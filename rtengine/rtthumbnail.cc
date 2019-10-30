@@ -16,33 +16,39 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <clocale>
+
+#include <lcms2.h>
+
+#include <glib/gstdio.h>
+
+#include <glibmm/ustring.h>
+
 #include "cieimage.h"
+#include "colortemp.h"
+#include "curves.h"
+#include "dcp.h"
+#include "iccmatrices.h"
+#include "iccstore.h"
+#include "image8.h"
+#include "improccoordinator.h"
+#include "improcfun.h"
+#include "jpeg.h"
 #include "labimage.h"
+#include "median.h"
+#include "mytime.h"
+#include "procparams.h"
+#include "rawimage.h"
+#include "rawimagesource.h"
 #include "rtengine.h"
 #include "rtthumbnail.h"
-#include "../rtgui/options.h"
-#include "image8.h"
-#include <lcms2.h>
-#include "curves.h"
-#include <glibmm/ustring.h>
-#include "improcfun.h"
-#include "colortemp.h"
-#include "mytime.h"
-#include "utils.h"
-#include "iccstore.h"
-#include "iccmatrices.h"
-#include "rawimagesource.h"
-#include "stdimagesource.h"
-#include <glib/gstdio.h>
-#include "rawimage.h"
-#include "jpeg.h"
-#include "../rtgui/ppversion.h"
-#include "improccoordinator.h"
 #include "settings.h"
-#include "procparams.h"
-#include <locale.h>
+#include "stdimagesource.h"
 #include "StopWatch.h"
-#include "median.h"
+#include "utils.h"
+
+#include "../rtgui/options.h"
+#include "../rtgui/ppversion.h"
 
 namespace
 {
@@ -1365,7 +1371,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = nullptr;
-    DCPProfile::ApplyState as;
+    DCPProfileApplyState as;
 
     if (isRaw) {
         cmsHPROFILE dummy;

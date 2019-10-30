@@ -19,34 +19,38 @@
 #include <cmath>
 #include <iostream>
 
-#include "rtengine.h"
-#include "imagefloat.h"
-#include "rawimage.h"
-#include "rawimagesource.h"
-#include "rawimagesource_i.h"
-#include "jaggedarray.h"
-#include "median.h"
-#include "rawimage.h"
-#include "mytime.h"
-#include "iccstore.h"
+#include "camconst.h"
+#include "color.h"
 #include "curves.h"
+#include "dcp.h"
 #include "dfmanager.h"
 #include "ffmanager.h"
-#include "dcp.h"
-#include "rt_math.h"
+#include "iccstore.h"
+#include "imagefloat.h"
 #include "improcfun.h"
-#include "rtlensfun.h"
+#include "jaggedarray.h"
+#include "median.h"
+#include "mytime.h"
 #include "pdaflinesfilter.h"
-#include "camconst.h"
 #include "procparams.h"
-#include "color.h"
+#include "rawimage.h"
+#include "rawimage.h"
+#include "rawimagesource_i.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
+#include "rtengine.h"
+#include "rtlensfun.h"
+
 //#define BENCHMARK
 //#include "StopWatch.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
 #include "opthelper.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
+
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
@@ -935,7 +939,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileApplyState &as)
 {
     if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
         return nullptr;

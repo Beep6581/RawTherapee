@@ -22,14 +22,17 @@
 #include <omp.h>
 #endif
 
+#include "curves.h"
+#include "guidedfilter.h"
 #include "iccstore.h"
 #include "improcfun.h"
 #include "labimage.h"
-#include "guidedfilter.h"
 #include "procparams.h"
+
+#include "sleef.c"
+
 //#define BENCHMARK
 #include "StopWatch.h"
-#include "sleef.c"
 
 namespace {
 

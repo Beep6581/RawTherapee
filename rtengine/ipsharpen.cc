@@ -17,19 +17,22 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "improcfun.h"
-#include "cieimage.h"
-#include "labimage.h"
-#include "gauss.h"
 #include "bilateral2.h"
+#include "cieimage.h"
+#include "gauss.h"
+#include "improcfun.h"
 #include "jaggedarray.h"
-#include "rt_math.h"
-#include "procparams.h"
-#include "sleef.c"
+#include "labimage.h"
 #include "opthelper.h"
+#include "procparams.h"
+#include "rt_algo.h"
+#include "rt_math.h"
+#include "settings.h"
+#include "sleef.c"
+
 //#define BENCHMARK
 #include "StopWatch.h"
-#include "rt_algo.h"
+
 using namespace std;
 
 namespace {

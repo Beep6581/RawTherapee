@@ -26,6 +26,7 @@
 #include "rawimage.h"
 #include "rawimagesource.h"
 
+#include "coord.h"
 #include "mytime.h"
 #include "opthelper.h"
 #include "procparams.h"

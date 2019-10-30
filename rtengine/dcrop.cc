@@ -18,17 +18,19 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "colortemp.h"
 #include "cieimage.h"
+#include "colortemp.h"
+#include "curves.h"
+#include "dcp.h"
+#include "dcrop.h"
 #include "image8.h"
 #include "imagefloat.h"
 #include "labimage.h"
-#include "curves.h"
-#include "dcrop.h"
 #include "mytime.h"
 #include "procparams.h"
 #include "refreshmap.h"
 #include "rt_math.h"
+
 #include "../rtgui/editcallbacks.h"
 
 namespace
@@ -830,7 +832,7 @@ void Crop::update(int todo)
             }
         }
         double rrm, ggm, bbm;
-        DCPProfile::ApplyState as;
+        DCPProfileApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;

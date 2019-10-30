@@ -24,13 +24,16 @@
 ////////////////////////////////////////////////////////////////
 
 #include "jaggedarray.h"
-#include "rtengine.h"
-#include "rawimagesource.h"
-#include "rt_math.h"
 #include "procparams.h"
+#include "rawimagesource.h"
+#include "rt_algo.h"
+#include "rt_math.h"
+#include "rtengine.h"
+
+#include "../rtgui/options.h"
+
 //#define BENCHMARK
 #include "StopWatch.h"
-#include "rt_algo.h"
 
 using namespace std;
 

@@ -18,14 +18,16 @@
  *
 */
 
-#include <cstddef>
+#include <algorithm>
 #include <cmath>
+#include <cstddef>
 
+#include "array2D.h"
 #include "cieimage.h"
 #include "improcfun.h"
-#include "array2D.h"
-#include "rt_math.h"
 #include "opthelper.h"
+#include "rt_math.h"
+#include "settings.h"
 
 namespace {
 
@@ -73,8 +75,8 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
                     float val = 0.f;
                     float norm = 0.f;
 
-                    for (int inbr = max(0, i - scalewin); inbr <= min(height - 1, i + scalewin); inbr += scale) {
-                        for (int jnbr = max(0, j - scalewin); jnbr <= j + scalewin; jnbr += scale) {
+                    for (int inbr = std::max(0, i - scalewin); inbr <= std::min(height - 1, i + scalewin); inbr += scale) {
+                        for (int jnbr = std::max(0, j - scalewin); jnbr <= j + scalewin; jnbr += scale) {
                             const float dirwt = domker[(inbr - i) / scale + halfwin][(jnbr - j)/ scale + halfwin] * rangeFn(fabsf(data_fine[inbr][jnbr] - data_fine[i][j])); 
                             val += dirwt * data_fine[inbr][jnbr];
                             norm += dirwt;
@@ -107,7 +109,7 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
                     float val = 0.f;
                     float norm = 0.f;
 
-                    for (int inbr = max(0, i - scalewin); inbr <= min(height - 1, i + scalewin); inbr += scale) {
+                    for (int inbr = std::max(0, i - scalewin); inbr <= std::min(height - 1, i + scalewin); inbr += scale) {
                         for (int jnbr = j - scalewin; jnbr <= j + scalewin; jnbr += scale) {
                             const float dirwt = domker[(inbr - i) / scale + halfwin][(jnbr - j)/ scale + halfwin] * rangeFn(fabsf(data_fine[inbr][jnbr] - data_fine[i][j])); 
                             val += dirwt * data_fine[inbr][jnbr];
@@ -121,8 +123,8 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
                     float val = 0.f;
                     float norm = 0.f;
 
-                    for (int inbr = max(0, i - scalewin); inbr <= min(height - 1, i + scalewin); inbr += scale) {
-                        for (int jnbr = j - scalewin; jnbr <= min(width - 1, j + scalewin); jnbr += scale) {
+                    for (int inbr = std::max(0, i - scalewin); inbr <= std::min(height - 1, i + scalewin); inbr += scale) {
+                        for (int jnbr = j - scalewin; jnbr <= std::min(width - 1, j + scalewin); jnbr += scale) {
                             const float dirwt = domker[(inbr - i) / scale + halfwin][(jnbr - j)/ scale + halfwin] * rangeFn(fabsf(data_fine[inbr][jnbr] - data_fine[i][j])); 
                             val += dirwt * data_fine[inbr][jnbr];
                             norm += dirwt;
@@ -151,8 +153,8 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
                     float val = 0.f;
                     float norm = 0.f;
 
-                    for (int inbr = max(0, i - scale); inbr <= min(height - 1, i + scale); inbr += scale) {
-                        for (int jnbr = max(0, j - scale); jnbr <= j + scale; jnbr += scale) {
+                    for (int inbr = std::max(0, i - scale); inbr <= std::min(height - 1, i + scale); inbr += scale) {
+                        for (int jnbr = std::max(0, j - scale); jnbr <= j + scale; jnbr += scale) {
                             const float dirwt = rangeFn(fabsf(data_fine[inbr][jnbr] - data_fine[i][j]));
                             val += dirwt * data_fine[inbr][jnbr];
                             norm += dirwt;
@@ -184,7 +186,7 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
                     float val = 0.f;
                     float norm = 0.f;
 
-                    for (int inbr = max(0, i - scale); inbr <= min(height - 1, i + scale); inbr += scale) {
+                    for (int inbr = std::max(0, i - scale); inbr <= std::min(height - 1, i + scale); inbr += scale) {
                         for (int jnbr = j - scale; jnbr <= j + scale; jnbr += scale) {
                             const float dirwt = rangeFn(fabsf(data_fine[inbr][jnbr] - data_fine[i][j]));
                             val += dirwt * data_fine[inbr][jnbr];
@@ -198,8 +200,8 @@ void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int w
                     float val = 0.f;
                     float norm = 0.f;
 
-                    for (int inbr = max(0, i - scale); inbr <= min(height - 1, i + scale); inbr += scale) {
-                        for (int jnbr = j - scale; jnbr <= min(width - 1, j + scale); jnbr += scale) {
+                    for (int inbr = std::max(0, i - scale); inbr <= std::min(height - 1, i + scale); inbr += scale) {
+                        for (int jnbr = j - scale; jnbr <= std::min(width - 1, j + scale); jnbr += scale) {
                             const float dirwt = rangeFn(fabsf(data_fine[inbr][jnbr] - data_fine[i][j]));
                             val += dirwt * data_fine[inbr][jnbr];
                             norm += dirwt;

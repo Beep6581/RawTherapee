@@ -40,7 +40,7 @@
 #include "rescale.h"
 #include "rt_math.h"
 
-extern Options options;
+#include "../rtgui/options.h"
 
 namespace rtengine {
 

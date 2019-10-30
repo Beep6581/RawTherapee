@@ -1,5 +1,8 @@
 #include <algorithm>
 
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+
 #include "clutstore.h"
 
 #include "colortemp.h"

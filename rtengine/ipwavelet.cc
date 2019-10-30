@@ -28,19 +28,20 @@
 
 #include "../rtgui/threadutils.h"
 
-#include "rtengine.h"
+#include "array2D.h"
+#include "curves.h"
+#include "EdgePreservingDecomposition.h"
+#include "iccstore.h"
 #include "improcfun.h"
 #include "labimage.h"
 #include "LUT.h"
-#include "array2D.h"
-#include "rt_math.h"
-#include "mytime.h"
-#include "sleef.c"
-#include "opthelper.h"
 #include "median.h"
-#include "EdgePreservingDecomposition.h"
-#include "iccstore.h"
+#include "mytime.h"
+#include "opthelper.h"
 #include "procparams.h"
+#include "rt_math.h"
+#include "rtengine.h"
+#include "sleef.c"
 
 #ifdef _OPENMP
 #include <omp.h>

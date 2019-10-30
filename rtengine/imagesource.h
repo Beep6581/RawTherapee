@@ -24,17 +24,22 @@
 #include <glibmm/ustring.h>
 
 #include "coord2d.h"
-#include "dcp.h"
 #include "imagedata.h"
 #include "LUT.h"
 #include "rtengine.h"
 
+template<typename T, const size_t num>
+class multi_array2D;
+
 namespace rtengine
 {
+
 class ColorTemp;
+class DCPProfile;
+class DCPProfileApplyState;
 class Imagefloat;
-class RetinextransmissionCurve;
 class RetinexgaintransmissionCurve;
+class RetinextransmissionCurve;
 
 namespace procparams
 {
@@ -126,7 +131,7 @@ public:
 
     virtual ImageMatrices* getImageMatrices () = 0;
     virtual bool           isRAW () const = 0;
-    virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfile::ApplyState &as)
+    virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfileApplyState &as)
     {
         return nullptr;
     };

@@ -20,12 +20,14 @@
 
 #include "improcfun.h"
 
+#include "curves.h"
 #include "gauss.h"
 #include "guidedfilter.h"
 #include "iccstore.h"
 #include "labimage.h"
 #include "opthelper.h"
 #include "procparams.h"
+
 #include "sleef.c"
 
 namespace rtengine {

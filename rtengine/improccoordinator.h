@@ -21,19 +21,20 @@
 
 #include <memory>
 
+#include "array2D.h"
 #include "colortemp.h"
-#include "rtengine.h"
-#include "improcfun.h"
-#include "imagesource.h"
-#include "procevents.h"
+#include "curves.h"
 #include "dcrop.h"
+#include "imagesource.h"
+#include "improcfun.h"
 #include "LUT.h"
+#include "procevents.h"
+#include "rtengine.h"
+
 #include "../rtgui/threadutils.h"
 
 namespace rtengine
 {
-
-class Image8;
 
 using namespace procparams;
 

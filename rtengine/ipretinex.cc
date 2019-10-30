@@ -41,6 +41,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "curves.h"
 #include "gauss.h"
 #include "improcfun.h"
 #include "jaggedarray.h"
@@ -134,8 +135,6 @@ void mean_stddv2( float **dst, float &mean, float &stddv, int W_L, int H_L, floa
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance, const LUTf& mapcurve, bool mapcontlutili, int width, int height, const procparams::RetinexParams &deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {

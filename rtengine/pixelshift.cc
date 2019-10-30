@@ -21,13 +21,20 @@
 ////////////////////////////////////////////////////////////////
 
 #include <cmath>
-#include "rawimagesource.h"
-#include "../rtgui/multilangmgr.h"
-#include "procparams.h"
+#include <stack>
+
+#include "array2D.h"
 #include "gauss.h"
 #include "median.h"
+#include "procparams.h"
+#include "rawimagesource.h"
+
+#include "../rtgui/multilangmgr.h"
+#include "../rtgui/options.h"
+
 //#define BENCHMARK
 #include "StopWatch.h"
+
 namespace
 {
 

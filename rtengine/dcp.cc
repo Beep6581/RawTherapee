@@ -433,7 +433,7 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
 
 }
 
-struct DCPProfile::ApplyState::Data {
+struct DCPProfileApplyState::Data {
     float pro_photo[3][3];
     float work[3][3];
     bool already_pro_photo;
@@ -442,14 +442,12 @@ struct DCPProfile::ApplyState::Data {
     float bl_scale;
 };
 
-DCPProfile::ApplyState::ApplyState() :
+DCPProfileApplyState::DCPProfileApplyState() :
     data(new Data{})
 {
 }
 
-DCPProfile::ApplyState::~ApplyState()
-{
-}
+DCPProfileApplyState::~DCPProfileApplyState() = default;
 
 DCPProfile::DCPProfile(const Glib::ustring& filename) :
     has_color_matrix_1(false),
@@ -1149,7 +1147,7 @@ void DCPProfile::apply(
     }
 }
 
-void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, ApplyState& as_out)
+void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, DCPProfileApplyState& as_out)
 {
     as_out.data->use_tone_curve = use_tone_curve;
     as_out.data->apply_look_table = apply_look_table;
@@ -1193,7 +1191,7 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
     }
 }
 
-void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int height, int tile_width, const ApplyState& as_in) const
+void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int height, int tile_width, const DCPProfileApplyState& as_in) const
 {
 
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
