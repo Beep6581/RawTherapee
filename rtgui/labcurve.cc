@@ -20,6 +20,8 @@
 
 #include "labcurve.h"
 
+#include "options.h"
+
 #include "../rtengine/improcfun.h"
 #include "../rtengine/procparams.h"
 #include "editcallbacks.h"

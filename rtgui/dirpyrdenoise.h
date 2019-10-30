@@ -26,7 +26,6 @@
 #include "curveeditorgroup.h"
 #include "colorprovider.h"
 #include "guiutils.h"
-#include "options.h"
 
 class EditDataProvider;
 

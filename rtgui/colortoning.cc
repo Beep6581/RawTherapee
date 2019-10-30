@@ -6,6 +6,7 @@
 #include "rtimage.h"
 #include "eventmapper.h"
 #include "labgrid.h"
+#include "options.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

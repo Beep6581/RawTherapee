@@ -37,8 +37,6 @@
 #include "../rtengine/ffmanager.h"
 #include "../rtengine/procparams.h"
 
-extern Options options;
-
 namespace
 {
 

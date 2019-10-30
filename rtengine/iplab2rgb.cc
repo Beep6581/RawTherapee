@@ -24,7 +24,6 @@
 #include <glibmm/ustring.h>
 #include "iccstore.h"
 #include "iccmatrices.h"
-#include "../rtgui/options.h"
 #include "settings.h"
 #include "alignedbuffer.h"
 #include "color.h"

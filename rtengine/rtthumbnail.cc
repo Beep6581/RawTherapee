@@ -191,8 +191,6 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], 
 
 }
 
-extern Options options;
-
 namespace rtengine
 {
 

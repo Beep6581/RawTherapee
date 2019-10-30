@@ -4,6 +4,7 @@
 #include "retinex.h"
 #include "mycurve.h"
 #include "rtimage.h"
+#include "options.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

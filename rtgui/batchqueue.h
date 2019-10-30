@@ -26,7 +26,6 @@
 
 #include "batchqueueentry.h"
 #include "lwbuttonset.h"
-#include "options.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
 #include "../rtengine/noncopyable.h"

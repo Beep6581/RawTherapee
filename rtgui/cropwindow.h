@@ -19,7 +19,6 @@
 #ifndef _CROPWINDOW_
 #define _CROPWINDOW_
 
-#include "../rtengine/rtengine.h"
 #include <gtkmm.h>
 #include "lwbutton.h"
 #include "lwbuttonset.h"
@@ -33,6 +32,11 @@
 #include "editcoordsys.h"
 #include "../rtengine/noncopyable.h"
 
+namespace rtengine {
+
+class Coord;
+
+}
 class CropWindow;
 
 class CropWindowListener

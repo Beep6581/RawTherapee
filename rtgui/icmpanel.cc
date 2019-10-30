@@ -32,8 +32,6 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-extern Options options;
-
 ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr)
 {
     auto m = ProcEventMapper::getInstance();

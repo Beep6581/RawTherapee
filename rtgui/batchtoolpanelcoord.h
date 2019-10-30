@@ -22,7 +22,8 @@
 #include "thumbnail.h"
 #include "toolpanelcoord.h"
 #include "fileselectionchangelistener.h"
-#include "../rtengine/rtengine.h"
+#include "../rtengine/procparams.h"
+#include "../rtengine/procevents.h"
 #include "paramsedited.h"
 #include "thumbnaillistener.h"
 

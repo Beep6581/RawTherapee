@@ -22,7 +22,6 @@
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "saveformatpanel.h"
-#include "options.h"
 
 class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener
 {

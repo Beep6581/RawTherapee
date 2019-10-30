@@ -23,8 +23,6 @@
 #include "../rtengine/rt_math.h"
 #include "options.h"
 
-extern Options options;
-
 using namespace rtengine;
 
 Navigator::Navigator () : currentRGBUnit(options.navRGBUnit), currentHSVUnit(options.navHSVUnit)

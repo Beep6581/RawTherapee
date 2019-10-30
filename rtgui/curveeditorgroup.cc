@@ -25,6 +25,7 @@
 #include "flatcurveeditorsubgroup.h"
 #include "multilangmgr.h"
 #include "rtimage.h"
+#include "options.h"
 
 CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), line(0), curve_reset(nullptr),
     displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)

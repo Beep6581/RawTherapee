@@ -20,6 +20,7 @@
 
 #include "rtimage.h"
 
+#include <cassert>
 #include <iostream>
 
 #include "options.h"

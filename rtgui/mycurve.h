@@ -26,7 +26,6 @@
 #include "coloredbar.h"
 #include "coordinateadjuster.h"
 #include "../rtengine/LUT.h"
-#include "options.h"
 #include "../rtengine/noncopyable.h"
 
 #define RADIUS          3.5 /** radius of the control points ; must be x.5 to target the center of a pixel */

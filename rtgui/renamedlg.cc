@@ -18,7 +18,6 @@
  */
 #include "renamedlg.h"
 #include "multilangmgr.h"
-#include "options.h"
 #include "rtimage.h"
 
 RenameDialog::RenameDialog (Gtk::Window* parent)

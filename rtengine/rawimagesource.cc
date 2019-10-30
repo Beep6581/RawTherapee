@@ -40,6 +40,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
+#include "../rtgui/options.h"
 
 //#define BENCHMARK
 //#include "StopWatch.h"

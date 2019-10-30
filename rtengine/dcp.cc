@@ -31,6 +31,7 @@
 #include "imagefloat.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
+#include "../rtgui/options.h"
 
 namespace rtengine
 {

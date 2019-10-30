@@ -24,8 +24,6 @@
 #include "options.h"
 #include "../rtengine/previewimage.h"
 
-extern Options options;
-
 InspectorBuffer::InspectorBuffer(const Glib::ustring &imagePath) : currTransform(0), fromRaw(false)
 {
     if (!imagePath.empty() && Glib::file_test(imagePath, Glib::FILE_TEST_EXISTS) && !Glib::file_test(imagePath, Glib::FILE_TEST_IS_DIR)) {

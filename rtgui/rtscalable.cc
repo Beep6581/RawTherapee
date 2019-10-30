@@ -25,11 +25,12 @@
 #include <librsvg/rsvg.h>
 #include "options.h"
 
+#include "../rtengine/rt_math.h"
+
 double RTScalable::dpi = 0.;
 int RTScalable::scale = 0;
 
 extern Glib::ustring argv0;
-extern Options options;
 extern unsigned char initialGdkScale;
 extern float fontScale;
 Gtk::TextDirection RTScalable::direction = Gtk::TextDirection::TEXT_DIR_NONE;

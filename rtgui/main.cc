@@ -53,8 +53,6 @@
 // Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
 #define ECLIPSE_ARGS 0
 
-extern Options options;
-
 // stores path to data files
 Glib::ustring argv0;
 Glib::ustring creditsPath;

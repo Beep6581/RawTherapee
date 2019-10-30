@@ -42,6 +42,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "sleef.c"
+#include "../rtgui/options.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -55,7 +56,6 @@
 #define blkrad 1    // radius of block averaging
 
 #define epsilon 0.001f/(TS*TS) //tolerance
-
 
 namespace rtengine
 {

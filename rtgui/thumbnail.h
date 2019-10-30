@@ -24,7 +24,6 @@
 
 #include <glibmm/ustring.h>
 #include "cachemanager.h"
-#include "options.h"
 #include "../rtengine/rtengine.h"
 #include "../rtengine/rtthumbnail.h"
 #include "cacheimagedata.h"

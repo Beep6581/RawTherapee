@@ -28,8 +28,6 @@
 
 using namespace rtengine;
 
-extern Options options;
-
 
 //
 //

@@ -29,8 +29,6 @@
 #include <omp.h>
 #endif
 
-extern Options options;
-
 namespace rtengine
 {
 

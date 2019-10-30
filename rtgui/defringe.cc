@@ -20,6 +20,7 @@
 #include <iomanip>
 
 #include "defringe.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 

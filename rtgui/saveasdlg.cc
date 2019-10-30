@@ -26,8 +26,6 @@
 
 #include "../rtengine/utils.h"
 
-extern Options options;
-
 namespace
 {
 

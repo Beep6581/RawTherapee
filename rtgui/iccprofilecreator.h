@@ -21,7 +21,6 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
-#include "options.h"
 #include <vector>
 #include "rtwindow.h"
 
