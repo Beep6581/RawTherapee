@@ -40,8 +40,6 @@ using namespace std;
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 #undef ABS
 
 #define ABS(a) ((a)<0?-(a):(a))

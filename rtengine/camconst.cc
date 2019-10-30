@@ -20,8 +20,6 @@
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 CameraConst::CameraConst() : pdafOffset(0)
 {
     memset(dcraw_matrix, 0, sizeof(dcraw_matrix));

@@ -78,11 +78,7 @@ namespace rtengine
 
  */
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-extern const Settings* settings;
 extern MyMutex *fftwMutex;
 
 

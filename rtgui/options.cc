@@ -28,6 +28,7 @@
 #include "version.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/rtengine.h"
 
 #ifdef _OPENMP
 #include <omp.h>

@@ -28,6 +28,7 @@
 #include "gauss.h"
 #include "median.h"
 #include "StopWatch.h"
+
 namespace {
 
 bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
@@ -104,10 +105,6 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
     return true;
 }
 //end of linear equation solver
-}
-
-namespace rtengine {
-    extern const Settings* settings;
 }
 
 using namespace std;

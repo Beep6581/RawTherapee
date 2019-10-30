@@ -23,9 +23,9 @@
 #include <gtkmm.h>
 #include <iostream>
 #include <librsvg/rsvg.h>
-#include "options.h"
 
 #include "../rtengine/rt_math.h"
+#include "options.h"
 
 double RTScalable::dpi = 0.;
 int RTScalable::scale = 0;
@@ -102,7 +102,7 @@ void RTScalable::deleteDir(const Glib::ustring& path)
             error |= g_remove (Glib::build_filename (path, *entry).c_str());
         }
 
-        if (error != 0 && options.rtSettings.verbose) {
+        if (error != 0 && rtengine::settings->verbose) {
             std::cerr << "Failed to delete all entries in '" << path << "': " << g_strerror(errno) << std::endl;
         }
 

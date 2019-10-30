@@ -22,6 +22,7 @@
 
 #include "guiutils.h"
 #include "options.h"
+#include "rtimage.h"
 
 #include "../rtengine/color.h"
 #include "../rtengine/procparams.h"

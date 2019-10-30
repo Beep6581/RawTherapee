@@ -27,8 +27,9 @@
 #include "partialpastedlg.h"
 #include "guiutils.h"
 #include "profilestorecombobox.h"
-#include "rtimage.h"
 #include "../rtengine/noncopyable.h"
+
+class RTImage;
 
 class ProfilePanel : public Gtk::Grid, public PParamsChangeListener, public ProfileStoreListener, public rtengine::NonCopyable
 {

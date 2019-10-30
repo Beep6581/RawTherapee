@@ -34,10 +34,6 @@
 namespace rtengine
 {
 
-#ifdef _DEBUG
-extern const Settings* settings;
-#endif
-
 void Ciecam02::curvecolorfloat (float satind, float satval, float &sres, float parsat)
 {
     if (satind > 0.f) {

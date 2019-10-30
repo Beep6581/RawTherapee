@@ -161,8 +161,6 @@ void dcdamping (float** aI, float** aO, float damping, int W, int H)
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, const float * const * blend, int W, int H, const procparams::SharpeningParams &sharpenParam, double Scale)
 {
     if (sharpenParam.deconvamount == 0 && sharpenParam.blurradius < 0.25f) {

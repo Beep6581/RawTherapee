@@ -36,13 +36,6 @@
 //#define BENCHMARK
 #include "StopWatch.h"
 
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
-
 namespace
 {
 

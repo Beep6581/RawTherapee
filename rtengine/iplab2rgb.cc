@@ -34,8 +34,6 @@ namespace rtengine
 
 extern void filmlike_clip(float *r, float *g, float *b);
 
-extern const Settings* settings;
-
 namespace {
 
 inline void copyAndClampLine(const float *src, unsigned char *dst, const int W)

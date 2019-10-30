@@ -53,6 +53,7 @@ enum SnapToType {
 
 class MyCurveIdleHelper;
 class CurveEditor;
+class EditDataProvider;
 
 class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller, public CoordinateProvider, public rtengine::NonCopyable
 {

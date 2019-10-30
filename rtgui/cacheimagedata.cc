@@ -23,6 +23,7 @@
 #include <locale.h>
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/settings.h"
 
 CacheImageData::CacheImageData() :
     supported(false),
@@ -223,11 +224,11 @@ int CacheImageData::load (const Glib::ustring& fname)
             return 0;
         }
     } catch (Glib::Error &err) {
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             printf("CacheImageData::load / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             printf("CacheImageData::load / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
     }
@@ -305,11 +306,11 @@ int CacheImageData::save (const Glib::ustring& fname)
     keyData = keyFile.to_data ();
 
     } catch (Glib::Error &err) {
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             printf("CacheImageData::save / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             printf("CacheImageData::save / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
         }
     }
@@ -321,7 +322,7 @@ int CacheImageData::save (const Glib::ustring& fname)
     FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (!f) {
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             printf("CacheImageData::save / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
 

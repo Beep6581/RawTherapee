@@ -48,8 +48,6 @@ constexpr T skips(T a, T b)
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 Crop::Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr),
       cropImg (nullptr), transCrop (nullptr), cieCrop (nullptr),

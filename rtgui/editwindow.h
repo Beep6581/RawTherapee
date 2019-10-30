@@ -20,6 +20,7 @@
 #include <gtkmm.h>
 #include "filepanel.h"
 #include "editorpanel.h"
+#include "rtimage.h"
 #include <set>
 
 class EditWindow : public Gtk::Window

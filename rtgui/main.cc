@@ -218,7 +218,7 @@ bool init_rt()
     extProgStore->init();
     SoundManager::init();
 
-    if ( !options.rtSettings.verbose ) {
+    if (!rtengine::settings->verbose) {
         TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
     }
 

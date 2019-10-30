@@ -20,7 +20,7 @@
 #include <sigc++/slot.h>
 #include <cmath>
 #include "multilangmgr.h"
-#include "../rtengine/rtengine.h"
+#include "../rtengine/rt_math.h"
 #include "options.h"
 #include "guiutils.h"
 #include "rtimage.h"

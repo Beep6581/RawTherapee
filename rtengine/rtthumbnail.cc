@@ -47,7 +47,6 @@
 #include "StopWatch.h"
 #include "utils.h"
 
-#include "../rtgui/options.h"
 #include "../rtgui/ppversion.h"
 
 namespace
@@ -194,8 +193,6 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], 
 namespace rtengine
 {
 
-extern const Settings *settings;
-
 using namespace procparams;
 
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode)
@@ -335,7 +332,7 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.inputProfile = "(camera)";
-    neutral.icm.workingProfile = options.rtSettings.srgb;
+    neutral.icm.workingProfile = settings->srgb;
 
     src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
     double thresholdDummy = 0.f;
@@ -434,7 +431,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     // did we succeed?
     if ( err ) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             std::cout << "Could not extract thumb from " << fname.c_str() << std::endl;
         }
         delete tpp;
@@ -1242,7 +1239,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ImProcFunctions ipf (&params, forHistogramMatching); // enable multithreading when forHistogramMatching is true
     ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
-    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(options.rtSettings.monitorIntent), false, false);
+    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(settings->monitorIntent), false, false);
 
     LUTu hist16 (65536);
 
@@ -2132,11 +2129,11 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
 
         return true;
     } catch (Glib::Error &err) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::readData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::readData / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
     }
@@ -2183,11 +2180,11 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         keyData = keyFile.to_data ();
 
     } catch (Glib::Error& err) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::writeData / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
         }
     }
@@ -2199,7 +2196,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
     FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (!f) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::writeData / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
 

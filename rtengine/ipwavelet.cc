@@ -60,8 +60,6 @@
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 struct cont_params {
     float mul[10];
     int chrom;

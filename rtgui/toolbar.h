@@ -21,8 +21,9 @@
 
 #include <gtkmm.h>
 #include "toolenum.h"
-#include "rtimage.h"
 #include "lockablecolorpicker.h"
+
+class RTImage;
 
 class ToolBarListener
 {

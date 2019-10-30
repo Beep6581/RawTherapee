@@ -96,4 +96,5 @@ public:
       * @param s a pointer to the Settings instance to destroy. */
     static void      destroy(Settings* s);
 };
+extern const Settings* settings;
 }

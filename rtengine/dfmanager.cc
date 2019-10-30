@@ -29,8 +29,6 @@
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 // *********************** class dfInfo **************************************
 
 inline dfInfo& dfInfo::operator =(const dfInfo &o)

@@ -35,13 +35,6 @@
 #include "settings.h"
 #include "utils.h"
 
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
-
 class rtengine::LCPProfile::LCPPersModel
 {
 public:

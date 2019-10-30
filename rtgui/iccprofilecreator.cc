@@ -29,13 +29,6 @@
 #include <omp.h>
 #endif
 
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
-
 const char* sTRCPreset[] = {"BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9", "Lab_g3.0s9.03296"}; //gamma free
 
 ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)

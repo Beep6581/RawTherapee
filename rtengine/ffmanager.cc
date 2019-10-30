@@ -30,8 +30,6 @@
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 // *********************** class ffInfo **************************************
 
 inline ffInfo& ffInfo::operator =(const ffInfo &o)

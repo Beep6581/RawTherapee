@@ -47,8 +47,6 @@
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 ImProcCoordinator::ImProcCoordinator() :
     orig_prev(nullptr),
     oprevi(nullptr),

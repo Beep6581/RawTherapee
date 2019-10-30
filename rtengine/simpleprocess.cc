@@ -38,7 +38,6 @@
 
 namespace rtengine
 {
-extern const Settings* settings;
 
 namespace
 {

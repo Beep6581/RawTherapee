@@ -426,7 +426,6 @@ void transLineD1x (const float* const red, const float* const green, const float
 namespace rtengine
 {
 
-extern const Settings* settings;
 #undef ABS
 #undef DIST
 

@@ -32,8 +32,6 @@
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 template<class T> void freeArray (T** a, int H)
 {
     for (int i = 0; i < H; i++) {

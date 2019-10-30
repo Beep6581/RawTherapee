@@ -28,13 +28,23 @@
 
 #include "../rtengine/coord.h"
 #include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
 
-#include "rtimage.h"
+#include "threadutils.h"
 
 // for convenience...
 #include "pathutils.h"
 
+namespace rtengine {
+namespace procparams
+{
+
+class ProcParams;
+
+struct CropParams;
+}
+}
+
+class RTImage;
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);

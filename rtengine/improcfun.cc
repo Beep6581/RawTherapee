@@ -267,8 +267,6 @@ namespace rtengine
 
 using namespace procparams;
 
-extern const Settings* settings;
-
 ImProcFunctions::~ImProcFunctions ()
 {
     if (monitorTransform) {

@@ -19,12 +19,12 @@
 
 #include <gtkmm.h>
 #include "rtwindow.h"
-#include "options.h"
 #include "preferences.h"
 #include "iccprofilecreator.h"
 #include "cursormanager.h"
 #include "rtimage.h"
 #include "whitebalance.h"
+#include "../rtengine/settings.h"
 
 float fontScale = 1.f;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
@@ -170,7 +170,7 @@ RTWindow::RTWindow ()
             if (options.pseudoHiDPISupport) {
                 fontScale = options.fontSize / (float)RTScalable::baseFontSize;
             }
-            if (options.rtSettings.verbose) {
+            if (rtengine::settings->verbose) {
                 printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
             }
         } else {
@@ -200,14 +200,14 @@ RTWindow::RTWindow ()
                 }
                 if ((int)initialGdkScale > 1 || pt != RTScalable::baseFontSize) {
                     css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
-                    if (options.rtSettings.verbose) {
+                    if (rtengine::settings->verbose) {
                         printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, fontScale);
                     }
                 }
             }
         }
         if (!css.empty()) {
-            if (options.rtSettings.verbose) {
+            if (rtengine::settings->verbose) {
                 printf("CSS:\n%s\n\n", css.c_str());
             }
             try {

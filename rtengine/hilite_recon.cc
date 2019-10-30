@@ -288,8 +288,6 @@ void boxblur_resamp(const float* const* src, float** dst, float** temp, int H, i
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue)
 {
     double progress = 0.0;

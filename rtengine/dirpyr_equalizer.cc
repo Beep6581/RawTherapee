@@ -350,8 +350,6 @@ void idirpyr_eq_channelcam(const float * const * data_coarse, const float * cons
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 void ImProcFunctions::dirpyr_equalizer(const float * const * src, float ** dst, int srcwidth, int srcheight, const float * const * l_a, const float * const * l_b, const double * mult, const double dirpyrThreshold, const double skinprot, float b_l, float t_l, float t_r, int scaleprev)
 {
     //sequence of scales

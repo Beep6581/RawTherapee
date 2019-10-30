@@ -810,7 +810,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
      * TIFFTAG_SMAXSAMPLEVALUE, but for now, we normalize the image to the
      * effective minimum and maximum values
      */
-    if (options.rtSettings.verbose) {
+    if (settings->verbose) {
         printf("Information of \"%s\":\n", fname.c_str());
         uint16 tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
         if (TIFFGetField(in, TIFFTAG_DEFAULTSCALE, &tiffDefaultScale)) {

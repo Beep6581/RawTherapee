@@ -33,13 +33,6 @@
 #include "rt_math.h"
 #include "../rtgui/options.h"
 
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
-
 using namespace rtengine;
 using namespace rtexif;
 
@@ -1868,7 +1861,7 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
     if (res->isValid()) {
         // Add profile
         profile_cache[key] = res;
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf("DCP profile '%s' loaded from disk\n", filename.c_str());
         }
         return res;

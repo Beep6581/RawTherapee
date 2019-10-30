@@ -19,8 +19,6 @@
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 RawImage::RawImage(  const Glib::ustring &name )
     : data(nullptr)
     , prefilters(0)

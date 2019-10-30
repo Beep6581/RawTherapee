@@ -29,8 +29,6 @@
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 SHMap::SHMap (int w, int h) : max_f(0.f), min_f(0.f), avg(0.f), W(w), H(h)
 {
 

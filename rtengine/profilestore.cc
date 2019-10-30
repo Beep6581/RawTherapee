@@ -160,7 +160,7 @@ void ProfileStore::_parseProfiles ()
     if (findEntryFromFullPathU (options.defProfRaw) == nullptr) {
         options.setDefProfRawMissing (true);
 
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("WARNING: Default profile \"%s\" for raw images not found!\n", options.defProfRaw.c_str());
         }
     }
@@ -168,7 +168,7 @@ void ProfileStore::_parseProfiles ()
     if (findEntryFromFullPathU (options.defProfImg) == nullptr) {
         options.setDefProfImgMissing (true);
 
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("WARNING: Default profile \"%s\" for standard images not found!\n", options.defProfImg.c_str());
         }
     }
@@ -220,7 +220,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
 
                 if (lastdot != Glib::ustring::npos && lastdot == currDir.length() - 4 && currDir.substr (lastdot).casefold() == paramFileExtension) {
                     // file found
-                    if ( options.rtSettings.verbose ) {
+                    if (settings->verbose) {
                         printf ("Processing file %s...", fname.c_str());
                     }
 
@@ -233,7 +233,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
                     if (!res && pProf->pparams->ppVersion >= 220) {
                         fileFound = true;
 
-                        if ( options.rtSettings.verbose ) {
+                        if (settings->verbose) {
                             printf ("OK\n");
                         }
 
@@ -244,7 +244,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
                         // map the partial profile
                         partProfiles[filePSE] = pProf;
                         //partProfiles.insert( std::pair<ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*> (filePSE, pProf) );
-                    } else if ( options.rtSettings.verbose ) {
+                    } else if (settings->verbose) {
                         printf ("failed!\n");
                     }
                 }
@@ -522,7 +522,7 @@ PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
 
     for (auto rule : dynamicRules) {
         if (rule.matches (im)) {
-            if (options.rtSettings.verbose) {
+            if (settings->verbose) {
                 printf ("found matching profile %s\n", rule.profilepath.c_str());
             }
 

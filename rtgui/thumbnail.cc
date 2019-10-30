@@ -19,7 +19,6 @@
 #include "thumbnail.h"
 #include <sstream>
 #include <iomanip>
-#include "options.h"
 #include "../rtengine/mytime.h"
 #include <cstdio>
 #include <cstdlib>
@@ -29,6 +28,7 @@
 #include <glib/gstdio.h>
 
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/settings.h"
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
@@ -299,7 +299,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
 
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             printf("Custom profile builder's command line: %s\n", Glib::ustring(cmdLine).c_str());
         }
 
