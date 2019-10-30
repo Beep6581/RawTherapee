@@ -1278,6 +1278,12 @@ private:
                      minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
 
+                if (params.locallab.spots.at(sp).spotMethod == "exc") {
+                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
+                } else {
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
+                }
+
                 // Clear local curves
                 lllocalcurve.clear();
                 cclocalcurve.clear();
