@@ -77,7 +77,7 @@ void RawImageSource::ppg_demosaic()
         plistener->setProgress (0.0);
     }
 
-    image = (float (*)[4]) calloc (H * W, sizeof * image);
+    image = (float (*)[4]) calloc (static_cast<size_t>(H) * W, sizeof * image);
 
     for (int ii = 0; ii < H; ii++)
         for (int jj = 0; jj < W; jj++) {
@@ -375,9 +375,9 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
     int row, col, c, d, i, u = width, v = 2 * u, w = 3 * u, x = 4 * u, y = 5 * u, z = 6 * u, indx, (*dif)[2], (*chr)[2];
     float f[4], g[4];
     float (*image)[4];
-    image = (float (*)[4]) calloc (width * height, sizeof * image);
-    dif = (int (*)[2]) calloc(width * height, sizeof * dif);
-    chr = (int (*)[2]) calloc(width * height, sizeof * chr);
+    image = (float (*)[4]) calloc (static_cast<size_t>(width) * height, sizeof * image);
+    dif = (int (*)[2]) calloc(static_cast<size_t>(width) * height, sizeof * dif);
+    chr = (int (*)[2]) calloc(static_cast<size_t>(width) * height, sizeof * chr);
 
     if (plistener) {
         // this function seems to be unused
@@ -542,14 +542,14 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &r
 
     float *rix[5];
     float *qix[5];
-    float *buffer = (float *)calloc(rr1 * cc1 * 5 * sizeof(float), 1);
+    float *buffer = (float *)calloc(static_cast<size_t>(rr1) * cc1 * 5 * sizeof(float), 1);
 
     if(buffer == nullptr) { // allocation of big block of memory failed, try to get 5 smaller ones
         printf("lmmse_interpolate_omp: allocation of big memory block failed, try to get 5 smaller ones now...\n");
         bool allocationFailed = false;
 
         for(int i = 0; i < 5; i++) {
-            qix[i] = (float *)calloc(rr1 * cc1 * sizeof(float), 1);
+            qix[i] = (float *)calloc(static_cast<size_t>(rr1) * cc1 * sizeof(float), 1);
 
             if(!qix[i]) { // allocation of at least one small block failed
                 allocationFailed = true;
@@ -1144,7 +1144,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     vdif  = (float (*)) calloc( width * height / 2, sizeof * vdif );
     hdif  = (float (*)) calloc( width * height / 2, sizeof * hdif );
 
-    chrarray    = (float (*)) calloc( width * height, sizeof( float ) );
+    chrarray    = (float (*)) calloc(static_cast<size_t>(width) * height, sizeof( float ) );
     chr[0] = chrarray;
     chr[1] = chrarray + (width * height) / 2;
 
@@ -2039,7 +2039,7 @@ void RawImageSource::refinement_lassus(int PassCount)
     t1e.set();
     int u = W, v = 2 * u, w = 3 * u, x = 4 * u, y = 5 * u;
     float (*image)[3];
-    image = (float(*)[3]) calloc(W * H, sizeof * image);
+    image = (float(*)[3]) calloc(static_cast<size_t>(W) * H, sizeof * image);
 #ifdef _OPENMP
     #pragma omp parallel shared(image)
 #endif

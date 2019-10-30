@@ -198,7 +198,7 @@ float* RawImageSource::CA_correct_RT(
 
     //block CA shift values and weight assigned to block
     float* const blockwt = buffer + (height * width);
-    memset(blockwt, 0, vblsz * hblsz * (2 * 2 + 1) * sizeof(float));
+    memset(blockwt, 0, static_cast<unsigned long>(vblsz) * hblsz * (2 * 2 + 1) * sizeof(float));
     float (*blockshifts)[2][2] = (float (*)[2][2])(blockwt + vblsz * hblsz);
 
     // Because we can't break parallel processing, we need a switch do handle the errors

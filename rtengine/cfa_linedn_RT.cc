@@ -62,7 +62,7 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     float noisevar = SQR(3 * noise * 65535); // _noise_ (as a fraction of saturation) is input to the algorithm
     float noisevarm4 = 4.0f * noisevar;
-    float* RawDataTmp = (float*)malloc( width * height * sizeof(float));
+    float* RawDataTmp = (float*)malloc(static_cast<unsigned long>(width) * height * sizeof(float));
 #ifdef _OPENMP
     #pragma omp parallel
 #endif

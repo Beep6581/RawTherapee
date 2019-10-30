@@ -114,9 +114,9 @@ void xorMasks(int xStart, int xEnd, int yStart, int yEnd, const array2D<uint8_t>
     }
 }
 
-void floodFill4Impl(int y, int x, int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &mask, std::stack<std::pair<uint16_t, uint16_t>, std::vector<std::pair<uint16_t, uint16_t>>> &coordStack)
+void floodFill4Impl(int yin, int xin, int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &mask, std::stack<std::pair<uint16_t, uint16_t>, std::vector<std::pair<uint16_t, uint16_t>>> &coordStack)
 {
-    coordStack.emplace(x, y);
+    coordStack.emplace(xin, yin);
 
     while(!coordStack.empty()) {
         auto coord = coordStack.top();

@@ -249,7 +249,7 @@ public:
         ar_realloc(w, h, offset);
 
         if (flags & ARRAY2D_CLEAR_DATA) {
-            memset(data + offset, 0, w * h * sizeof(T));
+            memset(data + offset, 0, static_cast<unsigned long>(w) * h * sizeof(T));
         }
     }
 

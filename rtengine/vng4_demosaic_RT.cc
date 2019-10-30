@@ -103,7 +103,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
     const int width = W, height = H;
     constexpr unsigned int colors = 4;
 
-    float (*image)[4] = (float (*)[4]) calloc (height * width, sizeof * image);
+    float (*image)[4] = (float (*)[4]) calloc (static_cast<size_t>(height) * width, sizeof * image);
 
     int lcode[16][16][32];
     float mul[16][16][8];
