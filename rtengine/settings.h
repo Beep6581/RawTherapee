@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _RTSETTINGS_
-#define _RTSETTINGS_
+#pragma once
 
+#include <glibmm/ustring.h>
 namespace rtengine
 {
 
@@ -97,6 +97,3 @@ public:
     static void      destroy(Settings* s);
 };
 }
-
-#endif
-

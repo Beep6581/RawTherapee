@@ -19,6 +19,7 @@
 #pragma once
 
 #include <set>
+#include <vector>
 #include <gtkmm/enums.h>
 #include "../rtengine/settings.h"
 #include <exception>
