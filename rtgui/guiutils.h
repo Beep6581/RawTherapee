@@ -25,7 +25,6 @@
 
 #include <cairomm/cairomm.h>
 
-#include "pathutils.h"
 #include "threadutils.h"
 
 #include "../rtengine/coord.h"

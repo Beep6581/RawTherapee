@@ -19,6 +19,7 @@
 #include "cacheimagedata.h"
 #include <vector>
 #include <glib/gstdio.h>
+#include <glibmm/keyfile.h>
 #include "version.h"
 #include <locale.h>
 

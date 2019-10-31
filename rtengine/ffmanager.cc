@@ -54,9 +54,7 @@ inline ffInfo& ffInfo::operator =(const ffInfo &o)
 
 ffInfo::~ffInfo()
 {
-    if( ri ) {
-        delete ri;
-    }
+    delete ri;
 }
 
 bool ffInfo::operator <(const ffInfo &e2) const

@@ -29,12 +29,15 @@
 #include <string>
 #include <vector>
 
-#include <glibmm/keyfile.h>
 #include <glibmm/ustring.h>
 
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rawmetadatalocation.h"
 
+namespace Glib
+{
+    class KeyFile;
+}
 namespace rtengine
 {
 

@@ -25,11 +25,13 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 class RawImage;
 
 }
+
 class DFProvider
 {
 public:

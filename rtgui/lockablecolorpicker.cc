@@ -21,6 +21,7 @@
 #include "options.h"
 #include "../rtengine/color.h"
 #include "../rtengine/rt_math.h"
+#include "../rtengine/utils.h"
 #include "imagearea.h"
 #include "multilangmgr.h"
 #include "navigator.h"

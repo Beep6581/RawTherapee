@@ -25,7 +25,6 @@
 #include "iccstore.h"
 #include "labimage.h"
 #include "mytime.h"
-#include "../rtgui/thresholdselector.h"
 #include "curves.h"
 #include "color.h"
 #include "procparams.h"

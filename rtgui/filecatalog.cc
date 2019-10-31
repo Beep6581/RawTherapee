@@ -36,6 +36,7 @@
 #include "thumbimageupdater.h"
 #include "batchqueue.h"
 #include "placesbrowser.h"
+#include "pathutils.h"
 
 using namespace std;
 

@@ -26,6 +26,7 @@
 #include "imageio.h"
 #include "mytime.h"
 #include "procparams.h"
+#include "utils.h"
 
 #undef THREAD_PRIORITY_NORMAL
 

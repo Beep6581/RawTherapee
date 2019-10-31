@@ -25,7 +25,8 @@
 
 #include "opthelper.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 class ProgressListener;
 

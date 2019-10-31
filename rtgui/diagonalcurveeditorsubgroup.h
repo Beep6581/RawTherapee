@@ -25,6 +25,7 @@
 #include "../rtengine/noncopyable.h"
 
 class DiagonalCurveEditor;
+class MyDiagonalCurve;
 
 class DiagonalCurveEditorSubGroup :
     public CurveEditorSubGroup,

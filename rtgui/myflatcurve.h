@@ -25,16 +25,7 @@
 #include "cursormanager.h"
 #include "curvelistener.h"
 #include "mycurve.h"
-
-// For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
-enum FlatCurveType {
-    FCT_Empty = -1,     // Also used for identity curves
-    FCT_Linear,         // 0
-    FCT_MinMaxCPoints,  // 1
-    //FCT_Parametric,   // 2
-    // Insert new curve type above this line
-    FCT_Unchanged       // Must remain the last of the enum
-};
+#include "../rtengine/flatcurvetypes.h"
 
 enum MouseOverAreas {
     FCT_Area_None       = 1 << 0,   // over a zone that don't have any

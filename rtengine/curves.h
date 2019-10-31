@@ -25,10 +25,9 @@
 #include <glibmm/ustring.h>
 
 #include "rt_math.h"
-#include "../rtgui/mycurve.h"
-#include "../rtgui/myflatcurve.h"
-#include "../rtgui/mydiagonalcurve.h"
 #include "color.h"
+#include "flatcurvetypes.h"
+#include "diagonalcurvetypes.h"
 #include "pipettebuffer.h"
 #include "noncopyable.h"
 #include "LUT.h"

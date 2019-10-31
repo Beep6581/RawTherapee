@@ -28,6 +28,7 @@
 #include "options.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 #include "editcallbacks.h"
 
 using namespace rtengine;

@@ -33,7 +33,6 @@
 #include "rawmetadatalocation.h"
 #include "rt_math.h"
 #include "settings.h"
-#include "utils.h"
 
 #include "../rtexif/rtexif.h"
 

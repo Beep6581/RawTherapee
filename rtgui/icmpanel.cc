@@ -23,6 +23,7 @@
 #include "eventmapper.h"
 #include "guiutils.h"
 #include "options.h"
+#include "pathutils.h"
 #include "rtimage.h"
 
 #include "../rtengine/dcp.h"

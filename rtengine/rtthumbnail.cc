@@ -23,6 +23,8 @@
 #include <glib/gstdio.h>
 
 #include <glibmm/ustring.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/keyfile.h>
 
 #include "cieimage.h"
 #include "colortemp.h"

@@ -24,6 +24,7 @@
 #include "cachemanager.h"
 #include "addsetids.h"
 #include "../rtengine/color.h"
+#include "pathutils.h"
 #include "rtimage.h"
 #ifdef _OPENMP
 #include <omp.h>

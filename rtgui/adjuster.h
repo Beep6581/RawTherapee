@@ -18,8 +18,6 @@
  */
 #pragma once
 
-#include <gtkmm.h>
-
 #include "editedstate.h"
 #include "guiutils.h"
 

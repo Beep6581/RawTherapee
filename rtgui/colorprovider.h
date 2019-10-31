@@ -18,8 +18,6 @@
  */
 #pragma once
 
-#include <gtkmm.h>
-
 class ColorProvider;
 
 /*

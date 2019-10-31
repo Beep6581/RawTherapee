@@ -25,6 +25,7 @@
 #include "../rtengine/noncopyable.h"
 
 class FlatCurveEditor;
+class MyFlatCurve;
 
 class FlatCurveEditorSubGroup:
     public CurveEditorSubGroup,

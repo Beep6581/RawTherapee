@@ -19,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <glibmm/thread.h>
 
 #include "improccoordinator.h"
 

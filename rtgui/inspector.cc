@@ -22,6 +22,7 @@
 #include "cursormanager.h"
 #include "guiutils.h"
 #include "options.h"
+#include "pathutils.h"
 #include "rtscalable.h"
 #include "../rtengine/previewimage.h"
 

@@ -103,11 +103,13 @@ enum PPLoadLocation {PLL_Cache = 0, PLL_Input = 1};
 enum CPBKeyType {CPBKT_TID = 0, CPBKT_NAME = 1, CPBKT_TID_NAME = 2};
 enum prevdemo_t {PD_Sidecar = 1, PD_Fast = 0};
 
-namespace Glib {
+namespace Glib
+{
 
 class KeyFile;
 
 }
+
 class Options
 {
 public:

@@ -32,6 +32,7 @@
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
+#include "pathutils.h"
 #include "profilestorecombobox.h"
 #include "procparamchangers.h"
 

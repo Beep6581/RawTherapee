@@ -32,8 +32,6 @@
 //#define BENCHMARK
 #include "StopWatch.h"
 
-#include "../rtgui/mydiagonalcurve.h"
-
 namespace rtengine
 {
 

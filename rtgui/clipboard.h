@@ -21,10 +21,10 @@
 #include <memory>
 #include <vector>
 
-#include "mydiagonalcurve.h"
-#include "myflatcurve.h"
 #include "paramsedited.h"
 
+#include "../rtengine/diagonalcurvetypes.h"
+#include "../rtengine/flatcurvetypes.h"
 #include "../rtengine/rtengine.h"
 
 namespace rtengine

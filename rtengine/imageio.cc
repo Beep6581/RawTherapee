@@ -27,6 +27,7 @@
 #include <libiptcdata/iptc-jpeg.h>
 #include "rt_math.h"
 #include "procparams.h"
+#include "utils.h"
 #include "../rtgui/options.h"
 #include "../rtgui/version.h"
 

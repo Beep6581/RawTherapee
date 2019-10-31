@@ -22,6 +22,8 @@
 #include <cstring>
 #include <functional>
 #include <glib/gstdio.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
 
 #include "dcp.h"
 
@@ -31,6 +33,7 @@
 #include "imagefloat.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
+#include "utils.h"
 #include "../rtgui/options.h"
 
 using namespace rtengine;

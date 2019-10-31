@@ -26,9 +26,10 @@
 #include "adjuster.h"
 #include "guiutils.h"
 #include "mycurve.h"
-#include "mydiagonalcurve.h"
-#include "myflatcurve.h"
 #include "shcselector.h"
+
+#include "../rtengine/diagonalcurvetypes.h"
+#include "../rtengine/flatcurvetypes.h"
 
 class CurveEditor;
 class DiagonalCurveEditorSubGroup;

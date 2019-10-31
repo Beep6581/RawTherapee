@@ -30,6 +30,7 @@
 #include "processingjob.h"
 #include "procparams.h"
 #include <glibmm/ustring.h>
+#include <glibmm/thread.h>
 #include "../rtgui/options.h"
 #include "rawimagesource.h"
 #include "../rtgui/multilangmgr.h"

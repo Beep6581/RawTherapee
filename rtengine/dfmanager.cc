@@ -27,6 +27,7 @@
 #include "../rtgui/options.h"
 #include "rawimage.h"
 #include "imagedata.h"
+#include "utils.h"
 
 namespace rtengine
 {
@@ -34,9 +35,7 @@ namespace rtengine
 // *********************** class dfInfo **************************************
 dfInfo::~dfInfo()
 {
-    if( ri ) {
-        delete ri;
-    }
+    delete ri;
 }
 
 inline dfInfo& dfInfo::operator =(const dfInfo &o)

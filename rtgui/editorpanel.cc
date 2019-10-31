@@ -32,6 +32,7 @@
 #include "progressconnector.h"
 #include "procparamchangers.h"
 #include "placesbrowser.h"
+#include "pathutils.h"
 
 using namespace rtengine::procparams;
 

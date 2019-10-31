@@ -33,7 +33,7 @@
 #include "curves.h"
 #include "labimage.h"
 #include "sleef.c"
-#include "../rtgui/myflatcurve.h"
+#include "curves.h"
 #include "rt_math.h"
 #include "opthelper.h"
 #include "median.h"

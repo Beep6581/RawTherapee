@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <glibmm/regex.h>
 #include <glibmm/miscutils.h>
+#include <glibmm/keyfile.h>
 
 #include "../rtgui/options.h"
 

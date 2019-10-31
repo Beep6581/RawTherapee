@@ -29,6 +29,7 @@
 
 #include <glib/gstdio.h>
 #include <glib/gunicode.h>
+#include <glibmm/keyfile.h>
 
 #include "rtexif.h"
 

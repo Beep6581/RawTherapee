@@ -34,6 +34,7 @@
 #include "filecatalog.h"
 #include "batchqueuebuttonset.h"
 #include "guiutils.h"
+#include "pathutils.h"
 #include "rtimage.h"
 #include <sys/time.h>
 

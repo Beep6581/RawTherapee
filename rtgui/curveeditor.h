@@ -20,10 +20,10 @@
 
 #include "coloredbar.h"
 #include "editcallbacks.h"
-#include "mydiagonalcurve.h"
-#include "myflatcurve.h"
 #include "popuptogglebutton.h"
 
+#include "../rtengine/diagonalcurvetypes.h"
+#include "../rtengine/flatcurvetypes.h"
 #include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
 

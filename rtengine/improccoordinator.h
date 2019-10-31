@@ -32,6 +32,11 @@
 
 #include "../rtgui/threadutils.h"
 
+namespace Glib
+{
+class Thread;
+}
+
 namespace rtengine
 {
 
