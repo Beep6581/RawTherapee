@@ -17,13 +17,13 @@
 *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 *
 */
-
-#ifndef _SOUNDMAN_
-#define _SOUNDMAN_
+#pragma once
 
 namespace Glib
 {
+
 class ustring;
+
 }
 
 class SoundManager
@@ -32,5 +32,3 @@ public:
     static void init();
     static void playSoundAsync(const Glib::ustring &sound);
 };
-
-#endif

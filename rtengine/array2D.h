@@ -52,8 +52,8 @@
  *
  *          !! locked arrays cannot be resized and cannot be unlocked again !!
  */
-#ifndef ARRAY2D_H_
-#define ARRAY2D_H_
+#pragma once
+
 #include <csignal>  // for raise()
 #include <cassert>
 
@@ -313,4 +313,3 @@ public:
         return list[index];
     }
 };
-#endif /* array2D_H_ */

@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THUMBNAILBROWSER_
-#define _THUMBNAILBROWSER_
+#pragma once
 
 #include <gtkmm.h>
-#include "thumbnail.h"
+
 #include "filecatalog.h"
+#include "thumbnail.h"
 
 class ThumbBrowserEntry
 {
@@ -97,5 +97,3 @@ public:
     void redraw ();
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
 };
-
-#endif

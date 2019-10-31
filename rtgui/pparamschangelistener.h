@@ -16,12 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PPARAMSCHANGELISTENER_
-#define _PPARAMSCHANGELISTENER_
+#pragma once
+
+#include <glibmm/ustring.h>
+
+#include "paramsedited.h"
 
 #include "../rtengine/rtengine.h"
-#include <glibmm/ustring.h>
-#include "paramsedited.h"
 
 class PParamsChangeListener
 {
@@ -43,6 +44,3 @@ public:
     virtual void beginBatchPParamsChange(int numberOfEntries) = 0;
     virtual void endBatchPParamsChange() = 0;
 };
-
-#endif
-

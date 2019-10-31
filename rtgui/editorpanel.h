@@ -17,24 +17,25 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _EDITORPANEL_
-#define _EDITORPANEL_
+#pragma once
 
 #include <gtkmm.h>
-#include "imageareapanel.h"
-#include "toolpanelcoord.h"
-#include "profilepanel.h"
-#include "../rtengine/rtengine.h"
-#include "history.h"
-#include "histogrampanel.h"
-#include "thumbnail.h"
-#include "saveasdlg.h"
+
 #include "batchqueueentry.h"
-#include "thumbnaillistener.h"
-#include "navigator.h"
-#include "progressconnector.h"
 #include "filepanel.h"
+#include "histogrampanel.h"
+#include "history.h"
+#include "imageareapanel.h"
+#include "navigator.h"
+#include "profilepanel.h"
+#include "progressconnector.h"
+#include "saveasdlg.h"
+#include "thumbnail.h"
+#include "thumbnaillistener.h"
+#include "toolpanelcoord.h"
+
 #include "../rtengine/noncopyable.h"
+#include "../rtengine/rtengine.h"
 
 class EditorPanel;
 class MyProgressBar;
@@ -259,6 +260,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif
-

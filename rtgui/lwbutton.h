@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _LWBUTTON_
-#define _LWBUTTON_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "rtsurface.h"
 
 class LWButton;
@@ -78,5 +78,3 @@ public:
 
     void    redraw              (Cairo::RefPtr<Cairo::Context> context);
 };
-
-#endif

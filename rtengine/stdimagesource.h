@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _STDIMAGESOURCE_
-#define _STDIMAGESOURCE_
+#pragma once
 
 #include "colortemp.h"
 #include "imagesource.h"
@@ -118,5 +117,5 @@ public:
     void        flushRGB          () override;
     void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) override {};
 };
+
 }
-#endif

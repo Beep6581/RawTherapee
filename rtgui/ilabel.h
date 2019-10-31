@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _ILABEL_
-#define _ILABEL_
+#pragma once
 
 #include <gtkmm.h>
 
-class ILabel : public Gtk::DrawingArea
+class ILabel :
+    public Gtk::DrawingArea
 {
 
     Glib::ustring label;
@@ -32,6 +32,3 @@ public:
     void on_realize() override;
     void on_style_updated () override;
 };
-
-#endif
-

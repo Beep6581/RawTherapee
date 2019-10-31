@@ -16,16 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _ICMPANEL_
-#define _ICMPANEL_
+#pragma once
 
 #include <memory>
+
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "guiutils.h"
-
-#include "toolpanel.h"
 #include "popupbutton.h"
+#include "toolpanel.h"
+
 #include "../rtengine/imagedata.h"
 
 class ICMPanelListener
@@ -148,5 +149,3 @@ public:
         icmplistener = ipl;
     }
 };
-
-#endif

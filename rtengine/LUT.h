@@ -56,8 +56,7 @@
  *          LUTuc stands for LUT<unsigned char>
  */
 
-#ifndef LUT_H_
-#define LUT_H_
+#pragma once
 
 #include <cstring>
 #include <cstdint>
@@ -67,9 +66,9 @@
 #include <fstream>
 #endif
 
+#include "noncopyable.h"
 #include "opthelper.h"
 #include "rt_math.h"
-#include "noncopyable.h"
 
 // Bit representations of flags
 enum {
@@ -628,5 +627,3 @@ public:
 
 
 };
-
-#endif /* LUT_H_ */

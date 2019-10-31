@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMPROCCOORDINATOR_H_
-#define _IMPROCCOORDINATOR_H_
+#pragma once
 
 #include <memory>
 
@@ -410,5 +409,5 @@ public:
     } denoiseInfoStore;
 
 };
+
 }
-#endif

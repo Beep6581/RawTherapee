@@ -16,15 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _MYCURVE_
-#define _MYCURVE_
+#pragma once
+
+#include <vector>
 
 #include <gtkmm.h>
-#include <vector>
-#include "curvelistener.h"
-#include "cursormanager.h"
+
 #include "coloredbar.h"
 #include "coordinateadjuster.h"
+#include "cursormanager.h"
+#include "curvelistener.h"
+
 #include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
 
@@ -151,5 +153,3 @@ public:
         myCurve->setDirty(true);
     }
 };
-
-#endif

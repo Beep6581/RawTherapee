@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMAGEFORMAT_
-#define _IMAGEFORMAT_
+#pragma once
 
 namespace rtengine
 {
@@ -51,5 +50,3 @@ typedef enum SensorType {
 } eSensorType;
 
 }
-
-#endif

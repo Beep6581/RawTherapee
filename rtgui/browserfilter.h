@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BROWSERFILTER_
-#define _BROWSERFILTER_
+#pragma once
 
 #include <vector>
 
@@ -25,7 +24,6 @@
 
 class BrowserFilter
 {
-
 public:
     bool showRanked[6];
     bool showCLabeled[6];
@@ -42,5 +40,3 @@ public:
 
     BrowserFilter ();
 };
-
-#endif

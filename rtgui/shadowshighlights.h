@@ -16,14 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _SHADOWSHIGHLIGHTS_H_
-#define _SHADOWSHIGHLIGHTS_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class ShadowsHighlights : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class ShadowsHighlights :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -53,5 +56,3 @@ public:
 
     void colorspaceChanged();
 };
-
-#endif

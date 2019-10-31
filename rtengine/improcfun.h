@@ -16,16 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMPROCFUN_H_
-#define _IMPROCFUN_H_
+#pragma once
 
-#include "shmap.h"
-#include "coord2d.h"
 #include "color.h"
-#include "LUT.h"
-#include "lcp.h"
-#include "pipettebuffer.h"
+#include "coord2d.h"
 #include "gamutwarning.h"
+#include "lcp.h"
+#include "LUT.h"
+#include "pipettebuffer.h"
+#include "shmap.h"
 
 template<typename T, const size_t num>
 class multi_array2D;
@@ -272,5 +271,5 @@ public:
     void rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
     void lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace);
 };
+
 }
-#endif

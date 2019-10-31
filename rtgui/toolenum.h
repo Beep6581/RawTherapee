@@ -16,9 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _TOOLENUM_
-#define _TOOLENUM_
+#pragma once
 
 enum ToolMode {TMNone = -1, TMHand = 0, TMSpotWB = 1, TMCropSelect = 2, TMStraighten = 3, TMColorPicker = 4};
-
-#endif

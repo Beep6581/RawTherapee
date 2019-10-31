@@ -16,16 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __BATCHTOOLPANELCCORD__
-#define __BATCHTOOLPANELCCORD__
+#pragma once
 
-#include "thumbnail.h"
-#include "toolpanelcoord.h"
 #include "fileselectionchangelistener.h"
-#include "../rtengine/procparams.h"
-#include "../rtengine/procevents.h"
 #include "paramsedited.h"
+#include "thumbnail.h"
 #include "thumbnaillistener.h"
+#include "toolpanelcoord.h"
+
+#include "../rtengine/procevents.h"
+#include "../rtengine/procparams.h"
 
 class FilePanel;
 class BatchToolPanelCoordinator :
@@ -85,5 +85,3 @@ public:
 
     void optionsChanged ();
 };
-
-#endif

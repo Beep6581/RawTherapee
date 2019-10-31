@@ -16,9 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CIECAM02_
-#define _CIECAM02_
+#pragma once
+
 #include <cmath>
+
 #include "LUT.h"
 #include "opthelper.h"
 
@@ -106,4 +107,3 @@ public:
 
 };
 }
-#endif

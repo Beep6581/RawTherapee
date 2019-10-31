@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _COLORPROVIDER_
-#define _COLORPROVIDER_
+#pragma once
 
 #include <gtkmm.h>
 
@@ -61,10 +60,7 @@ public:
  */
 class ColorProvider
 {
-
 public:
-    virtual ~ColorProvider() {};
+    virtual ~ColorProvider() = default;
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) {};
 };
-
-#endif

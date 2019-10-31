@@ -16,20 +16,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __PREFERENCES_H__
-#define __PREFERENCES_H__
+#pragma once
+
+#include <vector>
 
 #include <gtkmm.h>
-#include "adjuster.h"
-#include "options.h"
-#include <vector>
-#include "rtwindow.h"
-#include "dynamicprofilepanel.h"
 
-class Preferences : public Gtk::Dialog, public ProfileStoreListener
+#include "adjuster.h"
+#include "dynamicprofilepanel.h"
+#include "options.h"
+#include "rtwindow.h"
+
+class Preferences :
+    public Gtk::Dialog,
+    public ProfileStoreListener
 {
 
-    class ExtensionColumns : public Gtk::TreeModel::ColumnRecord
+    class ExtensionColumns :
+        public Gtk::TreeModel::ColumnRecord
     {
     public:
         Gtk::TreeModelColumn<bool>  enabled;
@@ -303,5 +307,3 @@ public:
 //    void selectICCProfileDir ();
 //    void selectMonitorProfile ();
 };
-
-#endif

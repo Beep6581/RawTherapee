@@ -16,17 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BATCHQUEUEENTRY_
-#define _BATCHQUEUEENTRY_
+#pragma once
 
 #include <memory>
 
 #include <gtkmm.h>
-#include "../rtengine/rtengine.h"
+
+#include "bqentryupdater.h"
 #include "thumbbrowserentrybase.h"
 #include "thumbnail.h"
-#include "bqentryupdater.h"
+
 #include "../rtengine/noncopyable.h"
+#include "../rtengine/rtengine.h"
 
 class BatchQueueEntry;
 struct BatchQueueEntryIdleHelper {
@@ -77,7 +78,3 @@ public:
     void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) override;
     void _updateImage (guint8* img, int w, int h); // inside gtk thread
 };
-
-
-
-#endif

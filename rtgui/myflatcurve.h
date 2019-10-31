@@ -16,13 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _MYFLATCURVE_
-#define _MYFLATCURVE_
+#pragma once
+
+#include <vector>
 
 #include <gtkmm.h>
-#include <vector>
-#include "curvelistener.h"
+
 #include "cursormanager.h"
+#include "curvelistener.h"
 #include "mycurve.h"
 
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
@@ -138,5 +139,3 @@ public:
     void setPos(double pos, int chanIdx) override;
     void stopNumericalAdjustment() override;
 };
-
-#endif

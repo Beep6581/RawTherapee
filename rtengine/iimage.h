@@ -16,17 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IIMAGE_
-#define _IIMAGE_
+#pragma once
+
+#include <vector>
 
 #include <glibmm/ustring.h>
-#include <vector>
-#include "rt_math.h"
+
 #include "alignedbuffer.h"
+#include "color.h"
+#include "coord2d.h"
 #include "imagedimensions.h"
 #include "LUT.h"
-#include "coord2d.h"
-#include "color.h"
+#include "rt_math.h"
+
 #include "../rtgui/threadutils.h"
 
 #define TR_NONE     0
@@ -1808,5 +1810,3 @@ public:
 };
 
 }
-
-#endif

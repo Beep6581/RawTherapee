@@ -16,16 +16,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __IMAGEDATA_H__
-#define __IMAGEDATA_H__
+#pragma once
 
 #include <cstdio>
 #include <memory>
 #include <string>
+#include <vector>
+
 #include <glibmm/ustring.h>
-#include "imageio.h"
-#include "../rtexif/rtexif.h"
+
 #include <libiptcdata/iptc-data.h>
+
+#include "imageio.h"
+
+#include "../rtexif/rtexif.h"
 
 namespace rtengine
 {
@@ -132,4 +136,3 @@ public:
 
 
 }
-#endif

@@ -16,21 +16,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _HISTOGRAMPANEL_
-#define _HISTOGRAMPANEL_
-
+#pragma once
 
 #include <gtkmm.h>
-#include <glibmm/ustring.h>
-#include <cairomm/cairomm.h>
-#include "../rtengine/LUT.h"
-#include "../rtengine/improccoordinator.h"
-#include "guiutils.h"
 
+#include <glibmm/ustring.h>
+
+#include <cairomm/cairomm.h>
+
+#include "guiutils.h"
 #include "pointermotionlistener.h"
+
+#include "../rtengine/improccoordinator.h"
+#include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
 
 class HistogramArea;
+
 struct HistogramAreaIdleHelper {
     HistogramArea* harea;
     bool destroyed;
@@ -252,5 +254,3 @@ public:
     // drawModeListener interface
     void toggleButtonMode () override;
 };
-
-#endif

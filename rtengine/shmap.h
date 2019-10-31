@@ -16,14 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __SHMAP__
-#define __SHMAP__
+#pragma once
 
 #include "LUT.h"
 #include "noncopyable.h"
 
 namespace rtengine
 {
+
 class Imagefloat;
 
 class SHMap :
@@ -49,5 +49,5 @@ private:
     void dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale);
 
 };
+
 }
-#endif

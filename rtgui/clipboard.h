@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CLIPBOARD_
-#define _CLIPBOARD_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -80,5 +79,3 @@ private:
 };
 
 extern Clipboard clipboard;
-
-#endif

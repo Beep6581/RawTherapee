@@ -16,15 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FLATFIELD_H_
-#define _FLATFIELD_H_
+#pragma once
 
 #include <memory>
+
 #include <gtkmm.h>
+
 #include "adjuster.h"
-#include "toolpanel.h"
-#include "../rtengine/rawimage.h"
 #include "guiutils.h"
+#include "toolpanel.h"
+
+#include "../rtengine/rawimage.h"
 
 class FFProvider
 {
@@ -84,5 +86,3 @@ public:
     };
     void flatFieldAutoClipValueChanged(int n = 0) override;
 };
-
-#endif

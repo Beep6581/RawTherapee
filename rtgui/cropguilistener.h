@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __CROPGUILISTENER__
-#define __CROPGUILISTENER__
+#pragma once
 
 class CropGUIListener
 {
@@ -39,5 +38,3 @@ public:
     virtual bool inImageArea(int x, int y) = 0;
     virtual double getRatio() const = 0;
 };
-
-#endif

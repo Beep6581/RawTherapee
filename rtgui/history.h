@@ -16,14 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _HISTORY_
-#define _HISTORY_
+#pragma once
 
 #include <gtkmm.h>
-#include "../rtengine/rtengine.h"
+
+#include "paramsedited.h"
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
-#include "paramsedited.h"
+
+#include "../rtengine/rtengine.h"
 
 class HistoryBeforeLineListener
 {
@@ -135,5 +136,3 @@ public:
         bmnum = 1;
     };
 };
-
-#endif

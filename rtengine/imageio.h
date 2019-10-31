@@ -16,27 +16,31 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMAGEIO_
-#define _IMAGEIO_
-
-#define IMIO_SUCCESS               0
-#define IMIO_CANNOTREADFILE        1
-#define IMIO_INVALIDHEADER         2
-#define IMIO_HEADERERROR           3
-#define IMIO_READERROR             4
-#define IMIO_VARIANTNOTSUPPORTED   5
-#define IMIO_FILETYPENOTSUPPORTED  6
-#define IMIO_CANNOTWRITEFILE       7
+#pragma once
 
 #include <memory>
 
 #include <glibmm/ustring.h>
+
 #include <libiptcdata/iptc-data.h>
-#include "rtengine.h"
-#include "imageformat.h"
-#include "../rtexif/rtexif.h"
-#include "imagedimensions.h"
+
 #include "iimage.h"
+#include "imagedimensions.h"
+#include "imageformat.h"
+#include "rtengine.h"
+
+#include "../rtexif/rtexif.h"
+
+enum {
+    IMIO_SUCCESS,
+    IMIO_CANNOTREADFILE,
+    IMIO_INVALIDHEADER,
+    IMIO_HEADERERROR,
+    IMIO_READERROR,
+    IMIO_VARIANTNOTSUPPORTED,
+    IMIO_FILETYPENOTSUPPORTED,
+    IMIO_CANNOTWRITEFILE
+};
 
 namespace rtengine
 {
@@ -111,4 +115,3 @@ public:
 };
 
 }
-#endif

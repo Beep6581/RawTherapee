@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BATCHQUEUEBUTTONSET_
-#define _BATCHQUEUEBUTTONSET_
+#pragma once
+
+#include <gtkmm.h>
 
 #include "lwbuttonset.h"
 #include "rtsurface.h"
-#include <gtkmm.h>
 
 class BatchQueueEntry;
 class BatchQueueButtonSet : public LWButtonSet
@@ -40,5 +40,3 @@ public:
 
     explicit BatchQueueButtonSet (BatchQueueEntry* myEntry);
 };
-
-#endif

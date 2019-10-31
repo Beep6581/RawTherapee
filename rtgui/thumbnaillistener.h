@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THUMBNAILLISTENER_
-#define _THUMBNAILLISTENER_
+#pragma once
 
 class Thumbnail;
 
@@ -27,6 +26,3 @@ public:
     virtual ~ThumbnailListener() = default;
     virtual void procParamsChanged(Thumbnail* thm, int whoChangedIt) = 0;
 };
-
-#endif
-

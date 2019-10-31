@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _MEXIF3_
-#define _MEXIF3_
+#pragma once
 
 #include <cmath>
 #include <cstdint>
@@ -687,5 +686,5 @@ extern const TagAttrib kodakIfdAttribs[];
 void parseKodakIfdTextualInfo (Tag *textualInfo, Tag* exif);
 extern const TagAttrib panasonicAttribs[];
 extern const TagAttrib panasonicRawAttribs[];
+
 }
-#endif

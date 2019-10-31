@@ -16,16 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PROFILESTORE_
-#define _PROFILESTORE_
+#pragma once
 
 #include <map>
 #include <vector>
+
 #include <glibmm/ustring.h>
 
-#include "rtengine.h"
-#include "noncopyable.h"
 #include "dynamicprofile.h"
+#include "noncopyable.h"
+#include "rtengine.h"
 
 // forward decl
 namespace rtengine
@@ -211,5 +211,3 @@ public:
 
     void dumpFolderList();
 };
-
-#endif

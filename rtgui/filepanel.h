@@ -16,21 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FILEPANEL_
-#define _FILEPANEL_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "batchtoolpanelcoord.h"
-#include "filecatalog.h"
 #include "dirbrowser.h"
-#include "fileselectionlistener.h"
-#include "placesbrowser.h"
-#include "recentbrowser.h"
-#include "pparamschangelistener.h"
-#include "history.h"
-#include "filterpanel.h"
 #include "exportpanel.h"
+#include "filecatalog.h"
+#include "fileselectionlistener.h"
+#include "filterpanel.h"
+#include "history.h"
+#include "placesbrowser.h"
+#include "pparamschangelistener.h"
 #include "progressconnector.h"
+#include "recentbrowser.h"
+
 #include "../rtengine/noncopyable.h"
 
 class RTWindow;
@@ -108,6 +109,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif
-

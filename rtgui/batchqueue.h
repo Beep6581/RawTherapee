@@ -15,19 +15,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BATCHQUEUE_
-#define _BATCHQUEUE_
+#pragma once
 
 #include <set>
 
 #include <gtkmm.h>
 
-#include "../rtengine/rtengine.h"
-
 #include "batchqueueentry.h"
 #include "lwbuttonset.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
+
+#include "../rtengine/rtengine.h"
 #include "../rtengine/noncopyable.h"
 
 class BatchQueueListener
@@ -123,5 +122,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif

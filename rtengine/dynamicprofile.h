@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _DYNAMICPROFILE_H_
-#define _DYNAMICPROFILE_H_
+#pragma once
 
 #include <glibmm/ustring.h>
 #include <vector>
@@ -76,5 +75,3 @@ public:
     const std::vector<DynamicProfileRule> &getRules();
     void setRules (const std::vector<DynamicProfileRule> &r);
 };
-
-#endif // _DYNAMICPROFILE_H_

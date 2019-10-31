@@ -16,16 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BAYERPROCESS_H_
-#define _BAYERPROCESS_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class BayerProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::FrameCountListener, public rtengine::AutoContrastListener
+class BayerProcess :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public CheckBoxListener,
+    public FoldableToolPanel,
+    public rtengine::FrameCountListener,
+    public rtengine::AutoContrastListener
 {
 
 protected:
@@ -89,5 +95,3 @@ public:
     void autoContrastChanged (double autoContrast) override;
     void FrameCountChanged(int n, int frameNum) override;
 };
-
-#endif

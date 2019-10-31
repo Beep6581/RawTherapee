@@ -16,22 +16,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PROFILEPANEL_
-#define _PROFILEPANEL_
+#pragma once
+
+#include <vector>
 
 #include <gtkmm.h>
-#include <vector>
-#include "../rtengine/rtengine.h"
+
+#include "guiutils.h"
+#include "partialpastedlg.h"
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
-#include "partialpastedlg.h"
-#include "guiutils.h"
 #include "profilestorecombobox.h"
+
 #include "../rtengine/noncopyable.h"
+#include "../rtengine/rtengine.h"
 
 class RTImage;
 
-class ProfilePanel : public Gtk::Grid, public PParamsChangeListener, public ProfileStoreListener, public rtengine::NonCopyable
+class ProfilePanel :
+    public Gtk::Grid,
+    public PParamsChangeListener,
+    public ProfileStoreListener,
+    public rtengine::NonCopyable
 {
 
 private:
@@ -107,5 +113,3 @@ public:
     void selection_changed ();
     void writeOptions();
 };
-
-#endif

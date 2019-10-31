@@ -16,21 +16,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THUMBNAIL_
-#define _THUMBNAIL_
+#pragma once
 
 #include <memory>
 #include <string>
 
 #include <glibmm/ustring.h>
+
+#include "cacheimagedata.h"
 #include "cachemanager.h"
+#include "threadutils.h"
+#include "thumbnaillistener.h"
+
 #include "../rtengine/rtengine.h"
 #include "../rtengine/rtthumbnail.h"
-#include "cacheimagedata.h"
-#include "thumbnaillistener.h"
-#include "threadutils.h"
 
 class CacheManager;
+
 struct ParamsEdited;
 
 class Thumbnail
@@ -184,7 +186,3 @@ public:
     bool            openDefaultViewer(int destination);
     bool            imageLoad(bool loading);
 };
-
-
-#endif
-
