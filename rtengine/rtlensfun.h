@@ -30,7 +30,8 @@
 #include "lcp.h"
 #include "noncopyable.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 class FramesMetaData;
 
@@ -39,6 +40,7 @@ namespace procparams
 
 struct CoarseTransformParams;
 struct LensProfParams;
+
 }
 
 class LFModifier final :

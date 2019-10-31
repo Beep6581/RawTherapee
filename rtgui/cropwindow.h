@@ -16,27 +16,31 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CROPWINDOW_
-#define _CROPWINDOW_
+#pragma once
+
+#include <list>
 
 #include <gtkmm.h>
-#include "lwbutton.h"
-#include "lwbuttonset.h"
-#include "editenums.h"
-#include "crophandler.h"
-#include <list>
+
 #include "cropguilistener.h"
-#include "pointermotionlistener.h"
+#include "crophandler.h"
 #include "cursormanager.h"
 #include "editbuffer.h"
 #include "editcoordsys.h"
+#include "editenums.h"
+#include "lwbutton.h"
+#include "lwbuttonset.h"
+#include "pointermotionlistener.h"
+
 #include "../rtengine/noncopyable.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
-class Coord;
+struct Coord;
 
 }
+
 class CropWindow;
 
 class CropWindowListener
@@ -243,5 +247,3 @@ public:
 
     ImageArea* getImageArea();
 };
-
-#endif

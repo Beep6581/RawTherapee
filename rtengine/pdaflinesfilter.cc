@@ -18,18 +18,18 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
+
+#include "camconst.h"
 #include "pdaflinesfilter.h"
 #include "rawimage.h"
 #include "settings.h"
-#include <iostream>
-#include "camconst.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
-extern const Settings *settings;
-
-
-namespace {
+namespace
+{
 
 class PDAFGreenEqulibrateThreshold: public RawImageSource::GreenEqulibrateThreshold {
     static constexpr float BASE_THRESHOLD = 0.5f;
@@ -166,8 +166,6 @@ private:
 };
 
 } // namespace
-
-
 
 PDAFLinesFilter::PDAFLinesFilter(RawImage *ri):
     ri_(ri),

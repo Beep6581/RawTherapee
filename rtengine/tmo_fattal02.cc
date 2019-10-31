@@ -50,32 +50,32 @@
  * $Id: tmo_fattal02.cpp,v 1.3 2008/11/04 23:43:08 rafm Exp $
  */
 
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+#include <algorithm>
 #include <cstdio>
 #include <iostream>
 #include <iterator>
-#include <vector>
-#include <algorithm>
 #include <limits>
+#include <vector>
 
-#include <math.h>
 #include <assert.h>
 #include <fftw3.h>
+#include <math.h>
 
 #include "array2D.h"
+#include "iccstore.h"
 #include "imagefloat.h"
 #include "improcfun.h"
-#include "settings.h"
-#include "iccstore.h"
-#include "StopWatch.h"
-#include "sleef.c"
 #include "opthelper.h"
-#include "rt_algo.h"
-#include "rescale.h"
 #include "procparams.h"
+#include "rescale.h"
+#include "rt_algo.h"
+#include "settings.h"
+#include "sleef.c"
+#include "StopWatch.h"
 
 namespace rtengine
 {
@@ -84,7 +84,6 @@ namespace rtengine
  * RT code
  ******************************************************************************/
 
-extern const Settings *settings;
 extern MyMutex *fftwMutex;
 
 using namespace std;

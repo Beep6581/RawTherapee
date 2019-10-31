@@ -29,7 +29,8 @@
 
 #include "noncopyable.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 class Image8;
 

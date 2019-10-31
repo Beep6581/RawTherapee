@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __GUI_UTILS_
-#define __GUI_UTILS_
+#pragma once
 
 #include <functional>
 #include <map>
@@ -26,22 +25,24 @@
 
 #include <cairomm/cairomm.h>
 
+#include "pathutils.h"
+#include "threadutils.h"
+
 #include "../rtengine/coord.h"
 #include "../rtengine/noncopyable.h"
 
-#include "threadutils.h"
+namespace rtengine
+{
 
-// for convenience...
-#include "pathutils.h"
-
-namespace rtengine {
 namespace procparams
 {
 
 class ProcParams;
 
 struct CropParams;
+
 }
+
 }
 
 class RTImage;
@@ -654,5 +655,3 @@ inline Gtk::Window& getToplevelWindow (Gtk::Widget* widget)
 {
     return *static_cast<Gtk::Window*> (widget->get_toplevel ());
 }
-
-#endif

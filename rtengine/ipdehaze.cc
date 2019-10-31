@@ -42,9 +42,11 @@
 
 #include "../rtgui/options.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
-namespace {
+namespace
+{
 
 float normalize(Imagefloat *rgb, bool multithread)
 {
@@ -271,7 +273,6 @@ void extract_channels(Imagefloat *img, array2D<float> &r, array2D<float> &g, arr
 
 } // namespace
 
-
 void ImProcFunctions::dehaze(Imagefloat *img)
 {
     if (!params->dehaze.enabled || params->dehaze.strength == 0.0) {
@@ -430,6 +431,5 @@ void ImProcFunctions::dehaze(Imagefloat *img)
         }
     }
 }
-
 
 } // namespace rtengine

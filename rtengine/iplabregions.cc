@@ -56,7 +56,8 @@ void fastlin2log(float *x, float factor, float base, int w)
 
 }
 
-namespace rtengine {
+namespace rtengine
+{
 
 void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
 {

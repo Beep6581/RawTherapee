@@ -18,15 +18,15 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "rtlensfun.h"
-#include "imagedata.h"
-#include "procparams.h"
-#include "settings.h"
 #include <iostream>
 
-namespace rtengine {
+#include "imagedata.h"
+#include "procparams.h"
+#include "rtlensfun.h"
+#include "settings.h"
 
-extern const Settings *settings;
+namespace rtengine
+{
 
 //-----------------------------------------------------------------------------
 // LFModifier

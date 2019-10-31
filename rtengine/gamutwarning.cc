@@ -29,7 +29,8 @@
 #include "iccstore.h"
 #include "image8.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 GamutWarning::GamutWarning(cmsHPROFILE iprof, cmsHPROFILE gamutprof, RenderingIntent intent, bool gamutbpc):
     lab2ref(nullptr),
@@ -128,6 +129,5 @@ inline void GamutWarning::mark(Image8 *image, int y, int x)
     image->g(y, x) = 255;
     image->b(y, x) = 255;
 }
-
 
 } // namespace rtengine

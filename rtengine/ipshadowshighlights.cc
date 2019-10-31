@@ -30,7 +30,8 @@
 
 #include "sleef.c"
 
-namespace rtengine {
+namespace rtengine
+{
 
 void ImProcFunctions::shadowsHighlights(LabImage *lab)
 {

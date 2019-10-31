@@ -18,22 +18,24 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "rawimagesource.h"
-#include "rtthumbnail.h"
-#include "curves.h"
-#include "color.h"
-#include "rt_math.h"
-#include "procparams.h"
-#include "../rtgui/mydiagonalcurve.h"
-#include "improcfun.h"
-//#define BENCHMARK
-#include "StopWatch.h"
 #include <iostream>
 
+#include "color.h"
+#include "curves.h"
+#include "improcfun.h"
+#include "procparams.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
+#include "rtthumbnail.h"
+#include "settings.h"
 
-namespace rtengine {
+//#define BENCHMARK
+#include "StopWatch.h"
 
-extern const Settings *settings;
+#include "../rtgui/mydiagonalcurve.h"
+
+namespace rtengine
+{
 
 namespace {
 

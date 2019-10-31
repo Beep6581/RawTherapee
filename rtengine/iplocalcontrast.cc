@@ -32,7 +32,8 @@
 #include "improcfun.h"
 #include "procparams.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 void ImProcFunctions::localContrast(LabImage *lab)
 {
