@@ -18,6 +18,7 @@
 */
 
 #include <algorithm>
+#include <cassert>
 #include <cstring>
 
 #include <glibmm/ustring.h>
@@ -32,6 +33,7 @@
 #include "lcp.h"
 
 #include "procparams.h"
+#include "rt_math.h"
 #include "settings.h"
 #include "utils.h"
 
