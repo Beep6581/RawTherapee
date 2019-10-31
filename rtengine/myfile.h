@@ -23,7 +23,13 @@
 
 #include <glib/gstdio.h>
 
-#include "rtengine.h"
+#include "opthelper.h"
+
+namespace rtengine {
+
+class ProgressListener;
+
+}
 
 struct IMFILE {
     int fd;

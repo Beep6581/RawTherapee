@@ -19,7 +19,6 @@
  */
 
 #include "cieimage.h"
-#include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"
 #include "dcrop.h"

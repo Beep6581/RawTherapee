@@ -25,7 +25,6 @@
 #include "rt_math.h"
 #include "color.h"
 #include "../rtgui/multilangmgr.h"
-#include "procparams.h"
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"

@@ -16,20 +16,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "dfmanager.h"
-#include "../rtgui/options.h"
-#include <giomm.h>
-#include "rawimage.h"
+
 #include <sstream>
 #include <iostream>
 #include <cstdio>
-#include "imagedata.h"
+#include <giomm.h>
 #include <glibmm/ustring.h>
+
+#include "dfmanager.h"
+#include "../rtgui/options.h"
+#include "rawimage.h"
+#include "imagedata.h"
 
 namespace rtengine
 {
 
 // *********************** class dfInfo **************************************
+dfInfo::~dfInfo()
+{
+    if( ri ) {
+        delete ri;
+    }
+}
 
 inline dfInfo& dfInfo::operator =(const dfInfo &o)
 {

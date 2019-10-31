@@ -34,7 +34,6 @@
 #include "pdaflinesfilter.h"
 #include "procparams.h"
 #include "rawimage.h"
-#include "rawimage.h"
 #include "rawimagesource_i.h"
 #include "rawimagesource.h"
 #include "rt_math.h"

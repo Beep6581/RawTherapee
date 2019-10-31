@@ -41,7 +41,6 @@
 #include "opthelper.h"
 #include "procparams.h"
 #include "rt_math.h"
-#include "rtengine.h"
 #include "sleef.c"
 
 #include "../rtgui/threadutils.h"

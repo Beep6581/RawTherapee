@@ -21,6 +21,7 @@
 #include <ctime>
 #include <cmath>
 #include <iostream>
+#include <glibmm/ustring.h>
 
 #include "dcraw.h"
 #include "imageformat.h"

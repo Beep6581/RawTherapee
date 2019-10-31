@@ -26,8 +26,11 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-#include "../rtengine/rawimage.h"
+namespace rtengine {
 
+class RawImage;
+
+}
 class FFProvider
 {
 public:
