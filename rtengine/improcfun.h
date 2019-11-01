@@ -194,7 +194,7 @@ public:
                  bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, int shado, float amountcd, float anchorcd,
                  LUTf & lmasklocalcurve, bool & localmaskutili,
                  const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
-                 bool shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
+                 int shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
                  float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope);
                  
     void deltaEforMask(float **rdE, int bfw, int bfh, LabImage* bufcolorig, const float hueref, const float chromaref, const float lumaref,

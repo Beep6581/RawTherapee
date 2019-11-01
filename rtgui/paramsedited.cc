@@ -954,6 +954,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).isvisible = locallab.spots.at(j).isvisible && pSpot.isvisible == otherSpot.isvisible;
                 locallab.spots.at(j).shape = locallab.spots.at(j).shape && pSpot.shape == otherSpot.shape;
                 locallab.spots.at(j).spotMethod = locallab.spots.at(j).spotMethod && pSpot.spotMethod == otherSpot.spotMethod;
+                locallab.spots.at(j).mergeMethod = locallab.spots.at(j).mergeMethod && pSpot.mergeMethod == otherSpot.mergeMethod;
                 locallab.spots.at(j).sensiexclu = locallab.spots.at(j).sensiexclu && pSpot.sensiexclu == otherSpot.sensiexclu;
                 locallab.spots.at(j).structexclu = locallab.spots.at(j).structexclu && pSpot.structexclu == otherSpot.structexclu;
                 locallab.spots.at(j).struc = locallab.spots.at(j).struc && pSpot.struc == otherSpot.struc;
@@ -2733,6 +2734,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).spotMethod) {
             toEdit.locallab.spots.at(i).spotMethod = mods.locallab.spots.at(i).spotMethod;
+        }
+
+        if (locallab.spots.at(i).mergeMethod) {
+            toEdit.locallab.spots.at(i).mergeMethod = mods.locallab.spots.at(i).mergeMethod;
         }
 
         if (locallab.spots.at(i).sensiexclu) {
@@ -4861,6 +4866,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     isvisible(v),
     shape(v),
     spotMethod(v),
+    mergeMethod(v),
     sensiexclu(v),
     structexclu(v),
     struc(v),
@@ -5167,6 +5173,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     isvisible = v;
     shape = v;
     spotMethod = v;
+    mergeMethod = v;
     sensiexclu = v;
     structexclu = v;
     struc = v;

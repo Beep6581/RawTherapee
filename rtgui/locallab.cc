@@ -2847,6 +2847,14 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
             r->spotMethod = 1;
         }
 
+        if (pp->locallab.spots.at(i).mergeMethod == "none") {
+            r->mergeMethod = 0;
+        } else if (pp->locallab.spots.at(i).mergeMethod == "short") {
+            r->mergeMethod = 1;
+        } else if (pp->locallab.spots.at(i).mergeMethod == "orig") {
+            r->mergeMethod = 2;
+        }
+
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
         r->structexclu = pp->locallab.spots.at(i).structexclu;
         r->struc = pp->locallab.spots.at(i).struc;
@@ -2960,6 +2968,14 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 r->spotMethod = 0;
             } else {
                 r->spotMethod = 1;
+            }
+
+            if (newSpot->mergeMethod == "none") {
+                r->mergeMethod = 0;
+            } else if (newSpot->mergeMethod == "short") {
+                r->mergeMethod = 1;
+            } else if (newSpot->mergeMethod == "orig") {
+                r->mergeMethod = 2;
             }
 
             r->sensiexclu = newSpot->sensiexclu;
@@ -3185,6 +3201,14 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 r->spotMethod = 1;
             }
 
+            if (newSpot->mergeMethod == "none") {
+                r->mergeMethod = 0;
+            } else if (newSpot->mergeMethod == "short") {
+                r->mergeMethod = 1;
+            } else if (newSpot->mergeMethod == "orig") {
+                r->mergeMethod = 2;
+            }
+
             r->sensiexclu = newSpot->sensiexclu;
             r->structexclu = newSpot->structexclu;
             r->struc = newSpot->struc;
@@ -3323,6 +3347,14 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "norm";
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "exc";
+                    }
+
+                    if (r->mergeMethod == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "none";
+                    } else if (r->mergeMethod == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "short";
+                    } else if (r->mergeMethod == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "orig";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
@@ -3743,6 +3775,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).isvisible = pe->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
                         pe->locallab.spots.at(pp->locallab.selspot).shape = pe->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
                         pe->locallab.spots.at(pp->locallab.selspot).spotMethod = pe->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
+                        pe->locallab.spots.at(pp->locallab.selspot).mergeMethod = pe->locallab.spots.at(pp->locallab.selspot).mergeMethod || se->mergeMethod;
                         pe->locallab.spots.at(pp->locallab.selspot).sensiexclu = pe->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
                         pe->locallab.spots.at(pp->locallab.selspot).structexclu = pe->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
                         pe->locallab.spots.at(pp->locallab.selspot).struc = pe->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
@@ -4061,6 +4094,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).isvisible = pedited->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
                         pedited->locallab.spots.at(pp->locallab.selspot).shape = pedited->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
                         pedited->locallab.spots.at(pp->locallab.selspot).spotMethod = pedited->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
+                        pedited->locallab.spots.at(pp->locallab.selspot).mergeMethod = pedited->locallab.spots.at(pp->locallab.selspot).mergeMethod || se->mergeMethod;
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu = pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
                         pedited->locallab.spots.at(pp->locallab.selspot).structexclu = pedited->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
                         pedited->locallab.spots.at(pp->locallab.selspot).struc = pedited->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
@@ -8788,6 +8822,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->isvisible = spotState->isvisible;
                 se->shape = spotState->shape;
                 se->spotMethod = spotState->spotMethod;
+                se->mergeMethod = spotState->mergeMethod;
                 se->sensiexclu = spotState->sensiexclu;
                 se->structexclu = spotState->structexclu;
                 se->struc = spotState->struc;

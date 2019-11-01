@@ -960,6 +960,7 @@ struct LocallabParams {
         bool isvisible;
         Glib::ustring shape; // ELI, RECT
         Glib::ustring spotMethod; // norm, exc
+        Glib::ustring mergeMethod; // none, short, orig
         int sensiexclu;
         int structexclu;
         double struc;

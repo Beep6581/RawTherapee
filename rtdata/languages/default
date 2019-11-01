@@ -1034,6 +1034,7 @@ HISTORY_MSG_793;Local - SH TRC gamma
 HISTORY_MSG_794;Local - SH TRC slope
 HISTORY_MSG_795;Local - Mask save restore image
 HISTORY_MSG_796;Local - Recursive references
+HISTORY_MSG_797;Local - Merge and Masks method
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2149,7 +2150,11 @@ TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lig
 TP_LOCALLAB_SAVREST;Save - Restore Current Image
 TP_LOCALLAB_SCOPEMASK;Scope Mask DeltaE Image
 TP_LOCALLAB_SCOPEMASK_TOOLTIP;Enabled if Mask DeltaE Image is enabled.\nLow values avoid retouching selected area
-TP_LOCALLAB_MASFRAME;Mask
+TP_LOCALLAB_MASFRAME;Mask and Merge
+TP_LOCALLAB_MERGETYPE;Merge image and mask
+TP_LOCALLAB_MERGENONE;None
+TP_LOCALLAB_MERGEONE;Short Curves 'L' Mask
+TP_LOCALLAB_MERGETWO;Original
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves are used.\nDisabled in Inverse
 TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_CSTHRESHOLDBLUR;Mask Wavelet level

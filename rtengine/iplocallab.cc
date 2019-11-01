@@ -341,6 +341,7 @@ struct local_params {
     double expcomp;
     float expchroma;
     int excmet;
+    int mergemet;
     int war;
     float adjch;
     int shapmet;
@@ -582,6 +583,14 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.excmet = 0;
     } else if (locallab.spots.at(sp).spotMethod == "exc") {
         lp.excmet = 1;
+    }
+
+    if (locallab.spots.at(sp).mergeMethod == "none") {
+        lp.mergemet = 0;
+    } else if (locallab.spots.at(sp).mergeMethod == "short") {
+        lp.mergemet = 1;
+    } else if (locallab.spots.at(sp).mergeMethod == "orig") {
+        lp.mergemet = 2;
     }
 
     if (locallab.spots.at(sp).shape == "ELI") {
@@ -3140,7 +3149,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                                   bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, int shado, float amountcd, float anchorcd,
                                   LUTf & lmasklocalcurve, bool & localmaskutili,
                                   const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
-                                  bool shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
+                                  int shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
                                   float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope
                                  )
 {
@@ -3238,7 +3247,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     bufmaskblurcol->a[ir][jr] = CLIPC(kmaskC + kmaskH);
                     bufmaskblurcol->b[ir][jr] = CLIPC(kmaskC + kmaskH);
 
-                    if (shortcu) { //short circuit all L curve
+                    if (shortcu == 1) { //short circuit all L curve
                         bufmaskblurcol->L[ir][jr] = 32768.f - bufcolorig->L[ir][jr];
                     }
 
@@ -8250,7 +8259,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool lmasutilicolwav = false;
                     float amountcd = 0.f;
                     float anchorcd = 50.f;
-                    bool shortcu = params->locallab.spots.at(sp).shortc;
+                    int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, multiThread,
@@ -8541,7 +8550,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmatm;
                     float lap = params->locallab.spots.at(sp).lapmasktm;
                     float pde = params->locallab.spots.at(sp).laplac;
-                    bool shortcu = params->locallab.spots.at(sp).shortc;
+                    int shortcu = lp.mergemet;// params->locallab.spots.at(sp).shortc;
                     int lumask = params->locallab.spots.at(sp).lumask;
 
                     if (!params->locallab.spots.at(sp).enatmMaskaft) {
@@ -8588,7 +8597,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bool lmasutilicolwav = false;
                             bool delt = params->locallab.spots.at(sp).deltae;
                             int sco = params->locallab.spots.at(sp).scopemask;
-                            bool shortcu = params->locallab.spots.at(sp).shortc;
+                            int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
                             int lumask = params->locallab.spots.at(sp).lumask;
 
                             const int limscope = 80;
@@ -8790,7 +8799,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool lmasutilicolwav = false;
                     bool delt = params->locallab.spots.at(sp).deltae;
                     int sco = params->locallab.spots.at(sp).scopemask;
-                    bool shortcu = params->locallab.spots.at(sp).shortc;
+                    int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
                     const int limscope = 80;
                     const float mindE = 2.f + MINSCOPE * sco * lp.thr;
@@ -8940,9 +8949,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             //  bool delt = params->locallab.spots.at(sp).deltae;
             bool delt = false;
             int sco = params->locallab.spots.at(sp).scopemask;
-            bool shortcu = params->locallab.spots.at(sp).shortc;
+            int shortcu = lp.mergemet; params->locallab.spots.at(sp).shortc;
 
-            const int limscope = 80;
+            const int limscope = 80;//
             const float mindE = 2.f + MINSCOPE * sco * lp.thr;
             const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -11014,7 +11023,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool delt = params->locallab.spots.at(sp).deltae;
                     int sco = params->locallab.spots.at(sp).scopemask;
                     int shado = 0;
-                    bool shortcu = params->locallab.spots.at(sp).shortc;
+                    int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
                     const int limscope = 80;
                     const float mindE = 2.f + MINSCOPE * sco * lp.thr;
@@ -11304,7 +11313,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool delt = false;
             int sco = params->locallab.spots.at(sp).scopemask;
             int shado = 0;
-            bool shortcu = params->locallab.spots.at(sp).shortc;
+            int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
             int lumask = params->locallab.spots.at(sp).lumask;
 
             const int limscope = 80;
@@ -11575,7 +11584,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int level_hl = params->locallab.spots.at(sp).csthresholdcol.getTopLeft();
                     int level_br = params->locallab.spots.at(sp).csthresholdcol.getBottomRight();
                     int level_hr = params->locallab.spots.at(sp).csthresholdcol.getTopRight();
-                    bool shortcu = params->locallab.spots.at(sp).shortc;
+                    int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
                     int lumask = params->locallab.spots.at(sp).lumask;
 
                     const int limscope = 80;
@@ -11804,7 +11813,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             //   bool delt = params->locallab.spots.at(sp).deltae;
             bool delt = false;
             int sco = params->locallab.spots.at(sp).scopemask;
-            bool shortcu = params->locallab.spots.at(sp).shortc;
+            int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
             int lumask = params->locallab.spots.at(sp).lumask;
 
             const int limscope = 80;

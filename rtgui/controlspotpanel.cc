@@ -50,6 +50,7 @@ ControlSpotPanel::ControlSpotPanel():
     spotMethod_(Gtk::manage(new MyComboBoxText())),
     shapeMethod_(Gtk::manage(new MyComboBoxText())),
     qualityMethod_(Gtk::manage(new MyComboBoxText())),
+    mergeMethod_(Gtk::manage(new MyComboBoxText())),
 
     sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
     structexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
@@ -181,7 +182,7 @@ ControlSpotPanel::ControlSpotPanel():
                           sigc::mem_fun(
                               *this, &ControlSpotPanel::spotMethodChanged));
     ctboxspotmethod->pack_start(*spotMethod_);
-    pack_start(*ctboxspotmethod);
+//    pack_start(*ctboxspotmethod);
 
     excluFrame->set_label_align(0.025, 0.5);
     if(showtooltip) excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
@@ -280,6 +281,21 @@ ControlSpotPanel::ControlSpotPanel():
     balan_->setAdjusterListener(this);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
+    
+    Gtk::HBox* const ctboxmergemethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labelmergemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MERGETYPE") + ":"));
+    ctboxmergemethod->pack_start(*labelmergemethod, Gtk::PACK_SHRINK, 4);
+    if(showtooltip) ctboxmergemethod->set_tooltip_markup(M("TP_LOCALLAB_MERGETYPE_TOOLTIP"));
+    mergeMethod_->append(M("TP_LOCALLAB_MERGENONE"));
+    mergeMethod_->append(M("TP_LOCALLAB_MERGEONE"));
+    mergeMethod_->append(M("TP_LOCALLAB_MERGETWO"));
+    mergeMethod_->set_active(0);
+    mergeMethodconn_ = mergeMethod_->signal_changed().connect(
+                          sigc::mem_fun(
+                              *this, &ControlSpotPanel::mergeMethodChanged));
+    ctboxmergemethod->pack_start(*mergeMethod_);
+//    pack_start(*ctboxmergemethod);
+    
 
     avoidConn_  = avoid_->signal_toggled().connect(
             sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
@@ -304,7 +320,9 @@ ControlSpotPanel::ControlSpotPanel():
             sigc::mem_fun(*this, &ControlSpotPanel::savrestChanged));
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
-    maskBox->pack_start(*shortc_);
+//    maskBox->pack_start(*shortc_);
+    maskBox->pack_start(*ctboxmergemethod);
+
     maskBox->pack_start(*lumask_);
 //    maskBox->pack_start(*savrest_);
     maskFrame->add(*maskBox);
@@ -594,6 +612,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     // Load param in selected control spot
     shape_->set_active(row[spots_.shape]);
     spotMethod_->set_active(row[spots_.spotMethod]);
+    mergeMethod_->set_active(row[spots_.mergeMethod]);
     sensiexclu_->setValue((double)row[spots_.sensiexclu]);
     structexclu_->setValue((double)row[spots_.structexclu]);
     struc_->setValue((double)row[spots_.struc]);
@@ -690,6 +709,38 @@ void ControlSpotPanel::spotMethodChanged()
         listener->panelChanged(EvLocallabSpotSpotMethod, spotMethod_->get_active_text());
     }
 }
+
+void ControlSpotPanel::mergeMethodChanged()
+{
+    // printf("mergeMethodChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    row[spots_.mergeMethod] = mergeMethod_->get_active_row_number();
+/*
+    // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
+    if (multiImage && mergeMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
+        excluFrame->show();
+    } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
+        excluFrame->hide();
+    } else { // Excluding case
+        excluFrame->show();
+    }
+*/
+    // Raise event
+    if (listener) {
+        listener->panelChanged(EvLocallabSpotmergeMethod, mergeMethod_->get_active_text());
+    }
+}
+
 
 void ControlSpotPanel::shapeMethodChanged()
 {
@@ -1289,6 +1340,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     buttonvisibilityconn_.block(cond);
     shapeconn_.block(cond);
     spotMethodconn_.block(cond);
+    mergeMethodconn_.block(cond);
     sensiexclu_->block(cond);
     structexclu_->block(cond);
     struc_->block(cond);
@@ -1323,6 +1375,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
 
     shape_->set_sensitive(cond);
     spotMethod_->set_sensitive(cond);
+    mergeMethod_->set_sensitive(cond);
     sensiexclu_->set_sensitive(cond);
     structexclu_->set_sensitive(cond);
     struc_->set_sensitive(cond);
@@ -1963,6 +2016,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->isvisible = row[spots_.isvisible];
             r->shape = row[spots_.shape];
             r->spotMethod = row[spots_.spotMethod];
+            r->mergeMethod = row[spots_.mergeMethod];
             r->sensiexclu = row[spots_.sensiexclu];
             r->structexclu = row[spots_.structexclu];
             r->struc = row[spots_.struc];
@@ -2096,6 +2150,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.curveid] = 0; // No associated curve
     row[spots_.shape] = newSpot->shape;
     row[spots_.spotMethod] = newSpot->spotMethod;
+    row[spots_.mergeMethod] = newSpot->mergeMethod;
     row[spots_.sensiexclu] = newSpot->sensiexclu;
     row[spots_.structexclu] = newSpot->structexclu;
     row[spots_.struc] = newSpot->struc;
@@ -2148,6 +2203,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.isvisible] = spot->isvisible;
             row[spots_.shape] = spot->shape;
             row[spots_.spotMethod] = spot->spotMethod;
+            row[spots_.mergeMethod] = spot->mergeMethod;
             row[spots_.sensiexclu] = spot->sensiexclu;
             row[spots_.structexclu] = spot->structexclu;
             row[spots_.struc] = spot->struc;
@@ -2246,6 +2302,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
 
     se->shape = shape_->get_active_text() != M("GENERAL_UNCHANGED");
     se->spotMethod = spotMethod_->get_active_text() != M("GENERAL_UNCHANGED");
+    se->mergeMethod = mergeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->sensiexclu = sensiexclu_->getEditedState();
     se->structexclu = structexclu_->getEditedState();
     se->struc = struc_->getEditedState();
@@ -2312,6 +2369,10 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
 
     if (!se->spotMethod) {
         spotMethod_->set_active_text(M("GENERAL_UNCHANGED"));
+    }
+
+    if (!se->mergeMethod) {
+        mergeMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
     sensiexclu_->setEditedState(se->sensiexclu ? Edited : UnEdited);
@@ -2470,6 +2531,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
     // Set batch mode for comboBoxText
     shape_->append(M("GENERAL_UNCHANGED"));
     spotMethod_->append(M("GENERAL_UNCHANGED"));
+    mergeMethod_->append(M("GENERAL_UNCHANGED"));
     shapeMethod_->append(M("GENERAL_UNCHANGED"));
     qualityMethod_->append(M("GENERAL_UNCHANGED"));
 }
@@ -2513,6 +2575,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(deltae);
     add(shortc);
     add(savrest);
+    add(mergeMethod);
 }
 
 //-----------------------------------------------------------------------------

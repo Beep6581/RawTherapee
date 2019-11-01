@@ -2413,6 +2413,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     isvisible(true),
     shape("ELI"),
     spotMethod("norm"),
+    mergeMethod("none"),
     sensiexclu(12),
     structexclu(0),
     struc(4.0),
@@ -2722,6 +2723,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && isvisible == other.isvisible
         && shape == other.shape
         && spotMethod == other.spotMethod
+        && mergeMethod == other.mergeMethod
         && sensiexclu == other.sensiexclu
         && structexclu == other.structexclu
         && struc == other.struc
@@ -4026,6 +4028,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).isvisible, "Locallab", "Isvisible_" + std::to_string(i), spot.isvisible, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shape, "Locallab", "Shape_" + std::to_string(i), spot.shape, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).spotMethod, "Locallab", "SpotMethod_" + std::to_string(i), spot.spotMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).mergeMethod, "Locallab", "MergeMethod_" + std::to_string(i), spot.mergeMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiexclu, "Locallab", "SensiExclu_" + std::to_string(i), spot.sensiexclu, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structexclu, "Locallab", "StructExclu_" + std::to_string(i), spot.structexclu, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).struc, "Locallab", "Struc_" + std::to_string(i), spot.struc, keyFile);
@@ -5438,6 +5441,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Isvisible_" + std::to_string(i), pedited, spot.isvisible, spotEdited.isvisible);
                 assignFromKeyfile(keyFile, "Locallab", "Shape_" + std::to_string(i), pedited, spot.shape, spotEdited.shape);
                 assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + std::to_string(i), pedited, spot.spotMethod, spotEdited.spotMethod);
+                assignFromKeyfile(keyFile, "Locallab", "MergeMethod_" + std::to_string(i), pedited, spot.mergeMethod, spotEdited.mergeMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + std::to_string(i), pedited, spot.shapeMethod, spotEdited.shapeMethod);
                 assignFromKeyfile(keyFile, "Locallab", "SensiExclu_" + std::to_string(i), pedited, spot.sensiexclu, spotEdited.sensiexclu);
                 assignFromKeyfile(keyFile, "Locallab", "StructExclu_" + std::to_string(i), pedited, spot.structexclu, spotEdited.structexclu);

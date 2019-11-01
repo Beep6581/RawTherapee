@@ -372,6 +372,7 @@ public:
         bool isvisible;
         bool shape;
         bool spotMethod;
+        bool mergeMethod;
         bool sensiexclu;
         bool structexclu;
         bool struc;
