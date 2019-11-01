@@ -33,6 +33,7 @@
 #include "procparamchangers.h"
 #include "rtimage.h"
 #include "threadutils.h"
+#include "thumbnail.h"
 
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"

@@ -29,13 +29,14 @@
 #include "imageareatoollistener.h"
 #include "thumbbrowserentrybase.h"
 #include "thumbimageupdater.h"
-#include "thumbnail.h"
 #include "thumbnaillistener.h"
 
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
 
 class FileBrowserEntry;
+class Thumbnail;
+
 struct FileBrowserEntryIdleHelper {
     FileBrowserEntry* fbentry;
     bool destroyed;

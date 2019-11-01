@@ -25,7 +25,6 @@
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
 #include "guiutils.h"
-#include "mycurve.h"
 #include "toolpanel.h"
 
 class ColorAppearance final :

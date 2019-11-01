@@ -27,6 +27,7 @@
 #include "rtimage.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
+#include "thumbnail.h"
 
 #include "../rtengine/procparams.h"
 

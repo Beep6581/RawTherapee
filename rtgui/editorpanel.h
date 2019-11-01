@@ -30,7 +30,6 @@
 #include "profilepanel.h"
 #include "progressconnector.h"
 #include "saveasdlg.h"
-#include "thumbnail.h"
 #include "thumbnaillistener.h"
 #include "toolpanelcoord.h"
 
@@ -39,6 +38,7 @@
 
 class EditorPanel;
 class MyProgressBar;
+class Thumbnail;
 
 struct EditorPanelIdleHelper {
     EditorPanel* epanel;

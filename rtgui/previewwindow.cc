@@ -20,6 +20,7 @@
 #include "guiutils.h"
 #include "imagearea.h"
 #include "cursormanager.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 

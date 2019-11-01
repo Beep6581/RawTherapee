@@ -23,10 +23,12 @@
 #include <gtkmm.h>
 
 #include "bqentryupdater.h"
+#include "options.h"
 #include "thumbbrowserentrybase.h"
-#include "thumbnail.h"
 
 #include "../rtengine/noncopyable.h"
+
+class Thumbnail;
 
 namespace rtengine
 {

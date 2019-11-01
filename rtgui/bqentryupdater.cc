@@ -19,6 +19,8 @@
 #include "bqentryupdater.h"
 
 #include "guiutils.h"
+#include "options.h"
+#include "thumbnail.h"
 #include "../rtengine/utils.h"
 
 namespace

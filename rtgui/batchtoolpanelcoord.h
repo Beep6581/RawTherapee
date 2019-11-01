@@ -20,7 +20,6 @@
 
 #include "fileselectionchangelistener.h"
 #include "paramsedited.h"
-#include "thumbnail.h"
 #include "thumbnaillistener.h"
 #include "toolpanelcoord.h"
 
@@ -28,6 +27,7 @@
 #include "../rtengine/procparams.h"
 
 class FilePanel;
+class Thumbnail;
 class BatchToolPanelCoordinator :
     public ToolPanelCoordinator,
     public FileSelectionChangeListener,

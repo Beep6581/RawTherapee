@@ -27,10 +27,6 @@
 #include "LUT.h"
 #include "rt_math.h"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 using namespace rtengine;
 
 // This seems ugly, but way faster than any other solutions I tried

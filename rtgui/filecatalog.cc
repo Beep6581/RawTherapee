@@ -37,6 +37,7 @@
 #include "batchqueue.h"
 #include "placesbrowser.h"
 #include "pathutils.h"
+#include "thumbnail.h"
 
 using namespace std;
 

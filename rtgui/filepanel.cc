@@ -21,6 +21,7 @@
 #include "rtwindow.h"
 #include "inspector.h"
 #include "placesbrowser.h"
+#include "thumbnail.h"
 
 FilePanel::FilePanel () : parent(nullptr), error(0)
 {

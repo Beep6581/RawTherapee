@@ -21,7 +21,8 @@
 #include <glibmm/thread.h>
 
 #include "threadutils.h"
-#include "thumbnail.h"
+
+class Thumbnail;
 
 namespace rtengine
 {

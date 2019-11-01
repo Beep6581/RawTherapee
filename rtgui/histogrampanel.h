@@ -27,7 +27,6 @@
 #include "guiutils.h"
 #include "pointermotionlistener.h"
 
-#include "../rtengine/improccoordinator.h"
 #include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
 

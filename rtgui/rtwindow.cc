@@ -24,6 +24,7 @@
 #include "iccprofilecreator.h"
 #include "cursormanager.h"
 #include "rtimage.h"
+#include "thumbnail.h"
 #include "whitebalance.h"
 #include "../rtengine/settings.h"
 

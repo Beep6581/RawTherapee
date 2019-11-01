@@ -22,6 +22,7 @@
 #include "filepanel.h"
 #include "procparamchangers.h"
 #include "addsetids.h"
+#include "thumbnail.h"
 
 using namespace rtengine::procparams;
 
