@@ -458,10 +458,9 @@ RTWindow::~RTWindow()
     g_object_unref (osxApp);
 #endif
 
-    if (fpanel) {
-        delete fpanel;
-    }
-
+    delete fpanel;
+    delete iFullscreen;
+    delete iFullscreen_exit;
     RTImage::cleanup();
 }
 

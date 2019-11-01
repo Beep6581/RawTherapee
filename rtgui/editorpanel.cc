@@ -891,41 +891,17 @@ EditorPanel::~EditorPanel ()
     delete vboxright;
 
     //delete saveAsDialog;
-    if (catalogPane) {
-        delete catalogPane;
-    }
-
-    if (iTopPanel_1_Show) {
-        delete iTopPanel_1_Show;
-    }
-
-    if (iTopPanel_1_Hide) {
-        delete iTopPanel_1_Hide;
-    }
-
-    if (iHistoryShow) {
-        delete iHistoryShow;
-    }
-
-    if (iHistoryHide) {
-        delete iHistoryHide;
-    }
-
-    if (iBeforeLockON) {
-        delete iBeforeLockON;
-    }
-
-    if (iBeforeLockOFF) {
-        delete iBeforeLockOFF;
-    }
-
-    if (iRightPanel_1_Show) {
-        delete iRightPanel_1_Show;
-    }
-
-    if (iRightPanel_1_Hide) {
-        delete iRightPanel_1_Hide;
-    }
+    delete catalogPane;
+    delete iTopPanel_1_Show;
+    delete iTopPanel_1_Hide;
+    delete iHistoryShow;
+    delete iHistoryHide;
+    delete iBeforeLockON;
+    delete iBeforeLockOFF;
+    delete iRightPanel_1_Show;
+    delete iRightPanel_1_Hide;
+    delete iShowHideSidePanels_exit;
+    delete iShowHideSidePanels;
 }
 
 void EditorPanel::leftPaneButtonReleased (GdkEventButton *event)
