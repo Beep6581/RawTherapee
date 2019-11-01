@@ -20,7 +20,11 @@
 
 #include <glibmm/ustring.h>
 #include <vector>
-#include "../rtengine/rtengine.h"
+
+namespace rtengine
+{
+    class FramesMetaData;
+}
 
 class DynamicProfileRule
 {

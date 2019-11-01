@@ -23,8 +23,16 @@
 #include "threadutils.h"
 #include "thumbnail.h"
 
-#include "../rtengine/rtengine.h"
+namespace rtengine
+{
+namespace procparams
+{
 
+class ProcParams;
+
+}
+
+}
 class BQEntryUpdateListener
 {
 

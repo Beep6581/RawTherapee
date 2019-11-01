@@ -29,8 +29,22 @@
 #include "profilestorecombobox.h"
 
 #include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
 
+namespace rtengine
+{
+
+class ProcEvent;
+
+namespace procparams
+{
+
+class ProcParams;
+
+struct PartialProfile;
+
+}
+
+}
 class RTImage;
 
 class ProfilePanel :

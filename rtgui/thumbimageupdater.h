@@ -22,9 +22,20 @@
 
 #include "thumbbrowserentrybase.h"
 
-#include "../rtengine/rtengine.h"
 #include "../rtengine/noncopyable.h"
 
+namespace rtengine
+{
+    class IImage8;
+
+namespace procparams
+{
+
+    struct CropParams;
+
+}
+
+}
 class ThumbImageUpdateListener
 {
 public:

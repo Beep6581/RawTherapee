@@ -24,6 +24,7 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/keyfile.h>
 
+#include "rtengine.h"
 #include "../rtgui/options.h"
 
 using namespace rtengine;

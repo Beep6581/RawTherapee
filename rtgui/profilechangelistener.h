@@ -20,14 +20,15 @@
 
 #include <glibmm/ustring.h>
 
-#include "../rtengine/rtengine.h"
 
 namespace rtengine
 {
+class ProcEvent;
 
 namespace procparams
 {
 
+class ProcParams;
 class PartialProfile;
 
 }

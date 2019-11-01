@@ -30,6 +30,19 @@
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
 
+class ParamsEdited;
+
+namespace rtengine
+{
+    class ProcEvent;
+
+namespace procparams
+{
+
+class ProcParams;
+}
+}
+
 class FoldableToolPanel;
 class ToolPanel;
 

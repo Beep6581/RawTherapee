@@ -20,7 +20,17 @@
 
 #include <gtkmm.h>
 
-#include "../rtengine/rtengine.h"
+namespace rtengine
+{
+namespace procparams
+{
+
+class ProcParams;
+
+
+}
+
+}
 
 struct ParamsEdited;
 

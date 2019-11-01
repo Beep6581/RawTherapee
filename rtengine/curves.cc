@@ -514,7 +514,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         double shcompr, double br, double contr,
         const std::vector<double>& curvePoints,
         const std::vector<double>& curvePoints2,
-        LUTu & histogram,
+        const LUTu & histogram,
         LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
         LUTu & outBeforeCCurveHistogram,
         ToneCurve & customToneCurve1,

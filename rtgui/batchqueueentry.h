@@ -27,7 +27,12 @@
 #include "thumbnail.h"
 
 #include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
+#include "../rtengine/procparams.h"
+
+namespace rtengine
+{
+    class ProcessingJob;
+}
 
 class BatchQueueEntry;
 struct BatchQueueEntryIdleHelper {

@@ -25,7 +25,6 @@
 
 #include "../rtengine/diagonalcurvetypes.h"
 #include "../rtengine/flatcurvetypes.h"
-#include "../rtengine/rtengine.h"
 
 namespace rtengine
 {
@@ -34,6 +33,7 @@ namespace procparams
 {
 
 class PartialProfile;
+class IPTCPairs;
 
 }
 

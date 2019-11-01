@@ -25,7 +25,8 @@
 
 #include "dynamicprofile.h"
 #include "noncopyable.h"
-#include "rtengine.h"
+#include "procparams.h"
+#include "../rtgui/threadutils.h"
 
 // forward decl
 namespace rtengine

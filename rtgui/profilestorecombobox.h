@@ -28,7 +28,6 @@
 #include "threadutils.h"
 
 #include "../rtengine/profilestore.h"
-#include "../rtengine/rtengine.h"
 
 /**
  * @brief subclass of Gtk::Label with extra fields for Combobox and Menu, to link with a ProfileStoreEntry
