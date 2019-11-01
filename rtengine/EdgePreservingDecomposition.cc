@@ -5,7 +5,6 @@
 #include <omp.h>
 #endif
 #include "sleef.c"
-#include "opthelper.h"
 
 #define DIAGONALS 5
 #define DIAGONALSP1 6

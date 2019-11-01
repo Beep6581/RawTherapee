@@ -29,7 +29,11 @@
 
 #include "imageio.h"
 
-#include "../rtexif/rtexif.h"
+namespace rtexif
+{
+
+class TagDirectory;
+}
 
 namespace rtengine
 {

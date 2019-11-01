@@ -29,8 +29,6 @@
 #include "imageformat.h"
 #include "rtengine.h"
 
-#include "../rtexif/rtexif.h"
-
 enum {
     IMIO_SUCCESS,
     IMIO_CANNOTREADFILE,
@@ -42,12 +40,26 @@ enum {
     IMIO_CANNOTWRITEFILE
 };
 
+namespace rtexif
+{
+
+class TagDirectory;
+
+}
+
 namespace rtengine
 {
 
 class ColorTemp;
 class ProgressListener;
 class Imagefloat;
+
+namespace procparams
+{
+
+class ExifPairs;
+
+}
 
 class ImageIO : virtual public ImageDatas
 {

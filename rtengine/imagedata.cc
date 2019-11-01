@@ -32,6 +32,7 @@
 #include "procparams.h"
 #include "rt_math.h"
 #include "utils.h"
+#include "../rtexif/rtexif.h"
 
 #pragma GCC diagnostic warning "-Wextra"
 #define PRINT_HDR_PS_DETECTION 0

@@ -66,7 +66,6 @@
 #include <fstream>
 #endif
 
-#include "noncopyable.h"
 #include "opthelper.h"
 #include "rt_math.h"
 

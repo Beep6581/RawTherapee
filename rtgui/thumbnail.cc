@@ -35,6 +35,7 @@
 #include "../rtengine/dynamicprofile.h"
 #include "../rtengine/profilestore.h"
 #include "../rtengine/settings.h"
+#include "../rtexif/rtexif.h"
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"

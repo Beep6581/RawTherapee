@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 
 #include "toolpanel.h"
+#include "../rtexif/rtexif.h"
 
 class ExifPanel :
     public Gtk::VBox,

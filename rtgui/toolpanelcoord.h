@@ -54,7 +54,6 @@
 #include "lensgeomlistener.h"
 #include "lensprofile.h"
 #include "localcontrast.h"
-#include "metadatapanel.h"
 #include "pcvignette.h"
 #include "pdsharpening.h"
 #include "perspective.h"
@@ -89,6 +88,7 @@
 #include "../rtengine/rtengine.h"
 
 class ImageEditorCoordinator;
+class MetaDataPanel;
 
 class ToolPanelCoordinator :
     public ToolPanelListener,

@@ -21,6 +21,7 @@
 #include <array>
 #include <ctime>
 #include <string>
+#include <memory>
 
 #include <glibmm/ustring.h>
 
@@ -34,8 +35,6 @@
 #include "rt_math.h"
 #include "settings.h"
 
-#include "../rtexif/rtexif.h"
-
 #include "../rtgui/threadutils.h"
 
 /**
@@ -45,6 +44,12 @@
  */
 
 class EditDataProvider;
+namespace rtexif
+{
+
+class TagDirectory;
+
+}
 
 namespace rtengine
 {

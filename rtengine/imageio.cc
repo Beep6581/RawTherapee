@@ -30,6 +30,7 @@
 #include "utils.h"
 #include "../rtgui/options.h"
 #include "../rtgui/version.h"
+#include "../rtexif/rtexif.h"
 
 #ifdef WIN32
 #include <winsock2.h>

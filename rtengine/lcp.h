@@ -29,7 +29,6 @@
 #include <expat.h>
 
 #include "cache.h"
-#include "opthelper.h"
 
 namespace rtengine
 {

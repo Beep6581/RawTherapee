@@ -32,6 +32,7 @@
 
 #include "lcp.h"
 
+#include "opthelper.h"
 #include "procparams.h"
 #include "rt_math.h"
 #include "settings.h"

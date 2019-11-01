@@ -18,17 +18,17 @@
  */
 #pragma once
 
+#include <memory>
+
 #include "color.h"
 #include "coord2d.h"
 #include "gamutwarning.h"
-#include "lcp.h"
 #include "LUT.h"
 #include "pipettebuffer.h"
 #include "shmap.h"
 
 template<typename T, const size_t num>
 class multi_array2D;
-
 namespace rtengine
 {
 
@@ -38,6 +38,7 @@ class DCPProfile;
 class DCPProfileApplyState;
 class FlatCurve;
 class FramesMetaData;
+class LensCorrection;
 class NoiseCurve;
 class OpacityCurve;
 class ToneCurve;

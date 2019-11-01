@@ -18,6 +18,7 @@
  */
 #include "multilangmgr.h"
 #include "toolpanelcoord.h"
+#include "metadatapanel.h"
 #include "options.h"
 #include "rtimage.h"
 #include "../rtengine/imagesource.h"
