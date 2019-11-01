@@ -1108,7 +1108,7 @@ Glib::ustring EditorPanel::getShortName ()
     }
 }
 
-Glib::ustring EditorPanel::getFileName ()
+Glib::ustring EditorPanel::getFileName () const
 {
     if (openThm) {
         return openThm->getFileName ();
@@ -2012,9 +2012,9 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
     if (img) {
         // get file name base
-        Glib::ustring shortname = removeExtension (Glib::path_get_basename (fname));
-        Glib::ustring dirname = Glib::get_tmp_dir ();
-        Glib::ustring fname = Glib::build_filename (dirname, shortname);
+        const Glib::ustring shortname = removeExtension (Glib::path_get_basename (fname));
+        const Glib::ustring dirname = Glib::get_tmp_dir ();
+        const Glib::ustring lfname = Glib::build_filename (dirname, shortname);
 
         SaveFormat sf;
         sf.format = "tif";
@@ -2023,13 +2023,13 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
         sf.tiffUncompressed = true;
         sf.saveParams = true;
 
-        Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
+        Glib::ustring fileName = Glib::ustring::compose ("%1.%2", lfname, sf.format);
 
         // TODO: Just list all file with a suitable name instead of brute force...
         int tries = 1;
 
         while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries < 1000) {
-            fileName = Glib::ustring::compose ("%1-%2.%3", fname, tries, sf.format);
+            fileName = Glib::ustring::compose ("%1-%2.%3", lfname, tries, sf.format);
             tries++;
         }
 

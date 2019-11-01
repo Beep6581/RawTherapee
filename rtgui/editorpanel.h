@@ -150,7 +150,7 @@ public:
 
     void saveProfile ();
     Glib::ustring getShortName ();
-    Glib::ustring getFileName ();
+    Glib::ustring getFileName () const;
     bool handleShortcutKey (GdkEventKey* event);
 
     bool getIsProcessing() const

@@ -653,8 +653,8 @@ void RTWindow::remEditorPanel (EditorPanel* ep)
 
             set_title_decorated ("");
         } else {
-            EditorPanel* ep = static_cast<EditorPanel*> (mainNB->get_nth_page (mainNB->get_current_page()));
-            set_title_decorated (ep->getFileName());
+            const EditorPanel* lep = static_cast<EditorPanel*> (mainNB->get_nth_page (mainNB->get_current_page()));
+            set_title_decorated (lep->getFileName());
         }
 
         // TODO: ask what to do: close & apply, close & apply selection, close & revert, cancel
