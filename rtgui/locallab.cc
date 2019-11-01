@@ -204,6 +204,7 @@ Locallab::Locallab():
     lapmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     shadmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
+    opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 100.))),
     // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 4.0, 0.05, 0.0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
@@ -406,6 +407,7 @@ Locallab::Locallab():
     gridMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
+    mergecolMethod(Gtk::manage(new MyComboBoxText())),
     csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
     //Exposure
     showmaskexpMethod(Gtk::manage(new MyComboBoxText())),
@@ -447,6 +449,8 @@ Locallab::Locallab():
     lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
     lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
     gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
+    mergecolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")))),
+    merge1colFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")))),
     pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
     fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
     fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
@@ -527,6 +531,7 @@ Locallab::Locallab():
     slomaskcol->setAdjusterListener(this);
     shadmaskcol->setAdjusterListener(this);
     softradiuscol->setAdjusterListener(this);
+    opacol->setAdjusterListener(this);
     lapmaskcol->setAdjusterListener(this);
 
     if (showtooltip) {
@@ -623,6 +628,14 @@ Locallab::Locallab():
     HCurveEditorG->curveListComplete();
 
     inversConn  = invers->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversChanged));
+
+
+    mergecolMethod->append(M("TP_LOCALLAB_MERONE"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERTWO"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERTHR"));
+    mergecolMethod->set_active(0);
+    mergecolMethodConn = mergecolMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::mergecolMethodChanged));
+
 
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -754,6 +767,14 @@ Locallab::Locallab():
     colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     colorBox->pack_start(*invers);
+
+    mergecolFrame->set_label_align(0.025, 0.5);
+    merge1colFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const mergecolBox = Gtk::manage(new ToolParamBlock());
+    mergecolBox->pack_start(*mergecolMethod);
+    mergecolBox->pack_start(*opacol);
+    merge1colFrame->add(*mergecolBox);
+
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*showmaskcolMethodinv, Gtk::PACK_SHRINK, 4);
@@ -769,7 +790,14 @@ Locallab::Locallab():
     maskcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
-    expmaskcol->add(*maskcolBox, false);
+    
+    mergecolFrame->add(*maskcolBox);
+
+    ToolParamBlock* const maskcol1Box = Gtk::manage(new ToolParamBlock());
+    maskcol1Box->pack_start(*merge1colFrame);
+    maskcol1Box->pack_start(*mergecolFrame);
+    
+    expmaskcol->add(*maskcol1Box, false);
     colorBox->pack_start(*expmaskcol);
 
     expcolor->add(*colorBox, false);
@@ -2849,10 +2877,17 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         if (pp->locallab.spots.at(i).mergeMethod == "none") {
             r->mergeMethod = 0;
+            merge1colFrame->hide();
+            mergecolFrame->show();
         } else if (pp->locallab.spots.at(i).mergeMethod == "short") {
             r->mergeMethod = 1;
+            merge1colFrame->hide();
+            mergecolFrame->show();
         } else if (pp->locallab.spots.at(i).mergeMethod == "orig") {
             r->mergeMethod = 2;
+            merge1colFrame->show();
+            mergecolFrame->hide();
+            
         }
 
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
@@ -2972,10 +3007,17 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             if (newSpot->mergeMethod == "none") {
                 r->mergeMethod = 0;
+                merge1colFrame->hide();
+                mergecolFrame->show();
             } else if (newSpot->mergeMethod == "short") {
                 r->mergeMethod = 1;
+                merge1colFrame->hide();
+                mergecolFrame->show();
             } else if (newSpot->mergeMethod == "orig") {
                 r->mergeMethod = 2;
+                merge1colFrame->show();
+                mergecolFrame->hide();
+                
             }
 
             r->sensiexclu = newSpot->sensiexclu;
@@ -3203,10 +3245,16 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             if (newSpot->mergeMethod == "none") {
                 r->mergeMethod = 0;
+                merge1colFrame->hide();
+                mergecolFrame->show();
             } else if (newSpot->mergeMethod == "short") {
                 r->mergeMethod = 1;
+                merge1colFrame->hide();
+                mergecolFrame->show();
             } else if (newSpot->mergeMethod == "orig") {
                 r->mergeMethod = 2;
+                merge1colFrame->show();
+                mergecolFrame->hide();
             }
 
             r->sensiexclu = newSpot->sensiexclu;
@@ -3351,10 +3399,18 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
                     if (r->mergeMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "none";
+                        merge1colFrame->hide();
+                        mergecolFrame->show();
+
                     } else if (r->mergeMethod == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "short";
+                        merge1colFrame->hide();
+                        mergecolFrame->show();
                     } else if (r->mergeMethod == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "orig";
+                        merge1colFrame->show();
+                        mergecolFrame->hide();
+                        
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
@@ -3427,6 +3483,14 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).gridMethod = "two";
                     }
 
+                    if (mergecolMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "one";
+                    } else if (mergecolMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "two";
+                    } else if (mergecolMethod->get_active_row_number() == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "thr";
+                    }
+
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).cccurve = ccshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LHcurve = LHshape->getCurve();
@@ -3444,6 +3508,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).shadmaskcol = shadmaskcol->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskcol = lapmaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscol = softradiuscol->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).opacol = opacol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = Lmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav = LLmaskcolshapewav->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).csthresholdcol = csThresholdcol->getValue<int>();
@@ -3814,6 +3879,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).structcol = pe->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).gridMethod = pe->locallab.spots.at(pp->locallab.selspot).gridMethod || gridMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).mergecolMethod = pe->locallab.spots.at(pp->locallab.selspot).mergecolMethod || mergecolMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).llcurve = pe->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).cccurve = pe->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LHcurve = pe->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
@@ -3832,6 +3898,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).shadmaskcol = pe->locallab.spots.at(pp->locallab.selspot).shadmaskcol || shadmaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiuscol = pe->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).opacol = pe->locallab.spots.at(pp->locallab.selspot).opacol || opacol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav = pe->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav || !LLmaskcolshapewav->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).csthresholdcol = pe->locallab.spots.at(pp->locallab.selspot).csthresholdcol || csThresholdcol->getEditedState();
@@ -4132,6 +4199,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).structcol = pedited->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).gridMethod = pedited->locallab.spots.at(pp->locallab.selspot).gridMethod || gridMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pedited->locallab.spots.at(pp->locallab.selspot).mergecolMethod = pedited->locallab.spots.at(pp->locallab.selspot).mergecolMethod || mergecolMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).llcurve = pedited->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).cccurve = pedited->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LHcurve = pedited->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
@@ -4150,6 +4218,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).shadmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).shadmaskcol || shadmaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).opacol = pedited->locallab.spots.at(pp->locallab.selspot).opacol || opacol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav || !LLmaskcolshapewav->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).csthresholdcol = pedited->locallab.spots.at(pp->locallab.selspot).csthresholdcol || csThresholdcol->getEditedState();
@@ -4942,6 +5011,18 @@ void Locallab::gridMethodChanged()
     if (getEnabled() && expcolor->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvLocallabgridMethod, gridMethod->get_active_text());
+        }
+    }
+}
+
+
+void Locallab::mergecolMethodChanged()
+{
+    // printf("mergecolMethodChanged\n");
+
+    if (getEnabled() && expcolor->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvLocallabmergecolMethod, mergecolMethod->get_active_text());
         }
     }
 }
@@ -6183,6 +6264,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     shadmaskcol->setDefault(defSpot->shadmaskcol);
     lapmaskcol->setDefault(defSpot->lapmaskcol);
     softradiuscol->setDefault(defSpot->softradiuscol);
+    opacol->setDefault(defSpot->opacol);
     csThresholdcol->setDefault<int>(defSpot->csthresholdcol);
     // Exposure
     expcomp->setDefault(defSpot->expcomp);
@@ -6374,6 +6456,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         shadmaskcol->setDefaultEditedState(Irrelevant);
         lapmaskcol->setDefaultEditedState(Irrelevant);
         softradiuscol->setDefaultEditedState(Irrelevant);
+        opacol->setDefaultEditedState(Irrelevant);
         csThresholdcol->setDefaultEditedState(Irrelevant);
         // Exposure
         expcomp->setDefaultEditedState(Irrelevant);
@@ -6569,6 +6652,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         shadmaskcol->setDefaultEditedState(defSpotState->shadmaskcol ? Edited : UnEdited);
         lapmaskcol->setDefaultEditedState(defSpotState->lapmaskcol ? Edited : UnEdited);
         softradiuscol->setDefaultEditedState(defSpotState->softradiuscol ? Edited : UnEdited);
+        opacol->setDefaultEditedState(defSpotState->opacol ? Edited : UnEdited);
         csThresholdcol->setDefaultEditedState(defSpotState->csthresholdcol ? Edited : UnEdited);
         // Exposure
         expcomp->setDefaultEditedState(defSpotState->expcomp ? Edited : UnEdited);
@@ -6889,6 +6973,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == softradiuscol) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiuscol, softradiuscol->getTextValue());
+            }
+        }
+
+        if (a == opacol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabopacol, opacol->getTextValue());
             }
         }
 
@@ -7925,6 +8015,7 @@ void Locallab::setBatchMode(bool batchMode)
     shadmaskcol->showEditedCB();
     lapmaskcol->showEditedCB();
     softradiuscol->showEditedCB();
+    opacol->showEditedCB();
     csThresholdcol->showEditedCB();
     // Exposure
     expcomp->showEditedCB();
@@ -8099,6 +8190,7 @@ void Locallab::setBatchMode(bool batchMode)
     // Color & Light
     qualitycurveMethod->append(M("GENERAL_UNCHANGED"));
     gridMethod->append(M("GENERAL_UNCHANGED"));
+    mergecolMethod->append(M("GENERAL_UNCHANGED"));
     //exposure
     expMethod->append(M("GENERAL_UNCHANGED"));
     exnoiseMethod->append(M("GENERAL_UNCHANGED"));
@@ -8266,6 +8358,7 @@ void Locallab::enableListener()
     curvactivConn.block(false);
     qualitycurveMethodConn.block(false);
     gridMethodConn.block(false);
+    mergecolMethodConn.block(false);
     inversConn.block(false);
     showmaskcolMethodConn.block(false);
     showmaskcolMethodConninv.block(false);
@@ -8346,6 +8439,7 @@ void Locallab::disableListener()
     curvactivConn.block(true);
     qualitycurveMethodConn.block(true);
     gridMethodConn.block(true);
+    mergecolMethodConn.block(true);
     inversConn.block(true);
     showmaskcolMethodConn.block(true);
     showmaskcolMethodConninv.block(true);
@@ -8445,6 +8539,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             gridMethod->set_active(1);
         }
 
+        if (pp->locallab.spots.at(index).mergecolMethod == "one") {
+            mergecolMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "two") {
+            mergecolMethod->set_active(1);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "thr") {
+            mergecolMethod->set_active(2);
+        }
+
 
         if (pp->locallab.spots.at(index).scalereti == 1) {
             LocalcurveEditorgainT->hide();
@@ -8477,6 +8579,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         shadmaskcol->setValue(pp->locallab.spots.at(index).shadmaskcol);
         lapmaskcol->setValue(pp->locallab.spots.at(index).lapmaskcol);
         softradiuscol->setValue(pp->locallab.spots.at(index).softradiuscol);
+        opacol->setValue(pp->locallab.spots.at(index).opacol);
         Lmaskshape->setCurve(pp->locallab.spots.at(index).Lmaskcurve);
         LLmaskcolshapewav->setCurve(pp->locallab.spots.at(index).LLmaskcolcurvewav);
         csThresholdcol->setValue<int>(pp->locallab.spots.at(index).csthresholdcol);
@@ -8870,6 +8973,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                     gridMethod->set_active_text(M("GENERAL_UNCHANGED"));
                 }
 
+                if (!spotState->gridMethod) {
+                    mergecolMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+
                 llshape->setUnChanged(!spotState->llcurve);
                 ccshape->setUnChanged(!spotState->cccurve);
                 LHshape->setUnChanged(!spotState->LHcurve);
@@ -8888,6 +8995,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 shadmaskcol->setEditedState(spotState->shadmaskcol ? Edited : UnEdited);
                 lapmaskcol->setEditedState(spotState->lapmaskcol ? Edited : UnEdited);
                 softradiuscol->setEditedState(spotState->softradiuscol ? Edited : UnEdited);
+                opacol->setEditedState(spotState->opacol ? Edited : UnEdited);
                 Lmaskshape->setUnChanged(!spotState->Lmaskcurve);
                 LLmaskcolshapewav->setUnChanged(!spotState->LLmaskcolcurvewav);
                 csThresholdcol->setEditedState(spotState->csthresholdcol ? Edited : UnEdited);

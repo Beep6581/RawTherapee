@@ -160,6 +160,7 @@ private:
     Adjuster* const lapmaskcol;
     Adjuster* const shadmaskcol;
     Adjuster* const softradiuscol;
+    Adjuster* const opacol;
     // Exposure
     Adjuster* const expcomp;
     Adjuster* const hlcompr;
@@ -395,6 +396,9 @@ private:
     sigc::connection showmaskcolMethodConn;
     MyComboBoxText* const showmaskcolMethodinv;
     sigc::connection showmaskcolMethodConninv;
+    MyComboBoxText* const mergecolMethod;
+    sigc::connection mergecolMethodConn;
+    
     ThresholdAdjuster* const csThresholdcol;
     //Exposure
     MyComboBoxText* const showmaskexpMethod;
@@ -454,6 +458,8 @@ private:
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
     Gtk::Frame* gridFrame;
+    Gtk::Frame* mergecolFrame;
+    Gtk::Frame* merge1colFrame;
     Gtk::Frame* pdeFrame;
     Gtk::Frame* fatFrame;
     Gtk::Frame* fatSHFrame;
@@ -545,6 +551,7 @@ private:
     void gridMethodChanged();
     void showmaskcolMethodChanged();
     void showmaskcolMethodChangedinv();
+    void mergecolMethodChanged();
     //Exposure
     void showmaskexpMethodChanged();
     void showmaskexpMethodChangedinv();

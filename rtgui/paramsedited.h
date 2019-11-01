@@ -422,6 +422,7 @@ public:
         bool lapmaskcol;
         bool qualitycurveMethod;
         bool gridMethod;
+        bool mergecolMethod;
         bool llcurve;
         bool cccurve;
         bool LHcurve;
@@ -432,6 +433,7 @@ public:
         bool LLmaskcurve;
         bool HHmaskcurve;
         bool softradiuscol;
+        bool opacol;
         bool Lmaskcurve;
         bool LLmaskcolcurvewav;
         bool csthresholdcol;

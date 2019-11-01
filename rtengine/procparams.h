@@ -1010,6 +1010,7 @@ struct LocallabParams {
         double lapmaskcol;
         Glib::ustring qualitycurveMethod;
         Glib::ustring gridMethod;
+        Glib::ustring mergecolMethod;
         std::vector<double> llcurve;
         std::vector<double> cccurve;
         std::vector<double> LHcurve;
@@ -1020,6 +1021,7 @@ struct LocallabParams {
         std::vector<double> LLmaskcurve;
         std::vector<double> HHmaskcurve;
         double softradiuscol;
+        double opacol;
         std::vector<double> Lmaskcurve;
         std::vector<double> LLmaskcolcurvewav;
         Threshold<int> csthresholdcol;

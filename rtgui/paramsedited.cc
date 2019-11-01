@@ -1004,6 +1004,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lapmaskcol = locallab.spots.at(j).lapmaskcol && pSpot.lapmaskcol == otherSpot.lapmaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
                 locallab.spots.at(j).gridMethod = locallab.spots.at(j).gridMethod && pSpot.gridMethod == otherSpot.gridMethod;
+                locallab.spots.at(j).mergecolMethod = locallab.spots.at(j).mergecolMethod && pSpot.mergecolMethod == otherSpot.mergecolMethod;
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
                 locallab.spots.at(j).cccurve = locallab.spots.at(j).cccurve && pSpot.cccurve == otherSpot.cccurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
@@ -1014,6 +1015,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).LLmaskcurve = locallab.spots.at(j).LLmaskcurve && pSpot.LLmaskcurve == otherSpot.LLmaskcurve;
                 locallab.spots.at(j).HHmaskcurve = locallab.spots.at(j).HHmaskcurve && pSpot.HHmaskcurve == otherSpot.HHmaskcurve;
                 locallab.spots.at(j).softradiuscol = locallab.spots.at(j).softradiuscol && pSpot.softradiuscol == otherSpot.softradiuscol;
+                locallab.spots.at(j).opacol = locallab.spots.at(j).opacol && pSpot.opacol == otherSpot.opacol;
                 locallab.spots.at(j).Lmaskcurve = locallab.spots.at(j).Lmaskcurve && pSpot.Lmaskcurve == otherSpot.Lmaskcurve;
                 locallab.spots.at(j).LLmaskcolcurvewav = locallab.spots.at(j).LLmaskcolcurvewav && pSpot.LLmaskcolcurvewav == otherSpot.LLmaskcolcurvewav;
                 locallab.spots.at(j).csthresholdcol = locallab.spots.at(j).csthresholdcol && pSpot.csthresholdcol == otherSpot.csthresholdcol;
@@ -2934,6 +2936,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).gridMethod = mods.locallab.spots.at(i).gridMethod;
         }
 
+        if (locallab.spots.at(i).mergecolMethod) {
+            toEdit.locallab.spots.at(i).mergecolMethod = mods.locallab.spots.at(i).mergecolMethod;
+        }
+
         if (locallab.spots.at(i).llcurve) {
             toEdit.locallab.spots.at(i).llcurve = mods.locallab.spots.at(i).llcurve;
         }
@@ -2972,6 +2978,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).softradiuscol) {
             toEdit.locallab.spots.at(i).softradiuscol = mods.locallab.spots.at(i).softradiuscol;
+        }
+
+        if (locallab.spots.at(i).opacol) {
+            toEdit.locallab.spots.at(i).opacol = mods.locallab.spots.at(i).opacol;
         }
 
         if (locallab.spots.at(i).Lmaskcurve) {
@@ -4916,6 +4926,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lapmaskcol(v),
     qualitycurveMethod(v),
     gridMethod(v),
+    mergecolMethod(v),
     llcurve(v),
     cccurve(v),
     LHcurve(v),
@@ -4926,6 +4937,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LLmaskcurve(v),
     HHmaskcurve(v),
     softradiuscol(v),
+    opacol(v),
     Lmaskcurve(v),
     LLmaskcolcurvewav(v),
     csthresholdcol(v),
@@ -5223,6 +5235,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lapmaskcol = v;
     qualitycurveMethod = v;
     gridMethod = v;
+    mergecolMethod = v;
     llcurve = v;
     cccurve = v;
     LHcurve = v;
@@ -5233,6 +5246,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LLmaskcurve = v;
     HHmaskcurve = v;
     softradiuscol = v;
+    opacol = v;
     Lmaskcurve = v;
     LLmaskcolcurvewav = v;
     csthresholdcol = v;
