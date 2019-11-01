@@ -15,6 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include "cachemanager.h"
 #include "multilangmgr.h"
 #include "thumbnail.h"
 #include <sstream>
@@ -25,6 +26,7 @@
 #include "../rtengine/colortemp.h"
 #include "../rtengine/imagedata.h"
 #include "../rtengine/procparams.h"
+#include "../rtengine/rtthumbnail.h"
 #include <glib/gstdio.h>
 
 #include "../rtengine/dynamicprofile.h"
@@ -1150,4 +1152,49 @@ bool Thumbnail::imageLoad(bool loading)
     }
 
     return false;
+}
+
+void Thumbnail::getCamWB(double& temp, double& green) const
+{
+    if (tpp) {
+        tpp->getCamWB  (temp, green);
+    } else {
+        temp = green = -1.0;
+    }
+}
+
+void Thumbnail::getSpotWB(int x, int y, int rect, double& temp, double& green)
+{
+    if (tpp) {
+        tpp->getSpotWB (getProcParams(), x, y, rect, temp, green);
+    } else {
+        temp = green = -1.0;
+    }
+}
+
+void Thumbnail::applyAutoExp (rtengine::procparams::ProcParams& pparams)
+{
+    if (tpp) {
+        tpp->applyAutoExp (pparams);
+    }
+}
+
+const CacheImageData* Thumbnail::getCacheImageData()
+{
+    return &cfs;
+}
+
+std::string Thumbnail::getMD5() const
+{
+    return cfs.md5;
+}
+
+bool Thumbnail::isQuick() const
+{
+    return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL;
+}
+
+bool Thumbnail::isPParamsValid() const
+{
+    return pparamsValid;
 }

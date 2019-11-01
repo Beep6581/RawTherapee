@@ -48,7 +48,7 @@ class BatchQueueEntryUpdater
         guint8* oimg;
         int ow, oh, newh;
         BQEntryUpdateListener* listener;
-        rtengine::ProcParams* pparams;
+        rtengine::procparams::ProcParams* pparams;
         Thumbnail* thumbnail;
     };
 
@@ -62,7 +62,7 @@ protected:
 public:
     BatchQueueEntryUpdater ();
 
-    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams = nullptr, Thumbnail* thumbnail = nullptr);
+    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::procparams::ProcParams* pparams = nullptr, Thumbnail* thumbnail = nullptr);
     void removeJobs (BQEntryUpdateListener* listener);
     void terminate  ();
 

@@ -28,6 +28,7 @@
 #include <sstream>
 #include <string>
 
+#include "cachemanager.h"
 #include "thumbnail.h"
 #include "batchqueue.h"
 #include "multilangmgr.h"

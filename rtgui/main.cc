@@ -33,6 +33,7 @@
 #include <cstdlib>
 #include <locale.h>
 #include <lensfun.h>
+#include "cachemanager.h"
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"

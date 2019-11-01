@@ -19,6 +19,7 @@
 
 #include <gtkmm.h>
 #include "rtwindow.h"
+#include "cachemanager.h"
 #include "preferences.h"
 #include "iccprofilecreator.h"
 #include "cursormanager.h"

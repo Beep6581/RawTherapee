@@ -22,9 +22,9 @@
 
 #include <glibmm/ustring.h>
 
-#include "filebrowserentry.h"
-
 #include "../rtengine/noncopyable.h"
+
+class FileBrowserEntry;
 
 class PreviewLoaderListener
 {
