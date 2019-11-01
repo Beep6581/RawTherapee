@@ -24,7 +24,7 @@
 #include "../rtengine/diagonalcurvetypes.h"
 #include "../rtengine/flatcurvetypes.h"
 
-class ParamsEdited;
+struct ParamsEdited;
 
 namespace rtengine
 {

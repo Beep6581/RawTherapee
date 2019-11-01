@@ -20,7 +20,7 @@
 
 #include <glibmm/ustring.h>
 
-class ParamsEdited;
+struct ParamsEdited;
 
 namespace rtengine
 {

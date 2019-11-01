@@ -42,7 +42,7 @@ namespace procparams
 
 class ProcParams;
 
-struct PartialProfile;
+class PartialProfile;
 
 }
 
