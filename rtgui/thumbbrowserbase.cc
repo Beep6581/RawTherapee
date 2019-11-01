@@ -22,7 +22,6 @@
 #include "options.h"
 #include "thumbbrowserbase.h"
 
-#include "../rtengine/mytime.h"
 #include "../rtengine/rt_math.h"
 
 using namespace std;

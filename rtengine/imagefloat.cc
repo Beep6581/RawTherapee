@@ -25,7 +25,6 @@
 #include "labimage.h"
 #include <cstring>
 #include "rtengine.h"
-#include "mytime.h"
 #include "iccstore.h"
 #include "alignedbuffer.h"
 #include "rt_math.h"

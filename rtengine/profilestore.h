@@ -25,7 +25,6 @@
 
 #include "dynamicprofile.h"
 #include "noncopyable.h"
-#include "procparams.h"
 #include "../rtgui/threadutils.h"
 
 // forward decl
@@ -34,6 +33,8 @@ namespace rtengine
 
 namespace procparams
 {
+
+class ProcParams;
 
 class AutoPartialProfile;
 class PartialProfile;

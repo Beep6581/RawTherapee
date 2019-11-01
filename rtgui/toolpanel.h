@@ -30,8 +30,6 @@
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
 
-class ParamsEdited;
-
 namespace rtengine
 {
     class ProcEvent;

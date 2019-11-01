@@ -15,12 +15,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #include "cachemanager.h"
 #include "multilangmgr.h"
 #include "thumbnail.h"
 #include <sstream>
 #include <iomanip>
-#include "../rtengine/mytime.h"
 #include <cstdio>
 #include <cstdlib>
 #include "../rtengine/colortemp.h"
@@ -30,12 +33,13 @@
 #include <glib/gstdio.h>
 
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/profilestore.h"
 #include "../rtengine/settings.h"
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
 #include "pathutils.h"
-#include "profilestorecombobox.h"
+#include "paramsedited.h"
 #include "procparamchangers.h"
 
 using namespace rtengine::procparams;

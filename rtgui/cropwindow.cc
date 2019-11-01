@@ -17,6 +17,9 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 #include "cropwindow.h"
 
@@ -32,7 +35,6 @@
 #include "editwidgets.h"
 
 #include "../rtengine/dcrop.h"
-#include "../rtengine/mytime.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/rt_math.h"
 

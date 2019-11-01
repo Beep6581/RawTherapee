@@ -26,9 +26,11 @@
 #include "partialpastedlg.h"
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
-#include "profilestorecombobox.h"
 
+#include "../rtengine/profilestore.h"
 #include "../rtengine/noncopyable.h"
+
+class ProfileStoreComboBox;
 
 namespace rtengine
 {

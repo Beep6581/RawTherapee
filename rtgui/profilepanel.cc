@@ -22,6 +22,7 @@
 #include "multilangmgr.h"
 #include "options.h"
 #include "profilestorecombobox.h"
+#include "paramsedited.h"
 #include "pathutils.h"
 #include "rtimage.h"
 

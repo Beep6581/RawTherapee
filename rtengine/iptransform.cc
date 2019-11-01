@@ -25,7 +25,6 @@
 #include "imagefloat.h"
 #include "improcfun.h"
 
-#include "mytime.h"
 #include "procparams.h"
 #include "rt_math.h"
 #include "rtengine.h"

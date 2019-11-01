@@ -30,7 +30,6 @@
 #include "improcfun.h"
 #include "curves.h"
 #include "dcp.h"
-#include "mytime.h"
 #include "iccstore.h"
 #include "imagesource.h"
 #include "rtthumbnail.h"
@@ -47,6 +46,10 @@
 #include "procparams.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/editcallbacks.h"
+
+#ifdef _DEBUG
+#include "mytime.h"
+#endif
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)

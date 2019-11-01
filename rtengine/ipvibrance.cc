@@ -24,7 +24,6 @@
 #include "improcfun.h"
 #include "iccstore.h"
 #include "labimage.h"
-#include "mytime.h"
 #include "curves.h"
 #include "color.h"
 #include "procparams.h"

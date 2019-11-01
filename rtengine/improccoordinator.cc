@@ -33,7 +33,6 @@
 #include "imagefloat.h"
 #include "improcfun.h"
 #include "labimage.h"
-#include "mytime.h"
 #include "procparams.h"
 #include "refreshmap.h"
 

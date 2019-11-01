@@ -29,7 +29,7 @@
 #include "filebrowserentry.h"
 #include "partialpastedlg.h"
 #include "pparamschangelistener.h"
-#include "profilestorecombobox.h"
+#include "../rtengine/profilestore.h"
 #include "thumbbrowserbase.h"
 
 #include "../rtengine/noncopyable.h"

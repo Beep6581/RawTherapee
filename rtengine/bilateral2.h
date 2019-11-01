@@ -25,7 +25,6 @@
 
 #include "array2D.h"
 #include "LUT.h"
-#include "mytime.h"
 #include "rt_math.h"
 
 #ifdef _OPENMP

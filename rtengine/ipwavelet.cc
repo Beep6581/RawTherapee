@@ -36,7 +36,6 @@
 #include "labimage.h"
 #include "LUT.h"
 #include "median.h"
-#include "mytime.h"
 #include "opthelper.h"
 #include "procparams.h"
 #include "rt_math.h"

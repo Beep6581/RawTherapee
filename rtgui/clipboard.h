@@ -21,17 +21,17 @@
 #include <memory>
 #include <vector>
 
-#include "paramsedited.h"
-
 #include "../rtengine/diagonalcurvetypes.h"
 #include "../rtengine/flatcurvetypes.h"
+
+class ParamsEdited;
 
 namespace rtengine
 {
 
 namespace procparams
 {
-
+class ProcParams;
 class PartialProfile;
 class IPTCPairs;
 

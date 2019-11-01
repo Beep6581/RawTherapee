@@ -27,11 +27,18 @@
 #include "thumbnail.h"
 
 #include "../rtengine/noncopyable.h"
-#include "../rtengine/procparams.h"
 
 namespace rtengine
 {
-    class ProcessingJob;
+class ProcessingJob;
+
+namespace procparams
+{
+
+class ProcParams;
+
+}
+
 }
 
 class BatchQueueEntry;

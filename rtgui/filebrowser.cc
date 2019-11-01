@@ -29,6 +29,7 @@
 #include "clipboard.h"
 #include "multilangmgr.h"
 #include "options.h"
+#include "profilestorecombobox.h"
 #include "procparamchangers.h"
 #include "rtimage.h"
 #include "threadutils.h"

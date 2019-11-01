@@ -24,11 +24,9 @@
 #include <glibmm/ustring.h>
 
 #include "guiutils.h"
-#include "paramsedited.h"
 #include "threadutils.h"
 
-#include "../rtengine/profilestore.h"
-
+class ProfileStoreEntry;
 /**
  * @brief subclass of Gtk::Label with extra fields for Combobox and Menu, to link with a ProfileStoreEntry
  */

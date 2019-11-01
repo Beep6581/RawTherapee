@@ -20,10 +20,13 @@
 #include "rtengine.h"
 #include "color.h"
 #include "iccmatrices.h"
-#include "mytime.h"
 #include "sleef.c"
 #include "opthelper.h"
 #include "iccstore.h"
+
+#ifdef _DEBUG
+#include "mytime.h"
+#endif
 
 using namespace std;
 
