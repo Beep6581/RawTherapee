@@ -342,6 +342,8 @@ struct local_params {
     float expchroma;
     int excmet;
     int mergemet;
+    int mergecolMethod;
+    float opacol;
     int war;
     float adjch;
     int shapmet;
@@ -592,6 +594,16 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).mergeMethod == "orig") {
         lp.mergemet = 2;
     }
+
+    if (locallab.spots.at(sp).mergecolMethod == "one") {
+        lp.mergecolMethod = 0;
+    } else if (locallab.spots.at(sp).mergecolMethod == "two") {
+        lp.mergecolMethod = 1;
+    } else if (locallab.spots.at(sp).mergecolMethod == "thr") {
+        lp.mergecolMethod = 2;
+    }
+
+    lp.opacol = 0.01f * locallab.spots.at(sp).opacol;
 
     if (locallab.spots.at(sp).shape == "ELI") {
         lp.shapmet = 0;
@@ -11358,7 +11370,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         float b_base = lp.lowB / scaling;
         bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
 
-        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet == 2 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
             /*
             //test for fftw blur with tiles  fftw_tile_blur....not good we can see tiles - very long time
                         int GW = original->W;
@@ -11701,6 +11713,84 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bufcolfin->L[ir][jr] = bufcolcalcL;
 
                             }
+
+                            if(lp.mergemet == 2) {//merge result with original
+                                std::unique_ptr<LabImage> bufcolreserv;
+                                bufcolreserv.reset(new LabImage(bfw, bfh));
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int y = 0; y < bfh ; y++) {
+                                    for (int x = 0; x < bfw; x++) {
+                                        bufcolreserv->L[y][x] = reserved->L[y + ystart][x + xstart];
+                                        bufcolreserv->a[y][x] = reserved->a[y + ystart][x + xstart];
+                                        bufcolreserv->b[y][x] = reserved->b[y + ystart][x + xstart];
+                                    }
+                                }
+
+                                if(lp.mergecolMethod == 0) {
+
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            bufcolfin->L[y][x] = lp.opacol * bufcolfin->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
+                                            bufcolfin->a[y][x] = lp.opacol * bufcolfin->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
+                                            bufcolfin->b[y][x] = lp.opacol * bufcolfin->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
+                                       }
+                                    }
+                                    
+                                }
+                                
+                                if(lp.mergecolMethod != 0) {
+                                    //prepare RGB values in 0 1 for current image and reserved
+                                    Imagefloat *tmpImageorig = nullptr;
+                                    tmpImageorig = new Imagefloat(bfw, bfh);
+                                    lab2rgb(*bufcolfin, *tmpImageorig, params->icm.workingProfile);
+                                    tmpImageorig->normalizeFloatTo1();
+
+                                    Imagefloat *tmpImagereserv = nullptr;
+                                    tmpImagereserv = new Imagefloat(bfw, bfh);
+                                    lab2rgb(*bufcolreserv, *tmpImagereserv, params->icm.workingProfile);
+                                    tmpImagereserv->normalizeFloatTo1();
+                                    //various combinaison  substrct, multiply, difference, etc. todo
+                                    if(lp.mergecolMethod == 1) {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                                        for (int y = 0; y < bfh ; y++) {
+                                            for (int x = 0; x < bfw; x++) {
+                                                tmpImageorig->r(y, x) = lp.opacol * LIM01(tmpImageorig->r(y, x) - tmpImagereserv->r(y, x)) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                                tmpImageorig->g(y, x) = lp.opacol * LIM01(tmpImageorig->g(y, x) - tmpImagereserv->g(y, x)) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                                tmpImageorig->b(y, x) = lp.opacol * LIM01(tmpImageorig->b(y, x) - tmpImagereserv->b(y, x)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            }
+                                        }
+                                    }
+
+                                    if(lp.mergecolMethod == 2) {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                                        for (int y = 0; y < bfh ; y++) {
+                                            for (int x = 0; x < bfw; x++) {
+                                                tmpImageorig->r(y, x) = lp.opacol * tmpImageorig->r(y, x) * tmpImagereserv->r(y, x) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                                tmpImageorig->g(y, x) = lp.opacol * tmpImageorig->g(y, x) * tmpImagereserv->g(y, x) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                                tmpImageorig->b(y, x) = lp.opacol * tmpImageorig->b(y, x) * tmpImagereserv->b(y, x) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            }
+                                        }
+                                    }
+                                    tmpImageorig->normalizeFloatTo65535();
+                                    rgb2lab(*tmpImageorig, *bufcolfin, params->icm.workingProfile);
+
+                                    delete tmpImageorig;
+                                    delete tmpImagereserv;
+                                }
+                            }
+
 
                         if (lp.softradiuscol > 0.f) {
                             softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
