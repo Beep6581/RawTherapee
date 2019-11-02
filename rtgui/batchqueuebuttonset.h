@@ -21,9 +21,10 @@
 #include <gtkmm.h>
 
 #include "lwbuttonset.h"
-#include "rtsurface.h"
 
 class BatchQueueEntry;
+class RTSurface;
+
 class BatchQueueButtonSet : public LWButtonSet
 {
 

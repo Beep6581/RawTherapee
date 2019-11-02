@@ -17,6 +17,8 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "lwbuttonset.h"
+#include "lwbutton.h"
+#include "rtscalable.h"
 
 LWButtonSet::LWButtonSet () : aw(0), ah(0), ax(-1), ay(-1)
 {

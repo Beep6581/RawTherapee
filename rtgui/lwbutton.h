@@ -19,9 +19,7 @@
 #pragma once
 
 #include <gtkmm.h>
-
 #include "rtsurface.h"
-
 class LWButton;
 
 class LWButtonListener

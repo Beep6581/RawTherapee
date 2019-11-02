@@ -18,8 +18,10 @@
  */
 
 #include "editwidgets.h"
+
 #include "editbuffer.h"
 #include "editcallbacks.h"
+#include "rtsurface.h"
 #include "../rtengine/rt_math.h"
 
 RGBColor Geometry::getInnerLineColor ()

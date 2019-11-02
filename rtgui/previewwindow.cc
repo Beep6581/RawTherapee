@@ -21,6 +21,7 @@
 #include "imagearea.h"
 #include "cursormanager.h"
 #include "options.h"
+#include "rtscalable.h"
 
 #include "../rtengine/procparams.h"
 

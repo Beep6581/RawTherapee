@@ -23,6 +23,7 @@
 
 #include "../rtengine/imagesource.h"
 #include "../rtengine/iccstore.h"
+#include "batchqueue.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "rtwindow.h"
@@ -34,6 +35,7 @@
 #include "placesbrowser.h"
 #include "pathutils.h"
 #include "thumbnail.h"
+#include "toolpanelcoord.h"
 
 using namespace rtengine::procparams;
 

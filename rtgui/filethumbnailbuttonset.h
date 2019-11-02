@@ -24,9 +24,9 @@
 
 #include "filebrowserentry.h"
 #include "lwbuttonset.h"
-#include "rtsurface.h"
 
 class FileBrowserEntry;
+class RTSurface;
 
 class FileThumbnailButtonSet :
     public LWButtonSet

@@ -25,15 +25,15 @@
 #include <gtkosxapplication.h>
 #endif
 
-#include "batchqueuepanel.h"
-#include "editorpanel.h"
-#include "editwindow.h"
-#include "filepanel.h"
 #include "progressconnector.h"
 #include "splash.h"
 
 #include "../rtengine/noncopyable.h"
 
+class BatchQueueEntry;
+class BatchQueuePanel;
+class EditorPanel;
+class FilePanel;
 class RTWindow :
     public Gtk::Window,
     public rtengine::ProgressListener,
@@ -55,10 +55,7 @@ private:
 
     Gtk::Image *iFullscreen, *iFullscreen_exit;
 
-    bool isSingleTabMode()
-    {
-        return !options.tabbedUI && ! (options.multiDisplayMode > 0);
-    };
+    bool isSingleTabMode() const;
 
     bool on_expose_event_epanel (GdkEventExpose* event);
     bool on_expose_event_fpanel (GdkEventExpose* event);

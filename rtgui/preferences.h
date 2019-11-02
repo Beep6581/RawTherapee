@@ -25,7 +25,10 @@
 #include "adjuster.h"
 #include "dynamicprofilepanel.h"
 #include "options.h"
-#include "rtwindow.h"
+#include "../rtengine/profilestore.h"
+
+class RTWindow;
+class Splash;
 
 class Preferences :
     public Gtk::Dialog,

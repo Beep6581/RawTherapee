@@ -23,10 +23,15 @@
 #include "preferences.h"
 #include "iccprofilecreator.h"
 #include "cursormanager.h"
+#include "editwindow.h"
 #include "rtimage.h"
 #include "thumbnail.h"
 #include "whitebalance.h"
 #include "../rtengine/settings.h"
+#include "batchqueuepanel.h"
+#include "editorpanel.h"
+#include "filepanel.h"
+#include "filmsimulation.h"
 
 float fontScale = 1.f;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
@@ -1162,4 +1167,9 @@ void RTWindow::createSetmEditor()
     epanel->tbTopPanel_1_visible (true); //show the toggle Top Panel button
     mainNB->append_page (*epanel, *editorLabelGrid);
 
+}
+
+bool RTWindow::isSingleTabMode() const
+{
+    return !options.tabbedUI && ! (options.multiDisplayMode > 0);
 }

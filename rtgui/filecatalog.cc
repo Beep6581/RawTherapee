@@ -25,6 +25,7 @@
 #include <glib/gstdio.h>
 
 #include "../rtengine/rt_math.h"
+#include "../rtengine/procparams.h"
 
 #include "guiutils.h"
 #include "options.h"

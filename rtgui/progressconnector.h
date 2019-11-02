@@ -23,7 +23,7 @@
 #include <sigc++/sigc++.h>
 
 #include "guiutils.h"
-
+#include "multilangmgr.h"
 #include "../rtengine/rtengine.h"
 
 #undef THREAD_PRIORITY_NORMAL

@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "renamedlg.h"
+#include "cacheimagedata.h"
 #include "multilangmgr.h"
 #include "rtimage.h"
 

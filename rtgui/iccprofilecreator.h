@@ -19,10 +19,13 @@
  */
 #pragma once
 
+#include <lcms2.h>
+
 #include <gtkmm.h>
 #include "adjuster.h"
 #include <vector>
-#include "rtwindow.h"
+
+class RTWindow;
 
 class ICCProfileCreator : public Gtk::Dialog, public AdjusterListener
 {

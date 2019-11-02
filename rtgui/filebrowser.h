@@ -27,6 +27,7 @@
 #include "exportpanel.h"
 #include "extprog.h"
 #include "filebrowserentry.h"
+#include "lwbutton.h"
 #include "partialpastedlg.h"
 #include "pparamschangelistener.h"
 #include "../rtengine/profilestore.h"

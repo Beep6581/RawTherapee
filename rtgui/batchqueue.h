@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 
 #include "batchqueueentry.h"
+#include "lwbutton.h"
 #include "lwbuttonset.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"

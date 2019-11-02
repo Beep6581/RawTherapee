@@ -20,7 +20,6 @@
 
 #include <gtkmm.h>
 
-#include "batchtoolpanelcoord.h"
 #include "dirbrowser.h"
 #include "exportpanel.h"
 #include "filecatalog.h"
@@ -34,6 +33,7 @@
 
 #include "../rtengine/noncopyable.h"
 
+class BatchToolPanelCoordinator;
 class RTWindow;
 
 class FilePanel final :

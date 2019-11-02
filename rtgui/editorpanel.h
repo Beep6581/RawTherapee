@@ -31,7 +31,6 @@
 #include "progressconnector.h"
 #include "saveasdlg.h"
 #include "thumbnaillistener.h"
-#include "toolpanelcoord.h"
 
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
@@ -39,6 +38,7 @@
 class EditorPanel;
 class MyProgressBar;
 class Thumbnail;
+class ToolPanelCoordinator;
 
 struct EditorPanelIdleHelper {
     EditorPanel* epanel;

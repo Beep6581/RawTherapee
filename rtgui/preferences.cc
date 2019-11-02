@@ -25,8 +25,10 @@
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include "../rtengine/iccstore.h"
+#include "../rtengine/procparams.h"
 #include <sstream>
 #include "rtimage.h"
+#include "rtwindow.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif

@@ -34,12 +34,16 @@
 #include <locale.h>
 #include <lensfun.h>
 #include "cachemanager.h"
+#include "editorpanel.h"
+#include "filecatalog.h"
+#include "filepanel.h"
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/procparams.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>

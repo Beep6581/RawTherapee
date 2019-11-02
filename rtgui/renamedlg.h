@@ -20,10 +20,11 @@
 
 #include <gtkmm.h>
 
-#include "cacheimagedata.h"
 #include "guiutils.h"
 
 #define RESPONSE_ALL 100
+
+class CacheImageData;
 
 class RenameDialog :
     public Gtk::Dialog

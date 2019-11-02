@@ -16,6 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include "bayerpreprocess.h"
+#include "bayerprocess.h"
+
 #include "multilangmgr.h"
 #include "batchtoolpanelcoord.h"
 #include "options.h"
