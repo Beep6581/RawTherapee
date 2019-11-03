@@ -633,6 +633,13 @@ Locallab::Locallab():
     mergecolMethod->append(M("TP_LOCALLAB_MERONE"));
     mergecolMethod->append(M("TP_LOCALLAB_MERTWO"));
     mergecolMethod->append(M("TP_LOCALLAB_MERTHR"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERFOU"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERFIV"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERSIX"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERSEV"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERHEI"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERNIN"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERTEN"));
     mergecolMethod->set_active(0);
     mergecolMethodConn = mergecolMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::mergecolMethodChanged));
 
@@ -3489,6 +3496,20 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "two";
                     } else if (mergecolMethod->get_active_row_number() == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "thr";
+                    } else if (mergecolMethod->get_active_row_number() == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "fou";
+                    } else if (mergecolMethod->get_active_row_number() == 4) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "fiv";
+                    } else if (mergecolMethod->get_active_row_number() == 5) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "six";
+                    } else if (mergecolMethod->get_active_row_number() == 6) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "sev";
+                    } else if (mergecolMethod->get_active_row_number() == 7) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "hei";
+                    } else if (mergecolMethod->get_active_row_number() == 8) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "nin";
+                    } else if (mergecolMethod->get_active_row_number() == 9) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "ten";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
@@ -8545,7 +8566,21 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             mergecolMethod->set_active(1);
         } else if (pp->locallab.spots.at(index).mergecolMethod == "thr") {
             mergecolMethod->set_active(2);
-        }
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "fou") {
+            mergecolMethod->set_active(3);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "fiv") {
+            mergecolMethod->set_active(4);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "six") {
+            mergecolMethod->set_active(5);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "sev") {
+            mergecolMethod->set_active(6);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "hei") {
+            mergecolMethod->set_active(7);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "nin") {
+            mergecolMethod->set_active(8);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "ten") {
+            mergecolMethod->set_active(9);
+       }
 
 
         if (pp->locallab.spots.at(index).scalereti == 1) {
