@@ -2173,6 +2173,7 @@ TP_LOCALLAB_MERHEI;Overlay
 TP_LOCALLAB_MERNIN;Screen
 TP_LOCALLAB_MERTEN;Darken only
 TP_LOCALLAB_MERELE;Lighten only
+TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves are used.\nDisabled in Inverse
 TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_CSTHRESHOLDBLUR;Mask Wavelet level
