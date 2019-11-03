@@ -2897,7 +2897,10 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
             r->mergeMethod = 2;
             merge1colFrame->show();
             mergecolFrame->hide();
-            
+        } else if (pp->locallab.spots.at(i).mergeMethod == "origmas") {
+            r->mergeMethod = 3;
+            merge1colFrame->show();
+            mergecolFrame->show();
         }
 
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
@@ -3027,6 +3030,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 r->mergeMethod = 2;
                 merge1colFrame->show();
                 mergecolFrame->hide();
+            } else if (newSpot->mergeMethod == "origmas") {
+                r->mergeMethod = 3;
+                merge1colFrame->show();
+                mergecolFrame->show();
                 
             }
 
@@ -3265,6 +3272,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 r->mergeMethod = 2;
                 merge1colFrame->show();
                 mergecolFrame->hide();
+            } else if (newSpot->mergeMethod == "origmas") {
+                r->mergeMethod = 3;
+                merge1colFrame->show();
+                mergecolFrame->show();
             }
 
             r->sensiexclu = newSpot->sensiexclu;
@@ -3420,6 +3431,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "orig";
                         merge1colFrame->show();
                         mergecolFrame->hide();
+                    } else if (r->mergeMethod == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "origmas";
+                        merge1colFrame->show();
+                        mergecolFrame->show();
                         
                     }
 

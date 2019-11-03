@@ -289,6 +289,7 @@ ControlSpotPanel::ControlSpotPanel():
     mergeMethod_->append(M("TP_LOCALLAB_MERGENONE"));
     mergeMethod_->append(M("TP_LOCALLAB_MERGEONE"));
     mergeMethod_->append(M("TP_LOCALLAB_MERGETWO"));
+    mergeMethod_->append(M("TP_LOCALLAB_MERGETHR"));
     mergeMethod_->set_active(0);
     mergeMethodconn_ = mergeMethod_->signal_changed().connect(
                           sigc::mem_fun(

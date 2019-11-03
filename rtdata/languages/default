@@ -2157,7 +2157,8 @@ TP_LOCALLAB_MERGETYPE;Merge image and mask
 TP_LOCALLAB_MERGETYPE_TOOLTIP;None, use all mask in LCH mode.\nShort curves 'L' mask, use a short circuit for mask 2, 3, 4, 6, 7.\nOriginal mask 7, blend current image with original
 TP_LOCALLAB_MERGENONE;None
 TP_LOCALLAB_MERGEONE;Short Curves 'L' Mask
-TP_LOCALLAB_MERGETWO;Original (Mask 7)
+TP_LOCALLAB_MERGETWO;Original(Mask 7)
+TP_LOCALLAB_MERGETHR;Original(Mask 7) + Mask LCH
 TP_LOCALLAB_MERGE1COLFRA;Merge with Original
 TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_MERGECOLFRA;Mask LCH

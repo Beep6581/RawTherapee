@@ -593,6 +593,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mergemet = 1;
     } else if (locallab.spots.at(sp).mergeMethod == "orig") {
         lp.mergemet = 2;
+    } else if (locallab.spots.at(sp).mergeMethod == "origmas") {
+        lp.mergemet = 3;
     }
 
     if (locallab.spots.at(sp).mergecolMethod == "one") {
@@ -11415,7 +11417,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         float b_base = lp.lowB / scaling;
         bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
 
-        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet == 2 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet >= 2 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
             /*
             //test for fftw blur with tiles  fftw_tile_blur....not good we can see tiles - very long time
                         int GW = original->W;
@@ -11651,8 +11653,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
                     float amountcd = 0.f;
                     float anchorcd = 50.f;
-
-                    maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
+                    if(lp.mergemet != 2) {
+                        maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
                                 level_bl, level_hl, level_br, level_hr,
@@ -11660,12 +11662,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                                );
 
-                    if (lp.showmaskcolmet == 3) {
-                        showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
+                        if (lp.showmaskcolmet == 3) {
+                            showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
 
-                        return;
+                            return;
+                        }
                     }
-
                     if (lp.showmaskcolmet == 4) {
                         return;
                     }
@@ -11759,7 +11761,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             }
 
-                        if (lp.mergemet == 2) { //merge result with original
+                        if (lp.mergemet >= 2) { //merge result with original
                             std::unique_ptr<LabImage> bufcolreserv;
                             bufcolreserv.reset(new LabImage(bfw, bfh));
 //printf("method=%i \n", lp.mergecolMethod);
