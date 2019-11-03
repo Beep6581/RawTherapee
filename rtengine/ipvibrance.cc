@@ -28,10 +28,6 @@
 #include "color.h"
 #include "procparams.h"
 #include "StopWatch.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 
 using namespace std;
 

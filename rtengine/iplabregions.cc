@@ -18,10 +18,6 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "color.h"
 #include "curves.h"
 #include "guidedfilter.h"

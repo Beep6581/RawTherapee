@@ -29,9 +29,6 @@
 #include "rt_algo.h"
 //#define BENCHMARK
 #include "StopWatch.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 #include "opthelper.h"
 #include "../rtgui/multilangmgr.h"
 

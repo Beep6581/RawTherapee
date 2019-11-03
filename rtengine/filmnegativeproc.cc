@@ -19,10 +19,6 @@
 #include <cmath>
 #include <iostream>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "rawimage.h"
 #include "rawimagesource.h"
 

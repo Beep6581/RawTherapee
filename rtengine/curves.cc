@@ -23,9 +23,6 @@
 #include <cstring>
 #include <glib.h>
 #include <glib/gstdio.h>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include "rt_math.h"
 
