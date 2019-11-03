@@ -33,7 +33,7 @@ namespace {
 void cfaboxblur(const float* const * riFlatFile, float* cfablur, int boxH, int boxW, int H, int W)
 {
     if (boxW < 0 || boxH < 0 || (boxW == 0 && boxH == 0)) { // nothing to blur or negative values
-        memcpy(cfablur, riFlatFile[0], W * H * sizeof(float));
+        memcpy(cfablur, riFlatFile[0], static_cast<unsigned long>(W) * H * sizeof(float));
         return;
     }
 
