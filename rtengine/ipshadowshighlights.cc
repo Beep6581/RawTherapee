@@ -20,6 +20,7 @@
 
 #include "improcfun.h"
 
+#include "color.h"
 #include "curves.h"
 #include "gauss.h"
 #include "guidedfilter.h"

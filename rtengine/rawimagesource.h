@@ -23,7 +23,6 @@
 #include <memory>
 
 #include "array2D.h"
-#include "color.h"
 #include "colortemp.h"
 #include "iimage.h"
 #include "imagesource.h"

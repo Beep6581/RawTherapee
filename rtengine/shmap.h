@@ -18,8 +18,12 @@
  */
 #pragma once
 
-#include "LUT.h"
 #include "noncopyable.h"
+
+template<typename T>
+class LUT;
+
+using LUTf = LUT<float>;
 
 namespace rtengine
 {

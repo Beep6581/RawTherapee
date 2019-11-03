@@ -29,6 +29,7 @@
 #include "array2D.h"
 #include "boxblur.h"
 #include "cplx_wavelet_dec.h"
+#include "color.h"
 #include "curves.h"
 #include "iccmatrices.h"
 #include "iccstore.h"

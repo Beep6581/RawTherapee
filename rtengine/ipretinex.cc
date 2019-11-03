@@ -41,6 +41,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "color.h"
 #include "curves.h"
 #include "gauss.h"
 #include "improcfun.h"

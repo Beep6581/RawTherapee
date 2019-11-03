@@ -26,9 +26,12 @@
 #include "curvelistener.h"
 #include "mycurve.h"
 
-#include "../rtengine/LUT.h"
 #include "../rtengine/diagonalcurvetypes.h"
 
+template<typename T>
+class LUT;
+
+using LUTf = LUT<float>;
 
 class DiagonalCurveDescr
 {

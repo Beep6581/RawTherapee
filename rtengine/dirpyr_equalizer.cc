@@ -24,7 +24,9 @@
 
 #include "array2D.h"
 #include "cieimage.h"
+#include "color.h"
 #include "improcfun.h"
+#include "LUT.h"
 #include "opthelper.h"
 #include "rt_math.h"
 #include "settings.h"

@@ -28,6 +28,11 @@
 #include "LUT.h"
 #include "rtengine.h"
 
+template<typename T>
+class LUT;
+
+using LUTf = LUT<float>;
+
 template<typename T, const size_t num>
 class multi_array2D;
 

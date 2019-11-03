@@ -29,6 +29,7 @@
 #include "../rtgui/threadutils.h"
 
 #include "array2D.h"
+#include "color.h"
 #include "curves.h"
 #include "EdgePreservingDecomposition.h"
 #include "iccstore.h"

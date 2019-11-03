@@ -66,6 +66,7 @@
 #include <math.h>
 
 #include "array2D.h"
+#include "color.h"
 #include "iccstore.h"
 #include "imagefloat.h"
 #include "improcfun.h"

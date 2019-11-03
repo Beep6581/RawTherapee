@@ -20,12 +20,16 @@
 
 #include <memory>
 
-#include "color.h"
 #include "coord2d.h"
 #include "gamutwarning.h"
-#include "LUT.h"
 #include "pipettebuffer.h"
 #include "shmap.h"
+
+template<typename T>
+class LUT;
+
+using LUTu = LUT<uint32_t>;
+using LUTf = LUT<float>;
 
 template<typename T, const size_t num>
 class multi_array2D;

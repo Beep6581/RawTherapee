@@ -29,7 +29,6 @@
 
 #include "iimage.h"
 #include "imageformat.h"
-#include "LUT.h"
 #include "procevents.h"
 #include "rawmetadatalocation.h"
 #include "rt_math.h"
@@ -42,6 +41,11 @@
  * This file contains the main functionality of the RawTherapee engine.
  *
  */
+
+template<typename T>
+class LUT;
+
+using LUTu = LUT<uint32_t>;
 
 class EditDataProvider;
 namespace rtexif

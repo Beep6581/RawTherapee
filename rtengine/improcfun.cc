@@ -42,6 +42,7 @@
 #include "improccoordinator.h"
 #include "clutstore.h"
 #include "ciecam02.h"
+#include "satandvalueblendingcurve.h"
 #include "StopWatch.h"
 #include "procparams.h"
 #include "../rtgui/ppversion.h"

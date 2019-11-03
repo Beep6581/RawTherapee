@@ -23,6 +23,7 @@
 //
 ////////////////////////////////////////////////////////////////
 
+#include "color.h"
 #include "jaggedarray.h"
 #include "procparams.h"
 #include "rawimagesource.h"

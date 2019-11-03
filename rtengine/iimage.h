@@ -21,9 +21,9 @@
 #include <vector>
 
 #include <glibmm/ustring.h>
+#include <lcms2.h>
 
 #include "alignedbuffer.h"
-#include "color.h"
 #include "coord2d.h"
 #include "imagedimensions.h"
 #include "LUT.h"
@@ -59,6 +59,7 @@ extern const char sImage16[];
 extern const char sImagefloat[];
 
 int getCoarseBitMask(const procparams::CoarseTransformParams& coarse);
+int igammasrgb(float in);
 
 enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 
@@ -964,9 +965,9 @@ public:
                 convertTo<T, float>(r(i, j), r_);
                 convertTo<T, float>(g(i, j), g_);
                 convertTo<T, float>(b(i, j), b_);
-                histogram[(int)Color::igamma_srgb (r_) >> histcompr]++;
-                histogram[(int)Color::igamma_srgb (g_) >> histcompr]++;
-                histogram[(int)Color::igamma_srgb (b_) >> histcompr]++;
+                histogram[igammasrgb (r_) >> histcompr]++;
+                histogram[igammasrgb (g_) >> histcompr]++;
+                histogram[igammasrgb (b_) >> histcompr]++;
             }
     }
 
@@ -982,9 +983,9 @@ public:
                 convertTo<T, float>(r(i, j), r_);
                 convertTo<T, float>(g(i, j), g_);
                 convertTo<T, float>(b(i, j), b_);
-                int rtemp = Color::igamma_srgb (r_);
-                int gtemp = Color::igamma_srgb (g_);
-                int btemp = Color::igamma_srgb (b_);
+                int rtemp = igammasrgb (r_);
+                int gtemp = igammasrgb (g_);
+                int btemp = igammasrgb (b_);
 
                 histogram[rtemp >> compression]++;
                 histogram[gtemp >> compression] += 2;
@@ -1573,9 +1574,9 @@ public:
                 convertTo<T, float>(r(i, j), r_);
                 convertTo<T, float>(g(i, j), g_);
                 convertTo<T, float>(b(i, j), b_);
-                histogram[(int)Color::igamma_srgb (r_) >> histcompr]++;
-                histogram[(int)Color::igamma_srgb (g_) >> histcompr]++;
-                histogram[(int)Color::igamma_srgb (b_) >> histcompr]++;
+                histogram[igammasrgb (r_) >> histcompr]++;
+                histogram[igammasrgb (g_) >> histcompr]++;
+                histogram[igammasrgb (b_) >> histcompr]++;
             }
     }
 
@@ -1591,9 +1592,9 @@ public:
                 convertTo<T, float>(r(i, j), r_);
                 convertTo<T, float>(g(i, j), g_);
                 convertTo<T, float>(b(i, j), b_);
-                int rtemp = Color::igamma_srgb (r_);
-                int gtemp = Color::igamma_srgb (g_);
-                int btemp = Color::igamma_srgb (b_);
+                int rtemp = igammasrgb (r_);
+                int gtemp = igammasrgb (g_);
+                int btemp = igammasrgb (b_);
 
                 histogram[rtemp >> compression]++;
                 histogram[gtemp >> compression] += 2;

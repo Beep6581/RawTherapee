@@ -19,6 +19,7 @@
 //
 ////////////////////////////////////////////////////////////////
 
+#include "color.h"
 #include "rtengine.h"
 #include "rawimage.h"
 #include "rawimagesource.h"

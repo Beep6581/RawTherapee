@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "color.h"
 #include "procparams.h"
 #include "rtengine.h"
 
@@ -44,4 +45,7 @@ int rtengine::getCoarseBitMask( const procparams::CoarseTransformParams &coarse)
     }
 
     return tr;
+}
+int rtengine::igammasrgb(float in) {
+    return Color::igamma_srgb(in);
 }

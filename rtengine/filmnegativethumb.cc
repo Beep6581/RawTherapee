@@ -18,9 +18,11 @@
  */
 #include <cmath>
 
+#include "LUT.h"
 #include "rtengine.h"
 #include "rtthumbnail.h"
 #include "opthelper.h"
+#include "sleef.c"
 #include "rt_algo.h"
 #include "settings.h"
 #include "procparams.h"

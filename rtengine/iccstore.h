@@ -27,8 +27,6 @@
 
 #include <lcms2.h>
 
-#include "color.h"
-
 namespace rtengine
 {
 

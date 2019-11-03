@@ -30,6 +30,7 @@
 #include "gauss.h"
 #include "improcfun.h"
 #include "cieimage.h"
+#include "color.h"
 #include "curves.h"
 #include "labimage.h"
 #include "sleef.c"

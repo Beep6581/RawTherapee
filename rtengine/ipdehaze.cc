@@ -32,6 +32,7 @@
 #include <iostream>
 #include <vector>
 
+#include "color.h"
 #include "guidedfilter.h"
 #include "iccstore.h"
 #include "imagefloat.h"

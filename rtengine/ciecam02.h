@@ -20,8 +20,13 @@
 
 #include <cmath>
 
-#include "LUT.h"
 #include "opthelper.h"
+
+template<typename T>
+class LUT;
+
+using LUTu = LUT<uint32_t>;
+using LUTf = LUT<float>;
 
 namespace rtengine
 {

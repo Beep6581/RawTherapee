@@ -22,6 +22,7 @@
 #include "rtengine.h"
 #include "rt_math.h"
 #include "rawimagesource.h"
+#include "sleef.c"
 #include "jaggedarray.h"
 #undef THREAD_PRIORITY_NORMAL
 #include "opthelper.h"

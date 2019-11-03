@@ -27,6 +27,7 @@
 #include <glibmm/keyfile.h>
 
 #include "cieimage.h"
+#include "color.h"
 #include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"

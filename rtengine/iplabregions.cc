@@ -22,6 +22,7 @@
 #include <omp.h>
 #endif
 
+#include "color.h"
 #include "curves.h"
 #include "guidedfilter.h"
 #include "iccstore.h"

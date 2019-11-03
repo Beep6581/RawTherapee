@@ -28,6 +28,7 @@
 #include "dcp.h"
 
 #include "cJSON.h"
+#include "color.h"
 #include "iccmatrices.h"
 #include "iccstore.h"
 #include "imagefloat.h"

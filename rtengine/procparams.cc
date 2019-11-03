@@ -26,6 +26,7 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/keyfile.h>
 
+#include "color.h"
 #include "curves.h"
 #include "procparams.h"
 #include "utils.h"

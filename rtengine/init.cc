@@ -18,6 +18,7 @@
  */
 #include <fftw3.h>
 #include "../rtgui/profilestorecombobox.h"
+#include "color.h"
 #include "rtengine.h"
 #include "iccstore.h"
 #include "dcp.h"

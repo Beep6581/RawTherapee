@@ -25,6 +25,7 @@
 #include "image16.h"
 #include "image8.h"
 #include "imagefloat.h"
+#include "LUT.h"
 #include "rawmetadatalocation.h"
 
 #include "../rtgui/threadutils.h"

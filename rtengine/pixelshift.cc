@@ -28,7 +28,7 @@
 #include "median.h"
 #include "procparams.h"
 #include "rawimagesource.h"
-
+#include "sleef.c"
 #include "../rtgui/multilangmgr.h"
 #include "../rtgui/options.h"
 
