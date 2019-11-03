@@ -25,8 +25,7 @@
 #include "improcfun.h"
 #include "labimage.h"
 #include "procparams.h"
-
-#include "sleef.c"
+#include "sleef.h"
 
 //#define BENCHMARK
 #include "StopWatch.h"

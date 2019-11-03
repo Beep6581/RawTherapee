@@ -22,7 +22,7 @@
 #include "rtengine.h"
 #include "rtthumbnail.h"
 #include "opthelper.h"
-#include "sleef.c"
+#include "sleef.h"
 #include "rt_algo.h"
 #include "settings.h"
 #include "procparams.h"

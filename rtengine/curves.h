@@ -30,7 +30,7 @@
 #include "pipettebuffer.h"
 #include "noncopyable.h"
 #include "LUT.h"
-#include "sleef.c"
+#include "sleef.h"
 #define CURVES_MIN_POLY_POINTS  1000
 
 #include "rt_math.h"

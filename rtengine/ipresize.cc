@@ -25,7 +25,7 @@
 #include "opthelper.h"
 #include "rt_math.h"
 #include "procparams.h"
-#include "sleef.c"
+#include "sleef.h"
 
 //#define PROFILE
 

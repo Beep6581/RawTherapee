@@ -25,7 +25,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
-#include "sleef.c"
+#include "sleef.h"
 
 using namespace std;
 

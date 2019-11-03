@@ -20,7 +20,7 @@
 #include "rt_math.h"
 #include "curves.h"
 #include <math.h>
-#include "sleef.c"
+#include "sleef.h"
 
 #ifdef _DEBUG
 #include "settings.h"

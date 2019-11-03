@@ -6,9 +6,7 @@
 //  This version contains modifications made by Ingo Weyrich
 //
 ////////////////////////////////////////////////////////////////
-
-#ifndef _SLEEFC_
-#define _SLEEFC_
+#pragma once
 
 #include <assert.h>
 #include <stdint.h>
@@ -1275,5 +1273,3 @@ __inline float xlog2lin(float x, float base)
     constexpr float one(1);
     return (pow_F(base, x) - one) / (base - one);
 }
-
-#endif

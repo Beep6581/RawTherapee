@@ -22,7 +22,7 @@
 #include "labimage.h"
 #include "improcfun.h"
 #include "cieimage.h"
-#include "sleef.c"
+#include "sleef.h"
 #include "opthelper.h"
 #include "gauss.h"
 

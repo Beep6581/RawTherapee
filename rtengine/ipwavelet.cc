@@ -41,7 +41,7 @@
 #include "procparams.h"
 #include "rt_math.h"
 #include "rtengine.h"
-#include "sleef.c"
+#include "sleef.h"
 #include "../rtgui/options.h"
 
 #ifdef _OPENMP

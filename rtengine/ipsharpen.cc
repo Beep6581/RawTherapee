@@ -28,7 +28,7 @@
 #include "rt_algo.h"
 #include "rt_math.h"
 #include "settings.h"
-#include "sleef.c"
+#include "sleef.h"
 
 //#define BENCHMARK
 #include "StopWatch.h"

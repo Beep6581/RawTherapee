@@ -28,7 +28,7 @@
 #include "procparams.h"
 #include "rt_algo.h"
 #include "rtengine.h"
-#include "sleef.c"
+#include "sleef.h"
 //#define BENCHMARK
 #include "StopWatch.h"
 

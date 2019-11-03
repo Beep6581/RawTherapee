@@ -28,8 +28,7 @@
 #include "labimage.h"
 #include "opthelper.h"
 #include "procparams.h"
-
-#include "sleef.c"
+#include "sleef.h"
 
 namespace rtengine
 {

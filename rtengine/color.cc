@@ -20,7 +20,7 @@
 #include "rtengine.h"
 #include "color.h"
 #include "iccmatrices.h"
-#include "sleef.c"
+#include "sleef.h"
 #include "opthelper.h"
 #include "iccstore.h"
 

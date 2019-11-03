@@ -75,7 +75,7 @@
 #include "rescale.h"
 #include "rt_algo.h"
 #include "settings.h"
-#include "sleef.c"
+#include "sleef.h"
 #include "StopWatch.h"
 
 namespace rtengine

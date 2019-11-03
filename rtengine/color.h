@@ -26,7 +26,7 @@
 #include "LUT.h"
 #include "iccmatrices.h"
 #include "lcms2.h"
-#include "sleef.c"
+#include "sleef.h"
 
 #define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
 

@@ -42,7 +42,7 @@
 #include "opthelper.h"
 #include "procparams.h"
 #include "rt_math.h"
-#include "sleef.c"
+#include "sleef.h"
 
 #include "../rtgui/threadutils.h"
 #include "../rtgui/options.h"

@@ -33,7 +33,7 @@
 #include "color.h"
 #include "curves.h"
 #include "labimage.h"
-#include "sleef.c"
+#include "sleef.h"
 #include "curves.h"
 #include "rt_math.h"
 #include "opthelper.h"
