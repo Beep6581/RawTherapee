@@ -609,14 +609,16 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mergecolMethod = 5;
     } else if (locallab.spots.at(sp).mergecolMethod == "sev") {
         lp.mergecolMethod = 6;
-    } else if (locallab.spots.at(sp).mergecolMethod == "hei") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "sev2") {
         lp.mergecolMethod = 7;
-    } else if (locallab.spots.at(sp).mergecolMethod == "nin") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "hei") {
         lp.mergecolMethod = 8;
-    } else if (locallab.spots.at(sp).mergecolMethod == "ten") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "nin") {
         lp.mergecolMethod = 9;
-    } else if (locallab.spots.at(sp).mergecolMethod == "ele") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "ten") {
         lp.mergecolMethod = 10;
+    } else if (locallab.spots.at(sp).mergecolMethod == "ele") {
+        lp.mergecolMethod = 11;
     }
 
     lp.opacol = 0.01f * locallab.spots.at(sp).opacol;
@@ -11880,7 +11882,29 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         }
                                     }
 
-                                    else if(lp.mergecolMethod == 7) {//overlay overlay (float &a, float &b)
+                                    else if(lp.mergecolMethod == 7) {//hard light overlay (float &b, float &a)
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                                        for (int y = 0; y < bfh ; y++) {
+                                            for (int x = 0; x < bfw; x++) {
+                                                float a = tmpImageorig->r(y, x);
+                                                float b = tmpImagereserv->r(y, x);
+                                                overlay(b, a);
+                                                tmpImageorig->r(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                                a = tmpImageorig->g(y, x);
+                                                b = tmpImagereserv->g(y, x);
+                                                overlay(b, a);
+                                                tmpImageorig->g(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                                a = tmpImageorig->b(y, x);
+                                                b = tmpImagereserv->b(y, x);
+                                                overlay(b, a);
+                                                tmpImageorig->b(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            }
+                                        }
+                                    }
+
+                                    else if(lp.mergecolMethod == 8) {//overlay overlay(float &a, float &b)
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -11902,7 +11926,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         }
                                     }
 
-                                    else if(lp.mergecolMethod == 8) {//screen screen (float &a, float &b)
+                                    else if(lp.mergecolMethod == 9) {//screen screen (float &a, float &b)
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -11923,7 +11947,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             }
                                         }
                                     }
-                                    else if(lp.mergecolMethod == 9) {//darken only
+                                    else if(lp.mergecolMethod == 10) {//darken only
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -11935,7 +11959,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             }
                                         }
                                     }
-                                    else if(lp.mergecolMethod == 10) {//lighten only
+                                    else if(lp.mergecolMethod == 11) {//lighten only
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
