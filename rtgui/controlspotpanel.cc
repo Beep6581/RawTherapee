@@ -182,7 +182,7 @@ ControlSpotPanel::ControlSpotPanel():
                           sigc::mem_fun(
                               *this, &ControlSpotPanel::spotMethodChanged));
     ctboxspotmethod->pack_start(*spotMethod_);
-//    pack_start(*ctboxspotmethod);
+    pack_start(*ctboxspotmethod);
 
     excluFrame->set_label_align(0.025, 0.5);
     if(showtooltip) excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));

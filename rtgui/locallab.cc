@@ -640,6 +640,7 @@ Locallab::Locallab():
     mergecolMethod->append(M("TP_LOCALLAB_MERHEI"));
     mergecolMethod->append(M("TP_LOCALLAB_MERNIN"));
     mergecolMethod->append(M("TP_LOCALLAB_MERTEN"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERELE"));
     mergecolMethod->set_active(0);
     mergecolMethodConn = mergecolMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::mergecolMethodChanged));
 
@@ -3510,6 +3511,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "nin";
                     } else if (mergecolMethod->get_active_row_number() == 9) {
                         pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "ten";
+                    } else if (mergecolMethod->get_active_row_number() == 10) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "ele";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
@@ -8580,6 +8583,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             mergecolMethod->set_active(8);
         } else if (pp->locallab.spots.at(index).mergecolMethod == "ten") {
             mergecolMethod->set_active(9);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "ele") {
+            mergecolMethod->set_active(10);
        }
 
 

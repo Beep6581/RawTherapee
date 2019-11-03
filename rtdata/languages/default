@@ -2163,14 +2163,15 @@ TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_MERGECOLFRA;Mask LCH
 TP_LOCALLAB_MERONE;Normal
 TP_LOCALLAB_MERTWO;Substract
-TP_LOCALLAB_MERTHR;Multiply
-TP_LOCALLAB_MERFOU;Addition
-TP_LOCALLAB_MERFIV;Divide
-TP_LOCALLAB_MERSIX;Soft Light
-TP_LOCALLAB_MERSEV;Overlay
-TP_LOCALLAB_MERHEI;Screen
-TP_LOCALLAB_MERNIN;Darken only
-TP_LOCALLAB_MERTEN;Lighten only
+TP_LOCALLAB_MERTHR;Difference
+TP_LOCALLAB_MERFOU;Multiply
+TP_LOCALLAB_MERFIV;Addition
+TP_LOCALLAB_MERSIX;Divide
+TP_LOCALLAB_MERSEV;Soft Light
+TP_LOCALLAB_MERHEI;Overlay
+TP_LOCALLAB_MERNIN;Screen
+TP_LOCALLAB_MERTEN;Darken only
+TP_LOCALLAB_MERELE;Lighten only
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves are used.\nDisabled in Inverse
 TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_CSTHRESHOLDBLUR;Mask Wavelet level
