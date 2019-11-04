@@ -16,14 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _RECENTBROWSER_
-#define _RECENTBROWSER_
+#pragma once
 
 #include <gtkmm.h>
-#include "multilangmgr.h"
-#include "guiutils.h"
 
-class RecentBrowser : public Gtk::VBox
+#include "guiutils.h"
+#include "multilangmgr.h"
+
+class RecentBrowser :
+    public Gtk::VBox
 {
 public:
     typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
@@ -47,7 +48,3 @@ inline void RecentBrowser::setDirSelector (const RecentBrowser::DirSelectionSlot
 {
     this->selectDir = selectDir;
 }
-
-#endif
-
-

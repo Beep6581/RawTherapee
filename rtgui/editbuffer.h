@@ -22,10 +22,6 @@
 #include "../rtengine/coord.h"
 #include <cairomm/cairomm.h>
 
-#ifdef GUIVERSION
-#include "rtsurface.h"
-#endif
-
 class EditDataProvider;
 class EditSubscriber;
 

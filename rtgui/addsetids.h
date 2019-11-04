@@ -1,6 +1,4 @@
-#ifndef _ADDSETIDS_
-#define _ADDSETIDS_
-
+#pragma once
 
 //          UPDATE THE DEFAULT VALUE IN OPTIONS.CC  int babehav[] TOO !!!
 
@@ -146,5 +144,3 @@ enum {
 
     ADDSET_PARAM_NUM // THIS IS USED AS A DELIMITER!!
 };
-
-#endif

@@ -16,18 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _MYCURVE_
-#define _MYCURVE_
+#pragma once
+
+#include <vector>
 
 #include <gtkmm.h>
-#include <vector>
-#include "curvelistener.h"
-#include "cursormanager.h"
+
 #include "coloredbar.h"
 #include "coordinateadjuster.h"
+#include "cursormanager.h"
+#include "curvelistener.h"
+
 #include "../rtengine/LUT.h"
-#include "guiutils.h"
-#include "options.h"
 #include "../rtengine/noncopyable.h"
 
 #define RADIUS          3.5 /** radius of the control points ; must be x.5 to target the center of a pixel */
@@ -55,6 +55,7 @@ enum SnapToType {
 
 class MyCurveIdleHelper;
 class CurveEditor;
+class EditDataProvider;
 
 class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller, public CoordinateProvider, public rtengine::NonCopyable
 {
@@ -152,5 +153,3 @@ public:
         myCurve->setDirty(true);
     }
 };
-
-#endif

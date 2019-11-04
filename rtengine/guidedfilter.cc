@@ -29,15 +29,19 @@
  * available at https://arxiv.org/abs/1505.00996
 */
 
-#include "guidedfilter.h"
 #include "boxblur.h"
-#include "rescale.h"
+#include "guidedfilter.h"
 #include "imagefloat.h"
+#include "rescale.h"
+
 #define BENCHMARK
 #include "StopWatch.h"
-namespace rtengine {
 
-namespace {
+namespace rtengine
+{
+
+namespace
+{
 
 int calculate_subsampling(int w, int h, int r)
 {
@@ -59,7 +63,6 @@ int calculate_subsampling(int w, int h, int r)
 }
 
 } // namespace
-
 
 void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling)
 {

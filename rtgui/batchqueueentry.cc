@@ -25,8 +25,10 @@
 #include "rtimage.h"
 #include "multilangmgr.h"
 #include "thumbbrowserbase.h"
+#include "thumbnail.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/rtengine.h"
 
 bool BatchQueueEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;

@@ -2,6 +2,9 @@
  *  This file is part of RawTherapee.
  */
 #include "camconst.h"
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/ustring.h>
 #include "settings.h"
 #include "rt_math.h"
 #include <cstdio>
@@ -16,8 +19,6 @@
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 CameraConst::CameraConst() : pdafOffset(0)
 {

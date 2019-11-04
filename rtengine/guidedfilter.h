@@ -22,7 +22,8 @@
 
 #include "array2D.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling=0);
 

@@ -23,7 +23,8 @@
 #include "array2D.h"
 #include "rt_math.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 inline float getBilinearValue(const array2D<float> &src, float x, float y)
 {
@@ -95,6 +96,5 @@ inline void rescaleNearest(const array2D<float> &src, array2D<float> &dst, bool 
         }
     }
 }
-
 
 } // namespace rtengine

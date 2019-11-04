@@ -16,18 +16,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _DEFRINGE_H_
-#define _DEFRINGE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
-#include "toolpanel.h"
-#include "guiutils.h"
+#include "colorprovider.h"
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
-#include "colorprovider.h"
+#include "guiutils.h"
+#include "toolpanel.h"
 
-class Defringe : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
+class Defringe :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public CurveListener,
+    public ColorProvider
 {
 
 protected:
@@ -54,5 +59,3 @@ public:
     void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 
 };
-
-#endif

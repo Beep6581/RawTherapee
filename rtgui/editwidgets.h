@@ -20,12 +20,14 @@
 
 #ifdef GUIVERSION
 
-#include "rtsurface.h"
+#include <glibmm/ustring.h>
+
 #include "editbuffer.h"
 #include "editcoordsys.h"
 #include "../rtengine/coord.h"
 
 class ObjectMOBuffer;
+class RTSurface;
 
 /** @file
  *

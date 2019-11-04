@@ -16,13 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _SENSORXTRANS_H_
-#define _SENSORXTRANS_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "toolpanel.h"
 
-class SensorXTrans : public ToolParamBlock, public FoldableToolPanel
+class SensorXTrans :
+    public ToolParamBlock,
+    public FoldableToolPanel
 {
 
 protected:
@@ -37,5 +39,3 @@ public:
         return packBox;
     }
 };
-
-#endif

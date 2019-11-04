@@ -19,6 +19,7 @@
 #include "toolpanel.h"
 #include "toolpanelcoord.h"
 #include "guiutils.h"
+#include "rtimage.h"
 
 #include "../rtengine/procparams.h"
 

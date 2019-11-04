@@ -21,14 +21,17 @@
  *
  *
  */
-#ifndef _SHARPENEDGE_H_
-#define _SHARPENEDGE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SharpenEdge : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class SharpenEdge :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -56,5 +59,3 @@ public:
     void chanthree_toggled   ();
 
 };
-
-#endif

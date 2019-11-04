@@ -20,6 +20,7 @@
 #include "../rtengine/curves.h"
 #include <cstring>
 #include <gdkmm/types.h>
+#include "rtscalable.h"
 
 MyCurve::MyCurve () :
     pipetteR(-1.f),

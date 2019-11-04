@@ -22,11 +22,10 @@
 
 #include "guiutils.h"
 #include "multilangmgr.h"
+#include "pathutils.h"
 #include "rtimage.h"
 
 #include "../rtengine/utils.h"
-
-extern Options options;
 
 namespace
 {

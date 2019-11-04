@@ -16,26 +16,37 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "improccoordinator.h"
-#include "curves.h"
-#include "mytime.h"
-#include "refreshmap.h"
-#include "../rtgui/ppversion.h"
-#include "colortemp.h"
-#include "improcfun.h"
-#include "iccstore.h"
-#include "procparams.h"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
+#include <glibmm/thread.h>
+
+#include "improccoordinator.h"
+
+#include "cieimage.h"
 #include "color.h"
+#include "colortemp.h"
+#include "curves.h"
+#include "dcp.h"
+#include "iccstore.h"
+#include "image8.h"
+#include "imagefloat.h"
+#include "improcfun.h"
+#include "labimage.h"
+#include "lcp.h"
+#include "procparams.h"
+#include "refreshmap.h"
+
+#include "../rtgui/options.h"
+#include "../rtgui/ppversion.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator() :
     orig_prev(nullptr),
@@ -731,7 +742,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double ggm = 33.;
                 double bbm = 33.;
 
-                DCPProfile::ApplyState as;
+                DCPProfileApplyState as;
                 DCPProfile *dcpProf = imgsrc->getDCP(params->icm, as);
 
                 ipf.rgbProc (oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, params->toneCurve.saturation,

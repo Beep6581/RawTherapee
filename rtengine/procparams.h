@@ -20,10 +20,11 @@
 
 #include <cmath>
 #include <cstdio>
+#include <map>
 #include <type_traits>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <lcms2.h>
 
 #include "noncopyable.h"

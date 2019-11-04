@@ -22,9 +22,14 @@
 #include <locale.h>
 
 #include <glib/gstdio.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/keyfile.h>
 
+#include "color.h"
 #include "curves.h"
 #include "procparams.h"
+#include "utils.h"
 
 #include "../rtgui/multilangmgr.h"
 #include "../rtgui/options.h"

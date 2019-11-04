@@ -16,14 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _EPD_H_
-#define _EPD_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class EdgePreservingDecompositionUI : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class EdgePreservingDecompositionUI :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 protected:
     Adjuster *strength;
@@ -45,5 +48,3 @@ public:
     void enabledChanged  () override;
     void setAdjusterBehavior (bool stAdd, bool gAdd, bool esAdd, bool scAdd, bool rAdd);
 };
-
-#endif

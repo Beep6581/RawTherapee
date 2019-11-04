@@ -16,15 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THUMBPROCESSINGPARAMETERS_
-#define _THUMBPROCESSINGPARAMETERS_
+#pragma once
 
-#include "rawmetadatalocation.h"
-#include <glibmm.h>
+#include <glibmm/ustring.h>
+
 #include <lcms2.h>
-#include "image8.h"
+
 #include "image16.h"
+#include "image8.h"
 #include "imagefloat.h"
+#include "LUT.h"
+#include "rawmetadatalocation.h"
+
 #include "../rtgui/threadutils.h"
 
 namespace rtengine
@@ -160,6 +163,3 @@ public:
     }
 };
 }
-
-#endif
-

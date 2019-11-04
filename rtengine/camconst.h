@@ -1,11 +1,11 @@
 /*
  *  This file is part of RawTherapee.
  */
-#ifndef __CAMCONST__
-#define __CAMCONST__
+#pragma once
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <map>
+#include <vector>
 
 namespace rtengine
 {
@@ -72,5 +72,3 @@ public:
 };
 
 }
-
-#endif

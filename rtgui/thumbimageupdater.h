@@ -16,17 +16,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THUMBIMAGEUPDATER_
-#define _THUMBIMAGEUPDATER_
+#pragma once
 
-#include <glibmm.h>
 #include <glib.h>
-
-#include "../rtengine/rtengine.h"
-#include "../rtengine/noncopyable.h"
 
 #include "thumbbrowserentrybase.h"
 
+#include "../rtengine/noncopyable.h"
+
+namespace rtengine
+{
+    class IImage8;
+
+namespace procparams
+{
+
+    struct CropParams;
+
+}
+
+}
 class ThumbImageUpdateListener
 {
 public:
@@ -101,5 +110,3 @@ private:
  * To use: \c thumbImageUpdater->start() ,
  */
 #define thumbImageUpdater ThumbImageUpdater::getInstance()
-
-#endif

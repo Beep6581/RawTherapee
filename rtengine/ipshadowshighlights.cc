@@ -20,13 +20,18 @@
 
 #include "improcfun.h"
 
+#include "color.h"
+#include "curves.h"
 #include "gauss.h"
 #include "guidedfilter.h"
+#include "iccstore.h"
+#include "labimage.h"
 #include "opthelper.h"
 #include "procparams.h"
-#include "sleef.c"
+#include "sleef.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 void ImProcFunctions::shadowsHighlights(LabImage *lab)
 {

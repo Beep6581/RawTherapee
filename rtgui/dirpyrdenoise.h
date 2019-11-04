@@ -16,17 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _DIRPYRDENOISE_H_
-#define _DIRPYRDENOISE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
-#include "toolpanel.h"
+#include "colorprovider.h"
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
-#include "colorprovider.h"
 #include "guiutils.h"
-#include "options.h"
+#include "toolpanel.h"
 
 class EditDataProvider;
 
@@ -138,5 +137,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif

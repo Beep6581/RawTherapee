@@ -18,22 +18,16 @@
  */
 #include <cmath>
 
+#include "LUT.h"
 #include "rtengine.h"
 #include "rtthumbnail.h"
 #include "opthelper.h"
+#include "sleef.h"
 #include "rt_algo.h"
-#include "rtengine.h"
 #include "settings.h"
 #include "procparams.h"
 #define BENCHMARK
 #include "StopWatch.h"
-
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
 
 void rtengine::Thumbnail::processFilmNegative(
     const procparams::ProcParams &params,

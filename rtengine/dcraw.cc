@@ -26,12 +26,13 @@
 /*RT*/#include <omp.h>
 /*RT*/#endif
 
+#include <memory>
 #include <utility>
 #include <vector>
 #include "opthelper.h"
 //#define BENCHMARK
 #include "StopWatch.h"
-
+#include "utils.h"
 #include <zlib.h>
 #include <stdint.h>
 

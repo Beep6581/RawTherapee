@@ -50,31 +50,33 @@
  * $Id: tmo_fattal02.cpp,v 1.3 2008/11/04 23:43:08 rafm Exp $
  */
 
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+#include <algorithm>
 #include <cstdio>
 #include <iostream>
 #include <iterator>
-#include <vector>
-#include <algorithm>
 #include <limits>
+#include <vector>
 
-#include <math.h>
 #include <assert.h>
 #include <fftw3.h>
+#include <math.h>
 
 #include "array2D.h"
-#include "improcfun.h"
-#include "settings.h"
+#include "color.h"
 #include "iccstore.h"
-#include "StopWatch.h"
-#include "sleef.c"
+#include "imagefloat.h"
+#include "improcfun.h"
 #include "opthelper.h"
-#include "rt_algo.h"
-#include "rescale.h"
 #include "procparams.h"
+#include "rescale.h"
+#include "rt_algo.h"
+#include "settings.h"
+#include "sleef.h"
+#include "StopWatch.h"
 
 namespace rtengine
 {
@@ -83,7 +85,6 @@ namespace rtengine
  * RT code
  ******************************************************************************/
 
-extern const Settings *settings;
 extern MyMutex *fftwMutex;
 
 using namespace std;
@@ -1093,7 +1094,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
 
     float oldMedian;
     const float percentile = float(LIM(params->fattal.anchor, 1, 100)) / 100.f;
-    findMinMaxPercentile (Yr.data(), Yr.getRows() * Yr.getCols(), percentile, oldMedian, percentile, oldMedian, multiThread);
+    findMinMaxPercentile (Yr.data(), static_cast<size_t>(Yr.getRows()) * Yr.getCols(), percentile, oldMedian, percentile, oldMedian, multiThread);
     // median filter on the deep shadows, to avoid boosting noise
     // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
     int w2 = find_fast_dim (w) + 1;
@@ -1135,7 +1136,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     const float wr = float(w2) / float(w);
 
     float newMedian;
-    findMinMaxPercentile (L.data(), L.getRows() * L.getCols(), percentile, newMedian, percentile, newMedian, multiThread);
+    findMinMaxPercentile (L.data(), static_cast<size_t>(L.getRows()) * L.getCols(), percentile, newMedian, percentile, newMedian, multiThread);
     const float scale = (oldMedian == 0.f || newMedian == 0.f) ? 65535.f : (oldMedian / newMedian); // avoid Nan
 
 #ifdef _OPENMP

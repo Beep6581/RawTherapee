@@ -19,6 +19,7 @@
 
 #include "previewimage.h"
 
+#include "color.h"
 #include "iimage.h"
 #include "iimage.h"
 #include "procparams.h"

@@ -19,11 +19,9 @@
 //
 // A class representing a 16 bit rgb image with separate planes and 16 byte aligned data
 //
-#ifndef _IMAGEFLOAT_
-#define _IMAGEFLOAT_
+#pragma once
 
 #include "imageio.h"
-#include "rtengine.h"
 
 namespace rtengine
 {
@@ -31,6 +29,7 @@ using namespace procparams;
 
 class Image8;
 class Image16;
+class LabImage;
 
 /*
  * Image type used by most tools; expected range: [0.0 ; 65535.0]
@@ -227,4 +226,3 @@ public:
 };
 
 }
-#endif

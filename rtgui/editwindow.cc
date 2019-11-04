@@ -16,6 +16,7 @@
 */
 
 #include "editwindow.h"
+#include "../rtengine/procparams.h"
 #include "options.h"
 #include "preferences.h"
 #include "cursormanager.h"

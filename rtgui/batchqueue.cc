@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <glib/gstdio.h>
 #include <cstring>
 #include <functional>
@@ -28,12 +28,14 @@
 #include <sstream>
 #include <string>
 
+#include "cachemanager.h"
 #include "thumbnail.h"
 #include "batchqueue.h"
 #include "multilangmgr.h"
 #include "filecatalog.h"
 #include "batchqueuebuttonset.h"
 #include "guiutils.h"
+#include "pathutils.h"
 #include "rtimage.h"
 #include <sys/time.h>
 
