@@ -46,6 +46,7 @@ int rtengine::getCoarseBitMask( const procparams::CoarseTransformParams &coarse)
 
     return tr;
 }
-int rtengine::igammasrgb(float in) {
-    return Color::igamma_srgb(in);
+
+const LUTf& rtengine::getigammatab() {
+    return Color::igammatab_srgb;
 }

@@ -59,7 +59,7 @@ extern const char sImage16[];
 extern const char sImagefloat[];
 
 int getCoarseBitMask(const procparams::CoarseTransformParams& coarse);
-int igammasrgb(float in);
+const LUTf& getigammatab();
 
 enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 
@@ -958,17 +958,35 @@ public:
 
         histogram(65536 >> histcompr);
         histogram.clear();
+        const LUTf& igammatab = getigammatab();
 
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < width; j++) {
-                float r_, g_, b_;
-                convertTo<T, float>(r(i, j), r_);
-                convertTo<T, float>(g(i, j), g_);
-                convertTo<T, float>(b(i, j), b_);
-                histogram[igammasrgb (r_) >> histcompr]++;
-                histogram[igammasrgb (g_) >> histcompr]++;
-                histogram[igammasrgb (b_) >> histcompr]++;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            LUTu histThr(histogram.getSize());
+            histThr.clear();
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16) nowait
+#endif
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i, j), r_);
+                    convertTo<T, float>(g(i, j), g_);
+                    convertTo<T, float>(b(i, j), b_);
+                    histThr[static_cast<int>(igammatab[r_]) >> histcompr]++;
+                    histThr[static_cast<int>(igammatab[g_]) >> histcompr]++;
+                    histThr[static_cast<int>(igammatab[b_]) >> histcompr]++;
+                }
             }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                histogram += histThr;
+            }
+        }
     }
 
     void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const override
@@ -976,16 +994,16 @@ public:
         histogram.clear();
         avg_r = avg_g = avg_b = 0.;
         n = 0;
-
+        const LUTf& igammatab = getigammatab();
         for (unsigned int i = 0; i < (unsigned int)(height); i++)
             for (unsigned int j = 0; j < (unsigned int)(width); j++) {
                 float r_, g_, b_;
                 convertTo<T, float>(r(i, j), r_);
                 convertTo<T, float>(g(i, j), g_);
                 convertTo<T, float>(b(i, j), b_);
-                int rtemp = igammasrgb (r_);
-                int gtemp = igammasrgb (g_);
-                int btemp = igammasrgb (b_);
+                int rtemp = igammatab[r_];
+                int gtemp = igammatab[g_];
+                int btemp = igammatab[b_];
 
                 histogram[rtemp >> compression]++;
                 histogram[gtemp >> compression] += 2;
@@ -1012,6 +1030,9 @@ public:
         int n = 0;
         //int p = 6;
 
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:avg_r,avg_g,avg_b,n) schedule(dynamic,16)
+#endif
         for (unsigned int i = 0; i < (unsigned int)(height); i++)
             for (unsigned int j = 0; j < (unsigned int)(width); j++) {
                 float r_, g_, b_;
@@ -1567,17 +1588,35 @@ public:
 
         histogram(65536 >> histcompr);
         histogram.clear();
+        const LUTf& igammatab = getigammatab();
 
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < width; j++) {
-                float r_, g_, b_;
-                convertTo<T, float>(r(i, j), r_);
-                convertTo<T, float>(g(i, j), g_);
-                convertTo<T, float>(b(i, j), b_);
-                histogram[igammasrgb (r_) >> histcompr]++;
-                histogram[igammasrgb (g_) >> histcompr]++;
-                histogram[igammasrgb (b_) >> histcompr]++;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            LUTu histThr(histogram.getSize());
+            histThr.clear();
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16) nowait
+#endif
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i, j), r_);
+                    convertTo<T, float>(g(i, j), g_);
+                    convertTo<T, float>(b(i, j), b_);
+                    histThr[static_cast<int>(igammatab[r_]) >> histcompr]++;
+                    histThr[static_cast<int>(igammatab[g_]) >> histcompr]++;
+                    histThr[static_cast<int>(igammatab[b_]) >> histcompr]++;
+                }
             }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                histogram += histThr;
+            }
+        }
     }
 
     void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const override
@@ -1585,6 +1624,7 @@ public:
         histogram.clear();
         avg_r = avg_g = avg_b = 0.;
         n = 0;
+        const LUTf& igammatab = getigammatab();
 
         for (unsigned int i = 0; i < (unsigned int)(height); i++)
             for (unsigned int j = 0; j < (unsigned int)(width); j++) {
@@ -1592,9 +1632,9 @@ public:
                 convertTo<T, float>(r(i, j), r_);
                 convertTo<T, float>(g(i, j), g_);
                 convertTo<T, float>(b(i, j), b_);
-                int rtemp = igammasrgb (r_);
-                int gtemp = igammasrgb (g_);
-                int btemp = igammasrgb (b_);
+                int rtemp = igammatab[r_];
+                int gtemp = igammatab[g_];
+                int btemp = igammatab[b_];
 
                 histogram[rtemp >> compression]++;
                 histogram[gtemp >> compression] += 2;
@@ -1621,6 +1661,9 @@ public:
         int n = 0;
         //int p = 6;
 
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:avg_r,avg_g,avg_b,n) schedule(dynamic,16)
+#endif
         for (unsigned int i = 0; i < (unsigned int)(height); i++)
             for (unsigned int j = 0; j < (unsigned int)(width); j++) {
                 float r_, g_, b_;
