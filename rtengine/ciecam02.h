@@ -19,6 +19,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstdint>
 
 #include "opthelper.h"
 
