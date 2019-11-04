@@ -16,13 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _MYFILE_
-#define _MYFILE_
+#pragma once
 
-#include <glib/gstdio.h>
 #include <cstdio>
 #include <cstring>
-#include "rtengine.h"
+
+#include <glib/gstdio.h>
+
+#include "opthelper.h"
+
+namespace rtengine
+{
+
+class ProgressListener;
+
+}
+
 struct IMFILE {
     int fd;
     ssize_t pos;
@@ -134,6 +143,3 @@ inline unsigned char* fdata(int offset, IMFILE* f)
 
 int fscanf (IMFILE* f, const char* s ...);
 char* fgets (char* s, int n, IMFILE* f);
-
-#endif
-

@@ -17,20 +17,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include "cieimage.h"
 #include "curves.h"
+#include "dcp.h"
 #include "dcrop.h"
+#include "image8.h"
+#include "imagefloat.h"
+#include "labimage.h"
 #include "mytime.h"
 #include "procparams.h"
 #include "refreshmap.h"
 #include "rt_math.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <unistd.h>
-
-//#include <chrono>
-// "ceil" rounding
-//#define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
 #include "../rtgui/editcallbacks.h"
 
 #pragma GCC diagnostic warning "-Wall"
@@ -49,8 +47,6 @@ constexpr T skips(T a, T b)
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 Crop::Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr), reservCrop(nullptr),
@@ -834,7 +830,7 @@ void Crop::update(int todo)
             }
         }
         double rrm, ggm, bbm;
-        DCPProfile::ApplyState as;
+        DCPProfileApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;
@@ -1152,7 +1148,7 @@ void Crop::update(int todo)
                 loclmasCurvecolwav.Reset();
 
                 if (skip <= 2) {
-                    usleep(settings->cropsleep);    //wait to avoid crash when crop 100% and move window
+                    Glib::usleep(settings->cropsleep);    //wait to avoid crash when crop 100% and move window
                 }
             }
         }

@@ -20,6 +20,7 @@
 #include "array2D.h"
 #include "median.h"
 #include "pixelsmap.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 
 namespace rtengine

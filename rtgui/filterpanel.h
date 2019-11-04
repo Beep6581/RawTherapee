@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FILTERPANEL_
-#define _FILTERPANEL_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "exiffiltersettings.h"
 
 class FilterPanelListener
@@ -79,5 +79,3 @@ public:
         enabled->set_active(enabledState);
     }
 };
-
-#endif

@@ -16,13 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _GAUSS_H_
-#define _GAUSS_H_
+#pragma once
 
 enum eGaussType {GAUSS_STANDARD, GAUSS_MULT, GAUSS_DIV};
 static constexpr auto GAUSS_SKIP = 0.25;
 
 
 void gaussianBlur(float** src, float** dst, const int W, const int H, const double sigma, bool useBoxBlur = false, eGaussType gausstype = GAUSS_STANDARD, float** buffer2 = nullptr);
-
-#endif

@@ -19,7 +19,10 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "color.h"
+#include "iccstore.h"
 #include "improcfun.h"
+#include "labimage.h"
 
 #include "procparams.h"
 
@@ -59,7 +62,7 @@ inline vfloat sl(vfloat blend, vfloat x)
 
 //} // namespace
 
-void ImProcFunctions::softLight(LabImage *lab, const SoftLightParams &softLightParams)
+void ImProcFunctions::softLight(LabImage *lab, const rtengine::procparams::SoftLightParams &softLightParams)
 {
     if (!softLightParams.enabled || !softLightParams.strength) {
         return;

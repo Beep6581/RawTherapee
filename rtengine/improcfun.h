@@ -16,28 +16,56 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMPROCFUN_H_
-#define _IMPROCFUN_H_
+#pragma once
 
-#include "imagefloat.h"
-#include "image16.h"
-#include "image8.h"
-#include "shmap.h"
+#include <memory>
+
 #include "coord2d.h"
-#include "color.h"
-#include "labimage.h"
-#include "cieimage.h"
-#include "LUT.h"
-#include "lcp.h"
-#include "dcp.h"
-#include "curves.h"
-#include "cplx_wavelet_dec.h"
-#include "pipettebuffer.h"
 #include "gamutwarning.h"
 #include "jaggedarray.h"
+#include "pipettebuffer.h"
+#include "shmap.h"
 
+template<typename T>
+class LUT;
+
+using LUTu = LUT<uint32_t>;
+using LUTf = LUT<float>;
+
+template<typename T, const size_t num>
+class multi_array2D;
 namespace rtengine
 {
+
+class ColorAppearance;
+class ColorGradientCurve;
+class DCPProfile;
+class DCPProfileApplyState;
+class FlatCurve;
+class FramesMetaData;
+class LensCorrection;
+class LocCCmaskCurve;
+class LocLLmaskCurve;
+class LocHHmaskCurve;
+class LocwavCurve;
+class LocretigainCurve;
+class LocretitransCurve;
+class LocLHCurve;
+class LocHHCurve;
+class NoiseCurve;
+class OpacityCurve;
+class ToneCurve;
+class WavCurve;
+class WavOpacityCurveBY;
+class WavOpacityCurveRG;
+class WavOpacityCurveW;
+class WavOpacityCurveWL;
+
+class CieImage;
+class Image8;
+class Imagefloat;
+class LabImage;
+class wavelet_decomposition;
 
 namespace procparams
 {
@@ -46,6 +74,7 @@ class ProcParams;
 
 struct DehazeParams;
 struct FattalToneMappingParams;
+struct ColorManagementParams;
 struct DirPyrDenoiseParams;
 struct LocalContrastParams;
 struct LocallabParams;
@@ -64,7 +93,7 @@ class ImProcFunctions
     cmsHTRANSFORM monitorTransform;
     std::unique_ptr<GamutWarning> gamutWarning;
 
-    const ProcParams* params;
+    const procparams::ProcParams* params;
     double scale;
     bool multiThread;
 
@@ -102,7 +131,7 @@ public:
 
     double lumimul[3];
 
-    explicit ImProcFunctions(const ProcParams* iparams, bool imultiThread = true)
+    explicit ImProcFunctions(const procparams::ProcParams* iparams, bool imultiThread = true)
         : monitorTransform(nullptr), params(iparams), scale(1), multiThread(imultiThread), lumimul{} {}
     ~ImProcFunctions();
     bool needsLuminanceOnly()
@@ -118,11 +147,11 @@ public:
     void updateColorProfiles(const Glib::ustring& monitorProfile, RenderingIntent monitorIntent, bool softProof, bool gamutCheck);
     void rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                  int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clcurve, LUTf & cl2curve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
-                 const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve, size_t chunkSize = 1, bool measure = false);
+                 const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfileApplyState &asIn, LUTu &histToneCurve, size_t chunkSize = 1, bool measure = false);
     void rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                  int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clcurve, LUTf & cl2curve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
                  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob,
-                 double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve, size_t chunkSize = 1, bool measure = false);
+                 double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf, const DCPProfileApplyState &asIn, LUTu &histToneCurve, size_t chunkSize = 1, bool measure = false);
     void labtoning(float r, float g, float b, float &ro, float &go, float &bo, int algm, int metchrom, int twoc, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, LUTf & clToningcurve, LUTf & cl2Toningcurve, float iplow, float iphigh, double wp[3][3], double wip[3][3]);
     void toning2col(float r, float g, float b, float &ro, float &go, float &bo, float iplow, float iphigh, float rl, float gl, float bl, float rh, float gh, float bh, float SatLow, float SatHigh, float balanS, float balanH, float reducac, int mode, int preser, float strProtect);
     void toningsmh(float r, float g, float b, float &ro, float &go, float &bo, float RedLow, float GreenLow, float BlueLow, float RedMed, float GreenMed, float BlueMed, float RedHigh, float GreenHigh, float BlueHigh, float reducac, int mode, float strProtect);
@@ -134,10 +163,9 @@ public:
     void moyeqt(Imagefloat* working, float &moyS, float &eqty);
 
     void luminanceCurve(LabImage* lold, LabImage* lnew, LUTf &curve);
-
     void ciecamloc_02float(int sp, LabImage* lab);
 
-    void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
+    void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const procparams::ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
                         LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
                         bool showSharpMask = false);
@@ -149,7 +177,7 @@ public:
     void sharpening(LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask = false);
     void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
     void transform(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage);
-    float resizeScale(const ProcParams* params, int fw, int fh, int &imw, int &imh);
+    float resizeScale(const procparams::ProcParams* params, int fw, int fh, int &imw, int &imh);
     void lab2monitorRgb(LabImage* lab, Image8* image);
     void resize(Imagefloat* src, Imagefloat* dst, float dScale);
     void Lanczos(const LabImage* src, LabImage* dst, float scale);
@@ -354,14 +382,14 @@ public:
     void Badpixelscam(CieImage * ncie, double radius, int thresh, int mode, float chrom, bool hotbad);
     void BadpixelsLab(LabImage * lab, double radius, int thresh, float chrom);
 
-    void dehaze(Imagefloat *rgb, const DehazeParams &dehazeParams);
-    void ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level);
-    void localContrast(LabImage *lab, float **destination, const LocalContrastParams &localContrastParams, bool fftwlc, double scale);
+    void dehaze(Imagefloat *rgb, const procparams::DehazeParams &dehazeParams);
+    void ToneMapFattal02(Imagefloat *rgb, const procparams::FattalToneMappingParams &fatParams, int detail_level);
+    void localContrast(LabImage *lab, float **destination, const procparams::LocalContrastParams &localContrastParams, bool fftwlc, double scale);
     void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
    // void shadowsHighlights(LabImage *lab);
     void shadowsHighlights(LabImage *lab, bool ena, int labmode, int hightli, int shado, int rad, int scal, int hltonal, int shtonal);
     
-    void softLight(LabImage *lab, const SoftLightParams &softLightParams);
+    void softLight(LabImage *lab, const procparams::SoftLightParams &softLightParams);
     void labColorCorrectionRegions(LabImage *lab);
 
     Image8*     lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true);
@@ -377,5 +405,5 @@ public:
     void rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
     void lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace);
 };
+
 }
-#endif

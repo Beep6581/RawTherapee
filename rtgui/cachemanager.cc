@@ -32,9 +32,9 @@
 
 #include "guiutils.h"
 #include "options.h"
-#include "procparamchangers.h"
 #include "thumbnail.h"
-//#include "md5helper.h"
+#include "procparamchangers.h"
+
 namespace
 {
 
@@ -64,8 +64,8 @@ void CacheManager::init ()
         }
     }
 
-    if (error != 0 && options.rtSettings.verbose) {
-        std::cerr << "Failed to create all cache directories: " << g_strerror (errno) << std::endl;
+    if (error != 0 && rtengine::settings->verbose) {
+        std::cerr << "Failed to create all cache directories: " << g_strerror(errno) << std::endl;
     }
 }
 
@@ -197,8 +197,8 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
     error |= g_rename (getCacheFileName ("embprofiles", oldfilename, ".icc", oldmd5).c_str (), getCacheFileName ("embprofiles", newfilename, ".icc", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("data", oldfilename, ".txt", oldmd5).c_str (), getCacheFileName ("data", newfilename, ".txt", newmd5).c_str ());
 
-    if (error != 0 && options.rtSettings.verbose) {
-        std::cerr << "Failed to rename all files for cache entry '" << oldfilename << "': " << g_strerror (errno) << std::endl;
+    if (error != 0 && rtengine::settings->verbose) {
+        std::cerr << "Failed to rename all files for cache entry '" << oldfilename << "': " << g_strerror(errno) << std::endl;
     }
 
     // check if it is opened
@@ -273,8 +273,8 @@ void CacheManager::deleteDir (const Glib::ustring& dirName) const
             error |= g_remove (Glib::build_filename (baseDir, dirName, *entry).c_str ());
         }
 
-        if (error != 0 && options.rtSettings.verbose) {
-            std::cerr << "Failed to delete all entries in cache directory '" << dirName << "': " << g_strerror (errno) << std::endl;
+        if (error != 0 && rtengine::settings->verbose) {
+            std::cerr << "Failed to delete all entries in cache directory '" << dirName << "': " << g_strerror(errno) << std::endl;
         }
 
     } catch (Glib::Error&) {}
@@ -296,7 +296,10 @@ void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& m
 
     if (purgeProfile) {
         error |= g_remove (getCacheFileName ("profiles", fname, paramFileExtension, md5).c_str ());
+    }
 
+    if (error != 0 && rtengine::settings->verbose) {
+        std::cerr << "Failed to delete all files for cache entry '" << fname << "': " << g_strerror(errno) << std::endl;
     }
 }
 

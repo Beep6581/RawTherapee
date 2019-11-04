@@ -16,17 +16,20 @@
  *
  *  (C) 2010 Emil Martinec <ejmartin@uchicago.edu>
  */
-
-#ifndef DIRPYREQUALIZER_H_INCLUDED
-#define DIRPYREQUALIZER_H_INCLUDED
+#pragma once
 
 #include <gtkmm.h>
-#include "adjuster.h"
-#include "toolpanel.h"
-#include "thresholdadjuster.h"
-#include "colorprovider.h"
 
-class DirPyrEqualizer : public ToolParamBlock, public ThresholdAdjusterListener, public AdjusterListener, public FoldableToolPanel
+#include "adjuster.h"
+#include "colorprovider.h"
+#include "thresholdadjuster.h"
+#include "toolpanel.h"
+
+class DirPyrEqualizer :
+    public ToolParamBlock,
+    public ThresholdAdjusterListener,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -77,5 +80,3 @@ public:
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override;
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
 };
-
-#endif

@@ -19,32 +19,38 @@
 #include <cmath>
 #include <iostream>
 
-#include "rtengine.h"
-#include "rawimagesource.h"
-#include "rawimagesource_i.h"
-#include "jaggedarray.h"
-#include "median.h"
-#include "rawimage.h"
-#include "mytime.h"
-#include "iccstore.h"
+#include "camconst.h"
+#include "color.h"
 #include "curves.h"
+#include "dcp.h"
 #include "dfmanager.h"
 #include "ffmanager.h"
-#include "dcp.h"
-#include "rt_math.h"
+#include "iccstore.h"
+#include "imagefloat.h"
 #include "improcfun.h"
-#include "rtlensfun.h"
+#include "jaggedarray.h"
+#include "median.h"
+#include "mytime.h"
 #include "pdaflinesfilter.h"
-#include "camconst.h"
 #include "procparams.h"
-#include "color.h"
+#include "rawimage.h"
+#include "rawimagesource_i.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
+#include "rtengine.h"
+#include "rtlensfun.h"
+#include "../rtgui/options.h"
+
 //#define BENCHMARK
 //#include "StopWatch.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
 #include "opthelper.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
+
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
@@ -419,7 +425,6 @@ void transLineD1x (const float* const red, const float* const green, const float
 namespace rtengine
 {
 
-extern const Settings* settings;
 #undef ABS
 #undef DIST
 
@@ -499,6 +504,26 @@ RawImageSource::~RawImageSource()
     if (embProfile) {
         cmsCloseProfile(embProfile);
     }
+}
+
+unsigned RawImageSource::FC(int row, int col) const
+{
+    return ri->FC(row, col);
+}
+
+eSensorType RawImageSource::getSensorType () const
+{
+    return ri != nullptr ? ri->getSensorType() : ST_NONE;
+}
+
+bool RawImageSource::isMono() const
+{
+    return ri->get_colors() == 1;
+}
+
+int RawImageSource::getRotateDegree() const
+{
+    return ri->get_rotateDegree();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -914,7 +939,7 @@ void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* imag
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileApplyState &as)
 {
     if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
         return nullptr;

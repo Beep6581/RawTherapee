@@ -20,18 +20,15 @@
 #include <iostream>
 
 #include "rtengine.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-#include "improcfun.h"
 #include "procparams.h"
 #include "color.h"
 #include "gauss.h"
 #include "rt_algo.h"
 //#define BENCHMARK
 #include "StopWatch.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 #include "opthelper.h"
 #include "../rtgui/multilangmgr.h"
 
@@ -583,10 +580,10 @@ BENCHFUN
                 } else {
                     if (sigmaCornerOffset != 0.0) {
                         const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - H / 2) + rtengine::SQR(j + tileSize / 2 - W / 2));
-                        const float sigmaTile = sigma + distanceFactor * distance;
+                        const float sigmaTile = static_cast<float>(sigma) + distanceFactor * distance;
                         if (sigmaTile >= 0.4f) {
                             float lkernel7[7][7];
-                            compute7x7kernel(sigma + distanceFactor * distance, lkernel7);
+                            compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
                             for (int k = 0; k < iterations - 1; ++k) {
                                 // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                                 gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, fullTileSize, lkernel7);
@@ -605,13 +602,13 @@ BENCHFUN
                     // special handling for small tiles at end of row or column
                     for (int k = border, ii = endOfCol ? H - fullTileSize - border : i - border; k < fullTileSize - border; ++k) {
                         for (int l = border, jj = endOfRow ? W - fullTileSize - border : j - border; l < fullTileSize - border; ++l) {
-                            luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
+                            luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], std::max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
                         }
                     }
                 } else {
                     for (int ii = border; ii < fullTileSize - border; ++ii) {
                         for (int jj = border; jj < fullTileSize - border; ++jj) {
-                            luminance[i + ii - border][j + jj - border] = rtengine::intp(blend[i + ii - border][j + jj - border], max(tmpIThr[ii][jj], 0.0f), luminance[i + ii - border][j + jj - border]);
+                            luminance[i + ii - border][j + jj - border] = rtengine::intp(blend[i + ii - border][j + jj - border], std::max(tmpIThr[ii][jj], 0.0f), luminance[i + ii - border][j + jj - border]);
                         }
                     }
                 }

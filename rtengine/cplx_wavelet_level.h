@@ -17,10 +17,8 @@
  *  2010 Ilya Popov <ilia_popov@rambler.ru>
  *  2012 Emil Martinec <ejmartin@uchicago.edu>
  *  2014 Ingo Weyrich <heckflosse@i-weyrich.de>
- */
-
-#ifndef CPLX_WAVELET_LEVEL_H_INCLUDED
-#define CPLX_WAVELET_LEVEL_H_INCLUDED
+*/
+#pragma once
 
 #include <cstddef>
 #include "rt_math.h"
@@ -759,5 +757,3 @@ template<typename T> template<typename E> void wavelet_level<T>::reconstruct_lev
 }
 #endif
 }
-
-#endif

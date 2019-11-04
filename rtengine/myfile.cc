@@ -18,8 +18,7 @@
  */
 #include "myfile.h"
 #include <cstdarg>
-#include <glibmm.h>
-
+#include "rtengine.h"
 // get mmap() sorted out
 #ifdef MYFILE_MMAP
 

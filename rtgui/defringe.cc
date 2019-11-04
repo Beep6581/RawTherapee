@@ -20,7 +20,9 @@
 #include <iomanip>
 
 #include "defringe.h"
+#include "options.h"
 
+#include "../rtengine/color.h"
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;

@@ -26,8 +26,10 @@
 #include "guiutils.h"
 #include "lwbuttonset.h"
 #include "threadutils.h"
-#include "thumbnail.h"
 
+#include "../rtengine/coord2d.h"
+
+class Thumbnail;
 class ThumbBrowserBase;
 class ThumbBrowserEntryBase
 {

@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _LENSGEOMLISTENER_H_
-#define _LENSGEOMLISTENER_H_
+#pragma once
 
 class LensGeomListener
 {
@@ -27,5 +26,3 @@ public:
     virtual void autoCropRequested   () = 0;
     virtual double autoDistorRequested () = 0;
 };
-
-#endif

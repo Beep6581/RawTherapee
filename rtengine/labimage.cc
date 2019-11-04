@@ -17,7 +17,6 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <cstring>
 #include <memory>
 
 #include "labimage.h"

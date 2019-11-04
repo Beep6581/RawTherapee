@@ -80,7 +80,6 @@ set(NONCLISOURCEFILES
     hsvequalizer.cc
     iccprofilecreator.cc
     icmpanel.cc
-    ilabel.cc
     imagearea.cc
     imageareapanel.cc
     impulsedenoise.cc

@@ -23,25 +23,34 @@
 ////////////////////////////////////////////////////////////////
 
 #include <cmath>
+
 #include <fftw3.h>
-#include "../rtgui/threadutils.h"
-#include "rtengine.h"
-#include "improcfun.h"
-#include "LUT.h"
+
 #include "array2D.h"
-#include "iccmatrices.h"
 #include "boxblur.h"
-#include "rt_math.h"
-#include "mytime.h"
-#include "sleef.c"
-#include "opthelper.h"
 #include "cplx_wavelet_dec.h"
-#include "median.h"
+#include "color.h"
+#include "curves.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
+#include "imagefloat.h"
+#include "improcfun.h"
+#include "labimage.h"
+#include "LUT.h"
+#include "median.h"
+#include "mytime.h"
+#include "opthelper.h"
 #include "procparams.h"
+#include "rt_math.h"
+#include "sleef.h"
+
+#include "../rtgui/threadutils.h"
+#include "../rtgui/options.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
 //#define BENCHMARK
 #include "StopWatch.h"
 
@@ -69,11 +78,7 @@ namespace rtengine
 
  */
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-extern const Settings* settings;
 extern MyMutex *fftwMutex;
 
 

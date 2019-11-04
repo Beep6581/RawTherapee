@@ -16,17 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PREPROCESS_H_
-#define _PREPROCESS_H_
+#pragma once
 
 #include <gtkmm.h>
-//#include "adjuster.h"
-#include "toolpanel.h"
+
 #include "adjuster.h"
 #include "guiutils.h"
-#include "../rtengine/rawimage.h"
+#include "toolpanel.h"
 
-class PreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class PreProcess :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -54,5 +55,3 @@ public:
     //void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
     //void trimValues          (rtengine::procparams::ProcParams* pp);
 };
-
-#endif

@@ -16,14 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CROP_H_
-#define _CROP_H_
+#pragma once
+
+#include <vector>
 
 #include <gtkmm.h>
+
 #include "cropguilistener.h"
-#include "toolpanel.h"
 #include "guiutils.h"
-#include <vector>
+#include "toolpanel.h"
 
 class CropPanelListener
 {
@@ -129,5 +130,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif

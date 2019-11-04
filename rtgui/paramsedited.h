@@ -20,7 +20,19 @@
 
 #include <vector>
 
-#include "../rtengine/rtengine.h"
+namespace rtengine
+{
+
+namespace procparams
+{
+
+class ProcParams;
+
+class PartialProfile;
+
+}
+
+}
 
 struct GeneralParamsEdited {
     bool rank;

@@ -16,15 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BATCHQUEUEPANEL_
-#define _BATCHQUEUEPANEL_
+#pragma once
 
 #include <atomic>
 
 #include <gtkmm.h>
+
 #include "batchqueue.h"
-#include "saveformatpanel.h"
 #include "guiutils.h"
+#include "saveformatpanel.h"
 
 class RTWindow;
 class FileCatalog;
@@ -83,5 +83,3 @@ private:
     void formatChanged(const Glib::ustring& format) override;
     void updateTab (int qsize, int forceOrientation = 0); // forceOrientation=0: base on options / 1: horizontal / 2: vertical
 };
-#endif
-

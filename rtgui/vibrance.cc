@@ -18,6 +18,7 @@
  */
 
 #include "vibrance.h"
+#include "options.h"
 #include "../rtengine/color.h"
 
 using namespace rtengine;

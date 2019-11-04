@@ -32,6 +32,7 @@
 #include "curveeditor.h"
 #include "flatcurveeditorsubgroup.h"
 #include "rtimage.h"
+#include "options.h"
 
 #include "../rtengine/curves.h"
 

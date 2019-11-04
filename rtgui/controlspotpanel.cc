@@ -24,6 +24,7 @@
 #include <iomanip>
 #include "editwidgets.h"
 #include "options.h"
+#include "rtimage.h"
 
 using namespace rtengine;
 extern Options options;

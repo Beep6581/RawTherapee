@@ -16,20 +16,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMPROCCOORDINATOR_H_
-#define _IMPROCCOORDINATOR_H_
+#pragma once
 
 #include <memory>
 
-#include "rtengine.h"
-#include "improcfun.h"
-#include "image8.h"
-#include "image16.h"
-#include "imagesource.h"
-#include "procevents.h"
+#include "array2D.h"
+#include "colortemp.h"
+#include "curves.h"
 #include "dcrop.h"
+#include "imagesource.h"
+#include "improcfun.h"
 #include "LUT.h"
+#include "procevents.h"
+#include "rtengine.h"
+
 #include "../rtgui/threadutils.h"
+
+namespace Glib
+{
+class Thread;
+}
 
 namespace rtengine
 {
@@ -538,5 +544,5 @@ public:
     } denoiseInfoStore;
 
 };
+
 }
-#endif

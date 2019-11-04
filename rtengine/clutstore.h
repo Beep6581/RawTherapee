@@ -3,8 +3,6 @@
 #include <memory>
 #include <cstdint>
 
-#include <gtkmm.h>
-
 #include "cache.h"
 #include "alignedbuffer.h"
 #include "noncopyable.h"

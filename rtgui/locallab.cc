@@ -31,6 +31,7 @@
 #include "guiutils.h"
 #include <string>
 #include <unistd.h>
+#include "../rtengine/color.h"
 #include "../rtengine/improcfun.h"
 #include "labgrid.h"
 
@@ -482,7 +483,7 @@ Locallab::Locallab():
     nextminT = 0.;
     nextmaxT = 0.;
 
-    LocallabParams::LocallabSpot defSpot;
+    rtengine::procparams::LocallabParams::LocallabSpot defSpot;
 
 
     // Settings
@@ -2846,7 +2847,7 @@ void Locallab::lumacontrastMinusPressed()
     adjusterChanged(multiplier[0], multiplier[0]->getValue()); // Value isn't used
 }
 
-void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
+void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     // printf("Locallab read\n");
 
@@ -2981,7 +2982,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 }
 
-void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
+void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
     // printf("Locallab write\n");
 
@@ -2990,7 +2991,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     const int spotPanelEvent = expsettings->getEventType();
     int spotId;
     ControlSpotPanel::SpotRow* r;
-    LocallabParams::LocallabSpot* newSpot;
+    rtengine::procparams::LocallabParams::LocallabSpot* newSpot;
 
     int imW, imH; // Size of image
     int prW, prH; // Size of preview area
@@ -3000,7 +3001,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     switch (spotPanelEvent) {
         case (ControlSpotPanel::SpotCreation): // Spot creation event
             // Spot creation (default initialization)
-            newSpot = new LocallabParams::LocallabSpot();
+            newSpot = new rtengine::procparams::LocallabParams::LocallabSpot();
             spotId = expsettings->getNewId();
             r = new ControlSpotPanel::SpotRow();
             r->id = newSpot->id = spotId;
@@ -3233,7 +3234,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             for (int i = 0; i < pp->locallab.nbspot && i < (int)pp->locallab.spots.size(); i++) {
                 if (pp->locallab.spots.at(i).id == spotId) {
-                    newSpot = new LocallabParams::LocallabSpot(pp->locallab.spots.at(i));
+                    newSpot = new rtengine::procparams::LocallabParams::LocallabSpot(pp->locallab.spots.at(i));
                     break;
                 }
             }
@@ -3489,10 +3490,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chroma = chroma->getIntValue();
                     labgrid->getParams(pp->locallab.spots.at(pp->locallab.selspot).labgridALow, pp->locallab.spots.at(pp->locallab.selspot).labgridBLow, pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh, pp->locallab.spots.at(pp->locallab.selspot).labgridBHigh);
                     pp->locallab.spots.at(pp->locallab.selspot).strengthgrid = strengthgrid->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).labgridALow *= LocallabParams::LABGRIDL_CORR_MAX;
-                    pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh *= LocallabParams::LABGRIDL_CORR_MAX;
-                    pp->locallab.spots.at(pp->locallab.selspot).labgridBLow *= LocallabParams::LABGRIDL_CORR_MAX;
-                    pp->locallab.spots.at(pp->locallab.selspot).labgridBHigh *= LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridALow *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridBLow *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridBHigh *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
                     pp->locallab.spots.at(pp->locallab.selspot).sensi = sensi->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).structcol = structcol->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).blurcolde = blurcolde->getIntValue();
@@ -6275,7 +6276,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams* defParams, co
     }
 }
 
-void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited, int id)
+void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, const ParamsEdited * pedited, int id)
 {
     // printf("setDefaults\n");
 
@@ -6294,7 +6295,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     }
 
     // Set default values for adjusters
-    const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
+    const rtengine::procparams::LocallabParams::LocallabSpot* defSpot = new rtengine::procparams::LocallabParams::LocallabSpot();
 
     if (index != -1 && index < (int)defParams->locallab.spots.size()) {
         defSpot = &defParams->locallab.spots.at(index);
@@ -6304,7 +6305,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     lightness->setDefault((double)defSpot->lightness);
     contrast->setDefault((double)defSpot->contrast);
     chroma->setDefault((double)defSpot->chroma);
-    labgrid->setDefault(defSpot->labgridALow / LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBLow / LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX);
+    labgrid->setDefault(defSpot->labgridALow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBLow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridAHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX);
     sensi->setDefault((double)defSpot->sensi);
     structcol->setDefault((double)defSpot->structcol);
     blurcolde->setDefault((double)defSpot->blurcolde);
@@ -8578,7 +8579,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         lightness->setValue(pp->locallab.spots.at(index).lightness);
         contrast->setValue(pp->locallab.spots.at(index).contrast);
         chroma->setValue(pp->locallab.spots.at(index).chroma);
-        labgrid->setParams(pp->locallab.spots.at(index).labgridALow / LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBLow / LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX, false);
+        labgrid->setParams(pp->locallab.spots.at(index).labgridALow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBLow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridAHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, false);
         strengthgrid->setValue(pp->locallab.spots.at(index).strengthgrid);
         sensi->setValue(pp->locallab.spots.at(index).sensi);
         structcol->setValue(pp->locallab.spots.at(index).structcol);

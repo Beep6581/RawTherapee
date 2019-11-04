@@ -24,13 +24,17 @@
 #include <fftw3.h>
 
 #include "improcfun.h"
+#include "colortemp.h"
 #include "curves.h"
 #include "gauss.h"
-#include "iccmatrices.h"
+#include "iccstore.h"
+#include "imagefloat.h"
+#include "labimage.h"
 #include "color.h"
 #include "rt_math.h"
 #include "jaggedarray.h"
 #include "rt_algo.h"
+#include "settings.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -178,9 +182,6 @@ namespace rtengine
 extern MyMutex *fftwMutex;
 
 using namespace procparams;
-
-extern const Settings* settings;
-
 
 struct local_params {
     float yc, xc;

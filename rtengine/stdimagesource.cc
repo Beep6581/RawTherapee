@@ -19,18 +19,19 @@
 #include "stdimagesource.h"
 
 #include "color.h"
-#include "curves.h"
 #include "iccstore.h"
+#include "image8.h"
+#include "image16.h"
+#include "imagefloat.h"
 #include "imageio.h"
 #include "mytime.h"
 #include "procparams.h"
+#include "utils.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 template<class T> void freeArray (T** a, int H)
 {

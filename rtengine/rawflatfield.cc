@@ -23,6 +23,7 @@
 
 #include "rawimagesource.h"
 #include "procparams.h"
+#include "rawimage.h"
 //#define BENCHMARK
 //#include "StopWatch.h"
 #include "opthelper.h"
@@ -32,7 +33,7 @@ namespace {
 void cfaboxblur(const float* const * riFlatFile, float* cfablur, int boxH, int boxW, int H, int W)
 {
     if (boxW < 0 || boxH < 0 || (boxW == 0 && boxH == 0)) { // nothing to blur or negative values
-        memcpy(cfablur, riFlatFile[0], W * H * sizeof(float));
+        memcpy(cfablur, riFlatFile[0], static_cast<unsigned long>(W) * H * sizeof(float));
         return;
     }
 
@@ -262,7 +263,7 @@ void cfaboxblur(const float* const * riFlatFile, float* cfablur, int boxH, int b
 namespace rtengine
 {
 
-void RawImageSource::processFlatField(const RAWParams &raw, const RawImage *riFlatFile, const unsigned short black[4])
+void RawImageSource::processFlatField(const procparams::RAWParams &raw, const RawImage *riFlatFile, const unsigned short black[4])
 {
 //    BENCHFUN
     const float fblack[4] = {static_cast<float>(black[0]), static_cast<float>(black[1]), static_cast<float>(black[2]), static_cast<float>(black[3])};
@@ -270,11 +271,11 @@ void RawImageSource::processFlatField(const RAWParams &raw, const RawImage *riFl
 
     const int BS = raw.ff_BlurRadius + (raw.ff_BlurRadius & 1);
 
-    if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::V)) {
+    if (raw.ff_BlurType == procparams::RAWParams::getFlatFieldBlurTypeString(procparams::RAWParams::FlatFieldBlurType::V)) {
         cfaboxblur(riFlatFile->data, cfablur.get(), 2 * BS, 0, H, W);
-    } else if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::H)) {
+    } else if (raw.ff_BlurType == procparams::RAWParams::getFlatFieldBlurTypeString(procparams::RAWParams::FlatFieldBlurType::H)) {
         cfaboxblur(riFlatFile->data, cfablur.get(), 0, 2 * BS, H, W);
-    } else if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::VH)) {
+    } else if (raw.ff_BlurType == procparams::RAWParams::getFlatFieldBlurTypeString(procparams::RAWParams::FlatFieldBlurType::VH)) {
         //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
         cfaboxblur(riFlatFile->data, cfablur.get(), BS, BS, H, W);    //first do area blur to correct vignette
     } else { //(raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::area_ff))
@@ -464,7 +465,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, const RawImage *riFl
         }
     }
 
-    if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::VH)) {
+    if (raw.ff_BlurType == procparams::RAWParams::getFlatFieldBlurTypeString(procparams::RAWParams::FlatFieldBlurType::VH)) {
         std::unique_ptr<float []> cfablur1(new float[H * W]);
         std::unique_ptr<float []> cfablur2(new float[H * W]);
         //slightly more complicated blur if trying to correct both vertical and horizontal anomalies

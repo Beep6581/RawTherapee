@@ -17,8 +17,8 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "renamedlg.h"
+#include "cacheimagedata.h"
 #include "multilangmgr.h"
-#include "options.h"
 #include "rtimage.h"
 
 RenameDialog::RenameDialog (Gtk::Window* parent)

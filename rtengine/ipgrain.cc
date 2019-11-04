@@ -39,10 +39,7 @@
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
+#include "imagefloat.h"
 #include "improcfun.h"
 #include "rt_math.h"
 

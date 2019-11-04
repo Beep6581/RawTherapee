@@ -23,6 +23,7 @@
 #include "eventmapper.h"
 #include "guiutils.h"
 #include "options.h"
+#include "pathutils.h"
 #include "rtimage.h"
 
 #include "../rtengine/dcp.h"
@@ -31,8 +32,6 @@
 
 using namespace rtengine;
 using namespace rtengine::procparams;
-
-extern Options options;
 
 ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr)
 {

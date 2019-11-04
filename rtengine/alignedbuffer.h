@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _ALIGNEDBUFFER_
-#define _ALIGNEDBUFFER_
+#pragma once
 
 #include <cstdint>
 #include <cstdlib>
@@ -142,5 +141,3 @@ public:
         return unitSize ? allocatedSize / unitSize : 0;
     }
 };
-
-#endif

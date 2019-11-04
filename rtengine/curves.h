@@ -16,24 +16,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __CURVES_H__
-#define __CURVES_H__
+#pragma once
 
 #include <map>
 #include <string>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "rt_math.h"
-#include "../rtgui/mycurve.h"
-#include "../rtgui/myflatcurve.h"
-#include "../rtgui/mydiagonalcurve.h"
-#include "color.h"
+#include "flatcurvetypes.h"
+#include "diagonalcurvetypes.h"
 #include "pipettebuffer.h"
 
 #include "LUT.h"
-
+#include "sleef.h"
 #define CURVES_MIN_POLY_POINTS  1000
 
 #include "rt_math.h"
@@ -356,8 +353,7 @@ public:
 public:
     static void complexCurve(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
                              const std::vector<double>& curvePoints, const std::vector<double>& curvePoints2,
-                             LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
-
+                             const LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
                              int skip = 1);
 
     static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double cont, double lumare,
@@ -677,7 +673,6 @@ public:
         return lutLocHHmaskblCurve;
     }
 };
-
 
 class LocCCmaskblCurve
 {
@@ -1700,12 +1695,6 @@ public:
             float *r, float *g, float *b) const;
 };
 
-class SatAndValueBlendingToneCurve : public ToneCurve
-{
-public:
-    void Apply(float& r, float& g, float& b) const;
-};
-
 class WeightedStdToneCurve : public ToneCurve
 {
 private:
@@ -2085,47 +2074,6 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
 #endif
 }
 
-// Tone curve modifying the value channel only, preserving hue and saturation
-// values in 0xffff space
-inline void SatAndValueBlendingToneCurve::Apply(float& ir, float& ig, float& ib) const
-{
-
-    assert(lutToneCurve);
-
-    float r = CLIP(ir);
-    float g = CLIP(ig);
-    float b = CLIP(ib);
-
-    const float lum = (r + g + b) / 3.f;
-    const float newLum = lutToneCurve[lum];
-
-    if (newLum == lum) {
-        return;
-    }
-
-    float h, s, v;
-    Color::rgb2hsvtc(r, g, b, h, s, v);
-
-    float dV;
-
-    if (newLum > lum) {
-        // Linearly targeting Value = 1 and Saturation = 0
-        const float coef = (newLum - lum) / (65535.f - lum);
-        dV = (1.f - v) * coef;
-        s *= 1.f - coef;
-    } else {
-        // Linearly targeting Value = 0
-        const float coef = (newLum - lum) / lum ;
-        dV = v * coef;
-    }
-
-    Color::hsv2rgbdcp(h, s, v + dV, r, g, b);
-
-    setUnlessOOG(ir, ig, ib, r, g, b);
-}
-
 }
 
 #undef CLIPI
-
-#endif

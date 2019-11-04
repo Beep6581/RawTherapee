@@ -16,10 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _ADJUSTER_H_
-#define _ADJUSTER_H_
+#pragma once
 
-#include <gtkmm.h>
 #include "editedstate.h"
 #include "guiutils.h"
 
@@ -130,5 +128,3 @@ public:
     void trimValue (int &val) const;
     void setLogScale(double base, double pivot, bool anchorMiddle = false);
 };
-
-#endif

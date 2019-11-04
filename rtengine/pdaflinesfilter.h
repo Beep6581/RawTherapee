@@ -21,10 +21,14 @@
 #pragma once
 
 #include <vector>
-#include "rawimagesource.h"
-#include "noncopyable.h"
 
-namespace rtengine {
+#include "noncopyable.h"
+#include "rawimagesource.h"
+
+namespace rtengine
+{
+
+class RawImage;
 
 class PDAFLinesFilter: public rtengine::NonCopyable
 {

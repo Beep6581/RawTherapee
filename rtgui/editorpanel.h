@@ -17,27 +17,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _EDITORPANEL_
-#define _EDITORPANEL_
+#pragma once
 
 #include <gtkmm.h>
-#include "imageareapanel.h"
-#include "toolpanelcoord.h"
-#include "profilepanel.h"
-#include "../rtengine/rtengine.h"
-#include "history.h"
-#include "histogrampanel.h"
-#include "thumbnail.h"
-#include "saveasdlg.h"
+
 #include "batchqueueentry.h"
-#include "thumbnaillistener.h"
-#include "navigator.h"
-#include "progressconnector.h"
 #include "filepanel.h"
+#include "histogrampanel.h"
+#include "history.h"
+#include "imageareapanel.h"
+#include "navigator.h"
+#include "profilepanel.h"
+#include "progressconnector.h"
+#include "saveasdlg.h"
+#include "thumbnaillistener.h"
+
 #include "../rtengine/noncopyable.h"
+#include "../rtengine/rtengine.h"
 
 class EditorPanel;
 class MyProgressBar;
+class Thumbnail;
+class ToolPanelCoordinator;
 
 struct EditorPanelIdleHelper {
     EditorPanel* epanel;
@@ -149,7 +150,7 @@ public:
 
     void saveProfile ();
     Glib::ustring getShortName ();
-    Glib::ustring getFileName ();
+    Glib::ustring getFileName () const;
     bool handleShortcutKey (GdkEventKey* event);
 
     bool getIsProcessing() const
@@ -259,6 +260,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif
-

@@ -16,18 +16,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <glibmm/ustring.h>
+
 #include "colortemp.h"
-#include "rtengine.h"
+#include "iccmatrices.h"
+#include "rt_math.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "sleef.c"
+#include "sleef.h"
 #include "settings.h"
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 2° Standard Observer.
     {0.0000000, 0.000000, 0.000000}, {0.0000000, 0.000000, 0.000000}, {0.0001299, 0.0003917, 0.0006061},

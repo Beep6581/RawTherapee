@@ -17,8 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DCRAW_H
-#define DCRAW_H
+#pragma once
 
 #include "myfile.h"
 #include <csetjmp>
@@ -529,6 +528,3 @@ void shiftXtransMatrix( const int offsy, const int offsx) {
 void nikon_14bit_load_raw(); // ported from LibRaw
 
 };
-
-
-#endif //DCRAW_H

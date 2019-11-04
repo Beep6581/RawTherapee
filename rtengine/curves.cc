@@ -23,9 +23,6 @@
 #include <cstring>
 #include <glib.h>
 #include <glib/gstdio.h>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include "rt_math.h"
 
@@ -792,16 +789,16 @@ void CurveFactory::complexsgnCurve(bool & autili,  bool & butili, bool & ccutili
 
 }
 
-void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, double hlcomprthresh,
-                                double shcompr, double br, double contr,
-                                const std::vector<double>& curvePoints,
-                                const std::vector<double>& curvePoints2,
-                                LUTu & histogram,
-                                LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
-                                LUTu & outBeforeCCurveHistogram,
-                                ToneCurve & customToneCurve1,
-                                ToneCurve & customToneCurve2,
-                                int skip)
+void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
+        double shcompr, double br, double contr,
+        const std::vector<double>& curvePoints,
+        const std::vector<double>& curvePoints2,
+        const LUTu & histogram,
+        LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
+        LUTu & outBeforeCCurveHistogram,
+        ToneCurve & customToneCurve1,
+        ToneCurve & customToneCurve2,
+        int skip)
 {
 
     // the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,

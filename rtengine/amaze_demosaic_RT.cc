@@ -30,10 +30,9 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
-#include "sleef.c"
+#include "sleef.h"
 #include "opthelper.h"
 #include "median.h"
-#include "procparams.h"
 #include "StopWatch.h"
 
 namespace rtengine

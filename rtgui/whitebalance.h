@@ -16,15 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _WB_H_
-#define _WB_H_
+#pragma once
 
 #include <gtkmm.h>
-#include "toolpanel.h"
+
 #include "adjuster.h"
 #include "guiutils.h"
+#include "toolpanel.h"
 #include "wbprovider.h"
+
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 
 class SpotWBListener
 {
@@ -123,5 +125,3 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void enabledChanged() override;
 };
-
-#endif

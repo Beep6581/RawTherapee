@@ -1,16 +1,20 @@
 /*
  *  This file is part of RawTherapee.
  */
-#ifndef _GRADIENT_H_
-#define _GRADIENT_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "editcallbacks.h"
-#include "toolpanel.h"
 #include "guiutils.h"
+#include "toolpanel.h"
 
-class Gradient : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public EditSubscriber
+class Gradient :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public EditSubscriber
 {
 
 private:
@@ -58,5 +62,3 @@ public:
     bool drag1(int modifierKey) override;
     void switchOffEditMode () override;
 };
-
-#endif

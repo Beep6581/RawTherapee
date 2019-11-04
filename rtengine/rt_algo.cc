@@ -31,7 +31,7 @@
 #include "opthelper.h"
 #include "rt_algo.h"
 #include "rt_math.h"
-#include "sleef.c"
+#include "sleef.h"
 
 namespace {
 float calcBlendFactor(float val, float threshold) {

@@ -16,24 +16,34 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _DARKFRAME_H_
-#define _DARKFRAME_H_
+#pragma once
 
 #include <memory>
+
 #include <gtkmm.h>
-#include "toolpanel.h"
-#include "../rtengine/rawimage.h"
+
 #include "guiutils.h"
+#include "toolpanel.h"
+
+namespace rtengine
+{
+
+class RawImage;
+
+}
 
 class DFProvider
 {
 public:
+    virtual ~DFProvider() = default;
     virtual rtengine::RawImage* getDF() = 0;
     virtual Glib::ustring GetCurrentImageFilePath() = 0;
     // add other info here
 };
 
-class DarkFrame : public ToolParamBlock, public FoldableToolPanel
+class DarkFrame :
+    public ToolParamBlock,
+    public FoldableToolPanel
 {
 
 protected:
@@ -66,5 +76,3 @@ public:
         dfp = p;
     };
 };
-
-#endif

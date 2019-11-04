@@ -20,6 +20,7 @@
 #include "toolbar.h"
 #include "multilangmgr.h"
 #include "guiutils.h"
+#include "rtimage.h"
 
 ToolBar::ToolBar () : showColPickers(true), listener (nullptr), pickerListener(nullptr)
 {

@@ -26,8 +26,6 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-extern Options options;
-
 namespace
 {
 

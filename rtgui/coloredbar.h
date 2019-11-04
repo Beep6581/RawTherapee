@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _COLOREDBAR_
-#define _COLOREDBAR_
+#pragma once
 
 #include "colorprovider.h"
 #include "guiutils.h"
@@ -62,5 +61,3 @@ public:
         BackBuffer::setDirty(isDirty);
     }
 };
-
-#endif

@@ -16,11 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CIECAM02_
-#define _CIECAM02_
+#pragma once
+
 #include <cmath>
-#include "LUT.h"
+#include <cstdint>
+
 #include "opthelper.h"
+
+template<typename T>
+class LUT;
+
+using LUTu = LUT<uint32_t>;
+using LUTf = LUT<float>;
 
 namespace rtengine
 {
@@ -106,4 +113,3 @@ public:
 
 };
 }
-#endif

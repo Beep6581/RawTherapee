@@ -28,32 +28,20 @@
  * available at https://arxiv.org/abs/1505.00996
  */
 
-#include "guidedfilter.h"
 #include "boxblur.h"
-#include "sleef.c"
-#include "rescale.h"
+#include "guidedfilter.h"
 #include "imagefloat.h"
+#include "rescale.h"
+#include "sleef.h"
 
-namespace rtengine {
+#define BENCHMARK
+#include "StopWatch.h"
 
-#if 0
-#  define DEBUG_DUMP(arr)                                                 \
-    do {                                                                \
-        Imagefloat im(arr.width(), arr.height());                      \
-        const char *out = "/tmp/" #arr ".tif";                     \
-        for (int y = 0; y < im.getHeight(); ++y) {                      \
-            for (int x = 0; x < im.getWidth(); ++x) {                   \
-                im.r(y, x) = im.g(y, x) = im.b(y, x) = arr[y][x] * 65535.f; \
-            }                                                           \
-        }                                                               \
-        im.saveTIFF(out, 16);                                           \
-    } while (false)
-#else
-#  define DEBUG_DUMP(arr)
-#endif
+namespace rtengine
+{
 
-
-namespace {
+namespace
+{
 
 int calculate_subsampling(int w, int h, int r)
 {
@@ -75,7 +63,6 @@ int calculate_subsampling(int w, int h, int r)
 }
 
 } // namespace
-
 
 void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling)
 {
@@ -166,54 +153,39 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     f_subsample(I1, I);
     f_subsample(p1, p);
 
-    DEBUG_DUMP(I);
-    DEBUG_DUMP(p);
-    DEBUG_DUMP(I1);
-    DEBUG_DUMP(p1);
-
     float r1 = float(r) / subsampling;
 
     array2D<float> meanI(w, h);
     f_mean(meanI, I1, r1);
-    DEBUG_DUMP(meanI);
 
     array2D<float> meanp(w, h);
     f_mean(meanp, p1, r1);
-    DEBUG_DUMP(meanp);
 
     array2D<float> &corrIp = p1;
     apply(MUL, corrIp, I1, p1);
     f_mean(corrIp, corrIp, r1);
-    DEBUG_DUMP(corrIp);
 
     array2D<float> &corrI = I1;
     apply(MUL, corrI, I1, I1);
     f_mean(corrI, corrI, r1);
-    DEBUG_DUMP(corrI);
 
     array2D<float> &varI = corrI;
     apply(SUBMUL, varI, meanI, meanI, corrI);
-    DEBUG_DUMP(varI);
 
     array2D<float> &covIp = corrIp;
     apply(SUBMUL, covIp, meanI, meanp, corrIp);
-    DEBUG_DUMP(covIp);
 
     array2D<float> &a = varI;
     apply(DIVEPSILON, a, covIp, varI);
-    DEBUG_DUMP(a);
 
     array2D<float> &b = covIp;
     apply(SUBMUL, b, a, meanI, meanp);
-    DEBUG_DUMP(b);
 
     array2D<float> &meana = a;
     f_mean(meana, a, r1);
-    DEBUG_DUMP(meana);
 
     array2D<float> &meanb = b;
     f_mean(meanb, b, r1);
-    DEBUG_DUMP(meanb);
 
     // speedup by heckflosse67
     const int Ws = meana.width();

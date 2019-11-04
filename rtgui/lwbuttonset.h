@@ -19,9 +19,10 @@
 #pragma once
 
 #include <gtkmm.h>
-#include "lwbutton.h"
 #include <vector>
 
+class LWButton;
+class LWButtonListener;
 class LWButtonSet
 {
 

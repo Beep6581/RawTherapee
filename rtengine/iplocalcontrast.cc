@@ -22,22 +22,17 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "array2D.h"
 #include "gauss.h"
+#include "labimage.h"
 #include "improcfun.h"
 #include "procparams.h"
+#include "settings.h"
 
 namespace rtengine
 {
-    extern const Settings* settings;
-    
-    LocallabParams          locallab;        ///< Local lab parameters
 
-void ImProcFunctions::localContrast(LabImage *lab, float **destination, const LocalContrastParams &localContrastParams, bool fftwlc, double scale)
+void ImProcFunctions::localContrast(LabImage *lab, float **destination, const rtengine::procparams::LocalContrastParams &localContrastParams, bool fftwlc, double scale)
 {
     if (!localContrastParams.enabled) {
         return;
