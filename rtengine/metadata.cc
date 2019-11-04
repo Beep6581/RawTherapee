@@ -187,10 +187,10 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
     dst->readMetadata();
     if (image_.get()) {
         dst->setMetadata(*image_);
-        remove_unwanted(dst.get());
         if (merge_xmp_) {
             do_merge_xmp(dst.get());
         }
+        remove_unwanted(dst.get());
     } else {
         dst->setExifData(exif_data_);
         dst->setIptcData(iptc_data_);
