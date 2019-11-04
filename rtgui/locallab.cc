@@ -800,13 +800,13 @@ Locallab::Locallab():
     maskcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
-    
+
     mergecolFrame->add(*maskcolBox);
 
     ToolParamBlock* const maskcol1Box = Gtk::manage(new ToolParamBlock());
     maskcol1Box->pack_start(*merge1colFrame);
     maskcol1Box->pack_start(*mergecolFrame);
-    
+
     expmaskcol->add(*maskcol1Box, false);
     colorBox->pack_start(*expmaskcol);
 
@@ -1235,6 +1235,7 @@ Locallab::Locallab():
     for (int i = 0; i < 5; i++) {
         shadhighBox->pack_start(*multipliersh[i]);
     }
+
     gamFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gammBox = Gtk::manage(new ToolParamBlock());
     gammBox->pack_start(*gamSH);
@@ -3034,7 +3035,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 r->mergeMethod = 3;
                 merge1colFrame->show();
                 mergecolFrame->show();
-                
+
             }
 
             r->sensiexclu = newSpot->sensiexclu;
@@ -3435,7 +3436,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "origmas";
                         merge1colFrame->show();
                         mergecolFrame->show();
-                        
+
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
@@ -4012,6 +4013,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         for (int i = 0; i < 5; i++) {
                             pe->locallab.spots.at(pp->locallab.selspot).multsh[i] = pe->locallab.spots.at(pp->locallab.selspot).multsh[i] || multipliersh[i]->getEditedState();
                         }
+
                         pe->locallab.spots.at(pp->locallab.selspot).fatamountSH = pe->locallab.spots.at(pp->locallab.selspot).fatamountSH || fatamountSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fatanchorSH = pe->locallab.spots.at(pp->locallab.selspot).fatanchorSH || fatanchorSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gamSH = pe->locallab.spots.at(pp->locallab.selspot).gamSH || gamSH->getEditedState();
@@ -4332,6 +4334,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         for (int i = 0; i < 5; i++) {
                             pedited->locallab.spots.at(pp->locallab.selspot).multsh[i] = pedited->locallab.spots.at(pp->locallab.selspot).multsh[i] || multipliersh[i]->getEditedState();
                         }
+
                         pedited->locallab.spots.at(pp->locallab.selspot).fatamountSH = pedited->locallab.spots.at(pp->locallab.selspot).fatamountSH || fatamountSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fatanchorSH = pedited->locallab.spots.at(pp->locallab.selspot).fatanchorSH || fatanchorSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gamSH = pedited->locallab.spots.at(pp->locallab.selspot).gamSH || gamSH->getEditedState();
@@ -5749,6 +5752,8 @@ void Locallab::inversChanged()
         showmaskcolMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
         gridFrame->hide();
         showmaskcolMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+        merge1colFrame->show();
+
     } else if (invers->get_active()) {
         sensi->show();
         llCurveEditorG->show();
@@ -5764,6 +5769,7 @@ void Locallab::inversChanged()
         softradiuscol->hide();
         showmaskcolMethod->hide();
         showmaskcolMethodinv->show();
+        merge1colFrame->hide();
     } else {
         sensi->show();
         llCurveEditorG->show();
@@ -5778,6 +5784,7 @@ void Locallab::inversChanged()
         softradiuscol->show();
         showmaskcolMethodinv->hide();
         showmaskcolMethod->show();
+        merge1colFrame->show();
 
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -6357,6 +6364,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     for (int i = 0; i < 5; i++) {
         multipliersh[i]->setDefault(defSpot->multsh[i]);
     }
+
     fatamountSH->setDefault(defSpot->fatamountSH);
     fatanchorSH->setDefault(defSpot->fatanchorSH);
     gamSH->setDefault(defSpot->gamSH);
@@ -6549,6 +6557,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->setDefaultEditedState(Irrelevant);
         }
+
         fatamountSH->setDefaultEditedState(Irrelevant);
         fatanchorSH->setDefaultEditedState(Irrelevant);
         gamSH->setDefaultEditedState(Irrelevant);
@@ -6745,6 +6754,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->setDefaultEditedState(defSpotState->multsh[i] ? Edited : UnEdited);
         }
+
         fatamountSH->setDefaultEditedState(defSpotState->fatamountSH ? Edited : UnEdited);
         fatanchorSH->setDefaultEditedState(defSpotState->fatanchorSH ? Edited : UnEdited);
         gamSH->setDefaultEditedState(defSpotState->gamSH ? Edited : UnEdited);
@@ -8108,6 +8118,7 @@ void Locallab::setBatchMode(bool batchMode)
     for (int i = 0; i < 5; i++) {
         multipliersh[i]->showEditedCB();
     }
+
     fatamountSH->showEditedCB();
     fatanchorSH->showEditedCB();
     gamSH->showEditedCB();
@@ -8742,6 +8753,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->setValue(pp->locallab.spots.at(index).multsh[i]);
         }
+
         fatamountSH->setValue(pp->locallab.spots.at(index).fatamountSH);
         fatanchorSH->setValue(pp->locallab.spots.at(index).fatanchorSH);
         gamSH->setValue(pp->locallab.spots.at(index).gamSH);
@@ -9141,6 +9153,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 for (int i = 0; i < 5; i++) {
                     multipliersh[i]->setEditedState(spotState->multsh[i] ? Edited : UnEdited);
                 }
+
                 fatamountSH->setEditedState(spotState->fatamountSH ? Edited : UnEdited);
                 fatanchorSH->setEditedState(spotState->fatanchorSH ? Edited : UnEdited);
                 gamSH->setEditedState(spotState->gamSH ? Edited : UnEdited);
@@ -9370,6 +9383,8 @@ void Locallab::updateSpecificGUIState()
         showmaskcolMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
         showmaskcolMethodinv->hide();
         gridFrame->hide();
+        merge1colFrame->show();
+
     } else if (invers->get_active()) {
         HCurveEditorG->hide();
         qualitycurveMethod->hide();
@@ -9380,6 +9395,7 @@ void Locallab::updateSpecificGUIState()
         gridFrame->hide();
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         showmaskcolMethodinv->show();
+        merge1colFrame->hide();
     } else {
         HCurveEditorG->show();
         qualitycurveMethod->show();
@@ -9390,6 +9406,7 @@ void Locallab::updateSpecificGUIState()
         softradiuscol->show();
         showmaskcolMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
         showmaskcolMethodinv->hide();
+        merge1colFrame->show();
 
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -9501,6 +9518,7 @@ void Locallab::updateSpecificGUIState()
             for (int i = 0; i < 5; i++) {
                 multipliersh[i]->show();
             }
+
             gamFrame->show();
 
             detailSH->show();

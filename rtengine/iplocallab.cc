@@ -3997,7 +3997,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 }
 
 
-void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexporig, const LabImage * bufcolfin, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
     BENCHFUN {
@@ -4011,7 +4011,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         const float ach = lp.trans / 100.f;
         float varsens = lp.sensex;
 
-        if (senstype == 0)   //Color and Light
+        if (senstype == 0 || senstype == 100)   //Color and Light
         {
             varsens =  lp.sens;
         } else if (senstype == 1)   //exposure
@@ -4055,11 +4055,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         const float refL = lumaref * 327.68f;
 
         const bool expshow = ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1);
-        const bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  &&  senstype == 0);
+        const bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  && (senstype == 0 || senstype == 100));
         const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
         const bool cbshow = ((lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2)  &&  senstype == 6);
         const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2)  &&  senstype == 8);
-        const bool previewcol = ((lp.showmaskcolmet == 5)  &&  senstype == 0);
+        const bool previewcol = ((lp.showmaskcolmet == 5)  && (senstype == 0 || senstype == 100));
         const bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
         const bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
         const bool previewcb = ((lp.showmaskcbmet == 4)  &&  senstype == 6);
@@ -4088,7 +4088,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         kab /= SQR(327.68f);
         kL /= SQR(327.68f);
         const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
-        const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
+        const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && (senstype == 0 || senstype == 100);
         const bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
         const bool usemaskcb = (lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 4) && senstype == 6;
         const bool usemasktm = (lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 4) && senstype == 8;
@@ -4231,7 +4231,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                     const float rL = origblur->L[y - ystart][x - xstart] / 327.68f;
                     float rsob = 0.f;
 
-                    if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || (senstype == 0 && lp.struco > 0.f))) {
+                    if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || ((senstype == 0 || senstype == 100) && lp.struco > 0.f))) {
                         const float csob = xlogf(1.f + std::min(blend2[y - ystart][x - xstart] / 100.f, 60.f) + 0.001f);
 
                         float rs;
@@ -4244,7 +4244,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 
                         if (rs > 0.f && senstype == 1) {
                             rsob =  1.1f * lp.struexp * rs;
-                        } else if (rs > 0.f && senstype == 0) {
+                        } else if (rs > 0.f && (senstype == 0 || senstype == 100)) {
                             rsob =  1.1f * lp.struco * rs;
                         }
                     }
@@ -4258,7 +4258,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                     const float clc = (previewcol || previewexp || previewSH || previewcb) ? settings->previewselection * 100.f : bufchro[y - ystart][x - xstart];
 
 
-                    if (senstype <= 1) {
+                    if (senstype <= 1 || senstype == 100) {
                         cla = buf_a_cat[y - ystart][x - xstart];
                         clb = buf_b_cat[y - ystart][x - xstart];
                     }
@@ -4302,6 +4302,26 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 } else if (senstype == 6 || senstype == 8 || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                                } else if (senstype == 100) {
+                                    difL = (bufcolfin->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+
+                                    if (HHutili) {
+                                        const float hhro = bufhh[y - ystart][x - xstart];
+
+                                        if (hhro != 0) {
+                                            const float realhhdE = reducdE * hhro;
+                                            const float addh = 0.01f * realhhdE * factorx;
+                                            newhr = rhue + addh;
+
+                                            if (newhr > rtengine::RT_PI_F) {
+                                                newhr -= 2 * rtengine::RT_PI_F;
+                                            } else if (newhr < -rtengine::RT_PI_F) {
+                                                newhr += 2 * rtengine::RT_PI_F;
+                                            }
+                                        }
+                                    }
+
                                 } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3 || senstype == 30) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
@@ -4335,8 +4355,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 } else {
                                     float flia = 1.f;
                                     float flib = 1.f;
-                                    const float chra = bufexporig->a[y - ystart][x - xstart];
-                                    const float chrb = bufexporig->b[y - ystart][x - xstart];
+                                    float chra = bufexporig->a[y - ystart][x - xstart];
+                                    float chrb = bufexporig->b[y - ystart][x - xstart];
+
+                                    if (senstype == 100) {
+                                        chra = bufcolfin->a[y - ystart][x - xstart];
+                                        chrb = bufcolfin->b[y - ystart][x - xstart];
+
+                                    }
 
                                     if (senstype == 2 || senstype == 3 || senstype == 30 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
 
@@ -4349,7 +4375,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
-                                    } else if (senstype == 0) {
+                                    } else if (senstype == 0  || senstype == 100) {
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
 
@@ -4367,7 +4393,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
                                     transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
-                                    if (senstype == 0 && HHutili) {
+                                    if ((senstype == 0 || senstype == 100) && HHutili) {
                                         const float tempa = transformed->a[y][x];
                                         const float tempb = transformed->b[y][x];
                                         const float hhro = bufhh[y - ystart][x - xstart];
@@ -4426,6 +4452,26 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 } else if (senstype == 6 || senstype == 8  || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                                } else if (senstype == 100) {
+                                    difL = (bufcolfin->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+
+                                    if (HHutili) {
+                                        const float hhro = bufhh[y - ystart][x - xstart];
+
+                                        if (hhro != 0) {
+                                            const float realhhdE = reducdE * hhro;
+                                            const float addh = 0.01f * realhhdE;
+                                            newhr = rhue + addh;
+
+                                            if (newhr > rtengine::RT_PI_F) {
+                                                newhr -= 2 * rtengine::RT_PI_F;
+                                            } else if (newhr < -rtengine::RT_PI_F) {
+                                                newhr += 2 * rtengine::RT_PI_F;
+                                            }
+                                        }
+                                    }
+
                                 } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3 || senstype == 30) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
@@ -4459,8 +4505,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 } else {
                                     float flia = 1.f;
                                     float flib = 1.f;
-                                    const float chra = bufexporig->a[y - ystart][x - xstart];
-                                    const float chrb = bufexporig->b[y - ystart][x - xstart];
+                                    float chra = bufexporig->a[y - ystart][x - xstart];
+                                    float chrb = bufexporig->b[y - ystart][x - xstart];
+
+                                    if (senstype == 100) {
+                                        chra = bufcolfin->a[y - ystart][x - xstart];
+                                        chrb = bufcolfin->b[y - ystart][x - xstart];
+
+                                    }
 
                                     if (senstype == 2 || senstype == 3 || senstype == 30 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
                                         flia = flib = (100.f + realstrchdE) / 100.f;
@@ -4472,7 +4524,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
-                                    } else if (senstype == 0) {
+                                    } else if (senstype == 0  || senstype == 100) {
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
 
@@ -4488,7 +4540,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
                                     transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
-                                    if (senstype == 0 && HHutili) {
+                                    if ((senstype == 0 || senstype == 100) && HHutili) {
                                         const float tempa = transformed->a[y][x];
                                         const float tempb = transformed->b[y][x];
                                         const float hhro = bufhh[y - ystart][x - xstart];
@@ -8369,7 +8421,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-                    transit_shapedetect(6, loctemp.get(), originalmaskcb.get(), buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(6, loctemp.get(), nullptr, originalmaskcb.get(), buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     bool nochroma = (lp.showmaskcbmet == 2  || lp.showmaskcbmet == 1);
 
@@ -8437,7 +8489,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-                        transit_shapedetect(7, loctemp.get(), nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect(7, loctemp.get(), nullptr, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                         if (params->locallab.spots.at(sp).recurs) {
                             original->CopyFrom(transformed);
@@ -8507,7 +8559,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     bufexpfin.reset();
-                    transit_shapedetect(2, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(2, bufexporig.get(), nullptr, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
@@ -8749,7 +8801,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         //
                         //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
-                        transit_shapedetect(8, tmp1.get(), originalmasktm.get(), buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect(8, tmp1.get(), nullptr, originalmasktm.get(), buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                         bufgb.reset();
 
                         if (params->locallab.spots.at(sp).recurs) {
@@ -8943,7 +8995,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    transit_shapedetect(9, bufexpfin.get(), originalmaskSH.get(), buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(9, bufexpfin.get(), nullptr, originalmaskSH.get(), buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
@@ -9223,7 +9275,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 bufexpfin.reset();
-                transit_shapedetect(3, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(3, bufexporig.get(), nullptr, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed);
@@ -9691,7 +9743,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 bufgb.reset();
-                transit_shapedetect(10, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(10, tmp1.get(), nullptr, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 tmp1.reset();
 
                 if (params->locallab.spots.at(sp).recurs) {
@@ -9863,7 +9915,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 bufexpfin.reset();
-                transit_shapedetect(30, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(30, bufexporig.get(), nullptr, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed);
@@ -11301,7 +11353,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     bufexpfin.reset();
-                    transit_shapedetect(1, bufexporig.get(), originalmaskexp.get(), buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(1, bufexporig.get(), nullptr, originalmaskexp.get(), buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     bufexporig.reset();
 
                     if (params->locallab.spots.at(sp).recurs) {
@@ -11505,6 +11557,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 std::unique_ptr<LabImage> bufcolfin;
                 std::unique_ptr<LabImage> bufmaskblurcol;
                 std::unique_ptr<LabImage> originalmaskcol;
+                std::unique_ptr<LabImage> bufcolreserv;
 
                 array2D<float> buflight(bfw, bfh, true);
                 JaggedArray<float> bufchro(bfw, bfh, true);
@@ -11653,14 +11706,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
                     float amountcd = 0.f;
                     float anchorcd = 50.f;
-                    if(lp.mergemet != 2) {
+
+                    if (lp.mergemet != 2) {
                         maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
-                                locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
-                                level_bl, level_hl, level_br, level_hr,
-                                shortcu, delt, hueref, chromaref, lumaref,
-                                maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
-                               );
+                                    locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
+                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
+                                    level_bl, level_hl, level_br, level_hr,
+                                    shortcu, delt, hueref, chromaref, lumaref,
+                                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                                   );
 
                         if (lp.showmaskcolmet == 3) {
                             showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
@@ -11668,6 +11722,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             return;
                         }
                     }
+
                     if (lp.showmaskcolmet == 4) {
                         return;
                     }
@@ -11762,9 +11817,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                         if (lp.mergemet >= 2) { //merge result with original
-                            std::unique_ptr<LabImage> bufcolreserv;
                             bufcolreserv.reset(new LabImage(bfw, bfh));
-//printf("method=%i \n", lp.mergecolMethod);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12003,9 +12056,43 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 delete tmpImageorig;
                                 delete tmpImagereserv;
+
+                                bool fordiff = false;
+
+                                if (lp.mergecolMethod == 2 && fordiff) {//display differences whithout deltaE...in case of generally disabled
+#ifdef _OPENMP
+                                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                    for (int y = 0; y < bfh; y++) {
+                                        const int loy = y + ystart + cy;
+
+                                        for (int x = 0; x < bfw; x++) {
+                                            const int lox = x + xstart + cx;
+                                            int zone = 0;
+                                            float localFactor = 1.f;
+                                            const float achm = (float)lp.trans / 100.f;
+
+                                            if (lp.shapmet == 0) {
+                                                calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                            } else if (lp.shapmet == 1) {
+                                                calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                            }
+
+                                            if (zone > 0) {//normal
+                                                transformed->L[y + ystart][x + xstart] = bufcolfin->L[y][x];
+                                                transformed->a[y + ystart][x + xstart] = bufcolfin->a[y][x];
+                                                transformed->b[y + ystart][x + xstart] = bufcolfin->b[y][x];
+                                            }
+                                        }
+                                    }
+
+                                    return;
+                                }
+
+
                             }
                         }
-
 
                         if (lp.softradiuscol > 0.f) {
                             softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
@@ -12028,7 +12115,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         temp = blend2;
                     }
 
-                    transit_shapedetect(0, bufcolorig.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
+                    int smerge = 0;
+
+                    if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
+                        smerge = 100;
+                    }
+
+                    //bufcolfin add for merge
+                    transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
