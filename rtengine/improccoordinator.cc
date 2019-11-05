@@ -172,6 +172,7 @@ ImProcCoordinator::ImProcCoordinator() :
     coordX(0), coordY(0), localX(0), localY(0),
     lllocalcurve(65536, 0),
     cclocalcurve(65536, 0),
+    rgblocalcurve(65536, 0),
     exlocalcurve(65536, 0),
     hltonecurveloc(65536, 0), //32768
     shtonecurveloc(65536, 0),
@@ -186,6 +187,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lmaskbllocalcurve(65536, 0),
     locallutili(false), 
     localcutili(false), 
+    localrgbutili(false), 
     localexutili(false),
     llmasutili(false),
     lhmasutili(false),
@@ -936,6 +938,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 HHutili = false;
                 locallutili = false;
                 localexutili = false;
+                localrgbutili = false;
                 localcutili = false;
                 llmasutili = false;
                 lhmasutili = false;
@@ -1001,6 +1004,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locwavCurve.Set(params->locallab.spots.at(sp).locwavcurve, locwavutili);
                 CurveFactory::curveLocal(locallutili, params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
                 CurveFactory::curveCCLocal(localcutili, params->locallab.spots.at(sp).cccurve, cclocalcurve, sca);
+                CurveFactory::curveLocal(localrgbutili, params->locallab.spots.at(sp).rgbcurve, rgblocalcurve, sca);
                 CurveFactory::curveexLocal(localexutili, params->locallab.spots.at(sp).excurve, exlocalcurve, sca);
                 CurveFactory::curvemaskLocal(localmaskutili, params->locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, sca);
                 CurveFactory::curvemaskLocal(localmaskexputili, params->locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, sca);
@@ -1093,7 +1097,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 loclmasCurveblwav,lmasutiliblwav,
                                 loclmasCurvecolwav,lmasutilicolwav,
                                 locwavCurve, locwavutili,
-                                LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                                LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                 huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav,
                                 locallColorMask, locallColorMaskinv, locallExpMask, locallExpMaskinv, locallSHMask, locallSHMaskinv, locallcbMask, locallretiMask, locallsoftMask, localltmMask, locallblMask,
                                 minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
@@ -1118,7 +1122,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 loclmasCurveblwav,lmasutiliblwav,
                                 loclmasCurvecolwav,lmasutilicolwav,
                                 locwavCurve, locwavutili,
-                                LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                                LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                 huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                 }
@@ -1143,6 +1147,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 lllocalcurve.clear();
                 lightCurveloc.clear();
                 cclocalcurve.clear();
+                rgblocalcurve.clear();
                 exlocalcurve.clear();
                 lmasklocalcurve.clear();
                 lmaskexplocalcurve.clear();

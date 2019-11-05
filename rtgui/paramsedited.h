@@ -434,9 +434,11 @@ public:
         bool lapmaskcol;
         bool qualitycurveMethod;
         bool gridMethod;
+        bool toneMethod;
         bool mergecolMethod;
         bool llcurve;
         bool cccurve;
+        bool rgbcurve;
         bool LHcurve;
         bool HHcurve;
         bool invers;

@@ -1011,9 +1011,11 @@ struct LocallabParams {
         double lapmaskcol;
         Glib::ustring qualitycurveMethod;
         Glib::ustring gridMethod;
+        Glib::ustring toneMethod;
         Glib::ustring mergecolMethod;
         std::vector<double> llcurve;
         std::vector<double> cccurve;
+        std::vector<double> rgbcurve;
         std::vector<double> LHcurve;
         std::vector<double> HHcurve;
         bool invers;

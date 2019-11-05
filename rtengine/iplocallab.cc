@@ -7396,6 +7396,25 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 }
 
+float triangle(float a, float a1, float b)
+{
+    if (a != b) {
+        float b1;
+        float a2 = a1 - a;
+
+        if (b < a) {
+            b1 = b + a2 *      b  /     a ;
+        } else       {
+            b1 = b + a2 * (65535.f - b) / (65535.f - a);
+        }
+
+        return b1;
+    }
+
+    return a1;
+}
+
+
 
 void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
                                 const LocretigainCurve & locRETgainCcurve, const LocretitransCurve & locRETtransCcurve, LUTf & lllocalcurve, bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
@@ -7416,7 +7435,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocwavCurve & loclmasCurveblwav, bool & lmasutiliblwav,
                                 const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav,
                                 const LocwavCurve & locwavCurve, bool & locwavutili,
-                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
+                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                                 double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int &lastsav,
                                 int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
                                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
@@ -11699,6 +11718,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int level_hr = params->locallab.spots.at(sp).csthresholdcol.getTopRight();
                     int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
                     int lumask = params->locallab.spots.at(sp).lumask;
+                    int tonemod = 0;
+
+                    if (params->locallab.spots.at(sp).toneMethod == "one") {
+                        tonemod = 0;
+                    } else if (params->locallab.spots.at(sp).toneMethod == "two") {
+                        tonemod = 1;
+                    } else if (params->locallab.spots.at(sp).toneMethod == "thr") {
+                        tonemod = 2;
+                    }
 
                     const int limscope = 80;
                     const float mindE = 2.f + MINSCOPE * sco * lp.thr;
@@ -11816,6 +11844,85 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bufcolfin->L[ir][jr] = bufcolcalcL;
 
                             }
+
+                        //RGB Curves
+                        Imagefloat *tmpImage = nullptr;
+                        tmpImage = new Imagefloat(bfw, bfh);
+
+                        float *rtemp = new float[bfw * bfh];
+                        float *gtemp = new float[bfw * bfh];
+                        float *btemp = new float[bfw * bfh];
+
+                        lab2rgb(*bufcolfin, *tmpImage, params->icm.workingProfile);
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int y = 0; y < bfh; y++)
+                            for (int x = 0; x < bfw; x++) {
+                                rtemp[y * bfw + x] = tmpImage->r(y, x);
+                                gtemp[y * bfw + x] = tmpImage->g(y, x);
+                                btemp[y * bfw + x] = tmpImage->b(y, x);
+
+                                if (rgblocalcurve && localrgbutili  && lp.qualcurvemet != 0) {
+                                    assert(rgblocalcurve);
+
+                                    //std
+                                    if (tonemod == 0) {
+                                        curves::setLutVal(rgblocalcurve, rtemp[y * bfw + x], gtemp[y * bfw + x], btemp[y * bfw + x]);
+                                    } else {
+                                        float r = CLIP(rtemp[y * bfw + x]);
+                                        float g = CLIP(gtemp[y * bfw + x]);
+                                        float b = CLIP(btemp[y * bfw + x]);
+
+                                        //Luminance
+                                        if (tonemod == 2) {
+                                            float currLuminance = r * 0.2126729f + g * 0.7151521f + b * 0.0721750f;
+
+                                            const float newLuminance = rgblocalcurve[currLuminance];
+                                            currLuminance = currLuminance == 0.f ? 0.00001f : currLuminance;
+                                            const float coef = newLuminance / currLuminance;
+                                            r = LIM<float> (r * coef, 0.f, 65535.f);
+                                            g = LIM<float> (g * coef, 0.f, 65535.f);
+                                            b = LIM<float> (b * coef, 0.f, 65535.f);
+                                        }
+
+                                        //weightstd
+                                        if (tonemod == 1) {
+                                            float r1 = rgblocalcurve[r];
+                                            float g1 = triangle(r, r1, g);
+                                            float b1 = triangle(r, r1, b);
+
+                                            float g2 = rgblocalcurve[g];
+                                            float r2 = triangle(g, g2, r);
+                                            float b2 = triangle(g, g2, b);
+
+                                            float b3 = rgblocalcurve[b];
+                                            float r3 = triangle(b, b3, r);
+                                            float g3 = triangle(b, b3, g);
+                                            r = CLIP<float>(r1 * 0.50f + r2 * 0.25f + r3 * 0.25f);
+                                            g = CLIP<float> (g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
+                                            b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
+                                        }
+
+                                        setUnlessOOG(rtemp[y * bfw + x], gtemp[y * bfw + x], btemp[y * bfw + x], r, g, b);
+                                    }
+                                }
+
+                                tmpImage->r(y, x) = rtemp[y * bfw + x];
+                                tmpImage->g(y, x) = gtemp[y * bfw + x];
+                                tmpImage->b(y, x) = btemp[y * bfw + x];
+                            }
+
+                        rgb2lab(*tmpImage, *bufcolfin, params->icm.workingProfile);
+
+                        delete tmpImage;
+                        delete [] rtemp;
+                        delete [] gtemp;
+                        delete [] btemp;
+
+
+                        //
 
                         if (lp.mergemet >= 2) { //merge result with original
                             bufcolreserv.reset(new LabImage(bfw, bfh));

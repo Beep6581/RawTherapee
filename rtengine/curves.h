@@ -1755,6 +1755,7 @@ inline void StandardToneCurve::Apply(float& r, float& g, float& b) const
     curves::setLutVal(lutToneCurve, r, g, b);
 }
 
+
 inline void StandardToneCurve::BatchApply(
     const size_t start, const size_t end,
     float *r, float *g, float *b) const

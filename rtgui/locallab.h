@@ -73,12 +73,14 @@ private:
     // Color & Light
     CurveEditorGroup* const llCurveEditorG;
     CurveEditorGroup* const HCurveEditorG;
+    CurveEditorGroup* const rgbCurveEditorG;
     CurveEditorGroup* const maskCurveEditorG;
     CurveEditorGroup* const mask2CurveEditorG;
     CurveEditorGroup* const mask2CurveEditorGwav;
     DiagonalCurveEditor* Lmaskshape;
     DiagonalCurveEditor* llshape;
     DiagonalCurveEditor* ccshape;
+    DiagonalCurveEditor* rgbshape;
     FlatCurveEditor* LHshape;
     FlatCurveEditor* HHshape;
     FlatCurveEditor* CCmaskshape;
@@ -392,6 +394,8 @@ private:
     sigc::connection qualitycurveMethodConn;
     MyComboBoxText* const gridMethod;
     sigc::connection gridMethodConn;
+    MyComboBoxText* const toneMethod;
+    sigc::connection toneMethodConn;
     MyComboBoxText* const showmaskcolMethod;
     sigc::connection showmaskcolMethodConn;
     MyComboBoxText* const showmaskcolMethodinv;
@@ -549,6 +553,7 @@ private:
     // Color & Light
     void qualitycurveMethodChanged();
     void gridMethodChanged();
+    void toneMethodChanged();
     void showmaskcolMethodChanged();
     void showmaskcolMethodChangedinv();
     void mergecolMethodChanged();

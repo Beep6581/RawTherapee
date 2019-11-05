@@ -1037,6 +1037,8 @@ HISTORY_MSG_796;Local - Recursive references
 HISTORY_MSG_797;Local - Merge and Masks method
 HISTORY_MSG_798;Local - Merge Original method
 HISTORY_MSG_799;Local - Opacity
+HISTORY_MSG_800;Local - Color RGB ToneCurve
+HISTORY_MSG_801;Local - Color ToneCurve Method
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2216,6 +2218,7 @@ TP_LOCALLAB_LUM;Curves LC
 TP_LOCALLAB_LAPLACE;Laplacian threshold deltaE
 TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_HLH;Curves H
+TP_LOCALLAB_RGB;RGB Tone Curve
 TP_LOCALLAB_EQUIL;Normalize Luminance
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie

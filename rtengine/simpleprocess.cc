@@ -1124,6 +1124,7 @@ private:
             LocwavCurve locwavCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
+            LUTf rgblocalcurve(65536, 0);
             LUTf hltonecurveloc(65536, 0);
             LUTf shtonecurveloc(65536, 0);
             LUTf tonecurveloc(65536, 0);
@@ -1154,6 +1155,7 @@ private:
                 bool HHutili = false;
                 bool locallutili = false;
                 bool localcutili = false;
+                bool localrgbutili = false;
                 bool localexutili = false;
                 bool llmasutili = false;
                 bool lhmasutili = false;
@@ -1217,6 +1219,7 @@ private:
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
+                CurveFactory::curveLocal(localrgbutili, params.locallab.spots.at(sp).rgbcurve, rgblocalcurve, 1);
                 CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskutili, params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskexputili, params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, 1);
@@ -1276,7 +1279,7 @@ private:
                      loclmasCurveblwav,lmasutiliblwav,
                      loclmasCurvecolwav,lmasutilicolwav,
                      locwavCurve, locwavutili,
-                     LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                     LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                      huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                      minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
@@ -1290,6 +1293,7 @@ private:
                 // Clear local curves
                 lllocalcurve.clear();
                 cclocalcurve.clear();
+                rgblocalcurve.clear();
                 exlocalcurve.clear();
                 hltonecurveloc.clear();
                 lmasklocalcurve.clear();

@@ -234,6 +234,7 @@ protected:
     int coordX, coordY, localX, localY;
     LUTf lllocalcurve;
     LUTf cclocalcurve;
+    LUTf rgblocalcurve;
     LUTf exlocalcurve;
     LUTf hltonecurveloc;
     LUTf shtonecurveloc;
@@ -279,6 +280,7 @@ protected:
 
     bool locallutili;
     bool localcutili;
+    bool localrgbutili;
     bool localexutili;
     bool llmasutili;
     bool lhmasutili;
