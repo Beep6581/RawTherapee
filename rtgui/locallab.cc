@@ -467,6 +467,14 @@ Locallab::Locallab():
 //    retiBox(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     retiBox(Gtk::manage(new ToolParamBlock())),
     maskretiBox(Gtk::manage(new ToolParamBlock())),
+    labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")))),
+    mMLabels(Gtk::manage(new Gtk::Label("---"))),
+    transLabels(Gtk::manage(new Gtk::Label("---"))),
+    transLabels2(Gtk::manage(new Gtk::Label("---"))),
+    ctboxsoftmethod(Gtk::manage(new Gtk::HBox())),
+    ctboxexpmethod(Gtk::manage(new Gtk::HBox())),
+
+
     // Others
     defparams(nullptr),
     defpedited(nullptr),
@@ -771,7 +779,7 @@ Locallab::Locallab():
     csThresholdcol->setAdjusterListener(this);
 
 
-    labgrid = Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")));
+//    labgrid = Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")));
 
     ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const superFrame = Gtk::manage(new Gtk::Frame());
@@ -858,7 +866,7 @@ Locallab::Locallab():
         expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
     }
 
-    ctboxexpmethod = Gtk::manage(new Gtk::HBox());
+//    ctboxexpmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelexpmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"));
     ctboxexpmethod->pack_start(*labelexpmethod, Gtk::PACK_SHRINK, 4);
 
@@ -1387,7 +1395,7 @@ Locallab::Locallab():
     softMethodConn = softMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::softMethodChanged));
 
 
-    ctboxsoftmethod = Gtk::manage(new Gtk::HBox());
+//    ctboxsoftmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelsoftmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHOWDCT") + ":"));
     ctboxsoftmethod->pack_start(*labelsoftmethod, Gtk::PACK_SHRINK, 4);
 
@@ -1680,21 +1688,21 @@ Locallab::Locallab():
         softradiusret->set_tooltip_text(M("TP_LOCALLAB_SOFTRETI_TOOLTIP"));
     }
 
-    mMLabels = Gtk::manage(new Gtk::Label("---"));
+//    mMLabels = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(mMLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     if (showtooltip) {
         mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
     }
 
-    transLabels = Gtk::manage(new Gtk::Label("---"));
+//    transLabels = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(transLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     if (showtooltip) {
         transLabels->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
     }
 
-    transLabels2 = Gtk::manage(new Gtk::Label("---"));
+//    transLabels2 = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(transLabels2, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     LocalcurveEditortransT->setCurveListener(this);
