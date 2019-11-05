@@ -165,7 +165,7 @@ Locallab::Locallab():
     llshape(static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     ccshape(static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "C(C)"))),
     toneMethod(Gtk::manage(new MyComboBoxText())),
-    rgbshape(static_cast<DiagonalCurveEditor*>(rgbCurveEditorG->addCurve(CT_Diagonal,"",toneMethod))),
+    rgbshape(static_cast<DiagonalCurveEditor*>(rgbCurveEditorG->addCurve(CT_Diagonal, "", toneMethod))),
     LHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true))),
     HHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
     CCmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
@@ -463,7 +463,7 @@ Locallab::Locallab():
     // Color & Light
     qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
     gridMethod(Gtk::manage(new MyComboBoxText())),
- //   toneMethod(Gtk::manage(new MyComboBoxText())),
+//   toneMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
     mergecolMethod(Gtk::manage(new MyComboBoxText())),
@@ -530,7 +530,7 @@ Locallab::Locallab():
 
     // Others
     ctboxsoftmethod(Gtk::manage(new Gtk::HBox())),
-    ctboxexpmethod (Gtk::manage(new Gtk::HBox())),
+    ctboxexpmethod(Gtk::manage(new Gtk::HBox())),
     nextmin(0.),
     nextmax(0.),
     nextminiT(0.),
@@ -624,7 +624,7 @@ Locallab::Locallab():
     toneMethod->append(M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
     toneMethod->append(M("TP_EXPOSURE_TCMODE_LUMINANCE"));
     toneMethod->append(M("TP_EXPOSURE_TCMODE_FILMLIKE"));
-    
+
     toneMethod->set_active(0);
     toneMethodConn = toneMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::toneMethodChanged));
 
@@ -668,20 +668,20 @@ Locallab::Locallab():
     LHshape->setCurveColorProvider(this, 1);
 
     const std::vector<GradientMilestone> six_shape =
-        []() -> std::vector<GradientMilestone>
+    []() -> std::vector<GradientMilestone> {
+        std::vector<GradientMilestone> res;
+
+        float R, G, B;
+
+        for (int i = 0; i < 7; ++i)
         {
-            std::vector<GradientMilestone> res;
+            const float x = static_cast<float>(i) * (1.f / 6.f);
+            Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+            res.emplace_back(x, R, G, B);
+        }
 
-            float R, G, B;
-
-            for (int i = 0; i < 7; ++i) {
-                const float x = static_cast<float>(i) * (1.f / 6.f);
-                Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-                res.emplace_back(x, R, G, B);
-            }
-
-            return res;
-        }();
+        return res;
+    }();
 
     const std::vector<GradientMilestone>& mLHshape = six_shape;
     LHshape->setBottomBarBgGradient(mLHshape);
@@ -1377,18 +1377,17 @@ Locallab::Locallab():
     }
 
     const std::vector<GradientMilestone> mskinTonesCurve =
-        []() -> std::vector<GradientMilestone>
-        {
-            std::vector<GradientMilestone> res;
+    []() -> std::vector<GradientMilestone> {
+        std::vector<GradientMilestone> res;
 
-            float R, G, B;
-            Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
-            res.emplace_back(0.0, R, G, B);
-            Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
-            res.emplace_back(1.0, R, G, B);
+        float R, G, B;
+        Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
+        res.emplace_back(0.0, R, G, B);
+        Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
+        res.emplace_back(1.0, R, G, B);
 
-            return res;
-        }();
+        return res;
+    }();
     // -0.1 rad < Hue < 1.6 rad
     skinTonesCurve->setBottomBarBgGradient(mskinTonesCurve);
     skinTonesCurve->setLeftBarBgGradient(mskinTonesCurve);

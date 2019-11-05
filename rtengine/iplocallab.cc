@@ -7414,7 +7414,7 @@ float triangle(float a, float a1, float b)
     return a1;
 }
 
-void rgbtone (float& maxval, float& medval, float& minval, LUTf & lutToneCurve)
+void rgbtone(float& maxval, float& medval, float& minval, LUTf & lutToneCurve)
 {
     float minvalold = minval, medvalold = medval, maxvalold = maxval;
 
@@ -11780,27 +11780,28 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 chprosl = CLIPCHRO(ampli * ch - ampli);
                             }
                         }
-                        
+
                         //RGB Curves
-                        Imagefloat *tmpImage = nullptr;
-                        tmpImage = new Imagefloat(bfw, bfh);
+                        if (rgblocalcurve && localrgbutili  && lp.qualcurvemet != 0) {
 
-                        float *rtemp = new float[bfw * bfh];
-                        float *gtemp = new float[bfw * bfh];
-                        float *btemp = new float[bfw * bfh];
+                            Imagefloat *tmpImage = nullptr;
+                            tmpImage = new Imagefloat(bfw, bfh);
 
-                        lab2rgb(*bufcolorig, *tmpImage, params->icm.workingProfile);
+                            float *rtemp = new float[bfw * bfh];
+                            float *gtemp = new float[bfw * bfh];
+                            float *btemp = new float[bfw * bfh];
+
+                            lab2rgb(*bufcolorig, *tmpImage, params->icm.workingProfile);
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                        for (int y = 0; y < bfh; y++)
-                            for (int x = 0; x < bfw; x++) {
-                                rtemp[y * bfw + x] = tmpImage->r(y, x);
-                                gtemp[y * bfw + x] = tmpImage->g(y, x);
-                                btemp[y * bfw + x] = tmpImage->b(y, x);
+                            for (int y = 0; y < bfh; y++)
+                                for (int x = 0; x < bfw; x++) {
+                                    rtemp[y * bfw + x] = tmpImage->r(y, x);
+                                    gtemp[y * bfw + x] = tmpImage->g(y, x);
+                                    btemp[y * bfw + x] = tmpImage->b(y, x);
 
-                                if (rgblocalcurve && localrgbutili  && lp.qualcurvemet != 0) {
                                     assert(rgblocalcurve);
 
                                     //std
@@ -11840,6 +11841,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             g = CLIP<float> (g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
                                             b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
                                         }
+
                                         //Film like Adobe
                                         if (tonemod == 3) {
 
@@ -11865,24 +11867,25 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                                 }
                                             }
                                         }
-                                        
+
 
                                         setUnlessOOG(rtemp[y * bfw + x], gtemp[y * bfw + x], btemp[y * bfw + x], r, g, b);
                                     }
+
+
+                                    tmpImage->r(y, x) = rtemp[y * bfw + x];
+                                    tmpImage->g(y, x) = gtemp[y * bfw + x];
+                                    tmpImage->b(y, x) = btemp[y * bfw + x];
                                 }
 
-                                tmpImage->r(y, x) = rtemp[y * bfw + x];
-                                tmpImage->g(y, x) = gtemp[y * bfw + x];
-                                tmpImage->b(y, x) = btemp[y * bfw + x];
-                            }
+                            rgb2lab(*tmpImage, *bufcolorig, params->icm.workingProfile);
 
-                        rgb2lab(*tmpImage, *bufcolorig, params->icm.workingProfile);
-
-                        delete tmpImage;
-                        delete [] rtemp;
-                        delete [] gtemp;
-                        delete [] btemp;
-                        // end rgb curves
+                            delete tmpImage;
+                            delete [] rtemp;
+                            delete [] gtemp;
+                            delete [] btemp;
+                            // end rgb curves
+                        }
 
 
                         //others curves

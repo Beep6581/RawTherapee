@@ -403,7 +403,7 @@ private:
     sigc::connection showmaskcolMethodConninv;
     MyComboBoxText* const mergecolMethod;
     sigc::connection mergecolMethodConn;
-    
+
     ThresholdAdjuster* const csThresholdcol;
     //Exposure
     MyComboBoxText* const showmaskexpMethod;
