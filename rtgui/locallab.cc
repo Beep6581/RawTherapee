@@ -160,34 +160,89 @@ Locallab::Locallab():
     maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     mask2CurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
+
+    Lmaskshape(static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    llshape(static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    ccshape(static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "C(C)"))),
+    rgbshape(static_cast<DiagonalCurveEditor*>(rgbCurveEditorG->addCurve(CT_Diagonal,"",toneMethod))),
+    LHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true))),
+    HHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
+    CCmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
+    LLmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    HHmaskshape(static_cast<FlatCurveEditor *>(maskCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+    LLmaskcolshapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+
     // Exposure
     curveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"))),
     maskexpCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2expCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+
+    Lmaskexpshape(static_cast<DiagonalCurveEditor*>(mask2expCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    shapeexpos(static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""))),
+    CCmaskexpshape(static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
+    LLmaskexpshape(static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    HHmaskexpshape(static_cast<FlatCurveEditor *>(maskexpCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+
     //Shadows Highlight
     maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2SHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+
+    LmaskSHshape(static_cast<DiagonalCurveEditor*>(mask2SHCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    CCmaskSHshape(static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
+    LLmaskSHshape(static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    HHmaskSHshape(static_cast<FlatCurveEditor *>(maskSHCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+
     // Vibrance
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
+
+    skinTonesCurve(static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")))),
+
     //Blur
     maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2blCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2blCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
 
+    Lmaskblshape(static_cast<DiagonalCurveEditor*>(mask2blCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    CCmaskblshape(static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
+    LLmaskblshape(static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    HHmaskblshape(static_cast<FlatCurveEditor *>(maskblCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+    LLmaskblshapewav(static_cast<FlatCurveEditor*>(mask2blCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+
     //TM
     masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2tmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
-    // Retinex
+
+    Lmasktmshape(static_cast<DiagonalCurveEditor*>(mask2tmCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    CCmasktmshape(static_cast<FlatCurveEditor*>(masktmCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
+    LLmasktmshape(static_cast<FlatCurveEditor*>(masktmCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    HHmasktmshape(static_cast<FlatCurveEditor *>(masktmCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+
+// Retinex
     LocalcurveEditortransT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONMAP"))),
     LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
     maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2retiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
-    //Local contrast
+
+    Lmaskretishape(static_cast<DiagonalCurveEditor*>(mask2retiCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    cTtransshape(static_cast<FlatCurveEditor*>(LocalcurveEditortransT->addCurve(CT_Flat, "", nullptr, false, false))),
+    cTgainshape(static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false))),
+    CCmaskretishape(static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
+    LLmaskretishape(static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    HHmaskretishape(static_cast<FlatCurveEditor *>(maskretiCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+
+//Local contrast
     LocalcurveEditorwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
+
+    wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
 
     //CBDL
     maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2cbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+
+    Lmaskcbshape(static_cast<DiagonalCurveEditor*>(mask2cbCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    CCmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
+    LLmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    HHmaskcbshape(static_cast<FlatCurveEditor *>(maskcbCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
 
     // Adjuster widgets
     // Color & Light
@@ -467,23 +522,29 @@ Locallab::Locallab():
 //    retiBox(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     retiBox(Gtk::manage(new ToolParamBlock())),
     maskretiBox(Gtk::manage(new ToolParamBlock())),
+    labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")))),
+    mMLabels(Gtk::manage(new Gtk::Label("---"))),
+    transLabels(Gtk::manage(new Gtk::Label("---"))),
+    transLabels2(Gtk::manage(new Gtk::Label("---"))),
+
     // Others
+    ctboxsoftmethod(Gtk::manage(new Gtk::HBox())),
+    ctboxexpmethod (Gtk::manage(new Gtk::HBox())),
+    nextmin(0.),
+    nextmax(0.),
+    nextminiT(0.),
+    nextmaxiT(0.),
+    nextmeanT(0.),
+    nextminT(0.),
+    nextmaxT(0.),
+    nextsigma(0.),
     defparams(nullptr),
     defpedited(nullptr),
     pe(nullptr)
 {
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
-    bool showtooltip = options.showtooltip;
+    const bool showtooltip = options.showtooltip;
     CurveListener::setMulti(true);
-    float R, G, B;
-    nextmin = 0.;
-    nextmax = 0.;
-    nextminiT = 0.;
-    nextmaxiT = 0.;
-    nextmeanT = 0.;
-    nextsigma = 0.;
-    nextminT = 0.;
-    nextmaxT = 0.;
 
     rtengine::procparams::LocallabParams::LocallabSpot defSpot;
 
@@ -565,29 +626,28 @@ Locallab::Locallab():
     toneMethodConn = toneMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::toneMethodChanged));
 
     llCurveEditorG->setCurveListener(this);
-    llshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     llshape->setResetCurve(DiagonalCurveType(defSpot.llcurve.at(0)), defSpot.llcurve);
 
     if (showtooltip) {
         llshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mllshape;
-    mllshape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mllshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone> zero_one_shape = {
+        {0., 0., 0., 0.},
+        {1., 1., 1., 1.}
+    };
+
+    const std::vector<GradientMilestone>& mllshape = zero_one_shape;
     llshape->setBottomBarBgGradient(mllshape);
     llshape->setLeftBarBgGradient(mllshape);
 
-    ccshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "C(C)"));
     ccshape->setResetCurve(DiagonalCurveType(defSpot.cccurve.at(0)), defSpot.cccurve);
 
     if (showtooltip) {
         ccshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mccshape;
-    mccshape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mccshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mccshape = zero_one_shape;
     ccshape->setBottomBarBgGradient(mccshape);
     ccshape->setLeftBarBgGradient(mccshape);
 
@@ -595,7 +655,6 @@ Locallab::Locallab():
     llCurveEditorG->curveListComplete();
     HCurveEditorG->setCurveListener(this);
 
-    LHshape = static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true));
     LHshape->setIdentityValue(0.);
     LHshape->setResetCurve(FlatCurveType(defSpot.LHcurve.at(0)), defSpot.LHcurve);
 
@@ -604,17 +663,26 @@ Locallab::Locallab():
     }
 
     LHshape->setCurveColorProvider(this, 1);
-    std::vector<GradientMilestone> mLHshape;
 
-    for (int i = 0; i < 7; i++) {
-        float x = float (i) * (1.0f / 6.0);
-        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-        mLHshape.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
-    }
+    const std::vector<GradientMilestone> six_shape =
+        []() -> std::vector<GradientMilestone>
+        {
+            std::vector<GradientMilestone> res;
 
+            float R, G, B;
+
+            for (int i = 0; i < 7; ++i) {
+                const float x = static_cast<float>(i) * (1.f / 6.f);
+                Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+                res.emplace_back(x, R, G, B);
+            }
+
+            return res;
+        }();
+
+    const std::vector<GradientMilestone>& mLHshape = six_shape;
     LHshape->setBottomBarBgGradient(mLHshape);
 
-    HHshape = static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true));
     HHshape->setIdentityValue(0.);
     HHshape->setResetCurve(FlatCurveType(defSpot.HHcurve.at(0)), defSpot.HHcurve);
 
@@ -623,31 +691,21 @@ Locallab::Locallab():
     }
 
     HHshape->setCurveColorProvider(this, 1);
-    std::vector<GradientMilestone> mHHshape;
 
-    for (int i = 0; i < 7; i++) {
-        float x = float (i) * (1.0f / 6.0);
-
-        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-        mHHshape.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
-    }
-
+    const std::vector<GradientMilestone>& mHHshape = six_shape;
     HHshape->setBottomBarBgGradient(mHHshape);
 
     HCurveEditorG->curveListComplete();
 
 
     rgbCurveEditorG->setCurveListener(this);
-    rgbshape = static_cast<DiagonalCurveEditor*>(rgbCurveEditorG->addCurve(CT_Diagonal,"",toneMethod));
     rgbshape->setResetCurve(DiagonalCurveType(defSpot.rgbcurve.at(0)), defSpot.rgbcurve);
 
     if (showtooltip) {
         rgbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mrgbshape;
-    mrgbshape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mrgbshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mrgbshape = zero_one_shape;
     rgbshape->setBottomBarBgGradient(mrgbshape);
     rgbshape->setLeftBarBgGradient(mrgbshape);
     rgbCurveEditorG->curveListComplete();
@@ -703,7 +761,6 @@ Locallab::Locallab():
 
     maskCurveEditorG->setCurveListener(this);
 
-    CCmaskshape = static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
     CCmaskshape->setIdentityValue(0.);
     CCmaskshape->setResetCurve(FlatCurveType(defSpot.CCmaskcurve.at(0)), defSpot.CCmaskcurve);
 
@@ -713,7 +770,6 @@ Locallab::Locallab():
 
     CCmaskshape->setBottomBarColorProvider(this, 7);
 
-    LLmaskshape = static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskshape->setIdentityValue(0.);
     LLmaskshape->setResetCurve(FlatCurveType(defSpot.LLmaskcurve.at(0)), defSpot.LLmaskcurve);
 
@@ -727,7 +783,6 @@ Locallab::Locallab():
         LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     }
 
-    HHmaskshape = static_cast<FlatCurveEditor *>(maskCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
     HHmaskshape->setIdentityValue(0.);
     HHmaskshape->setResetCurve(FlatCurveType(defSpot.HHmaskcurve.at(0)), defSpot.HHmaskcurve);
 
@@ -741,22 +796,18 @@ Locallab::Locallab():
     maskCurveEditorG->curveListComplete();
 
     mask2CurveEditorG->setCurveListener(this);
-    Lmaskshape = static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     Lmaskshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskcurve.at(0)), defSpot.Lmaskcurve);
 
     if (showtooltip) {
         Lmaskshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mLmaskshape;
-    mLmaskshape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mLmaskshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mLmaskshape = zero_one_shape;
     Lmaskshape->setBottomBarBgGradient(mLmaskshape);
     Lmaskshape->setLeftBarBgGradient(mLmaskshape);
     mask2CurveEditorG->curveListComplete();
 
     mask2CurveEditorGwav->setCurveListener(this);
-    LLmaskcolshapewav = static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskcolshapewav->setIdentityValue(0.);
     LLmaskcolshapewav->setResetCurve(FlatCurveType(defSpot.LLmaskcolcurvewav.at(0)), defSpot.LLmaskcolcurvewav);
 
@@ -770,8 +821,6 @@ Locallab::Locallab():
     mask2CurveEditorGwav->curveListComplete();
     csThresholdcol->setAdjusterListener(this);
 
-
-    labgrid = Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")));
 
     ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const superFrame = Gtk::manage(new Gtk::Frame());
@@ -858,7 +907,6 @@ Locallab::Locallab():
         expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
     }
 
-    ctboxexpmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelexpmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"));
     ctboxexpmethod->pack_start(*labelexpmethod, Gtk::PACK_SHRINK, 4);
 
@@ -940,16 +988,13 @@ Locallab::Locallab():
 
     curveEditorG->setCurveListener(this);
 
-    shapeexpos = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
     shapeexpos->setResetCurve(DiagonalCurveType(defSpot.excurve.at(0)), defSpot.excurve);
 
     if (showtooltip) {
         shapeexpos->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mshapeexpos;
-    mshapeexpos.push_back(GradientMilestone(0., 0., 0., 0.));
-    mshapeexpos.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mshapeexpos = zero_one_shape;
     shapeexpos->setBottomBarBgGradient(mshapeexpos);
     shapeexpos->setLeftBarBgGradient(mshapeexpos);
 
@@ -986,7 +1031,6 @@ Locallab::Locallab():
 
     maskexpCurveEditorG->setCurveListener(this);
 
-    CCmaskexpshape = static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
     CCmaskexpshape->setIdentityValue(0.);
     CCmaskexpshape->setResetCurve(FlatCurveType(defSpot.CCmaskexpcurve.at(0)), defSpot.CCmaskexpcurve);
 
@@ -996,7 +1040,6 @@ Locallab::Locallab():
 
     CCmaskexpshape->setBottomBarColorProvider(this, 7);
 
-    LLmaskexpshape = static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskexpshape->setIdentityValue(0.);
     LLmaskexpshape->setResetCurve(FlatCurveType(defSpot.LLmaskexpcurve.at(0)), defSpot.LLmaskexpcurve);
 
@@ -1006,7 +1049,6 @@ Locallab::Locallab():
 
     LLmaskexpshape->setBottomBarBgGradient(mllshape);
 
-    HHmaskexpshape = static_cast<FlatCurveEditor *>(maskexpCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
     HHmaskexpshape->setIdentityValue(0.);
     HHmaskexpshape->setResetCurve(FlatCurveType(defSpot.HHmaskexpcurve.at(0)), defSpot.HHmaskexpcurve);
 
@@ -1020,16 +1062,13 @@ Locallab::Locallab():
     maskexpCurveEditorG->curveListComplete();
 
     mask2expCurveEditorG->setCurveListener(this);
-    Lmaskexpshape = static_cast<DiagonalCurveEditor*>(mask2expCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     Lmaskexpshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskexpcurve.at(0)), defSpot.Lmaskexpcurve);
 
     if (showtooltip) {
         Lmaskexpshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mLmaskexpshape;
-    mLmaskexpshape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mLmaskexpshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mLmaskexpshape = zero_one_shape;
     Lmaskexpshape->setBottomBarBgGradient(mLmaskexpshape);
     Lmaskexpshape->setLeftBarBgGradient(mLmaskexpshape);
     mask2expCurveEditorG->curveListComplete();
@@ -1135,9 +1174,8 @@ Locallab::Locallab():
         expmasksh->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
 
-    for (int i = 0; i < 5; i++) {
-        Glib::ustring ss;
-        ss = Glib::ustring::format(i);
+    for (int i = 0; i < 5; ++i) {
+        Glib::ustring ss = Glib::ustring::format(i);
 
         if (i == 0) {
             ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMADARKEST"));
@@ -1207,7 +1245,6 @@ Locallab::Locallab():
 
     maskSHCurveEditorG->setCurveListener(this);
 
-    CCmaskSHshape = static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
     CCmaskSHshape->setIdentityValue(0.);
     CCmaskSHshape->setResetCurve(FlatCurveType(defSpot.CCmaskSHcurve.at(0)), defSpot.CCmaskSHcurve);
 
@@ -1217,7 +1254,6 @@ Locallab::Locallab():
 
     CCmaskSHshape->setBottomBarColorProvider(this, 7);
 
-    LLmaskSHshape = static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskSHshape->setIdentityValue(0.);
     LLmaskSHshape->setResetCurve(FlatCurveType(defSpot.LLmaskSHcurve.at(0)), defSpot.LLmaskSHcurve);
 
@@ -1227,7 +1263,6 @@ Locallab::Locallab():
 
     LLmaskSHshape->setBottomBarBgGradient(mllshape);
 
-    HHmaskSHshape = static_cast<FlatCurveEditor *>(maskSHCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
     HHmaskSHshape->setIdentityValue(0.);
     HHmaskSHshape->setResetCurve(FlatCurveType(defSpot.HHmaskSHcurve.at(0)), defSpot.HHmaskSHcurve);
 
@@ -1241,16 +1276,13 @@ Locallab::Locallab():
     maskSHCurveEditorG->curveListComplete();
 
     mask2SHCurveEditorG->setCurveListener(this);
-    LmaskSHshape = static_cast<DiagonalCurveEditor*>(mask2SHCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     LmaskSHshape->setResetCurve(DiagonalCurveType(defSpot.LmaskSHcurve.at(0)), defSpot.LmaskSHcurve);
 
     if (showtooltip) {
         LmaskSHshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mLmaskSHshape;
-    mLmaskSHshape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mLmaskSHshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mLmaskSHshape = zero_one_shape;
     LmaskSHshape->setBottomBarBgGradient(mLmaskSHshape);
     LmaskSHshape->setLeftBarBgGradient(mLmaskSHshape);
     mask2SHCurveEditorG->curveListComplete();
@@ -1258,7 +1290,7 @@ Locallab::Locallab():
     ToolParamBlock* const shadhighBox = Gtk::manage(new ToolParamBlock());
     shadhighBox->pack_start(*shMethod);
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
         shadhighBox->pack_start(*multipliersh[i]);
     }
 
@@ -1337,18 +1369,24 @@ Locallab::Locallab():
 
     curveEditorGG->setCurveListener(this);
 
-    skinTonesCurve = static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")));
-
     if (showtooltip) {
         skinTonesCurve->setTooltip(M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mskinTonesCurve;
+    const std::vector<GradientMilestone> mskinTonesCurve =
+        []() -> std::vector<GradientMilestone>
+        {
+            std::vector<GradientMilestone> res;
+
+            float R, G, B;
+            Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
+            res.emplace_back(0.0, R, G, B);
+            Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
+            res.emplace_back(1.0, R, G, B);
+
+            return res;
+        }();
     // -0.1 rad < Hue < 1.6 rad
-    Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
-    mskinTonesCurve.push_back(GradientMilestone(0.0, double (R), double (G), double (B)));
-    Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
-    mskinTonesCurve.push_back(GradientMilestone(1.0, double (R), double (G), double (B)));
     skinTonesCurve->setBottomBarBgGradient(mskinTonesCurve);
     skinTonesCurve->setLeftBarBgGradient(mskinTonesCurve);
     skinTonesCurve->setRangeLabels(
@@ -1387,7 +1425,6 @@ Locallab::Locallab():
     softMethodConn = softMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::softMethodChanged));
 
 
-    ctboxsoftmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelsoftmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHOWDCT") + ":"));
     ctboxsoftmethod->pack_start(*labelsoftmethod, Gtk::PACK_SHRINK, 4);
 
@@ -1431,7 +1468,7 @@ Locallab::Locallab():
     TMLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_TM")) + Glib::ustring("</b>"));
     TMLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     TMTitleHBox->pack_start(*TMLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-    RTImage *TMImage = Gtk::manage(new RTImage("one-to-one-small.png"));
+    RTImage* const TMImage = Gtk::manage(new RTImage("one-to-one-small.png"));
 
     if (showtooltip) {
         TMImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
@@ -1482,11 +1519,10 @@ Locallab::Locallab():
         rewei->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
     }
 
-    equiltmConn  = equiltm->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::equiltmChanged));
+    equiltmConn = equiltm->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::equiltmChanged));
 
     masktmCurveEditorG->setCurveListener(this);
 
-    CCmasktmshape = static_cast<FlatCurveEditor*>(masktmCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
     CCmasktmshape->setIdentityValue(0.);
     CCmasktmshape->setResetCurve(FlatCurveType(defSpot.CCmasktmcurve.at(0)), defSpot.CCmasktmcurve);
 
@@ -1496,7 +1532,6 @@ Locallab::Locallab():
 
     CCmasktmshape->setBottomBarColorProvider(this, 7);
 
-    LLmasktmshape = static_cast<FlatCurveEditor*>(masktmCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmasktmshape->setIdentityValue(0.);
     LLmasktmshape->setResetCurve(FlatCurveType(defSpot.LLmasktmcurve.at(0)), defSpot.LLmasktmcurve);
 
@@ -1506,7 +1541,6 @@ Locallab::Locallab():
 
     LLmasktmshape->setBottomBarBgGradient(mllshape);
 
-    HHmasktmshape = static_cast<FlatCurveEditor *>(masktmCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
     HHmasktmshape->setIdentityValue(0.);
     HHmasktmshape->setResetCurve(FlatCurveType(defSpot.HHmasktmcurve.at(0)), defSpot.HHmasktmcurve);
 
@@ -1520,16 +1554,13 @@ Locallab::Locallab():
     masktmCurveEditorG->curveListComplete();
 
     mask2tmCurveEditorG->setCurveListener(this);
-    Lmasktmshape = static_cast<DiagonalCurveEditor*>(mask2tmCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     Lmasktmshape->setResetCurve(DiagonalCurveType(defSpot.Lmasktmcurve.at(0)), defSpot.Lmasktmcurve);
 
     if (showtooltip) {
         Lmasktmshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mLmasktmshape;
-    mLmasktmshape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mLmasktmshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mLmasktmshape = zero_one_shape;
     Lmasktmshape->setBottomBarBgGradient(mLmasktmshape);
     Lmasktmshape->setLeftBarBgGradient(mLmasktmshape);
     mask2tmCurveEditorG->curveListComplete();
@@ -1605,7 +1636,7 @@ Locallab::Locallab():
     retiLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_RETI")) + Glib::ustring("</b>"));
     retiLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     retiTitleHBox->pack_start(*retiLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-    RTImage *retiImage = Gtk::manage(new RTImage("one-to-one-small.png"));
+    RTImage* const retiImage = Gtk::manage(new RTImage("one-to-one-small.png"));
 
     if (showtooltip) {
         retiImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
@@ -1680,25 +1711,21 @@ Locallab::Locallab():
         softradiusret->set_tooltip_text(M("TP_LOCALLAB_SOFTRETI_TOOLTIP"));
     }
 
-    mMLabels = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(mMLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     if (showtooltip) {
         mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
     }
 
-    transLabels = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(transLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     if (showtooltip) {
         transLabels->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
     }
 
-    transLabels2 = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(transLabels2, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     LocalcurveEditortransT->setCurveListener(this);
-    cTtransshape = static_cast<FlatCurveEditor*>(LocalcurveEditortransT->addCurve(CT_Flat, "", nullptr, false, false));
     cTtransshape->setIdentityValue(0.);
     cTtransshape->setResetCurve(FlatCurveType(defSpot.localTtranscurve.at(0)), defSpot.localTtranscurve);
 
@@ -1710,7 +1737,6 @@ Locallab::Locallab():
 
     LocalcurveEditorgainT->setCurveListener(this);
 
-    cTgainshape = static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false));
     cTgainshape->setIdentityValue(0.);
     cTgainshape->setResetCurve(FlatCurveType(defSpot.localTgaincurve.at(0)), defSpot.localTgaincurve);
 
@@ -1727,7 +1753,6 @@ Locallab::Locallab():
 
     maskretiCurveEditorG->setCurveListener(this);
 
-    CCmaskretishape = static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
     CCmaskretishape->setIdentityValue(0.);
     CCmaskretishape->setResetCurve(FlatCurveType(defSpot.CCmaskreticurve.at(0)), defSpot.CCmaskreticurve);
 
@@ -1737,7 +1762,6 @@ Locallab::Locallab():
 
     CCmaskretishape->setBottomBarColorProvider(this, 7);
 
-    LLmaskretishape = static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskretishape->setIdentityValue(0.);
     LLmaskretishape->setResetCurve(FlatCurveType(defSpot.LLmaskreticurve.at(0)), defSpot.LLmaskreticurve);
 
@@ -1747,7 +1771,6 @@ Locallab::Locallab():
 
     LLmaskretishape->setBottomBarBgGradient(mllshape);
 
-    HHmaskretishape = static_cast<FlatCurveEditor *>(maskretiCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
     HHmaskretishape->setIdentityValue(0.);
     HHmaskretishape->setResetCurve(FlatCurveType(defSpot.HHmaskreticurve.at(0)), defSpot.HHmaskreticurve);
 
@@ -1761,16 +1784,13 @@ Locallab::Locallab():
     maskretiCurveEditorG->curveListComplete();
 
     mask2retiCurveEditorG->setCurveListener(this);
-    Lmaskretishape = static_cast<DiagonalCurveEditor*>(mask2retiCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     Lmaskretishape->setResetCurve(DiagonalCurveType(defSpot.Lmaskreticurve.at(0)), defSpot.Lmaskreticurve);
 
     if (showtooltip) {
         Lmaskretishape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mLmaskretishape;
-    mLmaskretishape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mLmaskretishape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mLmaskretishape = zero_one_shape;
     Lmaskretishape->setBottomBarBgGradient(mLmaskretishape);
     Lmaskretishape->setLeftBarBgGradient(mLmaskretishape);
     mask2retiCurveEditorG->curveListComplete();
@@ -1885,7 +1905,7 @@ Locallab::Locallab():
     sharpLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_SHARP")) + Glib::ustring("</b>"));
     sharpLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     sharpTitleHBox->pack_start(*sharpLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-    RTImage *sharpImage = Gtk::manage(new RTImage("one-to-one-small.png"));
+    RTImage* const sharpImage = Gtk::manage(new RTImage("one-to-one-small.png"));
 
     if (showtooltip) {
         sharpImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
@@ -1942,7 +1962,6 @@ Locallab::Locallab():
 
     LocalcurveEditorwav->setCurveListener(this);
 
-    wavshape = static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false));
     wavshape->setIdentityValue(0.);
     wavshape->setResetCurve(FlatCurveType(defSpot.locwavcurve.at(0)), defSpot.locwavcurve);
 
@@ -2020,7 +2039,7 @@ Locallab::Locallab():
     cbdlLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_CBDL")) + Glib::ustring("</b>"));
     cbdlLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     cbdlTitleHBox->pack_start(*cbdlLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-    RTImage *cbdlImage = Gtk::manage(new RTImage("one-to-one-small.png"));
+    RTImage* const cbdlImage = Gtk::manage(new RTImage("one-to-one-small.png"));
 
     if (showtooltip) {
         cbdlImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
@@ -2044,8 +2063,7 @@ Locallab::Locallab():
     }
 
     for (int i = 0; i < 6; i++) {
-        Glib::ustring ss;
-        ss = Glib::ustring::format(i);
+        Glib::ustring ss = Glib::ustring::format(i);
 
         if (i == 0) {
             ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
@@ -2100,7 +2118,6 @@ Locallab::Locallab():
 
     maskcbCurveEditorG->setCurveListener(this);
 
-    CCmaskcbshape = static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
     CCmaskcbshape->setIdentityValue(0.);
     CCmaskcbshape->setResetCurve(FlatCurveType(defSpot.CCmaskcbcurve.at(0)), defSpot.CCmaskcbcurve);
 
@@ -2110,7 +2127,6 @@ Locallab::Locallab():
 
     CCmaskcbshape->setBottomBarColorProvider(this, 7);
 
-    LLmaskcbshape = static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskcbshape->setIdentityValue(0.);
     LLmaskcbshape->setResetCurve(FlatCurveType(defSpot.LLmaskcbcurve.at(0)), defSpot.LLmaskcbcurve);
 
@@ -2120,7 +2136,6 @@ Locallab::Locallab():
 
     LLmaskcbshape->setBottomBarBgGradient(mllshape);
 
-    HHmaskcbshape = static_cast<FlatCurveEditor *>(maskcbCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
     HHmaskcbshape->setIdentityValue(0.);
     HHmaskcbshape->setResetCurve(FlatCurveType(defSpot.HHmaskcbcurve.at(0)), defSpot.HHmaskcbcurve);
 
@@ -2134,16 +2149,13 @@ Locallab::Locallab():
     maskcbCurveEditorG->curveListComplete();
 
     mask2cbCurveEditorG->setCurveListener(this);
-    Lmaskcbshape = static_cast<DiagonalCurveEditor*>(mask2cbCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     Lmaskcbshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskcbcurve.at(0)), defSpot.Lmaskcbcurve);
 
     if (showtooltip) {
         Lmaskcbshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mLmaskcbshape;
-    mLmaskcbshape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mLmaskcbshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mLmaskcbshape = zero_one_shape;
     Lmaskcbshape->setBottomBarBgGradient(mLmaskcbshape);
     Lmaskcbshape->setLeftBarBgGradient(mLmaskcbshape);
     mask2cbCurveEditorG->curveListComplete();
@@ -2157,7 +2169,7 @@ Locallab::Locallab():
 
 
     ToolParamBlock* const cbdlBox = Gtk::manage(new ToolParamBlock());
-    Gtk::HBox* buttonBox = Gtk::manage(new Gtk::HBox(true, 10));
+    Gtk::HBox* const buttonBox = Gtk::manage(new Gtk::HBox(true, 10));
     buttonBox->pack_start(*lumacontrastMinusButton);
     lumacontrastMinusPressedConn = lumacontrastMinusButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::lumacontrastMinusPressed));
     buttonBox->pack_start(*lumaneutralButton);
@@ -2183,7 +2195,7 @@ Locallab::Locallab():
     maskcbBox->pack_start(*mask2cbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskcb->add(*maskcbBox, false);
 
-    Gtk::HSeparator *separator = Gtk::manage(new  Gtk::HSeparator());
+    Gtk::HSeparator* const separator = Gtk::manage(new  Gtk::HSeparator());
     cbdlBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
     cbdlBox->pack_start(*chromacbdl);
     cbdlBox->pack_start(*threshold);
@@ -2208,7 +2220,7 @@ Locallab::Locallab():
     BLLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_BLUFR")) + Glib::ustring("</b>"));
     BLLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     BLTitleHBox->pack_start(*BLLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-    RTImage *BLImage = Gtk::manage(new RTImage("one-to-one-small.png"));
+    RTImage* const BLImage = Gtk::manage(new RTImage("one-to-one-small.png"));
 
     if (showtooltip) {
         BLImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
@@ -2261,7 +2273,6 @@ Locallab::Locallab():
 
     maskblCurveEditorG->setCurveListener(this);
 
-    CCmaskblshape = static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
     CCmaskblshape->setIdentityValue(0.);
     CCmaskblshape->setResetCurve(FlatCurveType(defSpot.CCmaskblcurve.at(0)), defSpot.CCmaskblcurve);
 
@@ -2271,7 +2282,6 @@ Locallab::Locallab():
 
     CCmaskblshape->setBottomBarColorProvider(this, 7);
 
-    LLmaskblshape = static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskblshape->setIdentityValue(0.);
     LLmaskblshape->setResetCurve(FlatCurveType(defSpot.LLmaskblcurve.at(0)), defSpot.LLmaskblcurve);
 
@@ -2281,7 +2291,6 @@ Locallab::Locallab():
 
     LLmaskblshape->setBottomBarBgGradient(mllshape);
 
-    HHmaskblshape = static_cast<FlatCurveEditor *>(maskblCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
     HHmaskblshape->setIdentityValue(0.);
     HHmaskblshape->setResetCurve(FlatCurveType(defSpot.HHmaskblcurve.at(0)), defSpot.HHmaskblcurve);
 
@@ -2295,23 +2304,19 @@ Locallab::Locallab():
     maskblCurveEditorG->curveListComplete();
 
     mask2blCurveEditorG->setCurveListener(this);
-    Lmaskblshape = static_cast<DiagonalCurveEditor*>(mask2blCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     Lmaskblshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskblcurve.at(0)), defSpot.Lmaskblcurve);
 
     if (showtooltip) {
         Lmaskblshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     }
 
-    std::vector<GradientMilestone> mLmaskblshape;
-    mLmaskblshape.push_back(GradientMilestone(0., 0., 0., 0.));
-    mLmaskblshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    const std::vector<GradientMilestone>& mLmaskblshape = zero_one_shape;
     Lmaskblshape->setBottomBarBgGradient(mLmaskblshape);
     Lmaskblshape->setLeftBarBgGradient(mLmaskblshape);
     mask2blCurveEditorG->curveListComplete();
     csThresholdblur->setAdjusterListener(this);
 
     mask2blCurveEditorGwav->setCurveListener(this);
-    LLmaskblshapewav = static_cast<FlatCurveEditor*>(mask2blCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskblshapewav->setIdentityValue(0.);
     LLmaskblshapewav->setResetCurve(FlatCurveType(defSpot.LLmaskblcurvewav.at(0)), defSpot.LLmaskblcurvewav);
 
@@ -2439,7 +2444,7 @@ Locallab::Locallab():
     denoiLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_DENOIS")) + Glib::ustring("</b>"));
     denoiLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     denoiTitleHBox->pack_start(*denoiLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-    RTImage *denoiImage = Gtk::manage(new RTImage("one-to-one-small.png"));
+    RTImage* const denoiImage = Gtk::manage(new RTImage("one-to-one-small.png"));
 
     if (showtooltip) {
         denoiImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
