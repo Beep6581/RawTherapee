@@ -11780,81 +11780,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 chprosl = CLIPCHRO(ampli * ch - ampli);
                             }
                         }
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                float bufcolcalca = bufcolorig->a[ir][jr];
-                                float bufcolcalcb = bufcolorig->b[ir][jr];
-                                float bufcolcalcL = bufcolorig->L[ir][jr];
-
-                                float chprocu = 1.f;
-
-                                if (cclocalcurve  && lp.qualcurvemet != 0 && localcutili) { // C=f(C) curve
-                                    const float chromat = sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
-                                    const float ch = cclocalcurve[chromat * adjustr] / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
-                                    constexpr float ampli = 25.f;
-                                    chprocu = CLIPCHRO(ampli * ch - ampli);
-                                }
-
-                                bufchro[ir][jr] = chprosl + chprocu;
-
-                                if (lochhCurve && HHutili && lp.qualcurvemet != 0) {
-                                    const float hhforcurv = xatan2f(bufcolcalcb, bufcolcalca);
-                                    const float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)  1.7 optimisation !
-                                    bufhh[ir][jr] = CLIPRET(200.f * valparam);
-                                }
-
-
-                                if (lp.ligh != 0.f || lp.cont != 0) {
-                                    calclight(bufcolcalcL, lp.ligh, bufcolcalcL, lightCurveloc);  //replace L-curve
-                                }
-
-                                if (lllocalcurve && locallutili  && lp.qualcurvemet != 0) {// L=f(L) curve enhanced
-                                    bufcolcalcL = 0.5f * lllocalcurve[bufcolcalcL * 2.f];
-                                }
-
-                                if (loclhCurve && LHutili && lp.qualcurvemet != 0) {
-                                    const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
-                                    float l_r = bufcolcalcL / 32768.f; //Luminance Lab in 0..1
-                                    const float valparam = loclhCurve[500.f * Color::huelab_to_huehsv2(rhue)] - 0.5f;  //get l_r=f(H)
-
-                                    if (valparam > 0.f) {
-                                        l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - min(l_r, 1.0f))))));
-                                    } else {
-                                        constexpr float khu = 1.9f; //in reserve in case of!
-                                        //for negative
-                                        l_r *= (1.f + khu * valparam);
-                                    }
-
-                                    bufcolcalcL = l_r * 32768.f;
-
-                                }
-
-                                if (ctoning) {
-                                    if (lp.gridmet == 0) {
-                                        bufcolcalca += bufcolcalcL * a_scale + a_base;
-                                        bufcolcalcb += bufcolcalcL * b_scale + b_base;
-                                    } else if (lp.gridmet == 1) {
-                                        bufcolcalca += scaledirect * a_scale;
-                                        bufcolcalcb += scaledirect * b_scale;
-                                    }
-
-                                    bufcolcalca = CLIPC(bufcolcalca);
-                                    bufcolcalcb = CLIPC(bufcolcalcb);
-
-                                }
-
-                                // buflight[ir][jr] = CLIPRET((bufcolcalcL - bufcolorig->L[ir][jr]) / 328.f);
-                                buf_a[ir][jr] = CLIPRET((bufcolcalca - bufcolorig->a[ir][jr]) / 328.f);;
-                                buf_b[ir][jr] = CLIPRET((bufcolcalcb - bufcolorig->b[ir][jr]) / 328.f);;
-                                bufcolfin->L[ir][jr] = bufcolcalcL;
-
-                            }
-
+                        
                         //RGB Curves
                         Imagefloat *tmpImage = nullptr;
                         tmpImage = new Imagefloat(bfw, bfh);
@@ -11863,7 +11789,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float *gtemp = new float[bfw * bfh];
                         float *btemp = new float[bfw * bfh];
 
-                        lab2rgb(*bufcolfin, *tmpImage, params->icm.workingProfile);
+                        lab2rgb(*bufcolorig, *tmpImage, params->icm.workingProfile);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -11950,12 +11876,90 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 tmpImage->b(y, x) = btemp[y * bfw + x];
                             }
 
-                        rgb2lab(*tmpImage, *bufcolfin, params->icm.workingProfile);
+                        rgb2lab(*tmpImage, *bufcolorig, params->icm.workingProfile);
 
                         delete tmpImage;
                         delete [] rtemp;
                         delete [] gtemp;
                         delete [] btemp;
+                        // end rgb curves
+
+
+                        //others curves
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                float bufcolcalca = bufcolorig->a[ir][jr];
+                                float bufcolcalcb = bufcolorig->b[ir][jr];
+                                float bufcolcalcL = bufcolorig->L[ir][jr];
+
+                                float chprocu = 1.f;
+
+                                if (cclocalcurve  && lp.qualcurvemet != 0 && localcutili) { // C=f(C) curve
+                                    const float chromat = sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
+                                    const float ch = cclocalcurve[chromat * adjustr] / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
+                                    constexpr float ampli = 25.f;
+                                    chprocu = CLIPCHRO(ampli * ch - ampli);
+                                }
+
+                                bufchro[ir][jr] = chprosl + chprocu;
+
+                                if (lochhCurve && HHutili && lp.qualcurvemet != 0) {
+                                    const float hhforcurv = xatan2f(bufcolcalcb, bufcolcalca);
+                                    const float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)  1.7 optimisation !
+                                    bufhh[ir][jr] = CLIPRET(200.f * valparam);
+                                }
+
+
+                                if (lp.ligh != 0.f || lp.cont != 0) {
+                                    calclight(bufcolcalcL, lp.ligh, bufcolcalcL, lightCurveloc);  //replace L-curve
+                                }
+
+                                if (lllocalcurve && locallutili  && lp.qualcurvemet != 0) {// L=f(L) curve enhanced
+                                    bufcolcalcL = 0.5f * lllocalcurve[bufcolcalcL * 2.f];
+                                }
+
+                                if (loclhCurve && LHutili && lp.qualcurvemet != 0) {
+                                    const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
+                                    float l_r = bufcolcalcL / 32768.f; //Luminance Lab in 0..1
+                                    const float valparam = loclhCurve[500.f * Color::huelab_to_huehsv2(rhue)] - 0.5f;  //get l_r=f(H)
+
+                                    if (valparam > 0.f) {
+                                        l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - min(l_r, 1.0f))))));
+                                    } else {
+                                        constexpr float khu = 1.9f; //in reserve in case of!
+                                        //for negative
+                                        l_r *= (1.f + khu * valparam);
+                                    }
+
+                                    bufcolcalcL = l_r * 32768.f;
+
+                                }
+
+                                if (ctoning) {
+                                    if (lp.gridmet == 0) {
+                                        bufcolcalca += bufcolcalcL * a_scale + a_base;
+                                        bufcolcalcb += bufcolcalcL * b_scale + b_base;
+                                    } else if (lp.gridmet == 1) {
+                                        bufcolcalca += scaledirect * a_scale;
+                                        bufcolcalcb += scaledirect * b_scale;
+                                    }
+
+                                    bufcolcalca = CLIPC(bufcolcalca);
+                                    bufcolcalcb = CLIPC(bufcolcalcb);
+
+                                }
+
+                                // buflight[ir][jr] = CLIPRET((bufcolcalcL - bufcolorig->L[ir][jr]) / 328.f);
+                                buf_a[ir][jr] = CLIPRET((bufcolcalca - bufcolorig->a[ir][jr]) / 328.f);;
+                                buf_b[ir][jr] = CLIPRET((bufcolcalcb - bufcolorig->b[ir][jr]) / 328.f);;
+                                bufcolfin->L[ir][jr] = bufcolcalcL;
+
+                            }
+
 
 
                         //
