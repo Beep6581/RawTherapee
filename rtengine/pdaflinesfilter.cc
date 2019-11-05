@@ -22,6 +22,7 @@
 
 #include "camconst.h"
 #include "pdaflinesfilter.h"
+#include "pixelsmap.h"
 #include "rawimage.h"
 #include "settings.h"
 

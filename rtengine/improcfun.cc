@@ -45,7 +45,6 @@
 #include "satandvalueblendingcurve.h"
 #include "StopWatch.h"
 #include "procparams.h"
-#include "../rtgui/ppversion.h"
 #include "../rtgui/editcallbacks.h"
 
 #ifdef _DEBUG

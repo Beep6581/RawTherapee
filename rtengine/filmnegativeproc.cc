@@ -25,6 +25,7 @@
 #include "coord.h"
 #include "mytime.h"
 #include "opthelper.h"
+#include "pixelsmap.h"
 #include "procparams.h"
 #include "rt_algo.h"
 #include "rtengine.h"

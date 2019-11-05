@@ -38,7 +38,6 @@
 #include "refreshmap.h"
 
 #include "../rtgui/options.h"
-#include "../rtgui/ppversion.h"
 
 #ifdef _OPENMP
 #include <omp.h>
