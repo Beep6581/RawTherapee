@@ -7414,6 +7414,14 @@ float triangle(float a, float a1, float b)
     return a1;
 }
 
+void rgbtone (float& maxval, float& medval, float& minval, LUTf & lutToneCurve)
+{
+    float minvalold = minval, medvalold = medval, maxvalold = maxval;
+
+    maxval = lutToneCurve[maxvalold];
+    minval = lutToneCurve[minvalold];
+    medval = minval + ((maxval - minval) * (medvalold - minvalold) / (maxvalold - minvalold));
+}
 
 
 void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
@@ -11726,6 +11734,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         tonemod = 1;
                     } else if (params->locallab.spots.at(sp).toneMethod == "thr") {
                         tonemod = 2;
+                    } else if (params->locallab.spots.at(sp).toneMethod == "fou") {
+                        tonemod = 3;
                     }
 
                     const int limscope = 80;
@@ -11904,6 +11914,32 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             g = CLIP<float> (g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
                                             b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
                                         }
+                                        //Film like Adobe
+                                        if (tonemod == 3) {
+
+                                            if (r >= g) {
+                                                if (g > b) {
+                                                    rgbtone(r, g, b, rgblocalcurve);     // Case 1: r >= g >  b
+                                                } else if (b > r) {
+                                                    rgbtone(b, r, g, rgblocalcurve);     // Case 2: b >  r >= g
+                                                } else if (b > g) {
+                                                    rgbtone(r, b, g, rgblocalcurve);     // Case 3: r >= b >  g
+                                                } else {                           // Case 4: r == g == b
+                                                    r = rgblocalcurve[r];
+                                                    g = rgblocalcurve[g];
+                                                    b = g;
+                                                }
+                                            } else {
+                                                if (r >= b) {
+                                                    rgbtone(g, r, b, rgblocalcurve);     // Case 5: g >  r >= b
+                                                } else if (b >  g) {
+                                                    rgbtone(b, g, r, rgblocalcurve);     // Case 6: b >  g >  r
+                                                } else {
+                                                    rgbtone(g, b, r, rgblocalcurve);     // Case 7: g >= b >  r
+                                                }
+                                            }
+                                        }
+                                        
 
                                         setUnlessOOG(rtemp[y * bfw + x], gtemp[y * bfw + x], btemp[y * bfw + x], r, g, b);
                                     }

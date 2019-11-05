@@ -80,6 +80,7 @@ private:
     DiagonalCurveEditor* const Lmaskshape;
     DiagonalCurveEditor* const llshape;
     DiagonalCurveEditor* const ccshape;
+    MyComboBoxText* const toneMethod;
     DiagonalCurveEditor* const rgbshape;
     FlatCurveEditor* const LHshape;
     FlatCurveEditor* const HHshape;
@@ -394,7 +395,7 @@ private:
     sigc::connection qualitycurveMethodConn;
     MyComboBoxText* const gridMethod;
     sigc::connection gridMethodConn;
-    MyComboBoxText* const toneMethod;
+//    MyComboBoxText* const toneMethod;
     sigc::connection toneMethodConn;
     MyComboBoxText* const showmaskcolMethod;
     sigc::connection showmaskcolMethodConn;

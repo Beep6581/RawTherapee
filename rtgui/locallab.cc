@@ -164,6 +164,7 @@ Locallab::Locallab():
     Lmaskshape(static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     llshape(static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     ccshape(static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "C(C)"))),
+    toneMethod(Gtk::manage(new MyComboBoxText())),
     rgbshape(static_cast<DiagonalCurveEditor*>(rgbCurveEditorG->addCurve(CT_Diagonal,"",toneMethod))),
     LHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true))),
     HHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
@@ -462,7 +463,7 @@ Locallab::Locallab():
     // Color & Light
     qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
     gridMethod(Gtk::manage(new MyComboBoxText())),
-    toneMethod(Gtk::manage(new MyComboBoxText())),
+ //   toneMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
     mergecolMethod(Gtk::manage(new MyComboBoxText())),
@@ -622,6 +623,8 @@ Locallab::Locallab():
     toneMethod->append(M("TP_EXPOSURE_TCMODE_STANDARD"));
     toneMethod->append(M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
     toneMethod->append(M("TP_EXPOSURE_TCMODE_LUMINANCE"));
+    toneMethod->append(M("TP_EXPOSURE_TCMODE_FILMLIKE"));
+    
     toneMethod->set_active(0);
     toneMethodConn = toneMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::toneMethodChanged));
 
@@ -3548,6 +3551,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).toneMethod = "two";
                     } else if (toneMethod->get_active_row_number() == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).toneMethod = "thr";
+                    } else if (toneMethod->get_active_row_number() == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).toneMethod = "fou";
                     }
 
                     if (mergecolMethod->get_active_row_number() == 0) {
@@ -8666,6 +8671,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             toneMethod->set_active(1);
         } else if (pp->locallab.spots.at(index).toneMethod == "thr") {
             toneMethod->set_active(2);
+        } else if (pp->locallab.spots.at(index).toneMethod == "fou") {
+            toneMethod->set_active(3);
         }
 
         if (pp->locallab.spots.at(index).mergecolMethod == "one") {
