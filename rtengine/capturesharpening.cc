@@ -25,7 +25,6 @@
 #include "rt_math.h"
 #include "procparams.h"
 #include "color.h"
-#include "gauss.h"
 #include "rt_algo.h"
 //#define BENCHMARK
 #include "StopWatch.h"
@@ -510,6 +509,7 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
     }
     return std::sqrt((1.f / (std::log(1.f / maxRatio))) / -2.f);
 }
+
 void CaptureDeconvSharpening (float** luminance, float** oldLuminance, const float * const * blend, int W, int H, double sigma, double sigmaCornerOffset, int iterations, rtengine::ProgressListener* plistener, double startVal, double endVal)
 {
 BENCHFUN
@@ -651,13 +651,13 @@ BENCHFUN
 
     const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
 
-    array2D<float>& redVals = redCache ? *redCache : red;
-    array2D<float>& greenVals = greenCache ? *greenCache : green;
-    array2D<float>& blueVals = blueCache ? *blueCache : blue;
+    const array2D<float>& redVals = redCache ? *redCache : red;
+    const array2D<float>& greenVals = greenCache ? *greenCache : green;
+    const array2D<float>& blueVals = blueCache ? *blueCache : blue;
 
     array2D<float> clipMask(W, H);
     constexpr float clipLimit = 0.95f;
-    if (ri->getSensorType() == ST_BAYER) {
+    if (getSensorType() == ST_BAYER) {
         const float whites[2][2] = {
                                     {(ri->get_white(FC(0,0)) - c_black[FC(0,0)]) * scale_mul[FC(0,0)] * clipLimit, (ri->get_white(FC(0,1)) - c_black[FC(0,1)]) * scale_mul[FC(0,1)] * clipLimit},
                                     {(ri->get_white(FC(1,0)) - c_black[FC(1,0)]) * scale_mul[FC(1,0)] * clipLimit, (ri->get_white(FC(1,1)) - c_black[FC(1,1)]) * scale_mul[FC(1,1)] * clipLimit}
@@ -667,7 +667,7 @@ BENCHFUN
         if (sharpeningParams.autoRadius) {
             radius = std::min(calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc), 1.15f);
         }
-    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
+    } else if (getSensorType() == ST_FUJI_XTRANS) {
         float whites[6][6];
         for (int i = 0; i < 6; ++i) {
             for (int j = 0; j < 6; ++j) {
