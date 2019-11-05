@@ -11768,18 +11768,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     if (lp.showmaskcolmet == 0 || lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2 || lp.showmaskcolmet == 5 || lp.enaColorMask) {
 
-                        float chprosl = 1.f;
-
-                        if (lp.chro != 0.f) {
-                            const float ch = (1.f + 0.01f * lp.chro) ;
-
-                            if (ch <= 1.f) {
-                                chprosl = 99.f * ch - 99.f;
-                            } else {
-                                constexpr float ampli = 70.f;
-                                chprosl = CLIPCHRO(ampli * ch - ampli);
-                            }
-                        }
 
                         //RGB Curves
                         if (rgblocalcurve && localrgbutili  && lp.qualcurvemet != 0) {
@@ -11793,7 +11781,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             lab2rgb(*bufcolorig, *tmpImage, params->icm.workingProfile);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                           #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                             for (int y = 0; y < bfh; y++)
@@ -11886,9 +11874,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             delete [] btemp;
                             // end rgb curves
                         }
-
-
                         //others curves
+
+                        float chprosl = 1.f;
+
+                        if (lp.chro != 0.f) {
+                            const float ch = (1.f + 0.01f * lp.chro) ;
+
+                            if (ch <= 1.f) {
+                                chprosl = 99.f * ch - 99.f;
+                            } else {
+                                constexpr float ampli = 70.f;
+                                chprosl = CLIPCHRO(ampli * ch - ampli);
+                            }
+                        }
+
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12266,7 +12266,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         temp = blend2;
                     }
 
-                    int smerge = 100;
+                    int smerge = 0;
 
                     if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
                         smerge = 100;
