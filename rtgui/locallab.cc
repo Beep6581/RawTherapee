@@ -2555,6 +2555,7 @@ Locallab::~Locallab()
     delete maskcbCurveEditorG;
     delete mask2cbCurveEditorG;
 }
+
 void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
 {
     if (event->button == 3) {
