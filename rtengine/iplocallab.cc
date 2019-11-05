@@ -12263,7 +12263,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         temp = blend2;
                     }
 
-                    int smerge = 0;
+                    int smerge = 100;
 
                     if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
                         smerge = 100;
