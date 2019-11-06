@@ -290,6 +290,25 @@ Locallab::Locallab():
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0, 3, 1, 2))),
+    multipliersh(
+        [this]() -> std::array<Adjuster*, 5>
+        {
+            std::array<Adjuster*, 5> res = {};
+            for (unsigned int i = 0; i < res.size(); ++i) {
+                Glib::ustring ss = Glib::ustring::format(i);
+
+                if (i == 0) {
+                    ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMADARKEST"));
+                } else if (i == 4) {
+                    ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMAWHITESEST"));
+                }
+
+                res[i] = Gtk::manage(new Adjuster(std::move(ss), -100, 100, 1, 0));
+                res[i]->setAdjusterListener(this);
+            }
+            return res;
+        }()
+    ),
     //Shadow hightlights
     highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
     h_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70))),
@@ -391,6 +410,25 @@ Locallab::Locallab():
     claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100, 100, 1, 0))),
+    multiplier(
+        [this]() -> std::array<Adjuster*, 6>
+        {
+            std::array<Adjuster*, 6> res = {};
+            for (unsigned int i = 0; i < res.size(); ++i) {
+                Glib::ustring ss = Glib::ustring::format(i);
+
+                if (i == 0) {
+                    ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
+                } else if (i == 5) {
+                    ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
+                }
+
+                res[i] = Gtk::manage(new Adjuster(std::move(ss), 0.0, 4.0, 0.01, 1.0));
+                res[i]->setAdjusterListener(this);
+            }
+            return res;
+        }()
+    ),
     // Contrast by detail levels
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
@@ -1179,21 +1217,6 @@ Locallab::Locallab():
     if (showtooltip) {
         expmasksh->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
-
-    for (int i = 0; i < 5; ++i) {
-        Glib::ustring ss = Glib::ustring::format(i);
-
-        if (i == 0) {
-            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMADARKEST"));
-        } else if (i == 4) {
-            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMAWHITESEST"));
-        }
-
-        multipliersh[i] = Gtk::manage(new Adjuster(std::move(ss), -100, 100, 1, 0));
-        multipliersh[i]->setAdjusterListener(this);
-    }
-
-
 
     highlights->setAdjusterListener(this);
     h_tonalwidth->setAdjusterListener(this);
@@ -2067,19 +2090,6 @@ Locallab::Locallab():
         expmaskcb->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
 
-    for (int i = 0; i < 6; i++) {
-        Glib::ustring ss = Glib::ustring::format(i);
-
-        if (i == 0) {
-            ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
-        } else if (i == 5) {
-            ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
-        }
-
-        multiplier[i] = Gtk::manage(new Adjuster(std::move(ss), 0.0, 4.0, 0.01, 1.0));
-        multiplier[i]->setAdjusterListener(this);
-    }
-
     if (showtooltip) {
         chromacbdl->set_tooltip_text(M("TP_LOCALLAB_CHROMACB_TOOLTIP"));
     }
@@ -2183,8 +2193,8 @@ Locallab::Locallab():
     lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::lumacontrastPlusPressed));
     cbdlBox->pack_start(*buttonBox);
 
-    for (int i = 0; i < 6; i++) {
-        cbdlBox->pack_start(*multiplier[i]);
+    for (auto adjuster : multiplier) {
+        cbdlBox->pack_start(*adjuster);
     }
 
     ToolParamBlock* const maskcbBox = Gtk::manage(new ToolParamBlock());

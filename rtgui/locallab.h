@@ -20,6 +20,8 @@
  *  2018 Pierre Cabrera <pierre.cab@gmail.com>
  */
 
+#include <array>
+
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
@@ -192,7 +194,7 @@ private:
     Adjuster* const fatanchor;
     Adjuster* const fatlevel;
     //Shadow highlight
-    Adjuster* multipliersh[5];
+    const std::array<Adjuster*, 5> multipliersh;
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;
     Adjuster* const shadows;
@@ -296,7 +298,7 @@ private:
     Adjuster* const sensilc;
     Adjuster* const residchro;
     // Contrast by detail levels
-    Adjuster* multiplier[6];
+    const std::array<Adjuster*, 6> multiplier;
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const clarityml;
