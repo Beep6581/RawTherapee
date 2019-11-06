@@ -384,7 +384,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
 #endif
         {
             // let the first thread, which is out of work, do the border interpolation
-            border_interpolate2(W, H, 3, rawData, red, green, blue);
+            border_interpolate(W, H, 3, rawData, red, green, blue);
         }
     }
 

@@ -38,6 +38,10 @@
 namespace
 {
 
+unsigned fc(const unsigned int cfa[2][2], int r, int c) {
+    return cfa[r & 1][c & 1];
+}
+
 float greenDiff(float a, float b, float stddevFactor, float eperIso, float nreadIso, float prnu)
 {
     // calculate the difference between two green samples
@@ -323,6 +327,7 @@ BENCHFUN
         bayerParams.pixelShiftShowMotion = false;
     }
 
+    const unsigned int cfarray[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     const bool showMotion = bayerParams.pixelShiftShowMotion;
     const bool showOnlyMask = bayerParams.pixelShiftShowMotionMaskOnly && showMotion;
     const float smoothFactor = 1.0 - bayerParams.pixelShiftSmoothFactor;
@@ -641,11 +646,11 @@ BENCHFUN
 
                 for(int i = winy + 1; i < winh - 1; ++i) {
                     int j = winx + 1;
-                    int c = FC(i, j);
+                    int c = fc(cfarray, i, j);
 
-                    bool bluerow = (c + FC(i, j + 1)) == 3;
+                    bool bluerow = (c + fc(cfarray, i, j + 1)) == 3;
 
-                    for(int j = winx + 1, offset = FC(i, j) & 1; j < winw - 1; ++j, offset ^= 1) {
+                    for(int j = winx + 1, offset = fc(cfarray, i, j) & 1; j < winw - 1; ++j, offset ^= 1) {
                         (*histogreenThr[1 - offset])[(*rawDataFrames[1 - offset])[i - offset + 1][j]]++;
                         (*histogreenThr[3 - offset])[(*rawDataFrames[3 - offset])[i + offset][j + 1]]++;
 
@@ -726,9 +731,9 @@ BENCHFUN
                                    };
             int ng = 0;
             int j = winx + 1;
-            int c = FC(i, j);
+            int c = fc(cfarray, i, j);
 
-            if((c + FC(i, j + 1)) == 3) {
+            if((c + fc(cfarray, i, j + 1)) == 3) {
                 // row with blue pixels => swap destination pointers for non green pixels
                 std::swap(nonGreenDest0, nonGreenDest1);
                 ng ^= 1;
@@ -783,7 +788,7 @@ BENCHFUN
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
             // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
-            unsigned int offset = FC(i, winx + border - offsX) & 1;
+            unsigned int offset = fc(cfarray, i, winx + border - offsX) & 1;
 
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
                 psMask[i][j] = noMotion;
@@ -919,7 +924,7 @@ BENCHFUN
             float *blueDest = blue[i + offsY];
 
             // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
-            unsigned int offset = FC(i, winx + border - offsX) & 1;
+            unsigned int offset = fc(cfarray, i, winx + border - offsX) & 1;
 
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
                 if(showOnlyMask) {
@@ -969,9 +974,9 @@ BENCHFUN
             float *nonGreenDest1 = blue[i];
             int ng = 0;
             int j = winx + 1;
-            int c = FC(i, j);
+            int c = fc(cfarray, i, j);
 
-            if((c + FC(i, j + 1)) == 3) {
+            if((c + fc(cfarray, i, j + 1)) == 3) {
                 // row with blue pixels => swap destination pointers for non green pixels
                 std::swap(nonGreenDest0, nonGreenDest1);
                 ng ^= 1;

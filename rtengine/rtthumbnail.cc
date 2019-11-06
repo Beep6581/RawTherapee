@@ -31,15 +31,12 @@
 #include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"
-#include "iccmatrices.h"
 #include "iccstore.h"
 #include "image8.h"
-#include "improccoordinator.h"
 #include "improcfun.h"
 #include "jpeg.h"
 #include "labimage.h"
 #include "median.h"
-#include "mytime.h"
 #include "procparams.h"
 #include "rawimage.h"
 #include "rawimagesource.h"
@@ -49,8 +46,6 @@
 #include "stdimagesource.h"
 #include "StopWatch.h"
 #include "utils.h"
-
-#include "../rtgui/ppversion.h"
 
 namespace
 {

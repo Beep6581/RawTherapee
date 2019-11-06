@@ -26,12 +26,12 @@
 #include "colortemp.h"
 #include "iimage.h"
 #include "imagesource.h"
-#include "pixelsmap.h"
 
 #define HR_SCALE 2
 
 namespace rtengine
 {
+class PixelsMap;
 class RawImage;
 class DiagonalCurve;
 class RetinextransmissionCurve;
@@ -266,8 +266,6 @@ protected:
     void eahd_demosaic();
     void hphd_demosaic();
     void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
-    void ppg_demosaic();
-    void jdl_interpolate_omp();
     void igv_interpolate(int winw, int winh);
     void lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
     void amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, size_t chunkSize = 1, bool measure = false);//Emil's code for AMaZE
@@ -276,8 +274,7 @@ protected:
     void dcb_demosaic(int iterations, bool dcb_enhance);
     void ahd_demosaic();
     void rcd_demosaic(size_t chunkSize = 1, bool measure = false);
-    void border_interpolate(unsigned int border, float (*image)[4], unsigned int start = 0, unsigned int end = 0);
-    void border_interpolate2(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void border_interpolate(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
     void fill_raw(float (*cache)[3], int x0, int y0, float** rawData);
     void fill_border(float (*cache)[3], int border, int x0, int y0);
