@@ -260,17 +260,3 @@ void DCraw::panasonicC7_load_raw()
     free(iobuf);
     tiff_bps = RT_pana_info.bpp;
 }
-
-//-----------------------------------------------------------------------------
-
-/* RT: Delete from here */
-/*RT*/#undef SQR
-/*RT*/#undef MAX
-/*RT*/#undef MIN
-/*RT*/#undef ABS
-/*RT*/#undef LIM
-/*RT*/#undef ULIM
-/*RT*/#undef CLIP
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
