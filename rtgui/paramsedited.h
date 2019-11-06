@@ -442,6 +442,7 @@ public:
         bool LHcurve;
         bool HHcurve;
         bool invers;
+        bool special;
         bool enaColorMask;
         bool CCmaskcurve;
         bool LLmaskcurve;

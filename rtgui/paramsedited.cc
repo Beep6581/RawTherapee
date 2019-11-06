@@ -1012,6 +1012,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
                 locallab.spots.at(j).HHcurve = locallab.spots.at(j).HHcurve && pSpot.HHcurve == otherSpot.HHcurve;
                 locallab.spots.at(j).invers = locallab.spots.at(j).invers && pSpot.invers == otherSpot.invers;
+                locallab.spots.at(j).special = locallab.spots.at(j).special && pSpot.special == otherSpot.special;
                 locallab.spots.at(j).enaColorMask = locallab.spots.at(j).enaColorMask && pSpot.enaColorMask == otherSpot.enaColorMask;
                 locallab.spots.at(j).CCmaskcurve = locallab.spots.at(j).CCmaskcurve && pSpot.CCmaskcurve == otherSpot.CCmaskcurve;
                 locallab.spots.at(j).LLmaskcurve = locallab.spots.at(j).LLmaskcurve && pSpot.LLmaskcurve == otherSpot.LLmaskcurve;
@@ -2968,6 +2969,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).invers) {
             toEdit.locallab.spots.at(i).invers = mods.locallab.spots.at(i).invers;
+        }
+
+        if (locallab.spots.at(i).special) {
+            toEdit.locallab.spots.at(i).special = mods.locallab.spots.at(i).special;
         }
 
         if (locallab.spots.at(i).enaColorMask) {
@@ -4944,6 +4949,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LHcurve(v),
     HHcurve(v),
     invers(v),
+    special(v),
     enaColorMask(v),
     CCmaskcurve(v),
     LLmaskcurve(v),
@@ -5255,6 +5261,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LHcurve = v;
     HHcurve = v;
     invers = v;
+    special = v;
     enaColorMask = v;
     CCmaskcurve = v;
     LLmaskcurve = v;

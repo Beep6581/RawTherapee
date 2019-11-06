@@ -330,8 +330,9 @@ private:
     // Color & Light
     Gtk::CheckButton* const curvactiv;
     Gtk::CheckButton* const invers;
+    Gtk::CheckButton* const special;
     Gtk::CheckButton* const enaColorMask;
-    sigc::connection curvactivConn, inversConn, enaColorMaskConn;
+    sigc::connection curvactivConn, inversConn, enaColorMaskConn, specialConn;
     // Exposure
     Gtk::CheckButton* const enaExpMask;
     sigc::connection enaExpMaskConn;
@@ -516,6 +517,7 @@ private:
     // Color & Light
     void curvactivChanged();
     void inversChanged();
+    void specialChanged();
     void enaColorMaskChanged();
     // Exposure
     void enaExpMaskChanged();

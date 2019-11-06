@@ -11580,6 +11580,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
             bool HHcurve = false;
+            bool usergb = false;
+            bool spez = params->locallab.spots.at(sp).special;
 
             if (bfw >= mSP && bfh >= mSP) {
                 std::unique_ptr<LabImage> bufcolorig;
@@ -11776,7 +11778,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                         //RGB Curves
-                        bool usergb = false;
 
                         if (rgblocalcurve && localrgbutili  && lp.qualcurvemet != 0) {
                             usergb = true;
@@ -11884,6 +11885,39 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             delete [] btemp;
                             // end rgb curves
                         }
+
+
+
+                        if (usergb && spez) {//special use of rgb curves ex : negative
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                            for (int y = 0; y < bfh; y++) {
+                                const int loy = y + ystart + cy;
+
+                                for (int x = 0; x < bfw; x++) {
+                                    const int lox = x + xstart + cx;
+                                    int zone = 0;
+                                    float localFactor = 1.f;
+                                    const float achm = (float)lp.trans / 100.f;
+
+                                    if (lp.shapmet == 0) {
+                                        calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                    } else if (lp.shapmet == 1) {
+                                        calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                    }
+
+                                    if (zone > 0) {
+                                        transformed->L[y + ystart][x + xstart] = buftemp->L[y][x] * localFactor + (1.f - localFactor) * original->L[y + ystart][x + xstart];
+                                        transformed->a[y + ystart][x + xstart] = buftemp->a[y][x] * localFactor + (1.f - localFactor) * original->a[y + ystart][x + xstart];
+                                        transformed->b[y + ystart][x + xstart] = buftemp->b[y][x] * localFactor + (1.f - localFactor) * original->b[y + ystart][x + xstart];
+                                    }
+                                }
+                            }
+
+                        }
+
 
                         //others curves
 
@@ -12320,7 +12354,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     //bufcolfin add for merge
-                    transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
+                    if (!(usergb && spez)) {
+                        transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
+                    }
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
