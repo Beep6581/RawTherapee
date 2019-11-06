@@ -411,6 +411,21 @@ private:
    unsigned encoding;
 };
 
+class pana_cs6_page_decoder
+{
+  unsigned int pixelbuffer[14], lastoffset, maxoffset;
+  unsigned char current, *buffer;
+  public:
+  pana_cs6_page_decoder(unsigned char *_buffer, unsigned int bsize)
+      : lastoffset(0), maxoffset(bsize), current(0), buffer(_buffer)
+  {
+  }
+  void read_page(); // will throw IO error if not enough space in buffer
+  unsigned int nextpixel() { return current < 14 ? pixelbuffer[current++] : 0; }
+};
+void panasonicC6_load_raw();
+void panasonicC7_load_raw();
+
 void canon_rmf_load_raw();
 void panasonic_load_raw();
 void olympus_load_raw();
