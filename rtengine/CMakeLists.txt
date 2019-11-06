@@ -104,6 +104,7 @@ set(RTENGINESOURCEFILES
     lj92.c
     loadinitial.cc
     myfile.cc
+    panasonic_decoders.cc
     pdaflinesfilter.cc
     PF_correct_RT.cc
     pipettebuffer.cc
