@@ -2468,7 +2468,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lapmaskcol(0.0),
     qualitycurveMethod("none"),
     gridMethod("one"),
-    toneMethod("one"),
+    toneMethod("fou"),
     mergecolMethod("one"),
     llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     cccurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},

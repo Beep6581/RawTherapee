@@ -11586,6 +11586,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 std::unique_ptr<LabImage> bufmaskblurcol;
                 std::unique_ptr<LabImage> originalmaskcol;
                 std::unique_ptr<LabImage> bufcolreserv;
+                std::unique_ptr<LabImage> buftemp;
 
                 array2D<float> buflight(bfw, bfh, true);
                 JaggedArray<float> bufchro(bfw, bfh, true);
@@ -11618,6 +11619,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float meansob = 0.f;
                     bufcolorig.reset(new LabImage(bfw, bfh));
                     bufcolfin.reset(new LabImage(bfw, bfh));
+                    buftemp.reset(new LabImage(bfw, bfh));
 
                     if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3 || lp.showmaskcolmet == 5) {
                         bufmaskblurcol.reset(new LabImage(bfw, bfh, true));
@@ -11636,6 +11638,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufcolfin->L[y][x] = original->L[y + ystart][x + xstart];
                             bufcolfin->a[y][x] = original->a[y + ystart][x + xstart];
                             bufcolfin->b[y][x] = original->b[y + ystart][x + xstart];
+                            buftemp->L[y][x] = original->L[y + ystart][x + xstart];
+                            buftemp->a[y][x] = original->a[y + ystart][x + xstart];
+                            buftemp->b[y][x] = original->b[y + ystart][x + xstart];
                         }
                     }
 
@@ -11770,7 +11775,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                         //RGB Curves
+                        bool usergb = false;
+
                         if (rgblocalcurve && localrgbutili  && lp.qualcurvemet != 0) {
+                            usergb = true;
 
                             Imagefloat *tmpImage = nullptr;
                             tmpImage = new Imagefloat(bfw, bfh);
@@ -11779,9 +11787,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             float *gtemp = new float[bfw * bfh];
                             float *btemp = new float[bfw * bfh];
 
-                            lab2rgb(*bufcolorig, *tmpImage, params->icm.workingProfile);
+                            lab2rgb(*buftemp, *tmpImage, params->icm.workingProfile);
 #ifdef _OPENMP
-                           #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                             for (int y = 0; y < bfh; y++)
@@ -11800,18 +11808,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         float g = CLIP(gtemp[y * bfw + x]);
                                         float b = CLIP(btemp[y * bfw + x]);
 
-                                        //Luminance
-                                        if (tonemod == 2) {
-                                            float currLuminance = r * 0.2126729f + g * 0.7151521f + b * 0.0721750f;
-
-                                            const float newLuminance = rgblocalcurve[currLuminance];
-                                            currLuminance = currLuminance == 0.f ? 0.00001f : currLuminance;
-                                            const float coef = newLuminance / currLuminance;
-                                            r = LIM<float> (r * coef, 0.f, 65535.f);
-                                            g = LIM<float> (g * coef, 0.f, 65535.f);
-                                            b = LIM<float> (b * coef, 0.f, 65535.f);
-                                        }
-
                                         //weightstd
                                         if (tonemod == 1) {
                                             float r1 = rgblocalcurve[r];
@@ -11828,6 +11824,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             r = CLIP<float>(r1 * 0.50f + r2 * 0.25f + r3 * 0.25f);
                                             g = CLIP<float> (g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
                                             b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
+                                        }
+
+
+                                        //Luminance
+                                        if (tonemod == 2) {
+                                            float currLuminance = r * 0.2126729f + g * 0.7151521f + b * 0.0721750f;
+
+                                            const float newLuminance = rgblocalcurve[currLuminance];
+                                            currLuminance = currLuminance == 0.f ? 0.00001f : currLuminance;
+                                            const float coef = newLuminance / currLuminance;
+                                            r = LIM<float> (r * coef, 0.f, 65535.f);
+                                            g = LIM<float> (g * coef, 0.f, 65535.f);
+                                            b = LIM<float> (b * coef, 0.f, 65535.f);
                                         }
 
                                         //Film like Adobe
@@ -11866,7 +11875,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     tmpImage->b(y, x) = btemp[y * bfw + x];
                                 }
 
-                            rgb2lab(*tmpImage, *bufcolorig, params->icm.workingProfile);
+                            rgb2lab(*tmpImage, *buftemp, params->icm.workingProfile);
 
                             delete tmpImage;
                             delete [] rtemp;
@@ -11874,6 +11883,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             delete [] btemp;
                             // end rgb curves
                         }
+
                         //others curves
 
                         float chprosl = 1.f;
@@ -11889,15 +11899,23 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
+                        const LabImage *origptr = usergb ? buftemp.get() : bufcolorig.get();
+
+                        bool execcolor = false;
+
+                        if (localcutili || HHutili || locallutili || lp.ligh != 0.f || lp.cont != 0 || lp.chro != 0 || LHutili || ctoning) {
+                            execcolor = true;
+                        }
+
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
-                                float bufcolcalca = bufcolorig->a[ir][jr];
-                                float bufcolcalcb = bufcolorig->b[ir][jr];
-                                float bufcolcalcL = bufcolorig->L[ir][jr];
+                                float bufcolcalca = origptr->a[ir][jr];
+                                float bufcolcalcb = origptr->b[ir][jr];
+                                float bufcolcalcL = origptr->L[ir][jr];
 
                                 float chprocu = 1.f;
 
@@ -11957,12 +11975,26 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
                                 // buflight[ir][jr] = CLIPRET((bufcolcalcL - bufcolorig->L[ir][jr]) / 328.f);
-                                buf_a[ir][jr] = CLIPRET((bufcolcalca - bufcolorig->a[ir][jr]) / 328.f);;
-                                buf_b[ir][jr] = CLIPRET((bufcolcalcb - bufcolorig->b[ir][jr]) / 328.f);;
+                                buf_a[ir][jr] = CLIPRET((bufcolcalca - origptr->a[ir][jr]) / 328.f);;
+                                buf_b[ir][jr] = CLIPRET((bufcolcalcb - origptr->b[ir][jr]) / 328.f);;
                                 bufcolfin->L[ir][jr] = bufcolcalcL;
+                                bufcolfin->a[ir][jr] = bufcolcalca;
+                                bufcolfin->b[ir][jr] = bufcolcalcb;
 
                             }
 
+                        if (!execcolor) {
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    bufcolfin->L[ir][jr] = origptr->L[ir][jr];
+                                    bufcolfin->a[ir][jr] = origptr->a[ir][jr];
+                                    bufcolfin->b[ir][jr] = origptr->b[ir][jr];
+                                }
+                        }
 
 
                         //
@@ -12266,7 +12298,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         temp = blend2;
                     }
 
-                    int smerge = 0;
+                    int smerge = 100;
 
                     if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
                         smerge = 100;
