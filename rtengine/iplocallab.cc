@@ -4011,7 +4011,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         // printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
         const float ach = lp.trans / 100.f;
         float varsens = lp.sensex;
-
+        //if(HHutili) printf("exec H\n"); else printf("pas exec H\n");
         if (senstype == 0 || senstype == 100)   //Color and Light
         {
             varsens =  lp.sens;
@@ -11579,6 +11579,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
+            bool HHcurve = false;
 
             if (bfw >= mSP && bfh >= mSP) {
                 std::unique_ptr<LabImage> bufcolorig;
@@ -11907,6 +11908,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             execcolor = true;
                         }
 
+
+                        if (lochhCurve && HHutili) {
+                            for (int i = 0; i < 500; i++) {
+                                if (lochhCurve[i] != 0.5) {
+                                    HHcurve = true;
+                                }
+                            }
+                        }
+
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -11928,7 +11938,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 bufchro[ir][jr] = chprosl + chprocu;
 
-                                if (lochhCurve && HHutili && lp.qualcurvemet != 0) {
+                                if (lochhCurve && HHcurve && lp.qualcurvemet != 0  && !ctoning) {
                                     const float hhforcurv = xatan2f(bufcolcalcb, bufcolcalca);
                                     const float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)  1.7 optimisation !
                                     bufhh[ir][jr] = CLIPRET(200.f * valparam);
@@ -11978,12 +11988,17 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 buf_a[ir][jr] = CLIPRET((bufcolcalca - origptr->a[ir][jr]) / 328.f);;
                                 buf_b[ir][jr] = CLIPRET((bufcolcalcb - origptr->b[ir][jr]) / 328.f);;
                                 bufcolfin->L[ir][jr] = bufcolcalcL;
-                                bufcolfin->a[ir][jr] = bufcolcalca;
-                                bufcolfin->b[ir][jr] = bufcolcalcb;
+                                // if (lp.mergemet >= 2) {
+                                //bufcolfin->a[ir][jr] = bufcolcalca;
+                                // bufcolfin->b[ir][jr] = bufcolcalcb;
 
                             }
 
-                        if (!execcolor) {
+                        if (HHcurve && ctoning) {//not use ctoning and H(H) simultaneous but priority to ctoning
+                            HHcurve = false;
+                        }
+
+                        if (!execcolor) {//if we don't use color and light sliders, curves except RGB
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12305,7 +12320,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     //bufcolfin add for merge
-                    transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
