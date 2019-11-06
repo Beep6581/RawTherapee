@@ -167,8 +167,7 @@ protected:
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
-    int histogram[4][0x2000];
-    void (DCraw::*write_thumb)(), (DCraw::*write_fun)();
+    void (DCraw::*write_thumb)();
     void (DCraw::*load_raw)(), (DCraw::*thumb_load_raw)();
     jmp_buf failure;
 
