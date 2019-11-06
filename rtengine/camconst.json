@@ -2144,7 +2144,7 @@ Camera constants:
 
     { // Quality B, per ISO info missing
         "make_model": [ "Panasonic DC-S1", "Panasonic DC-S1R" ],
-        "ranges": { "white": 16383 }
+        "ranges": { "white": 16225 }
     },
 
     { // Quality B, per ISO info missing
