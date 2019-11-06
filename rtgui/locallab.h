@@ -80,7 +80,7 @@ private:
     DiagonalCurveEditor* const Lmaskshape;
     DiagonalCurveEditor* const llshape;
     DiagonalCurveEditor* const ccshape;
-    MyComboBoxText* const toneMethod;
+    MyComboBoxText* const toneMethod;//put here to use toneMethod in rgbshape
     DiagonalCurveEditor* const rgbshape;
     FlatCurveEditor* const LHshape;
     FlatCurveEditor* const HHshape;
