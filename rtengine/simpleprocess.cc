@@ -975,6 +975,7 @@ private:
 
         labView = new LabImage(fw, fh);
         reservView = new LabImage(fw, fh);
+        lastorigView = new LabImage(fw, fh);
 
         if (params.blackwhite.enabled) {
             CurveFactory::curveBW(params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
@@ -1085,6 +1086,7 @@ private:
         //     bool locallutili = false;
         //     bool localcutili = false;
         reservView->CopyFrom(labView);
+        lastorigView->CopyFrom(labView);
 
         if (params.locallab.enabled) {
             MyTime t1, t2;
@@ -1262,7 +1264,7 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve, lochhCurve,
+                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, lastorigView, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve, lochhCurve,
                      lmasklocalcurve, localmaskutili,
                      lmaskexplocalcurve, localmaskexputili,
                      lmaskSHlocalcurve, localmaskSHutili,
@@ -1283,6 +1285,7 @@ private:
                      huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                      minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
+                lastorigView->CopyFrom(labView);
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
@@ -1328,6 +1331,8 @@ private:
 
         delete reservView;
         reservView = nullptr;
+        delete lastorigView;
+        lastorigView = nullptr;
 
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
@@ -1825,6 +1830,7 @@ private:
     Imagefloat *baseImg;
     LabImage* labView;
     LabImage* reservView;
+    LabImage* lastorigView;
 
     LUTu hist16;
 

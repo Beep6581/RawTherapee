@@ -2950,6 +2950,14 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->mergeMethod = 3;
             merge1colFrame->show();
             mergecolFrame->show();
+        } else if (pp->locallab.spots.at(i).mergeMethod == "lastspot") {
+            r->mergeMethod = 4;
+            merge1colFrame->show();
+            mergecolFrame->hide();
+        } else if (pp->locallab.spots.at(i).mergeMethod == "lastspotmas") {
+            r->mergeMethod = 5;
+            merge1colFrame->show();
+            mergecolFrame->hide();
         }
 
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
@@ -3081,6 +3089,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 mergecolFrame->hide();
             } else if (newSpot->mergeMethod == "origmas") {
                 r->mergeMethod = 3;
+                merge1colFrame->show();
+                mergecolFrame->show();
+            } else if (newSpot->mergeMethod == "lastspot") {
+                r->mergeMethod = 4;
+                merge1colFrame->show();
+                mergecolFrame->hide();
+            } else if (newSpot->mergeMethod == "lastspotmas") {
+                r->mergeMethod = 5;
                 merge1colFrame->show();
                 mergecolFrame->show();
 
@@ -3325,6 +3341,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->mergeMethod = 3;
                 merge1colFrame->show();
                 mergecolFrame->show();
+            } else if (newSpot->mergeMethod == "lastspot") {
+                r->mergeMethod = 4;
+                merge1colFrame->show();
+                mergecolFrame->hide();
+            } else if (newSpot->mergeMethod == "lastspotmas") {
+                r->mergeMethod = 5;
+                merge1colFrame->show();
+                mergecolFrame->show();
             }
 
             r->sensiexclu = newSpot->sensiexclu;
@@ -3482,6 +3506,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         mergecolFrame->hide();
                     } else if (r->mergeMethod == 3) {
                         pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "origmas";
+                        merge1colFrame->show();
+                        mergecolFrame->show();
+                    } else if (r->mergeMethod == 4) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "lastspot";
+                        merge1colFrame->show();
+                        mergecolFrame->hide();
+                    } else if (r->mergeMethod == 5) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "lastspotmas";
                         merge1colFrame->show();
                         mergecolFrame->show();
 

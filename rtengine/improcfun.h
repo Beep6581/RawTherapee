@@ -262,7 +262,7 @@ public:
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, float &avg);
     void copy_ref(LabImage* spotbuffer, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
     void paste_ref(LabImage* spotbuffer, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp);
-    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve & locRETgainCcurve, const LocretitransCurve &locRETtransCcurve, LUTf & lllocalcurve,  bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
+    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, LabImage* lastorig, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve & locRETgainCcurve, const LocretitransCurve &locRETtransCcurve, LUTf & lllocalcurve,  bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
                 LUTf & lmasklocalcurve, bool & localmaskutili,
                 LUTf & lmaskexplocalcurve, bool & localmaskexputili,
                 LUTf & lmaskSHlocalcurve, bool & localmaskSHutili,

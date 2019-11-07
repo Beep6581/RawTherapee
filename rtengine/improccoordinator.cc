@@ -168,6 +168,7 @@ ImProcCoordinator::ImProcCoordinator() :
   //locallab
     locallListener(nullptr),
     reserv(nullptr),
+    lastorigimp(nullptr),
     coordX(0), coordY(0), localX(0), localY(0),
     lllocalcurve(65536, 0),
     cclocalcurve(65536, 0),
@@ -895,6 +896,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (todo & (M_LUMINANCE + M_COLOR)) {
             nprevl->CopyFrom(oprevl);
         reserv->CopyFrom(oprevl);
+        lastorigimp->CopyFrom(oprevl);
 
       //  int maxspot = 1;
         progress("Applying Color Boost...", 100 * readyphase / numofphases);
@@ -1079,7 +1081,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmax;
 
                 if (sp == params->locallab.selspot) {
-                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, 
+                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, 
                                 lmasklocalcurve, localmaskutili,
                                 lmaskexplocalcurve, localmaskexputili,
                                 lmaskSHlocalcurve, localmaskSHutili,
@@ -1104,7 +1106,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                     }
                 } else {
-                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, 
+                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, 
                                 lmasklocalcurve, localmaskutili,
                                 lmaskexplocalcurve, localmaskexputili,
                                 lmaskSHlocalcurve, localmaskSHutili,
@@ -1125,6 +1127,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                 }
+
+                lastorigimp->CopyFrom(nprevl);
+
                 //recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg);
@@ -1457,6 +1462,8 @@ void ImProcCoordinator::freeAll()
         nprevl    = nullptr;
         delete reserv;
         reserv    = nullptr;
+        delete lastorigimp;
+        lastorigimp = nullptr;
 
         if (ncie) {
             delete ncie;
@@ -1511,6 +1518,7 @@ void ImProcCoordinator::setScale(int prevscale)
         oprevl = new LabImage(pW, pH);
         nprevl = new LabImage(pW, pH);
         reserv = new LabImage(pW, pH);
+        lastorigimp = new LabImage(pW, pH);
 
         //  nprevloc = new LabImage (pW, pH);
         //ncie is only used in ImProcCoordinator::updatePreviewImage, it will be allocated on first use and deleted if not used anymore

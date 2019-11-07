@@ -596,6 +596,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mergemet = 2;
     } else if (locallab.spots.at(sp).mergeMethod == "origmas") {
         lp.mergemet = 3;
+    } else if (locallab.spots.at(sp).mergeMethod == "lastspot") {
+        lp.mergemet = 4;
+    } else if (locallab.spots.at(sp).mergeMethod == "lastspotmas") {
+        lp.mergemet = 5;
     }
 
     if (locallab.spots.at(sp).mergecolMethod == "one") {
@@ -7427,7 +7431,7 @@ void rgbtone(float& maxval, float& medval, float& minval, LUTf & lutToneCurve)
 }
 
 
-void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
+void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,
                                 const LocretigainCurve & locRETgainCcurve, const LocretitransCurve & locRETtransCcurve, LUTf & lllocalcurve, bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
                                 LUTf & lmasklocalcurve, bool & localmaskutili,
                                 LUTf & lmaskexplocalcurve, bool & localmaskexputili,
@@ -12059,9 +12063,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
+                                    if(lp.mergemet == 2 || lp.mergemet == 3) {
                                     bufcolreserv->L[y][x] = reserved->L[y + ystart][x + xstart];
                                     bufcolreserv->a[y][x] = reserved->a[y + ystart][x + xstart];
                                     bufcolreserv->b[y][x] = reserved->b[y + ystart][x + xstart];
+                                    } else {
+                                    bufcolreserv->L[y][x] = lastorig->L[y + ystart][x + xstart];
+                                    bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
+                                    bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
+                                    }
                                 }
                             }
 

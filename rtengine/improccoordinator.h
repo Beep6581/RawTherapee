@@ -230,7 +230,8 @@ protected:
     
     //locallab
     LocallabListener* locallListener;
-    LabImage *reserv;       
+    LabImage *reserv;
+    LabImage *lastorigimp;
     int coordX, coordY, localX, localY;
     LUTf lllocalcurve;
     LUTf cclocalcurve;

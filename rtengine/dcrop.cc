@@ -49,7 +49,7 @@ namespace rtengine
 {
 
 Crop::Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
-    : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr), reservCrop(nullptr),
+    : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr), reservCrop(nullptr), lastorigCrop(nullptr), 
       cropImg(nullptr), shbuf_real(nullptr), transCrop(nullptr), cieCrop(nullptr), shbuffer(nullptr),
       updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
@@ -866,6 +866,7 @@ void Crop::update(int todo)
         //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
         labnCrop->CopyFrom(laboCrop);
         reservCrop->CopyFrom(laboCrop);
+        lastorigCrop->CopyFrom(laboCrop);
 
 
         //parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
@@ -1061,7 +1062,7 @@ void Crop::update(int todo)
                                                 sca);
                 // Locallab mask are only shown for selected spot
                 if (sp == params.locallab.selspot) {
-                    parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, 
+                    parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, lastorigCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, 
                             lllocalcurve2,locallutili, loclhCurve, lochhCurve, 
                             lmasklocalcurve2, localmaskutili, 
                             lmaskexplocalcurve2, localmaskexputili, 
@@ -1087,7 +1088,7 @@ void Crop::update(int todo)
                         parent->locallListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                     }
                 } else {
-                    parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, 
+                    parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, lastorigCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, 
                             lllocalcurve2,locallutili, loclhCurve, lochhCurve,
                             lmasklocalcurve2, localmaskutili,
                             lmaskexplocalcurve2, localmaskexputili, 
@@ -1109,6 +1110,9 @@ void Crop::update(int todo)
                             huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                             minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                 }
+
+                lastorigCrop->CopyFrom(labnCrop);
+
                 lllocalcurve2.clear();
                 lightCurveloc2.clear();
                 rgblocalcurve2.clear();
@@ -1386,6 +1390,11 @@ void Crop::freeAll()
             reservCrop = nullptr;
         }
 
+        if (lastorigCrop) {
+            delete    lastorigCrop;
+            lastorigCrop = nullptr;
+        }
+
 
         /*        if (lablocCrop ) {
                     delete    lablocCrop;
@@ -1572,6 +1581,11 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
 
         reservCrop = new LabImage(cropw, croph);
 
+        if (lastorigCrop) {
+            delete lastorigCrop;    // labnCrop can't be resized
+        }
+
+        lastorigCrop = new LabImage(cropw, croph);
 
         /*        if (lablocCrop) {
                     delete lablocCrop;    // labnCrop can't be resized
