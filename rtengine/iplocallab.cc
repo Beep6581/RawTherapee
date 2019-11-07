@@ -6343,7 +6343,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     mxsl = max(mxslid34, mxslid56);
 
                 }
-printf("OK 1\n");
                 /*
                 for(int j=0;j<8;j++){
                 printf("j=%i slidL=%f\n", j, slidL[j]);
@@ -6392,7 +6391,6 @@ printf("OK 1\n");
                         vari[6] = max(0.0001f, kr5 * vari[6]);
                     }
 
-printf("OK 2\n");
 
                     float* noisevarlum = new float[GH * GW];
                     int GW2 = (GW + 1) / 2;
