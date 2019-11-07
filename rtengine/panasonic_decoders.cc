@@ -90,7 +90,7 @@ StopWatch Stop1("panasonic_load_raw");
 
     pana_bits(0, 0);
     int enc_blck_size = RT_pana_info.bpp == 12 ? 10 : 9;
-    if (RT_pana_info.encoding == 5 || RT_pana_info.encoding == 7) {
+    if (RT_pana_info.encoding == 5) {
         for (row = 0; row < raw_height; row++) {
             ushort* raw_block_data = raw_image + row * raw_width;
 
@@ -230,7 +230,7 @@ void DCraw::panasonicC7_load_raw()
         fread (iobuf, rowbytes, rowstoread, ifp);
         unsigned char *bytes = iobuf;
         for (int crow = 0; crow < rowstoread; crow++) {
-            unsigned short *rowptr = &raw_image[row + crow];
+            ushort *rowptr = &raw_image[(row + crow) * raw_width];
             for (int col = 0; col < raw_width - pixperblock + 1; col += pixperblock, bytes += 16) {
                 if (RT_pana_info.bpp == 14) {
                     rowptr[col] = bytes[0] + ((bytes[1] & 0x3F) << 8);
