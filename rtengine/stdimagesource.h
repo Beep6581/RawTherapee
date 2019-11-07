@@ -16,13 +16,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _STDIMAGESOURCE_
-#define _STDIMAGESOURCE_
+#pragma once
 
+#include "colortemp.h"
 #include "imagesource.h"
+#include "procparams.h"
 
 namespace rtengine
 {
+
+class ImageIO;
+
+namespace procparams
+{
+
+class ProcParams;
+
+struct ToneCurveParams;
+struct RAWParams;
+struct ColorManagementParams;
+
+}
 
 class StdImageSource : public ImageSource
 {
@@ -43,7 +57,7 @@ public:
     ~StdImageSource () override;
 
     int         load        (const Glib::ustring &fname) override;
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw) override;
+    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hrp, const procparams::RAWParams &raw) override;
     void        getrgbloc(bool local, bool gamma, bool  cat02, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w);
     ColorTemp   getWB       () const override
     {
@@ -51,8 +65,8 @@ public:
     }
     void        getAutoWBMultipliers (double &rm, double &gm, double &bm) override;
     ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) override;
-    void        WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams &cmp, const RAWParams &raw);
-    void        getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw);
+    void        WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw);
+    void        getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw);
 
     eSensorType getSensorType() const override {return ST_NONE;}
     bool isMono() const override {return false;}
@@ -90,8 +104,8 @@ public:
         plistener = pl;
     }
 
-    void        convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb) override;// RAWParams raw will not be used for non-raw files (see imagesource.h)
-    static void colorSpaceConversion (Imagefloat* im, const ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
+    void        convertColorSpace(Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) override;// RAWParams raw will not be used for non-raw files (see imagesource.h)
+    static void colorSpaceConversion (Imagefloat* im, const procparams::ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
 
     bool        isRGBSourceModified() const override
     {
@@ -107,5 +121,5 @@ public:
     void        flushRGB          () override;
     void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) override {};
 };
+
 }
-#endif

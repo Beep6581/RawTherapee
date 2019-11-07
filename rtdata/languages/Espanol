@@ -979,8 +979,8 @@ MAIN_TOOLTIP_BACKCOLOR2;Color de fondo de la previsualización: <b>Blanco</b>\nT
 MAIN_TOOLTIP_BACKCOLOR3;Color de fondo de la vista previa: <b> Medio gris </b> \nMétodo rápido: <b> 9 </b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Bloquear</b> / <b>Desbloquear</b> la vista <b>Antes</b>\n\n<b>Bloquear</b>: la vista <b>Antes</b> permanece inalterada - \nútil para evaluar el efecto acumulativo de varias herramientas.\nAdemás, se puede hacer una comparación con cualquier estado en el Historial\n\n<b>Desbloquear</b>: la vista <b>Antes</b> seguirá a la vista <b>Después</b> un paso por detrás, mostrando la imagen antes del efecto de la herramienta que se está usando
 MAIN_TOOLTIP_HIDEHP;Mostrar/Ocultar panel izquierdo (incluyendo historial).\nTecla de Atajo: <b>i</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Indicación de luces altas recortadas.\nTecla de Atajo: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Indicación de sombras recortadas.\nTecla de Atajo: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Indicación de luces altas recortadas.\nTecla de Atajo: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Indicación de sombras recortadas.\nTecla de Atajo: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Previsualización <b>Canal azul</b>.\nTecla de Atajo: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Previsualización <b>Máscara de Foco</b>.\nTecla de Atajo: <b>Shift-F</b>\n\nMás preciso en imágenes con poca profundidad de campo, bajo ruido y a mayores niveles de aumento\n\nPara mejorar la precisión en imágenes con ruido evalúe usando menor aumento (10%-30%)\n\nLa vista previa es realizada más lentamente cuando la Máscara de Foco esta activa.
 MAIN_TOOLTIP_PREVIEWG;Previsualización <b>Canal verde</b>.\nTecla de Atajo: <b>g</b>
@@ -2358,9 +2358,9 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !TP_DEHAZE_LUMINANCE;Luminance only
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected

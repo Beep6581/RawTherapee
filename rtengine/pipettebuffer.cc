@@ -20,6 +20,7 @@
 #include "pipettebuffer.h"
 
 #include "imagefloat.h"
+#include "labimage.h"
 
 #include "../rtgui/editcallbacks.h"
 

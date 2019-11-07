@@ -19,16 +19,16 @@
 #pragma once
 
 #include <cmath>
+#include <list>
 #include <map>
 #include <string>
 
 #include <glibmm/ustring.h>
 
-#include "rawimage.h"
-
 namespace rtengine
 {
 
+class RawImage;
 class ffInfo
 {
 public:
@@ -48,13 +48,8 @@ public:
 
     ffInfo( const ffInfo &o)
         : pathname(o.pathname), maker(o.maker), model(o.model), lens(o.lens), aperture(o.aperture), focallength(o.focallength), timestamp(o.timestamp), ri(nullptr) {}
-    ~ffInfo()
-    {
-        if( ri ) {
-            delete ri;
-        }
-    }
 
+    ~ffInfo();
 
     ffInfo &operator =(const ffInfo &o);
     bool operator <(const ffInfo &e2) const;

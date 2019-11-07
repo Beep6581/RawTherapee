@@ -16,19 +16,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _LABCURVE_H_
-#define _LABCURVE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
-#include "toolpanel.h"
+#include "colorprovider.h"
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
-#include "colorprovider.h"
+#include "toolpanel.h"
 
 class EditDataProvider;
 
-class LCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
+class LCurve :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public CurveListener,
+    public ColorProvider
 {
 
 protected:
@@ -97,5 +102,3 @@ public:
 
     void enabledChanged() override;
 };
-
-#endif

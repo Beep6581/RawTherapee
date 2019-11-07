@@ -23,36 +23,40 @@
 //
 ////////////////////////////////////////////////////////////////
 
+#include "color.h"
 #include "jaggedarray.h"
-#include "rtengine.h"
-#include "rawimagesource.h"
-#include "rt_math.h"
 #include "procparams.h"
+#include "rawimagesource.h"
+#include "rt_algo.h"
+#include "rt_math.h"
+#include "rtengine.h"
+
+#include "../rtgui/options.h"
+
 //#define BENCHMARK
 #include "StopWatch.h"
-#include "rt_algo.h"
 
 using namespace std;
 
 namespace rtengine
 {
 
-void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast)
+void RawImageSource::dual_demosaic_RT(bool isBayer, const procparams::RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast)
 {
     BENCHFUN
 
     if (contrast == 0.f && !autoContrast) {
         // contrast == 0.0 means only first demosaicer will be used
         if(isBayer) {
-            if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) ) {
+            if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEVNG4) ) {
                 amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
-            } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
+            } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4) ) {
                 dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
-            } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {
+            } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDVNG4) ) {
                 rcd_demosaic(options.chunkSizeRCD, options.measure);
             }
         } else {
-            if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {
+            if (raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::FOUR_PASS) ) {
                 xtrans_interpolate (3, true, options.chunkSizeXT, options.measure);
             } else {
                 xtrans_interpolate (1, false, options.chunkSizeXT, options.measure);
@@ -70,15 +74,15 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
     if (isBayer) {
         vng4_demosaic(rawData, redTmp, greenTmp, blueTmp);
 
-        if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+        if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEVNG4) || raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
             amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
+        } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4) ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {
+        } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDVNG4) ) {
             rcd_demosaic(options.chunkSizeRCD, options.measure);
         }
     } else {
-        if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {
+        if (raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::FOUR_PASS) ) {
             xtrans_interpolate (3, true, options.chunkSizeXT, options.measure);
         } else {
             xtrans_interpolate (1, false, options.chunkSizeXT, options.measure);

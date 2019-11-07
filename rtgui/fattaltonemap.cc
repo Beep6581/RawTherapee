@@ -23,6 +23,7 @@
 #include "fattaltonemap.h"
 
 #include "eventmapper.h"
+#include "rtimage.h"
 
 #include "../rtengine/procparams.h"
 

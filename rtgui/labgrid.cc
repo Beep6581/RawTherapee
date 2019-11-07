@@ -38,7 +38,9 @@
 
 #include "labgrid.h"
 
+#include "../rtengine/color.h"
 #include "options.h"
+#include "rtimage.h"
 
 using rtengine::Color;
 

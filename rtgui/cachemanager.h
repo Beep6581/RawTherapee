@@ -16,17 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CACHEMANAGER_
-#define _CACHEMANAGER_
+#pragma once
 
-#include <string>
 #include <map>
+#include <string>
 
 #include <glibmm/ustring.h>
 
-#include "../rtengine/noncopyable.h"
-
 #include "threadutils.h"
+
+#include "../rtengine/noncopyable.h"
 
 class Thumbnail;
 
@@ -70,6 +69,3 @@ public:
 };
 
 #define cacheMgr CacheManager::getInstance()
-
-#endif
-

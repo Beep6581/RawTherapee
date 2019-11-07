@@ -16,18 +16,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FILETHUMBNAILBUTTONSET_
-#define _FILETHUMBNAILBUTTONSET_
+#pragma once
 
 #include <array>
 
-#include "lwbuttonset.h"
 #include <gtkmm.h>
+
 #include "filebrowserentry.h"
-#include "rtsurface.h"
+#include "lwbuttonset.h"
 
 class FileBrowserEntry;
-class FileThumbnailButtonSet : public LWButtonSet
+class RTSurface;
+
+class FileThumbnailButtonSet :
+    public LWButtonSet
 {
 
     static bool iconsLoaded;
@@ -55,5 +57,3 @@ public:
     void    setInTrash (bool inTrash);
 
 };
-
-#endif

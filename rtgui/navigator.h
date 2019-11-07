@@ -16,16 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _NAVIGATOR_
-#define _NAVIGATOR_
+#pragma once
 
 #include <gtkmm.h>
-#include "previewwindow.h"
-#include "pointermotionlistener.h"
-#include "options.h"
-#include "../rtengine/iccstore.h"
 
-class Navigator : public Gtk::Frame, public PointerMotionListener
+#include "options.h"
+#include "pointermotionlistener.h"
+#include "previewwindow.h"
+
+class Navigator :
+    public Gtk::Frame,
+    public PointerMotionListener
 {
 
     typedef const double (*TMatrix)[3];
@@ -63,5 +64,3 @@ public:
     void getLABText (float l, float a, float b, Glib::ustring &sL, Glib::ustring &sA, Glib::ustring &sB) override;
 
 };
-
-#endif

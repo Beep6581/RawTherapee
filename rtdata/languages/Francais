@@ -916,8 +916,8 @@ MAIN_TOOLTIP_BACKCOLOR2;Couleur de fond de l'aperçu: <b>Blanc</b>\nRaccourci: <
 MAIN_TOOLTIP_BACKCOLOR3;Couleur de fond de l'aperçu: <b>Gris moyen</b>\nRaccourci : <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vérouille</b> / <b>déverouille</b> la vue <b>Avant</b>\n\n<b>Vérouille</b>: garde la vue <b>Avant</b> inchangée - \nutile pour évaluer l'effet cumulatif de plusieurs outils.\nDe plus, une comparaison peut être faite à partir de n'importe quelle étape de l'historique\n\n<b>Déverouille</b>: la vue <b>Avant</b> représentera l'étape précédant la vue <b>Après</b>, montrant l'effet qui vient d'être modifié
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique)\nRaccourci: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine\nRaccourci: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Indication ombres hors domaine\nRaccourci: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine\nRaccourci: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Indication ombres hors domaine\nRaccourci: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Affichage du <b>canal Bleu</b>\nRaccourci: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Affichage du <b>Masque du focus</b>\nRaccourci: <b>Shift-f</b>\n\nPlus précis sur les images avec une faible profondeur de champ, à faible bruit et à des niveaux de zoom élevé\n\nPour améliorer la précision de détection des images bruitées, évaluez les à un facteur de zoom de 10-30%\n\nLa prévisualisation met plus de temps à se calculer lorsque cet outil est actif.
 MAIN_TOOLTIP_PREVIEWG;Affichage du <b>canal Vert</b>\nRaccourci: <b>g</b>
@@ -2291,9 +2291,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_DEHAZE_LUMINANCE;Luminance only
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected

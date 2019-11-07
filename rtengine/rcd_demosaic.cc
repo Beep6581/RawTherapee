@@ -20,12 +20,18 @@
 
 #include "rawimagesource.h"
 #include "rt_math.h"
-#include "procparams.h"
 #include "../rtgui/multilangmgr.h"
 #include "opthelper.h"
 #include "StopWatch.h"
 
 using namespace std;
+
+namespace
+{
+unsigned fc(const unsigned int cfa[2][2], int r, int c) {
+    return cfa[r & 1][c & 1];
+}
+}
 
 namespace rtengine
 {
@@ -56,6 +62,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
         plistener->setProgress(progress);
     }
     
+    const unsigned int cfarray[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     constexpr int rcdBorder = 9;
     constexpr int tileSize = 214;
     constexpr int tileSizeN = tileSize - 2 * rcdBorder;
@@ -98,8 +105,8 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 
             for (int row = rowStart; row < rowEnd; row++) {
                 int indx = (row - rowStart) * tileSize;
-                int c0 = FC(row, colStart);
-                int c1 = FC(row, colStart + 1);
+                int c0 = fc(cfarray, row, colStart);
+                int c1 = fc(cfarray, row, colStart + 1);
                 int col = colStart;
 
                 for (; col < colEnd - 1; col+=2, indx+=2) {
@@ -132,7 +139,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
             // Step 2.1: Low pass filter incorporating green, red and blue local samples from the raw data
 
             for (int row = 2; row < tileRows - 2; row++) {
-                for (int col = 2 + (FC(row, 0) & 1), indx = row * tileSize + col; col < tilecols - 2; col += 2, indx += 2) {
+                for (int col = 2 + (fc(cfarray, row, 0) & 1), indx = row * tileSize + col; col < tilecols - 2; col += 2, indx += 2) {
                     lpf[indx>>1] = 0.25f * cfa[indx] + 0.125f * (cfa[indx - w1] + cfa[indx + w1] + cfa[indx - 1] + cfa[indx + 1]) + 0.0625f * (cfa[indx - w1 - 1] + cfa[indx - w1 + 1] + cfa[indx + w1 - 1] + cfa[indx + w1 + 1]);
                 }
             }
@@ -142,7 +149,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
             */
             // Step 3.1: Populate the green channel at blue and red CFA positions
            for (int row = 4; row < tileRows - 4; row++) {
-               for (int col = 4 + (FC(row, 0) & 1), indx = row * tileSize + col; col < tilecols - 4; col += 2, indx += 2) {
+               for (int col = 4 + (fc(cfarray, row, 0) & 1), indx = row * tileSize + col; col < tilecols - 4; col += 2, indx += 2) {
 
                     // Refined vertical and horizontal local discrimination
                     float VH_Central_Value = VH_Dir[indx];
@@ -177,7 +184,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 
             // Step 4.1: Calculate P/Q diagonal local discrimination
             for (int row = rcdBorder - 4; row < tileRows - rcdBorder + 4; row++) {
-                for (int col = rcdBorder - 4 + (FC(row, rcdBorder) & 1), indx = row * tileSize + col; col < tilecols - rcdBorder + 4; col += 2, indx += 2) {
+                for (int col = rcdBorder - 4 + (fc(cfarray, row, rcdBorder) & 1), indx = row * tileSize + col; col < tilecols - rcdBorder + 4; col += 2, indx += 2) {
                     const float cfai = cfa[indx];
 
                     float P_Stat = max(epssq, - 18.f * cfai * (cfa[indx - w1 - 1] + cfa[indx + w1 + 1] + 2.f * (cfa[indx - w2 - 2] + cfa[indx + w2 + 2]) - cfa[indx - w3 - 3] - cfa[indx + w3 + 3]) - 2.f * cfai * (cfa[indx - w4 - 4] + cfa[indx + w4 + 4] - 19.f * cfai) - cfa[indx - w1 - 1] * (70.f * cfa[indx + w1 + 1] - 12.f * cfa[indx - w2 - 2] + 24.f * cfa[indx + w2 + 2] - 38.f * cfa[indx - w3 - 3] + 16.f * cfa[indx + w3 + 3] + 12.f * cfa[indx - w4 - 4] - 6.f * cfa[indx + w4 + 4] + 46.f * cfa[indx - w1 - 1]) + cfa[indx + w1 + 1] * (24.f * cfa[indx - w2 - 2] - 12.f * cfa[indx + w2 + 2] + 16.f * cfa[indx - w3 - 3] - 38.f * cfa[indx + w3 + 3] - 6.f * cfa[indx - w4 - 4] + 12.f * cfa[indx + w4 + 4] + 46.f * cfa[indx + w1 + 1]) + cfa[indx - w2 - 2] * (14.f * cfa[indx + w2 + 2] - 12.f * cfa[indx + w3 + 3] - 2.f * (cfa[indx - w4 - 4] - cfa[indx + w4 + 4]) + 11.f * cfa[indx - w2 - 2]) - cfa[indx + w2 + 2] * (12.f * cfa[indx - w3 - 3] + 2.f * (cfa[indx - w4 - 4] - cfa[indx + w4 + 4]) + 11.f * cfa[indx + w2 + 2]) + cfa[indx - w3 - 3] * (2.f * cfa[indx + w3 + 3] - 6.f * cfa[indx - w4 - 4] + 10.f * cfa[indx - w3 - 3]) - cfa[indx + w3 + 3] * (6.f * cfa[indx + w4 + 4] + 10.f * cfa[indx + w3 + 3]) + cfa[indx - w4 - 4] * cfa[indx - w4 - 4] + cfa[indx + w4 + 4] * cfa[indx + w4 + 4]);
@@ -190,7 +197,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 
             // Step 4.2: Populate the red and blue channels at blue and red CFA positions
             for (int row = rcdBorder - 3; row < tileRows - rcdBorder + 3; row++) {
-                for (int col = rcdBorder - 3 + (FC(row, rcdBorder - 1) & 1), indx = row * tileSize + col, c = 2 - FC(row, col); col < tilecols - rcdBorder + 3; col += 2, indx += 2) {
+                for (int col = rcdBorder - 3 + (fc(cfarray, row, rcdBorder - 1) & 1), indx = row * tileSize + col, c = 2 - fc(cfarray, row, col); col < tilecols - rcdBorder + 3; col += 2, indx += 2) {
 
                     // Refined P/Q diagonal local discrimination
                     float PQ_Central_Value   = PQ_Dir[indx];
@@ -222,7 +229,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 
             // Step 4.3: Populate the red and blue channels at green CFA positions
             for (int row = rcdBorder; row < tileRows - rcdBorder; row++) {
-                for (int col = rcdBorder + (FC(row, rcdBorder - 1) & 1), indx = row * tileSize + col; col < tilecols - rcdBorder; col += 2, indx += 2) {
+                for (int col = rcdBorder + (fc(cfarray, row, rcdBorder - 1) & 1), indx = row * tileSize + col; col < tilecols - rcdBorder; col += 2, indx += 2) {
 
                     // Refined vertical and horizontal local discrimination
                     float VH_Central_Value   = VH_Dir[indx];
@@ -297,7 +304,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
     free(PQ_Dir);
 }
 
-    border_interpolate2(W, H, rcdBorder, rawData, red, green, blue);
+    border_interpolate(W, H, rcdBorder, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgress(1);

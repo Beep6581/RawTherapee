@@ -19,17 +19,18 @@
 #pragma once
 
 #include <cmath>
+#include <list>
 #include <map>
 #include <string>
 
 #include <glibmm/ustring.h>
 
 #include "pixelsmap.h"
-#include "rawimage.h"
 
 namespace rtengine
 {
 
+class RawImage;
 class dfInfo
 {
 public:
@@ -48,13 +49,7 @@ public:
 
     dfInfo( const dfInfo &o)
         : pathname(o.pathname), maker(o.maker), model(o.model), iso(o.iso), shutter(o.shutter), timestamp(o.timestamp), ri(nullptr) {}
-    ~dfInfo()
-    {
-        if( ri ) {
-            delete ri;
-        }
-    }
-
+    ~dfInfo();
 
     dfInfo &operator =(const dfInfo &o);
     bool operator <(const dfInfo &e2) const;

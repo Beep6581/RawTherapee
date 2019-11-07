@@ -18,8 +18,11 @@
 */
 
 #include <algorithm>
+#include <cassert>
 #include <cstring>
 
+#include <glibmm/ustring.h>
+#include <glibmm/fileutils.h>
 #include <glib/gstdio.h>
 
 #ifdef WIN32
@@ -29,15 +32,11 @@
 
 #include "lcp.h"
 
+#include "opthelper.h"
 #include "procparams.h"
+#include "rt_math.h"
 #include "settings.h"
-
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
+#include "utils.h"
 
 class rtengine::LCPProfile::LCPPersModel
 {
@@ -984,7 +983,7 @@ rtengine::LCPMapper::LCPMapper(
     bool useCADistP,
     int fullWidth,
     int fullHeight,
-    const CoarseTransformParams& coarse,
+    const procparams::CoarseTransformParams& coarse,
     int rawRotationDeg
 ) :
     enableCA(false),

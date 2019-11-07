@@ -16,13 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMAGEAREATOOLLISTENER_
-#define _IMAGEAREATOOLLISTENER_
+#pragma once
 
-#include "toolbar.h"
-#include "thumbnail.h"
 #include "cropguilistener.h"
+#include "toolbar.h"
 
+class Thumbnail;
 class ImageAreaToolListener
 {
 
@@ -36,6 +35,3 @@ public:
     virtual ToolBar* getToolBar() const = 0;
     virtual CropGUIListener* startCropEditing(Thumbnail* thm = nullptr) = 0;
 };
-
-#endif
-

@@ -17,10 +17,15 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../rtengine/dynamicprofile.h"
+#include "dynamicprofile.h"
 
 #include <stdlib.h>
 #include <glibmm/regex.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/keyfile.h>
+
+#include "rtengine.h"
+#include "../rtgui/options.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -176,7 +181,7 @@ bool DynamicProfileRules::loadRules()
         return false;
     }
 
-    if (options.rtSettings.verbose) {
+    if (settings->verbose) {
         printf ("loading dynamic profiles...\n");
     }
 
@@ -195,7 +200,7 @@ bool DynamicProfileRules::loadRules()
             return false;
         }
 
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf (" loading rule %d\n", serial);
         }
 
@@ -225,7 +230,7 @@ bool DynamicProfileRules::loadRules()
 
 bool DynamicProfileRules::storeRules()
 {
-    if (options.rtSettings.verbose) {
+    if (settings->verbose) {
         printf ("saving dynamic profiles...\n");
     }
 

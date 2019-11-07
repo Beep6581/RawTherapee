@@ -16,22 +16,31 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THUMBNAIL_
-#define _THUMBNAIL_
+#pragma once
 
 #include <memory>
 #include <string>
 
-#include <glibmm.h>
-#include "cachemanager.h"
-#include "options.h"
-#include "../rtengine/rtengine.h"
-#include "../rtengine/rtthumbnail.h"
-#include "cacheimagedata.h"
-#include "thumbnaillistener.h"
-#include "threadutils.h"
+#include <glibmm/ustring.h>
 
+#include "cacheimagedata.h"
+#include "threadutils.h"
+#include "thumbnaillistener.h"
+
+namespace rtengine
+{
+class Thumbnail;
+
+namespace procparams
+{
+
+class ProcParams;
+
+}
+
+}
 class CacheManager;
+
 struct ParamsEdited;
 
 class Thumbnail
@@ -97,14 +106,8 @@ public:
 
     void              notifylisterners_procParamsChanged(int whoChangedIt);
 
-    bool              isQuick() const
-    {
-        return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL;
-    }
-    bool              isPParamsValid() const
-    {
-        return pparamsValid;
-    }
+    bool              isQuick() const;
+    bool              isPParamsValid() const;
     bool              isRecentlySaved () const;
     void              imageDeveloped ();
     void              imageEnqueued ();
@@ -122,29 +125,10 @@ public:
 
     const Glib::ustring&  getExifString () const;
     const Glib::ustring&  getDateTimeString () const;
-    void                  getCamWB  (double& temp, double& green) const
-    {
-        if (tpp) {
-            tpp->getCamWB  (temp, green);
-        } else {
-            temp = green = -1.0;
-        }
-    }
+    void                  getCamWB  (double& temp, double& green) const;
     void                  getAutoWB (double& temp, double& green, double equal, double tempBias);
-    void                  getSpotWB (int x, int y, int rect, double& temp, double& green)
-    {
-        if (tpp) {
-            tpp->getSpotWB (getProcParams(), x, y, rect, temp, green);
-        } else {
-            temp = green = -1.0;
-        }
-    }
-    void                  applyAutoExp (rtengine::procparams::ProcParams& pparams)
-    {
-        if (tpp) {
-            tpp->applyAutoExp (pparams);
-        }
-    }
+    void                  getSpotWB (int x, int y, int rect, double& temp, double& green);
+    void                  applyAutoExp (rtengine::procparams::ProcParams& pparams);
 
     ThFileType      getType ();
     Glib::ustring   getFileName () const
@@ -155,14 +139,8 @@ public:
 
     bool            isSupported ();
 
-    const CacheImageData* getCacheImageData()
-    {
-        return &cfs;
-    }
-    std::string     getMD5   () const
-    {
-        return cfs.md5;
-    }
+    const CacheImageData* getCacheImageData();
+    std::string     getMD5   () const;
 
     int             getRank  () const;
     void            setRank  (int rank);
@@ -185,7 +163,3 @@ public:
     bool            openDefaultViewer(int destination);
     bool            imageLoad(bool loading);
 };
-
-
-#endif
-

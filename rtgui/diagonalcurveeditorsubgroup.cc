@@ -31,6 +31,7 @@
 #include "curveeditor.h"
 #include "diagonalcurveeditorsubgroup.h"
 #include "rtimage.h"
+#include "options.h"
 
 #include "../rtengine/curves.h"
 

@@ -17,22 +17,27 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "improcfun.h"
-#include "gauss.h"
 #include "bilateral2.h"
+#include "cieimage.h"
+#include "gauss.h"
+#include "improcfun.h"
 #include "jaggedarray.h"
-#include "rt_math.h"
-#include "procparams.h"
-#include "sleef.c"
+#include "labimage.h"
 #include "opthelper.h"
+#include "procparams.h"
+#include "rt_algo.h"
+#include "rt_math.h"
+#include "settings.h"
+#include "sleef.h"
+
 //#define BENCHMARK
 #include "StopWatch.h"
-#include "rt_algo.h"
+
 using namespace std;
 
 namespace {
 
-void sharpenHaloCtrl (float** luminance, float** blurmap, float** base, float** blend, int W, int H, const SharpeningParams &sharpenParam)
+void sharpenHaloCtrl (float** luminance, float** blurmap, float** base, float** blend, int W, int H, const procparams::SharpeningParams &sharpenParam)
 {
 
     const float scale = (100.f - sharpenParam.halocontrol_amount) * 0.01f;
@@ -156,9 +161,7 @@ void dcdamping (float** aI, float** aO, float damping, int W, int H)
 namespace rtengine
 {
 
-extern const Settings* settings;
-
-void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, const float * const * blend, int W, int H, const SharpeningParams &sharpenParam, double Scale)
+void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, const float * const * blend, int W, int H, const procparams::SharpeningParams &sharpenParam, double Scale)
 {
     if (sharpenParam.deconvamount == 0 && sharpenParam.blurradius < 0.25f) {
         return;
@@ -207,13 +210,13 @@ BENCHFUN
         for (int k = 0; k < sharpenParam.deconviter; k++) {
             if (!needdamp) {
                 // apply gaussian blur and divide luminance by result of gaussian blur
-                gaussianBlur(tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
+                gaussianBlur(tmpI, tmp, W, H, sigma, false, GAUSS_DIV, luminance);
             } else {
                 // apply gaussian blur + damping
                 gaussianBlur(tmpI, tmp, W, H, sigma);
                 dcdamping(tmp, luminance, damping, W, H);
             }
-            gaussianBlur(tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
+            gaussianBlur(tmp, tmpI, W, H, sigma, false, GAUSS_MULT);
         } // end for
 
 #ifdef _OPENMP
@@ -241,7 +244,7 @@ BENCHFUN
     delete blurbuffer;
 }
 
-void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpenParam, bool showMask)
+void ImProcFunctions::sharpening (LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask)
 {
 
     if ((!sharpenParam.enabled) || sharpenParam.amount < 1 || lab->W < 8 || lab->H < 8) {

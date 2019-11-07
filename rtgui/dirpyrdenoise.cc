@@ -21,14 +21,15 @@
 
 #include "dirpyrdenoise.h"
 
-#include "guiutils.h"
-
-#include "../rtengine/procparams.h"
 #include "editbuffer.h"
+#include "guiutils.h"
+#include "options.h"
+
+#include "../rtengine/color.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
-extern Options options;
 
 DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP_DIRPYRDENOISE_LABEL"), true, true), lastmedian(false)
 {

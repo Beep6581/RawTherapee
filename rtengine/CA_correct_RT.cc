@@ -28,6 +28,14 @@
 #include "gauss.h"
 #include "median.h"
 #include "StopWatch.h"
+
+namespace
+{
+unsigned fc(const unsigned int cfa[2][2], int r, int c) {
+    return cfa[r & 1][c & 1];
+}
+}
+
 namespace {
 
 bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
@@ -106,10 +114,6 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 //end of linear equation solver
 }
 
-namespace rtengine {
-    extern const Settings* settings;
-}
-
 using namespace std;
 using namespace rtengine;
 
@@ -138,6 +142,7 @@ float* RawImageSource::CA_correct_RT(
     }
 
     // multithreaded and vectorized by Ingo Weyrich
+    const unsigned int cfa[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     constexpr int ts = 128;
     constexpr int tsh = ts / 2;
     constexpr int cb = 2; // 2 pixels border will be excluded from correction
@@ -148,7 +153,7 @@ float* RawImageSource::CA_correct_RT(
     // Test for RGB cfa
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
-            if (FC(i, j) == 3) {
+            if (fc(cfa, i, j) == 3) {
                 std::cout << "CA correction supports only RGB Colour filter arrays" << std::endl;
                 return buffer;
             }
@@ -167,7 +172,7 @@ float* RawImageSource::CA_correct_RT(
         #pragma omp parallel for
 #endif
         for (int i = cb; i < H - cb; ++i) {
-            for (int j = cb + (FC(i, 0) & 1); j < W - cb; j += 2) {
+            for (int j = cb + (fc(cfa, i, 0) & 1); j < W - cb; j += 2) {
                 (*oldraw)[i - cb][(j - cb) / 2] = rawData[i][j];
             }
         }
@@ -198,7 +203,7 @@ float* RawImageSource::CA_correct_RT(
 
     //block CA shift values and weight assigned to block
     float* const blockwt = buffer + (height * width);
-    memset(blockwt, 0, vblsz * hblsz * (2 * 2 + 1) * sizeof(float));
+    memset(blockwt, 0, static_cast<unsigned long>(vblsz) * hblsz * (2 * 2 + 1) * sizeof(float));
     float (*blockshifts)[2][2] = (float (*)[2][2])(blockwt + vblsz * hblsz);
 
     // Because we can't break parallel processing, we need a switch do handle the errors
@@ -320,12 +325,12 @@ float* RawImageSource::CA_correct_RT(
                             int cc = ccmin;
                             int col = cc + left;
 #ifdef __SSE2__
-                            int c0 = FC(rr, cc);
+                            int c0 = fc(cfa, rr, cc);
                             if (c0 == 1) {
                                 rgb[c0][rr * ts + cc] = rawData[row][col] / 65535.f;
                                 cc++;
                                 col++;
-                                c0 = FC(rr, cc);
+                                c0 = fc(cfa, rr, cc);
                             }
                             int indx1 = rr * ts + cc;
                             for (; cc < ccmax - 7; cc+=8, col+=8, indx1 += 8) {
@@ -338,7 +343,7 @@ float* RawImageSource::CA_correct_RT(
                             }
 #endif
                             for (; cc < ccmax; cc++, col++) {
-                                int c = FC(rr, cc);
+                                int c = fc(cfa, rr, cc);
                                 int indx1 = rr * ts + cc;
                                 rgb[c][indx1 >> ((c & 1) ^ 1)] = rawData[row][col] / 65535.f;
                             }
@@ -348,7 +353,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmin > 0) {
                             for (int rr = 0; rr < border; rr++) {
                                 for (int cc = ccmin; cc < ccmax; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rgb[c][((border2 - rr) * ts + cc) >> ((c & 1) ^ 1)];
                                 }
                             }
@@ -357,7 +362,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmax < rr1) {
                             for (int rr = 0; rr < border; rr++) {
                                 for (int cc = ccmin; cc < ccmax; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = rawData[(height - rr - 2)][left + cc] / 65535.f;
                                 }
                             }
@@ -366,7 +371,7 @@ float* RawImageSource::CA_correct_RT(
                         if (ccmin > 0) {
                             for (int rr = rrmin; rr < rrmax; rr++) {
                                 for (int cc = 0; cc < border; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rgb[c][(rr * ts + border2 - cc) >> ((c & 1) ^ 1)];
                                 }
                             }
@@ -375,7 +380,7 @@ float* RawImageSource::CA_correct_RT(
                         if (ccmax < cc1) {
                             for (int rr = rrmin; rr < rrmax; rr++) {
                                 for (int cc = 0; cc < border; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = rawData[(top + rr)][(width - cc - 2)] / 65535.f;
                                 }
                             }
@@ -385,7 +390,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmin > 0 && ccmin > 0) {
                             for (int rr = 0; rr < border; rr++) {
                                 for (int cc = 0; cc < border; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rawData[border2 - rr][border2 - cc] / 65535.f;
                                 }
                             }
@@ -394,7 +399,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmax < rr1 && ccmax < cc1) {
                             for (int rr = 0; rr < border; rr++) {
                                 for (int cc = 0; cc < border; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][((rrmax + rr)*ts + ccmax + cc) >> ((c & 1) ^ 1)] = rawData[(height - rr - 2)][(width - cc - 2)] / 65535.f;
                                 }
                             }
@@ -403,7 +408,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmin > 0 && ccmax < cc1) {
                             for (int rr = 0; rr < border; rr++) {
                                 for (int cc = 0; cc < border; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = rawData[(border2 - rr)][(width - cc - 2)] / 65535.f;
                                 }
                             }
@@ -412,7 +417,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmax < rr1 && ccmin > 0) {
                             for (int rr = 0; rr < border; rr++) {
                                 for (int cc = 0; cc < border; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = rawData[(height - rr - 2)][(border2 - cc)] / 65535.f;
                                 }
                             }
@@ -427,9 +432,9 @@ float* RawImageSource::CA_correct_RT(
 #endif
                         for (int rr = 3; rr < rr1 - 3; rr++) {
                             int row = rr + top;
-                            int cc = 3 + (FC(rr,3) & 1);
+                            int cc = 3 + (fc(cfa, rr,3) & 1);
                             int indx = rr * ts + cc;
-                            int c = FC(rr,cc);
+                            int c = fc(cfa, rr,cc);
 #ifdef __SSE2__
                             for (; cc < cc1 - 9; cc+=8, indx+=8) {
                                 //compute directional weights using image gradients
@@ -463,7 +468,7 @@ float* RawImageSource::CA_correct_RT(
                             }
 
                             if (row > -1 && row < height) {
-                                int offset = (FC(row,max(left + 3, 0)) & 1);
+                                int offset = (fc(cfa, row,max(left + 3, 0)) & 1);
                                 int col = max(left + 3, 0) + offset;
                                 int indx = rr * ts + 3 - (left < 0 ? (left+3) : 0) + offset;
 #ifdef __SSE2__
@@ -481,9 +486,9 @@ float* RawImageSource::CA_correct_RT(
                         vfloat zd25v = F2V(0.25f);
 #endif
                         for (int rr = 4; rr < rr1 - 4; rr++) {
-                            int cc = 4 + (FC(rr, 2) & 1);
+                            int cc = 4 + (fc(cfa, rr, 2) & 1);
                             int indx = rr * ts + cc;
-                            int c = FC(rr, cc);
+                            int c = fc(cfa, rr, cc);
 #ifdef __SSE2__
                             for (; cc < cc1 - 10; cc += 8, indx += 8) {
                                 vfloat rgb1v = LC2VFU(rgb[1][indx]);
@@ -547,9 +552,9 @@ float* RawImageSource::CA_correct_RT(
                         // along line segments, find the point along each segment that minimizes the colour variance
                         // averaged over the tile; evaluate for up/down and left/right away from R/B grid point
                         for (int rr = 8; rr < rr1 - 8; rr++) {
-                            int cc = 8 + (FC(rr, 2) & 1);
+                            int cc = 8 + (fc(cfa, rr, 2) & 1);
                             int indx = rr * ts + cc;
-                            int c = FC(rr, cc);
+                            int c = fc(cfa, rr, cc);
 #ifdef __SSE2__
                             vfloat coeff00v = ZEROV;
                             vfloat coeff01v = ZEROV;
@@ -871,14 +876,14 @@ float* RawImageSource::CA_correct_RT(
                             int indx = row * width + col;
                             int indx1 = rr * ts + cc;
 #ifdef __SSE2__
-                            int c = FC(rr, cc);
+                            int c = fc(cfa, rr, cc);
                             if (c & 1) {
                                 rgb[1][indx1] = rawData[row][col] / 65535.f;
                                 indx++;
                                 indx1++;
                                 cc++;
                                 col++;
-                                c = FC(rr, cc);
+                                c = fc(cfa, rr, cc);
                             }
                             for (; cc < ccmax - 7; cc += 8, col += 8, indx += 8, indx1 += 8) {
                                 vfloat val1v = LVFU(rawData[row][col]) / c65535v;
@@ -890,7 +895,7 @@ float* RawImageSource::CA_correct_RT(
                             }
 #endif
                             for (; cc < ccmax; cc++, col++, indx++, indx1++) {
-                                int c = FC(rr, cc);
+                                int c = fc(cfa, rr, cc);
                                 rgb[c][indx1 >> ((c & 1) ^ 1)] = rawData[row][col] / 65535.f;
 
                                 if ((c & 1) == 0) {
@@ -903,7 +908,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmin > 0) {
                             for (int rr = 0; rr < border; rr++) {
                                 for (int cc = ccmin; cc < ccmax; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rgb[c][((border2 - rr) * ts + cc) >> ((c & 1) ^ 1)];
                                     rgb[1][rr * ts + cc] = rgb[1][(border2 - rr) * ts + cc];
                                 }
@@ -913,7 +918,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmax < rr1) {
                             for (int rr = 0; rr < std::min(border, rr1 - rrmax); rr++) {
                                 for (int cc = ccmin; cc < ccmax; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = (rawData[(height - rr - 2)][left + cc]) / 65535.f;
                                     if ((c & 1) == 0) {
                                         rgb[1][(rrmax + rr)*ts + cc] = Gtmp[((height - rr - 2) * width + left + cc) >> 1];
@@ -925,7 +930,7 @@ float* RawImageSource::CA_correct_RT(
                         if (ccmin > 0) {
                             for (int rr = rrmin; rr < rrmax; rr++) {
                                 for (int cc = 0; cc < border; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rgb[c][(rr * ts + border2 - cc) >> ((c & 1) ^ 1)];
                                     rgb[1][rr * ts + cc] = rgb[1][rr * ts + border2 - cc];
                                 }
@@ -935,7 +940,7 @@ float* RawImageSource::CA_correct_RT(
                         if (ccmax < cc1) {
                             for (int rr = rrmin; rr < rrmax; rr++) {
                                 for (int cc = 0; cc < std::min(border, cc1 - ccmax); cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = (rawData[(top + rr)][(width - cc - 2)]) / 65535.f;
                                     if ((c & 1) == 0) {
                                         rgb[1][rr * ts + ccmax + cc] = Gtmp[((top + rr) * width + (width - cc - 2)) >> 1];
@@ -948,7 +953,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmin > 0 && ccmin > 0) {
                             for (int rr = 0; rr < border; rr++) {
                                 for (int cc = 0; cc < border; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = (rawData[border2 - rr][border2 - cc]) / 65535.f;
                                     if ((c & 1) == 0) {
                                         rgb[1][rr * ts + cc] = Gtmp[((border2 - rr) * width + border2 - cc) >> 1];
@@ -960,7 +965,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmax < rr1 && ccmax < cc1) {
                             for (int rr = 0; rr < std::min(border, rr1 - rrmax); rr++) {
                                 for (int cc = 0; cc < std::min(border, cc1 - ccmax); cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][((rrmax + rr)*ts + ccmax + cc) >> ((c & 1) ^ 1)] = (rawData[(height - rr - 2)][(width - cc - 2)]) / 65535.f;
                                     if ((c & 1) == 0) {
                                         rgb[1][(rrmax + rr)*ts + ccmax + cc] = Gtmp[((height - rr - 2) * width + (width - cc - 2)) >> 1];
@@ -972,7 +977,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmin > 0 && ccmax < cc1) {
                             for (int rr = 0; rr < border; rr++) {
                                 for (int cc = 0; cc < std::min(border, cc1 - ccmax); cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = (rawData[(border2 - rr)][(width - cc - 2)]) / 65535.f;
                                     if ((c & 1) == 0) {
                                         rgb[1][rr * ts + ccmax + cc] = Gtmp[((border2 - rr) * width + (width - cc - 2)) >> 1];
@@ -984,7 +989,7 @@ float* RawImageSource::CA_correct_RT(
                         if (rrmax < rr1 && ccmin > 0) {
                             for (int rr = 0; rr < std::min(border, rr1 - rrmax); rr++) {
                                 for (int cc = 0; cc < border; cc++) {
-                                    int c = FC(rr, cc);
+                                    int c = fc(cfa, rr, cc);
                                     rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = (rawData[(height - rr - 2)][(border2 - cc)]) / 65535.f;
                                     if ((c & 1) == 0) {
                                         rgb[1][(rrmax + rr)*ts + cc] = Gtmp[((height - rr - 2) * width + (border2 - cc)) >> 1];
@@ -1001,7 +1006,7 @@ float* RawImageSource::CA_correct_RT(
 #endif
                             //manual CA correction; use red/blue slider values to set CA shift parameters
                             for (int rr = 3; rr < rr1 - 3; rr++) {
-                                int cc = 3 + FC(rr, 1), c = FC(rr,cc), indx = rr * ts + cc;
+                                int cc = 3 + fc(cfa, rr, 1), c = fc(cfa, rr,cc), indx = rr * ts + cc;
 #ifdef __SSE2__
                                 for (; cc < cc1 - 10; cc += 8, indx += 8) {
                                     //compute directional weights using image gradients
@@ -1082,8 +1087,8 @@ float* RawImageSource::CA_correct_RT(
                         }
 
                         for (int rr = 4; rr < rr1 - 4; rr++) {
-                            int cc = 4 + (FC(rr, 2) & 1);
-                            int c = FC(rr, cc);
+                            int cc = 4 + (fc(cfa, rr, 2) & 1);
+                            int c = fc(cfa, rr, cc);
                             int indx = (rr * ts + cc) >> 1;
                             int indxfc = (rr + shiftvfloor[c]) * ts + cc + shifthceil[c];
                             int indxff = (rr + shiftvfloor[c]) * ts + cc + shifthfloor[c];
@@ -1132,8 +1137,8 @@ float* RawImageSource::CA_correct_RT(
                         vfloat epsv = F2V(eps);
 #endif
                         for (int rr = 8; rr < rr1 - 8; rr++) {
-                            int cc = 8 + (FC(rr, 2) & 1);
-                            int c = FC(rr, cc);
+                            int cc = 8 + (fc(cfa, rr, 2) & 1);
+                            int c = fc(cfa, rr, cc);
                             int GRBdir0 = GRBdir[0][c];
                             int GRBdir1 = GRBdir[1][c];
 #ifdef __SSE2__
@@ -1170,7 +1175,7 @@ float* RawImageSource::CA_correct_RT(
                                 STVFU(rgb[c][indx >> 1], RBint);
                             }
 #endif
-                            for (int c = FC(rr, cc), indx = rr * ts + cc; cc < cc1 - 8; cc += 2, indx += 2) {
+                            for (int c = fc(cfa, rr, cc), indx = rr * ts + cc; cc < cc1 - 8; cc += 2, indx += 2) {
                                 float grbdiffold = rgb[1][indx] - rgb[c][indx >> 1];
 
                                 //interpolate colour difference from optical R/B locations to grid locations
@@ -1212,9 +1217,9 @@ float* RawImageSource::CA_correct_RT(
 
                         // copy CA corrected results to temporary image matrix
                         for (int rr = border; rr < rr1 - border; rr++) {
-                            int c = FC(rr + top, left + border + (FC(rr + top, 2) & 1));
+                            int c = fc(cfa, rr + top, left + border + (fc(cfa, rr + top, 2) & 1));
                             int row = rr + top;
-                            int cc = border + (FC(rr, 2) & 1);
+                            int cc = border + (fc(cfa, rr, 2) & 1);
                             int indx = (row * width + cc + left) >> 1;
                             int indx1 = (rr * ts + cc) >> 1;
 #ifdef __SSE2__
@@ -1249,7 +1254,7 @@ float* RawImageSource::CA_correct_RT(
 #endif
 
                 for (int row = cb; row < height - cb; row++) {
-                    int col = cb + (FC(row, 0) & 1);
+                    int col = cb + (fc(cfa, row, 0) & 1);
                     int indx = (row * width + col) >> 1;
 #ifdef __SSE2__
                     for (; col < width - 7 - cb; col += 8, indx += 4) {
@@ -1284,8 +1289,8 @@ float* RawImageSource::CA_correct_RT(
                 #pragma omp for
 #endif
                 for (int i = 0; i < H - 2 * cb; ++i) {
-                    const int firstCol = FC(i, 0) & 1;
-                    const int colour = FC(i, firstCol);
+                    const int firstCol = fc(cfa, i, 0) & 1;
+                    const int colour = fc(cfa, i, firstCol);
                     const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                     int j = firstCol;
 #ifdef __SSE2__
@@ -1317,9 +1322,9 @@ float* RawImageSource::CA_correct_RT(
 
                     if (W % 2) {
                         // odd width => factors for one channel are not set in last column => use value of preceding column
-                        const int ngRow = 1 - (FC(0, 0) & 1);
-                        const int ngCol = FC(ngRow, 0) & 1;
-                        const int colour = FC(ngRow, ngCol);
+                        const int ngRow = 1 - (fc(cfa, 0, 0) & 1);
+                        const int ngCol = fc(cfa, ngRow, 0) & 1;
+                        const int colour = fc(cfa, ngRow, ngCol);
                         const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                         for (int i = 0; i < (H + 1 - 2 * cb) / 2; ++i) {
                             (*nonGreen)[i][(W - 2 * cb + 1) / 2 - 1] = (*nonGreen)[i][(W - 2* cb + 1) / 2 - 2];
@@ -1336,8 +1341,8 @@ float* RawImageSource::CA_correct_RT(
                 #pragma omp for
 #endif
                 for (int i = 0; i < H - 2 * cb; ++i) {
-                    const int firstCol = FC(i, 0) & 1;
-                    const int colour = FC(i, firstCol);
+                    const int firstCol = fc(cfa, i, 0) & 1;
+                    const int colour = fc(cfa, i, firstCol);
                     const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                     for (int j = firstCol; j < W - 2 * cb; j += 2) {
                         rawData[i + cb][j + cb] *= (*nonGreen)[i / 2][j / 2];

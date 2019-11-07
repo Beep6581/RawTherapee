@@ -22,16 +22,14 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "array2D.h"
 #include "gauss.h"
+#include "labimage.h"
 #include "improcfun.h"
 #include "procparams.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 void ImProcFunctions::localContrast(LabImage *lab)
 {

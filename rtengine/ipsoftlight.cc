@@ -19,7 +19,10 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "color.h"
+#include "iccstore.h"
 #include "improcfun.h"
+#include "labimage.h"
 
 #include "procparams.h"
 

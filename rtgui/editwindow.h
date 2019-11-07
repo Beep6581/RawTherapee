@@ -14,15 +14,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _EDITWINDOW_
-#define _EDITWINDOW_
+#pragma once
 
-#include <gtkmm.h>
-#include "filepanel.h"
-#include "editorpanel.h"
 #include <set>
 
-class EditWindow : public Gtk::Window
+#include <gtkmm.h>
+
+#include "editorpanel.h"
+#include "filepanel.h"
+#include "rtimage.h"
+
+class EditWindow :
+    public Gtk::Window
 {
 
 private:
@@ -66,5 +69,3 @@ public:
     void set_title_decorated(Glib::ustring fname);
     void on_realize () override;
 };
-
-#endif

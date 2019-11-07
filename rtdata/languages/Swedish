@@ -698,8 +698,8 @@ MAIN_TOOLTIP_BACKCOLOR1;Bakgrundsfärg: <b>Svart</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Bakgrundsfärg: <b>Vit</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lås</b> / <b>Lås upp</b> <b>före-vyn</b>\n\n<b>Lås</b>: behåll <b>före-vyn</b> oförändrad.\nAnvändbart för att utvärdera den sammanlagda effekten av flera stegs redigering. Dessutom kan jämförelser göras gentemot varje annat steg i historiken.\n\n<b>Lås upp</b>: <b>Före-vyn</b> kommer hela tiden visa ett tidigare steg jämfört med <b>efter-vyn</b>, och visar därmed effekten av det verktyg som användes senast.
 MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen. Kortkommando: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Markera högdagerindikation.\nKortkommando: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Markera skuggindikation.\nKortkommando: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Markera högdagerindikation.\nKortkommando: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Markera skuggindikation.\nKortkommando: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Förhandsgranska den <b>blå kanalen</b>.\nGenväg: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Förhandsgranska <b>fokusmasken</b>.\nKortkommando: <b>Shift-f</b>\n\nNoggrannare på bilder med kort skärpedjup, lågt brus och där en hög zoom-grad är vald.\n\nFör att förbättra detekteringen för brusiga bilder, utvärdera vid en zoom-grad om 10-30%\n\nFörhandsvisningen görs långsammare med fokusmasken påslagen.
 MAIN_TOOLTIP_PREVIEWG;Förhandsgranska den <b>gröna kanalen</b>.\nGenväg: <b>g</b>
@@ -2133,9 +2133,9 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_FLATFIELD_CLIPCONTROL;Clip control
 !TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.

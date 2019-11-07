@@ -17,8 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __COORD__
-#define __COORD__
+#pragma once
 
 namespace rtengine
 {
@@ -253,5 +252,3 @@ inline const PolarCoord operator* (const double lhs, const PolarCoord& rhs)
 }
 
 }
-
-#endif

@@ -17,10 +17,10 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "ciecam02.h"
-#include "rtengine.h"
+#include "rt_math.h"
 #include "curves.h"
 #include <math.h>
-#include "sleef.c"
+#include "sleef.h"
 
 #ifdef _DEBUG
 #include "settings.h"
@@ -33,10 +33,6 @@
 
 namespace rtengine
 {
-
-#ifdef _DEBUG
-extern const Settings* settings;
-#endif
 
 void Ciecam02::curvecolorfloat (float satind, float satval, float &sres, float parsat)
 {

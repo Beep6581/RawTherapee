@@ -24,6 +24,7 @@
 
 #include "multilangmgr.h"
 #include "mycurve.h"
+#include "rtscalable.h"
 
 #include "../rtengine/procparams.h"
 

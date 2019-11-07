@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _EDITENUMS_
-#define _EDITENUMS_
+#pragma once
 
 enum ImgEditState {SNormal, SCropMove, SHandMove, SResizeW1, SResizeW2, SResizeH1, SResizeH2, SResizeTL, SResizeTR, SResizeBL, SResizeBR,
                    SCropSelecting, SRotateSelecting, SCropWinMove, SCropFrameMove, SCropImgMove, SCropWinResize, SObservedMove,
@@ -26,5 +25,3 @@ enum ImgEditState {SNormal, SCropMove, SHandMove, SResizeW1, SResizeW2, SResizeH
 enum CursorArea  {CropWinButtons, CropToolBar, CropImage, ColorPicker, CropBorder, CropTop, CropTopLeft, CropTopRight, CropBottom, CropBottomLeft,
                   CropBottomRight, CropLeft, CropRight, CropInside, CropResize, CropObserved
                  };
-
-#endif

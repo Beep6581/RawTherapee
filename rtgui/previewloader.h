@@ -16,15 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PREVIEWLOADER_
-#define _PREVIEWLOADER_
+#pragma once
 
 #include <set>
-#include <glibmm.h>
+
+#include <glibmm/ustring.h>
 
 #include "../rtengine/noncopyable.h"
 
-#include "filebrowserentry.h"
+class FileBrowserEntry;
 
 class PreviewLoaderListener
 {
@@ -94,5 +94,3 @@ private:
  * To use: \c previewLoader->start() ,
  */
 #define previewLoader PreviewLoader::getInstance()
-
-#endif

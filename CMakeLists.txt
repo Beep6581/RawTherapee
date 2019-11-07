@@ -89,6 +89,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 
 # Stop compilation on typos such as std:swap (missing colon will be detected as unused label):
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=unused-label")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=delete-incomplete")
 
 # Special treatment for x87 and x86-32 SSE (see GitHub issue #4324)
 include(FindX87Math)

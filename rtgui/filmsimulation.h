@@ -1,14 +1,17 @@
-#ifndef FILM_SIMULATION_INCLUDED
-#define FILM_SIMULATION_INCLUDED
+#pragma once
+
+#include <memory>
 
 #include <gtkmm.h>
-#include <glibmm.h>
-#include <memory>
-#include "toolpanel.h"
-#include "guiutils.h"
-#include "adjuster.h"
 
-class ClutComboBox : public MyComboBox
+#include <glibmm/ustring.h>
+
+#include "adjuster.h"
+#include "guiutils.h"
+#include "toolpanel.h"
+
+class ClutComboBox :
+    public MyComboBox
 {
 public:
     explicit ClutComboBox(const Glib::ustring &path);
@@ -74,5 +77,3 @@ private:
 
     Adjuster *m_strength;
 };
-
-#endif

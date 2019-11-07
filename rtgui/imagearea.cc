@@ -25,6 +25,7 @@
 #include "../rtengine/refreshmap.h"
 #include "../rtengine/procparams.h"
 #include "options.h"
+#include "rtscalable.h"
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), fullImageWidth(0), fullImageHeight(0)
 {

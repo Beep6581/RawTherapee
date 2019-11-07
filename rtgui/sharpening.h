@@ -16,15 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _SHARPENING_H_
-#define _SHARPENING_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class Sharpening : public ToolParamBlock, public ThresholdAdjusterListener, public AdjusterListener, public FoldableToolPanel
+class Sharpening :
+    public ToolParamBlock,
+    public ThresholdAdjusterListener,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -82,5 +86,3 @@ public:
     void setAdjusterBehavior (bool contrastadd, bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };
-
-#endif

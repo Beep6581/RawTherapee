@@ -17,8 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DCRAW_H
-#define DCRAW_H
+#pragma once
 
 #include "myfile.h"
 #include <csetjmp>
@@ -168,8 +167,7 @@ protected:
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
-    int histogram[4][0x2000];
-    void (DCraw::*write_thumb)(), (DCraw::*write_fun)();
+    void (DCraw::*write_thumb)();
     void (DCraw::*load_raw)(), (DCraw::*thumb_load_raw)();
     jmp_buf failure;
 
@@ -529,6 +527,3 @@ void shiftXtransMatrix( const int offsy, const int offsx) {
 void nikon_14bit_load_raw(); // ported from LibRaw
 
 };
-
-
-#endif //DCRAW_H

@@ -16,13 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __COARSEPANEL__
-#define __COARSEPANEL__
+#pragma once
 
 #include <gtkmm.h>
+
 #include "toolpanel.h"
 
-class CoarsePanel : public Gtk::HBox, public ToolPanel
+class CoarsePanel :
+    public Gtk::HBox,
+    public ToolPanel
 {
 
 protected:
@@ -46,5 +48,3 @@ public:
     void flipHorizontal ();
     void flipVertical   ();
 };
-
-#endif

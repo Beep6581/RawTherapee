@@ -960,8 +960,8 @@ MAIN_TOOLTIP_BACKCOLOR2;プレビューの背景色を指定します: <b>白</b
 MAIN_TOOLTIP_BACKCOLOR3;プレビューの背景色を指定します: <b>中間のグレー</b>\nショートカット: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>固定</b> / <b>固定解除</b> - <b>補正前</b> の表示設定\n\n<b>固定</b>: <b>補正前</b>をそのまま表示し変更されません\n複数のツールの累積効果を評価するのに役立ちます\nさらに、比較は履歴上のどこからでも行うことができます\n\n<b>固定解除</b>: 現在使用のツールの効果が <b>補正後</b> に表示され、その1段階前が <b>補正前</b> に表示されます
 MAIN_TOOLTIP_HIDEHP;左パネル 表示/非表示 (履歴含む)\nショートカット:  <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;ハイライト・クリッピング領域の表示\nショートカット: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;シャドウ・クリッピング領域の表示\nショートカット: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;ハイライト・クリッピング領域の表示\nショートカット: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;シャドウ・クリッピング領域の表示\nショートカット: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;<b>ブルー チャンネル</b>表示\nショートカット: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;<b>フォーカス・マスク</b>表示\nショートカット: <b>Shift-f</b>\n\n浅い被写界深度、低ノイズ、高ズームの画像の場合は、より正確に\n\nノイズの多い画像に対しては、検出精度を向上させるため10から30%縮小して評価します\n\nフォーカス・マスクをオンにすると表示に時間が掛かります
 MAIN_TOOLTIP_PREVIEWG;<b>グリーン チャンネル</b>表示\nショートカット: <b>g</b>
@@ -1672,9 +1672,9 @@ TP_EXPOS_BLACKPOINT_LABEL;raw ブラック・ポイント
 TP_EXPOS_WHITEPOINT_LABEL;raw ホワイト・ポイント
 TP_FILMNEGATIVE_BLUE;ブルーの比率
 TP_FILMNEGATIVE_GREEN;参考指数(コントラスト)
-TP_FILMNEGATIVE_GUESS_TOOLTIP;画像の中でニュートラルな参考ポイントを2点選んで指数を計算します;白い(明るいグレー)1点と黒い(暗いグレー)1点を選びます。順番は関係ありません。2つ目のポイントが選択されると指数が更新されます。
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 TP_FILMNEGATIVE_LABEL;ネガフィルム
-TP_FILMNEGATIVE_PICK;白と黒のポイントをピックアップする
+TP_FILMNEGATIVE_PICK;Pick neutral spots
 TP_FILMNEGATIVE_RED;レッドの比率
 TP_FILMSIMULATION_LABEL;フィルムシミュレーション
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapeeはフィルムシミュレーション機能に使う画像をHald CLUTフォルダーの中から探すよう設計されています（プログラムに組み込むにはフォルダーが大き過ぎるため）。\n変更するには、環境設定 > 画像処理 > フィルムシミュレーションと進み\nどのフォルダーが使われているか確認します。機能を利用する場合は、Hald CLUTだけが入っているフォルダーを指定するか、 この機能を使わない場合はそのフォルダーを空にしておきます。\n\n詳しくはRawPediaを参照して下さい。\n\nフィルム画像のスキャンを止めますか？

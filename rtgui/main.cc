@@ -33,12 +33,17 @@
 #include <cstdlib>
 #include <locale.h>
 #include <lensfun.h>
+#include "cachemanager.h"
+#include "editorpanel.h"
+#include "filecatalog.h"
+#include "filepanel.h"
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/procparams.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -52,8 +57,6 @@
 
 // Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
 #define ECLIPSE_ARGS 0
-
-extern Options options;
 
 // stores path to data files
 Glib::ustring argv0;
@@ -220,7 +223,7 @@ bool init_rt()
     extProgStore->init();
     SoundManager::init();
 
-    if ( !options.rtSettings.verbose ) {
+    if (!rtengine::settings->verbose) {
         TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
     }
 

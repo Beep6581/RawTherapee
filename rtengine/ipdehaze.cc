@@ -32,17 +32,22 @@
 #include <iostream>
 #include <vector>
 
+#include "color.h"
 #include "guidedfilter.h"
+#include "iccstore.h"
+#include "imagefloat.h"
 #include "improcfun.h"
 #include "procparams.h"
 #include "rescale.h"
 #include "rt_math.h"
 
-extern Options options;
+#include "../rtgui/options.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
-namespace {
+namespace
+{
 
 float normalize(Imagefloat *rgb, bool multithread)
 {
@@ -198,7 +203,7 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
         }
     }
 
-    if (options.rtSettings.verbose) {
+    if (settings->verbose) {
         std::cout << "dehaze: computing ambient light from " << patches.size()
                   << " patches" << std::endl;
     }
@@ -269,7 +274,6 @@ void extract_channels(Imagefloat *img, array2D<float> &r, array2D<float> &g, arr
 
 } // namespace
 
-
 void ImProcFunctions::dehaze(Imagefloat *img)
 {
     if (!params->dehaze.enabled || params->dehaze.strength == 0.0) {
@@ -282,7 +286,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
     const int H = img->getHeight();
     const float strength = LIM01(float(params->dehaze.strength) / 100.f * 0.9f);
 
-    if (options.rtSettings.verbose) {
+    if (settings->verbose) {
         std::cout << "dehaze: strength = " << strength << std::endl;
     }
 
@@ -324,7 +328,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
         }
 
         if (min(ambient[0], ambient[1], ambient[2]) < 0.01f) {
-            if (options.rtSettings.verbose) {
+            if (settings->verbose) {
                 std::cout << "dehaze: no haze detected" << std::endl;
             }
             restore(img, maxChannel, multiThread);
@@ -332,7 +336,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
         }
         patchsize = max(max(W, H) / 600, 2);
 
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             std::cout << "dehaze: ambient light is "
                       << ambient[0] << ", " << ambient[1] << ", " << ambient[2]
                       << std::endl;
@@ -347,7 +351,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
     array2D<float> guideB(W, H, img->b.ptrs, ARRAY2D_BYREFERENCE);
     guidedFilter(guideB, dark, dark, radius, epsilon, multiThread);
         
-    if (options.rtSettings.verbose) {
+    if (settings->verbose) {
         std::cout << "dehaze: max distance is " << maxDistance << std::endl;
     }
 
@@ -428,6 +432,5 @@ void ImProcFunctions::dehaze(Imagefloat *img)
         }
     }
 }
-
 
 } // namespace rtengine

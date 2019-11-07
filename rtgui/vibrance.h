@@ -16,18 +16,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _VIBRANCE_
-#define _VIBRANCE_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
-#include "thresholdadjuster.h"
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
+#include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class Vibrance : public ToolParamBlock, public AdjusterListener, public ThresholdCurveProvider, public ThresholdAdjusterListener,
-    public FoldableToolPanel, public CurveListener
+class Vibrance :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public ThresholdCurveProvider,
+    public ThresholdAdjusterListener,
+    public FoldableToolPanel,
+    public CurveListener
 {
 
 protected:
@@ -76,6 +81,3 @@ public:
     void pastsattog_toggled      ();
     std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const override;
 };
-
-
-#endif
