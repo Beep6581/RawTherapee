@@ -2270,7 +2270,6 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
                         //simple wavelet shrinkage
                         float * sfave = buffer[0] + 32;
                         float * sfaved = buffer[2] + 96;
-                  //      float * blurBuffer = buffer[2] + 96;
 
                         float mad_Lr = madL[lvl][dir - 1];
                         /*
@@ -2288,7 +2287,6 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
                         for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                             nvl[i] = 0.f;
                         }
-
                         if ((edge == 1 || edge == 2 || edge == 3) && vari) {
                             //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
                             if ((edge == 1 || edge == 3)) {
@@ -2346,7 +2344,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
 
 #endif
                         boxblur(sfave, sfaved, lvl + 2, Wlvl_L, Hlvl_L, false); //increase smoothness by locally averaging shrinkage
-                  //      boxblur(sfave, sfaved, blurBuffer, lvl + 2, lvl + 2, Wlvl_L, Hlvl_L); //increase smoothness by locally averaging shrinkage
+                 
 #ifdef __SSE2__
                         vfloat sfavev;
                         vfloat sf_Lv;
@@ -2384,7 +2382,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
             }
         }
 
-        for (int i = 3; i >= 0; i--) {
+        for (int i = 2; i >= 0; i--) {
             if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
