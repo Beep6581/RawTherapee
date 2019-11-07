@@ -27,7 +27,6 @@
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
 #include "guiutils.h"
-#include "options.h"
 
 class EditDataProvider;
 

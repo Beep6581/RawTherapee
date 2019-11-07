@@ -18,16 +18,17 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-#include "improcfun.h"
+#include "color.h"
+#include "curves.h"
 #include "guidedfilter.h"
+#include "iccstore.h"
+#include "improcfun.h"
+#include "labimage.h"
 #include "procparams.h"
+#include "sleef.h"
+
 //#define BENCHMARK
 #include "StopWatch.h"
-#include "sleef.c"
 
 namespace {
 
@@ -51,7 +52,8 @@ void fastlin2log(float *x, float factor, float base, int w)
 
 }
 
-namespace rtengine {
+namespace rtengine
+{
 
 void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
 {

@@ -20,18 +20,14 @@
 #include <iostream>
 
 #include "rtengine.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-#include "improcfun.h"
 #include "procparams.h"
 #include "color.h"
-#include "gauss.h"
 #include "rt_algo.h"
 //#define BENCHMARK
 #include "StopWatch.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 #include "opthelper.h"
 #include "../rtgui/multilangmgr.h"
 
@@ -513,6 +509,7 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
     }
     return std::sqrt((1.f / (std::log(1.f / maxRatio))) / -2.f);
 }
+
 void CaptureDeconvSharpening (float** luminance, float** oldLuminance, const float * const * blend, int W, int H, double sigma, double sigmaCornerOffset, int iterations, rtengine::ProgressListener* plistener, double startVal, double endVal)
 {
 BENCHFUN
@@ -583,10 +580,10 @@ BENCHFUN
                 } else {
                     if (sigmaCornerOffset != 0.0) {
                         const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - H / 2) + rtengine::SQR(j + tileSize / 2 - W / 2));
-                        const float sigmaTile = sigma + distanceFactor * distance;
+                        const float sigmaTile = static_cast<float>(sigma) + distanceFactor * distance;
                         if (sigmaTile >= 0.4f) {
                             float lkernel7[7][7];
-                            compute7x7kernel(sigma + distanceFactor * distance, lkernel7);
+                            compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
                             for (int k = 0; k < iterations - 1; ++k) {
                                 // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                                 gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, fullTileSize, lkernel7);
@@ -605,13 +602,13 @@ BENCHFUN
                     // special handling for small tiles at end of row or column
                     for (int k = border, ii = endOfCol ? H - fullTileSize - border : i - border; k < fullTileSize - border; ++k) {
                         for (int l = border, jj = endOfRow ? W - fullTileSize - border : j - border; l < fullTileSize - border; ++l) {
-                            luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
+                            luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], std::max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
                         }
                     }
                 } else {
                     for (int ii = border; ii < fullTileSize - border; ++ii) {
                         for (int jj = border; jj < fullTileSize - border; ++jj) {
-                            luminance[i + ii - border][j + jj - border] = rtengine::intp(blend[i + ii - border][j + jj - border], max(tmpIThr[ii][jj], 0.0f), luminance[i + ii - border][j + jj - border]);
+                            luminance[i + ii - border][j + jj - border] = rtengine::intp(blend[i + ii - border][j + jj - border], std::max(tmpIThr[ii][jj], 0.0f), luminance[i + ii - border][j + jj - border]);
                         }
                     }
                 }
@@ -654,13 +651,13 @@ BENCHFUN
 
     const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
 
-    array2D<float>& redVals = redCache ? *redCache : red;
-    array2D<float>& greenVals = greenCache ? *greenCache : green;
-    array2D<float>& blueVals = blueCache ? *blueCache : blue;
+    const array2D<float>& redVals = redCache ? *redCache : red;
+    const array2D<float>& greenVals = greenCache ? *greenCache : green;
+    const array2D<float>& blueVals = blueCache ? *blueCache : blue;
 
     array2D<float> clipMask(W, H);
     constexpr float clipLimit = 0.95f;
-    if (ri->getSensorType() == ST_BAYER) {
+    if (getSensorType() == ST_BAYER) {
         const float whites[2][2] = {
                                     {(ri->get_white(FC(0,0)) - c_black[FC(0,0)]) * scale_mul[FC(0,0)] * clipLimit, (ri->get_white(FC(0,1)) - c_black[FC(0,1)]) * scale_mul[FC(0,1)] * clipLimit},
                                     {(ri->get_white(FC(1,0)) - c_black[FC(1,0)]) * scale_mul[FC(1,0)] * clipLimit, (ri->get_white(FC(1,1)) - c_black[FC(1,1)]) * scale_mul[FC(1,1)] * clipLimit}
@@ -668,9 +665,9 @@ BENCHFUN
         buildClipMaskBayer(rawData, W, H, clipMask, whites);
         const unsigned int fc[2] = {FC(0,0), FC(1,0)};
         if (sharpeningParams.autoRadius) {
-            radius = calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc);
+            radius = std::min(calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc), 1.15f);
         }
-    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
+    } else if (getSensorType() == ST_FUJI_XTRANS) {
         float whites[6][6];
         for (int i = 0; i < 6; ++i) {
             for (int j = 0; j < 6; ++j) {
@@ -696,14 +693,14 @@ BENCHFUN
             }
         }
         if (sharpeningParams.autoRadius) {
-            radius = calcRadiusXtrans(rawData, W, H, 1000.f, clipVal, i, j);
+            radius = std::min(calcRadiusXtrans(rawData, W, H, 1000.f, clipVal, i, j), 1.15f);
         }
 
     } else if (ri->get_colors() == 1) {
         buildClipMaskMono(rawData, W, H, clipMask, (ri->get_white(0) - c_black[0]) * scale_mul[0] * clipLimit);
         if (sharpeningParams.autoRadius) {
             const unsigned int fc[2] = {0, 0};
-            radius = calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc);
+            radius = std::min(calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc), 1.15f);
         }
     }
 
@@ -810,6 +807,7 @@ BENCHFUN
     if (plistener) {
         plistener->setProgress(1.0);
     }
+    rgbSourceModified = false;
 }
 
 } /* namespace */

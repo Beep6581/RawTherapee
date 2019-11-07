@@ -21,8 +21,8 @@
 ////////////////////////////////////////////////////////////////
 
 #include "rtengine.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
-#include "procparams.h"
 #include "../rtgui/multilangmgr.h"
 //#define BENCHMARK
 #include "StopWatch.h"
@@ -102,7 +102,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
     const int width = W, height = H;
     constexpr unsigned int colors = 4;
 
-    float (*image)[4] = (float (*)[4]) calloc (height * width, sizeof * image);
+    float (*image)[4] = (float (*)[4]) calloc (static_cast<size_t>(height) * width, sizeof * image);
 
     int lcode[16][16][32];
     float mul[16][16][8];
@@ -384,7 +384,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
 #endif
         {
             // let the first thread, which is out of work, do the border interpolation
-            border_interpolate2(W, H, 3, rawData, red, green, blue);
+            border_interpolate(W, H, 3, rawData, red, green, blue);
         }
     }
 

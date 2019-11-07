@@ -27,12 +27,17 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-#include "procparams.h"
 #include "../rtgui/multilangmgr.h"
 #include "median.h"
 //#define BENCHMARK
 #include "StopWatch.h"
 
+namespace
+{
+unsigned fc(const unsigned int cfa[2][2], int r, int c) {
+    return cfa[r & 1][c & 1];
+}
+}
 namespace rtengine
 {
 #define TS 144
@@ -40,6 +45,7 @@ void RawImageSource::ahd_demosaic()
 {
     BENCHFUN
 
+    const unsigned int cfa[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     constexpr int dirs[4] = { -1, 1, -TS, TS };
     float xyz_cam[3][3];
     LUTf cbrt(65536);
@@ -74,7 +80,7 @@ void RawImageSource::ahd_demosaic()
             }
         }
     }
-    border_interpolate2(W, H, 5, rawData, red, green, blue);
+    border_interpolate(W, H, 5, rawData, red, green, blue);
 
 
 #ifdef _OPENMP
@@ -94,7 +100,7 @@ void RawImageSource::ahd_demosaic()
         for (int left = 2; left < width - 5; left += TS - 6) {
             //  Interpolate green horizontally and vertically:
             for (int row = top; row < top + TS && row < height - 2; row++) {
-                for (int col = left + (FC(row, left) & 1); col < std::min(left + TS, width - 2); col += 2) {
+                for (int col = left + (fc(cfa, row, left) & 1); col < std::min(left + TS, width - 2); col += 2) {
                     auto pix = &rawData[row][col];
                     float val0 = 0.25f * ((pix[-1] + pix[0] + pix[1]) * 2
                                   - pix[-2] - pix[2]) ;
@@ -108,12 +114,12 @@ void RawImageSource::ahd_demosaic()
             //  Interpolate red and blue, and convert to CIELab:
             for (int d = 0; d < 2; d++)
                 for (int row = top + 1; row < top + TS - 1 && row < height - 3; row++) {
-                    int cng = FC(row + 1, FC(row + 1, 0) & 1);
+                    int cng = fc(cfa, row + 1, fc(cfa, row + 1, 0) & 1);
                     for (int col = left + 1; col < std::min(left + TS - 1, width - 3); col++) {
                         auto pix = &rawData[row][col];
                         auto rix = &rgb[d][row - top][col - left];
                         auto lix = lab[d][row - top][col - left];
-                        if (FC(row, col) == 1) {
+                        if (fc(cfa, row, col) == 1) {
                             rix[0][2 - cng] = CLIP(pix[0] + (0.5f * (pix[-1] + pix[1]
                                                        - rix[-1][1] - rix[1][1] ) ));
                             rix[0][cng] = CLIP(pix[0] + (0.5f * (pix[-width] + pix[width]

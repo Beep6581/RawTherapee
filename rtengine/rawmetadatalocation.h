@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _RAWMETADATALOCATION_
-#define _RAWMETADATALOCATION_
+#pragma once
 
 namespace rtengine
 {
@@ -36,6 +35,3 @@ public:
 };
 
 }
-
-#endif
-

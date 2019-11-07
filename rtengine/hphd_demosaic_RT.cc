@@ -18,12 +18,11 @@
  */
 #include <cmath>
 
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"
-#include "rawimage.h"
 #include "rt_math.h"
-#include "procparams.h"
 #include "../rtgui/multilangmgr.h"
 #include "opthelper.h"
 //#define BENCHMARK
@@ -353,7 +352,7 @@ void RawImageSource::hphd_demosaic ()
         interpolate_row_rb_mul_pp(rawData, red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
     }
 
-    border_interpolate2(W, H, 4, rawData, red, green, blue);
+    border_interpolate(W, H, 4, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgress(1.0);

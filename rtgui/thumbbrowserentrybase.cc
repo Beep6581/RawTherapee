@@ -21,8 +21,6 @@
 #include "options.h"
 #include "thumbbrowserbase.h"
 
-#include "../rtengine/mytime.h"
-
 namespace
 {
 

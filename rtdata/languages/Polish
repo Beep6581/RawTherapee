@@ -563,8 +563,8 @@ MAIN_TOOLTIP_BACKCOLOR1;Kolor tła podglądu: <b>Czarny</b>\nSkrót: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Kolor tła podglądu: <b>Biały</b>\nSkrót: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Zablokuj</b> / <b>Odblokuj</b> widok <b>Przed</b>\n\n<b>Zablokuj</b>: nie zmieniaj widoku <b>Przed</b> - \nPrzydatne w porównywaniu zablokowanego obrazu z obrazem na ktorym wykonano wiele zmian.\n\n<b>Odblokuj</b>: widok <b>Przed</b> będzie śledził widok <b>Po</b> o jeden krok do tyłu, pokazując obraz przed efektem aktualnie użytego narzędzia.
 MAIN_TOOLTIP_HIDEHP;Pokaż/ukryj lewy panel (razem z historią).\nSkrót: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Pokaż obcięte prześwietlenia.\nSkrót: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Pokaż obcięte niedoświetlenia.\nSkrót: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Pokaż obcięte prześwietlenia.\nSkrót: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Pokaż obcięte niedoświetlenia.\nSkrót: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Podgląd <b>kanału niebieskiego</b>.\nSkrót: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Podgląd <b>maski ostrości</b>.\nSkrót: <b>Shift-f</b>\n\nDokładniejsze w przypadku zdjęc o płytkiej głębi ostrości, niskim pozimie szumów i o większym przybliżeniu. W przypadku zdjęć o wyższym poziomie szumów maska ostrości będzie dokładniejsza przy mniejszym zoomie (10-30%).
 MAIN_TOOLTIP_PREVIEWG;Podgląd <b>kanału zielonego</b>.\nSkrót: <b>g</b>
@@ -1945,9 +1945,9 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure

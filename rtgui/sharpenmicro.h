@@ -21,14 +21,17 @@
  *
  *
  */
-#ifndef _SHARPENMICRO_H_
-#define _SHARPENMICRO_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SharpenMicro : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class SharpenMicro :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -60,5 +63,3 @@ public:
 
 
 };
-
-#endif

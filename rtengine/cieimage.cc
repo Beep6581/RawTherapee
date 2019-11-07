@@ -1,5 +1,7 @@
 #include "cieimage.h"
-#include <memory.h>
+
+#include <new>
+#include <cstring>
 namespace rtengine
 {
 
@@ -10,7 +12,6 @@ CieImage::CieImage (int w, int h) : fromImage(false), W(w), H(h)
     M_p = new float*[H];
     C_p = new float*[H];
     sh_p = new float*[H];
-    //  ch_p = new float*[H];
     h_p = new float*[H];
 
     // Initialize the pointers to zero
@@ -98,9 +99,6 @@ CieImage::CieImage (int w, int h) : fromImage(false), W(w), H(h)
 
         ++c;
 
-        //  for (int i=0; i<H; i++)
-        //      ch_p[i] = data[c] + i*W;
-        //  ++c;
         for (int i = 0; i < H; i++) {
             h_p[i] = data[c] + i * W;
         }

@@ -17,8 +17,26 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "bqentryupdater.h"
-#include <gtkmm.h>
+
 #include "guiutils.h"
+#include "options.h"
+#include "thumbnail.h"
+#include "../rtengine/utils.h"
+
+namespace
+{
+
+void thumbInterp(const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
+{
+
+    if (options.thumbInterp == 0) {
+        rtengine::nearestInterp (src, sw, sh, dst, dw, dh);
+    } else if (options.thumbInterp == 1) {
+        rtengine::bilinearInterp (src, sw, sh, dst, dw, dh);
+    }
+}
+
+}
 
 BatchQueueEntryUpdater batchQueueEntryUpdater;
 
@@ -27,7 +45,7 @@ BatchQueueEntryUpdater::BatchQueueEntryUpdater ()
 {
 }
 
-void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams, Thumbnail* thumbnail)
+void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::procparams::ProcParams* pparams, Thumbnail* thumbnail)
 {
     if (!oimg && (!pparams || !thumbnail)) {
         //printf("WARNING! !oimg && (!pparams || !thumbnail)\n");

@@ -16,13 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THRESHOLDSELECTOR_
-#define _THRESHOLDSELECTOR_
+#pragma once
 
-#include "guiutils.h"
-#include "../rtengine/procparams.h"
-#include "coloredbar.h"
 #include <iomanip>
+
+#include "coloredbar.h"
+#include "guiutils.h"
+
+#include "../rtengine/procparams.h"
 
 class ThresholdSelector;
 
@@ -245,6 +246,3 @@ inline void ThresholdSelector::getPositions<Glib::ustring> (Glib::ustring& botto
     bottomRight = Glib::ustring::format(std::fixed, std::setprecision(precisionBottom), shapePositionValue(TS_BOTTOMRIGHT));
     topRight    = Glib::ustring::format(std::fixed, std::setprecision(precisionTop),    shapePositionValue(TS_TOPRIGHT));
 }
-
-#endif
-

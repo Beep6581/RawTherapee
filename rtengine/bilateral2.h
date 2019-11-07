@@ -16,22 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BILATERAL2_
-#define _BILATERAL2_
+#pragma once
 
+#include <algorithm>
 #include <cmath>
-#include <cstring>
 #include <cstdio>
-#include <glibmm.h>
-
-#include "rtengine.h"
-#include "rt_math.h"
-#include "mytime.h"
+#include <cstring>
 
 #include "array2D.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+#include "LUT.h"
+#include "rt_math.h"
 
 using namespace rtengine;
 
@@ -573,7 +567,7 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
     // calculate histogram at the beginning of the row
     rhist.clear();
 
-    for (int x = MAX(0, row_from - r); x <= MIN(H, row_from + r); x++)
+    for (int x = std::max(0, row_from - r); x <= std::min(H, row_from + r); x++)
         for (int y = 0; y < r + 1; y++) {
             rhist[((int)src[x][y]) >> TRANSBIT]++;
         }
@@ -584,12 +578,12 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
 
         // calculate histogram at the beginning of the row
         if (i > r)
-            for (int x = 0; x <= MIN(H, r); x++) {
+            for (int x = 0; x <= std::min(H, r); x++) {
                 rhist[((int)src[i - r - 1][x]) >> TRANSBIT]--;
             }
 
         if (i < H - r)
-            for (int x = 0; x <= MIN(H, r); x++) {
+            for (int x = 0; x <= std::min(H, r); x++) {
                 rhist[((int)src[i + r][x]) >> TRANSBIT]++;
             }
 
@@ -599,12 +593,12 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
 
             // subtract pixels at the left and add pixels at the right
             if (j > r)
-                for (int x = MAX(0, i - r); x <= MIN(i + r, H - 1); x++) {
+                for (int x = std::max(0, i - r); x <= std::min(i + r, H - 1); x++) {
                     hist[(int)(src[x][j - r - 1]) >> TRANSBIT]--;
                 }
 
             if (j < W - r)
-                for (int x = MAX(0, i - r); x <= MIN(i + r, H - 1); x++) {
+                for (int x = std::max(0, i - r); x <= std::min(i + r, H - 1); x++) {
                     hist[((int)src[x][j + r]) >> TRANSBIT]++;
                 }
 
@@ -643,5 +637,3 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
 }
 #undef BINBIT
 #undef TRANSBIT
-
-#endif

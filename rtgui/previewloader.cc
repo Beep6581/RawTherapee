@@ -18,6 +18,8 @@
  */
 
 #include <set>
+#include "cachemanager.h"
+#include "filebrowserentry.h"
 #include "previewloader.h"
 #include "guiutils.h"
 #include "threadutils.h"

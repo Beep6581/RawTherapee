@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __GUI_UTILS_
-#define __GUI_UTILS_
+#pragma once
 
 #include <functional>
 #include <map>
@@ -26,19 +25,29 @@
 
 #include <cairomm/cairomm.h>
 
+#include "threadutils.h"
+
 #include "../rtengine/coord.h"
 #include "../rtengine/noncopyable.h"
-#include "../rtengine/rtengine.h"
 
-#include "rtimage.h"
+namespace rtengine
+{
 
-// for convenience...
-#include "pathutils.h"
+namespace procparams
+{
 
+class ProcParams;
+
+struct CropParams;
+
+}
+
+}
+
+class RTImage;
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
-void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh);
 bool confirmOverwrite (Gtk::Window& parent, const std::string& filename);
 void writeFailed (Gtk::Window& parent, const std::string& filename);
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide = true, bool useBgColor = true, bool fullImageVisible = true);
@@ -644,5 +653,3 @@ inline Gtk::Window& getToplevelWindow (Gtk::Widget* widget)
 {
     return *static_cast<Gtk::Window*> (widget->get_toplevel ());
 }
-
-#endif

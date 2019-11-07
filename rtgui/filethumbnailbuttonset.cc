@@ -20,6 +20,8 @@
 
 #include "rtimage.h"
 #include "multilangmgr.h"
+#include "lwbutton.h"
+#include "rtsurface.h"
 
 bool FileThumbnailButtonSet::iconsLoaded = false;
 

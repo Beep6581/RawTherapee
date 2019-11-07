@@ -16,15 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _XTRANSRAWEXPOSURE_H_
-#define _XTRANSRAWEXPOSURE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
-#include "../rtengine/rawimage.h"
 
-class XTransRAWExposure : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class XTransRAWExposure :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -46,5 +48,3 @@ public:
     void setAdjusterBehavior (bool pexblackadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };
-
-#endif

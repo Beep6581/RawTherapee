@@ -16,24 +16,29 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __IMAGEAREA_H__
-#define __IMAGEAREA_H__
+#pragma once
 
 #include <gtkmm.h>
+
 #include "cropguilistener.h"
-#include "imageareapanel.h"
-#include "editenums.h"
-#include "toolbar.h"
-#include "previewhandler.h"
-#include "imageareatoollistener.h"
 #include "cropwindow.h"
 #include "editcallbacks.h"
-#include "zoompanel.h"
+#include "editenums.h"
+#include "imageareapanel.h"
+#include "imageareatoollistener.h"
 #include "indclippedpanel.h"
+#include "previewhandler.h"
 #include "previewmodepanel.h"
+#include "toolbar.h"
+#include "zoompanel.h"
 
 class ImageAreaPanel;
-class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public EditDataProvider, public LockablePickerToolListener
+
+class ImageArea :
+    public Gtk::DrawingArea,
+    public CropWindowListener,
+    public EditDataProvider,
+    public LockablePickerToolListener
 {
 
     friend class ZoomPanel;
@@ -158,7 +163,3 @@ public:
         return mainCropWindow;
     }
 };
-
-
-
-#endif

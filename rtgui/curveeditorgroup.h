@@ -16,18 +16,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CURVEEDITORGROUP_
-#define _CURVEEDITORGROUP_
+#pragma once
 
-#include <gtkmm.h>
 #include <fstream>
 #include <string>
+
+#include <gtkmm.h>
+
+#include "adjuster.h"
 #include "guiutils.h"
 #include "mycurve.h"
-#include "myflatcurve.h"
-#include "mydiagonalcurve.h"
 #include "shcselector.h"
-#include "adjuster.h"
+
+#include "../rtengine/diagonalcurvetypes.h"
+#include "../rtengine/flatcurvetypes.h"
 
 class CurveEditor;
 class DiagonalCurveEditorSubGroup;
@@ -169,5 +171,3 @@ protected:
     virtual const std::vector<double> getCurveFromGUI (int type) = 0;
 
 };
-
-#endif

@@ -27,8 +27,10 @@
 #include <libiptcdata/iptc-jpeg.h>
 #include "rt_math.h"
 #include "procparams.h"
+#include "utils.h"
 #include "../rtgui/options.h"
 #include "../rtgui/version.h"
+#include "../rtexif/rtexif.h"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -810,7 +812,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
      * TIFFTAG_SMAXSAMPLEVALUE, but for now, we normalize the image to the
      * effective minimum and maximum values
      */
-    if (options.rtSettings.verbose) {
+    if (settings->verbose) {
         printf("Information of \"%s\":\n", fname.c_str());
         uint16 tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
         if (TIFFGetField(in, TIFFTAG_DEFAULTSCALE, &tiffDefaultScale)) {

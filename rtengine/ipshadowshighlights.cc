@@ -20,11 +20,15 @@
 
 #include "improcfun.h"
 
+#include "color.h"
+#include "curves.h"
 #include "gauss.h"
 #include "guidedfilter.h"
+#include "iccstore.h"
+#include "labimage.h"
 #include "opthelper.h"
 #include "procparams.h"
-#include "sleef.c"
+#include "sleef.h"
 
 namespace rtengine {
 //modifications to pass parameters needs by locallab, to avoid 2 functions - no change in process - J.Desmis march 2019

@@ -25,11 +25,14 @@
 
 #pragma once
 
-#include "iccstore.h"
-#include "noncopyable.h"
-#include "image8.h"
+#include <lcms2.h>
 
-namespace rtengine {
+#include "noncopyable.h"
+
+namespace rtengine
+{
+
+class Image8;
 
 enum RenderingIntent : int;
 

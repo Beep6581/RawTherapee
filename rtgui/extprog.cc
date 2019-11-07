@@ -26,6 +26,8 @@
 #include <shlobj.h>
 #endif
 
+#include <gtkmm.h>
+
 #include "options.h"
 #include "multilangmgr.h"
 
@@ -211,7 +213,7 @@ bool ExtProgStore::spawnCommandAsync (const Glib::ustring& cmd)
 
     } catch (const Glib::Exception& exception) {
 
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             std::cerr << "Failed to execute \"" << cmd << "\": " << exception.what() << std::endl;
         }
 
@@ -230,7 +232,7 @@ bool ExtProgStore::spawnCommandSync (const Glib::ustring& cmd)
 
     } catch (const Glib::Exception& exception) {
 
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             std::cerr << "Failed to execute \"" << cmd << "\": " << exception.what() << std::endl;
         }
 

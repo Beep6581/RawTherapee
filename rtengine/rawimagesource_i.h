@@ -16,9 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-#ifndef RAWIMAGESOURCE_I_H_INCLUDED
-#define RAWIMAGESOURCE_I_H_INCLUDED
+#pragma once
 
 #include "rawimagesource.h"
 
@@ -184,5 +182,3 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (const array2D<float> &raw
 }
 
 }
-
-#endif

@@ -19,15 +19,13 @@
 //
 // A class representing a 8 bit rgb image without alpha channel
 //
-#ifndef _IMAGE8_
-#define _IMAGE8_
+#pragma once
 
 #include "imageio.h"
-#include "rtengine.h"
-#include "imagefloat.h"
 
 namespace rtengine
 {
+class Imagefloat;
 
 class Image8 : public IImage8, public ImageIO
 {
@@ -104,4 +102,3 @@ public:
 };
 
 }
-#endif

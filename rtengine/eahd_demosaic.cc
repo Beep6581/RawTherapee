@@ -20,14 +20,13 @@
 #include <cmath>
 
 #include "color.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"
-#include "rawimage.h"
 #include "iccmatrices.h"
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
-#include "procparams.h"
 //#define BENCHMARK
 #include "StopWatch.h"
 

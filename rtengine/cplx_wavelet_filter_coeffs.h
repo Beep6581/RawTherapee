@@ -17,7 +17,7 @@
  *  2012 Emil Martinec <ejmartin@uchicago.edu>
  *  2014 Jacques Desmis <jdesmis@gmail.com>
  */
-
+#pragma once
 
 namespace rtengine
 {

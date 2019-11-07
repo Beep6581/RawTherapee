@@ -18,7 +18,10 @@
  */
 #include <cstring>
 #include <cstdio>
+
+#include "colortemp.h"
 #include "image8.h"
+#include "imagefloat.h"
 #include "rtengine.h"
 
 using namespace rtengine;

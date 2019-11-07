@@ -19,27 +19,19 @@
 #include <cmath>
 #include <iostream>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
+#include "rawimage.h"
 #include "rawimagesource.h"
 
+#include "coord.h"
 #include "mytime.h"
 #include "opthelper.h"
+#include "pixelsmap.h"
 #include "procparams.h"
 #include "rt_algo.h"
 #include "rtengine.h"
-
+#include "sleef.h"
 //#define BENCHMARK
 #include "StopWatch.h"
-
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
 
 namespace
 {
@@ -98,7 +90,7 @@ bool channelsAvg(
 
 }
 
-bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
+bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const procparams::FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
 {
     newExps = {
         static_cast<float>(currentParams.redRatio * currentParams.greenExp),

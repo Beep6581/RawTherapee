@@ -15,24 +15,32 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#ifdef WIN32
+#include <windows.h>
+#endif
+
+#include "cachemanager.h"
 #include "multilangmgr.h"
 #include "thumbnail.h"
 #include <sstream>
 #include <iomanip>
-#include "options.h"
-#include "../rtengine/mytime.h"
 #include <cstdio>
 #include <cstdlib>
-#include <glibmm.h>
+#include "../rtengine/colortemp.h"
 #include "../rtengine/imagedata.h"
 #include "../rtengine/procparams.h"
+#include "../rtengine/rtthumbnail.h"
 #include <glib/gstdio.h>
 
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/profilestore.h"
+#include "../rtengine/settings.h"
+#include "../rtexif/rtexif.h"
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
-#include "profilestorecombobox.h"
+#include "pathutils.h"
+#include "paramsedited.h"
 #include "procparamchangers.h"
 
 using namespace rtengine::procparams;
@@ -299,7 +307,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
 
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             printf("Custom profile builder's command line: %s\n", Glib::ustring(cmdLine).c_str());
         }
 
@@ -1149,4 +1157,49 @@ bool Thumbnail::imageLoad(bool loading)
     }
 
     return false;
+}
+
+void Thumbnail::getCamWB(double& temp, double& green) const
+{
+    if (tpp) {
+        tpp->getCamWB  (temp, green);
+    } else {
+        temp = green = -1.0;
+    }
+}
+
+void Thumbnail::getSpotWB(int x, int y, int rect, double& temp, double& green)
+{
+    if (tpp) {
+        tpp->getSpotWB (getProcParams(), x, y, rect, temp, green);
+    } else {
+        temp = green = -1.0;
+    }
+}
+
+void Thumbnail::applyAutoExp (rtengine::procparams::ProcParams& pparams)
+{
+    if (tpp) {
+        tpp->applyAutoExp (pparams);
+    }
+}
+
+const CacheImageData* Thumbnail::getCacheImageData()
+{
+    return &cfs;
+}
+
+std::string Thumbnail::getMD5() const
+{
+    return cfs.md5;
+}
+
+bool Thumbnail::isQuick() const
+{
+    return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL;
+}
+
+bool Thumbnail::isPParamsValid() const
+{
+    return pparamsValid;
 }

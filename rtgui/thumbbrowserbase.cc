@@ -16,13 +16,13 @@
  */
 #include <numeric>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "multilangmgr.h"
 #include "options.h"
+#include "rtscalable.h"
 #include "thumbbrowserbase.h"
 
-#include "../rtengine/mytime.h"
 #include "../rtengine/rt_math.h"
 
 using namespace std;

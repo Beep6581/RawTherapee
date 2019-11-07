@@ -22,9 +22,9 @@
 #include "cursormanager.h"
 #include "guiutils.h"
 #include "options.h"
+#include "pathutils.h"
+#include "rtscalable.h"
 #include "../rtengine/previewimage.h"
-
-extern Options options;
 
 InspectorBuffer::InspectorBuffer(const Glib::ustring &imagePath) : currTransform(0), fromRaw(false)
 {

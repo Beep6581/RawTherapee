@@ -33,6 +33,7 @@ set(RTENGINESOURCEFILES
     ahd_demosaic_RT.cc
     amaze_demosaic_RT.cc
     badpixels.cc
+    boxblur.cc
     CA_correct_RT.cc
     calc_distort.cc
     camconst.cc
@@ -111,6 +112,7 @@ set(RTENGINESOURCEFILES
     processingjob.cc
     procparams.cc
     profilestore.cc
+    rawflatfield.cc
     rawimage.cc
     rawimagesource.cc
     rcd_demosaic.cc
@@ -120,7 +122,6 @@ set(RTENGINESOURCEFILES
     rtthumbnail.cc
     shmap.cc
     simpleprocess.cc
-    slicer.cc
     stdimagesource.cc
     tmo_fattal02.cc
     utils.cc

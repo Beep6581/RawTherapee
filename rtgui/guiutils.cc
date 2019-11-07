@@ -217,16 +217,6 @@ bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference)
     }
 }
 
-void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
-{
-
-    if (options.thumbInterp == 0) {
-        rtengine::nearestInterp (src, sw, sh, dst, dw, dh);
-    } else if (options.thumbInterp == 1) {
-        rtengine::bilinearInterp (src, sw, sh, dst, dw, dh);
-    }
-}
-
 bool confirmOverwrite (Gtk::Window& parent, const std::string& filename)
 {
     bool safe = true;

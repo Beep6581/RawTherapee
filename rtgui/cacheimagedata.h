@@ -16,17 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CACHEIMAGEDATA_
-#define _CACHEIMAGEDATA_
+#pragma once
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
+
 #include "options.h"
-#include "../rtengine/rtengine.h"
+
 #include "../rtengine/imageformat.h"
+#include "../rtengine/rtengine.h"
 
-class CacheImageData: public rtengine::FramesMetaData
+class CacheImageData :
+    public rtengine::FramesMetaData
 {
-
 public:
 
     // basic information
@@ -115,4 +116,3 @@ public:
     std::string getImageType (unsigned int frame) const override { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
     rtengine::IIOSampleFormat getSampleFormat (unsigned int frame = 0) const override { return sampleFormat; }
 };
-#endif

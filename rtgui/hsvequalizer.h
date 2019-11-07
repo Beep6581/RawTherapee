@@ -16,20 +16,22 @@
  *
  *  2010 Ilya Popov <ilia_popov@rambler.ru>
  */
-
-#ifndef HSVEQUALIZER_H_INCLUDED
-#define HSVEQUALIZER_H_INCLUDED
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
-#include "toolpanel.h"
-#include "guiutils.h"
+#include "colorprovider.h"
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
-#include "colorprovider.h"
+#include "guiutils.h"
+#include "toolpanel.h"
 
-
-class HSVEqualizer : public ToolParamBlock, public FoldableToolPanel, public CurveListener, public ColorProvider
+class HSVEqualizer :
+    public ToolParamBlock,
+    public FoldableToolPanel,
+    public CurveListener,
+    public ColorProvider
 {
 
 protected:
@@ -56,5 +58,3 @@ public:
     //void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged() override;
 };
-
-#endif

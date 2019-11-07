@@ -16,13 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PROGRESSCONNECTOR_
-#define _PROGRESSCONNECTOR_
+#pragma once
+
+#include <gtkmm.h>
 
 #include <sigc++/sigc++.h>
-#include <gtkmm.h>
-#include "../rtengine/rtengine.h"
+
 #include "guiutils.h"
+#include "multilangmgr.h"
+#include "../rtengine/rtengine.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -109,4 +111,3 @@ public:
         return retval;
     }
 };
-#endif

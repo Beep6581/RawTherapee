@@ -18,7 +18,6 @@
  */
 #include "cursormanager.h"
 
-#include "options.h"
 #include "rtimage.h"
 
 CursorManager mainWindowCursorManager;

@@ -18,9 +18,12 @@
  */
 #include "filepanel.h"
 
+#include "batchtoolpanelcoord.h"
+#include "editorpanel.h"
 #include "rtwindow.h"
 #include "inspector.h"
 #include "placesbrowser.h"
+#include "thumbnail.h"
 
 FilePanel::FilePanel () : parent(nullptr), error(0)
 {

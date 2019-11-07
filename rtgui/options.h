@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _OPTIONS_
-#define _OPTIONS_
+#pragma once
 
 #include <set>
-#include <gtkmm.h>
-#include "../rtengine/rtengine.h"
+#include <vector>
+#include <gtkmm/enums.h>
+#include "../rtengine/settings.h"
 #include <exception>
 
 #define STARTUPDIR_CURRENT 0
@@ -102,6 +102,13 @@ enum ThFileType {FT_Invalid = -1, FT_None = 0, FT_Raw = 1, FT_Jpeg = 2, FT_Tiff 
 enum PPLoadLocation {PLL_Cache = 0, PLL_Input = 1};
 enum CPBKeyType {CPBKT_TID = 0, CPBKT_NAME = 1, CPBKT_TID_NAME = 2};
 enum prevdemo_t {PD_Sidecar = 1, PD_Fast = 0};
+
+namespace Glib
+{
+
+class KeyFile;
+
+}
 
 class Options
 {
@@ -447,5 +454,3 @@ extern bool gimpPlugin;
 extern bool remote;
 extern Glib::ustring versionString;
 extern Glib::ustring paramFileExtension;
-
-#endif

@@ -16,17 +16,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _XTRANSPROCESS_H_
-#define _XTRANSPROCESS_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
-
-class XTransProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::AutoContrastListener
+class XTransProcess :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public CheckBoxListener,
+    public FoldableToolPanel,
+    public rtengine::AutoContrastListener
 {
 
 protected:
@@ -64,5 +68,3 @@ public:
     void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void adjusterAutoToggled(Adjuster* a, bool newval) override;
 };
-
-#endif

@@ -16,12 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _INSPECTOR_
-#define _INSPECTOR_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "guiutils.h"
+
 #include "../rtengine/coord.h"
+#include "../rtengine/coord2d.h"
+#include "../rtengine/rt_math.h"
 
 class InspectorBuffer
 {
@@ -99,5 +102,3 @@ public:
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
 };
-
-#endif

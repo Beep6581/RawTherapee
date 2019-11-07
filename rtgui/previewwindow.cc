@@ -20,6 +20,8 @@
 #include "guiutils.h"
 #include "imagearea.h"
 #include "cursormanager.h"
+#include "options.h"
+#include "rtscalable.h"
 
 #include "../rtengine/procparams.h"
 
@@ -88,7 +90,7 @@ void PreviewWindow::updatePreviewImage ()
             cc->fill();
 
             if (previewHandler->getCropParams().enabled) {
-                rtengine::CropParams cparams = previewHandler->getCropParams();
+                rtengine::procparams::CropParams cparams = previewHandler->getCropParams();
                 switch (options.cropGuides) {
                 case Options::CROP_GUIDE_NONE:
                     cparams.guide = "None";

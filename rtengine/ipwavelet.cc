@@ -28,21 +28,23 @@
 
 #include "../rtgui/threadutils.h"
 
-#include "rtengine.h"
-#include "improcfun.h"
-#include "LUT.h"
 #include "array2D.h"
-#include "boxblur.h"
-#include "rt_math.h"
-#include "mytime.h"
-#include "sleef.c"
-#include "opthelper.h"
-#include "median.h"
+#include "color.h"
+#include "curves.h"
 #include "EdgePreservingDecomposition.h"
 #include "iccstore.h"
+#include "improcfun.h"
+#include "labimage.h"
+#include "LUT.h"
+#include "median.h"
+#include "opthelper.h"
 #include "procparams.h"
+#include "rt_math.h"
+#include "rtengine.h"
+#include "sleef.h"
+#include "../rtgui/options.h"
 #include "guidedfilter.h"
-
+#include "imagefloat.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -56,11 +58,8 @@
 
 #define epsilon 0.001f/(TS*TS) //tolerance
 
-
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 struct cont_params {
     float mul[10];

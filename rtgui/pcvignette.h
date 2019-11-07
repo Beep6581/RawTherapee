@@ -1,14 +1,17 @@
 /*
  *  This file is part of RawTherapee.
  */
-#ifndef _PCVIGNETTE_H_
-#define _PCVIGNETTE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class PCVignette : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class PCVignette :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -30,5 +33,3 @@ public:
     void setAdjusterBehavior (bool strengthadd, bool featheradd, bool roundnessadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };
-
-#endif

@@ -16,15 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _ROTATE_H_
-#define _ROTATE_H_
+#pragma once
 
 #include <gtkmm.h>
-#include "adjuster.h"
-#include "toolpanel.h"
-#include "lensgeomlistener.h"
 
-class Rotate : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+#include "adjuster.h"
+#include "lensgeomlistener.h"
+#include "toolpanel.h"
+
+class Rotate :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -52,5 +55,3 @@ public:
         rlistener = l;
     }
 };
-
-#endif

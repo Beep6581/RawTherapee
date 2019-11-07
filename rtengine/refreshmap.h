@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __REFRESHMAP__
-#define __REFRESHMAP__
+#pragma once
 
 #include <unordered_map>
+
 #include "procevents.h"
 
 // Use M_VOID if you wish to update the proc params without updating the preview at all !
@@ -80,7 +80,8 @@
 
 extern int refreshmap[];
 
-namespace rtengine {
+namespace rtengine
+{
 
 class RefreshMapper {
 public:
@@ -97,5 +98,3 @@ private:
 };
 
 } // namespace rtengine
-
-#endif
