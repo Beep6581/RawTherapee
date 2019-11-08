@@ -1040,6 +1040,7 @@ HISTORY_MSG_799;Local - Opacity
 HISTORY_MSG_800;Local - Color RGB ToneCurve
 HISTORY_MSG_801;Local - Color ToneCurve Method
 HISTORY_MSG_802;Local - Color ToneCurve Special
+HISTORY_MSG_803;Local - Contrast threshold
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2166,6 +2167,8 @@ TP_LOCALLAB_MERGEFOU;Previous Spot(Mask 7)
 TP_LOCALLAB_MERGEFIV;Previous Spot(Mask 7) + Mask LCH
 TP_LOCALLAB_MERGE1COLFRA;Merge with Original
 TP_LOCALLAB_OPACOL;Opacity
+TP_LOCALLAB_CONTTHR;Contrast Threshold
+TP_LOCALLAB_MERGEOPA_TOOLTIP;Opacity merge % current Spot with original or previous Spot.\nContrast threshold : adjust result in function of Original contrast
 TP_LOCALLAB_MERGECOLFRA;Mask LCH
 TP_LOCALLAB_MERONE;Normal
 TP_LOCALLAB_MERTWO;Substract

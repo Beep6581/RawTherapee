@@ -263,6 +263,7 @@ Locallab::Locallab():
     shadmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
     opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 100.))),
+    conthrcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTTHR"), 0.0, 100.0, 0.5, 100.))),
     // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 4.0, 0.05, 0.0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
@@ -636,6 +637,7 @@ Locallab::Locallab():
     shadmaskcol->setAdjusterListener(this);
     softradiuscol->setAdjusterListener(this);
     opacol->setAdjusterListener(this);
+    conthrcol->setAdjusterListener(this);
     lapmaskcol->setAdjusterListener(this);
 
     if (showtooltip) {
@@ -864,6 +866,11 @@ Locallab::Locallab():
     mask2CurveEditorGwav->curveListComplete();
     csThresholdcol->setAdjusterListener(this);
 
+    if (showtooltip) {
+        opacol->set_tooltip_text(M("TP_LOCALLAB_MERGEOPA_TOOLTIP"));
+        conthrcol->set_tooltip_text(M("TP_LOCALLAB_MERGEOPA_TOOLTIP"));
+    }
+
 
     ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const superFrame = Gtk::manage(new Gtk::Frame());
@@ -902,6 +909,7 @@ Locallab::Locallab():
     ToolParamBlock* const mergecolBox = Gtk::manage(new ToolParamBlock());
     mergecolBox->pack_start(*mergecolMethod);
     mergecolBox->pack_start(*opacol);
+    mergecolBox->pack_start(*conthrcol);
     merge1colFrame->add(*mergecolBox);
 
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
@@ -3647,6 +3655,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskcol = lapmaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscol = softradiuscol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).opacol = opacol->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).conthrcol = conthrcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = Lmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav = LLmaskcolshapewav->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).csthresholdcol = csThresholdcol->getValue<int>();
@@ -4040,6 +4049,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiuscol = pe->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).opacol = pe->locallab.spots.at(pp->locallab.selspot).opacol || opacol->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).conthrcol = pe->locallab.spots.at(pp->locallab.selspot).conthrcol || conthrcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav = pe->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav || !LLmaskcolshapewav->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).csthresholdcol = pe->locallab.spots.at(pp->locallab.selspot).csthresholdcol || csThresholdcol->getEditedState();
@@ -4364,6 +4374,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).opacol = pedited->locallab.spots.at(pp->locallab.selspot).opacol || opacol->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).conthrcol = pedited->locallab.spots.at(pp->locallab.selspot).conthrcol || conthrcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav || !LLmaskcolshapewav->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).csthresholdcol = pedited->locallab.spots.at(pp->locallab.selspot).csthresholdcol || csThresholdcol->getEditedState();
@@ -6454,6 +6465,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     lapmaskcol->setDefault(defSpot->lapmaskcol);
     softradiuscol->setDefault(defSpot->softradiuscol);
     opacol->setDefault(defSpot->opacol);
+    conthrcol->setDefault(defSpot->conthrcol);
     csThresholdcol->setDefault<int>(defSpot->csthresholdcol);
     // Exposure
     expcomp->setDefault(defSpot->expcomp);
@@ -6647,6 +6659,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         lapmaskcol->setDefaultEditedState(Irrelevant);
         softradiuscol->setDefaultEditedState(Irrelevant);
         opacol->setDefaultEditedState(Irrelevant);
+        conthrcol->setDefaultEditedState(Irrelevant);
         csThresholdcol->setDefaultEditedState(Irrelevant);
         // Exposure
         expcomp->setDefaultEditedState(Irrelevant);
@@ -6844,6 +6857,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         lapmaskcol->setDefaultEditedState(defSpotState->lapmaskcol ? Edited : UnEdited);
         softradiuscol->setDefaultEditedState(defSpotState->softradiuscol ? Edited : UnEdited);
         opacol->setDefaultEditedState(defSpotState->opacol ? Edited : UnEdited);
+        conthrcol->setDefaultEditedState(defSpotState->conthrcol ? Edited : UnEdited);
         csThresholdcol->setDefaultEditedState(defSpotState->csthresholdcol ? Edited : UnEdited);
         // Exposure
         expcomp->setDefaultEditedState(defSpotState->expcomp ? Edited : UnEdited);
@@ -7171,6 +7185,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == opacol) {
             if (listener) {
                 listener->panelChanged(Evlocallabopacol, opacol->getTextValue());
+            }
+        }
+
+        if (a == conthrcol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabconthrcol, conthrcol->getTextValue());
             }
         }
 
@@ -8208,6 +8228,7 @@ void Locallab::setBatchMode(bool batchMode)
     lapmaskcol->showEditedCB();
     softradiuscol->showEditedCB();
     opacol->showEditedCB();
+    conthrcol->showEditedCB();
     csThresholdcol->showEditedCB();
     // Exposure
     expcomp->showEditedCB();
@@ -8810,6 +8831,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         lapmaskcol->setValue(pp->locallab.spots.at(index).lapmaskcol);
         softradiuscol->setValue(pp->locallab.spots.at(index).softradiuscol);
         opacol->setValue(pp->locallab.spots.at(index).opacol);
+        conthrcol->setValue(pp->locallab.spots.at(index).conthrcol);
         Lmaskshape->setCurve(pp->locallab.spots.at(index).Lmaskcurve);
         LLmaskcolshapewav->setCurve(pp->locallab.spots.at(index).LLmaskcolcurvewav);
         csThresholdcol->setValue<int>(pp->locallab.spots.at(index).csthresholdcol);
@@ -9233,6 +9255,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 lapmaskcol->setEditedState(spotState->lapmaskcol ? Edited : UnEdited);
                 softradiuscol->setEditedState(spotState->softradiuscol ? Edited : UnEdited);
                 opacol->setEditedState(spotState->opacol ? Edited : UnEdited);
+                conthrcol->setEditedState(spotState->conthrcol ? Edited : UnEdited);
                 Lmaskshape->setUnChanged(!spotState->Lmaskcurve);
                 LLmaskcolshapewav->setUnChanged(!spotState->LLmaskcolcurvewav);
                 csThresholdcol->setEditedState(spotState->csthresholdcol ? Edited : UnEdited);

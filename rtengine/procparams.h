@@ -1026,6 +1026,7 @@ struct LocallabParams {
         std::vector<double> HHmaskcurve;
         double softradiuscol;
         double opacol;
+        double conthrcol;
         std::vector<double> Lmaskcurve;
         std::vector<double> LLmaskcolcurvewav;
         Threshold<int> csthresholdcol;

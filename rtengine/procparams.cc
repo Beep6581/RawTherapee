@@ -2483,6 +2483,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     HHmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     softradiuscol(0.0),
     opacol(100.0),
+    conthrcol(0.0),
     Lmaskcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LLmaskcolcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     csthresholdcol(0, 0, 6, 5, false),
@@ -2798,6 +2799,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blurcolde == other.blurcolde
         && softradiuscol == other.softradiuscol
         && opacol == other.opacol
+        && conthrcol == other.conthrcol
         && Lmaskcurve == other.Lmaskcurve
         && LLmaskcolcurvewav == other.LLmaskcolcurvewav
         && csthresholdcol == other.csthresholdcol
@@ -4108,6 +4110,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskcurve, "Locallab", "HHmaskCurve_" + std::to_string(i), spot.HHmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiuscol, "Locallab", "Softradiuscol_" + std::to_string(i), spot.softradiuscol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).opacol, "Locallab", "Opacol_" + std::to_string(i), spot.opacol, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).conthrcol, "Locallab", "Conthrcol_" + std::to_string(i), spot.conthrcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmaskcurve, "Locallab", "LmaskCurve_" + std::to_string(i), spot.Lmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskcolcurvewav, "Locallab", "LLmaskcolCurvewav_" + std::to_string(i), spot.LLmaskcolcurvewav, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).csthresholdcol, "Locallab", "CSThresholdcol_" + std::to_string(i), spot.csthresholdcol.toVector(), keyFile);
@@ -5526,6 +5529,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskCurve_" + std::to_string(i), pedited, spot.HHmaskcurve, spotEdited.HHmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscol_" + std::to_string(i), pedited, spot.softradiuscol, spotEdited.softradiuscol);
                 assignFromKeyfile(keyFile, "Locallab", "Opacol_" + std::to_string(i), pedited, spot.opacol, spotEdited.opacol);
+                assignFromKeyfile(keyFile, "Locallab", "Conthrcol_" + std::to_string(i), pedited, spot.conthrcol, spotEdited.conthrcol);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskCurve_" + std::to_string(i), pedited, spot.Lmaskcurve, spotEdited.Lmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskcolCurvewav_" + std::to_string(i), pedited, spot.LLmaskcolcurvewav, spotEdited.LLmaskcolcurvewav);
                 if (keyFile.has_key("Locallab", "CSThresholdcol_" + std::to_string(i))) {

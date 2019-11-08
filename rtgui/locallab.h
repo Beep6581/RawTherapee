@@ -166,6 +166,7 @@ private:
     Adjuster* const shadmaskcol;
     Adjuster* const softradiuscol;
     Adjuster* const opacol;
+    Adjuster* const conthrcol;
     // Exposure
     Adjuster* const expcomp;
     Adjuster* const hlcompr;

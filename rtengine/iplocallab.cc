@@ -6347,6 +6347,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     mxsl = max(mxslid34, mxslid56);
 
                 }
+
                 /*
                 for(int j=0;j<8;j++){
                 printf("j=%i slidL=%f\n", j, slidL[j]);
@@ -6435,9 +6436,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
                     } else {
-                        
+
                         WaveletDenoiseAll_BiShrinkL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
-                        
+
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
                     }
@@ -11741,6 +11742,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int level_hr = params->locallab.spots.at(sp).csthresholdcol.getTopRight();
                     int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
                     int lumask = params->locallab.spots.at(sp).lumask;
+                    float conthr = 0.01f * params->locallab.spots.at(sp).conthrcol;
                     int tonemod = 0;
 
                     if (params->locallab.spots.at(sp).toneMethod == "one") {
@@ -12057,23 +12059,30 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (lp.mergemet >= 2) { //merge result with original
                             bufcolreserv.reset(new LabImage(bfw, bfh));
+                            JaggedArray<float> lumreserv(bfw, bfh);
+
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
-                                    if(lp.mergemet == 2 || lp.mergemet == 3) {
-                                    bufcolreserv->L[y][x] = reserved->L[y + ystart][x + xstart];
-                                    bufcolreserv->a[y][x] = reserved->a[y + ystart][x + xstart];
-                                    bufcolreserv->b[y][x] = reserved->b[y + ystart][x + xstart];
+                                    lumreserv[y][x] = reserved->L[y + ystart][x + xstart];
+
+                                    if (lp.mergemet == 2 || lp.mergemet == 3) {
+                                        bufcolreserv->L[y][x] = reserved->L[y + ystart][x + xstart];
+                                        bufcolreserv->a[y][x] = reserved->a[y + ystart][x + xstart];
+                                        bufcolreserv->b[y][x] = reserved->b[y + ystart][x + xstart];
                                     } else {
-                                    bufcolreserv->L[y][x] = lastorig->L[y + ystart][x + xstart];
-                                    bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
-                                    bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
+                                        bufcolreserv->L[y][x] = lastorig->L[y + ystart][x + xstart];
+                                        bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
+                                        bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
                                     }
                                 }
                             }
+
+                            JaggedArray<float> blend(bfw, bfh);
+                            buildBlendMask(lumreserv, blend, bfw, bfh, conthr, 1.f);
 
                             if (lp.mergecolMethod == 0) { //normal
 
@@ -12301,6 +12310,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 delete tmpImageorig;
                                 delete tmpImagereserv;
+
+                                if (conthr > 0.f) {
+#ifdef _OPENMP
+                                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
+                                            bufcolfin->a[y][x] = intp(blend[y][x], bufcolfin->a[y][x], bufcolreserv->a[y][x]);
+                                            bufcolfin->b[y][x] = intp(blend[y][x], bufcolfin->b[y][x], bufcolreserv->b[y][x]);
+                                        }
+                                    }
+                                }
 
                                 bool fordiff = false;
 
