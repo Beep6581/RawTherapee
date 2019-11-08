@@ -18,6 +18,7 @@
 
 #include <glibmm/ustring.h>
 
+#include "inspector.h"
 #include "multilangmgr.h"
 #include "options.h"
 #include "rtscalable.h"
