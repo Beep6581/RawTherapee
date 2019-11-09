@@ -12083,6 +12083,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             JaggedArray<float> blend(bfw, bfh);
                             buildBlendMask(lumreserv, blend, bfw, bfh, conthr, 1.f);
+                            float rm = 20.f / sk;
+
+                            if (rm > 0) {
+                                float **mb = blend;
+                                gaussianBlur(mb, mb, bfw, bfh, rm);
+                            }
 
                             if (lp.mergecolMethod == 0) { //normal
 
