@@ -2143,6 +2143,11 @@ Camera constants:
     },
 
     { // Quality B, per ISO info missing
+        "make_model": [ "Panasonic DC-S1", "Panasonic DC-S1R" ],
+        "ranges": { "white": 16225 }
+    },
+
+    { // Quality B, per ISO info missing
         "make_model": "PENTAX K-x",
         "dcraw_matrix": [ 8843,-2837,-625,-5025,12644,2668,-411,1234,7410 ], // adobe dcp d65
         "ranges": { "white": 4080 } // nominal at ISO200 4094

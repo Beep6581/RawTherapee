@@ -119,11 +119,12 @@ protected:
     const TagAttrib*  attribs;      // descriptor table to decode the tags
     ByteOrder         order;        // byte order
     TagDirectory*     parent;       // parent directory (NULL if root)
+    bool              parseJPEG;
     static Glib::ustring getDumpKey (int tagID, const Glib::ustring &tagName);
 
 public:
     TagDirectory ();
-    TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored = true);
+    TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored = true, bool parseJpeg = true);
     TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border);
     virtual ~TagDirectory ();
 
@@ -134,6 +135,10 @@ public:
     TagDirectory*    getParent     ()
     {
         return parent;
+    }
+    inline bool getParseJpeg() const
+    {
+        return parseJPEG;
     }
     TagDirectory*    getRoot       ();
     inline int       getCount      () const
@@ -346,7 +351,7 @@ class ExifManager
 
     Tag* saveCIFFMNTag (TagDirectory* root, int len, const char* name);
     void parseCIFF (int length, TagDirectory* root);
-    void parse (bool isRaw, bool skipIgnored = true);
+    void parse (bool isRaw, bool skipIgnored = true, bool parseJpeg = true);
 
 public:
     FILE* f;
