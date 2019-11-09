@@ -2508,6 +2508,12 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
 void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread)
 {
     SobelCannyLuma(blend2, bufcolorig->L, bfw, bfh, radius, multiThread);
+    float rm = 20.f / sk;
+
+    if (rm > 0) {
+        float **mb = blend2;
+        gaussianBlur(mb, mb, bfw, bfh, rm);
+    }
 
     array2D<float> ble(bfw, bfh);
     array2D<float> guid(bfw, bfh);
