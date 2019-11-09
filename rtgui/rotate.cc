@@ -21,6 +21,7 @@
 #include "rotate.h"
 
 #include "guiutils.h"
+#include "lensgeomlistener.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"

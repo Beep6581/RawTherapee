@@ -24,7 +24,7 @@
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class Sharpening :
+class Sharpening final:
     public ToolParamBlock,
     public ThresholdAdjusterListener,
     public AdjusterListener,

@@ -22,15 +22,18 @@
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
+#include "curvelistener.h"
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
 #include "guiutils.h"
 
+class CurveEditor;
+class CurveEditorGroup;
+class DiagonalCurveEditor;
 class EditDataProvider;
+class FlatCurveEditor;
 
-class Wavelet :
+class Wavelet final :
     public ToolParamBlock,
     public ThresholdAdjusterListener,
     public AdjusterListener,

@@ -21,7 +21,6 @@
 
 #include <gtkmm.h>
 
-#include "batchqueueentry.h"
 #include "filepanel.h"
 #include "histogrampanel.h"
 #include "history.h"
@@ -35,7 +34,9 @@
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
 
+class BatchQueueEntry;
 class EditorPanel;
+class FilePanel;
 class MyProgressBar;
 class Thumbnail;
 class ToolPanelCoordinator;

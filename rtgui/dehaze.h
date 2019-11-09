@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class Dehaze: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class Dehaze final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 private:
     Adjuster *strength;

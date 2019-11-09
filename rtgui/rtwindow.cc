@@ -29,6 +29,7 @@
 #include "whitebalance.h"
 #include "../rtengine/settings.h"
 #include "batchqueuepanel.h"
+#include "batchqueueentry.h"
 #include "editorpanel.h"
 #include "filepanel.h"
 #include "filmsimulation.h"

@@ -2,6 +2,9 @@
  *  This file is part of RawTherapee.
  */
 #include "retinex.h"
+
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "mycurve.h"
 #include "rtimage.h"
 #include "options.h"

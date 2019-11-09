@@ -22,11 +22,13 @@
 
 #include "adjuster.h"
 #include "colorprovider.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
+#include "curvelistener.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
+class CurveEditor;
+class CurveEditorGroup;
+class FlatCurveEditor;
 class EditDataProvider;
 
 class DirPyrDenoise final :

@@ -18,10 +18,14 @@
  */
 #pragma once
 
-#include <glibmm/ustring.h>
-
 struct ParamsEdited;
 
+namespace Glib
+{
+
+class ustring;
+
+}
 namespace rtengine
 {
 

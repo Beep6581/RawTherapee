@@ -23,7 +23,7 @@
 #include "lensgeomlistener.h"
 #include "toolpanel.h"
 
-class LensGeometry :
+class LensGeometry final :
     public ToolParamBlock,
     public FoldableToolPanel
 {

@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 
 #include "thumbimageupdater.h"
+#include "thumbbrowserentrybase.h"
 
 #include "guiutils.h"
 #include "threadutils.h"

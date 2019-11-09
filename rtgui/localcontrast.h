@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class LocalContrast: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class LocalContrast final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 private:
     Adjuster *radius;

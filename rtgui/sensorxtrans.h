@@ -22,7 +22,7 @@
 
 #include "toolpanel.h"
 
-class SensorXTrans :
+class SensorXTrans final:
     public ToolParamBlock,
     public FoldableToolPanel
 {

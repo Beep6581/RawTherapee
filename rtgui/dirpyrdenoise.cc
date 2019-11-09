@@ -21,6 +21,8 @@
 
 #include "dirpyrdenoise.h"
 
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "editbuffer.h"
 #include "guiutils.h"
 #include "options.h"
