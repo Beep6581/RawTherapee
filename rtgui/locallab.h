@@ -63,6 +63,7 @@ private:
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
     MyExpander* const expmaskcol;
+    MyExpander* const expmaskcol1;
     MyExpander* const expmaskexp;
     MyExpander* const expmasksh;
     MyExpander* const expmaskcb;
@@ -399,6 +400,8 @@ private:
     sigc::connection qualitycurveMethodConn;
     MyComboBoxText* const gridMethod;
     sigc::connection gridMethodConn;
+    MyComboBoxText* const merMethod;
+    sigc::connection merMethodConn;
 //    MyComboBoxText* const toneMethod;
     sigc::connection toneMethodConn;
     MyComboBoxText* const showmaskcolMethod;
@@ -481,6 +484,7 @@ private:
     Gtk::Frame* const grainFrame;
     ToolParamBlock* const retiBox;
     ToolParamBlock* const maskretiBox;
+    ToolParamBlock* const mask7;
     LabGrid* const labgrid;
     Gtk::Label* const mMLabels;
     Gtk::Label* const transLabels;
@@ -559,6 +563,7 @@ private:
     // Color & Light
     void qualitycurveMethodChanged();
     void gridMethodChanged();
+    void merMethodChanged();
     void toneMethodChanged();
     void showmaskcolMethodChanged();
     void showmaskcolMethodChangedinv();

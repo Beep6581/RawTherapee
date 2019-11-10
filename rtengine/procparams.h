@@ -961,7 +961,7 @@ struct LocallabParams {
         bool isvisible;
         Glib::ustring shape; // ELI, RECT
         Glib::ustring spotMethod; // norm, exc
-        Glib::ustring mergeMethod; // none, short, orig
+//        Glib::ustring mergeMethod; // none, short, orig
         int sensiexclu;
         int structexclu;
         double struc;
@@ -1011,6 +1011,7 @@ struct LocallabParams {
         double lapmaskcol;
         Glib::ustring qualitycurveMethod;
         Glib::ustring gridMethod;
+        Glib::ustring merMethod;
         Glib::ustring toneMethod;
         Glib::ustring mergecolMethod;
         std::vector<double> llcurve;

@@ -954,7 +954,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).isvisible = locallab.spots.at(j).isvisible && pSpot.isvisible == otherSpot.isvisible;
                 locallab.spots.at(j).shape = locallab.spots.at(j).shape && pSpot.shape == otherSpot.shape;
                 locallab.spots.at(j).spotMethod = locallab.spots.at(j).spotMethod && pSpot.spotMethod == otherSpot.spotMethod;
-                locallab.spots.at(j).mergeMethod = locallab.spots.at(j).mergeMethod && pSpot.mergeMethod == otherSpot.mergeMethod;
+//                locallab.spots.at(j).mergeMethod = locallab.spots.at(j).mergeMethod && pSpot.mergeMethod == otherSpot.mergeMethod;
                 locallab.spots.at(j).sensiexclu = locallab.spots.at(j).sensiexclu && pSpot.sensiexclu == otherSpot.sensiexclu;
                 locallab.spots.at(j).structexclu = locallab.spots.at(j).structexclu && pSpot.structexclu == otherSpot.structexclu;
                 locallab.spots.at(j).struc = locallab.spots.at(j).struc && pSpot.struc == otherSpot.struc;
@@ -1004,6 +1004,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lapmaskcol = locallab.spots.at(j).lapmaskcol && pSpot.lapmaskcol == otherSpot.lapmaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
                 locallab.spots.at(j).gridMethod = locallab.spots.at(j).gridMethod && pSpot.gridMethod == otherSpot.gridMethod;
+                locallab.spots.at(j).merMethod = locallab.spots.at(j).merMethod && pSpot.merMethod == otherSpot.merMethod;
                 locallab.spots.at(j).toneMethod = locallab.spots.at(j).toneMethod && pSpot.toneMethod == otherSpot.toneMethod;
                 locallab.spots.at(j).mergecolMethod = locallab.spots.at(j).mergecolMethod && pSpot.mergecolMethod == otherSpot.mergecolMethod;
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
@@ -2741,11 +2742,11 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         if (locallab.spots.at(i).spotMethod) {
             toEdit.locallab.spots.at(i).spotMethod = mods.locallab.spots.at(i).spotMethod;
         }
-
+/*
         if (locallab.spots.at(i).mergeMethod) {
             toEdit.locallab.spots.at(i).mergeMethod = mods.locallab.spots.at(i).mergeMethod;
         }
-
+*/
         if (locallab.spots.at(i).sensiexclu) {
             toEdit.locallab.spots.at(i).sensiexclu = mods.locallab.spots.at(i).sensiexclu;
         }
@@ -2938,6 +2939,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).gridMethod) {
             toEdit.locallab.spots.at(i).gridMethod = mods.locallab.spots.at(i).gridMethod;
+        }
+
+        if (locallab.spots.at(i).merMethod) {
+            toEdit.locallab.spots.at(i).merMethod = mods.locallab.spots.at(i).merMethod;
         }
 
         if (locallab.spots.at(i).toneMethod) {
@@ -4896,7 +4901,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     isvisible(v),
     shape(v),
     spotMethod(v),
-    mergeMethod(v),
+//    mergeMethod(v),
     sensiexclu(v),
     structexclu(v),
     struc(v),
@@ -4946,6 +4951,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lapmaskcol(v),
     qualitycurveMethod(v),
     gridMethod(v),
+    merMethod(v),
     toneMethod(v),
     mergecolMethod(v),
     llcurve(v),
@@ -5209,7 +5215,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     isvisible = v;
     shape = v;
     spotMethod = v;
-    mergeMethod = v;
+//    mergeMethod = v;
     sensiexclu = v;
     structexclu = v;
     struc = v;
@@ -5259,6 +5265,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lapmaskcol = v;
     qualitycurveMethod = v;
     gridMethod = v;
+    merMethod = v;
     toneMethod = v;
     mergecolMethod = v;
     llcurve = v;

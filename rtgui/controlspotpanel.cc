@@ -51,11 +51,11 @@ ControlSpotPanel::ControlSpotPanel():
     spotMethod_(Gtk::manage(new MyComboBoxText())),
     shapeMethod_(Gtk::manage(new MyComboBoxText())),
     qualityMethod_(Gtk::manage(new MyComboBoxText())),
-    mergeMethod_(Gtk::manage(new MyComboBoxText())),
+//    mergeMethod_(Gtk::manage(new MyComboBoxText())),
 
     sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
     structexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
-    
+
     struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1.0, 12.0, 0.1, 4.0))),
     locX_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH"), 2, 3000, 1, 150))),
     locXL_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH_L"), 2, 3000, 1, 150))),
@@ -96,7 +96,7 @@ ControlSpotPanel::ControlSpotPanel():
     buttondeleteconn_ = button_delete_->signal_clicked().connect(
                             sigc::mem_fun(*this, &ControlSpotPanel::on_button_delete));
     buttonduplicateconn_ = button_duplicate_->signal_clicked().connect(
-                            sigc::mem_fun(*this, &ControlSpotPanel::on_button_duplicate));
+                               sigc::mem_fun(*this, &ControlSpotPanel::on_button_duplicate));
     hbox1_->pack_start(*button_add_);
     hbox1_->pack_start(*button_delete_);
     hbox1_->pack_start(*button_duplicate_);
@@ -107,7 +107,11 @@ ControlSpotPanel::ControlSpotPanel():
                             sigc::mem_fun(*this, &ControlSpotPanel::on_button_rename));
     buttonvisibilityconn_ = button_visibility_->signal_button_release_event().connect(
                                 sigc::mem_fun(*this, &ControlSpotPanel::on_button_visibility));
-    if(showtooltip) button_visibility_->set_tooltip_markup(M("TP_LOCALLAB_VIS_TOOLTIP"));
+
+    if (showtooltip) {
+        button_visibility_->set_tooltip_markup(M("TP_LOCALLAB_VIS_TOOLTIP"));
+    }
+
     hbox2_->pack_start(*button_rename_);
     hbox2_->pack_start(*button_visibility_);
     pack_start(*hbox2_);
@@ -122,8 +126,8 @@ ControlSpotPanel::ControlSpotPanel():
     // Disable search to prevent hijacking keyboard shortcuts #5265
     treeview_->set_enable_search(false);
     treeview_->signal_key_press_event().connect(
-            sigc::mem_fun(
-                    *this, &ControlSpotPanel::blockTreeviewSearch), false);
+        sigc::mem_fun(
+            *this, &ControlSpotPanel::blockTreeviewSearch), false);
 
     auto cell = Gtk::manage(new Gtk::CellRendererText());
     int cols_count = treeview_->append_column("ID", *cell);
@@ -175,7 +179,11 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const ctboxspotmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelspotmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"));
     ctboxspotmethod->pack_start(*labelspotmethod, Gtk::PACK_SHRINK, 4);
-    if(showtooltip) ctboxspotmethod->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
+
+    if (showtooltip) {
+        ctboxspotmethod->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
+    }
+
     spotMethod_->append(M("TP_LOCALLAB_EXNORM"));
     spotMethod_->append(M("TP_LOCALLAB_EXECLU"));
     spotMethod_->set_active(0);
@@ -186,9 +194,17 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*ctboxspotmethod);
 
     excluFrame->set_label_align(0.025, 0.5);
-    if(showtooltip) excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
+
+    if (showtooltip) {
+        excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
+    }
+
     ToolParamBlock* const excluBox = Gtk::manage(new ToolParamBlock());
-    if(showtooltip) sensiexclu_->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
+
+    if (showtooltip) {
+        sensiexclu_->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
+    }
+
     sensiexclu_->setAdjusterListener(this);
     structexclu_->setAdjusterListener(this);
     excluBox->pack_start(*sensiexclu_);
@@ -199,7 +215,11 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshapemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"));
     ctboxshapemethod->pack_start(*labelshapemethod, Gtk::PACK_SHRINK, 4);
-    if(showtooltip) ctboxshapemethod->set_tooltip_markup(M("TP_LOCALLAB_STYPE_TOOLTIP"));
+
+    if (showtooltip) {
+        ctboxshapemethod->set_tooltip_markup(M("TP_LOCALLAB_STYPE_TOOLTIP"));
+    }
+
     shapeMethod_->append(M("TP_LOCALLAB_IND"));
     shapeMethod_->append(M("TP_LOCALLAB_SYM"));
     shapeMethod_->append(M("TP_LOCALLAB_INDSL"));
@@ -235,7 +255,11 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const ctboxqualitymethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelqualitymethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUAL_METHOD") + ":"));
     ctboxqualitymethod->pack_start(*labelqualitymethod, Gtk::PACK_SHRINK, 4);
-    if(showtooltip) ctboxqualitymethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
+
+    if (showtooltip) {
+        ctboxqualitymethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
+    }
+
     qualityMethod_->append(M("TP_LOCALLAB_ENH"));
     qualityMethod_->append(M("TP_LOCALLAB_ENHDEN"));
     qualityMethod_->set_active(1);
@@ -247,15 +271,38 @@ ControlSpotPanel::ControlSpotPanel():
 
     Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
     transitFrame->set_label_align(0.025, 0.5);
-    if(showtooltip) transitFrame->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+
+    if (showtooltip) {
+        transitFrame->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+    }
+
     ToolParamBlock* const transitBox = Gtk::manage(new ToolParamBlock());
-    if(showtooltip) transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
-    if(showtooltip) transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
-    if(showtooltip) transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
-    if(showtooltip) scopemask_->set_tooltip_text(M("TP_LOCALLAB_SCOPEMASK_TOOLTIP"));
+
+    if (showtooltip) {
+        transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+    }
+
+    if (showtooltip) {
+        transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
+    }
+
+    if (showtooltip) {
+        transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
+    }
+
+    if (showtooltip) {
+        scopemask_->set_tooltip_text(M("TP_LOCALLAB_SCOPEMASK_TOOLTIP"));
+    }
+
 //    if(showtooltip) lumask_->set_tooltip_text(M("TP_LOCALLAB_LUMASK_TOOLTIP"));
-    if(showtooltip) shortc_->set_tooltip_text(M("TP_LOCALLAB_SHORTCMASK_TOOLTIP"));
-    if(showtooltip) savrest_->set_tooltip_text(M("TP_LOCALLAB_SAVREST_TOOLTIP"));
+    if (showtooltip) {
+        shortc_->set_tooltip_text(M("TP_LOCALLAB_SHORTCMASK_TOOLTIP"));
+    }
+
+    if (showtooltip) {
+        savrest_->set_tooltip_text(M("TP_LOCALLAB_SAVREST_TOOLTIP"));
+    }
+
     transit_->setAdjusterListener(this);
     transitweak_->setAdjusterListener(this);
     transitgrad_->setAdjusterListener(this);
@@ -267,10 +314,14 @@ ControlSpotPanel::ControlSpotPanel():
     transitBox->pack_start(*transitgrad_);
     transitFrame->add(*transitBox);
     pack_start(*transitFrame);
-    
+
     Gtk::Frame* const artifFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ARTIF")));
     artifFrame->set_label_align(0.025, 0.5);
-    if(showtooltip) artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
+
+    if (showtooltip) {
+        artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
+    }
+
     ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
     thresh_->setAdjusterListener(this);
     struc_->setAdjusterListener(this);
@@ -282,51 +333,58 @@ ControlSpotPanel::ControlSpotPanel():
     balan_->setAdjusterListener(this);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
-    
-    Gtk::HBox* const ctboxmergemethod = Gtk::manage(new Gtk::HBox());
-    Gtk::Label* const labelmergemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MERGETYPE") + ":"));
-    ctboxmergemethod->pack_start(*labelmergemethod, Gtk::PACK_SHRINK, 4);
-    if(showtooltip) ctboxmergemethod->set_tooltip_markup(M("TP_LOCALLAB_MERGETYPE_TOOLTIP"));
-    mergeMethod_->append(M("TP_LOCALLAB_MERGENONE"));
-    mergeMethod_->append(M("TP_LOCALLAB_MERGEONE"));
-    mergeMethod_->append(M("TP_LOCALLAB_MERGETWO"));
-    mergeMethod_->append(M("TP_LOCALLAB_MERGETHR"));
-    mergeMethod_->append(M("TP_LOCALLAB_MERGEFOU"));
-    mergeMethod_->append(M("TP_LOCALLAB_MERGEFIV"));
-    mergeMethod_->set_active(0);
-    mergeMethodconn_ = mergeMethod_->signal_changed().connect(
-                          sigc::mem_fun(
-                              *this, &ControlSpotPanel::mergeMethodChanged));
-    ctboxmergemethod->pack_start(*mergeMethod_);
-
+    /*
+        Gtk::HBox* const ctboxmergemethod = Gtk::manage(new Gtk::HBox());
+        Gtk::Label* const labelmergemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MERGETYPE") + ":"));
+        ctboxmergemethod->pack_start(*labelmergemethod, Gtk::PACK_SHRINK, 4);
+        if(showtooltip) ctboxmergemethod->set_tooltip_markup(M("TP_LOCALLAB_MERGETYPE_TOOLTIP"));
+        mergeMethod_->append(M("TP_LOCALLAB_MERGENONE"));
+        mergeMethod_->append(M("TP_LOCALLAB_MERGEONE"));
+        mergeMethod_->append(M("TP_LOCALLAB_MERGETWO"));
+        mergeMethod_->append(M("TP_LOCALLAB_MERGETHR"));
+        mergeMethod_->append(M("TP_LOCALLAB_MERGEFOU"));
+        mergeMethod_->append(M("TP_LOCALLAB_MERGEFIV"));
+        mergeMethod_->set_active(0);
+        mergeMethodconn_ = mergeMethod_->signal_changed().connect(
+                              sigc::mem_fun(
+                                  *this, &ControlSpotPanel::mergeMethodChanged));
+    //    ctboxmergemethod->pack_start(*mergeMethod_);
+    */
     avoidConn_  = avoid_->signal_toggled().connect(
-            sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
+                      sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
     pack_start(*avoid_);
     recursConn_  = recurs_->signal_toggled().connect(
-            sigc::mem_fun(*this, &ControlSpotPanel::recursChanged));
+                       sigc::mem_fun(*this, &ControlSpotPanel::recursChanged));
     pack_start(*recurs_);
-    if(showtooltip) recurs_->set_tooltip_text(M("TP_LOCALLAB_RECURS_TOOLTIP"));
-    
+
+    if (showtooltip) {
+        recurs_->set_tooltip_text(M("TP_LOCALLAB_RECURS_TOOLTIP"));
+    }
+
     Gtk::Frame* const maskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MASFRAME")));
     maskFrame->set_label_align(0.025, 0.5);
-    if(showtooltip) maskFrame->set_tooltip_text(M("TP_LOCALLAB_MASFRAME_TOOLTIP"));
+
+    if (showtooltip) {
+        maskFrame->set_tooltip_text(M("TP_LOCALLAB_MASFRAME_TOOLTIP"));
+    }
+
     ToolParamBlock* const maskBox = Gtk::manage(new ToolParamBlock());
     maskBox->pack_start(*laplac_);
     laplacConn_  = laplac_->signal_toggled().connect(
-            sigc::mem_fun(*this, &ControlSpotPanel::laplacChanged));
+                       sigc::mem_fun(*this, &ControlSpotPanel::laplacChanged));
     deltaeConn_  = deltae_->signal_toggled().connect(
-            sigc::mem_fun(*this, &ControlSpotPanel::deltaeChanged));
+                       sigc::mem_fun(*this, &ControlSpotPanel::deltaeChanged));
     shortcConn_  = shortc_->signal_toggled().connect(
-            sigc::mem_fun(*this, &ControlSpotPanel::shortcChanged));
+                       sigc::mem_fun(*this, &ControlSpotPanel::shortcChanged));
     savrestConn_  = savrest_->signal_toggled().connect(
-            sigc::mem_fun(*this, &ControlSpotPanel::savrestChanged));
+                        sigc::mem_fun(*this, &ControlSpotPanel::savrestChanged));
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
 //    maskBox->pack_start(*shortc_);
     Gtk::HSeparator *separator = Gtk::manage(new  Gtk::HSeparator());
     maskBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
 
-    maskBox->pack_start(*ctboxmergemethod);
+//    maskBox->pack_start(*ctboxmergemethod);
 
     Gtk::HSeparator *separator1 = Gtk::manage(new  Gtk::HSeparator());
     maskBox->pack_start(*separator1, Gtk::PACK_SHRINK, 2);
@@ -349,7 +407,7 @@ ControlSpotPanel::ControlSpotPanel():
     colorMouseovertext.set_green(100. / 255.);
     colorMouseovertext.set_blue(0.);
     colorMouseovertext.set_alpha(0.5);
-    
+
     // Nominal spot (transparent black)
     colorNominal.set_red(0.);
     colorNominal.set_green(0.);
@@ -473,16 +531,18 @@ void ControlSpotPanel::on_button_duplicate()
 
     // Raise event
     const int selId = getSelectedSpot();
+
     if (selId == 0) { // No selected spot to duplicate
         return;
     }
+
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDuplication;
     const int newId = getNewId();
     listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId)
-                                + " (" + M("TP_LOCALLAB_EV_DUPL") + " ID#"
-                                + std::to_string(selId) + ")");
+                           + " (" + M("TP_LOCALLAB_EV_DUPL") + " ID#"
+                           + std::to_string(selId) + ")");
 }
 
 void ControlSpotPanel::on_button_rename()
@@ -512,6 +572,7 @@ void ControlSpotPanel::on_button_rename()
     // Update actual name and raise event
     if (status == RenameDialog::OkButton) {
         const Glib::ustring newname = d.get_new_name();
+
         if (newname != actualname) { // Event is only raised if name is updated
             nameChanged_ = true;
             row[spots_.name] = newname;
@@ -620,7 +681,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     // Load param in selected control spot
     shape_->set_active(row[spots_.shape]);
     spotMethod_->set_active(row[spots_.spotMethod]);
-    mergeMethod_->set_active(row[spots_.mergeMethod]);
+//    mergeMethod_->set_active(row[spots_.mergeMethod]);
     sensiexclu_->setValue((double)row[spots_.sensiexclu]);
     structexclu_->setValue((double)row[spots_.structexclu]);
     struc_->setValue((double)row[spots_.struc]);
@@ -717,7 +778,7 @@ void ControlSpotPanel::spotMethodChanged()
         listener->panelChanged(EvLocallabSpotSpotMethod, spotMethod_->get_active_text());
     }
 }
-
+/*
 void ControlSpotPanel::mergeMethodChanged()
 {
     // printf("mergeMethodChanged\n");
@@ -733,22 +794,12 @@ void ControlSpotPanel::mergeMethodChanged()
     Gtk::TreeModel::Row row = *iter;
 
     row[spots_.mergeMethod] = mergeMethod_->get_active_row_number();
-/*
-    // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
-    if (multiImage && mergeMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
-        excluFrame->show();
-    } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
-        excluFrame->hide();
-    } else { // Excluding case
-        excluFrame->show();
-    }
-*/
     // Raise event
     if (listener) {
         listener->panelChanged(EvLocallabSpotmergeMethod, mergeMethod_->get_active_text());
     }
 }
-
+*/
 
 void ControlSpotPanel::shapeMethodChanged()
 {
@@ -858,6 +909,7 @@ void ControlSpotPanel::updateParamVisibility()
 
     // Update Control Spot GUI according to shapeMethod_ combobox state (to be compliant with shapeMethodChanged function)
     const int method = shapeMethod_->get_active_row_number();
+
     if (!batchMode) {
         if (method == 1 || method == 3) { // Symmetrical cases
             locXL_->hide();
@@ -960,7 +1012,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(Evlocallabstructexlu, structexclu_->getTextValue());
         }
     }
-    
+
     if (a == struc_) {
         row[spots_.struc] = struc_->getValue();
 
@@ -1348,7 +1400,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     buttonvisibilityconn_.block(cond);
     shapeconn_.block(cond);
     spotMethodconn_.block(cond);
-    mergeMethodconn_.block(cond);
+//    mergeMethodconn_.block(cond);
     sensiexclu_->block(cond);
     structexclu_->block(cond);
     struc_->block(cond);
@@ -1383,7 +1435,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
 
     shape_->set_sensitive(cond);
     spotMethod_->set_sensitive(cond);
-    mergeMethod_->set_sensitive(cond);
+//    mergeMethod_->set_sensitive(cond);
     sensiexclu_->set_sensitive(cond);
     structexclu_->set_sensitive(cond);
     struc_->set_sensitive(cond);
@@ -1689,9 +1741,10 @@ CursorShape ControlSpotPanel::getCursor(int objectID) const
 
     // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
     const auto s = treeview_->get_selection();
+
     if (!s->count_selected_rows()) {
-         return CSHandOpen;
-     }
+        return CSHandOpen;
+    }
 
     const int rem_ = objectID % 7;
 
@@ -1765,6 +1818,7 @@ bool ControlSpotPanel::mouseOver(int modifierKey)
 
         for (auto iter = children.begin(); iter != children.end(); iter++) {
             Gtk::TreeModel::Row row = *iter;
+
             if (row[spots_.curveid] == curveId_ && *row != *selRow) {
                 row[spots_.mouseover] = true;
             } else {
@@ -1867,7 +1921,7 @@ bool ControlSpotPanel::button1Pressed(int modifierKey)
     }
 
     lastCoord_.set(provider->posImage.x + provider->deltaImage.x, provider->posImage.y + provider->deltaImage.y);
-    EditSubscriber::action = EditSubscriber::Action::DRAGGING;    
+    EditSubscriber::action = EditSubscriber::Action::DRAGGING;
     return true;
 }
 
@@ -2024,7 +2078,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->isvisible = row[spots_.isvisible];
             r->shape = row[spots_.shape];
             r->spotMethod = row[spots_.spotMethod];
-            r->mergeMethod = row[spots_.mergeMethod];
+//           r->mergeMethod = row[spots_.mergeMethod];
             r->sensiexclu = row[spots_.sensiexclu];
             r->structexclu = row[spots_.structexclu];
             r->struc = row[spots_.struc];
@@ -2158,7 +2212,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.curveid] = 0; // No associated curve
     row[spots_.shape] = newSpot->shape;
     row[spots_.spotMethod] = newSpot->spotMethod;
-    row[spots_.mergeMethod] = newSpot->mergeMethod;
+//   row[spots_.mergeMethod] = newSpot->mergeMethod;
     row[spots_.sensiexclu] = newSpot->sensiexclu;
     row[spots_.structexclu] = newSpot->structexclu;
     row[spots_.struc] = newSpot->struc;
@@ -2211,7 +2265,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.isvisible] = spot->isvisible;
             row[spots_.shape] = spot->shape;
             row[spots_.spotMethod] = spot->spotMethod;
-            row[spots_.mergeMethod] = spot->mergeMethod;
+//           row[spots_.mergeMethod] = spot->mergeMethod;
             row[spots_.sensiexclu] = spot->sensiexclu;
             row[spots_.structexclu] = spot->structexclu;
             row[spots_.struc] = spot->struc;
@@ -2310,7 +2364,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
 
     se->shape = shape_->get_active_text() != M("GENERAL_UNCHANGED");
     se->spotMethod = spotMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->mergeMethod = mergeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
+//    se->mergeMethod = mergeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->sensiexclu = sensiexclu_->getEditedState();
     se->structexclu = structexclu_->getEditedState();
     se->struc = struc_->getEditedState();
@@ -2379,10 +2433,11 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
         spotMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
-    if (!se->mergeMethod) {
-        mergeMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
+    /*
+        if (!se->mergeMethod) {
+            mergeMethod_->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+    */
     sensiexclu_->setEditedState(se->sensiexclu ? Edited : UnEdited);
     structexclu_->setEditedState(se->structexclu ? Edited : UnEdited);
     struc_->setEditedState(se->struc ? Edited : UnEdited);
@@ -2539,7 +2594,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
     // Set batch mode for comboBoxText
     shape_->append(M("GENERAL_UNCHANGED"));
     spotMethod_->append(M("GENERAL_UNCHANGED"));
-    mergeMethod_->append(M("GENERAL_UNCHANGED"));
+//    mergeMethod_->append(M("GENERAL_UNCHANGED"));
     shapeMethod_->append(M("GENERAL_UNCHANGED"));
     qualityMethod_->append(M("GENERAL_UNCHANGED"));
 }
@@ -2583,7 +2638,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(deltae);
     add(shortc);
     add(savrest);
-    add(mergeMethod);
+//    add(mergeMethod);
 }
 
 //-----------------------------------------------------------------------------

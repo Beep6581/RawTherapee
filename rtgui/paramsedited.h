@@ -384,7 +384,7 @@ public:
         bool isvisible;
         bool shape;
         bool spotMethod;
-        bool mergeMethod;
+//        bool mergeMethod;
         bool sensiexclu;
         bool structexclu;
         bool struc;
@@ -434,6 +434,7 @@ public:
         bool lapmaskcol;
         bool qualitycurveMethod;
         bool gridMethod;
+        bool merMethod;
         bool toneMethod;
         bool mergecolMethod;
         bool llcurve;

@@ -1034,13 +1034,13 @@ HISTORY_MSG_793;Local - SH TRC gamma
 HISTORY_MSG_794;Local - SH TRC slope
 HISTORY_MSG_795;Local - Mask save restore image
 HISTORY_MSG_796;Local - Recursive references
-HISTORY_MSG_797;Local - Merge and Masks method
-HISTORY_MSG_798;Local - Merge Original method
-HISTORY_MSG_799;Local - Opacity
-HISTORY_MSG_800;Local - Color RGB ToneCurve
-HISTORY_MSG_801;Local - Color ToneCurve Method
-HISTORY_MSG_802;Local - Color ToneCurve Special
-HISTORY_MSG_803;Local - Contrast threshold
+HISTORY_MSG_797;Local - Merge Original method
+HISTORY_MSG_798;Local - Opacity
+HISTORY_MSG_799;Local - Color RGB ToneCurve
+HISTORY_MSG_800;Local - Color ToneCurve Method
+HISTORY_MSG_801;Local - Color ToneCurve Special
+HISTORY_MSG_802;Local - Contrast threshold
+HISTORY_MSG_803;Local - Color Merge
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2157,6 +2157,10 @@ TP_LOCALLAB_SAVREST;Save - Restore Current Image
 TP_LOCALLAB_SCOPEMASK;Scope Mask DeltaE Image
 TP_LOCALLAB_SCOPEMASK_TOOLTIP;Enabled if Mask DeltaE Image is enabled.\nLow values avoid retouching selected area
 TP_LOCALLAB_MASFRAME;Mask and Merge
+TP_LOCALLAB_MRONE;None
+TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
+TP_LOCALLAB_MRTHR;Original Image
+TP_LOCALLAB_MRFOU;Previous Spot
 TP_LOCALLAB_MERGETYPE;Merge image and mask
 TP_LOCALLAB_MERGETYPE_TOOLTIP;None, use all mask in LCH mode.\nShort curves 'L' mask, use a short circuit for mask 2, 3, 4, 6, 7.\nOriginal mask 7, blend current image with original
 TP_LOCALLAB_MERGENONE;None
@@ -2165,7 +2169,7 @@ TP_LOCALLAB_MERGETWO;Original(Mask 7)
 TP_LOCALLAB_MERGETHR;Original(Mask 7) + Mask LCH
 TP_LOCALLAB_MERGEFOU;Previous Spot(Mask 7)
 TP_LOCALLAB_MERGEFIV;Previous Spot(Mask 7) + Mask LCH
-TP_LOCALLAB_MERGE1COLFRA;Merge with Original
+TP_LOCALLAB_MERGE1COLFRA;Merge with Original or Previous
 TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_CONTTHR;Contrast Threshold
 TP_LOCALLAB_MERGEOPA_TOOLTIP;Opacity merge % current Spot with original or previous Spot.\nContrast threshold : adjust result in function of Original contrast
@@ -2380,7 +2384,8 @@ TP_LOCALLAB_SHOWT;3 - Mask and modifications
 TP_LOCALLAB_SHOWS;4+* - Mask and modifications
 TP_LOCALLAB_SHOWR;5 - Mask and modifications
 TP_LOCALLAB_SHOWE;6+ - Mask and modifications
-TP_LOCALLAB_SHOWC;7+* - Mask and modifications - Merge 
+TP_LOCALLAB_SHOWC;7+* - Mask and modifications
+TP_LOCALLAB_SHOWC1;Merge file
 TP_LOCALLAB_SHOWPLUS;1+* - Mask and modifications - Smooth-Blur & Denoise
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR or Blur).\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMNONE;None

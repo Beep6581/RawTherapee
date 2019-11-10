@@ -819,13 +819,14 @@ enum ProcEventCode {
     EvlocallabsloSH = 793,
     Evlocallabsavrest = 794,
     Evlocallabrecurs = 795,
-    EvLocallabSpotmergeMethod = 796,
-    EvLocallabmergecolMethod = 797,
-    Evlocallabopacol = 798,
-    Evlocallabrgbshape = 799,
-    EvLocallabtoneMethod = 800,
-    EvLocallabspecial = 801,
-    Evlocallabconthrcol = 802,
+//    EvLocallabSpotmergeMethod = 796,
+    EvLocallabmergecolMethod = 796,
+    Evlocallabopacol = 797,
+    Evlocallabrgbshape = 798,
+    EvLocallabtoneMethod = 799,
+    EvLocallabspecial = 800,
+    Evlocallabconthrcol = 801,
+    EvLocallabmerMethod = 802,
     NUMOFEVENTS
 };
 

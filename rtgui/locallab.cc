@@ -144,6 +144,7 @@ Locallab::Locallab():
     expcbdl(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     expdenoi(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     expmaskcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
+    expmaskcol1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC1")))),
     expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWE")))),
     expmasksh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
     expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
@@ -292,296 +293,302 @@ Locallab::Locallab():
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0, 3, 1, 2))),
     multipliersh(
-        [this]() -> std::array<Adjuster*, 5>
-        {
-            std::array<Adjuster*, 5> res = {};
-            for (unsigned int i = 0; i < res.size(); ++i) {
-                Glib::ustring ss = Glib::ustring::format(i);
+        [this]() -> std::array<Adjuster *, 5>
+{
+    std::array<Adjuster*, 5> res = {};
 
-                if (i == 0) {
-                    ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMADARKEST"));
-                } else if (i == 4) {
-                    ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMAWHITESEST"));
-                }
+    for (unsigned int i = 0; i < res.size(); ++i) {
+        Glib::ustring ss = Glib::ustring::format(i);
 
-                res[i] = Gtk::manage(new Adjuster(std::move(ss), -100, 100, 1, 0));
-                res[i]->setAdjusterListener(this);
-            }
-            return res;
-        }()
-    ),
-    //Shadow hightlights
-    highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
-    h_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70))),
-    shadows(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0))),
-    s_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 30))),
-    sh_radius(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0, 100, 1, 40))),
-    sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
-    blendmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    radmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
-    chromaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
-    gammaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
-    slomaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
-    lapmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    detailSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILSH"), -5, 5, 1, 0))),
-    fatamountSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
-    fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    gamSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
-    sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 100.0, 0.01, 12.92))),
-    // Vibrance
-    saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
-    pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
-    sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
-    //Soft Light
-    streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
-    laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
-    sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
-    // Blur & Noise
-    radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.5, 1000.0, 0.1, 1.5))),
-    strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
-    itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
-    guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
-    epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
-    sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
-    blendmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    radmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    chromaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
-    gammaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
-    slomaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
-    lapmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    shadmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))),
-    isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
-    strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
-    scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
-    // Tone Mapping
-    stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
-    gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 0.4, 4.0, 0.11, 1.0))),
-    estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 0.1, 4.0, 0.01, 0.5))),
-    scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 0.1, 10.0, 0.01, 4.0))),
-    rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 3, 1, 0))),
-    sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
-    softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
-    amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50., 100.0, 0.5, 95.))),
-    satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100., 100., 0.1, 0.))),//by default satur = 0 ==> use Mantiuk value
-    blendmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    radmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    chromasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
-    gammasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
-    slomasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
-    lapmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    // Retinex
-    str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.2))),
-    chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
-    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), MINNEIGH, MAXNEIGH, 0.5, 50., nullptr, nullptr, &retiSlider2neigh, &retiNeigh2Slider))),
-    vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 0.1, 500., 0.1, 150.))),
-    offs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFS"), -16386., 32768., 1., 0.))),
-    dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
-    depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
-    sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 60))),
-    softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRETI"), 0.0, 100.0, 0.5, 40.))),
-    blendmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    radmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
-    chromaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
-    gammaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
-    slomaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
-    lapmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    scalereti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALERETI"), 1.0, 10.0, 1., 2.))),
-    darkness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DARKRETI"), 0.01, 6.0, 0.01, 2.0))),
-    lightnessreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTRETI"), 0.01, 4.0, 0.01, 1.))),
-    limd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESRETI"), 1.2, 100.0, 0.1, 8.))),
-    cliptm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLIPTM"), 0.02, 2.0, 0.01, 1.))),
-    // Sharpening
-    sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
-    sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
-    sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
-    shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 0))),
-    shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
-    sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
-    sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
-    // Local Contrast
-    lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 20, 400, 1, 80))),
-    lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
-    lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
-    lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
-    levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
-    residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
-    clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
-    clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARISOFT"), 0., 100., 0.5, 0.))),
-    claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
-    sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
-    residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100, 100, 1, 0))),
-    multiplier(
-        [this]() -> std::array<Adjuster*, 6>
-        {
-            std::array<Adjuster*, 6> res = {};
-            for (unsigned int i = 0; i < res.size(); ++i) {
-                Glib::ustring ss = Glib::ustring::format(i);
+        if (i == 0) {
+            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMADARKEST"));
+        } else if (i == 4) {
+            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMAWHITESEST"));
+        }
 
-                if (i == 0) {
-                    ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
-                } else if (i == 5) {
-                    ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
-                }
+        res[i] = Gtk::manage(new Adjuster(std::move(ss), -100, 100, 1, 0));
+        res[i]->setAdjusterListener(this);
+    }
 
-                res[i] = Gtk::manage(new Adjuster(std::move(ss), 0.0, 4.0, 0.01, 1.0));
-                res[i]->setAdjusterListener(this);
-            }
-            return res;
-        }()
-    ),
-    // Contrast by detail levels
-    chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
-    threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
-    clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
-    contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
-    blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0., 100., 0.1, 0.))),
-    sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
-    softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
-    blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    radmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    chromaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
-    gammaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
-    slomaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
-    lapmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    // Denoise
-    noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
-    noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
-    noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
-    noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
-    noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0., 100., 0.01, 0.))),
-    noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
-    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
-    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
-    noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0., 100., 0.01, 0.))),
-    adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-red-small.png"))))),
-    bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
-    sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 20))),
-    detailthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILTHR"), 0, 100, 1, 0))),
+    return res;
+}
+()
+),
+//Shadow hightlights
+highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
+h_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70))),
+shadows(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0))),
+s_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 30))),
+sh_radius(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0, 100, 1, 40))),
+sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
+blendmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+radmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
+chromaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+gammaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
+slomaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+lapmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+detailSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILSH"), -5, 5, 1, 0))),
+fatamountSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
+fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+gamSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
+sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 100.0, 0.01, 12.92))),
+// Vibrance
+saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
+pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
+sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
+//Soft Light
+streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
+laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
+sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
+// Blur & Noise
+radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.5, 1000.0, 0.1, 1.5))),
+strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
+itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
+guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
+epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
+sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
+blendmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+radmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+chromaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+gammaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
+slomaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+lapmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+shadmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))),
+isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
+strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
+scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
+// Tone Mapping
+stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
+gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 0.4, 4.0, 0.11, 1.0))),
+estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 0.1, 4.0, 0.01, 0.5))),
+scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 0.1, 10.0, 0.01, 4.0))),
+rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 3, 1, 0))),
+sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
+softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
+amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50., 100.0, 0.5, 95.))),
+satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100., 100., 0.1, 0.))),//by default satur = 0 ==> use Mantiuk value
+blendmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+radmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+chromasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+gammasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
+slomasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+lapmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+// Retinex
+str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.2))),
+chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
+neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), MINNEIGH, MAXNEIGH, 0.5, 50., nullptr, nullptr, &retiSlider2neigh, &retiNeigh2Slider))),
+vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 0.1, 500., 0.1, 150.))),
+offs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFS"), -16386., 32768., 1., 0.))),
+dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
+depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
+sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 60))),
+softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRETI"), 0.0, 100.0, 0.5, 40.))),
+blendmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+radmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
+chromaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+gammaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
+slomaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+lapmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+scalereti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALERETI"), 1.0, 10.0, 1., 2.))),
+darkness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DARKRETI"), 0.01, 6.0, 0.01, 2.0))),
+lightnessreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTRETI"), 0.01, 4.0, 0.01, 1.))),
+limd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESRETI"), 1.2, 100.0, 0.1, 8.))),
+cliptm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLIPTM"), 0.02, 2.0, 0.01, 1.))),
+// Sharpening
+sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
+sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
+sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
+shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 0))),
+shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
+sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
+sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
+// Local Contrast
+lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 20, 400, 1, 80))),
+lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
+lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
+lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
+levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
+residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
+clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
+clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARISOFT"), 0., 100., 0.5, 0.))),
+claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
+sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
+residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100, 100, 1, 0))),
+multiplier(
+[this]() -> std::array<Adjuster*, 6> {
+    std::array<Adjuster*, 6> res = {};
 
-    // ButtonCheck widgets
-    // Color & Light
-    curvactiv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CURV")))),
-    invers(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
-    special(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SPECIAL")))),
-    enaColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    // Exposure
-    enaExpMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    enaExpMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASKAFT")))),
-    inversex(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
-    //Shadows Highlight
-    enaSHMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    inverssh(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
-    // Vibrance
-    protectSkins(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")))),
-    avoidColorShift(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_AVOIDCOLORSHIFT")))),
-    pastSatTog(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PASTSATTOG")))),
-    // Blur & Noise
-    activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
-    enablMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    fftwbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
-    //TM
-    equiltm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
-    enatmMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    enatmMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_AFTER_MASK")))),
-    // Retinex
-    equilret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
-    inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
-    loglin(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGLIN")))),
-    lumonly(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LUMONLY")))),
-    enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
-    fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
-    // Sharpening
-    inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
-    // Local contrast
-    fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
-    //CBDL
-    enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+    for (unsigned int i = 0; i < res.size(); ++i)
+    {
+        Glib::ustring ss = Glib::ustring::format(i);
 
-    // ComboBox widgets
-    // Color & Light
-    qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
-    gridMethod(Gtk::manage(new MyComboBoxText())),
+        if (i == 0) {
+            ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
+        } else if (i == 5) {
+            ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
+        }
+
+        res[i] = Gtk::manage(new Adjuster(std::move(ss), 0.0, 4.0, 0.01, 1.0));
+        res[i]->setAdjusterListener(this);
+    }
+    return res;
+}()
+),
+// Contrast by detail levels
+chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
+threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
+clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
+contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
+blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0., 100., 0.1, 0.))),
+sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
+softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
+blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+radmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+chromaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+gammaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
+slomaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+lapmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+// Denoise
+noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
+noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
+noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
+noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
+noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0., 100., 0.01, 0.))),
+noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
+noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
+noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
+noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0., 100., 0.01, 0.))),
+adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-red-small.png"))))),
+bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
+sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 20))),
+detailthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILTHR"), 0, 100, 1, 0))),
+
+// ButtonCheck widgets
+// Color & Light
+curvactiv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CURV")))),
+invers(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+special(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SPECIAL")))),
+enaColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+// Exposure
+enaExpMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+enaExpMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASKAFT")))),
+inversex(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+//Shadows Highlight
+enaSHMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+inverssh(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+// Vibrance
+protectSkins(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")))),
+avoidColorShift(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_AVOIDCOLORSHIFT")))),
+pastSatTog(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PASTSATTOG")))),
+// Blur & Noise
+activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
+enablMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+fftwbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
+//TM
+equiltm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
+enatmMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+enatmMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_AFTER_MASK")))),
+// Retinex
+equilret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
+inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+loglin(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGLIN")))),
+lumonly(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LUMONLY")))),
+enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
+fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
+// Sharpening
+inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+// Local contrast
+fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
+//CBDL
+enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+
+// ComboBox widgets
+// Color & Light
+qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
+gridMethod(Gtk::manage(new MyComboBoxText())),
+merMethod(Gtk::manage(new MyComboBoxText())),
 //   toneMethod(Gtk::manage(new MyComboBoxText())),
-    showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
-    showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
-    mergecolMethod(Gtk::manage(new MyComboBoxText())),
-    csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
-    //Exposure
-    showmaskexpMethod(Gtk::manage(new MyComboBoxText())),
-    showmaskexpMethodinv(Gtk::manage(new MyComboBoxText())),
-    expMethod(Gtk::manage(new MyComboBoxText())),
-    exnoiseMethod(Gtk::manage(new MyComboBoxText())),
-    //Shadows Highlight
-    shMethod(Gtk::manage(new MyComboBoxText())),
-    showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
-    showmaskSHMethodinv(Gtk::manage(new MyComboBoxText())),
-    // Blur & Noise
-    blurMethod(Gtk::manage(new MyComboBoxText())),
-    //soft Method
-    softMethod(Gtk::manage(new MyComboBoxText())),
-    showmasksoftMethod(Gtk::manage(new MyComboBoxText())),
-    //Blur
-    blMethod(Gtk::manage(new MyComboBoxText())),
-    medMethod(Gtk::manage(new MyComboBoxText())),
-    showmaskblMethod(Gtk::manage(new MyComboBoxText())),
-    csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
-    //TM
-    showmasktmMethod(Gtk::manage(new MyComboBoxText())),
-    // Retinex
-    retinexMethod(Gtk::manage(new MyComboBoxText())),
-    showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
-    //Local contrast
-    localcontMethod(Gtk::manage(new MyComboBoxText())),
-    csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 5, 5, 0, false))),
-    //CBDL
-    showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
+showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
+showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
+mergecolMethod(Gtk::manage(new MyComboBoxText())),
+csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
+//Exposure
+showmaskexpMethod(Gtk::manage(new MyComboBoxText())),
+showmaskexpMethodinv(Gtk::manage(new MyComboBoxText())),
+expMethod(Gtk::manage(new MyComboBoxText())),
+exnoiseMethod(Gtk::manage(new MyComboBoxText())),
+//Shadows Highlight
+shMethod(Gtk::manage(new MyComboBoxText())),
+showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
+showmaskSHMethodinv(Gtk::manage(new MyComboBoxText())),
+// Blur & Noise
+blurMethod(Gtk::manage(new MyComboBoxText())),
+//soft Method
+softMethod(Gtk::manage(new MyComboBoxText())),
+showmasksoftMethod(Gtk::manage(new MyComboBoxText())),
+//Blur
+blMethod(Gtk::manage(new MyComboBoxText())),
+medMethod(Gtk::manage(new MyComboBoxText())),
+showmaskblMethod(Gtk::manage(new MyComboBoxText())),
+csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
+//TM
+showmasktmMethod(Gtk::manage(new MyComboBoxText())),
+// Retinex
+retinexMethod(Gtk::manage(new MyComboBoxText())),
+showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
+//Local contrast
+localcontMethod(Gtk::manage(new MyComboBoxText())),
+csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 5, 5, 0, false))),
+//CBDL
+showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
 
-    // ThresholdAdjuster widgets
-    // Vibrance
-    psThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false))),
+// ThresholdAdjuster widgets
+// Vibrance
+psThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false))),
 
-    // Other widgets
-    labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
-    lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
-    lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
-    lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
-    gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
-    mergecolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")))),
-    merge1colFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")))),
-    pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
-    fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
-    fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
-    gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
-    dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
-    retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
-    retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
-    residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
-    clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
-    grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
+// Other widgets
+labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
+lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
+lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
+lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
+gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
+mergecolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")))),
+merge1colFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")))),
+pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
+fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
+fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
+gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
+dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
+retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
+retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
+residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
+clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
+grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
 //    retiBox(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
-    retiBox(Gtk::manage(new ToolParamBlock())),
-    maskretiBox(Gtk::manage(new ToolParamBlock())),
-    labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")))),
-    mMLabels(Gtk::manage(new Gtk::Label("---"))),
-    transLabels(Gtk::manage(new Gtk::Label("---"))),
-    transLabels2(Gtk::manage(new Gtk::Label("---"))),
+retiBox(Gtk::manage(new ToolParamBlock())),
+maskretiBox(Gtk::manage(new ToolParamBlock())),
+mask7(Gtk::manage(new ToolParamBlock())),
+labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")))),
+mMLabels(Gtk::manage(new Gtk::Label("---"))),
+transLabels(Gtk::manage(new Gtk::Label("---"))),
+transLabels2(Gtk::manage(new Gtk::Label("---"))),
 
-    // Others
-    ctboxsoftmethod(Gtk::manage(new Gtk::HBox())),
-    ctboxexpmethod(Gtk::manage(new Gtk::HBox())),
-    nextmin(0.),
-    nextmax(0.),
-    nextminiT(0.),
-    nextmaxiT(0.),
-    nextmeanT(0.),
-    nextminT(0.),
-    nextmaxT(0.),
-    nextsigma(0.),
-    defparams(nullptr),
-    defpedited(nullptr),
-    pe(nullptr)
+// Others
+ctboxsoftmethod(Gtk::manage(new Gtk::HBox())),
+ctboxexpmethod(Gtk::manage(new Gtk::HBox())),
+nextmin(0.),
+nextmax(0.),
+nextminiT(0.),
+nextmaxiT(0.),
+nextmeanT(0.),
+nextminT(0.),
+nextmaxT(0.),
+nextsigma(0.),
+defparams(nullptr),
+defpedited(nullptr),
+pe(nullptr)
 {
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
     const bool showtooltip = options.showtooltip;
@@ -603,6 +610,9 @@ Locallab::Locallab():
     setExpandAlignProperties(expmaskcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskcol->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskcol));
     expmaskcol->setLevel(2);
+    setExpandAlignProperties(expmaskcol1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expmaskcol1->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskcol1));
+    expmaskcol1->setLevel(2);
 
     if (showtooltip) {
         expmaskcol->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
@@ -660,6 +670,13 @@ Locallab::Locallab():
     gridMethod->append(M("TP_LOCALLAB_GRIDTWO"));
     gridMethod->set_active(0);
     gridMethodConn = gridMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::gridMethodChanged));
+
+    merMethod->append(M("TP_LOCALLAB_MRONE"));
+    merMethod->append(M("TP_LOCALLAB_MRTWO"));
+    merMethod->append(M("TP_LOCALLAB_MRTHR"));
+    merMethod->append(M("TP_LOCALLAB_MRFOU"));
+    merMethod->set_active(0);
+    merMethodConn = merMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::merMethodChanged));
 
     toneMethod->append(M("TP_EXPOSURE_TCMODE_STANDARD"));
     toneMethod->append(M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
@@ -903,10 +920,14 @@ Locallab::Locallab():
     colorBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     colorBox->pack_start(*special);
     colorBox->pack_start(*invers);
+    Gtk::HSeparator* const separatormer = Gtk::manage(new  Gtk::HSeparator());
+
+
 
     mergecolFrame->set_label_align(0.025, 0.5);
     merge1colFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const mergecolBox = Gtk::manage(new ToolParamBlock());
+    mergecolBox->pack_start(*separatormer, Gtk::PACK_SHRINK, 2);
     mergecolBox->pack_start(*mergecolMethod);
     mergecolBox->pack_start(*opacol);
     mergecolBox->pack_start(*conthrcol);
@@ -929,12 +950,13 @@ Locallab::Locallab():
     maskcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
 
     mergecolFrame->add(*maskcolBox);
-
-    ToolParamBlock* const maskcol1Box = Gtk::manage(new ToolParamBlock());
-    maskcol1Box->pack_start(*merge1colFrame);
-    maskcol1Box->pack_start(*mergecolFrame);
-
-    expmaskcol->add(*maskcol1Box, false);
+    ToolParamBlock* const mask7Box = Gtk::manage(new ToolParamBlock());
+    mask7Box->pack_start(*merMethod);
+    mask7->pack_start(*merge1colFrame);
+    mask7Box->pack_start(*mask7);
+    expmaskcol1->add(*mask7Box, false);
+    expmaskcol->add(*mergecolFrame, false);
+    colorBox->pack_start(*expmaskcol1);
     colorBox->pack_start(*expmaskcol);
 
     expcolor->add(*colorBox, false);
@@ -965,11 +987,6 @@ Locallab::Locallab():
     exnoiseMethod->append(M("TP_LOCALLAB_NONENOISE"));
     exnoiseMethod->append(M("TP_LOCALLAB_MEDIAN"));
     exnoiseMethod->append(M("TP_LOCALLAB_WEDIANHI"));
-    /*
-    exnoiseMethod->append(M("TP_LOCALLAB_WAVLOW"));
-    exnoiseMethod->append(M("TP_LOCALLAB_WAVMED"));
-    exnoiseMethod->append(M("TP_LOCALLAB_WAVHIGH"));
-    */
     exnoiseMethod->set_active(0);
     exnoiseMethodConn  = exnoiseMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::exnoiseMethodChanged));
 
@@ -2596,6 +2613,7 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         expcbdl->set_expanded(expcbdl == expander);
         expdenoi->set_expanded(expdenoi == expander);
         expmaskcol->set_expanded(expmaskcol == expander);
+        expmaskcol1->set_expanded(expmaskcol1 == expander);
         expmaskexp->set_expanded(expmaskexp == expander);
         expmasksh->set_expanded(expmasksh == expander);
         expmaskcb->set_expanded(expmaskcb == expander);
@@ -2689,6 +2707,7 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expcbdl->get_expanded());
     tpOpen.push_back(expdenoi->get_expanded());
     tpOpen.push_back(expmaskcol->get_expanded());
+    tpOpen.push_back(expmaskcol1->get_expanded());
     tpOpen.push_back(expmaskexp->get_expanded());
     tpOpen.push_back(expmasksh->get_expanded());
     tpOpen.push_back(expmaskcb->get_expanded());
@@ -2840,7 +2859,7 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 21) {
+    if (tpOpen.size() >= 22) {
         expsettings->setExpanded(tpOpen.at(0));
         expcolor->set_expanded(tpOpen.at(1));
         expexpose->set_expanded(tpOpen.at(2));
@@ -2855,12 +2874,13 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
         expcbdl->set_expanded(tpOpen.at(11));
         expdenoi->set_expanded(tpOpen.at(12));
         expmaskcol->set_expanded(tpOpen.at(13));
-        expmaskexp->set_expanded(tpOpen.at(14));
-        expmasksh->set_expanded(tpOpen.at(15));
-        expmaskcb->set_expanded(tpOpen.at(16));
-        expmaskreti->set_expanded(tpOpen.at(17));
-        expmasktm->set_expanded(tpOpen.at(18));
-        expmaskbl->set_expanded(tpOpen.at(19));
+        expmaskcol1->set_expanded(tpOpen.at(14));
+        expmaskexp->set_expanded(tpOpen.at(15));
+        expmasksh->set_expanded(tpOpen.at(16));
+        expmaskcb->set_expanded(tpOpen.at(17));
+        expmaskreti->set_expanded(tpOpen.at(18));
+        expmasktm->set_expanded(tpOpen.at(19));
+        expmaskbl->set_expanded(tpOpen.at(20));
     }
 }
 
@@ -2942,32 +2962,39 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->spotMethod = 1;
         }
 
-        if (pp->locallab.spots.at(i).mergeMethod == "none") {
-            r->mergeMethod = 0;
-            merge1colFrame->hide();
-            mergecolFrame->show();
-        } else if (pp->locallab.spots.at(i).mergeMethod == "short") {
-            r->mergeMethod = 1;
-            merge1colFrame->hide();
-            mergecolFrame->show();
-        } else if (pp->locallab.spots.at(i).mergeMethod == "orig") {
-            r->mergeMethod = 2;
-            merge1colFrame->show();
-            mergecolFrame->hide();
-        } else if (pp->locallab.spots.at(i).mergeMethod == "origmas") {
-            r->mergeMethod = 3;
-            merge1colFrame->show();
-            mergecolFrame->show();
-        } else if (pp->locallab.spots.at(i).mergeMethod == "lastspot") {
-            r->mergeMethod = 4;
-            merge1colFrame->show();
-            mergecolFrame->hide();
-        } else if (pp->locallab.spots.at(i).mergeMethod == "lastspotmas") {
-            r->mergeMethod = 5;
-            merge1colFrame->show();
-            mergecolFrame->hide();
-        }
+        /*
+                if (pp->locallab.spots.at(i).mergeMethod == "none") {
+                    r->mergeMethod = 0;
+                    expmaskcol1->hide();
+                    expmaskcol->show();
 
+                } else if (pp->locallab.spots.at(i).mergeMethod == "short") {
+                    r->mergeMethod = 1;
+                    expmaskcol1->hide();
+                    expmaskcol->show();
+
+                } else if (pp->locallab.spots.at(i).mergeMethod == "orig") {
+                    r->mergeMethod = 2;
+                    expmaskcol1->show();
+                    expmaskcol->hide();
+
+                } else if (pp->locallab.spots.at(i).mergeMethod == "origmas") {
+                    r->mergeMethod = 3;
+                    expmaskcol1->show();
+                    expmaskcol->show();
+
+                } else if (pp->locallab.spots.at(i).mergeMethod == "lastspot") {
+                    r->mergeMethod = 4;
+                    expmaskcol1->show();
+                    expmaskcol->hide();
+
+                } else if (pp->locallab.spots.at(i).mergeMethod == "lastspotmas") {
+                    r->mergeMethod = 5;
+                    expmaskcol1->show();
+                    expmaskcol->hide();
+
+                }
+        */
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
         r->structexclu = pp->locallab.spots.at(i).structexclu;
         r->struc = pp->locallab.spots.at(i).struc;
@@ -3083,33 +3110,36 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->spotMethod = 1;
             }
 
-            if (newSpot->mergeMethod == "none") {
-                r->mergeMethod = 0;
-                merge1colFrame->hide();
-                mergecolFrame->show();
-            } else if (newSpot->mergeMethod == "short") {
-                r->mergeMethod = 1;
-                merge1colFrame->hide();
-                mergecolFrame->show();
-            } else if (newSpot->mergeMethod == "orig") {
-                r->mergeMethod = 2;
-                merge1colFrame->show();
-                mergecolFrame->hide();
-            } else if (newSpot->mergeMethod == "origmas") {
-                r->mergeMethod = 3;
-                merge1colFrame->show();
-                mergecolFrame->show();
-            } else if (newSpot->mergeMethod == "lastspot") {
-                r->mergeMethod = 4;
-                merge1colFrame->show();
-                mergecolFrame->hide();
-            } else if (newSpot->mergeMethod == "lastspotmas") {
-                r->mergeMethod = 5;
-                merge1colFrame->show();
-                mergecolFrame->show();
+            /*
+                        if (newSpot->mergeMethod == "none") {
+                            r->mergeMethod = 0;
+                            expmaskcol1->hide();
+                            expmaskcol->show();
 
-            }
+                        } else if (newSpot->mergeMethod == "short") {
+                            r->mergeMethod = 1;
+                            expmaskcol1->hide();
+                            expmaskcol->show();
 
+                        } else if (newSpot->mergeMethod == "orig") {
+                            r->mergeMethod = 2;
+                            expmaskcol1->show();
+                            expmaskcol->hide();
+                        } else if (newSpot->mergeMethod == "origmas") {
+                            r->mergeMethod = 3;
+                            expmaskcol1->show();
+                            expmaskcol->show();
+                        } else if (newSpot->mergeMethod == "lastspot") {
+                            r->mergeMethod = 4;
+                            expmaskcol1->show();
+                            expmaskcol->hide();
+                        } else if (newSpot->mergeMethod == "lastspotmas") {
+                            r->mergeMethod = 5;
+                            expmaskcol1->show();
+                            expmaskcol->show();
+
+                        }
+            */
             r->sensiexclu = newSpot->sensiexclu;
             r->structexclu = newSpot->structexclu;
             r->struc = newSpot->struc;
@@ -3333,32 +3363,33 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->spotMethod = 1;
             }
 
-            if (newSpot->mergeMethod == "none") {
-                r->mergeMethod = 0;
-                merge1colFrame->hide();
-                mergecolFrame->show();
-            } else if (newSpot->mergeMethod == "short") {
-                r->mergeMethod = 1;
-                merge1colFrame->hide();
-                mergecolFrame->show();
-            } else if (newSpot->mergeMethod == "orig") {
-                r->mergeMethod = 2;
-                merge1colFrame->show();
-                mergecolFrame->hide();
-            } else if (newSpot->mergeMethod == "origmas") {
-                r->mergeMethod = 3;
-                merge1colFrame->show();
-                mergecolFrame->show();
-            } else if (newSpot->mergeMethod == "lastspot") {
-                r->mergeMethod = 4;
-                merge1colFrame->show();
-                mergecolFrame->hide();
-            } else if (newSpot->mergeMethod == "lastspotmas") {
-                r->mergeMethod = 5;
-                merge1colFrame->show();
-                mergecolFrame->show();
-            }
-
+            /*
+                        if (newSpot->mergeMethod == "none") {
+                            r->mergeMethod = 0;
+                            expmaskcol1->hide();
+                            expmaskcol->show();
+                        } else if (newSpot->mergeMethod == "short") {
+                            r->mergeMethod = 1;
+                            expmaskcol1->hide();
+                            expmaskcol->show();
+                        } else if (newSpot->mergeMethod == "orig") {
+                            r->mergeMethod = 2;
+                            expmaskcol1->show();
+                            expmaskcol->hide();
+                        } else if (newSpot->mergeMethod == "origmas") {
+                            r->mergeMethod = 3;
+                            expmaskcol1->show();
+                            expmaskcol->show();
+                        } else if (newSpot->mergeMethod == "lastspot") {
+                            r->mergeMethod = 4;
+                            expmaskcol1->show();
+                            expmaskcol->hide();
+                        } else if (newSpot->mergeMethod == "lastspotmas") {
+                            r->mergeMethod = 5;
+                            expmaskcol1->show();
+                            expmaskcol->show();
+                        }
+            */
             r->sensiexclu = newSpot->sensiexclu;
             r->structexclu = newSpot->structexclu;
             r->struc = newSpot->struc;
@@ -3499,34 +3530,35 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "exc";
                     }
 
-                    if (r->mergeMethod == 0) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "none";
-                        merge1colFrame->hide();
-                        mergecolFrame->show();
+                    /*
+                                        if (r->mergeMethod == 0) {
+                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "none";
+                                            expmaskcol1->hide();
+                                            expmaskcol->show();
 
-                    } else if (r->mergeMethod == 1) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "short";
-                        merge1colFrame->hide();
-                        mergecolFrame->show();
-                    } else if (r->mergeMethod == 2) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "orig";
-                        merge1colFrame->show();
-                        mergecolFrame->hide();
-                    } else if (r->mergeMethod == 3) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "origmas";
-                        merge1colFrame->show();
-                        mergecolFrame->show();
-                    } else if (r->mergeMethod == 4) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "lastspot";
-                        merge1colFrame->show();
-                        mergecolFrame->hide();
-                    } else if (r->mergeMethod == 5) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "lastspotmas";
-                        merge1colFrame->show();
-                        mergecolFrame->show();
+                                        } else if (r->mergeMethod == 1) {
+                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "short";
+                                            expmaskcol1->hide();
+                                            expmaskcol->show();
+                                        } else if (r->mergeMethod == 2) {
+                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "orig";
+                                            expmaskcol1->show();
+                                            expmaskcol->hide();
+                                        } else if (r->mergeMethod == 3) {
+                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "origmas";
+                                            expmaskcol1->show();
+                                            expmaskcol->show();
+                                        } else if (r->mergeMethod == 4) {
+                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "lastspot";
+                                            expmaskcol1->show();
+                                            expmaskcol->hide();
+                                        } else if (r->mergeMethod == 5) {
+                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "lastspotmas";
+                                            expmaskcol1->show();
+                                            expmaskcol->show();
 
-                    }
-
+                                        }
+                    */
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
                     pp->locallab.spots.at(pp->locallab.selspot).structexclu = r->structexclu;
                     pp->locallab.spots.at(pp->locallab.selspot).struc = r->struc;
@@ -3595,6 +3627,16 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).gridMethod = "one";
                     } else if (gridMethod->get_active_row_number() == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).gridMethod = "two";
+                    }
+
+                    if (merMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).merMethod = "mone";
+                    } else if (merMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).merMethod = "mtwo";
+                    } else if (merMethod->get_active_row_number() == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).merMethod = "mthr";
+                    } else if (merMethod->get_active_row_number() == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).merMethod = "mfou";
                     }
 
                     if (toneMethod->get_active_row_number() == 0) {
@@ -3987,7 +4029,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).isvisible = pe->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
                         pe->locallab.spots.at(pp->locallab.selspot).shape = pe->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
                         pe->locallab.spots.at(pp->locallab.selspot).spotMethod = pe->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
-                        pe->locallab.spots.at(pp->locallab.selspot).mergeMethod = pe->locallab.spots.at(pp->locallab.selspot).mergeMethod || se->mergeMethod;
+//                        pe->locallab.spots.at(pp->locallab.selspot).mergeMethod = pe->locallab.spots.at(pp->locallab.selspot).mergeMethod || se->mergeMethod;
                         pe->locallab.spots.at(pp->locallab.selspot).sensiexclu = pe->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
                         pe->locallab.spots.at(pp->locallab.selspot).structexclu = pe->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
                         pe->locallab.spots.at(pp->locallab.selspot).struc = pe->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
@@ -4026,6 +4068,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).structcol = pe->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).gridMethod = pe->locallab.spots.at(pp->locallab.selspot).gridMethod || gridMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).merMethod = pe->locallab.spots.at(pp->locallab.selspot).merMethod || merMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).toneMethod = pe->locallab.spots.at(pp->locallab.selspot).toneMethod || toneMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).mergecolMethod = pe->locallab.spots.at(pp->locallab.selspot).mergecolMethod || mergecolMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).llcurve = pe->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
@@ -4313,7 +4356,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).isvisible = pedited->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
                         pedited->locallab.spots.at(pp->locallab.selspot).shape = pedited->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
                         pedited->locallab.spots.at(pp->locallab.selspot).spotMethod = pedited->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
-                        pedited->locallab.spots.at(pp->locallab.selspot).mergeMethod = pedited->locallab.spots.at(pp->locallab.selspot).mergeMethod || se->mergeMethod;
+//                        pedited->locallab.spots.at(pp->locallab.selspot).mergeMethod = pedited->locallab.spots.at(pp->locallab.selspot).mergeMethod || se->mergeMethod;
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu = pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
                         pedited->locallab.spots.at(pp->locallab.selspot).structexclu = pedited->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
                         pedited->locallab.spots.at(pp->locallab.selspot).struc = pedited->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
@@ -4351,6 +4394,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).structcol = pedited->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).gridMethod = pedited->locallab.spots.at(pp->locallab.selspot).gridMethod || gridMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pedited->locallab.spots.at(pp->locallab.selspot).merMethod = pedited->locallab.spots.at(pp->locallab.selspot).merMethod || merMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).toneMethod = pedited->locallab.spots.at(pp->locallab.selspot).toneMethod || toneMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).mergecolMethod = pedited->locallab.spots.at(pp->locallab.selspot).mergecolMethod || mergecolMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).llcurve = pedited->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
@@ -5178,6 +5222,25 @@ void Locallab::gridMethodChanged()
     }
 }
 
+void Locallab::merMethodChanged()
+{
+    if (merMethod->get_active_row_number() == 0) {
+        mask7->hide();
+    } else if (merMethod->get_active_row_number() == 1) {
+        mask7->hide();
+    } else if (merMethod->get_active_row_number() == 2) {
+        mask7->show();
+    } else if (merMethod->get_active_row_number() == 3) {
+        mask7->show();
+    }
+
+    if (getEnabled() && expcolor->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvLocallabmerMethod, merMethod->get_active_text());
+        }
+    }
+}
+
 void Locallab::toneMethodChanged()
 {
     // printf("qualitycurveMethodChanged\n");
@@ -5893,6 +5956,7 @@ void Locallab::inversChanged()
         qualitycurveMethod->show();
         labqualcurv->show();
         expmaskcol->show();
+        expmaskcol1->show();
         structcol->show();
         strengthgrid->hide();
         blurcolde->show();
@@ -5910,6 +5974,7 @@ void Locallab::inversChanged()
         qualitycurveMethod->hide();
         labqualcurv->hide();
         expmaskcol->show();
+        expmaskcol1->hide();
         structcol->hide();
         blurcolde->show();
         gridFrame->hide();
@@ -5926,6 +5991,7 @@ void Locallab::inversChanged()
         qualitycurveMethod->show();
         labqualcurv->show();
         expmaskcol->show();
+        expmaskcol1->show();
         structcol->show();
         blurcolde->show();
         gridFrame->show();
@@ -8404,6 +8470,7 @@ void Locallab::setBatchMode(bool batchMode)
     // Color & Light
     qualitycurveMethod->append(M("GENERAL_UNCHANGED"));
     gridMethod->append(M("GENERAL_UNCHANGED"));
+    merMethod->append(M("GENERAL_UNCHANGED"));
     toneMethod->append(M("GENERAL_UNCHANGED"));
     mergecolMethod->append(M("GENERAL_UNCHANGED"));
     //exposure
@@ -8573,6 +8640,7 @@ void Locallab::enableListener()
     curvactivConn.block(false);
     qualitycurveMethodConn.block(false);
     gridMethodConn.block(false);
+    merMethodConn.block(false);
     toneMethodConn.block(false);
     mergecolMethodConn.block(false);
     inversConn.block(false);
@@ -8656,6 +8724,7 @@ void Locallab::disableListener()
     curvactivConn.block(true);
     qualitycurveMethodConn.block(true);
     gridMethodConn.block(true);
+    merMethodConn.block(true);
     toneMethodConn.block(true);
     mergecolMethodConn.block(true);
     inversConn.block(true);
@@ -8756,6 +8825,16 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             gridMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).gridMethod == "two") {
             gridMethod->set_active(1);
+        }
+
+        if (pp->locallab.spots.at(index).merMethod == "mone") {
+            merMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).merMethod == "mtwo") {
+            merMethod->set_active(1);
+        } else if (pp->locallab.spots.at(index).merMethod == "mthr") {
+            merMethod->set_active(2);
+        } else if (pp->locallab.spots.at(index).merMethod == "mfou") {
+            merMethod->set_active(3);
         }
 
         if (pp->locallab.spots.at(index).toneMethod == "one") {
@@ -9178,7 +9257,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->isvisible = spotState->isvisible;
                 se->shape = spotState->shape;
                 se->spotMethod = spotState->spotMethod;
-                se->mergeMethod = spotState->mergeMethod;
+//               se->mergeMethod = spotState->mergeMethod;
                 se->sensiexclu = spotState->sensiexclu;
                 se->structexclu = spotState->structexclu;
                 se->struc = spotState->struc;
@@ -9224,6 +9303,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
                 if (!spotState->gridMethod) {
                     gridMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+
+                if (!spotState->merMethod) {
+                    merMethod->set_active_text(M("GENERAL_UNCHANGED"));
                 }
 
                 if (!spotState->toneMethod) {
@@ -9561,6 +9644,7 @@ void Locallab::updateSpecificGUIState()
         qualitycurveMethod->show();
         labqualcurv->show();
         expmaskcol->show();
+        expmaskcol1->show();
         structcol->show();
         softradiuscol->show();
         showmaskcolMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -9573,6 +9657,7 @@ void Locallab::updateSpecificGUIState()
         qualitycurveMethod->hide();
         labqualcurv->hide();
         expmaskcol->show();
+        expmaskcol1->hide();
         softradiuscol->hide();
         structcol->hide();
         gridFrame->hide();
@@ -9584,6 +9669,7 @@ void Locallab::updateSpecificGUIState()
         qualitycurveMethod->show();
         labqualcurv->show();
         expmaskcol->show();
+        expmaskcol1->show();
         structcol->show();
         gridFrame->show();
         softradiuscol->show();
@@ -9595,6 +9681,16 @@ void Locallab::updateSpecificGUIState()
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
             showmaskcolMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         }
+    }
+
+    if (merMethod->get_active_row_number() == 0) {
+        mask7->hide();
+    } else if (merMethod->get_active_row_number() == 1) {
+        mask7->hide();
+    } else if (merMethod->get_active_row_number() == 2) {
+        mask7->show();
+    } else if (merMethod->get_active_row_number() == 3) {
+        mask7->show();
     }
 
     // Update Exposure GUI according to black adjuster state (to be compliant with adjusterChanged function)

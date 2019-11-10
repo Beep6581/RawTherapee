@@ -588,18 +588,14 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.excmet = 1;
     }
 
-    if (locallab.spots.at(sp).mergeMethod == "none") {
+    if (locallab.spots.at(sp).merMethod == "mone") {
         lp.mergemet = 0;
-    } else if (locallab.spots.at(sp).mergeMethod == "short") {
+    } else if (locallab.spots.at(sp).merMethod == "mtwo") {
         lp.mergemet = 1;
-    } else if (locallab.spots.at(sp).mergeMethod == "orig") {
+    } else if (locallab.spots.at(sp).merMethod == "mthr") {
         lp.mergemet = 2;
-    } else if (locallab.spots.at(sp).mergeMethod == "origmas") {
+    } else if (locallab.spots.at(sp).merMethod == "mfou") {
         lp.mergemet = 3;
-    } else if (locallab.spots.at(sp).mergeMethod == "lastspot") {
-        lp.mergemet = 4;
-    } else if (locallab.spots.at(sp).mergeMethod == "lastspotmas") {
-        lp.mergemet = 5;
     }
 
     if (locallab.spots.at(sp).mergecolMethod == "one") {
@@ -5297,27 +5293,29 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
 
-static void softlig(float &a, float &b)
+static void softlig(float &a, float &b, float minc, float maxc)
 {
-    if (b <= 0.5f) {
-        a = (2.f * a * b) + a * a * (1.f - 2.f * b);
+    float alpha = 0.5f * (maxc - minc);
+    if (b <= alpha) {
+        a = (2.f * a * b) + a * a * (maxc - 2.f * b);
     } else {
-        a = 2.f * a * (1.f - b) + sqrt(a) * (2.f * b - 1.f);
+        a = 2.f * a * (maxc - b) + sqrt(LIM(a, 0.f, 2.f)) * (2.f * b - maxc);
     }
 }
 
-static void overlay(float &a, float &b)
+static void overlay(float &a, float &b, float minc, float maxc)
 {
-    if (b <= 0.5f) {
+    float alpha = 0.5f * (maxc - minc);
+    if (b <= alpha) {
         a = (2.f * a * b);
     } else {
-        a = 1.f - 2.f * (1.f - a) * (1.f - b);
+        a = maxc - 2.f * (1.f - a) * (maxc - b);
     }
 }
 
-static void screen(float &a, float &b)
+static void screen(float &a, float &b, float maxc)
 {
-    a = 1.f - (1.f - a) * (1.f - b);
+    a = 1.f - (1.f - a) * (maxc - b);
 }
 
 static void exclusion(float &a, float &b)
@@ -8411,7 +8409,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool lmasutilicolwav = false;
                     float amountcd = 0.f;
                     float anchorcd = 50.f;
-                    int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
+                    int shortcu = 0; //lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, multiThread,
@@ -8702,7 +8700,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmatm;
                     float lap = params->locallab.spots.at(sp).lapmasktm;
                     float pde = params->locallab.spots.at(sp).laplac;
-                    int shortcu = lp.mergemet;// params->locallab.spots.at(sp).shortc;
+                    int shortcu = 0; //lp.mergemet;// params->locallab.spots.at(sp).shortc;
                     int lumask = params->locallab.spots.at(sp).lumask;
 
                     if (!params->locallab.spots.at(sp).enatmMaskaft) {
@@ -8749,7 +8747,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bool lmasutilicolwav = false;
                             bool delt = params->locallab.spots.at(sp).deltae;
                             int sco = params->locallab.spots.at(sp).scopemask;
-                            int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
+                            int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
                             int lumask = params->locallab.spots.at(sp).lumask;
 
                             const int limscope = 80;
@@ -8951,7 +8949,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool lmasutilicolwav = false;
                     bool delt = params->locallab.spots.at(sp).deltae;
                     int sco = params->locallab.spots.at(sp).scopemask;
-                    int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
+                    int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
                     const int limscope = 80;
                     const float mindE = 2.f + MINSCOPE * sco * lp.thr;
@@ -9101,7 +9099,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             //  bool delt = params->locallab.spots.at(sp).deltae;
             bool delt = false;
             int sco = params->locallab.spots.at(sp).scopemask;
-            int shortcu = lp.mergemet;
+            int shortcu = 0;//lp.mergemet;
             params->locallab.spots.at(sp).shortc;
 
             const int limscope = 80;//
@@ -11176,7 +11174,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool delt = params->locallab.spots.at(sp).deltae;
                     int sco = params->locallab.spots.at(sp).scopemask;
                     int shado = 0;
-                    int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
+                    int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
                     const int limscope = 80;
                     const float mindE = 2.f + MINSCOPE * sco * lp.thr;
@@ -11466,7 +11464,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool delt = false;
             int sco = params->locallab.spots.at(sp).scopemask;
             int shado = 0;
-            int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
+            int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
             int lumask = params->locallab.spots.at(sp).lumask;
 
             const int limscope = 80;
@@ -11511,7 +11509,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         float b_base = lp.lowB / scaling;
         bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
 
-        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet >= 2 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
             /*
             //test for fftw blur with tiles  fftw_tile_blur....not good we can see tiles - very long time
                         int GW = original->W;
@@ -11769,7 +11767,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float amountcd = 0.f;
                     float anchorcd = 50.f;
 
-                    if (lp.mergemet != 2) {
+//                    if (lp.mergemet != 2) {
                         maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                                     locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
                                     enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
@@ -11783,7 +11781,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             return;
                         }
-                    }
+//                    }
 
                     if (lp.showmaskcolmet == 4) {
                         return;
@@ -12075,7 +12073,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 for (int x = 0; x < bfw; x++) {
                                     lumreserv[y][x] = reserved->L[y + ystart][x + xstart];
 
-                                    if (lp.mergemet == 2 || lp.mergemet == 3) {
+                                    if (lp.mergemet == 2) {
                                         bufcolreserv->L[y][x] = reserved->L[y + ystart][x + xstart];
                                         bufcolreserv->a[y][x] = reserved->a[y + ystart][x + xstart];
                                         bufcolreserv->b[y][x] = reserved->b[y + ystart][x + xstart];
@@ -12125,6 +12123,47 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 lab2rgb(*bufcolreserv, *tmpImagereserv, params->icm.workingProfile);
                                 tmpImagereserv->normalizeFloatTo1();
 
+                                float minR = tmpImagereserv->r(0, 0);
+                                float maxR = minR;
+#ifdef _OPENMP
+                                #pragma omp parallel for reduction(max:maxR) reduction(min:minR) schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++) {
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        minR = rtengine::min(minR, tmpImagereserv->r(ir, jr));
+                                        maxR = rtengine::max(maxR, tmpImagereserv->r(ir, jr));
+                                    }
+                                }
+
+                                float minG = tmpImagereserv->g(0, 0);
+                                float maxG = minG;
+#ifdef _OPENMP
+                                #pragma omp parallel for reduction(max:maxG) reduction(min:minG) schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++) {
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        minG = rtengine::min(minG, tmpImagereserv->g(ir, jr));
+                                        maxG = rtengine::max(maxG, tmpImagereserv->g(ir, jr));
+                                    }
+                                }
+
+                                float minB = tmpImagereserv->b(0, 0);
+                                float maxB = minB;
+#ifdef _OPENMP
+                                #pragma omp parallel for reduction(max:maxB) reduction(min:minB) schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++) {
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        minB = rtengine::min(minB, tmpImagereserv->b(ir, jr));
+                                        maxB = rtengine::max(maxB, tmpImagereserv->b(ir, jr));
+                                    }
+                                }
+
+
+
                                 //various combinaison  substrct, multiply, difference, etc
                                 if (lp.mergecolMethod == 1) { //substract
 #ifdef _OPENMP
@@ -12133,9 +12172,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     for (int y = 0; y < bfh ; y++) {//LIM(x 0 2) 2 arbitral value but limit...
                                         for (int x = 0; x < bfw; x++) {
-                                            tmpImageorig->r(y, x) = lp.opacol * LIM((tmpImageorig->r(y, x) - tmpImagereserv->r(y, x)), 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                            tmpImageorig->g(y, x) = lp.opacol * LIM((tmpImageorig->g(y, x) - tmpImagereserv->g(y, x)), 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                            tmpImageorig->b(y, x) = lp.opacol * LIM((tmpImageorig->b(y, x) - tmpImagereserv->b(y, x)), 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            tmpImageorig->r(y, x) = lp.opacol * ((tmpImageorig->r(y, x) - tmpImagereserv->r(y, x))) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            tmpImageorig->g(y, x) = lp.opacol * ((tmpImageorig->g(y, x) - tmpImagereserv->g(y, x))) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            tmpImageorig->b(y, x) = lp.opacol * ((tmpImageorig->b(y, x) - tmpImagereserv->b(y, x))) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
                                 } else if (lp.mergecolMethod == 2) { //difference
@@ -12169,9 +12208,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     for (int y = 0; y < bfh ; y++) {
                                         for (int x = 0; x < bfw; x++) {
-                                            tmpImageorig->r(y, x) = lp.opacol * LIM(tmpImageorig->r(y, x) + tmpImagereserv->r(y, x), 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                            tmpImageorig->g(y, x) = lp.opacol * LIM(tmpImageorig->g(y, x) + tmpImagereserv->g(y, x), 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                            tmpImageorig->b(y, x) = lp.opacol * LIM(tmpImageorig->b(y, x) + tmpImagereserv->b(y, x), 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            tmpImageorig->r(y, x) = lp.opacol * (tmpImageorig->r(y, x) + tmpImagereserv->r(y, x)) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            tmpImageorig->g(y, x) = lp.opacol * (tmpImageorig->g(y, x) + tmpImagereserv->g(y, x)) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            tmpImageorig->b(y, x) = lp.opacol * (tmpImageorig->b(y, x) + tmpImagereserv->b(y, x)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
                                 } else if (lp.mergecolMethod == 5) { //divide
@@ -12181,9 +12220,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     for (int y = 0; y < bfh ; y++) {
                                         for (int x = 0; x < bfw; x++) {
-                                            tmpImageorig->r(y, x) = lp.opacol * LIM(tmpImageorig->r(y, x) / (tmpImagereserv->r(y, x) + 0.00001f), 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                            tmpImageorig->g(y, x) = lp.opacol * LIM(tmpImageorig->g(y, x) / (tmpImagereserv->g(y, x) + 0.00001f), 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                            tmpImageorig->b(y, x) = lp.opacol * LIM(tmpImageorig->b(y, x) / (tmpImagereserv->b(y, x) + 0.00001f), 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            tmpImageorig->r(y, x) = lp.opacol * (tmpImageorig->r(y, x) / (tmpImagereserv->r(y, x) + 0.00001f)) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            tmpImageorig->g(y, x) = lp.opacol * (tmpImageorig->g(y, x) / (tmpImagereserv->g(y, x) + 0.00001f)) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            tmpImageorig->b(y, x) = lp.opacol * (tmpImageorig->b(y, x) / (tmpImagereserv->b(y, x) + 0.00001f)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
                                 } else if (lp.mergecolMethod == 6) { //soft light softlig (float &a, float &b)
@@ -12195,16 +12234,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         for (int x = 0; x < bfw; x++) {
                                             float a = tmpImageorig->r(y, x);
                                             float b = tmpImagereserv->r(y, x);
-                                            softlig(a, b);
-                                            tmpImageorig->r(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            softlig(a, b, minR, maxR);
+                                            tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                             a = tmpImageorig->g(y, x);
                                             b = tmpImagereserv->g(y, x);
-                                            softlig(a, b);
-                                            tmpImageorig->g(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            softlig(a, b, minG, maxG);
+                                            tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                             a = tmpImageorig->b(y, x);
                                             b = tmpImagereserv->b(y, x);
-                                            softlig(a, b);
-                                            tmpImageorig->b(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            softlig(a, b, minB, maxB);
+                                            tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
                                 } else if (lp.mergecolMethod == 7) { //hard light overlay (float &b, float &a)
@@ -12216,16 +12255,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         for (int x = 0; x < bfw; x++) {
                                             float a = tmpImageorig->r(y, x);
                                             float b = tmpImagereserv->r(y, x);
-                                            overlay(b, a);
-                                            tmpImageorig->r(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            overlay(b, a, minR, maxR);
+                                            tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                             a = tmpImageorig->g(y, x);
                                             b = tmpImagereserv->g(y, x);
-                                            overlay(b, a);
-                                            tmpImageorig->g(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            overlay(b, a, minG, maxG);
+                                            tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                             a = tmpImageorig->b(y, x);
                                             b = tmpImagereserv->b(y, x);
-                                            overlay(b, a);
-                                            tmpImageorig->b(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            overlay(b, a, minB, maxB);
+                                            tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
                                 } else if (lp.mergecolMethod == 8) { //overlay overlay(float &a, float &b)
@@ -12237,16 +12276,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         for (int x = 0; x < bfw; x++) {
                                             float a = tmpImageorig->r(y, x);
                                             float b = tmpImagereserv->r(y, x);
-                                            overlay(a, b);
-                                            tmpImageorig->r(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            overlay(a, b, minR, maxR);
+                                            tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                             a = tmpImageorig->g(y, x);
                                             b = tmpImagereserv->g(y, x);
-                                            overlay(a, b);
-                                            tmpImageorig->g(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            overlay(a, b, minG, maxG);
+                                            tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                             a = tmpImageorig->b(y, x);
                                             b = tmpImagereserv->b(y, x);
-                                            overlay(a, b);
-                                            tmpImageorig->b(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            overlay(a, b, minB, maxB);
+                                            tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
                                 } else if (lp.mergecolMethod == 9) { //screen screen (float &a, float &b)
@@ -12258,16 +12297,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         for (int x = 0; x < bfw; x++) {
                                             float a = tmpImageorig->r(y, x);
                                             float b = tmpImagereserv->r(y, x);
-                                            screen(a, b);
-                                            tmpImageorig->r(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            screen(a, b, maxR);
+                                            tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                             a = tmpImageorig->g(y, x);
                                             b = tmpImagereserv->g(y, x);
-                                            screen(a, b);
-                                            tmpImageorig->g(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            screen(a, b, maxG);
+                                            tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                             a = tmpImageorig->b(y, x);
                                             b = tmpImagereserv->b(y, x);
-                                            screen(a, b);
-                                            tmpImageorig->b(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            screen(a, b, maxB);
+                                            tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
                                 } else if (lp.mergecolMethod == 10) { //darken only
@@ -12304,15 +12343,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             float a = tmpImageorig->r(y, x);
                                             float b = tmpImagereserv->r(y, x);
                                             exclusion(a, b);
-                                            tmpImageorig->r(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                             a = tmpImageorig->g(y, x);
                                             b = tmpImagereserv->g(y, x);
                                             exclusion(a, b);
-                                            tmpImageorig->g(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                             a = tmpImageorig->b(y, x);
                                             b = tmpImagereserv->b(y, x);
                                             exclusion(a, b);
-                                            tmpImageorig->b(y, x) = lp.opacol * LIM(a, 0.f, 2.f) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                            tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
                                 }

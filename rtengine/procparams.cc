@@ -2418,7 +2418,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     isvisible(true),
     shape("ELI"),
     spotMethod("norm"),
-    mergeMethod("none"),
+//    mergeMethod("none"),
     sensiexclu(12),
     structexclu(0),
     struc(4.0),
@@ -2468,6 +2468,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lapmaskcol(0.0),
     qualitycurveMethod("none"),
     gridMethod("one"),
+    merMethod("mone"),
     toneMethod("fou"),
     mergecolMethod("one"),
     llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
@@ -2734,7 +2735,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && isvisible == other.isvisible
         && shape == other.shape
         && spotMethod == other.spotMethod
-        && mergeMethod == other.mergeMethod
+ //       && mergeMethod == other.mergeMethod
         && sensiexclu == other.sensiexclu
         && structexclu == other.structexclu
         && struc == other.struc
@@ -2783,6 +2784,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lapmaskcol == other.lapmaskcol
         && qualitycurveMethod == other.qualitycurveMethod
         && gridMethod == other.gridMethod
+        && merMethod == other.merMethod
         && toneMethod == other.toneMethod
         && mergecolMethod == other.mergecolMethod
         && llcurve == other.llcurve
@@ -4045,7 +4047,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).isvisible, "Locallab", "Isvisible_" + std::to_string(i), spot.isvisible, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shape, "Locallab", "Shape_" + std::to_string(i), spot.shape, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).spotMethod, "Locallab", "SpotMethod_" + std::to_string(i), spot.spotMethod, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).mergeMethod, "Locallab", "MergeMethod_" + std::to_string(i), spot.mergeMethod, keyFile);
+//                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).mergeMethod, "Locallab", "MergeMethod_" + std::to_string(i), spot.mergeMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiexclu, "Locallab", "SensiExclu_" + std::to_string(i), spot.sensiexclu, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structexclu, "Locallab", "StructExclu_" + std::to_string(i), spot.structexclu, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).struc, "Locallab", "Struc_" + std::to_string(i), spot.struc, keyFile);
@@ -4095,6 +4097,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmaskcol, "Locallab", "Lapmaskcol_" + std::to_string(i), spot.lapmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), spot.qualitycurveMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gridMethod, "Locallab", "gridMethod_" + std::to_string(i), spot.gridMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).merMethod, "Locallab", "Merg_Method_" + std::to_string(i), spot.merMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).toneMethod, "Locallab", "ToneMethod_" + std::to_string(i), spot.toneMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).mergecolMethod, "Locallab", "mergecolMethod_" + std::to_string(i), spot.mergecolMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).llcurve, "Locallab", "LLCurve_" + std::to_string(i), spot.llcurve, keyFile);
@@ -5464,7 +5467,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Isvisible_" + std::to_string(i), pedited, spot.isvisible, spotEdited.isvisible);
                 assignFromKeyfile(keyFile, "Locallab", "Shape_" + std::to_string(i), pedited, spot.shape, spotEdited.shape);
                 assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + std::to_string(i), pedited, spot.spotMethod, spotEdited.spotMethod);
-                assignFromKeyfile(keyFile, "Locallab", "MergeMethod_" + std::to_string(i), pedited, spot.mergeMethod, spotEdited.mergeMethod);
+//                assignFromKeyfile(keyFile, "Locallab", "MergeMethod_" + std::to_string(i), pedited, spot.mergeMethod, spotEdited.mergeMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + std::to_string(i), pedited, spot.shapeMethod, spotEdited.shapeMethod);
                 assignFromKeyfile(keyFile, "Locallab", "SensiExclu_" + std::to_string(i), pedited, spot.sensiexclu, spotEdited.sensiexclu);
                 assignFromKeyfile(keyFile, "Locallab", "StructExclu_" + std::to_string(i), pedited, spot.structexclu, spotEdited.structexclu);
@@ -5514,6 +5517,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskcol_" + std::to_string(i), pedited, spot.lapmaskcol, spotEdited.lapmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
                 assignFromKeyfile(keyFile, "Locallab", "gridMethod_" + std::to_string(i), pedited, spot.gridMethod, spotEdited.gridMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Merge_Method_" + std::to_string(i), pedited, spot.merMethod, spotEdited.merMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ToneMethod_" + std::to_string(i), pedited, spot.toneMethod, spotEdited.toneMethod);
                 assignFromKeyfile(keyFile, "Locallab", "mergecolMethod_" + std::to_string(i), pedited, spot.mergecolMethod, spotEdited.mergecolMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, spot.llcurve, spotEdited.llcurve);
