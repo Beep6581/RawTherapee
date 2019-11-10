@@ -11395,7 +11395,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufexpfin.reset();
                     transit_shapedetect(1, bufexporig.get(), nullptr, originalmaskexp.get(), buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     bufexporig.reset();
-
+                    blend2.free();
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
                         float avge;
@@ -11660,9 +11660,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     const int spotSi = std::max(1 + 2 * max(1,  lp.cir / sk), 5);
-                    const bool blend = bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struco > 0.f;
+                    const bool blends = bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struco > 0.f;
 
-                    if (blend) {
+                    if (blends) {
                         blend2(bfw, bfh);
                         ImProcFunctions::blendstruc(bfw, bfh, bufcolorig.get(), 3.f / (sk * 1.4f), 0.5f * lp.struco, blend2, sk, multiThread);
 
@@ -12427,13 +12427,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                     }
-
+/*
                     float **temp = nullptr;
 
                     if (blend) {
                         temp = blend2;
+                        blend2.free();
                     }
-
+*/
                     int smerge = 100;
 
                     if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
@@ -12442,7 +12443,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     //bufcolfin add for merge
                     if (!(usergb && spez)) {
-                        transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                        if(blends) blend2.free();
                     }
 
                     if (params->locallab.spots.at(sp).recurs) {
