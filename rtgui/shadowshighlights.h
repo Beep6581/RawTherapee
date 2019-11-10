@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class ShadowsHighlights :
+class ShadowsHighlights final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

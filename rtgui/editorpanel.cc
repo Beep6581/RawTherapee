@@ -24,6 +24,7 @@
 #include "../rtengine/imagesource.h"
 #include "../rtengine/iccstore.h"
 #include "batchqueue.h"
+#include "batchqueueentry.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "rtwindow.h"

@@ -20,7 +20,6 @@
 
 #include "coloredbar.h"
 #include "editcallbacks.h"
-#include "popuptogglebutton.h"
 
 #include "../rtengine/diagonalcurvetypes.h"
 #include "../rtengine/flatcurvetypes.h"
@@ -29,6 +28,7 @@
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
+class PopUpToggleButton;
 
 /*
  *********************** Curve Editor ***********************
@@ -143,7 +143,7 @@ public:
  */
 
 
-class DiagonalCurveEditor : public CurveEditor
+class DiagonalCurveEditor final : public CurveEditor
 {
 
     friend class DiagonalCurveEditorSubGroup;
@@ -179,7 +179,7 @@ public:
  */
 
 
-class FlatCurveEditor : public CurveEditor
+class FlatCurveEditor final : public CurveEditor
 {
     friend class FlatCurveEditorSubGroup;
 

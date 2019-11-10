@@ -22,12 +22,14 @@
 
 #include "adjuster.h"
 #include "colorprovider.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
+#include "curvelistener.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class Defringe :
+class CurveEditorGroup;
+class FlatCurveEditor;
+
+class Defringe final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel,

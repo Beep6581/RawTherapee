@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class BayerPreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class BayerPreProcess final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 
 protected:

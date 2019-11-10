@@ -24,7 +24,7 @@
 #include "checkbox.h"
 #include "toolpanel.h"
 
-class BayerRAWExposure :
+class BayerRAWExposure final :
     public ToolParamBlock,
     public AdjusterListener,
     public CheckBoxListener,

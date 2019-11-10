@@ -24,7 +24,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class PreProcess :
+class PreProcess final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

@@ -42,7 +42,7 @@ public:
     // add other info here
 };
 
-class FlatField : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::FlatFieldAutoClipListener
+class FlatField final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::FlatFieldAutoClipListener
 {
 
 protected:

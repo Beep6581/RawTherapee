@@ -25,7 +25,7 @@
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class DirPyrEqualizer :
+class DirPyrEqualizer final :
     public ToolParamBlock,
     public ThresholdAdjusterListener,
     public AdjusterListener,

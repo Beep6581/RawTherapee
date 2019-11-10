@@ -21,7 +21,6 @@
 #include <gtkmm.h>
 
 #include "guiutils.h"
-#include "lensgeom.h"
 #include "toolpanel.h"
 
 class LensProfilePanel final :

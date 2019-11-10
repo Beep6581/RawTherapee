@@ -43,7 +43,7 @@
 #include "toolpanel.h"
 
 
-class LabGridArea: public Gtk::DrawingArea, public BackBuffer {
+class LabGridArea final : public Gtk::DrawingArea, public BackBuffer {
 private:
     rtengine::ProcEvent evt;
     Glib::ustring evtMsg;

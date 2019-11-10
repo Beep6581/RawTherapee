@@ -25,7 +25,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class XTransProcess :
+class XTransProcess final :
     public ToolParamBlock,
     public AdjusterListener,
     public CheckBoxListener,

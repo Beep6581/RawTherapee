@@ -35,7 +35,7 @@ public:
     virtual void spotWBRequested(int size) = 0;
 };
 
-class WhiteBalance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoWBListener
+class WhiteBalance final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoWBListener
 {
 
     enum WB_LabelType {

@@ -36,6 +36,7 @@
 #include "renamedlg.h"
 #include "thumbimageupdater.h"
 #include "batchqueue.h"
+#include "batchqueueentry.h"
 #include "placesbrowser.h"
 #include "pathutils.h"
 #include "thumbnail.h"

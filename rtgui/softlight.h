@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SoftLight: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class SoftLight final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 private:
     Adjuster *strength;

@@ -24,7 +24,7 @@
 #include "checkbox.h"
 #include "toolpanel.h"
 
-class RAWCACorr :
+class RAWCACorr final:
     public ToolParamBlock,
     public AdjusterListener,
     public CheckBoxListener,

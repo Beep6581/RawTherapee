@@ -24,6 +24,7 @@
 #include "diagonalcurveeditorsubgroup.h"
 #include "flatcurveeditorsubgroup.h"
 #include "multilangmgr.h"
+#include "popuptogglebutton.h"
 #include "rtimage.h"
 #include "options.h"
 #include "pathutils.h"

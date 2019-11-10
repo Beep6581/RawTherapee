@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class PerspCorrection :
+class PerspCorrection final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel
