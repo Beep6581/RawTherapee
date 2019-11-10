@@ -381,13 +381,13 @@ ControlSpotPanel::ControlSpotPanel():
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
 //    maskBox->pack_start(*shortc_);
-    Gtk::HSeparator *separator = Gtk::manage(new  Gtk::HSeparator());
-    maskBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
+//    Gtk::HSeparator *separator = Gtk::manage(new  Gtk::HSeparator());
+//    maskBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
 
 //    maskBox->pack_start(*ctboxmergemethod);
 
-    Gtk::HSeparator *separator1 = Gtk::manage(new  Gtk::HSeparator());
-    maskBox->pack_start(*separator1, Gtk::PACK_SHRINK, 2);
+//    Gtk::HSeparator *separator1 = Gtk::manage(new  Gtk::HSeparator());
+//   maskBox->pack_start(*separator1, Gtk::PACK_SHRINK, 2);
 
     maskBox->pack_start(*lumask_);
 //    maskBox->pack_start(*savrest_);

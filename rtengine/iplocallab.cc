@@ -8530,7 +8530,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         transit_shapedetect(7, loctemp.get(), nullptr, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-
+                        buflight.free();
+                        bufsh.free();
                         if (params->locallab.spots.at(sp).recurs) {
                             original->CopyFrom(transformed);
                             float avge;
@@ -11396,6 +11397,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     transit_shapedetect(1, bufexporig.get(), nullptr, originalmaskexp.get(), buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     bufexporig.reset();
                     blend2.free();
+                    buflight.free();
+                    
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
                         float avge;
@@ -12444,7 +12447,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     //bufcolfin add for merge
                     if (!(usergb && spez)) {
                         transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
-                        if(blends) blend2.free();
+                        if(blends) {
+                            blend2.free();
+                        }
+                        buflight.free();
                     }
 
                     if (params->locallab.spots.at(sp).recurs) {
