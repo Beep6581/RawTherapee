@@ -2142,9 +2142,22 @@ Camera constants:
         }
     },
 
-    { // Quality B, per ISO info missing
-        "make_model": [ "Panasonic DC-S1", "Panasonic DC-S1R" ],
-        "ranges": { "white": 16225 }
+    { // Quality B, issue #5204. Missing ISO 50, 64 and 80 and I expect the WL to differ for these ISO values
+        "make_model": [ "Panasonic DC-S1" ],
+        "dcraw_matrix": [ 9744, -3905, -779, -4899, 12807, 2324, -798, 1630, 5827 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 11.4
+        "ranges": { "white": 16320 }
+    },
+
+    { // Quality X, issue #5204. No white frames available.
+        "make_model": [ "Panasonic DC-S1R" ],
+        "dcraw_matrix": [ 11822, -5321, -1249, -5958, 15114, 766, -614, 1264, 7043 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 11.4
+        "ranges": {
+            "white": [
+                { "iso": 50, "levels": 9500 },
+                { "iso": [64, 80], "levels": 11600 },
+                { "iso": 100, "levels": 16336 }
+            ]
+        }
     },
 
     { // Quality B, per ISO info missing
