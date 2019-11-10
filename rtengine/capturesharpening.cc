@@ -543,7 +543,9 @@ BENCHFUN
         array2D<float> tmpIThr(fullTileSize, fullTileSize);
         array2D<float> tmpThr(fullTileSize, fullTileSize);
         array2D<float> lumThr(fullTileSize, fullTileSize);
-#pragma omp for schedule(dynamic,2) collapse(2)
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,2) collapse(2)
+#endif
         for (int i = border; i < H - border; i+= tileSize) {
             for(int j = border; j < W - border; j+= tileSize) {
                 const bool endOfCol = (i + tileSize + border) >= H;
@@ -754,14 +756,13 @@ BENCHFUN
     array2D<float>& L = Lbuffer ? *Lbuffer : red;
     array2D<float>& YOld = YOldbuffer ? * YOldbuffer : green;
     array2D<float>& YNew = YNewbuffer ? * YNewbuffer : blue;
-    const float gamma = sharpeningParams.gamma;
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
     for (int i = 0; i < H; ++i) {
         Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], xyz_rgb, W);
-        Color::RGB2Y(redVals[i], greenVals[i], blueVals[i], YOld[i], YNew[i], gamma, W);
+        Color::RGB2Y(redVals[i], greenVals[i], blueVals[i], YOld[i], YNew[i], W);
     }
     if (plistener) {
         plistener->setProgress(0.1);
@@ -784,9 +785,8 @@ BENCHFUN
     for (int i = 0; i < H; ++i) {
         int j = 0;
 #ifdef __SSE2__
-        const vfloat gammav = F2V(gamma);
         for (; j < W - 3; j += 4) {
-            const vfloat factor = pow_F(vmaxf(LVFU(YNew[i][j]), ZEROV) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f)), gammav);
+            const vfloat factor = vmaxf(LVFU(YNew[i][j]), ZEROV) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f));
             STVFU(red[i][j], LVFU(redVals[i][j]) * factor);
             STVFU(green[i][j], LVFU(greenVals[i][j]) * factor);
             STVFU(blue[i][j], LVFU(blueVals[i][j]) * factor);
@@ -794,7 +794,7 @@ BENCHFUN
 
 #endif
         for (; j < W; ++j) {
-            const float factor = pow_F(std::max(YNew[i][j], 0.f) / std::max(YOld[i][j], 0.00001f), gamma);
+            const float factor = std::max(YNew[i][j], 0.f) / std::max(YOld[i][j], 0.00001f);
             red[i][j] = redVals[i][j] * factor;
             green[i][j] = greenVals[i][j] * factor;
             blue[i][j] = blueVals[i][j] * factor;
