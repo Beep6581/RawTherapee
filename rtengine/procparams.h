@@ -1008,6 +1008,7 @@ struct LocallabParams {
         double gammaskcol;
         double slomaskcol;
         int shadmaskcol;
+        int strumaskcol;
         double lapmaskcol;
         Glib::ustring qualitycurveMethod;
         Glib::ustring gridMethod;

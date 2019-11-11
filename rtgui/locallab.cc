@@ -253,7 +253,7 @@ Locallab::Locallab():
     chroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
     strengthgrid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRGRID"), 0, 100, 1, 30))),
     sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
-    structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
+    structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL1"), 0, 100, 1, 0))),
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     blendmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -265,8 +265,9 @@ Locallab::Locallab():
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
     opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 100.))),
     conthrcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTTHR"), 0.0, 100.0, 0.5, 0.))),
+    strumaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0, 100, 1, 0))),
     // Exposure
-    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 4.0, 0.05, 0.0))),
+    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 3.0, 0.05, 0.0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0))),
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 10, 0))),
@@ -645,6 +646,7 @@ pe(nullptr)
     gammaskcol->setAdjusterListener(this);
     slomaskcol->setAdjusterListener(this);
     shadmaskcol->setAdjusterListener(this);
+    strumaskcol->setAdjusterListener(this);
     softradiuscol->setAdjusterListener(this);
     opacol->setAdjusterListener(this);
     conthrcol->setAdjusterListener(this);
@@ -932,12 +934,15 @@ pe(nullptr)
     mergecolBox->pack_start(*opacol);
     mergecolBox->pack_start(*conthrcol);
     merge1colFrame->add(*mergecolBox);
+    Gtk::HSeparator* const separatorstru = Gtk::manage(new  Gtk::HSeparator());
 
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*showmaskcolMethodinv, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskcolBox->pack_start(*strumaskcol, Gtk::PACK_SHRINK, 0);
+    maskcolBox->pack_start(*separatorstru, Gtk::PACK_SHRINK, 2);
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*radmaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
@@ -3694,6 +3699,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskcol = gammaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskcol = slomaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shadmaskcol = shadmaskcol->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strumaskcol = strumaskcol->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskcol = lapmaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscol = softradiuscol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).opacol = opacol->getValue();
@@ -4089,6 +4095,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskcol = pe->locallab.spots.at(pp->locallab.selspot).gammaskcol || gammaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskcol = pe->locallab.spots.at(pp->locallab.selspot).slomaskcol || slomaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).shadmaskcol = pe->locallab.spots.at(pp->locallab.selspot).shadmaskcol || shadmaskcol->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strumaskcol = pe->locallab.spots.at(pp->locallab.selspot).strumaskcol || strumaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiuscol = pe->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).opacol = pe->locallab.spots.at(pp->locallab.selspot).opacol || opacol->getEditedState();
@@ -4415,6 +4422,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskcol = pedited->locallab.spots.at(pp->locallab.selspot).gammaskcol || gammaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskcol = pedited->locallab.spots.at(pp->locallab.selspot).slomaskcol || slomaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).shadmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).shadmaskcol || shadmaskcol->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strumaskcol = pedited->locallab.spots.at(pp->locallab.selspot).strumaskcol || strumaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).opacol = pedited->locallab.spots.at(pp->locallab.selspot).opacol || opacol->getEditedState();
@@ -6528,6 +6536,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     gammaskcol->setDefault(defSpot->gammaskcol);
     slomaskcol->setDefault(defSpot->slomaskcol);
     shadmaskcol->setDefault(defSpot->shadmaskcol);
+    strumaskcol->setDefault(defSpot->strumaskcol);
     lapmaskcol->setDefault(defSpot->lapmaskcol);
     softradiuscol->setDefault(defSpot->softradiuscol);
     opacol->setDefault(defSpot->opacol);
@@ -6722,6 +6731,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         gammaskcol->setDefaultEditedState(Irrelevant);
         slomaskcol->setDefaultEditedState(Irrelevant);
         shadmaskcol->setDefaultEditedState(Irrelevant);
+        strumaskcol->setDefaultEditedState(Irrelevant);
         lapmaskcol->setDefaultEditedState(Irrelevant);
         softradiuscol->setDefaultEditedState(Irrelevant);
         opacol->setDefaultEditedState(Irrelevant);
@@ -6920,6 +6930,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         gammaskcol->setDefaultEditedState(defSpotState->gammaskcol ? Edited : UnEdited);
         slomaskcol->setDefaultEditedState(defSpotState->slomaskcol ? Edited : UnEdited);
         shadmaskcol->setDefaultEditedState(defSpotState->shadmaskcol ? Edited : UnEdited);
+        strumaskcol->setDefaultEditedState(defSpotState->strumaskcol ? Edited : UnEdited);
         lapmaskcol->setDefaultEditedState(defSpotState->lapmaskcol ? Edited : UnEdited);
         softradiuscol->setDefaultEditedState(defSpotState->softradiuscol ? Edited : UnEdited);
         opacol->setDefaultEditedState(defSpotState->opacol ? Edited : UnEdited);
@@ -7233,6 +7244,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == shadmaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabshadmaskcol, shadmaskcol->getTextValue());
+            }
+        }
+
+        if (a == strumaskcol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrumaskcol, strumaskcol->getTextValue());
             }
         }
 
@@ -8291,6 +8308,7 @@ void Locallab::setBatchMode(bool batchMode)
     gammaskcol->showEditedCB();
     slomaskcol->showEditedCB();
     shadmaskcol->showEditedCB();
+    strumaskcol->showEditedCB();
     lapmaskcol->showEditedCB();
     softradiuscol->showEditedCB();
     opacol->showEditedCB();
@@ -8907,6 +8925,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         gammaskcol->setValue(pp->locallab.spots.at(index).gammaskcol);
         slomaskcol->setValue(pp->locallab.spots.at(index).slomaskcol);
         shadmaskcol->setValue(pp->locallab.spots.at(index).shadmaskcol);
+        strumaskcol->setValue(pp->locallab.spots.at(index).strumaskcol);
         lapmaskcol->setValue(pp->locallab.spots.at(index).lapmaskcol);
         softradiuscol->setValue(pp->locallab.spots.at(index).softradiuscol);
         opacol->setValue(pp->locallab.spots.at(index).opacol);
@@ -9335,6 +9354,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 gammaskcol->setEditedState(spotState->gammaskcol ? Edited : UnEdited);
                 slomaskcol->setEditedState(spotState->slomaskcol ? Edited : UnEdited);
                 shadmaskcol->setEditedState(spotState->shadmaskcol ? Edited : UnEdited);
+                strumaskcol->setEditedState(spotState->strumaskcol ? Edited : UnEdited);
                 lapmaskcol->setEditedState(spotState->lapmaskcol ? Edited : UnEdited);
                 softradiuscol->setEditedState(spotState->softradiuscol ? Edited : UnEdited);
                 opacol->setEditedState(spotState->opacol ? Edited : UnEdited);

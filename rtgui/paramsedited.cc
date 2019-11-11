@@ -1001,6 +1001,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gammaskcol = locallab.spots.at(j).gammaskcol && pSpot.gammaskcol == otherSpot.gammaskcol;
                 locallab.spots.at(j).slomaskcol = locallab.spots.at(j).slomaskcol && pSpot.slomaskcol == otherSpot.slomaskcol;
                 locallab.spots.at(j).shadmaskcol = locallab.spots.at(j).shadmaskcol && pSpot.shadmaskcol == otherSpot.shadmaskcol;
+                locallab.spots.at(j).strumaskcol = locallab.spots.at(j).strumaskcol && pSpot.strumaskcol == otherSpot.strumaskcol;
                 locallab.spots.at(j).lapmaskcol = locallab.spots.at(j).lapmaskcol && pSpot.lapmaskcol == otherSpot.lapmaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
                 locallab.spots.at(j).gridMethod = locallab.spots.at(j).gridMethod && pSpot.gridMethod == otherSpot.gridMethod;
@@ -2927,6 +2928,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).shadmaskcol) {
             toEdit.locallab.spots.at(i).shadmaskcol = mods.locallab.spots.at(i).shadmaskcol;
+        }
+
+        if (locallab.spots.at(i).strumaskcol) {
+            toEdit.locallab.spots.at(i).strumaskcol = mods.locallab.spots.at(i).strumaskcol;
         }
 
         if (locallab.spots.at(i).lapmaskcol) {
@@ -4948,6 +4953,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     gammaskcol(v),
     slomaskcol(v),
     shadmaskcol(v),
+    strumaskcol(v),
     lapmaskcol(v),
     qualitycurveMethod(v),
     gridMethod(v),
@@ -5262,6 +5268,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gammaskcol = v;
     slomaskcol = v;
     shadmaskcol = v;
+    strumaskcol = v;
     lapmaskcol = v;
     qualitycurveMethod = v;
     gridMethod = v;

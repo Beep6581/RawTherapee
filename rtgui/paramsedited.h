@@ -431,6 +431,7 @@ public:
         bool gammaskcol;
         bool slomaskcol;
         bool shadmaskcol;
+        bool strumaskcol;
         bool lapmaskcol;
         bool qualitycurveMethod;
         bool gridMethod;

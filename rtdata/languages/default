@@ -1041,6 +1041,7 @@ HISTORY_MSG_800;Local - Color ToneCurve Method
 HISTORY_MSG_801;Local - Color ToneCurve Special
 HISTORY_MSG_802;Local - Contrast threshold
 HISTORY_MSG_803;Local - Color Merge
+HISTORY_MSG_804;Local - Color mask Structure
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2113,7 +2114,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance deltaE ab-L
 TP_LOCALLAB_BILATERAL;Bilateral filter
-TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a single tool, this requires activating another tool (but without using the tool : sliders to 0,...) where is the mask you want to activate.\nMasks with this ability are marked '+'\nMasks with additional features are marked '*'\nThe number indicates the order of use of the masks.\n\nYou can combine the mask associated with the tool with an inverse mask.\nIn this case the new tool associated with the mask must be selected in inverse; you must use the tool with very small values (ex Exposure 0.01)
+TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a single tool, this requires activating another tool (but without using the tool : sliders to 0,...) where is the mask you want to activate.\nMasks with this ability are marked '+'\nMasks with additional features are marked '*'\nThe number indicates the order of use of the masks.\n\nYou can combine the mask associated with the tool with an inverse mask.\nIn this case the new tool associated with the mask must be selected in inverse.
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
@@ -2144,6 +2145,7 @@ TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_GAMMASKCOL;Gamma mask
 TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_SHAMASKCOL;Shadows mask
+TP_LOCALLAB_STRUMASKCOL;Structure mask
 TP_LOCALLAB_HIGHMASKCOL;Highlights mask
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
 TP_LOCALLAB_LUMADARKEST;Darkest
@@ -2173,7 +2175,7 @@ TP_LOCALLAB_MERGE1COLFRA;Merge with Original or Previous
 TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_CONTTHR;Contrast Threshold
 TP_LOCALLAB_MERGEOPA_TOOLTIP;Opacity merge % current Spot with original or previous Spot.\nContrast threshold : adjust result in function of Original contrast
-TP_LOCALLAB_MERGECOLFRA;Mask LCH
+TP_LOCALLAB_MERGECOLFRA;Mask: LCH & Structure
 TP_LOCALLAB_MERONE;Normal
 TP_LOCALLAB_MERTWO;Substract
 TP_LOCALLAB_MERTHR;Difference
@@ -2392,7 +2394,7 @@ TP_LOCALLAB_SHOWMNONE;None
 TP_LOCALLAB_SHOWMODIF;Show modifications whithout mask
 TP_LOCALLAB_SHOWMODIFMASK;Show modifications whith mask
 TP_LOCALLAB_SHOWMASK;Show mask
-TP_LOCALLAB_SHOWSTRUC;Show structure
+TP_LOCALLAB_SHOWSTRUC;Show structure Spot
 TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_SHADHIGH;Shadows Highlights-Gradient- Tone Equalizer-TRC
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
@@ -2403,6 +2405,7 @@ TP_LOCALLAB_RETIM;Original Retinex
 TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGTH;Noise
 TP_LOCALLAB_STRUCCOL;Structure
+TP_LOCALLAB_STRUCCOL1;Structure Spot
 TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
