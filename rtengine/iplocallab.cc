@@ -7650,7 +7650,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
                 JaggedArray<float> blendstru(GW, GH);
-                float strumask = 0.01f * (float) params->locallab.spots.at(sp).strumaskbl;
+                float strumask = 0.015f * (float) params->locallab.spots.at(sp).strumaskbl;
 
                 if(strumask > 0.f){
                     buildBlendMask(bufgb->L, blendstru, GW, GH, strumask, 1.f);
@@ -11795,7 +11795,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int level_hr = params->locallab.spots.at(sp).csthresholdcol.getTopRight();
                     int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
                     int lumask = params->locallab.spots.at(sp).lumask;
-                    float strumask = 0.01f *(float) params->locallab.spots.at(sp).strumaskcol;
+                    float strumask = 0.015f *(float) params->locallab.spots.at(sp).strumaskcol;
                     float conthr = 0.01f * params->locallab.spots.at(sp).conthrcol;
                     int tonemod = 0;
 
