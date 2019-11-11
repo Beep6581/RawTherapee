@@ -3224,7 +3224,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         JaggedArray<float> blendstru(bfw, bfh);
 
         if(strumask > 0.f){
-            buildBlendMask(bufcolorig->L, blendstru, bfw, bfh, strumask, 1.f);
+            float delstrumask = 4.f - strumask;
+            buildBlendMask(bufcolorig->L, blendstru, bfw, bfh, delstrumask, 1.f);
             float radblur = 0.02f * rad;//empirical value
             float rm = radblur / sk;
 
@@ -7650,10 +7651,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
                 JaggedArray<float> blendstru(GW, GH);
-                float strumask = 0.015f * (float) params->locallab.spots.at(sp).strumaskbl;
+                float strumask = 0.02f * (float) params->locallab.spots.at(sp).strumaskbl;
 
                 if(strumask > 0.f){
-                    buildBlendMask(bufgb->L, blendstru, GW, GH, strumask, 1.f);
+                    float delstrumask = 4.f - strumask;
+                    buildBlendMask(bufgb->L, blendstru, GW, GH, delstrumask, 1.f);
                     float radblur = 0.02f * lp.radmabl;
                     float rm = radblur / sk;
 
@@ -11795,7 +11797,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int level_hr = params->locallab.spots.at(sp).csthresholdcol.getTopRight();
                     int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
                     int lumask = params->locallab.spots.at(sp).lumask;
-                    float strumask = 0.015f *(float) params->locallab.spots.at(sp).strumaskcol;
+                    float strumask = 0.02f * (float) params->locallab.spots.at(sp).strumaskcol;
                     float conthr = 0.01f * params->locallab.spots.at(sp).conthrcol;
                     int tonemod = 0;
 
@@ -12591,7 +12593,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int sco = params->locallab.spots.at(sp).scopemask;
             int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
             int lumask = params->locallab.spots.at(sp).lumask;
-            float strumask = 0.01f *(float) params->locallab.spots.at(sp).strumaskcol;
+            float strumask = 0.02f * (float) params->locallab.spots.at(sp).strumaskcol;
 
             const int limscope = 80;
             const float mindE = 2.f + MINSCOPE * sco * lp.thr;

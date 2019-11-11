@@ -265,7 +265,7 @@ Locallab::Locallab():
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
     opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 100.))),
     conthrcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTTHR"), 0.0, 100.0, 0.5, 0.))),
-    strumaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0, 200, 1, 0))),
+    strumaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 3.0, 0.05, 0.0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
@@ -359,7 +359,7 @@ shadmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))
 isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
 strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
 scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
-strumaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0, 200, 1, 0))),
+strumaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
 // Tone Mapping
 stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
 gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 0.4, 4.0, 0.11, 1.0))),
@@ -3704,7 +3704,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskcol = gammaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskcol = slomaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shadmaskcol = shadmaskcol->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).strumaskcol = strumaskcol->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strumaskcol = strumaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskcol = lapmaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscol = softradiuscol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).opacol = opacol->getValue();
@@ -3881,7 +3881,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskbl = slomaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskbl = lapmaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shadmaskbl = shadmaskbl->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).strumaskbl = strumaskbl->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strumaskbl = strumaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fftwbl = fftwbl->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve = Lmaskblshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav = LLmaskblshapewav->getCurve();

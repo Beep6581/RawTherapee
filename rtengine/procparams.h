@@ -1008,7 +1008,7 @@ struct LocallabParams {
         double gammaskcol;
         double slomaskcol;
         int shadmaskcol;
-        int strumaskcol;
+        double strumaskcol;
         double lapmaskcol;
         Glib::ustring qualitycurveMethod;
         Glib::ustring gridMethod;
@@ -1142,7 +1142,7 @@ struct LocallabParams {
         double slomaskbl;
         double lapmaskbl;
         int shadmaskbl;
-        int strumaskbl;
+        double strumaskbl;
         std::vector<double> Lmaskblcurve;
         std::vector<double> LLmaskblcurvewav;
         Threshold<int> csthresholdblur;
