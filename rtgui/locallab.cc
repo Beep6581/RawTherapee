@@ -359,6 +359,7 @@ shadmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))
 isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
 strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
 scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
+strumaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0, 100, 1, 0))),
 // Tone Mapping
 stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
 gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 0.4, 4.0, 0.11, 1.0))),
@@ -2431,11 +2432,15 @@ pe(nullptr)
     slomaskbl->setAdjusterListener(this);
     lapmaskbl->setAdjusterListener(this);
     shadmaskbl->setAdjusterListener(this);
+    strumaskbl->setAdjusterListener(this);
+    Gtk::HSeparator* const separatorstrubl = Gtk::manage(new  Gtk::HSeparator());
 
     ToolParamBlock* const maskblBox = Gtk::manage(new ToolParamBlock());
     maskblBox->pack_start(*showmaskblMethod, Gtk::PACK_SHRINK, 4);
     maskblBox->pack_start(*enablMask, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskblBox->pack_start(*strumaskbl, Gtk::PACK_SHRINK, 0);
+    maskblBox->pack_start(*separatorstrubl, Gtk::PACK_SHRINK, 2);
     maskblBox->pack_start(*blendmaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*radmaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*lapmaskbl, Gtk::PACK_SHRINK, 0);
@@ -3876,6 +3881,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskbl = slomaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskbl = lapmaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shadmaskbl = shadmaskbl->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strumaskbl = strumaskbl->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fftwbl = fftwbl->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve = Lmaskblshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav = LLmaskblshapewav->getCurve();
@@ -4216,6 +4222,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskbl = pe->locallab.spots.at(pp->locallab.selspot).slomaskbl || slomaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskbl = pe->locallab.spots.at(pp->locallab.selspot).lapmaskbl || lapmaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).shadmaskbl = pe->locallab.spots.at(pp->locallab.selspot).shadmaskbl || shadmaskbl->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strumaskbl = pe->locallab.spots.at(pp->locallab.selspot).strumaskbl || strumaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fftwbl = pe->locallab.spots.at(pp->locallab.selspot).fftwbl || !fftwbl->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve || !Lmaskblshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav = pe->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav || !LLmaskblshapewav->isUnChanged();
@@ -4543,6 +4550,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskbl = pedited->locallab.spots.at(pp->locallab.selspot).slomaskbl || slomaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskbl = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskbl || lapmaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).shadmaskbl = pedited->locallab.spots.at(pp->locallab.selspot).shadmaskbl || shadmaskbl->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strumaskbl = pedited->locallab.spots.at(pp->locallab.selspot).strumaskbl || strumaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fftwbl = pedited->locallab.spots.at(pp->locallab.selspot).fftwbl || !fftwbl->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve || !Lmaskblshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav || !LLmaskblshapewav->isUnChanged();
@@ -6620,6 +6628,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     slomaskbl->setDefault(defSpot->slomaskbl);
     lapmaskbl->setDefault(defSpot->lapmaskbl);
     shadmaskbl->setDefault(defSpot->shadmaskbl);
+    strumaskbl->setDefault(defSpot->strumaskbl);
     csThresholdblur->setDefault<int>(defSpot->csthresholdblur);
     // Tone Mapping
     stren->setDefault(defSpot->stren);
@@ -6815,6 +6824,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         slomaskbl->setDefaultEditedState(Irrelevant);
         lapmaskbl->setDefaultEditedState(Irrelevant);
         shadmaskbl->setDefaultEditedState(Irrelevant);
+        strumaskbl->setDefaultEditedState(Irrelevant);
         csThresholdblur->setDefaultEditedState(Irrelevant);
         // Tone Mapping
         stren->setDefaultEditedState(Irrelevant);
@@ -7014,6 +7024,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         slomaskbl->setDefaultEditedState(defSpotState->slomaskbl ? Edited : UnEdited);
         lapmaskbl->setDefaultEditedState(defSpotState->lapmaskbl ? Edited : UnEdited);
         shadmaskbl->setDefaultEditedState(defSpotState->shadmaskbl ? Edited : UnEdited);
+        strumaskbl->setDefaultEditedState(defSpotState->strumaskbl ? Edited : UnEdited);
         csThresholdblur->setDefaultEditedState(defSpotState->csthresholdblur ? Edited : UnEdited);
         // Tone Mapping
         stren->setDefaultEditedState(defSpotState->stren ? Edited : UnEdited);
@@ -7731,6 +7742,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == strumaskbl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrumaskbl, strumaskbl->getTextValue());
+            }
+        }
+
     }
 
     // Tone Mapping
@@ -8393,6 +8410,7 @@ void Locallab::setBatchMode(bool batchMode)
     slomaskbl->showEditedCB();
     lapmaskbl->showEditedCB();
     shadmaskbl->showEditedCB();
+    strumaskbl->showEditedCB();
     csThresholdblur->showEditedCB();
     // Tone Mapping
     stren->showEditedCB();
@@ -9106,6 +9124,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         slomaskbl->setValue(pp->locallab.spots.at(index).slomaskbl);
         lapmaskbl->setValue(pp->locallab.spots.at(index).lapmaskbl);
         shadmaskbl->setValue(pp->locallab.spots.at(index).shadmaskbl);
+        strumaskbl->setValue(pp->locallab.spots.at(index).strumaskbl);
         fftwbl->set_active(pp->locallab.spots.at(index).fftwbl);
         Lmaskblshape->setCurve(pp->locallab.spots.at(index).Lmaskblcurve);
         LLmaskblshapewav->setCurve(pp->locallab.spots.at(index).LLmaskblcurvewav);
@@ -9502,6 +9521,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 slomaskbl->setEditedState(spotState->slomaskbl ? Edited : UnEdited);
                 lapmaskbl->setEditedState(spotState->lapmaskbl ? Edited : UnEdited);
                 shadmaskbl->setEditedState(spotState->shadmaskbl ? Edited : UnEdited);
+                strumaskbl->setEditedState(spotState->strumaskbl ? Edited : UnEdited);
                 fftwbl->set_inconsistent(multiImage && !spotState->fftwbl);
                 Lmaskblshape->setUnChanged(!spotState->Lmaskblcurve);
                 LLmaskblshapewav->setUnChanged(!spotState->LLmaskblcurvewav);

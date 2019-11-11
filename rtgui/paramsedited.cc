@@ -1134,6 +1134,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).slomaskbl = locallab.spots.at(j).slomaskbl && pSpot.slomaskbl == otherSpot.slomaskbl;
                 locallab.spots.at(j).lapmaskbl = locallab.spots.at(j).lapmaskbl && pSpot.lapmaskbl == otherSpot.lapmaskbl;
                 locallab.spots.at(j).shadmaskbl = locallab.spots.at(j).shadmaskbl && pSpot.shadmaskbl == otherSpot.shadmaskbl;
+                locallab.spots.at(j).strumaskbl = locallab.spots.at(j).strumaskbl && pSpot.strumaskbl == otherSpot.strumaskbl;
                 locallab.spots.at(j).fftwbl = locallab.spots.at(j).fftwbl && pSpot.fftwbl == otherSpot.fftwbl;
                 locallab.spots.at(j).Lmaskblcurve = locallab.spots.at(j).Lmaskblcurve && pSpot.Lmaskblcurve == otherSpot.Lmaskblcurve;
                 locallab.spots.at(j).LLmaskblcurvewav = locallab.spots.at(j).LLmaskblcurvewav && pSpot.LLmaskblcurvewav == otherSpot.LLmaskblcurvewav;
@@ -3446,6 +3447,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).shadmaskbl = mods.locallab.spots.at(i).shadmaskbl;
         }
 
+        if (locallab.spots.at(i).strumaskbl) {
+            toEdit.locallab.spots.at(i).strumaskbl = mods.locallab.spots.at(i).strumaskbl;
+        }
+
         if (locallab.spots.at(i).Lmaskblcurve) {
             toEdit.locallab.spots.at(i).Lmaskblcurve = mods.locallab.spots.at(i).Lmaskblcurve;
         }
@@ -5086,6 +5091,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     slomaskbl(v),
     lapmaskbl(v),
     shadmaskbl(v),
+    strumaskbl(v),
     Lmaskblcurve(v),
     LLmaskblcurvewav(v),
     csthresholdblur(v),
@@ -5403,6 +5409,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     slomaskbl = v;
     lapmaskbl = v;
     shadmaskbl = v;
+    strumaskbl = v;
     Lmaskblcurve = v;
     LLmaskblcurvewav = v;
     csthresholdblur = v;

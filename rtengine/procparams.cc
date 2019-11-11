@@ -2598,6 +2598,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     slomaskbl(0.0),
     lapmaskbl(0.0),
     shadmaskbl(0),
+    strumaskbl(0),
     Lmaskblcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LLmaskblcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     csthresholdblur(0, 0, 6, 5, false),
@@ -2925,6 +2926,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomaskbl == other.slomaskbl
         && lapmaskbl == other.lapmaskbl
         && shadmaskbl == other.shadmaskbl
+        && strumaskbl == other.strumaskbl
         && Lmaskblcurve == other.Lmaskblcurve
         && LLmaskblcurvewav == other.LLmaskblcurvewav
         && csthresholdblur == other.csthresholdblur
@@ -4231,6 +4233,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskbl, "Locallab", "Slomaskbl_" + std::to_string(i), spot.slomaskbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmaskbl, "Locallab", "Lapmaskbl_" + std::to_string(i), spot.lapmaskbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shadmaskbl, "Locallab", "shadmaskbl_" + std::to_string(i), spot.shadmaskbl, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strumaskbl, "Locallab", "strumaskbl_" + std::to_string(i), spot.strumaskbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmaskblcurve, "Locallab", "LmaskblCurve_" + std::to_string(i), spot.Lmaskblcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskblcurvewav, "Locallab", "LLmaskblCurvewav_" + std::to_string(i), spot.LLmaskblcurvewav, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).csthresholdblur, "Locallab", "CSThresholdblur_" + std::to_string(i), spot.csthresholdblur.toVector(), keyFile);
@@ -5675,6 +5678,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskbl_" + std::to_string(i), pedited, spot.slomaskbl, spotEdited.slomaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskbl_" + std::to_string(i), pedited, spot.lapmaskbl, spotEdited.lapmaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "shadmaskbl_" + std::to_string(i), pedited, spot.shadmaskbl, spotEdited.shadmaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "strumaskbl_" + std::to_string(i), pedited, spot.strumaskbl, spotEdited.strumaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskblCurve_" + std::to_string(i), pedited, spot.Lmaskblcurve, spotEdited.Lmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurvewav_" + std::to_string(i), pedited, spot.LLmaskblcurvewav, spotEdited.LLmaskblcurvewav);
                 if (keyFile.has_key("Locallab", "CSThresholdblur_" + std::to_string(i))) {

@@ -7649,6 +7649,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
+                JaggedArray<float> blendstru(GW, GH);
+                float strumask = 0.01f * (float) params->locallab.spots.at(sp).strumaskbl;
+
+                if(strumask > 0.f){
+                    buildBlendMask(bufgb->L, blendstru, GW, GH, strumask, 1.f);
+                    float radblur = 0.02f * lp.radmabl;
+                    float rm = radblur / sk;
+
+                    if (rm > 0) {
+                        float **mb = blendstru;
+                        gaussianBlur(mb, mb, GW, GH, rm);
+                    }
+            }
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -7657,6 +7671,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     for (int jr = 0; jr < GW; jr++) {
                         float kmaskLexp = 0;
                         float kmaskCH = 0;
+                        float kmasstru = 0.f;
+
+                        if(strumask > 0.f){
+                            kmasstru = bufgb->L[ir][jr]* blendstru[ir][jr];
+                        }
 
                         if (locllmasblCurve  && llmasblutili) {
                             float ligh = bufgb->L[ir][jr] / 32768.f;
@@ -7688,7 +7707,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             kmaskLexp += 32768.f * valHH;
                         }
 
-                        bufmaskblurbl->L[ir][jr] = CLIPLOC(kmaskLexp);
+                        bufmaskblurbl->L[ir][jr] = CLIPLOC(kmaskLexp +  kmasstru);
                         bufmaskblurbl->a[ir][jr] = kmaskCH;
                         bufmaskblurbl->b[ir][jr] = kmaskCH;
                         ble[ir][jr] = bufmaskblurbl->L[ir][jr] / 32768.f;
@@ -12572,6 +12591,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int sco = params->locallab.spots.at(sp).scopemask;
             int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
             int lumask = params->locallab.spots.at(sp).lumask;
+            float strumask = 0.01f *(float) params->locallab.spots.at(sp).strumaskcol;
 
             const int limscope = 80;
             const float mindE = 2.f + MINSCOPE * sco * lp.thr;
@@ -12582,7 +12602,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float anchorcd = 50.f;
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
-                        0.f,
+                        strumask,
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
                         level_bl, level_hl, level_br, level_hr,

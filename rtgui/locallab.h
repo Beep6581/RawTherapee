@@ -241,6 +241,7 @@ private:
     Adjuster* const isogr;
     Adjuster* const strengr;
     Adjuster* const scalegr;
+    Adjuster* const strumaskbl;
     // Tone Mapping
     Adjuster* const stren;
     Adjuster* const gamma;
