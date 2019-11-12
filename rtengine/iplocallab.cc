@@ -2545,7 +2545,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
         }
     }
 
- //   Median_Denoise(ble, blend2, bfw, bfh, Median::TYPE_3X3_STRONG, 1, multiThread);
+//   Median_Denoise(ble, blend2, bfw, bfh, Median::TYPE_3X3_STRONG, 1, multiThread);
 }
 
 
@@ -3223,7 +3223,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         JaggedArray<float> blendstru(bfw, bfh);
 
-        if(strumask > 0.f){
+        if (strumask > 0.f) {
             float delstrumask = 4.1f - strumask;//4.1 = 2 * max slider strumask + 0.1
             buildBlendMask(bufcolorig->L, blendstru, bfw, bfh, delstrumask, 1.f);
             float radblur = 0.02f * rad;//empirical value
@@ -3233,7 +3233,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 float **mb = blendstru;
                 gaussianBlur(mb, mb, bfw, bfh, rm);
             }
-            
+
         }
 
 #ifdef _OPENMP
@@ -3271,8 +3271,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     float kmaskH = 0.f;
                     float kmasstru = 0.f;
 
-                    if(strumask > 0.f && !astool){
-                        kmasstru = bufcolorig->L[ir][jr]* blendstru[ir][jr];
+                    if (strumask > 0.f && !astool) {
+                        kmasstru = bufcolorig->L[ir][jr] * blendstru[ir][jr];
                     }
 
                     if (locllmasCurve && llmasutili) {
@@ -3347,10 +3347,10 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             }
         }
 
-        if(strumask > 0.f && astool){
+        if (strumask > 0.f && astool) {
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
             for (int ir = 0; ir < bfh; ir++) {
@@ -3358,7 +3358,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     bufmaskblurcol->L[ir][jr] *= (1.f + blendstru[ir][jr]);
                 }
             }
-            
+
         }
 
         if (lmasklocalcurve && localmaskutili) {
@@ -5331,6 +5331,7 @@ int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 static void softlig(float &a, float &b, float minc, float maxc)
 {
     float alpha = 0.5f * (maxc - minc);
+
     if (b <= alpha) {
         a = (2.f * a * b) + a * a * (maxc - 2.f * b);
     } else {
@@ -5341,6 +5342,7 @@ static void softlig(float &a, float &b, float minc, float maxc)
 static void overlay(float &a, float &b, float minc, float maxc)
 {
     float alpha = 0.5f * (maxc - minc);
+
     if (b <= alpha) {
         a = (2.f * a * b);
     } else {
@@ -7663,12 +7665,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufgb->b[y][x] = original->b[y][x];
                 }
             }
+
             float strumask = 0.02f * (float) params->locallab.spots.at(sp).strumaskbl;
             JaggedArray<float> blendstru(GW, GH);
 
             if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
 
-                if(strumask > 0.f){
+                if (strumask > 0.f) {
                     float delstrumask = 4.1f - strumask;//4.1 = 2 * max slider strumask + 0.1
                     buildBlendMask(bufgb->L, blendstru, GW, GH, delstrumask, 1.f);
                     float radblur = 0.02f * lp.radmabl;
@@ -7678,7 +7681,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float **mb = blendstru;
                         gaussianBlur(mb, mb, GW, GH, rm);
                     }
-            }
+                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -7690,8 +7693,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float kmaskCH = 0;
                         float kmasstru = 0.f;
 
-                        if(strumask > 0.f && !astool){
-                            kmasstru = bufgb->L[ir][jr]* blendstru[ir][jr];
+                        if (strumask > 0.f && !astool) {
+                            kmasstru = bufgb->L[ir][jr] * blendstru[ir][jr];
                         }
 
                         if (locllmasblCurve  && llmasblutili) {
@@ -7737,6 +7740,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         guid[ir][jr] = Y / 32768.f;
                     }
                 }
+
                 std::unique_ptr<LabImage> bufprov(new LabImage(GW, GH));
 
                 bufprov->CopyFrom(bufmaskblurbl.get());
@@ -7763,19 +7767,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             }
 
-        if(strumask > 0.f && astool && (lp.enablMask || lp.showmaskblmet == 3)){
+            if (strumask > 0.f && astool && (lp.enablMask || lp.showmaskblmet == 3)) {
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-            for (int ir = 0; ir < GH; ir++) {
-                for (int jr = 0; jr < GW; jr++) {
-                    bufmaskblurbl->L[ir][jr] *= (1.f + blendstru[ir][jr]);
+                for (int ir = 0; ir < GH; ir++) {
+                    for (int jr = 0; jr < GW; jr++) {
+                        bufmaskblurbl->L[ir][jr] *= (1.f + blendstru[ir][jr]);
+                    }
                 }
+
             }
-            
-        }
 
             if (lmaskbllocalcurve && localmaskblutili) {
 #ifdef _OPENMP
@@ -7833,13 +7837,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
 // deltae Mask with scope
- //           bool delt = params->locallab.spots.at(sp).deltae;
+//           bool delt = params->locallab.spots.at(sp).deltae;
             int sco = params->locallab.spots.at(sp).scopemask;
             const int limscope = 80;
             const float mindE = 2.f + MINSCOPE * sco * lp.thr;
             const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+
             //printf("minde=%f maxde=%f, scopee=%i huref=%f lumaref=%f chromaref=%f\n", mindE, maxdE, sco, hueref, lumaref, chromaref);
             if (delt && lp.blurmet == 0 && (lp.enablMask || lp.showmaskblmet == 3)) {
                 std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(GW, GH));
@@ -8480,7 +8485,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int shortcu = 0; //lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
-                                0.f, false, 
+                                0.f, false,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmaskcblocalcurve, localmaskcbutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                                 shortcu, delt, hueref, chromaref, lumaref,
@@ -8601,6 +8606,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         transit_shapedetect(7, loctemp.get(), nullptr, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                         buflight.free();
                         bufsh.free();
+
                         if (params->locallab.spots.at(sp).recurs) {
                             original->CopyFrom(transformed);
                             float avge;
@@ -11472,7 +11478,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufexporig.reset();
                     blend2.free();
                     buflight.free();
-                    
+
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
                         float avge;
@@ -11848,20 +11854,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float anchorcd = 50.f;
 
 //                    if (lp.mergemet != 2) {
-                        maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
-                                    strumask, astool,
-                                    locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
-                                    level_bl, level_hl, level_br, level_hr,
-                                    shortcu, delt, hueref, chromaref, lumaref,
-                                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
-                                   );
+                    maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
+                                strumask, astool,
+                                locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
+                                level_bl, level_hl, level_br, level_hr,
+                                shortcu, delt, hueref, chromaref, lumaref,
+                                maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                               );
 
-                        if (lp.showmaskcolmet == 3) {
-                            showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
+                    if (lp.showmaskcolmet == 3) {
+                        showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
 
-                            return;
-                        }
+                        return;
+                    }
+
 //                    }
 
                     if (lp.showmaskcolmet == 4) {
@@ -12508,14 +12515,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                     }
-/*
-                    float **temp = nullptr;
 
-                    if (blend) {
-                        temp = blend2;
-                        blend2.free();
-                    }
-*/
+                    /*
+                                        float **temp = nullptr;
+
+                                        if (blend) {
+                                            temp = blend2;
+                                            blend2.free();
+                                        }
+                    */
                     int smerge = 100;
 
                     if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
@@ -12525,9 +12533,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     //bufcolfin add for merge
                     if (!(usergb && spez)) {
                         transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
-                        if(blends) {
+
+                        if (blends) {
                             blend2.free();
                         }
+
                         buflight.free();
                     }
 

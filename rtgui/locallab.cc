@@ -954,7 +954,7 @@ pe(nullptr)
     maskcolBox->pack_start(*separatorstru, Gtk::PACK_SHRINK, 2);
     toolcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const toolcolBox = Gtk::manage(new ToolParamBlock());
-    
+
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*radmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
