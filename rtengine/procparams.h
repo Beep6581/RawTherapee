@@ -551,6 +551,7 @@ struct CaptureSharpeningParams {
     double         deconvradius;
     double         deconvradiusOffset;
     int            deconviter;
+    int            deconvrange;
 
     CaptureSharpeningParams();
 

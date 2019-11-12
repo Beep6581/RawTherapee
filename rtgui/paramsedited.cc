@@ -172,6 +172,7 @@ void ParamsEdited::set(bool v)
     pdsharpening.deconvradius   = v;
     pdsharpening.deconvradiusOffset   = v;
     pdsharpening.deconviter     = v;
+    pdsharpening.deconvrange     = v;
     prsharpening.enabled            = v;
     prsharpening.contrast           = v;
     prsharpening.radius             = v;
@@ -758,6 +759,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         pdsharpening.deconvradius = pdsharpening.deconvradius && p.pdsharpening.deconvradius == other.pdsharpening.deconvradius;
         pdsharpening.deconvradiusOffset = pdsharpening.deconvradiusOffset && p.pdsharpening.deconvradiusOffset == other.pdsharpening.deconvradiusOffset;
         pdsharpening.deconviter = pdsharpening.deconviter && p.pdsharpening.deconviter == other.pdsharpening.deconviter;
+        pdsharpening.deconvrange = pdsharpening.deconvrange && p.pdsharpening.deconvrange == other.pdsharpening.deconvrange;
         prsharpening.enabled = prsharpening.enabled && p.prsharpening.enabled == other.prsharpening.enabled;
         prsharpening.contrast = prsharpening.contrast && p.prsharpening.contrast == other.prsharpening.contrast;
         prsharpening.radius = prsharpening.radius && p.prsharpening.radius == other.prsharpening.radius;
@@ -1750,6 +1752,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (pdsharpening.deconviter) {
         toEdit.pdsharpening.deconviter = dontforceSet && options.baBehav[ADDSET_SHARP_ITER] ? toEdit.pdsharpening.deconviter + mods.pdsharpening.deconviter : mods.pdsharpening.deconviter;
+    }
+
+    if (pdsharpening.deconvrange) {
+        toEdit.pdsharpening.deconvrange = dontforceSet && options.baBehav[ADDSET_SHARP_RANGE] ? toEdit.pdsharpening.deconvrange + mods.pdsharpening.deconvrange : mods.pdsharpening.deconvrange;
     }
 
     if (prsharpening.enabled) {
@@ -3301,5 +3307,5 @@ bool FilmNegativeParamsEdited::isUnchanged() const
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const
 {
-    return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter;
+    return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvrange;
 }

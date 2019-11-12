@@ -646,7 +646,7 @@ BENCHFUN
     const array2D<float>& blueVals = blueCache ? *blueCache : blue;
 
     array2D<float> clipMask(W, H);
-    constexpr float clipLimit = 0.95f;
+    const float clipLimit = sharpeningParams.deconvrange / 100.f;
     constexpr float maxSigma = 1.15f;
 
     if (getSensorType() == ST_BAYER) {
