@@ -216,7 +216,7 @@ public:
                  int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/);
     //locallab
     void maskcalccol(bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, int inv, const struct local_params & lp,
-                 float strumask,
+                 float strumask, bool astool,
                  const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, 
                  const LocLLmaskCurve & locllmasCurve, bool & llmasutili, 
                  const LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, 

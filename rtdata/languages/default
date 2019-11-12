@@ -1043,6 +1043,7 @@ HISTORY_MSG_802;Local - Contrast threshold
 HISTORY_MSG_803;Local - Color Merge
 HISTORY_MSG_804;Local - Color mask Structure
 HISTORY_MSG_805;Local - Blur Noise mask Structure
+HISTORY_MSG_806;Local - Color mask Structure as tool
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2147,6 +2148,8 @@ TP_LOCALLAB_SHAMASKCOL;Shadows mask
 TP_LOCALLAB_STRUMASKCOL;Structure mask
 TP_LOCALLAB_HIGHMASKCOL;Highlights mask
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
+TP_LOCALLAB_TOOLMASK;Tools
+TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMAWHITESEST;Whiteest
 TP_LOCALLAB_SH1;Shadows Highlights
@@ -2188,7 +2191,7 @@ TP_LOCALLAB_MERNIN;Screen
 TP_LOCALLAB_MERTEN;Darken only
 TP_LOCALLAB_MERELE;Lighten only
 TP_LOCALLAB_MERTWE;Exclusion
-TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves are used.\nDisabled in Inverse
+TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves and structure mask (if enabled tool) are used.\nDisabled in Inverse
 TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_CSTHRESHOLDBLUR;Mask Wavelet level
 TP_LOCALLAB_LAPLACC;Mask Laplacian solve PDE

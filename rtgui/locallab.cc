@@ -471,6 +471,7 @@ detailthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILTHR"), 0, 100, 1, 0))),
 curvactiv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CURV")))),
 invers(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
 special(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SPECIAL")))),
+toolcol(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
 enaColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 // Exposure
 enaExpMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -556,6 +557,7 @@ lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACO
 lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
 lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
 gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
+toolcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
 mergecolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")))),
 merge1colFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")))),
 pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
@@ -776,6 +778,7 @@ pe(nullptr)
 
     inversConn  = invers->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversChanged));
     specialConn  = special->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::specialChanged));
+    toolcolConn  = toolcol->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::toolcolChanged));
 
 
     mergecolMethod->append(M("TP_LOCALLAB_MERONE"));
@@ -943,17 +946,24 @@ pe(nullptr)
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcolBox->pack_start(*strumaskcol, Gtk::PACK_SHRINK, 0);
+    maskcolBox->pack_start(*toolcol);
+
     maskcolBox->pack_start(*separatorstru, Gtk::PACK_SHRINK, 2);
+    toolcolFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const toolcolBox = Gtk::manage(new ToolParamBlock());
+    
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
-    maskcolBox->pack_start(*radmaskcol, Gtk::PACK_SHRINK, 0);
-    maskcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
-    maskcolBox->pack_start(*chromaskcol, Gtk::PACK_SHRINK, 0);
-    maskcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
-    maskcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
-    maskcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
-    maskcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    maskcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    maskcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
+    toolcolBox->pack_start(*radmaskcol, Gtk::PACK_SHRINK, 0);
+    toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
+    toolcolBox->pack_start(*chromaskcol, Gtk::PACK_SHRINK, 0);
+    toolcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
+    toolcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
+    toolcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
+    toolcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    toolcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    toolcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
+    toolcolFrame->add(*toolcolBox);
+    maskcolBox->pack_start(*toolcolFrame);
 
     mergecolFrame->add(*maskcolBox);
     ToolParamBlock* const mask7Box = Gtk::manage(new ToolParamBlock());
@@ -3694,6 +3704,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).HHcurve = HHshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).invers = invers->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).special = special->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).toolcol = toolcol->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).enaColorMask = enaColorMask->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = CCmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = LLmaskshape->getCurve();
@@ -4090,6 +4101,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).HHcurve = pe->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).invers = pe->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).special = pe->locallab.spots.at(pp->locallab.selspot).special || !special->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).toolcol = pe->locallab.spots.at(pp->locallab.selspot).toolcol || !toolcol->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).enaColorMask = pe->locallab.spots.at(pp->locallab.selspot).enaColorMask || !enaColorMask->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
@@ -4418,6 +4430,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).HHcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).invers = pedited->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).special = pedited->locallab.spots.at(pp->locallab.selspot).special || !special->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).toolcol = pedited->locallab.spots.at(pp->locallab.selspot).toolcol || !toolcol->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).enaColorMask = pedited->locallab.spots.at(pp->locallab.selspot).enaColorMask || !enaColorMask->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
@@ -5679,6 +5692,29 @@ void Locallab::specialChanged()
                 listener->panelChanged(EvLocallabspecial, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(EvLocallabspecial, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+void Locallab::toolcolChanged()
+{
+
+    if (multiImage) {
+        if (toolcol->get_inconsistent()) {
+            toolcol->set_inconsistent(false);
+            toolcolConn.block(true);
+            toolcol->set_active(false);
+            toolcolConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expcolor->getEnabled()) {
+        if (listener) {
+            if (toolcol->get_active()) {
+                listener->panelChanged(EvLocallabtoolcol, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvLocallabtoolcol, M("GENERAL_DISABLED"));
             }
         }
     }
@@ -8681,6 +8717,7 @@ void Locallab::enableListener()
     mergecolMethodConn.block(false);
     inversConn.block(false);
     specialConn.block(false);
+    toolcolConn.block(false);
     showmaskcolMethodConn.block(false);
     showmaskcolMethodConninv.block(false);
     enaColorMaskConn.block(false);
@@ -8765,6 +8802,7 @@ void Locallab::disableListener()
     mergecolMethodConn.block(true);
     inversConn.block(true);
     specialConn.block(true);
+    toolcolConn.block(true);
     showmaskcolMethodConn.block(true);
     showmaskcolMethodConninv.block(true);
     enaColorMaskConn.block(true);
@@ -8932,6 +8970,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         HHshape->setCurve(pp->locallab.spots.at(index).HHcurve);
         invers->set_active(pp->locallab.spots.at(index).invers);
         special->set_active(pp->locallab.spots.at(index).special);
+        toolcol->set_active(pp->locallab.spots.at(index).toolcol);
         enaColorMask->set_active(pp->locallab.spots.at(index).enaColorMask);
         CCmaskshape->setCurve(pp->locallab.spots.at(index).CCmaskcurve);
         LLmaskshape->setCurve(pp->locallab.spots.at(index).LLmaskcurve);
@@ -9362,6 +9401,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 HHshape->setUnChanged(!spotState->HHcurve);
                 invers->set_inconsistent(multiImage && !spotState->invers);
                 special->set_inconsistent(multiImage && !spotState->special);
+                toolcol->set_inconsistent(multiImage && !spotState->toolcol);
                 enaColorMask->set_inconsistent(multiImage && !spotState->enaColorMask);
                 CCmaskshape->setUnChanged(!spotState->CCmaskcurve);
                 LLmaskshape->setUnChanged(!spotState->LLmaskcurve);
