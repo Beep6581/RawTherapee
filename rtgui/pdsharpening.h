@@ -26,6 +26,7 @@ class PdSharpening final : public ToolParamBlock, public AdjusterListener, publi
 
 protected:
     Adjuster* contrast;
+    Adjuster* range;
     Adjuster* dradius;
     Adjuster* dradiusOffset;
     Adjuster* diter;
@@ -33,6 +34,7 @@ protected:
     bool lastAutoContrast;
     bool lastAutoRadius;
     rtengine::ProcEvent EvPdShrContrast;
+    rtengine::ProcEvent EvPdShrRange;
     rtengine::ProcEvent EvPdShrDRadius;
     rtengine::ProcEvent EvPdShrDRadiusOffset;
     rtengine::ProcEvent EvPdShrDIterations;
@@ -57,6 +59,6 @@ public:
     void autoContrastChanged (double autoContrast) override;
     void autoRadiusChanged (double autoRadius) override;
 
-    void setAdjusterBehavior (bool contrastadd, bool radiusadd, bool iteradds);
+    void setAdjusterBehavior (bool contrastadd, bool radiusadd, bool iteradd, bool rangeadd);
     void trimValues (rtengine::procparams::ProcParams* pp) override;
 };
