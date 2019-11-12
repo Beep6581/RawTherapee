@@ -567,7 +567,6 @@ struct CaptureSharpeningParams {
     bool           autoContrast;
     bool           autoRadius;
     double         contrast;
-    double         gamma;
     double         deconvradius;
     double         deconvradiusOffset;
     int            deconviter;

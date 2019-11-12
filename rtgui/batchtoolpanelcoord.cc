@@ -159,7 +159,7 @@ void BatchToolPanelCoordinator::initSession ()
             cacorrection->setAdjusterBehavior (false);
             sharpening->setAdjusterBehavior (false, false, false, false, false, false, false);
             prsharpening->setAdjusterBehavior (false, false, false, false, false, false, false);
-            pdSharpening->setAdjusterBehavior (false, false, false, false);
+            pdSharpening->setAdjusterBehavior (false, false, false);
             sharpenEdge->setAdjusterBehavior (false, false);
             sharpenMicro->setAdjusterBehavior (false, false, false);
             epd->setAdjusterBehavior (false, false, false, false, false);
