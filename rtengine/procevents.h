@@ -830,6 +830,7 @@ enum ProcEventCode {
     Evlocallabstrumaskcol = 803,
     Evlocallabstrumaskbl = 804,
     EvLocallabtoolcol = 805,
+    Evlocallabtoolbl = 806,
     NUMOFEVENTS
 };
 

@@ -557,6 +557,7 @@ public:
         bool HHmaskblcurve;
         bool enablMask;
         bool fftwbl;
+        bool toolbl;
         bool blendmaskbl;
         bool radmaskbl;
         bool chromaskbl;

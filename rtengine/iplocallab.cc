@@ -3355,7 +3355,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
-                    bufmaskblurcol->L[ir][jr] *= blendstru[ir][jr];
+                    bufmaskblurcol->L[ir][jr] *= (1.f + blendstru[ir][jr]);
                 }
             }
             
@@ -7623,8 +7623,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         bool blurz = false;
         bool delt = params->locallab.spots.at(sp).deltae;
+        bool astool = params->locallab.spots.at(sp).toolbl;
 
-        if (((radius > 1.5 * GAUSS_SKIP)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || delt || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
+        if (((radius > 1.5 * GAUSS_SKIP)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
             blurz = true;
         }
 
@@ -7662,10 +7663,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufgb->b[y][x] = original->b[y][x];
                 }
             }
+            float strumask = 0.02f * (float) params->locallab.spots.at(sp).strumaskbl;
+            JaggedArray<float> blendstru(GW, GH);
 
             if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
-                JaggedArray<float> blendstru(GW, GH);
-                float strumask = 0.02f * (float) params->locallab.spots.at(sp).strumaskbl;
 
                 if(strumask > 0.f){
                     float delstrumask = 4.1f - strumask;//4.1 = 2 * max slider strumask + 0.1
@@ -7689,7 +7690,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float kmaskCH = 0;
                         float kmasstru = 0.f;
 
-                        if(strumask > 0.f){
+                        if(strumask > 0.f && !astool){
                             kmasstru = bufgb->L[ir][jr]* blendstru[ir][jr];
                         }
 
@@ -7762,6 +7763,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             }
 
+        if(strumask > 0.f && astool && (lp.enablMask || lp.showmaskblmet == 3)){
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int ir = 0; ir < GH; ir++) {
+                for (int jr = 0; jr < GW; jr++) {
+                    bufmaskblurbl->L[ir][jr] *= (1.f + blendstru[ir][jr]);
+                }
+            }
+            
+        }
 
             if (lmaskbllocalcurve && localmaskblutili) {
 #ifdef _OPENMP

@@ -364,6 +364,8 @@ private:
     sigc::connection enablMaskConn;
     Gtk::CheckButton* const fftwbl;
     sigc::connection fftwblConn;
+    Gtk::CheckButton* const toolbl;
+    sigc::connection toolblConn;
     //Tone mapping
     Gtk::CheckButton* const equiltm;
     sigc::connection equiltmConn;
@@ -474,6 +476,7 @@ private:
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
     Gtk::Frame* const gridFrame;
     Gtk::Frame* const toolcolFrame;
+    Gtk::Frame* const toolblFrame;
     Gtk::Frame* const mergecolFrame;
     Gtk::Frame* const merge1colFrame;
     Gtk::Frame* const pdeFrame;
@@ -546,6 +549,7 @@ private:
     void activlumChanged();
     void enablMaskChanged();
     void fftwblChanged();
+    void toolblChanged();
     //TM
     void equiltmChanged();
     void enatmMaskChanged();

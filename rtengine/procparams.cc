@@ -2590,6 +2590,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     HHmaskblcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     enablMask(false),
     fftwbl(false),
+    toolbl(false),
     blendmaskbl(0),
     radmaskbl(0.0),
     chromaskbl(0.0),
@@ -2919,6 +2920,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && HHmaskblcurve == other.HHmaskblcurve
         && enablMask == other.enablMask
         && fftwbl == other.fftwbl
+        && toolbl == other.toolbl
         && blendmaskbl == other.blendmaskbl
         && radmaskbl == other.radmaskbl
         && chromaskbl == other.chromaskbl
@@ -4227,6 +4229,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskblcurve, "Locallab", "HHmaskblCurve_" + std::to_string(i), spot.HHmaskblcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enablMask, "Locallab", "EnablMask_" + std::to_string(i), spot.enablMask, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftwbl, "Locallab", "Fftwbl_" + std::to_string(i), spot.fftwbl, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).toolbl, "Locallab", "Toolbl_" + std::to_string(i), spot.toolbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskbl, "Locallab", "Blendmaskbl_" + std::to_string(i), spot.blendmaskbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmaskbl, "Locallab", "Radmaskbl_" + std::to_string(i), spot.radmaskbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskbl, "Locallab", "Chromaskbl_" + std::to_string(i), spot.chromaskbl, keyFile);
@@ -5672,6 +5675,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskblCurve_" + std::to_string(i), pedited, spot.HHmaskblcurve, spotEdited.HHmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "EnablMask_" + std::to_string(i), pedited, spot.enablMask, spotEdited.enablMask);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwbl_" + std::to_string(i), pedited, spot.fftwbl, spotEdited.fftwbl);
+                assignFromKeyfile(keyFile, "Locallab", "Toolbl_" + std::to_string(i), pedited, spot.toolbl, spotEdited.toolbl);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskbl_" + std::to_string(i), pedited, spot.blendmaskbl, spotEdited.blendmaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "Radmaskbl_" + std::to_string(i), pedited, spot.radmaskbl, spotEdited.radmaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskbl_" + std::to_string(i), pedited, spot.chromaskbl, spotEdited.chromaskbl);
