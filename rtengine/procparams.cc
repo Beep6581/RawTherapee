@@ -5530,7 +5530,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskcol_" + std::to_string(i), pedited, spot.lapmaskcol, spotEdited.lapmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
                 assignFromKeyfile(keyFile, "Locallab", "gridMethod_" + std::to_string(i), pedited, spot.gridMethod, spotEdited.gridMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Merge_Method_" + std::to_string(i), pedited, spot.merMethod, spotEdited.merMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Merg_Method_" + std::to_string(i), pedited, spot.merMethod, spotEdited.merMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ToneMethod_" + std::to_string(i), pedited, spot.toneMethod, spotEdited.toneMethod);
                 assignFromKeyfile(keyFile, "Locallab", "mergecolMethod_" + std::to_string(i), pedited, spot.mergecolMethod, spotEdited.mergecolMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, spot.llcurve, spotEdited.llcurve);

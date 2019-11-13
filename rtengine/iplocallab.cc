@@ -5336,7 +5336,7 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
 
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
-
+/*
 static void softlig(float &a, float &b, float minc, float maxc)
 {
     float alpha = 0.5f * (maxc - minc);
@@ -5346,6 +5346,11 @@ static void softlig(float &a, float &b, float minc, float maxc)
     } else {
         a = 2.f * a * (maxc - b) + sqrt(LIM(a, 0.f, 2.f)) * (2.f * b - maxc);
     }
+}
+*/
+static void softlig2(float &a, float &b)
+{
+    a = pow(a, pow(2.f,(2.f*(0.5f - b))));
 }
 
 static void overlay(float &a, float &b, float minc, float maxc)
@@ -12330,16 +12335,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     for (int y = 0; y < bfh ; y++) {
                                         for (int x = 0; x < bfw; x++) {
                                             float a = tmpImageorig->r(y, x);
-                                            float b = tmpImagereserv->r(y, x);
-                                            softlig(a, b, minR, maxR);
+                                            float b = LIM01(tmpImagereserv->r(y, x));
+                                         //   softlig(a, b, minR, maxR);
+                                            softlig2(a, b);
                                             tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                             a = tmpImageorig->g(y, x);
-                                            b = tmpImagereserv->g(y, x);
-                                            softlig(a, b, minG, maxG);
+                                            b = LIM01(tmpImagereserv->g(y, x));
+                                         //   softlig(a, b, minG, maxG);
+                                            softlig2(a, b);
                                             tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                             a = tmpImageorig->b(y, x);
-                                            b = tmpImagereserv->b(y, x);
-                                            softlig(a, b, minB, maxB);
+                                            b = LIM01(tmpImagereserv->b(y, x));
+                                        //    softlig(a, b, minB, maxB);
+                                            softlig2(a, b);
                                             tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
