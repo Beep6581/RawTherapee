@@ -4115,7 +4115,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         if (senstype == 1)
         {
             radius = (2.f + 0.2f * lp.blurexp) / sk;
-        } else if (senstype == 0)
+        } else if (senstype == 0 || senstype == 100)
         {
             radius = (2.f + 0.2f * lp.blurcol) / sk;
         } else if (senstype == 9)
@@ -4347,6 +4347,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 } else if (senstype == 100) {
                                     difL = (bufcolfin->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                                    diflc = difL;
 
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
@@ -4413,7 +4414,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
 
-                                        if (previewcol || previewexp || previewSH) {
+                                        if (previewexp) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
@@ -4421,10 +4422,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
 
-                                        if (previewcol || previewexp || previewSH  || previewcb) {
+                                        if (previewcol) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
+                                    }
+                                    if (previewSH  || previewcb) {
+                                        flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                     }
 
                                     float difa = chra * flia - original->a[y][x];
@@ -4497,7 +4502,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 } else if (senstype == 100) {
                                     difL = (bufcolfin->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-
+                                    diflc = difL;
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -4562,7 +4567,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
 
-                                        if (previewcol || previewexp || previewSH) {
+                                        if (previewexp) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
@@ -4570,10 +4575,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
 
-                                        if (previewcol || previewexp || previewSH) {
+                                        if (previewcol) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
+                                    }
+                                    if (previewSH  || previewcb) {
+                                        flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                     }
 
                                     float difa = chra * flia - original->a[y][x];
