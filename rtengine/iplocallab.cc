@@ -7781,7 +7781,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             }
 
-            if (lmaskbllocalcurve && localmaskblutili) {
+            if (lmaskbllocalcurve && localmaskblutili && (lp.enablMask || lp.showmaskblmet == 3)) {
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -7806,7 +7806,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float contrast = 0.f;
             bool wavcurvemask = false;
 
-            if (loclmasCurveblwav && lmasutiliblwav) {
+            if (loclmasCurveblwav && lmasutiliblwav && (lp.enablMask || lp.showmaskblmet == 3)) {
                 for (int i = 0; i < 500; i++) {
                     if (loclmasCurveblwav[i] != 0.5) {
                         wavcurvemask = true;
