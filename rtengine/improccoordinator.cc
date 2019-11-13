@@ -1142,12 +1142,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->refChanged(huer, lumar, chromar);
                     }
                 }
+/*
+//very bad idea : it's the story of the cat biting its tail
+// brings big bugs..
                 //restore ref values
                 huerefs[sp] = huer;
                 chromarefs[sp] = chromar;
                 lumarefs[sp] = lumar ;
                 sobelrefs[sp] = sobeler;
-
+*/
                 lllocalcurve.clear();
                 lightCurveloc.clear();
                 cclocalcurve.clear();
