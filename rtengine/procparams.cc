@@ -1162,7 +1162,7 @@ CaptureSharpeningParams::CaptureSharpeningParams() :
     deconvradius(0.75),
     deconvradiusOffset(0.0),
     deconviter(20),
-    deconvrange(95)
+    deconvitercheck(true)
 {
 }
 
@@ -1174,7 +1174,7 @@ bool CaptureSharpeningParams::operator ==(const CaptureSharpeningParams& other) 
         && autoContrast == other.autoContrast
         && autoRadius == other.autoRadius
         && deconvradius == other.deconvradius
-        && deconvrange == other.deconvrange
+        && deconvitercheck == other.deconvitercheck
         && deconvradiusOffset == other.deconvradiusOffset
         && deconviter == other.deconviter;
 }
@@ -4407,7 +4407,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->pdsharpening.autoRadius, "PostDemosaicSharpening", "AutoRadius", pdsharpening.autoRadius, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconvradius, "PostDemosaicSharpening", "DeconvRadius", pdsharpening.deconvradius, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconvradiusOffset, "PostDemosaicSharpening", "DeconvRadiusOffset", pdsharpening.deconvradiusOffset, keyFile);
-        saveToKeyfile(!pedited || pedited->pdsharpening.deconvrange, "PostDemosaicSharpening", "DeconvRange", pdsharpening.deconvrange, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.deconvitercheck, "PostDemosaicSharpening", "DeconvIterCheck", pdsharpening.deconvitercheck, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconviter, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, keyFile);
 
 // Post resize sharpening
@@ -5895,7 +5895,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "AutoRadius", pedited, pdsharpening.autoRadius, pedited->pdsharpening.autoRadius);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadius", pedited, pdsharpening.deconvradius, pedited->pdsharpening.deconvradius);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadiusOffset", pedited, pdsharpening.deconvradiusOffset, pedited->pdsharpening.deconvradiusOffset);
-            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRange", pedited, pdsharpening.deconvrange, pedited->pdsharpening.deconvrange);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterCheck", pedited, pdsharpening.deconvitercheck, pedited->pdsharpening.deconvitercheck);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterations", pedited, pdsharpening.deconviter, pedited->pdsharpening.deconviter);
         }
 

@@ -497,7 +497,30 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
     return std::sqrt((1.f / (std::log(1.f / maxRatio))) / -2.f);
 }
 
-void CaptureDeconvSharpening (float** luminance, float** oldLuminance, const float * const * blend, int W, int H, double sigma, double sigmaCornerOffset, int iterations, rtengine::ProgressListener* plistener, double startVal, double endVal)
+bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int border)
+{
+    bool stopped = false;
+    for (int ii = border; !stopped && ii < fullTileSize - border; ++ii) {
+#ifdef __SSE2__
+        for (int jj = border; jj < fullTileSize - border; jj += 4) {
+            if (_mm_movemask_ps((vfloat)vmaskf_lt(vmul2f(LVFU(tmpIThr[ii][jj])), LVFU(iterCheck[ii - border][jj - border])))) {
+                stopped = true;
+                break;
+            }
+        }
+#else
+        for (int jj = border; jj < fullTileSize - border; ++jj) {
+            if (tmpIThr[ii][jj] * xxx < luminance[i + ii - border][j + jj - border] * clipmask[i + ii - border][j + jj - border]) {
+                stopped = true;
+                break;
+            }
+        }
+#endif
+    }
+    return stopped;
+}
+
+void CaptureDeconvSharpening (float ** clipmask, float** luminance, float** oldLuminance, const float * const * blend, int W, int H, double sigma, double sigmaCornerOffset, int iterations, bool checkIterStop, rtengine::ProgressListener* plistener, double startVal, double endVal)
 {
 BENCHFUN
     const bool is5x5 = (sigma <= 0.84 && sigmaCornerOffset == 0.0);
@@ -513,7 +536,7 @@ BENCHFUN
         compute7x7kernel(sigma, kernel7);
     }
 
-    constexpr int tileSize = 194;
+    constexpr int tileSize = 32;
     constexpr int border = 5;
     constexpr int fullTileSize = tileSize + 2 * border;
     const float cornerRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
@@ -522,6 +545,7 @@ BENCHFUN
 
     double progress = startVal;
     const double progressStep = (endVal - startVal) * rtengine::SQR(tileSize) / (W * H);
+
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -530,9 +554,10 @@ BENCHFUN
         array2D<float> tmpIThr(fullTileSize, fullTileSize);
         array2D<float> tmpThr(fullTileSize, fullTileSize);
         array2D<float> lumThr(fullTileSize, fullTileSize);
+        array2D<float> iterCheck(tileSize, tileSize);
         initTile(tmpThr, fullTileSize);
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic,2) collapse(2)
+        #pragma omp for schedule(dynamic,16) collapse(2)
 #endif
         for (int i = border; i < H - border; i+= tileSize) {
             for(int j = border; j < W - border; j+= tileSize) {
@@ -541,6 +566,11 @@ BENCHFUN
                 // fill tiles
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
+                    for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
+                        for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
+                            iterCheck[k][l] = oldLuminance[ii][jj] * clipmask[ii][jj];
+                        }
+                    }
                     for (int k = 0, ii = endOfCol ? H - fullTileSize : i; k < fullTileSize; ++k, ++ii) {
                         for (int l = 0, jj = endOfRow ? W - fullTileSize : j; l < fullTileSize; ++l, ++jj) {
                             tmpIThr[k][l] = oldLuminance[ii - border][jj - border];
@@ -548,6 +578,11 @@ BENCHFUN
                         }
                     }
                 } else {
+                    for (int ii = 0; ii < tileSize; ++ii) {
+                        for (int jj = 0; jj < tileSize; ++jj) {
+                            iterCheck[ii][jj] = oldLuminance[i + ii][j + jj] * clipmask[i + ii][j + jj];
+                        }
+                    }
                     for (int ii = i; ii < i + fullTileSize; ++ii) {
                         for (int jj = j; jj < j + fullTileSize; ++jj) {
                             tmpIThr[ii - i][jj - j] = oldLuminance[ii - border][jj - border];
@@ -555,17 +590,24 @@ BENCHFUN
                         }
                     }
                 }
+                bool stopped = false;
                 if (is3x3) {
-                    for (int k = 0; k < iterations; ++k) {
+                    for (int k = 0; k < iterations && !stopped; ++k) {
                         // apply 3x3 gaussian blur and divide luminance by result of gaussian blur
                         gauss3x3div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel3);
                         gauss3x3mult(tmpThr, tmpIThr, fullTileSize, kernel3);
+                        if (checkIterStop) {
+                            stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                        }
                     }
                 } else if (is5x5) {
-                    for (int k = 0; k < iterations; ++k) {
+                    for (int k = 0; k < iterations && !stopped; ++k) {
                         // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
                         gauss5x5div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel5);
                         gauss5x5mult(tmpThr, tmpIThr, fullTileSize, kernel5);
+                        if (checkIterStop) {
+                            stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                        }
                     }
                 } else {
                     if (sigmaCornerOffset != 0.0) {
@@ -574,17 +616,23 @@ BENCHFUN
                         if (sigmaTile >= 0.4f) {
                             float lkernel7[7][7];
                             compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
-                            for (int k = 0; k < iterations; ++k) {
+                            for (int k = 0; k < iterations && !stopped; ++k) {
                                 // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                                 gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
                                 gauss7x7mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
+                                if (checkIterStop) {
+                                    stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                                }
                             }
                         }
                     } else {
-                        for (int k = 0; k < iterations; ++k) {
+                        for (int k = 0; k < iterations && !stopped; ++k) {
                             // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                             gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel7);
                             gauss7x7mult(tmpThr, tmpIThr, fullTileSize, kernel7);
+                            if (checkIterStop) {
+                                stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                            }
                         }
                     }
                 }
@@ -646,7 +694,7 @@ BENCHFUN
     const array2D<float>& blueVals = blueCache ? *blueCache : blue;
 
     array2D<float> clipMask(W, H);
-    const float clipLimit = sharpeningParams.deconvrange / 100.f;
+    constexpr float clipLimit = 0.95f;
     constexpr float maxSigma = 1.15f;
 
     if (getSensorType() == ST_BAYER) {
@@ -765,7 +813,7 @@ BENCHFUN
     }
     conrastThreshold = contrast * 100.f;
 
-    CaptureDeconvSharpening(YNew, YOld, blend, W, H, radius, sharpeningParams.deconvradiusOffset, sharpeningParams.deconviter, plistener, 0.2, 0.9);
+    CaptureDeconvSharpening(clipMask, YNew, YOld, blend, W, H, radius, sharpeningParams.deconvradiusOffset, sharpeningParams.deconviter, sharpeningParams.deconvitercheck, plistener, 0.2, 0.9);
     if (plistener) {
         plistener->setProgress(0.9);
     }

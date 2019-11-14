@@ -19,22 +19,29 @@
 #pragma once
 
 #include "adjuster.h"
+#include "checkbox.h"
 #include "toolpanel.h"
 
-class PdSharpening final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoContrastListener, public rtengine::AutoRadiusListener
+class PdSharpening final :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public rtengine::AutoContrastListener,
+    public rtengine::AutoRadiusListener,
+    public CheckBoxListener
 {
 
 protected:
     Adjuster* contrast;
-    Adjuster* range;
     Adjuster* dradius;
     Adjuster* dradiusOffset;
     Adjuster* diter;
+    CheckBox* itercheck;
 
     bool lastAutoContrast;
     bool lastAutoRadius;
     rtengine::ProcEvent EvPdShrContrast;
-    rtengine::ProcEvent EvPdShrRange;
+    rtengine::ProcEvent EvPdShrCheckIter;
     rtengine::ProcEvent EvPdShrDRadius;
     rtengine::ProcEvent EvPdShrDRadiusOffset;
     rtengine::ProcEvent EvPdShrDIterations;
@@ -59,6 +66,7 @@ public:
     void autoContrastChanged (double autoContrast) override;
     void autoRadiusChanged (double autoRadius) override;
 
-    void setAdjusterBehavior (bool contrastadd, bool radiusadd, bool iteradd, bool rangeadd);
+    void setAdjusterBehavior (bool contrastadd, bool radiusadd, bool iteradd);
     void trimValues (rtengine::procparams::ProcParams* pp) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 };
