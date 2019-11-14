@@ -215,10 +215,10 @@ struct CaptureSharpeningParamsEdited {
     bool contrast;
     bool autoContrast;
     bool autoRadius;
-    bool gamma;
     bool deconvradius;
     bool deconvradiusOffset;
     bool deconviter;
+    bool deconvitercheck;
     bool isUnchanged() const;
 };
 

@@ -41,7 +41,7 @@ public:
     // add other info here
 };
 
-class DarkFrame :
+class DarkFrame final:
     public ToolParamBlock,
     public FoldableToolPanel
 {

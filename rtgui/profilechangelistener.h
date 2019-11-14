@@ -18,8 +18,12 @@
  */
 #pragma once
 
-#include <glibmm/ustring.h>
+namespace Glib
+{
 
+class ustring;
+
+}
 
 namespace rtengine
 {

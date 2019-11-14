@@ -20,7 +20,6 @@
 
 #include <glib.h>
 
-#include "thumbbrowserentrybase.h"
 
 #include "../rtengine/noncopyable.h"
 
@@ -36,6 +35,9 @@ namespace procparams
 }
 
 }
+
+class ThumbBrowserEntryBase;
+
 class ThumbImageUpdateListener
 {
 public:

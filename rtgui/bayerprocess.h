@@ -25,7 +25,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class BayerProcess :
+class BayerProcess final :
     public ToolParamBlock,
     public AdjusterListener,
     public CheckBoxListener,

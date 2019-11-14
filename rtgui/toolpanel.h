@@ -41,9 +41,6 @@ class ProcParams;
 }
 }
 
-class FoldableToolPanel;
-class ToolPanel;
-
 class ToolPanelListener
 {
 public:

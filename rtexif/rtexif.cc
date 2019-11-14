@@ -54,13 +54,13 @@ Interpreter stdInterpreter;
 //-----------------------------------------------------------------------------
 
 TagDirectory::TagDirectory ()
-    : attribs (ifdAttribs), order (HOSTORDER), parent (nullptr) {}
+    : attribs (ifdAttribs), order (HOSTORDER), parent (nullptr), parseJPEG(true) {}
 
 TagDirectory::TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border)
-    : attribs (ta), order (border), parent (p) {}
+    : attribs (ta), order (border), parent (p), parseJPEG(true) {}
 
-TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored)
-    : attribs (ta), order (border), parent (p)
+TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored, bool parseJpeg)
+    : attribs (ta), order (border), parent (p), parseJPEG(parseJpeg)
 {
 
     int numOfTags = get2 (f, order);
@@ -980,9 +980,10 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
         }
     }
 
-    if (tag == 0x002e) { // location of the embedded preview image in raw files of Panasonic cameras
+    if (parent->getParseJpeg() && tag == 0x002e) { // location of the embedded preview image in raw files of Panasonic cameras
         ExifManager eManager(f, nullptr, true);
         const auto fpos = ftell(f);
+
         if (fpos >= 0) {
             eManager.parseJPEG(fpos); // try to parse the exif data from the preview image
 
@@ -1239,7 +1240,7 @@ defsubdirs:
             for (size_t j = 0, i = 0; j < count; j++, i++) {
                 int newpos = base + toInt (j * 4, LONG);
                 fseek (f, newpos, SEEK_SET);
-                directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
+                directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order, true, parent->getParseJpeg());
             }
 
             // set the terminating NULL
@@ -1374,7 +1375,7 @@ bool Tag::parseMakerNote (FILE* f, int base, ByteOrder bom )
         value = new unsigned char[12];
         fread (value, 1, 12, f);
         directory = new TagDirectory*[2];
-        directory[0] = new TagDirectory (parent, f, base, panasonicAttribs, bom);
+        directory[0] = new TagDirectory (parent, f, base, panasonicAttribs, bom, true, parent->getParseJpeg());
         directory[1] = nullptr;
     } else {
         return false;
@@ -2777,7 +2778,7 @@ void ExifManager::parseStd (bool skipIgnored) {
     parse(false, skipIgnored);
 }
 
-void ExifManager::parse (bool isRaw, bool skipIgnored)
+void ExifManager::parse (bool isRaw, bool skipIgnored, bool parseJpeg)
 {
     int ifdOffset = IFDOffset;
 
@@ -2806,7 +2807,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
         fseek (f, rml->exifBase + ifdOffset, SEEK_SET);
 
         // first read the IFD directory
-        TagDirectory* root =  new TagDirectory (nullptr, f, rml->exifBase, ifdAttribs, order, skipIgnored);
+        TagDirectory* root =  new TagDirectory (nullptr, f, rml->exifBase, ifdAttribs, order, skipIgnored, parseJpeg);
 
         // fix ISO issue with nikon and panasonic cameras
         Tag* make = root->getTag ("Make");
@@ -3174,7 +3175,7 @@ void ExifManager::parseJPEG (int offset)
                             rml.reset(new rtengine::RawMetaDataLocation(0));
                         }
                         rml->exifBase = tiffbase;
-                        parse (false);
+                        parse (false, true, false);
                         if (rmlCreated) {
                             rml.reset();
                         }

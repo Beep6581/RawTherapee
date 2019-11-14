@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class EdgePreservingDecompositionUI :
+class EdgePreservingDecompositionUI final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

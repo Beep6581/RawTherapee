@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class ImpulseDenoise :
+class ImpulseDenoise final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

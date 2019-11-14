@@ -8,7 +8,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class PCVignette :
+class PCVignette final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

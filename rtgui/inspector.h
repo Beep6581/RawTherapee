@@ -24,7 +24,6 @@
 
 #include "../rtengine/coord.h"
 #include "../rtengine/coord2d.h"
-#include "../rtengine/rt_math.h"
 
 class InspectorBuffer
 {

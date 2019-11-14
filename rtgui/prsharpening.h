@@ -24,7 +24,7 @@
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class PrSharpening :
+class PrSharpening final :
     public ToolParamBlock,
     public ThresholdAdjusterListener,
     public AdjusterListener,

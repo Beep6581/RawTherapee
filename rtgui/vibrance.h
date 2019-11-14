@@ -21,12 +21,14 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
+#include "curvelistener.h"
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class Vibrance :
+class CurveEditorGroup;
+class DiagonalCurveEditor;
+
+class Vibrance final :
     public ToolParamBlock,
     public AdjusterListener,
     public ThresholdCurveProvider,

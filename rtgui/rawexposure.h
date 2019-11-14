@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class RAWExposure :
+class RAWExposure final:
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel
@@ -32,8 +32,6 @@ class RAWExposure :
 protected:
     Adjuster* PexPos;
 
-private:
-//  Gtk::CheckButton*  PextwoGreen;
 public:
 
     RAWExposure ();

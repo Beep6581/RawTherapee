@@ -21,14 +21,16 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
+#include "curvelistener.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
+class CurveEditor;
+class CurveEditorGroup;
+class DiagonalCurveEditor;
 class EditDataProvider;
 
-class ToneCurve :
+class ToneCurve final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel,

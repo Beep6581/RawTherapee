@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class ChMixer :
+class ChMixer final:
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

@@ -24,7 +24,7 @@
 #include "lensgeomlistener.h"
 #include "toolpanel.h"
 
-class Distortion :
+class Distortion final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

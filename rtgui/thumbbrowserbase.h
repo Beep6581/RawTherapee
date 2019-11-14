@@ -23,13 +23,15 @@
 #include <gtkmm.h>
 
 #include "guiutils.h"
-#include "inspector.h"
 #include "options.h"
-#include "thumbbrowserentrybase.h"
 
 /*
  * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space
  */
+
+class Inspector;
+class ThumbBrowserEntryBase;
+
 class ThumbBrowserBase :
     public Gtk::Grid
 {

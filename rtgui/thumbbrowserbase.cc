@@ -18,10 +18,12 @@
 
 #include <glibmm/ustring.h>
 
+#include "inspector.h"
 #include "multilangmgr.h"
 #include "options.h"
 #include "rtscalable.h"
 #include "thumbbrowserbase.h"
+#include "thumbbrowserentrybase.h"
 
 #include "../rtengine/rt_math.h"
 

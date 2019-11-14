@@ -2,6 +2,8 @@
  *  This file is part of RawTherapee.
  */
 #include "colortoning.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "mycurve.h"
 #include "rtimage.h"
 #include "eventmapper.h"

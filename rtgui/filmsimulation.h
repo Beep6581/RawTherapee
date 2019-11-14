@@ -10,7 +10,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class ClutComboBox :
+class ClutComboBox final :
     public MyComboBox
 {
 public:
