@@ -3199,6 +3199,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
     array2D<float> guid(bfw, bfh);
     float meanfab, fab;
     mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, chrom);
+    float chromult = 1.f - 0.01f * chrom;
     float kinv = 1.f;
     float kneg = 1.f;
 
@@ -3306,8 +3307,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     bufmaskblurcol->L[ir][jr] = CLIPLOC(kmaskL + kmaskHL + kmasstru);
-                    bufmaskblurcol->a[ir][jr] = CLIPC(kmaskC + kmaskH);
-                    bufmaskblurcol->b[ir][jr] = CLIPC(kmaskC + kmaskH);
+                    bufmaskblurcol->a[ir][jr] = CLIPC(kmaskC + chromult * kmaskH);
+                    bufmaskblurcol->b[ir][jr] = CLIPC(kmaskC + chromult * kmaskH);
 
                     if (shortcu == 1) { //short circuit all L curve
                         bufmaskblurcol->L[ir][jr] = 32768.f - bufcolorig->L[ir][jr];
@@ -7667,6 +7668,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             array2D<float> guid(GW, GH);
             float meanfab, fab;
             mean_fab(0, 0, GW, GH, bufgb.get(), original, fab, meanfab, lp.chromabl);
+            float chromult =  1.f - 0.01f * lp.chromabl;
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -7735,7 +7737,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             float valHH = LIM01(1.f - lochhmasblCurve[500.f *  h]);
 
                             if (lp.showmaskblmet != 4) {
-                                kmaskCH += valHH;
+                                kmaskCH += chromult * valHH;
                             }
 
                             kmaskLexp += 32768.f * valHH;
@@ -11836,7 +11838,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         zero = true;
                     }
 
-                    float chrom = lp.chromacol;;
+                    float chrom = lp.chromacol;
                     float rad = lp.radmacol;
                     float gamma = lp.gammacol;
                     float slope = lp.slomacol;

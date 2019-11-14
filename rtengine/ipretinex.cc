@@ -811,8 +811,10 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
         }
     }
 
-
-    float fab = 4000.f;//value must be good in most cases
+    float chromult1 = 1.f + 0.01f * chro;
+    float chromult2 = 1.f - 0.01f * chro;
+    float fab = chromult1 * 20000.f;//value must be good in most cases
+    if(fab < 50.f) fab = 50.f;
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -852,7 +854,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
                 float valHH = LIM01(1.f - lochhmasretiCurve[500.f *  h]);
 
                 if (llretiMask != 4) {
-                    kmaskCH += valHH;
+                    kmaskCH += chromult2 * valHH;
                 }
 
                 kmaskLexp += 32768.f * valHH;
