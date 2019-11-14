@@ -503,14 +503,14 @@ bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int bord
     for (int ii = border; !stopped && ii < fullTileSize - border; ++ii) {
 #ifdef __SSE2__
         for (int jj = border; jj < fullTileSize - border; jj += 4) {
-            if (_mm_movemask_ps((vfloat)vmaskf_lt(vmul2f(LVFU(tmpIThr[ii][jj])), LVFU(iterCheck[ii - border][jj - border])))) {
+            if (_mm_movemask_ps((vfloat)vmaskf_lt(LVFU(tmpIThr[ii][jj]), LVFU(iterCheck[ii - border][jj - border])))) {
                 stopped = true;
                 break;
             }
         }
 #else
         for (int jj = border; jj < fullTileSize - border; ++jj) {
-            if (tmpIThr[ii][jj] * xxx < luminance[i + ii - border][j + jj - border] * clipmask[i + ii - border][j + jj - border]) {
+            if (tmpIThr[ii][jj] < iterCheck[ii - border][jj - border]) {
                 stopped = true;
                 break;
             }
@@ -566,9 +566,11 @@ BENCHFUN
                 // fill tiles
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
-                    for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
-                        for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
-                            iterCheck[k][l] = oldLuminance[ii][jj] * clipmask[ii][jj];
+                    if (checkIterStop) {
+                        for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
+                            for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
+                                iterCheck[k][l] = oldLuminance[ii][jj] * clipmask[ii][jj] * 0.5f;
+                            }
                         }
                     }
                     for (int k = 0, ii = endOfCol ? H - fullTileSize : i; k < fullTileSize; ++k, ++ii) {
@@ -578,9 +580,11 @@ BENCHFUN
                         }
                     }
                 } else {
-                    for (int ii = 0; ii < tileSize; ++ii) {
-                        for (int jj = 0; jj < tileSize; ++jj) {
-                            iterCheck[ii][jj] = oldLuminance[i + ii][j + jj] * clipmask[i + ii][j + jj];
+                    if (checkIterStop) {
+                        for (int ii = 0; ii < tileSize; ++ii) {
+                            for (int jj = 0; jj < tileSize; ++jj) {
+                                iterCheck[ii][jj] = oldLuminance[i + ii][j + jj] * clipmask[i + ii][j + jj] * 0.5f;
+                            }
                         }
                     }
                     for (int ii = i; ii < i + fullTileSize; ++ii) {
