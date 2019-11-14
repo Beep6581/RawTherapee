@@ -5350,7 +5350,7 @@ static void softlig(float &a, float &b, float minc, float maxc)
 */
 static void softlig2(float &a, float &b)
 {
-    a = pow(a, pow(2.f,(2.f*(0.5f - b))));
+    a = pow(b, pow(2.f,(2.f*(0.5f - a))));
 }
 
 static void overlay(float &a, float &b, float minc, float maxc)
@@ -11067,7 +11067,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
         }
 
-        if (!lp.invex  && (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || params->locallab.spots.at(sp).fatamount > 1.f || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)))) { //interior ellipse renforced lightness and chroma  //locallutili
+        bool enablefat = false;
+
+        if (params->locallab.spots.at(sp).fatamount > 1.f) {
+           enablefat = true;
+        }
+        
+        bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)));
+
+        if (!lp.invex  && execex) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -11083,6 +11091,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (bfw >= mSP && bfh >= mSP) {
 
                 if (lp.expmet == 1) {
+
                     int ftsizeH = 1;
                     int ftsizeW = 1;
 
@@ -11323,7 +11332,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
                             if (lp.expcomp == 0.f) {
-                                lp.expcomp = 0.1f;    // to enabled
+                                lp.expcomp = 0.011f;    // to enabled
                             }
 
                             ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
@@ -11334,15 +11343,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
                         }
 
-//exposure_pde
+//exposure_pde          
                         if (lp.expmet == 1) {
-
-                            float enablefat = false;
                             Imagefloat *tmpImagefat = nullptr;
 
-                            if (params->locallab.spots.at(sp).fatamount > 1.f) {
-                                enablefat = true;
-                            }
 
                             if (enablefat) {
                                 FattalToneMappingParams fatParams;
@@ -11432,13 +11436,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 delete [] dataout;
                                 delete [] dataor;
                             }
-                        }
+                        } 
 
                         //shadows with ipshadowshighlight
-                        if (lp.shadex > 0) {
-                            ImProcFunctions::shadowsHighlights(bufexpfin.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
+                        if((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
+                            if (lp.shadex > 0) {
+                                ImProcFunctions::shadowsHighlights(bufexpfin.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
+                            }
                         }
-
                         //cat02
                         if (params->locallab.spots.at(sp).warm != 0) {
                             ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
@@ -11446,8 +11451,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                         constexpr float ampli = 70.f;
-                        const float ch = (1.f + 0.02f * lp.expchroma);
-                        const float chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
+                        float ch = 0.f;
+                        float chprosl = 0.f;
+                        if((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
+                            ch = (1.f + 0.02f * lp.expchroma);
+                            chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
+                        }
 
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
@@ -11468,7 +11477,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (lp.softradiusexp > 0.f && lp.expmet == 0) {
                             softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
-                            //     softprocess(bufexporig.get(), buflight, lp.softradiusexp, bfh, bfw, sk, multiThread);
                         }
 
 #ifdef _OPENMP
@@ -12334,18 +12342,18 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     for (int y = 0; y < bfh ; y++) {
                                         for (int x = 0; x < bfw; x++) {
-                                            float a = tmpImageorig->r(y, x);
-                                            float b = LIM01(tmpImagereserv->r(y, x));
+                                            float a = LIM01(tmpImageorig->r(y, x));
+                                            float b = tmpImagereserv->r(y, x);
                                          //   softlig(a, b, minR, maxR);
                                             softlig2(a, b);
                                             tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                            a = tmpImageorig->g(y, x);
-                                            b = LIM01(tmpImagereserv->g(y, x));
+                                            a = LIM01(tmpImageorig->g(y, x));
+                                            b = tmpImagereserv->g(y, x);
                                          //   softlig(a, b, minG, maxG);
                                             softlig2(a, b);
                                             tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                            a = tmpImageorig->b(y, x);
-                                            b = LIM01(tmpImagereserv->b(y, x));
+                                            a = LIM01(tmpImageorig->b(y, x));
+                                            b = tmpImagereserv->b(y, x);
                                         //    softlig(a, b, minB, maxB);
                                             softlig2(a, b);
                                             tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
