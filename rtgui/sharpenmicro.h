@@ -28,7 +28,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SharpenMicro :
+class SharpenMicro final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class Vignetting :
+class Vignetting final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

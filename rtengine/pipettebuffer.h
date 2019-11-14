@@ -19,7 +19,6 @@
 #pragma once
 
 #include "array2D.h"
-#include "coord.h"
 #include "iimage.h"
 
 class EditDataProvider;

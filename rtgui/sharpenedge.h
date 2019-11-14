@@ -28,7 +28,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SharpenEdge :
+class SharpenEdge final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

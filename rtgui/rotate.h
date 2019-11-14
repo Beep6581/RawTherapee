@@ -21,10 +21,10 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
-#include "lensgeomlistener.h"
 #include "toolpanel.h"
 
-class Rotate :
+class LensGeomListener;
+class Rotate final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

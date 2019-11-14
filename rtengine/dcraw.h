@@ -411,6 +411,9 @@ private:
    unsigned encoding;
 };
 
+void panasonicC6_load_raw();
+void panasonicC7_load_raw();
+
 void canon_rmf_load_raw();
 void panasonic_load_raw();
 void olympus_load_raw();

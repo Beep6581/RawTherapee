@@ -22,7 +22,6 @@
 
 #include <gtkmm.h>
 
-#include "filebrowserentry.h"
 #include "lwbuttonset.h"
 
 class FileBrowserEntry;

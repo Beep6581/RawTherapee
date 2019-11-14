@@ -19,8 +19,13 @@
 #pragma once
 
 #include "editid.h"
-#include "../rtengine/coord.h"
 #include <cairomm/cairomm.h>
+
+namespace rtengine {
+
+struct Coord;
+
+}
 
 class EditDataProvider;
 class EditSubscriber;

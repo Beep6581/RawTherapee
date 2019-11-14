@@ -20,6 +20,8 @@
 
 #include "colorappearance.h"
 
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "guiutils.h"
 #include "options.h"
 #include "rtimage.h"

@@ -7,14 +7,18 @@
 
 #include "adjuster.h"
 #include "colorprovider.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
+#include "curvelistener.h"
 #include "guiutils.h"
-#include "labgrid.h"
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
 #include "../rtengine/procparams.h"
+
+class CurveEditor;
+class CurveEditorGroup;
+class DiagonalCurveEditor;
+class FlatCurveEditor;
+class LabGrid;
 
 class ColorToning final :
     public ToolParamBlock,

@@ -21,6 +21,7 @@
 #include "metadatapanel.h"
 #include "options.h"
 #include "rtimage.h"
+
 #include "../rtengine/imagesource.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"

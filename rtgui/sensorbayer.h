@@ -22,7 +22,7 @@
 
 #include "toolpanel.h"
 
-class SensorBayer :
+class SensorBayer final :
     public ToolParamBlock,
     public FoldableToolPanel
 {

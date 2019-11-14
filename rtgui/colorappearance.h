@@ -22,10 +22,13 @@
 
 #include "adjuster.h"
 #include "colorprovider.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
+#include "curvelistener.h"
 #include "guiutils.h"
 #include "toolpanel.h"
+
+class DiagonalCurveEditor;
+class CurveEditorGroup;
+class CurveEditor;
 
 class ColorAppearance final :
     public ToolParamBlock,

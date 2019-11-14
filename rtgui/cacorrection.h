@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class CACorrection :
+class CACorrection final:
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

@@ -10,7 +10,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class Gradient :
+class Gradient final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel,

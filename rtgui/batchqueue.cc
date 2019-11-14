@@ -31,6 +31,7 @@
 #include "cachemanager.h"
 #include "thumbnail.h"
 #include "batchqueue.h"
+#include "batchqueueentry.h"
 #include "multilangmgr.h"
 #include "filecatalog.h"
 #include "batchqueuebuttonset.h"

@@ -18,10 +18,9 @@
  */
 #pragma once
 
-#include "cropguilistener.h"
-#include "toolbar.h"
-
+class CropGUIListener;
 class Thumbnail;
+class ToolBar;
 class ImageAreaToolListener
 {
 

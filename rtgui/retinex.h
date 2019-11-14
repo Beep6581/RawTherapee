@@ -7,13 +7,18 @@
 
 #include "adjuster.h"
 #include "colorprovider.h"
-#include "curveeditor.h"
+#include "curvelistener.h"
 #include "curveeditorgroup.h"
 #include "guiutils.h"
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class Retinex :
+class CurveEditor;
+class CurveEditorGroup;
+class DiagonalCurveEditor;
+class FlatCurveEditor;
+
+class Retinex final :
     public ToolParamBlock,
     public FoldableToolPanel,
     public rtengine::RetinexListener,

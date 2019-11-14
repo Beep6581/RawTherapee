@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class XTransRAWExposure :
+class XTransRAWExposure final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel

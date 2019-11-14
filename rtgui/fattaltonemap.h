@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class FattalToneMapping: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class FattalToneMapping final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 protected:
     Adjuster *threshold;

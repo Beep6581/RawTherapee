@@ -21,6 +21,8 @@
 
 #include "blackwhite.h"
 
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "guiutils.h"
 #include "rtimage.h"
 #include "options.h"
