@@ -917,6 +917,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
 
                             WaveletDenoiseAllL (*Ldecomp, noisevarlum, madL, vari, edge, 1);
+                           
                         }
 
                         //Flat curve for Contrast=f(H) in levels

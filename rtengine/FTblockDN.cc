@@ -2736,7 +2736,6 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
         }
 
     }
-
     int i = 0;
 #ifdef __SSE2__
     const vfloat levelFactorv = F2V(levelFactor);
@@ -2745,10 +2744,12 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
 
 
     for (i = 0; i < W_L * H_L - 3; i += 4) {
-        const vfloat mad_Lv = LVFU(noisevarlum[i]) * levelFactorv;
+       // const vfloat mad_Lv = LVFU(noisevarlum[i]) * levelFactorv;
+        const vfloat mad_Lv = LVFU(nvl[i]) * levelFactorv;
         const vfloat magv = SQRV(LVFU(WavCoeffs_L[dir][i]));
         STVFU(sfave[i], magv / (magv + mad_Lv * xexpf(-magv / (ninev * mad_Lv)) + epsv));
     }
+
 #endif
     // few remaining pixels
     for (; i < W_L * H_L; ++i) {
@@ -2773,6 +2774,7 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
         //use smoothed shrinkage unless local shrinkage is much less
         WavCoeffs_L[dir][i] *= (SQR(sfaved[i]) + SQR(sf)) / (sfaved[i] + sf + eps);
     }//now luminance coefficients are denoised
+
     delete [] nvl;
 
 }
