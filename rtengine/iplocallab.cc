@@ -2573,6 +2573,7 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 
             if (inv == 0) {
                 if (zone > 0) {
+                    //      printf("bb=%f", bufmaskor->a[y][x]);
                     bufexporig->L[y][x] += (bl * bufmaskor->L[y][x]);
                     bufexporig->a[y][x] *= (1.f + bl * bufmaskor->a[y][x]);
                     bufexporig->b[y][x] *= (1.f + bl * bufmaskor->b[y][x]);
@@ -2781,6 +2782,7 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
 
             if (inv == 0) {
                 if (zone > 0) {//normal
+                    //   printf("bu=%f", bufmaskorigSH->a[y][x]);
                     transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + CLIPLOC(bufmaskorigSH->L[y][x]);
                     transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
                     transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
@@ -3237,12 +3239,24 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         }
 
+        bool HHmaskcurve = false;
+
+        if (lochhhmasCurve && lhhmasutili) {
+            for (int i = 0; i < 500; i++) {
+                if (lochhhmasCurve[i] != 0.5) {
+                    HHmaskcurve = true;
+                }
+            }
+        }
+
+
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
         {
 #ifdef __SSE2__
             float atan2Buffer[bfw] ALIGNED64;
+//            float atan2BufferH[bfw] ALIGNED64;
 #endif
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic, 16)
@@ -3250,7 +3264,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
             for (int ir = 0; ir < bfh; ir++) {
 #ifdef __SSE2__
-
                 if (lochhmasCurve && lhmasutili) {
                     int i = 0;
 
@@ -3271,6 +3284,10 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     float kmaskHL = 0.f;
                     float kmaskH = 0.f;
                     float kmasstru = 0.f;
+                    //   float kmaskHH = 0.f;
+                    //   float huemah;
+                    //  float newhr = 0.f;
+                    //   float2 sincosval;
 
                     if (strumask > 0.f && !astool) {
                         kmasstru = bufcolorig->L[ir][jr] * blendstru[ir][jr];
@@ -3304,11 +3321,52 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                         }
 
                         kmaskHL = 32768.f * valHH;
+
+
                     }
 
+                    /*
+                    //keep here in case of...but !!
+                                        if (lochhhmasCurve && HHmaskcurve) {
+
+                    #ifdef __SSE2__
+                                            huemah = atan2BufferH[jr];
+                    #else
+                                            huemah = xatan2f(bufcolorig->b[ir][jr], bufcolorig->a[ir][jr]);
+                    #endif
+
+                                            float hh = Color::huelab_to_huehsv2(huemah);
+                                            hh += 1.f / 6.f;
+
+                                            if (hh > 1.f) {
+                                                hh -= 1.f;
+                                            }
+
+                                            const float val_HH = float (LIM01(((0.5f - lochhhmasCurve[500.f * hh]))));
+                                            kmaskHH = 2.f * val_HH;
+                                            const float hhro = kmaskHH;
+
+                                            if (hhro != 0) {
+                                                newhr = huemah + hhro;
+
+                                                if (newhr > rtengine::RT_PI_F) {
+                                                    newhr -= 2 * rtengine::RT_PI_F;
+                                                } else if (newhr < -rtengine::RT_PI_F) {
+                                                    newhr += 2 * rtengine::RT_PI_F;
+                                                }
+                                            }
+                                            sincosval = xsincosf(newhr);
+
+                                        }
+                    */
                     bufmaskblurcol->L[ir][jr] = CLIPLOC(kmaskL + kmaskHL + kmasstru);
-                    bufmaskblurcol->a[ir][jr] = CLIPC(kmaskC + chromult * kmaskH);
-                    bufmaskblurcol->b[ir][jr] = CLIPC(kmaskC + chromult * kmaskH);
+//                    if(HHmaskcurve) {
+//                        bufmaskblurcol->a[ir][jr] = CLIPC((kmaskC + chromult * kmaskH) * sincosval.y);
+//                        bufmaskblurcol->b[ir][jr] = CLIPC((kmaskC + chromult * kmaskH) * sincosval.x);
+//                    } else {
+                    bufmaskblurcol->a[ir][jr] = CLIPC((kmaskC + chromult * kmaskH));
+                    bufmaskblurcol->b[ir][jr] = CLIPC((kmaskC + chromult * kmaskH));
+//                    }
 
                     if (shortcu == 1) { //short circuit all L curve
                         bufmaskblurcol->L[ir][jr] = 32768.f - bufcolorig->L[ir][jr];
@@ -3326,6 +3384,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 }
             }
         }
+
         std::unique_ptr<LabImage> bufprov(new LabImage(bfw, bfh));
 
         bufprov->CopyFrom(bufmaskblurcol);
@@ -3410,6 +3469,44 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         }
 
+        if (lochhhmasCurve && HHmaskcurve) {
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    float huemah = xatan2f(bufmaskblurcol->b[ir][jr], bufmaskblurcol->a[ir][jr]);
+                    float chromah = sqrt(SQR(bufmaskblurcol->b[ir][jr]) + SQR(bufmaskblurcol->a[ir][jr]));
+
+
+                    float hh = Color::huelab_to_huehsv2(huemah);
+                    hh += 1.f / 6.f;
+
+                    if (hh > 1.f) {
+                        hh -= 1.f;
+                    }
+
+                    const float val_HH = float ((0.5f - lochhhmasCurve[500.f * hh]));
+                    const float hhro = 1.5f * val_HH;
+                    float newhr;
+
+                    if (hhro != 0) {
+                        newhr = huemah + hhro;//we add radians and other dim between 0 1.. always radians but addition "false"
+
+                        if (newhr > rtengine::RT_PI_F) {
+                            newhr -= 2 * rtengine::RT_PI_F;
+                        } else if (newhr < -rtengine::RT_PI_F) {
+                            newhr += 2 * rtengine::RT_PI_F;
+                        }
+                    }
+
+                    float2 sincosval = xsincosf(newhr);
+                    bufmaskblurcol->a[ir][jr] = CLIPC(chromah * sincosval.y);
+                    bufmaskblurcol->b[ir][jr] = CLIPC(chromah * sincosval.x);
+
+                }
+        }
 
         if (amountcd > 1.f) { //dynamic range compression for Mask
             FattalToneMappingParams fatParams;
@@ -4428,6 +4525,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
                                     }
+
                                     if (previewSH  || previewcb) {
                                         flia = (100.f + realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + realstrchdE) / 100.f;
@@ -4504,6 +4602,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     difL = (bufcolfin->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                                     diflc = difL;
+
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -4581,6 +4680,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
                                     }
+
                                     if (previewSH  || previewcb) {
                                         flia = (100.f + realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + realstrchdE) / 100.f;
@@ -5351,7 +5451,7 @@ static void softlig(float &a, float &b, float minc, float maxc)
 */
 static void softlig2(float &a, float &b)
 {
-    a = pow(b, pow(2.f,(2.f*(0.5f - a))));
+    a = pow(b, pow(2.f, (2.f * (0.5f - a))));
 }
 
 static void overlay(float &a, float &b, float minc, float maxc)
@@ -11081,9 +11181,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         bool enablefat = false;
 
         if (params->locallab.spots.at(sp).fatamount > 1.f) {
-           enablefat = true;
+            enablefat = true;
         }
-        
+
         bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)));
 
         if (!lp.invex  && execex) {
@@ -11303,7 +11403,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                                 0.f, false,
-                                locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, lochhhmasCurve,lhhmasutili , multiThread,
+                                locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, lochhhmasCurve, lhhmasutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                                 shortcu, delt, hueref, chromaref, lumaref,
                                 maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
@@ -11356,7 +11456,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
                         }
 
-//exposure_pde          
+//exposure_pde
                         if (lp.expmet == 1) {
                             Imagefloat *tmpImagefat = nullptr;
 
@@ -11449,14 +11549,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 delete [] dataout;
                                 delete [] dataor;
                             }
-                        } 
+                        }
 
                         //shadows with ipshadowshighlight
-                        if((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
+                        if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
                             if (lp.shadex > 0) {
                                 ImProcFunctions::shadowsHighlights(bufexpfin.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
                             }
                         }
+
                         //cat02
                         if (params->locallab.spots.at(sp).warm != 0) {
                             ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
@@ -11466,7 +11567,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         constexpr float ampli = 70.f;
                         float ch = 0.f;
                         float chprosl = 0.f;
-                        if((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
+
+                        if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
                             ch = (1.f + 0.02f * lp.expchroma);
                             chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
                         }
@@ -11597,7 +11699,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                         0.f, false,
-                        locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,lochhhmasCurve, lhhmasutili,  multiThread,
+                        locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, lochhhmasCurve, lhhmasutili,  multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                         shortcu, delt, hueref, chromaref, lumaref,
                         maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
@@ -12359,17 +12461,17 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         for (int x = 0; x < bfw; x++) {
                                             float a = LIM01(tmpImageorig->r(y, x));
                                             float b = tmpImagereserv->r(y, x);
-                                         //   softlig(a, b, minR, maxR);
+                                            //   softlig(a, b, minR, maxR);
                                             softlig2(a, b);
                                             tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                             a = LIM01(tmpImageorig->g(y, x));
                                             b = tmpImagereserv->g(y, x);
-                                         //   softlig(a, b, minG, maxG);
+                                            //   softlig(a, b, minG, maxG);
                                             softlig2(a, b);
                                             tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                             a = LIM01(tmpImageorig->b(y, x));
                                             b = tmpImagereserv->b(y, x);
-                                        //    softlig(a, b, minB, maxB);
+                                            //    softlig(a, b, minB, maxB);
                                             softlig2(a, b);
                                             tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
@@ -12564,7 +12666,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             blend2.free();
                                         }
                     */
-                    int smerge = 100;
+                    int smerge = 0;
 
                     if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
                         smerge = 100;

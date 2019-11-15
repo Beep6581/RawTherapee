@@ -1045,6 +1045,7 @@ HISTORY_MSG_804;Local - Color mask Structure
 HISTORY_MSG_805;Local - Blur Noise mask Structure
 HISTORY_MSG_806;Local - Color mask Structure as tool
 HISTORY_MSG_807;Local - Blur Noise mask Structure as tool
+HISTORY_MSG_808;Local - Color mask curve H(H)
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2316,7 +2317,8 @@ TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_PROXI;DeltaE weakening
 TP_LOCALLAB_THRESDELTAE;Threshold deltaE-scope
 TP_LOCALLAB_LIGHTNESS;Lightness
-TP_LOCALLAB_MASK;Mask:
+TP_LOCALLAB_MASK;Mask
+TP_LOCALLAB_MASKH;Hue curve mask
 TP_LOCALLAB_MASK2;Contrast curve mask
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_PDE;Laplacian & PDE  

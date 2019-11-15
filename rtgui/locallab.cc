@@ -160,7 +160,7 @@ Locallab::Locallab():
     HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     rgbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_RGB"))),
     maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    maskHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    maskHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKH"))),
     mask2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     mask2CurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
 
@@ -173,7 +173,7 @@ Locallab::Locallab():
     HHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
     CCmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
     LLmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    HHmaskshape(static_cast<FlatCurveEditor *>(maskHCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+    HHmaskshape(static_cast<FlatCurveEditor *>(maskCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
     LLmaskcolshapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     HHhmaskshape(static_cast<FlatCurveEditor *>(maskHCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
 
@@ -855,8 +855,8 @@ pe(nullptr)
     if (showtooltip) {
         LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     }
-    maskCurveEditorG->curveListComplete();
-    maskHCurveEditorG->setCurveListener(this);
+ //   maskCurveEditorG->curveListComplete();
+//    maskHCurveEditorG->setCurveListener(this);
 
     HHmaskshape->setIdentityValue(0.);
     HHmaskshape->setResetCurve(FlatCurveType(defSpot.HHmaskcurve.at(0)), defSpot.HHmaskcurve);
@@ -864,10 +864,13 @@ pe(nullptr)
     if (showtooltip) {
         HHmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     }
+//    maskHCurveEditorG->setCurveListener(this);
 
     HHmaskshape->setCurveColorProvider(this, 6);
     HHmaskshape->setBottomBarColorProvider(this, 6);
+    maskCurveEditorG->curveListComplete();
 
+    maskHCurveEditorG->setCurveListener(this);
 
     HHhmaskshape->setIdentityValue(0.);
     HHhmaskshape->setResetCurve(FlatCurveType(defSpot.HHhmaskcurve.at(0)), defSpot.HHhmaskcurve);
@@ -876,12 +879,8 @@ pe(nullptr)
         HHhmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
 
-    HHhmaskshape->setCurveColorProvider(this, 1);
-
-    const std::vector<GradientMilestone>& mHHhmaskshape = six_shape;
-    HHhmaskshape->setBottomBarBgGradient(mHHhmaskshape);
-
-    HCurveEditorG->curveListComplete();
+    HHhmaskshape->setCurveColorProvider(this, 6);
+    HHhmaskshape->setBottomBarColorProvider(this, 6);
 
     maskHCurveEditorG->curveListComplete();
 
@@ -967,7 +966,6 @@ pe(nullptr)
     maskcolBox->pack_start(*showmaskcolMethodinv, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    maskcolBox->pack_start(*maskHCurveEditorG, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*strumaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*toolcol);
 
@@ -982,6 +980,7 @@ pe(nullptr)
     toolcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
+    toolcolBox->pack_start(*maskHCurveEditorG, Gtk::PACK_SHRINK, 4);
     toolcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     toolcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     toolcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
@@ -2869,6 +2868,7 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
             CCmaskshape->updateLocallabBackground(normChromar);
             LLmaskshape->updateLocallabBackground(normLumar);
             HHmaskshape->updateLocallabBackground(normHuer);
+            HHhmaskshape->updateLocallabBackground(normHuer);
 
             // Update Exposure mask background
             CCmaskexpshape->updateLocallabBackground(normChromar);
