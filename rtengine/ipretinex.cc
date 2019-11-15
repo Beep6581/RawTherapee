@@ -811,10 +811,45 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
         }
     }
 
-    float chromult1 = 1.f + 0.01f * chro;
-    float chromult2 = 1.f - 0.01f * chro;
-    float fab = chromult1 * 20000.f;//value must be good in most cases
-    if(fab < 50.f) fab = 50.f;
+    float chromult = 1.f - 0.01f * chro;
+//fab
+    float fab = 50.f;
+    float meanfab = 0.f;
+    const int nbfab = W_L * H_L;
+
+    double sumab = 0.0;
+
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:sumab)
+#endif
+
+    for (int y = 0; y < H_L; y++) {
+        for (int x = 0; x < W_L; x++) {
+            sumab += fabs(bufreti->a[y][x]);
+            sumab += fabs(bufreti->b[y][x]);
+        }
+    }
+
+    meanfab = sumab / (2.f * nbfab);
+    double som = 0.0;
+
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:som)
+#endif
+
+    for (int y = 0; y < H_L; y++) {
+       for (int x = 0; x < W_L; x++) {
+            som += SQR(fabs(bufreti->a[y][x]) - meanfab) + SQR(fabs(bufreti->b[y][x]) - meanfab);
+       }
+    }
+    const float multsigma = (chro >= 0.f ? 0.035f : 0.018f) * chro + 1.f;
+    const float stddv = sqrt(som / nbfab);
+    fab = meanfab + multsigma * stddv;
+
+    if (fab <= 0.f) {
+        fab = 50.f;
+    }
+//end fab
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -854,7 +889,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
                 float valHH = LIM01(1.f - lochhmasretiCurve[500.f *  h]);
 
                 if (llretiMask != 4) {
-                    kmaskCH += chromult2 * valHH;
+                    kmaskCH += chromult * valHH;
                 }
 
                 kmaskLexp += 32768.f * valHH;
