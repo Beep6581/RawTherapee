@@ -907,6 +907,7 @@ void Crop::update(int todo)
         bool HHutili = parent->HHutili;
         bool llmasutili = parent->llmasutili;
         bool lhmasutili = parent->lhmasutili;
+        bool lhhmasutili = parent->lhhmasutili;
         bool lcmasutili = parent->lcmasutili;
         bool lhmasexputili = parent->lhmasexputili;
         bool lcmasexputili = parent->lcmasexputili;
@@ -940,12 +941,14 @@ void Crop::update(int todo)
         LocCCmaskCurve locccmasCurve;
         LocLLmaskCurve locllmasCurve;
         LocHHmaskCurve lochhmasCurve;
+        LocHHmaskCurve lochhhmasCurve;
         LocCCmaskCurve locccmasexpCurve;
         LocLLmaskCurve locllmasexpCurve;
         LocHHmaskCurve lochhmasexpCurve;
         LocCCmaskCurve locccmasSHCurve;
         LocLLmaskCurve locllmasSHCurve;
         LocHHmaskCurve lochhmasSHCurve;
+ //       LocHHmaskCurve lochhhmasSHCurve;
         LocCCmaskCurve locccmascbCurve;
         LocLLmaskCurve locllmascbCurve;
         LocHHmaskCurve lochhmascbCurve;
@@ -978,6 +981,7 @@ void Crop::update(int todo)
                 locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmasutili);
                 locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, llmasutili);
                 lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve, lhmasutili);
+                lochhhmasCurve.Set(params.locallab.spots.at(sp).HHhmaskcurve, lhhmasutili);
                 locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve, lcmasexputili);
                 locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve, llmasexputili);
                 lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve, lhmasexputili);
@@ -1071,7 +1075,7 @@ void Crop::update(int todo)
                             lmaskretilocalcurve2, localmaskretiutili, 
                             lmaskcblocalcurve2, localmaskcbutili, 
                             lmaskbllocalcurve2, localmaskblutili, 
-                            locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
+                            locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                             locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                             locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                             locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
@@ -1097,7 +1101,7 @@ void Crop::update(int todo)
                             lmaskretilocalcurve2, localmaskretiutili, 
                             lmaskcblocalcurve2, localmaskcbutili, 
                             lmaskbllocalcurve2, localmaskblutili, 
-                            locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
+                            locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili,lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
                             locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                             locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                             locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
@@ -1135,6 +1139,7 @@ void Crop::update(int todo)
                 locccmasCurve.Reset();
                 locllmasCurve.Reset();
                 lochhmasCurve.Reset();
+                lochhhmasCurve.Reset();
                 locllmasexpCurve.Reset();
                 locccmasexpCurve.Reset();
                 lochhmasexpCurve.Reset();

@@ -160,6 +160,7 @@ Locallab::Locallab():
     HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     rgbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_RGB"))),
     maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    maskHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     mask2CurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
 
@@ -172,8 +173,9 @@ Locallab::Locallab():
     HHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
     CCmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
     LLmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    HHmaskshape(static_cast<FlatCurveEditor *>(maskCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+    HHmaskshape(static_cast<FlatCurveEditor *>(maskHCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
     LLmaskcolshapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    HHhmaskshape(static_cast<FlatCurveEditor *>(maskHCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
 
     // Exposure
     curveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"))),
@@ -853,6 +855,8 @@ pe(nullptr)
     if (showtooltip) {
         LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     }
+    maskCurveEditorG->curveListComplete();
+    maskHCurveEditorG->setCurveListener(this);
 
     HHmaskshape->setIdentityValue(0.);
     HHmaskshape->setResetCurve(FlatCurveType(defSpot.HHmaskcurve.at(0)), defSpot.HHmaskcurve);
@@ -864,7 +868,22 @@ pe(nullptr)
     HHmaskshape->setCurveColorProvider(this, 6);
     HHmaskshape->setBottomBarColorProvider(this, 6);
 
-    maskCurveEditorG->curveListComplete();
+
+    HHhmaskshape->setIdentityValue(0.);
+    HHhmaskshape->setResetCurve(FlatCurveType(defSpot.HHhmaskcurve.at(0)), defSpot.HHhmaskcurve);
+
+    if (showtooltip) {
+        HHhmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    }
+
+    HHhmaskshape->setCurveColorProvider(this, 1);
+
+    const std::vector<GradientMilestone>& mHHhmaskshape = six_shape;
+    HHhmaskshape->setBottomBarBgGradient(mHHhmaskshape);
+
+    HCurveEditorG->curveListComplete();
+
+    maskHCurveEditorG->curveListComplete();
 
     mask2CurveEditorG->setCurveListener(this);
     Lmaskshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskcurve.at(0)), defSpot.Lmaskcurve);
@@ -948,6 +967,7 @@ pe(nullptr)
     maskcolBox->pack_start(*showmaskcolMethodinv, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskcolBox->pack_start(*maskHCurveEditorG, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*strumaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*toolcol);
 
@@ -2603,6 +2623,7 @@ Locallab::~Locallab()
     delete HCurveEditorG;
     delete rgbCurveEditorG;
     delete maskCurveEditorG;
+    delete maskHCurveEditorG;
     delete mask2CurveEditorG;
     delete mask2CurveEditorGwav;
     delete mask2expCurveEditorG;
@@ -3718,6 +3739,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = CCmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = LLmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = HHmaskshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).HHhmaskcurve = HHhmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).blendmaskcol = blendmaskcol->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).radmaskcol = radmaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).chromaskcol = chromaskcol->getValue();
@@ -4116,6 +4138,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).HHmaskcurve || !HHmaskshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).HHhmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).HHhmaskcurve || !HHhmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).blurcolde = pe->locallab.spots.at(pp->locallab.selspot).blurcolde || blurcolde->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).blendmaskcol = pe->locallab.spots.at(pp->locallab.selspot).blendmaskcol || blendmaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).radmaskcol = pe->locallab.spots.at(pp->locallab.selspot).radmaskcol || radmaskcol->getEditedState();
@@ -4446,6 +4469,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmaskcurve || !HHmaskshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).HHhmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHhmaskcurve || !HHhmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).blurcolde = pedited->locallab.spots.at(pp->locallab.selspot).blurcolde || blurcolde->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).blendmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).blendmaskcol || blendmaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).radmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).radmaskcol || radmaskcol->getEditedState();
@@ -4859,6 +4883,12 @@ void Locallab::curveChanged(CurveEditor* ce)
         if (ce == HHmaskshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == HHhmaskshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHhmaskshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
 
@@ -9013,6 +9043,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         CCmaskshape->setCurve(pp->locallab.spots.at(index).CCmaskcurve);
         LLmaskshape->setCurve(pp->locallab.spots.at(index).LLmaskcurve);
         HHmaskshape->setCurve(pp->locallab.spots.at(index).HHmaskcurve);
+        HHhmaskshape->setCurve(pp->locallab.spots.at(index).HHhmaskcurve);
         blurcolde->setValue(pp->locallab.spots.at(index).blurcolde);
         blendmaskcol->setValue(pp->locallab.spots.at(index).blendmaskcol);
         radmaskcol->setValue(pp->locallab.spots.at(index).radmaskcol);
@@ -9445,6 +9476,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 CCmaskshape->setUnChanged(!spotState->CCmaskcurve);
                 LLmaskshape->setUnChanged(!spotState->LLmaskcurve);
                 HHmaskshape->setUnChanged(!spotState->HHmaskcurve);
+                HHhmaskshape->setUnChanged(!spotState->HHhmaskcurve);
                 blurcolde->setEditedState(spotState->blurcolde ? Edited : UnEdited);
                 blendmaskcol->setEditedState(spotState->blendmaskcol ? Edited : UnEdited);
                 radmaskcol->setEditedState(spotState->radmaskcol ? Edited : UnEdited);

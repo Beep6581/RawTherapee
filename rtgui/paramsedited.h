@@ -450,6 +450,7 @@ public:
         bool CCmaskcurve;
         bool LLmaskcurve;
         bool HHmaskcurve;
+        bool HHhmaskcurve;
         bool softradiuscol;
         bool opacol;
         bool conthrcol;

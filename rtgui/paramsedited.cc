@@ -1020,6 +1020,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).CCmaskcurve = locallab.spots.at(j).CCmaskcurve && pSpot.CCmaskcurve == otherSpot.CCmaskcurve;
                 locallab.spots.at(j).LLmaskcurve = locallab.spots.at(j).LLmaskcurve && pSpot.LLmaskcurve == otherSpot.LLmaskcurve;
                 locallab.spots.at(j).HHmaskcurve = locallab.spots.at(j).HHmaskcurve && pSpot.HHmaskcurve == otherSpot.HHmaskcurve;
+                locallab.spots.at(j).HHhmaskcurve = locallab.spots.at(j).HHhmaskcurve && pSpot.HHhmaskcurve == otherSpot.HHhmaskcurve;
                 locallab.spots.at(j).softradiuscol = locallab.spots.at(j).softradiuscol && pSpot.softradiuscol == otherSpot.softradiuscol;
                 locallab.spots.at(j).opacol = locallab.spots.at(j).opacol && pSpot.opacol == otherSpot.opacol;
                 locallab.spots.at(j).conthrcol = locallab.spots.at(j).conthrcol && pSpot.conthrcol == otherSpot.conthrcol;
@@ -3009,6 +3010,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).HHmaskcurve = mods.locallab.spots.at(i).HHmaskcurve;
         }
 
+        if (locallab.spots.at(i).HHhmaskcurve) {
+            toEdit.locallab.spots.at(i).HHhmaskcurve = mods.locallab.spots.at(i).HHhmaskcurve;
+        }
+
         if (locallab.spots.at(i).softradiuscol) {
             toEdit.locallab.spots.at(i).softradiuscol = mods.locallab.spots.at(i).softradiuscol;
         }
@@ -4987,6 +4992,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     CCmaskcurve(v),
     LLmaskcurve(v),
     HHmaskcurve(v),
+    HHhmaskcurve(v),
     softradiuscol(v),
     opacol(v),
     conthrcol(v),
@@ -5305,6 +5311,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     CCmaskcurve = v;
     LLmaskcurve = v;
     HHmaskcurve = v;
+    HHhmaskcurve = v;
     softradiuscol = v;
     opacol = v;
     conthrcol = v;

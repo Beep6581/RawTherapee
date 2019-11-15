@@ -1103,6 +1103,7 @@ private:
             LocCCmaskCurve locccmasCurve;
             LocLLmaskCurve locllmasCurve;
             LocHHmaskCurve lochhmasCurve;
+            LocHHmaskCurve lochhhmasCurve;
             LocCCmaskCurve locccmasexpCurve;
             LocLLmaskCurve locllmasexpCurve;
             LocHHmaskCurve lochhmasexpCurve;
@@ -1161,6 +1162,7 @@ private:
                 bool localexutili = false;
                 bool llmasutili = false;
                 bool lhmasutili = false;
+                bool lhhmasutili = false;
                 bool lcmasutili = false;
                 bool localmaskutili = false;
                 bool localmaskexputili = false;
@@ -1197,6 +1199,7 @@ private:
                 locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmasutili);
                 locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, llmasutili);
                 lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve, lhmasutili);
+                lochhhmasCurve.Set(params.locallab.spots.at(sp).HHhmaskcurve, lhhmasutili);
                 locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve, lcmasexputili);
                 locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve, llmasexputili);
                 lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve, lhmasexputili);
@@ -1272,7 +1275,7 @@ private:
                      lmaskretilocalcurve, localmaskretiutili,
                      lmaskcblocalcurve, localmaskcbutili,
                      lmaskbllocalcurve, localmaskblutili,
-                     locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
+                     locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                      locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                      locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                      locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,

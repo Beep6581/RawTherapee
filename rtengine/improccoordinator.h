@@ -257,6 +257,7 @@ protected:
     LocCCmaskCurve locccmasCurve;
     LocLLmaskCurve locllmasCurve;
     LocHHmaskCurve lochhmasCurve;
+    LocHHmaskCurve lochhhmasCurve;
     LocCCmaskCurve locccmasexpCurve;
     LocLLmaskCurve locllmasexpCurve;
     LocHHmaskCurve lochhmasexpCurve;
@@ -285,6 +286,7 @@ protected:
     bool localexutili;
     bool llmasutili;
     bool lhmasutili;
+    bool lhhmasutili;
     bool lcmasutili;
     bool localmaskutili;
     bool localmaskexputili;

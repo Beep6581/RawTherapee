@@ -1027,6 +1027,7 @@ struct LocallabParams {
         std::vector<double> CCmaskcurve;
         std::vector<double> LLmaskcurve;
         std::vector<double> HHmaskcurve;
+        std::vector<double> HHhmaskcurve;
         double softradiuscol;
         double opacol;
         double conthrcol;
