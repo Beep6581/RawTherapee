@@ -2198,6 +2198,10 @@ TP_LOCALLAB_MERELE;Lighten only
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTHI;Color Burn
 TP_LOCALLAB_MERFOR;Color Dodge
+TP_LOCALLAB_MERLUM;Luminosity
+TP_LOCALLAB_MERCOL;Color
+TP_LOCALLAB_MERSAT;Saturation
+TP_LOCALLAB_MERHUE;Hue
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves and structure mask (if enabled tool) are used.\nDisabled in Inverse
 TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_CSTHRESHOLDBLUR;Mask Wavelet level

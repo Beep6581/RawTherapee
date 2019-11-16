@@ -632,6 +632,14 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mergecolMethod = 15;
     } else if (locallab.spots.at(sp).mergecolMethod == "for") {
         lp.mergecolMethod = 16;
+    } else if (locallab.spots.at(sp).mergecolMethod == "hue") {
+        lp.mergecolMethod = 17;
+    } else if (locallab.spots.at(sp).mergecolMethod == "sat") {
+        lp.mergecolMethod = 18;
+    } else if (locallab.spots.at(sp).mergecolMethod == "col") {
+        lp.mergecolMethod = 19;
+    } else if (locallab.spots.at(sp).mergecolMethod == "lum") {
+        lp.mergecolMethod = 20;
     }
 
     lp.opacol = 0.01f * locallab.spots.at(sp).opacol;
@@ -3272,6 +3280,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
             for (int ir = 0; ir < bfh; ir++) {
 #ifdef __SSE2__
+
                 if (lochhmasCurve && lhmasutili) {
                     int i = 0;
 
@@ -5447,7 +5456,8 @@ int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
 
 static void softlig(float &a, float &b, float minc, float maxc)
-{ // as Photoshop
+{
+    // as Photoshop
     float alpha = 0.5f * (maxc - minc);
 
     if (b <= alpha) {
@@ -5459,40 +5469,44 @@ static void softlig(float &a, float &b, float minc, float maxc)
 
 
 static void softlig3(float &a, float &b)
-{// as w3C
-    if (b <= 0.5f){
+{
+    // as w3C
+    if (b <= 0.5f) {
         a = a - (1.f - 2.f * b) * a * (1.f - a);
-    } else if(((2.f * b) > 1.f) && ((4.f * a) <= 1.f)) {
+    } else if (((2.f * b) > 1.f) && ((4.f * a) <= 1.f)) {
         a = a + ((2.f * b) - 1.f) * (4.f * a * ((4.f * a) + 1.f) * (a - 1.f) + 7.f * a);
-    } else if(((2.f * b) > 1.f) && ((4.f * a) > 1.f)){
-        a = a + ((2.f * a) - 1.f) * (pow(a, 0.5f) -a);
+    } else if (((2.f * b) > 1.f) && ((4.f * a) > 1.f)) {
+        a = a + ((2.f * a) - 1.f) * (pow(a, 0.5f) - a);
     }
-    
+
 }
 
 
 
 static void softlig2(float &a, float &b)
-{ // illusions.hu
+{
+    // illusions.hu
     a = pow(b, pow(2.f, (2.f * (0.5f - a))));
 }
 
 static void colburn(float &a, float &b)
-{ // w3C
-  if(b == 0.f) {
-      a = 0.f;
-  } else {
-      a = 1.f - std::min(1.f, (1.f - a) / b);
-  }
+{
+    // w3C
+    if (b == 0.f) {
+        a = 0.f;
+    } else {
+        a = 1.f - std::min(1.f, (1.f - a) / b);
+    }
 }
 
 static void coldodge(float &a, float &b)
-{ // w3C
-  if(b == 1.f) {
-      a = 1.f;
-  } else {
-      a = std::min(1.f, a / (1.f - b));
-  }
+{
+    // w3C
+    if (b == 1.f) {
+        a = 1.f;
+    } else {
+        a = std::min(1.f, a / (1.f - b));
+    }
 }
 
 static void overlay(float &a, float &b, float minc, float maxc)
@@ -12377,9 +12391,88 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     }
                                 }
 
+                                if (conthr > 0.f) {
+#ifdef _OPENMP
+                                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
+                                            bufcolfin->a[y][x] = intp(blend[y][x], bufcolfin->a[y][x], bufcolreserv->a[y][x]);
+                                            bufcolfin->b[y][x] = intp(blend[y][x], bufcolfin->b[y][x], bufcolreserv->b[y][x]);
+                                        }
+                                    }
+                                }
+
+
                             }
 
-                            if (lp.mergecolMethod != 0) {
+
+                            if (lp.mergecolMethod > 16) { //hue sat chroma luma
+                                std::unique_ptr<LabImage> buftemp;
+                                buftemp.reset(new LabImage(bfw, bfh));
+
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int y = 0; y < bfh ; y++) {
+                                    for (int x = 0; x < bfw; x++) {
+                                        float huefin = xatan2f(bufcolfin->b[y][x], bufcolfin->a[y][x]);
+                                        float hueres = xatan2f(bufcolreserv->b[y][x], bufcolreserv->a[y][x]);
+                                        float chrofin = sqrt(SQR(bufcolfin->a[y][x]) + SQR(bufcolfin->b[y][x]));
+                                        float chrores = sqrt(SQR(bufcolreserv->a[y][x]) + SQR(bufcolreserv->b[y][x]));
+                                        float lumfin = bufcolfin->L[y][x];
+                                        float lumres = bufcolreserv->L[y][x];
+
+                                        if (lp.mergecolMethod == 17) {
+                                            float2 sincosval1 = xsincosf(huefin);
+                                            buftemp->a[y][x] = chrores * sincosval1.y;
+                                            buftemp->b[y][x] = chrores * sincosval1.x;
+                                            buftemp->L[y][x] = lumres;
+                                        } else if (lp.mergecolMethod == 18) {
+                                            float2 sincosval2 = xsincosf(hueres);
+                                            buftemp->a[y][x] = chrofin * sincosval2.y;
+                                            buftemp->b[y][x] = chrofin * sincosval2.x;
+                                            buftemp->L[y][x] = lumres;
+                                        } else if (lp.mergecolMethod == 19) {
+                                            float2 sincosval3 = xsincosf(huefin);
+                                            buftemp->a[y][x] = chrofin * sincosval3.y;
+                                            buftemp->b[y][x] = chrofin * sincosval3.x;
+                                            buftemp->L[y][x] = lumres;
+                                        } else if (lp.mergecolMethod == 20) {
+                                            float2 sincosval4 = xsincosf(hueres);
+                                            buftemp->a[y][x] = chrores * sincosval4.y;
+                                            buftemp->b[y][x] = chrores * sincosval4.x;
+                                            buftemp->L[y][x] = lumfin;
+                                        }
+
+                                        bufcolfin->L[y][x] = lp.opacol * buftemp->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
+                                        bufcolfin->a[y][x] = lp.opacol * buftemp->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
+                                        bufcolfin->b[y][x] = lp.opacol * buftemp->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
+                                    }
+                                }
+
+                                if (conthr > 0.f) {
+#ifdef _OPENMP
+                                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
+                                            bufcolfin->a[y][x] = intp(blend[y][x], bufcolfin->a[y][x], bufcolreserv->a[y][x]);
+                                            bufcolfin->b[y][x] = intp(blend[y][x], bufcolfin->b[y][x], bufcolreserv->b[y][x]);
+                                        }
+                                    }
+                                }
+
+
+                            }
+
+
+                            if (lp.mergecolMethod > 0 && lp.mergecolMethod <= 16) {
                                 //prepare RGB values in 0 1(or more)for current image and reserved
                                 Imagefloat *tmpImageorig = nullptr;
                                 tmpImageorig = new Imagefloat(bfw, bfh);
@@ -12664,7 +12757,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
-                                
+
                                 } else if (lp.mergecolMethod == 15) { //Color burn
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
@@ -12708,6 +12801,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         }
                                     }
                                 }
+
                                 tmpImageorig->normalizeFloatTo65535();
                                 rgb2lab(*tmpImageorig, *bufcolfin, params->icm.workingProfile);
 
@@ -12799,8 +12893,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 bufchro[ir][jr] = sqrt(SQR(bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) + SQR(bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr])) / 328.f;
-                                buf_a[ir][jr] =((bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) / 328.f);
-                                buf_b[ir][jr] =((bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr]) / 328.f);
+                                buf_a[ir][jr] = ((bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) / 328.f);
+                                buf_b[ir][jr] = ((bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr]) / 328.f);
                             }
                     }
 

@@ -803,6 +803,10 @@ pe(nullptr)
     mergecolMethod->append(M("TP_LOCALLAB_MERTWE"));
     mergecolMethod->append(M("TP_LOCALLAB_MERTHI"));
     mergecolMethod->append(M("TP_LOCALLAB_MERFOR"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERHUE"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERSAT"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERCOL"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERLUM"));
     mergecolMethod->set_active(0);
     mergecolMethodConn = mergecolMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::mergecolMethodChanged));
 
@@ -3737,6 +3741,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "thi";
                     } else if (mergecolMethod->get_active_row_number() == 16) {
                         pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "for";
+                    } else if (mergecolMethod->get_active_row_number() == 17) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "hue";
+                    } else if (mergecolMethod->get_active_row_number() == 18) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "sat";
+                    } else if (mergecolMethod->get_active_row_number() == 19) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "col";
+                    } else if (mergecolMethod->get_active_row_number() == 20) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "lum";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
@@ -9035,6 +9047,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             mergecolMethod->set_active(15);
         } else if (pp->locallab.spots.at(index).mergecolMethod == "for") {
             mergecolMethod->set_active(16);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "hue") {
+            mergecolMethod->set_active(17);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "sat") {
+            mergecolMethod->set_active(18);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "col") {
+            mergecolMethod->set_active(19);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "lum") {
+            mergecolMethod->set_active(20);
         }
 
 
