@@ -12670,6 +12670,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
                         smerge = 100;
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                bufchro[ir][jr] = sqrt(SQR(bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) + SQR(bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr])) / 328.f;
+                                buf_a[ir][jr] =((bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) / 328.f);
+                                buf_b[ir][jr] =((bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr]) / 328.f);
+                            }
                     }
 
                     //bufcolfin add for merge
