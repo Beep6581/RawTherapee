@@ -2187,13 +2187,17 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERFOU;Multiply
 TP_LOCALLAB_MERFIV;Addition
 TP_LOCALLAB_MERSIX;Divide
-TP_LOCALLAB_MERSEV;Soft Light
+TP_LOCALLAB_MERSEV;Soft Light Photshop
+TP_LOCALLAB_MERSEV0;Soft Light Illusion
+TP_LOCALLAB_MERSEV1;Soft Light W3C
 TP_LOCALLAB_MERSEV2;Hard Light
 TP_LOCALLAB_MERHEI;Overlay
 TP_LOCALLAB_MERNIN;Screen
 TP_LOCALLAB_MERTEN;Darken only
 TP_LOCALLAB_MERELE;Lighten only
 TP_LOCALLAB_MERTWE;Exclusion
+TP_LOCALLAB_MERTHI;Color Burn
+TP_LOCALLAB_MERFOR;Color Dodge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves and structure mask (if enabled tool) are used.\nDisabled in Inverse
 TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_CSTHRESHOLDBLUR;Mask Wavelet level

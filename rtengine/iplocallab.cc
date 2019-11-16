@@ -612,18 +612,26 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mergecolMethod = 5;
     } else if (locallab.spots.at(sp).mergecolMethod == "sev") {
         lp.mergecolMethod = 6;
-    } else if (locallab.spots.at(sp).mergecolMethod == "sev2") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "sev0") {
         lp.mergecolMethod = 7;
-    } else if (locallab.spots.at(sp).mergecolMethod == "hei") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "sev1") {
         lp.mergecolMethod = 8;
-    } else if (locallab.spots.at(sp).mergecolMethod == "nin") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "sev2") {
         lp.mergecolMethod = 9;
-    } else if (locallab.spots.at(sp).mergecolMethod == "ten") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "hei") {
         lp.mergecolMethod = 10;
-    } else if (locallab.spots.at(sp).mergecolMethod == "ele") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "nin") {
         lp.mergecolMethod = 11;
-    } else if (locallab.spots.at(sp).mergecolMethod == "twe") {
+    } else if (locallab.spots.at(sp).mergecolMethod == "ten") {
         lp.mergecolMethod = 12;
+    } else if (locallab.spots.at(sp).mergecolMethod == "ele") {
+        lp.mergecolMethod = 13;
+    } else if (locallab.spots.at(sp).mergecolMethod == "twe") {
+        lp.mergecolMethod = 14;
+    } else if (locallab.spots.at(sp).mergecolMethod == "thi") {
+        lp.mergecolMethod = 15;
+    } else if (locallab.spots.at(sp).mergecolMethod == "for") {
+        lp.mergecolMethod = 16;
     }
 
     lp.opacol = 0.01f * locallab.spots.at(sp).opacol;
@@ -5437,9 +5445,9 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
 
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
-/*
+
 static void softlig(float &a, float &b, float minc, float maxc)
-{
+{ // as Photoshop
     float alpha = 0.5f * (maxc - minc);
 
     if (b <= alpha) {
@@ -5448,10 +5456,43 @@ static void softlig(float &a, float &b, float minc, float maxc)
         a = 2.f * a * (maxc - b) + sqrt(LIM(a, 0.f, 2.f)) * (2.f * b - maxc);
     }
 }
-*/
+
+
+static void softlig3(float &a, float &b)
+{// as w3C
+    if (b <= 0.5f){
+        a = a - (1.f - 2.f * b) * a * (1.f - a);
+    } else if(((2.f * b) > 1.f) && ((4.f * a) <= 1.f)) {
+        a = a + ((2.f * b) - 1.f) * (4.f * a * ((4.f * a) + 1.f) * (a - 1.f) + 7.f * a);
+    } else if(((2.f * b) > 1.f) && ((4.f * a) > 1.f)){
+        a = a + ((2.f * a) - 1.f) * (pow(a, 0.5f) -a);
+    }
+    
+}
+
+
+
 static void softlig2(float &a, float &b)
-{
+{ // illusions.hu
     a = pow(b, pow(2.f, (2.f * (0.5f - a))));
+}
+
+static void colburn(float &a, float &b)
+{ // w3C
+  if(b == 0.f) {
+      a = 0.f;
+  } else {
+      a = 1.f - std::min(1.f, (1.f - a) / b);
+  }
+}
+
+static void coldodge(float &a, float &b)
+{ // w3C
+  if(b == 1.f) {
+      a = 1.f;
+  } else {
+      a = std::min(1.f, a / (1.f - b));
+  }
 }
 
 static void overlay(float &a, float &b, float minc, float maxc)
@@ -12452,7 +12493,28 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             tmpImageorig->b(y, x) = lp.opacol * (tmpImageorig->b(y, x) / (tmpImagereserv->b(y, x) + 0.00001f)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
-                                } else if (lp.mergecolMethod == 6) { //soft light softlig (float &a, float &b)
+                                } else if (lp.mergecolMethod == 6) { //soft light as Photoshop
+#ifdef _OPENMP
+                                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            float a = tmpImageorig->r(y, x);
+                                            float b = tmpImagereserv->r(y, x);
+                                            softlig(a, b, minR, maxR);
+                                            tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            a = tmpImageorig->g(y, x);
+                                            b = tmpImagereserv->g(y, x);
+                                            softlig(a, b, minG, maxG);
+                                            tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            a = tmpImageorig->b(y, x);
+                                            b = tmpImagereserv->b(y, x);
+                                            softlig(a, b, minB, maxB);
+                                            tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        }
+                                    }
+                                } else if (lp.mergecolMethod == 7) { //soft light as illusions.hu
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12461,22 +12523,40 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         for (int x = 0; x < bfw; x++) {
                                             float a = LIM01(tmpImageorig->r(y, x));
                                             float b = tmpImagereserv->r(y, x);
-                                            //   softlig(a, b, minR, maxR);
                                             softlig2(a, b);
                                             tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                             a = LIM01(tmpImageorig->g(y, x));
                                             b = tmpImagereserv->g(y, x);
-                                            //   softlig(a, b, minG, maxG);
                                             softlig2(a, b);
                                             tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                             a = LIM01(tmpImageorig->b(y, x));
                                             b = tmpImagereserv->b(y, x);
-                                            //    softlig(a, b, minB, maxB);
                                             softlig2(a, b);
                                             tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
-                                } else if (lp.mergecolMethod == 7) { //hard light overlay (float &b, float &a)
+                                } else if (lp.mergecolMethod == 8) { //soft light as W3C
+#ifdef _OPENMP
+                                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            float a = LIM01(tmpImageorig->r(y, x));
+                                            float b = tmpImagereserv->r(y, x);
+                                            softlig3(a, b);
+                                            tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            a = LIM01(tmpImageorig->g(y, x));
+                                            b = tmpImagereserv->g(y, x);
+                                            softlig3(a, b);
+                                            tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            a = LIM01(tmpImageorig->b(y, x));
+                                            b = tmpImagereserv->b(y, x);
+                                            softlig3(a, b);
+                                            tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        }
+                                    }
+                                } else if (lp.mergecolMethod == 9) { //hard light overlay (float &b, float &a)
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12497,7 +12577,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
-                                } else if (lp.mergecolMethod == 8) { //overlay overlay(float &a, float &b)
+                                } else if (lp.mergecolMethod == 10) { //overlay overlay(float &a, float &b)
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12518,7 +12598,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
-                                } else if (lp.mergecolMethod == 9) { //screen screen (float &a, float &b)
+                                } else if (lp.mergecolMethod == 11) { //screen screen (float &a, float &b)
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12539,7 +12619,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
-                                } else if (lp.mergecolMethod == 10) { //darken only
+                                } else if (lp.mergecolMethod == 12) { //darken only
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12551,7 +12631,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             tmpImageorig->b(y, x) = lp.opacol * std::min(tmpImageorig->b(y, x), tmpImagereserv->b(y, x)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
-                                } else if (lp.mergecolMethod == 11) { //lighten only
+                                } else if (lp.mergecolMethod == 13) { //lighten only
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12563,7 +12643,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             tmpImageorig->b(y, x) = lp.opacol * std::max(tmpImageorig->b(y, x), tmpImagereserv->b(y, x)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
-                                } else if (lp.mergecolMethod == 12) { //exclusion exclusion (float &a, float &b)
+                                } else if (lp.mergecolMethod == 14) { //exclusion exclusion (float &a, float &b)
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12584,8 +12664,50 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                         }
                                     }
-                                }
+                                
+                                } else if (lp.mergecolMethod == 15) { //Color burn
+#ifdef _OPENMP
+                                    #pragma omp parallel for schedule(dynamic,16)
+#endif
 
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            float a = LIM01(tmpImageorig->r(y, x));
+                                            float b = LIM01(tmpImagereserv->r(y, x));
+                                            colburn(a, b);
+                                            tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            a = LIM01(tmpImageorig->g(y, x));
+                                            b = LIM01(tmpImagereserv->g(y, x));
+                                            colburn(a, b);
+                                            tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            a = LIM01(tmpImageorig->b(y, x));
+                                            b = LIM01(tmpImagereserv->b(y, x));
+                                            colburn(a, b);
+                                            tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        }
+                                    }
+                                } else if (lp.mergecolMethod == 16) { //Color dodge
+#ifdef _OPENMP
+                                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            float a = LIM01(tmpImageorig->r(y, x));
+                                            float b = LIM01(tmpImagereserv->r(y, x));
+                                            coldodge(a, b);
+                                            tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
+                                            a = LIM01(tmpImageorig->g(y, x));
+                                            b = LIM01(tmpImagereserv->g(y, x));
+                                            coldodge(a, b);
+                                            tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
+                                            a = LIM01(tmpImageorig->b(y, x));
+                                            b = LIM01(tmpImagereserv->b(y, x));
+                                            coldodge(a, b);
+                                            tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        }
+                                    }
+                                }
                                 tmpImageorig->normalizeFloatTo65535();
                                 rgb2lab(*tmpImageorig, *bufcolfin, params->icm.workingProfile);
 

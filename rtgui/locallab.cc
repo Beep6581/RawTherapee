@@ -266,8 +266,8 @@ Locallab::Locallab():
     lapmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     shadmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
-    opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 100.))),
-    conthrcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTTHR"), 0.0, 100.0, 0.5, 0.))),
+    opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 40.))),
+    conthrcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTTHR"), 0.0, 100.0, 0.5, 20.))),
     strumaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 3.0, 0.05, 0.0))),
@@ -793,12 +793,16 @@ pe(nullptr)
     mergecolMethod->append(M("TP_LOCALLAB_MERFIV"));
     mergecolMethod->append(M("TP_LOCALLAB_MERSIX"));
     mergecolMethod->append(M("TP_LOCALLAB_MERSEV"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERSEV0"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERSEV1"));
     mergecolMethod->append(M("TP_LOCALLAB_MERSEV2"));
     mergecolMethod->append(M("TP_LOCALLAB_MERHEI"));
     mergecolMethod->append(M("TP_LOCALLAB_MERNIN"));
     mergecolMethod->append(M("TP_LOCALLAB_MERTEN"));
     mergecolMethod->append(M("TP_LOCALLAB_MERELE"));
     mergecolMethod->append(M("TP_LOCALLAB_MERTWE"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERTHI"));
+    mergecolMethod->append(M("TP_LOCALLAB_MERFOR"));
     mergecolMethod->set_active(0);
     mergecolMethodConn = mergecolMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::mergecolMethodChanged));
 
@@ -3714,17 +3718,25 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     } else if (mergecolMethod->get_active_row_number() == 6) {
                         pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "sev";
                     } else if (mergecolMethod->get_active_row_number() == 7) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "sev2";
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "sev0";
                     } else if (mergecolMethod->get_active_row_number() == 8) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "hei";
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "sev1";
                     } else if (mergecolMethod->get_active_row_number() == 9) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "nin";
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "sev2";
                     } else if (mergecolMethod->get_active_row_number() == 10) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "ten";
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "hei";
                     } else if (mergecolMethod->get_active_row_number() == 11) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "ele";
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "nin";
                     } else if (mergecolMethod->get_active_row_number() == 12) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "ten";
+                    } else if (mergecolMethod->get_active_row_number() == 13) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "ele";
+                    } else if (mergecolMethod->get_active_row_number() == 14) {
                         pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "twe";
+                    } else if (mergecolMethod->get_active_row_number() == 15) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "thi";
+                    } else if (mergecolMethod->get_active_row_number() == 16) {
+                        pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "for";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
@@ -9003,18 +9015,26 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             mergecolMethod->set_active(5);
         } else if (pp->locallab.spots.at(index).mergecolMethod == "sev") {
             mergecolMethod->set_active(6);
-        } else if (pp->locallab.spots.at(index).mergecolMethod == "sev2") {
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "sev0") {
             mergecolMethod->set_active(7);
-        } else if (pp->locallab.spots.at(index).mergecolMethod == "hei") {
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "sev1") {
             mergecolMethod->set_active(8);
-        } else if (pp->locallab.spots.at(index).mergecolMethod == "nin") {
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "sev2") {
             mergecolMethod->set_active(9);
-        } else if (pp->locallab.spots.at(index).mergecolMethod == "ten") {
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "hei") {
             mergecolMethod->set_active(10);
-        } else if (pp->locallab.spots.at(index).mergecolMethod == "ele") {
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "nin") {
             mergecolMethod->set_active(11);
-        } else if (pp->locallab.spots.at(index).mergecolMethod == "twe") {
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "ten") {
             mergecolMethod->set_active(12);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "ele") {
+            mergecolMethod->set_active(13);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "twe") {
+            mergecolMethod->set_active(14);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "thi") {
+            mergecolMethod->set_active(15);
+        } else if (pp->locallab.spots.at(index).mergecolMethod == "for") {
+            mergecolMethod->set_active(16);
         }
 
 
