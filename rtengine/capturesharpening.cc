@@ -409,8 +409,85 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
 #ifdef _OPENMP
     #pragma omp parallel for reduction(max:maxRatio) schedule(dynamic, 16)
 #endif
-    for (int row = starty + 3; row < H - 4; row += 3) {
-        for (int col = startx + 3; col < W - 4; col += 3) {
+    for (int row = starty + 2; row < H - 4; row += 3) {
+        for (int col = startx + 2; col < W - 4; col += 3) {
+            const float valp1p1 = rawData[row + 1][col + 1];
+            const bool squareClipped = rtengine::max(valp1p1, rawData[row + 1][col + 2], rawData[row + 2][col + 1], rawData[row + 2][col + 2]) >= upperLimit;
+            const float greenSolitary = rawData[row][col];
+            if (greenSolitary > 1.f && std::max(rawData[row - 1][col - 1], rawData[row - 1][col + 1]) < upperLimit) {
+                if (greenSolitary < upperLimit) {
+                    const float valp1m1 = rawData[row + 1][col - 1];
+                    if (valp1m1 > 1.f && rtengine::max(rawData[row + 1][col - 2], valp1m1, rawData[row + 2][col - 2], rawData[row + 1][col - 1]) < upperLimit) {
+                        const float maxVal = std::max(greenSolitary, valp1m1);
+                        if (maxVal > lowerLimit) {
+                            const float minVal = std::min(greenSolitary, valp1m1);
+                            if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                maxRatio = maxVal / minVal;
+                            }
+                        }
+                    }
+                    if (valp1p1 > 1.f && !squareClipped) {
+                        const float maxVal = std::max(greenSolitary, valp1p1);
+                        if (maxVal > lowerLimit) {
+                            const float minVal = std::min(greenSolitary, valp1p1);
+                            if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                maxRatio = maxVal / minVal;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!squareClipped) {
+                const float valp2p2 = rawData[row + 2][col + 2];
+                if (valp2p2 > 1.f) {
+                    if (valp1p1 > 1.f) {
+                        const float maxVal = std::max(valp1p1, valp2p2);
+                        if (maxVal > lowerLimit) {
+                            const float minVal = std::min(valp1p1, valp2p2);
+                            if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                maxRatio = maxVal / minVal;
+                            }
+                        }
+                    }
+                    const float greenSolitaryRight = rawData[row + 3][col + 3];
+                    if (rtengine::max(greenSolitaryRight, rawData[row + 4][col + 2], rawData[row + 4][col + 4]) < upperLimit) {
+                        if (greenSolitaryRight > 1.f) {
+                            const float maxVal = std::max(greenSolitaryRight, valp2p2);
+                            if (maxVal > lowerLimit) {
+                                const float minVal = std::min(greenSolitaryRight, valp2p2);
+                                if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                    maxRatio = maxVal / minVal;
+                                }
+                            }
+                        }
+                    }
+                }
+                const float valp1p2 = rawData[row + 1][col + 2];
+                const float valp2p1 = rawData[row + 2][col + 1];
+                if (valp2p1 > 1.f) {
+                    if (valp1p2 > 1.f) {
+                        const float maxVal = std::max(valp1p2, valp2p1);
+                        if (maxVal > lowerLimit) {
+                            const float minVal = std::min(valp1p2, valp2p1);
+                            if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                maxRatio = maxVal / minVal;
+                            }
+                        }
+                    }
+                    const float greenSolitaryLeft = rawData[row + 3][col];
+                    if (rtengine::max(greenSolitaryLeft, rawData[row + 4][col - 1], rawData[row + 4][col + 1]) < upperLimit) {
+                        if (greenSolitaryLeft > 1.f) {
+                            const float maxVal = std::max(greenSolitaryLeft, valp2p1);
+                            if (maxVal > lowerLimit) {
+                                const float minVal = std::min(greenSolitaryLeft, valp2p1);
+                                if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                    maxRatio = maxVal / minVal;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             const float valtl = rawData[row][col];
             const float valtr = rawData[row][col + 1];
             const float valbl = rawData[row + 1][col];
@@ -494,7 +571,7 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
             }
         }
     }
-    return std::sqrt((1.f / (std::log(1.f / maxRatio))) / -2.f);
+    return std::sqrt((1.f / (std::log(1.f / maxRatio) /  2.f)) / -2.f);
 }
 
 bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int border)
@@ -618,14 +695,27 @@ BENCHFUN
                         const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - H / 2) + rtengine::SQR(j + tileSize / 2 - W / 2));
                         const float sigmaTile = static_cast<float>(sigma) + distanceFactor * distance;
                         if (sigmaTile >= 0.4f) {
-                            float lkernel7[7][7];
-                            compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
-                            for (int k = 0; k < iterations && !stopped; ++k) {
-                                // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
-                                gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
-                                gauss7x7mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
-                                if (checkIterStop) {
-                                    stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                            if (sigmaTile > 0.84) { // have to use 7x7 kernel
+                                float lkernel7[7][7];
+                                compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
+                                for (int k = 0; k < iterations && !stopped; ++k) {
+                                    // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
+                                    gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
+                                    gauss7x7mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
+                                    if (checkIterStop) {
+                                        stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                                    }
+                                }
+                            } else { // can use 5x5 kernel
+                                float lkernel7[5][5];
+                                compute5x5kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
+                                for (int k = 0; k < iterations && !stopped; ++k) {
+                                    // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
+                                    gauss5x5div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
+                                    gauss5x5mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
+                                    if (checkIterStop) {
+                                        stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                                    }
                                 }
                             }
                         }
