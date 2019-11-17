@@ -2180,7 +2180,7 @@ TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 TP_LOCALLAB_MRTHR;Original Image
 TP_LOCALLAB_MRFOU;Previous Spot
 TP_LOCALLAB_MERGETYPE;Merge image and mask
-TP_LOCALLAB_MERGETYPE_TOOLTIP;None, use all mask in LCH mode.\nShort curves 'L' mask, use a short circuit for mask 2, 3, 4, 6, 7.\nOriginal mask 7, blend current image with original
+TP_LOCALLAB_MERGETYPE_TOOLTIP;None, use all mask in LCH mode.\nShort curves 'L' mask, use a short circuit for mask 2, 3, 4, 6, 7.\nOriginal mask 8, blend current image with original
 TP_LOCALLAB_MERGENONE;None
 TP_LOCALLAB_MERGEONE;Short Curves 'L' Mask
 TP_LOCALLAB_MERGETWO;Original(Mask 7)
@@ -2407,11 +2407,12 @@ TP_LOCALLAB_LUMASK;Luminance Background Mask
 TP_LOCALLAB_SHORTC;Short Curves 'L' Mask
 TP_LOCALLAB_SHORTCMASK_TOOLTIP;Short circuit the 2 curves L(L) and L(H).\nAllows you to mix the current image with the original image modified by the mask job.\nUsable with masks 2, 3, 4, 6, 7
 TP_LOCALLAB_SHOWCB;2+ - Mask and modifications
-TP_LOCALLAB_SHOWT;3 - Mask and modifications
-TP_LOCALLAB_SHOWS;4+* - Mask and modifications
-TP_LOCALLAB_SHOWR;5 - Mask and modifications
-TP_LOCALLAB_SHOWE;6+ - Mask and modifications
-TP_LOCALLAB_SHOWC;7+* - Mask and modifications
+TP_LOCALLAB_SHOWVI;3 - Mask and modifications
+TP_LOCALLAB_SHOWT;4 - Mask and modifications
+TP_LOCALLAB_SHOWS;5+* - Mask and modifications
+TP_LOCALLAB_SHOWR;6 - Mask and modifications
+TP_LOCALLAB_SHOWE;7+ - Mask and modifications
+TP_LOCALLAB_SHOWC;8+* - Mask and modifications
 TP_LOCALLAB_SHOWC1;Merge file
 TP_LOCALLAB_SHOWPLUS;1+* - Mask and modifications - Smooth-Blur & Denoise
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR or Blur).\n\nUse Mask is before algorihtm shape detection  

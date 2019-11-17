@@ -879,7 +879,8 @@ pe(nullptr)
     if (showtooltip) {
         LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     }
- //   maskCurveEditorG->curveListComplete();
+
+//   maskCurveEditorG->curveListComplete();
 //    maskHCurveEditorG->setCurveListener(this);
 
     HHmaskshape->setIdentityValue(0.);
@@ -888,6 +889,7 @@ pe(nullptr)
     if (showtooltip) {
         HHmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     }
+
 //    maskHCurveEditorG->setCurveListener(this);
 
     HHmaskshape->setCurveColorProvider(this, 6);
@@ -5179,7 +5181,7 @@ void Locallab::curveChanged(CurveEditor* ce)
                 listener->panelChanged(EvlocallabSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
             }
         }
-        
+
         if (ce == CCmaskvibshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskvibshape, M("HISTORY_CUSTOMCURVE"));
@@ -8031,7 +8033,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(Evlocallablapmaskvib, lapmaskvib->getTextValue());
             }
         }
-        
+
     }
 
     // Soft Light
@@ -9130,7 +9132,7 @@ void Locallab::enableListener()
     pastsattogconn.block(false);
     showmaskvibMethodConn.block(false);
     enavibMaskConn.block(false);
-   // Soft Light
+    // Soft Light
     enablesoftConn.block(false);
     softMethodConn.block(false);
     showmasksoftMethodConn.block(false);

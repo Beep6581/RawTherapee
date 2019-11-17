@@ -989,7 +989,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.ftwlc = fftwlc;
     lp.ftwreti = fftwreti;
     lp.vibena = locallab.spots.at(sp).expvibrance && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
-    
+
 }
 
 static void calcTransitionrect(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
@@ -8822,7 +8822,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //vibrance
 
-        if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f || lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 3 || lp.showmaskvibmet == 4) && lp.vibena){ //interior ellipse renforced lightness and chroma  //locallutili
+        if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f || lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 3 || lp.showmaskvibmet == 4) && lp.vibena) { //interior ellipse renforced lightness and chroma  //locallutili
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
                 const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -8930,44 +8930,45 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (lp.showmaskvibmet == 0 || lp.showmaskvibmet == 1  || lp.showmaskvibmet == 2 || lp.showmaskvibmet == 4 || lp.enavibMask) {
 
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int y = ystart; y < yend; y++) {
-                        for (int x = xstart; x < xend; x++) {
-                            bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
-                            bufexporig->a[y - ystart][x - xstart] = original->a[y][x];
-                            bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
+                        for (int y = ystart; y < yend; y++) {
+                            for (int x = xstart; x < xend; x++) {
+                                bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
+                                bufexporig->a[y - ystart][x - xstart] = original->a[y][x];
+                                bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
+                            }
                         }
-                    }
 
-                    VibranceParams vibranceParams;
-                    vibranceParams.enabled = params->locallab.spots.at(sp).expvibrance;
-                    vibranceParams.pastels = params->locallab.spots.at(sp).pastels;
-                    vibranceParams.saturated = params->locallab.spots.at(sp).saturated;
-                    vibranceParams.psthreshold = params->locallab.spots.at(sp).psthreshold;
-                    vibranceParams.protectskins = params->locallab.spots.at(sp).protectskins;
-                    vibranceParams.avoidcolorshift = params->locallab.spots.at(sp).avoidcolorshift;
-                    vibranceParams.pastsattog = params->locallab.spots.at(sp).pastsattog;
-                    vibranceParams.skintonescurve = params->locallab.spots.at(sp).skintonescurve;
+                        VibranceParams vibranceParams;
+                        vibranceParams.enabled = params->locallab.spots.at(sp).expvibrance;
+                        vibranceParams.pastels = params->locallab.spots.at(sp).pastels;
+                        vibranceParams.saturated = params->locallab.spots.at(sp).saturated;
+                        vibranceParams.psthreshold = params->locallab.spots.at(sp).psthreshold;
+                        vibranceParams.protectskins = params->locallab.spots.at(sp).protectskins;
+                        vibranceParams.avoidcolorshift = params->locallab.spots.at(sp).avoidcolorshift;
+                        vibranceParams.pastsattog = params->locallab.spots.at(sp).pastsattog;
+                        vibranceParams.skintonescurve = params->locallab.spots.at(sp).skintonescurve;
 
 
-                    bufexpfin->CopyFrom(bufexporig.get());
-                    ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
+                        bufexpfin->CopyFrom(bufexporig.get());
+                        ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
 
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                            buflight[y][x] = CLIPRET((bufexpfin->L[y][x] - bufexporig->L[y][x]) / 328.f);
-                            bufl_ab[y][x] = CLIPRET((sqrt(SQR(bufexpfin->a[y][x]) + SQR(bufexpfin->b[y][x])) - sqrt(SQR(bufexporig->a[y][x]) + SQR(bufexporig->b[y][x]))) / 250.f);
+                        for (int y = 0; y < bfh; y++) {
+                            for (int x = 0; x < bfw; x++) {
+                                buflight[y][x] = CLIPRET((bufexpfin->L[y][x] - bufexporig->L[y][x]) / 328.f);
+                                bufl_ab[y][x] = CLIPRET((sqrt(SQR(bufexpfin->a[y][x]) + SQR(bufexpfin->b[y][x])) - sqrt(SQR(bufexporig->a[y][x]) + SQR(bufexporig->b[y][x]))) / 250.f);
+                            }
                         }
+
+                        bufexpfin.reset();
                     }
-                    
-                    bufexpfin.reset();
-                    }
+
                     transit_shapedetect(2, bufexporig.get(), nullptr, originalmaskvib.get(), buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
