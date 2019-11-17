@@ -840,8 +840,14 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,          //EvlocallabLLmaskvibshape
     LUMINANCECURVE,           //EvlocallabHHmaskvibshape
     LUMINANCECURVE,          //EvlocallabshowmaskvibMethod
-    LUMINANCECURVE          //EvLocallabEnavibMask
-
+    LUMINANCECURVE,          //EvLocallabEnavibMask
+    LUMINANCECURVE,         //Evlocallabblendmaskvi
+    LUMINANCECURVE,         //Evlocallabradmaskvib
+    LUMINANCECURVE,         //Evlocallabchromaskvib
+    LUMINANCECURVE,         //Evlocallabgammaskvib
+    LUMINANCECURVE,         //Evlocallabslomaskvib
+    LUMINANCECURVE,         //Evlocallablapmaskvib
+    LUMINANCECURVE         //EvlocallabLmaskvibshape
 };
 
 namespace rtengine

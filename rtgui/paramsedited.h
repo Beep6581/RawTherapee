@@ -537,6 +537,13 @@ public:
         bool LLmaskvibcurve;
         bool HHmaskvibcurve;
         bool enavibMask;
+        bool blendmaskvib;
+        bool radmaskvib;
+        bool chromaskvib;
+        bool gammaskvib;
+        bool slomaskvib;
+        bool lapmaskvib;
+        bool Lmaskvibcurve;
         // Soft Light
         bool expsoft;
         bool streng;

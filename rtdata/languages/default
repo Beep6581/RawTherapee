@@ -1050,6 +1050,13 @@ HISTORY_MSG_809;Local - Vib mask curve C(C)
 HISTORY_MSG_810;Local - Vib mask curve L(L)
 HISTORY_MSG_811;Local - Vib mask curve LC(H)
 HISTORY_MSG_813;Local - Use Vib mask
+HISTORY_MSG_814;Local - Vib mask Blend
+HISTORY_MSG_815;Local - Vib mask radius
+HISTORY_MSG_816;Local - Vib mask chroma
+HISTORY_MSG_817;Local - Vib mask gamma
+HISTORY_MSG_818;Local - Vib mask slope
+HISTORY_MSG_819;Local - Vib mask laplacian
+HISTORY_MSG_820;Local - Vib mask contrast curve
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

@@ -1115,6 +1115,13 @@ struct LocallabParams {
         std::vector<double> LLmaskvibcurve;
         std::vector<double> HHmaskvibcurve;
         bool enavibMask;
+        int blendmaskvib;
+        double radmaskvib;
+        double chromaskvib;
+        double gammaskvib;
+        double slomaskvib;
+        double lapmaskvib;
+        std::vector<double> Lmaskvibcurve;
         // Soft Light
         bool expsoft;
         int streng;

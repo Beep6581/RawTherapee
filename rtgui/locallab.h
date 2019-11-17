@@ -114,8 +114,8 @@ private:
     CurveEditorGroup* const curveEditorGG;
     CurveEditorGroup* const maskvibCurveEditorG;
     DiagonalCurveEditor* const skinTonesCurve;
-//    CurveEditorGroup* const mask2vibCurveEditorG;
-//    DiagonalCurveEditor* const Lmaskvibshape;
+    CurveEditorGroup* const mask2vibCurveEditorG;
+    DiagonalCurveEditor* const Lmaskvibshape;
     FlatCurveEditor* const CCmaskvibshape;
     FlatCurveEditor* const LLmaskvibshape;
     FlatCurveEditor* const HHmaskvibshape;
@@ -230,6 +230,12 @@ private:
     Adjuster* const saturated;
     Adjuster* const pastels;
     Adjuster* const sensiv;
+    Adjuster* const blendmaskvib;
+    Adjuster* const radmaskvib;
+    Adjuster* const chromaskvib;
+    Adjuster* const gammaskvib;
+    Adjuster* const slomaskvib;
+    Adjuster* const lapmaskvib;
     // Soft Light
     Adjuster* const streng;
     Adjuster* const laplace;

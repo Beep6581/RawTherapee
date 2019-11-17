@@ -837,6 +837,13 @@ enum ProcEventCode {
     EvlocallabHHmaskvibshape = 810,
     EvlocallabshowmaskvibMethod = 811,
     EvLocallabEnavibMask = 812,
+    Evlocallabblendmaskvi = 813,
+    Evlocallabradmaskvib = 814,
+    Evlocallabchromaskvib = 815,
+    Evlocallabgammaskvib = 816,
+    Evlocallabslomaskvib = 817,
+    Evlocallablapmaskvib = 818,
+    EvlocallabLmaskvibshape = 819,
     NUMOFEVENTS
 };
 
