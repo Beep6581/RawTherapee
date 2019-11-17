@@ -12353,7 +12353,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
-                                    lumreserv[y][x] = reserved->L[y + ystart][x + xstart];
+                                    lumreserv[y][x] = 32768.f - reserved->L[y + ystart][x + xstart];
 
                                     if (lp.mergemet == 2) {
                                         bufcolreserv->L[y][x] = reserved->L[y + ystart][x + xstart];
@@ -12398,9 +12398,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     for (int y = 0; y < bfh ; y++) {
                                         for (int x = 0; x < bfw; x++) {
-                                            bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
-                                            bufcolfin->a[y][x] = intp(blend[y][x], bufcolfin->a[y][x], bufcolreserv->a[y][x]);
-                                            bufcolfin->b[y][x] = intp(blend[y][x], bufcolfin->b[y][x], bufcolreserv->b[y][x]);
+                                            bufcolfin->L[y][x] = intp((blend[y][x]), bufcolfin->L[y][x], bufcolreserv->L[y][x]);
+                                            bufcolfin->a[y][x] = intp((blend[y][x]), bufcolfin->a[y][x], bufcolreserv->a[y][x]);
+                                            bufcolfin->b[y][x] = intp((blend[y][x]), bufcolfin->b[y][x], bufcolreserv->b[y][x]);
                                         }
                                     }
                                 }
