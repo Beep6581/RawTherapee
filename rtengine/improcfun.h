@@ -267,6 +267,7 @@ public:
                 LUTf & lmasklocalcurve, bool & localmaskutili,
                 LUTf & lmaskexplocalcurve, bool & localmaskexputili,
                 LUTf & lmaskSHlocalcurve, bool & localmaskSHutili,
+                LUTf & lmaskviblocalcurve, bool & localmaskvibutili,
                 LUTf & lmasktmlocalcurve, bool & localmasktmutili,
                 LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
                 LUTf & lmaskcblocalcurve, bool & localmaskcbutili,
@@ -274,6 +275,7 @@ public:
                 const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili, const  LocHHmaskCurve & lochhhmasCurve, bool & lhhmasutili,
                 const LocCCmaskCurve & locccmasexpCurve, bool &lcmasexputili, const  LocLLmaskCurve & locllmasexpCurve, bool &llmasexputili, const  LocHHmaskCurve & lochhmasexpCurve, bool & lhmasexputili, 
                 const LocCCmaskCurve & locccmasSHCurve, bool &lcmasSHutili, const  LocLLmaskCurve & locllmasSHCurve, bool &llmasSHutili, const  LocHHmaskCurve & lochhmasSHCurve, bool & lhmasSHutili,
+                const LocCCmaskCurve & locccmasvibCurve, bool &lcmasvibutili, const  LocLLmaskCurve & locllmasvibCurve, bool &llmasvibutili, const  LocHHmaskCurve & lochhmasvibCurve, bool & lhmasvibutili,
                 const LocCCmaskCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskCurve & lochhmascbCurve, bool & lhmascbutili,
                 const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
                 const LocCCmaskCurve & locccmastmCurve, bool &lcmastmutili, const  LocLLmaskCurve & locllmastmCurve, bool &llmastmutili, const  LocHHmaskCurve & lochhmastmCurve, bool & lhmastmutili,
@@ -283,7 +285,7 @@ public:
                 const LocwavCurve & locwavCurve, bool & locwavutili,
                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                 double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
-                int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
+                int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
 
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);

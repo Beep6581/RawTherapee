@@ -1110,6 +1110,9 @@ private:
             LocCCmaskCurve locccmasSHCurve;
             LocLLmaskCurve locllmasSHCurve;
             LocHHmaskCurve lochhmasSHCurve;
+            LocCCmaskCurve locccmasvibCurve;
+            LocLLmaskCurve locllmasvibCurve;
+            LocHHmaskCurve lochhmasvibCurve;
             LocCCmaskCurve locccmascbCurve;
             LocLLmaskCurve locllmascbCurve;
             LocHHmaskCurve lochhmascbCurve;
@@ -1136,6 +1139,7 @@ private:
             LUTf lmasklocalcurve(65536, 0);
             LUTf lmaskexplocalcurve(65536, 0);
             LUTf lmaskSHlocalcurve(65536, 0);
+            LUTf lmaskviblocalcurve(65536, 0);
             LUTf lmasktmlocalcurve(65536, 0);
             LUTf lmaskretilocalcurve(65536, 0);
             LUTf lmaskcblocalcurve(65536, 0);
@@ -1167,6 +1171,7 @@ private:
                 bool localmaskutili = false;
                 bool localmaskexputili = false;
                 bool localmaskSHutili = false;
+                bool localmaskvibutili = false;
                 bool localmasktmutili = false;
                 bool localmaskretiutili = false;
                 bool localmaskcbutili = false;
@@ -1177,6 +1182,9 @@ private:
                 bool lcmasSHutili = false;
                 bool lhmasSHutili = false;
                 bool llmasSHutili = false;
+                bool lcmasvibutili = false;
+                bool lhmasvibutili = false;
+                bool llmasvibutili = false;
                 bool lcmascbutili = false;
                 bool lhmascbutili = false;
                 bool llmascbutili = false;
@@ -1206,6 +1214,9 @@ private:
                 locccmasSHCurve.Set(params.locallab.spots.at(sp).CCmaskSHcurve, lcmasSHutili);
                 locllmasSHCurve.Set(params.locallab.spots.at(sp).LLmaskSHcurve, llmasSHutili);
                 lochhmasSHCurve.Set(params.locallab.spots.at(sp).HHmaskSHcurve, lhmasSHutili);
+                locccmasvibCurve.Set(params.locallab.spots.at(sp).CCmaskvibcurve, lcmasvibutili);
+                locllmasvibCurve.Set(params.locallab.spots.at(sp).LLmaskvibcurve, llmasvibutili);
+                lochhmasvibCurve.Set(params.locallab.spots.at(sp).HHmaskvibcurve, lhmasvibutili);
                 locccmascbCurve.Set(params.locallab.spots.at(sp).CCmaskcbcurve, lcmascbutili);
                 locllmascbCurve.Set(params.locallab.spots.at(sp).LLmaskcbcurve, llmascbutili);
                 lochhmascbCurve.Set(params.locallab.spots.at(sp).HHmaskcbcurve, lhmascbutili);
@@ -1229,6 +1240,7 @@ private:
                 CurveFactory::curvemaskLocal(localmaskutili, params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskexputili, params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskSHutili, params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, 1);
+                CurveFactory::curvemaskLocal(localmaskvibutili, params.locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmasktmutili, params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskretiutili, params.locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskcbutili, params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, 1);
@@ -1271,12 +1283,14 @@ private:
                      lmasklocalcurve, localmaskutili,
                      lmaskexplocalcurve, localmaskexputili,
                      lmaskSHlocalcurve, localmaskSHutili,
+                     lmaskviblocalcurve, localmaskvibutili,
                      lmasktmlocalcurve, localmasktmutili,
                      lmaskretilocalcurve, localmaskretiutili,
                      lmaskcblocalcurve, localmaskcbutili,
                      lmaskbllocalcurve, localmaskblutili,
                      locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                      locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                     locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
                      locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                      locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
                      locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
@@ -1285,7 +1299,7 @@ private:
                      loclmasCurvecolwav,lmasutilicolwav,
                      locwavCurve, locwavutili,
                      LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                     huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                      minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                 lastorigView->CopyFrom(labView);
@@ -1305,6 +1319,7 @@ private:
                 lmasklocalcurve.clear();
                 lmaskexplocalcurve.clear();
                 lmaskSHlocalcurve.clear();
+                lmaskviblocalcurve.clear();
                 lmasktmlocalcurve.clear();
                 lmaskretilocalcurve.clear();
                 lmaskcblocalcurve.clear();

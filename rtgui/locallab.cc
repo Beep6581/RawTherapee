@@ -1611,7 +1611,7 @@ pe(nullptr)
     maskvibBox->pack_start(*mask2vibCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
     expmaskvib->add(*maskvibBox, false);
-  //  vibranceBox->pack_start(*expmaskvib);
+ //   vibranceBox->pack_start(*expmaskvib);
     expvibrance->add(*vibranceBox, false);
     expvibrance->setLevel(2);
 

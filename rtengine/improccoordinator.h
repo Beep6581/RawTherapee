@@ -244,6 +244,7 @@ protected:
     LUTf lmasklocalcurve;
     LUTf lmaskexplocalcurve;
     LUTf lmaskSHlocalcurve;
+    LUTf lmaskviblocalcurve;
     LUTf lmasktmlocalcurve;
     LUTf lmaskretilocalcurve;
     LUTf lmaskcblocalcurve;
@@ -264,6 +265,9 @@ protected:
     LocCCmaskCurve locccmasSHCurve;
     LocLLmaskCurve locllmasSHCurve;
     LocHHmaskCurve lochhmasSHCurve;
+    LocCCmaskCurve locccmasvibCurve;
+    LocLLmaskCurve locllmasvibCurve;
+    LocHHmaskCurve lochhmasvibCurve;
     LocCCmaskCurve locccmascbCurve;
     LocLLmaskCurve locllmascbCurve;
     LocHHmaskCurve lochhmascbCurve;
@@ -291,6 +295,7 @@ protected:
     bool localmaskutili;
     bool localmaskexputili;
     bool localmaskSHutili;
+    bool localmaskvibutili;
     bool localmasktmutili;
     bool localmaskretiutili;
     bool localmaskcbutili;
@@ -301,6 +306,9 @@ protected:
     bool lcmasSHutili;
     bool lhmasSHutili;
     bool llmasSHutili;
+    bool lcmasvibutili;
+    bool lhmasvibutili;
+    bool llmasvibutili;
     bool lcmascbutili;
     bool lhmascbutili;
     bool llmascbutili;
