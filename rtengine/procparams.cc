@@ -2568,6 +2568,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     pastsattog(true),
     sensiv(15),
     skintonescurve{(double)DCT_Linear},
+    CCmaskvibcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
+    LLmaskvibcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
+    HHmaskvibcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
+    enavibMask(false),
     // Soft Light
     expsoft(false),
     streng(0),
@@ -2899,7 +2903,11 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && pastsattog == other.pastsattog
         && sensiv == other.sensiv
         && skintonescurve == other.skintonescurve
-        // Soft Light
+        && CCmaskvibcurve == other.CCmaskvibcurve
+        && LLmaskvibcurve == other.LLmaskvibcurve
+        && HHmaskvibcurve == other.HHmaskvibcurve
+        && enavibMask == other.enavibMask
+       // Soft Light
         && expsoft == other.expsoft
         && streng == other.streng
         && sensisf == other.sensisf
@@ -4209,6 +4217,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).pastsattog, "Locallab", "PastSatTog_" + std::to_string(i), spot.pastsattog, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiv, "Locallab", "Sensiv_" + std::to_string(i), spot.sensiv, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).skintonescurve, "Locallab", "SkinTonesCurve_" + std::to_string(i), spot.skintonescurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskvibcurve, "Locallab", "CCmaskvibCurve_" + std::to_string(i), spot.CCmaskvibcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskvibcurve, "Locallab", "LLmaskvibCurve_" + std::to_string(i), spot.LLmaskvibcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskvibcurve, "Locallab", "HHmaskvibCurve_" + std::to_string(i), spot.HHmaskvibcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enavibMask, "Locallab", "EnavibMask_" + std::to_string(i), spot.enavibMask, keyFile);
                 // Soft Light
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expsoft, "Locallab", "Expsoft_" + std::to_string(i), spot.expsoft, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).streng, "Locallab", "Streng_" + std::to_string(i), spot.streng, keyFile);
@@ -5657,7 +5669,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "PastSatTog_" + std::to_string(i), pedited, spot.pastsattog, spotEdited.pastsattog);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + std::to_string(i), pedited, spot.sensiv, spotEdited.sensiv);
                 assignFromKeyfile(keyFile, "Locallab", "SkinTonesCurve_" + std::to_string(i), pedited, spot.skintonescurve, spotEdited.skintonescurve);
-                // Soft Light
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskvibCurve_" + std::to_string(i), pedited, spot.CCmaskvibcurve, spotEdited.CCmaskvibcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskvibCurve_" + std::to_string(i), pedited, spot.LLmaskvibcurve, spotEdited.LLmaskvibcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskvibCurve_" + std::to_string(i), pedited, spot.HHmaskvibcurve, spotEdited.HHmaskvibcurve);
+                assignFromKeyfile(keyFile, "Locallab", "EnavibMask_" + std::to_string(i), pedited, spot.enavibMask, spotEdited.enavibMask);
+               // Soft Light
                 assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + std::to_string(i), pedited, spot.expsoft, spotEdited.expsoft);
                 assignFromKeyfile(keyFile, "Locallab", "Streng_" + std::to_string(i), pedited, spot.streng, spotEdited.streng);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + std::to_string(i), pedited, spot.sensisf, spotEdited.sensisf);

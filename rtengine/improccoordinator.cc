@@ -239,6 +239,7 @@ ImProcCoordinator::ImProcCoordinator() :
     locallExpMaskinv(0),
     locallSHMask(0),
     locallSHMaskinv(0),
+    locallvibMask(0),
     locallcbMask(0),
     locallretiMask(0),
     locallsoftMask(0),

@@ -1111,6 +1111,10 @@ struct LocallabParams {
         bool pastsattog;
         int sensiv;
         std::vector<double> skintonescurve;
+        std::vector<double> CCmaskvibcurve;
+        std::vector<double> LLmaskvibcurve;
+        std::vector<double> HHmaskvibcurve;
+        bool enavibMask;
         // Soft Light
         bool expsoft;
         int streng;

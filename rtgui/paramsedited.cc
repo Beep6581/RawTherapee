@@ -1105,6 +1105,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).pastsattog = locallab.spots.at(j).pastsattog && pSpot.pastsattog == otherSpot.pastsattog;
                 locallab.spots.at(j).sensiv = locallab.spots.at(j).sensiv && pSpot.sensiv == otherSpot.sensiv;
                 locallab.spots.at(j).skintonescurve = locallab.spots.at(j).skintonescurve && pSpot.skintonescurve == otherSpot.skintonescurve;
+                locallab.spots.at(j).CCmaskvibcurve = locallab.spots.at(j).CCmaskvibcurve && pSpot.CCmaskvibcurve == otherSpot.CCmaskvibcurve;
+                locallab.spots.at(j).LLmaskvibcurve = locallab.spots.at(j).LLmaskvibcurve && pSpot.LLmaskvibcurve == otherSpot.LLmaskvibcurve;
+                locallab.spots.at(j).HHmaskvibcurve = locallab.spots.at(j).HHmaskvibcurve && pSpot.HHmaskvibcurve == otherSpot.HHmaskvibcurve;
+                locallab.spots.at(j).enavibMask = locallab.spots.at(j).enavibMask && pSpot.enavibMask == otherSpot.enavibMask;
                 // Soft Light
                 locallab.spots.at(j).expsoft = locallab.spots.at(j).expsoft && pSpot.expsoft == otherSpot.expsoft;
                 locallab.spots.at(j).streng = locallab.spots.at(j).streng && pSpot.streng == otherSpot.streng;
@@ -3332,6 +3336,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).skintonescurve = mods.locallab.spots.at(i).skintonescurve;
         }
 
+        if (locallab.spots.at(i).CCmaskvibcurve) {
+            toEdit.locallab.spots.at(i).CCmaskvibcurve = mods.locallab.spots.at(i).CCmaskvibcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskvibcurve) {
+            toEdit.locallab.spots.at(i).LLmaskvibcurve = mods.locallab.spots.at(i).LLmaskvibcurve;
+        }
+
+        if (locallab.spots.at(i).HHmaskvibcurve) {
+            toEdit.locallab.spots.at(i).HHmaskvibcurve = mods.locallab.spots.at(i).HHmaskvibcurve;
+        }
+
+        if (locallab.spots.at(i).enavibMask) {
+            toEdit.locallab.spots.at(i).enavibMask = mods.locallab.spots.at(i).enavibMask;
+        }
+
         // Soft Light
         if (locallab.spots.at(i).expsoft) {
             toEdit.locallab.spots.at(i).expsoft = mods.locallab.spots.at(i).expsoft;
@@ -5075,6 +5095,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     pastsattog(v),
     sensiv(v),
     skintonescurve(v),
+    CCmaskvibcurve(v),
+    LLmaskvibcurve(v),
+    HHmaskvibcurve(v),
+    enavibMask(v),
     // Soft Light
     expsoft(v),
     streng(v),
@@ -5396,6 +5420,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     pastsattog = v;
     sensiv = v;
     skintonescurve = v;
+    CCmaskvibcurve = v;
+    LLmaskvibcurve = v;
+    HHmaskvibcurve = v;
+    enavibMask = v;
     // Soft Light
     expsoft = v;
     streng = v;

@@ -70,6 +70,7 @@ private:
     MyExpander* const expmaskreti;
     MyExpander* const expmasktm;
     MyExpander* const expmaskbl;
+    MyExpander* const expmaskvib;
     sigc::connection enablecolorConn, enableexposeConn, enableshadhighConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
 
     // Curve widgets
@@ -111,7 +112,14 @@ private:
     FlatCurveEditor* const HHmaskSHshape;
     // Vibrance
     CurveEditorGroup* const curveEditorGG;
+    CurveEditorGroup* const maskvibCurveEditorG;
     DiagonalCurveEditor* const skinTonesCurve;
+//    CurveEditorGroup* const mask2vibCurveEditorG;
+//    DiagonalCurveEditor* const Lmaskvibshape;
+    FlatCurveEditor* const CCmaskvibshape;
+    FlatCurveEditor* const LLmaskvibshape;
+    FlatCurveEditor* const HHmaskvibshape;
+   
     //Blur and noise
     CurveEditorGroup* const maskblCurveEditorG;
     CurveEditorGroup* const mask2blCurveEditorG;
@@ -358,6 +366,8 @@ private:
     Gtk::CheckButton* const protectSkins;
     Gtk::CheckButton* const avoidColorShift;
     Gtk::CheckButton* const pastSatTog;
+    Gtk::CheckButton* const enavibMask;
+    sigc::connection enavibMaskConn;
     sigc::connection pskinsconn, ashiftconn, pastsattogconn;
     // Blur & Noise
     Gtk::CheckButton* const activlum;
@@ -435,6 +445,10 @@ private:
     sigc::connection showmaskSHMethodConn;
     MyComboBoxText* const showmaskSHMethodinv;
     sigc::connection showmaskSHMethodConninv;
+    //vibrance
+    //Shadows Highlight
+    MyComboBoxText* const showmaskvibMethod;
+    sigc::connection showmaskvibMethodConn;
     // Blur & Noise
     MyComboBoxText* const blurMethod;
     sigc::connection blurMethodConn;
@@ -547,6 +561,7 @@ private:
     void protectskins_toggled();
     void avoidcolorshift_toggled();
     void pastsattog_toggled();
+    void enavibMaskChanged();
     // Blur & Noise
     void activlumChanged();
     void enablMaskChanged();
@@ -588,6 +603,8 @@ private:
     void shMethodChanged();
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();
+    //vibrance
+    void showmaskvibMethodChanged();
     // Blur & Noise
     void blMethodChanged();
     void medMethodChanged();
@@ -644,6 +661,7 @@ public:
         int colorMaskinv;
         int expMask;
         int expMaskinv;
+        int vibMask;
         int SHMask;
         int SHMaskinv;
         int cbMask;

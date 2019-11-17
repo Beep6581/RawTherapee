@@ -533,6 +533,10 @@ public:
         bool pastsattog;
         bool sensiv;
         bool skintonescurve;
+        bool CCmaskvibcurve;
+        bool LLmaskvibcurve;
+        bool HHmaskvibcurve;
+        bool enavibMask;
         // Soft Light
         bool expsoft;
         bool streng;

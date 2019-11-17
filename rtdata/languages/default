@@ -1046,6 +1046,10 @@ HISTORY_MSG_805;Local - Blur Noise mask Structure
 HISTORY_MSG_806;Local - Color mask Structure as tool
 HISTORY_MSG_807;Local - Blur Noise mask Structure as tool
 HISTORY_MSG_808;Local - Color mask curve H(H)
+HISTORY_MSG_809;Local - Vib mask curve C(C)
+HISTORY_MSG_810;Local - Vib mask curve L(L)
+HISTORY_MSG_811;Local - Vib mask curve LC(H)
+HISTORY_MSG_813;Local - Use Vib mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
