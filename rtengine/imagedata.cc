@@ -309,6 +309,9 @@ FramesData::FramesData(const Glib::ustring &fname) :
         else if (find_exif_tag("Exif.Photo.DateTimeOriginal")) {
             datetime_taken = pos->print(&exif);
         }
+        else if (find_exif_tag("Exif.Photo.DateTimeDigitized")) {
+            datetime_taken = pos->print(&exif);
+        }
         if (sscanf(datetime_taken.c_str(), "%d:%d:%d %d:%d:%d", &time.tm_year, &time.tm_mon, &time.tm_mday, &time.tm_hour, &time.tm_min, &time.tm_sec) == 6) {
             time.tm_year -= 1900;
             time.tm_mon -= 1;
