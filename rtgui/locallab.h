@@ -179,6 +179,8 @@ private:
     Adjuster* const opacol;
     Adjuster* const conthrcol;
     Adjuster* const strumaskcol;
+    Adjuster* const mercol;
+    Adjuster* const merlucol;
     // Exposure
     Adjuster* const expcomp;
     Adjuster* const hlcompr;
@@ -497,6 +499,7 @@ private:
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
     Gtk::Frame* const gridFrame;
+    Gtk::Frame* const gridmerFrame;
     Gtk::Frame* const toolcolFrame;
     Gtk::Frame* const toolblFrame;
     Gtk::Frame* const mergecolFrame;
@@ -515,6 +518,7 @@ private:
     ToolParamBlock* const maskretiBox;
     ToolParamBlock* const mask7;
     LabGrid* const labgrid;
+    LabGrid* const labgridmerg;
     Gtk::Label* const mMLabels;
     Gtk::Label* const transLabels;
     Gtk::Label* const transLabels2;

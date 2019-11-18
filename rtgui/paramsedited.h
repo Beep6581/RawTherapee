@@ -169,6 +169,10 @@ struct ColorToningEdited {
     bool labgridBLow;
     bool labgridAHigh;
     bool labgridBHigh;
+    bool labgridALowmerg;
+    bool labgridBLowmerg;
+    bool labgridAHighmerg;
+    bool labgridBHighmerg;
     bool labregions;
     bool labregionsShowMask;
 };
@@ -421,6 +425,10 @@ public:
         bool labgridBLow;
         bool labgridAHigh;
         bool labgridBHigh;
+        bool labgridALowmerg;
+        bool labgridBLowmerg;
+        bool labgridAHighmerg;
+        bool labgridBHighmerg;
         bool strengthgrid;
         bool sensi;
         bool structcol;
@@ -453,6 +461,8 @@ public:
         bool HHhmaskcurve;
         bool softradiuscol;
         bool opacol;
+        bool mercol;
+        bool merlucol;
         bool conthrcol;
         bool Lmaskcurve;
         bool LLmaskcolcurvewav;

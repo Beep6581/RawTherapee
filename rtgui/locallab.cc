@@ -273,9 +273,11 @@ Locallab::Locallab():
     lapmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     shadmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
-    opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 40.))),
+    opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 100.))),
     conthrcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTTHR"), 0.0, 100.0, 0.5, 20.))),
     strumaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
+    mercol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERDCOL"), 0.0, 100.0, 0.5, 18.))),
+    merlucol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERLUCOL"), 0.0, 100.0, 0.5, 32.,Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 3.0, 0.05, 0.0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
@@ -577,6 +579,7 @@ lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACO
 lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
 lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
 gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
+gridmerFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRIDMERG")))),
 toolcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
 toolblFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
 mergecolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")))),
@@ -596,6 +599,8 @@ retiBox(Gtk::manage(new ToolParamBlock())),
 maskretiBox(Gtk::manage(new ToolParamBlock())),
 mask7(Gtk::manage(new ToolParamBlock())),
 labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")))),
+labgridmerg(Gtk::manage(new LabGrid(EvLocallabLabGridmergValue, M("TP_LOCALLAB_LABGRID_VALUES"), false))),
+
 mMLabels(Gtk::manage(new Gtk::Label("---"))),
 transLabels(Gtk::manage(new Gtk::Label("---"))),
 transLabels2(Gtk::manage(new Gtk::Label("---"))),
@@ -675,6 +680,8 @@ pe(nullptr)
     opacol->setAdjusterListener(this);
     conthrcol->setAdjusterListener(this);
     lapmaskcol->setAdjusterListener(this);
+    mercol->setAdjusterListener(this);
+    merlucol->setAdjusterListener(this);
 
     if (showtooltip) {
         radmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
@@ -701,6 +708,7 @@ pe(nullptr)
     merMethod->append(M("TP_LOCALLAB_MRTWO"));
     merMethod->append(M("TP_LOCALLAB_MRTHR"));
     merMethod->append(M("TP_LOCALLAB_MRFOU"));
+    merMethod->append(M("TP_LOCALLAB_MRFIV"));
     merMethod->set_active(0);
     merMethodConn = merMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::merMethodChanged));
 
@@ -974,8 +982,16 @@ pe(nullptr)
     colorBox->pack_start(*special);
     colorBox->pack_start(*invers);
     Gtk::HSeparator* const separatormer = Gtk::manage(new  Gtk::HSeparator());
+    if (showtooltip) {
+        gridmerFrame->set_tooltip_text(M("TP_LOCALLAB_GRIDFRAME_TOOLTIP"));
+    }
 
-
+    ToolParamBlock* const gridmerBox = Gtk::manage(new ToolParamBlock());
+    gridmerFrame->set_label_align(0.025, 0.5);
+    gridmerBox->pack_start(*labgridmerg);
+    gridmerBox->pack_start(*merlucol);
+    gridmerBox->pack_start(*mercol);
+    gridmerFrame->add(*gridmerBox);
 
     mergecolFrame->set_label_align(0.025, 0.5);
     merge1colFrame->set_label_align(0.025, 0.5);
@@ -984,6 +1000,8 @@ pe(nullptr)
     mergecolBox->pack_start(*mergecolMethod);
     mergecolBox->pack_start(*opacol);
     mergecolBox->pack_start(*conthrcol);
+    mergecolBox->pack_start(*gridmerFrame);
+    
     merge1colFrame->add(*mergecolBox);
     Gtk::HSeparator* const separatorstru = Gtk::manage(new  Gtk::HSeparator());
 
@@ -3784,11 +3802,16 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).contrast = contrast->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).chroma = chroma->getIntValue();
                     labgrid->getParams(pp->locallab.spots.at(pp->locallab.selspot).labgridALow, pp->locallab.spots.at(pp->locallab.selspot).labgridBLow, pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh, pp->locallab.spots.at(pp->locallab.selspot).labgridBHigh);
+                    labgridmerg->getParams(pp->locallab.spots.at(pp->locallab.selspot).labgridALowmerg, pp->locallab.spots.at(pp->locallab.selspot).labgridBLowmerg, pp->locallab.spots.at(pp->locallab.selspot).labgridAHighmerg, pp->locallab.spots.at(pp->locallab.selspot).labgridBHighmerg);
                     pp->locallab.spots.at(pp->locallab.selspot).strengthgrid = strengthgrid->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).labgridALow *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
                     pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
                     pp->locallab.spots.at(pp->locallab.selspot).labgridBLow *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
                     pp->locallab.spots.at(pp->locallab.selspot).labgridBHigh *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridALowmerg *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridAHighmerg *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridBLowmerg *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridBHighmerg *= rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX;
                     pp->locallab.spots.at(pp->locallab.selspot).sensi = sensi->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).structcol = structcol->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).blurcolde = blurcolde->getIntValue();
@@ -3813,6 +3836,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).merMethod = "mthr";
                     } else if (merMethod->get_active_row_number() == 3) {
                         pp->locallab.spots.at(pp->locallab.selspot).merMethod = "mfou";
+                    } else if (merMethod->get_active_row_number() == 4) {
+                        pp->locallab.spots.at(pp->locallab.selspot).merMethod = "mfiv";
                     }
 
                     if (toneMethod->get_active_row_number() == 0) {
@@ -3892,6 +3917,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskcol = lapmaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscol = softradiuscol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).opacol = opacol->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).mercol = mercol->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).merlucol = merlucol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).conthrcol = conthrcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = Lmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav = LLmaskcolshapewav->getCurve();
@@ -4270,6 +4297,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).lightness = pe->locallab.spots.at(pp->locallab.selspot).lightness || lightness->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).contrast = pe->locallab.spots.at(pp->locallab.selspot).contrast || contrast->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).labgridALow = pe->locallab.spots.at(pp->locallab.selspot).labgridBLow = pe->locallab.spots.at(pp->locallab.selspot).labgridAHigh = pe->locallab.spots.at(pp->locallab.selspot).labgridBHigh = labgrid->getEdited();
+                        pe->locallab.spots.at(pp->locallab.selspot).labgridALowmerg = pe->locallab.spots.at(pp->locallab.selspot).labgridBLowmerg = pe->locallab.spots.at(pp->locallab.selspot).labgridAHighmerg = pe->locallab.spots.at(pp->locallab.selspot).labgridBHighmerg = labgridmerg->getEdited();
                         pe->locallab.spots.at(pp->locallab.selspot).strengthgrid = pe->locallab.spots.at(pp->locallab.selspot).strengthgrid || strengthgrid->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).chroma = pe->locallab.spots.at(pp->locallab.selspot).chroma || chroma->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensi = pe->locallab.spots.at(pp->locallab.selspot).sensi || sensi->getEditedState();
@@ -4303,6 +4331,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiuscol = pe->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).opacol = pe->locallab.spots.at(pp->locallab.selspot).opacol || opacol->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).mercol = pe->locallab.spots.at(pp->locallab.selspot).mercol || mercol->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).merlucol = pe->locallab.spots.at(pp->locallab.selspot).merlucol || merlucol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).conthrcol = pe->locallab.spots.at(pp->locallab.selspot).conthrcol || conthrcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav = pe->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav || !LLmaskcolshapewav->isUnChanged();
@@ -4645,6 +4675,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).opacol = pedited->locallab.spots.at(pp->locallab.selspot).opacol || opacol->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).mercol = pedited->locallab.spots.at(pp->locallab.selspot).mercol || mercol->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).merlucol = pedited->locallab.spots.at(pp->locallab.selspot).merlucol || merlucol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).conthrcol = pedited->locallab.spots.at(pp->locallab.selspot).conthrcol || conthrcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcolcurvewav || !LLmaskcolshapewav->isUnChanged();
@@ -5498,12 +5530,25 @@ void Locallab::merMethodChanged()
 {
     if (merMethod->get_active_row_number() == 0) {
         mask7->hide();
+        conthrcol->show();
+        gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
+        conthrcol->show();
+        gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
+        conthrcol->show();
+        conthrcol->show();
+        gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
         mask7->show();
+        conthrcol->show();
+        gridmerFrame->hide();
+    } else if (merMethod->get_active_row_number() == 4) {
+        mask7->show();
+        conthrcol->hide();
+        gridmerFrame->show();
     }
 
     if (getEnabled() && expcolor->getEnabled()) {
@@ -6897,6 +6942,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     contrast->setDefault((double)defSpot->contrast);
     chroma->setDefault((double)defSpot->chroma);
     labgrid->setDefault(defSpot->labgridALow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBLow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridAHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX);
+    labgridmerg->setDefault(defSpot->labgridALowmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBLowmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridAHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX);
     sensi->setDefault((double)defSpot->sensi);
     structcol->setDefault((double)defSpot->structcol);
     blurcolde->setDefault((double)defSpot->blurcolde);
@@ -6910,6 +6956,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     lapmaskcol->setDefault(defSpot->lapmaskcol);
     softradiuscol->setDefault(defSpot->softradiuscol);
     opacol->setDefault(defSpot->opacol);
+    mercol->setDefault(defSpot->mercol);
+    merlucol->setDefault(defSpot->merlucol);
     conthrcol->setDefault(defSpot->conthrcol);
     csThresholdcol->setDefault<int>(defSpot->csthresholdcol);
     // Exposure
@@ -7098,6 +7146,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         contrast->setDefaultEditedState(Irrelevant);
         chroma->setDefaultEditedState(Irrelevant);
         labgrid->setEdited(Edited);
+        labgridmerg->setEdited(Edited);
         sensi->setDefaultEditedState(Irrelevant);
         structcol->setDefaultEditedState(Irrelevant);
         strengthgrid->setDefault((double)defSpot->strengthgrid);
@@ -7112,6 +7161,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         lapmaskcol->setDefaultEditedState(Irrelevant);
         softradiuscol->setDefaultEditedState(Irrelevant);
         opacol->setDefaultEditedState(Irrelevant);
+        mercol->setDefaultEditedState(Irrelevant);
+        merlucol->setDefaultEditedState(Irrelevant);
         conthrcol->setDefaultEditedState(Irrelevant);
         csThresholdcol->setDefaultEditedState(Irrelevant);
         // Exposure
@@ -7304,6 +7355,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         contrast->setDefaultEditedState(defSpotState->contrast ? Edited : UnEdited);
         chroma->setDefaultEditedState(defSpotState->chroma ? Edited : UnEdited);
         labgrid->setEdited((defSpotState->labgridALow || defSpotState->labgridBLow || defSpotState->labgridAHigh || defSpotState->labgridBHigh) ? Edited : UnEdited);
+        labgridmerg->setEdited((defSpotState->labgridALowmerg || defSpotState->labgridBLowmerg || defSpotState->labgridAHighmerg || defSpotState->labgridBHighmerg) ? Edited : UnEdited);
         sensi->setDefaultEditedState(defSpotState->sensi ? Edited : UnEdited);
         structcol->setDefaultEditedState(defSpotState->structcol ? Edited : UnEdited);
         strengthgrid->setDefaultEditedState(defSpotState->strengthgrid ? Edited : UnEdited);
@@ -7318,6 +7370,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         lapmaskcol->setDefaultEditedState(defSpotState->lapmaskcol ? Edited : UnEdited);
         softradiuscol->setDefaultEditedState(defSpotState->softradiuscol ? Edited : UnEdited);
         opacol->setDefaultEditedState(defSpotState->opacol ? Edited : UnEdited);
+        mercol->setDefaultEditedState(defSpotState->mercol ? Edited : UnEdited);
+        merlucol->setDefaultEditedState(defSpotState->merlucol ? Edited : UnEdited);
         conthrcol->setDefaultEditedState(defSpotState->conthrcol ? Edited : UnEdited);
         csThresholdcol->setDefaultEditedState(defSpotState->csthresholdcol ? Edited : UnEdited);
         // Exposure
@@ -7659,6 +7713,18 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == opacol) {
             if (listener) {
                 listener->panelChanged(Evlocallabopacol, opacol->getTextValue());
+            }
+        }
+
+        if (a == mercol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmercol, mercol->getTextValue());
+            }
+        }
+
+        if (a == merlucol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmerlucol, merlucol->getTextValue());
             }
         }
 
@@ -8746,6 +8812,8 @@ void Locallab::setBatchMode(bool batchMode)
     lapmaskcol->showEditedCB();
     softradiuscol->showEditedCB();
     opacol->showEditedCB();
+    mercol->showEditedCB();
+    merlucol->showEditedCB();
     conthrcol->showEditedCB();
     csThresholdcol->showEditedCB();
     // Exposure
@@ -9087,6 +9155,7 @@ void Locallab::setListener(ToolPanelListener* tpl)
 {
     this->listener = tpl;
     labgrid->setListener(tpl);
+    labgridmerg->setListener(tpl);
     expsettings->setListener(tpl);
 }
 
@@ -9279,6 +9348,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         contrast->setValue(pp->locallab.spots.at(index).contrast);
         chroma->setValue(pp->locallab.spots.at(index).chroma);
         labgrid->setParams(pp->locallab.spots.at(index).labgridALow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBLow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridAHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, false);
+        //labgridmerg->setParams(pp->locallab.spots.at(index).labgridALowmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBLowmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridAHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, false);
+        labgridmerg->setParams(0, 0, pp->locallab.spots.at(index).labgridAHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, false);
         strengthgrid->setValue(pp->locallab.spots.at(index).strengthgrid);
         sensi->setValue(pp->locallab.spots.at(index).sensi);
         structcol->setValue(pp->locallab.spots.at(index).structcol);
@@ -9303,6 +9374,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             merMethod->set_active(2);
         } else if (pp->locallab.spots.at(index).merMethod == "mfou") {
             merMethod->set_active(3);
+        } else if (pp->locallab.spots.at(index).merMethod == "mfiv") {
+            merMethod->set_active(4);
         }
 
         if (pp->locallab.spots.at(index).toneMethod == "one") {
@@ -9397,6 +9470,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         lapmaskcol->setValue(pp->locallab.spots.at(index).lapmaskcol);
         softradiuscol->setValue(pp->locallab.spots.at(index).softradiuscol);
         opacol->setValue(pp->locallab.spots.at(index).opacol);
+        mercol->setValue(pp->locallab.spots.at(index).mercol);
+        merlucol->setValue(pp->locallab.spots.at(index).merlucol);
         conthrcol->setValue(pp->locallab.spots.at(index).conthrcol);
         Lmaskshape->setCurve(pp->locallab.spots.at(index).Lmaskcurve);
         LLmaskcolshapewav->setCurve(pp->locallab.spots.at(index).LLmaskcolcurvewav);
@@ -9795,6 +9870,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sensi->setEditedState(spotState->sensi ? Edited : UnEdited);
                 structcol->setEditedState(spotState->structcol ? Edited : UnEdited);
                 labgrid->setEdited(spotState->labgridALow || spotState->labgridBLow || spotState->labgridAHigh || spotState->labgridBHigh);
+                labgridmerg->setEdited(spotState->labgridALowmerg || spotState->labgridBLowmerg || spotState->labgridAHighmerg || spotState->labgridBHighmerg);
                 strengthgrid->setEditedState(spotState->strengthgrid ? Edited : UnEdited);
 
                 if (!spotState->qualitycurveMethod) {
@@ -9841,6 +9917,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 lapmaskcol->setEditedState(spotState->lapmaskcol ? Edited : UnEdited);
                 softradiuscol->setEditedState(spotState->softradiuscol ? Edited : UnEdited);
                 opacol->setEditedState(spotState->opacol ? Edited : UnEdited);
+                mercol->setEditedState(spotState->mercol ? Edited : UnEdited);
+                merlucol->setEditedState(spotState->merlucol ? Edited : UnEdited);
                 conthrcol->setEditedState(spotState->conthrcol ? Edited : UnEdited);
                 Lmaskshape->setUnChanged(!spotState->Lmaskcurve);
                 LLmaskcolshapewav->setUnChanged(!spotState->LLmaskcolcurvewav);
@@ -10201,12 +10279,24 @@ void Locallab::updateSpecificGUIState()
 
     if (merMethod->get_active_row_number() == 0) {
         mask7->hide();
+        conthrcol->show();
+        gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
+        conthrcol->show();
+        gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
+        conthrcol->show();
+        gridmerFrame->hide();
+    } else if (merMethod->get_active_row_number() == 3) {
+        conthrcol->show();
+        mask7->show();
+        gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
         mask7->show();
+        conthrcol->hide();
+        gridmerFrame->show();
     }
 
     // Update Exposure GUI according to black adjuster state (to be compliant with adjusterChanged function)

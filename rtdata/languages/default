@@ -1057,6 +1057,9 @@ HISTORY_MSG_817;Local - Vib mask gamma
 HISTORY_MSG_818;Local - Vib mask slope
 HISTORY_MSG_819;Local - Vib mask laplacian
 HISTORY_MSG_820;Local - Vib mask contrast curve
+HISTORY_MSG_821;Local - color grid background
+HISTORY_MSG_822;Local - color background merge
+HISTORY_MSG_823;Local - color background luminance
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2179,6 +2182,11 @@ TP_LOCALLAB_MRONE;None
 TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 TP_LOCALLAB_MRTHR;Original Image
 TP_LOCALLAB_MRFOU;Previous Spot
+TP_LOCALLAB_MRFIV;Background
+TP_LOCALLAB_LABGRIDMERG;Background
+TP_LOCALLAB_MERDCOL;Merge background (deltaE)
+TP_LOCALLAB_GRIDFRAME_TOOLTIP;It is desirable that the spot is in a flat area.\n\nOnly mode NORMAL and eventually Hue, Saturation, Color, Luminosity are concerned by Merge background 
+TP_LOCALLAB_MERLUCOL;Luminance
 TP_LOCALLAB_MERGETYPE;Merge image and mask
 TP_LOCALLAB_MERGETYPE_TOOLTIP;None, use all mask in LCH mode.\nShort curves 'L' mask, use a short circuit for mask 2, 3, 4, 6, 7.\nOriginal mask 8, blend current image with original
 TP_LOCALLAB_MERGENONE;None
@@ -2187,7 +2195,7 @@ TP_LOCALLAB_MERGETWO;Original(Mask 7)
 TP_LOCALLAB_MERGETHR;Original(Mask 7) + Mask LCH
 TP_LOCALLAB_MERGEFOU;Previous Spot(Mask 7)
 TP_LOCALLAB_MERGEFIV;Previous Spot(Mask 7) + Mask LCH
-TP_LOCALLAB_MERGE1COLFRA;Merge with Original or Previous
+TP_LOCALLAB_MERGE1COLFRA;Merge with Original or Previous or Background
 TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_CONTTHR;Contrast Threshold
 TP_LOCALLAB_MERGEOPA_TOOLTIP;Opacity merge % current Spot with original or previous Spot.\nContrast threshold : adjust result in function of Original contrast

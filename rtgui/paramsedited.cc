@@ -991,6 +991,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).labgridBLow = locallab.spots.at(j).labgridBLow && pSpot.labgridBLow == otherSpot.labgridBLow;
                 locallab.spots.at(j).labgridAHigh = locallab.spots.at(j).labgridAHigh && pSpot.labgridAHigh == otherSpot.labgridAHigh;
                 locallab.spots.at(j).labgridBHigh = locallab.spots.at(j).labgridBHigh && pSpot.labgridBHigh == otherSpot.labgridBHigh;
+                locallab.spots.at(j).labgridALowmerg = locallab.spots.at(j).labgridALowmerg && pSpot.labgridALowmerg == otherSpot.labgridALowmerg;
+                locallab.spots.at(j).labgridBLowmerg = locallab.spots.at(j).labgridBLowmerg && pSpot.labgridBLowmerg == otherSpot.labgridBLowmerg;
+                locallab.spots.at(j).labgridAHighmerg = locallab.spots.at(j).labgridAHighmerg && pSpot.labgridAHighmerg == otherSpot.labgridAHighmerg;
+                locallab.spots.at(j).labgridBHighmerg = locallab.spots.at(j).labgridBHighmerg && pSpot.labgridBHighmerg == otherSpot.labgridBHighmerg;
                 locallab.spots.at(j).strengthgrid = locallab.spots.at(j).strengthgrid && pSpot.strengthgrid == otherSpot.strengthgrid;
                 locallab.spots.at(j).sensi = locallab.spots.at(j).sensi && pSpot.sensi == otherSpot.sensi;
                 locallab.spots.at(j).structcol = locallab.spots.at(j).structcol && pSpot.structcol == otherSpot.structcol;
@@ -1023,6 +1027,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).HHhmaskcurve = locallab.spots.at(j).HHhmaskcurve && pSpot.HHhmaskcurve == otherSpot.HHhmaskcurve;
                 locallab.spots.at(j).softradiuscol = locallab.spots.at(j).softradiuscol && pSpot.softradiuscol == otherSpot.softradiuscol;
                 locallab.spots.at(j).opacol = locallab.spots.at(j).opacol && pSpot.opacol == otherSpot.opacol;
+                locallab.spots.at(j).mercol = locallab.spots.at(j).mercol && pSpot.mercol == otherSpot.mercol;
+                locallab.spots.at(j).merlucol = locallab.spots.at(j).merlucol && pSpot.merlucol == otherSpot.merlucol;
                 locallab.spots.at(j).conthrcol = locallab.spots.at(j).conthrcol && pSpot.conthrcol == otherSpot.conthrcol;
                 locallab.spots.at(j).Lmaskcurve = locallab.spots.at(j).Lmaskcurve && pSpot.Lmaskcurve == otherSpot.Lmaskcurve;
                 locallab.spots.at(j).LLmaskcolcurvewav = locallab.spots.at(j).LLmaskcolcurvewav && pSpot.LLmaskcolcurvewav == otherSpot.LLmaskcolcurvewav;
@@ -2905,6 +2911,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).labgridBHigh = mods.locallab.spots.at(i).labgridBHigh;
         }
 
+        if (locallab.spots.at(i).labgridALowmerg) {
+            toEdit.locallab.spots.at(i).labgridALowmerg = mods.locallab.spots.at(i).labgridALowmerg;
+        }
+
+        if (locallab.spots.at(i).labgridBLowmerg) {
+            toEdit.locallab.spots.at(i).labgridBLowmerg = mods.locallab.spots.at(i).labgridBLowmerg;
+        }
+
+        if (locallab.spots.at(i).labgridAHighmerg) {
+            toEdit.locallab.spots.at(i).labgridAHighmerg = mods.locallab.spots.at(i).labgridAHighmerg;
+        }
+
+        if (locallab.spots.at(i).labgridBHighmerg) {
+            toEdit.locallab.spots.at(i).labgridBHighmerg = mods.locallab.spots.at(i).labgridBHighmerg;
+        }
+
         if (locallab.spots.at(i).strengthgrid) {
             toEdit.locallab.spots.at(i).strengthgrid = mods.locallab.spots.at(i).strengthgrid;
         }
@@ -3031,6 +3053,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).opacol) {
             toEdit.locallab.spots.at(i).opacol = mods.locallab.spots.at(i).opacol;
+        }
+
+        if (locallab.spots.at(i).mercol) {
+            toEdit.locallab.spots.at(i).mercol = mods.locallab.spots.at(i).mercol;
+        }
+
+        if (locallab.spots.at(i).merlucol) {
+            toEdit.locallab.spots.at(i).merlucol = mods.locallab.spots.at(i).merlucol;
         }
 
         if (locallab.spots.at(i).conthrcol) {
@@ -5019,6 +5049,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     labgridBLow(v),
     labgridAHigh(v),
     labgridBHigh(v),
+    labgridALowmerg(v),
+    labgridBLowmerg(v),
+    labgridAHighmerg(v),
+    labgridBHighmerg(v),
     strengthgrid(v),
     sensi(v),
     structcol(v),
@@ -5051,6 +5085,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     HHhmaskcurve(v),
     softradiuscol(v),
     opacol(v),
+    mercol(v),
+    merlucol(v),
     conthrcol(v),
     Lmaskcurve(v),
     LLmaskcolcurvewav(v),
@@ -5349,6 +5385,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     labgridBLow = v;
     labgridAHigh = v;
     labgridBHigh = v;
+    labgridALowmerg = v;
+    labgridBLowmerg = v;
+    labgridAHighmerg = v;
+    labgridBHighmerg = v;
     strengthgrid = v;
     sensi = v;
     structcol = v;
@@ -5381,6 +5421,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     HHhmaskcurve = v;
     softradiuscol = v;
     opacol = v;
+    mercol = v;
+    merlucol = v;
     conthrcol = v;
     Lmaskcurve = v;
     LLmaskcolcurvewav = v;

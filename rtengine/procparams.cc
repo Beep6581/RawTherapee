@@ -2455,6 +2455,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridBLow(0.0),
     labgridAHigh(0.0),
     labgridBHigh(0.0),
+    labgridALowmerg(0.0),
+    labgridBLowmerg(0.0),
+    labgridAHighmerg(-3500.0),
+    labgridBHighmerg(-4600.0),
     strengthgrid(30),
     sensi(15),
     structcol(0),
@@ -2487,7 +2491,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
 //    HHhmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     HHhmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 0.50, 0.5, 0.35, 0.35, 1.00, 0.5, 0.35, 0.35 },
     softradiuscol(0.0),
-    opacol(40.0),
+    opacol(100.0),
+    mercol(18.0),
+    merlucol(32.0),
     conthrcol(20.0),
     Lmaskcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LLmaskcolcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
@@ -2789,6 +2795,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && labgridBLow == other.labgridBLow
         && labgridAHigh == other.labgridAHigh
         && labgridBHigh == other.labgridBHigh
+        && labgridALowmerg == other.labgridALowmerg
+        && labgridBLowmerg == other.labgridBLowmerg
+        && labgridAHighmerg == other.labgridAHighmerg
+        && labgridBHighmerg == other.labgridBHighmerg
         && strengthgrid == other.strengthgrid
         && sensi == other.sensi
         && structcol == other.structcol
@@ -2821,6 +2831,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blurcolde == other.blurcolde
         && softradiuscol == other.softradiuscol
         && opacol == other.opacol
+        && mercol == other.mercol
+        && merlucol == other.merlucol
         && conthrcol == other.conthrcol
         && Lmaskcurve == other.Lmaskcurve
         && LLmaskcolcurvewav == other.LLmaskcolcurvewav
@@ -4117,6 +4129,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridBLow, "Locallab", "labgridBLow_" + std::to_string(i), spot.labgridBLow, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridAHigh, "Locallab", "labgridAHigh_" + std::to_string(i), spot.labgridAHigh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridBHigh, "Locallab", "labgridBHigh_" + std::to_string(i), spot.labgridBHigh, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridALowmerg, "Locallab", "labgridALowmerg_" + std::to_string(i), spot.labgridALowmerg, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridBLowmerg, "Locallab", "labgridBLowmerg_" + std::to_string(i), spot.labgridBLowmerg, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridAHighmerg, "Locallab", "labgridAHighmerg_" + std::to_string(i), spot.labgridAHighmerg, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridBHighmerg, "Locallab", "labgridBHighmerg_" + std::to_string(i), spot.labgridBHighmerg, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strengthgrid, "Locallab", "Strengthgrid_" + std::to_string(i), spot.strengthgrid, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensi, "Locallab", "Sensi_" + std::to_string(i), spot.sensi, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structcol, "Locallab", "Structcol_" + std::to_string(i), spot.structcol, keyFile);
@@ -4149,6 +4165,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHhmaskcurve, "Locallab", "HHhmaskCurve_" + std::to_string(i), spot.HHhmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiuscol, "Locallab", "Softradiuscol_" + std::to_string(i), spot.softradiuscol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).opacol, "Locallab", "Opacol_" + std::to_string(i), spot.opacol, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).mercol, "Locallab", "Mercol_" + std::to_string(i), spot.mercol, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).merlucol, "Locallab", "Merlucol_" + std::to_string(i), spot.merlucol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).conthrcol, "Locallab", "Conthrcol_" + std::to_string(i), spot.conthrcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmaskcurve, "Locallab", "LmaskCurve_" + std::to_string(i), spot.Lmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskcolcurvewav, "Locallab", "LLmaskcolCurvewav_" + std::to_string(i), spot.LLmaskcolcurvewav, keyFile);
@@ -5553,6 +5571,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "labgridBLow_" + std::to_string(i), pedited, spot.labgridBLow, spotEdited.labgridBLow);
                 assignFromKeyfile(keyFile, "Locallab", "labgridAHigh_" + std::to_string(i), pedited, spot.labgridAHigh, spotEdited.labgridAHigh);
                 assignFromKeyfile(keyFile, "Locallab", "labgridBHigh_" + std::to_string(i), pedited, spot.labgridBHigh, spotEdited.labgridBHigh);
+                assignFromKeyfile(keyFile, "Locallab", "labgridALowmerg_" + std::to_string(i), pedited, spot.labgridALowmerg, spotEdited.labgridALowmerg);
+                assignFromKeyfile(keyFile, "Locallab", "labgridBLowmerg_" + std::to_string(i), pedited, spot.labgridBLowmerg, spotEdited.labgridBLowmerg);
+                assignFromKeyfile(keyFile, "Locallab", "labgridAHighmerg_" + std::to_string(i), pedited, spot.labgridAHighmerg, spotEdited.labgridAHighmerg);
+                assignFromKeyfile(keyFile, "Locallab", "labgridBHighmerg_" + std::to_string(i), pedited, spot.labgridBHighmerg, spotEdited.labgridBHighmerg);
                 assignFromKeyfile(keyFile, "Locallab", "Strengthgrid_" + std::to_string(i), pedited, spot.strengthgrid, spotEdited.strengthgrid);
                 assignFromKeyfile(keyFile, "Locallab", "Sensi_" + std::to_string(i), pedited, spot.sensi, spotEdited.sensi);
                 assignFromKeyfile(keyFile, "Locallab", "Structcol_" + std::to_string(i), pedited, spot.structcol, spotEdited.structcol);
@@ -5585,6 +5607,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "HHhmaskCurve_" + std::to_string(i), pedited, spot.HHhmaskcurve, spotEdited.HHhmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscol_" + std::to_string(i), pedited, spot.softradiuscol, spotEdited.softradiuscol);
                 assignFromKeyfile(keyFile, "Locallab", "Opacol_" + std::to_string(i), pedited, spot.opacol, spotEdited.opacol);
+                assignFromKeyfile(keyFile, "Locallab", "Mercol_" + std::to_string(i), pedited, spot.mercol, spotEdited.mercol);
+                assignFromKeyfile(keyFile, "Locallab", "Merlucol_" + std::to_string(i), pedited, spot.merlucol, spotEdited.merlucol);
                 assignFromKeyfile(keyFile, "Locallab", "Conthrcol_" + std::to_string(i), pedited, spot.conthrcol, spotEdited.conthrcol);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskCurve_" + std::to_string(i), pedited, spot.Lmaskcurve, spotEdited.Lmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskcolCurvewav_" + std::to_string(i), pedited, spot.LLmaskcolcurvewav, spotEdited.LLmaskcolcurvewav);

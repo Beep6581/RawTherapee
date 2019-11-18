@@ -998,6 +998,10 @@ struct LocallabParams {
         double labgridBLow;
         double labgridAHigh;
         double labgridBHigh;
+        double labgridALowmerg;
+        double labgridBLowmerg;
+        double labgridAHighmerg;
+        double labgridBHighmerg;
         int strengthgrid;
         int sensi;
         int structcol;
@@ -1030,6 +1034,8 @@ struct LocallabParams {
         std::vector<double> HHhmaskcurve;
         double softradiuscol;
         double opacol;
+        double mercol;
+        double merlucol;
         double conthrcol;
         std::vector<double> Lmaskcurve;
         std::vector<double> LLmaskcolcurvewav;

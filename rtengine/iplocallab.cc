@@ -249,6 +249,7 @@ struct local_params {
     float blurSH;
     float ligh;
     float lowA, lowB, highA, highB;
+    float lowBmerg, highBmerg, lowAmerg, highAmerg;
     int shamo, shdamp, shiter, senssha, sensv;
     float neig;
     float strng;
@@ -607,8 +608,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mergemet = 2;
     } else if (locallab.spots.at(sp).merMethod == "mfou") {
         lp.mergemet = 3;
+    } else if (locallab.spots.at(sp).merMethod == "mfiv") {
+        lp.mergemet = 4;
     }
-
+printf("lpmermet=%i\n",lp.mergemet); 
     if (locallab.spots.at(sp).mergecolMethod == "one") {
         lp.mergecolMethod = 0;
     } else if (locallab.spots.at(sp).mergecolMethod == "two") {
@@ -711,6 +714,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float labgridBHighloc = locallab.spots.at(sp).labgridBHigh;
     float labgridAHighloc = locallab.spots.at(sp).labgridAHigh;
     float strengthgrid = (float) locallab.spots.at(sp).strengthgrid;
+    float labgridBLowlocmerg = locallab.spots.at(sp).labgridBLowmerg;
+    float labgridBHighlocmerg = locallab.spots.at(sp).labgridBHighmerg;
+    float labgridALowlocmerg = locallab.spots.at(sp).labgridALowmerg;
+    float labgridAHighlocmerg = locallab.spots.at(sp).labgridAHighmerg;
 
     float structcolor = (float) locallab.spots.at(sp).structcol;
     float blendmaskcolor = ((float) locallab.spots.at(sp).blendmaskcol) / 100.f ;
@@ -880,6 +887,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowB = labgridBLowloc;
     lp.highB = labgridBHighloc;
     lp.highA = labgridAHighloc;
+    lp.lowBmerg = labgridBLowlocmerg;
+    lp.highBmerg = labgridBHighlocmerg;
+    lp.lowAmerg = labgridALowlocmerg;
+    lp.highAmerg = labgridAHighlocmerg;
 
     lp.senssf = local_sensisf;
     lp.strng = strlight;
@@ -3568,7 +3579,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             float** rdE = *(rdEBuffer.get());
 
             deltaEforMask(rdE, bfw, bfh, bufcolorig, hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, lp.balance);
-            // printf("rde1=%f rde2=%f\n", rdE[1][1], rdE[100][100]);
+//             printf("rde1=%f\n", rdE[1][1]);
             std::unique_ptr<LabImage> delta(new LabImage(bfw, bfh));
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -11909,6 +11920,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         float b_base = lp.lowB / scaling;
         bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
 
+        float a_scalemerg = (lp.highAmerg - lp.lowAmerg) / factor / scaling;
+        float a_basemerg = lp.lowAmerg / scaling;
+        float b_scalemerg = (lp.highBmerg - lp.lowBmerg) / factor / scaling;
+        float b_basemerg = lp.lowBmerg / scaling;
+        bool ctoningmerg = (a_scalemerg != 0.f || b_scalemerg != 0.f || a_basemerg != 0.f || b_basemerg != 0.f);
+
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
             /*
             //test for fftw blur with tiles  fftw_tile_blur....not good we can see tiles - very long time
@@ -12150,6 +12167,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float strumask = 0.02f * (float) params->locallab.spots.at(sp).strumaskcol;
                     float conthr = 0.01f * params->locallab.spots.at(sp).conthrcol;
                     int tonemod = 0;
+                    float mercol = params->locallab.spots.at(sp).mercol;
+                    float merlucol = params->locallab.spots.at(sp).merlucol;
 
                     if (params->locallab.spots.at(sp).toneMethod == "one") {
                         tonemod = 0;
@@ -12468,7 +12487,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         if (lp.mergemet >= 2) { //merge result with original
                             bufcolreserv.reset(new LabImage(bfw, bfh));
                             JaggedArray<float> lumreserv(bfw, bfh);
-
+                            std::unique_ptr<LabImage> bufreser;
+                            bufreser.reset(new LabImage(bfw, bfh));
+                            if(lp.mergemet == 4) {
+                                printf("4 a=%f\n", 9.f * scaledirect * a_scalemerg);
+                            }
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12476,15 +12499,24 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
                                     lumreserv[y][x] = 32768.f - reserved->L[y + ystart][x + xstart];
+                                        bufreser->L[y][x] = reserved->L[y + ystart][x + xstart];
+                                        bufreser->a[y][x] = reserved->a[y + ystart][x + xstart];
+                                        bufreser->b[y][x] = reserved->b[y + ystart][x + xstart];
 
                                     if (lp.mergemet == 2) {
                                         bufcolreserv->L[y][x] = reserved->L[y + ystart][x + xstart];
                                         bufcolreserv->a[y][x] = reserved->a[y + ystart][x + xstart];
                                         bufcolreserv->b[y][x] = reserved->b[y + ystart][x + xstart];
-                                    } else {
+                                    } else if (lp.mergemet == 3) {
                                         bufcolreserv->L[y][x] = lastorig->L[y + ystart][x + xstart];
                                         bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
                                         bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
+                                    } else if (lp.mergemet == 4) {
+                                        if(ctoningmerg) {
+                                            bufcolreserv->L[y][x] = merlucol * 327.68f;
+                                            bufcolreserv->a[y][x] = 9.f * scaledirect * a_scalemerg;
+                                            bufcolreserv->b[y][x] = 9.f * scaledirect * b_scalemerg;
+                                        }
                                     }
                                 }
                             }
@@ -12497,6 +12529,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 float **mb = blend;
                                 gaussianBlur(mb, mb, bfw, bfh, rm);
                             }
+                            std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
+                            float** rdE = *(rdEBuffer.get());
+
+                            deltaEforMask(rdE, bfw, bfh, bufreser.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, 0.2f * lp.iterat, limscope, mercol, lp.balance);
 
                             if (lp.mergecolMethod == 0) { //normal
 
@@ -12510,21 +12546,27 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         bufcolfin->L[y][x] = lp.opacol * bufcolfin->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
                                         bufcolfin->a[y][x] = lp.opacol * bufcolfin->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
                                         bufcolfin->b[y][x] = lp.opacol * bufcolfin->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
+                                        
+                                        bufcolfin->L[y][x] = (1.f - rdE[y][x]) * bufcolfin->L[y][x] + (rdE[y][x]) * bufcolreserv->L[y][x];
+                                        bufcolfin->a[y][x] = (1.f - rdE[y][x]) * bufcolfin->a[y][x] + (rdE[y][x]) * bufcolreserv->a[y][x];
+                                        bufcolfin->b[y][x] = (1.f - rdE[y][x]) * bufcolfin->b[y][x] + (rdE[y][x])  * bufcolreserv->b[y][x];
                                     }
                                 }
 
-                                if (conthr > 0.f) {
+                                if (conthr > 0.f && lp.mergemet != 4) {
+                                   
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                                     for (int y = 0; y < bfh ; y++) {
                                         for (int x = 0; x < bfw; x++) {
-                                            bufcolfin->L[y][x] = intp((blend[y][x]), bufcolfin->L[y][x], bufcolreserv->L[y][x]);
-                                            bufcolfin->a[y][x] = intp((blend[y][x]), bufcolfin->a[y][x], bufcolreserv->a[y][x]);
-                                            bufcolfin->b[y][x] = intp((blend[y][x]), bufcolfin->b[y][x], bufcolreserv->b[y][x]);
+                                            bufcolfin->L[y][x] = intp((blend[y][x]), bufcolfin->L[y][x], bufreser->L[y][x]);
+                                            bufcolfin->a[y][x] = intp((blend[y][x]), bufcolfin->a[y][x], bufreser->a[y][x]);
+                                            bufcolfin->b[y][x] = intp((blend[y][x]), bufcolfin->b[y][x], bufreser->b[y][x]);
                                         }
                                     }
+                                    
                                 }
 
 
@@ -12573,10 +12615,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         bufcolfin->L[y][x] = lp.opacol * buftemp->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
                                         bufcolfin->a[y][x] = lp.opacol * buftemp->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
                                         bufcolfin->b[y][x] = lp.opacol * buftemp->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
+
+                                        bufcolfin->L[y][x] = (1.f - rdE[y][x]) * bufcolfin->L[y][x] + (rdE[y][x]) * bufcolreserv->L[y][x];
+                                        bufcolfin->a[y][x] = (1.f - rdE[y][x]) * bufcolfin->a[y][x] + (rdE[y][x]) * bufcolreserv->a[y][x];
+                                        bufcolfin->b[y][x] = (1.f - rdE[y][x]) * bufcolfin->b[y][x] + (rdE[y][x])  * bufcolreserv->b[y][x];
+                                        
                                     }
                                 }
 
-                                if (conthr > 0.f) {
+                                if (conthr > 0.f && lp.mergemet != 4) {
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -13014,9 +13061,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufchro[ir][jr] = sqrt(SQR(bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) + SQR(bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr])) / 328.f;
-                                buf_a[ir][jr] = ((bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) / 328.f);
-                                buf_b[ir][jr] = ((bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr]) / 328.f);
+                                if(lp.mergemet != 4) {
+                                    bufchro[ir][jr] = sqrt(SQR(bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) + SQR(bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr])) / 328.f;
+                                    buf_a[ir][jr] = ((bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) / 328.f);
+                                    buf_b[ir][jr] = ((bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr]) / 328.f);
+                                }
                             }
                     }
 

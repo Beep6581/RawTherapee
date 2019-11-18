@@ -844,6 +844,9 @@ enum ProcEventCode {
     Evlocallabslomaskvib = 817,
     Evlocallablapmaskvib = 818,
     EvlocallabLmaskvibshape = 819,
+    EvLocallabLabGridmergValue = 820,
+    Evlocallabmercol = 821,
+    Evlocallabmerlucol = 822,
     NUMOFEVENTS
 };
 
