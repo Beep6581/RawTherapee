@@ -18,6 +18,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "array2D.h"
 #include "color.h"
 #include "curves.h"
 #include "guidedfilter.h"
