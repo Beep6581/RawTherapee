@@ -5530,15 +5530,14 @@ void Locallab::merMethodChanged()
 {
     if (merMethod->get_active_row_number() == 0) {
         mask7->hide();
-        conthrcol->show();
+        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
-        conthrcol->show();
+        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
-        conthrcol->show();
         conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
@@ -10279,11 +10278,11 @@ void Locallab::updateSpecificGUIState()
 
     if (merMethod->get_active_row_number() == 0) {
         mask7->hide();
-        conthrcol->show();
+        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
-        conthrcol->show();
+        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
