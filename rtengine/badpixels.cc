@@ -22,7 +22,8 @@
 #include "pixelsmap.h"
 #include "rawimage.h"
 #include "rawimagesource.h"
-
+#define BENCHMARK
+#include "StopWatch.h"
 namespace
 {
 unsigned fc(const unsigned int cfa[2][2], int r, int c) {
@@ -445,126 +446,227 @@ int RawImageSource::interpolateBadPixelsXtrans(const PixelsMap &bitmapBads)
 /*  Search for hot or dead pixels in the image and update the map
  *  For each pixel compare its value to the average of similar color surrounding
  *  (Taken from Emil Martinec idea)
- *  (Optimized by Ingo Weyrich 2013 and 2015)
+ *  (Optimized by Ingo Weyrich 2013, 2015 and 2019)
  */
 int RawImageSource::findHotDeadPixels(PixelsMap &bpMap, const float thresh, const bool findHotPixels, const bool findDeadPixels) const
 {
+    BENCHFUN
     const float varthresh = (20.0 * (thresh / 100.0) + 1.0) / 24.f;
-
-    // allocate temporary buffer
-    float* cfablur = new float[H * W];
 
     // counter for dead or hot pixels
     int counter = 0;
 
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel reduction(+:counter)
 #endif
     {
+        array2D<float> cfablur(W, 5);
+        // zero left and right border
+        for (int i = 0; i < 5; ++i) {
+            cfablur[i][0] = cfablur[i][1] = cfablur[i][W - 2] = cfablur[i][W - 1];
+        }
+        int firstRow = -1;
+        int lastRow = -1;
+
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic,16) nowait
+        // note, static scheduling is important in this implementation
+        #pragma omp for schedule(static) nowait
 #endif
 
         for (int i = 2; i < H - 2; i++) {
-            for (int j = 2; j < W - 2; j++) {
+            if (firstRow == -1) {
+                firstRow = i;
+                if (firstRow == 2) {
+                    for (int i = 0; i < 2; ++i) {
+                        for (int j = 0; j < W; ++j) {
+                            cfablur[i][j] = 0.f;
+                        }
+                    }
+                } else {
+                    for (int row = firstRow - 2; row < firstRow; ++row) {
+                        int destRow = row % 5;
+                        int j = 2;
+    #ifdef __SSE2__
+                        for (; j < W - 5; j += 4) {
+                            const vfloat tempv = median(LVFU(rawData[row - 2][j - 2]), LVFU(rawData[row - 2][j]), LVFU(rawData[row - 2][j + 2]),
+                                                      LVFU(rawData[row][j - 2]), LVFU(rawData[row][j]), LVFU(rawData[row][j + 2]),
+                                                      LVFU(rawData[row + 2][j - 2]), LVFU(rawData[row + 2][j]), LVFU(rawData[row + 2][j + 2]));
+                            STVFU(cfablur[destRow][j], LVFU(rawData[row][j]) - tempv);
+                        }
+    #endif
+                        for (; j < W - 2; j++) {
+                            const float temp = median(rawData[row - 2][j - 2], rawData[row - 2][j], rawData[row - 2][j + 2],
+                                                      rawData[row][j - 2], rawData[row][j], rawData[row][j + 2],
+                                                      rawData[row + 2][j - 2], rawData[row + 2][j], rawData[row + 2][j + 2]);
+                            cfablur[destRow][j] = rawData[row][j] - temp;
+                        }
+                    }
+                }
+            }
+            lastRow = i;
+            const int destRow = i % 5;
+            int j = 2;
+#ifdef __SSE2__
+            for (; j < W - 5; j += 4) {
+                const vfloat tempv = median(LVFU(rawData[i - 2][j - 2]), LVFU(rawData[i - 2][j]), LVFU(rawData[i - 2][j + 2]),
+                                          LVFU(rawData[i][j - 2]), LVFU(rawData[i][j]), LVFU(rawData[i][j + 2]),
+                                          LVFU(rawData[i + 2][j - 2]), LVFU(rawData[i + 2][j]), LVFU(rawData[i + 2][j + 2]));
+                STVFU(cfablur[destRow][j], LVFU(rawData[i][j]) - tempv);
+            }
+#endif
+            for (; j < W - 2; j++) {
                 const float temp = median(rawData[i - 2][j - 2], rawData[i - 2][j], rawData[i - 2][j + 2],
                                           rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
                                           rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2]);
-                cfablur[i * W + j] = rawData[i][j] - temp;
-            }
-        }
-
-        // process borders. Former version calculated the median using mirrored border which does not make sense because the original pixel loses weight
-        // Setting the difference between pixel and median for border pixels to zero should do the job not worse then former version
-#ifdef _OPENMP
-        #pragma omp single
-#endif
-        {
-            for (int i = 0; i < 2; ++i) {
-                for (int j = 0; j < W; ++j) {
-                    cfablur[i * W + j] = 0.f;
-                }
+                cfablur[destRow][j] = rawData[i][j] - temp;
             }
 
-            for (int i = 2; i < H - 2; ++i) {
-                for (int j = 0; j < 2; ++j) {
-                    cfablur[i * W + j] = 0.f;
-                }
+            if (i - 1 > firstRow) {
+                const int rr = i - 2;
+                const int rrm2 = (rr - 2) % 5;
+                const int rrm1 = (rr - 1) % 5;
+                const int rr0 = rr % 5;
+                const int rrp1 = (rr + 1) % 5;
+                const int rrp2 = (rr + 2) % 5;
+                for (int cc = 2; cc < W - 2; ++cc) {
+                    //evaluate pixel for heat/death
+                    float pixdev = cfablur[rr0][cc];
 
-                for (int j = W - 2; j < W; ++j) {
-                    cfablur[i * W + j] = 0.f;
-                }
-            }
+                    if (pixdev == 0.f) {
+                        continue;
+                    }
 
-            for (int i = H - 2; i < H; ++i) {
-                for (int j = 0; j < W; ++j) {
-                    cfablur[i * W + j] = 0.f;
-                }
-            }
-        }
+                    if ((!findDeadPixels) && pixdev < 0) {
+                        continue;
+                    }
 
-#ifdef _OPENMP
-        #pragma omp barrier // barrier because of nowait clause above
+                    if ((!findHotPixels) && pixdev > 0) {
+                        continue;
+                    }
 
-        #pragma omp for reduction(+:counter) schedule(dynamic,16)
-#endif
-
-        //cfa pixel heat/death evaluation
-        for (int rr = 2; rr < H - 2; ++rr) {
-            for (int cc = 2, rrmWpcc = rr * W + 2; cc < W - 2; ++cc, ++rrmWpcc) {
-                //evaluate pixel for heat/death
-                float pixdev = cfablur[rrmWpcc];
-
-                if (pixdev == 0.f) {
-                    continue;
-                }
-
-                if ((!findDeadPixels) && pixdev < 0) {
-                    continue;
-                }
-
-                if ((!findHotPixels) && pixdev > 0) {
-                    continue;
-                }
-
-                pixdev = fabsf(pixdev);
-                float hfnbrave = -pixdev;
+                    pixdev = fabsf(pixdev);
+                    float hfnbrave = -pixdev;
 
 #ifdef __SSE2__
-                // sum up 5*4 = 20 values using SSE
-                // 10 fabs function calls and 10 float additions with SSE
-                vfloat sum = vabsf(LVFU(cfablur[(rr - 2) * W + cc - 2])) + vabsf(LVFU(cfablur[(rr - 1) * W + cc - 2]));
-                sum += vabsf(LVFU(cfablur[(rr) * W + cc - 2]));
-                sum += vabsf(LVFU(cfablur[(rr + 1) * W + cc - 2]));
-                sum += vabsf(LVFU(cfablur[(rr + 2) * W + cc - 2]));
-                // horizontally add the values and add the result to hfnbrave
-                hfnbrave += vhadd(sum);
+                    // sum up 5*4 = 20 values using SSE
+                    // 10 fabs function calls and 10 float additions with SSE
+                    vfloat sum1 = vabsf(LVFU(cfablur[rrm2][cc - 2])) + vabsf(LVFU(cfablur[rrm1][cc - 2]));
+                    vfloat sum2 = vabsf(LVFU(cfablur[rr0][cc - 2])) + vabsf(LVFU(cfablur[rrp1][cc - 2]));
+                    sum1 += vabsf(LVFU(cfablur[rrp2][cc - 2]));
+                    // horizontally add the values and add the result to hfnbrave
+                    hfnbrave += vhadd(sum1 + sum2);
 
-                // add remaining 5 values of last column
-                for (int mm = rr - 2; mm <= rr + 2; ++mm) {
-                    hfnbrave += fabsf(cfablur[mm * W + cc + 2]);
-                }
-
+                    // add remaining 5 values of last column
+                    hfnbrave += fabsf(cfablur[rrm2][cc + 2]);
+                    hfnbrave += fabsf(cfablur[rrm1][cc + 2]);
+                    hfnbrave += fabsf(cfablur[rr0][cc + 2]);
+                    hfnbrave += fabsf(cfablur[rrp1][cc + 2]);
+                    hfnbrave += fabsf(cfablur[rrp2][cc + 2]);
 #else
 
-                //  25 fabs function calls and 25 float additions without SSE
-                for (int mm = rr - 2; mm <= rr + 2; ++mm) {
+                    //  25 fabs function calls and 25 float additions without SSE
                     for (int nn = cc - 2; nn <= cc + 2; ++nn) {
-                        hfnbrave += fabsf(cfablur[mm * W + nn]);
+                        hfnbrave += fabsf(cfablur[rrm2][nn]);
+                        hfnbrave += fabsf(cfablur[rrm1][nn]);
+                        hfnbrave += fabsf(cfablur[rr0][nn]);
+                        hfnbrave += fabsf(cfablur[rrp1][nn]);
+                        hfnbrave += fabsf(cfablur[rrp2][nn]);
+                    }
+#endif
+                    if (pixdev > varthresh * hfnbrave) {
+                        // mark the pixel as "bad"
+                        bpMap.set(cc, rr);
+                        counter++;
+                    }
+                } //end of pixel evaluation
+            }
+        }
+
+        if (lastRow > 0 && lastRow < H - 2) {
+            //cfa pixel heat/death evaluation
+            for (int rr = lastRow - 1; rr < lastRow + 1; ++rr) {
+                const int i = rr + 2;
+                const int destRow = i % 5;
+                if (i >= H - 2) {
+                    for (int j = 2; j < W - 2; j++) {
+                        cfablur[destRow][j] = 0.f;
+                    }
+                } else {
+                    int j = 2;
+#ifdef __SSE2__
+                    for (; j < W - 5; j += 4) {
+                        const vfloat tempv = median(LVFU(rawData[i - 2][j - 2]), LVFU(rawData[i - 2][j]), LVFU(rawData[i - 2][j + 2]),
+                                                  LVFU(rawData[i][j - 2]), LVFU(rawData[i][j]), LVFU(rawData[i][j + 2]),
+                                                  LVFU(rawData[i + 2][j - 2]), LVFU(rawData[i + 2][j]), LVFU(rawData[i + 2][j + 2]));
+                        STVFU(cfablur[destRow][j], LVFU(rawData[i][j]) - tempv);
+                    }
+#endif
+                    for (; j < W - 2; j++) {
+                        const float temp = median(rawData[i - 2][j - 2], rawData[i - 2][j], rawData[i - 2][j + 2],
+                                                  rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
+                                                  rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2]);
+                        cfablur[destRow][j] = rawData[i][j] - temp;
                     }
                 }
 
-#endif
+                const int rrm2 = (rr - 2) % 5;
+                const int rrm1 = (rr - 1) % 5;
+                const int rr0 = rr % 5;
+                const int rrp1 = (rr + 1) % 5;
+                const int rrp2 = (rr + 2) % 5;
+                for (int cc = 2; cc < W - 2; ++cc) {
+                    //evaluate pixel for heat/death
+                    float pixdev = cfablur[rr0][cc];
 
-                if (pixdev > varthresh * hfnbrave) {
-                    // mark the pixel as "bad"
-                    bpMap.set(cc, rr);
-                    counter++;
-                }
-            }//end of pixel evaluation
+                    if (pixdev == 0.f) {
+                        continue;
+                    }
+
+                    if ((!findDeadPixels) && pixdev < 0) {
+                        continue;
+                    }
+
+                    if ((!findHotPixels) && pixdev > 0) {
+                        continue;
+                    }
+
+                    pixdev = fabsf(pixdev);
+                    float hfnbrave = -pixdev;
+
+#ifdef __SSE2__
+                    // sum up 5*4 = 20 values using SSE
+                    // 10 fabs function calls and 10 float additions with SSE
+                    vfloat sum1 = vabsf(LVFU(cfablur[rrm2][cc - 2])) + vabsf(LVFU(cfablur[rrm1][cc - 2]));
+                    vfloat sum2 = vabsf(LVFU(cfablur[rr0][cc - 2])) + vabsf(LVFU(cfablur[rrp1][cc - 2]));
+                    sum1 += vabsf(LVFU(cfablur[rrp2][cc - 2]));
+                    // horizontally add the values and add the result to hfnbrave
+                    hfnbrave += vhadd(sum1 + sum2);
+
+                    // add remaining 5 values of last column
+                    hfnbrave += fabsf(cfablur[rrm2][cc + 2]);
+                    hfnbrave += fabsf(cfablur[rrm1][cc + 2]);
+                    hfnbrave += fabsf(cfablur[rr0][cc + 2]);
+                    hfnbrave += fabsf(cfablur[rrp1][cc + 2]);
+                    hfnbrave += fabsf(cfablur[rrp2][cc + 2]);
+#else
+                    //  25 fabs function calls and 25 float additions without SSE
+                    for (int nn = cc - 2; nn <= cc + 2; ++nn) {
+                        hfnbrave += fabsf(cfablur[rrm2][nn]);
+                        hfnbrave += fabsf(cfablur[rrm1][nn]);
+                        hfnbrave += fabsf(cfablur[rr0][nn]);
+                        hfnbrave += fabsf(cfablur[rrp1][nn]);
+                        hfnbrave += fabsf(cfablur[rrp2][nn]);
+                    }
+#endif
+                    if (pixdev > varthresh * hfnbrave) {
+                        // mark the pixel as "bad"
+                        bpMap.set(cc, rr);
+                        counter++;
+                    }
+                }//end of pixel evaluation
+            }
         }
     }//end of parallel processing
-    delete [] cfablur;
     return counter;
 }
 
