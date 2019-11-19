@@ -164,6 +164,35 @@ protected:
         PanasonicRW2Info(): bpp(0), encoding(0) {}
     };
     PanasonicRW2Info RT_pana_info;
+public:
+    struct CanonCR3Data {
+        // contents of tag CMP1 for relevant track in CR3 file
+        struct crx_data_header_t {
+            int32_t version;
+            int32_t f_width;
+            int32_t f_height;
+            int32_t tileWidth;
+            int32_t tileHeight;
+            int32_t nBits;
+            int32_t nPlanes;
+            int32_t cfaLayout;
+            int32_t encType;
+            int32_t imageLevels;
+            int32_t hasTileCols;
+            int32_t hasTileRows;
+            int32_t mdatHdrSize;
+            // Not from header, but from datastream
+            uint32_t MediaSize;
+            INT64 MediaOffset;
+            uint32_t MediaType; /* 1 -> /C/RAW, 2-> JPEG */
+        };
+        static constexpr size_t CRXTRACKS_MAXCOUNT = 16;
+        crx_data_header_t crx_header[CRXTRACKS_MAXCOUNT];
+        int crx_track_selected;
+        short CR3_CTMDtag;
+    };
+protected:
+    CanonCR3Data RT_canon_CR3_data;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
@@ -528,5 +557,21 @@ void shiftXtransMatrix( const int offsy, const int offsx) {
 }
 
 void nikon_14bit_load_raw(); // ported from LibRaw
+
+//-----------------------------------------------------------------------------
+// Canon CR3 support ported from LibRaw
+//-----------------------------------------------------------------------------
+void parse_canon_cr3();
+void selectCRXTrack(short maxTrack);
+int parseCR3(unsigned long long oAtomList,
+             unsigned long long szAtomList, short &nesting,
+             char *AtomNameStack, short &nTrack, short &TrackType);
+int crxDecodePlane(void *p, uint32_t planeNumber);
+void crxLoadDecodeLoop(void *img, int nPlanes);
+void crxConvertPlaneLineDf(void *p, int imageRow);
+void crxLoadFinalizeLoopE3(void *p, int planeHeight);
+void crxLoadRaw();
+int crxParseImageHeader(uchar *cmp1TagData, int nTrack);
+//-----------------------------------------------------------------------------
 
 };

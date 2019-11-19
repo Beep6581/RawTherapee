@@ -1138,6 +1138,11 @@ Camera constants:
         }
     },
 
+    { // Quality C, only raw crop
+        "make_model": [ "Canon EOS M6 Mark II", "Canon EOS 90D" ],
+        "raw_crop": [ 144, 72, 6984, 4660 ]
+    },
+
 // Canon Powershot
     { // Quality C, CHDK DNGs, raw frame correction
         "make_model": "Canon PowerShot A3100 IS",
