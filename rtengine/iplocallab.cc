@@ -545,7 +545,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskSHmet = llSHMask;
     lp.showmaskSHmetinv = llSHMaskinv;
     lp.showmaskvibmet = llvibMask;
-    printf("vibmet=%i\n",  lp.showmaskvibmet);
     lp.showmaskcbmet = llcbMask;
     lp.showmaskretimet = llretiMask;
     lp.showmasksoftmet = llsoftMask;
@@ -611,7 +610,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).merMethod == "mfiv") {
         lp.mergemet = 4;
     }
-printf("lpmermet=%i\n",lp.mergemet); 
+
+
     if (locallab.spots.at(sp).mergecolMethod == "one") {
         lp.mergecolMethod = 0;
     } else if (locallab.spots.at(sp).mergecolMethod == "two") {
@@ -11925,6 +11925,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         float b_scalemerg = (lp.highBmerg - lp.lowBmerg) / factor / scaling;
         float b_basemerg = lp.lowBmerg / scaling;
         bool ctoningmerg = (a_scalemerg != 0.f || b_scalemerg != 0.f || a_basemerg != 0.f || b_basemerg != 0.f);
+        bool toto = false;
 
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
             /*
@@ -12458,9 +12459,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 buf_a[ir][jr] = CLIPRET((bufcolcalca - origptr->a[ir][jr]) / 328.f);;
                                 buf_b[ir][jr] = CLIPRET((bufcolcalcb - origptr->b[ir][jr]) / 328.f);;
                                 bufcolfin->L[ir][jr] = bufcolcalcL;
-                                // if (lp.mergemet >= 2) {
-                                //bufcolfin->a[ir][jr] = bufcolcalca;
-                                // bufcolfin->b[ir][jr] = bufcolcalcb;
+
+                                if (lp.mergemet >= 2) {
+                                    bufcolfin->a[ir][jr] = bufcolcalca + 328.f * (buf_a[ir][jr] + bufchro[ir][jr]);
+                                    bufcolfin->b[ir][jr] = bufcolcalcb + 328.f * (buf_b[ir][jr] + bufchro[ir][jr]);
+                                    //  bufcolfin->a[ir][jr] = bufcolcalca * (1.f + 0.01f * (chprosl + chprocu));
+                                    //  bufcolfin->b[ir][jr] = bufcolcalcb * (1.f + 0.01f * (chprosl + chprocu));
+                                }
 
                             }
 
@@ -12485,13 +12490,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         //
 
                         if (lp.mergemet >= 2) { //merge result with original
+                            toto = true;
                             bufcolreserv.reset(new LabImage(bfw, bfh));
                             JaggedArray<float> lumreserv(bfw, bfh);
                             std::unique_ptr<LabImage> bufreser;
                             bufreser.reset(new LabImage(bfw, bfh));
-                            if(lp.mergemet == 4) {
-                                printf("4 a=%f\n", 9.f * scaledirect * a_scalemerg);
-                            }
+
+
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12499,9 +12504,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
                                     lumreserv[y][x] = 32768.f - reserved->L[y + ystart][x + xstart];
-                                        bufreser->L[y][x] = reserved->L[y + ystart][x + xstart];
-                                        bufreser->a[y][x] = reserved->a[y + ystart][x + xstart];
-                                        bufreser->b[y][x] = reserved->b[y + ystart][x + xstart];
+                                    bufreser->L[y][x] = reserved->L[y + ystart][x + xstart];
+                                    bufreser->a[y][x] = reserved->a[y + ystart][x + xstart];
+                                    bufreser->b[y][x] = reserved->b[y + ystart][x + xstart];
 
                                     if (lp.mergemet == 2) {
                                         bufcolreserv->L[y][x] = reserved->L[y + ystart][x + xstart];
@@ -12512,7 +12517,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
                                         bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
                                     } else if (lp.mergemet == 4) {
-                                        if(ctoningmerg) {
+                                        if (ctoningmerg) {
                                             bufcolreserv->L[y][x] = merlucol * 327.68f;
                                             bufcolreserv->a[y][x] = 9.f * scaledirect * a_scalemerg;
                                             bufcolreserv->b[y][x] = 9.f * scaledirect * b_scalemerg;
@@ -12529,32 +12534,57 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 float **mb = blend;
                                 gaussianBlur(mb, mb, bfw, bfh, rm);
                             }
+
                             std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
                             float** rdE = *(rdEBuffer.get());
 
-                            deltaEforMask(rdE, bfw, bfh, bufreser.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, 0.2f * lp.iterat, limscope, mercol, lp.balance);
+                            deltaEforMask(rdE, bfw, bfh, bufreser.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, mercol, lp.balance);
 
-                            if (lp.mergecolMethod == 0) { //normal
+                            if (lp.mergecolMethod == 0) {  //normal
 
+                                if (lp.mergemet == 4) {
+                                    bufprov.reset(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                                for (int y = 0; y < bfh ; y++) {
-                                    for (int x = 0; x < bfw; x++) {
-                                        bufcolfin->L[y][x] = lp.opacol * bufcolfin->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
-                                        bufcolfin->a[y][x] = lp.opacol * bufcolfin->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
-                                        bufcolfin->b[y][x] = lp.opacol * bufcolfin->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
-                                        
-                                        bufcolfin->L[y][x] = (1.f - rdE[y][x]) * bufcolfin->L[y][x] + (rdE[y][x]) * bufcolreserv->L[y][x];
-                                        bufcolfin->a[y][x] = (1.f - rdE[y][x]) * bufcolfin->a[y][x] + (rdE[y][x]) * bufcolreserv->a[y][x];
-                                        bufcolfin->b[y][x] = (1.f - rdE[y][x]) * bufcolfin->b[y][x] + (rdE[y][x])  * bufcolreserv->b[y][x];
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            rdE[y][x] *= SQR(rdE[y][x]);
+                                            bufprov->L[y][x] = (1.f - rdE[y][x]) * bufcolfin->L[y][x] + (rdE[y][x]) * bufcolreserv->L[y][x];
+                                            bufprov->a[y][x] = (1.f - rdE[y][x]) * bufcolfin->a[y][x] + (rdE[y][x]) * bufcolreserv->a[y][x];
+                                            bufprov->b[y][x] = (1.f - rdE[y][x]) * bufcolfin->b[y][x] + (rdE[y][x]) * bufcolreserv->b[y][x];
+
+                                            bufcolfin->L[y][x] = (1.f - lp.opacol) * bufcolfin->L[y][x] + (lp.opacol) * bufprov->L[y][x];
+                                            bufcolfin->a[y][x] = (1.f - lp.opacol) * bufcolfin->a[y][x] + (lp.opacol) * bufprov->a[y][x];
+                                            bufcolfin->b[y][x] = (1.f - lp.opacol) * bufcolfin->b[y][x] + (lp.opacol) * bufprov->b[y][x];
+                                        }
                                     }
+                                } else {
+                                    bufprov.reset(new LabImage(bfw, bfh));
+
+#ifdef _OPENMP
+                                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                    for (int y = 0; y < bfh ; y++) {
+                                        for (int x = 0; x < bfw; x++) {
+                                            bufprov->L[y][x] = bufcolfin->L[y][x] - bufcolreserv->L[y][x];
+                                            bufprov->a[y][x] = bufcolfin->a[y][x] - bufcolreserv->a[y][x];
+                                            bufprov->b[y][x] = bufcolfin->b[y][x] - bufcolreserv->b[y][x];
+
+                                            bufcolfin->L[y][x] = bufcolreserv->L[y][x] + (lp.opacol) * bufprov->L[y][x];
+                                            bufcolfin->a[y][x] = bufcolreserv->a[y][x] + (lp.opacol) * bufprov->a[y][x];
+                                            bufcolfin->b[y][x] = bufcolreserv->b[y][x] + (lp.opacol) * bufprov->b[y][x];
+                                        }
+                                    }
+
                                 }
 
+
                                 if (conthr > 0.f && lp.mergemet != 4) {
-                                   
+
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12566,7 +12596,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             bufcolfin->b[y][x] = intp((blend[y][x]), bufcolfin->b[y][x], bufreser->b[y][x]);
                                         }
                                     }
-                                    
+
                                 }
 
 
@@ -12612,6 +12642,27 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             buftemp->L[y][x] = lumfin;
                                         }
 
+                                        if (lp.mergemet == 4) {
+                                            rdE[y][x] *= SQR(rdE[y][x]);
+                                            bufprov->L[y][x] = (1.f - rdE[y][x]) * buftemp->L[y][x] + (rdE[y][x]) * bufcolreserv->L[y][x];
+                                            bufprov->a[y][x] = (1.f - rdE[y][x]) * buftemp->a[y][x] + (rdE[y][x]) * bufcolreserv->a[y][x];
+                                            bufprov->b[y][x] = (1.f - rdE[y][x]) * buftemp->b[y][x] + (rdE[y][x]) * bufcolreserv->b[y][x];
+
+                                            bufcolfin->L[y][x] = (1.f - lp.opacol) * buftemp->L[y][x] + (lp.opacol) * bufprov->L[y][x];
+                                            bufcolfin->a[y][x] = (1.f - lp.opacol) * buftemp->a[y][x] + (lp.opacol) * bufprov->a[y][x];
+                                            bufcolfin->b[y][x] = (1.f - lp.opacol) * buftemp->b[y][x] + (lp.opacol) * bufprov->b[y][x];
+                                        } else {
+                                            bufprov->L[y][x] = buftemp->L[y][x] - bufcolreserv->L[y][x];
+                                            bufprov->a[y][x] = buftemp->a[y][x] - bufcolreserv->a[y][x];
+                                            bufprov->b[y][x] = buftemp->b[y][x] - bufcolreserv->b[y][x];
+
+                                            bufcolfin->L[y][x] = bufcolreserv->L[y][x] + (lp.opacol) * bufprov->L[y][x];
+                                            bufcolfin->a[y][x] = bufcolreserv->a[y][x] + (lp.opacol) * bufprov->a[y][x];
+                                            bufcolfin->b[y][x] = bufcolreserv->b[y][x] + (lp.opacol) * bufprov->b[y][x];
+
+                                        }
+
+                                        /*
                                         bufcolfin->L[y][x] = lp.opacol * buftemp->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
                                         bufcolfin->a[y][x] = lp.opacol * buftemp->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
                                         bufcolfin->b[y][x] = lp.opacol * buftemp->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
@@ -12619,7 +12670,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         bufcolfin->L[y][x] = (1.f - rdE[y][x]) * bufcolfin->L[y][x] + (rdE[y][x]) * bufcolreserv->L[y][x];
                                         bufcolfin->a[y][x] = (1.f - rdE[y][x]) * bufcolfin->a[y][x] + (rdE[y][x]) * bufcolreserv->a[y][x];
                                         bufcolfin->b[y][x] = (1.f - rdE[y][x]) * bufcolfin->b[y][x] + (rdE[y][x])  * bufcolreserv->b[y][x];
-                                        
+                                        */
                                     }
                                 }
 
@@ -13026,6 +13077,41 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                             }
+
+                            if (toto) {
+                                //special
+//                               printf("toto\n");
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int y = 0; y < bfh; y++) {
+                                    const int loy = y + ystart + cy;
+
+                                    for (int x = 0; x < bfw; x++) {
+                                        const int lox = x + xstart + cx;
+                                        int zone = 0;
+                                        float localFactor = 1.f;
+                                        const float achm = (float)lp.trans / 100.f;
+
+                                        if (lp.shapmet == 0) {
+                                            calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                        } else if (lp.shapmet == 1) {
+                                            calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                        }
+
+                                        if (zone > 0) {
+                                            transformed->L[y + ystart][x + xstart] = bufcolfin->L[y][x] * localFactor + (1.f - localFactor) * reserved->L[y + ystart][x + xstart];
+                                            transformed->a[y + ystart][x + xstart] = bufcolfin->a[y][x] * localFactor + (1.f - localFactor) * reserved->a[y + ystart][x + xstart];
+                                            transformed->b[y + ystart][x + xstart] = bufcolfin->b[y][x] * localFactor + (1.f - localFactor) * reserved->b[y + ystart][x + xstart];
+                                        }
+                                    }
+                                }
+
+
+                            }
+
+
                         }
 
                         if (lp.softradiuscol > 0.f) {
@@ -13053,31 +13139,35 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     */
                     int smerge = 0;
 
-                    if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
-                        smerge = 100;
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
+                    /*
+                                        if (lp.mergemet >= 2) {//change transit_shapedetect if merge...because we use others references and other files
+                                            smerge = 100;
+                    #ifdef _OPENMP
+                                            #pragma omp parallel for schedule(dynamic,16)
+                    #endif
 
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                if(lp.mergemet != 4) {
-                                    bufchro[ir][jr] = sqrt(SQR(bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) + SQR(bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr])) / 328.f;
-                                    buf_a[ir][jr] = ((bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) / 328.f);
-                                    buf_b[ir][jr] = ((bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr]) / 328.f);
-                                }
-                            }
-                    }
-
+                                            for (int ir = 0; ir < bfh; ir++)
+                                                for (int jr = 0; jr < bfw; jr++) {
+                                                    if (lp.mergemet != 4) {
+                                                        bufchro[ir][jr] = sqrt(SQR(bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) + SQR(bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr])) / 328.f;
+                                                        buf_a[ir][jr] = ((bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr]) / 328.f);
+                                                        buf_b[ir][jr] = ((bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr]) / 328.f);
+                                                    }
+                                                }
+                                        }
+                    */
                     //bufcolfin add for merge
                     if (!(usergb && spez)) {
-                        transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
 
-                        if (blends) {
-                            blend2.free();
+                        if (!toto) {
+                            transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+
+                            if (blends) {
+                                blend2.free();
+                            }
+
+                            buflight.free();
                         }
-
-                        buflight.free();
                     }
 
                     if (params->locallab.spots.at(sp).recurs) {
