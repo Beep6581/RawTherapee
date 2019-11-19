@@ -1143,6 +1143,11 @@ Camera constants:
         "raw_crop": [ 144, 72, 6984, 4660 ]
     },
 
+    { // Quality C, only raw crop
+        "make_model": [ "Canon EOS R" ],
+        "raw_crop": [ 144, 46, 6744, 4500 ]
+    },
+
 // Canon Powershot
     { // Quality C, CHDK DNGs, raw frame correction
         "make_model": "Canon PowerShot A3100 IS",
