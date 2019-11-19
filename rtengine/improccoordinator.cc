@@ -1312,36 +1312,20 @@ bool ImProcCoordinator::getFilmNegativeExponents(int xA, int yA, int xB, int yB,
     return imgsrc->getFilmNegativeExponents(p1, p2, tr, params->filmNegative, newExps);
 }
 
-bool ImProcCoordinator::getFilmNegativeMedians(std::array<float, 3>& medians)
+bool ImProcCoordinator::getFilmBaseValues(std::array<float, 3>& rawValues)
 {
     MyMutex::MyLock lock(mProcessing);
 
-    const int coarseTransf = getCoarseBitMask(params->coarse);
-
-    const procparams::CropParams cr = params->crop;
-    Coord2D p1;
-    Coord2D p2;
-    if (cr.enabled) {
-        printf("Crop rect: %d,%d  %dx%d\n", cr.x,cr.y, cr.w,cr.h);
-
-        const Coord2D tl = translateCoord(ipf, fw, fh, cr.x, cr.y);
-        const Coord2D tr = translateCoord(ipf, fw, fh, cr.x + cr.w, cr.y);
-        const Coord2D br = translateCoord(ipf, fw, fh, cr.x + cr.w, cr.y + cr.h);
-        const Coord2D bl = translateCoord(ipf, fw, fh, cr.x, cr.y + cr.h);
-
-        p1 = Coord2D(std::max(tl.x,bl.x), std::max(tl.y,tr.y));
-        p2 = Coord2D(std::min(tr.x,br.x), std::min(bl.y,br.y));
-    } else {
-        p1 = Coord2D(0, 0);
-        int w, h;
-        imgsrc->getFullSize(w, h);
-        p2 = Coord2D(w, h);
-    }
-
-    return imgsrc->getFilmNegativeMedians(p1, p2, coarseTransf, params->filmNegative, medians);
-
+    return imgsrc->getFilmBaseValues(rawValues);
 }
 
+bool ImProcCoordinator::getRawSpotValues(int x, int y, int spotSize, std::array<float, 3>& rawValues)
+{
+    MyMutex::MyLock lock(mProcessing);
+
+    return imgsrc->getRawSpotValues(translateCoord(ipf, fw, fh, x, y), spotSize,
+        getCoarseBitMask(params->coarse), params->filmNegative, rawValues);
+}
 
 void ImProcCoordinator::getAutoCrop(double ratio, int &x, int &y, int &w, int &h)
 {

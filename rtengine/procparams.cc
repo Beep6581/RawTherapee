@@ -2813,9 +2813,9 @@ FilmNegativeParams::FilmNegativeParams() :
     redRatio(1.36),
     greenExp(1.5),
     blueRatio(0.86),
-    redMedian(0),
-    greenMedian(0),
-    blueMedian(0)
+    redBase(0),
+    greenBase(0),
+    blueBase(0)
 {
 }
 
@@ -2826,9 +2826,9 @@ bool FilmNegativeParams::operator ==(const FilmNegativeParams& other) const
         && redRatio == other.redRatio
         && greenExp == other.greenExp
         && blueRatio == other.blueRatio
-        && redMedian == other.redMedian
-        && greenMedian == other.greenMedian
-        && blueMedian == other.blueMedian;
+        && redBase == other.redBase
+        && greenBase == other.greenBase
+        && blueBase == other.blueBase;
 }
 
 bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
@@ -3688,9 +3688,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->filmNegative.redRatio, "Film Negative", "RedRatio", filmNegative.redRatio, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.greenExp, "Film Negative", "GreenExponent", filmNegative.greenExp, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.blueRatio, "Film Negative", "BlueRatio", filmNegative.blueRatio, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.medians, "Film Negative", "RedMedian", filmNegative.redMedian, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.medians, "Film Negative", "GreenMedian", filmNegative.greenMedian, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.medians, "Film Negative", "BlueMedian", filmNegative.blueMedian, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "RedBase", filmNegative.redBase, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "GreenBase", filmNegative.greenBase, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "BlueBase", filmNegative.blueBase, keyFile);
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -5253,9 +5253,24 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Film Negative", "RedRatio", pedited, filmNegative.redRatio, pedited->filmNegative.redRatio);
             assignFromKeyfile(keyFile, "Film Negative", "GreenExponent", pedited, filmNegative.greenExp, pedited->filmNegative.greenExp);
             assignFromKeyfile(keyFile, "Film Negative", "BlueRatio", pedited, filmNegative.blueRatio, pedited->filmNegative.blueRatio);
-            assignFromKeyfile(keyFile, "Film Negative", "RedMedian", pedited, filmNegative.redMedian, pedited->filmNegative.medians);
-            assignFromKeyfile(keyFile, "Film Negative", "GreenMedian", pedited, filmNegative.greenMedian, pedited->filmNegative.medians);
-            assignFromKeyfile(keyFile, "Film Negative", "BlueMedian", pedited, filmNegative.blueMedian, pedited->filmNegative.medians);
+            if (ppVersion >= 347) {
+                bool r, g, b;
+                assignFromKeyfile(keyFile, "Film Negative", "RedBase", pedited, filmNegative.redBase, r);
+                assignFromKeyfile(keyFile, "Film Negative", "GreenBase", pedited, filmNegative.greenBase, g);
+                assignFromKeyfile(keyFile, "Film Negative", "BlueBase", pedited, filmNegative.blueBase, b);
+                if (pedited) {
+                    pedited->filmNegative.baseValues = r || g || b;
+                }
+            } else {
+                // Backwards compatibility with film negative in RT 5.7: use special film base value -1,
+                // to signal that the old channel scaling method should be used.
+                filmNegative.redBase = -1.f;
+                filmNegative.greenBase = -1.f;
+                filmNegative.blueBase = -1.f;
+                if (pedited) {
+                    pedited->filmNegative.baseValues = true;
+                }
+            }
         }
 
         if (keyFile.has_group("MetaData")) {

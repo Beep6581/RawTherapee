@@ -179,35 +179,32 @@ void calcMedians(
 
 }
 
-void cameraWBMults(
-    const rtengine::ColorTemp camera_wb,
+std::array<double, 3> calcWBMults(
+    rtengine::ColorTemp wb,
     const rtengine::ImageMatrices imatrices,
     const rtengine::RawImage *ri,
-    const float ref_pre_mul[4],
-    std::array<double, 3>& camwb_mul)
+    const float ref_pre_mul[4])
 {
+    std::array<double, 3> wb_mul;
     double r, g, b;
-    camera_wb.getMultipliers(r, g, b);
-    camwb_mul[0] = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
-    camwb_mul[1] = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
-    camwb_mul[2] = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
+    wb.getMultipliers(r, g, b);
+    wb_mul[0] = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
+    wb_mul[1] = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
+    wb_mul[2] = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
 
     for (int c = 0; c < 3; ++c) {
-        camwb_mul[c] = ri->get_pre_mul(c) / camwb_mul[c] / ref_pre_mul[c];
-    }
-
-    if (rtengine::settings->verbose) {
-        printf("camwb mults: %g %g %g\n", camwb_mul[0], camwb_mul[1], camwb_mul[2]);
+        wb_mul[c] = ri->get_pre_mul(c) / wb_mul[c] / ref_pre_mul[c];
     }
 
     // Normalize max channel gain to 1.0
-    float base = rtengine::max(camwb_mul[0], camwb_mul[1], camwb_mul[2]);
+    float mg = rtengine::max(wb_mul[0], wb_mul[1], wb_mul[2]);
 
     for (int c = 0; c < 3; ++c) {
-        camwb_mul[c] /= base;
+        wb_mul[c] /= mg;
     }
-}
 
+    return wb_mul;
+}
 
 }
 
@@ -224,6 +221,12 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
     Coord spot;
     std::array<float, 3> clearVals;
     std::array<float, 3> denseVals;
+
+    // Get channel averages in the two spots, sampling from the original ri->data buffer.
+    // NOTE: rawData values might be affected by CA corection, FlatField, etc, so:
+    //   rawData[y][x] == (ri->data[y][x] - cblacksom[c]) * scale_mul[c]
+    // is not always true. To calculate exponents on the exact values, we should keep
+    // a copy of the rawData buffer after preprocessing. Worth the memory waste?
 
     // Sample first spot
     transformPosition(spotA.x, spotA.y, tran, spot.x, spot.y);
@@ -275,44 +278,46 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
     return true;
 }
 
-bool rtengine::RawImageSource::getFilmNegativeMedians(Coord2D topLeft, Coord2D bottomRight, int tran, const FilmNegativeParams &params, std::array<float, 3>& meds)
+bool rtengine::RawImageSource::getFilmBaseValues(std::array<float, 3>& rawValues)
 {
-    int x1, y1;
-    int x2, y2;
-    transformPosition(topLeft.x, topLeft.y, tran, x1, y1);
-    transformPosition(bottomRight.x, bottomRight.y, tran, x2, y2);
+    if (filmBaseValues[0] == 0.f) {
+        if (settings->verbose) {
+            printf("getFilmBaseValues: filmBaseValues still unset!");
+        }
 
-    x1 = CLAMP(x1 + border, 0, W);
-    y1 = CLAMP(y1 + border, 0, H);
-    x2 = CLAMP(x2 - border, 0, W);
-    y2 = CLAMP(y2 - border, 0, H);
-
-    if (x1 > x2) {
-        std::swap(x1, x2);
-    }
-
-    if (y1 > y2) {
-        std::swap(y1, y2);
-    }
-
-    if (settings->verbose) {
-        printf("Transformed coords: %d,%d %d,%d\n", x1, y1, x2, y2);
-    }
-
-    if (x2 - x1 < 8 || y2 - y1 < 8) {
         return false;
     }
 
-    // Calculate medians of raw unscaled channels
-    calcMedians(ri, ri->data, x1, y1, x2, y2, meds);
+    if (settings->verbose) {
+        printf("getFilmBaseValues: %g %g %g\n", filmBaseValues[0], filmBaseValues[1], filmBaseValues[2]);
+    }
 
-    // Subtract black levels
-    for (int c = 0; c < 3; ++c) {
-        meds[c] -= cblacksom[c];
+    rawValues[0] = filmBaseValues[0];
+    rawValues[1] = filmBaseValues[1];
+    rawValues[2] = filmBaseValues[2];
+    return true;
+}
+
+bool rtengine::RawImageSource::getRawSpotValues(Coord2D spotCoord, int spotSize, int tran, const FilmNegativeParams &params, std::array<float, 3>& rawValues)
+{
+    Coord spot;
+    transformPosition(spotCoord.x, spotCoord.y, tran, spot.x, spot.y);
+
+    if (settings->verbose) {
+        printf("Transformed coords: %d,%d\n", spot.x, spot.y);
+    }
+
+    if (spotSize < 4) {
+        return false;
+    }
+
+    // Calculate averages of raw unscaled channels
+    if (!channelsAvg(ri, W, H, cblacksom, spot, spotSize, params, rawValues)) {
+        return false;
     }
 
     if (settings->verbose) {
-        printf("Channel medians: R=%g, G=%g, B=%g\n", meds[0], meds[1], meds[2]);
+        printf("Raw spot values: R=%g, G=%g, B=%g\n", rawValues[0], rawValues[1], rawValues[2]);
     }
 
     return true;
@@ -336,68 +341,98 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
 
     constexpr float MAX_OUT_VALUE = 65000.f;
 
-    // Input channel median values, scaled to match thumbnail multipliers
-    std::array<float, 3> medians;
+    // Get multipliers for a known, fixed WB setting, that will be the starting point
+    // for balancing the converted image.
+    const std::array<double, 3> wb_mul = calcWBMults(
+        ColorTemp(3500., 1., 1., "Custom"), imatrices, ri, ref_pre_mul);
+
+
+    if (rtengine::settings->verbose) {
+        printf("Fixed WB mults: %g %g %g\n", wb_mul[0], wb_mul[1], wb_mul[2]);
+    }
+
+
 
     std::array<float, 3> mults;  // Channel normalization multipliers
 
-    // If channel medians are not set in params, use previous method.
-    // For backwards compatibility with profiles saved by RT 5.7
-    const bool oldChannelScaling = params.redMedian == 0.f;
+    // If film base values are set in params, use those
+    if (params.redBase > 0.f) {
 
-    if (oldChannelScaling) {
+        filmBaseValues[0] = params.redBase   ;
+        filmBaseValues[1] = params.greenBase ;
+        filmBaseValues[2] = params.blueBase  ;
+
+    } else {
+        // ...otherwise, the film negative tool might have just been enabled on this image,
+        // whithout any previous setting. So, estimate film base values from channel medians
+
+        std::array<float, 3> medians;
+
+        // Special value for backwards compatibility with profiles saved by RT 5.7
+        const bool oldChannelScaling = params.redBase == -1.f;
+
         // If using the old channel scaling method, get medians from the whole current image,
         // reading values from the already-scaled rawData buffer.
-        // Note that rawData values might be affected by CA corection, so:
-        //   rawData[y][x] == (ri->data[y][x] - cblacksom[c]) * scale_mul[c]
-        // is not always true.
-        calcMedians(ri, rawData, 0, 0, W, H, medians);
+        if (oldChannelScaling) {
+            calcMedians(ri, rawData, 0, 0, W, H, medians);
+        } else {
+            // Cut 20% border from medians calculation. It will probably contain outlier values
+            // from the film holder, which will bias the median result.
+            const int bW = W * 20 / 100;
+            const int bH = H * 20 / 100;
+            calcMedians(ri, rawData, bW, bH, W - bW, H - bH, medians);
+        }
+
+        // Un-scale rawData medians
+        for (int c = 0; c < 3; ++c) {
+            medians[c] /= scale_mul[c];
+        }
 
         if (settings->verbose) {
             printf("Channel medians: R=%g, G=%g, B=%g\n", medians[0], medians[1], medians[2]);
         }
 
         for (int c = 0; c < 3; ++c) {
-            // Apply channel exponents, to obtain medians of the converted (output) data
-            medians[c] = pow_F(rtengine::max(medians[c], 1.f), exps[c]);
+            // If using the old channel scaling method, apply WB multipliers here to undo their
+            // effect later, as fixed wb compensation was not used in previous version.
+            float ref = oldChannelScaling
+                        ? 24.f / (512.f * wb_mul[c])
+                        : 24.f / 512.f;
 
-            // Determine the channel multiplier so that N times the median becomes 65k. This clips away
-            // the values in the dark border surrounding the negative (due to the film holder, for example),
-            // the reciprocal of which have blown up to stellar values.
-            mults[c] = MAX_OUT_VALUE / (medians[c] * 24.f);
+            filmBaseValues[c] = pow_F(ref, 1.f / exps[c]) * medians[c];
         }
+    }
 
-    } else {  // ...otherwise, get raw (unscaled) channel medians from params
 
-        medians[0] = params.redMedian;
-        medians[1] = params.greenMedian;
-        medians[2] = params.blueMedian;
+    // Calculate multipliers based on previously obtained film base input values.
 
-        // Get camera WB multipliers and adapt output medians to those, so that channels
-        // are automatically balanced when the user select "Camera WB"
-        std::array<double, 3> camwb_mul;
-        cameraWBMults(camera_wb, imatrices, ri, ref_pre_mul, camwb_mul);
+    // Apply current scaling coefficients to raw, unscaled base values.
+    std::array<float, 3> fb;
+    fb[0] = filmBaseValues[0] * scale_mul[0];
+    fb[1] = filmBaseValues[1] * scale_mul[1];
+    fb[2] = filmBaseValues[2] * scale_mul[2];
 
-        for (int c = 0; c < 3; ++c) {
-            // Apply current scaling coefficients to previously obtained channel medians.
-            medians[c] = medians[c] * scale_mul[c];
+    if (settings->verbose) {
+        printf("Input film base values: %g %g %g\n", fb[0], fb[1], fb[2]);
+    }
 
-            // Apply channel exponents, to obtain medians of the converted (output) data
-            medians[c] = pow_F(rtengine::max(medians[c], 1.f), exps[c]);
+    for (int c = 0; c < 3; ++c) {
+        // Apply channel exponents, to obtain the corresponding base values in the output data
+        fb[c] = pow_F(rtengine::max(fb[c], 1.f), exps[c]);
 
-            // Apply camera WB multipliers, to reverse their effect later in the WB tool.
-            medians[c] = medians[c] * camwb_mul[c];
+        // Determine the channel multiplier so that the film base value is 1/512th of max.
+        mults[c] = (MAX_OUT_VALUE / 512.f) / fb[c];
 
-            // Determine the channel multiplier so that N times the median becomes 65k.
-            mults[c] = MAX_OUT_VALUE / (medians[c] * 24.f);
-        }
-
+        // Un-apply the fixed WB multipliers, to reverse their effect later in the WB tool.
+        // This way, the output image will be adapted to this WB setting
+        mults[c] /= wb_mul[c];
     }
 
     if (settings->verbose) {
-        printf("Output medians: %g %g %g\n", medians[0], medians[1], medians[2]);
+        printf("Output film base values: %g %g %g\n", fb[0], fb[1], fb[2]);
         printf("Computed multipliers: %g %g %g\n", mults[0], mults[1], mults[2]);
     }
+
 
     constexpr float CLIP_VAL = 65535.f;
 

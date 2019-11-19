@@ -35,6 +35,39 @@ extern const Settings* settings;
 
 }
 
+namespace
+{
+
+using rtengine::Imagefloat;
+using rtengine::findMinMaxPercentile;
+
+
+void calcMedians(
+    const Imagefloat* baseImg,
+    const int x1, const int y1,
+    const int x2, const int y2,
+    float &rmed, float &gmed, float &bmed
+)
+{
+    // Channel vectors to calculate medians
+    std::vector<float> rv, gv, bv;
+
+    for (int i = y1; i < y2; i++) {
+        for (int j = x1; j < x2; j++) {
+            rv.push_back(baseImg->r(i, j));
+            gv.push_back(baseImg->g(i, j));
+            bv.push_back(baseImg->b(i, j));
+        }
+    }
+
+    // Calculate channel medians from whole image
+    findMinMaxPercentile(rv.data(), rv.size(), 0.5f, rmed, 0.5f, rmed, true);
+    findMinMaxPercentile(gv.data(), gv.size(), 0.5f, gmed, 0.5f, gmed, true);
+    findMinMaxPercentile(bv.data(), bv.size(), 0.5f, bmed, 0.5f, bmed, true);
+}
+
+}
+
 void rtengine::Thumbnail::processFilmNegative(
     const procparams::ProcParams &params,
     const Imagefloat* baseImg,
@@ -48,36 +81,93 @@ void rtengine::Thumbnail::processFilmNegative(
     const float gexp = -params.filmNegative.greenExp;
     const float bexp = -params.filmNegative.blueRatio * params.filmNegative.greenExp;
 
-    // If channel medians are not set in params, use previous method.
-    // For backwards compatibility with profiles saved by RT 5.7
-    const bool oldChannelScaling = params.filmNegative.redMedian == 0.f;
+    // Calculate output multipliers
+    float rmult, gmult, bmult;
 
-    // Reference channel medians
-    float rmed, gmed, bmed;
+    const float MAX_OUT_VALUE = 65000.f;
+
+    // For backwards compatibility with profiles saved by RT 5.7
+    const bool oldChannelScaling = params.filmNegative.redBase == -1.f;
+
+    // If the film base values are not set in params, estimate multipliers from each channel's median value.
+    if (params.filmNegative.redBase <= 0.f) {
+
+        // Channel medians
+        float rmed, gmed, bmed;
+
+        if (oldChannelScaling) {
+            // If using the old method, calculate nedians on the whole image
+            calcMedians(baseImg, 0, 0, rwidth, rheight, rmed, gmed, bmed);
+        } else {
+            // The new method cuts out a 20% border from medians calculation.
+            const int bW = rwidth * 20 / 100;
+            const int bH = rheight * 20 / 100;
+            calcMedians(baseImg, bW, bH, rwidth - bW, rheight - bH, rmed, gmed, bmed);
+        }
+
+        if (settings->verbose) {
+            printf("Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
+        }
+
+        // Calculate output medians
+        rmed = powf(rmed, rexp);
+        gmed = powf(gmed, gexp);
+        bmed = powf(bmed, bexp);
+
+        // Calculate output multipliers so that the median value is 1/24 of the output range.
+        rmult = (MAX_OUT_VALUE / 24.f) / rmed;
+        gmult = (MAX_OUT_VALUE / 24.f) / gmed;
+        bmult = (MAX_OUT_VALUE / 24.f) / bmed;
+
+    } else {
+
+        // Read film-base values from params
+        float rbase, gbase, bbase;
+        rbase = params.filmNegative.redBase;
+        gbase = params.filmNegative.greenBase;
+        bbase = params.filmNegative.blueBase;
+
+        // Reconstruct scale_mul coefficients from thumbnail metadata:
+        //   redMultiplier / camwbRed is pre_mul[0]
+        //   pre_mul[0] * scaleGain is scale_mul[0]
+        // Apply channel scaling to raw (unscaled) input base values, to
+        // match with actual (scaled) data in baseImg
+        rbase *= (redMultiplier / camwbRed)     * scaleGain;
+        gbase *= (greenMultiplier / camwbGreen) * scaleGain;
+        bbase *= (blueMultiplier / camwbBlue)   * scaleGain;
+
+        if (settings->verbose) {
+            printf("Thumbnail input film base values: %g %g %g\n", rbase, gbase, bbase);
+        }
+
+        // Apply exponents to get output film base values
+        rbase = powf(rbase, rexp);
+        gbase = powf(gbase, gexp);
+        bbase = powf(bbase, bexp);
+
+        if (settings->verbose) {
+            printf("Thumbnail output film base values: %g %g %g\n", rbase, gbase, bbase);
+        }
+
+        // Calculate multipliers so that film base value is 1/512th of the output range.
+        rmult = (MAX_OUT_VALUE / 512.f) / rbase;
+        gmult = (MAX_OUT_VALUE / 512.f) / gbase;
+        bmult = (MAX_OUT_VALUE / 512.f) / bbase;
+
+    }
+
 
     if (oldChannelScaling) {
-
         // Need to calculate channel averages, to fake the same conditions
         // found in rawimagesource, where get_ColorsCoeff is called with
         // forceAutoWB=true.
         float rsum = 0.f, gsum = 0.f, bsum = 0.f;
 
-        // Channel vectors to calculate medians
-        std::vector<float> rv, gv, bv;
-
         for (int i = 0; i < rheight; i++) {
             for (int j = 0; j < rwidth; j++) {
-                const float r = baseImg->r(i, j);
-                const float g = baseImg->g(i, j);
-                const float b = baseImg->b(i, j);
-
-                rsum += r;
-                gsum += g;
-                bsum += b;
-
-                rv.push_back(r);
-                gv.push_back(g);
-                bv.push_back(b);
+                rsum += baseImg->r(i, j);
+                gsum += baseImg->g(i, j);
+                bsum += baseImg->b(i, j);
             }
         }
 
@@ -90,59 +180,30 @@ void rtengine::Thumbnail::processFilmNegative(
         // gmi /= (gAvg/gAvg);  green chosen as reference channel
         bmi /= (gavg / bavg);
 
-
-        // Calculate channel medians from whole image
-        findMinMaxPercentile(rv.data(), rv.size(), 0.5f, rmed, 0.5f, rmed, true);
-        findMinMaxPercentile(gv.data(), gv.size(), 0.5f, gmed, 0.5f, gmed, true);
-        findMinMaxPercentile(bv.data(), bv.size(), 0.5f, bmed, 0.5f, bmed, true);
-
-        if (settings->verbose) {
-            printf("Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
-        }
-
-        // Calculate output medians
-        rmed = powf(rmed, rexp);
-        gmed = powf(gmed, gexp);
-        bmed = powf(bmed, bexp);
-
     } else {
 
-        // Read reference channel medians from params
-        rmed = params.filmNegative.redMedian;
-        gmed = params.filmNegative.greenMedian;
-        bmed = params.filmNegative.blueMedian;
+        // Get and un-apply multipliers to adapt the thumbnail to a known fixed WB setting,
+        // as in the main image processing.
 
-        // Reconstruct scale_mul coefficients from thumbnail metadata:
-        //   redMultiplier / camwbRed is pre_mul[0]
-        //   pre_mul[0] * scaleGain is scale_mul[0]
-        // Apply channel scaling to raw (unscaled) reference input medians, to
-        // match with actual (scaled) data in baseImg
-        rmed *= (redMultiplier / camwbRed)     * scaleGain;
-        gmed *= (greenMultiplier / camwbGreen) * scaleGain;
-        bmed *= (blueMultiplier / camwbBlue)   * scaleGain;
+        double r, g, b;
+        ColorTemp(3500., 1., 1., "Custom").getMultipliers (r, g, b);
+        //iColorMatrix is cam_rgb
+        double rm = camwbRed   / (iColorMatrix[0][0] * r + iColorMatrix[0][1] * g + iColorMatrix[0][2] * b);
+        double gm = camwbGreen / (iColorMatrix[1][0] * r + iColorMatrix[1][1] * g + iColorMatrix[1][2] * b);
+        double bm = camwbBlue  / (iColorMatrix[2][0] * r + iColorMatrix[2][1] * g + iColorMatrix[2][2] * b);
 
-        if (settings->verbose) {
-            printf("Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
-        }
-
-        // Calculate output medians
-        rmed = powf(rmed, rexp);
-        gmed = powf(gmed, gexp);
-        bmed = powf(bmed, bexp);
-
+        // Normalize max WB multiplier to 1.f
+        double m = max(rm, gm, bm);
+        rmult /= rm / m;
+        gmult /= gm / m;
+        bmult /= bm / m;
     }
 
-    const float MAX_OUT_VALUE = 65000.f;
-
-    // Calculate output multipliers
-    const float rmult = MAX_OUT_VALUE / (rmed * 24);
-    const float gmult = MAX_OUT_VALUE / (gmed * 24);
-    const float bmult = MAX_OUT_VALUE / (bmed * 24);
 
     if (settings->verbose) {
-        printf("Thumbnail output channel medians: %g %g %g\n", rmed, gmed, bmed);
         printf("Thumbnail computed multipliers: %g %g %g\n", rmult, gmult, bmult);
     }
+
 
 #ifdef __SSE2__
     const vfloat clipv = F2V(MAXVALF);

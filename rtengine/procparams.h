@@ -1526,9 +1526,9 @@ struct FilmNegativeParams {
     double greenExp;
     double blueRatio;
 
-    double redMedian;
-    double greenMedian;
-    double blueMedian;
+    double redBase;
+    double greenBase;
+    double blueBase;
     
     FilmNegativeParams();
 

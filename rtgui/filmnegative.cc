@@ -51,14 +51,17 @@ FilmNegative::FilmNegative() :
     EditSubscriber(ET_OBJECTS),
     evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
     evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
-    evFilmNegativeMedians(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_MEDIANS")),
+    evFilmBaseValues(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_FILMBASE")),
+    filmBaseValues({0.f, 0.f, 0.f}),
     fnp(nullptr),
     greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 1.5)),  // master exponent (green channel)
     redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 3, (2.04 / 1.5))), // ratio of red exponent to master exponent
     blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 3, (1.29 / 1.5))), // ratio of blue exponent to master exponent
     spotgrid(Gtk::manage(new Gtk::Grid())),
     spotbutton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
-    recalcCropMedians(Gtk::manage(new Gtk::Button(M("TP_FILMNEGATIVE_CROP_MEDIANS"))))
+    filmBaseLabel(Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_FILMBASE_VALUES"), Gtk::ALIGN_START))),
+    filmBaseValuesLabel(Gtk::manage(new Gtk::Label("auto"))),
+    filmBaseSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_FILMBASE_PICK"))))
 {
     spotgrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -66,9 +69,10 @@ FilmNegative::FilmNegative() :
     setExpandAlignProperties(spotbutton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotbutton->get_style_context()->add_class("independent");
     spotbutton->set_tooltip_text(M("TP_FILMNEGATIVE_GUESS_TOOLTIP"));
-    spotbutton->set_image (*Gtk::manage (new RTImage ("color-picker-small.png")));
+    spotbutton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
 
-    recalcCropMedians->set_tooltip_text(M("TP_FILMNEGATIVE_CROP_MEDIANS_TOOLTIP"));
+    filmBaseSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_FILMBASE_TOOLTIP"));
+    setExpandAlignProperties(filmBaseValuesLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     // TODO make spot size configurable ?
 
@@ -85,8 +89,7 @@ FilmNegative::FilmNegative() :
     // spotsize->set_active(0);
     // spotsize->append ("4");
 
-    spotgrid->attach (*spotbutton, 0, 1, 1, 1);
-    spotgrid->attach (*recalcCropMedians, 0, 2, 1, 1);
+    spotgrid->attach(*spotbutton, 0, 1, 1, 1);
     // spotgrid->attach (*slab, 1, 0, 1, 1);
     // spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
 
@@ -95,15 +98,26 @@ FilmNegative::FilmNegative() :
     pack_start(*blueRatio, Gtk::PACK_SHRINK, 0);
     pack_start(*spotgrid, Gtk::PACK_SHRINK, 0);
 
+    Gtk::HSeparator* sep = Gtk::manage(new  Gtk::HSeparator());
+    sep->get_style_context()->add_class("grid-row-separator");
+    pack_start(*sep, Gtk::PACK_SHRINK, 0);
+
+    Gtk::Grid* fbGrid = Gtk::manage(new Gtk::Grid());
+    fbGrid->attach(*filmBaseLabel, 0, 0);
+    fbGrid->attach(*filmBaseValuesLabel, 1, 0);
+    pack_start(*fbGrid, Gtk::PACK_SHRINK, 0);
+
+    pack_start(*filmBaseSpotButton, Gtk::PACK_SHRINK, 0);
+
     spotbutton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
     // spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 
-    recalcCropMedians->signal_clicked().connect(sigc::mem_fun(*this, &FilmNegative::recalcCropMediansClicked));
+    filmBaseSpotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::baseSpotToggled));
 
     // Editing geometry; create the spot rectangle
     Rectangle* const spotRect = new Rectangle();
     spotRect->filled = false;
-    
+
     visibleGeometry.push_back(spotRect);
 
     // Stick a dummy rectangle over the whole image in mouseOverGeometry.
@@ -141,9 +155,16 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     greenExp->setValue(pp->filmNegative.greenExp);
     blueRatio->setValue(pp->filmNegative.blueRatio);
 
-    channelMedians[0] = pp->filmNegative.redMedian;
-    channelMedians[1] = pp->filmNegative.greenMedian;
-    channelMedians[2] = pp->filmNegative.blueMedian;
+    filmBaseValues[0] = pp->filmNegative.redBase;
+    filmBaseValues[1] = pp->filmNegative.greenBase;
+    filmBaseValues[2] = pp->filmNegative.blueBase;
+
+    if (pp->filmNegative.redBase > 0.f && pp->filmNegative.greenBase > 0.f && pp->filmNegative.blueBase > 0.f) {
+        filmBaseValuesLabel->set_text(Glib::ustring::sprintf("%0.1f %0.1f %0.1f",
+                                      filmBaseValues[0], filmBaseValues[1], filmBaseValues[2]));
+    } else { // base values not set in params
+        filmBaseValuesLabel->set_text("auto");
+    }
 
     enableListener();
 }
@@ -153,20 +174,28 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     pp->filmNegative.redRatio = redRatio->getValue();
     pp->filmNegative.greenExp = greenExp->getValue();
     pp->filmNegative.blueRatio = blueRatio->getValue();
-    pp->filmNegative.redMedian = channelMedians[0];
-    pp->filmNegative.greenMedian = channelMedians[1];
-    pp->filmNegative.blueMedian = channelMedians[2];
+
+    // If the film base values are still unset, use the median-based estimates
+    if (filmBaseValues[0] <= 0.f) {
+        fnp->getFilmBaseValues(filmBaseValues);
+    }
+
     pp->filmNegative.enabled = getEnabled();
 
     if (pedited) {
         pedited->filmNegative.redRatio = redRatio->getEditedState();
         pedited->filmNegative.greenExp = greenExp->getEditedState();
         pedited->filmNegative.blueRatio = blueRatio->getEditedState();
-        pedited->filmNegative.medians = channelMedians[0] != pp->filmNegative.redMedian
-            || channelMedians[1] != pp->filmNegative.greenMedian
-            || channelMedians[2] != pp->filmNegative.blueMedian;
+        pedited->filmNegative.baseValues = filmBaseValues[0] != pp->filmNegative.redBase
+                                           || filmBaseValues[1] != pp->filmNegative.greenBase
+                                           || filmBaseValues[2] != pp->filmNegative.blueBase;
         pedited->filmNegative.enabled = !get_inconsistent();
     }
+
+    pp->filmNegative.redBase = filmBaseValues[0];
+    pp->filmNegative.greenBase = filmBaseValues[1];
+    pp->filmNegative.blueBase = filmBaseValues[2];
+
 }
 
 void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
@@ -189,8 +218,8 @@ void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams
 void FilmNegative::setBatchMode(bool batchMode)
 {
     if (batchMode) {
-        spotConn.disconnect();
         removeIfThere(this, spotgrid, false);
+        removeIfThere(this, filmBaseSpotButton, false);
         ToolPanel::setBatchMode(batchMode);
         redRatio->showEditedCB();
         greenExp->showEditedCB();
@@ -222,11 +251,9 @@ void FilmNegative::enabledChanged()
     if (listener) {
         if (get_inconsistent()) {
             listener->panelChanged(evFilmNegativeEnabled, M("GENERAL_UNCHANGED"));
-        }
-        else if (getEnabled()) {
+        } else if (getEnabled()) {
             listener->panelChanged(evFilmNegativeEnabled, M("GENERAL_ENABLED"));
-        }
-        else {
+        } else {
             listener->panelChanged(evFilmNegativeEnabled, M("GENERAL_DISABLED"));
         }
     }
@@ -244,7 +271,7 @@ void FilmNegative::setEditProvider(EditDataProvider* provider)
 
 CursorShape FilmNegative::getCursor(int objectID) const
 {
-   return CSSpotWB;
+    return CSSpotWB;
 }
 
 bool FilmNegative::mouseOver(int modifierKey)
@@ -263,31 +290,58 @@ bool FilmNegative::button1Pressed(int modifierKey)
     EditSubscriber::action = EditSubscriber::Action::NONE;
 
     if (listener) {
-        refSpotCoords.push_back(provider->posImage);
+        if (spotbutton->get_active()) {
 
-        if (refSpotCoords.size() == 2) {
-            // User has selected 2 reference gray spots. Calculating new exponents
-            // from channel values and updating parameters.
+            refSpotCoords.push_back(provider->posImage);
 
-            std::array<float, 3> newExps;
-            if (fnp->getFilmNegativeExponents(refSpotCoords[0], refSpotCoords[1], newExps)) {
+            if (refSpotCoords.size() == 2) {
+                // User has selected 2 reference gray spots. Calculating new exponents
+                // from channel values and updating parameters.
+
+                std::array<float, 3> newExps;
+
+                if (fnp->getFilmNegativeExponents(refSpotCoords[0], refSpotCoords[1], newExps)) {
+                    disableListener();
+                    // Leaving green exponent unchanged, setting red and blue exponents based on
+                    // the ratios between newly calculated exponents.
+                    redRatio->setValue(newExps[0] / newExps[1]);
+                    blueRatio->setValue(newExps[2] / newExps[1]);
+                    enableListener();
+
+                    if (listener && getEnabled()) {
+                        listener->panelChanged(
+                            evFilmNegativeExponents,
+                            Glib::ustring::compose(
+                                "Ref=%1\nR=%2\nB=%3",
+                                greenExp->getValue(),
+                                redRatio->getValue(),
+                                blueRatio->getValue()
+                            )
+                        );
+                    }
+                }
+
+                switchOffEditMode();
+            }
+
+        } else if (filmBaseSpotButton->get_active()) {
+
+            std::array<float, 3> newBaseLev = {};
+
+            if (fnp->getRawSpotValues(provider->posImage, 32, newBaseLev)) {
                 disableListener();
-                // Leaving green exponent unchanged, setting red and blue exponents based on
-                // the ratios between newly calculated exponents.
-                redRatio->setValue(newExps[0] / newExps[1]);
-                blueRatio->setValue(newExps[2] / newExps[1]);
+
+                filmBaseValues = newBaseLev;
+
                 enableListener();
 
+                Glib::ustring vs = Glib::ustring::sprintf("%0.1f %0.1f %0.1f",
+                                   filmBaseValues[0], filmBaseValues[1], filmBaseValues[2]);
+
+                filmBaseValuesLabel->set_text(vs);
+
                 if (listener && getEnabled()) {
-                    listener->panelChanged(
-                        evFilmNegativeExponents,
-                        Glib::ustring::compose(
-                            "Ref=%1\nR=%2\nB=%3",
-                            greenExp->getValue(),
-                            redRatio->getValue(),
-                            blueRatio->getValue()
-                        )
-                    );
+                    listener->panelChanged(evFilmBaseValues, vs);
                 }
             }
 
@@ -309,11 +363,16 @@ void FilmNegative::switchOffEditMode()
     refSpotCoords.clear();
     unsubscribe();
     spotbutton->set_active(false);
+    filmBaseSpotButton->set_active(false);
 }
 
 void FilmNegative::editToggled()
 {
     if (spotbutton->get_active()) {
+
+        filmBaseSpotButton->set_active(false);
+        refSpotCoords.clear();
+
         subscribe();
 
         int w, h;
@@ -329,30 +388,24 @@ void FilmNegative::editToggled()
     }
 }
 
-void FilmNegative::recalcCropMediansClicked()
+void FilmNegative::baseSpotToggled()
 {
-    if (listener) {
+    if (filmBaseSpotButton->get_active()) {
 
-        disableListener();
+        spotbutton->set_active(false);
+        refSpotCoords.clear();
 
-        std::array<float, 3> newMedians = {};
-        if (fnp->getFilmNegativeMedians(newMedians)) {
+        subscribe();
 
-            channelMedians = newMedians;
+        int w, h;
+        getEditProvider()->getImageSize(w, h);
 
-            enableListener();
-
-            if (listener && getEnabled()) {
-                listener->panelChanged(
-                    evFilmNegativeMedians,
-                    Glib::ustring::compose("R=%1\nG=%2\nB=%3",
-                        channelMedians[0], channelMedians[1], channelMedians[2]
-                    )
-                );
-            }
-        }
-
+        // Stick a dummy rectangle over the whole image in mouseOverGeometry.
+        // This is to make sure the getCursor() call is fired everywhere.
+        Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
+        imgRect->setXYWH(0, 0, w, h);
+    } else {
+        refSpotCoords.clear();
+        unsubscribe();
     }
-
-
 }

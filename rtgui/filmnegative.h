@@ -34,8 +34,8 @@ public:
     virtual ~FilmNegProvider() = default;
 
     virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) = 0;
-    virtual bool getFilmNegativeMedians(std::array<float, 3>& medians) = 0;
-
+    virtual bool getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues) = 0;
+    virtual bool getFilmBaseValues(std::array<float, 3>& rawValues) = 0;
 };
 
 class FilmNegative :
@@ -69,15 +69,15 @@ public:
 
 private:
     void editToggled();
-    void recalcCropMediansClicked();
+    void baseSpotToggled();
 
     const rtengine::ProcEvent evFilmNegativeExponents;
     const rtengine::ProcEvent evFilmNegativeEnabled;
-    const rtengine::ProcEvent evFilmNegativeMedians;
+    const rtengine::ProcEvent evFilmBaseValues;
 
     std::vector<rtengine::Coord> refSpotCoords;
 
-    std::array<float, 3> channelMedians;
+    std::array<float, 3> filmBaseValues;
 
     FilmNegProvider* fnp;
 
@@ -87,8 +87,9 @@ private:
 
     Gtk::Grid* const spotgrid;
     Gtk::ToggleButton* const spotbutton;
-    sigc::connection spotConn;
 
-    Gtk::Button* const recalcCropMedians;
+    Gtk::Label* const filmBaseLabel;
+    Gtk::Label* const filmBaseValuesLabel;
+    Gtk::ToggleButton* const filmBaseSpotButton;
 
 };
