@@ -18,7 +18,6 @@
 
 #include <iostream>
 #include "dcraw.h"
-
 #ifdef __GNUC__ // silence warning
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-compare"
@@ -626,9 +625,6 @@ libraw_inline void _BitScanReverse(DWORD *Index, unsigned long Mask)
 #define _byteswap_ulong(x) __builtin_bswap32(x)
 #endif
 
-#ifdef LIBRAW_USE_OPENMP
-#  undef LIBRAW_USE_OPENMP
-#endif
 
 #define LIBRAW_EXCEPTION_IO_EOF std::exception()
 
@@ -787,17 +783,17 @@ static inline void crxFillBuffer(CrxBitstream *bitStrm)
   {
     bitStrm->curPos = 0;
     bitStrm->curBufOffset += bitStrm->curBufSize;
-#ifdef LIBRAW_USE_OPENMP
+#ifdef _OPENMP
 #pragma omp critical
 #endif
     {
-#ifndef LIBRAW_USE_OPENMP
+#ifndef _OPENMP
       bitStrm->input->lock();
 #endif
       bitStrm->input->seek(bitStrm->curBufOffset, SEEK_SET);
       bitStrm->curBufSize = bitStrm->input->read(
           bitStrm->mdatBuf, 1, _min(bitStrm->mdatSize, CRX_BUF_SIZE));
-#ifndef LIBRAW_USE_OPENMP
+#ifndef _OPENMP
       bitStrm->input->unlock();
 #endif
       if (bitStrm->curBufSize < 1) // nothing read
@@ -2960,7 +2956,7 @@ int crxFreeImageData(CrxImage *img)
 
 void DCraw::crxLoadDecodeLoop(void *img, int nPlanes)
 {
-#ifdef LIBRAW_USE_OPENMP
+#ifdef _OPENMP
   int results[4]; // nPlanes is always <= 4
 #pragma omp parallel for
   for (int32_t plane = 0; plane < nPlanes; ++plane)
@@ -2983,7 +2979,7 @@ void DCraw::crxConvertPlaneLineDf(void *p, int imageRow)
 
 void DCraw::crxLoadFinalizeLoopE3(void *p, int planeHeight)
 {
-#ifdef LIBRAW_USE_OPENMP
+#ifdef _OPENMP
 #pragma omp parallel for
 #endif
   for (int i = 0; i < planeHeight; ++i)
@@ -3018,17 +3014,17 @@ void DCraw::crxLoadRaw()
   uint8_t *hdrBuf = (uint8_t *)malloc(hdr.mdatHdrSize);
 
   // read image header
-#ifdef LIBRAW_USE_OPENMP
+#ifdef _OPENMP
 #pragma omp critical
 #endif
   {
-#ifndef LIBRAW_USE_OPENMP
+#ifndef _OPENMP
     /*libraw_internal_data.internal_data.input->*/input.lock();
 #endif
     /*libraw_internal_data.internal_data.input->*/input.seek(
         data_offset, SEEK_SET);
     /*libraw_internal_data.internal_data.input->*/input.read(hdrBuf, 1, hdr.mdatHdrSize);
-#ifndef LIBRAW_USE_OPENMP
+#ifndef _OPENMP
       /*libraw_internal_data.internal_data.input->*/input.unlock();
 #endif
   }
