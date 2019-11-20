@@ -468,8 +468,8 @@ int DCraw::parseCR3(unsigned long long oAtomList,
       }
 #define current_track RT_canon_CR3_data.crx_header[nTrack]
 
-//      ImageWidth = get2();
-//      ImageHeight = get2();
+      /*ImageWidth = */get2();
+      /*ImageHeight = */get2();
     }
     else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAW"))
     {
