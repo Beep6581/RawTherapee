@@ -98,11 +98,11 @@ FilmNegative::FilmNegative() :
     pack_start(*blueRatio, Gtk::PACK_SHRINK, 0);
     pack_start(*spotgrid, Gtk::PACK_SHRINK, 0);
 
-    Gtk::HSeparator* sep = Gtk::manage(new  Gtk::HSeparator());
+    Gtk::HSeparator* const sep = Gtk::manage(new  Gtk::HSeparator());
     sep->get_style_context()->add_class("grid-row-separator");
     pack_start(*sep, Gtk::PACK_SHRINK, 0);
 
-    Gtk::Grid* fbGrid = Gtk::manage(new Gtk::Grid());
+    Gtk::Grid* const fbGrid = Gtk::manage(new Gtk::Grid());
     fbGrid->attach(*filmBaseLabel, 0, 0);
     fbGrid->attach(*filmBaseValuesLabel, 1, 0);
     pack_start(*fbGrid, Gtk::PACK_SHRINK, 0);
@@ -326,7 +326,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
         } else if (filmBaseSpotButton->get_active()) {
 
-            std::array<float, 3> newBaseLev = {};
+            std::array<float, 3> newBaseLev;
 
             if (fnp->getRawSpotValues(provider->posImage, 32, newBaseLev)) {
                 disableListener();
@@ -335,7 +335,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
                 enableListener();
 
-                Glib::ustring vs = Glib::ustring::sprintf("%0.1f %0.1f %0.1f",
+                const Glib::ustring vs = Glib::ustring::sprintf("%0.1f %0.1f %0.1f",
                                    filmBaseValues[0], filmBaseValues[1], filmBaseValues[2]);
 
                 filmBaseValuesLabel->set_text(vs);

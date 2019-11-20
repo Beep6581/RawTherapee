@@ -52,6 +52,11 @@ void calcMedians(
     // Channel vectors to calculate medians
     std::vector<float> rv, gv, bv;
 
+    const int sz = std::max(0, (y2 - y1) * (x2 - x1));
+    rv.reserve(sz);
+    gv.reserve(sz);
+    bv.reserve(sz);
+
     for (int i = y1; i < y2; i++) {
         for (int j = x1; j < x2; j++) {
             rv.push_back(baseImg->r(i, j));
@@ -122,10 +127,9 @@ void rtengine::Thumbnail::processFilmNegative(
     } else {
 
         // Read film-base values from params
-        float rbase, gbase, bbase;
-        rbase = params.filmNegative.redBase;
-        gbase = params.filmNegative.greenBase;
-        bbase = params.filmNegative.blueBase;
+        float rbase = params.filmNegative.redBase;
+        float gbase = params.filmNegative.greenBase;
+        float bbase = params.filmNegative.blueBase;
 
         // Reconstruct scale_mul coefficients from thumbnail metadata:
         //   redMultiplier / camwbRed is pre_mul[0]
@@ -176,9 +180,9 @@ void rtengine::Thumbnail::processFilmNegative(
         const float bavg = bsum / (rheight * rwidth);
 
         // Shifting current WB multipliers, based on channel averages.
-        rmi /= (gavg / ravg);
-        // gmi /= (gAvg/gAvg);  green chosen as reference channel
-        bmi /= (gavg / bavg);
+        rmi /= gavg / ravg;
+        // gmi /= gAvg / gAvg;  green chosen as reference channel
+        bmi /= gavg / bavg;
 
     } else {
 
@@ -188,12 +192,12 @@ void rtengine::Thumbnail::processFilmNegative(
         double r, g, b;
         ColorTemp(3500., 1., 1., "Custom").getMultipliers (r, g, b);
         //iColorMatrix is cam_rgb
-        double rm = camwbRed   / (iColorMatrix[0][0] * r + iColorMatrix[0][1] * g + iColorMatrix[0][2] * b);
-        double gm = camwbGreen / (iColorMatrix[1][0] * r + iColorMatrix[1][1] * g + iColorMatrix[1][2] * b);
-        double bm = camwbBlue  / (iColorMatrix[2][0] * r + iColorMatrix[2][1] * g + iColorMatrix[2][2] * b);
+        const double rm = camwbRed   / (iColorMatrix[0][0] * r + iColorMatrix[0][1] * g + iColorMatrix[0][2] * b);
+        const double gm = camwbGreen / (iColorMatrix[1][0] * r + iColorMatrix[1][1] * g + iColorMatrix[1][2] * b);
+        const double bm = camwbBlue  / (iColorMatrix[2][0] * r + iColorMatrix[2][1] * g + iColorMatrix[2][2] * b);
 
         // Normalize max WB multiplier to 1.f
-        double m = max(rm, gm, bm);
+        const double m = max(rm, gm, bm);
         rmult /= rm / m;
         gmult /= gm / m;
         bmult /= bm / m;

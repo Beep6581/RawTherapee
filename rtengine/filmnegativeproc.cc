@@ -180,7 +180,7 @@ void calcMedians(
 }
 
 std::array<double, 3> calcWBMults(
-    rtengine::ColorTemp wb,
+    const rtengine::ColorTemp wb,
     const rtengine::ImageMatrices imatrices,
     const rtengine::RawImage *ri,
     const float ref_pre_mul[4])
@@ -358,9 +358,9 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     // If film base values are set in params, use those
     if (params.redBase > 0.f) {
 
-        filmBaseValues[0] = params.redBase   ;
-        filmBaseValues[1] = params.greenBase ;
-        filmBaseValues[2] = params.blueBase  ;
+        filmBaseValues[0] = params.redBase;
+        filmBaseValues[1] = params.greenBase;
+        filmBaseValues[2] = params.blueBase;
 
     } else {
         // ...otherwise, the film negative tool might have just been enabled on this image,
@@ -395,7 +395,7 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
         for (int c = 0; c < 3; ++c) {
             // If using the old channel scaling method, apply WB multipliers here to undo their
             // effect later, as fixed wb compensation was not used in previous version.
-            float ref = oldChannelScaling
+            const float ref = oldChannelScaling
                         ? 24.f / (512.f * wb_mul[c])
                         : 24.f / 512.f;
 
@@ -407,10 +407,11 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     // Calculate multipliers based on previously obtained film base input values.
 
     // Apply current scaling coefficients to raw, unscaled base values.
-    std::array<float, 3> fb;
-    fb[0] = filmBaseValues[0] * scale_mul[0];
-    fb[1] = filmBaseValues[1] * scale_mul[1];
-    fb[2] = filmBaseValues[2] * scale_mul[2];
+    std::array<float,3> fb = {
+        filmBaseValues[0] * scale_mul[0],
+        filmBaseValues[1] * scale_mul[1],
+        filmBaseValues[2] * scale_mul[2]
+    };
 
     if (settings->verbose) {
         printf("Input film base values: %g %g %g\n", fb[0], fb[1], fb[2]);

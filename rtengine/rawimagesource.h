@@ -98,7 +98,7 @@ protected:
     float psRedBrightness[4];
     float psGreenBrightness[4];
     float psBlueBrightness[4];
-    std::array<float, 3> filmBaseValues = {0.f, 0.f, 0.f};
+    std::array<float, 3> filmBaseValues = {};
 
     std::vector<double> histMatchingCache;
     const std::unique_ptr<procparams::ColorManagementParams> histMatchingParams;
