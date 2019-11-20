@@ -17,6 +17,7 @@
 */
 
 #include <iostream>
+
 #include "dcraw.h"
 #ifdef __GNUC__ // silence warning
 #pragma GCC diagnostic push
@@ -587,7 +588,7 @@ fin:
 #undef _min
 #undef _constrain
 #endif
-#define _abs(x) (((x) ^ ((int32_t)(x) >> 31)) - ((int32_t)(x) >> 31))
+#define _abs(x) ((x) < 0 ? -(x) : (x))
 #define _min(a, b) ((a) < (b) ? (a) : (b))
 #define _constrain(x, l, u) ((x) < (l) ? (l) : ((x) > (u) ? (u) : (x)))
 
@@ -622,7 +623,14 @@ libraw_inline void _BitScanReverse(DWORD *Index, unsigned long Mask)
 {
   *Index = sizeof(unsigned long) * 8 - 1 - __builtin_clzl(Mask);
 }
-#define _byteswap_ulong(x) __builtin_bswap32(x)
+uint32_t _byteswap_ulong(uint32_t x)
+{
+    #if BYTE_ORDER == BIG_ENDIAN
+        return x;
+    #else
+        return __builtin_bswap32(x);
+    #endif
+}
 #endif
 
 
@@ -1041,7 +1049,7 @@ libraw_inline void crxDecodeSymbolL1Rounded(CrxBandParam *param,
     bitCode = crxBitstreamGetBits(&param->bitStream, param->kParam) |
               (bitCode << param->kParam);
   int32_t code = -(bitCode & 1) ^ (bitCode >> 1);
-  param->lineBuf1[1] = param->roundedBitsMask * 2 * code + (code >> 31) + sym;
+  param->lineBuf1[1] = param->roundedBitsMask * 2 * code + static_cast<bool>(code < 0) + sym;
 
   if (doCode)
   {
