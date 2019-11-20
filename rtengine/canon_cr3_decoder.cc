@@ -1,4 +1,24 @@
-/* -*- C++ -*-
+/*
+ *  This file is part of RawTherapee.
+ *
+ *  Copyright (c) 2019 RawTherapee development team
+ *
+ *  RawTherapee is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  RawTherapee is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+// Code adapted from ART
+/*
  *  
  *  This file is part of ART.
  *
@@ -16,16 +36,6 @@
  *  along with ART.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
-
-#include "dcraw.h"
-#ifdef __GNUC__ // silence warning
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#endif
-
 // Code adapted from libraw
 /* -*- C++ -*-
  * Copyright 2019 LibRaw LLC (info@libraw.org)
@@ -41,13 +51,17 @@
 
 */
 
+#include <iostream>
+#include <limits>
+
+#include "dcraw.h"
 
 void DCraw::parse_canon_cr3()
 {
     int err;
     unsigned long long szAtomList;
     short nesting = -1;
-    short nTrack = -1;
+    unsigned short nTrack = 0;
     short TrackType;
     char AtomNameStack[128];
     strcpy(make, "Canon");
@@ -61,14 +75,14 @@ void DCraw::parse_canon_cr3()
 
 #define LIBRAW_CRXTRACKS_MAXCOUNT RT_canon_CR3_data.CRXTRACKS_MAXCOUNT
 
-void DCraw::selectCRXTrack(short maxTrack)
+void DCraw::selectCRXTrack(unsigned short maxTrack)
 {
   if (maxTrack < 0)
     return;
   INT64 bitcounts[LIBRAW_CRXTRACKS_MAXCOUNT], maxbitcount = 0;
   uint32_t maxjpegbytes = 0;
   memset(bitcounts, 0, sizeof(bitcounts));
-  for (int i = 0; i <= maxTrack && i < LIBRAW_CRXTRACKS_MAXCOUNT; i++)
+  for (unsigned int i = 0; i <= maxTrack && i < LIBRAW_CRXTRACKS_MAXCOUNT; i++)
   {
     CanonCR3Data::crx_data_header_t *d = &RT_canon_CR3_data.crx_header[i];
     if (d->MediaType == 1) // RAW
@@ -89,18 +103,21 @@ void DCraw::selectCRXTrack(short maxTrack)
   }
   if (maxbitcount < 8)
     return;
-  int framei = -1, framecnt = 0;
-  for (int i = 0; i <= maxTrack && i < LIBRAW_CRXTRACKS_MAXCOUNT; i++)
+  bool has_framei = false;
+  unsigned int framei = 0, framecnt = 0;
+  for (unsigned int i = 0; i <= maxTrack && i < LIBRAW_CRXTRACKS_MAXCOUNT; i++)
   {
     if (bitcounts[i] == maxbitcount)
     {
-      if (framecnt <= shot_select)
+      if (framecnt <= shot_select) {
+        has_framei = true;
         framei = i;
+      }
       framecnt++;
     }
   }
   is_raw = framecnt;
-  if (framei >= 0 && framei < LIBRAW_CRXTRACKS_MAXCOUNT)
+  if (has_framei && framei < LIBRAW_CRXTRACKS_MAXCOUNT)
   {
     CanonCR3Data::crx_data_header_t *d =
         &RT_canon_CR3_data.crx_header[framei];
@@ -129,7 +146,7 @@ void DCraw::selectCRXTrack(short maxTrack)
 
     int tiff_idx = -1;
     INT64 tpixels = 0;
-    for (int i = 0; i < tiff_nifds; i++)
+    for (unsigned int i = 0; i < tiff_nifds; i++)
       if (INT64(tiff_ifd[i].height) * INT64(tiff_ifd[i].height) > tpixels)
       {
         tpixels = INT64(tiff_ifd[i].height) * INT64(tiff_ifd[i].height);
@@ -147,7 +164,7 @@ void DCraw::selectCRXTrack(short maxTrack)
    (get4() != 0x00000008))
 int DCraw::parseCR3(unsigned long long oAtomList,
                      unsigned long long szAtomList, short &nesting,
-                     char *AtomNameStack, short &nTrack, short &TrackType)
+                     char *AtomNameStack, unsigned short &nTrack, short &TrackType)
 {
   /*
   Atom starts with 4 bytes for Atom size and 4 bytes containing Atom name
@@ -159,8 +176,8 @@ int DCraw::parseCR3(unsigned long long oAtomList,
   */
   const char UIID_Canon[17] =
       "\x85\xc0\xb6\x87\x82\x0f\x11\xe0\x81\x11\xf4\xce\x46\x2b\x6a\x48";
-  const char UIID_Preview[17] =
-      "\xea\xf4\x2b\x5e\x1c\x98\x4b\x88\xb9\xfb\xb7\xdc\x40\x6e\x4d\x16";
+//  const char UIID_Preview[17] =
+//      "\xea\xf4\x2b\x5e\x1c\x98\x4b\x88\xb9\xfb\xb7\xdc\x40\x6e\x4d\x16";
 
   /*
   AtomType = 0 - unknown: "unk."
@@ -168,7 +185,7 @@ int DCraw::parseCR3(unsigned long long oAtomList,
   AtomType = 2 - leaf atom: "leaf"
   AtomType = 3 - can be container, can be leaf: "both"
   */
-  const char sAtomeType[4][5] = {"unk.", "cont", "leaf", "both"};
+//  const char sAtomeType[4][5] = {"unk.", "cont", "leaf", "both"};
   short AtomType;
   static const struct
   {
@@ -256,7 +273,8 @@ int DCraw::parseCR3(unsigned long long oAtomList,
 
   const char sHandlerType[5][5] = {"unk.", "soun", "vide", "hint", "meta"};
 
-  int c, err = 0;
+  unsigned int c;
+  int err = 0;
 
   ushort tL;                        // Atom length represented in 4 or 8 bytes
   char nmAtom[5];                   // Atom name
@@ -268,14 +286,14 @@ int DCraw::parseCR3(unsigned long long oAtomList,
   char UIID[16];
   uchar CMP1[36];
   char HandlerType[5], MediaFormatID[5];
-  unsigned ImageWidth, ImageHeight;
+//  unsigned ImageWidth, ImageHeight;
   long relpos_inDir, relpos_inBox;
   unsigned szItem, Tag, lTag;
   ushort tItem;
 
   nmAtom[0] = MediaFormatID[0] = nmAtom[4] = MediaFormatID[4] = '\0';
   strcpy(HandlerType, sHandlerType[0]);
-  ImageWidth = ImageHeight = 0U;
+//  ImageWidth = ImageHeight = 0U;
   oAtom = oAtomList;
   nesting++;
   if (nesting > 31)
@@ -450,8 +468,8 @@ int DCraw::parseCR3(unsigned long long oAtomList,
       }
 #define current_track RT_canon_CR3_data.crx_header[nTrack]
 
-      ImageWidth = get2();
-      ImageHeight = get2();
+//      ImageWidth = get2();
+//      ImageHeight = get2();
     }
     else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAW"))
     {
@@ -813,7 +831,7 @@ static inline void crxFillBuffer(CrxBitstream *bitStrm)
 
 libraw_inline int crxBitstreamGetZeros(CrxBitstream *bitStrm)
 {
-  uint32_t bitData = bitStrm->bitData;
+//  uint32_t bitData = bitStrm->bitData;
   uint32_t nonZeroBit = 0;
   uint64_t nextData = 0;
   int32_t result = 0;
@@ -2049,7 +2067,7 @@ int crxIdwt53FilterTransform(CrxPlaneComp *comp, uint32_t level)
       lineBufH1[i] = lineBufL1[i] + ((delta + lineBufH0[i]) >> 1);
       lineBufH2[i] = delta;
     }
-    if (wavelet->curLine >= wavelet->height - 3 && wavelet->height & 1)
+    if (wavelet->curLine >= wavelet->height - 3 && (wavelet->height & 1))
     {
       wavelet->curH += 3;
       wavelet->curLine += 3;
@@ -2644,10 +2662,9 @@ int crxReadSubbandHeaders(crx_data_header_t *hdr, CrxImage *img, CrxTile *tile,
 
   if (!img->subbandCount)
     return 0;
-  int32_t curSubband = 0;
   int32_t subbandOffset = 0;
   band = comp->subBands;
-  for (int curSubband = 0; curSubband < img->subbandCount; curSubband++, band++)
+  for (unsigned int curSubband = 0; curSubband < img->subbandCount; curSubband++, band++)
   {
     if (*mdatSize < 0xC)
       return -1;
@@ -2683,7 +2700,7 @@ int crxReadSubbandHeaders(crx_data_header_t *hdr, CrxImage *img, CrxTile *tile,
 int crxReadImageHeaders(crx_data_header_t *hdr, CrxImage *img, uint8_t *mdatPtr,
                         uint32_t mdatSize)
 {
-  int nTiles = img->tileRows * img->tileCols;
+  unsigned int nTiles = img->tileRows * img->tileCols;
 
   if (!nTiles)
     return -1;
@@ -2702,7 +2719,7 @@ int crxReadImageHeaders(crx_data_header_t *hdr, CrxImage *img, uint8_t *mdatPtr,
     CrxPlaneComp *comps = (CrxPlaneComp *)(tile + nTiles);
     CrxSubband *bands = (CrxSubband *)(comps + img->nPlanes * nTiles);
 
-    for (int curTile = 0; curTile < nTiles; curTile++, tile++)
+    for (unsigned int curTile = 0; curTile < nTiles; curTile++, tile++)
     {
       tile->tileFlag = 0; // tile neighbouring flags
       tile->tileNumber = curTile;
@@ -2780,7 +2797,7 @@ int crxReadImageHeaders(crx_data_header_t *hdr, CrxImage *img, uint8_t *mdatPtr,
   uint8_t *dataPtr = mdatPtr;
   CrxTile *tile = img->tiles;
 
-  for (int curTile = 0; curTile < nTiles; curTile++, tile++)
+  for (unsigned int curTile = 0; curTile < nTiles; curTile++, tile++)
   {
     if (dataSize < 0xC)
       return -1;
@@ -2997,8 +3014,7 @@ void DCraw::crxLoadFinalizeLoopE3(void *p, int planeHeight)
 void DCraw::crxLoadRaw()
 {
   CrxImage img;
-  if (RT_canon_CR3_data.crx_track_selected < 0 ||
-      RT_canon_CR3_data.crx_track_selected >=
+  if (RT_canon_CR3_data.crx_track_selected >=
           LIBRAW_CRXTRACKS_MAXCOUNT)
     derror();
   crx_data_header_t hdr =
@@ -3052,9 +3068,9 @@ void DCraw::crxLoadRaw()
   crxFreeImageData(&img);
 }
 
-int DCraw::crxParseImageHeader(uchar *cmp1TagData, int nTrack)
+int DCraw::crxParseImageHeader(uchar *cmp1TagData, unsigned int nTrack)
 {
-  if (nTrack < 0 || nTrack >= LIBRAW_CRXTRACKS_MAXCOUNT)
+  if (nTrack >= LIBRAW_CRXTRACKS_MAXCOUNT)
     return -1;
   if (!cmp1TagData)
     return -1;
@@ -3099,8 +3115,8 @@ int DCraw::crxParseImageHeader(uchar *cmp1TagData, int nTrack)
     if (hdr->nBits != 8)
       return -1;
   }
-  else if (hdr->nPlanes != 4 || hdr->f_width & 1 || hdr->f_height & 1 ||
-           hdr->tileWidth & 1 || hdr->tileHeight & 1 || hdr->cfaLayout > 3u ||
+  else if (hdr->nPlanes != 4 || (hdr->f_width & 1) || (hdr->f_height & 1) ||
+           (hdr->tileWidth & 1) || (hdr->tileHeight & 1) || hdr->cfaLayout > 3 ||
            (hdr->encType && hdr->encType != 1 && hdr->encType != 3) ||
            hdr->nBits == 8)
     return -1;
@@ -3118,7 +3134,3 @@ int DCraw::crxParseImageHeader(uchar *cmp1TagData, int nTrack)
 #undef _constrain
 #undef libraw_inline
 #undef LIBRAW_CRXTRACKS_MAXCOUNT
-
-#ifdef __GNUC__ // silence warning
-#pragma GCC diagnostic pop
-#endif
