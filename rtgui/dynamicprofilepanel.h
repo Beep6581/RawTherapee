@@ -16,14 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _DYNAMICPROFILEPANEL_H_
-#define _DYNAMICPROFILEPANEL_H_
+#pragma once
 
 #include <gtkmm.h>
-#include "../rtengine/dynamicprofile.h"
+
 #include "profilestorecombobox.h"
 
-class DynamicProfilePanel: public Gtk::VBox
+#include "../rtengine/dynamicprofile.h"
+
+class DynamicProfilePanel :
+    public Gtk::VBox
 {
 public:
     DynamicProfilePanel();
@@ -133,5 +135,3 @@ private:
     Gtk::Button button_edit_;
     Gtk::Button button_delete_;
 };
-
-#endif // _DYNAMICPROFILEPANEL_H_

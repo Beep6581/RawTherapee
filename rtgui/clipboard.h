@@ -16,25 +16,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CLIPBOARD_
-#define _CLIPBOARD_
+#pragma once
 
 #include <memory>
 #include <vector>
 
-#include "mydiagonalcurve.h"
-#include "myflatcurve.h"
-#include "paramsedited.h"
+#include "../rtengine/diagonalcurvetypes.h"
+#include "../rtengine/flatcurvetypes.h"
 
-#include "../rtengine/rtengine.h"
+struct ParamsEdited;
 
 namespace rtengine
 {
 
 namespace procparams
 {
-
+class ProcParams;
 class PartialProfile;
+class IPTCPairs;
 
 }
 
@@ -80,5 +79,3 @@ private:
 };
 
 extern Clipboard clipboard;
-
-#endif

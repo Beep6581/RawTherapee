@@ -16,14 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PLACESBROWSER_
-#define _PLACESBROWSER_
+#pragma once
 
 #include <gtkmm.h>
+
 #include <giomm.h>
+
 #include "multilangmgr.h"
 
-class PlacesBrowser : public Gtk::VBox
+class PlacesBrowser :
+    public Gtk::VBox
 {
 public:
     typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
@@ -84,7 +86,3 @@ inline void PlacesBrowser::setDirSelector (const PlacesBrowser::DirSelectionSlot
 {
     this->selectDir = selectDir;
 }
-
-#endif
-
-

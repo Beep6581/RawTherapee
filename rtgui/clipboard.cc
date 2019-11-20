@@ -18,6 +18,7 @@
  */
 #include "clipboard.h"
 
+#include "paramsedited.h"
 #include "../rtengine/procparams.h"
 
 Clipboard clipboard;

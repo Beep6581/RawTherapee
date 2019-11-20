@@ -526,7 +526,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
 };
 
 
-namespace rtengine {
+namespace rtengine
+{
 
 RefreshMapper::RefreshMapper():
     next_event_(rtengine::NUMOFEVENTS)

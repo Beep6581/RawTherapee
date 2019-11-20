@@ -16,23 +16,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THUMBNAILBROWSERBASE_
-#define _THUMBNAILBROWSERBASE_
+#pragma once
+
+#include <set>
 
 #include <gtkmm.h>
-#include "thumbbrowserentrybase.h"
-#include <set>
-#include "options.h"
+
 #include "guiutils.h"
-#include "inspector.h"
+#include "options.h"
 
 /*
  * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space
  */
-class ThumbBrowserBase  :  public Gtk::Grid
+
+class Inspector;
+class ThumbBrowserEntryBase;
+
+class ThumbBrowserBase :
+    public Gtk::Grid
 {
 
-    class Internal : public Gtk::DrawingArea
+    class Internal :
+        public Gtk::DrawingArea
     {
         //Cairo::RefPtr<Cairo::Context> cc;
         int ofsX, ofsY;
@@ -253,5 +258,3 @@ public:
     }
 
 };
-
-#endif

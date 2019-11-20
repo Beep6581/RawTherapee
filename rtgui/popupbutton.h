@@ -18,13 +18,15 @@
  *
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
-#ifndef _POPUPBUTTON_
-#define _POPUPBUTTON_
+#pragma once
 
 #include <gtkmm/button.h>
+
 #include "popupcommon.h"
 
-class PopUpButton : public Gtk::Button, public PopUpCommon
+class PopUpButton :
+    public Gtk::Button,
+    public PopUpCommon
 {
 
 public:
@@ -40,5 +42,3 @@ private:
     bool nextOnClicked;
 
 };
-
-#endif

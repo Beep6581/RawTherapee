@@ -16,20 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __CROPHANDLER__
-#define __CROPHANDLER__
+#pragma once
 
 #include <atomic>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include <gtkmm.h>
 
-#include "../rtengine/rtengine.h"
 #include "editbuffer.h"
-
 #include "lockablecolorpicker.h"
 #include "threadutils.h"
+
+#include "../rtengine/rtengine.h"
 
 class EditSubscriber;
 
@@ -139,5 +138,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif

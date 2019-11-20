@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _COLORTEMP_
-#define _COLORTEMP_
+#pragma once
 
 #include <cmath>
 #include <map>
@@ -207,4 +206,3 @@ public:
 
 };
 }
-#endif

@@ -16,25 +16,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _COLORAPPEARANCE_H_
-#define _COLORAPPEARANCE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
-#include "toolpanel.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
-#include "mycurve.h"
-#include "guiutils.h"
 #include "colorprovider.h"
+#include "curvelistener.h"
+#include "guiutils.h"
+#include "toolpanel.h"
+
+class DiagonalCurveEditor;
+class CurveEditorGroup;
+class CurveEditor;
 
 class ColorAppearance final :
-        public ToolParamBlock,
-        public AdjusterListener,
-        public FoldableToolPanel,
-        public rtengine::AutoCamListener,
-        public CurveListener,
-        public ColorProvider
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public rtengine::AutoCamListener,
+    public CurveListener,
+    public ColorProvider
 {
 public:
     ColorAppearance ();
@@ -173,5 +175,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif

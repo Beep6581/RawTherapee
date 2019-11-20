@@ -16,16 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _RENAMEDLG_
-#define _RENAMEDLG_
+#pragma once
 
 #include <gtkmm.h>
-#include "cacheimagedata.h"
+
 #include "guiutils.h"
 
 #define RESPONSE_ALL 100
 
-class RenameDialog : public Gtk::Dialog
+class CacheImageData;
+
+class RenameDialog :
+    public Gtk::Dialog
 {
 
 protected:
@@ -43,6 +45,3 @@ public:
     Glib::ustring getNewName ();
 
 };
-
-#endif
-

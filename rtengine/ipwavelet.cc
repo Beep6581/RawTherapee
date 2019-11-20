@@ -28,18 +28,21 @@
 
 #include "../rtgui/threadutils.h"
 
-#include "rtengine.h"
-#include "improcfun.h"
-#include "LUT.h"
 #include "array2D.h"
-#include "rt_math.h"
-#include "mytime.h"
-#include "sleef.c"
-#include "opthelper.h"
-#include "median.h"
+#include "color.h"
+#include "curves.h"
 #include "EdgePreservingDecomposition.h"
 #include "iccstore.h"
+#include "improcfun.h"
+#include "labimage.h"
+#include "LUT.h"
+#include "median.h"
+#include "opthelper.h"
 #include "procparams.h"
+#include "rt_math.h"
+#include "rtengine.h"
+#include "sleef.h"
+#include "../rtgui/options.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -54,11 +57,8 @@
 
 #define epsilon 0.001f/(TS*TS) //tolerance
 
-
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 struct cont_params {
     float mul[10];
@@ -1195,7 +1195,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 b = 327.68f * Chprov * sincosv.x; //aply Munsell
                             } else {//general case
                                 L = labco->L[i1][j1];
-                                const float Lin = labco->L[i1][j1];
+                                const float Lin = std::max(0.f, L);
 
                                 if(wavclCurve  && cp.finena) {
                                     labco->L[i1][j1] = (0.5f * Lin + 1.5f * wavclCurve[Lin]) / 2.f;   //apply contrast curve

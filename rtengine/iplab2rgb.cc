@@ -17,13 +17,14 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "rtengine.h"
+#include "image8.h"
+#include "imagefloat.h"
+#include "labimage.h"
 #include "improcfun.h"
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "iccstore.h"
 #include "iccmatrices.h"
-#include "../rtgui/options.h"
 #include "settings.h"
-#include "curves.h"
 #include "alignedbuffer.h"
 #include "color.h"
 #include "procparams.h"
@@ -32,8 +33,6 @@ namespace rtengine
 {
 
 extern void filmlike_clip(float *r, float *g, float *b);
-
-extern const Settings* settings;
 
 namespace {
 

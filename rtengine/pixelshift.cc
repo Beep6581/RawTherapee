@@ -21,15 +21,26 @@
 ////////////////////////////////////////////////////////////////
 
 #include <cmath>
-#include "rawimagesource.h"
-#include "../rtgui/multilangmgr.h"
-#include "procparams.h"
+#include <stack>
+
+#include "array2D.h"
 #include "gauss.h"
 #include "median.h"
+#include "procparams.h"
+#include "rawimagesource.h"
+#include "sleef.h"
+#include "../rtgui/multilangmgr.h"
+#include "../rtgui/options.h"
+
 //#define BENCHMARK
 #include "StopWatch.h"
+
 namespace
 {
+
+unsigned fc(const unsigned int cfa[2][2], int r, int c) {
+    return cfa[r & 1][c & 1];
+}
 
 float greenDiff(float a, float b, float stddevFactor, float eperIso, float nreadIso, float prnu)
 {
@@ -107,9 +118,9 @@ void xorMasks(int xStart, int xEnd, int yStart, int yEnd, const array2D<uint8_t>
     }
 }
 
-void floodFill4Impl(int y, int x, int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &mask, std::stack<std::pair<uint16_t, uint16_t>, std::vector<std::pair<uint16_t, uint16_t>>> &coordStack)
+void floodFill4Impl(int yin, int xin, int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &mask, std::stack<std::pair<uint16_t, uint16_t>, std::vector<std::pair<uint16_t, uint16_t>>> &coordStack)
 {
-    coordStack.emplace(x, y);
+    coordStack.emplace(xin, yin);
 
     while(!coordStack.empty()) {
         auto coord = coordStack.top();
@@ -295,7 +306,7 @@ void calcFrameBrightnessFactor(unsigned int frame, uint32_t datalen, LUTu *histo
 
 using namespace std;
 using namespace rtengine;
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const procparams::RAWParams &rawParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
 BENCHFUN
     if(numFrames != 4) { // fallback for non pixelshift files
@@ -303,19 +314,20 @@ BENCHFUN
         return;
     }
 
-    RAWParams::BayerSensor bayerParams = rawParamsIn.bayersensor;
+    procparams::RAWParams::BayerSensor bayerParams = rawParamsIn.bayersensor;
 
     bool motionDetection = true;
 
-    if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::AUTO) {
+    if(bayerParams.pixelShiftMotionCorrectionMethod == procparams::RAWParams::BayerSensor::PSMotionCorrectionMethod::AUTO) {
         bool pixelShiftEqualBright = bayerParams.pixelShiftEqualBright;
         bayerParams.setPixelShiftDefaults();
         bayerParams.pixelShiftEqualBright = pixelShiftEqualBright;
-    } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::OFF) {
+    } else if(bayerParams.pixelShiftMotionCorrectionMethod == procparams::RAWParams::BayerSensor::PSMotionCorrectionMethod::OFF) {
         motionDetection = false;
         bayerParams.pixelShiftShowMotion = false;
     }
 
+    const unsigned int cfarray[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     const bool showMotion = bayerParams.pixelShiftShowMotion;
     const bool showOnlyMask = bayerParams.pixelShiftShowMotionMaskOnly && showMotion;
     const float smoothFactor = 1.0 - bayerParams.pixelShiftSmoothFactor;
@@ -323,9 +335,9 @@ BENCHFUN
     if(motionDetection) {
         if(!showOnlyMask) {
             if(bayerParams.pixelShiftMedian) { // We need the demosaiced frames for motion correction
-                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
+                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
-                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
                     dual_demosaic_RT (true, rawParamsIn, winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.dualDemosaicContrast, true);
                 } else {
                     amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue, options.chunkSizeAMAZE, options.measure);
@@ -335,9 +347,9 @@ BENCHFUN
                 multi_array2D<float, 3> blueTmp(winw, winh);
 
                 for(int i = 0; i < 3; i++) {
-                    if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
+                    if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                         lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.lmmse_iterations);
-                    } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                    } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
                         dual_demosaic_RT (true, rawParamsIn, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.dualDemosaicContrast, true);
                     } else {
                         amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], options.chunkSizeAMAZE, options.measure);
@@ -362,11 +374,11 @@ BENCHFUN
                     }
                 }
             } else {
-                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
+                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
-                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
-                    RAWParams rawParamsTmp = rawParamsIn;
-                    rawParamsTmp.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4);
+                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                    procparams::RAWParams rawParamsTmp = rawParamsIn;
+                    rawParamsTmp.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEVNG4);
                     dual_demosaic_RT (true, rawParamsTmp, winw, winh, rawData, red, green, blue, bayerParams.dualDemosaicContrast, true);
                 } else {
                     amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
@@ -634,11 +646,11 @@ BENCHFUN
 
                 for(int i = winy + 1; i < winh - 1; ++i) {
                     int j = winx + 1;
-                    int c = FC(i, j);
+                    int c = fc(cfarray, i, j);
 
-                    bool bluerow = (c + FC(i, j + 1)) == 3;
+                    bool bluerow = (c + fc(cfarray, i, j + 1)) == 3;
 
-                    for(int j = winx + 1, offset = FC(i, j) & 1; j < winw - 1; ++j, offset ^= 1) {
+                    for(int j = winx + 1, offset = fc(cfarray, i, j) & 1; j < winw - 1; ++j, offset ^= 1) {
                         (*histogreenThr[1 - offset])[(*rawDataFrames[1 - offset])[i - offset + 1][j]]++;
                         (*histogreenThr[3 - offset])[(*rawDataFrames[3 - offset])[i + offset][j + 1]]++;
 
@@ -719,9 +731,9 @@ BENCHFUN
                                    };
             int ng = 0;
             int j = winx + 1;
-            int c = FC(i, j);
+            int c = fc(cfarray, i, j);
 
-            if((c + FC(i, j + 1)) == 3) {
+            if((c + fc(cfarray, i, j + 1)) == 3) {
                 // row with blue pixels => swap destination pointers for non green pixels
                 std::swap(nonGreenDest0, nonGreenDest1);
                 ng ^= 1;
@@ -776,7 +788,7 @@ BENCHFUN
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
             // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
-            unsigned int offset = FC(i, winx + border - offsX) & 1;
+            unsigned int offset = fc(cfarray, i, winx + border - offsX) & 1;
 
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
                 psMask[i][j] = noMotion;
@@ -912,7 +924,7 @@ BENCHFUN
             float *blueDest = blue[i + offsY];
 
             // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
-            unsigned int offset = FC(i, winx + border - offsX) & 1;
+            unsigned int offset = fc(cfarray, i, winx + border - offsX) & 1;
 
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
                 if(showOnlyMask) {
@@ -962,9 +974,9 @@ BENCHFUN
             float *nonGreenDest1 = blue[i];
             int ng = 0;
             int j = winx + 1;
-            int c = FC(i, j);
+            int c = fc(cfarray, i, j);
 
-            if((c + FC(i, j + 1)) == 3) {
+            if((c + fc(cfarray, i, j + 1)) == 3) {
                 // row with blue pixels => swap destination pointers for non green pixels
                 std::swap(nonGreenDest0, nonGreenDest1);
                 ng ^= 1;

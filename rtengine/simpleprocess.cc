@@ -16,6 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include "cieimage.h"
+#include "dcp.h"
+#include "imagefloat.h"
+#include "labimage.h"
 #include "rtengine.h"
 #include "colortemp.h"
 #include "imagesource.h"
@@ -25,7 +29,8 @@
 #include "clutstore.h"
 #include "processingjob.h"
 #include "procparams.h"
-#include <glibmm.h>
+#include <glibmm/ustring.h>
+#include <glibmm/thread.h>
 #include "../rtgui/options.h"
 #include "rawimagesource.h"
 #include "../rtgui/multilangmgr.h"
@@ -34,7 +39,6 @@
 
 namespace rtengine
 {
-extern const Settings* settings;
 
 namespace
 {
@@ -240,7 +244,6 @@ private:
             bool dehacontlutili = false;
             bool mapcontlutili = false;
             bool useHsl = false;
-//        multi_array2D<float, 3> conversionBuffer(1, 1);
             multi_array2D<float, 4> conversionBuffer (1, 1);
             imgsrc->retinexPrepareBuffers (params.icm, params.retinex, conversionBuffer, dummy);
             imgsrc->retinexPrepareCurves (params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
@@ -995,7 +998,7 @@ private:
         }
 
         autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-        DCPProfile::ApplyState as;
+        DCPProfileApplyState as;
         DCPProfile *dcpProf = imgsrc->getDCP (params.icm, as);
 
         LUTu histToneCurve;

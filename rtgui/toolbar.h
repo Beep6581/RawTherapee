@@ -16,13 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __TOOLBAR_H__
-#define __TOOLBAR_H__
+#pragma once
 
 #include <gtkmm.h>
-#include "toolenum.h"
-#include "rtimage.h"
+
 #include "lockablecolorpicker.h"
+#include "toolenum.h"
+
+class RTImage;
 
 class ToolBarListener
 {
@@ -36,7 +37,7 @@ public:
     virtual void editModeSwitchedOff() = 0;
 };
 
-class ToolBar : public Gtk::HBox
+class ToolBar final : public Gtk::HBox
 {
 private:
     std::unique_ptr<RTImage> handimg;
@@ -99,5 +100,3 @@ public:
     bool handleShortcutKey (GdkEventKey* event);
     void setBatchMode();
 };
-
-#endif

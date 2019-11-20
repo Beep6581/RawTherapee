@@ -34,6 +34,7 @@ set(RTENGINESOURCEFILES
     amaze_demosaic_RT.cc
     badpixels.cc
     boxblur.cc
+    canon_cr3_decoder.cc
     CA_correct_RT.cc
     calc_distort.cc
     camconst.cc
@@ -104,6 +105,7 @@ set(RTENGINESOURCEFILES
     lj92.c
     loadinitial.cc
     myfile.cc
+    panasonic_decoders.cc
     pdaflinesfilter.cc
     PF_correct_RT.cc
     pipettebuffer.cc
@@ -112,6 +114,7 @@ set(RTENGINESOURCEFILES
     processingjob.cc
     procparams.cc
     profilestore.cc
+    rawflatfield.cc
     rawimage.cc
     rawimagesource.cc
     rcd_demosaic.cc
@@ -121,7 +124,6 @@ set(RTENGINESOURCEFILES
     rtthumbnail.cc
     shmap.cc
     simpleprocess.cc
-    slicer.cc
     stdimagesource.cc
     tmo_fattal02.cc
     utils.cc

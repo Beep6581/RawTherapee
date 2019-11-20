@@ -18,8 +18,6 @@
  */
 #pragma once
 
-#include "array2D.h"
-#include "coord.h"
 #include "iimage.h"
 
 class EditDataProvider;
@@ -31,6 +29,7 @@ namespace rtengine
 {
 
 class Imagefloat;
+class LabImage;
 
 /// @brief Structure that contains information about and pointers to the Edit buffer
 class PipetteBuffer

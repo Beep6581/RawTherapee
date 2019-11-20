@@ -56,21 +56,18 @@
  *          LUTuc stands for LUT<unsigned char>
  */
 
-#ifndef LUT_H_
-#define LUT_H_
+#pragma once
 
 #include <cstring>
 #include <cstdint>
 #include <cassert>
 
 #ifndef NDEBUG
-#include <glibmm.h>
 #include <fstream>
 #endif
 
 #include "opthelper.h"
 #include "rt_math.h"
-#include "noncopyable.h"
 
 // Bit representations of flags
 enum {
@@ -485,26 +482,6 @@ public:
         return (p1 + p2 * diff);
     }
 
-#ifndef NDEBUG
-    // Debug facility ; dump the content of the LUT in a file. No control of the filename is done
-    void dump(Glib::ustring fname)
-    {
-        if (size) {
-            Glib::ustring fname_ = fname + ".xyz"; // TopSolid'Design "plot" file format
-            std::ofstream f (fname_.c_str());
-            f << "$" << std::endl;
-
-            for (unsigned int iter = 0; iter < size; iter++) {
-                f << iter << ", " << data[iter] << ", 0." << std::endl;
-            }
-
-            f << "$" << std::endl;
-            f.close ();
-        }
-    }
-#endif
-
-
     operator bool (void) const
     {
         return size > 0;
@@ -649,5 +626,3 @@ public:
 
 
 };
-
-#endif /* LUT_H_ */

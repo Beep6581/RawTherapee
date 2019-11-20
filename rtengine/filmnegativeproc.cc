@@ -19,27 +19,19 @@
 #include <cmath>
 #include <iostream>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
+#include "rawimage.h"
 #include "rawimagesource.h"
 
+#include "coord.h"
 #include "mytime.h"
 #include "opthelper.h"
+#include "pixelsmap.h"
 #include "procparams.h"
 #include "rt_algo.h"
 #include "rtengine.h"
-
+#include "sleef.h"
 //#define BENCHMARK
 #include "StopWatch.h"
-
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
 
 namespace
 {
@@ -208,7 +200,7 @@ std::array<double, 3> calcWBMults(
 
 }
 
-bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
+bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const procparams::FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
 {
     newExps = {
         static_cast<float>(currentParams.redRatio * currentParams.greenExp),
@@ -298,7 +290,7 @@ bool rtengine::RawImageSource::getFilmBaseValues(std::array<float, 3>& rawValues
     return true;
 }
 
-bool rtengine::RawImageSource::getRawSpotValues(Coord2D spotCoord, int spotSize, int tran, const FilmNegativeParams &params, std::array<float, 3>& rawValues)
+bool rtengine::RawImageSource::getRawSpotValues(Coord2D spotCoord, int spotSize, int tran, const procparams::FilmNegativeParams &params, std::array<float, 3>& rawValues)
 {
     Coord spot;
     transformPosition(spotCoord.x, spotCoord.y, tran, spot.x, spot.y);

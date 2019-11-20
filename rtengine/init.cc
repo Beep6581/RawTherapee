@@ -18,6 +18,7 @@
  */
 #include <fftw3.h>
 #include "../rtgui/profilestorecombobox.h"
+#include "color.h"
 #include "rtengine.h"
 #include "iccstore.h"
 #include "dcp.h"
@@ -42,7 +43,7 @@ const Settings* settings;
 MyMutex* lcmsMutex = nullptr;
 MyMutex *fftwMutex = nullptr;
 
-int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll)
+int init (const Settings* s, const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir, bool loadAll)
 {
     settings = s;
     ProcParams::init();

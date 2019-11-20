@@ -23,10 +23,14 @@
 #include "tonecurve.h"
 
 #include "adjuster.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "eventmapper.h"
 #include "ppversion.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 #include "editcallbacks.h"
 
 using namespace rtengine;

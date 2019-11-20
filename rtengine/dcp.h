@@ -24,35 +24,23 @@
 #include <array>
 #include <memory>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "../rtgui/threadutils.h"
 
-#include "imagefloat.h"
 #include "curves.h"
-#include "colortemp.h"
 #include "noncopyable.h"
 
 namespace rtengine
 {
 
+class ColorTemp;
+class Imagefloat;
+class DCPProfileApplyState;
+
 class DCPProfile final
 {
 public:
-    class ApplyState final
-    {
-    public:
-        ApplyState();
-        ~ApplyState();
-
-    private:
-        struct Data;
-
-        const std::unique_ptr<Data> data;
-
-        friend class DCPProfile;
-    };
-
     struct Illuminants {
         short light_source_1;
         short light_source_2;
@@ -86,8 +74,8 @@ public:
         const Matrix& cam_wb_matrix,
         bool apply_hue_sat_map = true
     ) const;
-    void setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, ApplyState& as_out);
-    void step2ApplyTile(float* r, float* g, float* b, int width, int height, int tile_width, const ApplyState& as_in) const;
+    void setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, DCPProfileApplyState& as_out);
+    void step2ApplyTile(float* r, float* g, float* b, int width, int height, int tile_width, const DCPProfileApplyState& as_in) const;
 
 private:
     struct HsbModify {
@@ -146,6 +134,20 @@ private:
     short light_source_2;
 
     AdobeToneCurve tone_curve;
+};
+
+class DCPProfileApplyState final
+{
+public:
+    DCPProfileApplyState();
+    ~DCPProfileApplyState();
+
+private:
+    struct Data;
+
+    const std::unique_ptr<Data> data;
+
+    friend class DCPProfile;
 };
 
 class DCPStore final :

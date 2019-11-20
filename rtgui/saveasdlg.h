@@ -16,15 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _SAVEASDLG_
-#define _SAVEASDLG_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "saveformatpanel.h"
-#include "options.h"
 
-class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener
+class SaveAsDialog :
+    public Gtk::Dialog,
+    public FormatChangeListener
 {
 
 protected:
@@ -65,6 +66,3 @@ public:
     void formatChanged(const Glib::ustring& format) override;
     bool keyPressed (GdkEventKey* event);
 };
-
-
-#endif

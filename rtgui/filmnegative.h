@@ -26,7 +26,6 @@
 #include "editcallbacks.h"
 #include "guiutils.h"
 #include "toolpanel.h"
-#include "wbprovider.h"
 
 class FilmNegProvider
 {
@@ -38,7 +37,7 @@ public:
     virtual bool getFilmBaseValues(std::array<float, 3>& rawValues) = 0;
 };
 
-class FilmNegative :
+class FilmNegative final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel,

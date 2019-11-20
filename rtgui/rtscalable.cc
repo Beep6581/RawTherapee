@@ -20,16 +20,17 @@
 #include "rtscalable.h"
 #include <glib/gstdio.h>
 #include <regex>
-#include <glibmm.h>
+#include <gtkmm.h>
 #include <iostream>
 #include <librsvg/rsvg.h>
+
+#include "../rtengine/rt_math.h"
 #include "options.h"
 
 double RTScalable::dpi = 0.;
 int RTScalable::scale = 0;
 
 extern Glib::ustring argv0;
-extern Options options;
 extern unsigned char initialGdkScale;
 extern float fontScale;
 Gtk::TextDirection RTScalable::direction = Gtk::TextDirection::TEXT_DIR_NONE;
@@ -101,7 +102,7 @@ void RTScalable::deleteDir(const Glib::ustring& path)
             error |= g_remove (Glib::build_filename (path, *entry).c_str());
         }
 
-        if (error != 0 && options.rtSettings.verbose) {
+        if (error != 0 && rtengine::settings->verbose) {
             std::cerr << "Failed to delete all entries in '" << path << "': " << g_strerror(errno) << std::endl;
         }
 

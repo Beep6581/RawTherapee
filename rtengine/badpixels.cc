@@ -20,7 +20,15 @@
 #include "array2D.h"
 #include "median.h"
 #include "pixelsmap.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
+
+namespace
+{
+unsigned fc(const unsigned int cfa[2][2], int r, int c) {
+    return cfa[r & 1][c & 1];
+}
+}
 
 namespace rtengine
 {
@@ -30,6 +38,7 @@ namespace rtengine
  */
 int RawImageSource::interpolateBadPixelsBayer(const PixelsMap &bitmapBads, array2D<float> &rawData)
 {
+    const unsigned int cfarray[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     constexpr float eps = 1.f;
     int counter = 0;
 
@@ -53,7 +62,7 @@ int RawImageSource::interpolateBadPixelsBayer(const PixelsMap &bitmapBads, array
             float wtdsum = 0.f, norm = 0.f;
 
             // diagonal interpolation
-            if (FC(row, col) == 1) {
+            if (fc(cfarray, row, col) == 1) {
                 // green channel. We can use closer pixels than for red or blue channel. Distance to center pixel is sqrt(2) => weighting is 0.70710678
                 // For green channel following pixels will be used for interpolation. Pixel to be interpolated is in center.
                 // 1 means that pixel is used in this step, if itself and his counterpart are not marked bad

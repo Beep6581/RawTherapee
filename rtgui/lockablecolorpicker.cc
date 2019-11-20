@@ -21,11 +21,10 @@
 #include "options.h"
 #include "../rtengine/color.h"
 #include "../rtengine/rt_math.h"
+#include "../rtengine/utils.h"
 #include "imagearea.h"
 #include "multilangmgr.h"
 #include "navigator.h"
-
-extern Options options;
 
 LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
 : cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S15),

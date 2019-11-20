@@ -16,16 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _DIAGONALCURVEEDITORSUBGROUP_
-#define _DIAGONALCURVEEDITORSUBGROUP_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "curveeditorgroup.h"
+
 #include "../rtengine/noncopyable.h"
 
 class DiagonalCurveEditor;
+class MyDiagonalCurve;
 
-class DiagonalCurveEditorSubGroup : public CurveEditorSubGroup, public SHCListener, public AdjusterListener, public rtengine::NonCopyable
+class DiagonalCurveEditorSubGroup :
+    public CurveEditorSubGroup,
+    public SHCListener,
+    public AdjusterListener,
+    public rtengine::NonCopyable
 {
 
     friend class DiagonalCurveEditor;
@@ -111,5 +117,3 @@ protected:
     void setSubGroupRangeLabels(Glib::ustring r1, Glib::ustring r2, Glib::ustring r3, Glib::ustring r4);
     void setSubGroupBottomBarBgGradient();
 };
-
-#endif

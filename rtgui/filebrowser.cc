@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <map>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "filebrowser.h"
 
@@ -29,15 +29,15 @@
 #include "clipboard.h"
 #include "multilangmgr.h"
 #include "options.h"
+#include "profilestorecombobox.h"
 #include "procparamchangers.h"
 #include "rtimage.h"
 #include "threadutils.h"
+#include "thumbnail.h"
 
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include "../rtengine/procparams.h"
-
-extern Options options;
 
 namespace
 {

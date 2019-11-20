@@ -20,17 +20,18 @@
 #include "rtengine.h"
 #include "color.h"
 #include "iccmatrices.h"
-#include "mytime.h"
-#include "sleef.c"
+#include "sleef.h"
 #include "opthelper.h"
 #include "iccstore.h"
+
+#ifdef _DEBUG
+#include "mytime.h"
+#endif
 
 using namespace std;
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 cmsToneCurve* Color::linearGammaTRC;
 LUTf Color::cachef;

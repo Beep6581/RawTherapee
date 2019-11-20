@@ -25,6 +25,7 @@
 #include <glib/gstdio.h>
 
 #include "../rtengine/rt_math.h"
+#include "../rtengine/procparams.h"
 
 #include "guiutils.h"
 #include "options.h"
@@ -35,7 +36,10 @@
 #include "renamedlg.h"
 #include "thumbimageupdater.h"
 #include "batchqueue.h"
+#include "batchqueueentry.h"
 #include "placesbrowser.h"
+#include "pathutils.h"
+#include "thumbnail.h"
 
 using namespace std;
 
@@ -602,7 +606,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList()
 
                 names.push_back(Glib::build_filename(selectedDirectory, fname));
             } catch (Glib::Exception& exception) {
-                if (options.rtSettings.verbose) {
+                if (rtengine::settings->verbose) {
                     std::cerr << exception.what() << std::endl;
                 }
             }
@@ -610,7 +614,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList()
 
     } catch (Glib::Exception& exception) {
 
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             std::cerr << "Failed to list directory \"" << selectedDirectory << "\": " << exception.what() << std::endl;
         }
 

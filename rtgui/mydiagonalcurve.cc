@@ -23,6 +23,7 @@
 #include "mydiagonalcurve.h"
 
 #include "editcallbacks.h"
+#include "rtscalable.h"
 
 #include "../rtengine/curves.h"
 

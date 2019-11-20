@@ -22,12 +22,10 @@
 #include "rawimagesource.h"
 #include "rawimage.h"
 #include "mytime.h"
-#include "image8.h"
 #include "rt_math.h"
 #include "color.h"
 #include "../rtgui/multilangmgr.h"
-#include "procparams.h"
-#include "sleef.c"
+#include "sleef.h"
 #include "opthelper.h"
 #include "median.h"
 //#define BENCHMARK
@@ -40,8 +38,6 @@ using namespace std;
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 #undef ABS
 
@@ -59,158 +55,7 @@ extern const Settings* settings;
 
 #define FORCC for (unsigned int c=0; c < colors; c++)
 
-/*
-   Patterned Pixel Grouping Interpolation by Alain Desbiolles
-*/
-void RawImageSource::ppg_demosaic()
-{
-    int width = W, height = H;
-    int dir[5] = { 1, width, -1, -width, 1 };
-    int row, col, diff[2] = {}, guess[2], c, d, i;
-    float (*pix)[4];
-
-    float (*image)[4];
-
-    if (plistener) {
-        // looks like ppg isn't supported anymore
-        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::ppg)));
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("GENERAL_NA")));
-        plistener->setProgress (0.0);
-    }
-
-    image = (float (*)[4]) calloc (H * W, sizeof * image);
-
-    for (int ii = 0; ii < H; ii++)
-        for (int jj = 0; jj < W; jj++) {
-            image[ii * W + jj][fc(ii, jj)] = rawData[ii][jj];
-        }
-
-    border_interpolate(3, image);
-
-    /*  Fill in the green layer with gradients and pattern recognition: */
-    for (row = 3; row < height - 3; row++) {
-        for (col = 3 + (FC(row, 3) & 1), c = FC(row, col); col < width - 3; col += 2) {
-            pix = image + row * width + col;
-
-            for (i = 0; (d = dir[i]) > 0; i++) {
-                guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
-                           - pix[-2 * d][c] - pix[2 * d][c];
-                diff[i] = ( ABS(pix[-2 * d][c] - pix[ 0][c]) +
-                            ABS(pix[ 2 * d][c] - pix[ 0][c]) +
-                            ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
-                          ( ABS(pix[ 3 * d][1] - pix[ d][1]) +
-                            ABS(pix[-3 * d][1] - pix[-d][1]) ) * 2;
-            }
-
-            d = dir[i = diff[0] > diff[1]];
-            pix[0][1] = median(static_cast<float>(guess[i] >> 2), pix[d][1], pix[-d][1]);
-        }
-
-        if(plistener) {
-            plistener->setProgress(0.33 * row / (height - 3));
-        }
-    }
-
-    /*  Calculate red and blue for each green pixel:        */
-    for (row = 1; row < height - 1; row++) {
-        for (col = 1 + (FC(row, 2) & 1), c = FC(row, col + 1); col < width - 1; col += 2) {
-            pix = image + row * width + col;
-
-            for (i = 0; (d = dir[i]) > 0; c = 2 - c, i++)
-                pix[0][c] = CLIP(0.5 * (pix[-d][c] + pix[d][c] + 2 * pix[0][1]
-                                        - pix[-d][1] - pix[d][1]) );
-        }
-
-        if(plistener) {
-            plistener->setProgress(0.33 + 0.33 * row / (height - 1));
-        }
-    }
-
-    /*  Calculate blue for red pixels and vice versa:       */
-    for (row = 1; row < height - 1; row++) {
-        for (col = 1 + (FC(row, 1) & 1), c = 2 - FC(row, col); col < width - 1; col += 2) {
-            pix = image + row * width + col;
-
-            for (i = 0; (d = dir[i] + dir[i + 1]) > 0; i++) {
-                diff[i] = ABS(pix[-d][c] - pix[d][c]) +
-                          ABS(pix[-d][1] - pix[0][1]) +
-                          ABS(pix[ d][1] - pix[0][1]);
-                guess[i] = pix[-d][c] + pix[d][c] + 2 * pix[0][1]
-                           - pix[-d][1] - pix[d][1];
-            }
-
-            if (diff[0] != diff[1]) {
-                pix[0][c] = CLIP(guess[diff[0] > diff[1]] / 2);
-            } else {
-                pix[0][c] = CLIP((guess[0] + guess[1]) / 4);
-            }
-        }
-
-        if(plistener) {
-            plistener->setProgress(0.67 + 0.33 * row / (height - 1));
-        }
-    }
-
-    red(W, H);
-
-    for (int i = 0; i < H; i++)
-        for (int j = 0; j < W; j++) {
-            red[i][j] = image[i * W + j][0];
-        }
-
-    green(W, H);
-
-    for (int i = 0; i < H; i++)
-        for (int j = 0; j < W; j++) {
-            green[i][j] = image[i * W + j][1];
-        }
-
-    blue(W, H);
-
-    for (int i = 0; i < H; i++)
-        for (int j = 0; j < W; j++) {
-            blue[i][j] = image[i * W + j][2];
-        }
-
-    free (image);
-}
-
-void RawImageSource::border_interpolate(unsigned int border, float (*image)[4], unsigned int start, unsigned int end)
-{
-    unsigned row, col, y, x, f;
-    float sum[8];
-    unsigned int width = W, height = H;
-    unsigned int colors = 3;
-
-    if (end == 0 ) {
-        end = H;
-    }
-
-    for (row = start; row < end; row++)
-        for (col = 0; col < width; col++) {
-            if (col == border && row >= border && row < height - border) {
-                col = width - border;
-            }
-
-            memset (sum, 0, sizeof sum);
-
-            for (y = row - 1; y != row + 2; y++)
-                for (x = col - 1; x != col + 2; x++)
-                    if (y < height && x < width) {
-                        f = fc(y, x);
-                        sum[f] += image[y * width + x][f];
-                        sum[f + 4]++;
-                    }
-
-            f = fc(row, col);
-
-            FORCC if (c != f && sum[c + 4]) {
-                image[row * width + col][c] = sum[c] / sum[c + 4];
-            }
-        }
-}
-
-void RawImageSource::border_interpolate2( int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::border_interpolate( int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
     int bord = lborders;
     int width = winw;
@@ -365,129 +210,6 @@ void RawImageSource::border_interpolate2( int winw, int winh, int lborders, cons
 
 }
 
-// Joint Demosaicing and Denoising using High Order Interpolation Techniques
-// Revision 0.9.1a - 09/02/2010 - Contact info: luis.sanz.rodriguez@gmail.com
-// Copyright Luis Sanz Rodriguez 2010
-// Adapted to RawTherapee by Jacques Desmis 3/2013
-
-void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
-{
-    int width = W, height = H;
-    int row, col, c, d, i, u = width, v = 2 * u, w = 3 * u, x = 4 * u, y = 5 * u, z = 6 * u, indx, (*dif)[2], (*chr)[2];
-    float f[4], g[4];
-    float (*image)[4];
-    image = (float (*)[4]) calloc (width * height, sizeof * image);
-    dif = (int (*)[2]) calloc(width * height, sizeof * dif);
-    chr = (int (*)[2]) calloc(width * height, sizeof * chr);
-
-    if (plistener) {
-        // this function seems to be unused
-        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::jdl)));
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("GENERAL_NA")));
-        plistener->setProgress (0.0);
-    }
-
-#ifdef _OPENMP
-    #pragma omp parallel shared(image,width,height,u,w,v,y,x,z,dif,chr) private(row,col,f,g,indx,c,d,i)
-#endif
-    {
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (int ii = 0; ii < height; ii++)
-            for (int jj = 0; jj < width; jj++) {
-                image[ii * width + jj][fc(ii, jj)] = rawData[ii][jj];
-            }
-
-        border_interpolate(6, image);
-
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (row = 5; row < height - 5; row++)
-            for (col = 5 + (FC(row, 1) & 1), indx = row * width + col, c = FC(row, col); col < u - 5; col += 2, indx += 2) {
-                f[0] = 1.f + abs(image[indx - u][1] - image[indx - w][1]) + abs(image[indx - u][1] - image[indx + u][1]) + abs(image[indx][c] - image[indx - v][c]) + abs(image[indx - v][c] - image[indx - x][c]);
-                f[1] = 1.f + abs(image[indx + 1][1] - image[indx + 3][1]) + abs(image[indx + 1][1] - image[indx - 1][1]) + abs(image[indx][c] - image[indx + 2][c]) + abs(image[indx + 2][c] - image[indx + 4][c]);
-                f[2] = 1.f + abs(image[indx - 1][1] - image[indx - 3][1]) + abs(image[indx - 1][1] - image[indx + 1][1]) + abs(image[indx][c] - image[indx - 2][c]) + abs(image[indx - 2][c] - image[indx - 4][c]);
-                f[3] = 1.f + abs(image[indx + u][1] - image[indx + w][1]) + abs(image[indx + u][1] - image[indx - u][1]) + abs(image[indx][c] - image[indx + v][c]) + abs(image[indx + v][c] - image[indx + x][c]);
-                g[0] = CLIP((22.f * image[indx - u][1] + 22.f * image[indx - w][1] + 2.f * image[indx - y][1] + 2.f * image[indx + u][1] + 40.f * image[indx][c] - 32.f * image[indx - v][c] - 8.f * image[indx - x][c]) / 48.f);
-                g[1] = CLIP((22.f * image[indx + 1][1] + 22.f * image[indx + 3][1] + 2.f * image[indx + 5][1] + 2.f * image[indx - 1][1] + 40.f * image[indx][c] - 32.f * image[indx + 2][c] - 8.f * image[indx + 4][c]) / 48.f);
-                g[2] = CLIP((22.f * image[indx - 1][1] + 22.f * image[indx - 3][1] + 2.f * image[indx - 5][1] + 2.f * image[indx + 1][1] + 40.f * image[indx][c] - 32.f * image[indx - 2][c] - 8.f * image[indx - 4][c]) / 48.f);
-                g[3] = CLIP((22.f * image[indx + u][1] + 22.f * image[indx + w][1] + 2.f * image[indx + y][1] + 2.f * image[indx - u][1] + 40.f * image[indx][c] - 32.f * image[indx + v][c] - 8.f * image[indx + x][c]) / 48.f);
-                dif[indx][0] = CLIP((f[3] * g[0] + f[0] * g[3]) / (f[0] + f[3])) - image[indx][c];
-                dif[indx][1] = CLIP((f[2] * g[1] + f[1] * g[2]) / (f[1] + f[2])) - image[indx][c];
-            }
-
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (row = 6; row < height - 6; row++)
-            for (col = 6 + (FC(row, 2) & 1), indx = row * width + col, c = FC(row, col) / 2; col < u - 6; col += 2, indx += 2) {
-                f[0] = 1.f + 78.f * SQR((float)dif[indx][0]) + 69.f * (SQR((float) dif[indx - v][0]) + SQR((float)dif[indx + v][0])) + 51.f * (SQR((float)dif[indx - x][0]) + SQR((float)dif[indx + x][0])) + 21.f * (SQR((float)dif[indx - z][0]) + SQR((float)dif[indx + z][0])) - 6.f * SQR((float)dif[indx - v][0] + dif[indx][0] + dif[indx + v][0]) - 10.f * (SQR((float)dif[indx - x][0] + dif[indx - v][0] + dif[indx][0]) + SQR((float)dif[indx][0] + dif[indx + v][0] + dif[indx + x][0])) - 7.f * (SQR((float)dif[indx - z][0] + dif[indx - x][0] + dif[indx - v][0]) + SQR((float)dif[indx + v][0] + dif[indx + x][0] + dif[indx + z][0]));
-                f[1] = 1.f + 78.f * SQR((float)dif[indx][1]) + 69.f * (SQR((float)dif[indx - 2][1]) + SQR((float)dif[indx + 2][1])) + 51.f * (SQR((float)dif[indx - 4][1]) + SQR((float)dif[indx + 4][1])) + 21.f * (SQR((float)dif[indx - 6][1]) + SQR((float)dif[indx + 6][1])) - 6.f * SQR((float)dif[indx - 2][1] + dif[indx][1] + dif[indx + 2][1]) - 10.f * (SQR((float)dif[indx - 4][1] + dif[indx - 2][1] + dif[indx][1]) + SQR((float)dif[indx][1] + dif[indx + 2][1] + dif[indx + 4][1])) - 7.f * (SQR((float)dif[indx - 6][1] + dif[indx - 4][1] + dif[indx - 2][1]) + SQR((float)dif[indx + 2][1] + dif[indx + 4][1] + dif[indx + 6][1]));
-                g[0] = median(0.725f * dif[indx][0] + 0.1375f * dif[indx - v][0] + 0.1375f * dif[indx + v][0], static_cast<float>(dif[indx - v][0]), static_cast<float>(dif[indx + v][0]));
-                g[1] = median(0.725f * dif[indx][1] + 0.1375f * dif[indx - 2][1] + 0.1375f * dif[indx + 2][1], static_cast<float>(dif[indx - 2][1]), static_cast<float>(dif[indx + 2][1]));
-                chr[indx][c] = (f[1] * g[0] + f[0] * g[1]) / (f[0] + f[1]);
-            }
-
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (row = 6; row < height - 6; row++)
-            for (col = 6 + (FC(row, 2) & 1), indx = row * width + col, c = 1 - FC(row, col) / 2, d = 2 * c; col < u - 6; col += 2, indx += 2) {
-                f[0] = 1.f / (float)(1.f + fabs((float)chr[indx - u - 1][c] - chr[indx + u + 1][c]) + fabs((float)chr[indx - u - 1][c] - chr[indx - w - 3][c]) + fabs((float)chr[indx + u + 1][c] - chr[indx - w - 3][c]));
-                f[1] = 1.f / (float)(1.f + fabs((float)chr[indx - u + 1][c] - chr[indx + u - 1][c]) + fabs((float)chr[indx - u + 1][c] - chr[indx - w + 3][c]) + fabs((float)chr[indx + u - 1][c] - chr[indx - w + 3][c]));
-                f[2] = 1.f / (float)(1.f + fabs((float)chr[indx + u - 1][c] - chr[indx - u + 1][c]) + fabs((float)chr[indx + u - 1][c] - chr[indx + w + 3][c]) + fabs((float)chr[indx - u + 1][c] - chr[indx + w - 3][c]));
-                f[3] = 1.f / (float)(1.f + fabs((float)chr[indx + u + 1][c] - chr[indx - u - 1][c]) + fabs((float)chr[indx + u + 1][c] - chr[indx + w - 3][c]) + fabs((float)chr[indx - u - 1][c] - chr[indx + w + 3][c]));
-                g[0] = median(chr[indx - u - 1][c], chr[indx - w - 1][c], chr[indx - u - 3][c]);
-                g[1] = median(chr[indx - u + 1][c], chr[indx - w + 1][c], chr[indx - u + 3][c]);
-                g[2] = median(chr[indx + u - 1][c], chr[indx + w - 1][c], chr[indx + u - 3][c]);
-                g[3] = median(chr[indx + u + 1][c], chr[indx + w + 1][c], chr[indx + u + 3][c]);
-                chr[indx][c] = (f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) / (f[0] + f[1] + f[2] + f[3]);
-                image[indx][1] = CLIP(image[indx][2 - d] + chr[indx][1 - c]);
-                image[indx][d] = CLIP(image[indx][1] - chr[indx][c]);
-            }
-
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (row = 6; row < height - 6; row++)
-            for (col = 6 + (FC(row, 1) & 1), indx = row * width + col, c = FC(row, col + 1) / 2, d = 2 * c; col < u - 6; col += 2, indx += 2)
-                for(i = 0; i <= 1; c = 1 - c, d = 2 * c, i++) {
-                    f[0] = 1.f / (float)(1.f + fabs((float)chr[indx - u][c] - chr[indx + u][c]) + fabs((float)chr[indx - u][c] - chr[indx - w][c]) + fabs((float)chr[indx + u][c] - chr[indx - w][c]));
-                    f[1] = 1.f / (float)(1.f + fabs((float)chr[indx + 1][c] - chr[indx - 1][c]) + fabs((float)chr[indx + 1][c] - chr[indx + 3][c]) + fabs((float)chr[indx - 1][c] - chr[indx + 3][c]));
-                    f[2] = 1.f / (float)(1.f + fabs((float)chr[indx - 1][c] - chr[indx + 1][c]) + fabs((float)chr[indx - 1][c] - chr[indx - 3][c]) + fabs((float)chr[indx + 1][c] - chr[indx - 3][c]));
-                    f[3] = 1.f / (float)(1.f + fabs((float)chr[indx + u][c] - chr[indx - u][c]) + fabs((float)chr[indx + u][c] - chr[indx + w][c]) + fabs((float)chr[indx - u][c] - chr[indx + w][c]));
-                    g[0] = 0.875f * chr[indx - u][c] + 0.125f * chr[indx - w][c];
-                    g[1] = 0.875f * chr[indx + 1][c] + 0.125f * chr[indx + 3][c];
-                    g[2] = 0.875f * chr[indx - 1][c] + 0.125f * chr[indx - 3][c];
-                    g[3] = 0.875f * chr[indx + u][c] + 0.125f * chr[indx + w][c];
-                    image[indx][d] = CLIP(image[indx][1] - (f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) / (f[0] + f[1] + f[2] + f[3]));
-                }
-
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (int ii = 0; ii < height; ii++) {
-            for (int jj = 0; jj < width; jj++) {
-                red[ii][jj]  = CLIP(image[ii * width + jj][0]);
-                green[ii][jj]    = CLIP(image[ii * width + jj][1]);
-                blue[ii][jj]     = CLIP(image[ii * width + jj][2]);
-            }
-        }
-    } // End of parallelization
-    free (image);
-    free(dif);
-    free(chr);
-    //RawImageSource::refinement_lassus();
-}
-
 // LSMME demosaicing algorithm
 // L. Zhang and X. Wu,
 // Color demozaicing via directional Linear Minimum Mean Square-error Estimation,
@@ -543,14 +265,14 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &r
 
     float *rix[5];
     float *qix[5];
-    float *buffer = (float *)calloc(rr1 * cc1 * 5 * sizeof(float), 1);
+    float *buffer = (float *)calloc(static_cast<size_t>(rr1) * cc1 * 5 * sizeof(float), 1);
 
     if(buffer == nullptr) { // allocation of big block of memory failed, try to get 5 smaller ones
         printf("lmmse_interpolate_omp: allocation of big memory block failed, try to get 5 smaller ones now...\n");
         bool allocationFailed = false;
 
         for(int i = 0; i < 5; i++) {
-            qix[i] = (float *)calloc(rr1 * cc1 * sizeof(float), 1);
+            qix[i] = (float *)calloc(static_cast<size_t>(rr1) * cc1 * sizeof(float), 1);
 
             if(!qix[i]) { // allocation of at least one small block failed
                 allocationFailed = true;
@@ -1145,7 +867,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     vdif  = (float (*)) calloc( width * height / 2, sizeof * vdif );
     hdif  = (float (*)) calloc( width * height / 2, sizeof * hdif );
 
-    chrarray    = (float (*)) calloc( width * height, sizeof( float ) );
+    chrarray    = (float (*)) calloc(static_cast<size_t>(width) * height, sizeof( float ) );
     chr[0] = chrarray;
     chr[1] = chrarray + (width * height) / 2;
 
@@ -1507,7 +1229,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
             }
         }
     }// End of parallelization
-    border_interpolate2(winw, winh, 8, rawData, red, green, blue);
+    border_interpolate(winw, winh, 8, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgress (1.0);
@@ -1563,8 +1285,6 @@ void RawImageSource::igv_interpolate(int winw, int winh)
                 int c = FC(row, col);
                 rgb[c][indx] = CLIP(rawData[row][col]); //rawData = RT data
             }
-
-//  border_interpolate2(7, rgb);
 
 #ifdef _OPENMP
         #pragma omp single
@@ -1740,9 +1460,6 @@ void RawImageSource::igv_interpolate(int winw, int winh)
             if (plistener) {
                 plistener->setProgress (0.91);
             }
-
-            //Interpolate borders
-//  border_interpolate2(7, rgb);
         }
         /*
 #ifdef _OPENMP
@@ -1770,7 +1487,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
                 blue [row][col] = CLIP(rgb[1][indx] - 65535.f * chr[1][indx]);
             }
     }// End of parallelization
-    border_interpolate2(winw, winh, 8, rawData, red, green, blue);
+    border_interpolate(winw, winh, 8, rawData, red, green, blue);
 
 
     if (plistener) {
@@ -2040,7 +1757,7 @@ void RawImageSource::refinement_lassus(int PassCount)
     t1e.set();
     int u = W, v = 2 * u, w = 3 * u, x = 4 * u, y = 5 * u;
     float (*image)[3];
-    image = (float(*)[3]) calloc(W * H, sizeof * image);
+    image = (float(*)[3]) calloc(static_cast<size_t>(W) * H, sizeof * image);
 #ifdef _OPENMP
     #pragma omp parallel shared(image)
 #endif
@@ -2813,7 +2530,7 @@ BENCHFUN
     free(buffer0);
 }
 
-    border_interpolate2(W, H, 1, rawData, red, green, blue);
+    border_interpolate(W, H, 1, rawData, red, green, blue);
     if(plistener) {
         plistener->setProgress (1.0);
     }

@@ -17,12 +17,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _EXPORTPANEL_
-#define _EXPORTPANEL_
+#pragma once
 
 #include <gtkmm.h>
-#include "guiutils.h"
+
 #include "adjuster.h"
+#include "guiutils.h"
 
 class ExportPanelListener
 {
@@ -122,5 +122,3 @@ public:
         listener = l;
     }
 };
-
-#endif

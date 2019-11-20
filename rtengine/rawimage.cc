@@ -15,11 +15,10 @@
 #include "settings.h"
 #include "camconst.h"
 #include "utils.h"
+#include "rtengine.h"
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 RawImage::RawImage(  const Glib::ustring &name )
     : data(nullptr)
