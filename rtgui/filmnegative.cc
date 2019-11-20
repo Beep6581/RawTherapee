@@ -336,7 +336,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
                 enableListener();
 
                 const Glib::ustring vs = Glib::ustring::sprintf("%0.1f %0.1f %0.1f",
-                                   filmBaseValues[0], filmBaseValues[1], filmBaseValues[2]);
+                                         filmBaseValues[0], filmBaseValues[1], filmBaseValues[2]);
 
                 filmBaseValuesLabel->set_text(vs);
 

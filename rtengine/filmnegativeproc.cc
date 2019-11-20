@@ -344,7 +344,7 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     // Get multipliers for a known, fixed WB setting, that will be the starting point
     // for balancing the converted image.
     const std::array<double, 3> wb_mul = calcWBMults(
-        ColorTemp(3500., 1., 1., "Custom"), imatrices, ri, ref_pre_mul);
+            ColorTemp(3500., 1., 1., "Custom"), imatrices, ri, ref_pre_mul);
 
 
     if (rtengine::settings->verbose) {
@@ -396,8 +396,8 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
             // If using the old channel scaling method, apply WB multipliers here to undo their
             // effect later, as fixed wb compensation was not used in previous version.
             const float ref = oldChannelScaling
-                        ? 24.f / (512.f * wb_mul[c])
-                        : 24.f / 512.f;
+                              ? 24.f / (512.f * wb_mul[c])
+                              : 24.f / 512.f;
 
             filmBaseValues[c] = pow_F(ref, 1.f / exps[c]) * medians[c];
         }
@@ -407,7 +407,7 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     // Calculate multipliers based on previously obtained film base input values.
 
     // Apply current scaling coefficients to raw, unscaled base values.
-    std::array<float,3> fb = {
+    std::array<float, 3> fb = {
         filmBaseValues[0] * scale_mul[0],
         filmBaseValues[1] * scale_mul[1],
         filmBaseValues[2] * scale_mul[2]

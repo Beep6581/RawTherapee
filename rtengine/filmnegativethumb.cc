@@ -190,7 +190,7 @@ void rtengine::Thumbnail::processFilmNegative(
         // as in the main image processing.
 
         double r, g, b;
-        ColorTemp(3500., 1., 1., "Custom").getMultipliers (r, g, b);
+        ColorTemp(3500., 1., 1., "Custom").getMultipliers(r, g, b);
         //iColorMatrix is cam_rgb
         const double rm = camwbRed   / (iColorMatrix[0][0] * r + iColorMatrix[0][1] * g + iColorMatrix[0][2] * b);
         const double gm = camwbGreen / (iColorMatrix[1][0] * r + iColorMatrix[1][1] * g + iColorMatrix[1][2] * b);
