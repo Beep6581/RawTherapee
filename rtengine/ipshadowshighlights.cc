@@ -20,6 +20,7 @@
 
 #include "improcfun.h"
 
+#include "array2D.h"
 #include "color.h"
 #include "curves.h"
 #include "gauss.h"
