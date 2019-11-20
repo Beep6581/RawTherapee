@@ -2494,7 +2494,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     opacol(60.0),
     mercol(18.0),
     merlucol(32.0),
-    conthrcol(20.0),
+    conthrcol(0.0),
     Lmaskcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LLmaskcolcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     csthresholdcol(0, 0, 6, 5, false),
