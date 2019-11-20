@@ -273,7 +273,7 @@ Locallab::Locallab():
     lapmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     shadmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
-    opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 100.))),
+    opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 60.))),
     conthrcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTTHR"), 0.0, 100.0, 0.5, 20.))),
     strumaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     mercol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERDCOL"), 0.0, 100.0, 0.5, 18.))),
@@ -990,7 +990,6 @@ pe(nullptr)
     gridmerFrame->set_label_align(0.025, 0.5);
     gridmerBox->pack_start(*labgridmerg);
     gridmerBox->pack_start(*merlucol);
-    gridmerBox->pack_start(*mercol);
     gridmerFrame->add(*gridmerBox);
 
     mergecolFrame->set_label_align(0.025, 0.5);
@@ -998,6 +997,7 @@ pe(nullptr)
     ToolParamBlock* const mergecolBox = Gtk::manage(new ToolParamBlock());
     mergecolBox->pack_start(*separatormer, Gtk::PACK_SHRINK, 2);
     mergecolBox->pack_start(*mergecolMethod);
+    mergecolBox->pack_start(*mercol);
     mergecolBox->pack_start(*opacol);
     mergecolBox->pack_start(*conthrcol);
     mergecolBox->pack_start(*gridmerFrame);
@@ -5530,23 +5530,38 @@ void Locallab::merMethodChanged()
 {
     if (merMethod->get_active_row_number() == 0) {
         mask7->hide();
-        conthrcol->hide();
+//        conthrcol->hide();
+        sensi->set_sensitive(true);
+        structcol->set_sensitive(true);
+        blurcolde->set_sensitive(true);
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
-        conthrcol->hide();
+        sensi->set_sensitive(true);
+        structcol->set_sensitive(true);
+        blurcolde->set_sensitive(true);
+//        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
-        conthrcol->show();
+        sensi->set_sensitive(false);
+        structcol->set_sensitive(false);
+        blurcolde->set_sensitive(false);
+ //       conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
+        sensi->set_sensitive(false);
+        structcol->set_sensitive(false);
+        blurcolde->set_sensitive(false);
         mask7->show();
-        conthrcol->show();
+//        conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 4) {
         mask7->show();
-        conthrcol->hide();
+//        conthrcol->hide();
+        blurcolde->set_sensitive(false);
+        sensi->set_sensitive(false);
+        structcol->set_sensitive(false);
         gridmerFrame->show();
     }
 
@@ -10278,23 +10293,38 @@ void Locallab::updateSpecificGUIState()
 
     if (merMethod->get_active_row_number() == 0) {
         mask7->hide();
-        conthrcol->hide();
+//        conthrcol->hide();
+        structcol->set_sensitive(true);
+        sensi->set_sensitive(true);
+        blurcolde->set_sensitive(true);
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
-        conthrcol->hide();
+        structcol->set_sensitive(true);
+        sensi->set_sensitive(true);
+        blurcolde->set_sensitive(true);
+//        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
-        conthrcol->show();
+        structcol->set_sensitive(false);
+        sensi->set_sensitive(false);
+        blurcolde->set_sensitive(false);
+//        conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
-        conthrcol->show();
+//        conthrcol->show();
+        structcol->set_sensitive(false);
+        sensi->set_sensitive(false);
+        blurcolde->set_sensitive(false);
         mask7->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
         mask7->show();
-        conthrcol->hide();
+        structcol->set_sensitive(false);
+        sensi->set_sensitive(false);
+        blurcolde->set_sensitive(false);
+//        conthrcol->hide();
         gridmerFrame->show();
     }
 

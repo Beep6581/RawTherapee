@@ -2491,7 +2491,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
 //    HHhmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     HHhmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 0.50, 0.5, 0.35, 0.35, 1.00, 0.5, 0.35, 0.35 },
     softradiuscol(0.0),
-    opacol(100.0),
+    opacol(60.0),
     mercol(18.0),
     merlucol(32.0),
     conthrcol(20.0),
