@@ -625,11 +625,11 @@ libraw_inline void _BitScanReverse(DWORD *Index, unsigned long Mask)
 }
 uint32_t _byteswap_ulong(uint32_t x)
 {
-    #if BYTE_ORDER == BIG_ENDIAN
-        return x;
-    #else
-        return __builtin_bswap32(x);
-    #endif
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+    return x;
+#else
+    return __builtin_bswap32(x);
+#endif
 }
 #endif
 
