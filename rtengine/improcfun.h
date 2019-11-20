@@ -25,7 +25,7 @@
 #include "jaggedarray.h"
 #include "pipettebuffer.h"
 #include "shmap.h"
-
+#include "array2D.h"
 template<typename T>
 class LUT;
 
