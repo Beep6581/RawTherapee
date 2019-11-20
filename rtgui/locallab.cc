@@ -159,6 +159,7 @@ Locallab::Locallab():
     // Color & Light
     llCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LUM"))),
     HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
+    H2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     rgbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_RGB"))),
     maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     maskHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKH"))),
@@ -171,7 +172,7 @@ Locallab::Locallab():
     toneMethod(Gtk::manage(new MyComboBoxText())),
     rgbshape(static_cast<DiagonalCurveEditor*>(rgbCurveEditorG->addCurve(CT_Diagonal, "", toneMethod))),
     LHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true))),
-    HHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
+    HHshape(static_cast<FlatCurveEditor*>(H2CurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
     CCmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
     LLmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     HHmaskshape(static_cast<FlatCurveEditor *>(maskCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
@@ -777,6 +778,8 @@ pe(nullptr)
 
     const std::vector<GradientMilestone>& mLHshape = six_shape;
     LHshape->setBottomBarBgGradient(mLHshape);
+    HCurveEditorG->curveListComplete();
+    H2CurveEditorG->setCurveListener(this);
 
     HHshape->setIdentityValue(0.);
     HHshape->setResetCurve(FlatCurveType(defSpot.HHcurve.at(0)), defSpot.HHcurve);
@@ -790,7 +793,7 @@ pe(nullptr)
     const std::vector<GradientMilestone>& mHHshape = six_shape;
     HHshape->setBottomBarBgGradient(mHHshape);
 
-    HCurveEditorG->curveListComplete();
+    H2CurveEditorG->curveListComplete();
 
 
     rgbCurveEditorG->setCurveListener(this);
@@ -978,6 +981,7 @@ pe(nullptr)
     colorBox->pack_start(*qualcurvbox);
     colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    colorBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     colorBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     colorBox->pack_start(*special);
     colorBox->pack_start(*invers);
@@ -5534,12 +5538,20 @@ void Locallab::merMethodChanged()
         sensi->set_sensitive(true);
         structcol->set_sensitive(true);
         blurcolde->set_sensitive(true);
+        H2CurveEditorG->set_sensitive(true);
+        rgbCurveEditorG->set_sensitive(true);
+        special->set_sensitive(true);
+        invers->set_sensitive(true);
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
         sensi->set_sensitive(true);
         structcol->set_sensitive(true);
         blurcolde->set_sensitive(true);
+        H2CurveEditorG->set_sensitive(true);
+        rgbCurveEditorG->set_sensitive(true);
+        special->set_sensitive(true);
+        invers->set_sensitive(true);
 //        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
@@ -5547,12 +5559,20 @@ void Locallab::merMethodChanged()
         sensi->set_sensitive(false);
         structcol->set_sensitive(false);
         blurcolde->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(false);
+        rgbCurveEditorG->set_sensitive(false);
+        special->set_sensitive(false);
+        invers->set_sensitive(false);
  //       conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
         sensi->set_sensitive(false);
         structcol->set_sensitive(false);
         blurcolde->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(false);
+        rgbCurveEditorG->set_sensitive(false);
+        special->set_sensitive(false);
+        invers->set_sensitive(false);
         mask7->show();
 //        conthrcol->show();
         gridmerFrame->hide();
@@ -5562,6 +5582,10 @@ void Locallab::merMethodChanged()
         blurcolde->set_sensitive(false);
         sensi->set_sensitive(false);
         structcol->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(false);
+        rgbCurveEditorG->set_sensitive(false);
+        special->set_sensitive(false);
+        invers->set_sensitive(false);
         gridmerFrame->show();
     }
 
@@ -10297,12 +10321,20 @@ void Locallab::updateSpecificGUIState()
         structcol->set_sensitive(true);
         sensi->set_sensitive(true);
         blurcolde->set_sensitive(true);
+        H2CurveEditorG->set_sensitive(true);
+        rgbCurveEditorG->set_sensitive(true);
+        special->set_sensitive(true);
+        invers->set_sensitive(true);
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
         structcol->set_sensitive(true);
         sensi->set_sensitive(true);
         blurcolde->set_sensitive(true);
+        H2CurveEditorG->set_sensitive(true);
+        rgbCurveEditorG->set_sensitive(true);
+        special->set_sensitive(true);
+        invers->set_sensitive(true);
 //        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
@@ -10310,6 +10342,10 @@ void Locallab::updateSpecificGUIState()
         structcol->set_sensitive(false);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(false);
+        rgbCurveEditorG->set_sensitive(false);
+        special->set_sensitive(false);
+        invers->set_sensitive(false);
 //        conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
@@ -10317,6 +10353,10 @@ void Locallab::updateSpecificGUIState()
         structcol->set_sensitive(false);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(false);
+        rgbCurveEditorG->set_sensitive(false);
+        special->set_sensitive(false);
+        invers->set_sensitive(false);
         mask7->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
@@ -10324,6 +10364,10 @@ void Locallab::updateSpecificGUIState()
         structcol->set_sensitive(false);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(false);
+        rgbCurveEditorG->set_sensitive(false);
+        special->set_sensitive(false);
+        invers->set_sensitive(false);
 //        conthrcol->hide();
         gridmerFrame->show();
     }

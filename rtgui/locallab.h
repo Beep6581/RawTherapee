@@ -77,6 +77,7 @@ private:
     // Color & Light
     CurveEditorGroup* const llCurveEditorG;
     CurveEditorGroup* const HCurveEditorG;
+    CurveEditorGroup* const H2CurveEditorG;
     CurveEditorGroup* const rgbCurveEditorG;
     CurveEditorGroup* const maskCurveEditorG;
     CurveEditorGroup* const maskHCurveEditorG;
