@@ -12529,7 +12529,18 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     }
                                 }
                             }
-
+                            //test for write text , now it compile... but does nothing
+                            // why ?? is arial found (I tried others) or I missed something
+                            /*
+                            locImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, bfw, bfh);
+                            Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(locImage);
+                            cr->set_source_rgb(0.1, 0.1, 0.1);
+                            cr->select_font_face ("Arial", Cairo::FontSlant::FONT_SLANT_NORMAL, Cairo::FontWeight::FONT_WEIGHT_BOLD);
+                            cr->set_font_size (20);
+                            cr->move_to (20, 20);
+                            cr->show_text ("Coucou");  
+                            printf("OK \n");
+                            */
                             JaggedArray<float> blend(bfw, bfh);
                             buildBlendMask(lumreserv, blend, bfw, bfh, conthr, 1.f);
                             float rm = 20.f / sk;
@@ -12588,8 +12599,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
 
-                                //  if (conthr > 0.f && lp.mergemet != 4) {
-                                if (conthr > 0.f) {
+                                if (conthr > 0.f && lp.mergemet != 4) {
+                            //    if (conthr > 0.f) {
 
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
@@ -12695,8 +12706,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     }
                                 }
 
-                                if (conthr > 0.f) {
-                                    //   if (conthr > 0.f && lp.mergemet != 4) {
+                               // if (conthr > 0.f) {
+                                if (conthr > 0.f && lp.mergemet != 4) {
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -13063,7 +13074,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 delete tmpImageorig;
                                 delete tmpImagereserv;
 
-                                if (conthr > 0.f) {
+                                if (conthr > 0.f && lp.mergemet != 4) {
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
 #endif

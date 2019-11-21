@@ -5534,7 +5534,7 @@ void Locallab::merMethodChanged()
 {
     if (merMethod->get_active_row_number() == 0) {
         mask7->hide();
-//        conthrcol->hide();
+        conthrcol->hide();
         sensi->set_sensitive(true);
         structcol->set_sensitive(true);
         blurcolde->set_sensitive(true);
@@ -5552,7 +5552,7 @@ void Locallab::merMethodChanged()
         rgbCurveEditorG->set_sensitive(true);
         special->set_sensitive(true);
         invers->set_sensitive(true);
-//        conthrcol->hide();
+        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
@@ -5563,7 +5563,7 @@ void Locallab::merMethodChanged()
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
- //       conthrcol->show();
+        conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
         sensi->set_sensitive(false);
@@ -5574,11 +5574,11 @@ void Locallab::merMethodChanged()
         special->set_sensitive(false);
         invers->set_sensitive(false);
         mask7->show();
-//        conthrcol->show();
+        conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 4) {
         mask7->show();
-//        conthrcol->hide();
+        conthrcol->hide();
         blurcolde->set_sensitive(false);
         sensi->set_sensitive(false);
         structcol->set_sensitive(false);
@@ -10317,7 +10317,7 @@ void Locallab::updateSpecificGUIState()
 
     if (merMethod->get_active_row_number() == 0) {
         mask7->hide();
-//        conthrcol->hide();
+        conthrcol->hide();
         structcol->set_sensitive(true);
         sensi->set_sensitive(true);
         blurcolde->set_sensitive(true);
@@ -10335,7 +10335,7 @@ void Locallab::updateSpecificGUIState()
         rgbCurveEditorG->set_sensitive(true);
         special->set_sensitive(true);
         invers->set_sensitive(true);
-//        conthrcol->hide();
+        conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
@@ -10346,10 +10346,10 @@ void Locallab::updateSpecificGUIState()
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
-//        conthrcol->show();
+        conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
-//        conthrcol->show();
+        conthrcol->show();
         structcol->set_sensitive(false);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
@@ -10368,7 +10368,7 @@ void Locallab::updateSpecificGUIState()
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
-//        conthrcol->hide();
+        conthrcol->hide();
         gridmerFrame->show();
     }
 

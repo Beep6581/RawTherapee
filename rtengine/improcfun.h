@@ -26,6 +26,9 @@
 #include "pipettebuffer.h"
 #include "shmap.h"
 #include "array2D.h"
+
+#include <cairomm/cairomm.h>
+
 template<typename T>
 class LUT;
 
@@ -92,6 +95,7 @@ class ImProcFunctions
 {
     cmsHTRANSFORM monitorTransform;
     std::unique_ptr<GamutWarning> gamutWarning;
+    Cairo::RefPtr<Cairo::ImageSurface> locImage;
 
     const procparams::ProcParams* params;
     double scale;
