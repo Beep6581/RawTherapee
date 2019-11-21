@@ -2578,8 +2578,8 @@ void calcGradientParams (int oW, int oH, const struct local_params& lp, struct g
     int h = oH;
     double gradient_stops = lp.strmaexp;
     double gradient_span = 1.f; //gradient.feather / 100.0  not used because we have transition and others gradients
-    double gradient_center_x = (lp.xc - xstart) / bfw;
-    double gradient_center_y = (lp.yc - ystart) / bfh;
+    double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
+    double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = lp.angmaexp / 180.0 * rtengine::RT_PI;
     
    // printf("xstart=%f ysta=%f lpxc=%f lpyc=%f aa=%f bb=%f cc=%f dd=%f ee=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_span, gradient_center_x, gradient_center_y, gradient_angle, w, h);
@@ -3757,7 +3757,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         
     struct grad_params gp;
 
-    if (lp.angmaexp != 0.f) {
+    if (lp.strmaexp != 0.f) {
         calcGradientParams (bfw, bfh, lp, gp, ystart, xstart, bfw, bfh);
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
