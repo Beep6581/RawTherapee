@@ -84,7 +84,7 @@ public:
      * Forward transform from XYZ to CIECAM02 JCh.
      */
     static void initcam1float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
-                               float &cz, float &aw, float &wh, float &pfl, float &fl, float &c);
+                               float &cz, float &aw, float &wh, float &pfl, float &fl, float c);
 
     static void initcam2float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                                float &cz, float &aw, float &fl);
