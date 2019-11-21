@@ -1046,6 +1046,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensiex = locallab.spots.at(j).sensiex && pSpot.sensiex == otherSpot.sensiex;
                 locallab.spots.at(j).structexp = locallab.spots.at(j).structexp && pSpot.structexp == otherSpot.structexp;
                 locallab.spots.at(j).blurexpde = locallab.spots.at(j).blurexpde && pSpot.blurexpde == otherSpot.blurexpde;
+                locallab.spots.at(j).strexp = locallab.spots.at(j).strexp && pSpot.strexp == otherSpot.strexp;
+                locallab.spots.at(j).angexp = locallab.spots.at(j).angexp && pSpot.angexp == otherSpot.angexp;
                 locallab.spots.at(j).excurve = locallab.spots.at(j).excurve && pSpot.excurve == otherSpot.excurve;
                 locallab.spots.at(j).inversex = locallab.spots.at(j).inversex && pSpot.inversex == otherSpot.inversex;
                 locallab.spots.at(j).enaExpMask = locallab.spots.at(j).enaExpMask && pSpot.enaExpMask == otherSpot.enaExpMask;
@@ -3126,6 +3128,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).blurexpde = mods.locallab.spots.at(i).blurexpde;
         }
 
+        if (locallab.spots.at(i).strexp) {
+            toEdit.locallab.spots.at(i).strexp = mods.locallab.spots.at(i).strexp;
+        }
+
+        if (locallab.spots.at(i).angexp) {
+            toEdit.locallab.spots.at(i).angexp = mods.locallab.spots.at(i).angexp;
+        }
+
         if (locallab.spots.at(i).excurve) {
             toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
         }
@@ -5114,6 +5124,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensiex(v),
     structexp(v),
     blurexpde(v),
+    strexp(v),
+    angexp(v),
     excurve(v),
     inversex(v),
     enaExpMask(v),
@@ -5452,6 +5464,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensiex = v;
     structexp = v;
     blurexpde = v;
+    strexp = v;
+    angexp = v;
     excurve = v;
     inversex = v;
     enaExpMask = v;

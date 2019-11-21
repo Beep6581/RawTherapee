@@ -1054,6 +1054,8 @@ struct LocallabParams {
         int sensiex;
         int structexp;
         int blurexpde;
+        double strexp;
+        double angexp;
         std::vector<double> excurve;
         bool inversex;
         bool enaExpMask;

@@ -194,6 +194,8 @@ private:
     Adjuster* const sensiex;
     Adjuster* const structexp;
     Adjuster* const blurexpde;
+    Adjuster* const strexp;
+    Adjuster* const angexp;
     Adjuster* const blendmaskexp;
     Adjuster* const radmaskexp;
     Adjuster* const chromaskexp;
@@ -509,6 +511,7 @@ private:
     Gtk::Frame* const merge1colFrame;
     Gtk::Frame* const pdeFrame;
     Gtk::Frame* const fatFrame;
+    Gtk::Frame* const gradFrame;
     Gtk::Frame* const fatSHFrame;
     Gtk::Frame* const gamFrame;
     Gtk::Frame* const dehaFrame;

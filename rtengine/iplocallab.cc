@@ -212,6 +212,8 @@ struct local_params {
     float slomaexp;
     float strmaexp;
     float angmaexp;
+    float strexp;
+    float angexp;
     float softradiusexp;
     float softradiuscol;
     float softradiuscb;
@@ -734,6 +736,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float slomaskexpo = ((float) locallab.spots.at(sp).slomaskexp);
     float strmaskexpo = ((float) locallab.spots.at(sp).strmaskexp);
     float angmaskexpo = ((float) locallab.spots.at(sp).angmaskexp);
+    float strexpo = ((float) locallab.spots.at(sp).strexp);
+    float angexpo = ((float) locallab.spots.at(sp).angexp);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
@@ -839,6 +843,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.slomaexp = slomaskexpo;
     lp.strmaexp = strmaskexpo;
     lp.angmaexp = angmaskexpo;
+    lp.strexp = strexpo;
+    lp.angexp = angexpo;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
@@ -2571,16 +2577,26 @@ struct grad_params {
     int h;
 };
 
-void calcGradientParams (int oW, int oH, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh)
+void calcGradientParams (int oW, int oH, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh, int indic)
 
 {
     int w = oW;
     int h = oH;
-    double gradient_stops = lp.strmaexp;
+    float stops = 0.f;
+    float angs = 0.f;
+
+    if(indic == 0) {
+        stops = lp.strmaexp;
+        angs = lp.angmaexp;
+    } else if (indic == 1) {
+        stops = -lp.strexp;
+        angs = lp.angexp;
+    }
+    double gradient_stops = stops;
     double gradient_span = 1.f; //gradient.feather / 100.0  not used because we have transition and others gradients
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
-    double gradient_angle = lp.angmaexp / 180.0 * rtengine::RT_PI;
+    double gradient_angle = angs / 180.0 * rtengine::RT_PI;
     
    // printf("xstart=%f ysta=%f lpxc=%f lpyc=%f aa=%f bb=%f cc=%f dd=%f ee=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_span, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
@@ -3758,7 +3774,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
     struct grad_params gp;
 
     if (lp.strmaexp != 0.f) {
-        calcGradientParams (bfw, bfh, lp, gp, ystart, xstart, bfw, bfh);
+        calcGradientParams (bfw, bfh, lp, gp, ystart, xstart, bfw, bfh, 0);
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     double factor = 1.0;
@@ -3766,7 +3782,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     bufmaskblurcol->L[ir][jr] *= factor;
                 }
     }
-        
+
 
         if (lap > 0.f) {
             float *datain = new float[bfh * bfw];
@@ -11540,7 +11556,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             enablefat = true;
         }
 
-        bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)));
+        bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || lp.strexp > 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)));
 
         if (!lp.invex  && execex) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -11811,6 +11827,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
                         }
+//gradient
+                        struct grad_params gp;
+
+                        if (lp.strexp != 0.f) {
+                            calcGradientParams (bfw, bfh, lp, gp, ystart, xstart, bfw, bfh, 1);
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    double factor = 1.0;
+                                    factor = calcGradientFactor (gp, jr, ir);
+                                    bufexpfin->L[ir][jr] *= factor;
+                                }
+                        }
+
+
 
 //exposure_pde
                         if (lp.expmet == 1) {

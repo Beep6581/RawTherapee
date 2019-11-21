@@ -2511,6 +2511,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensiex(15),
     structexp(0),
     blurexpde(5),
+    strexp(0.),
+    angexp(0.),
     excurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     inversex(false),
     enaExpMask(false),
@@ -2852,6 +2854,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensiex == other.sensiex
         && structexp == other.structexp
         && blurexpde == other.blurexpde
+        && strexp == other.strexp
+        && angexp == other.angexp
         && excurve == other.excurve
         && inversex == other.inversex
         && enaExpMask == other.enaExpMask
@@ -4188,6 +4192,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiex, "Locallab", "Sensiex_" + std::to_string(i), spot.sensiex, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structexp, "Locallab", "Structexp_" + std::to_string(i), spot.structexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurexpde, "Locallab", "Blurexpde_" + std::to_string(i), spot.blurexpde, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strexp, "Locallab", "Strexp_" + std::to_string(i), spot.strexp, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).angexp, "Locallab", "Angexp_" + std::to_string(i), spot.angexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).excurve, "Locallab", "ExCurve_" + std::to_string(i), spot.excurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inversex, "Locallab", "Inversex_" + std::to_string(i), spot.inversex, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enaExpMask, "Locallab", "EnaExpMask_" + std::to_string(i), spot.enaExpMask, keyFile);
@@ -5643,6 +5649,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensiex_" + std::to_string(i), pedited, spot.sensiex, spotEdited.sensiex);
                 assignFromKeyfile(keyFile, "Locallab", "Structexp_" + std::to_string(i), pedited, spot.structexp, spotEdited.structexp);
                 assignFromKeyfile(keyFile, "Locallab", "Blurexpde_" + std::to_string(i), pedited, spot.blurexpde, spotEdited.blurexpde);
+                assignFromKeyfile(keyFile, "Locallab", "Strexp_" + std::to_string(i), pedited, spot.strexp, spotEdited.strexp);
+                assignFromKeyfile(keyFile, "Locallab", "Angexp_" + std::to_string(i), pedited, spot.angexp, spotEdited.angexp);
                 assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + std::to_string(i), pedited, spot.excurve, spotEdited.excurve);
                 assignFromKeyfile(keyFile, "Locallab", "Inversex_" + std::to_string(i), pedited, spot.inversex, spotEdited.inversex);
                 assignFromKeyfile(keyFile, "Locallab", "EnaExpMask_" + std::to_string(i), pedited, spot.enaExpMask, spotEdited.enaExpMask);

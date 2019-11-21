@@ -291,6 +291,8 @@ Locallab::Locallab():
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
+    strexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
+    angexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
     blendmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -589,6 +591,7 @@ mergecolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")))),
 merge1colFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")))),
 pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
 fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
+gradFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
 gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
 dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
@@ -1120,6 +1123,8 @@ pe(nullptr)
     structexp->setAdjusterListener(this);
 
     blurexpde->setAdjusterListener(this);
+    strexp->setAdjusterListener(this);
+    angexp->setAdjusterListener(this);
 
     blendmaskexp->setAdjusterListener(this);
     radmaskexp->setAdjusterListener(this);
@@ -1258,10 +1263,15 @@ pe(nullptr)
     fatBox->pack_start(*fatdetail);
     fatBox->pack_start(*fatlevel);
     fatBox->pack_start(*fatanchor);
-
     pdeFrame->add(*pdeBox);
     fatFrame->add(*fatBox);
 
+    gradFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
+    gradBox->pack_start(*strexp);
+    gradBox->pack_start(*angexp);
+    gradFrame->add(*gradBox);
+    
     ToolParamBlock* const exposeBox = Gtk::manage(new ToolParamBlock());
     exposeBox->pack_start(*expMethod);
     exposeBox->pack_start(*pdeFrame);
@@ -1277,6 +1287,8 @@ pe(nullptr)
     exposeBox->pack_start(*sensiex);
     exposeBox->pack_start(*structexp);
     exposeBox->pack_start(*blurexpde);
+    exposeBox->pack_start(*gradFrame);
+
     exposeBox->pack_start(*softradiusexp);
     exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exposeBox->pack_start(*inversex);
@@ -3946,6 +3958,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).sensiex = sensiex->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).structexp = structexp->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).blurexpde = blurexpde->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strexp = strexp->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).angexp = angexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).excurve = shapeexpos->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).inversex = inversex->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).enaExpMask = enaExpMask->get_active();
@@ -4362,6 +4376,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).sensiex = pe->locallab.spots.at(pp->locallab.selspot).sensiex || sensiex->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).structexp = pe->locallab.spots.at(pp->locallab.selspot).structexp || structexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).blurexpde = pe->locallab.spots.at(pp->locallab.selspot).blurexpde || blurexpde->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strexp = pe->locallab.spots.at(pp->locallab.selspot).strexp || strexp->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).angexp = pe->locallab.spots.at(pp->locallab.selspot).angexp || angexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).excurve = pe->locallab.spots.at(pp->locallab.selspot).excurve || !shapeexpos->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).inversex = pe->locallab.spots.at(pp->locallab.selspot).inversex || !inversex->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).enaExpMask = pe->locallab.spots.at(pp->locallab.selspot).enaExpMask || !enaExpMask->get_inconsistent();
@@ -4708,6 +4724,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiex = pedited->locallab.spots.at(pp->locallab.selspot).sensiex || sensiex->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).structexp = pedited->locallab.spots.at(pp->locallab.selspot).structexp || structexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).blurexpde = pedited->locallab.spots.at(pp->locallab.selspot).blurexpde || blurexpde->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strexp = pedited->locallab.spots.at(pp->locallab.selspot).strexp || strexp->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).angexp = pedited->locallab.spots.at(pp->locallab.selspot).angexp || angexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).excurve = pedited->locallab.spots.at(pp->locallab.selspot).excurve || !shapeexpos->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).inversex = pedited->locallab.spots.at(pp->locallab.selspot).inversex || !inversex->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).enaExpMask = pedited->locallab.spots.at(pp->locallab.selspot).enaExpMask || !enaExpMask->get_inconsistent();
@@ -7022,6 +7040,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     sensiex->setDefault((double)defSpot->sensiex);
     structexp->setDefault((double)defSpot->structexp);
     blurexpde->setDefault((double)defSpot->blurexpde);
+    strexp->setDefault((double)defSpot->strexp);
+    angexp->setDefault((double)defSpot->angexp);
     blendmaskexp->setDefault((double)defSpot->blendmaskexp);
     radmaskexp->setDefault(defSpot->radmaskexp);
     chromaskexp->setDefault(defSpot->chromaskexp);
@@ -7229,6 +7249,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         sensiex->setDefaultEditedState(Irrelevant);
         structexp->setDefaultEditedState(Irrelevant);
         blurexpde->setDefaultEditedState(Irrelevant);
+        strexp->setDefaultEditedState(Irrelevant);
+        angexp->setDefaultEditedState(Irrelevant);
         blendmaskexp->setDefaultEditedState(Irrelevant);
         radmaskexp->setDefaultEditedState(Irrelevant);
         chromaskexp->setDefaultEditedState(Irrelevant);
@@ -7440,6 +7462,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         sensiex->setDefaultEditedState(defSpotState->sensiex ? Edited : UnEdited);
         structexp->setDefaultEditedState(defSpotState->structexp ? Edited : UnEdited);
         blurexpde->setDefaultEditedState(defSpotState->blurexpde ? Edited : UnEdited);
+        strexp->setDefaultEditedState(defSpotState->strexp ? Edited : UnEdited);
+        angexp->setDefaultEditedState(defSpotState->angexp ? Edited : UnEdited);
         blendmaskexp->setDefaultEditedState(defSpotState->blendmaskexp ? Edited : UnEdited);
         radmaskexp->setDefaultEditedState(defSpotState->radmaskexp ? Edited : UnEdited);
         chromaskexp->setDefaultEditedState(defSpotState->chromaskexp ? Edited : UnEdited);
@@ -7875,6 +7899,18 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == blurexpde) {
             if (listener) {
                 listener->panelChanged(Evlocallabblurexpde, blurexpde->getTextValue());
+            }
+        }
+
+        if (a == strexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrexp, strexp->getTextValue());
+            }
+        }
+
+        if (a == angexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabangexp, angexp->getTextValue());
             }
         }
 
@@ -8896,6 +8932,8 @@ void Locallab::setBatchMode(bool batchMode)
     sensiex->showEditedCB();
     structexp->showEditedCB();
     blurexpde->showEditedCB();
+    strexp->showEditedCB();
+    angexp->showEditedCB();
     blendmaskexp->showEditedCB();
     radmaskexp->showEditedCB();
     chromaskexp->showEditedCB();
@@ -9560,6 +9598,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         sensiex->setValue(pp->locallab.spots.at(index).sensiex);
         structexp->setValue(pp->locallab.spots.at(index).structexp);
         blurexpde->setValue(pp->locallab.spots.at(index).blurexpde);
+        strexp->setValue(pp->locallab.spots.at(index).strexp);
+        angexp->setValue(pp->locallab.spots.at(index).angexp);
         shapeexpos->setCurve(pp->locallab.spots.at(index).excurve);
         inversex->set_active(pp->locallab.spots.at(index).inversex);
         enaExpMask->set_active(pp->locallab.spots.at(index).enaExpMask);
@@ -10009,6 +10049,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sensiex->setEditedState(spotState->sensiex ? Edited : UnEdited);
                 structexp->setEditedState(spotState->structexp ? Edited : UnEdited);
                 blurexpde->setEditedState(spotState->blurexpde ? Edited : UnEdited);
+                strexp->setEditedState(spotState->strexp ? Edited : UnEdited);
+                angexp->setEditedState(spotState->angexp ? Edited : UnEdited);
                 shapeexpos->setUnChanged(!spotState->excurve);
                 inversex->set_inconsistent(multiImage && !spotState->inversex);
                 enaExpMask->set_inconsistent(multiImage && !spotState->enaExpMask);

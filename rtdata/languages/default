@@ -1060,8 +1060,10 @@ HISTORY_MSG_820;Local - Vib mask contrast curve
 HISTORY_MSG_821;Local - color grid background
 HISTORY_MSG_822;Local - color background merge
 HISTORY_MSG_823;Local - color background luminance
-HISTORY_MSG_824;Local - Exp gradient strength
-HISTORY_MSG_825;Local - Exp gradient angle
+HISTORY_MSG_824;Local - Exp gradient mask strength
+HISTORY_MSG_825;Local - Exp gradient mask angle
+HISTORY_MSG_826;Local - Exp gradient strength
+HISTORY_MSG_827;Local - Exp gradient angle
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2290,6 +2292,7 @@ TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot use recursive data.\nExcluding spot re
 TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXPOSE;Exposure
+TP_LOCALLAB_GRADFRA;Graduated Filter
 TP_LOCALLAB_ENABLE_MASKAFT;Use all algorithms Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPCHROMA;Chroma compensation

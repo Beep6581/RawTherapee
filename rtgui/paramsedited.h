@@ -480,6 +480,8 @@ public:
         bool sensiex;
         bool structexp;
         bool blurexpde;
+        bool strexp;
+        bool angexp;
         bool excurve;
         bool inversex;
         bool enaExpMask;
