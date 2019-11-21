@@ -68,8 +68,7 @@ void DCraw::parse_canon_cr3()
 
     szAtomList = ifp->size;
     err = parseCR3(0ULL, szAtomList, nesting, AtomNameStack, nTrack, TrackType);
-    if ((err == 0 || err == -14) &&
-        nTrack >= 0) // no error, or too deep nesting
+    if (err == 0 || err == -14) // no error, or too deep nesting
         selectCRXTrack(nTrack);
 }
 
@@ -77,8 +76,6 @@ void DCraw::parse_canon_cr3()
 
 void DCraw::selectCRXTrack(unsigned short maxTrack)
 {
-  if (maxTrack < 0)
-    return;
   INT64 bitcounts[LIBRAW_CRXTRACKS_MAXCOUNT], maxbitcount = 0;
   uint32_t maxjpegbytes = 0;
   memset(bitcounts, 0, sizeof(bitcounts));
@@ -117,7 +114,7 @@ void DCraw::selectCRXTrack(unsigned short maxTrack)
     }
   }
   is_raw = framecnt;
-  if (has_framei && framei < LIBRAW_CRXTRACKS_MAXCOUNT)
+  if (has_framei)
   {
     CanonCR3Data::crx_data_header_t *d =
         &RT_canon_CR3_data.crx_header[framei];
