@@ -2524,6 +2524,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gammaskexp(1.0),
     slomaskexp(0.0),
     lapmaskexp(0.0),
+    strmaskexp(0.0),
+    angmaskexp(0.0),
     softradiusexp(0.0),
     Lmaskexpcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     expMethod("std"),
@@ -2863,6 +2865,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gammaskexp == other.gammaskexp
         && slomaskexp == other.slomaskexp
         && lapmaskexp == other.lapmaskexp
+        && strmaskexp == other.strmaskexp
+        && angmaskexp == other.angmaskexp
         && softradiusexp == other.softradiusexp
         && Lmaskexpcurve == other.Lmaskexpcurve
         && expMethod == other.expMethod
@@ -4197,6 +4201,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskexp, "Locallab", "Gammaskexp_" + std::to_string(i), spot.gammaskexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskexp, "Locallab", "Slomaskexp_" + std::to_string(i), spot.slomaskexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmaskexp, "Locallab", "Lapmaskexp_" + std::to_string(i), spot.lapmaskexp, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strmaskexp, "Locallab", "Strmaskexp_" + std::to_string(i), spot.strmaskexp, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).angmaskexp, "Locallab", "Angmaskexp_" + std::to_string(i), spot.angmaskexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiusexp, "Locallab", "Softradiusexp_" + std::to_string(i), spot.softradiusexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmaskexpcurve, "Locallab", "LmaskexpCurve_" + std::to_string(i), spot.Lmaskexpcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expMethod, "Locallab", "ExpMethod_" + std::to_string(i), spot.expMethod, keyFile);
@@ -5650,6 +5656,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskexp_" + std::to_string(i), pedited, spot.gammaskexp, spotEdited.gammaskexp);
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskexp_" + std::to_string(i), pedited, spot.slomaskexp, spotEdited.slomaskexp);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskexp_" + std::to_string(i), pedited, spot.lapmaskexp, spotEdited.lapmaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Strmaskexp_" + std::to_string(i), pedited, spot.strmaskexp, spotEdited.strmaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Angmaskexp_" + std::to_string(i), pedited, spot.angmaskexp, spotEdited.angmaskexp);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiusexp_" + std::to_string(i), pedited, spot.softradiusexp, spotEdited.softradiusexp);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskexpCurve_" + std::to_string(i), pedited, spot.Lmaskexpcurve, spotEdited.Lmaskexpcurve);
                 assignFromKeyfile(keyFile, "Locallab", "ExpMethod_" + std::to_string(i), pedited, spot.expMethod, spotEdited.expMethod);

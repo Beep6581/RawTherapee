@@ -1067,6 +1067,8 @@ struct LocallabParams {
         double gammaskexp;
         double slomaskexp;
         double lapmaskexp;
+        double strmaskexp;
+        double angmaskexp;
         double softradiusexp;
         std::vector<double> Lmaskexpcurve;
         Glib::ustring expMethod;

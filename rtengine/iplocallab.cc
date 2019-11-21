@@ -210,6 +210,8 @@ struct local_params {
     float chromaexp;
     float gammaexp;
     float slomaexp;
+    float strmaexp;
+    float angmaexp;
     float softradiusexp;
     float softradiuscol;
     float softradiuscb;
@@ -730,6 +732,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float chromaskexpo = ((float) locallab.spots.at(sp).chromaskexp);
     float gammaskexpo = ((float) locallab.spots.at(sp).gammaskexp);
     float slomaskexpo = ((float) locallab.spots.at(sp).slomaskexp);
+    float strmaskexpo = ((float) locallab.spots.at(sp).strmaskexp);
+    float angmaskexpo = ((float) locallab.spots.at(sp).angmaskexp);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
@@ -833,6 +837,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.chromaexp = chromaskexpo;
     lp.gammaexp = gammaskexpo;
     lp.slomaexp = slomaskexpo;
+    lp.strmaexp = strmaskexpo;
+    lp.angmaexp = angmaskexpo;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
@@ -2550,6 +2556,155 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
     }
 }
 
+float pow3 (float x)
+{
+    return x * x * x;
+}
+
+
+struct grad_params {
+    bool angle_is_zero, transpose, bright_top;
+    float ta, yc, xc;
+    float ys, ys_inv;
+    float scale, botmul, topmul;
+    float top_edge_0;
+    int h;
+};
+
+void calcGradientParams (int oW, int oH, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh)
+
+{
+    int w = oW;
+    int h = oH;
+    double gradient_stops = lp.strmaexp;
+    double gradient_span = 1.f; //gradient.feather / 100.0  not used because we have transition and others gradients
+    double gradient_center_x = (lp.xc - xstart) / bfw;
+    double gradient_center_y = (lp.yc - ystart) / bfh;
+    double gradient_angle = lp.angmaexp / 180.0 * rtengine::RT_PI;
+    
+   // printf("xstart=%f ysta=%f lpxc=%f lpyc=%f aa=%f bb=%f cc=%f dd=%f ee=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_span, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+
+    // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
+    gradient_angle = fmod (gradient_angle, 2 * rtengine::RT_PI);
+
+    if (gradient_angle < 0.0) {
+        gradient_angle += 2.0 * rtengine::RT_PI;
+    }
+
+    gp.bright_top = false;
+    gp.transpose = false;
+    gp.angle_is_zero = false;
+    gp.h = h;
+    double cosgrad = cos (gradient_angle);
+
+    if (fabs (cosgrad) < 0.707) {
+        // we transpose to avoid division by zero at 90 degrees
+        // (actually we could transpose only for 90 degrees, but this way we avoid
+        // division with extremely small numbers
+        gp.transpose = true;
+        gradient_angle += 0.5 * rtengine::RT_PI;
+        double gxc = gradient_center_x;
+        gradient_center_x = 1.0 - gradient_center_y;
+        gradient_center_y = gxc;
+    }
+
+    gradient_angle = fmod (gradient_angle, 2 * rtengine::RT_PI);
+
+    if (gradient_angle > 0.5 * rtengine::RT_PI && gradient_angle < rtengine::RT_PI) {
+        gradient_angle += rtengine::RT_PI;
+        gp.bright_top = true;
+    } else if (gradient_angle >= rtengine::RT_PI && gradient_angle < 1.5 * rtengine::RT_PI) {
+        gradient_angle -= rtengine::RT_PI;
+        gp.bright_top = true;
+    }
+
+    if (fabs (gradient_angle) < 0.001 || fabs (gradient_angle - 2 * rtengine::RT_PI) < 0.001) {
+        gradient_angle = 0;
+        gp.angle_is_zero = true;
+    }
+
+    if (gp.transpose) {
+        gp.bright_top = !gp.bright_top;
+        std::swap(w, h);
+    }
+
+    gp.scale = 1.0 / pow (2, gradient_stops);
+
+    if (gp.bright_top) {
+        gp.topmul = 1.0;
+        gp.botmul = gp.scale;
+    } else {
+        gp.topmul = gp.scale;
+        gp.botmul = 1.0;
+    }
+
+    gp.ta = tan (gradient_angle);
+    gp.xc = w * gradient_center_x;
+    gp.yc = h * gradient_center_y;
+    gp.ys = sqrt ((float)h * h + (float)w * w) * (gradient_span / cos (gradient_angle));
+    gp.ys_inv = 1.0 / gp.ys;
+    gp.top_edge_0 = gp.yc - gp.ys / 2.0;
+
+    if (gp.ys < 1.0 / h) {
+        gp.ys_inv = 0;
+        gp.ys = 0;
+    }
+}
+
+static float calcGradientFactor (const struct grad_params& gp, int x, int y)
+{
+    if (gp.angle_is_zero) {
+        int gy = gp.transpose ? x : y;
+
+        if (gy < gp.top_edge_0) {
+            return gp.topmul;
+        } else if (gy >= gp.top_edge_0 + gp.ys) {
+            return gp.botmul;
+        } else {
+            float val = ((float) (gy - gp.top_edge_0) * gp.ys_inv);
+
+            if (gp.bright_top) {
+                val = 1.f - val;
+            }
+
+            val *= rtengine::RT_PI_F_2;
+
+            if (gp.scale < 1.f) {
+                val = pow3 (xsinf (val));
+            } else {
+                val = 1.f - pow3 (xcosf (val));
+            }
+
+            return gp.scale + val * (1.0 - gp.scale);
+        }
+    } else {
+        int gy = gp.transpose ? x : y;
+        int gx = gp.transpose ? gp.h - y - 1 : x;
+        float top_edge = gp.top_edge_0 - gp.ta * (gx - gp.xc);
+
+        if (gy < top_edge) {
+            return gp.topmul;
+        } else if (gy >= top_edge + gp.ys) {
+            return gp.botmul;
+        } else {
+            float val = ((float) (gy - top_edge) * gp.ys_inv);
+
+            val = gp.bright_top ? 1.f - val : val;
+
+            val *= rtengine::RT_PI_F_2;
+
+            if (gp.scale < 1.f) {
+                val = pow3 (xsinf (val));
+            } else {
+                val = 1.f - pow3 (xcosf (val));
+            }
+
+            return gp.scale + val * (1.0 - gp.scale);
+        }
+    }
+}
+
+
 
 void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread)
 {
@@ -3599,6 +3754,19 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             rdEBuffer.reset();
 
         }
+        
+    struct grad_params gp;
+
+    if (lp.angmaexp != 0.f) {
+        calcGradientParams (bfw, bfh, lp, gp, ystart, xstart, bfw, bfh);
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    double factor = 1.0;
+                    factor = calcGradientFactor (gp, jr, ir);
+                    bufmaskblurcol->L[ir][jr] *= factor;
+                }
+    }
+        
 
         if (lap > 0.f) {
             float *datain = new float[bfh * bfw];

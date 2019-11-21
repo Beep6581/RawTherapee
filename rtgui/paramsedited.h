@@ -493,6 +493,8 @@ public:
         bool gammaskexp;
         bool slomaskexp;
         bool lapmaskexp;
+        bool strmaskexp;
+        bool angmaskexp;
         bool softradiusexp;
         bool Lmaskexpcurve;
         bool expMethod;

@@ -1060,6 +1060,8 @@ HISTORY_MSG_820;Local - Vib mask contrast curve
 HISTORY_MSG_821;Local - color grid background
 HISTORY_MSG_822;Local - color background merge
 HISTORY_MSG_823;Local - color background luminance
+HISTORY_MSG_824;Local - Exp gradient strength
+HISTORY_MSG_825;Local - Exp gradient angle
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2324,6 +2326,8 @@ TP_LOCALLAB_FATAMOUNT;Amount
 TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATLEVEL;Detail levels
+TP_LOCALLAB_GRADANG;Gradient angle
+TP_LOCALLAB_GRADSTR;Gradient strength
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_SLOSH;Slope

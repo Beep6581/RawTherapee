@@ -208,6 +208,8 @@ private:
     Adjuster* const fatamount;
     Adjuster* const fatdetail;
     Adjuster* const fatanchor;
+    Adjuster* const strmaskexp;
+    Adjuster* const angmaskexp;
     Adjuster* const fatlevel;
     //Shadow highlight
     const std::array<Adjuster*, 5> multipliersh;

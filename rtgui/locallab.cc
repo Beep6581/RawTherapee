@@ -305,6 +305,8 @@ Locallab::Locallab():
     fatamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    strmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
+    angmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0, 3, 1, 2))),
     multipliersh(
         [this]() -> std::array<Adjuster *, 5>
@@ -1125,6 +1127,8 @@ pe(nullptr)
     gammaskexp->setAdjusterListener(this);
     slomaskexp->setAdjusterListener(this);
     lapmaskexp->setAdjusterListener(this);
+    strmaskexp->setAdjusterListener(this);
+    angmaskexp->setAdjusterListener(this);
     softradiusexp->setAdjusterListener(this);
     laplacexp->setAdjusterListener(this);
     balanexp->setAdjusterListener(this);
@@ -1288,6 +1292,8 @@ pe(nullptr)
     maskexpBox->pack_start(*chromaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*gammaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*slomaskexp, Gtk::PACK_SHRINK, 0);
+    maskexpBox->pack_start(*strmaskexp, Gtk::PACK_SHRINK, 0);
+    maskexpBox->pack_start(*angmaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*mask2expCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskexp->add(*maskexpBox, false);
     exposeBox->pack_start(*expmaskexp);
@@ -3953,6 +3959,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskexp = gammaskexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskexp = slomaskexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskexp = lapmaskexp->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strmaskexp = strmaskexp->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).angmaskexp = angmaskexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiusexp = softradiusexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve = Lmaskexpshape->getCurve();
 
@@ -4367,6 +4375,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskexp = pe->locallab.spots.at(pp->locallab.selspot).gammaskexp || gammaskexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskexp = pe->locallab.spots.at(pp->locallab.selspot).slomaskexp || slomaskexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskexp = pe->locallab.spots.at(pp->locallab.selspot).lapmaskexp || lapmaskexp->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strmaskexp = pe->locallab.spots.at(pp->locallab.selspot).strmaskexp || strmaskexp->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).angmaskexp = pe->locallab.spots.at(pp->locallab.selspot).angmaskexp || angmaskexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiusexp = pe->locallab.spots.at(pp->locallab.selspot).softradiusexp || softradiusexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve || !Lmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).expMethod = pe->locallab.spots.at(pp->locallab.selspot).expMethod || expMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -4711,6 +4721,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskexp = pedited->locallab.spots.at(pp->locallab.selspot).gammaskexp || gammaskexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskexp = pedited->locallab.spots.at(pp->locallab.selspot).slomaskexp || slomaskexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskexp = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskexp || lapmaskexp->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strmaskexp = pedited->locallab.spots.at(pp->locallab.selspot).strmaskexp || strmaskexp->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).angmaskexp = pedited->locallab.spots.at(pp->locallab.selspot).angmaskexp || angmaskexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiusexp = pedited->locallab.spots.at(pp->locallab.selspot).softradiusexp || softradiusexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve || !Lmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).expMethod = pedited->locallab.spots.at(pp->locallab.selspot).expMethod || expMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -7016,6 +7028,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     gammaskexp->setDefault(defSpot->gammaskexp);
     slomaskexp->setDefault(defSpot->slomaskexp);
     lapmaskexp->setDefault(defSpot->lapmaskexp);
+    strmaskexp->setDefault(defSpot->strmaskexp);
+    angmaskexp->setDefault(defSpot->angmaskexp);
     softradiusexp->setDefault(defSpot->softradiusexp);
     laplacexp->setDefault(defSpot->laplacexp);
     balanexp->setDefault(defSpot->balanexp);
@@ -7221,6 +7235,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         gammaskexp->setDefaultEditedState(Irrelevant);
         slomaskexp->setDefaultEditedState(Irrelevant);
         lapmaskexp->setDefaultEditedState(Irrelevant);
+        strmaskexp->setDefaultEditedState(Irrelevant);
+        angmaskexp->setDefaultEditedState(Irrelevant);
         softradiusexp->setDefaultEditedState(Irrelevant);
         laplacexp->setDefaultEditedState(Irrelevant);
         balanexp->setDefaultEditedState(Irrelevant);
@@ -7430,6 +7446,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         gammaskexp->setDefaultEditedState(defSpotState->gammaskexp ? Edited : UnEdited);
         slomaskexp->setDefaultEditedState(defSpotState->slomaskexp ? Edited : UnEdited);
         lapmaskexp->setDefaultEditedState(defSpotState->lapmaskexp ? Edited : UnEdited);
+        strmaskexp->setDefaultEditedState(defSpotState->strmaskexp ? Edited : UnEdited);
+        angmaskexp->setDefaultEditedState(defSpotState->angmaskexp ? Edited : UnEdited);
         softradiusexp->setDefaultEditedState(defSpotState->softradiusexp ? Edited : UnEdited);
         laplacexp->setDefaultEditedState(defSpotState->laplacexp ? Edited : UnEdited);
         balanexp->setDefaultEditedState(defSpotState->balanexp ? Edited : UnEdited);
@@ -7893,6 +7911,18 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == lapmaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmaskexp, lapmaskexp->getTextValue());
+            }
+        }
+
+        if (a == strmaskexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrmaskexp, strmaskexp->getTextValue());
+            }
+        }
+
+        if (a == angmaskexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabangmaskexp, angmaskexp->getTextValue());
             }
         }
 
@@ -8872,6 +8902,8 @@ void Locallab::setBatchMode(bool batchMode)
     gammaskexp->showEditedCB();
     slomaskexp->showEditedCB();
     lapmaskexp->showEditedCB();
+    strmaskexp->showEditedCB();
+    angmaskexp->showEditedCB();
     softradiusexp->showEditedCB();
     laplacexp->showEditedCB();
     balanexp->showEditedCB();
@@ -9541,6 +9573,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         gammaskexp->setValue(pp->locallab.spots.at(index).gammaskexp);
         slomaskexp->setValue(pp->locallab.spots.at(index).slomaskexp);
         lapmaskexp->setValue(pp->locallab.spots.at(index).lapmaskexp);
+        strmaskexp->setValue(pp->locallab.spots.at(index).strmaskexp);
+        angmaskexp->setValue(pp->locallab.spots.at(index).angmaskexp);
         softradiusexp->setValue(pp->locallab.spots.at(index).softradiusexp);
         Lmaskexpshape->setCurve(pp->locallab.spots.at(index).Lmaskexpcurve);
 
@@ -9988,6 +10022,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 gammaskexp->setEditedState(spotState->gammaskexp ? Edited : UnEdited);
                 slomaskexp->setEditedState(spotState->slomaskexp ? Edited : UnEdited);
                 lapmaskexp->setEditedState(spotState->lapmaskexp ? Edited : UnEdited);
+                strmaskexp->setEditedState(spotState->strmaskexp ? Edited : UnEdited);
+                angmaskexp->setEditedState(spotState->angmaskexp ? Edited : UnEdited);
                 softradiusexp->setEditedState(spotState->softradiusexp ? Edited : UnEdited);
                 Lmaskexpshape->setUnChanged(!spotState->Lmaskexpcurve);
 

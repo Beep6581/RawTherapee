@@ -1059,6 +1059,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gammaskexp = locallab.spots.at(j).gammaskexp && pSpot.gammaskexp == otherSpot.gammaskexp;
                 locallab.spots.at(j).slomaskexp = locallab.spots.at(j).slomaskexp && pSpot.slomaskexp == otherSpot.slomaskexp;
                 locallab.spots.at(j).lapmaskexp = locallab.spots.at(j).lapmaskexp && pSpot.lapmaskexp == otherSpot.lapmaskexp;
+                locallab.spots.at(j).strmaskexp = locallab.spots.at(j).strmaskexp && pSpot.strmaskexp == otherSpot.strmaskexp;
+                locallab.spots.at(j).angmaskexp = locallab.spots.at(j).angmaskexp && pSpot.angmaskexp == otherSpot.angmaskexp;
                 locallab.spots.at(j).softradiusexp = locallab.spots.at(j).softradiusexp && pSpot.softradiusexp == otherSpot.softradiusexp;
                 locallab.spots.at(j).Lmaskexpcurve = locallab.spots.at(j).Lmaskexpcurve && pSpot.Lmaskexpcurve == otherSpot.Lmaskexpcurve;
                 locallab.spots.at(j).expMethod = locallab.spots.at(j).expMethod && pSpot.expMethod == otherSpot.expMethod;
@@ -3176,6 +3178,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lapmaskexp = mods.locallab.spots.at(i).lapmaskexp;
         }
 
+        if (locallab.spots.at(i).strmaskexp) {
+            toEdit.locallab.spots.at(i).strmaskexp = mods.locallab.spots.at(i).strmaskexp;
+        }
+
+        if (locallab.spots.at(i).angmaskexp) {
+            toEdit.locallab.spots.at(i).angmaskexp = mods.locallab.spots.at(i).angmaskexp;
+        }
+
         if (locallab.spots.at(i).softradiusexp) {
             toEdit.locallab.spots.at(i).softradiusexp = mods.locallab.spots.at(i).softradiusexp;
         }
@@ -5117,6 +5127,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     gammaskexp(v),
     slomaskexp(v),
     lapmaskexp(v),
+    strmaskexp(v),
+    angmaskexp(v),
     softradiusexp(v),
     Lmaskexpcurve(v),
     expMethod(v),
@@ -5453,6 +5465,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gammaskexp = v;
     slomaskexp = v;
     lapmaskexp = v;
+    strmaskexp = v;
+    angmaskexp = v;
     softradiusexp = v;
     Lmaskexpcurve = v;
     expMethod = v;
