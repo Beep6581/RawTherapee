@@ -33,7 +33,7 @@
 
 #include "../rtgui/options.h"
 
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 using namespace std;
