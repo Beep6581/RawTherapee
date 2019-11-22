@@ -2516,7 +2516,7 @@ Camera constants:
 
     { // Quality C,
         "make_model": "Sony ILCE-7RM4",
-        "raw_crop": [ 0, 0, 9568, 0 ] // full raw frame 9600x6376 - 32 rightmost columns are garbage
+        "raw_crop": [ 0, 0, -32, 0 ] // full raw frame 9600x6376 - 32 rightmost columns are garbage. Using -32 instead of 9568 to support also 16-shot pixelshift files
     },
 
     { // Quality B, color matrix copied from a7rm2
