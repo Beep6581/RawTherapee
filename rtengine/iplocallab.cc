@@ -2577,28 +2577,27 @@ struct grad_params {
     int h;
 };
 
-void calcGradientParams (int oW, int oH, const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh, int indic)
+static void calclocalGradientParams (const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh, int indic)
 
 {
-    int w = oW;
-    int h = oH;
+    int w = bfw;
+    int h = bfh;
     float stops = 0.f;
     float angs = 0.f;
 
     if(indic == 0) {
-        stops = lp.strmaexp;
+        stops = -lp.strmaexp;
         angs = lp.angmaexp;
     } else if (indic == 1) {
-        stops = -lp.strexp;
+        stops = lp.strexp;
         angs = lp.angexp;
     }
     double gradient_stops = stops;
-    double gradient_span = 1.f; //gradient.feather / 100.0  not used because we have transition and others gradients
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = angs / 180.0 * rtengine::RT_PI;
     
-   // printf("xstart=%f ysta=%f lpxc=%f lpyc=%f aa=%f bb=%f cc=%f dd=%f ee=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_span, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+   // printf("xstart=%f ysta=%f lpxc=%f lpyc=%f aa=%f bb=%f cc=%f dd=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
     gradient_angle = fmod (gradient_angle, 2 * rtengine::RT_PI);
@@ -2657,7 +2656,7 @@ void calcGradientParams (int oW, int oH, const struct local_params& lp, struct g
     gp.ta = tan (gradient_angle);
     gp.xc = w * gradient_center_x;
     gp.yc = h * gradient_center_y;
-    gp.ys = sqrt ((float)h * h + (float)w * w) * (gradient_span / cos (gradient_angle));
+    gp.ys = sqrt ((float)h * h + (float)w * w) * (1.f / cos (gradient_angle));
     gp.ys_inv = 1.0 / gp.ys;
     gp.top_edge_0 = gp.yc - gp.ys / 2.0;
 
@@ -2666,61 +2665,6 @@ void calcGradientParams (int oW, int oH, const struct local_params& lp, struct g
         gp.ys = 0;
     }
 }
-
-static float calcGradientFactor (const struct grad_params& gp, int x, int y)
-{
-    if (gp.angle_is_zero) {
-        int gy = gp.transpose ? x : y;
-
-        if (gy < gp.top_edge_0) {
-            return gp.topmul;
-        } else if (gy >= gp.top_edge_0 + gp.ys) {
-            return gp.botmul;
-        } else {
-            float val = ((float) (gy - gp.top_edge_0) * gp.ys_inv);
-
-            if (gp.bright_top) {
-                val = 1.f - val;
-            }
-
-            val *= rtengine::RT_PI_F_2;
-
-            if (gp.scale < 1.f) {
-                val = pow3 (xsinf (val));
-            } else {
-                val = 1.f - pow3 (xcosf (val));
-            }
-
-            return gp.scale + val * (1.0 - gp.scale);
-        }
-    } else {
-        int gy = gp.transpose ? x : y;
-        int gx = gp.transpose ? gp.h - y - 1 : x;
-        float top_edge = gp.top_edge_0 - gp.ta * (gx - gp.xc);
-
-        if (gy < top_edge) {
-            return gp.topmul;
-        } else if (gy >= top_edge + gp.ys) {
-            return gp.botmul;
-        } else {
-            float val = ((float) (gy - top_edge) * gp.ys_inv);
-
-            val = gp.bright_top ? 1.f - val : val;
-
-            val *= rtengine::RT_PI_F_2;
-
-            if (gp.scale < 1.f) {
-                val = pow3 (xsinf (val));
-            } else {
-                val = 1.f - pow3 (xcosf (val));
-            }
-
-            return gp.scale + val * (1.0 - gp.scale);
-        }
-    }
-}
-
-
 
 void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread)
 {
@@ -3774,7 +3718,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
     struct grad_params gp;
 
     if (lp.strmaexp != 0.f) {
-        calcGradientParams (bfw, bfh, lp, gp, ystart, xstart, bfw, bfh, 0);
+        calclocalGradientParams (lp, gp, ystart, xstart, bfw, bfh, 0);
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     double factor = 1.0;
@@ -11831,7 +11775,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         struct grad_params gp;
 
                         if (lp.strexp != 0.f) {
-                            calcGradientParams (bfw, bfh, lp, gp, ystart, xstart, bfw, bfh, 1);
+                            calclocalGradientParams (lp, gp, ystart, xstart, bfw, bfh, 1);
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     double factor = 1.0;
