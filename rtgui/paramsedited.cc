@@ -998,6 +998,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).strengthgrid = locallab.spots.at(j).strengthgrid && pSpot.strengthgrid == otherSpot.strengthgrid;
                 locallab.spots.at(j).sensi = locallab.spots.at(j).sensi && pSpot.sensi == otherSpot.sensi;
                 locallab.spots.at(j).structcol = locallab.spots.at(j).structcol && pSpot.structcol == otherSpot.structcol;
+                locallab.spots.at(j).strcol = locallab.spots.at(j).strcol && pSpot.strcol == otherSpot.strcol;
+                locallab.spots.at(j).strcolab = locallab.spots.at(j).strcolab && pSpot.strcolab == otherSpot.strcolab;
+                locallab.spots.at(j).angcol = locallab.spots.at(j).angcol && pSpot.angcol == otherSpot.angcol;
                 locallab.spots.at(j).blurcolde = locallab.spots.at(j).blurcolde && pSpot.blurcolde == otherSpot.blurcolde;
                 locallab.spots.at(j).blendmaskcol = locallab.spots.at(j).blendmaskcol && pSpot.blendmaskcol == otherSpot.blendmaskcol;
                 locallab.spots.at(j).radmaskcol = locallab.spots.at(j).radmaskcol && pSpot.radmaskcol == otherSpot.radmaskcol;
@@ -2947,6 +2950,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).structcol) {
             toEdit.locallab.spots.at(i).structcol = mods.locallab.spots.at(i).structcol;
+        }
+
+        if (locallab.spots.at(i).strcol) {
+            toEdit.locallab.spots.at(i).strcol = mods.locallab.spots.at(i).strcol;
+        }
+
+        if (locallab.spots.at(i).strcolab) {
+            toEdit.locallab.spots.at(i).strcolab = mods.locallab.spots.at(i).strcolab;
+        }
+
+        if (locallab.spots.at(i).angcol) {
+            toEdit.locallab.spots.at(i).angcol = mods.locallab.spots.at(i).angcol;
         }
 
         if (locallab.spots.at(i).blendmaskcol) {
@@ -5086,6 +5101,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     strengthgrid(v),
     sensi(v),
     structcol(v),
+    strcol(v),
+    strcolab(v),
+    angcol(v),
     blurcolde(v),
     blendmaskcol(v),
     radmaskcol(v),
@@ -5428,6 +5446,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     strengthgrid = v;
     sensi = v;
     structcol = v;
+    strcol = v;
+    strcolab = v;
+    angcol = v;
     blurcolde = v;
     blendmaskcol = v;
     radmaskcol = v;

@@ -216,6 +216,9 @@ struct local_params {
     float angexp;
     float strSH;
     float angSH;
+    float strcol;
+    float strcolab;
+    float angcol;
     float softradiusexp;
     float softradiuscol;
     float softradiuscb;
@@ -742,6 +745,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float angexpo = ((float) locallab.spots.at(sp).angexp);
     float strSH = ((float) locallab.spots.at(sp).strSH);
     float angSH = ((float) locallab.spots.at(sp).angSH);
+    float strcol = ((float) locallab.spots.at(sp).strcol);
+    float strcolab = ((float) locallab.spots.at(sp).strcolab);
+    float angcol = ((float) locallab.spots.at(sp).angcol);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
@@ -851,6 +857,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.angexp = angexpo;
     lp.strSH = strSH;
     lp.angSH = angSH;
+    lp.strcol = strcol;
+    lp.strcolab = strcolab;
+    lp.angcol = angcol;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
@@ -2568,7 +2577,7 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
     }
 }
 
-float pow3 (float x)
+float pow3(float x)
 {
     return x * x * x;
 }
@@ -2583,7 +2592,7 @@ struct grad_params {
     int h;
 };
 
-void calclocalGradientParams (const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh, int indic)
+void calclocalGradientParams(const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh, int indic)
 
 {
     int w = bfw;
@@ -2591,7 +2600,7 @@ void calclocalGradientParams (const struct local_params& lp, struct grad_params&
     float stops = 0.f;
     float angs = 0.f;
 
-    if(indic == 0) {
+    if (indic == 0) {
         stops = -lp.strmaexp;
         angs = lp.angmaexp;
     } else if (indic == 1) {
@@ -2600,18 +2609,25 @@ void calclocalGradientParams (const struct local_params& lp, struct grad_params&
     } else if (indic == 2) {
         stops = lp.strSH;
         angs = lp.angSH;
+    } else if (indic == 3) {
+        stops = lp.strcol;
+        angs = lp.angcol;
+    } else if (indic == 4) {
+        stops = lp.strcolab;
+        angs = lp.angcol;
     }
+
     //printf("Indic=%d strex=%f stop=%f\n", indic, lp.strexp, stops);
-    
+
     double gradient_stops = stops;
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = angs / 180.0 * rtengine::RT_PI;
-    
-   //printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+
+    printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
-    gradient_angle = fmod (gradient_angle, 2 * rtengine::RT_PI);
+    gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
 
     if (gradient_angle < 0.0) {
         gradient_angle += 2.0 * rtengine::RT_PI;
@@ -2621,9 +2637,9 @@ void calclocalGradientParams (const struct local_params& lp, struct grad_params&
     gp.transpose = false;
     gp.angle_is_zero = false;
     gp.h = h;
-    double cosgrad = cos (gradient_angle);
+    double cosgrad = cos(gradient_angle);
 
-    if (fabs (cosgrad) < 0.707) {
+    if (fabs(cosgrad) < 0.707) {
         // we transpose to avoid division by zero at 90 degrees
         // (actually we could transpose only for 90 degrees, but this way we avoid
         // division with extremely small numbers
@@ -2634,7 +2650,7 @@ void calclocalGradientParams (const struct local_params& lp, struct grad_params&
         gradient_center_y = gxc;
     }
 
-    gradient_angle = fmod (gradient_angle, 2 * rtengine::RT_PI);
+    gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
 
     if (gradient_angle > 0.5 * rtengine::RT_PI && gradient_angle < rtengine::RT_PI) {
         gradient_angle += rtengine::RT_PI;
@@ -2644,7 +2660,7 @@ void calclocalGradientParams (const struct local_params& lp, struct grad_params&
         gp.bright_top = true;
     }
 
-    if (fabs (gradient_angle) < 0.001 || fabs (gradient_angle - 2 * rtengine::RT_PI) < 0.001) {
+    if (fabs(gradient_angle) < 0.001 || fabs(gradient_angle - 2 * rtengine::RT_PI) < 0.001) {
         gradient_angle = 0;
         gp.angle_is_zero = true;
     }
@@ -2654,7 +2670,7 @@ void calclocalGradientParams (const struct local_params& lp, struct grad_params&
         std::swap(w, h);
     }
 
-    gp.scale = 1.0 / pow (2, gradient_stops);
+    gp.scale = 1.0 / pow(2, gradient_stops);
 
     if (gp.bright_top) {
         gp.topmul = 1.0;
@@ -2664,10 +2680,10 @@ void calclocalGradientParams (const struct local_params& lp, struct grad_params&
         gp.botmul = 1.0;
     }
 
-    gp.ta = tan (gradient_angle);
+    gp.ta = tan(gradient_angle);
     gp.xc = w * gradient_center_x;
     gp.yc = h * gradient_center_y;
-    gp.ys = sqrt ((float)h * h + (float)w * w) * (1.f / cos (gradient_angle));
+    gp.ys = sqrt((float)h * h + (float)w * w) * (1.f / cos(gradient_angle));
     gp.ys_inv = 1.0 / gp.ys;
     gp.top_edge_0 = gp.yc - gp.ys / 2.0;
 
@@ -3725,21 +3741,22 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             rdEBuffer.reset();
 
         }
-        
-    struct grad_params gp;
 
-    if (lp.strmaexp != 0.f) {
-        calclocalGradientParams (lp, gp, ystart, xstart, bfw, bfh, 0);
+        struct grad_params gp;
+
+        if (lp.strmaexp != 0.f) {
+            calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 0);
 #ifdef _OPENMP
-                       #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16)
 #endif
+
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     double factor = 1.0;
-                    factor = ImProcFunctions::calcGradientFactor (gp, jr, ir);
+                    factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
                     bufmaskblurcol->L[ir][jr] *= factor;
                 }
-    }
+        }
 
 
         if (lap > 0.f) {
@@ -9531,14 +9548,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         struct grad_params gp;
 
                         if (lp.strSH != 0.f) {
-                            calclocalGradientParams (lp, gp, ystart, xstart, bfw, bfh, 2);
+                            calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 2);
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
+
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     double factor = 1.0;
-                                    factor = ImProcFunctions::calcGradientFactor (gp, jr, ir);
+                                    factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
                                     bufexpfin->L[ir][jr] *= factor;
                                 }
                         }
@@ -11801,18 +11819,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
                         }
+
 //gradient
                         struct grad_params gp;
 
                         if (lp.strexp != 0.f) {
-                            calclocalGradientParams (lp, gp, ystart, xstart, bfw, bfh, 1);
+                            calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 1);
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
+
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     double factor = 1.0;
-                                    factor = ImProcFunctions::calcGradientFactor (gp, jr, ir);
+                                    factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
                                     bufexpfin->L[ir][jr] *= factor;
                                 }
                         }
@@ -12102,7 +12122,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         bool ctoningmerg = (a_scalemerg != 0.f || b_scalemerg != 0.f || a_basemerg != 0.f || b_basemerg != 0.f);
         bool nottransit = false;
 
-        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 ||  lp.strcol != 0.f ||  lp.strcolab != 0.f || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
             /*
             //test for fftw blur with tiles  fftw_tile_blur....not good we can see tiles - very long time
                         int GW = original->W;
@@ -12569,6 +12589,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             kd = 10.f * 0.01f * lp.strengrid;
                         }
 
+
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12641,12 +12662,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 buf_b[ir][jr] = CLIPRET((bufcolcalcb - origptr->b[ir][jr]) / 328.f);;
                                 bufcolfin->L[ir][jr] = bufcolcalcL;
 
+
                                 if (lp.mergemet >= 2) {
                                     bufcolfin->a[ir][jr] = bufcolcalca * (1.f + 0.01f * (chprosl + chprocu));
                                     bufcolfin->b[ir][jr] = bufcolcalcb * (1.f + 0.01f * (chprosl + chprocu));
                                 }
 
                             }
+
 
                         if (HHcurve && ctoning) {//not use ctoning and H(H) simultaneous but priority to ctoning
                             HHcurve = false;
@@ -12704,6 +12727,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     }
                                 }
                             }
+
                             //test for write text , now it compile... but does nothing
                             // why ?? is arial found (I tried others) or I missed something
                             /*
@@ -12713,7 +12737,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             cr->select_font_face ("Arial", Cairo::FontSlant::FONT_SLANT_NORMAL, Cairo::FontWeight::FONT_WEIGHT_BOLD);
                             cr->set_font_size (20);
                             cr->move_to (20, 20);
-                            cr->show_text ("Coucou");  
+                            cr->show_text ("Coucou");
                             printf("OK \n");
                             */
                             JaggedArray<float> blend(bfw, bfh);
@@ -12775,7 +12799,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                                 if (conthr > 0.f && lp.mergemet != 4) {
-                            //    if (conthr > 0.f) {
+                                    //    if (conthr > 0.f) {
 
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
@@ -12881,7 +12905,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     }
                                 }
 
-                               // if (conthr > 0.f) {
+                                // if (conthr > 0.f) {
                                 if (conthr > 0.f && lp.mergemet != 4) {
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
@@ -13303,6 +13327,37 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
                             }
 
+                            if (lp.strcol != 0.f) {
+                                struct grad_params gp;
+                                calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 3);
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++)
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        double factor = 1.0;
+                                        factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
+                                        bufcolfin->L[ir][jr] *= factor;
+                                    }
+                            }
+
+                            if (lp.strcolab != 0.f) {
+                                struct grad_params gpab;
+                                calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 4);
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++)
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        double factor = 1.0;
+                                        factor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
+                                        bufcolfin->a[ir][jr] *= factor;
+                                        bufcolfin->b[ir][jr] *= factor;
+                                    }
+                            }
+
                             if (nottransit) {
                                 //special only transition
                                 //may be we can add preview...
@@ -13340,6 +13395,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         if (!nottransit) {
+//gradient
+
+                            if (lp.strcol != 0.f) {
+                                struct grad_params gp;
+                                calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 3);
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++)
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        double factor = 1.0;
+                                        factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
+                                        bufcolfin->L[ir][jr] *= factor;
+                                    }
+                            }
 
                             if (lp.softradiuscol > 0.f) {
                                 softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
@@ -13352,6 +13423,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     buflight[ir][jr] = CLIPRET((bufcolfin->L[ir][jr] - bufcolorig->L[ir][jr]) / 328.f);
+                                    /*
+                                    float tempa = SQR((bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr])/328.f);
+                                    float tempb = SQR((bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr])/328.f);
+                                    if(lp.strcolab != 0.f) {
+                                        bufchro[ir][jr] = sqrt(tempa + tempb);
+                                    }
+                                    */
                                 }
                         }
 

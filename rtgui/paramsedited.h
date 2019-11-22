@@ -432,6 +432,9 @@ public:
         bool strengthgrid;
         bool sensi;
         bool structcol;
+        bool strcol;
+        bool strcolab;
+        bool angcol;
         bool blurcolde;
         bool blendmaskcol;
         bool radmaskcol;

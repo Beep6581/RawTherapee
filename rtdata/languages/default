@@ -1066,6 +1066,9 @@ HISTORY_MSG_826;Local - Exp gradient strength
 HISTORY_MSG_827;Local - Exp gradient angle
 HISTORY_MSG_828;Local - SH gradient strength
 HISTORY_MSG_829;Local - SH gradient angle
+HISTORY_MSG_830;Local - Color gradient strength L
+HISTORY_MSG_831;Local - Color gradient angle
+HISTORY_MSG_832;Local - Color gradient strength C
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2333,6 +2336,8 @@ TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATLEVEL;Detail levels
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADSTR;Gradient strength
+TP_LOCALLAB_GRADSTRLUM;Gradient strength Luminance
+TP_LOCALLAB_GRADSTRCHRO;Gradient strength Chrominance
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_SLOSH;Slope

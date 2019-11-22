@@ -169,6 +169,9 @@ private:
     Adjuster* const sensi;
     Adjuster* const structcol;
     Adjuster* const blurcolde;
+    Adjuster* const strcol;
+    Adjuster* const strcolab;
+    Adjuster* const angcol;
     Adjuster* const blendmaskcol;
     Adjuster* const radmaskcol;
     Adjuster* const chromaskcol;
@@ -513,6 +516,7 @@ private:
     Gtk::Frame* const merge1colFrame;
     Gtk::Frame* const pdeFrame;
     Gtk::Frame* const fatFrame;
+    Gtk::Frame* const gradcolFrame;
     Gtk::Frame* const gradFrame;
     Gtk::Frame* const gradSHFrame;
     Gtk::Frame* const fatSHFrame;

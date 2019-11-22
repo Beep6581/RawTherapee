@@ -1005,6 +1005,9 @@ struct LocallabParams {
         int strengthgrid;
         int sensi;
         int structcol;
+        double strcol;
+        double strcolab;
+        double angcol;
         int blurcolde;
         int blendmaskcol;
         double radmaskcol;
