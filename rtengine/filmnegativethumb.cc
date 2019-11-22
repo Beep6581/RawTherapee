@@ -71,8 +71,7 @@ void calcMedians(
 void rtengine::Thumbnail::processFilmNegative(
     const procparams::ProcParams &params,
     const Imagefloat* baseImg,
-    const int rwidth, const int rheight,
-    float &rmi, float &gmi, float &bmi
+    const int rwidth, const int rheight
 )
 {
 
@@ -175,9 +174,9 @@ void rtengine::Thumbnail::processFilmNegative(
         const float bavg = bsum / (rheight * rwidth);
 
         // Shifting current WB multipliers, based on channel averages.
-        rmi /= gavg / ravg;
-        // gmi /= gAvg / gAvg;  green chosen as reference channel
-        bmi /= gavg / bavg;
+        rmult /= gavg / ravg;
+        // gmult /= gAvg / gAvg;  green chosen as reference channel
+        bmult /= gavg / bavg;
 
     } else {
 

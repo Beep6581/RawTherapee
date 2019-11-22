@@ -1183,7 +1183,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
 
     if (isRaw && params.filmNegative.enabled) {
-        processFilmNegative(params, baseImg, rwidth, rheight, rmi, gmi, bmi);
+        processFilmNegative(params, baseImg, rwidth, rheight);
     }
 
     if (params.coarse.rotate) {
