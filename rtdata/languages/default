@@ -1064,6 +1064,8 @@ HISTORY_MSG_824;Local - Exp gradient mask strength
 HISTORY_MSG_825;Local - Exp gradient mask angle
 HISTORY_MSG_826;Local - Exp gradient strength
 HISTORY_MSG_827;Local - Exp gradient angle
+HISTORY_MSG_828;Local - SH gradient strength
+HISTORY_MSG_829;Local - SH gradient angle
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

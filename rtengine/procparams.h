@@ -1100,6 +1100,8 @@ struct LocallabParams {
         int blendmaskSH;
         double radmaskSH;
         int blurSHde;
+        double strSH;
+        double angSH;
         bool inverssh;
         double chromaskSH;
         double gammaskSH;

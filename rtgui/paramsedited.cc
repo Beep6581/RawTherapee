@@ -1091,6 +1091,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).blendmaskSH = locallab.spots.at(j).blendmaskSH && pSpot.blendmaskSH == otherSpot.blendmaskSH;
                 locallab.spots.at(j).radmaskSH = locallab.spots.at(j).radmaskSH && pSpot.radmaskSH == otherSpot.radmaskSH;
                 locallab.spots.at(j).blurSHde = locallab.spots.at(j).blurSHde && pSpot.blurSHde == otherSpot.blurSHde;
+                locallab.spots.at(j).strSH = locallab.spots.at(j).strSH && pSpot.strSH == otherSpot.strSH;
+                locallab.spots.at(j).angSH = locallab.spots.at(j).angSH && pSpot.angSH == otherSpot.angSH;
                 locallab.spots.at(j).inverssh = locallab.spots.at(j).inverssh && pSpot.inverssh == otherSpot.inverssh;
                 locallab.spots.at(j).chromaskSH = locallab.spots.at(j).chromaskSH && pSpot.chromaskSH == otherSpot.chromaskSH;
                 locallab.spots.at(j).gammaskSH = locallab.spots.at(j).gammaskSH && pSpot.gammaskSH == otherSpot.gammaskSH;
@@ -3305,6 +3307,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).blurSHde = mods.locallab.spots.at(i).blurSHde;
         }
 
+        if (locallab.spots.at(i).strSH) {
+            toEdit.locallab.spots.at(i).strSH = mods.locallab.spots.at(i).strSH;
+        }
+
+        if (locallab.spots.at(i).angSH) {
+            toEdit.locallab.spots.at(i).angSH = mods.locallab.spots.at(i).angSH;
+        }
+
         if (locallab.spots.at(i).inverssh) {
             toEdit.locallab.spots.at(i).inverssh = mods.locallab.spots.at(i).inverssh;
         }
@@ -5170,6 +5180,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blendmaskSH(v),
     radmaskSH(v),
     blurSHde(v),
+    strSH(v),
+    angSH(v),
     inverssh(v),
     chromaskSH(v),
     gammaskSH(v),
@@ -5512,6 +5524,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     blendmaskSH = v;
     radmaskSH = v;
     blurSHde = v;
+    strSH = v;
+    angSH = v;
     inverssh = v;
     chromaskSH = v;
     gammaskSH = v;

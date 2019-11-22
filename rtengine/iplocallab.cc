@@ -214,6 +214,8 @@ struct local_params {
     float angmaexp;
     float strexp;
     float angexp;
+    float strSH;
+    float angSH;
     float softradiusexp;
     float softradiuscol;
     float softradiuscb;
@@ -738,6 +740,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float angmaskexpo = ((float) locallab.spots.at(sp).angmaskexp);
     float strexpo = ((float) locallab.spots.at(sp).strexp);
     float angexpo = ((float) locallab.spots.at(sp).angexp);
+    float strSH = ((float) locallab.spots.at(sp).strSH);
+    float angSH = ((float) locallab.spots.at(sp).angSH);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
@@ -845,6 +849,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.angmaexp = angmaskexpo;
     lp.strexp = strexpo;
     lp.angexp = angexpo;
+    lp.strSH = strSH;
+    lp.angSH = angSH;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
@@ -2577,7 +2583,7 @@ struct grad_params {
     int h;
 };
 
-static void calclocalGradientParams (const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh, int indic)
+void calclocalGradientParams (const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh, int indic)
 
 {
     int w = bfw;
@@ -2591,13 +2597,18 @@ static void calclocalGradientParams (const struct local_params& lp, struct grad_
     } else if (indic == 1) {
         stops = lp.strexp;
         angs = lp.angexp;
+    } else if (indic == 2) {
+        stops = lp.strSH;
+        angs = lp.angSH;
     }
+    //printf("Indic=%d strex=%f stop=%f\n", indic, lp.strexp, stops);
+    
     double gradient_stops = stops;
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = angs / 180.0 * rtengine::RT_PI;
     
-   // printf("xstart=%f ysta=%f lpxc=%f lpyc=%f aa=%f bb=%f cc=%f dd=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+   //printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
     gradient_angle = fmod (gradient_angle, 2 * rtengine::RT_PI);
@@ -3719,10 +3730,13 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
     if (lp.strmaexp != 0.f) {
         calclocalGradientParams (lp, gp, ystart, xstart, bfw, bfh, 0);
+#ifdef _OPENMP
+                       #pragma omp parallel for schedule(dynamic,16)
+#endif
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     double factor = 1.0;
-                    factor = calcGradientFactor (gp, jr, ir);
+                    factor = ImProcFunctions::calcGradientFactor (gp, jr, ir);
                     bufmaskblurcol->L[ir][jr] *= factor;
                 }
     }
@@ -9385,7 +9399,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             tonecurv = true;
         }
 
-        if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) && call < 3  && lp.hsena) {
+        if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || lp.strSH != 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) && call < 3  && lp.hsena) {
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -9511,6 +9525,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (params->locallab.spots.at(sp).shMethod == "std") {
                             ImProcFunctions::shadowsHighlights(bufexpfin.get(), lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
+                        }
+
+//gradient
+                        struct grad_params gp;
+
+                        if (lp.strSH != 0.f) {
+                            calclocalGradientParams (lp, gp, ystart, xstart, bfw, bfh, 2);
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    double factor = 1.0;
+                                    factor = ImProcFunctions::calcGradientFactor (gp, jr, ir);
+                                    bufexpfin->L[ir][jr] *= factor;
+                                }
                         }
 
                         if (params->locallab.spots.at(sp).shMethod == "tone") {
@@ -11500,7 +11530,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             enablefat = true;
         }
 
-        bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || lp.strexp > 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)));
+        bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)));
 
         if (!lp.invex  && execex) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -11776,10 +11806,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (lp.strexp != 0.f) {
                             calclocalGradientParams (lp, gp, ystart, xstart, bfw, bfh, 1);
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     double factor = 1.0;
-                                    factor = calcGradientFactor (gp, jr, ir);
+                                    factor = ImProcFunctions::calcGradientFactor (gp, jr, ir);
                                     bufexpfin->L[ir][jr] *= factor;
                                 }
                         }

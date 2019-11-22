@@ -224,6 +224,8 @@ private:
     Adjuster* const blendmaskSH;
     Adjuster* const radmaskSH;
     Adjuster* const blurSHde;
+    Adjuster* const strSH;
+    Adjuster* const angSH;
     Adjuster* const chromaskSH;
     Adjuster* const gammaskSH;
     Adjuster* const slomaskSH;
@@ -512,6 +514,7 @@ private:
     Gtk::Frame* const pdeFrame;
     Gtk::Frame* const fatFrame;
     Gtk::Frame* const gradFrame;
+    Gtk::Frame* const gradSHFrame;
     Gtk::Frame* const fatSHFrame;
     Gtk::Frame* const gamFrame;
     Gtk::Frame* const dehaFrame;

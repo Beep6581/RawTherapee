@@ -342,6 +342,8 @@ sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
 blendmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
 radmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
 blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
+strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
+angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -90, 90, 0.1, 0.))),
 chromaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
 gammaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
 slomaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
@@ -592,6 +594,7 @@ merge1colFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")))),
 pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
 fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
 gradFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
+gradSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
 gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
 dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
@@ -1356,6 +1359,8 @@ pe(nullptr)
     blendmaskSH->setAdjusterListener(this);
     radmaskSH->setAdjusterListener(this);
     blurSHde->setAdjusterListener(this);
+    strSH->setAdjusterListener(this);
+    angSH->setAdjusterListener(this);
     chromaskSH->setAdjusterListener(this);
     gammaskSH->setAdjusterListener(this);
     slomaskSH->setAdjusterListener(this);
@@ -1458,6 +1463,12 @@ pe(nullptr)
     gammBox->pack_start(*sloSH);
     gamFrame->add(*gammBox);
 
+    gradSHFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const gradSHBox = Gtk::manage(new ToolParamBlock());
+    gradSHBox->pack_start(*strSH);
+    gradSHBox->pack_start(*angSH);
+    gradSHFrame->add(*gradSHBox);
+
     shadhighBox->pack_start(*detailSH);
     shadhighBox->pack_start(*gamFrame);
     shadhighBox->pack_start(*highlights);
@@ -1467,6 +1478,7 @@ pe(nullptr)
     shadhighBox->pack_start(*sh_radius);
     shadhighBox->pack_start(*sensihs);
     shadhighBox->pack_start(*blurSHde);
+    shadhighBox->pack_start(*gradSHFrame);
     shadhighBox->pack_start(*inverssh);
 
     fatSHFrame->set_label_align(0.025, 0.5);
@@ -4025,6 +4037,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).blendmaskSH = blendmaskSH->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).radmaskSH = radmaskSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).blurSHde = blurSHde->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strSH = strSH->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).angSH = angSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).inverssh = inverssh->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).chromaskSH = chromaskSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskSH = gammaskSH->getValue();
@@ -4420,6 +4434,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).blendmaskSH = pe->locallab.spots.at(pp->locallab.selspot).blendmaskSH || blendmaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).radmaskSH = pe->locallab.spots.at(pp->locallab.selspot).radmaskSH || radmaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).blurSHde = pe->locallab.spots.at(pp->locallab.selspot).blurSHde || blurSHde->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strSH = pe->locallab.spots.at(pp->locallab.selspot).strSH || strSH->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).angSH = pe->locallab.spots.at(pp->locallab.selspot).angSH || angSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).inverssh = pe->locallab.spots.at(pp->locallab.selspot).inverssh || !inverssh->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).chromaskSH = pe->locallab.spots.at(pp->locallab.selspot).chromaskSH || chromaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskSH = pe->locallab.spots.at(pp->locallab.selspot).gammaskSH || gammaskSH->getEditedState();
@@ -4768,6 +4784,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).blendmaskSH = pedited->locallab.spots.at(pp->locallab.selspot).blendmaskSH || blendmaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).radmaskSH = pedited->locallab.spots.at(pp->locallab.selspot).radmaskSH || radmaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).blurSHde = pedited->locallab.spots.at(pp->locallab.selspot).blurSHde || blurSHde->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strSH = pedited->locallab.spots.at(pp->locallab.selspot).strSH || strSH->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).angSH = pedited->locallab.spots.at(pp->locallab.selspot).angSH || angSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).inverssh = pedited->locallab.spots.at(pp->locallab.selspot).inverssh || !inverssh->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).chromaskSH = pedited->locallab.spots.at(pp->locallab.selspot).chromaskSH || chromaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskSH = pedited->locallab.spots.at(pp->locallab.selspot).gammaskSH || gammaskSH->getEditedState();
@@ -6532,6 +6550,7 @@ void Locallab::inversexChanged()
         shadex->show();
         expMethod->show();
         exnoiseMethod->show();
+        gradFrame->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -6560,6 +6579,7 @@ void Locallab::inversexChanged()
         showmaskexpMethod->hide();
         showmaskexpMethodinv->show();
         expMethod->set_active(0);
+        gradFrame->hide();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -6581,6 +6601,7 @@ void Locallab::inversexChanged()
         shadex->show();
         expMethod->show();
         exnoiseMethod->show();
+        gradFrame->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -6633,6 +6654,7 @@ void Locallab::inversshChanged()
         expmasksh->show();
         showmaskSHMethod->show();
         showmaskSHMethodinv->hide();
+        gradSHFrame->show();
 
         showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inverssh->get_active()) {
@@ -6643,6 +6665,7 @@ void Locallab::inversshChanged()
         showmaskSHMethod->hide();
         showmaskSHMethodinv->show();
 //        shMethod->set_active(0);
+        gradSHFrame->hide();
 
     } else {
         //   printf("Pas Inv SH\n");
@@ -6651,6 +6674,7 @@ void Locallab::inversshChanged()
         blurSHde->show();
         showmaskSHMethod->show();
         showmaskSHMethodinv->hide();
+        gradSHFrame->show();
 
         if (batchMode) {
             showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -7069,6 +7093,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     blendmaskSH->setDefault((double)defSpot->blendmaskSH);
     radmaskSH->setDefault(defSpot->radmaskSH);
     blurSHde->setDefault((double)defSpot->blurSHde);
+    strSH->setDefault((double)defSpot->strSH);
+    angSH->setDefault((double)defSpot->angSH);
     chromaskSH->setDefault(defSpot->chromaskSH);
     gammaskSH->setDefault(defSpot->gammaskSH);
     slomaskSH->setDefault(defSpot->slomaskSH);
@@ -7278,6 +7304,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         blendmaskSH->setDefaultEditedState(Irrelevant);
         radmaskSH->setDefaultEditedState(Irrelevant);
         blurSHde->setDefaultEditedState(Irrelevant);
+        strSH->setDefaultEditedState(Irrelevant);
+        angSH->setDefaultEditedState(Irrelevant);
         chromaskSH->setDefaultEditedState(Irrelevant);
         gammaskSH->setDefaultEditedState(Irrelevant);
         slomaskSH->setDefaultEditedState(Irrelevant);
@@ -7491,6 +7519,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         blendmaskSH->setDefaultEditedState(defSpotState->blendmaskSH ? Edited : UnEdited);
         radmaskSH->setDefaultEditedState(defSpotState->radmaskSH ? Edited : UnEdited);
         blurSHde->setDefaultEditedState(defSpotState->blurSHde ? Edited : UnEdited);
+        strSH->setDefaultEditedState(defSpotState->strSH ? Edited : UnEdited);
+        angSH->setDefaultEditedState(defSpotState->angSH ? Edited : UnEdited);
         chromaskSH->setDefaultEditedState(defSpotState->chromaskSH ? Edited : UnEdited);
         gammaskSH->setDefaultEditedState(defSpotState->gammaskSH ? Edited : UnEdited);
         slomaskSH->setDefaultEditedState(defSpotState->slomaskSH ? Edited : UnEdited);
@@ -8084,6 +8114,18 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == blurSHde) {
             if (listener) {
                 listener->panelChanged(EvlocallabblurSHde, blurSHde->getTextValue());
+            }
+        }
+
+        if (a == strSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabstrSH, strSH->getTextValue());
+            }
+        }
+
+        if (a == angSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabangSH, angSH->getTextValue());
             }
         }
 
@@ -8961,6 +9003,8 @@ void Locallab::setBatchMode(bool batchMode)
     blendmaskSH->showEditedCB();
     radmaskSH->showEditedCB();
     blurSHde->showEditedCB();
+    strSH->showEditedCB();
+    angSH->showEditedCB();
     chromaskSH->showEditedCB();
     gammaskSH->showEditedCB();
     slomaskSH->showEditedCB();
@@ -9665,6 +9709,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         blendmaskSH->setValue(pp->locallab.spots.at(index).blendmaskSH);
         radmaskSH->setValue(pp->locallab.spots.at(index).radmaskSH);
         blurSHde->setValue(pp->locallab.spots.at(index).blurSHde);
+        strSH->setValue(pp->locallab.spots.at(index).strSH);
+        angSH->setValue(pp->locallab.spots.at(index).angSH);
         inverssh->set_active(pp->locallab.spots.at(index).inverssh);
         chromaskSH->setValue(pp->locallab.spots.at(index).chromaskSH);
         gammaskSH->setValue(pp->locallab.spots.at(index).gammaskSH);
@@ -10101,6 +10147,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 blendmaskSH->setEditedState(spotState->blendmaskSH ? Edited : UnEdited);
                 radmaskSH->setEditedState(spotState->radmaskSH ? Edited : UnEdited);
                 blurSHde->setEditedState(spotState->blurSHde ? Edited : UnEdited);
+                strSH->setEditedState(spotState->strSH ? Edited : UnEdited);
+                angSH->setEditedState(spotState->angSH ? Edited : UnEdited);
                 inverssh->set_inconsistent(multiImage && !spotState->inverssh);
                 chromaskSH->setEditedState(spotState->chromaskSH ? Edited : UnEdited);
                 gammaskSH->setEditedState(spotState->gammaskSH ? Edited : UnEdited);
@@ -10462,6 +10510,7 @@ void Locallab::updateSpecificGUIState()
         expMethod->show();
         expmaskexp->show();
         exnoiseMethod->show();
+        gradFrame->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -10487,6 +10536,7 @@ void Locallab::updateSpecificGUIState()
         showmaskexpMethodinv->show();
         showmaskexpMethod->hide();
         softradiusexp->show();
+        gradFrame->hide();
 
         expMethod->set_active(0);
 
@@ -10508,6 +10558,7 @@ void Locallab::updateSpecificGUIState()
         expmaskexp->show();
         showmaskexpMethodinv->hide();
         showmaskexpMethod->show();
+        gradFrame->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -10537,6 +10588,7 @@ void Locallab::updateSpecificGUIState()
         showmaskSHMethodinv->show();
         showmaskSHMethod->hide();
 //        shMethod->set_active(0);
+        gradSHFrame->hide();
 
         if (shMethod->get_active_row_number() == 0) {
             for (int i = 0; i < 5; i++) {
@@ -10556,6 +10608,7 @@ void Locallab::updateSpecificGUIState()
             }
 
             gamFrame->show();
+            gradSHFrame->show();
 
             detailSH->show();
             highlights->hide();
@@ -10571,6 +10624,7 @@ void Locallab::updateSpecificGUIState()
         expmasksh->show();
         showmaskSHMethodinv->hide();
         showmaskSHMethod->show();
+        gradSHFrame->show();
 
         if (batchMode) {
             showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode

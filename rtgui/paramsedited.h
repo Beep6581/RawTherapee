@@ -526,6 +526,8 @@ public:
         bool blendmaskSH;
         bool radmaskSH;
         bool blurSHde;
+        bool strSH;
+        bool angSH;
         bool inverssh;
         bool chromaskSH;
         bool gammaskSH;

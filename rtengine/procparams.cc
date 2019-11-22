@@ -2557,6 +2557,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blendmaskSH(0),
     radmaskSH(0.0),
     blurSHde(5),
+    strSH(0.),
+    angSH(0.),
     inverssh(false),
     chromaskSH(0.0),
     gammaskSH(1.0),
@@ -2909,6 +2911,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blendmaskSH == other.blendmaskSH
         && radmaskSH == other.radmaskSH
         && blurSHde == other.blurSHde
+        && strSH == other.strSH
+        && angSH == other.angSH
         && inverssh == other.inverssh
         && chromaskSH == other.chromaskSH
         && gammaskSH == other.gammaskSH
@@ -4237,6 +4241,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskSH, "Locallab", "BlendmaskSH_" + std::to_string(i), spot.blendmaskSH, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmaskSH, "Locallab", "RadmaskSH_" + std::to_string(i), spot.radmaskSH, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurSHde, "Locallab", "BlurSHde_" + std::to_string(i), spot.blurSHde, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strSH, "Locallab", "StrSH_" + std::to_string(i), spot.strSH, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).angSH, "Locallab", "AngSH_" + std::to_string(i), spot.angSH, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inverssh, "Locallab", "Inverssh_" + std::to_string(i), spot.inverssh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskSH, "Locallab", "ChromaskSH_" + std::to_string(i), spot.chromaskSH, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskSH, "Locallab", "GammaskSH_" + std::to_string(i), spot.gammaskSH, keyFile);
@@ -5694,6 +5700,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "BlendmaskSH_" + std::to_string(i), pedited, spot.blendmaskSH, spotEdited.blendmaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "RadmaskSH_" + std::to_string(i), pedited, spot.radmaskSH, spotEdited.radmaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "BlurSHde_" + std::to_string(i), pedited, spot.blurSHde, spotEdited.blurSHde);
+                assignFromKeyfile(keyFile, "Locallab", "StrSH_" + std::to_string(i), pedited, spot.strSH, spotEdited.strSH);
+                assignFromKeyfile(keyFile, "Locallab", "AngSH_" + std::to_string(i), pedited, spot.angSH, spotEdited.angSH);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssh_" + std::to_string(i), pedited, spot.inverssh, spotEdited.inverssh);
                 assignFromKeyfile(keyFile, "Locallab", "ChromaskSH_" + std::to_string(i), pedited, spot.chromaskSH, spotEdited.chromaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "GammaskSH_" + std::to_string(i), pedited, spot.gammaskSH, spotEdited.gammaskSH);
