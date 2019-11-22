@@ -24,7 +24,6 @@
 #include "gamutwarning.h"
 #include "jaggedarray.h"
 #include "pipettebuffer.h"
-#include "shmap.h"
 #include "array2D.h"
 
 #include <cairomm/cairomm.h>

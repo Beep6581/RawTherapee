@@ -64,7 +64,7 @@ class pana_cs6_page_decoder
     unsigned char current, *buffer;
 public:
     pana_cs6_page_decoder(unsigned char *_buffer, unsigned int bsize)
-      : lastoffset(0), maxoffset(bsize), current(0), buffer(_buffer)
+      : pixelbuffer{}, lastoffset(0), maxoffset(bsize), current(0), buffer(_buffer)
     {
     }
     void read_page(); // will throw IO error if not enough space in buffer

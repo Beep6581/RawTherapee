@@ -220,7 +220,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
             blue.push_back  (Coord2D (src[i].x, src[i].y));
         }
 
-        return clipped;
+        return false;
     }
 
     double oW = W, oH = H;

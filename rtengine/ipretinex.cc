@@ -51,7 +51,7 @@
 #include "procparams.h"
 #include "rawimagesource.h"
 #include "rtengine.h"
-
+#include "shmap.h"
 #define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
