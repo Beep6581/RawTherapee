@@ -103,8 +103,8 @@ FilmNegative::FilmNegative() :
     pack_start(*sep, Gtk::PACK_SHRINK, 0);
 
     Gtk::Grid* const fbGrid = Gtk::manage(new Gtk::Grid());
-    fbGrid->attach(*filmBaseLabel, 0, 0);
-    fbGrid->attach(*filmBaseValuesLabel, 1, 0);
+    fbGrid->attach(*filmBaseLabel, 0, 0, 1, 1);
+    fbGrid->attach(*filmBaseValuesLabel, 1, 0, 1, 1);
     pack_start(*fbGrid, Gtk::PACK_SHRINK, 0);
 
     pack_start(*filmBaseSpotButton, Gtk::PACK_SHRINK, 0);
@@ -160,8 +160,9 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     filmBaseValues[2] = pp->filmNegative.blueBase;
 
     if (pp->filmNegative.redBase > 0.f && pp->filmNegative.greenBase > 0.f && pp->filmNegative.blueBase > 0.f) {
-        filmBaseValuesLabel->set_text(Glib::ustring::sprintf("%0.1f %0.1f %0.1f",
-                                      filmBaseValues[0], filmBaseValues[1], filmBaseValues[2]));
+        filmBaseValuesLabel->set_text(Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[0]) + " " +
+                                      Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[1]) + " " +
+                                      Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[2]));
     } else { // base values not set in params
         filmBaseValuesLabel->set_text("auto");
     }
@@ -335,8 +336,9 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
                 enableListener();
 
-                const Glib::ustring vs = Glib::ustring::sprintf("%0.1f %0.1f %0.1f",
-                                         filmBaseValues[0], filmBaseValues[1], filmBaseValues[2]);
+                const Glib::ustring vs = Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[0]) + " " +
+                                         Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[1]) + " " +
+                                         Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[2]);
 
                 filmBaseValuesLabel->set_text(vs);
 
