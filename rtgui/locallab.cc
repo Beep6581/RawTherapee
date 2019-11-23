@@ -599,6 +599,7 @@ pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
 fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
 gradcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 gradFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
+gradFramemask(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 gradSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
 gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
@@ -1309,6 +1310,14 @@ pe(nullptr)
     gradBox->pack_start(*angexp);
     gradFrame->add(*gradBox);
 
+    gradFramemask->set_label_align(0.025, 0.5);
+
+    ToolParamBlock* const gradmaskBox = Gtk::manage(new ToolParamBlock());
+    gradmaskBox->pack_start(*strmaskexp);
+    gradmaskBox->pack_start(*angmaskexp);
+    gradFramemask->add(*gradmaskBox);
+
+
     ToolParamBlock* const exposeBox = Gtk::manage(new ToolParamBlock());
     exposeBox->pack_start(*expMethod);
     exposeBox->pack_start(*pdeFrame);
@@ -1325,11 +1334,6 @@ pe(nullptr)
     exposeBox->pack_start(*structexp);
     exposeBox->pack_start(*blurexpde);
     exposeBox->pack_start(*gradFrame);
-    /*
-        if (showtooltip) {
-            gradFrame->set_tooltip_markup(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
-        }
-    */
     exposeBox->pack_start(*softradiusexp);
     exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exposeBox->pack_start(*inversex);
@@ -1345,8 +1349,7 @@ pe(nullptr)
     maskexpBox->pack_start(*chromaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*gammaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*slomaskexp, Gtk::PACK_SHRINK, 0);
-    maskexpBox->pack_start(*strmaskexp, Gtk::PACK_SHRINK, 0);
-    maskexpBox->pack_start(*angmaskexp, Gtk::PACK_SHRINK, 0);
+    maskexpBox->pack_start(*gradFramemask);
     maskexpBox->pack_start(*mask2expCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskexp->add(*maskexpBox, false);
     exposeBox->pack_start(*expmaskexp);

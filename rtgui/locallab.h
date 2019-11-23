@@ -519,6 +519,7 @@ private:
     Gtk::Frame* const fatFrame;
     Gtk::Frame* const gradcolFrame;
     Gtk::Frame* const gradFrame;
+    Gtk::Frame* const gradFramemask;
     Gtk::Frame* const gradSHFrame;
     Gtk::Frame* const fatSHFrame;
     Gtk::Frame* const gamFrame;
