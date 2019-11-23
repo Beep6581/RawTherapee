@@ -35,7 +35,7 @@
 #include "jaggedarray.h"
 #include "rt_algo.h"
 #include "settings.h"
-
+#include "utils.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -272,6 +272,7 @@ struct local_params {
     int guidb;
     float epsb;
     float trans;
+    float feath;
     float transweak;
     float transgrad;
     int dehaze;
@@ -768,6 +769,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
     float blurSH = (float) locallab.spots.at(sp).blurSHde;
     float local_transit = locallab.spots.at(sp).transit;
+    float local_feather = locallab.spots.at(sp).feather;
     float local_transitweak = (float)locallab.spots.at(sp).transitweak;
     float local_transitgrad = (float)locallab.spots.at(sp).transitgrad;
     float radius = (float) locallab.spots.at(sp).radius;
@@ -929,6 +931,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     }
 
     lp.trans = local_transit;
+    lp.feath = local_feather;
     lp.transweak = local_transitweak;
     lp.transgrad = local_transitgrad;
     lp.rad = radius;
@@ -2623,8 +2626,13 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = angs / 180.0 * rtengine::RT_PI;
+    double varfeath = 0.01 * lp.feath;
 
-    printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+    if(indic ==4 && lp.strcolab > 0.f) { //chroma
+        varfeath = 1.f;
+    }
+
+   // printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
     gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
@@ -2683,7 +2691,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     gp.ta = tan(gradient_angle);
     gp.xc = w * gradient_center_x;
     gp.yc = h * gradient_center_y;
-    gp.ys = sqrt((float)h * h + (float)w * w) * (1.f / cos(gradient_angle));
+    gp.ys = sqrt((float)h * h + (float)w * w) * (varfeath / cos(gradient_angle));
     gp.ys_inv = 1.0 / gp.ys;
     gp.top_edge_0 = gp.yc - gp.ys / 2.0;
 
@@ -12561,7 +12569,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             if (ch <= 1.f) {
                                 chprosl = 99.f * ch - 99.f;
                             } else {
-                                constexpr float ampli = 70.f;
+                                constexpr float ampli = 50.f;
                                 chprosl = CLIPCHRO(ampli * ch - ampli);
                             }
                         }
@@ -12730,16 +12738,42 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             //test for write text , now it compile... but does nothing
                             // why ?? is arial found (I tried others) or I missed something
-                            /*
+/*
                             locImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, bfw, bfh);
                             Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(locImage);
+
                             cr->set_source_rgb(0.1, 0.1, 0.1);
-                            cr->select_font_face ("Arial", Cairo::FontSlant::FONT_SLANT_NORMAL, Cairo::FontWeight::FONT_WEIGHT_BOLD);
-                            cr->set_font_size (20);
-                            cr->move_to (20, 20);
-                            cr->show_text ("Coucou");
-                            printf("OK \n");
-                            */
+                            cr->select_font_face("Arial", Cairo::FontSlant::FONT_SLANT_NORMAL, Cairo::FontWeight::FONT_WEIGHT_BOLD);
+                            cr->set_font_size(20);
+                            cr->move_to(20, 20);
+                            cr->show_text("Coucou");
+                            Imagefloat *tmpImageorig = nullptr;
+                            tmpImageorig = new Imagefloat(bfw, bfh);
+                            lab2rgb(*bufcolfin, *tmpImageorig, params->icm.workingProfile);
+                            tmpImageorig->normalizeFloatTo1();
+                            for (int y = 0; y < bfh ; y++) {
+                                unsigned char *dst = locImage->get_data() + (y * bfw + x) * 4;
+
+                                for (int x = 0; x < bfw; x++) {
+                                    float r = tmpImageorig->r(y, x);
+                                    float g = tmpImageorig->g(y, x);
+                                    float b = tmpImageorig->b(y, x);
+                                    poke01_d(dst, r, g, b);
+                                    tmpImageorig->r(y, x) = r;
+                                    tmpImageorig->g(y, x) = g;
+                                    tmpImageorig->b(y, x) = b;
+
+                                }
+                            }
+
+                            locImage->mark_dirty();
+
+
+
+                            tmpImageorig->normalizeFloatTo65535();
+                            rgb2lab(*tmpImageorig, *bufcolfin, params->icm.workingProfile);
+                            delete tmpImageorig;
+*/
                             JaggedArray<float> blend(bfw, bfh);
                             buildBlendMask(lumreserv, blend, bfw, bfh, conthr, 1.f);
                             float rm = 20.f / sk;
@@ -13409,6 +13443,32 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         double factor = 1.0;
                                         factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
                                         bufcolfin->L[ir][jr] *= factor;
+                                    }
+                            }
+ 
+                            if (lp.strcolab != 0.f) {
+                                struct grad_params gpab;
+                                calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 4);
+
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++)
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        double factor = 1.0;
+                                        factor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
+                                        float cor = 0.f;
+                                        
+                                        if(factor < 1.f) {
+                                            cor = -60.f * factor;
+                                        } else if(factor > 1.f) {
+                                            cor = 2.f * factor;
+                                        }
+                                        bufchro[ir][jr] += cor;
+                                        if(bufchro[ir][jr] < -99.f) {
+                                            bufchro[ir][jr] = -99.f;
+                                        }
                                     }
                             }
 

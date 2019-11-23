@@ -402,6 +402,7 @@ public:
         bool circrad;
         bool qualityMethod;
         bool transit;
+        bool feather;
         bool thresh;
         bool iter;
         bool balan;

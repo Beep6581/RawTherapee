@@ -705,6 +705,12 @@ pe(nullptr)
         //   chromaskcol->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
     }
 
+    if (showtooltip) {
+        strcol->set_tooltip_text(M("TP_LOCALLAB_GRADSTR_TOOLTIP"));
+        strcolab->set_tooltip_text(M("TP_LOCALLAB_GRADSTRAB_TOOLTIP"));
+        angcol->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    }
+
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
     qualitycurveMethod->set_active(0);
@@ -1163,6 +1169,13 @@ pe(nullptr)
     fatlevel->setAdjusterListener(this);
 
     if (showtooltip) {
+        strexp->set_tooltip_text(M("TP_LOCALLAB_GRADSTR_TOOLTIP"));
+        strmaskexp->set_tooltip_text(M("TP_LOCALLAB_GRADSTR_TOOLTIP"));
+        angexp->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+        angmaskexp->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    }
+
+    if (showtooltip) {
         radmaskexp->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmaskexp->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         //      chromaskexp->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
@@ -1389,6 +1402,11 @@ pe(nullptr)
     if (showtooltip) {
         radmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+    }
+
+    if (showtooltip) {
+        strSH->set_tooltip_text(M("TP_LOCALLAB_GRADSTR_TOOLTIP"));
+        angSH->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     }
 
     enaSHMaskConn = enaSHMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaSHMaskChanged));
@@ -3267,6 +3285,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         }
 
         r->transit = pp->locallab.spots.at(i).transit;
+        r->feather = pp->locallab.spots.at(i).feather;
         r->thresh = pp->locallab.spots.at(i).thresh;
         r->iter = pp->locallab.spots.at(i).iter;
         r->balan = pp->locallab.spots.at(i).balan;
@@ -3431,6 +3450,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             }
 
             r->transit = newSpot->transit;
+            r->feather = newSpot->feather;
             r->thresh = newSpot->thresh;
             r->iter = newSpot->iter;
             r->balan = newSpot->balan;
@@ -3681,6 +3701,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             }
 
             r->transit = newSpot->transit;
+            r->feather = newSpot->feather;
             r->thresh = newSpot->thresh;
             r->iter = newSpot->iter;
             r->balan = newSpot->balan;
@@ -3831,6 +3852,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).transit = r->transit;
+                    pp->locallab.spots.at(pp->locallab.selspot).feather = r->feather;
                     pp->locallab.spots.at(pp->locallab.selspot).thresh = r->thresh;
                     pp->locallab.spots.at(pp->locallab.selspot).iter = r->iter;
                     pp->locallab.spots.at(pp->locallab.selspot).balan = r->balan;
@@ -4336,6 +4358,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).circrad = pe->locallab.spots.at(pp->locallab.selspot).circrad || se->circrad;
                         pe->locallab.spots.at(pp->locallab.selspot).qualityMethod = pe->locallab.spots.at(pp->locallab.selspot).qualityMethod || se->qualityMethod;
                         pe->locallab.spots.at(pp->locallab.selspot).transit = pe->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
+                        pe->locallab.spots.at(pp->locallab.selspot).feather = pe->locallab.spots.at(pp->locallab.selspot).feather || se->feather;
                         pe->locallab.spots.at(pp->locallab.selspot).thresh = pe->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
                         pe->locallab.spots.at(pp->locallab.selspot).iter = pe->locallab.spots.at(pp->locallab.selspot).iter || se->iter;
                         pe->locallab.spots.at(pp->locallab.selspot).transitweak = pe->locallab.spots.at(pp->locallab.selspot).transitweak || se->transitweak;
@@ -4691,6 +4714,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).circrad = pedited->locallab.spots.at(pp->locallab.selspot).circrad || se->circrad;
                         pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod || se->qualityMethod;
                         pedited->locallab.spots.at(pp->locallab.selspot).transit = pedited->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
+                        pedited->locallab.spots.at(pp->locallab.selspot).feather = pedited->locallab.spots.at(pp->locallab.selspot).feather || se->feather;
                         pedited->locallab.spots.at(pp->locallab.selspot).thresh = pedited->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
                         pedited->locallab.spots.at(pp->locallab.selspot).iter = pedited->locallab.spots.at(pp->locallab.selspot).iter || se->iter;
                         pedited->locallab.spots.at(pp->locallab.selspot).balan = pedited->locallab.spots.at(pp->locallab.selspot).balan || se->balan;
@@ -5612,7 +5636,7 @@ void Locallab::merMethodChanged()
         blurcolde->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(true);
-        strcolab->set_sensitive(false);
+ //       strcolab->set_sensitive(false);
         special->set_sensitive(true);
         invers->set_sensitive(true);
         gridmerFrame->hide();
@@ -5625,7 +5649,7 @@ void Locallab::merMethodChanged()
         rgbCurveEditorG->set_sensitive(true);
         special->set_sensitive(true);
         invers->set_sensitive(true);
-        strcolab->set_sensitive(false);
+//        strcolab->set_sensitive(false);
         conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
@@ -10066,6 +10090,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->circrad = spotState->circrad;
                 se->qualityMethod = spotState->qualityMethod;
                 se->transit = spotState->transit;
+                se->feather = spotState->feather;
                 se->thresh = spotState->thresh;
                 se->iter = spotState->iter;
                 se->balan = spotState->balan;
@@ -10510,7 +10535,7 @@ void Locallab::updateSpecificGUIState()
         mask7->hide();
         conthrcol->hide();
         structcol->set_sensitive(true);
-        strcolab->set_sensitive(false);
+//        strcolab->set_sensitive(false);
         sensi->set_sensitive(true);
         blurcolde->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
@@ -10521,7 +10546,7 @@ void Locallab::updateSpecificGUIState()
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
         structcol->set_sensitive(true);
-        strcolab->set_sensitive(false);
+ //       strcolab->set_sensitive(false);
         sensi->set_sensitive(true);
         blurcolde->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
@@ -10533,7 +10558,7 @@ void Locallab::updateSpecificGUIState()
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
         structcol->set_sensitive(false);
-        strcolab->set_sensitive(true);
+ //       strcolab->set_sensitive(true);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
         H2CurveEditorG->set_sensitive(false);

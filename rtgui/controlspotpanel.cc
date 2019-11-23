@@ -65,6 +65,7 @@ ControlSpotPanel::ControlSpotPanel():
     centerY_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITVALUE"), 5., 100., 0.1, 60.))),
+    feather_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 50.))),
     thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 10.0, 0.1, 2.0))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
     balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
@@ -287,6 +288,10 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     if (showtooltip) {
+        feather_->set_tooltip_text(M("TP_LOCALLAB_FEATH_TOOLTIP"));
+    }
+
+    if (showtooltip) {
         transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
     }
 
@@ -304,6 +309,7 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     transit_->setAdjusterListener(this);
+    feather_->setAdjusterListener(this);
     transitweak_->setAdjusterListener(this);
     transitgrad_->setAdjusterListener(this);
     scopemask_->setAdjusterListener(this);
@@ -312,6 +318,7 @@ ControlSpotPanel::ControlSpotPanel():
     transitBox->pack_start(*transit_);
     transitBox->pack_start(*transitweak_);
     transitBox->pack_start(*transitgrad_);
+    transitBox->pack_start(*feather_);
     transitFrame->add(*transitBox);
     pack_start(*transitFrame);
 
@@ -695,6 +702,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     circrad_->setValue((double)row[spots_.circrad]);
     qualityMethod_->set_active(row[spots_.qualityMethod]);
     transit_->setValue((double)row[spots_.transit]);
+    feather_->setValue((double)row[spots_.feather]);
     thresh_->setValue((double)row[spots_.thresh]);
     iter_->setValue((double)row[spots_.iter]);
     balan_->setValue((double)row[spots_.balan]);
@@ -1118,6 +1126,13 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (a == feather_) {
+        row[spots_.feather] = feather_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotfeather, feather_->getTextValue());
+        }
+    }
 
     if (a == thresh_) {
         row[spots_.thresh] = thresh_->getValue();
@@ -1414,6 +1429,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     circrad_->block(cond);
     qualityMethodconn_.block(cond);
     transit_->block(cond);
+    feather_->block(cond);
     thresh_->block(cond);
     iter_->block(cond);
     balan_->block(cond);
@@ -1449,6 +1465,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     circrad_->set_sensitive(cond);
     qualityMethod_->set_sensitive(cond);
     transit_->set_sensitive(cond);
+    feather_->set_sensitive(cond);
     thresh_->set_sensitive(cond);
     iter_->set_sensitive(cond);
     balan_->set_sensitive(cond);
@@ -2092,6 +2109,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->circrad = row[spots_.circrad];
             r->qualityMethod = row[spots_.qualityMethod];
             r->transit = row[spots_.transit];
+            r->feather = row[spots_.feather];
             r->thresh = row[spots_.thresh];
             r->iter = row[spots_.iter];
             r->balan = row[spots_.balan];
@@ -2226,6 +2244,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.circrad] = newSpot->circrad;
     row[spots_.qualityMethod] = newSpot->qualityMethod;
     row[spots_.transit] = newSpot->transit;
+    row[spots_.feather] = newSpot->feather;
     row[spots_.thresh] = newSpot->thresh;
     row[spots_.iter] = newSpot->iter;
     row[spots_.balan] = newSpot->balan;
@@ -2279,6 +2298,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.circrad] = spot->circrad;
             row[spots_.qualityMethod] = spot->qualityMethod;
             row[spots_.transit] = spot->transit;
+            row[spots_.feather] = spot->feather;
             row[spots_.thresh] = spot->thresh;
             row[spots_.iter] = spot->iter;
             row[spots_.balan] = spot->balan;
@@ -2378,6 +2398,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->circrad = circrad_->getEditedState();
     se->qualityMethod = qualityMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->transit = transit_->getEditedState();
+    se->feather = feather_->getEditedState();
     se->thresh = thresh_->getEditedState();
     se->iter = iter_->getEditedState();
     se->balan = balan_->getEditedState();
@@ -2459,6 +2480,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     }
 
     transit_->setEditedState(se->transit ? Edited : UnEdited);
+    feather_->setEditedState(se->feather ? Edited : UnEdited);
     thresh_->setEditedState(se->thresh ? Edited : UnEdited);
     iter_->setEditedState(se->iter ? Edited : UnEdited);
     balan_->setEditedState(se->balan ? Edited : UnEdited);
@@ -2511,6 +2533,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
     centerY_->setDefault((double)defSpot->centerY);
     circrad_->setDefault((double)defSpot->circrad);
     transit_->setDefault(defSpot->transit);
+    feather_->setDefault(defSpot->feather);
     thresh_->setDefault(defSpot->thresh);
     iter_->setDefault(defSpot->iter);
     balan_->setDefault(defSpot->balan);
@@ -2532,6 +2555,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         centerY_->setDefaultEditedState(Irrelevant);
         circrad_->setDefaultEditedState(Irrelevant);
         transit_->setDefaultEditedState(Irrelevant);
+        feather_->setDefaultEditedState(Irrelevant);
         thresh_->setDefaultEditedState(Irrelevant);
         iter_->setDefaultEditedState(Irrelevant);
         balan_->setDefaultEditedState(Irrelevant);
@@ -2557,6 +2581,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         centerY_->setDefaultEditedState(defSpotState->centerY ? Edited : UnEdited);
         circrad_->setDefaultEditedState(defSpotState->circrad ? Edited : UnEdited);
         transit_->setDefaultEditedState(defSpotState->transit ? Edited : UnEdited);
+        feather_->setDefaultEditedState(defSpotState->feather ? Edited : UnEdited);
         thresh_->setDefaultEditedState(defSpotState->thresh ? Edited : UnEdited);
         iter_->setDefaultEditedState(defSpotState->iter ? Edited : UnEdited);
         balan_->setDefaultEditedState(defSpotState->balan ? Edited : UnEdited);
@@ -2583,6 +2608,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
     centerY_->showEditedCB();
     circrad_->showEditedCB();
     transit_->showEditedCB();
+    feather_->showEditedCB();
     thresh_->showEditedCB();
     iter_->showEditedCB();
     balan_->showEditedCB();
@@ -2625,6 +2651,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(circrad);
     add(qualityMethod);
     add(transit);
+    add(feather);
     add(thresh);
     add(iter);
     add(balan);

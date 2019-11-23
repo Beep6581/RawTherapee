@@ -1069,6 +1069,7 @@ HISTORY_MSG_829;Local - SH gradient angle
 HISTORY_MSG_830;Local - Color gradient strength L
 HISTORY_MSG_831;Local - Color gradient angle
 HISTORY_MSG_832;Local - Color gradient strength C
+HISTORY_MSG_833;Local - Gradient feather
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2298,6 +2299,10 @@ TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_GRADFRA;Graduated Filter
+TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n.Disabled for negatives chrominance.
+TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
+TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees -90 0 +90
+TP_LOCALLAB_GRADSTRAB_TOOLTIP;Filter chroma strength
 TP_LOCALLAB_ENABLE_MASKAFT;Use all algorithms Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
@@ -2472,6 +2477,7 @@ TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
 TP_LOCALLAB_TRANSITVALUE;Transition value
+TP_LOCALLAB_FEATVALUE;Feather gradient
 TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that of the ordinate 
 TP_LOCALLAB_TRANSITWEAK;Transition weakening

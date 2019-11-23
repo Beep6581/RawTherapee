@@ -60,6 +60,7 @@ public:
         int circrad;
         int qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
         int transit;
+        double feather;
         double thresh;
         double iter;
         double balan;
@@ -99,6 +100,7 @@ public:
         bool circrad;
         bool qualityMethod;
         bool transit;
+        bool feather;
         bool thresh;
         bool iter;
         bool balan;
@@ -326,6 +328,7 @@ private:
         Gtk::TreeModelColumn<int> circrad;
         Gtk::TreeModelColumn<int> qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
         Gtk::TreeModelColumn<int> transit;
+        Gtk::TreeModelColumn<int> feather;
         Gtk::TreeModelColumn<double> thresh;
         Gtk::TreeModelColumn<double> iter;
         Gtk::TreeModelColumn<double> balan;
@@ -400,6 +403,7 @@ private:
     Adjuster* const centerY_;
     Adjuster* const circrad_;
     Adjuster* const transit_;
+    Adjuster* const feather_;
     Adjuster* const thresh_;
     Adjuster* const iter_;
     Adjuster* const balan_;
