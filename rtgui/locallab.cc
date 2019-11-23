@@ -708,7 +708,7 @@ pe(nullptr)
     }
 
     if (showtooltip) {
-        strcol->set_tooltip_text(M("TP_LOCALLAB_GRADSTR_TOOLTIP"));
+        strcol->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         strcolab->set_tooltip_text(M("TP_LOCALLAB_GRADSTRAB_TOOLTIP"));
         strcolh->set_tooltip_text(M("TP_LOCALLAB_GRADSTRHUE_TOOLTIP"));
         angcol->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
@@ -1173,8 +1173,8 @@ pe(nullptr)
     fatlevel->setAdjusterListener(this);
 
     if (showtooltip) {
-        strexp->set_tooltip_text(M("TP_LOCALLAB_GRADSTR_TOOLTIP"));
-        strmaskexp->set_tooltip_text(M("TP_LOCALLAB_GRADSTR_TOOLTIP"));
+        strexp->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
+        strmaskexp->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         angexp->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
         angmaskexp->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     }
@@ -1302,6 +1302,7 @@ pe(nullptr)
     fatFrame->add(*fatBox);
 
     gradFrame->set_label_align(0.025, 0.5);
+    
     ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
     gradBox->pack_start(*strexp);
     gradBox->pack_start(*angexp);
@@ -1323,7 +1324,11 @@ pe(nullptr)
     exposeBox->pack_start(*structexp);
     exposeBox->pack_start(*blurexpde);
     exposeBox->pack_start(*gradFrame);
-
+/*
+    if (showtooltip) {
+        gradFrame->set_tooltip_markup(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
+    }
+*/
     exposeBox->pack_start(*softradiusexp);
     exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exposeBox->pack_start(*inversex);
@@ -1409,7 +1414,7 @@ pe(nullptr)
     }
 
     if (showtooltip) {
-        strSH->set_tooltip_text(M("TP_LOCALLAB_GRADSTR_TOOLTIP"));
+        strSH->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         angSH->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     }
 
