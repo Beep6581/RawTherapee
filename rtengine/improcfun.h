@@ -23,7 +23,6 @@
 #include "coord2d.h"
 #include "gamutwarning.h"
 #include "pipettebuffer.h"
-#include "shmap.h"
 
 template<typename T>
 class LUT;

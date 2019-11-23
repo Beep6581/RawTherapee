@@ -187,7 +187,6 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
-    void progress (Glib::ustring str, int pr);
     void reallocAll ();
     void updateLRGBHistograms ();
     void setScale (int prevscale);
