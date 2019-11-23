@@ -218,6 +218,7 @@ struct local_params {
     float angSH;
     float strcol;
     float strcolab;
+    float strcolh;
     float angcol;
     float softradiusexp;
     float softradiuscol;
@@ -748,6 +749,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float angSH = ((float) locallab.spots.at(sp).angSH);
     float strcol = ((float) locallab.spots.at(sp).strcol);
     float strcolab = ((float) locallab.spots.at(sp).strcolab);
+    float strcolh = ((float) locallab.spots.at(sp).strcolh);
     float angcol = ((float) locallab.spots.at(sp).angcol);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
@@ -861,6 +863,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.angSH = angSH;
     lp.strcol = strcol;
     lp.strcolab = strcolab;
+    lp.strcolh = strcolh;
     lp.angcol = angcol;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
@@ -2618,9 +2621,12 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     } else if (indic == 4) {
         stops = lp.strcolab;
         angs = lp.angcol;
+    } else if (indic == 5) {
+        stops = lp.strcolh;
+        angs = lp.angcol;
     }
 
-    //printf("Indic=%d strex=%f stop=%f\n", indic, lp.strexp, stops);
+    printf("Indic=%d strcol=%f stop=%f\n", indic, lp.strcolh, stops);
 
     double gradient_stops = stops;
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
@@ -2632,7 +2638,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
         varfeath = 1.f;
     }
 
-   // printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+    printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
     gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
@@ -12735,45 +12741,130 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     }
                                 }
                             }
-
-                            //test for write text , now it compile... but does nothing
-                            // why ?? is arial found (I tried others) or I missed something
+//   test for write text with Cairo November 2019
 /*
-                            locImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, bfw, bfh);
-                            Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(locImage);
+                            //test for write text , it compile... but does nothing
+                            // why ?? is arial or Purisa found (I tried others) or I missed something or poke ?? or tmImageorig or ??
 
-                            cr->set_source_rgb(0.1, 0.1, 0.1);
-                            cr->select_font_face("Arial", Cairo::FontSlant::FONT_SLANT_NORMAL, Cairo::FontWeight::FONT_WEIGHT_BOLD);
-                            cr->set_font_size(20);
-                            cr->move_to(20, 20);
+                            locImage = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bfw, bfh);
+                            Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(locImage);
+                            cr->set_source_rgb(0.9, 0.9, 0.9);//white
+                            cr->paint();
+                            cr->select_font_face("Purisa", Cairo::FontSlant::FONT_SLANT_NORMAL, Cairo::FontWeight::FONT_WEIGHT_BOLD);
+                            cr->set_font_size(50);
+                            cr->set_source_rgb(0.3, 0.3, 0.3);//grey
+                           
+                            cr->move_to(0, 0);
                             cr->show_text("Coucou");
                             Imagefloat *tmpImageorig = nullptr;
                             tmpImageorig = new Imagefloat(bfw, bfh);
-                            lab2rgb(*bufcolfin, *tmpImageorig, params->icm.workingProfile);
-                            tmpImageorig->normalizeFloatTo1();
+                            lab2rgb(*bufcolreserv, *tmpImageorig, params->icm.workingProfile);
+                       //     tmpImageorig->normalizeFloatTo1();
+                            locImage->flush();
+                            unsigned char *locData = locImage->get_data();
+                       
                             for (int y = 0; y < bfh ; y++) {
-                                unsigned char *dst = locImage->get_data() + (y * bfw + x) * 4;
 
                                 for (int x = 0; x < bfw; x++) {
-                                    float r = tmpImageorig->r(y, x);
-                                    float g = tmpImageorig->g(y, x);
-                                    float b = tmpImageorig->b(y, x);
-                                    poke01_d(dst, r, g, b);
-                                    tmpImageorig->r(y, x) = r;
-                                    tmpImageorig->g(y, x) = g;
-                                    tmpImageorig->b(y, x) = b;
+                                    unsigned char *dst = locData + (y * bfw + x) * 4;//why 4 ?
+                                   // printf("dst=%d ", *dst);
+                                    double r = tmpImageorig->r(y, x);
+                                    double g = tmpImageorig->g(y, x);
+                                    double b = tmpImageorig->b(y, x);
+                                    
+                                    //perhaps that or whithout 255 or ??
+                                    *(dst++) = (unsigned char)(r);
+                                    tmpImageorig->r(y, x) = 255.f * *dst;
+                                    *(dst++) = (unsigned char)(g);
+                                    tmpImageorig->g(y, x) = 255.f * *dst;
+                                    *(dst++) = (unsigned char)(b);
+                                    tmpImageorig->b(y, x) = 255.f * *dst;
+
+                                  //perhaps ??
+                                 //   rtengine::poke01_d(dst, r, g, b);
+                                 //   tmpImageorig->r(y, x) = *(dst++);
+                                  //  tmpImageorig->g(y, x) = *(dst++);
+                                  //  tmpImageorig->b(y, x) = *(dst++);
 
                                 }
                             }
 
                             locImage->mark_dirty();
 
-
-
-                            tmpImageorig->normalizeFloatTo65535();
-                            rgb2lab(*tmpImageorig, *bufcolfin, params->icm.workingProfile);
+                       //     tmpImageorig->normalizeFloatTo65535();
+                            rgb2lab(*tmpImageorig, *bufcolreserv, params->icm.workingProfile);
                             delete tmpImageorig;
 */
+
+                            if (lp.strcol != 0.f) {
+                                struct grad_params gp;
+                                calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 3);
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++)
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        double factor = 1.0;
+                                        factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
+                                        bufcolfin->L[ir][jr] *= factor;
+                                    }
+                            }
+
+                            if (lp.strcolab != 0.f) {
+                                struct grad_params gpab;
+                                calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 4);
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++)
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        double factor = 1.0;
+                                        factor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
+                                        bufcolfin->a[ir][jr] *= factor;
+                                        bufcolfin->b[ir][jr] *= factor;
+                                    }
+                            }
+
+                            if (lp.strcolh != 0.f) {
+                                struct grad_params gph;
+                                calclocalGradientParams(lp, gph, ystart, xstart, bfw, bfh, 5);
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++)
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        double factor = 1.0;
+                                        factor = ImProcFunctions::calcGradientFactor(gph, jr, ir);
+                                        float aa = bufcolfin->a[ir][jr];
+                                        float bb = bufcolfin->b[ir][jr];
+                                        float chrm = sqrt(SQR(aa) + SQR(bb));
+                                        float HH = xatan2f(bb, aa);
+
+                                        float newhr = 0.f;
+                                        float cor = 0.f;
+                                        if(factor < 1.f) {
+                                            cor = - 2.5f * (1.f - factor);
+                                        } else if(factor > 1.f) {
+                                            cor = 0.03f * (factor - 1.f);
+                                        }
+
+                                        newhr = HH + cor;
+
+                                        if (newhr > rtengine::RT_PI_F) {
+                                            newhr -= 2 * rtengine::RT_PI_F;
+                                        } else if (newhr < -rtengine::RT_PI_F) {
+                                            newhr += 2 * rtengine::RT_PI_F;
+                                        }
+
+                                        float2 sincosval = xsincosf(newhr);
+                                        bufcolfin->a[ir][jr] = CLIPC(chrm * sincosval.y);
+                                        bufcolfin->b[ir][jr] = CLIPC(chrm * sincosval.x);
+                                    }
+                            }
+
                             JaggedArray<float> blend(bfw, bfh);
                             buildBlendMask(lumreserv, blend, bfw, bfh, conthr, 1.f);
                             float rm = 20.f / sk;
@@ -13361,36 +13452,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
                             }
 
-                            if (lp.strcol != 0.f) {
-                                struct grad_params gp;
-                                calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 3);
-#ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
-#endif
 
-                                for (int ir = 0; ir < bfh; ir++)
-                                    for (int jr = 0; jr < bfw; jr++) {
-                                        double factor = 1.0;
-                                        factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
-                                        bufcolfin->L[ir][jr] *= factor;
-                                    }
-                            }
-
-                            if (lp.strcolab != 0.f) {
-                                struct grad_params gpab;
-                                calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 4);
-#ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                                for (int ir = 0; ir < bfh; ir++)
-                                    for (int jr = 0; jr < bfw; jr++) {
-                                        double factor = 1.0;
-                                        factor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
-                                        bufcolfin->a[ir][jr] *= factor;
-                                        bufcolfin->b[ir][jr] *= factor;
-                                    }
-                            }
 
                             if (nottransit) {
                                 //special only transition

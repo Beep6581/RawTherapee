@@ -171,6 +171,7 @@ private:
     Adjuster* const blurcolde;
     Adjuster* const strcol;
     Adjuster* const strcolab;
+    Adjuster* const strcolh;
     Adjuster* const angcol;
     Adjuster* const blendmaskcol;
     Adjuster* const radmaskcol;

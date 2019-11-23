@@ -435,6 +435,7 @@ public:
         bool structcol;
         bool strcol;
         bool strcolab;
+        bool strcolh;
         bool angcol;
         bool blurcolde;
         bool blendmaskcol;

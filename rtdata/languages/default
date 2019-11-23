@@ -1070,6 +1070,7 @@ HISTORY_MSG_830;Local - Color gradient strength L
 HISTORY_MSG_831;Local - Color gradient angle
 HISTORY_MSG_832;Local - Color gradient strength C
 HISTORY_MSG_833;Local - Gradient feather
+HISTORY_MSG_834;Local - Color gradient strength H
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2301,8 +2302,9 @@ TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_GRADFRA;Graduated Filter
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n.Disabled for negatives chrominance.
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
-TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees -90 0 +90
+TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees : -180 0 +180
 TP_LOCALLAB_GRADSTRAB_TOOLTIP;Filter chroma strength
+TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Filter Hue strength
 TP_LOCALLAB_ENABLE_MASKAFT;Use all algorithms Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
@@ -2343,6 +2345,7 @@ TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADSTR;Gradient strength
 TP_LOCALLAB_GRADSTRLUM;Gradient strength Luminance
 TP_LOCALLAB_GRADSTRCHRO;Gradient strength Chrominance
+TP_LOCALLAB_GRADSTRHUE;Gradient strength Hue (merge file)
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_SLOSH;Slope

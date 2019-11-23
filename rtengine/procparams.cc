@@ -2465,6 +2465,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structcol(0),
     strcol(0.),
     strcolab(0.),
+    strcolh(0.),
     angcol(0.),
     blurcolde(5),
     blendmaskcol(0),
@@ -2815,6 +2816,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && structcol == other.structcol
         && strcol == other.strcol
         && strcolab == other.strcolab
+        && strcolh == other.strcolh
         && angcol == other.angcol
         && blendmaskcol == other.blendmaskcol
         && radmaskcol == other.radmaskcol
@@ -4159,6 +4161,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structcol, "Locallab", "Structcol_" + std::to_string(i), spot.structcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strcol, "Locallab", "Strcol_" + std::to_string(i), spot.strcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strcolab, "Locallab", "Strcolab_" + std::to_string(i), spot.strcolab, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strcolh, "Locallab", "Strcolh_" + std::to_string(i), spot.strcolh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).angcol, "Locallab", "Angcol_" + std::to_string(i), spot.angcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurcolde, "Locallab", "Blurcolde_" + std::to_string(i), spot.blurcolde, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskcol, "Locallab", "Blendmaskcol_" + std::to_string(i), spot.blendmaskcol, keyFile);
@@ -5611,6 +5614,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Structcol_" + std::to_string(i), pedited, spot.structcol, spotEdited.structcol);
                 assignFromKeyfile(keyFile, "Locallab", "Strcol_" + std::to_string(i), pedited, spot.strcol, spotEdited.strcol);
                 assignFromKeyfile(keyFile, "Locallab", "Strcolab_" + std::to_string(i), pedited, spot.strcolab, spotEdited.strcolab);
+                assignFromKeyfile(keyFile, "Locallab", "Strcolh_" + std::to_string(i), pedited, spot.strcolh, spotEdited.strcolh);
                 assignFromKeyfile(keyFile, "Locallab", "Angcol_" + std::to_string(i), pedited, spot.angcol, spotEdited.angcol);
                 assignFromKeyfile(keyFile, "Locallab", "Blurcolde_" + std::to_string(i), pedited, spot.blurcolde, spotEdited.blurcolde);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskcol_" + std::to_string(i), pedited, spot.blendmaskcol, spotEdited.blendmaskcol);

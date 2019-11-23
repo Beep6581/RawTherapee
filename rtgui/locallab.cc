@@ -268,7 +268,8 @@ Locallab::Locallab():
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     strcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRLUM"), -4., 4., 0.05, 0.))),
     strcolab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -6., 6., 0.05, 0.))),
-    angcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -90, 90, 0.1, 0.))),
+    strcolh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRHUE"), -6., 6., 0.05, 0.))),
+    angcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
     blendmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -295,7 +296,7 @@ Locallab::Locallab():
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     strexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
-    angexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -90, 90, 0.1, 0.))),
+    angexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
     blendmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -311,7 +312,7 @@ Locallab::Locallab():
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     strmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
-    angmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -90., 90., 0.1, 0.))),
+    angmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0, 3, 1, 2))),
     multipliersh(
         [this]() -> std::array<Adjuster *, 5>
@@ -346,7 +347,7 @@ blendmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1
 radmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
 blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
 strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
-angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -90, 90, 0.1, 0.))),
+angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
 chromaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
 gammaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
 slomaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
@@ -684,6 +685,7 @@ pe(nullptr)
     strcol->setAdjusterListener(this);
     angcol->setAdjusterListener(this);
     strcolab->setAdjusterListener(this);
+    strcolh->setAdjusterListener(this);
 
     blendmaskcol->setAdjusterListener(this);
     radmaskcol->setAdjusterListener(this);
@@ -708,6 +710,7 @@ pe(nullptr)
     if (showtooltip) {
         strcol->set_tooltip_text(M("TP_LOCALLAB_GRADSTR_TOOLTIP"));
         strcolab->set_tooltip_text(M("TP_LOCALLAB_GRADSTRAB_TOOLTIP"));
+        strcolh->set_tooltip_text(M("TP_LOCALLAB_GRADSTRHUE_TOOLTIP"));
         angcol->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     }
 
@@ -977,6 +980,7 @@ pe(nullptr)
     ToolParamBlock* const gradcolBox = Gtk::manage(new ToolParamBlock());
     gradcolBox->pack_start(*strcol);
     gradcolBox->pack_start(*strcolab);
+    gradcolBox->pack_start(*strcolh);
     gradcolBox->pack_start(*angcol);
     gradcolFrame->add(*gradcolBox);
 
@@ -3889,6 +3893,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).strcol = strcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).angcol = angcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).strcolab = strcolab->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strcolh = strcolh->getValue();
 
                     if (qualitycurveMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = "none";
@@ -4385,6 +4390,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).structcol = pe->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).strcol = pe->locallab.spots.at(pp->locallab.selspot).strcol || strcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).strcolab = pe->locallab.spots.at(pp->locallab.selspot).strcolab || strcolab->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strcolh = pe->locallab.spots.at(pp->locallab.selspot).strcolh || strcolh->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).angcol = pe->locallab.spots.at(pp->locallab.selspot).angcol || angcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).gridMethod = pe->locallab.spots.at(pp->locallab.selspot).gridMethod || gridMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -4739,6 +4745,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).structcol = pedited->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).strcol = pedited->locallab.spots.at(pp->locallab.selspot).strcol || strcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).strcolab = pedited->locallab.spots.at(pp->locallab.selspot).strcolab || strcolab->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strcolh = pedited->locallab.spots.at(pp->locallab.selspot).strcolh || strcolh->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).angcol = pedited->locallab.spots.at(pp->locallab.selspot).angcol || angcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).gridMethod = pedited->locallab.spots.at(pp->locallab.selspot).gridMethod || gridMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -5636,7 +5643,7 @@ void Locallab::merMethodChanged()
         blurcolde->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(true);
- //       strcolab->set_sensitive(false);
+        strcolh->set_sensitive(false);
         special->set_sensitive(true);
         invers->set_sensitive(true);
         gridmerFrame->hide();
@@ -5649,7 +5656,7 @@ void Locallab::merMethodChanged()
         rgbCurveEditorG->set_sensitive(true);
         special->set_sensitive(true);
         invers->set_sensitive(true);
-//        strcolab->set_sensitive(false);
+        strcolh->set_sensitive(false);
         conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
@@ -5661,7 +5668,7 @@ void Locallab::merMethodChanged()
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
-        strcolab->set_sensitive(true);
+        strcolh->set_sensitive(true);
         conthrcol->show();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 3) {
@@ -5672,7 +5679,7 @@ void Locallab::merMethodChanged()
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
-        strcolab->set_sensitive(true);
+        strcolh->set_sensitive(true);
         mask7->show();
         conthrcol->show();
         gridmerFrame->hide();
@@ -5686,7 +5693,7 @@ void Locallab::merMethodChanged()
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
-        strcolab->set_sensitive(true);
+        strcolh->set_sensitive(true);
         gridmerFrame->show();
     }
 
@@ -7092,6 +7099,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     structcol->setDefault((double)defSpot->structcol);
     strcol->setDefault((double)defSpot->strcol);
     strcolab->setDefault((double)defSpot->strcolab);
+    strcolh->setDefault((double)defSpot->strcolh);
     angcol->setDefault((double)defSpot->angcol);
     blurcolde->setDefault((double)defSpot->blurcolde);
     blendmaskcol->setDefault((double)defSpot->blendmaskcol);
@@ -7305,6 +7313,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         structcol->setDefaultEditedState(Irrelevant);
         strcol->setDefaultEditedState(Irrelevant);
         strcolab->setDefaultEditedState(Irrelevant);
+        strcolh->setDefaultEditedState(Irrelevant);
         angcol->setDefaultEditedState(Irrelevant);
         strengthgrid->setDefault((double)defSpot->strengthgrid);
         blurcolde->setDefaultEditedState(Irrelevant);
@@ -7523,6 +7532,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         structcol->setDefaultEditedState(defSpotState->structcol ? Edited : UnEdited);
         strcol->setDefaultEditedState(defSpotState->strcol ? Edited : UnEdited);
         strcolab->setDefaultEditedState(defSpotState->strcolab ? Edited : UnEdited);
+        strcolh->setDefaultEditedState(defSpotState->strcolh ? Edited : UnEdited);
         angcol->setDefaultEditedState(defSpotState->angcol ? Edited : UnEdited);
         strengthgrid->setDefaultEditedState(defSpotState->strengthgrid ? Edited : UnEdited);
         blurcolde->setDefaultEditedState(defSpotState->blurcolde ? Edited : UnEdited);
@@ -7837,6 +7847,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == strcolab) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrcolab, strcolab->getTextValue());
+            }
+        }
+
+        if (a == strcolh) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrcolh, strcolh->getTextValue());
             }
         }
 
@@ -9028,6 +9044,7 @@ void Locallab::setBatchMode(bool batchMode)
     structcol->showEditedCB();
     strcol->showEditedCB();
     strcolab->showEditedCB();
+    strcolh->showEditedCB();
     angcol->showEditedCB();
     strengthgrid->showEditedCB();
     blurcolde->showEditedCB();
@@ -9591,6 +9608,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         strcol->setValue(pp->locallab.spots.at(index).strcol);
         angcol->setValue(pp->locallab.spots.at(index).angcol);
         strcolab->setValue(pp->locallab.spots.at(index).strcolab);
+        strcolh->setValue(pp->locallab.spots.at(index).strcolh);
 
         if (pp->locallab.spots.at(index).qualitycurveMethod == "none") {
             qualitycurveMethod->set_active(0);
@@ -10116,6 +10134,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 structcol->setEditedState(spotState->structcol ? Edited : UnEdited);
                 strcol->setEditedState(spotState->strcol ? Edited : UnEdited);
                 strcolab->setEditedState(spotState->strcolab ? Edited : UnEdited);
+                strcolh->setEditedState(spotState->strcolh ? Edited : UnEdited);
                 angcol->setEditedState(spotState->angcol ? Edited : UnEdited);
                 labgrid->setEdited(spotState->labgridALow || spotState->labgridBLow || spotState->labgridAHigh || spotState->labgridBHigh);
                 labgridmerg->setEdited(spotState->labgridALowmerg || spotState->labgridBLowmerg || spotState->labgridAHighmerg || spotState->labgridBHighmerg);
@@ -10535,7 +10554,7 @@ void Locallab::updateSpecificGUIState()
         mask7->hide();
         conthrcol->hide();
         structcol->set_sensitive(true);
-//        strcolab->set_sensitive(false);
+        strcolh->set_sensitive(false);
         sensi->set_sensitive(true);
         blurcolde->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
@@ -10546,7 +10565,7 @@ void Locallab::updateSpecificGUIState()
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
         structcol->set_sensitive(true);
- //       strcolab->set_sensitive(false);
+        strcolh->set_sensitive(false);
         sensi->set_sensitive(true);
         blurcolde->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
@@ -10558,7 +10577,7 @@ void Locallab::updateSpecificGUIState()
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
         structcol->set_sensitive(false);
- //       strcolab->set_sensitive(true);
+        strcolh->set_sensitive(true);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
         H2CurveEditorG->set_sensitive(false);
@@ -10572,7 +10591,7 @@ void Locallab::updateSpecificGUIState()
         structcol->set_sensitive(false);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
-        strcolab->set_sensitive(true);
+        strcolh->set_sensitive(true);
         H2CurveEditorG->set_sensitive(false);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
@@ -10582,7 +10601,7 @@ void Locallab::updateSpecificGUIState()
     } else if (merMethod->get_active_row_number() == 3) {
         mask7->show();
         structcol->set_sensitive(false);
-        strcolab->set_sensitive(true);
+        strcolh->set_sensitive(true);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
         H2CurveEditorG->set_sensitive(false);

@@ -1001,6 +1001,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).structcol = locallab.spots.at(j).structcol && pSpot.structcol == otherSpot.structcol;
                 locallab.spots.at(j).strcol = locallab.spots.at(j).strcol && pSpot.strcol == otherSpot.strcol;
                 locallab.spots.at(j).strcolab = locallab.spots.at(j).strcolab && pSpot.strcolab == otherSpot.strcolab;
+                locallab.spots.at(j).strcolh = locallab.spots.at(j).strcolh && pSpot.strcolh == otherSpot.strcolh;
                 locallab.spots.at(j).angcol = locallab.spots.at(j).angcol && pSpot.angcol == otherSpot.angcol;
                 locallab.spots.at(j).blurcolde = locallab.spots.at(j).blurcolde && pSpot.blurcolde == otherSpot.blurcolde;
                 locallab.spots.at(j).blendmaskcol = locallab.spots.at(j).blendmaskcol && pSpot.blendmaskcol == otherSpot.blendmaskcol;
@@ -2962,6 +2963,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).strcolab) {
             toEdit.locallab.spots.at(i).strcolab = mods.locallab.spots.at(i).strcolab;
+        }
+
+        if (locallab.spots.at(i).strcolh) {
+            toEdit.locallab.spots.at(i).strcolh = mods.locallab.spots.at(i).strcolh;
         }
 
         if (locallab.spots.at(i).angcol) {
@@ -5108,6 +5113,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     structcol(v),
     strcol(v),
     strcolab(v),
+    strcolh(v),
     angcol(v),
     blurcolde(v),
     blendmaskcol(v),
@@ -5454,6 +5460,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     structcol = v;
     strcol = v;
     strcolab = v;
+    strcolh = v;
     angcol = v;
     blurcolde = v;
     blendmaskcol = v;
