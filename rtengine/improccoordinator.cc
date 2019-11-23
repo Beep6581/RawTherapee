@@ -316,7 +316,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 )
                 && params->filmNegative.enabled
             ) {
-                imgsrc->filmNegativeProcess(params->filmNegative);
+                std::array<float, 3> filmBaseValues = {
+                    static_cast<float>(params->filmNegative.redBase),
+                    static_cast<float>(params->filmNegative.greenBase),
+                    static_cast<float>(params->filmNegative.blueBase)
+                };
+                imgsrc->filmNegativeProcess(params->filmNegative, filmBaseValues);
+                if (filmNegListener && params->filmNegative.redBase <= 0.f) {
+                    filmNegListener->filmBaseValuesChanged(filmBaseValues);
+                }
             }
         }
 
@@ -1318,13 +1326,6 @@ bool ImProcCoordinator::getFilmNegativeExponents(int xA, int yA, int xB, int yB,
     const Coord2D p2 = translateCoord(ipf, fw, fh, xB, yB);
 
     return imgsrc->getFilmNegativeExponents(p1, p2, tr, params->filmNegative, newExps);
-}
-
-bool ImProcCoordinator::getFilmBaseValues(std::array<float, 3>& rawValues)
-{
-    MyMutex::MyLock lock(mProcessing);
-
-    return imgsrc->getFilmBaseValues(rawValues);
 }
 
 bool ImProcCoordinator::getRawSpotValues(int x, int y, int spotSize, std::array<float, 3>& rawValues)

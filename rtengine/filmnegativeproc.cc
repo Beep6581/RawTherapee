@@ -270,26 +270,6 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
     return true;
 }
 
-bool rtengine::RawImageSource::getFilmBaseValues(std::array<float, 3>& rawValues)
-{
-    if (filmBaseValues[0] == 0.f) {
-        if (settings->verbose) {
-            printf("getFilmBaseValues: filmBaseValues still unset!");
-        }
-
-        return false;
-    }
-
-    if (settings->verbose) {
-        printf("getFilmBaseValues: %g %g %g\n", filmBaseValues[0], filmBaseValues[1], filmBaseValues[2]);
-    }
-
-    rawValues[0] = filmBaseValues[0];
-    rawValues[1] = filmBaseValues[1];
-    rawValues[2] = filmBaseValues[2];
-    return true;
-}
-
 bool rtengine::RawImageSource::getRawSpotValues(Coord2D spotCoord, int spotSize, int tran, const procparams::FilmNegativeParams &params, std::array<float, 3>& rawValues)
 {
     Coord spot;
@@ -315,7 +295,7 @@ bool rtengine::RawImageSource::getRawSpotValues(Coord2D spotCoord, int spotSize,
     return true;
 }
 
-void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &params)
+void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &params, std::array<float, 3>& filmBaseValues)
 {
 //    BENCHFUNMICRO
 
@@ -348,20 +328,14 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     std::array<float, 3> mults;  // Channel normalization multipliers
 
     // If film base values are set in params, use those
-    if (params.redBase > 0.f) {
-
-        filmBaseValues[0] = params.redBase;
-        filmBaseValues[1] = params.greenBase;
-        filmBaseValues[2] = params.blueBase;
-
-    } else {
+    if (filmBaseValues[0] <= 0.f) {
         // ...otherwise, the film negative tool might have just been enabled on this image,
         // whithout any previous setting. So, estimate film base values from channel medians
 
         std::array<float, 3> medians;
 
         // Special value for backwards compatibility with profiles saved by RT 5.7
-        const bool oldChannelScaling = params.redBase == -1.f;
+        const bool oldChannelScaling = filmBaseValues[0] == -1.f;
 
         // If using the old channel scaling method, get medians from the whole current image,
         // reading values from the already-scaled rawData buffer.

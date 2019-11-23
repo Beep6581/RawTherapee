@@ -44,6 +44,13 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
     return adj;
 }
 
+Glib::ustring formatBaseValues(const std::array<float, 3>& rgb)
+{
+    return Glib::ustring::format(std::fixed, std::setprecision(1), rgb[0]) + " " +
+           Glib::ustring::format(std::fixed, std::setprecision(1), rgb[1]) + " " +
+           Glib::ustring::format(std::fixed, std::setprecision(1), rgb[2]);
+}
+
 }
 
 FilmNegative::FilmNegative() :
@@ -60,7 +67,7 @@ FilmNegative::FilmNegative() :
     spotgrid(Gtk::manage(new Gtk::Grid())),
     spotbutton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
     filmBaseLabel(Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_FILMBASE_VALUES"), Gtk::ALIGN_START))),
-    filmBaseValuesLabel(Gtk::manage(new Gtk::Label("auto"))),
+    filmBaseValuesLabel(Gtk::manage(new Gtk::Label("- - -"))),
     filmBaseSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_FILMBASE_PICK"))))
 {
     spotgrid->get_style_context()->add_class("grid-spacing");
@@ -159,12 +166,10 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     filmBaseValues[1] = pp->filmNegative.greenBase;
     filmBaseValues[2] = pp->filmNegative.blueBase;
 
-    if (pp->filmNegative.redBase > 0.f && pp->filmNegative.greenBase > 0.f && pp->filmNegative.blueBase > 0.f) {
-        filmBaseValuesLabel->set_text(Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[0]) + " " +
-                                      Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[1]) + " " +
-                                      Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[2]));
-    } else { // base values not set in params
-        filmBaseValuesLabel->set_text("auto");
+    // If base values are already set in params, display them in the label.
+    // Otherwise, estimated values will be passed in (after processing) via FilmNegListener
+    if (filmBaseValues[0] > 0.f && filmBaseValues[1] > 0.f && filmBaseValues[2] > 0.f) {
+        filmBaseValuesLabel->set_text(formatBaseValues(filmBaseValues));
     }
 
     enableListener();
@@ -175,11 +180,6 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     pp->filmNegative.redRatio = redRatio->getValue();
     pp->filmNegative.greenExp = greenExp->getValue();
     pp->filmNegative.blueRatio = blueRatio->getValue();
-
-    // If the film base values are still unset, use the median-based estimates
-    if (filmBaseValues[0] <= 0.f) {
-        fnp->getFilmBaseValues(filmBaseValues);
-    }
 
     pp->filmNegative.enabled = getEnabled();
 
@@ -260,6 +260,12 @@ void FilmNegative::enabledChanged()
     }
 }
 
+void FilmNegative::filmBaseValuesChanged(std::array<float, 3> rgb)
+{
+    filmBaseValues = rgb;
+    filmBaseValuesLabel->set_text(formatBaseValues(filmBaseValues));
+}
+
 void FilmNegative::setFilmNegProvider(FilmNegProvider* provider)
 {
     fnp = provider;
@@ -336,9 +342,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
                 enableListener();
 
-                const Glib::ustring vs = Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[0]) + " " +
-                                         Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[1]) + " " +
-                                         Glib::ustring::format(std::fixed, std::setprecision(1), filmBaseValues[2]);
+                const Glib::ustring vs = formatBaseValues(filmBaseValues);
 
                 filmBaseValuesLabel->set_text(vs);
 

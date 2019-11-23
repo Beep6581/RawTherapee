@@ -298,7 +298,6 @@ public:
     // FilmNegProvider interface
     bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) override;
     bool getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues) override;
-    bool getFilmBaseValues(std::array<float, 3>& rawValues) override;
 
     // rotatelistener interface
     void straightenRequested () override;

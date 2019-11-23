@@ -585,6 +585,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
         ipc->setImageTypeListener (this);
+        ipc->setFilmNegListener (filmNegative);
         flatfield->setShortcutPath (Glib::path_get_dirname (ipc->getInitialImage()->getFileName()));
 
         icm->setRawMeta (raw, (const rtengine::FramesData*)pMetaData);
@@ -1041,9 +1042,4 @@ bool ToolPanelCoordinator::getFilmNegativeExponents(rtengine::Coord spotA, rteng
 bool ToolPanelCoordinator::getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues)
 {
     return ipc && ipc->getRawSpotValues(spot.x, spot.y, spotSize, rawValues);
-}
-
-bool ToolPanelCoordinator::getFilmBaseValues(std::array<float, 3>& rawValues)
-{
-    return ipc && ipc->getFilmBaseValues(rawValues);
 }
