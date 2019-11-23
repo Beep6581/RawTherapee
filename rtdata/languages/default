@@ -2300,7 +2300,7 @@ TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_GRADFRA;Graduated Filter
-TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n.Disabled for negatives chrominance.
+TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n..
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees : -180 0 +180
 TP_LOCALLAB_GRADSTRAB_TOOLTIP;Filter chroma strength

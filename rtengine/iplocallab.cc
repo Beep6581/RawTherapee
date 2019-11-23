@@ -2626,19 +2626,19 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
         angs = lp.angcol;
     }
 
-    printf("Indic=%d strcol=%f stop=%f\n", indic, lp.strcolh, stops);
+   // printf("Indic=%d strcol=%f stop=%f\n", indic, lp.strcolab, stops);
 
     double gradient_stops = stops;
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = angs / 180.0 * rtengine::RT_PI;
     double varfeath = 0.01 * lp.feath;
-
+/*
     if(indic ==4 && lp.strcolab > 0.f) { //chroma
         varfeath = 1.f;
     }
-
-    printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+*/
+//    printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
     gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
@@ -13511,7 +13511,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             if (lp.strcolab != 0.f) {
                                 struct grad_params gpab;
                                 calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 4);
-
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -13521,11 +13520,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         double factor = 1.0;
                                         factor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
                                         float cor = 0.f;
-                                        
+                                        if(factor < mini) mini = factor;
+                                        if(factor > maxi) maxi = factor;
                                         if(factor < 1.f) {
-                                            cor = -60.f * factor;
+                                            cor = -80.f * (1.f - factor);
                                         } else if(factor > 1.f) {
-                                            cor = 2.f * factor;
+                                            cor = 3.f * factor;
                                         }
                                         bufchro[ir][jr] += cor;
                                         if(bufchro[ir][jr] < -99.f) {
