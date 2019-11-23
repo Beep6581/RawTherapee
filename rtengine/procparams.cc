@@ -2432,7 +2432,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     circrad(18),
     qualityMethod("enh"),
     transit(60.),
-    feather(50.),
+    feather(30.),
     thresh(2.0),
     iter(2.0),
     balan(1.0),

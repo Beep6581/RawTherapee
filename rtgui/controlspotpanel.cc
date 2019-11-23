@@ -65,7 +65,7 @@ ControlSpotPanel::ControlSpotPanel():
     centerY_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITVALUE"), 5., 100., 0.1, 60.))),
-    feather_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 50.))),
+    feather_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 30.))),
     thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 10.0, 0.1, 2.0))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
     balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
