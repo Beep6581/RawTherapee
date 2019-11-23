@@ -282,7 +282,7 @@ Locallab::Locallab():
     conthrcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTTHR"), 0.0, 100.0, 0.5, 0.))),
     strumaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     mercol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERDCOL"), 0.0, 100.0, 0.5, 18.))),
-    merlucol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERLUCOL"), 0.0, 100.0, 0.5, 32.,Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    merlucol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERLUCOL"), 0.0, 100.0, 0.5, 32., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 3.0, 0.05, 0.0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
@@ -1019,6 +1019,7 @@ pe(nullptr)
     colorBox->pack_start(*special);
     colorBox->pack_start(*invers);
     Gtk::HSeparator* const separatormer = Gtk::manage(new  Gtk::HSeparator());
+
     if (showtooltip) {
         gridmerFrame->set_tooltip_text(M("TP_LOCALLAB_GRIDFRAME_TOOLTIP"));
     }
@@ -1038,7 +1039,7 @@ pe(nullptr)
     mergecolBox->pack_start(*opacol);
     mergecolBox->pack_start(*conthrcol);
     mergecolBox->pack_start(*gridmerFrame);
-    
+
     merge1colFrame->add(*mergecolBox);
     Gtk::HSeparator* const separatorstru = Gtk::manage(new  Gtk::HSeparator());
 
@@ -1302,12 +1303,12 @@ pe(nullptr)
     fatFrame->add(*fatBox);
 
     gradFrame->set_label_align(0.025, 0.5);
-    
+
     ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
     gradBox->pack_start(*strexp);
     gradBox->pack_start(*angexp);
     gradFrame->add(*gradBox);
-    
+
     ToolParamBlock* const exposeBox = Gtk::manage(new ToolParamBlock());
     exposeBox->pack_start(*expMethod);
     exposeBox->pack_start(*pdeFrame);
@@ -1324,11 +1325,11 @@ pe(nullptr)
     exposeBox->pack_start(*structexp);
     exposeBox->pack_start(*blurexpde);
     exposeBox->pack_start(*gradFrame);
-/*
-    if (showtooltip) {
-        gradFrame->set_tooltip_markup(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
-    }
-*/
+    /*
+        if (showtooltip) {
+            gradFrame->set_tooltip_markup(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
+        }
+    */
     exposeBox->pack_start(*softradiusexp);
     exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exposeBox->pack_start(*inversex);

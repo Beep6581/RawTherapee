@@ -120,9 +120,6 @@ float calcLocalFactor(const float lox, const float loy, const float lcx, const f
 {
 //elipse x2/a2 + y2/b2=1
 //transition elipsoidal
-//x==>lox y==>loy
-// a==> dx  b==>dy
-//printf("grad=%f", gradient);
     float eps = 0.0001f;
     float kelip = dx / dy;
     float belip = sqrt((rtengine::SQR((lox - lcx) / kelip) + rtengine::SQR(loy - lcy)));    //determine position ellipse ==> a and b
@@ -573,7 +570,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.enablMask = locallab.spots.at(sp).enablMask && llblMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0;
     lp.enavibMask = locallab.spots.at(sp).enavibMask && llvibMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llSHMask == 0;
 
-//printf("lp.showmaskSHmetinv=%i\n", lp.showmaskSHmetinv);
     if (locallab.spots.at(sp).softMethod == "soft") {
         lp.softmet = 0;
     } else if (locallab.spots.at(sp).softMethod == "reti") {
@@ -1186,7 +1182,6 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
         const float f = v < 0 ? lo : hi;
         return exp2(float(v) / 100.f * f);
     };
-//        printf("mullocsh0=%i mullocsh2=%i\n",  lp.mullocsh[0], lp.mullocsh[2]);
     const float factors[12] = {
         conv(lp.mullocsh[0], 2.f, 3.f), // -18 EV
         conv(lp.mullocsh[0], 2.f, 3.f), // -16 EV
@@ -2599,7 +2594,6 @@ struct grad_params {
 };
 
 void calclocalGradientParams(const struct local_params& lp, struct grad_params& gp, float ystart, float xstart, int bfw, int bfh, int indic)
-
 {
     int w = bfw;
     int h = bfh;
@@ -2626,18 +2620,12 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
         angs = lp.angcol;
     }
 
-   // printf("Indic=%d strcol=%f stop=%f\n", indic, lp.strcolab, stops);
-
     double gradient_stops = stops;
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = angs / 180.0 * rtengine::RT_PI;
     double varfeath = 0.01 * lp.feath;
-/*
-    if(indic ==4 && lp.strcolab > 0.f) { //chroma
-        varfeath = 1.f;
-    }
-*/
+
 //    printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
@@ -2779,7 +2767,6 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 
             if (inv == 0) {
                 if (zone > 0) {
-                    //      printf("bb=%f", bufmaskor->a[y][x]);
                     bufexporig->L[y][x] += (bl * bufmaskor->L[y][x]);
                     bufexporig->a[y][x] *= (1.f + bl * bufmaskor->a[y][x]);
                     bufexporig->b[y][x] *= (1.f + bl * bufmaskor->b[y][x]);
@@ -2988,7 +2975,6 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
 
             if (inv == 0) {
                 if (zone > 0) {//normal
-                    //   printf("bu=%f", bufmaskorigSH->a[y][x]);
                     transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + CLIPLOC(bufmaskorigSH->L[y][x]);
                     transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
                     transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
@@ -3735,7 +3721,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             float** rdE = *(rdEBuffer.get());
 
             deltaEforMask(rdE, bfw, bfh, bufcolorig, hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, lp.balance);
-//             printf("rde1=%f\n", rdE[1][1]);
             std::unique_ptr<LabImage> delta(new LabImage(bfw, bfh));
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -4374,7 +4359,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         // printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
         const float ach = lp.trans / 100.f;
         float varsens = lp.sensex;
-        //if(HHutili) printf("exec H\n"); else printf("pas exec H\n");
+
         if (senstype == 0 || senstype == 100)   //Color and Light
         {
             varsens =  lp.sens;
@@ -6647,7 +6632,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
     bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0); // only if one slider ore more is engaged
     bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f || lp.mulloc[5] != 1.f) ;//only if user want cbdl
     bool execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib  && lp.past != 0.f));
-    //  printf("OK 1 aut=%i\n", aut);
 
 
     if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
@@ -6769,14 +6753,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                 }
 
-                /*
-                for(int j=0;j<8;j++){
-                printf("j=%i slidL=%f\n", j, slidL[j]);
-                }
-
-                printf("mxsl=%f\n", mxsl);
-                */
-//               if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f || mxsl >= 0.1f || mxsfl >= 0.1f)) {
                 {
                     float kr3 = 0.f;
                     float kr4 = 0.f;
@@ -6848,11 +6824,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
                         }
 
-                    /*
-                    for(int j=0;j<8;j++){
-                    printf("j=%i variL=%f\n", j, vari[j]);
-                    }
-                    */
                     if ((lp.noiselc < 0.02f && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
@@ -6977,12 +6948,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                 }
 
-                /*
-                for(int j=0;j<8;j++){
-                printf("j=%i slida=%f\n", j, slida[j]);
-                }
-                */
-                //    if (((lp.noisecf >= 0.1f && aut == 0) ||  (lp.noisecc >= 0.1f && aut == 0) || (noiscfactiv && aut == 0) || (maxcfine >= 0.1f && (aut == 1 || aut ==2)) || (maxccoarse > 0.1f && (aut == 1 || aut ==2)))) {
                 {
                     float minic = 0.0001f;
 
@@ -7154,18 +7119,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
 
-                    /*
-                    for(int j=0;j<8;j++){
-                    printf("j=%i variC=%f\n", j, variC[j]);
-                    }
-                    */
                     if ((lp.noisecc < 0.02f && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
-//                        printf("SANS SANS\n");
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
                     } else {
-//                        printf("AVEC AV\n");
-
                         WaveletDenoiseAll_BiShrinkAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
 
@@ -7726,14 +7683,11 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
-//                   printf("OK CHRO\n");
 
                         if ((lp.noisecc < 0.02f && aut == 0) || (maxccoarse < 0.1f && (aut == 1  || aut == 2)))  {
-//                       printf("SANS Shrink\n");
                             WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                             WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
                         } else {
-//                       printf("avec Shrink\n");
                             WaveletDenoiseAll_BiShrinkAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                             WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
 
@@ -8234,7 +8188,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 float** rdE = *(rdEBuffer.get());
 
                 deltaEforMask(rdE, GW, GH, bufgb.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.balance);
-//                 printf("rde1=%f rde2=%f\n", rdE[1][1], rdE[100][100]);
                 std::unique_ptr<LabImage> delta(new LabImage(GW, GH));
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -10630,8 +10583,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 std::unique_ptr<JaggedArray<float>> reducDEBuffer(new JaggedArray<float>(Wd, Hd));
                 float** reducDE = *(reducDEBuffer.get());
 
-//                float minreduc = 1000000.f;
-//                float maxreduc = -1000000.f;
                 float ade = 0.01f * raddE;
                 float bde = 100.f - raddE;
                 float sensibefore = ade * lp.sensh + bde;//we can change sensitivity 0.1 90 or 0.3 70 or 0.4 60
@@ -10645,12 +10596,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float reducdE;
                         calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore, reducdE);
                         reducDE[y][x] = CLIPdE(reducdE);
-//                           if(reducDE[y][x] > maxreduc) maxreduc = reducDE[y][x];
-//                           if(reducDE[y][x] < minreduc) minreduc = reducDE[y][x];
 
                     }
 
-//                printf("reducdemax=%f reducmin=%f\n", maxreduc, minreduc);
                 std::unique_ptr<JaggedArray<float>> origBuffer(new JaggedArray<float>(Wd, Hd));
                 float** orig = *(origBuffer.get());
 
@@ -12741,60 +12689,61 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     }
                                 }
                             }
+
 //   test for write text with Cairo November 2019
-/*
-                            //test for write text , it compile... but does nothing
-                            // why ?? is arial or Purisa found (I tried others) or I missed something or poke ?? or tmImageorig or ??
+                            /*
+                                                        //test for write text , it compile... but does nothing
+                                                        // why ?? is arial or Purisa found (I tried others) or I missed something or poke ?? or tmImageorig or ??
 
-                            locImage = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bfw, bfh);
-                            Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(locImage);
-                            cr->set_source_rgb(0.9, 0.9, 0.9);//white
-                            cr->paint();
-                            cr->select_font_face("Purisa", Cairo::FontSlant::FONT_SLANT_NORMAL, Cairo::FontWeight::FONT_WEIGHT_BOLD);
-                            cr->set_font_size(50);
-                            cr->set_source_rgb(0.3, 0.3, 0.3);//grey
-                           
-                            cr->move_to(0, 0);
-                            cr->show_text("Coucou");
-                            Imagefloat *tmpImageorig = nullptr;
-                            tmpImageorig = new Imagefloat(bfw, bfh);
-                            lab2rgb(*bufcolreserv, *tmpImageorig, params->icm.workingProfile);
-                       //     tmpImageorig->normalizeFloatTo1();
-                            locImage->flush();
-                            unsigned char *locData = locImage->get_data();
-                       
-                            for (int y = 0; y < bfh ; y++) {
+                                                        locImage = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bfw, bfh);
+                                                        Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(locImage);
+                                                        cr->set_source_rgb(0.9, 0.9, 0.9);//white
+                                                        cr->paint();
+                                                        cr->select_font_face("Purisa", Cairo::FontSlant::FONT_SLANT_NORMAL, Cairo::FontWeight::FONT_WEIGHT_BOLD);
+                                                        cr->set_font_size(50);
+                                                        cr->set_source_rgb(0.3, 0.3, 0.3);//grey
 
-                                for (int x = 0; x < bfw; x++) {
-                                    unsigned char *dst = locData + (y * bfw + x) * 4;//why 4 ?
-                                   // printf("dst=%d ", *dst);
-                                    double r = tmpImageorig->r(y, x);
-                                    double g = tmpImageorig->g(y, x);
-                                    double b = tmpImageorig->b(y, x);
-                                    
-                                    //perhaps that or whithout 255 or ??
-                                    *(dst++) = (unsigned char)(r);
-                                    tmpImageorig->r(y, x) = 255.f * *dst;
-                                    *(dst++) = (unsigned char)(g);
-                                    tmpImageorig->g(y, x) = 255.f * *dst;
-                                    *(dst++) = (unsigned char)(b);
-                                    tmpImageorig->b(y, x) = 255.f * *dst;
+                                                        cr->move_to(0, 0);
+                                                        cr->show_text("Coucou");
+                                                        Imagefloat *tmpImageorig = nullptr;
+                                                        tmpImageorig = new Imagefloat(bfw, bfh);
+                                                        lab2rgb(*bufcolreserv, *tmpImageorig, params->icm.workingProfile);
+                                                   //     tmpImageorig->normalizeFloatTo1();
+                                                        locImage->flush();
+                                                        unsigned char *locData = locImage->get_data();
 
-                                  //perhaps ??
-                                 //   rtengine::poke01_d(dst, r, g, b);
-                                 //   tmpImageorig->r(y, x) = *(dst++);
-                                  //  tmpImageorig->g(y, x) = *(dst++);
-                                  //  tmpImageorig->b(y, x) = *(dst++);
+                                                        for (int y = 0; y < bfh ; y++) {
 
-                                }
-                            }
+                                                            for (int x = 0; x < bfw; x++) {
+                                                                unsigned char *dst = locData + (y * bfw + x) * 4;//why 4 ?
+                                                               // printf("dst=%d ", *dst);
+                                                                double r = tmpImageorig->r(y, x);
+                                                                double g = tmpImageorig->g(y, x);
+                                                                double b = tmpImageorig->b(y, x);
 
-                            locImage->mark_dirty();
+                                                                //perhaps that or whithout 255 or ??
+                                                                *(dst++) = (unsigned char)(r);
+                                                                tmpImageorig->r(y, x) = 255.f * *dst;
+                                                                *(dst++) = (unsigned char)(g);
+                                                                tmpImageorig->g(y, x) = 255.f * *dst;
+                                                                *(dst++) = (unsigned char)(b);
+                                                                tmpImageorig->b(y, x) = 255.f * *dst;
 
-                       //     tmpImageorig->normalizeFloatTo65535();
-                            rgb2lab(*tmpImageorig, *bufcolreserv, params->icm.workingProfile);
-                            delete tmpImageorig;
-*/
+                                                              //perhaps ??
+                                                             //   rtengine::poke01_d(dst, r, g, b);
+                                                             //   tmpImageorig->r(y, x) = *(dst++);
+                                                              //  tmpImageorig->g(y, x) = *(dst++);
+                                                              //  tmpImageorig->b(y, x) = *(dst++);
+
+                                                            }
+                                                        }
+
+                                                        locImage->mark_dirty();
+
+                                                   //     tmpImageorig->normalizeFloatTo65535();
+                                                        rgb2lab(*tmpImageorig, *bufcolreserv, params->icm.workingProfile);
+                                                        delete tmpImageorig;
+                            */
 
                             if (lp.strcol != 0.f) {
                                 struct grad_params gp;
@@ -12845,9 +12794,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                         float newhr = 0.f;
                                         float cor = 0.f;
-                                        if(factor < 1.f) {
+
+                                        if (factor < 1.f) {
                                             cor = - 2.5f * (1.f - factor);
-                                        } else if(factor > 1.f) {
+                                        } else if (factor > 1.f) {
                                             cor = 0.03f * (factor - 1.f);
                                         }
 
@@ -13507,7 +13457,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         bufcolfin->L[ir][jr] *= factor;
                                     }
                             }
- 
+
                             if (lp.strcolab != 0.f) {
                                 struct grad_params gpab;
                                 calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 4);
@@ -13520,15 +13470,24 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         double factor = 1.0;
                                         factor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
                                         float cor = 0.f;
-                                        if(factor < mini) mini = factor;
-                                        if(factor > maxi) maxi = factor;
-                                        if(factor < 1.f) {
+
+                                        if (factor < mini) {
+                                            mini = factor;
+                                        }
+
+                                        if (factor > maxi) {
+                                            maxi = factor;
+                                        }
+
+                                        if (factor < 1.f) {
                                             cor = -80.f * (1.f - factor);
-                                        } else if(factor > 1.f) {
+                                        } else if (factor > 1.f) {
                                             cor = 3.f * factor;
                                         }
+
                                         bufchro[ir][jr] += cor;
-                                        if(bufchro[ir][jr] < -99.f) {
+
+                                        if (bufchro[ir][jr] < -99.f) {
                                             bufchro[ir][jr] = -99.f;
                                         }
                                     }
