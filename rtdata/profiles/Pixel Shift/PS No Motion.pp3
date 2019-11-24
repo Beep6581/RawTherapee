@@ -1,18 +1,8 @@
 [Sharpening]
-Enabled=true
-Contrast=5
-Method=rld
-DeconvRadius=0.75
-DeconvAmount=100
-DeconvDamping=0
-DeconvIterations=30
+Enabled=false
 
 [SharpenMicro]
-Enabled=true
-Contrast=15
-Matrix=false
-Strength=20
-Uniformity=5
+Enabled=false
 
 [RAW]
 CA=true
@@ -22,3 +12,6 @@ Method=pixelshift
 PixelShiftMotion=0
 PixelShiftMotionCorrection=5
 PixelShiftMotionCorrectionMethod=0
+
+[PostDemosaicSharpening]
+Enabled=true
