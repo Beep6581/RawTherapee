@@ -1138,6 +1138,10 @@ struct LocallabParams {
         double gammaskvib;
         double slomaskvib;
         double lapmaskvib;
+        double strvib;
+        double strvibab;
+        double strvibh;
+        double angvib;
         std::vector<double> Lmaskvibcurve;
         // Soft Light
         bool expsoft;

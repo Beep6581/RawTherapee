@@ -564,6 +564,10 @@ public:
         bool gammaskvib;
         bool slomaskvib;
         bool lapmaskvib;
+        bool strvib;
+        bool strvibab;
+        bool strvibh;
+        bool angvib;
         bool Lmaskvibcurve;
         // Soft Light
         bool expsoft;

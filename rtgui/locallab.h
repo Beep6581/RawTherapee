@@ -249,6 +249,10 @@ private:
     Adjuster* const gammaskvib;
     Adjuster* const slomaskvib;
     Adjuster* const lapmaskvib;
+    Adjuster* const strvib;
+    Adjuster* const strvibab;
+    Adjuster* const strvibh;
+    Adjuster* const angvib;
     // Soft Light
     Adjuster* const streng;
     Adjuster* const laplace;
@@ -521,6 +525,7 @@ private:
     Gtk::Frame* const gradFrame;
     Gtk::Frame* const gradFramemask;
     Gtk::Frame* const gradSHFrame;
+    Gtk::Frame* const gradvibFrame;
     Gtk::Frame* const fatSHFrame;
     Gtk::Frame* const gamFrame;
     Gtk::Frame* const dehaFrame;

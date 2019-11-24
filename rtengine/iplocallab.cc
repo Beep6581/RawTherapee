@@ -217,6 +217,10 @@ struct local_params {
     float strcolab;
     float strcolh;
     float angcol;
+    float strvib;
+    float strvibab;
+    float strvibh;
+    float angvib;
     float softradiusexp;
     float softradiuscol;
     float softradiuscb;
@@ -747,6 +751,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float strcolab = ((float) locallab.spots.at(sp).strcolab);
     float strcolh = ((float) locallab.spots.at(sp).strcolh);
     float angcol = ((float) locallab.spots.at(sp).angcol);
+    float strvib = ((float) locallab.spots.at(sp).strvib);
+    float strvibab = ((float) locallab.spots.at(sp).strvibab);
+    float strvibh = ((float) locallab.spots.at(sp).strvibh);
+    float angvib = ((float) locallab.spots.at(sp).angvib);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
@@ -861,6 +869,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.strcolab = strcolab;
     lp.strcolh = strcolh;
     lp.angcol = angcol;
+    lp.strvib = strvib;
+    lp.strvibab = strvibab;
+    lp.strvibh = strvibh;
+    lp.angvib = angvib;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
@@ -2613,12 +2625,41 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
         stops = lp.strcol;
         angs = lp.angcol;
     } else if (indic == 4) {
-        stops = lp.strcolab;
+        float redu = 1.f;
+
+        if (lp.strcolab > 0.f) {
+            redu = 0.6f;
+        } else {
+            redu = 0.15f;
+        }
+
+        stops = redu * lp.strcolab;
         angs = lp.angcol;
     } else if (indic == 5) {
+        stops = lp.strcolab;
+        angs = lp.angcol;
+    } else if (indic == 6) {
         stops = lp.strcolh;
         angs = lp.angcol;
+    } else if (indic == 7) {
+        stops = lp.strvib;
+        angs = lp.angvib;
+    } else if (indic == 8) {
+        float redu = 1.f;
+
+        if (lp.strvibab > 0.f) {
+            redu = 1.f;
+        } else {
+            redu = 1.f;
+        }
+
+        stops = redu * lp.strvibab;
+        angs = lp.angvib;
+    } else if (indic == 9) {
+        stops = lp.strvibh;
+        angs = lp.angvib;
     }
+
 
     double gradient_stops = stops;
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
@@ -2626,7 +2667,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     double gradient_angle = angs / 180.0 * rtengine::RT_PI;
     double varfeath = 0.01 * lp.feath;
 
-//    printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+    printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
     gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
@@ -4610,7 +4651,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                     const float clc = (previewcol || previewexp || previewSH || previewvib || previewcb) ? settings->previewselection * 100.f : bufchro[y - ystart][x - xstart];
 
 
-                    if (senstype <= 1 || senstype == 100) {
+                    if (senstype <= 1 || senstype == 100 || senstype == 2) {//
                         cla = buf_a_cat[y - ystart][x - xstart];
                         clb = buf_b_cat[y - ystart][x - xstart];
                     }
@@ -4720,6 +4761,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     if (senstype == 2 || senstype == 3 || senstype == 30 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
 
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
+
+                                        if (senstype == 2) {
+                                            flia = flib = (100.f + realstrchdE + realstradE) / 100.f;
+                                        }
+
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
@@ -4875,6 +4921,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 
                                     if (senstype == 2 || senstype == 3 || senstype == 30 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
                                         flia = flib = (100.f + realstrchdE) / 100.f;
+
+                                        if (senstype == 2) {
+                                            flia = flib = (100.f + realstrchdE + realstradE) / 100.f;
+                                        }
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
@@ -8959,7 +9009,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //vibrance
 
-        if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f || lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 3 || lp.showmaskvibmet == 4) && lp.vibena) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f || lp.strvib != 0.f || lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 3 || lp.showmaskvibmet == 4) && lp.vibena) { //interior ellipse renforced lightness and chroma  //locallutili
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
                 const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -8971,6 +9021,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 if (bfw >= mSP && bfh >= mSP) {
                     JaggedArray<float> buflight(bfw, bfh);
                     JaggedArray<float> bufl_ab(bfw, bfh);
+                    JaggedArray<float> buf_a(bfw, bfh);
+                    JaggedArray<float> buf_b(bfw, bfh);
                     std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
                     std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
                     std::unique_ptr<LabImage> bufmaskorigvib;
@@ -9080,8 +9132,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         VibranceParams vibranceParams;
                         vibranceParams.enabled = params->locallab.spots.at(sp).expvibrance;
-                        vibranceParams.pastels = params->locallab.spots.at(sp).pastels;
-                        vibranceParams.saturated = params->locallab.spots.at(sp).saturated;
+                        vibranceParams.pastels = 2.f * params->locallab.spots.at(sp).pastels;
+                        vibranceParams.saturated = 2.f * params->locallab.spots.at(sp).saturated;
                         vibranceParams.psthreshold = params->locallab.spots.at(sp).psthreshold;
                         vibranceParams.protectskins = params->locallab.spots.at(sp).protectskins;
                         vibranceParams.avoidcolorshift = params->locallab.spots.at(sp).avoidcolorshift;
@@ -9090,7 +9142,114 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                         bufexpfin->CopyFrom(bufexporig.get());
+
+                        lp.strvibh = 0.f;
+                        if (lp.strvibh != 0.f) {
+                            struct grad_params gph;
+                            calclocalGradientParams(lp, gph, ystart, xstart, bfw, bfh, 9);
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    double factor = 1.0;
+                                    factor = ImProcFunctions::calcGradientFactor(gph, jr, ir);
+                                    float aa = bufexpfin->a[ir][jr];
+                                    float bb = bufexpfin->b[ir][jr];
+                                    float chrm = sqrt(SQR(aa) + SQR(bb));
+                                    float HH = xatan2f(bb, aa);
+
+                                    float newhr = 0.f;
+                                    float cor = 0.f;
+
+                                    if (factor < 1.f) {
+                                        cor = - 2.5f * (1.f - factor);
+                                    } else if (factor > 1.f) {
+                                        cor = 0.03f * (factor - 1.f);
+                                    }
+
+                                    newhr = HH + cor;
+
+                                    if (newhr > rtengine::RT_PI_F) {
+                                        newhr -= 2 * rtengine::RT_PI_F;
+                                    } else if (newhr < -rtengine::RT_PI_F) {
+                                        newhr += 2 * rtengine::RT_PI_F;
+                                    }
+
+                                    float2 sincosval = xsincosf(newhr);
+                                    bufexpfin->a[ir][jr] = CLIPC(chrm * sincosval.y);
+                                    bufexpfin->b[ir][jr] = CLIPC(chrm * sincosval.x);
+                                }
+                        }
+
+                        if (lp.strvib != 0.f) {
+                            struct grad_params gp;
+                            calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 7);
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    double factor = 1.0;
+                                    factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
+                                    bufexpfin->L[ir][jr] *= factor;
+                                }
+                        }
+                        lp.strvibab = 0.f;
+                        if (lp.strvibab != 0.f) {
+                            struct grad_params gpab;
+                            calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 8);
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    double factor = 1.0;
+                                    factor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
+                                    bufexpfin->a[ir][jr] *= factor;
+                                    bufexpfin->b[ir][jr] *= factor;
+                                }
+                        }
+
+                  //      bool toto = true;
                         ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
+/*
+                        if (toto) {
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                            for (int y = 0; y < bfh; y++) {
+                                const int loy = y + ystart + cy;
+
+                                for (int x = 0; x < bfw; x++) {
+                                    const int lox = x + xstart + cx;
+                                    int zone = 0;
+                                    float localFactor = 1.f;
+                                    const float achm = (float)lp.trans / 100.f;
+
+                                    if (lp.shapmet == 0) {
+                                        calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                    } else if (lp.shapmet == 1) {
+                                        calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                    }
+
+                                    if (zone > 0) {
+                                        transformed->L[y + ystart][x + xstart] = bufexpfin->L[y][x];
+                                        transformed->a[y + ystart][x + xstart] = bufexpfin->a[y][x];
+                                        transformed->b[y + ystart][x + xstart] = bufexpfin->b[y][x];
+                                    }
+                                }
+                            }
+
+                            return;
+                        }
+*/
+
+
 
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
@@ -9100,13 +9259,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int x = 0; x < bfw; x++) {
                                 buflight[y][x] = CLIPRET((bufexpfin->L[y][x] - bufexporig->L[y][x]) / 328.f);
                                 bufl_ab[y][x] = CLIPRET((sqrt(SQR(bufexpfin->a[y][x]) + SQR(bufexpfin->b[y][x])) - sqrt(SQR(bufexporig->a[y][x]) + SQR(bufexporig->b[y][x]))) / 250.f);
+                                buf_a[y][x] = CLIPRET((bufexpfin->a[y][x] - bufexporig->a[y][x]) / 328.f);
+                                buf_b[y][x] = CLIPRET((bufexpfin->b[y][x] - bufexporig->b[y][x]) / 328.f);
+
                             }
                         }
 
                         bufexpfin.reset();
                     }
 
-                    transit_shapedetect(2, bufexporig.get(), nullptr, originalmaskvib.get(), buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(2, bufexporig.get(), nullptr, originalmaskvib.get(), buflight, bufl_ab, buf_a, buf_b, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
@@ -12778,7 +12940,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             if (lp.strcolh != 0.f) {
                                 struct grad_params gph;
-                                calclocalGradientParams(lp, gph, ystart, xstart, bfw, bfh, 5);
+                                calclocalGradientParams(lp, gph, ystart, xstart, bfw, bfh, 6);
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -13460,7 +13622,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             if (lp.strcolab != 0.f) {
                                 struct grad_params gpab;
-                                calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 4);
+                                calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 5);
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif

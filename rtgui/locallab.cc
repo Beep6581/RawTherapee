@@ -367,6 +367,10 @@ chromaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0
 gammaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
 slomaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
 lapmaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+strvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
+strvibab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -6., 6., 0.05, 0.))),
+strvibh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRHUE2"), -6., 6., 0.05, 0.))),
+angvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
 //Soft Light
 streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
 laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
@@ -601,6 +605,7 @@ gradcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 gradFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 gradFramemask(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 gradSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
+gradvibFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
 gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
 dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
@@ -1596,6 +1601,10 @@ pe(nullptr)
     gammaskvib->setAdjusterListener(this);
     slomaskvib->setAdjusterListener(this);
     lapmaskvib->setAdjusterListener(this);
+    strvib->setAdjusterListener(this);
+    angvib->setAdjusterListener(this);
+    strvibab->setAdjusterListener(this);
+    strvibh->setAdjusterListener(this);
 
     curveEditorGG->setCurveListener(this);
 
@@ -1626,6 +1635,14 @@ pe(nullptr)
 
     curveEditorGG->curveListComplete();
 
+    gradvibFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const gradvibBox = Gtk::manage(new ToolParamBlock());
+    gradvibBox->pack_start(*strvib);
+//    gradvibBox->pack_start(*strvibab);
+//    gradvibBox->pack_start(*strvibh);
+    gradvibBox->pack_start(*angvib);
+    gradvibFrame->add(*gradvibBox);
+
     ToolParamBlock* const vibranceBox = Gtk::manage(new ToolParamBlock());
     vibranceBox->pack_start(*saturated, Gtk::PACK_SHRINK, 0);
     vibranceBox->pack_start(*pastels, Gtk::PACK_SHRINK, 0);
@@ -1635,6 +1652,7 @@ pe(nullptr)
     vibranceBox->pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
     vibranceBox->pack_start(*sensiv, Gtk::PACK_SHRINK, 0);
     vibranceBox->pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    vibranceBox->pack_start(*gradvibFrame, Gtk::PACK_SHRINK, 0);
 
     enavibMaskConn = enavibMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enavibMaskChanged));
 
@@ -4136,6 +4154,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskvib = slomaskvib->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskvib = lapmaskvib->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).Lmaskvibcurve = Lmaskvibshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).strvib = strvib->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strvibab = strvibab->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strvibh = strvibh->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).angvib = angvib->getValue();
                     // Soft Light
                     pp->locallab.spots.at(pp->locallab.selspot).expsoft = expsoft->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).streng = streng->getIntValue();
@@ -4534,6 +4556,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskvib = pe->locallab.spots.at(pp->locallab.selspot).slomaskvib || slomaskvib->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskvib = pe->locallab.spots.at(pp->locallab.selspot).lapmaskvib || lapmaskvib->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).Lmaskvibcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskvibcurve || !Lmaskvibshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).strvib = pe->locallab.spots.at(pp->locallab.selspot).strvib || strvib->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strvibab = pe->locallab.spots.at(pp->locallab.selspot).strvibab || strvibab->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strvibh = pe->locallab.spots.at(pp->locallab.selspot).strvibh || strvibh->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).angvib = pe->locallab.spots.at(pp->locallab.selspot).angvib || angvib->getEditedState();
                         // Soft Light
                         pe->locallab.spots.at(pp->locallab.selspot).expsoft = pe->locallab.spots.at(pp->locallab.selspot).expsoft || !expsoft->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).streng = pe->locallab.spots.at(pp->locallab.selspot).streng || streng->getEditedState();
@@ -4889,6 +4915,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskvib = pedited->locallab.spots.at(pp->locallab.selspot).slomaskvib || slomaskvib->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskvib = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskvib || lapmaskvib->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).Lmaskvibcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskvibcurve || !Lmaskvibshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strvib = pedited->locallab.spots.at(pp->locallab.selspot).strvib || strvib->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strvibab = pedited->locallab.spots.at(pp->locallab.selspot).strvibab || strvibab->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strvibh = pedited->locallab.spots.at(pp->locallab.selspot).strvibh || strvibh->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).angvib = pedited->locallab.spots.at(pp->locallab.selspot).angvib || angvib->getEditedState();
                         // Soft Light
                         pedited->locallab.spots.at(pp->locallab.selspot).expsoft = pedited->locallab.spots.at(pp->locallab.selspot).expsoft || !expsoft->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).streng = pedited->locallab.spots.at(pp->locallab.selspot).streng || streng->getEditedState();
@@ -7194,6 +7224,10 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     gammaskvib->setDefault(defSpot->gammaskvib);
     slomaskvib->setDefault(defSpot->slomaskvib);
     lapmaskvib->setDefault(defSpot->lapmaskvib);
+    strvib->setDefault(defSpot->strvib);
+    strvibab->setDefault(defSpot->strvibab);
+    strvibh->setDefault(defSpot->strvibh);
+    angvib->setDefault(defSpot->angvib);
     // Soft Light
     streng->setDefault((double)defSpot->streng);
     sensisf->setDefault((double)defSpot->sensisf);
@@ -7409,6 +7443,10 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         gammaskvib->setDefaultEditedState(Irrelevant);
         slomaskvib->setDefaultEditedState(Irrelevant);
         lapmaskvib->setDefaultEditedState(Irrelevant);
+        strvib->setDefaultEditedState(Irrelevant);
+        strvibab->setDefaultEditedState(Irrelevant);
+        strvibh->setDefaultEditedState(Irrelevant);
+        angvib->setDefaultEditedState(Irrelevant);
         // Soft Light
         streng->setDefaultEditedState(Irrelevant);
         sensisf->setDefaultEditedState(Irrelevant);
@@ -7628,6 +7666,10 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         gammaskvib->setDefaultEditedState(defSpotState->gammaskvib ? Edited : UnEdited);
         slomaskvib->setDefaultEditedState(defSpotState->slomaskvib ? Edited : UnEdited);
         lapmaskvib->setDefaultEditedState(defSpotState->lapmaskvib ? Edited : UnEdited);
+        strvib->setDefaultEditedState(defSpotState->strvib ? Edited : UnEdited);
+        strvibab->setDefaultEditedState(defSpotState->strvibab ? Edited : UnEdited);
+        strvibh->setDefaultEditedState(defSpotState->strvibh ? Edited : UnEdited);
+        angvib->setDefaultEditedState(defSpotState->angvib ? Edited : UnEdited);
         // Soft Light
         streng->setDefaultEditedState(defSpotState->streng ? Edited : UnEdited);
         sensisf->setDefaultEditedState(defSpotState->sensisf ? Edited : UnEdited);
@@ -8348,6 +8390,30 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == lapmaskvib) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmaskvib, lapmaskvib->getTextValue());
+            }
+        }
+
+        if (a == strvib) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrvib, strvib->getTextValue());
+            }
+        }
+
+        if (a == strvibab) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrvibab, strvibab->getTextValue());
+            }
+        }
+
+        if (a == strvibh) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrvibh, strvibh->getTextValue());
+            }
+        }
+
+        if (a == angvib) {
+            if (listener) {
+                listener->panelChanged(Evlocallabangvib, angvib->getTextValue());
             }
         }
 
@@ -9140,6 +9206,10 @@ void Locallab::setBatchMode(bool batchMode)
     gammaskvib->showEditedCB();
     slomaskvib->showEditedCB();
     lapmaskvib->showEditedCB();
+    strvib->showEditedCB();
+    strvibab->showEditedCB();
+    strvibh->showEditedCB();
+    angvib->showEditedCB();
     // Soft Light
     streng->showEditedCB();
     sensisf->showEditedCB();
@@ -9868,6 +9938,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         slomaskvib->setValue(pp->locallab.spots.at(index).slomaskvib);
         lapmaskvib->setValue(pp->locallab.spots.at(index).lapmaskvib);
         Lmaskvibshape->setCurve(pp->locallab.spots.at(index).Lmaskvibcurve);
+        strvib->setValue(pp->locallab.spots.at(index).strvib);
+        strvibab->setValue(pp->locallab.spots.at(index).strvibab);
+        strvibh->setValue(pp->locallab.spots.at(index).strvibh);
+        angvib->setValue(pp->locallab.spots.at(index).angvib);
 
         // Soft Light
         expsoft->setEnabled(pp->locallab.spots.at(index).expsoft);
@@ -10309,6 +10383,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 slomaskvib->setEditedState(spotState->slomaskvib ? Edited : UnEdited);
                 lapmaskvib->setEditedState(spotState->lapmaskvib ? Edited : UnEdited);
                 Lmaskvibshape->setUnChanged(!spotState->Lmaskvibcurve);
+                strvib->setEditedState(spotState->strvib ? Edited : UnEdited);
+                strvibab->setEditedState(spotState->strvibab ? Edited : UnEdited);
+                strvibh->setEditedState(spotState->strvibh ? Edited : UnEdited);
+                angvib->setEditedState(spotState->angvib ? Edited : UnEdited);
 
                 // Soft Light
                 expsoft->set_inconsistent(!spotState->expsoft);

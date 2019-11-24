@@ -144,6 +144,7 @@ void ImProcFunctions::vibrance (LabImage* lab, const procparams::VibranceParams 
     if (skinCurveIsSet) {
         fillCurveArrayVib (dcurve, skin_curve);
         skin_curve /= ask;
+//        skin_curve *= 2.f;
     }
 
     if (dcurve) {

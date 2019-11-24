@@ -1132,6 +1132,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gammaskvib = locallab.spots.at(j).gammaskvib && pSpot.gammaskvib == otherSpot.gammaskvib;
                 locallab.spots.at(j).slomaskvib = locallab.spots.at(j).slomaskvib && pSpot.slomaskvib == otherSpot.slomaskvib;
                 locallab.spots.at(j).lapmaskvib = locallab.spots.at(j).lapmaskvib && pSpot.lapmaskvib == otherSpot.lapmaskvib;
+                locallab.spots.at(j).strvib = locallab.spots.at(j).strvib && pSpot.strvib == otherSpot.strvib;
+                locallab.spots.at(j).strvibab = locallab.spots.at(j).strvibab && pSpot.strvibab == otherSpot.strvibab;
+                locallab.spots.at(j).strvibh = locallab.spots.at(j).strvibh && pSpot.strvibh == otherSpot.strvibh;
+                locallab.spots.at(j).angvib = locallab.spots.at(j).angvib && pSpot.angvib == otherSpot.angvib;
                 locallab.spots.at(j).Lmaskvibcurve = locallab.spots.at(j).Lmaskvibcurve && pSpot.Lmaskvibcurve == otherSpot.Lmaskvibcurve;
                 // Soft Light
                 locallab.spots.at(j).expsoft = locallab.spots.at(j).expsoft && pSpot.expsoft == otherSpot.expsoft;
@@ -3467,6 +3471,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lapmaskvib = mods.locallab.spots.at(i).lapmaskvib;
         }
 
+        if (locallab.spots.at(i).strvib) {
+            toEdit.locallab.spots.at(i).strvib = mods.locallab.spots.at(i).strvib;
+        }
+
+        if (locallab.spots.at(i).strvibab) {
+            toEdit.locallab.spots.at(i).strvibab = mods.locallab.spots.at(i).strvibab;
+        }
+
+        if (locallab.spots.at(i).strvibh) {
+            toEdit.locallab.spots.at(i).strvibh = mods.locallab.spots.at(i).strvibh;
+        }
+
+        if (locallab.spots.at(i).angvib) {
+            toEdit.locallab.spots.at(i).angvib = mods.locallab.spots.at(i).angvib;
+        }
+
         if (locallab.spots.at(i).Lmaskvibcurve) {
             toEdit.locallab.spots.at(i).Lmaskvibcurve = mods.locallab.spots.at(i).Lmaskvibcurve;
         }
@@ -5242,6 +5262,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     gammaskvib(v),
     slomaskvib(v),
     lapmaskvib(v),
+    strvib(v),
+    strvibab(v),
+    strvibh(v),
+    angvib(v),
     Lmaskvibcurve(v),
     // Soft Light
     expsoft(v),
@@ -5591,6 +5615,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gammaskvib = v;
     slomaskvib = v;
     lapmaskvib = v;
+    strvib = v;
+    strvibab = v;
+    strvibh = v;
+    angvib = v;
     Lmaskvibcurve = v;
     // Soft Light
     expsoft = v;
