@@ -4197,7 +4197,9 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
     //initialize scope
     float varsens = lp.sensex;//exposure
 
-    if (senstype == 2) { //vibrance
+    if (senstype == 0) { //Color and light
+        varsens =  lp.sens;
+    } else if (senstype == 2) { //vibrance
         varsens =  lp.sensv;
     }
 
@@ -4219,12 +4221,17 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
     //to preview modifications, scope, mask
     const bool expshow = ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1);
     const bool vibshow = ((lp.showmaskvibmet == 1 || lp.showmaskvibmet == 2)  &&  senstype == 2);
+    const bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  &&  senstype == 0);
     const bool previewvib = ((lp.showmaskvibmet == 4)  &&  senstype == 2);
     const bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
+    const bool previewcol = ((lp.showmaskcolmet == 5)  &&  senstype == 0);
+
     float radius = 3.f / sk;
 
     if (senstype == 1) {
         radius = (2.f + 0.2f * lp.blurexp) / sk;
+    } else if (senstype == 1) {
+        radius = (2.f + 0.2f * lp.blurcol) / sk;
     }
 
 
@@ -4240,7 +4247,8 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
 
     const bool usemaskvib = (lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 4) && senstype == 2;
     const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
-    const bool usemaskall = (usemaskexp || usemaskvib);
+    const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
+    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol);
 
     //blur a little mask
     if (usemaskall) {
@@ -4310,7 +4318,7 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
             float rsob = 0.f;
 
             //claculate additive sobel to deltaE
-            if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || ((senstype == 0 || senstype == 100) && lp.struco > 0.f))) {
+            if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || ((senstype == 0) && lp.struco > 0.f))) {
                 const float csob = xlogf(1.f + std::min(blend2[y][x] / 100.f, 60.f) + 0.001f);
 
                 float rs;
@@ -4358,7 +4366,7 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
                 difb = 328.f * factorx * realstrbdE;
                 float maxdifab = max(fabs(difa), fabs(difb));
 
-                if (expshow || vibshow) {//show modifications
+                if (expshow || vibshow || colshow) {//show modifications
                     if (diflc < 1000.f) {//if too low to be view use ab
                         diflc += 0.5f * maxdifab;
                     }
@@ -4366,7 +4374,7 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
                     transformed->L[y + ystart][x + xstart] = CLIP(12000.f + diflc);
                     transformed->a[y + ystart][x + xstart] = CLIPC(difa);
                     transformed->b[y + ystart][x + xstart] = CLIPC(difb);
-                } else if (previewexp || previewvib) {//show deltaE
+                } else if (previewexp || previewvib || previewcol) {//show deltaE
                     if (fabs(difb) < 500.f) {//if too low to be view use L
                         difb += 0.5f * diflc;
                     }
@@ -9339,7 +9347,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         bufexpfin->CopyFrom(bufexporig.get());
 
-//                       lp.strvibh = 0.f;
                         if (lp.strvibh != 0.f) {
                             struct grad_params gph;
                             calclocalGradientParams(lp, gph, ystart, xstart, bfw, bfh, 9);
@@ -12471,13 +12478,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 std::unique_ptr<LabImage> bufcolreserv;
                 std::unique_ptr<LabImage> buftemp;
 
-                array2D<float> buflight(bfw, bfh, true);
-                JaggedArray<float> bufchro(bfw, bfh, true);
-                JaggedArray<float> bufhh(bfw, bfh, true);
+//                array2D<float> buflight(bfw, bfh, true);
+//                JaggedArray<float> bufchro(bfw, bfh, true);
+//                JaggedArray<float> bufhh(bfw, bfh, true);
 
                 array2D<float> blend2;
-                JaggedArray<float> buf_a(bfw, bfh, true);
-                JaggedArray<float> buf_b(bfw, bfh, true);
+//                JaggedArray<float> buf_a(bfw, bfh, true);
+//               JaggedArray<float> buf_b(bfw, bfh, true);
 
                 float adjustr = 1.0f;
 
@@ -12808,19 +12815,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         //others curves
 
-                        float chprosl = 1.f;
-
-                        if (lp.chro != 0.f) {
-                            const float ch = (1.f + 0.01f * lp.chro) ;
-
-                            if (ch <= 1.f) {
-                                chprosl = 99.f * ch - 99.f;
-                            } else {
-                                constexpr float ampli = 50.f;
-                                chprosl = CLIPCHRO(ampli * ch - ampli);
-                            }
-                        }
-
                         const LabImage *origptr = usergb ? buftemp.get() : bufcolorig.get();
 
                         bool execcolor = false;
@@ -12839,10 +12833,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         float kd = 1.f;//correction to ctoning
+                        kd = 10.f * 0.01f * lp.strengrid;
 
-                        if (lp.mergemet >= 2) {
-                            kd = 10.f * 0.01f * lp.strengrid;
-                        }
 
 
 #ifdef _OPENMP
@@ -12855,21 +12847,26 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 float bufcolcalcb = origptr->b[ir][jr];
                                 float bufcolcalcL = origptr->L[ir][jr];
 
-                                float chprocu = 1.f;
+                                if (lp.chro != 0.f) {
+                                    const float ch = (1.f + 0.01f * lp.chro) ;
+                                    bufcolcalca *= ch;
+                                    bufcolcalcb *= ch;
+                                }
 
                                 if (cclocalcurve  && lp.qualcurvemet != 0 && localcutili) { // C=f(C) curve
                                     const float chromat = sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
                                     const float ch = cclocalcurve[chromat * adjustr] / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
-                                    constexpr float ampli = 25.f;
-                                    chprocu = CLIPCHRO(ampli * ch - ampli);
+                                    bufcolcalca *= ch;
+                                    bufcolcalcb *= ch;
                                 }
 
-                                bufchro[ir][jr] = chprosl + chprocu;
-
                                 if (lochhCurve && HHcurve && lp.qualcurvemet != 0  && !ctoning) {
+                                    const float chromat = sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
                                     const float hhforcurv = xatan2f(bufcolcalcb, bufcolcalca);
                                     const float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)  1.7 optimisation !
-                                    bufhh[ir][jr] = CLIPRET(200.f * valparam);
+                                    float2 sincosval = xsincosf(valparam);
+                                    bufcolcalca = chromat * sincosval.y;
+                                    bufcolcalcb = chromat * sincosval.x;
                                 }
 
 
@@ -12912,17 +12909,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 }
 
-                                // buflight[ir][jr] = CLIPRET((bufcolcalcL - bufcolorig->L[ir][jr]) / 328.f);
-                                buf_a[ir][jr] = CLIPRET((bufcolcalca - origptr->a[ir][jr]) / 328.f);;
-                                buf_b[ir][jr] = CLIPRET((bufcolcalcb - origptr->b[ir][jr]) / 328.f);;
                                 bufcolfin->L[ir][jr] = bufcolcalcL;
-
-
-                                if (lp.mergemet >= 2) {
-                                    bufcolfin->a[ir][jr] = bufcolcalca * (1.f + 0.01f * (chprosl + chprocu));
-                                    bufcolfin->b[ir][jr] = bufcolcalcb * (1.f + 0.01f * (chprosl + chprocu));
-                                }
-
+                                bufcolfin->a[ir][jr] = bufcolcalca;
+                                bufcolfin->b[ir][jr] = bufcolcalcb;
                             }
 
 
@@ -12942,9 +12931,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     bufcolfin->b[ir][jr] = origptr->b[ir][jr];
                                 }
                         }
-
-
-                        //
 
                         if (lp.mergemet >= 2) { //merge result with original
                             nottransit = true;
@@ -13159,7 +13145,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             bufcolfin->L[y][x] = (lp.opacol) * bufprov->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
                                             bufcolfin->a[y][x] = (lp.opacol) * bufprov->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
                                             bufcolfin->b[y][x] = (lp.opacol) * bufprov->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
-
                                         }
                                     }
 
@@ -13167,7 +13152,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                                 if (conthr > 0.f && lp.mergemet != 4) {
-                                    //    if (conthr > 0.f) {
 
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
@@ -13180,10 +13164,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             bufcolfin->b[y][x] = intp((blend[y][x]), bufcolfin->b[y][x], bufreser->b[y][x]);
                                         }
                                     }
-
                                 }
-
-
                             }
 
 
@@ -13218,7 +13199,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             bufprov->b[y][x] = (rdE[y][x]) * bufcolfin->b[y][x] + (1.f - rdE[y][x]) * bufcolreserv->b[y][x];
                                         }
                                     }
-
                                 }
 
 #ifdef _OPENMP
@@ -13264,16 +13244,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                             bufcolfin->L[y][x] = (lp.opacol) * bufprov->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
                                             bufcolfin->a[y][x] = (lp.opacol) * bufprov->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
                                             bufcolfin->b[y][x] = (lp.opacol) * bufprov->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
-                                            /*
-                                            bufcolfin->L[y][x] = (lp.opacol) * bufcolfin->L[y][x] + (1.f - lp.opacol) * bufprov->L[y][x];
-                                            bufcolfin->a[y][x] = (lp.opacol) * bufcolfin->a[y][x] + (1.f - lp.opacol) * bufprov->a[y][x];
-                                            bufcolfin->b[y][x] = (lp.opacol) * bufcolfin->b[y][x] + (1.f - lp.opacol) * bufprov->b[y][x];
-                                            */
                                         }
                                     }
                                 }
 
-                                // if (conthr > 0.f) {
                                 if (conthr > 0.f && lp.mergemet != 4) {
 #ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16)
@@ -13698,6 +13672,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                             if (nottransit) {
+
                                 //special only transition
                                 //may be we can add preview...
 #ifdef _OPENMP
@@ -13733,6 +13708,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         }
 
+
                         if (!nottransit) {
 //gradient
 
@@ -13762,75 +13738,59 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     for (int jr = 0; jr < bfw; jr++) {
                                         double factor = 1.0;
                                         factor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
-                                        float cor = 0.f;
-
-                                        if (factor < mini) {
-                                            mini = factor;
-                                        }
-
-                                        if (factor > maxi) {
-                                            maxi = factor;
-                                        }
-
-                                        if (factor < 1.f) {
-                                            cor = -80.f * (1.f - factor);
-                                        } else if (factor > 1.f) {
-                                            cor = 3.f * factor;
-                                        }
-
-                                        bufchro[ir][jr] += cor;
-
-                                        if (bufchro[ir][jr] < -99.f) {
-                                            bufchro[ir][jr] = -99.f;
-                                        }
+                                        bufcolfin->a[ir][jr] *= factor;
+                                        bufcolfin->b[ir][jr] *= factor;
                                     }
                             }
+
+                            if (lp.strcolh != 0.f) {
+                                struct grad_params gph;
+                                calclocalGradientParams(lp, gph, ystart, xstart, bfw, bfh, 6);
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int ir = 0; ir < bfh; ir++)
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        double factor = 1.0;
+                                        factor = ImProcFunctions::calcGradientFactor(gph, jr, ir);
+                                        float aa = bufcolfin->a[ir][jr];
+                                        float bb = bufcolfin->b[ir][jr];
+                                        float chrm = sqrt(SQR(aa) + SQR(bb));
+                                        float HH = xatan2f(bb, aa);
+
+                                        float newhr = 0.f;
+                                        float cor = 0.f;
+
+                                        if (factor < 1.f) {
+                                            cor = - 2.5f * (1.f - factor);
+                                        } else if (factor > 1.f) {
+                                            cor = 0.03f * (factor - 1.f);
+                                        }
+
+                                        newhr = HH + cor;
+
+                                        if (newhr > rtengine::RT_PI_F) {
+                                            newhr -= 2 * rtengine::RT_PI_F;
+                                        } else if (newhr < -rtengine::RT_PI_F) {
+                                            newhr += 2 * rtengine::RT_PI_F;
+                                        }
+
+                                        float2 sincosval = xsincosf(newhr);
+                                        bufcolfin->a[ir][jr] = CLIPC(chrm * sincosval.y);
+                                        bufcolfin->b[ir][jr] = CLIPC(chrm * sincosval.x);
+                                    }
+                            }
+
 
                             if (lp.softradiuscol > 0.f) {
                                 softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
                             }
 
-#ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
-#endif
+                            transit_shapedetect2(0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
 
-                            for (int ir = 0; ir < bfh; ir++)
-                                for (int jr = 0; jr < bfw; jr++) {
-                                    buflight[ir][jr] = CLIPRET((bufcolfin->L[ir][jr] - bufcolorig->L[ir][jr]) / 328.f);
-                                    /*
-                                    float tempa = SQR((bufcolfin->a[ir][jr] - bufcolorig->a[ir][jr])/328.f);
-                                    float tempb = SQR((bufcolfin->b[ir][jr] - bufcolorig->b[ir][jr])/328.f);
-                                    if(lp.strcolab != 0.f) {
-                                        bufchro[ir][jr] = sqrt(tempa + tempb);
-                                    }
-                                    */
-                                }
                         }
 
-                    }
-
-                    /*
-                                        float **temp = nullptr;
-
-                                        if (blend) {
-                                            temp = blend2;
-                                            blend2.free();
-                                        }
-                    */
-                    int smerge = 0;
-
-                    //bufcolfin add for merge
-                    if (!(usergb && spez)) {
-
-                        if (!nottransit) {
-                            transit_shapedetect(smerge, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHcurve, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
-
-                            if (blends) {
-                                blend2.free();
-                            }
-
-                            buflight.free();
-                        }
                     }
 
                     if (params->locallab.spots.at(sp).recurs) {
