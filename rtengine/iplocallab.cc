@@ -4201,6 +4201,8 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
         varsens =  lp.sens;
     } else if (senstype == 2) { //vibrance
         varsens =  lp.sensv;
+    } else if (senstype == 9) { //shadowshighlight
+        varsens =  lp.senshs;
     }
 
     //sobel
@@ -4222,9 +4224,12 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
     const bool expshow = ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1);
     const bool vibshow = ((lp.showmaskvibmet == 1 || lp.showmaskvibmet == 2)  &&  senstype == 2);
     const bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  &&  senstype == 0);
+    const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
+
     const bool previewvib = ((lp.showmaskvibmet == 4)  &&  senstype == 2);
     const bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
     const bool previewcol = ((lp.showmaskcolmet == 5)  &&  senstype == 0);
+    const bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
 
     float radius = 3.f / sk;
 
@@ -4232,6 +4237,8 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
         radius = (2.f + 0.2f * lp.blurexp) / sk;
     } else if (senstype == 1) {
         radius = (2.f + 0.2f * lp.blurcol) / sk;
+    } else if (senstype == 9) {
+        radius = (2.f + 0.2f * lp.blurSH) / sk;
     }
 
 
@@ -4248,7 +4255,8 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
     const bool usemaskvib = (lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 4) && senstype == 2;
     const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
     const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
-    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol);
+    const bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
+    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol || usemaskSH);
 
     //blur a little mask
     if (usemaskall) {
@@ -4366,7 +4374,7 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
                 difb = 328.f * factorx * realstrbdE;
                 float maxdifab = max(fabs(difa), fabs(difb));
 
-                if (expshow || vibshow || colshow) {//show modifications
+                if (expshow || vibshow || colshow || SHshow) {//show modifications
                     if (diflc < 1000.f) {//if too low to be view use ab
                         diflc += 0.5f * maxdifab;
                     }
@@ -4374,7 +4382,7 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
                     transformed->L[y + ystart][x + xstart] = CLIP(12000.f + diflc);
                     transformed->a[y + ystart][x + xstart] = CLIPC(difa);
                     transformed->b[y + ystart][x + xstart] = CLIPC(difb);
-                } else if (previewexp || previewvib || previewcol) {//show deltaE
+                } else if (previewexp || previewvib || previewcol || previewSH) {//show deltaE
                     if (fabs(difb) < 500.f) {//if too low to be view use L
                         difb += 0.5f * diflc;
                     }
@@ -4451,6 +4459,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
             const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+            const float previewint = settings->previewselection;
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -4556,7 +4565,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                         }
 
                         const float difa = (chra * fliab - original->a[y][x]) * localFactor;
-                        const float difb = (chrb * fliab - original->b[y][x]) * localFactor;
+                        float difb = (chrb * fliab - original->b[y][x]) * localFactor;
 
                         transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
                         transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
@@ -4579,7 +4588,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 
                         if (previewreti) {
                             transformed->a[y][x] = 0.f;
-                            transformed->b[y][x] = CLIPC(difb);
+                            transformed->b[y][x] = previewint * difb;
                         }
                     }
                 }
@@ -4595,7 +4604,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 }
 
 
-void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexporig, const LabImage * bufcolfin, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
     BENCHFUN {
@@ -4609,16 +4618,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         const float ach = lp.trans / 100.f;
         float varsens = lp.sensex;
 
-        if (senstype == 0 || senstype == 100)   //Color and Light
-        {
-            varsens =  lp.sens;
-        } else if (senstype == 1)   //exposure
-        {
-            varsens =  lp.sensex;
-        } else if (senstype == 2)   //vibrance
-        {
-            varsens =  lp.sensv;
-        } else if (senstype == 3)   //soft light
+        if (senstype == 3)   //soft light
         {
             varsens =  lp.senssf;
         } else if (senstype == 30)   //dehaze
@@ -4630,9 +4630,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         } else if (senstype == 8)   //TM
         {
             varsens =  lp.senstm;
-        } else if (senstype == 9)   //Shadow highlight
-        {
-            varsens =  lp.senshs;
         } else if (senstype == 10) //local contrast
         {
             varsens =  lp.senslc;
@@ -4651,17 +4648,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         const float refa = chromaref * cos(hueref) * 327.68f;
         const float refb = chromaref * sin(hueref) * 327.68f;
         const float refL = lumaref * 327.68f;
+        const float previewint = settings->previewselection;
 
-        const bool expshow = ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1);
-        const bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  && (senstype == 0 || senstype == 100));
-        const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
-        const bool vibshow = ((lp.showmaskvibmet == 1 || lp.showmaskvibmet == 2)  &&  senstype == 2);
         const bool cbshow = ((lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2)  &&  senstype == 6);
         const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2)  &&  senstype == 8);
-        const bool previewcol = ((lp.showmaskcolmet == 5)  && (senstype == 0 || senstype == 100));
-        const bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
-        const bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
-        const bool previewvib = ((lp.showmaskvibmet == 4)  &&  senstype == 2);
         const bool previewcb = ((lp.showmaskcbmet == 4)  &&  senstype == 6);
         const bool previewtm = ((lp.showmasktmmet == 4)  &&  senstype == 8);
 
@@ -4687,13 +4677,9 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         balancedeltaE(kL, kab);
         kab /= SQR(327.68f);
         kL /= SQR(327.68f);
-        const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
-        const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && (senstype == 0 || senstype == 100);
-        const bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
-        const bool usemaskvib = (lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 4) && senstype == 2;
         const bool usemaskcb = (lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 4) && senstype == 6;
         const bool usemasktm = (lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 4) && senstype == 8;
-        const bool usemaskall = (usemaskSH || usemaskcol || usemaskexp || usemaskcb  || usemasktm || usemaskvib);
+        const bool usemaskall = (usemaskcb  || usemasktm);
 
         if (usemaskall)
         {
@@ -4852,97 +4838,30 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 
                     const float dE = rsob + sqrt(kab * (SQR(refa - maskptr->a[y - ystart][x - xstart]) + SQR(refb - maskptr->b[y - ystart][x - xstart])) + kL * SQR(refL - maskptr->L[y - ystart][x - xstart]));
 
-                    float cla = 0.f;
-                    float clb = 0.f;
-
                     const float cli = buflight[y - ystart][x - xstart];
-                    const float clc = (previewcol || previewexp || previewSH || previewvib || previewcb) ? settings->previewselection * 100.f : bufchro[y - ystart][x - xstart];
+                    const float clc = (previewcb) ? settings->previewselection * 100.f : bufchro[y - ystart][x - xstart];
 
 
-                    if (senstype <= 1 || senstype == 100 || senstype == 2) {//
-                        cla = buf_a_cat[y - ystart][x - xstart];
-                        clb = buf_b_cat[y - ystart][x - xstart];
-                    }
 
                     float reducdE;
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
 
                     const float realstrdE = reducdE * cli;
-                    const float realstradE = reducdE * cla;
-                    const float realstrbdE = reducdE * clb;
                     const float realstrchdE = reducdE * clc;
-                    /* comment on processus deltaE
-                            * the algo uses 3 different ways to manage deltaE according to the type of intervention
-                            * if we call "applyproc" : the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
-
-                            * direct : in this case we use directly the datas produced upstream by "applyproc", with only a regulation produce for deltaE by reducdE
-                            * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise, Sharp, TM
-
-                            * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f *  realstrdE
-                            * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight, Localcontrast
-
-                            * with second use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type fli = (100.f + realstrdE) / 100.f;
-                            * in this case we found "applyproc" which result in large variations of L : Retinex
-
-                            * if you change you must test before
-
-                    */
 
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                         switch (zone) {
                             case 1: { // inside transition zone
                                 float factorx = localFactor;
-                                float diflc = 0.f;
-                                float newhr = 0.f;
                                 float difL = 0.f;
 
-                                if (senstype == 2) {
-                                    const float lightc = bufexporig->L[y - ystart][x - xstart];
-                                    const float fli = (100.f + realstrdE) / 100.f;
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + (lightc * fli - original->L[y][x]) * factorx);
-                                } else if (senstype == 6 || senstype == 8 || senstype == 10) {
+                                if (senstype == 6 || senstype == 8 || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 100) {
-                                    difL = (bufcolfin->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                    diflc = difL;
-
-                                    if (HHutili) {
-                                        const float hhro = bufhh[y - ystart][x - xstart];
-
-                                        if (hhro != 0) {
-                                            const float realhhdE = reducdE * hhro;
-                                            const float addh = 0.01f * realhhdE * factorx;
-                                            newhr = rhue + addh;
-
-                                            if (newhr > rtengine::RT_PI_F) {
-                                                newhr -= 2 * rtengine::RT_PI_F;
-                                            } else if (newhr < -rtengine::RT_PI_F) {
-                                                newhr += 2 * rtengine::RT_PI_F;
-                                            }
-                                        }
-                                    }
-
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3 || senstype == 30) {
-                                    if (HHutili) {
-                                        const float hhro = bufhh[y - ystart][x - xstart];
-
-                                        if (hhro != 0) {
-                                            const float realhhdE = reducdE * hhro;
-                                            const float addh = 0.01f * realhhdE * factorx;
-                                            newhr = rhue + addh;
-
-                                            if (newhr > rtengine::RT_PI_F) {
-                                                newhr -= 2 * rtengine::RT_PI_F;
-                                            } else if (newhr < -rtengine::RT_PI_F) {
-                                                newhr += 2 * rtengine::RT_PI_F;
-                                            }
-                                        }
-                                    }
+                                } else if (senstype == 3 || senstype == 30) {
 
                                     transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);
-                                    diflc = 328.f * factorx * realstrdE;
+                                    //  diflc = 328.f * factorx * realstrdE;
                                 }
 
                                 if (senstype == 7) {
@@ -4960,42 +4879,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     float chra = bufexporig->a[y - ystart][x - xstart];
                                     float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 100) {
-                                        chra = bufcolfin->a[y - ystart][x - xstart];
-                                        chrb = bufcolfin->b[y - ystart][x - xstart];
-
-                                    }
-
-                                    if (senstype == 2 || senstype == 3 || senstype == 30 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
-
+                                    if (senstype == 3 || senstype == 30 || senstype == 8 || senstype == 6 || senstype == 10) {
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
-
-                                        if (senstype == 2) {
-                                            flia = flib = (100.f + realstrchdE + realstradE) / 100.f;
-                                        }
-
-                                    } else if (senstype == 1) {
-                                        flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
-                                        flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
-
-                                        if (previewexp) {
-                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
-                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
-                                        }
-                                    } else if (senstype == 0  || senstype == 100) {
-                                        flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
-                                        flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
-
-                                        if (previewcol) {
-                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
-                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
-                                        }
                                     }
 
-                                    if (previewSH  || previewcb || previewvib) {
-                                        flia = (100.f + realstradE + realstrchdE) / 100.f;
-                                        flib = (100.f + realstrbdE + realstrchdE) / 100.f;
-                                    }
 
                                     float difa = chra * flia - original->a[y][x];
                                     float difb = chrb * flib - original->b[y][x];
@@ -5005,46 +4892,18 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
                                     transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
-                                    if ((senstype == 0 || senstype == 100) && HHutili) {
-                                        const float tempa = transformed->a[y][x];
-                                        const float tempb = transformed->b[y][x];
-                                        const float hhro = bufhh[y - ystart][x - xstart];
 
-                                        if (hhro != 0.f) {
-                                            const float chromhr = sqrt(SQR(original->a[y][x] + difa) + SQR(original->b[y][x] + difb));
-                                            float epsia = 0.f;
-                                            float epsib = 0.f;
-
-                                            if (original->a[y][x] == 0.f) {
-                                                epsia = 0.001f;
-                                            }
-
-                                            if (original->b[y][x] == 0.f) {
-                                                epsib = 0.001f;
-                                            }
-
-                                            const float faca = (original->a[y][x] + difa) / (original->a[y][x] + epsia);
-                                            const float facb = (original->b[y][x] + difb) / (original->b[y][x] + epsib);
-                                            const float2 sincosval = xsincosf(newhr);
-
-                                            transformed->a[y][x] = CLIPC(chromhr * sincosval.y * faca) ;
-                                            transformed->b[y][x] = CLIPC(chromhr * sincosval.x * facb);
-                                            difa = transformed->a[y][x] - tempa;
-                                            difb = transformed->b[y][x] - tempb;
-                                        }
-                                    }
-
-                                    if (expshow || colshow || SHshow) {
-                                        transformed->L[y][x] = CLIP(12000.f + diflc);
-                                        transformed->a[y][x] = CLIPC(difa);
-                                        transformed->b[y][x] = CLIPC(difb);
-                                    } else if (cbshow || tmshow || vibshow) {
+                                    if (cbshow || tmshow) {
                                         transformed->L[y][x] = CLIP(12000.f + difL);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
-                                    } else if (previewcol || previewexp || previewSH  || previewcb  || previewtm || previewvib) {
+                                    } else if (previewcb  || previewtm) {
+                                        if (fabs(difb) < 500.f) {
+                                            difb += difL;
+                                        }
+
                                         transformed->a[y][x] = 0.f;
-                                        transformed->b[y][x] = (difb);
+                                        transformed->b[y][x] = previewint * difb;
                                     }
                                 }
 
@@ -5053,57 +4912,16 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                             }
 
                             case 2: { // inside selection => full effect, no transition
-                                float diflc = 0.f;
-                                float newhr = 0.f;
                                 float difL = 0.f;
 
-                                if (senstype == 2) {
-                                    const float lightc = bufexporig->L[y - ystart][x - xstart];
-                                    const float fli = (100.f + realstrdE) / 100.f;
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
-                                } else if (senstype == 6 || senstype == 8  || senstype == 10) {
+                                if (senstype == 6 || senstype == 8  || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 100) {
-                                    difL = (bufcolfin->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                    diflc = difL;
 
-                                    if (HHutili) {
-                                        const float hhro = bufhh[y - ystart][x - xstart];
-
-                                        if (hhro != 0) {
-                                            const float realhhdE = reducdE * hhro;
-                                            const float addh = 0.01f * realhhdE;
-                                            newhr = rhue + addh;
-
-                                            if (newhr > rtengine::RT_PI_F) {
-                                                newhr -= 2 * rtengine::RT_PI_F;
-                                            } else if (newhr < -rtengine::RT_PI_F) {
-                                                newhr += 2 * rtengine::RT_PI_F;
-                                            }
-                                        }
-                                    }
-
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3 || senstype == 30) {
-                                    if (HHutili) {
-                                        const float hhro = bufhh[y - ystart][x - xstart];
-
-                                        if (hhro != 0) {
-                                            const float realhhdE = reducdE * hhro;
-                                            const float addh = 0.01f * realhhdE;
-                                            newhr = rhue + addh;
-
-                                            if (newhr > rtengine::RT_PI_F) {
-                                                newhr -= 2 * rtengine::RT_PI_F;
-                                            } else if (newhr < -rtengine::RT_PI_F) {
-                                                newhr += 2 * rtengine::RT_PI_F;
-                                            }
-                                        }
-                                    }
+                                } else if (senstype == 3 || senstype == 30) {
 
                                     transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * realstrdE);//kch fach
-                                    diflc = 328.f * realstrdE;
+                                    // diflc = 328.f * realstrdE;
                                 }
 
                                 if (senstype == 7) {//cbdl chroma
@@ -5121,39 +4939,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     float chra = bufexporig->a[y - ystart][x - xstart];
                                     float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 100) {
-                                        chra = bufcolfin->a[y - ystart][x - xstart];
-                                        chrb = bufcolfin->b[y - ystart][x - xstart];
 
-                                    }
-
-                                    if (senstype == 2 || senstype == 3 || senstype == 30 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
+                                    if (senstype == 3 || senstype == 30 || senstype == 8 || senstype == 6 || senstype == 10) {
                                         flia = flib = (100.f + realstrchdE) / 100.f;
 
-                                        if (senstype == 2) {
-                                            flia = flib = (100.f + realstrchdE + realstradE) / 100.f;
-                                        }
-                                    } else if (senstype == 1) {
-                                        flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
-                                        flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
-
-                                        if (previewexp) {
-                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
-                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
-                                        }
-                                    } else if (senstype == 0  || senstype == 100) {
-                                        flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
-                                        flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
-
-                                        if (previewcol) {
-                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
-                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
-                                        }
-                                    }
-
-                                    if (previewSH  || previewcb || previewvib) {
-                                        flia = (100.f + realstradE + realstrchdE) / 100.f;
-                                        flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                     }
 
                                     float difa = chra * flia - original->a[y][x];
@@ -5162,46 +4951,18 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
                                     transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
-                                    if ((senstype == 0 || senstype == 100) && HHutili) {
-                                        const float tempa = transformed->a[y][x];
-                                        const float tempb = transformed->b[y][x];
-                                        const float hhro = bufhh[y - ystart][x - xstart];
 
-                                        if (hhro != 0.f) {
-                                            const float chromhr = sqrt(SQR(original->a[y][x] + difa) + SQR(original->b[y][x] + difb));
-                                            float epsia = 0.f;
-                                            float epsib = 0.f;
-
-                                            if (original->a[y][x] == 0.f) {
-                                                epsia = 0.001f;
-                                            }
-
-                                            if (original->b[y][x] == 0.f) {
-                                                epsib = 0.001f;
-                                            }
-
-                                            const float faca = (original->a[y][x] + difa) / (original->a[y][x] + epsia);
-                                            const float facb = (original->b[y][x] + difb) / (original->b[y][x] + epsib);
-
-                                            const float2 sincosval = xsincosf(newhr);
-                                            transformed->a[y][x] = CLIPC(chromhr * sincosval.y * faca) ;
-                                            transformed->b[y][x] = CLIPC(chromhr * sincosval.x * facb);
-                                            difa = transformed->a[y][x] - tempa;
-                                            difb = transformed->b[y][x] - tempb;
-                                        }
-                                    }
-
-                                    if (expshow || colshow || SHshow) {
-                                        transformed->L[y][x] = CLIP(12000.f + diflc);
-                                        transformed->a[y][x] = CLIPC(difa);
-                                        transformed->b[y][x] = CLIPC(difb);
-                                    } else if (cbshow || tmshow || vibshow) {
+                                    if (cbshow || tmshow) {
                                         transformed->L[y][x] = CLIP(12000.f + difL);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
-                                    } else if (previewcol || previewexp || previewSH || previewcb || previewtm || previewvib) {
+                                    } else if (previewcb || previewtm) {
+                                        if (fabs(difb) < 500.f) {
+                                            difb += difL;
+                                        }
+
                                         transformed->a[y][x] = 0.f;
-                                        transformed->b[y][x] = difb;
+                                        transformed->b[y][x] = previewint * difb;
                                     }
                                 }
                             }
@@ -9130,7 +8891,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-                    transit_shapedetect(6, loctemp.get(), nullptr, originalmaskcb.get(), buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(6, loctemp.get(), originalmaskcb.get(), buflight, bufchrom, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     bool nochroma = (lp.showmaskcbmet == 2  || lp.showmaskcbmet == 1);
 
@@ -9198,7 +8959,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-                        transit_shapedetect(7, loctemp.get(), nullptr, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect(7, loctemp.get(), nullptr, buflight, bufchrom, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                         buflight.free();
                         bufsh.free();
 
@@ -9671,7 +9432,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         //
                         //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
-                        transit_shapedetect(8, tmp1.get(), nullptr, originalmasktm.get(), buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect(8, tmp1.get(), originalmasktm.get(), buflight, bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                         bufgb.reset();
 
                         if (params->locallab.spots.at(sp).recurs) {
@@ -9716,8 +9477,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 std::unique_ptr<LabImage> bufmaskblurSH;
                 std::unique_ptr<LabImage> originalmaskSH;
 
-                JaggedArray<float> buflight(bfw, bfh);
-                JaggedArray<float> bufl_ab(bfw, bfh);
 
                 if (call <= 3) { //simpleprocess, dcrop, improccoordinator
                     if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) {
@@ -9873,25 +9632,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             delete tmpImage;
                         }
 
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < bfh; ir++) {
-                            for (int jr = 0; jr < bfw; jr++) {
-                                buflight[ir][jr] = CLIPRET((bufexpfin->L[ir][jr] - bufexporig->L[ir][jr]) / 328.f);
-                                bufl_ab[ir][jr] = CLIPRET((sqrt(SQR(bufexpfin->a[ir][jr]) + SQR(bufexpfin->b[ir][jr])) - sqrt(SQR(bufexporig->a[ir][jr]) + SQR(bufexporig->b[ir][jr]))) / 250.f);
-                            }
-                        }
                     }
+                }
 
-                    transit_shapedetect(9, bufexpfin.get(), nullptr, originalmaskSH.get(), buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect2(9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
-                    if (params->locallab.spots.at(sp).recurs) {
-                        original->CopyFrom(transformed);
-                        float avge;
-                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
-                    }
+                if (params->locallab.spots.at(sp).recurs) {
+                    original->CopyFrom(transformed);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
                 }
             }
         } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ  || tonecurv || lp.showmaskSHmetinv == 1 || lp.enaSHMaskinv) && call < 3  && lp.hsena) {
@@ -10168,7 +9917,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 bufexpfin.reset();
-                transit_shapedetect(3, bufexporig.get(), nullptr, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(3, bufexporig.get(), nullptr, buflight, bufl_ab, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed);
@@ -10636,7 +10385,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 bufgb.reset();
-                transit_shapedetect(10, tmp1.get(), nullptr, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(10, tmp1.get(), nullptr, buflight, bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 tmp1.reset();
 
                 if (params->locallab.spots.at(sp).recurs) {
@@ -10808,7 +10557,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 bufexpfin.reset();
-                transit_shapedetect(30, bufexporig.get(), nullptr, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(30, bufexporig.get(), nullptr, buflight, bufl_ab, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed);
@@ -11148,7 +10897,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     });
                     bool fftw = false;
 
-                    if (params->locallab.spots.at(sp).chrrt > 40.f) { //second step active Retinex Chroma
+                    if (params->locallab.spots.at(sp).chrrt > 110.f) { //second step active Retinex Chroma
                         ImProcFunctions::MSRLocal(sp, fftw, 0, nullptr, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1,
                                                   Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                                   locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
@@ -11172,7 +10921,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 sincosval.y = Chprov == 0.0f ? 1.f : bufreti->a[ir][jr] / Chprov;
                                 sincosval.x = Chprov == 0.0f ? 0.f : bufreti->b[ir][jr] / Chprov;
 
-                                if (params->locallab.spots.at(sp).chrrt <= 40.f) { //first step
+                                if (params->locallab.spots.at(sp).chrrt <= 100.f) { //first step
                                     float buf = LIM01(orig[ir][jr] / divchro);
                                     buf = reti_satur.getVal(buf);
                                     buf *= divchro;
