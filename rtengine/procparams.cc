@@ -3429,6 +3429,7 @@ const std::vector<const char*>& RAWParams::BayerSensor::getPSDemosaicMethodStrin
     static const std::vector<const char*> method_strings {
         "amaze",
         "amazevng4",
+        "rcdvng4",
         "lmmse"
     };
     return method_strings;
