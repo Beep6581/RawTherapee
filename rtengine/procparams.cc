@@ -2509,7 +2509,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     hlcompr(0),
     hlcomprthresh(0),
     black(0),
-    shadex(20),
+    shadex(0),
     shcompr(50),
     expchroma(30),
     warm(0),

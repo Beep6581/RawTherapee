@@ -4183,6 +4183,206 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
     }
 }
 
+
+void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+{
+    //initialize coordonates
+    const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+    const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+    const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+    const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+    const int bfw = xend - xstart;
+    const int bfh = yend - ystart;
+
+    //initialize scope
+    float varsens = lp.sensex;//exposure
+
+    if (senstype == 2) { //vibrance
+        varsens =  lp.sensv;
+    }
+
+    //sobel
+    sobelref /= 100.f;
+    meansobel /= 100.f;
+
+    sobelref = rtengine::min(sobelref, 60.f);
+
+    const bool k = !(sobelref < meansobel && sobelref < lp.stru); //does not always work with noisy images
+
+    sobelref = log1p(sobelref);
+
+    //references Spot
+    const float refa = chromaref * cos(hueref) * 327.68f;
+    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refL = lumaref * 327.68f;
+
+    //to preview modifications, scope, mask
+    const bool expshow = ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1);
+    const bool vibshow = ((lp.showmaskvibmet == 1 || lp.showmaskvibmet == 2)  &&  senstype == 2);
+    const bool previewvib = ((lp.showmaskvibmet == 4)  &&  senstype == 2);
+    const bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
+    float radius = 3.f / sk;
+
+    if (senstype == 1) {
+        radius = (2.f + 0.2f * lp.blurexp) / sk;
+    }
+
+
+    std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
+    std::unique_ptr<LabImage> origblurmask;
+
+    //balance deltaE
+    float kL = lp.balance;
+    float kab = 1.f;
+    balancedeltaE(kL, kab);
+    kab /= SQR(327.68f);
+    kL /= SQR(327.68f);
+
+    const bool usemaskvib = (lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 4) && senstype == 2;
+    const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
+    const bool usemaskall = (usemaskexp || usemaskvib);
+
+    //blur a little mask
+    if (usemaskall) {
+        origblurmask.reset(new LabImage(bfw, bfh));
+
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+            gaussianBlur(originalmask->L, origblurmask->L, bfw, bfh, radius);
+            gaussianBlur(originalmask->a, origblurmask->a, bfw, bfh, radius);
+            gaussianBlur(originalmask->b, origblurmask->b, bfw, bfh, radius);
+        }
+    }
+
+#ifdef _OPENMP
+    #pragma omp parallel if (multiThread)
+#endif
+    {
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < bfh; y++) {
+            for (int x = 0; x < bfw; x++) {
+                origblur->L[y][x] = original->L[y + ystart][x + xstart];
+                origblur->a[y][x] = original->a[y + ystart][x + xstart];
+                origblur->b[y][x] = original->b[y + ystart][x + xstart];
+            }
+        }
+
+        gaussianBlur(origblur->L, origblur->L, bfw, bfh, radius);
+        gaussianBlur(origblur->a, origblur->a, bfw, bfh, radius);
+        gaussianBlur(origblur->b, origblur->b, bfw, bfh, radius);
+
+    }
+    //choice between original and mask
+    const LabImage *maskptr = usemaskexp ? origblurmask.get() : origblur.get();
+
+    //parameters deltaE
+    const int limscope = 80;
+    const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
+    const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
+    const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+    const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+    for (int y = 0; y < bfh; y++) {
+        const int loy = y + ystart + cy;
+
+        for (int x = 0; x < bfw; x++) {
+            const int lox = x + xstart + cx;
+            int zone = 0;
+            float localFactor = 1.f;
+            const float achm = (float)lp.trans / 100.f;
+
+            //claculate transition
+            if (lp.shapmet == 0) {
+                calcTransition(lox, loy, achm, lp, zone, localFactor);
+            } else if (lp.shapmet == 1) {
+                calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+            }
+
+            float rsob = 0.f;
+
+            //claculate additive sobel to deltaE
+            if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || ((senstype == 0 || senstype == 100) && lp.struco > 0.f))) {
+                const float csob = xlogf(1.f + std::min(blend2[y][x] / 100.f, 60.f) + 0.001f);
+
+                float rs;
+
+                if (k) {
+                    rs = sobelref / csob;
+                } else {
+                    rs = csob / sobelref;
+                }
+
+                if (rs > 0.f && senstype == 1) {
+                    rsob =  1.1f * lp.struexp * rs;
+                } else if (rs > 0.f && (senstype == 0 || senstype == 100)) {
+                    rsob =  1.1f * lp.struco * rs;
+                }
+            }
+
+            //deltaE
+            const float dE = rsob + sqrt(kab * (SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x])) + kL * SQR(refL - maskptr->L[y][x]));
+            float reducdE;
+            //reduction action with deltaE
+            calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
+
+            const float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
+            const float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
+            const float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
+
+            const float previewint = settings->previewselection;
+            const float realstrdE = reducdE * cli;
+            const float realstradE = reducdE * cla;
+            const float realstrbdE = reducdE * clb;
+
+            float factorx = localFactor;
+            float diflc = 0.f;
+            float difa = 0.f;
+            float difb = 0.f;
+
+            if (zone > 0) {
+                //simplified transformed with deltaE and transition
+                transformed->L[y + ystart][x + xstart] = CLIPLOC(bufexporig->L[y][x] + factorx * realstrdE);
+                diflc = 328.f * factorx * realstrdE;
+                transformed->a[y + ystart][x + xstart] = CLIPC(bufexporig->a[y][x] + factorx * realstradE);
+                difa = 328.f * factorx * realstradE;
+                transformed->b[y + ystart][x + xstart] = CLIPC(bufexporig->b[y][x] + factorx * realstrbdE);
+                difb = 328.f * factorx * realstrbdE;
+                float maxdifab = max(fabs(difa), fabs(difb));
+
+                if (expshow || vibshow) {//show modifications
+                    if (diflc < 1000.f) {//if too low to be view use ab
+                        diflc += 0.5f * maxdifab;
+                    }
+
+                    transformed->L[y + ystart][x + xstart] = CLIP(12000.f + diflc);
+                    transformed->a[y + ystart][x + xstart] = CLIPC(difa);
+                    transformed->b[y + ystart][x + xstart] = CLIPC(difb);
+                } else if (previewexp || previewvib) {//show deltaE
+                    if (fabs(difb) < 500.f) {//if too low to be view use L
+                        difb += 0.5f * diflc;
+                    }
+
+                    transformed->a[y + ystart][x + xstart] = 0.f;
+                    transformed->b[y + ystart][x + xstart] = (previewint * difb);
+                }
+
+            }
+        }
+    }
+
+}
+
+
+
 void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
@@ -9019,10 +9219,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const int bfw = xend - xstart;
 
                 if (bfw >= mSP && bfh >= mSP) {
-                    JaggedArray<float> buflight(bfw, bfh);
-                    JaggedArray<float> bufl_ab(bfw, bfh);
-                    JaggedArray<float> buf_a(bfw, bfh);
-                    JaggedArray<float> buf_b(bfw, bfh);
                     std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
                     std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
                     std::unique_ptr<LabImage> bufmaskorigvib;
@@ -9214,161 +9410,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
                         }
 
-                        bool newtransform = true;
                         ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
 
-                        if (newtransform) {
-                            int senstype = 2;
-                            float varsens = lp.sensv;
-                            const float refa = chromaref * cos(hueref) * 327.68f;
-                            const float refb = chromaref * sin(hueref) * 327.68f;
-                            const float refL = lumaref * 327.68f;
-
-                            const bool vibshow = ((lp.showmaskvibmet == 1 || lp.showmaskvibmet == 2)  &&  senstype == 2);
-                            const bool previewvib = ((lp.showmaskvibmet == 4)  &&  senstype == 2);
-
-                            std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
-                            std::unique_ptr<LabImage> origblurmask;
-                            float radius = 3.f / sk;
-                            //balance deltaE
-                            float kL = lp.balance;
-                            float kab = 1.f;
-                            balancedeltaE(kL, kab);
-                            kab /= SQR(327.68f);
-                            kL /= SQR(327.68f);
-
-                            const bool usemaskvib = (lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 4) && senstype == 2;
-
-                            if (usemaskvib) {
-                                origblurmask.reset(new LabImage(bfw, bfh));
-
-#ifdef _OPENMP
-                                #pragma omp parallel if (multiThread)
-#endif
-                                {
-                                    gaussianBlur(originalmaskvib->L, origblurmask->L, bfw, bfh, radius);
-                                    gaussianBlur(originalmaskvib->a, origblurmask->a, bfw, bfh, radius);
-                                    gaussianBlur(originalmaskvib->b, origblurmask->b, bfw, bfh, radius);
-                                }
-                            }
-
-#ifdef _OPENMP
-                            #pragma omp parallel if (multiThread)
-#endif
-                            {
-#ifdef _OPENMP
-                                #pragma omp for schedule(dynamic,16)
-#endif
-
-                                for (int y = 0; y < bfh; y++) {
-                                    for (int x = 0; x < bfw; x++) {
-                                        origblur->L[y][x] = original->L[y + ystart][x + xstart];
-                                        origblur->a[y][x] = original->a[y + ystart][x + xstart];
-                                        origblur->b[y][x] = original->b[y + ystart][x + xstart];
-                                    }
-                                }
-
-                                gaussianBlur(origblur->L, origblur->L, bfw, bfh, radius);
-                                gaussianBlur(origblur->a, origblur->a, bfw, bfh, radius);
-                                gaussianBlur(origblur->b, origblur->b, bfw, bfh, radius);
-
-                            }
-
-                            const LabImage *maskptr = usemaskvib ? origblurmask.get() : origblur.get();
-
-                            const int limscope = 80;
-                            const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
-                            const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
-                            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
-                            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-
-#ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                            for (int y = 0; y < bfh; y++) {
-                                const int loy = y + ystart + cy;
-
-                                for (int x = 0; x < bfh; x++) {
-                                    const int lox = x + xstart + cx;
-                                    int zone = 0;
-                                    float localFactor = 1.f;
-                                    const float achm = (float)lp.trans / 100.f;
-
-                                    if (lp.shapmet == 0) {
-                                        calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                    } else if (lp.shapmet == 1) {
-                                        calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
-                                    }
-
-                                    const float dE = sqrt(kab * (SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x])) + kL * SQR(refL - maskptr->L[y][x]));
-                                    float reducdE;
-                                    calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
-
-                                    const float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]) / 328.f;
-                                    const float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]) / 328.f;
-                                    const float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]) / 328.f;
-
-                                    const float previewint = settings->previewselection;
-                                    const float realstrdE = reducdE * cli;
-                                    const float realstradE = reducdE * cla;
-                                    const float realstrbdE = reducdE * clb;
-
-                                    float factorx = localFactor;
-                                    float diflc = 0.f;
-                                    float difa = 0.f;
-                                    float difb = 0.f;
-
-                                    if (zone > 0) {
-                                        transformed->L[y + ystart][x + xstart] = CLIPLOC(bufexporig->L[y][x] + 328.f * factorx * realstrdE);
-                                        diflc = 328.f * factorx * realstrdE;
-                                        transformed->a[y + ystart][x + xstart] = CLIPC(bufexporig->a[y][x] + 328.f * factorx * realstradE);
-                                        difa = 328.f * factorx * realstradE;
-                                        transformed->b[y + ystart][x + xstart] = CLIPC(bufexporig->b[y][x] + 328.f * factorx * realstrbdE);
-                                        difb = 328.f * factorx * realstrbdE;
-                                        float maxdifab = max(fabs(difa), fabs(difb));
-
-                                        if (vibshow) {
-                                            if (diflc < 1000.f) {
-                                                diflc += 0.5f * maxdifab;
-                                            }
-
-                                            transformed->L[y + ystart][x + xstart] = CLIP(12000.f + diflc);
-                                            transformed->a[y + ystart][x + xstart] = CLIPC(difa);
-                                            transformed->b[y + ystart][x + xstart] = CLIPC(difb);
-                                        } else if (previewvib) {
-                                            transformed->a[y + ystart][x + xstart] = 0.f;
-                                            transformed->b[y + ystart][x + xstart] = (previewint * difb);
-                                        }
-
-                                    }
-                                }
-                            }
-
-                        }
+                        transit_shapedetect2(2, bufexporig.get(), bufexpfin.get(), originalmaskvib.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
 
-
-                        /*
-                        #ifdef _OPENMP
-                                                #pragma omp parallel for schedule(dynamic,16)
-                        #endif
-
-                                                for (int y = 0; y < bfh; y++) {
-                                                    for (int x = 0; x < bfw; x++) {
-                                                        buflight[y][x] = CLIPRET((bufexpfin->L[y][x] - bufexporig->L[y][x]) / 328.f);
-                                                        bufl_ab[y][x] = CLIPRET((sqrt(SQR(bufexpfin->a[y][x]) + SQR(bufexpfin->b[y][x])) - sqrt(SQR(bufexporig->a[y][x]) + SQR(bufexporig->b[y][x]))) / 250.f);
-                                                        buf_a[y][x] = CLIPRET((bufexpfin->a[y][x] - bufexporig->a[y][x]) / 328.f);
-                                                        buf_b[y][x] = CLIPRET((bufexpfin->b[y][x] - bufexporig->b[y][x]) / 328.f);
-
-                                                    }
-                                                }
-
-                                                bufexpfin.reset();
-                                                */
                     }
 
-                    //    transit_shapedetect(2, bufexporig.get(), nullptr, originalmaskvib.get(), buflight, bufl_ab, buf_a, buf_b, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
@@ -11861,11 +11909,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 std::unique_ptr<LabImage> bufmaskblurexp;
                 std::unique_ptr<LabImage> originalmaskexp;
 
-
+                /*
                 array2D<float> buflight(bfw, bfh);
                 JaggedArray<float> bufl_ab(bfw, bfh);
                 JaggedArray<float> buf_a_cat(bfw, bfh);
                 JaggedArray<float> buf_b_cat(bfw, bfh);
+                */
                 array2D<float> blend2;
 
                 if (call <= 3) { //simpleprocess, dcrop, improccoordinator
@@ -12170,58 +12219,40 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
                         }
 
+                        /*
+                                                constexpr float ampli = 70.f;
+                                                float ch = 0.f;
+                                                float chprosl = 0.f;
 
-                        constexpr float ampli = 70.f;
-                        float ch = 0.f;
-                        float chprosl = 0.f;
+                                                if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
+                                                    ch = (1.f + 0.02f * lp.expchroma);
+                                                    chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
+                                                }
 
-                        if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
-                            ch = (1.f + 0.02f * lp.expchroma);
-                            chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
-                        }
+                        #ifdef _OPENMP
+                                                #pragma omp parallel for schedule(dynamic,16)
+                        #endif
 
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
+                                                for (int ir = 0; ir < bfh; ir++) {
+                                                    for (int jr = 0; jr < bfw; jr++) {
+                                                        const float epsi = bufexporig->L[ir][jr] == 0.f ? 0.001f : 0.f;
+                                                        const float rapexp = bufexpfin->L[ir][jr] / (bufexporig->L[ir][jr] + epsi);
 
-                        for (int ir = 0; ir < bfh; ir++) {
-                            for (int jr = 0; jr < bfw; jr++) {
-                                const float epsi = bufexporig->L[ir][jr] == 0.f ? 0.001f : 0.f;
-                                const float rapexp = bufexpfin->L[ir][jr] / (bufexporig->L[ir][jr] + epsi);
-
-                                if (rapexp >= 1.f) {
-                                    bufl_ab[ir][jr] = chprosl * rapexp;
-                                } else {
-                                    bufl_ab[ir][jr] = chprosl * rapexp;
-                                }
-                            }
-                        }
-
+                                                        if (rapexp >= 1.f) {
+                                                            bufl_ab[ir][jr] = chprosl * rapexp;
+                                                        } else {
+                                                            bufl_ab[ir][jr] = chprosl * rapexp;
+                                                        }
+                                                    }
+                                                }
+                        */
                         if (lp.softradiusexp > 0.f && lp.expmet == 0) {
                             softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
                         }
 
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
+                        transit_shapedetect2(1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
 
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                buflight[ir][jr] = CLIPRET((bufexpfin->L[ir][jr] - bufexporig->L[ir][jr]) / 328.f);
-                                buf_a_cat[ir][jr] = CLIPRET((bufexpfin->a[ir][jr] - bufexporig->a[ir][jr]) / 328.f);
-                                buf_b_cat[ir][jr] = CLIPRET((bufexpfin->b[ir][jr] - bufexporig->b[ir][jr]) / 328.f);
-                            }
-
-                        if (lp.softradiusexp > 0.f) {
-                            //     softprocess(bufexporig.get(), buflight, lp.softradiusexp, bfh, bfw, sk, multiThread);
-                        }
                     }
-
-                    bufexpfin.reset();
-                    transit_shapedetect(1, bufexporig.get(), nullptr, originalmaskexp.get(), buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
-                    bufexporig.reset();
-                    blend2.free();
-                    buflight.free();
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed);
