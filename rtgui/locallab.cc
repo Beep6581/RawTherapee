@@ -368,7 +368,7 @@ gammaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01
 slomaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
 lapmaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
 strvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
-strvibab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -6., 6., 0.05, 0.))),
+strvibab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -4., 4., 0.05, 0.))),
 strvibh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRHUE2"), -6., 6., 0.05, 0.))),
 angvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
 //Soft Light
@@ -1606,6 +1606,13 @@ pe(nullptr)
     strvibab->setAdjusterListener(this);
     strvibh->setAdjusterListener(this);
 
+    if (showtooltip) {
+        strvib->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
+        strvibab->set_tooltip_text(M("TP_LOCALLAB_GRADSTRAB_TOOLTIP"));
+        strvibh->set_tooltip_text(M("TP_LOCALLAB_GRADSTRHUE_TOOLTIP"));
+        angvib->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    }
+
     curveEditorGG->setCurveListener(this);
 
     if (showtooltip) {
@@ -1638,8 +1645,8 @@ pe(nullptr)
     gradvibFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradvibBox = Gtk::manage(new ToolParamBlock());
     gradvibBox->pack_start(*strvib);
-//    gradvibBox->pack_start(*strvibab);
-//    gradvibBox->pack_start(*strvibh);
+    gradvibBox->pack_start(*strvibab);
+    gradvibBox->pack_start(*strvibh);
     gradvibBox->pack_start(*angvib);
     gradvibFrame->add(*gradvibBox);
 
