@@ -46,7 +46,6 @@ bool channelsAvg(
     const float* cblacksom,
     rtengine::Coord spotPos,
     int spotSize,
-    const rtengine::procparams::FilmNegativeParams& params,
     std::array<float, 3>& avgs
 )
 {
@@ -172,8 +171,8 @@ void calcMedians(
 }
 
 std::array<double, 3> calcWBMults(
-    const rtengine::ColorTemp wb,
-    const rtengine::ImageMatrices imatrices,
+    const rtengine::ColorTemp& wb,
+    const rtengine::ImageMatrices& imatrices,
     const rtengine::RawImage *ri,
     const float ref_pre_mul[4])
 {
@@ -223,14 +222,14 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
     // Sample first spot
     transformPosition(spotA.x, spotA.y, tran, spot.x, spot.y);
 
-    if (!channelsAvg(ri, W, H, cblacksom, spot, spotSize, currentParams, clearVals)) {
+    if (!channelsAvg(ri, W, H, cblacksom, spot, spotSize, clearVals)) {
         return false;
     }
 
     // Sample second spot
     transformPosition(spotB.x, spotB.y, tran, spot.x, spot.y);
 
-    if (!channelsAvg(ri, W, H, cblacksom, spot, spotSize, currentParams, denseVals)) {
+    if (!channelsAvg(ri, W, H, cblacksom, spot, spotSize, denseVals)) {
         return false;
     }
 
@@ -284,7 +283,7 @@ bool rtengine::RawImageSource::getRawSpotValues(Coord2D spotCoord, int spotSize,
     }
 
     // Calculate averages of raw unscaled channels
-    if (!channelsAvg(ri, W, H, cblacksom, spot, spotSize, params, rawValues)) {
+    if (!channelsAvg(ri, W, H, cblacksom, spot, spotSize, rawValues)) {
         return false;
     }
 
