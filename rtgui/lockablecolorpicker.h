@@ -80,7 +80,7 @@ public:
     void setPosition (const rtengine::Coord &newPos);
     void setRGB (const float R, const float G, const float B, const float previewR, const float previewG, const float previewB);
     void getImagePosition (rtengine::Coord &imgPos) const;
-    void getScreenPosition (rtengine::Coord &screenPos);
+    void getScreenPosition (rtengine::Coord &screenPos) const;
     Size getSize () const;
     bool isOver (int x, int y);
     void setValidity (Validity isValid);

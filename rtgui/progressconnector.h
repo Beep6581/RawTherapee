@@ -79,8 +79,8 @@ class ProgressConnector
     static int emitEndSignalUI (void* data)
     {
 
-        sigc::signal0<bool>* lopEnd = (sigc::signal0<bool>*) data;
-        int r = lopEnd->emit ();
+        const sigc::signal0<bool>* lopEnd = reinterpret_cast<sigc::signal0<bool>*>(data);
+        const int r = lopEnd->emit ();
         delete lopEnd;
 
         return r;

@@ -590,7 +590,7 @@ void Thumbnail::decreaseRef ()
     cachemgr->closeThumbnail (this);
 }
 
-int Thumbnail::getThumbnailWidth (const int &h, const rtengine::procparams::ProcParams *pparams) const
+int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcParams *pparams) const
 {
     int tw_ = tw;
     int th_ = th;

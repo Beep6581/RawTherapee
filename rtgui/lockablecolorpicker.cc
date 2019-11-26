@@ -289,7 +289,7 @@ void LockableColorPicker::getImagePosition (rtengine::Coord &imgPos) const
     imgPos = position;
 }
 
-void LockableColorPicker::getScreenPosition (rtengine::Coord &screenPos)
+void LockableColorPicker::getScreenPosition (rtengine::Coord &screenPos) const
 {
     if (cropWindow) {
         cropWindow->imageCoordToScreen(position.x, position.y, screenPos.x, screenPos.y);

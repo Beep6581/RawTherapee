@@ -147,7 +147,7 @@ int BatchQueue::getThumbnailHeight ()
     return std::max(std::min(options.thumbSizeQueue, 200), 10);
 }
 
-void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry)
+void BatchQueue::rightClicked ()
 {
     pmenu.popup (3, this->eventTime);
 }

@@ -948,19 +948,19 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
         double step  = adjust->get_step_increment();
 
         if (event->direction == GDK_SCROLL_DOWN) {
-            double value2 = rtengine::min<double>(value + step, upperBound);
+            const double value2 = rtengine::min<double>(value + step, upperBound);
 
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_UP) {
-            double value2 = rtengine::max<double>(value - step, lowerBound);
+            const double value2 = rtengine::max<double>(value - step, lowerBound);
 
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_SMOOTH) {
-            double value2 = rtengine::LIM<double>(value + event->delta_y * step, lowerBound, upperBound);
+            const double value2 = rtengine::LIM<double>(value + event->delta_y * step, lowerBound, upperBound);
 
             if (value2 != value) {
                 scroll->set_value(value2);

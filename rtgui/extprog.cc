@@ -137,43 +137,47 @@ bool ExtProgStore::searchProgram (const Glib::ustring& name,
     action.name = name;
     action.target = (allowRaw ? 1 : 2);
 
+    auto& filePath = action.filePathEXE;
+
     if (maxVer > 0) {
 
         for (auto ver = maxVer; ver >= 0; ver--) {
 
-            auto filePath = progFilesDir + "\\" + Glib::ustring::compose(exePath, ver);
+            filePath = progFilesDir + "\\" + Glib::ustring::compose(exePath, ver);
 
-            if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+            if (Glib::file_test(filePath, Glib::FILE_TEST_EXISTS)) {
                 break;
             }
 
-            if (!exePath86.empty ()) {
+            if (!exePath86.empty()) {
 
                 filePath = progFilesDirx86 + "\\" + Glib::ustring::compose(exePath86, ver);
 
-                if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+                if (Glib::file_test(filePath, Glib::FILE_TEST_EXISTS)) {
                     break;
                 }
             }
+            filePath.clear();
         }
     } else {
 
         do {
 
-            auto filePath = progFilesDir + "\\" + exePath;
+            filePath = progFilesDir + "\\" + exePath;
 
-            if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+            if (Glib::file_test(filePath, Glib::FILE_TEST_EXISTS)) {
                 break;
             }
 
-            if (!exePath86.empty ()) {
+            if (!exePath86.empty()) {
 
                 filePath = progFilesDirx86 + "\\" + exePath86;
 
-                if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+                if (Glib::file_test(filePath, Glib::FILE_TEST_EXISTS)) {
                     break;
                 }
             }
+            filePath.clear();
         } while (false);
     }
 

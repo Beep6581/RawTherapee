@@ -5396,7 +5396,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
             octile[count] += histogram[j];
 
             if (octile[count] > sum / 8.f || (count == 7 && octile[count] > sum / 16.f)) {
-                octile[count] = xlog (1. + (float)j) / log (2.f);
+                octile[count] = xlog (1. + j) / log (2.f);
                 count++;// = min(count+1,7);
             }
         }
@@ -5409,7 +5409,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
             octile[count] += histogram[j];
 
             if (octile[count] > sum / 8.f || (count == 7 && octile[count] > sum / 16.f)) {
-                octile[count] = xlog (1. + (float)j) / log (2.f);
+                octile[count] = xlog (1. + j) / log (2.f);
                 count++;// = min(count+1,7);
             }
         }

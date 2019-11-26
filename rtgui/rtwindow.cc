@@ -44,7 +44,7 @@ extern unsigned char initialGdkScale;
 static gboolean
 osx_should_quit_cb (GtkosxApplication *app, gpointer data)
 {
-    RTWindow *rtWin = static_cast<RTWindow*>(data);
+    RTWindow * const rtWin = static_cast<RTWindow*>(data);
     return rtWin->on_delete_event (0);
 }
 
