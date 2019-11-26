@@ -280,6 +280,7 @@ public:
     bool renameUseTemplates;
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
+    int complexity;
 
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;

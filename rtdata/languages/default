@@ -1075,6 +1075,7 @@ HISTORY_MSG_835;Local - Vib gradient strength L
 HISTORY_MSG_836;Local - Vib gradient angle
 HISTORY_MSG_837;Local - Vib gradient strength C
 HISTORY_MSG_838;Local - Vib gradient strength H
+HISTORY_MSG_839;Local - Software complexity
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2138,6 +2139,11 @@ TP_LENSPROFILE_USE_CA;Chromatic aberration
 TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
 TP_LENSPROFILE_USE_HEADER;Correct
 TP_LENSPROFILE_USE_VIGNETTING;Vignetting
+TP_LOCALLAB_COMPLEX_METHOD;Software Complexity
+TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustements rubrics.
+TP_LOCALLAB_SIM;Simple
+TP_LOCALLAB_MED;Medium
+TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_ACTIV;Luminance only
 TP_LOCALLAB_ADJ;Equalizer blue-red
 TP_LOCALLAB_AMOUNT;Amount

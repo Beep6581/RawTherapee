@@ -74,7 +74,8 @@ public:
         bool deltae;
         bool shortc;
         bool savrest;
-//        int mergeMethod; // 0 = None, 1 = short circuit, 2 = original
+        int complexMethod; // 0 = Simple, 1 = Moderate, 2 = all
+        
     };
 
     /**
@@ -114,7 +115,7 @@ public:
         bool deltae;
         bool shortc;
         bool savrest;
-//        bool mergeMethod;
+        bool complexMethod;
     };
 
     /**
@@ -273,6 +274,8 @@ private:
     void shapeMethodChanged();
 //    void mergeMethodChanged();
     void qualityMethodChanged();
+    void complexMethodChanged();
+    
     void updateParamVisibility();
     void adjusterChanged(Adjuster* a, double newval);
     void adjusterAutoToggled(Adjuster* a, bool newval);
@@ -342,7 +345,7 @@ private:
         Gtk::TreeModelColumn<bool> deltae;
         Gtk::TreeModelColumn<bool> shortc;
         Gtk::TreeModelColumn<bool> savrest;
-//        Gtk::TreeModelColumn<int> mergeMethod; // 0 = None, 1 = short cir, 2 = original
+        Gtk::TreeModelColumn<int> complexMethod; // 0 = Simple, 1 = mod, 2 = all
     };
 
     class RenameDialog:
@@ -389,8 +392,8 @@ private:
     sigc::connection shapeMethodconn_;
     MyComboBoxText* const qualityMethod_;
     sigc::connection qualityMethodconn_;
-//    MyComboBoxText* const mergeMethod_;
- //   sigc::connection mergeMethodconn_;
+    MyComboBoxText* const complexMethod_;
+    sigc::connection complexMethodconn_;
 
     Adjuster* const sensiexclu_;
     Adjuster* const structexclu_;

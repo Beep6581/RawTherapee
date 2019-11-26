@@ -967,6 +967,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).centerY = locallab.spots.at(j).centerY && pSpot.centerY == otherSpot.centerY;
                 locallab.spots.at(j).circrad = locallab.spots.at(j).circrad && pSpot.circrad == otherSpot.circrad;
                 locallab.spots.at(j).qualityMethod = locallab.spots.at(j).qualityMethod && pSpot.qualityMethod == otherSpot.qualityMethod;
+                locallab.spots.at(j).complexMethod = locallab.spots.at(j).complexMethod && pSpot.complexMethod == otherSpot.complexMethod;
                 locallab.spots.at(j).transit = locallab.spots.at(j).transit && pSpot.transit == otherSpot.transit;
                 locallab.spots.at(j).feather = locallab.spots.at(j).feather && pSpot.feather == otherSpot.feather;
                 locallab.spots.at(j).thresh = locallab.spots.at(j).thresh && pSpot.thresh == otherSpot.thresh;
@@ -2830,6 +2831,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).qualityMethod) {
             toEdit.locallab.spots.at(i).qualityMethod = mods.locallab.spots.at(i).qualityMethod;
+        }
+
+        if (locallab.spots.at(i).complexMethod) {
+            toEdit.locallab.spots.at(i).complexMethod = mods.locallab.spots.at(i).complexMethod;
         }
 
         if (locallab.spots.at(i).transit) {
@@ -5099,6 +5104,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     centerY(v),
     circrad(v),
     qualityMethod(v),
+    complexMethod(v),
     transit(v),
     feather(v),
     thresh(v),
@@ -5450,6 +5456,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     centerY = v;
     circrad = v;
     qualityMethod = v;
+    complexMethod = v;
     transit = v;
     feather = v;
     thresh = v;

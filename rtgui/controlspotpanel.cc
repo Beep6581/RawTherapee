@@ -51,7 +51,7 @@ ControlSpotPanel::ControlSpotPanel():
     spotMethod_(Gtk::manage(new MyComboBoxText())),
     shapeMethod_(Gtk::manage(new MyComboBoxText())),
     qualityMethod_(Gtk::manage(new MyComboBoxText())),
-//    mergeMethod_(Gtk::manage(new MyComboBoxText())),
+    complexMethod_(Gtk::manage(new MyComboBoxText())),
 
     sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
     structexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
@@ -270,6 +270,24 @@ ControlSpotPanel::ControlSpotPanel():
     ctboxqualitymethod->pack_start(*qualityMethod_);
     pack_start(*ctboxqualitymethod);
 
+
+    Gtk::HBox* const ctboxcomplexmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labelcomplexmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_COMPLEX_METHOD") + ":"));
+    ctboxcomplexmethod->pack_start(*labelcomplexmethod, Gtk::PACK_SHRINK, 4);
+
+    if (showtooltip) {
+        ctboxcomplexmethod->set_tooltip_markup(M("TP_LOCALLAB_COMPLEXMETHOD_TOOLTIP"));
+    }
+
+    complexMethod_->append(M("TP_LOCALLAB_SIM"));
+    complexMethod_->append(M("TP_LOCALLAB_MED"));
+    complexMethod_->append(M("TP_LOCALLAB_ALL"));
+    complexMethod_->set_active(1);
+    complexMethodconn_ = complexMethod_->signal_changed().connect(
+                             sigc::mem_fun(
+                                 *this, &ControlSpotPanel::complexMethodChanged));
+    ctboxcomplexmethod->pack_start(*complexMethod_);
+
     Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
     transitFrame->set_label_align(0.025, 0.5);
 
@@ -400,6 +418,13 @@ ControlSpotPanel::ControlSpotPanel():
 //    maskBox->pack_start(*savrest_);
     maskFrame->add(*maskBox);
     pack_start(*maskFrame);
+    Gtk::HSeparator *separatormet = Gtk::manage(new  Gtk::HSeparator());
+    pack_start(*separatormet, Gtk::PACK_SHRINK, 2);
+
+//    pack_start(*ctboxcomplexmethod);
+    if (showtooltip) {
+        complexMethod_->set_tooltip_markup(M("TP_LOCALLAB_COMPLEX_TOOLTIP"));
+    }
 
     show_all();
 
@@ -701,6 +726,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     centerY_->setValue((double)row[spots_.centerY]);
     circrad_->setValue((double)row[spots_.circrad]);
     qualityMethod_->set_active(row[spots_.qualityMethod]);
+    complexMethod_->set_active(row[spots_.complexMethod]);
     transit_->setValue((double)row[spots_.transit]);
     feather_->setValue((double)row[spots_.feather]);
     thresh_->setValue((double)row[spots_.thresh]);
@@ -908,6 +934,38 @@ void ControlSpotPanel::qualityMethodChanged()
     // Raise event
     if (listener) {
         listener->panelChanged(EvLocallabSpotQualityMethod, qualityMethod_->get_active_text());
+    }
+}
+
+void ControlSpotPanel::complexMethodChanged()
+{
+    // printf("qualityMethodChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    row[spots_.complexMethod] = complexMethod_->get_active_row_number();
+
+    if (multiImage && complexMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
+       // excluFrame->show();
+    } else if (complexMethod_->get_active_row_number() == 0) { //sim
+       // excluFrame->hide();
+    } else if (complexMethod_->get_active_row_number() == 1){ // mod
+       // excluFrame->show();
+    } else if (complexMethod_->get_active_row_number() == 2){ // all
+      //  excluFrame->show();
+    }
+
+    // Raise event
+    if (listener) {
+        listener->panelChanged(EvLocallabSpotcomplexMethod, complexMethod_->get_active_text());
     }
 }
 
@@ -1428,6 +1486,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     centerY_->block(cond);
     circrad_->block(cond);
     qualityMethodconn_.block(cond);
+    complexMethodconn_.block(cond);
     transit_->block(cond);
     feather_->block(cond);
     thresh_->block(cond);
@@ -1464,6 +1523,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     centerY_->set_sensitive(cond);
     circrad_->set_sensitive(cond);
     qualityMethod_->set_sensitive(cond);
+    complexMethod_->set_sensitive(cond);
     transit_->set_sensitive(cond);
     feather_->set_sensitive(cond);
     thresh_->set_sensitive(cond);
@@ -2108,6 +2168,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->centerY = row[spots_.centerY];
             r->circrad = row[spots_.circrad];
             r->qualityMethod = row[spots_.qualityMethod];
+            r->complexMethod = row[spots_.complexMethod];
             r->transit = row[spots_.transit];
             r->feather = row[spots_.feather];
             r->thresh = row[spots_.thresh];
@@ -2243,6 +2304,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.centerY] = newSpot->centerY;
     row[spots_.circrad] = newSpot->circrad;
     row[spots_.qualityMethod] = newSpot->qualityMethod;
+    row[spots_.complexMethod] = newSpot->complexMethod;
     row[spots_.transit] = newSpot->transit;
     row[spots_.feather] = newSpot->feather;
     row[spots_.thresh] = newSpot->thresh;
@@ -2297,6 +2359,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.centerY] = spot->centerY;
             row[spots_.circrad] = spot->circrad;
             row[spots_.qualityMethod] = spot->qualityMethod;
+            row[spots_.complexMethod] = spot->complexMethod;
             row[spots_.transit] = spot->transit;
             row[spots_.feather] = spot->feather;
             row[spots_.thresh] = spot->thresh;
@@ -2397,6 +2460,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se-> centerY = centerY_->getEditedState();
     se->circrad = circrad_->getEditedState();
     se->qualityMethod = qualityMethod_->get_active_text() != M("GENERAL_UNCHANGED");
+    se->complexMethod = complexMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->transit = transit_->getEditedState();
     se->feather = feather_->getEditedState();
     se->thresh = thresh_->getEditedState();
@@ -2477,6 +2541,10 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
 
     if (!se->qualityMethod) {
         qualityMethod_->set_active_text(M("GENERAL_UNCHANGED"));
+    }
+
+    if (!se->complexMethod) {
+        complexMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
     transit_->setEditedState(se->transit ? Edited : UnEdited);
@@ -2623,6 +2691,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
 //    mergeMethod_->append(M("GENERAL_UNCHANGED"));
     shapeMethod_->append(M("GENERAL_UNCHANGED"));
     qualityMethod_->append(M("GENERAL_UNCHANGED"));
+    complexMethod_->append(M("GENERAL_UNCHANGED"));
 }
 
 //-----------------------------------------------------------------------------
@@ -2650,6 +2719,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(centerY);
     add(circrad);
     add(qualityMethod);
+    add(complexMethod);
     add(transit);
     add(feather);
     add(thresh);

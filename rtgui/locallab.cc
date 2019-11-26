@@ -642,10 +642,9 @@ pe(nullptr)
 {
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
     const bool showtooltip = options.showtooltip;
+    complexsoft = options.complexity;
     CurveListener::setMulti(true);
-
     rtengine::procparams::LocallabParams::LocallabSpot defSpot;
-
 
     // Settings
     expsettings->getExpander()->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsettings->getExpander()));
@@ -734,7 +733,8 @@ pe(nullptr)
     gridMethod->append(M("TP_LOCALLAB_GRIDTWO"));
     gridMethod->set_active(0);
     gridMethodConn = gridMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::gridMethodChanged));
-
+    
+    
     merMethod->append(M("TP_LOCALLAB_MRONE"));
     merMethod->append(M("TP_LOCALLAB_MRTWO"));
     merMethod->append(M("TP_LOCALLAB_MRTHR"));
@@ -1005,7 +1005,7 @@ pe(nullptr)
     gridBox->pack_start(*gridMethod);
     gridBox->pack_start(*strengthgrid);
     gridFrame->add(*gridBox);
-    superBox->pack_start(*gridFrame);
+    if(complexsoft < 10) superBox->pack_start(*gridFrame);
 
     superFrame->add(*superBox);
     colorBox->pack_start(*superFrame);
@@ -1063,7 +1063,7 @@ pe(nullptr)
 
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*radmaskcol, Gtk::PACK_SHRINK, 0);
-    toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 10) toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*chromaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
@@ -3322,6 +3322,14 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->qualityMethod = 1;
         }
 
+        if (pp->locallab.spots.at(i).complexMethod == "sim") {
+            r->complexMethod = 0;
+        } else  if (pp->locallab.spots.at(i).complexMethod == "mod") {
+            r->complexMethod = 1;
+        } else  if (pp->locallab.spots.at(i).complexMethod == "all") {
+            r->complexMethod = 2;
+        }
+
         r->transit = pp->locallab.spots.at(i).transit;
         r->feather = pp->locallab.spots.at(i).feather;
         r->thresh = pp->locallab.spots.at(i).thresh;
@@ -3485,6 +3493,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->qualityMethod = 0;
             } else {
                 r->qualityMethod = 1;
+            }
+
+            if (newSpot->complexMethod == "sim") {
+                r->complexMethod = 0;
+            } else  if (newSpot->complexMethod == "mod") {
+                r->complexMethod = 1;
+            } else  if (newSpot->complexMethod == "all") {
+                r->complexMethod = 2;
             }
 
             r->transit = newSpot->transit;
@@ -3738,6 +3754,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->qualityMethod = 1;
             }
 
+            if (newSpot->complexMethod == "sim") {
+                r->complexMethod = 0;
+            } else  if (newSpot->complexMethod == "mod") {
+                r->complexMethod = 1;
+            } else  if (newSpot->complexMethod == "all") {
+                r->complexMethod = 2;
+            }
+
             r->transit = newSpot->transit;
             r->feather = newSpot->feather;
             r->thresh = newSpot->thresh;
@@ -3887,6 +3911,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).qualityMethod = "enh";
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).qualityMethod = "enhden";
+                    }
+
+                    if (r->complexMethod == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).complexMethod = "sim";
+                    } else if (r->complexMethod == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).complexMethod = "mod";
+                    } else if (r->complexMethod == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).complexMethod = "all";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).transit = r->transit;
@@ -4400,6 +4432,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).centerY = pe->locallab.spots.at(pp->locallab.selspot).centerY || se->centerY;
                         pe->locallab.spots.at(pp->locallab.selspot).circrad = pe->locallab.spots.at(pp->locallab.selspot).circrad || se->circrad;
                         pe->locallab.spots.at(pp->locallab.selspot).qualityMethod = pe->locallab.spots.at(pp->locallab.selspot).qualityMethod || se->qualityMethod;
+                        pe->locallab.spots.at(pp->locallab.selspot).complexMethod = pe->locallab.spots.at(pp->locallab.selspot).complexMethod || se->complexMethod;
                         pe->locallab.spots.at(pp->locallab.selspot).transit = pe->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
                         pe->locallab.spots.at(pp->locallab.selspot).feather = pe->locallab.spots.at(pp->locallab.selspot).feather || se->feather;
                         pe->locallab.spots.at(pp->locallab.selspot).thresh = pe->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
@@ -4761,6 +4794,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).centerY = pedited->locallab.spots.at(pp->locallab.selspot).centerY || se->centerY;
                         pedited->locallab.spots.at(pp->locallab.selspot).circrad = pedited->locallab.spots.at(pp->locallab.selspot).circrad || se->circrad;
                         pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod || se->qualityMethod;
+                        pedited->locallab.spots.at(pp->locallab.selspot).complexMethod = pedited->locallab.spots.at(pp->locallab.selspot).complexMethod || se->complexMethod;
                         pedited->locallab.spots.at(pp->locallab.selspot).transit = pedited->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
                         pedited->locallab.spots.at(pp->locallab.selspot).feather = pedited->locallab.spots.at(pp->locallab.selspot).feather || se->feather;
                         pedited->locallab.spots.at(pp->locallab.selspot).thresh = pedited->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
@@ -5671,6 +5705,7 @@ void Locallab::qualitycurveMethodChanged()
 void Locallab::gridMethodChanged()
 {
     // printf("qualitycurveMethodChanged\n");
+    if(complexsoft < 10) gridMethod->hide();
 
     if (getEnabled() && expcolor->getEnabled()) {
         if (listener) {
@@ -5710,7 +5745,7 @@ void Locallab::merMethodChanged()
         sensi->set_sensitive(false);
         structcol->set_sensitive(false);
         blurcolde->set_sensitive(false);
-        H2CurveEditorG->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
@@ -5721,7 +5756,7 @@ void Locallab::merMethodChanged()
         sensi->set_sensitive(false);
         structcol->set_sensitive(false);
         blurcolde->set_sensitive(false);
-        H2CurveEditorG->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
@@ -5735,7 +5770,7 @@ void Locallab::merMethodChanged()
         blurcolde->set_sensitive(false);
         sensi->set_sensitive(false);
         structcol->set_sensitive(false);
-        H2CurveEditorG->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
@@ -10197,6 +10232,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->centerY = spotState->centerY;
                 se->circrad = spotState->circrad;
                 se->qualityMethod = spotState->qualityMethod;
+                se->complexMethod = spotState->complexMethod;
                 se->transit = spotState->transit;
                 se->feather = spotState->feather;
                 se->thresh = spotState->thresh;
@@ -10674,7 +10710,7 @@ void Locallab::updateSpecificGUIState()
         strcolh->set_sensitive(true);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
-        H2CurveEditorG->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
@@ -10686,7 +10722,7 @@ void Locallab::updateSpecificGUIState()
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
         strcolh->set_sensitive(true);
-        H2CurveEditorG->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
@@ -10698,7 +10734,7 @@ void Locallab::updateSpecificGUIState()
         strcolh->set_sensitive(true);
         sensi->set_sensitive(false);
         blurcolde->set_sensitive(false);
-        H2CurveEditorG->set_sensitive(false);
+        H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);

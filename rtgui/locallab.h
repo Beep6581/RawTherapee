@@ -553,6 +553,7 @@ private:
     double nextminT;
     double nextmaxT;
     double nextsigma;
+    int complexsoft;
     /**
      * Used to store the default ProcParams when setDefaults function is called
      * When an other spot is selected, this default ProcParams is used to update adjusters default values

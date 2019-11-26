@@ -479,6 +479,7 @@ void Options::setDefaults()
     menuGroupProfileOperations = true;
     menuGroupExtProg = true;
     showtooltip = true;
+    complexity = 0;
 
     ICCPC_primariesPreset = "sRGB",
     ICCPC_redPrimaryX = 0.6400;
@@ -1424,6 +1425,7 @@ void Options::readFromFile(Glib::ustring fname)
                     navHSVUnit = (NavigatorUnit)keyFile.get_integer("GUI", "NavigatorHSVUnit");
                 }
 
+
                 if (keyFile.has_key("GUI", "ShowFilmStripToolBar")) {
                     showFilmStripToolBar = keyFile.get_boolean("GUI", "ShowFilmStripToolBar");
                 }
@@ -1447,6 +1449,11 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "CurveBBoxPosition")) {
                     curvebboxpos = keyFile.get_integer("GUI", "CurveBBoxPosition");
                 }
+                
+                if (keyFile.has_key("GUI", "Complexity")) {
+                    complexity = keyFile.get_integer("GUI", "Complexity");
+                }
+                
             }
 
             if (keyFile.has_group("Crop Settings")) {
@@ -1643,6 +1650,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("Color Management", "Previewselection")) {//Intensity of preview selection deltaE
                     rtSettings.previewselection = keyFile.get_integer("Color Management", "Previewselection");
                 }
+
 
                 if (keyFile.has_key("Color Management", "Cbdlsensi")) {//sensibility to crash for cbdl
                     rtSettings.cbdlsensi = keyFile.get_double("Color Management", "Cbdlsensi");
@@ -2188,6 +2196,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "HistogramWorking", rtSettings.HistogramWorking);
         keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
         keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
+        keyFile.set_integer("GUI", "Complexity", complexity);
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

@@ -2431,6 +2431,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     centerY(0),
     circrad(18),
     qualityMethod("enh"),
+    complexMethod("mod"),
     transit(60.),
     feather(25.),
     thresh(2.0),
@@ -2786,6 +2787,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && centerY == other.centerY
         && circrad == other.circrad
         && qualityMethod == other.qualityMethod
+        && complexMethod == other.complexMethod
         && transit == other.transit
         && feather == other.feather
         && thresh == other.thresh
@@ -4136,6 +4138,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).centerY, "Locallab", "CenterY_" + std::to_string(i), spot.centerY, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).circrad, "Locallab", "Circrad_" + std::to_string(i), spot.circrad, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualityMethod, "Locallab", "QualityMethod_" + std::to_string(i), spot.qualityMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).complexMethod, "Locallab", "ComplexMethod_" + std::to_string(i), spot.complexMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).transit, "Locallab", "Transit_" + std::to_string(i), spot.transit, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).feather, "Locallab", "Feather_" + std::to_string(i), spot.feather, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).thresh, "Locallab", "Thresh_" + std::to_string(i), spot.thresh, keyFile);
@@ -5593,6 +5596,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "CenterY_" + std::to_string(i), pedited, spot.centerY, spotEdited.centerY);
                 assignFromKeyfile(keyFile, "Locallab", "Circrad_" + std::to_string(i), pedited, spot.circrad, spotEdited.circrad);
                 assignFromKeyfile(keyFile, "Locallab", "QualityMethod_" + std::to_string(i), pedited, spot.qualityMethod, spotEdited.qualityMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ComplexMethod_" + std::to_string(i), pedited, spot.complexMethod, spotEdited.complexMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Transit_" + std::to_string(i), pedited, spot.transit, spotEdited.transit);
                 assignFromKeyfile(keyFile, "Locallab", "Feather_" + std::to_string(i), pedited, spot.feather, spotEdited.feather);
                 assignFromKeyfile(keyFile, "Locallab", "Thresh_" + std::to_string(i), pedited, spot.thresh, spotEdited.thresh);

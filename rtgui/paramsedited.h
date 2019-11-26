@@ -401,6 +401,7 @@ public:
         bool centerY;
         bool circrad;
         bool qualityMethod;
+        bool complexMethod;
         bool transit;
         bool feather;
         bool thresh;
