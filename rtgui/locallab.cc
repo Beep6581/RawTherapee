@@ -643,7 +643,7 @@ pe(nullptr)
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
     const bool showtooltip = options.showtooltip;
     complexsoft = options.complexity;
-    printf("Complexsoft=%i\n", complexsoft);
+   // printf("Complexsoft=%i\n", complexsoft);
     CurveListener::setMulti(true);
     rtengine::procparams::LocallabParams::LocallabSpot defSpot;
 

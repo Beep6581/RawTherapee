@@ -9979,7 +9979,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     LocallabParams locallabparams;
                     localContrastParams.enabled = true;
                     localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
-                    localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
+                    localContrastParams.amount = 0.01f * params->locallab.spots.at(sp).lcamount;
                     localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
                     localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
                     bool fftwlc = false;
@@ -10309,7 +10309,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 // not good    transit_shapedetect2(0, tmp1.get(), bufgb.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
-                bufgb.reset();
+              //  bufgb.reset();
                 transit_shapedetect(10, tmp1.get(), nullptr, bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 tmp1.reset();
 
