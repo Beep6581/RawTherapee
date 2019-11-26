@@ -643,6 +643,7 @@ pe(nullptr)
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
     const bool showtooltip = options.showtooltip;
     complexsoft = options.complexity;
+    printf("Complexsoft=%i\n", complexsoft);
     CurveListener::setMulti(true);
     rtengine::procparams::LocallabParams::LocallabSpot defSpot;
 
@@ -985,8 +986,8 @@ pe(nullptr)
     gradcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradcolBox = Gtk::manage(new ToolParamBlock());
     gradcolBox->pack_start(*strcol);
-    gradcolBox->pack_start(*strcolab);
-    gradcolBox->pack_start(*strcolh);
+    if(complexsoft < 2) gradcolBox->pack_start(*strcolab);
+    if(complexsoft < 2) gradcolBox->pack_start(*strcolh);
     gradcolBox->pack_start(*angcol);
     gradcolFrame->add(*gradcolBox);
 
@@ -1005,24 +1006,24 @@ pe(nullptr)
     gridBox->pack_start(*gridMethod);
     gridBox->pack_start(*strengthgrid);
     gridFrame->add(*gridBox);
-    if(complexsoft < 10) superBox->pack_start(*gridFrame);
+    if(complexsoft < 2) superBox->pack_start(*gridFrame);
 
     superFrame->add(*superBox);
     colorBox->pack_start(*superFrame);
     colorBox->pack_start(*sensi);
-    colorBox->pack_start(*structcol);
-    colorBox->pack_start(*blurcolde);
+    if(complexsoft < 2) colorBox->pack_start(*structcol);
+    if(complexsoft < 2) colorBox->pack_start(*blurcolde);
     colorBox->pack_start(*gradcolFrame);
-    colorBox->pack_start(*softradiuscol);
+    if(complexsoft < 2) colorBox->pack_start(*softradiuscol);
     Gtk::HBox* const qualcurvbox = Gtk::manage(new Gtk::HBox());
     qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start(*qualitycurveMethod);
     colorBox->pack_start(*qualcurvbox);
     colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    colorBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    colorBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    colorBox->pack_start(*special);
+    if(complexsoft < 2) colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    if(complexsoft < 2) colorBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    if(complexsoft < 2) colorBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    if(complexsoft < 2) colorBox->pack_start(*special);
     colorBox->pack_start(*invers);
     Gtk::HSeparator* const separatormer = Gtk::manage(new  Gtk::HSeparator());
 
@@ -1046,7 +1047,7 @@ pe(nullptr)
     mergecolBox->pack_start(*conthrcol);
     mergecolBox->pack_start(*gridmerFrame);
 
-    merge1colFrame->add(*mergecolBox);
+    if(complexsoft < 2) merge1colFrame->add(*mergecolBox);
     Gtk::HSeparator* const separatorstru = Gtk::manage(new  Gtk::HSeparator());
 
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
@@ -1054,8 +1055,8 @@ pe(nullptr)
     maskcolBox->pack_start(*showmaskcolMethodinv, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    maskcolBox->pack_start(*strumaskcol, Gtk::PACK_SHRINK, 0);
-    maskcolBox->pack_start(*toolcol);
+    if(complexsoft < 2) maskcolBox->pack_start(*strumaskcol, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 2) maskcolBox->pack_start(*toolcol);
 
     maskcolBox->pack_start(*separatorstru, Gtk::PACK_SHRINK, 2);
     toolcolFrame->set_label_align(0.025, 0.5);
@@ -1063,15 +1064,15 @@ pe(nullptr)
 
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*radmaskcol, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 10) toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 1) toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*chromaskcol, Gtk::PACK_SHRINK, 0);
-    toolcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
-    toolcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
-    toolcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
-    toolcolBox->pack_start(*maskHCurveEditorG, Gtk::PACK_SHRINK, 4);
+    if(complexsoft < 2) toolcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 2) toolcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 2) toolcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 2) toolcolBox->pack_start(*maskHCurveEditorG, Gtk::PACK_SHRINK, 4);
     toolcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 1) toolcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    if(complexsoft < 1) toolcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
     toolcolFrame->add(*toolcolBox);
     maskcolBox->pack_start(*toolcolFrame);
 
@@ -1082,7 +1083,7 @@ pe(nullptr)
     mask7Box->pack_start(*mask7);
     expmaskcol1->add(*mask7Box, false);
     expmaskcol->add(*mergecolFrame, false);
-    colorBox->pack_start(*expmaskcol1);
+    if(complexsoft < 2) colorBox->pack_start(*expmaskcol1);
     colorBox->pack_start(*expmaskcol);
 
     expcolor->add(*colorBox, false);

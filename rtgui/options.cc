@@ -451,6 +451,7 @@ void Options::setDefaults()
     histogramHeight = 200;
     histogramDrawMode = 0;
     curvebboxpos = 1;
+    complexity = 0;
     prevdemo = PD_Sidecar;
 
     rgbDenoiseThreadLimit = 0;
@@ -479,7 +480,6 @@ void Options::setDefaults()
     menuGroupProfileOperations = true;
     menuGroupExtProg = true;
     showtooltip = true;
-    complexity = 0;
 
     ICCPC_primariesPreset = "sRGB",
     ICCPC_redPrimaryX = 0.6400;

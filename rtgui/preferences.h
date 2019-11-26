@@ -147,6 +147,8 @@ class Preferences :
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
 
+    Gtk::ComboBoxText* complexitylocal;
+
     Gtk::ComboBoxText* themeCBT;
     Gtk::FontButton* mainFontFB;
     Gtk::FontButton* colorPickerFontFB;
