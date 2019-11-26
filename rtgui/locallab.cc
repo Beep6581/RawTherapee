@@ -2194,7 +2194,7 @@ pe(nullptr)
     retiFrame->add(*deharetiBox);
 
     auxBox->add(*dehaFrame);
-    auxBox->add(*retiFrame);
+    if(complexsoft < 2) auxBox->add(*retiFrame);
 
     ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
     scopeBox->pack_start(*sensih);
@@ -2347,7 +2347,7 @@ pe(nullptr)
     clariFrame->add(*clariBox);
 
     ToolParamBlock* const contrastBox = Gtk::manage(new ToolParamBlock());
-    contrastBox->pack_start(*localcontMethod);
+    if(complexsoft < 2)contrastBox->pack_start(*localcontMethod);
     contrastBox->pack_start(*lcradius);
     contrastBox->pack_start(*lcamount);
     contrastBox->pack_start(*lcdarkness);
@@ -2355,11 +2355,11 @@ pe(nullptr)
     contrastBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4);
 //    contrastBox->pack_start(*levelwav);
     contrastBox->pack_start(*csThreshold);
-    contrastBox->pack_start(*residcont);
-    contrastBox->pack_start(*residchro);
-    contrastBox->pack_start(*clariFrame);
+    if(complexsoft < 2) contrastBox->pack_start(*residcont);
+    if(complexsoft < 2) contrastBox->pack_start(*residchro);
+    if(complexsoft < 2) contrastBox->pack_start(*clariFrame);
     contrastBox->pack_start(*sensilc);
-    contrastBox->pack_start(*fftwlc);
+    if(complexsoft < 2) contrastBox->pack_start(*fftwlc);
     expcontrast->add(*contrastBox, false);
     expcontrast->setLevel(2);
 
@@ -5706,7 +5706,6 @@ void Locallab::qualitycurveMethodChanged()
 void Locallab::gridMethodChanged()
 {
     // printf("qualitycurveMethodChanged\n");
-    if(complexsoft < 10) gridMethod->hide();
 
     if (getEnabled() && expcolor->getEnabled()) {
         if (listener) {
@@ -10100,8 +10099,12 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         } else {
             retinexMethod->set_active(2);
         }
-
         str->setValue(pp->locallab.spots.at(index).str);
+
+        if(complexsoft == 2) {
+            str->setValue(0);
+        }
+        
         chrrt->setValue(pp->locallab.spots.at(index).chrrt);
         neigh->setValue(pp->locallab.spots.at(index).neigh);
         vart->setValue(pp->locallab.spots.at(index).vart);
@@ -10168,6 +10171,9 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             localcontMethod->set_active(1);
         }
 
+        if(complexsoft == 2){
+            localcontMethod->set_active(1);
+        }
         wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
 
         // Contrast by detail levels
