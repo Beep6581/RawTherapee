@@ -280,12 +280,17 @@ int DCraw::parseCR3(
         {"uuid", 3},
     };
 
-    const char sHandlerType[5][5] = {"unk.", "soun", "vide", "hint", "meta"};
+    const char sHandlerType[5][5] = {
+        "unk.",
+        "soun",
+        "vide",
+        "hint",
+        "meta"
+    };
 
-    unsigned int c;
     int err = 0;
 
-    ushort tL; // Atom length represented in 4 or 8 bytes
+    unsigned short tL; // Atom length represented in 4 or 8 bytes
     char nmAtom[5]; // Atom name
     unsigned long long oAtom;
     unsigned long long szAtom; // Atom offset and Atom size
@@ -297,19 +302,19 @@ int DCraw::parseCR3(
     uchar CMP1[36];
     char HandlerType[5];
     char MediaFormatID[5];
-//  unsigned ImageWidth, ImageHeight;
+//  unsigned int ImageWidth, ImageHeight;
     long relpos_inDir;
     long relpos_inBox;
-    unsigned szItem;
-    unsigned Tag;
-    unsigned lTag;
-    ushort tItem;
+    unsigned int szItem;
+    unsigned int Tag;
+    unsigned int lTag;
+    unsigned short tItem;
 
     nmAtom[0] = MediaFormatID[0] = nmAtom[4] = MediaFormatID[4] = '\0';
-    strcpy(HandlerType, sHandlerType[0]);
+    strncpy(HandlerType, sHandlerType[0], sizeof(HandlerType));
 //  ImageWidth = ImageHeight = 0U;
     oAtom = oAtomList;
-    nesting++;
+    ++nesting;
 
     if (nesting > 31) {
         return -14; // too deep nesting
@@ -329,20 +334,20 @@ int DCraw::parseCR3(
                 || get4() != 0x00000008;
         };
 
-    while ((oAtom + 8ULL) <= (oAtomList + szAtomList)) {
-        lHdr = 0ULL;
+    while ((oAtom + 8) <= (oAtomList + szAtomList)) {
+        lHdr = 0U;
         err = 0;
-        order = 0x4d4d;
+        order = 0x4D4D;
         fseek(ifp, oAtom, SEEK_SET);
         szAtom = get4();
-        for (c = 0; c < 4; c++) {
+        for (unsigned int c = 0; c < 4; ++c) {
             nmAtom[c] = AtomNameStack[nesting * 4 + c] = fgetc(ifp);
         }
         AtomNameStack[(nesting + 1) * 4] = '\0';
         tL = 4;
         AtomType = 0;
 
-        for (c = 0; c < sizeof AtomNamesList / sizeof * AtomNamesList; c++) {
+        for (unsigned int c = 0; c < sizeof(AtomNamesList) / sizeof(*AtomNamesList); ++c) {
             if (!strcmp(nmAtom, AtomNamesList[c].AtomName)) {
                 AtomType = AtomNamesList[c].AtomType;
                 break;
@@ -353,28 +358,28 @@ int DCraw::parseCR3(
             err = 1;
         }
 
-        if (szAtom == 0ULL) {
+        if (szAtom == 0) {
             if (nesting != 0) {
                 err = -2;
                 goto fin;
             }
 
             szAtom = szAtomList - oAtom;
-            oAtomContent = oAtom + 8ULL;
-            szAtomContent = szAtom - 8ULL;
-        } else if (szAtom == 1ULL)   {
-            if ((oAtom + 16ULL) > (oAtomList + szAtomList)) {
+            oAtomContent = oAtom + 8;
+            szAtomContent = szAtom - 8;
+        } else if (szAtom == 1)   {
+            if ((oAtom + 16) > (oAtomList + szAtomList)) {
                 err = -3;
                 goto fin;
             }
 
             tL = 8;
-            szAtom = (((unsigned long long)get4()) << 32) | get4();
-            oAtomContent = oAtom + 16ULL;
-            szAtomContent = szAtom - 16ULL;
+            szAtom = (static_cast<unsigned long long>(get4()) << 32) | get4();
+            oAtomContent = oAtom + 16;
+            szAtomContent = szAtom - 16;
         } else   {
-            oAtomContent = oAtom + 8ULL;
-            szAtomContent = szAtom - 8ULL;
+            oAtomContent = oAtom + 8;
+            szAtomContent = szAtom - 8;
         }
 
         if (!strcmp(nmAtom, "trak")) {
@@ -387,7 +392,7 @@ int DCraw::parseCR3(
         }
 
         if (!strcmp(AtomNameStack, "moovuuid")) {
-            lHdr = 16ULL;
+            lHdr = 16;
             fread(UIID, 1, lHdr, ifp);
 
             if (!strncmp(UIID, UIID_Canon, lHdr)) {
@@ -396,12 +401,12 @@ int DCraw::parseCR3(
                 fseek(ifp, -lHdr, SEEK_CUR);
             }
         } else if (!strcmp(AtomNameStack, "moovuuidCCTP"))   {
-            lHdr = 12ULL;
+            lHdr = 12;
         } else if (!strcmp(AtomNameStack, "moovuuidCMT1"))   {
-            short q_order = order;
+            const short q_order = order;
             order = get2();
 
-            if ((tL != 4) || is_bad_header()) {
+            if (tL != 4 || is_bad_header()) {
                 err = -4;
                 goto fin;
             }
@@ -409,10 +414,10 @@ int DCraw::parseCR3(
             parse_tiff_ifd(oAtomContent);
             order = q_order;
         } else if (!strcmp(AtomNameStack, "moovuuidCMT2"))   {
-            short q_order = order;
+            const short q_order = order;
             order = get2();
 
-            if ((tL != 4) || is_bad_header()) {
+            if (tL != 4 || is_bad_header()) {
                 err = -5;
                 goto fin;
             }
@@ -420,10 +425,10 @@ int DCraw::parseCR3(
             parse_exif(oAtomContent);
             order = q_order;
         } else if (!strcmp(AtomNameStack, "moovuuidCMT3"))   {
-            short q_order = order;
+            const short q_order = order;
             order = get2();
 
-            if ((tL != 4) || is_bad_header()) {
+            if (tL != 4 || is_bad_header()) {
                 err = -6;
                 goto fin;
             }
@@ -432,26 +437,26 @@ int DCraw::parseCR3(
             parse_makernote(oAtomContent, 0);
             order = q_order;
         } else if (!strcmp(AtomNameStack, "moovuuidCMT4"))   {
-            short q_order = order;
+            const short q_order = order;
             order = get2();
 
-            if ((tL != 4) || is_bad_header()) {
+            if (tL != 4 || is_bad_header()) {
                 err = -6;
                 goto fin;
             }
 
-            std::int64_t off = ftell(ifp);
+            const std::int64_t off = ftell(ifp); // FIXME: ftell() returns int
             parse_gps(oAtomContent);
-            fseek(ifp, off, SEEK_SET);
+            fseek(ifp, off, SEEK_SET); // FIXME: fseek() takes int offset
 //      parse_gps_libraw(oAtomContent);
             order = q_order;
         } else if (!strcmp(AtomNameStack, "moovtrakmdiahdlr"))   {
-            fseek(ifp, 8L, SEEK_CUR);
-            for (c = 0; c < 4; c++) {
+            fseek(ifp, 8, SEEK_CUR);
+            for (unsigned int c = 0; c < 4; ++c) {
                 HandlerType[c] = fgetc(ifp);
             }
 
-            for (c = 1; c < sizeof sHandlerType / sizeof * sHandlerType; c++) {
+            for (unsigned int c = 1; c < sizeof(sHandlerType) / sizeof(*sHandlerType); ++c) {
                 if (!strcmp(HandlerType, sHandlerType[c])) {
                     TrackType = c;
                     break;
@@ -466,13 +471,13 @@ int DCraw::parseCR3(
                 goto fin;
             }
 
-            for (c = 0; c < 4; c++) {
+            for (unsigned int c = 0; c < 4; ++c) {
                 MediaFormatID[c] = fgetc(ifp);
             }
 
-            if ((TrackType == 2) && (!strcmp(MediaFormatID, "CRAW"))) {
+            if (TrackType == 2 && !strcmp(MediaFormatID, "CRAW")) {
                 if (szAtomContent >= 44) {
-                    fseek(ifp, 24L, SEEK_CUR);
+                    fseek(ifp, 24, SEEK_CUR);
                 } else {
                     err = -8;
                     goto fin;
@@ -481,8 +486,6 @@ int DCraw::parseCR3(
                 AtomType = 2; // only continue for CRAW
                 lHdr = 0;
             }
-
-#define current_track RT_canon_CR3_data.crx_header[nTrack]
 
             /*ImageWidth = */ get2();
             /*ImageHeight = */ get2();
@@ -497,69 +500,81 @@ int DCraw::parseCR3(
             }
 
             if (!crxParseImageHeader(CMP1, nTrack)) {
-                current_track.MediaType = 1;
+                RT_canon_CR3_data.crx_header[nTrack].MediaType = 1;
             }
         } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWJPEG"))   {
-            current_track.MediaType = 2;
+            RT_canon_CR3_data.crx_header[nTrack].MediaType = 2;
         } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsz"))   {
             if (szAtomContent == 12) {
-                fseek(ifp, 4L, SEEK_CUR);
+                fseek(ifp, 4, SEEK_CUR);
             } else if (szAtomContent == 16) {
-                fseek(ifp, 12L, SEEK_CUR);
+                fseek(ifp, 12, SEEK_CUR);
             } else {
                 err = -9;
                 goto fin;
             }
 
-            current_track.MediaSize = get4();
+            RT_canon_CR3_data.crx_header[nTrack].MediaSize = get4();
         } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblco64"))   {
             if (szAtomContent == 16) {
-                fseek(ifp, 8L, SEEK_CUR);
+                fseek(ifp, 8, SEEK_CUR);
             } else {
                 err = -10;
                 goto fin;
             }
 
-            current_track.MediaOffset = (((unsigned long long)get4()) << 32) | get4();
+            RT_canon_CR3_data.crx_header[nTrack].MediaOffset = (static_cast<unsigned long long>(get4()) << 32) | get4();
         }
 
-        if (current_track.MediaSize && current_track.MediaOffset &&
-                ((oAtom + szAtom) >= (oAtomList + szAtomList)) &&
-                !strncmp(AtomNameStack, "moovtrakmdiaminfstbl", 20)) {
-            if ((TrackType == 4) && (!strcmp(MediaFormatID, "CTMD"))) {
+        if (
+            RT_canon_CR3_data.crx_header[nTrack].MediaSize
+            && RT_canon_CR3_data.crx_header[nTrack].MediaOffset
+            && oAtom + szAtom >= oAtomList + szAtomList
+            && !strncmp(AtomNameStack, "moovtrakmdiaminfstbl", 20)
+        ) {
+            if (TrackType == 4 && !strcmp(MediaFormatID, "CTMD")) {
                 order = 0x4949;
-                relpos_inDir = 0L;
+                relpos_inDir = 0;
 
-                while (relpos_inDir + 6 < current_track.MediaSize) {
-                    fseek(ifp, current_track.MediaOffset + relpos_inDir, SEEK_SET);
+                while (relpos_inDir + 6 < RT_canon_CR3_data.crx_header[nTrack].MediaSize) {
+                    fseek(ifp, RT_canon_CR3_data.crx_header[nTrack].MediaOffset + relpos_inDir, SEEK_SET);
                     szItem = get4();
                     tItem = get2();
 
-                    if ((relpos_inDir + szItem) > current_track.MediaSize) {
+                    if ((relpos_inDir + szItem) > RT_canon_CR3_data.crx_header[nTrack].MediaSize) {
                         err = -11;
                         goto fin;
                     }
 
-                    if ((tItem == 7) || (tItem == 8) || (tItem == 9)) {
-                        relpos_inBox = relpos_inDir + 12L;
+                    if (
+                        tItem == 7
+                        || tItem == 8
+                        || tItem == 9
+                    ) {
+                        relpos_inBox = relpos_inDir + 12;
 
                         while (relpos_inBox + 8 < relpos_inDir + szItem) {
-                            fseek(ifp, current_track.MediaOffset + relpos_inBox, SEEK_SET);
+                            fseek(ifp, RT_canon_CR3_data.crx_header[nTrack].MediaOffset + relpos_inBox, SEEK_SET);
                             lTag = get4();
                             Tag = get4();
 
                             if (lTag < 8) {
                                 err = -12;
                                 goto fin;
-                            } else if ((relpos_inBox + lTag) > (relpos_inDir + szItem))   {
+                            } else if (relpos_inBox + lTag > relpos_inDir + szItem) {
                                 err = -11;
                                 goto fin;
                             }
 
-                            if ((Tag == 0x927c) && ((tItem == 7) || (tItem == 8))) {
-                                fseek(ifp, current_track.MediaOffset + relpos_inBox + 8L,
-                                      SEEK_SET);
-                                short q_order = order;
+                            if (
+                                Tag == 0x927C
+                                && (
+                                    tItem == 7
+                                    || tItem == 8
+                                )
+                            ) {
+                                fseek(ifp, RT_canon_CR3_data.crx_header[nTrack].MediaOffset + relpos_inBox + 8, SEEK_SET);
+                                const short q_order = order;
                                 order = get2();
 
                                 if (is_bad_header()) {
@@ -567,10 +582,9 @@ int DCraw::parseCR3(
                                     goto fin;
                                 }
 
-                                fseek(ifp, -8L, SEEK_CUR);
+                                fseek(ifp, -8, SEEK_CUR);
                                 RT_canon_CR3_data.CR3_CTMDtag = 1;
-                                parse_makernote(current_track.MediaOffset + relpos_inBox + 8,
-                                                0);
+                                parse_makernote(RT_canon_CR3_data.crx_header[nTrack].MediaOffset + relpos_inBox + 8, 0);
                                 RT_canon_CR3_data.CR3_CTMDtag = 0;
                                 order = q_order;
                             }
@@ -582,15 +596,12 @@ int DCraw::parseCR3(
                     relpos_inDir += szItem;
                 }
 
-                order = 0x4d4d;
+                order = 0x4D4D;
             }
         }
 
-#undef current_track
-
         if (AtomType == 1) {
-            err = parseCR3(oAtomContent + lHdr, szAtomContent - lHdr, nesting,
-                           AtomNameStack, nTrack, TrackType);
+            err = parseCR3(oAtomContent + lHdr, szAtomContent - lHdr, nesting, AtomNameStack, nTrack, TrackType);
 
             if (err) {
                 goto fin;
@@ -601,7 +612,7 @@ int DCraw::parseCR3(
     }
 
 fin:
-    nesting--;
+    --nesting;
 
     if (nesting >= 0) {
         AtomNameStack[nesting * 4] = '\0';
@@ -610,7 +621,6 @@ fin:
     order = s_order;
     return err;
 }
-#undef bad_hdr
 
 // -----------------------------------------------------------------------------
 
@@ -633,9 +643,9 @@ fin:
 
 namespace
 {
-static unsigned sgetn(int n, unsigned char* s)
+static unsigned int sgetn(int n, unsigned char* s)
 {
-    unsigned result = 0;
+    unsigned int result = 0;
 
     while (n-- > 0) {
         result = (result << 8) | (*s++);
