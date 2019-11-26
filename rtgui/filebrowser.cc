@@ -114,16 +114,16 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
     // Find the original image for each bucket
     for (BasenameIterator bucket = byBasename.begin (); bucket != byBasename.end (); ++bucket) {
-        const EntryVector& entries = bucket->second;
+        const EntryVector& lentries = bucket->second;
         ThumbBrowserEntryBase* original = nullptr;
 
         // Select the most likely original in a first pass...
-        for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
+        for (EntryIterator entry = lentries.begin (); entry != lentries.end (); ++entry) {
             original = selectOriginalEntry (original, *entry);
         }
 
         // ...and link all other images to it in a second pass.
-        for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
+        for (EntryIterator entry = lentries.begin (); entry != lentries.end (); ++entry) {
             (*entry)->setOriginal (*entry != original ? original : nullptr);
         }
     }

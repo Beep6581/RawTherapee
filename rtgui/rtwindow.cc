@@ -44,14 +44,14 @@ extern unsigned char initialGdkScale;
 static gboolean
 osx_should_quit_cb (GtkosxApplication *app, gpointer data)
 {
-    RTWindow *rtWin = (RTWindow *)data;
+    RTWindow *rtWin = static_cast<RTWindow*>(data);
     return rtWin->on_delete_event (0);
 }
 
 static void
 osx_will_quit_cb (GtkosxApplication *app, gpointer data)
 {
-    RTWindow *rtWin = (RTWindow *)data;
+    RTWindow *rtWin = static_cast<RTWindow*>(data);
     rtWin->on_delete_event (0);
     gtk_main_quit ();
 }
@@ -75,7 +75,7 @@ bool RTWindow::osxFileOpenEvent (Glib::ustring path)
 static gboolean
 osx_open_file_cb (GtkosxApplication *app, gchar *path_, gpointer data)
 {
-    RTWindow *rtWin = (RTWindow *)data;
+    RTWindow *rtWin = static_cast<RTWindow*>(data);
 
     if (!argv1.empty()) {
         // skip handling if we have a file argument or else we get double open of same file
@@ -231,13 +231,6 @@ RTWindow::RTWindow ()
             }
         }
     }
-
-#ifndef NDEBUG
-    else if (!screen) {
-        printf ("ERROR: Can't get default screen!\n");
-    }
-
-#endif
 
     // ------- end loading theme files
 

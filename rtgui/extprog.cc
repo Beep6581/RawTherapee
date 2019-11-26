@@ -137,13 +137,11 @@ bool ExtProgStore::searchProgram (const Glib::ustring& name,
     action.name = name;
     action.target = (allowRaw ? 1 : 2);
 
-    auto& filePath = action.filePathEXE;
-
     if (maxVer > 0) {
 
         for (auto ver = maxVer; ver >= 0; ver--) {
 
-            filePath = progFilesDir + "\\" + Glib::ustring::compose(exePath, ver);
+            auto filePath = progFilesDir + "\\" + Glib::ustring::compose(exePath, ver);
 
             if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
                 break;
@@ -157,14 +155,12 @@ bool ExtProgStore::searchProgram (const Glib::ustring& name,
                     break;
                 }
             }
-
-            filePath.clear ();
         }
     } else {
 
         do {
 
-            filePath = progFilesDir + "\\" + exePath;
+            auto filePath = progFilesDir + "\\" + exePath;
 
             if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
                 break;
@@ -178,9 +174,6 @@ bool ExtProgStore::searchProgram (const Glib::ustring& name,
                     break;
                 }
             }
-
-            filePath.clear ();
-
         } while (false);
     }
 
@@ -279,9 +272,9 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
     for (auto ver = 12; ver >= 0; --ver) {
 
         executable = Glib::build_filename (options.gimpDir, "bin", Glib::ustring::compose (Glib::ustring("gimp-2.%1.exe"), ver));
-        auto success = ShellExecute( NULL, "open", executable.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
+        auto lsuccess = ShellExecute( NULL, "open", executable.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
 
-        if ((uintptr_t)success > 32) {
+        if ((uintptr_t)lsuccess > 32) {
             return true;
         }
     }

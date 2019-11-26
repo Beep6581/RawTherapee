@@ -79,9 +79,9 @@ class ProgressConnector
     static int emitEndSignalUI (void* data)
     {
 
-        sigc::signal0<bool>* opEnd = (sigc::signal0<bool>*) data;
-        int r = opEnd->emit ();
-        delete opEnd;
+        sigc::signal0<bool>* lopEnd = (sigc::signal0<bool>*) data;
+        int r = lopEnd->emit ();
+        delete lopEnd;
 
         return r;
     }

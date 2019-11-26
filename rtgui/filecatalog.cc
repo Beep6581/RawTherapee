@@ -1222,9 +1222,8 @@ void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bo
 
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params, fastmode && options.fastexport_use_fast_pipeline);
 
-            int pw;
-            int ph = BatchQueue::calcMaxThumbnailHeight();
-            th->getThumbnailSize (pw, ph);
+            const int ph = BatchQueue::calcMaxThumbnailHeight();
+            const int pw = th->getThumbnailWidth(ph);
 
             // processThumbImage is the processing intensive part, but adding to queue must be ordered
             //#pragma omp ordered

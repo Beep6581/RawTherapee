@@ -20,10 +20,10 @@
 
 #include <gtkmm.h>
 
-#include "lockablecolorpicker.h"
 #include "toolenum.h"
 
 class RTImage;
+class LockablePickerToolListener;
 
 class ToolBarListener
 {

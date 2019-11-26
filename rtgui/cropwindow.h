@@ -224,7 +224,7 @@ public:
     void centerCrop            (bool update = true);
     void getCropSize           (int& w, int& h);
     void getCropAnchorPosition (int& w, int& h);
-    void setCropAnchorPosition (int& w, int& h);
+    void setCropAnchorPosition (int w, int h);
 
     // listeners
     void setCropGUIListener       (CropGUIListener* cgl);

@@ -18,11 +18,9 @@
 #include "editwindow.h"
 #include "../rtengine/procparams.h"
 #include "options.h"
-#include "preferences.h"
 #include "cursormanager.h"
 #include "rtwindow.h"
 #include <gtk/gtk.h>
-#include "rtimage.h"
 #include "threadutils.h"
 
 extern Glib::ustring argv0;

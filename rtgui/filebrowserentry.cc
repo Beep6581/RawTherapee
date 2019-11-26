@@ -118,7 +118,7 @@ void FileBrowserEntry::calcThumbnailSize ()
 {
 
     if (thumbnail) {
-        thumbnail->getThumbnailSize (prew, preh);
+        prew = thumbnail->getThumbnailWidth(preh);
     }
 }
 

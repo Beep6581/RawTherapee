@@ -344,9 +344,8 @@ bool BatchQueue::loadBatchQueue ()
 
             auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams, fast);
 
-            auto prevh = getMaxThumbnailHeight ();
-            auto prevw = prevh;
-            thumb->getThumbnailSize (prevw, prevh, &pparams);
+            const auto prevh = getMaxThumbnailHeight ();
+            const auto prevw = thumb->getThumbnailWidth(prevh, &pparams);
 
             auto entry = new BatchQueueEntry (job, pparams, source, prevw, prevh, thumb, options.overwriteOutputFile);
             thumb->decreaseRef ();  // Removing the refCount acquired by cacheMgr->getEntry

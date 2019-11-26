@@ -259,7 +259,7 @@ void CropWindow::getCropAnchorPosition (int& x, int& y)
     cropHandler.getAnchorPosition(x, y);
 }
 
-void CropWindow::setCropAnchorPosition (int& x, int& y)
+void CropWindow::setCropAnchorPosition (int x, int y)
 {
     cropHandler.setAnchorPosition(x, y);
 }
