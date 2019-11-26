@@ -90,6 +90,7 @@ ControlSpotPanel::ControlSpotPanel():
     excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF"))))
 {
     bool showtooltip = options.showtooltip;
+    int complexsoft = options.complexity;
 
     Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
     buttonaddconn_ = button_add_->signal_clicked().connect(
@@ -230,7 +231,7 @@ ControlSpotPanel::ControlSpotPanel():
                            sigc::mem_fun(
                                *this, &ControlSpotPanel::shapeMethodChanged));
     ctboxshapemethod->pack_start(*shapeMethod_);
-    pack_start(*ctboxshapemethod);
+    if(complexsoft < 2) pack_start(*ctboxshapemethod);
 
     pack_start(*locX_);
     locX_->setAdjusterListener(this);
@@ -268,7 +269,7 @@ ControlSpotPanel::ControlSpotPanel():
                              sigc::mem_fun(
                                  *this, &ControlSpotPanel::qualityMethodChanged));
     ctboxqualitymethod->pack_start(*qualityMethod_);
-    pack_start(*ctboxqualitymethod);
+    if(complexsoft < 2) pack_start(*ctboxqualitymethod);
 
 
     Gtk::HBox* const ctboxcomplexmethod = Gtk::manage(new Gtk::HBox());
@@ -334,8 +335,8 @@ ControlSpotPanel::ControlSpotPanel():
     lumask_->setAdjusterListener(this);
 
     transitBox->pack_start(*transit_);
-    transitBox->pack_start(*transitweak_);
-    transitBox->pack_start(*transitgrad_);
+    if(complexsoft < 2) transitBox->pack_start(*transitweak_);
+    if(complexsoft < 2)transitBox->pack_start(*transitgrad_);
     transitBox->pack_start(*feather_);
     transitFrame->add(*transitBox);
     pack_start(*transitFrame);
@@ -350,10 +351,10 @@ ControlSpotPanel::ControlSpotPanel():
     ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
     thresh_->setAdjusterListener(this);
     struc_->setAdjusterListener(this);
-    artifBox->pack_start(*struc_);
-    artifBox->pack_start(*thresh_);
+    if(complexsoft < 2) artifBox->pack_start(*struc_);
+    if(complexsoft < 2) artifBox->pack_start(*thresh_);
     artifBox->pack_start(*iter_);
-    artifBox->pack_start(*balan_);
+    if(complexsoft < 2) artifBox->pack_start(*balan_);
     iter_->setAdjusterListener(this);
     balan_->setAdjusterListener(this);
     artifFrame->add(*artifBox);
