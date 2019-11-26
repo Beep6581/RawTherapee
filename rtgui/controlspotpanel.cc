@@ -395,7 +395,7 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     ToolParamBlock* const maskBox = Gtk::manage(new ToolParamBlock());
-    maskBox->pack_start(*laplac_);
+    if(complexsoft < 2) maskBox->pack_start(*laplac_);
     laplacConn_  = laplac_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::laplacChanged));
     deltaeConn_  = deltae_->signal_toggled().connect(
