@@ -1556,7 +1556,7 @@ pe(nullptr)
     maskSHBox->pack_start(*chromaskSH, Gtk::PACK_SHRINK, 0);
     if(complexsoft < 2) maskSHBox->pack_start(*gammaskSH, Gtk::PACK_SHRINK, 0);
     if(complexsoft < 2) maskSHBox->pack_start(*slomaskSH, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 1) maskSHBox->pack_start(*mask2SHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskSHBox->pack_start(*mask2SHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     if(complexsoft < 1) maskSHBox->pack_start(*fatSHFrame);
     expmasksh->add(*maskSHBox, false);
     shadhighBox->pack_start(*expmasksh);
@@ -1646,8 +1646,8 @@ pe(nullptr)
     gradvibFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradvibBox = Gtk::manage(new ToolParamBlock());
     gradvibBox->pack_start(*strvib);
-    gradvibBox->pack_start(*strvibab);
-    gradvibBox->pack_start(*strvibh);
+    if(complexsoft < 2) gradvibBox->pack_start(*strvibab);
+    if(complexsoft < 2) gradvibBox->pack_start(*strvibh);
     gradvibBox->pack_start(*angvib);
     gradvibFrame->add(*gradvibBox);
 
@@ -1659,7 +1659,7 @@ pe(nullptr)
     vibranceBox->pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
     vibranceBox->pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
     vibranceBox->pack_start(*sensiv, Gtk::PACK_SHRINK, 0);
-    vibranceBox->pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    if(complexsoft < 2) vibranceBox->pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     vibranceBox->pack_start(*gradvibFrame, Gtk::PACK_SHRINK, 0);
 
     enavibMaskConn = enavibMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enavibMaskChanged));
@@ -1730,10 +1730,10 @@ pe(nullptr)
     maskvibBox->pack_start(*maskvibCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskvibBox->pack_start(*blendmaskvib, Gtk::PACK_SHRINK, 0);
     maskvibBox->pack_start(*radmaskvib, Gtk::PACK_SHRINK, 0);
-    maskvibBox->pack_start(*lapmaskvib, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 1) maskvibBox->pack_start(*lapmaskvib, Gtk::PACK_SHRINK, 0);
     maskvibBox->pack_start(*chromaskvib, Gtk::PACK_SHRINK, 0);
-    maskvibBox->pack_start(*gammaskvib, Gtk::PACK_SHRINK, 0);
-    maskvibBox->pack_start(*slomaskvib, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 2) maskvibBox->pack_start(*gammaskvib, Gtk::PACK_SHRINK, 0);
+    if(complexsoft < 2) maskvibBox->pack_start(*slomaskvib, Gtk::PACK_SHRINK, 0);
     maskvibBox->pack_start(*mask2vibCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
     expmaskvib->add(*maskvibBox, false);
@@ -1783,7 +1783,7 @@ pe(nullptr)
 
     ToolParamBlock* const softBox = Gtk::manage(new ToolParamBlock());
 
-    softBox->pack_start(*softMethod);
+    if(complexsoft < 2) softBox->pack_start(*softMethod);
 //   softBox->pack_start(*showmasksoftMethod, Gtk::PACK_SHRINK, 4);
     softBox->pack_start(*ctboxsoftmethod);
     softBox->pack_start(*streng);
@@ -1960,7 +1960,7 @@ pe(nullptr)
     exptonemap->add(*tmBox, false);
     exptonemap->setLevel(2);
 
-    panel->pack_start(*exptonemap, false, false);
+    if(complexsoft < 2) panel->pack_start(*exptonemap, false, false);
 
     // Retinex
     Gtk::HBox* const retiTitleHBox = Gtk::manage(new Gtk::HBox());
@@ -9955,7 +9955,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             shMethod->set_active(1);
         }
 
-        if(complexsoft < 2) {
+        if(complexsoft == 2) {
             shMethod->set_active(1);
         }
         for (int i = 0; i < 5; i++) {
@@ -10005,6 +10005,9 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             softMethod->set_active(1);
         }
 
+        if(complexsoft == 2) {
+            softMethod->set_active(0);
+        }
         // Blur & Noise
         expblur->setEnabled(pp->locallab.spots.at(index).expblur);
         radius->setValue(pp->locallab.spots.at(index).radius);

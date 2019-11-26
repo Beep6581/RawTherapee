@@ -938,7 +938,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_EXP"));
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_CONF"));
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_NORM"));
-    complexitylocal->set_active(1);
+    complexitylocal->set_active(2);
     Gtk::Label* complexitylocalRestartL = Gtk::manage(new Gtk::Label(Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")"));
     setExpandAlignProperties(complexitylocalRestartL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     workflowGrid->attach_next_to(*complexityL, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
