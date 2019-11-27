@@ -303,8 +303,8 @@ int DCraw::parseCR3(
     char HandlerType[5];
     char MediaFormatID[5];
 //  unsigned int ImageWidth, ImageHeight;
-    long relpos_inDir;
-    long relpos_inBox;
+    unsigned long relpos_inDir;
+    unsigned long relpos_inBox;
     unsigned int szItem;
     unsigned int Tag;
     unsigned int lTag;
@@ -2663,9 +2663,10 @@ int DCraw::crxDecodePlane(void* p, std::uint32_t planeNumber)
 
 namespace
 {
+
 using crx_data_header_t = DCraw::CanonCR3Data::crx_data_header_t;
 
-int crxReadSubbandHeaders(crx_data_header_t* hdr, CrxImage* img, CrxTile* tile,
+int crxReadSubbandHeaders(CrxImage* img, CrxTile* tile,
                           CrxPlaneComp* comp, std::uint8_t** subbandMdatPtr,
                           std::uint32_t* mdatSize)
 {
@@ -2952,7 +2953,7 @@ int crxReadImageHeaders(crx_data_header_t* hdr, CrxImage* img, std::uint8_t* mda
                 comp->roundedBitsMask = 1 << (compHdrRoundedBits - 1);
             }
 
-            if (crxReadSubbandHeaders(hdr, img, tile, comp, &dataPtr, &dataSize)) {
+            if (crxReadSubbandHeaders(img, tile, comp, &dataPtr, &dataSize)) {
                 return -1;
             }
         }
@@ -2980,9 +2981,7 @@ int crxSetupImageData(crx_data_header_t* hdr, CrxImage* img, std::int16_t* outBu
     img->tileCols = (img->planeWidth + hdr->tileWidth - 1) / hdr->tileWidth;
     img->tileRows = (img->planeHeight + hdr->tileHeight - 1) / hdr->tileHeight;
 
-    if (img->tileCols > 0xFF || img->tileRows > 0xFF ||
-            img->planeWidth - hdr->tileWidth * (img->tileCols - 1) < 0x16 ||
-            img->planeHeight - hdr->tileHeight * (img->tileRows - 1) < 0x16) {
+    if (img->planeWidth - hdr->tileWidth * (img->tileCols - 1) < 0x16 || img->planeHeight - hdr->tileHeight * (img->tileRows - 1) < 0x16) {
         return -1;
     }
 
