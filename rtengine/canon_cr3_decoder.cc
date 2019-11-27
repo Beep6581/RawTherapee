@@ -76,7 +76,7 @@ void DCraw::parse_canon_cr3()
 
 void DCraw::selectCRXTrack(unsigned short maxTrack)
 {
-    std::int64_t bitcounts[RT_canon_CR3_data.CRXTRACKS_MAXCOUNT] = {};
+    std::int64_t bitcounts[CanonCR3Data::CRXTRACKS_MAXCOUNT] = {};
     std::int64_t maxbitcount = 0;
     std::uint32_t maxjpegbytes = 0;
 
