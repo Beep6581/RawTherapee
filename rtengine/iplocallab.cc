@@ -9979,7 +9979,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     LocallabParams locallabparams;
                     localContrastParams.enabled = true;
                     localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
-                    localContrastParams.amount = 0.01f * params->locallab.spots.at(sp).lcamount;
+                    localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
                     localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
                     localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
                     bool fftwlc = false;
