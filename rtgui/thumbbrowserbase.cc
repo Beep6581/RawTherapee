@@ -967,7 +967,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
             }
 
             MYWRITERLOCK_RELEASE(l);
-            rightClicked (fileDescr);
+            rightClicked ();
         }
     } // end of MYWRITERLOCK(l, entryRW);
 

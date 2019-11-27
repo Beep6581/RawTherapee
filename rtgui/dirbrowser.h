@@ -23,10 +23,6 @@
 
 #include "guiutils.h"
 
-#ifdef WIN32
-#include "windows.h"
-#endif
-
 class DirBrowser : public Gtk::VBox
 {
 public:

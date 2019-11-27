@@ -672,7 +672,7 @@ void BayerProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
     }
 }
 
-void BayerProcess::adjusterAutoToggled(Adjuster* a, bool newval)
+void BayerProcess::adjusterAutoToggled(Adjuster* a)
 {
     if (multiImage) {
         if (dualDemosaicContrast->getAutoInconsistent()) {

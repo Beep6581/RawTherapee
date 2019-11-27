@@ -28,7 +28,7 @@ class AdjusterListener
 public:
     virtual ~AdjusterListener() = default;
     virtual void adjusterChanged (Adjuster* a, double newval) = 0;
-    virtual void adjusterAutoToggled (Adjuster* a, bool newval) {}
+    virtual void adjusterAutoToggled (Adjuster* a) {}
 };
 
 typedef double(*double2double_fun)(double val);

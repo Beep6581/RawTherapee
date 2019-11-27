@@ -18,7 +18,6 @@
  */
 #include "batchqueuepanel.h"
 #include "options.h"
-#include "preferences.h"
 #include "multilangmgr.h"
 #include "rtwindow.h"
 #include "soundman.h"

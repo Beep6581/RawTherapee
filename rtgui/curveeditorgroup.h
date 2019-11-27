@@ -23,7 +23,6 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "guiutils.h"
 #include "mycurve.h"
 #include "shcselector.h"

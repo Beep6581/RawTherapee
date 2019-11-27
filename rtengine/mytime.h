@@ -19,7 +19,7 @@
 #pragma once
 
 #ifdef WIN32
-#include <windows.h>
+#include <profileapi.h>
 #elif defined __APPLE__
 #include <sys/time.h>
 #else

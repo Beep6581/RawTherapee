@@ -128,7 +128,7 @@ Preferences::~Preferences ()
     get_size (options.preferencesWidth, options.preferencesHeight);
 }
 
-int Preferences::getThemeRowNumber (Glib::ustring& longThemeFName)
+int Preferences::getThemeRowNumber (const Glib::ustring& longThemeFName)
 {
 
     if (regex->match (longThemeFName + ".css", matchInfo)) {

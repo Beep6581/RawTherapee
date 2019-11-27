@@ -225,7 +225,7 @@ public:
     {
         return true;
     }
-    virtual void rightClicked (ThumbBrowserEntryBase* entry) {}
+    virtual void rightClicked () = 0;
     virtual void doubleClicked (ThumbBrowserEntryBase* entry) {}
     virtual bool keyPressed (GdkEventKey* event)
     {

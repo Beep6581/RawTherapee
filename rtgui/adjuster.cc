@@ -246,7 +246,7 @@ void Adjuster::autoToggled ()
     }
 
     if (adjusterListener != nullptr && !blocked) {
-        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
+        adjusterListener->adjusterAutoToggled(this);
     }
 }
 
@@ -493,7 +493,7 @@ bool Adjuster::notifyListenerAutoToggled ()
 {
 
     if (adjusterListener != nullptr && !blocked) {
-        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
+        adjusterListener->adjusterAutoToggled(this);
     }
 
     return false;
