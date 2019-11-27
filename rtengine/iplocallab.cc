@@ -10309,7 +10309,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 // not good    transit_shapedetect2(0, tmp1.get(), bufgb.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
-              //  bufgb.reset();
+                //  bufgb.reset();
                 transit_shapedetect(10, tmp1.get(), nullptr, bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 tmp1.reset();
 
@@ -12455,7 +12455,24 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float kd = 1.f;//correction to ctoning
                         kd = 10.f * 0.01f * lp.strengrid;
 
+                        //chroma slider with curve instead of linear
+                        float satreal = lp.chro;
 
+                        DiagonalCurve color_satur({
+                            DCT_NURBS,
+                            0, 0,
+                            0.2, 0.2 + satreal / 250.0,
+                            0.6,  min(1.0, 0.6 + satreal / 250.0),
+                            1, 1
+                        });
+
+                        DiagonalCurve color_saturmoins({
+                            DCT_NURBS,
+                            0, 0,
+                            0.1 - satreal / 150., 0.1,
+                            min(1.0, 0.7 - satreal / 300.), 0.7,
+                            1, 1
+                        });
 
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
@@ -12468,9 +12485,33 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 float bufcolcalcL = origptr->L[ir][jr];
 
                                 if (lp.chro != 0.f) {
-                                    const float ch = (1.f + 0.01f * lp.chro) ;
-                                    bufcolcalca *= ch;
-                                    bufcolcalcb *= ch;
+                                    const float Chprov = sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
+                                    float chp = Chprov;
+                                    float2 sincosval;
+                                    sincosval.y = Chprov == 0.0f ? 1.f : bufcolcalca / Chprov;
+                                    sincosval.x = Chprov == 0.0f ? 0.f : bufcolcalcb / Chprov;
+
+                                    if (lp.chro > 0.f) {
+                                        float buf = LIM01(chp / 35000.f);//35000 must be globaly good
+                                        buf = color_satur.getVal(buf);
+                                        buf *= 35000.f;
+                                        chp = buf;
+                                    } else {
+                                        float buf = LIM01(chp / 35000.f);
+                                        buf = color_saturmoins.getVal(buf);
+                                        buf *= 35000.f;
+                                        chp = buf;
+                                    }
+
+                                    if (lp.chro == -100.f) {
+                                        chp = 0.f;
+                                    }
+
+                                    bufcolcalca = chp * sincosval.y;
+                                    bufcolcalcb = chp * sincosval.x;
+                                    //  const float ch = (1.f + 0.01f * lp.chro) ;
+                                    //   bufcolcalca *= ch;
+                                    //   bufcolcalcb *= ch;
                                 }
 
                                 if (cclocalcurve  && lp.qualcurvemet != 0 && localcutili) { // C=f(C) curve
