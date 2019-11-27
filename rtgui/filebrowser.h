@@ -23,7 +23,6 @@
 #include <gtkmm.h>
 
 #include "browserfilter.h"
-#include "exiffiltersettings.h"
 #include "exportpanel.h"
 #include "extprog.h"
 #include "filebrowserentry.h"

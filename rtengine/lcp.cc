@@ -27,7 +27,6 @@
 
 #ifdef WIN32
 #include <shlobj.h>
-#include <windows.h>
 #endif
 
 #include "lcp.h"

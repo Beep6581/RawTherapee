@@ -32,6 +32,7 @@
 #include "rtimage.h"
 #include "cachemanager.h"
 #include "multilangmgr.h"
+#include "coarsepanel.h"
 #include "filepanel.h"
 #include "renamedlg.h"
 #include "thumbimageupdater.h"
@@ -40,6 +41,7 @@
 #include "placesbrowser.h"
 #include "pathutils.h"
 #include "thumbnail.h"
+#include "toolbar.h"
 
 using namespace std;
 

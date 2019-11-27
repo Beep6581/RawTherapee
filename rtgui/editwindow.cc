@@ -16,8 +16,11 @@
 */
 
 #include "editwindow.h"
+#include "editorpanel.h"
+#include "filepanel.h"
 #include "../rtengine/procparams.h"
 #include "options.h"
+#include "preferences.h"
 #include "cursormanager.h"
 #include "rtwindow.h"
 #include <gtk/gtk.h>

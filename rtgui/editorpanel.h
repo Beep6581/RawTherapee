@@ -21,11 +21,9 @@
 
 #include <gtkmm.h>
 
-#include "filepanel.h"
 #include "histogrampanel.h"
 #include "history.h"
 #include "imageareapanel.h"
-#include "navigator.h"
 #include "profilepanel.h"
 #include "progressconnector.h"
 #include "saveasdlg.h"
@@ -38,6 +36,7 @@ class BatchQueueEntry;
 class EditorPanel;
 class FilePanel;
 class MyProgressBar;
+class Navigator;
 class Thumbnail;
 class ToolPanelCoordinator;
 

@@ -20,9 +20,9 @@
 
 #ifdef GUIVERSION
 
+#include <cairomm/cairomm.h>
 #include <glibmm/ustring.h>
 
-#include "editbuffer.h"
 #include "editcoordsys.h"
 #include "../rtengine/coord.h"
 

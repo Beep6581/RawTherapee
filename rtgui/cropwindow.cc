@@ -33,6 +33,7 @@
 #include "editcallbacks.h"
 #include "editbuffer.h"
 #include "editwidgets.h"
+#include "pointermotionlistener.h"
 #include "rtsurface.h"
 
 #include "../rtengine/dcrop.h"

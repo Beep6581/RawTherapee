@@ -24,7 +24,6 @@
 
 #include <gtkmm.h>
 
-#include "editbuffer.h"
 #include "lockablecolorpicker.h"
 #include "threadutils.h"
 

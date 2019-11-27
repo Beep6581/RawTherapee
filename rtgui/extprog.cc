@@ -22,8 +22,8 @@
 #include <iostream>
 
 #ifdef WIN32
-#include <windows.h>
 #include <shlobj.h>
+#include <shellapi.h>
 #endif
 
 #include <gtkmm.h>
@@ -261,7 +261,7 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 #endif
 
 #ifdef WIN32
-    if ((uintptr_t)success > 32) {
+    if (reinterpret_cast<uintptr_t>(success) > 32) {
         return true;
     }
 #else
@@ -278,7 +278,7 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
         executable = Glib::build_filename (options.gimpDir, "bin", Glib::ustring::compose (Glib::ustring("gimp-2.%1.exe"), ver));
         auto lsuccess = ShellExecute( NULL, "open", executable.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
 
-        if ((uintptr_t)lsuccess > 32) {
+        if (reinterpret_cast<uintptr_t>(lsuccess) > 32) {
             return true;
         }
     }
