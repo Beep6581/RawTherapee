@@ -643,7 +643,7 @@ pe(nullptr)
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
     const bool showtooltip = options.showtooltip;
     complexsoft = options.complexity;
-   // printf("Complexsoft=%i\n", complexsoft);
+
     CurveListener::setMulti(true);
     rtengine::procparams::LocallabParams::LocallabSpot defSpot;
 
@@ -734,8 +734,8 @@ pe(nullptr)
     gridMethod->append(M("TP_LOCALLAB_GRIDTWO"));
     gridMethod->set_active(0);
     gridMethodConn = gridMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::gridMethodChanged));
-    
-    
+
+
     merMethod->append(M("TP_LOCALLAB_MRONE"));
     merMethod->append(M("TP_LOCALLAB_MRTWO"));
     merMethod->append(M("TP_LOCALLAB_MRTHR"));
@@ -986,8 +986,15 @@ pe(nullptr)
     gradcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradcolBox = Gtk::manage(new ToolParamBlock());
     gradcolBox->pack_start(*strcol);
-    if(complexsoft < 2) gradcolBox->pack_start(*strcolab);
-    if(complexsoft < 2) gradcolBox->pack_start(*strcolh);
+
+    if (complexsoft < 2) {
+        gradcolBox->pack_start(*strcolab);
+    }
+
+    if (complexsoft < 2) {
+        gradcolBox->pack_start(*strcolh);
+    }
+
     gradcolBox->pack_start(*angcol);
     gradcolFrame->add(*gradcolBox);
 
@@ -1006,24 +1013,51 @@ pe(nullptr)
     gridBox->pack_start(*gridMethod);
     gridBox->pack_start(*strengthgrid);
     gridFrame->add(*gridBox);
-    if(complexsoft < 2) superBox->pack_start(*gridFrame);
+
+    if (complexsoft < 2) {
+        superBox->pack_start(*gridFrame);
+    }
 
     superFrame->add(*superBox);
     colorBox->pack_start(*superFrame);
     colorBox->pack_start(*sensi);
-    if(complexsoft < 2) colorBox->pack_start(*structcol);
-    if(complexsoft < 2) colorBox->pack_start(*blurcolde);
+
+    if (complexsoft < 2) {
+        colorBox->pack_start(*structcol);
+    }
+
+    if (complexsoft < 2) {
+        colorBox->pack_start(*blurcolde);
+    }
+
     colorBox->pack_start(*gradcolFrame);
-    if(complexsoft < 2) colorBox->pack_start(*softradiuscol);
+
+    if (complexsoft < 2) {
+        colorBox->pack_start(*softradiuscol);
+    }
+
     Gtk::HBox* const qualcurvbox = Gtk::manage(new Gtk::HBox());
     qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start(*qualitycurveMethod);
     colorBox->pack_start(*qualcurvbox);
     colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 2) colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 2) colorBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 2) colorBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 2) colorBox->pack_start(*special);
+
+    if (complexsoft < 2) {
+        colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+    }
+
+    if (complexsoft < 2) {
+        colorBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+    }
+
+    if (complexsoft < 2) {
+        colorBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+    }
+
+    if (complexsoft < 2) {
+        colorBox->pack_start(*special);
+    }
+
     colorBox->pack_start(*invers);
     Gtk::HSeparator* const separatormer = Gtk::manage(new  Gtk::HSeparator());
 
@@ -1047,7 +1081,10 @@ pe(nullptr)
     mergecolBox->pack_start(*conthrcol);
     mergecolBox->pack_start(*gridmerFrame);
 
-    if(complexsoft < 2) merge1colFrame->add(*mergecolBox);
+    if (complexsoft < 2) {
+        merge1colFrame->add(*mergecolBox);
+    }
+
     Gtk::HSeparator* const separatorstru = Gtk::manage(new  Gtk::HSeparator());
 
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
@@ -1055,8 +1092,14 @@ pe(nullptr)
     maskcolBox->pack_start(*showmaskcolMethodinv, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 2) maskcolBox->pack_start(*strumaskcol, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskcolBox->pack_start(*toolcol);
+
+    if (complexsoft < 2) {
+        maskcolBox->pack_start(*strumaskcol, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        maskcolBox->pack_start(*toolcol);
+    }
 
     maskcolBox->pack_start(*separatorstru, Gtk::PACK_SHRINK, 2);
     toolcolFrame->set_label_align(0.025, 0.5);
@@ -1064,15 +1107,39 @@ pe(nullptr)
 
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*radmaskcol, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 1) toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 1) {
+        toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
+    }
+
     toolcolBox->pack_start(*chromaskcol, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) toolcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) toolcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) toolcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) toolcolBox->pack_start(*maskHCurveEditorG, Gtk::PACK_SHRINK, 4);
+
+    if (complexsoft < 2) {
+        toolcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        toolcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        toolcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        toolcolBox->pack_start(*maskHCurveEditorG, Gtk::PACK_SHRINK, 4);
+    }
+
     toolcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 1) toolcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 1) toolcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 1) {
+        toolcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+    }
+
+    if (complexsoft < 1) {
+        toolcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
+    }
+
     toolcolFrame->add(*toolcolBox);
     maskcolBox->pack_start(*toolcolFrame);
 
@@ -1083,7 +1150,11 @@ pe(nullptr)
     mask7Box->pack_start(*mask7);
     expmaskcol1->add(*mask7Box, false);
     expmaskcol->add(*mergecolFrame, false);
-    if(complexsoft < 2) colorBox->pack_start(*expmaskcol1);
+
+    if (complexsoft < 2) {
+        colorBox->pack_start(*expmaskcol1);
+    }
+
     colorBox->pack_start(*expmaskcol);
 
     expcolor->add(*colorBox, false);
@@ -1325,10 +1396,21 @@ pe(nullptr)
 
 
     ToolParamBlock* const exposeBox = Gtk::manage(new ToolParamBlock());
-    if(complexsoft < 2) exposeBox->pack_start(*expMethod);
-    if(complexsoft < 2) exposeBox->pack_start(*pdeFrame);
+
+    if (complexsoft < 2) {
+        exposeBox->pack_start(*expMethod);
+    }
+
+    if (complexsoft < 2) {
+        exposeBox->pack_start(*pdeFrame);
+    }
+
     exposeBox->pack_start(*black);
-    if(complexsoft < 2) exposeBox->pack_start(*fatFrame);
+
+    if (complexsoft < 2) {
+        exposeBox->pack_start(*fatFrame);
+    }
+
     exposeBox->pack_start(*expcomp);
     exposeBox->pack_start(*hlcompr);
     exposeBox->pack_start(*hlcomprthresh);
@@ -1337,10 +1419,21 @@ pe(nullptr)
     exposeBox->pack_start(*expchroma);
     exposeBox->pack_start(*warm);
     exposeBox->pack_start(*sensiex);
-    if(complexsoft < 2) exposeBox->pack_start(*structexp);
-    if(complexsoft < 2) exposeBox->pack_start(*blurexpde);
+
+    if (complexsoft < 2) {
+        exposeBox->pack_start(*structexp);
+    }
+
+    if (complexsoft < 2) {
+        exposeBox->pack_start(*blurexpde);
+    }
+
     exposeBox->pack_start(*gradFrame);
-    if(complexsoft < 2) exposeBox->pack_start(*softradiusexp);
+
+    if (complexsoft < 2) {
+        exposeBox->pack_start(*softradiusexp);
+    }
+
     exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exposeBox->pack_start(*inversex);
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
@@ -1351,11 +1444,25 @@ pe(nullptr)
     maskexpBox->pack_start(*maskexpCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskexpBox->pack_start(*blendmaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*radmaskexp, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 1) maskexpBox->pack_start(*lapmaskexp, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 1) {
+        maskexpBox->pack_start(*lapmaskexp, Gtk::PACK_SHRINK, 0);
+    }
+
     maskexpBox->pack_start(*chromaskexp, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskexpBox->pack_start(*gammaskexp, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskexpBox->pack_start(*slomaskexp, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskexpBox->pack_start(*gradFramemask);
+
+    if (complexsoft < 2) {
+        maskexpBox->pack_start(*gammaskexp, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        maskexpBox->pack_start(*slomaskexp, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        maskexpBox->pack_start(*gradFramemask);
+    }
+
     maskexpBox->pack_start(*mask2expCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskexp->add(*maskexpBox, false);
     exposeBox->pack_start(*expmaskexp);
@@ -1503,7 +1610,10 @@ pe(nullptr)
     mask2SHCurveEditorG->curveListComplete();
 
     ToolParamBlock* const shadhighBox = Gtk::manage(new ToolParamBlock());
-    if(complexsoft < 2) shadhighBox->pack_start(*shMethod);
+
+    if (complexsoft < 2) {
+        shadhighBox->pack_start(*shMethod);
+    }
 
     for (int i = 0; i < 5; ++i) {
         shadhighBox->pack_start(*multipliersh[i]);
@@ -1522,14 +1632,22 @@ pe(nullptr)
     gradSHFrame->add(*gradSHBox);
 
     shadhighBox->pack_start(*detailSH);
-    if(complexsoft < 2) shadhighBox->pack_start(*gamFrame);
+
+    if (complexsoft < 2) {
+        shadhighBox->pack_start(*gamFrame);
+    }
+
     shadhighBox->pack_start(*highlights);
     shadhighBox->pack_start(*h_tonalwidth);
     shadhighBox->pack_start(*shadows);
     shadhighBox->pack_start(*s_tonalwidth);
     shadhighBox->pack_start(*sh_radius);
     shadhighBox->pack_start(*sensihs);
-    if(complexsoft < 2) shadhighBox->pack_start(*blurSHde);
+
+    if (complexsoft < 2) {
+        shadhighBox->pack_start(*blurSHde);
+    }
+
     shadhighBox->pack_start(*gradSHFrame);
     shadhighBox->pack_start(*inverssh);
 
@@ -1552,12 +1670,27 @@ pe(nullptr)
     maskSHBox->pack_start(*maskSHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskSHBox->pack_start(*blendmaskSH, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*radmaskSH, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 1) maskSHBox->pack_start(*lapmaskSH, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 1) {
+        maskSHBox->pack_start(*lapmaskSH, Gtk::PACK_SHRINK, 0);
+    }
+
     maskSHBox->pack_start(*chromaskSH, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskSHBox->pack_start(*gammaskSH, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskSHBox->pack_start(*slomaskSH, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 2) {
+        maskSHBox->pack_start(*gammaskSH, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        maskSHBox->pack_start(*slomaskSH, Gtk::PACK_SHRINK, 0);
+    }
+
     maskSHBox->pack_start(*mask2SHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 1) maskSHBox->pack_start(*fatSHFrame);
+
+    if (complexsoft < 1) {
+        maskSHBox->pack_start(*fatSHFrame);
+    }
+
     expmasksh->add(*maskSHBox, false);
     shadhighBox->pack_start(*expmasksh);
 
@@ -1646,8 +1779,15 @@ pe(nullptr)
     gradvibFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradvibBox = Gtk::manage(new ToolParamBlock());
     gradvibBox->pack_start(*strvib);
-    if(complexsoft < 2) gradvibBox->pack_start(*strvibab);
-    if(complexsoft < 2) gradvibBox->pack_start(*strvibh);
+
+    if (complexsoft < 2) {
+        gradvibBox->pack_start(*strvibab);
+    }
+
+    if (complexsoft < 2) {
+        gradvibBox->pack_start(*strvibh);
+    }
+
     gradvibBox->pack_start(*angvib);
     gradvibFrame->add(*gradvibBox);
 
@@ -1659,7 +1799,11 @@ pe(nullptr)
     vibranceBox->pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
     vibranceBox->pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
     vibranceBox->pack_start(*sensiv, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) vibranceBox->pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+
+    if (complexsoft < 2) {
+        vibranceBox->pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+    }
+
     vibranceBox->pack_start(*gradvibFrame, Gtk::PACK_SHRINK, 0);
 
     enavibMaskConn = enavibMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enavibMaskChanged));
@@ -1730,10 +1874,21 @@ pe(nullptr)
     maskvibBox->pack_start(*maskvibCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskvibBox->pack_start(*blendmaskvib, Gtk::PACK_SHRINK, 0);
     maskvibBox->pack_start(*radmaskvib, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 1) maskvibBox->pack_start(*lapmaskvib, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 1) {
+        maskvibBox->pack_start(*lapmaskvib, Gtk::PACK_SHRINK, 0);
+    }
+
     maskvibBox->pack_start(*chromaskvib, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskvibBox->pack_start(*gammaskvib, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskvibBox->pack_start(*slomaskvib, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 2) {
+        maskvibBox->pack_start(*gammaskvib, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        maskvibBox->pack_start(*slomaskvib, Gtk::PACK_SHRINK, 0);
+    }
+
     maskvibBox->pack_start(*mask2vibCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
     expmaskvib->add(*maskvibBox, false);
@@ -1783,7 +1938,10 @@ pe(nullptr)
 
     ToolParamBlock* const softBox = Gtk::manage(new ToolParamBlock());
 
-    if(complexsoft < 2) softBox->pack_start(*softMethod);
+    if (complexsoft < 2) {
+        softBox->pack_start(*softMethod);
+    }
+
 //   softBox->pack_start(*showmasksoftMethod, Gtk::PACK_SHRINK, 4);
     softBox->pack_start(*ctboxsoftmethod);
     softBox->pack_start(*streng);
@@ -1960,7 +2118,9 @@ pe(nullptr)
     exptonemap->add(*tmBox, false);
     exptonemap->setLevel(2);
 
-    if(complexsoft < 2) panel->pack_start(*exptonemap, false, false);
+    if (complexsoft < 2) {
+        panel->pack_start(*exptonemap, false, false);
+    }
 
     // Retinex
     Gtk::HBox* const retiTitleHBox = Gtk::manage(new Gtk::HBox());
@@ -2194,7 +2354,10 @@ pe(nullptr)
     retiFrame->add(*deharetiBox);
 
     auxBox->add(*dehaFrame);
-    if(complexsoft < 1) auxBox->add(*retiFrame);
+
+    if (complexsoft < 1) {
+        auxBox->add(*retiFrame);
+    }
 
     ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
     scopeBox->pack_start(*sensih);
@@ -2347,7 +2510,11 @@ pe(nullptr)
     clariFrame->add(*clariBox);
 
     ToolParamBlock* const contrastBox = Gtk::manage(new ToolParamBlock());
-    if(complexsoft < 2)contrastBox->pack_start(*localcontMethod);
+
+    if (complexsoft < 2) {
+        contrastBox->pack_start(*localcontMethod);
+    }
+
     contrastBox->pack_start(*lcradius);
     contrastBox->pack_start(*lcamount);
     contrastBox->pack_start(*lcdarkness);
@@ -2355,11 +2522,25 @@ pe(nullptr)
     contrastBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4);
 //    contrastBox->pack_start(*levelwav);
     contrastBox->pack_start(*csThreshold);
-    if(complexsoft < 2) contrastBox->pack_start(*residcont);
-    if(complexsoft < 2) contrastBox->pack_start(*residchro);
-    if(complexsoft < 2) contrastBox->pack_start(*clariFrame);
+
+    if (complexsoft < 2) {
+        contrastBox->pack_start(*residcont);
+    }
+
+    if (complexsoft < 2) {
+        contrastBox->pack_start(*residchro);
+    }
+
+    if (complexsoft < 2) {
+        contrastBox->pack_start(*clariFrame);
+    }
+
     contrastBox->pack_start(*sensilc);
-    if(complexsoft < 2) contrastBox->pack_start(*fftwlc);
+
+    if (complexsoft < 2) {
+        contrastBox->pack_start(*fftwlc);
+    }
+
     expcontrast->add(*contrastBox, false);
     expcontrast->setLevel(2);
 
@@ -2507,10 +2688,21 @@ pe(nullptr)
     maskcbBox->pack_start(*maskcbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcbBox->pack_start(*blendmaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*radmaskcb, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 1) maskcbBox->pack_start(*lapmaskcb, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 1) {
+        maskcbBox->pack_start(*lapmaskcb, Gtk::PACK_SHRINK, 0);
+    }
+
     maskcbBox->pack_start(*chromaskcb, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskcbBox->pack_start(*gammaskcb, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskcbBox->pack_start(*slomaskcb, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 2) {
+        maskcbBox->pack_start(*gammaskcb, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        maskcbBox->pack_start(*slomaskcb, Gtk::PACK_SHRINK, 0);
+    }
+
     maskcbBox->pack_start(*mask2cbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskcb->add(*maskcbBox, false);
 
@@ -2715,20 +2907,51 @@ pe(nullptr)
     ToolParamBlock* const maskblBox = Gtk::manage(new ToolParamBlock());
     maskblBox->pack_start(*showmaskblMethod, Gtk::PACK_SHRINK, 4);
     maskblBox->pack_start(*enablMask, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 2) maskblBox->pack_start(*strumaskbl, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) maskblBox->pack_start(*toolbl, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 2) {
+        maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+    }
+
+    if (complexsoft < 2) {
+        maskblBox->pack_start(*strumaskbl, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        maskblBox->pack_start(*toolbl, Gtk::PACK_SHRINK, 0);
+    }
+
     maskblBox->pack_start(*separatorstrubl, Gtk::PACK_SHRINK, 2);
     maskblBox->pack_start(*blendmaskbl, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*radmaskbl, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 1) toolblBox->pack_start(*lapmaskbl, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 1) {
+        toolblBox->pack_start(*lapmaskbl, Gtk::PACK_SHRINK, 0);
+    }
+
     toolblBox->pack_start(*chromaskbl, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) toolblBox->pack_start(*gammaskbl, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) toolblBox->pack_start(*slomaskbl, Gtk::PACK_SHRINK, 0);
-    if(complexsoft < 2) toolblBox->pack_start(*shadmaskbl, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 2) {
+        toolblBox->pack_start(*gammaskbl, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        toolblBox->pack_start(*slomaskbl, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        toolblBox->pack_start(*shadmaskbl, Gtk::PACK_SHRINK, 0);
+    }
+
     toolblBox->pack_start(*mask2blCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 1) toolblBox->pack_start(*mask2blCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    if(complexsoft < 1) toolblBox->pack_start(*csThresholdblur, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 1) {
+        toolblBox->pack_start(*mask2blCurveEditorGwav, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+    }
+
+    if (complexsoft < 1) {
+        toolblBox->pack_start(*csThresholdblur, Gtk::PACK_SHRINK, 0);
+    }
+
     toolblFrame->add(*toolblBox);
     maskblBox->pack_start(*toolblFrame);
 
@@ -2747,8 +2970,15 @@ pe(nullptr)
 
 
     ToolParamBlock* const blurrBox = Gtk::manage(new ToolParamBlock());
-    if(complexsoft < 2) blurrBox->pack_start(*blMethod);
-    if(complexsoft < 2)blurrBox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 2) {
+        blurrBox->pack_start(*blMethod);
+    }
+
+    if (complexsoft < 2) {
+        blurrBox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
+    }
+
     blurrBox->pack_start(*radius);
     blurrBox->pack_start(*strength);
     blurrBox->pack_start(*grainFrame);
@@ -2844,7 +3074,9 @@ pe(nullptr)
     expdenoi->add(*denoisBox, false);
     expdenoi->setLevel(2);
 
-    if(complexsoft < 2) panel->pack_start(*expdenoi, false, false);
+    if (complexsoft < 2) {
+        panel->pack_start(*expdenoi, false, false);
+    }
 
     pack_start(*panel);
 
@@ -5724,7 +5956,7 @@ void Locallab::merMethodChanged()
         blurcolde->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(true);
-    //    strcolh->set_sensitive(false);
+        //    strcolh->set_sensitive(false);
         special->set_sensitive(true);
         invers->set_sensitive(true);
         gridmerFrame->hide();
@@ -5737,7 +5969,7 @@ void Locallab::merMethodChanged()
         rgbCurveEditorG->set_sensitive(true);
         special->set_sensitive(true);
         invers->set_sensitive(true);
-   //     strcolh->set_sensitive(false);
+        //     strcolh->set_sensitive(false);
         conthrcol->hide();
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
@@ -9892,8 +10124,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         } else if (pp->locallab.spots.at(index).expMethod == "pde") {
             expMethod->set_active(1);
         }
-        
-        if(complexsoft == 2) {
+
+        if (complexsoft == 2) {
             expMethod->set_active(0);
         }
 
@@ -9954,9 +10186,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             shMethod->set_active(1);
         }
 
-        if(complexsoft == 2) {
+        if (complexsoft == 2) {
             shMethod->set_active(1);
         }
+
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->setValue(pp->locallab.spots.at(index).multsh[i]);
         }
@@ -10004,9 +10237,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             softMethod->set_active(1);
         }
 
-        if(complexsoft == 2) {
+        if (complexsoft == 2) {
             softMethod->set_active(0);
         }
+
         // Blur & Noise
         expblur->setEnabled(pp->locallab.spots.at(index).expblur);
         radius->setValue(pp->locallab.spots.at(index).radius);
@@ -10027,7 +10261,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             blMethod->set_active(2);
         }
 
-        if(complexsoft == 2) {
+        if (complexsoft == 2) {
             blMethod->set_active(0);
         }
 
@@ -10103,12 +10337,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         } else {
             retinexMethod->set_active(2);
         }
+
         str->setValue(pp->locallab.spots.at(index).str);
 
-        if(complexsoft == 2) {
+        if (complexsoft == 2) {
             str->setValue(0);
         }
-        
+
         chrrt->setValue(pp->locallab.spots.at(index).chrrt);
         neigh->setValue(pp->locallab.spots.at(index).neigh);
         vart->setValue(pp->locallab.spots.at(index).vart);
@@ -10175,9 +10410,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             localcontMethod->set_active(1);
         }
 
-        if(complexsoft == 2){
+        if (complexsoft == 2) {
             localcontMethod->set_active(1);
         }
+
         wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
 
         // Contrast by detail levels
@@ -10705,7 +10941,7 @@ void Locallab::updateSpecificGUIState()
         mask7->hide();
         conthrcol->hide();
         structcol->set_sensitive(true);
-      //  strcolh->set_sensitive(false);
+        //  strcolh->set_sensitive(false);
         sensi->set_sensitive(true);
         blurcolde->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
@@ -10716,7 +10952,7 @@ void Locallab::updateSpecificGUIState()
     } else if (merMethod->get_active_row_number() == 1) {
         mask7->hide();
         structcol->set_sensitive(true);
-     //   strcolh->set_sensitive(false);
+        //   strcolh->set_sensitive(false);
         sensi->set_sensitive(true);
         blurcolde->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);

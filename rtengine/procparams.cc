@@ -2440,7 +2440,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitweak(1.0),
     transitgrad(0.0),
     avoid(false),
-    recurs(true),
+    recurs(false),
     laplac(false),
     deltae(true),
     shortc(false),

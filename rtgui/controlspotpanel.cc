@@ -231,7 +231,10 @@ ControlSpotPanel::ControlSpotPanel():
                            sigc::mem_fun(
                                *this, &ControlSpotPanel::shapeMethodChanged));
     ctboxshapemethod->pack_start(*shapeMethod_);
-    if(complexsoft < 2) pack_start(*ctboxshapemethod);
+
+    if (complexsoft < 2) {
+        pack_start(*ctboxshapemethod);
+    }
 
     pack_start(*locX_);
     locX_->setAdjusterListener(this);
@@ -269,7 +272,10 @@ ControlSpotPanel::ControlSpotPanel():
                              sigc::mem_fun(
                                  *this, &ControlSpotPanel::qualityMethodChanged));
     ctboxqualitymethod->pack_start(*qualityMethod_);
-    if(complexsoft < 2) pack_start(*ctboxqualitymethod);
+
+    if (complexsoft < 2) {
+        pack_start(*ctboxqualitymethod);
+    }
 
 
     Gtk::HBox* const ctboxcomplexmethod = Gtk::manage(new Gtk::HBox());
@@ -335,8 +341,15 @@ ControlSpotPanel::ControlSpotPanel():
     lumask_->setAdjusterListener(this);
 
     transitBox->pack_start(*transit_);
-    if(complexsoft < 2) transitBox->pack_start(*transitweak_);
-    if(complexsoft < 2)transitBox->pack_start(*transitgrad_);
+
+    if (complexsoft < 2) {
+        transitBox->pack_start(*transitweak_);
+    }
+
+    if (complexsoft < 2) {
+        transitBox->pack_start(*transitgrad_);
+    }
+
     transitBox->pack_start(*feather_);
     transitFrame->add(*transitBox);
     pack_start(*transitFrame);
@@ -351,10 +364,21 @@ ControlSpotPanel::ControlSpotPanel():
     ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
     thresh_->setAdjusterListener(this);
     struc_->setAdjusterListener(this);
-    if(complexsoft < 2) artifBox->pack_start(*struc_);
-    if(complexsoft < 2) artifBox->pack_start(*thresh_);
+
+    if (complexsoft < 2) {
+        artifBox->pack_start(*struc_);
+    }
+
+    if (complexsoft < 2) {
+        artifBox->pack_start(*thresh_);
+    }
+
     artifBox->pack_start(*iter_);
-    if(complexsoft < 2) artifBox->pack_start(*balan_);
+
+    if (complexsoft < 2) {
+        artifBox->pack_start(*balan_);
+    }
+
     iter_->setAdjusterListener(this);
     balan_->setAdjusterListener(this);
     artifFrame->add(*artifBox);
@@ -395,7 +419,11 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     ToolParamBlock* const maskBox = Gtk::manage(new ToolParamBlock());
-    if(complexsoft < 2) maskBox->pack_start(*laplac_);
+
+    if (complexsoft < 2) {
+        maskBox->pack_start(*laplac_);
+    }
+
     laplacConn_  = laplac_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::laplacChanged));
     deltaeConn_  = deltae_->signal_toggled().connect(
@@ -955,13 +983,13 @@ void ControlSpotPanel::complexMethodChanged()
     row[spots_.complexMethod] = complexMethod_->get_active_row_number();
 
     if (multiImage && complexMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
-       // excluFrame->show();
+        // excluFrame->show();
     } else if (complexMethod_->get_active_row_number() == 0) { //sim
-       // excluFrame->hide();
-    } else if (complexMethod_->get_active_row_number() == 1){ // mod
-       // excluFrame->show();
-    } else if (complexMethod_->get_active_row_number() == 2){ // all
-      //  excluFrame->show();
+        // excluFrame->hide();
+    } else if (complexMethod_->get_active_row_number() == 1) { // mod
+        // excluFrame->show();
+    } else if (complexMethod_->get_active_row_number() == 2) { // all
+        //  excluFrame->show();
     }
 
     // Raise event
