@@ -53,6 +53,8 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
+#include <exception>
 #include <iostream>
 
 #include "dcraw.h"
@@ -624,26 +626,10 @@ fin:
 
 // -----------------------------------------------------------------------------
 
-#ifdef _abs
-#undef _abs
-#undef _min
-#undef _constrain
-#endif
-#define _abs(x) ((x) < 0 ? -(x) : (x))
-#define _min(a, b) ((a) < (b) ? (a) : (b))
-#define _constrain(x, l, u) ((x) < (l) ? (l) : ((x) > (u) ? (u) : (x)))
-
-#if defined (__clang__) || defined (__GNUG__)
-#define libraw_inline inline __attribute__((always_inline))
-#elif defined (_MSC_VER) && _MSC_VER > 1400
-#define libraw_inline __forceinline
-#else
-#define libraw_inline inline
-#endif
-
 namespace
 {
-static unsigned int sgetn(int n, unsigned char* s)
+
+unsigned int sgetn(int n, unsigned char* s)
 {
     unsigned int result = 0;
 
@@ -655,12 +641,11 @@ static unsigned int sgetn(int n, unsigned char* s)
 }
 
 // this should be divisible by 4
-#define CRX_BUF_SIZE 0x10000
+constexpr std::uint64_t CRX_BUF_SIZE = 0x10000;
+
 #if !defined (_WIN32) || (defined (__GNUC__) && !defined (__INTRINSIC_SPECIAL__BitScanReverse))
 /* __INTRINSIC_SPECIAL__BitScanReverse found in MinGW32-W64 v7.30 headers, may be there is a better solution? */
-using DWORD = std::uint32_t;
-using byte = std::uint8_t;
-libraw_inline void _BitScanReverse(DWORD* Index, unsigned long Mask)
+inline void _BitScanReverse(std::uint32_t* Index, unsigned long Mask)
 {
     *Index = sizeof(unsigned long) * 8 - 1 - __builtin_clzl(Mask);
 }
@@ -673,8 +658,6 @@ std::uint32_t _byteswap_ulong(std::uint32_t x)
 #endif
 }
 #endif
-
-#define LIBRAW_EXCEPTION_IO_EOF std::exception()
 
 struct LibRaw_abstract_datastream {
     IMFILE* ifp;
@@ -751,7 +734,7 @@ struct CrxSubband {
 };
 
 struct CrxPlaneComp {
-    byte* compBuf;
+    std::uint8_t* compBuf;
     CrxSubband* subBands;
     CrxWaveletTransform* waveletTransform;
     std::int8_t compNumber;
@@ -798,7 +781,7 @@ enum TileFlags {
     E_HAS_TILES_ON_THE_TOP = 8
 };
 
-std::int32_t exCoefNumTbl[0x120] = {
+const std::int32_t exCoefNumTbl[0x120] = {
     // level 1
     1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
     1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
@@ -818,18 +801,20 @@ std::int32_t exCoefNumTbl[0x120] = {
     8, 8, 2, 1, 4, 3, 1, 1, 1, 1, 1, 1, 8, 7, 1, 1, 3, 3, 1, 1, 1, 1
 };
 
-std::uint32_t JS[32] = {1,     1,     1,     1,     2,      2,      2,      2,
-                   4,     4,     4,     4,     8,      8,      8,      8,
-                   0x10,  0x10,  0x20,  0x20,  0x40,   0x40,   0x80,   0x80,
-                   0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000, 0x8000
-                  };
+const std::uint32_t JS[32] = {
+    0x0001, 0x0001, 0x0001, 0x0001, 0x0002, 0x0002, 0x0002, 0x0002,
+    0x0004, 0x0004, 0x0004, 0x0004, 0x0008, 0x0008, 0x0008, 0x0008,
+    0x0010, 0x0010, 0x0020, 0x0020, 0x0040, 0x0040, 0x0080, 0x0080,
+    0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000, 0x8000
+};
 
-std::uint32_t J[32] = {0, 0, 0, 0, 1,    1,    1,    1,    2,    2,   2,
-                  2, 3, 3, 3, 3,    4,    4,    5,    5,    6,   6,
-                  7, 7, 8, 9, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-                 };
+const std::uint32_t J[32] = {
+    0x0, 0x0, 0x0, 0x0, 0x1, 0x1, 0x1, 0x1, 0x2, 0x2, 0x2,
+    0x2, 0x3, 0x3, 0x3, 0x3, 0x4, 0x4, 0x5, 0x5, 0x6, 0x6,
+    0x7, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF
+};
 
-static inline void crxFillBuffer(CrxBitstream* bitStrm)
+inline void crxFillBuffer(CrxBitstream* bitStrm)
 {
     if (bitStrm->curPos >= bitStrm->curBufSize && bitStrm->mdatSize) {
         bitStrm->curPos = 0;
@@ -842,14 +827,13 @@ static inline void crxFillBuffer(CrxBitstream* bitStrm)
             bitStrm->input->lock();
 #endif
             bitStrm->input->seek(bitStrm->curBufOffset, SEEK_SET);
-            bitStrm->curBufSize = bitStrm->input->read(
-                                      bitStrm->mdatBuf, 1, _min(bitStrm->mdatSize, CRX_BUF_SIZE));
+            bitStrm->curBufSize = bitStrm->input->read(bitStrm->mdatBuf, 1, std::min(bitStrm->mdatSize, CRX_BUF_SIZE));
 #ifndef _OPENMP
             bitStrm->input->unlock();
 #endif
 
             if (bitStrm->curBufSize < 1) {  // nothing read
-                throw LIBRAW_EXCEPTION_IO_EOF;
+                throw std::exception();
             }
 
             bitStrm->mdatSize -= bitStrm->curBufSize;
@@ -857,7 +841,7 @@ static inline void crxFillBuffer(CrxBitstream* bitStrm)
     }
 }
 
-libraw_inline int crxBitstreamGetZeros(CrxBitstream* bitStrm)
+inline int crxBitstreamGetZeros(CrxBitstream* bitStrm)
 {
 //  std::uint32_t bitData = bitStrm->bitData;
     std::uint32_t nonZeroBit = 0;
@@ -865,7 +849,7 @@ libraw_inline int crxBitstreamGetZeros(CrxBitstream* bitStrm)
     std::int32_t result = 0;
 
     if (bitStrm->bitData) {
-        _BitScanReverse((DWORD*)&nonZeroBit, (DWORD)bitStrm->bitData);
+        _BitScanReverse((std::uint32_t*)&nonZeroBit, (std::uint32_t)bitStrm->bitData);
         result = 31 - nonZeroBit;
         bitStrm->bitData <<= 32 - nonZeroBit;
         bitStrm->bitsLeft -= 32 - nonZeroBit;
@@ -880,7 +864,7 @@ libraw_inline int crxBitstreamGetZeros(CrxBitstream* bitStrm)
                 crxFillBuffer(bitStrm);
 
                 if (nextData) {
-                    _BitScanReverse((DWORD*)&nonZeroBit, (DWORD)nextData);
+                    _BitScanReverse((std::uint32_t*)&nonZeroBit, (std::uint32_t)nextData);
                     result = bitsLeft + 31 - nonZeroBit;
                     bitStrm->bitData = nextData << (32 - nonZeroBit);
                     bitStrm->bitsLeft = nonZeroBit;
@@ -904,7 +888,7 @@ libraw_inline int crxBitstreamGetZeros(CrxBitstream* bitStrm)
             bitsLeft += 8;
         }
 
-        _BitScanReverse((DWORD*)&nonZeroBit, (DWORD)nextData);
+        _BitScanReverse((std::uint32_t*)&nonZeroBit, (std::uint32_t)nextData);
         result = (std::uint32_t)(bitsLeft + 7 - nonZeroBit);
         bitStrm->bitData = nextData << (32 - nonZeroBit);
         bitStrm->bitsLeft = nonZeroBit;
@@ -913,7 +897,7 @@ libraw_inline int crxBitstreamGetZeros(CrxBitstream* bitStrm)
     return result;
 }
 
-libraw_inline std::uint32_t crxBitstreamGetBits(CrxBitstream* bitStrm, int bits)
+inline std::uint32_t crxBitstreamGetBits(CrxBitstream* bitStrm, int bits)
 {
     int bitsLeft = bitStrm->bitsLeft;
     std::uint32_t bitData = bitStrm->bitData;
@@ -953,7 +937,7 @@ libraw_inline std::uint32_t crxBitstreamGetBits(CrxBitstream* bitStrm, int bits)
     return result;
 }
 
-libraw_inline int crxPredictKParameter(std::int32_t prevK, std::int32_t bitCode,
+inline int crxPredictKParameter(std::int32_t prevK, std::int32_t bitCode,
                                        std::int32_t maxVal = 0)
 {
     std::int32_t newKParam = prevK - (bitCode < (1 << prevK >> 1)) +
@@ -962,7 +946,7 @@ libraw_inline int crxPredictKParameter(std::int32_t prevK, std::int32_t bitCode,
     return !maxVal || newKParam < maxVal ? newKParam : maxVal;
 }
 
-libraw_inline void crxDecodeSymbolL1(CrxBandParam* param,
+inline void crxDecodeSymbolL1(CrxBandParam* param,
                                      std::int32_t doMedianPrediction,
                                      std::int32_t notEOL = 0)
 {
@@ -997,7 +981,7 @@ libraw_inline void crxDecodeSymbolL1(CrxBandParam* param,
     // for not end of the line - use one symbol ahead to estimate next K
     if (notEOL) {
         std::int32_t nextDelta = (param->lineBuf0[2] - param->lineBuf0[1]) << 1;
-        bitCode = (bitCode + _abs(nextDelta)) >> 1;
+        bitCode = (bitCode + std::abs(nextDelta)) >> 1;
         ++param->lineBuf0;
     }
 
@@ -1081,7 +1065,7 @@ int crxDecodeLine(CrxBandParam* param)
     return 0;
 }
 
-libraw_inline void crxDecodeSymbolL1Rounded(CrxBandParam* param,
+inline void crxDecodeSymbolL1Rounded(CrxBandParam* param,
         std::int32_t doSym = 1,
         std::int32_t doCode = 1)
 {
@@ -1123,7 +1107,7 @@ libraw_inline void crxDecodeSymbolL1Rounded(CrxBandParam* param,
         }
 
         param->kParam = crxPredictKParameter(param->kParam,
-                                             (bitCode + 2 * _abs(code)) >> 1, 15);
+                                             (bitCode + 2 * std::abs(code)) >> 1, 15);
     } else   {
         param->kParam = crxPredictKParameter(param->kParam, bitCode, 15);
     }
@@ -1140,11 +1124,11 @@ int crxDecodeLineRounded(CrxBandParam* param)
     std::int32_t length = param->subbandWidth;
 
     for (; length > 1; --length) {
-        if (_abs(param->lineBuf0[2] - param->lineBuf0[1]) > param->roundedBitsMask) {
+        if (std::abs(param->lineBuf0[2] - param->lineBuf0[1]) > param->roundedBitsMask) {
             crxDecodeSymbolL1Rounded(param);
             ++param->lineBuf0;
             valueReached = 1;
-        } else if (valueReached || _abs(param->lineBuf0[0] - param->lineBuf1[0]) >
+        } else if (valueReached || std::abs(param->lineBuf0[0] - param->lineBuf1[0]) >
                    param->roundedBitsMask) {
             crxDecodeSymbolL1Rounded(param);
             ++param->lineBuf0;
@@ -1201,7 +1185,7 @@ int crxDecodeLineRounded(CrxBandParam* param)
             if (length > 1) {
                 crxDecodeSymbolL1Rounded(param, 0);
                 ++param->lineBuf0;
-                valueReached = _abs(param->lineBuf0[1] - param->lineBuf0[0]) >
+                valueReached = std::abs(param->lineBuf0[1] - param->lineBuf0[0]) >
                                param->roundedBitsMask;
             } else if (length == 1)   {
                 crxDecodeSymbolL1Rounded(param, 0, 0);
@@ -1458,7 +1442,7 @@ int crxDecodeTopLineRounded(CrxBandParam* param)
 
     // read the line from bitstream
     for (; length > 1; --length) {
-        if (_abs(param->lineBuf1[0]) > param->roundedBitsMask) {
+        if (std::abs(param->lineBuf1[0]) > param->roundedBitsMask) {
             param->lineBuf1[1] = param->lineBuf1[0];
         } else {
             int nSyms = 0;
@@ -2363,7 +2347,7 @@ void crxConvertPlaneLine(CrxImage* img, int imageRow, int imageCol = 0,
 
             for (int i = 0; i < lineLength; i++) {
                 img->outBufs[plane][rawOffset + 2 * i] =
-                    _constrain(lineData[i], minVal, maxVal);
+                    rtengine::LIM(lineData[i], minVal, maxVal);
             }
         } else if (img->encType == 3)   {
             // copy to intermediate planeBuf
@@ -2379,7 +2363,7 @@ void crxConvertPlaneLine(CrxImage* img, int imageRow, int imageCol = 0,
 
             for (int i = 0; i < lineLength; i++) {
                 img->outBufs[plane][rawOffset + 2 * i] =
-                    _constrain(median + lineData[i], 0, maxVal);
+                    rtengine::LIM(median + lineData[i], 0, maxVal);
             }
         } else if (img->nPlanes == 1)   {
             std::int32_t maxVal = (1 << img->nBits) - 1;
@@ -2388,7 +2372,7 @@ void crxConvertPlaneLine(CrxImage* img, int imageRow, int imageCol = 0,
 
             for (int i = 0; i < lineLength; i++) {
                 img->outBufs[0][rawOffset + i] =
-                    _constrain(median + lineData[i], 0, maxVal);
+                    rtengine::LIM(median + lineData[i], 0, maxVal);
             }
         }
     } else if (img->encType == 3 && img->planeBuf)   {
@@ -2409,23 +2393,23 @@ void crxConvertPlaneLine(CrxImage* img, int imageRow, int imageCol = 0,
             std::int32_t val = 0;
 
             if (gr < 0) {
-                gr = -(((_abs(gr) + 512) >> 9) & ~1);
+                gr = -(((std::abs(gr) + 512) >> 9) & ~1);
             } else {
-                gr = ((_abs(gr) + 512) >> 9) & ~1;
+                gr = ((std::abs(gr) + 512) >> 9) & ~1;
             }
 
             // Essentially R = round(median + P0 + 1.474*P3)
             val = (median + (plane0[i] << 10) + 1510 * plane3[i] + 512) >> 10;
-            img->outBufs[0][rawLineOffset + 2 * i] = _constrain(val, 0, maxVal);
+            img->outBufs[0][rawLineOffset + 2 * i] = rtengine::LIM(val, 0, maxVal);
             // Essentially G1 = round(median + P0 + P2 - 0.164*P1 - 0.571*P3)
             val = (plane2[i] + gr + 1) >> 1;
-            img->outBufs[1][rawLineOffset + 2 * i] = _constrain(val, 0, maxVal);
+            img->outBufs[1][rawLineOffset + 2 * i] = rtengine::LIM(val, 0, maxVal);
             // Essentially G1 = round(median + P0 - P2 - 0.164*P1 - 0.571*P3)
             val = (gr - plane2[i] + 1) >> 1;
-            img->outBufs[2][rawLineOffset + 2 * i] = _constrain(val, 0, maxVal);
+            img->outBufs[2][rawLineOffset + 2 * i] = rtengine::LIM(val, 0, maxVal);
             // Essentially B = round(median + P0 + 1.881*P1)
             val = (median + (plane0[i] << 10) + 1927 * plane1[i] + 512) >> 10;
-            img->outBufs[3][rawLineOffset + 2 * i] = _constrain(val, 0, maxVal);
+            img->outBufs[3][rawLineOffset + 2 * i] = rtengine::LIM(val, 0, maxVal);
         }
     }
 }
@@ -2682,9 +2666,9 @@ int crxReadSubbandHeaders(CrxImage* img, CrxTile* tile,
         // Coefficient structure is a bit unclear and convoluted:
         //   3 levels max - 8 groups (for tile width rounded to 8 bytes)
         //                  of 3 band per level 4 sets of coefficients for each
-        std::int32_t* rowExCoef =
+        const std::int32_t* rowExCoef =
             exCoefNumTbl + 0x60 * (img->levels - 1) + 12 * (tile->width & 7);
-        std::int32_t* colExCoef =
+        const std::int32_t* colExCoef =
             exCoefNumTbl + 0x60 * (img->levels - 1) + 12 * (tile->height & 7);
 
         for (int level = 0; level < img->levels; ++level) {
@@ -3268,8 +3252,3 @@ int DCraw::crxParseImageHeader(uchar* cmp1TagData, unsigned int nTrack)
 
     return 0;
 }
-
-#undef _abs
-#undef _min
-#undef _constrain
-#undef libraw_inline
