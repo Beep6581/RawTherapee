@@ -1599,9 +1599,9 @@ BENCHFUN
                                         Color::Lab2RGBLimit(labdn->L[i1], labdn->a[i1], labdn->b[i1], labdn->L[i1], labdn->a[i1], labdn->b[i1], wip, 9000000.f, 1.f + qhighFactor * realred, 1.f + qhighFactor * realblue, width);
                                         for (int j = tileleft; j < tileright; ++j) {
                                             int j1 = j - tileleft;
-                                            float r_ = labdn->L[i1][j1];
-                                            float g_ = labdn->a[i1][j1];
-                                            float b_ = labdn->b[i1][j1];
+                                            float r_ = std::max(0.f, labdn->L[i1][j1]);
+                                            float g_ = std::max(0.f, labdn->a[i1][j1]);
+                                            float b_ = std::max(0.f, labdn->b[i1][j1]);
                                             //inverse gamma standard (slider)
                                             r_ = r_ < 32768.f ? igamcurve[r_] : (Color::gammanf(r_ / 32768.f, igam) * 65535.f);
                                             g_ = g_ < 32768.f ? igamcurve[g_] : (Color::gammanf(g_ / 32768.f, igam) * 65535.f);

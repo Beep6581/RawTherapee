@@ -51,6 +51,7 @@
 #include "procparams.h"
 #include "rawimagesource.h"
 #include "rtengine.h"
+#include "shmap.h"
 #include "StopWatch.h"
 
 namespace

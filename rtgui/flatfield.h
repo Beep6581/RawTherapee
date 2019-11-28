@@ -79,7 +79,7 @@ public:
     void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
 
     void adjusterChanged            (Adjuster* a, double newval) override;
-    void adjusterAutoToggled        (Adjuster* a, bool newval) override;
+    void adjusterAutoToggled        (Adjuster* a) override;
     void flatFieldFileChanged       ();
     void flatFieldFile_Reset        ();
     void flatFieldAutoSelectChanged ();

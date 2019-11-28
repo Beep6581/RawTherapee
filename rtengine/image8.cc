@@ -233,10 +233,10 @@ void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, P
                         lineB[dst_x] = CLIP(bm * btot);
                     } else {
                         // computing a special factor for this incomplete sub-region
-                        float area = src_sub_width * src_sub_height;
-                        lineR[dst_x] = CLIP(rm2 * rtot / area);
-                        lineG[dst_x] = CLIP(gm2 * gtot / area);
-                        lineB[dst_x] = CLIP(bm2 * btot / area);
+                        float larea = src_sub_width * src_sub_height;
+                        lineR[dst_x] = CLIP(rm2 * rtot / larea);
+                        lineG[dst_x] = CLIP(gm2 * gtot / larea);
+                        lineB[dst_x] = CLIP(bm2 * btot / larea);
                     }
                 }
             }

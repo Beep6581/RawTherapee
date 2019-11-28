@@ -85,7 +85,7 @@ public:
     bool handleEvents (GdkEvent* event) override;
     void setActiveParam (int ac);
     void reset (const std::vector<double> &resetCurve, double identityValue = 0.5) override;
-    void updateBackgroundHistogram (LUTu & hist);
+    void updateBackgroundHistogram (const LUTu & hist);
 
     void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey) override;
     bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) override;

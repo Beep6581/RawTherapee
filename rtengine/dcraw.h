@@ -68,6 +68,7 @@ public:
         gamm[0]=0.45;gamm[1]=4.5;gamm[2]=gamm[3]=gamm[4]=gamm[5]=0;
         user_mul[0]=user_mul[1]=user_mul[2]=user_mul[3]=0;
         greybox[0]=greybox[1]=0; greybox[2]=greybox[3]= UINT_MAX;
+        RT_canon_CR3_data.CR3_CTMDtag = 0;
     }
 
 protected:

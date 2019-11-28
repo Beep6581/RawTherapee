@@ -404,7 +404,7 @@ void Ciecam02::calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, v
 #endif
 
 void Ciecam02::initcam1float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
-                              float &cz, float &aw, float &wh, float &pfl, float &fl, float &c)
+                              float &cz, float &aw, float &wh, float &pfl, float &fl, float c)
 {
     n = yb / yw;
 

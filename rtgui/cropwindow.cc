@@ -33,6 +33,7 @@
 #include "editcallbacks.h"
 #include "editbuffer.h"
 #include "editwidgets.h"
+#include "pointermotionlistener.h"
 #include "rtsurface.h"
 
 #include "../rtengine/dcrop.h"
@@ -259,7 +260,7 @@ void CropWindow::getCropAnchorPosition (int& x, int& y)
     cropHandler.getAnchorPosition(x, y);
 }
 
-void CropWindow::setCropAnchorPosition (int& x, int& y)
+void CropWindow::setCropAnchorPosition (int x, int y)
 {
     cropHandler.setAnchorPosition(x, y);
 }

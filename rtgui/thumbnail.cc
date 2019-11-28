@@ -590,10 +590,8 @@ void Thumbnail::decreaseRef ()
     cachemgr->closeThumbnail (this);
 }
 
-void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::ProcParams *pparams)
+int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcParams *pparams) const
 {
-    MyMutex::MyLock lock(mutex);
-
     int tw_ = tw;
     int th_ = th;
     float imgRatio_ = imgRatio;
@@ -613,20 +611,17 @@ void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::Pr
 
         if (thisCoarse != ppCoarse) {
             // different orientation -> swapping width & height
-            int tmp = th_;
-            th_ = tw_;
-            tw_ = tmp;
-
+            std::swap(th_, tw_);
             if (imgRatio_ >= 0.0001f) {
                 imgRatio_ = 1.f / imgRatio_;
             }
         }
     }
 
-    if (imgRatio_ > 0.) {
-        w = (int)(imgRatio_ * (float)h);
+    if (imgRatio_ > 0.f) {
+        return imgRatio_ * h;
     } else {
-        w = tw_ * h / th_;
+        return tw_ * h / th_;
     }
 }
 
