@@ -1019,8 +1019,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).toneMethod = locallab.spots.at(j).toneMethod && pSpot.toneMethod == otherSpot.toneMethod;
                 locallab.spots.at(j).mergecolMethod = locallab.spots.at(j).mergecolMethod && pSpot.mergecolMethod == otherSpot.mergecolMethod;
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
-                locallab.spots.at(j).rgbcurve = locallab.spots.at(j).llcurve && pSpot.rgbcurve == otherSpot.rgbcurve;
+                locallab.spots.at(j).lccurve = locallab.spots.at(j).lccurve && pSpot.lccurve == otherSpot.lccurve;
+                locallab.spots.at(j).rgbcurve = locallab.spots.at(j).rgbcurve && pSpot.rgbcurve == otherSpot.rgbcurve;
                 locallab.spots.at(j).cccurve = locallab.spots.at(j).cccurve && pSpot.cccurve == otherSpot.cccurve;
+                locallab.spots.at(j).clcurve = locallab.spots.at(j).clcurve && pSpot.cccurve == otherSpot.clcurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
                 locallab.spots.at(j).HHcurve = locallab.spots.at(j).HHcurve && pSpot.HHcurve == otherSpot.HHcurve;
                 locallab.spots.at(j).invers = locallab.spots.at(j).invers && pSpot.invers == otherSpot.invers;
@@ -3038,12 +3040,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).llcurve = mods.locallab.spots.at(i).llcurve;
         }
 
+        if (locallab.spots.at(i).lccurve) {
+            toEdit.locallab.spots.at(i).lccurve = mods.locallab.spots.at(i).lccurve;
+        }
+
         if (locallab.spots.at(i).rgbcurve) {
             toEdit.locallab.spots.at(i).rgbcurve = mods.locallab.spots.at(i).rgbcurve;
         }
 
         if (locallab.spots.at(i).cccurve) {
             toEdit.locallab.spots.at(i).cccurve = mods.locallab.spots.at(i).cccurve;
+        }
+
+        if (locallab.spots.at(i).clcurve) {
+            toEdit.locallab.spots.at(i).clcurve = mods.locallab.spots.at(i).clcurve;
         }
 
         if (locallab.spots.at(i).LHcurve) {
@@ -5156,7 +5166,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     toneMethod(v),
     mergecolMethod(v),
     llcurve(v),
+    lccurve(v),
     cccurve(v),
+    clcurve(v),
     rgbcurve(v),
     LHcurve(v),
     HHcurve(v),
@@ -5508,7 +5520,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     toneMethod = v;
     mergecolMethod = v;
     llcurve = v;
+    lccurve = v;
     cccurve = v;
+    clcurve = v;
     rgbcurve = v;
     LHcurve = v;
     HHcurve = v;

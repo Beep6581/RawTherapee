@@ -2483,7 +2483,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     toneMethod("fou"),
     mergecolMethod("one"),
     llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
+    lccurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     cccurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
+    clcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     rgbcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LHcurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35},
     HHcurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35},
@@ -2838,7 +2840,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && toneMethod == other.toneMethod
         && mergecolMethod == other.mergecolMethod
         && llcurve == other.llcurve
+        && lccurve == other.lccurve
         && cccurve == other.cccurve
+        && clcurve == other.clcurve
         && rgbcurve == other.rgbcurve
         && LHcurve == other.LHcurve
         && HHcurve == other.HHcurve
@@ -4190,7 +4194,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).toneMethod, "Locallab", "ToneMethod_" + std::to_string(i), spot.toneMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).mergecolMethod, "Locallab", "mergecolMethod_" + std::to_string(i), spot.mergecolMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).llcurve, "Locallab", "LLCurve_" + std::to_string(i), spot.llcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lccurve, "Locallab", "LCCurve_" + std::to_string(i), spot.lccurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).cccurve, "Locallab", "CCCurve_" + std::to_string(i), spot.cccurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).clcurve, "Locallab", "CLCurve_" + std::to_string(i), spot.clcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).rgbcurve, "Locallab", "RGBCurve_" + std::to_string(i), spot.rgbcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LHcurve, "Locallab", "LHCurve_" + std::to_string(i), spot.LHcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHcurve, "Locallab", "HHCurve_" + std::to_string(i), spot.HHcurve, keyFile);
@@ -5648,7 +5654,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ToneMethod_" + std::to_string(i), pedited, spot.toneMethod, spotEdited.toneMethod);
                 assignFromKeyfile(keyFile, "Locallab", "mergecolMethod_" + std::to_string(i), pedited, spot.mergecolMethod, spotEdited.mergecolMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, spot.llcurve, spotEdited.llcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LCCurve_" + std::to_string(i), pedited, spot.lccurve, spotEdited.lccurve);
                 assignFromKeyfile(keyFile, "Locallab", "CCCurve_" + std::to_string(i), pedited, spot.cccurve, spotEdited.cccurve);
+                assignFromKeyfile(keyFile, "Locallab", "CLCurve_" + std::to_string(i), pedited, spot.clcurve, spotEdited.clcurve);
                 assignFromKeyfile(keyFile, "Locallab", "RGBCurve_" + std::to_string(i), pedited, spot.rgbcurve, spotEdited.rgbcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LHCurve_" + std::to_string(i), pedited, spot.LHcurve, spotEdited.LHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHCurve_" + std::to_string(i), pedited, spot.HHcurve, spotEdited.HHcurve);

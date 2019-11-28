@@ -76,6 +76,7 @@ private:
     // Curve widgets
     // Color & Light
     CurveEditorGroup* const llCurveEditorG;
+    CurveEditorGroup* const clCurveEditorG;
     CurveEditorGroup* const HCurveEditorG;
     CurveEditorGroup* const H2CurveEditorG;
     CurveEditorGroup* const rgbCurveEditorG;
@@ -86,6 +87,8 @@ private:
     DiagonalCurveEditor* const Lmaskshape;
     DiagonalCurveEditor* const llshape;
     DiagonalCurveEditor* const ccshape;
+    DiagonalCurveEditor* const clshape;
+    DiagonalCurveEditor* const lcshape;
     MyComboBoxText* const toneMethod;//put here to use toneMethod in rgbshape
     DiagonalCurveEditor* const rgbshape;
     FlatCurveEditor* const LHshape;

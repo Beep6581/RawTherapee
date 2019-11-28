@@ -1026,7 +1026,9 @@ struct LocallabParams {
         Glib::ustring toneMethod;
         Glib::ustring mergecolMethod;
         std::vector<double> llcurve;
+        std::vector<double> lccurve;
         std::vector<double> cccurve;
+        std::vector<double> clcurve;
         std::vector<double> rgbcurve;
         std::vector<double> LHcurve;
         std::vector<double> HHcurve;

@@ -453,7 +453,9 @@ public:
         bool toneMethod;
         bool mergecolMethod;
         bool llcurve;
+        bool lccurve;
         bool cccurve;
+        bool clcurve;
         bool rgbcurve;
         bool LHcurve;
         bool HHcurve;

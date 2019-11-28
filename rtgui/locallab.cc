@@ -158,6 +158,7 @@ Locallab::Locallab():
     // CurveEditorGroup widgets
     // Color & Light
     llCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LUM"))),
+    clCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CH"))),
     HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     H2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     rgbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_RGB"))),
@@ -169,6 +170,8 @@ Locallab::Locallab():
     Lmaskshape(static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     llshape(static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     ccshape(static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "C(C)"))),
+    clshape(static_cast<DiagonalCurveEditor*>(clCurveEditorG->addCurve(CT_Diagonal, "C(L)"))),
+    lcshape(static_cast<DiagonalCurveEditor*>(clCurveEditorG->addCurve(CT_Diagonal, "L(C)"))),
     toneMethod(Gtk::manage(new MyComboBoxText())),
     rgbshape(static_cast<DiagonalCurveEditor*>(rgbCurveEditorG->addCurve(CT_Diagonal, "", toneMethod))),
     LHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true))),
@@ -774,12 +777,34 @@ pe(nullptr)
         ccshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
 
-//    const std::vector<GradientMilestone>& mccshape = zero_one_shape;
     ccshape->setBottomBarColorProvider(this, 2);
     ccshape->setLeftBarColorProvider(this, 7);
 
-    // llCurveEditorG->newLine();
+    if (showtooltip) {
+        clshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    }
+    const std::vector<GradientMilestone>& mclshape = zero_one_shape;
+
     llCurveEditorG->curveListComplete();
+
+    clCurveEditorG->setCurveListener(this);
+    clshape->setResetCurve(DiagonalCurveType(defSpot.clcurve.at(0)), defSpot.clcurve);
+
+    clshape->setBottomBarBgGradient(mclshape);
+    clshape->setLeftBarColorProvider(this, 7);
+
+    if (showtooltip) {
+        lcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    }
+    const std::vector<GradientMilestone>& mlcshape = zero_one_shape;
+    lcshape->setResetCurve(DiagonalCurveType(defSpot.lccurve.at(0)), defSpot.lccurve);
+
+    lcshape->setBottomBarColorProvider(this, 2);
+    lcshape->setLeftBarBgGradient(mlcshape);
+
+    clCurveEditorG->curveListComplete();
+
+    // llCurveEditorG->newLine();
     HCurveEditorG->setCurveListener(this);
 
     LHshape->setIdentityValue(0.);
@@ -1041,6 +1066,7 @@ pe(nullptr)
     qualcurvbox->pack_start(*qualitycurveMethod);
     colorBox->pack_start(*qualcurvbox);
     colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    //colorBox->pack_start(*clCurveEditorG, Gtk::PACK_SHRINK, 4);
 
     if (complexsoft < 2) {
         colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
@@ -1821,8 +1847,9 @@ pe(nullptr)
         vibranceBox->pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
     }
 
-    vibranceBox->pack_start(*gradvibFrame, Gtk::PACK_SHRINK, 0);
-
+    if (complexsoft < 2) {
+        vibranceBox->pack_start(*gradvibFrame, Gtk::PACK_SHRINK, 0);
+    }
     enavibMaskConn = enavibMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enavibMaskChanged));
 
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
@@ -2774,8 +2801,9 @@ pe(nullptr)
     expcbdl->add(*cbdlBox, false);
     expcbdl->setLevel(2);
 
-    panel->pack_start(*expcbdl, false, false);
-
+    if (complexsoft < 2) {
+        panel->pack_start(*expcbdl, false, false);
+    }
     // Blur & Noise
     Gtk::HBox* const BLTitleHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const BLLabel = Gtk::manage(new Gtk::Label());
@@ -3143,6 +3171,7 @@ Locallab::~Locallab()
     idle_register.destroy();
 
     delete llCurveEditorG;
+    delete clCurveEditorG;
     delete HCurveEditorG;
     delete rgbCurveEditorG;
     delete maskCurveEditorG;
@@ -4325,6 +4354,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).cccurve = ccshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).clcurve = clshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).lccurve = lcshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).rgbcurve = rgbshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LHcurve = LHshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHcurve = HHshape->getCurve();
@@ -4753,8 +4784,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).toneMethod = pe->locallab.spots.at(pp->locallab.selspot).toneMethod || toneMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).mergecolMethod = pe->locallab.spots.at(pp->locallab.selspot).mergecolMethod || mergecolMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).llcurve = pe->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).lccurve = pe->locallab.spots.at(pp->locallab.selspot).lccurve || !lcshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).rgbcurve = pe->locallab.spots.at(pp->locallab.selspot).rgbcurve || !rgbshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).cccurve = pe->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).clcurve = pe->locallab.spots.at(pp->locallab.selspot).clcurve || !clshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).lccurve = pe->locallab.spots.at(pp->locallab.selspot).lccurve || !lcshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LHcurve = pe->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHcurve = pe->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).invers = pe->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
@@ -5113,8 +5147,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).toneMethod = pedited->locallab.spots.at(pp->locallab.selspot).toneMethod || toneMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).mergecolMethod = pedited->locallab.spots.at(pp->locallab.selspot).mergecolMethod || mergecolMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).llcurve = pedited->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lccurve = pedited->locallab.spots.at(pp->locallab.selspot).lccurve || !lcshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).rgbcurve = pedited->locallab.spots.at(pp->locallab.selspot).rgbcurve || !rgbshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).cccurve = pedited->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).clcurve = pedited->locallab.spots.at(pp->locallab.selspot).clcurve || !clshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lccurve = pedited->locallab.spots.at(pp->locallab.selspot).lccurve || !lcshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LHcurve = pedited->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).invers = pedited->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
@@ -5522,9 +5559,21 @@ void Locallab::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == lcshape) {
+            if (listener) {
+                listener->panelChanged(Evlocallablcshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
         if (ce == ccshape) {
             if (listener) {
                 listener->panelChanged(Evlocallabccshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == clshape) {
+            if (listener) {
+                listener->panelChanged(Evlocallabclshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
 
@@ -6884,6 +6933,7 @@ void Locallab::inversChanged()
     if (multiImage && invers->get_inconsistent()) {
         sensi->show();
         llCurveEditorG->show();
+        clCurveEditorG->show();
         HCurveEditorG->show();
         curvactiv->hide();
         qualitycurveMethod->show();
@@ -6902,6 +6952,7 @@ void Locallab::inversChanged()
     } else if (invers->get_active()) {
         sensi->show();
         llCurveEditorG->show();
+        clCurveEditorG->hide();
         HCurveEditorG->hide();
         curvactiv->hide();
         qualitycurveMethod->hide();
@@ -6919,6 +6970,7 @@ void Locallab::inversChanged()
     } else {
         sensi->show();
         llCurveEditorG->show();
+        clCurveEditorG->show();
         HCurveEditorG->show();
         curvactiv->hide();
         qualitycurveMethod->show();
@@ -10107,7 +10159,9 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
 
         llshape->setCurve(pp->locallab.spots.at(index).llcurve);
+        lcshape->setCurve(pp->locallab.spots.at(index).lccurve);
         ccshape->setCurve(pp->locallab.spots.at(index).cccurve);
+        clshape->setCurve(pp->locallab.spots.at(index).clcurve);
         rgbshape->setCurve(pp->locallab.spots.at(index).rgbcurve);
         LHshape->setCurve(pp->locallab.spots.at(index).LHcurve);
         HHshape->setCurve(pp->locallab.spots.at(index).HHcurve);
@@ -10595,7 +10649,9 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 }
 
                 llshape->setUnChanged(!spotState->llcurve);
+                lcshape->setUnChanged(!spotState->lccurve);
                 ccshape->setUnChanged(!spotState->cccurve);
+                clshape->setUnChanged(!spotState->clcurve);
                 rgbshape->setUnChanged(!spotState->rgbcurve);
                 LHshape->setUnChanged(!spotState->LHcurve);
                 HHshape->setUnChanged(!spotState->HHcurve);
@@ -10940,11 +10996,12 @@ void Locallab::updateSpecificGUIState()
 {
     // Update Color & Light GUI according to invers button state (to be compliant with inversChanged function)
     sensi->show();
-    llCurveEditorG->show();
     curvactiv->hide();
     blurcolde->show();
 
     if (multiImage && invers->get_inconsistent()) {
+        llCurveEditorG->show();
+        clCurveEditorG->show();
         HCurveEditorG->show();
         qualitycurveMethod->show();
         labqualcurv->show();
@@ -10958,6 +11015,8 @@ void Locallab::updateSpecificGUIState()
         merge1colFrame->show();
 
     } else if (invers->get_active()) {
+        llCurveEditorG->show();
+        clCurveEditorG->hide();
         HCurveEditorG->hide();
         qualitycurveMethod->hide();
         labqualcurv->hide();
@@ -10970,6 +11029,8 @@ void Locallab::updateSpecificGUIState()
         showmaskcolMethodinv->show();
         merge1colFrame->hide();
     } else {
+        llCurveEditorG->show();
+        clCurveEditorG->show();
         HCurveEditorG->show();
         qualitycurveMethod->show();
         labqualcurv->show();

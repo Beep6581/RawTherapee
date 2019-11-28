@@ -1076,6 +1076,8 @@ HISTORY_MSG_836;Local - Vib gradient angle
 HISTORY_MSG_837;Local - Vib gradient strength C
 HISTORY_MSG_838;Local - Vib gradient strength H
 HISTORY_MSG_839;Local - Software complexity
+HISTORY_MSG_840;Local - CL Curve
+HISTORY_MSG_841;Local - LC curve
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2173,6 +2175,7 @@ TP_LOCALLAB_BUTTON_VIS;Show/Hide
 TP_LOCALLAB_CBDL;Contrast by detail levels - Big defects : grease..
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
+TP_LOCALLAB_CH;Curves CL - LC
 TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
@@ -2306,7 +2309,7 @@ TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
 TP_LOCALLAB_LOGLIN;Logarithm mode
-TP_LOCALLAB_LUM;Curves LC
+TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Luminance Background Mask
 TP_LOCALLAB_LUMAWHITESEST;Whiteest
