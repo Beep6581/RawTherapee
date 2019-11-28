@@ -399,8 +399,8 @@ strumaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1,
 // Tone Mapping
 stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
 gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 0.4, 4.0, 0.11, 1.0))),
-estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 0.1, 4.0, 0.01, 0.5))),
-scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 0.1, 10.0, 0.01, 4.0))),
+estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 0.1, 4., 0.01, 1.4))),
+scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 0.1, 10.0, 0.01, 1.0))),
 rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 3, 1, 0))),
 sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
 softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -1401,7 +1401,9 @@ pe(nullptr)
     ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
-    fatBox->pack_start(*fatlevel);
+    if (complexsoft < 2) {
+        fatBox->pack_start(*fatlevel);
+    }
     fatBox->pack_start(*fatanchor);
     pdeFrame->add(*pdeBox);
     fatFrame->add(*fatBox);
@@ -1427,22 +1429,25 @@ pe(nullptr)
         exposeBox->pack_start(*expMethod);
     }
 
-    if (complexsoft < 2) {
+    if (complexsoft < 1) {
         exposeBox->pack_start(*pdeFrame);
     }
 
-    exposeBox->pack_start(*black);
-
     if (complexsoft < 2) {
-        exposeBox->pack_start(*fatFrame);
+        exposeBox->pack_start(*black);
     }
+//    if (complexsoft < 2) {
+        exposeBox->pack_start(*fatFrame);
+//    }
 
     exposeBox->pack_start(*expcomp);
-    exposeBox->pack_start(*hlcompr);
-    exposeBox->pack_start(*hlcomprthresh);
-    exposeBox->pack_start(*shadex);
-    exposeBox->pack_start(*shcompr);
-    exposeBox->pack_start(*expchroma);
+    if (complexsoft < 2) {
+        exposeBox->pack_start(*hlcompr);
+        exposeBox->pack_start(*hlcomprthresh);
+        exposeBox->pack_start(*shadex);
+        exposeBox->pack_start(*shcompr);
+        exposeBox->pack_start(*expchroma);
+    }
     exposeBox->pack_start(*warm);
     exposeBox->pack_start(*sensiex);
 
@@ -2135,14 +2140,18 @@ pe(nullptr)
     masktmBox->pack_start(*showmasktmMethod, Gtk::PACK_SHRINK, 4);
     masktmBox->pack_start(*enatmMask, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*enatmMaskaft, Gtk::PACK_SHRINK, 0);
-    masktmBox->pack_start(*masktmCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    masktmBox->pack_start(*masktmCurveEditorG, Gtk::PACK_SHRINK, 4);
     masktmBox->pack_start(*blendmasktm, Gtk::PACK_SHRINK, 0);
-    masktmBox->pack_start(*lapmasktm, Gtk::PACK_SHRINK, 0);
+    if (complexsoft < 1) {
+        masktmBox->pack_start(*lapmasktm, Gtk::PACK_SHRINK, 0);
+    }
     masktmBox->pack_start(*radmasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*chromasktm, Gtk::PACK_SHRINK, 0);
-    masktmBox->pack_start(*gammasktm, Gtk::PACK_SHRINK, 0);
-    masktmBox->pack_start(*slomasktm, Gtk::PACK_SHRINK, 0);
-    masktmBox->pack_start(*mask2tmCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    if (complexsoft < 1) {
+        masktmBox->pack_start(*gammasktm, Gtk::PACK_SHRINK, 0);
+        masktmBox->pack_start(*slomasktm, Gtk::PACK_SHRINK, 0);
+    }
+    masktmBox->pack_start(*mask2tmCurveEditorG, Gtk::PACK_SHRINK, 4);
     expmasktm->add(*masktmBox, false);
 
 
@@ -2150,11 +2159,15 @@ pe(nullptr)
 //    tmBox->pack_start(*amount);//to use if we change transit_shapedetect parameters
     tmBox->pack_start(*stren);
     tmBox->pack_start(*equiltm);
-    tmBox->pack_start(*gamma);
-    tmBox->pack_start(*satur);
+    if (complexsoft < 2) {
+        tmBox->pack_start(*gamma);
+        tmBox->pack_start(*satur);
+    }
     tmBox->pack_start(*estop);
     tmBox->pack_start(*scaltm);
-    tmBox->pack_start(*rewei);
+    if (complexsoft < 2) {
+        tmBox->pack_start(*rewei);
+    }
 //    tmBox->pack_start(*softradiustm);//always bad with TM ??
     tmBox->pack_start(*sensitm);
     tmBox->pack_start(*expmasktm);
@@ -2162,9 +2175,9 @@ pe(nullptr)
     exptonemap->add(*tmBox, false);
     exptonemap->setLevel(2);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         panel->pack_start(*exptonemap, false, false);
-    }
+//    }
 
     // Retinex
     Gtk::HBox* const retiTitleHBox = Gtk::manage(new Gtk::HBox());
@@ -8184,6 +8197,7 @@ void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newT
 {
     // Not used
 }
+    
 
 void Locallab::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
 {
@@ -8193,13 +8207,13 @@ void Locallab::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTop
         }
     }
 
-    if (getEnabled() && expblur->getEnabled()) {
+    if (getEnabled() && expblur->getEnabled()  && complexsoft < 1) {
         if (listener) {
             listener->panelChanged(EvlocallabcsThresholdblur, csThresholdblur->getHistoryString());
         }
     }
 
-    if (getEnabled() && expcolor->getEnabled()) {
+    if (getEnabled() && expcolor->getEnabled()  && complexsoft < 1) {
         if (listener) {
             listener->panelChanged(EvlocallabcsThresholdcol, csThresholdcol->getHistoryString());
         }
@@ -10231,7 +10245,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         }
 
         if (complexsoft == 2) {
-            expMethod->set_active(0);
+            expMethod->set_active(1);
         }
 
         if (pp->locallab.spots.at(index).exnoiseMethod == "one") {

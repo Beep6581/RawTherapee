@@ -2251,7 +2251,7 @@ TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the m
 TP_LOCALLAB_FATAMOUNT;Amount
 TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATDETAIL;Detail
-TP_LOCALLAB_FATFRA;PDE Fattal - Dynamic Range Compression
+TP_LOCALLAB_FATFRA;Dynamic Range Compression
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.\nAnchor allows selection according to the images over or under exposed.\nUseful to increase Luminance for a Second spot near the current and using mask
 TP_LOCALLAB_FATLEVEL;Detail levels
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask
@@ -2498,7 +2498,7 @@ TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_TLABEL2;TM Effective Tm=%1 TM=%2
 TP_LOCALLAB_TLABEL;TM Datas Min=%1 Max=%2 Mean=%3 Sigma=%4 (Threshold)
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can act on Threshold to normalize
-TP_LOCALLAB_TM;Tone Mapping
+TP_LOCALLAB_TM;Tone Mapping - Reinforced texture
 TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;Increase Edge stopping - or Reweighting iterates, increase processing time - but increases the effects 
 TP_LOCALLAB_TONEMAP_TOOLTIP;Tone Mapping - main menu must be disabled
