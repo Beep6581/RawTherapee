@@ -4385,10 +4385,24 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).mergecolMethod = "lum";
                     }
 
+                    if (complexsoft == 2) {
+                        lcshape->reset();
+                        clshape->reset();
+                        LHshape->reset();
+                        HHshape->reset();
+                        rgbshape->reset();
+                        HHhmaskshape->reset();
+                    }
+
+                    if (complexsoft > 0) {
+                        LLmaskcolshapewav->reset();
+                     }
+
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).cccurve = ccshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).clcurve = clshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).lccurve = lcshape->getCurve();
+
                     pp->locallab.spots.at(pp->locallab.selspot).rgbcurve = rgbshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LHcurve = LHshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHcurve = HHshape->getCurve();
@@ -10092,6 +10106,11 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         labgrid->setParams(pp->locallab.spots.at(index).labgridALow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBLow / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridAHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHigh / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, false);
         //labgridmerg->setParams(pp->locallab.spots.at(index).labgridALowmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBLowmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridAHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, false);
         labgridmerg->setParams(0, 0, pp->locallab.spots.at(index).labgridAHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, false);
+
+        if (complexsoft == 2) {
+            labgrid->setParams(0, 0,0, 0, false);
+        } 
+
         strengthgrid->setValue(pp->locallab.spots.at(index).strengthgrid);
         sensi->setValue(pp->locallab.spots.at(index).sensi);
         structcol->setValue(pp->locallab.spots.at(index).structcol);
@@ -10192,11 +10211,22 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         }
 
 
-        llshape->setCurve(pp->locallab.spots.at(index).llcurve);
-        lcshape->setCurve(pp->locallab.spots.at(index).lccurve);
+        if (complexsoft < 2) {
+            llshape->setCurve(pp->locallab.spots.at(index).llcurve);
+            lcshape->setCurve(pp->locallab.spots.at(index).lccurve);
+        }
         ccshape->setCurve(pp->locallab.spots.at(index).cccurve);
         clshape->setCurve(pp->locallab.spots.at(index).clcurve);
         rgbshape->setCurve(pp->locallab.spots.at(index).rgbcurve);
+
+        if (complexsoft == 2) {
+            lcshape->reset();
+            clshape->reset();
+            LHshape->reset();
+            HHshape->reset();
+            rgbshape->reset();
+        }
+        
         LHshape->setCurve(pp->locallab.spots.at(index).LHcurve);
         HHshape->setCurve(pp->locallab.spots.at(index).HHcurve);
         invers->set_active(pp->locallab.spots.at(index).invers);
@@ -10213,6 +10243,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromaskcol->setValue(pp->locallab.spots.at(index).chromaskcol);
         gammaskcol->setValue(pp->locallab.spots.at(index).gammaskcol);
         slomaskcol->setValue(pp->locallab.spots.at(index).slomaskcol);
+        
         shadmaskcol->setValue(pp->locallab.spots.at(index).shadmaskcol);
         strumaskcol->setValue(pp->locallab.spots.at(index).strumaskcol);
         lapmaskcol->setValue(pp->locallab.spots.at(index).lapmaskcol);
@@ -10225,6 +10256,28 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         LLmaskcolshapewav->setCurve(pp->locallab.spots.at(index).LLmaskcolcurvewav);
         csThresholdcol->setValue<int>(pp->locallab.spots.at(index).csthresholdcol);
 
+        if (complexsoft == 2) {
+            HHhmaskshape->reset();
+        }
+
+        if (complexsoft == 2) {
+            gammaskcol->setValue(1);
+            slomaskcol->setValue(0);
+            shadmaskcol->setValue(0);
+            strumaskcol->setValue(0);
+            strcolab->setValue(0);
+            strcolh->setValue(0);
+            blurcolde->setValue(5);
+            softradiuscol->setValue(0);
+            special->set_active(false);
+            toolcol->set_active(false);
+            merMethod->set_active(0);
+        }
+
+        if (complexsoft > 0) {
+            lapmaskcol->setValue(0);
+            LLmaskcolshapewav->reset();
+        }
         // Exposure
         expexpose->setEnabled(pp->locallab.spots.at(index).expexpose);
         expcomp->setValue(pp->locallab.spots.at(index).expcomp);
