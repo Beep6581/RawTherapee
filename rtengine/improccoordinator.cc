@@ -171,6 +171,8 @@ ImProcCoordinator::ImProcCoordinator() :
     lastorigimp(nullptr),
     coordX(0), coordY(0), localX(0), localY(0),
     lllocalcurve(65536, 0),
+    cllocalcurve(65536, 0),
+    lclocalcurve(65536, 0),
     cclocalcurve(65536, 0),
     rgblocalcurve(65536, 0),
     exlocalcurve(65536, 0),
@@ -187,6 +189,8 @@ ImProcCoordinator::ImProcCoordinator() :
     lmaskcblocalcurve(65536, 0),
     lmaskbllocalcurve(65536, 0),
     locallutili(false), 
+    localclutili(false), 
+    locallcutili(false), 
     localcutili(false), 
     localrgbutili(false), 
     localexutili(false),
@@ -926,6 +930,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 LHutili = false;
                 HHutili = false;
                 locallutili = false;
+                localclutili = false;
+                locallcutili = false;
                 localexutili = false;
                 localrgbutili = false;
                 localcutili = false;
@@ -1000,6 +1006,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 
                 locwavCurve.Set(params->locallab.spots.at(sp).locwavcurve, locwavutili);
                 CurveFactory::curveLocal(locallutili, params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
+                CurveFactory::curveLocal(localclutili, params->locallab.spots.at(sp).llcurve, cllocalcurve, sca);
+                CurveFactory::curveLocal(locallcutili, params->locallab.spots.at(sp).llcurve, lclocalcurve, sca);
                 CurveFactory::curveCCLocal(localcutili, params->locallab.spots.at(sp).cccurve, cclocalcurve, sca);
                 CurveFactory::curveLocal(localrgbutili, params->locallab.spots.at(sp).rgbcurve, rgblocalcurve, sca);
                 CurveFactory::curveexLocal(localexutili, params->locallab.spots.at(sp).excurve, exlocalcurve, sca);

@@ -233,6 +233,8 @@ protected:
     LabImage *lastorigimp;
     int coordX, coordY, localX, localY;
     LUTf lllocalcurve;
+    LUTf cllocalcurve;
+    LUTf lclocalcurve;
     LUTf cclocalcurve;
     LUTf rgblocalcurve;
     LUTf exlocalcurve;
@@ -284,6 +286,8 @@ protected:
     LocwavCurve loclmasCurvecolwav;
 
     bool locallutili;
+    bool localclutili;
+    bool locallcutili;
     bool localcutili;
     bool localrgbutili;
     bool localexutili;

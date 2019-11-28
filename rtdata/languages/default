@@ -1018,9 +1018,9 @@ HISTORY_MSG_777;Local - Blur Mask local contrast curve
 HISTORY_MSG_778;Local - Blur Mask highlights
 HISTORY_MSG_779;Local - Color Mask local contrast curve
 HISTORY_MSG_780;Local - Color Mask shadows
-HISTORY_MSG_781;Local - Local contrast Wavelet level
+HISTORY_MSG_781;Local - Contrast Mask Wavelet level
 HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
-HISTORY_MSG_783;Local - Color Mask Wavelet levels
+HISTORY_MSG_783;Local - Color Wavelet levels
 HISTORY_MSG_784;Local - Mask DeltaE
 HISTORY_MSG_785;Local - Mask Scope DeltaE
 HISTORY_MSG_786;Local - SH method

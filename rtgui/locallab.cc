@@ -2582,9 +2582,9 @@ pe(nullptr)
     contrastBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4);
 
 //    contrastBox->pack_start(*levelwav);
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         contrastBox->pack_start(*csThreshold);
-    }
+//    }
 
 //   if (complexsoft < 2) {
     contrastBox->pack_start(*residcont);
