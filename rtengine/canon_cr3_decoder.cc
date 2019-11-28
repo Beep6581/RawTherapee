@@ -59,6 +59,8 @@
 
 #include "dcraw.h"
 
+#include "rt_math.h"
+
 void DCraw::parse_canon_cr3()
 {
     strncpy(make, "Canon", sizeof(make));
