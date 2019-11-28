@@ -20,7 +20,6 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "colorprovider.h"
 #include "curvelistener.h"
 #include "toolpanel.h"

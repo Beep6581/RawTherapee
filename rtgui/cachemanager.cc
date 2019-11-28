@@ -25,7 +25,7 @@
 #include <glib/gstdio.h>
 
 #ifdef WIN32
-#include <windows.h>
+#include <fileapi.h>
 #endif
 
 #include "cachemanager.h"

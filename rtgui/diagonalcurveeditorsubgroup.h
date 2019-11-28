@@ -21,7 +21,7 @@
 #include <gtkmm.h>
 
 #include "curveeditorgroup.h"
-
+#include "adjuster.h"
 #include "../rtengine/noncopyable.h"
 
 class DiagonalCurveEditor;

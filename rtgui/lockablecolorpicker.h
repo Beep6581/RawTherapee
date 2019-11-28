@@ -74,14 +74,14 @@ public:
 
     LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile);
 
-    void draw (Cairo::RefPtr<Cairo::Context> &cr);
+    void draw (const Cairo::RefPtr<Cairo::Context> &cr);
 
     // Used to update the RGB color, the HSV values will be updated accordingly
     void setPosition (const rtengine::Coord &newPos);
     void setRGB (const float R, const float G, const float B, const float previewR, const float previewG, const float previewB);
-    void getImagePosition (rtengine::Coord &imgPos);
-    void getScreenPosition (rtengine::Coord &screenPos);
-    Size getSize ();
+    void getImagePosition (rtengine::Coord &imgPos) const;
+    void getScreenPosition (rtengine::Coord &screenPos) const;
+    Size getSize () const;
     bool isOver (int x, int y);
     void setValidity (Validity isValid);
     void setSize (Size newSize);

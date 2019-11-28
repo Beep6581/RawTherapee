@@ -592,7 +592,6 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
 
                         curve.x.insert (itx, 0);
                         curve.y.insert (ity, 0);
-                        num++;
 
                         // the graph is refreshed only if a new point is created
                         curve.x.at(closest_point) = clampedX;
@@ -1504,7 +1503,7 @@ void MyDiagonalCurve::setActiveParam (int ac)
     queue_draw ();
 }
 
-void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist)
+void MyDiagonalCurve::updateBackgroundHistogram (const LUTu & hist)
 {
     if (hist) {
         //memcpy (bghist, hist, 256*sizeof(unsigned int));

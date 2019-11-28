@@ -21,7 +21,6 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "guiutils.h"
 
 class ExportPanelListener

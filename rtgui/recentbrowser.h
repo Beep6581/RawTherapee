@@ -21,7 +21,6 @@
 #include <gtkmm.h>
 
 #include "guiutils.h"
-#include "multilangmgr.h"
 
 class RecentBrowser :
     public Gtk::VBox

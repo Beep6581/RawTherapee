@@ -20,9 +20,9 @@
 
 #ifdef GUIVERSION
 
+#include <cairomm/cairomm.h>
 #include <glibmm/ustring.h>
 
-#include "editbuffer.h"
 #include "editcoordsys.h"
 #include "../rtengine/coord.h"
 
@@ -286,7 +286,7 @@ public:
     rtengine::Coord end;
 
     Line ();
-    Line (rtengine::Coord& begin, rtengine::Coord& end);
+    Line (const rtengine::Coord& begin, const rtengine::Coord& end);
     Line (int beginX, int beginY, int endX, int endY);
 
     void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
@@ -556,7 +556,7 @@ inline Circle::Circle (int centerX, int centerY, int radius, bool filled,
                 radiusInImageSpace) {
 }
 
-inline Line::Line (rtengine::Coord& begin, rtengine::Coord& end) :
+inline Line::Line (const rtengine::Coord& begin, const rtengine::Coord& end) :
         begin (begin), end (end) {
 }
 
