@@ -774,9 +774,9 @@ pe(nullptr)
         ccshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
 
-    const std::vector<GradientMilestone>& mccshape = zero_one_shape;
-    ccshape->setBottomBarBgGradient(mccshape);
-    ccshape->setLeftBarBgGradient(mccshape);
+//    const std::vector<GradientMilestone>& mccshape = zero_one_shape;
+    ccshape->setBottomBarColorProvider(this, 2);
+    ccshape->setLeftBarColorProvider(this, 7);
 
     // llCurveEditorG->newLine();
     llCurveEditorG->curveListComplete();
@@ -1792,12 +1792,29 @@ pe(nullptr)
     gradvibFrame->add(*gradvibBox);
 
     ToolParamBlock* const vibranceBox = Gtk::manage(new ToolParamBlock());
-    vibranceBox->pack_start(*saturated, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 2) {
+        vibranceBox->pack_start(*saturated, Gtk::PACK_SHRINK, 0);
+    }
+
     vibranceBox->pack_start(*pastels, Gtk::PACK_SHRINK, 0);
-    vibranceBox->pack_start(*psThreshold, Gtk::PACK_SHRINK, 0);
-    vibranceBox->pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
-    vibranceBox->pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
-    vibranceBox->pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
+
+    if (complexsoft < 2) {
+        vibranceBox->pack_start(*psThreshold, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        vibranceBox->pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        vibranceBox->pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft < 2) {
+        vibranceBox->pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
+    }
+
     vibranceBox->pack_start(*sensiv, Gtk::PACK_SHRINK, 0);
 
     if (complexsoft < 2) {
@@ -2435,9 +2452,19 @@ pe(nullptr)
     sharpBox->pack_start(*sharcontrast);
     sharpBox->pack_start(*sharradius);
     sharpBox->pack_start(*sharamount);
-    sharpBox->pack_start(*shardamping);
-    sharpBox->pack_start(*shariter);
-    sharpBox->pack_start(*sharblur);
+
+    if (complexsoft < 2) {
+        sharpBox->pack_start(*shardamping);
+    }
+
+    if (complexsoft < 2) {
+        sharpBox->pack_start(*shariter);
+    }
+
+    if (complexsoft < 2) {
+        sharpBox->pack_start(*sharblur);
+    }
+
     sharpBox->pack_start(*sensisha);
     sharpBox->pack_start(*inverssha);
     expsharp->add(*sharpBox, false);
@@ -2504,8 +2531,14 @@ pe(nullptr)
     clariFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const clariBox = Gtk::manage(new ToolParamBlock());
     clariBox->pack_start(*clarilres);
-    clariBox->pack_start(*claricres);
-    clariBox->pack_start(*clarisoft);
+
+    if (complexsoft < 2) {
+        clariBox->pack_start(*claricres);
+    }
+
+    if (complexsoft < 2) {
+        clariBox->pack_start(*clarisoft);
+    }
 
     clariFrame->add(*clariBox);
 
@@ -2520,20 +2553,23 @@ pe(nullptr)
     contrastBox->pack_start(*lcdarkness);
     contrastBox->pack_start(*lclightness);
     contrastBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4);
-//    contrastBox->pack_start(*levelwav);
-    contrastBox->pack_start(*csThreshold);
 
+//    contrastBox->pack_start(*levelwav);
     if (complexsoft < 2) {
-        contrastBox->pack_start(*residcont);
+        contrastBox->pack_start(*csThreshold);
     }
+
+//   if (complexsoft < 2) {
+    contrastBox->pack_start(*residcont);
+//   }
 
     if (complexsoft < 2) {
         contrastBox->pack_start(*residchro);
     }
 
-    if (complexsoft < 2) {
-        contrastBox->pack_start(*clariFrame);
-    }
+//    if (complexsoft < 2) {
+    contrastBox->pack_start(*clariFrame);
+//    }
 
     contrastBox->pack_start(*sensilc);
 
@@ -2708,16 +2744,31 @@ pe(nullptr)
 
     Gtk::HSeparator* const separator = Gtk::manage(new  Gtk::HSeparator());
     cbdlBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
-    cbdlBox->pack_start(*chromacbdl);
+
+    if (complexsoft < 2) {
+        cbdlBox->pack_start(*chromacbdl);
+    }
+
     cbdlBox->pack_start(*threshold);
-    cbdlBox->pack_start(*blurcbdl);
+
+    if (complexsoft < 2) {
+        cbdlBox->pack_start(*blurcbdl);
+    }
+
     residFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const residBox = Gtk::manage(new ToolParamBlock());
     residBox->pack_start(*clarityml);
     residBox->pack_start(*contresid);
     residFrame->add(*residBox);
-    cbdlBox->pack_start(*residFrame);
-    cbdlBox->pack_start(*softradiuscb);
+
+    if (complexsoft < 2) {
+        cbdlBox->pack_start(*residFrame);
+    }
+
+    if (complexsoft < 2) {
+        cbdlBox->pack_start(*softradiuscb);
+    }
+
     cbdlBox->pack_start(*sensicb);
     cbdlBox->pack_start(*expmaskcb);
     expcbdl->add(*cbdlBox, false);
