@@ -869,6 +869,10 @@ void Crop::update(int todo)
 
         bool locallutili = parent->locallutili;
         LUTf lllocalcurve2(65536, 0);
+        bool localclutili = parent->localclutili;
+        LUTf cllocalcurve2(65536, 0);
+        bool locallcutili = parent->locallcutili;
+        LUTf lclocalcurve2(65536, 0);
         bool localcutili = parent->locallutili;
         LUTf cclocalcurve2(65536, 0);
         bool localrgbutili = parent->localrgbutili;
@@ -1007,6 +1011,10 @@ void Crop::update(int todo)
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
                 locallutili = false;
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
+                localclutili = false;
+                CurveFactory::curveLocal(localclutili, params.locallab.spots.at(sp).clcurve, cllocalcurve2, sca);
+                locallcutili = false;
+                CurveFactory::curveLocal(locallcutili, params.locallab.spots.at(sp).lccurve, lclocalcurve2, sca);
                 localrgbutili = false;
                 CurveFactory::curveLocal(localrgbutili, params.locallab.spots.at(sp).rgbcurve, rgblocalcurve2, sca);
                 localcutili = false;
@@ -1070,7 +1078,10 @@ void Crop::update(int todo)
                 // Locallab mask are only shown for selected spot
                 if (sp == params.locallab.selspot) {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, lastorigCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, 
-                            lllocalcurve2,locallutili, loclhCurve, lochhCurve, 
+                            lllocalcurve2,locallutili, 
+                            cllocalcurve2, localclutili,
+                            lclocalcurve2, locallcutili,
+                            loclhCurve, lochhCurve, 
                             lmasklocalcurve2, localmaskutili, 
                             lmaskexplocalcurve2, localmaskexputili, 
                             lmaskSHlocalcurve2, localmaskSHutili, 
@@ -1098,7 +1109,10 @@ void Crop::update(int todo)
                     }
                 } else {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, lastorigCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, 
-                            lllocalcurve2,locallutili, loclhCurve, lochhCurve,
+                            lllocalcurve2,locallutili, 
+                            cllocalcurve2, localclutili,
+                            lclocalcurve2, locallcutili,
+                            loclhCurve, lochhCurve,
                             lmasklocalcurve2, localmaskutili,
                             lmaskexplocalcurve2, localmaskexputili, 
                             lmaskSHlocalcurve2, localmaskSHutili, 
@@ -1125,6 +1139,8 @@ void Crop::update(int todo)
                 lastorigCrop->CopyFrom(labnCrop);
 
                 lllocalcurve2.clear();
+                lclocalcurve2.clear();
+                cllocalcurve2.clear();
                 lightCurveloc2.clear();
                 rgblocalcurve2.clear();
                 cclocalcurve2.clear();

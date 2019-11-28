@@ -1006,8 +1006,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 
                 locwavCurve.Set(params->locallab.spots.at(sp).locwavcurve, locwavutili);
                 CurveFactory::curveLocal(locallutili, params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
-                CurveFactory::curveLocal(localclutili, params->locallab.spots.at(sp).llcurve, cllocalcurve, sca);
-                CurveFactory::curveLocal(locallcutili, params->locallab.spots.at(sp).llcurve, lclocalcurve, sca);
+                CurveFactory::curveLocal(localclutili, params->locallab.spots.at(sp).clcurve, cllocalcurve, sca);
+                CurveFactory::curveLocal(locallcutili, params->locallab.spots.at(sp).lccurve, lclocalcurve, sca);
                 CurveFactory::curveCCLocal(localcutili, params->locallab.spots.at(sp).cccurve, cclocalcurve, sca);
                 CurveFactory::curveLocal(localrgbutili, params->locallab.spots.at(sp).rgbcurve, rgblocalcurve, sca);
                 CurveFactory::curveexLocal(localexutili, params->locallab.spots.at(sp).excurve, exlocalcurve, sca);
@@ -1086,7 +1086,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmax;
 
                 if (sp == params->locallab.selspot) {
-                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, 
+                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, 
+                                lllocalcurve, locallutili, 
+                                cllocalcurve, localclutili, 
+                                lclocalcurve, locallcutili, 
+                                loclhCurve,  lochhCurve, 
                                 lmasklocalcurve, localmaskutili,
                                 lmaskexplocalcurve, localmaskexputili,
                                 lmaskSHlocalcurve, localmaskSHutili,
@@ -1113,7 +1117,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                     }
                 } else {
-                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, 
+                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, 
+                                lllocalcurve, locallutili, 
+                                cllocalcurve, localclutili, 
+                                lclocalcurve, locallcutili, 
+                                loclhCurve,  lochhCurve, 
                                 lmasklocalcurve, localmaskutili,
                                 lmaskexplocalcurve, localmaskexputili,
                                 lmaskSHlocalcurve, localmaskSHutili,
@@ -1161,6 +1169,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 sobelrefs[sp] = sobeler;
 */
                 lllocalcurve.clear();
+                lclocalcurve.clear();
+                cllocalcurve.clear();
                 lightCurveloc.clear();
                 cclocalcurve.clear();
                 rgblocalcurve.clear();

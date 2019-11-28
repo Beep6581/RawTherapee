@@ -4393,7 +4393,7 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
                     transformed->b[y + ystart][x + xstart] = CLIPC(difb);
                 } else if (previewexp || previewvib || previewcol || previewSH || previewtm) {//show deltaE
                     if (fabs(difb) < 500.f) {//if too low to be view use L
-                        difb += 0.5f * diflc;
+                        difb += 0.2f * diflc;
                     }
 
                     transformed->a[y + ystart][x + xstart] = 0.f;
@@ -7764,7 +7764,11 @@ void rgbtone(float& maxval, float& medval, float& minval, LUTf & lutToneCurve)
 
 
 void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,
-                                const LocretigainCurve & locRETgainCcurve, const LocretitransCurve & locRETtransCcurve, LUTf & lllocalcurve, bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
+                                const LocretigainCurve & locRETgainCcurve, const LocretitransCurve & locRETtransCcurve,
+                                LUTf & lllocalcurve, bool & locallutili,
+                                LUTf & cllocalcurve, bool & localclutili,
+                                LUTf & lclocalcurve, bool & locallcutili,
+                                const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
                                 LUTf & lmasklocalcurve, bool & localmaskutili,
                                 LUTf & lmaskexplocalcurve, bool & localmaskexputili,
                                 LUTf & lmaskSHlocalcurve, bool & localmaskSHutili,
@@ -12484,7 +12488,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 float bufcolcalcb = origptr->b[ir][jr];
                                 float bufcolcalcL = origptr->L[ir][jr];
 
-                                if (lp.chro != 0.f) {
+                                if (lp.chro != 0.f) {//slider chroma with curve DCT_NURBS
                                     const float Chprov = sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
                                     float chp = Chprov;
                                     float2 sincosval;
@@ -12492,7 +12496,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     sincosval.x = Chprov == 0.0f ? 0.f : bufcolcalcb / Chprov;
 
                                     if (lp.chro > 0.f) {
-                                        float buf = LIM01(chp / 35000.f);//35000 must be globaly good
+                                        float buf = LIM01(chp / 35000.f);//35000 must be globaly good, more than 32768...anf les than !! to avoid calculation min max 
                                         buf = color_satur.getVal(buf);
                                         buf *= 35000.f;
                                         chp = buf;
@@ -12509,7 +12513,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     bufcolcalca = chp * sincosval.y;
                                     bufcolcalcb = chp * sincosval.x;
-                                    //  const float ch = (1.f + 0.01f * lp.chro) ;
+                                    //  const float ch = (1.f + 0.01f * lp.chro) ;//whithout curve
                                     //   bufcolcalca *= ch;
                                     //   bufcolcalcb *= ch;
                                 }
@@ -12521,25 +12525,44 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     bufcolcalcb *= ch;
                                 }
 
-                                if (lochhCurve && HHcurve && lp.qualcurvemet != 0  && !ctoning) {
+                                if (cllocalcurve  && lp.qualcurvemet != 0 && localclutili) { // C=f(L) curve
+                                    float chromaCfactor = (cllocalcurve[bufcolcalcL * 2.f]) / (bufcolcalcL * 2.f);
+                                    bufcolcalca *= chromaCfactor;
+                                    bufcolcalcb *= chromaCfactor;
+                                }
+
+                                if (lclocalcurve  && lp.qualcurvemet != 0 && locallcutili) { // L=f(C) curve
+                                    const float chromat = sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
+                                    float Lc = lclocalcurve[chromat * adjustr] / ((chromat + 0.00001f) * adjustr);
+
+                                    if (Lc > 1.f) {
+                                        Lc = (Lc - 1.0f) * 0.1f + 1.0f; //reduct action
+                                    } else {
+                                        Lc = (Lc - 1.0f) * 0.3f + 1.0f;
+                                    }
+
+                                    bufcolcalcL *= Lc;
+                                }
+
+                                if (lochhCurve && HHcurve && lp.qualcurvemet != 0  && !ctoning) { // H=f(H)
                                     const float chromat = sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
                                     const float hhforcurv = xatan2f(bufcolcalcb, bufcolcalca);
-                                    const float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)  1.7 optimisation !
+                                    const float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)
                                     float2 sincosval = xsincosf(valparam);
                                     bufcolcalca = chromat * sincosval.y;
                                     bufcolcalcb = chromat * sincosval.x;
                                 }
 
 
-                                if (lp.ligh != 0.f || lp.cont != 0) {
-                                    calclight(bufcolcalcL, lp.ligh, bufcolcalcL, lightCurveloc);  //replace L-curve
+                                if (lp.ligh != 0.f || lp.cont != 0) {//slider luminance or slider contrast with curve
+                                    calclight(bufcolcalcL, lp.ligh, bufcolcalcL, lightCurveloc);
                                 }
 
-                                if (lllocalcurve && locallutili  && lp.qualcurvemet != 0) {// L=f(L) curve enhanced
+                                if (lllocalcurve && locallutili  && lp.qualcurvemet != 0) {// L=f(L) curve
                                     bufcolcalcL = 0.5f * lllocalcurve[bufcolcalcL * 2.f];
                                 }
 
-                                if (loclhCurve && LHutili && lp.qualcurvemet != 0) {
+                                if (loclhCurve && LHutili && lp.qualcurvemet != 0) {//L=f(H) curve
                                     const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
                                     float l_r = bufcolcalcL / 32768.f; //Luminance Lab in 0..1
                                     const float valparam = loclhCurve[500.f * Color::huelab_to_huehsv2(rhue)] - 0.5f;  //get l_r=f(H)
@@ -12556,7 +12579,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 }
 
-                                if (ctoning) {
+                                if (ctoning) {//color toning and direct change color
                                     if (lp.gridmet == 0) {
                                         bufcolcalca += kd * bufcolcalcL * a_scale + a_base;
                                         bufcolcalcb += kd * bufcolcalcL * b_scale + b_base;

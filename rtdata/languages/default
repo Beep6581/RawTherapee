@@ -2463,6 +2463,7 @@ TP_LOCALLAB_SHOWPOISSON;Poisson (pde)
 TP_LOCALLAB_SHOWR;6 - Mask and modifications
 TP_LOCALLAB_SHOWS;5+* - Mask and modifications
 TP_LOCALLAB_SHOWSTRUC;Show structure Spot
+TP_LOCALLAB_SHOWSTRUCEX;Show structure Spot - disabled in "normal"
 TP_LOCALLAB_SHOWT;4 - Mask and modifications
 TP_LOCALLAB_SHOWVI;3 - Mask and modifications
 TP_LOCALLAB_SIM;Simple

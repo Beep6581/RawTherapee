@@ -1117,6 +1117,8 @@ private:
             LocwavCurve loclmasCurvecolwav;
             LocwavCurve locwavCurve;
             LUTf lllocalcurve(65536, 0);
+            LUTf lclocalcurve(65536, 0);
+            LUTf cllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
             LUTf rgblocalcurve(65536, 0);
             LUTf hltonecurveloc(65536, 0);
@@ -1149,6 +1151,8 @@ private:
                 bool LHutili = false;
                 bool HHutili = false;
                 bool locallutili = false;
+                bool localclutili = false;
+                bool locallcutili = false;
                 bool localcutili = false;
                 bool localrgbutili = false;
                 bool localexutili = false;
@@ -1222,6 +1226,8 @@ private:
 
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
+                CurveFactory::curveLocal(localclutili, params.locallab.spots.at(sp).clcurve, cllocalcurve, 1);
+                CurveFactory::curveLocal(locallcutili, params.locallab.spots.at(sp).lccurve, lclocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveLocal(localrgbutili, params.locallab.spots.at(sp).rgbcurve, rgblocalcurve, 1);
                 CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
@@ -1267,28 +1273,32 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, lastorigView, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve, lochhCurve,
-                     lmasklocalcurve, localmaskutili,
-                     lmaskexplocalcurve, localmaskexputili,
-                     lmaskSHlocalcurve, localmaskSHutili,
-                     lmaskviblocalcurve, localmaskvibutili,
-                     lmasktmlocalcurve, localmasktmutili,
-                     lmaskretilocalcurve, localmaskretiutili,
-                     lmaskcblocalcurve, localmaskcbutili,
-                     lmaskbllocalcurve, localmaskblutili,
-                     locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
-                     locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
-                     locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
-                     locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
-                     locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
-                     locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
-                     locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
-                     loclmasCurveblwav,lmasutiliblwav,
-                     loclmasCurvecolwav,lmasutilicolwav,
-                     locwavCurve, locwavutili,
-                     LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                     huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                     minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, lastorigView, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
+                        lllocalcurve, locallutili, 
+                        cllocalcurve, localclutili,
+                        lclocalcurve, locallcutili,
+                        loclhCurve, lochhCurve,
+                        lmasklocalcurve, localmaskutili,
+                        lmaskexplocalcurve, localmaskexputili,
+                        lmaskSHlocalcurve, localmaskSHutili,
+                        lmaskviblocalcurve, localmaskvibutili,
+                        lmasktmlocalcurve, localmasktmutili,
+                        lmaskretilocalcurve, localmaskretiutili,
+                        lmaskcblocalcurve, localmaskcbutili,
+                        lmaskbllocalcurve, localmaskblutili,
+                        locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
+                        locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                        locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
+                        locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
+                        locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
+                        locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
+                        locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
+                        loclmasCurveblwav,lmasutiliblwav,
+                        loclmasCurvecolwav,lmasutilicolwav,
+                        locwavCurve, locwavutili,
+                        LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                 lastorigView->CopyFrom(labView);
 
@@ -1300,6 +1310,8 @@ private:
 
                 // Clear local curves
                 lllocalcurve.clear();
+                lclocalcurve.clear();
+                cllocalcurve.clear();
                 cclocalcurve.clear();
                 rgblocalcurve.clear();
                 exlocalcurve.clear();

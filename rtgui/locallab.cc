@@ -783,6 +783,7 @@ pe(nullptr)
     if (showtooltip) {
         clshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
+
     const std::vector<GradientMilestone>& mclshape = zero_one_shape;
 
     llCurveEditorG->curveListComplete();
@@ -796,6 +797,7 @@ pe(nullptr)
     if (showtooltip) {
         lcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
+
     const std::vector<GradientMilestone>& mlcshape = zero_one_shape;
     lcshape->setResetCurve(DiagonalCurveType(defSpot.lccurve.at(0)), defSpot.lccurve);
 
@@ -1065,19 +1067,22 @@ pe(nullptr)
     qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start(*qualitycurveMethod);
     colorBox->pack_start(*qualcurvbox);
-    colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    //colorBox->pack_start(*clCurveEditorG, Gtk::PACK_SHRINK, 4);
+    colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4);
 
     if (complexsoft < 2) {
-        colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+        colorBox->pack_start(*clCurveEditorG, Gtk::PACK_SHRINK, 4);
     }
 
     if (complexsoft < 2) {
-        colorBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+        colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4);
     }
 
     if (complexsoft < 2) {
-        colorBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4);    // Padding is mandatory to correct behavior of curve editor
+        colorBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4);
+    }
+
+    if (complexsoft < 2) {
+        colorBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4);
     }
 
     if (complexsoft < 2) {
@@ -1311,7 +1316,7 @@ pe(nullptr)
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskexpMethod->append(M("TP_LOCALLAB_SHOWSTRUC"));
+    showmaskexpMethod->append(M("TP_LOCALLAB_SHOWSTRUCEX"));
     showmaskexpMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
 
     showmaskexpMethod->set_active(0);
@@ -1401,9 +1406,11 @@ pe(nullptr)
     ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
+
     if (complexsoft < 2) {
         fatBox->pack_start(*fatlevel);
     }
+
     fatBox->pack_start(*fatanchor);
     pdeFrame->add(*pdeBox);
     fatFrame->add(*fatBox);
@@ -1436,11 +1443,13 @@ pe(nullptr)
     if (complexsoft < 2) {
         exposeBox->pack_start(*black);
     }
+
 //    if (complexsoft < 2) {
-        exposeBox->pack_start(*fatFrame);
+    exposeBox->pack_start(*fatFrame);
 //    }
 
     exposeBox->pack_start(*expcomp);
+
     if (complexsoft < 2) {
         exposeBox->pack_start(*hlcompr);
         exposeBox->pack_start(*hlcomprthresh);
@@ -1448,6 +1457,7 @@ pe(nullptr)
         exposeBox->pack_start(*shcompr);
         exposeBox->pack_start(*expchroma);
     }
+
     exposeBox->pack_start(*warm);
     exposeBox->pack_start(*sensiex);
 
@@ -1855,6 +1865,7 @@ pe(nullptr)
     if (complexsoft < 2) {
         vibranceBox->pack_start(*gradvibFrame, Gtk::PACK_SHRINK, 0);
     }
+
     enavibMaskConn = enavibMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enavibMaskChanged));
 
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
@@ -2142,15 +2153,19 @@ pe(nullptr)
     masktmBox->pack_start(*enatmMaskaft, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*masktmCurveEditorG, Gtk::PACK_SHRINK, 4);
     masktmBox->pack_start(*blendmasktm, Gtk::PACK_SHRINK, 0);
+
     if (complexsoft < 1) {
         masktmBox->pack_start(*lapmasktm, Gtk::PACK_SHRINK, 0);
     }
+
     masktmBox->pack_start(*radmasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*chromasktm, Gtk::PACK_SHRINK, 0);
+
     if (complexsoft < 1) {
         masktmBox->pack_start(*gammasktm, Gtk::PACK_SHRINK, 0);
         masktmBox->pack_start(*slomasktm, Gtk::PACK_SHRINK, 0);
     }
+
     masktmBox->pack_start(*mask2tmCurveEditorG, Gtk::PACK_SHRINK, 4);
     expmasktm->add(*masktmBox, false);
 
@@ -2159,15 +2174,19 @@ pe(nullptr)
 //    tmBox->pack_start(*amount);//to use if we change transit_shapedetect parameters
     tmBox->pack_start(*stren);
     tmBox->pack_start(*equiltm);
+
     if (complexsoft < 2) {
         tmBox->pack_start(*gamma);
         tmBox->pack_start(*satur);
     }
+
     tmBox->pack_start(*estop);
     tmBox->pack_start(*scaltm);
+
     if (complexsoft < 2) {
         tmBox->pack_start(*rewei);
     }
+
 //    tmBox->pack_start(*softradiustm);//always bad with TM ??
     tmBox->pack_start(*sensitm);
     tmBox->pack_start(*expmasktm);
@@ -2176,7 +2195,7 @@ pe(nullptr)
     exptonemap->setLevel(2);
 
 //    if (complexsoft < 2) {
-        panel->pack_start(*exptonemap, false, false);
+    panel->pack_start(*exptonemap, false, false);
 //    }
 
     // Retinex
@@ -2596,7 +2615,7 @@ pe(nullptr)
 
 //    contrastBox->pack_start(*levelwav);
 //    if (complexsoft < 2) {
-        contrastBox->pack_start(*csThreshold);
+    contrastBox->pack_start(*csThreshold);
 //    }
 
 //   if (complexsoft < 2) {
@@ -2817,6 +2836,7 @@ pe(nullptr)
     if (complexsoft < 2) {
         panel->pack_start(*expcbdl, false, false);
     }
+
     // Blur & Noise
     Gtk::HBox* const BLTitleHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const BLLabel = Gtk::manage(new Gtk::Label());
@@ -8197,7 +8217,7 @@ void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newT
 {
     // Not used
 }
-    
+
 
 void Locallab::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
 {
