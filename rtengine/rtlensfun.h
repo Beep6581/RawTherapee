@@ -135,6 +135,7 @@ private:
     mutable MyMutex lfDBMutex;
     static LFDatabase instance_;
     lfDatabase *data_;
+    static Glib::ustring lastKey;
 };
 
 } // namespace rtengine
