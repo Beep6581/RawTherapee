@@ -1756,6 +1756,7 @@ pe(nullptr)
     saturated->setAdjusterListener(this);
 
     pastels->setAdjusterListener(this);
+    
 
     if (showtooltip) {
         psThreshold->set_tooltip_markup(M("TP_VIBRANCE_PSTHRESHOLD_TOOLTIP"));
@@ -1836,6 +1837,10 @@ pe(nullptr)
 
     if (complexsoft < 2) {
         vibranceBox->pack_start(*saturated, Gtk::PACK_SHRINK, 0);
+    }
+
+    if (complexsoft == 2) {
+        pastels->setLabel(M("TP_LOCALLAB_PASTELS2"));
     }
 
     vibranceBox->pack_start(*pastels, Gtk::PACK_SHRINK, 0);
@@ -4559,6 +4564,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).strvibab = strvibab->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).strvibh = strvibh->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).angvib = angvib->getValue();
+                    if (complexsoft == 2) {
+                        skinTonesCurve->reset();
+                    }
+
                     // Soft Light
                     pp->locallab.spots.at(pp->locallab.selspot).expsoft = expsoft->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).streng = streng->getIntValue();
@@ -10319,6 +10328,24 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (complexsoft == 2) {
             expMethod->set_active(1);
+            expcomp->setValue(0);
+            hlcompr->setValue(0);
+            hlcomprthresh->setValue(0);
+            black->setValue(0);
+            shadex->setValue(0);
+            shcompr->setValue(0);
+            expchroma->setValue(0);
+            structexp->setValue(0);
+            blurexpde->setValue(5);
+            gammaskexp->setValue(1);
+            slomaskexp->setValue(0);
+            strmaskexp->setValue(0);
+            angmaskexp->setValue(0);
+            softradiusexp->setValue(0);
+        }
+
+        if (complexsoft > 0) {
+            lapmaskexp->setValue(0);
         }
 
         if (pp->locallab.spots.at(index).exnoiseMethod == "one") {
@@ -10346,6 +10373,11 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         fatdetail->setValue(pp->locallab.spots.at(index).fatdetail);
         fatanchor->setValue(pp->locallab.spots.at(index).fatanchor);
         fatlevel->setValue(pp->locallab.spots.at(index).fatlevel);
+
+        if (complexsoft > 0) {
+            laplacexp->setValue(0);
+            fatlevel->setValue(2);
+        }
 
         // Shadow highlight
         expshadhigh->setEnabled(pp->locallab.spots.at(index).expshadhigh);
@@ -10380,6 +10412,19 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (complexsoft == 2) {
             shMethod->set_active(1);
+            highlights->setValue(0);
+            shadows->setValue(0);
+        }
+
+        if (complexsoft == 2) {
+            gammaskSH->setValue(1);
+            slomaskSH->setValue(0);
+            strSH->setValue(0);
+            angSH->setValue(0);
+        }
+
+        if (complexsoft > 0) {
+            lapmaskSH->setValue(0);
         }
 
         for (int i = 0; i < 5; i++) {
@@ -10416,6 +10461,23 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         strvibab->setValue(pp->locallab.spots.at(index).strvibab);
         strvibh->setValue(pp->locallab.spots.at(index).strvibh);
         angvib->setValue(pp->locallab.spots.at(index).angvib);
+
+        if (complexsoft < 2) {
+            pastels->setLabel(M("TP_VIBRANCE_PASTELS"));
+        }
+
+        if (complexsoft == 2) {
+            gammaskvib->setValue(1);
+            slomaskvib->setValue(0);
+            skinTonesCurve->reset();
+
+        }
+        if (complexsoft > 0) {
+            lapmaskvib->setValue(0);
+            strvibab->setValue(0);
+            strvibh->setValue(0);
+
+        }
 
         // Soft Light
         expsoft->setEnabled(pp->locallab.spots.at(index).expsoft);
