@@ -2322,6 +2322,7 @@ TP_LOCALLAB_MASKH;Hue curve mask
 TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a single tool, this requires activating another tool (but without using the tool : sliders to 0,...) where is the mask you want to activate.\nMasks with this ability are marked '+'\nMasks with additional features are marked '*'\nThe number indicates the order of use of the masks.\n\nYou can combine the mask associated with the tool with an inverse mask.\nIn this case the new tool associated with the mask must be selected in inverse.
 TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Low
+TP_LOCALLAB_MEDNONE;None
 TP_LOCALLAB_MERCOL;Color
 TP_LOCALLAB_MERDCOL;Merge background (deltaE)
 TP_LOCALLAB_MERELE;Lighten only

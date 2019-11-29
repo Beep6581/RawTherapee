@@ -588,7 +588,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.blmet = 2;
     }
 
-    if (locallab.spots.at(sp).medMethod == "33") {
+    if (locallab.spots.at(sp).medMethod == "none") {
+         lp.medmet = -1;
+    } else if (locallab.spots.at(sp).medMethod == "33") {
         lp.medmet = 0;
     } else if (locallab.spots.at(sp).medMethod == "55") {
         lp.medmet = 1;
@@ -8401,7 +8403,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         medianTypeL = medianTypeAB = Median::TYPE_9X9;
                     }
 
-                    if (lp.blurmet == 0  && lp.blmet == 1) {
+                    if (lp.blurmet == 0  && lp.blmet == 1 && lp.medmet != -1) {
                         float** tmL;
                         int wid = bfw;
                         int hei = bfh;

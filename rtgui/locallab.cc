@@ -2166,7 +2166,7 @@ pe(nullptr)
     masktmBox->pack_start(*radmasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*chromasktm, Gtk::PACK_SHRINK, 0);
 
-    if (complexsoft < 1) {
+    if (complexsoft < 2) {
         masktmBox->pack_start(*gammasktm, Gtk::PACK_SHRINK, 0);
         masktmBox->pack_start(*slomasktm, Gtk::PACK_SHRINK, 0);
     }
@@ -2795,13 +2795,13 @@ pe(nullptr)
 
     maskcbBox->pack_start(*chromaskcb, Gtk::PACK_SHRINK, 0);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         maskcbBox->pack_start(*gammaskcb, Gtk::PACK_SHRINK, 0);
-    }
+//    }
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         maskcbBox->pack_start(*slomaskcb, Gtk::PACK_SHRINK, 0);
-    }
+//    }
 
     maskcbBox->pack_start(*mask2cbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskcb->add(*maskcbBox, false);
@@ -2809,15 +2809,15 @@ pe(nullptr)
     Gtk::HSeparator* const separator = Gtk::manage(new  Gtk::HSeparator());
     cbdlBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         cbdlBox->pack_start(*chromacbdl);
-    }
+//    }
 
     cbdlBox->pack_start(*threshold);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         cbdlBox->pack_start(*blurcbdl);
-    }
+//    }
 
     residFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const residBox = Gtk::manage(new ToolParamBlock());
@@ -2825,13 +2825,13 @@ pe(nullptr)
     residBox->pack_start(*contresid);
     residFrame->add(*residBox);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         cbdlBox->pack_start(*residFrame);
-    }
+//    }
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         cbdlBox->pack_start(*softradiuscb);
-    }
+//    }
 
     cbdlBox->pack_start(*sensicb);
     cbdlBox->pack_start(*expmaskcb);
@@ -2983,6 +2983,7 @@ pe(nullptr)
         //   chromaskbl->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
     }
 
+    medMethod->append(M("TP_LOCALLAB_MEDNONE"));
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_3X3"));
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_5X5"));
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_7X7"));
@@ -4601,12 +4602,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     }
 
                     if (medMethod->get_active_row_number() == 0) {
-                        pp->locallab.spots.at(pp->locallab.selspot).medMethod = "33";
+                        pp->locallab.spots.at(pp->locallab.selspot).medMethod = "none";
                     } else if (medMethod->get_active_row_number() == 1) {
-                        pp->locallab.spots.at(pp->locallab.selspot).medMethod = "55";
+                        pp->locallab.spots.at(pp->locallab.selspot).medMethod = "33";
                     } else if (medMethod->get_active_row_number() == 2) {
-                        pp->locallab.spots.at(pp->locallab.selspot).medMethod = "77";
+                        pp->locallab.spots.at(pp->locallab.selspot).medMethod = "55";
                     } else if (medMethod->get_active_row_number() == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).medMethod = "77";
+                    } else if (medMethod->get_active_row_number() == 4) {
                         pp->locallab.spots.at(pp->locallab.selspot).medMethod = "99";
                     }
 
@@ -10470,13 +10473,12 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             gammaskvib->setValue(1);
             slomaskvib->setValue(0);
             skinTonesCurve->reset();
-
         }
+
         if (complexsoft > 0) {
             lapmaskvib->setValue(0);
             strvibab->setValue(0);
             strvibh->setValue(0);
-
         }
 
         // Soft Light
@@ -10493,6 +10495,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (complexsoft == 2) {
             softMethod->set_active(0);
+            streng->setValue(1);
         }
 
         // Blur & Noise
@@ -10517,7 +10520,9 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (complexsoft == 2) {
             blMethod->set_active(0);
+            guidbl->setValue(0);
         }
+
 
         if (pp->locallab.spots.at(index).blurMethod == "norm") {
             blurMethod->set_active(0);
@@ -10527,14 +10532,20 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             //   expmaskbl->hide();
         }
 
-        if (pp->locallab.spots.at(index).medMethod == "33") {
+        if (pp->locallab.spots.at(index).medMethod == "none") {
             medMethod->set_active(0);
-        } else if (pp->locallab.spots.at(index).medMethod == "55") {
+        } else if (pp->locallab.spots.at(index).medMethod == "33") {
             medMethod->set_active(1);
-        } else if (pp->locallab.spots.at(index).medMethod == "77") {
+        } else if (pp->locallab.spots.at(index).medMethod == "55") {
             medMethod->set_active(2);
-        } else if (pp->locallab.spots.at(index).medMethod == "99") {
+        } else if (pp->locallab.spots.at(index).medMethod == "77") {
             medMethod->set_active(3);
+        } else if (pp->locallab.spots.at(index).medMethod == "99") {
+            medMethod->set_active(4);
+        }
+
+        if (complexsoft == 2) {
+            medMethod->set_active(0);
         }
 
         activlum->set_active(pp->locallab.spots.at(index).activlum);
@@ -10555,6 +10566,18 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         Lmaskblshape->setCurve(pp->locallab.spots.at(index).Lmaskblcurve);
         LLmaskblshapewav->setCurve(pp->locallab.spots.at(index).LLmaskblcurvewav);
         csThresholdblur->setValue<int>(pp->locallab.spots.at(index).csthresholdblur);
+
+        if (complexsoft == 2) {
+            gammaskbl->setValue(1);
+            slomaskbl->setValue(0);
+            LLmaskblshapewav->reset();
+            strumaskbl->setValue(0);
+            shadmaskbl->setValue(0);
+        }
+        if (complexsoft > 0) {
+            lapmaskbl->setValue(0);
+            LLmaskblshapewav->reset();
+        }
 
         // Tone Mapping
         exptonemap->setEnabled(pp->locallab.spots.at(index).exptonemap);
@@ -10581,6 +10604,16 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         HHmasktmshape->setCurve(pp->locallab.spots.at(index).HHmasktmcurve);
         Lmasktmshape->setCurve(pp->locallab.spots.at(index).Lmasktmcurve);
 
+        if (complexsoft == 2) {
+            gammasktm->setValue(1);
+            slomasktm->setValue(0);
+            gamma->setValue(1);
+            satur->setValue(0);
+            rewei->setValue(0);
+        }
+        if (complexsoft > 0) {
+            lapmasktm->setValue(0);
+        }
         // Retinex
         expreti->setEnabled(pp->locallab.spots.at(index).expreti);
 
@@ -10642,6 +10675,12 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         sensisha->setValue(pp->locallab.spots.at(index).sensisha);
         inverssha->set_active(pp->locallab.spots.at(index).inverssha);
 
+        if (complexsoft == 2) {
+            shardamping->setValue(0);
+            shariter->setValue(30);
+            sharblur->setValue(0.2);
+        }
+
         // Local Contrast
         expcontrast->setEnabled(pp->locallab.spots.at(index).expcontrast);
         lcradius->setValue(pp->locallab.spots.at(index).lcradius);
@@ -10666,6 +10705,12 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (complexsoft == 2) {
             localcontMethod->set_active(1);
+            claricres->setValue(0);
+            clarisoft->setValue(0);
+            lcradius->setValue(80);
+            lcamount->setValue(0);
+            residchro->setValue(0);
+            fftwlc->set_active(false);
         }
 
         wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
@@ -10696,6 +10741,16 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         HHmaskcbshape->setCurve(pp->locallab.spots.at(index).HHmaskcbcurve);
         Lmaskcbshape->setCurve(pp->locallab.spots.at(index).Lmaskcbcurve);
 
+        if (complexsoft == 2) {
+            for (int i = 0; i < 6; i++) {
+                multiplier[i]->setValue(1.0);
+            }
+        }
+
+        if (complexsoft > 0) {
+            lapmaskcb->setValue(0);
+        }
+
         // Denoise
         expdenoi->setEnabled(pp->locallab.spots.at(index).expdenoi);
         noiselumf->setValue(pp->locallab.spots.at(index).noiselumf);
@@ -10711,6 +10766,16 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         bilateral->setValue(pp->locallab.spots.at(index).bilateral);
         sensiden->setValue(pp->locallab.spots.at(index).sensiden);
         detailthr->setValue(pp->locallab.spots.at(index).detailthr);
+
+        if (complexsoft == 2) {
+            noiselumf->setValue(0);
+            noiselumf0->setValue(0);
+            noiselumf2->setValue(0);
+            noiselumc->setValue(0);
+            noisechrof->setValue(0);
+            noisechroc->setValue(0);
+            bilateral->setValue(0);
+        }
 
         if (pedited) {
             if (index < (int)pedited->locallab.spots.size()) {
