@@ -860,8 +860,7 @@ inline int crxBitstreamGetZeros(CrxBitstream* bitStrm)
 
         while (true) {
             while (bitStrm->curPos + 4 <= bitStrm->curBufSize) {
-                nextData =
-                    _byteswap_ulong(*reinterpret_cast<std::uint32_t*>(bitStrm->mdatBuf + bitStrm->curPos));
+                nextData = _byteswap_ulong(*reinterpret_cast<std::uint32_t*>(bitStrm->mdatBuf + bitStrm->curPos));
                 bitStrm->curPos += 4;
                 crxFillBuffer(bitStrm);
 
@@ -910,8 +909,7 @@ inline std::uint32_t crxBitstreamGetBits(CrxBitstream* bitStrm, int bits)
     if (bitsLeft < bits) {
         // get them from stream
         if (bitStrm->curPos + 4 <= bitStrm->curBufSize) {
-            nextWord =
-                _byteswap_ulong(*reinterpret_cast<std::uint32_t*>(bitStrm->mdatBuf + bitStrm->curPos));
+            nextWord = _byteswap_ulong(*reinterpret_cast<std::uint32_t*>(bitStrm->mdatBuf + bitStrm->curPos));
             bitStrm->curPos += 4;
             crxFillBuffer(bitStrm);
             bitStrm->bitsLeft = 32 - (bits - bitsLeft);
@@ -939,30 +937,34 @@ inline std::uint32_t crxBitstreamGetBits(CrxBitstream* bitStrm, int bits)
     return result;
 }
 
-inline int crxPredictKParameter(std::int32_t prevK, std::int32_t bitCode,
-                                       std::int32_t maxVal = 0)
+inline std::int32_t crxPredictKParameter(std::int32_t prevK, std::int32_t bitCode, std::int32_t maxVal = 0)
 {
-    std::int32_t newKParam = prevK - (bitCode < (1 << prevK >> 1)) +
-                        ((bitCode >> prevK) > 2) + ((bitCode >> prevK) > 5);
+    const std::int32_t newKParam =
+        prevK
+        - (bitCode < (1 << prevK >> 1))
+        + ((bitCode >> prevK) > 2) + ((bitCode >> prevK) > 5);
 
-    return !maxVal || newKParam < maxVal ? newKParam : maxVal;
+    return
+        !maxVal || newKParam < maxVal
+            ? newKParam
+            : maxVal;
 }
 
-inline void crxDecodeSymbolL1(CrxBandParam* param,
-                                     std::int32_t doMedianPrediction,
-                                     std::int32_t notEOL = 0)
+inline void crxDecodeSymbolL1(CrxBandParam* param, std::int32_t doMedianPrediction, bool notEOL = false)
 {
     if (doMedianPrediction) {
-        std::int32_t symb[4];
+        const std::int32_t delta = param->lineBuf0[1] - param->lineBuf0[0];
+        const std::int32_t symb[4] = {
+            delta + param->lineBuf1[0],
+            delta + param->lineBuf1[0],
+            param->lineBuf1[0],
+            param->lineBuf0[1]
+        };
 
-        std::int32_t delta = param->lineBuf0[1] - param->lineBuf0[0];
-        symb[2] = param->lineBuf1[0];
-        symb[0] = symb[1] = delta + symb[2];
-        symb[3] = param->lineBuf0[1];
-
-        param->lineBuf1[1] =
-            symb[(((param->lineBuf0[0] < param->lineBuf1[0]) ^ (delta < 0)) << 1) +
-                                                             ((param->lineBuf1[0] < param->lineBuf0[1]) ^ (delta < 0))];
+        param->lineBuf1[1] = symb[
+            (((param->lineBuf0[0] < param->lineBuf1[0]) ^ (delta < 0)) << 1)
+            + ((param->lineBuf1[0] < param->lineBuf0[1]) ^ (delta < 0))
+        ];
     } else   {
         param->lineBuf1[1] = param->lineBuf0[1];
     }
@@ -973,8 +975,7 @@ inline void crxDecodeSymbolL1(CrxBandParam* param,
     if (bitCode >= 41) {
         bitCode = crxBitstreamGetBits(&param->bitStream, 21);
     } else if (param->kParam) {
-        bitCode = crxBitstreamGetBits(&param->bitStream, param->kParam) |
-                  (bitCode << param->kParam);
+        bitCode = crxBitstreamGetBits(&param->bitStream, param->kParam) | (bitCode << param->kParam);
     }
 
     // add converted (+/-) error code to predicted value
@@ -982,7 +983,7 @@ inline void crxDecodeSymbolL1(CrxBandParam* param,
 
     // for not end of the line - use one symbol ahead to estimate next K
     if (notEOL) {
-        std::int32_t nextDelta = (param->lineBuf0[2] - param->lineBuf0[1]) << 1;
+        const std::int32_t nextDelta = (param->lineBuf0[2] - param->lineBuf0[1]) << 1;
         bitCode = (bitCode + std::abs(nextDelta)) >> 1;
         ++param->lineBuf0;
     }
@@ -993,17 +994,16 @@ inline void crxDecodeSymbolL1(CrxBandParam* param,
     ++param->lineBuf1;
 }
 
-int crxDecodeLine(CrxBandParam* param)
+bool crxDecodeLine(CrxBandParam* param)
 {
     int length = param->subbandWidth;
 
     param->lineBuf1[0] = param->lineBuf0[1];
 
     for (; length > 1; --length) {
-        if (param->lineBuf1[0] != param->lineBuf0[1] ||
-                param->lineBuf1[0] != param->lineBuf0[2]) {
-            crxDecodeSymbolL1(param, 1, 1);
-        } else   {
+        if (param->lineBuf1[0] != param->lineBuf0[1] || param->lineBuf1[0] != param->lineBuf0[2]) {
+            crxDecodeSymbolL1(param, 1, true);
+        } else {
             int nSyms = 0;
 
             if (crxBitstreamGetBits(&param->bitStream, 1)) {
@@ -1036,7 +1036,7 @@ int crxDecodeLine(CrxBandParam* param)
                     }
 
                     if (nSyms > length) {
-                        return -1;
+                        return false;
                     }
                 }
 
@@ -1053,36 +1053,37 @@ int crxDecodeLine(CrxBandParam* param)
             }
 
             if (length > 0) {
-                crxDecodeSymbolL1(param, 0, (length > 1));
+                crxDecodeSymbolL1(param, 0, length > 1);
             }
         }
     }
 
     if (length == 1) {
-        crxDecodeSymbolL1(param, 1, 0);
+        crxDecodeSymbolL1(param, 1, false);
     }
 
     param->lineBuf1[1] = param->lineBuf1[0] + 1;
 
-    return 0;
+    return true;
 }
 
-inline void crxDecodeSymbolL1Rounded(CrxBandParam* param,
-        std::int32_t doSym = 1,
-        std::int32_t doCode = 1)
+inline void crxDecodeSymbolL1Rounded(CrxBandParam* param, bool doSym = true, bool doCode = true)
 {
     std::int32_t sym = param->lineBuf0[1];
 
     if (doSym) {
         // calculate the next symbol gradient
-        std::int32_t symb[4];
-        std::int32_t deltaH = param->lineBuf0[1] - param->lineBuf0[0];
-        symb[2] = param->lineBuf1[0];
-        symb[0] = symb[1] = deltaH + symb[2];
-        symb[3] = param->lineBuf0[1];
-        sym =
-            symb[(((param->lineBuf0[0] < param->lineBuf1[0]) ^ (deltaH < 0)) << 1) +
-                                                             ((param->lineBuf1[0] < param->lineBuf0[1]) ^ (deltaH < 0))];
+        const std::int32_t deltaH = param->lineBuf0[1] - param->lineBuf0[0];
+        const std::int32_t symb[4] = {
+            deltaH + param->lineBuf1[0],
+            deltaH + param->lineBuf1[0],
+            param->lineBuf1[0],
+            param->lineBuf0[1]
+        };
+        sym = symb[
+            (((param->lineBuf0[0] < param->lineBuf1[0]) ^ (deltaH < 0)) << 1)
+            + ((param->lineBuf1[0] < param->lineBuf0[1]) ^ (deltaH < 0))
+        ];
     }
 
     std::uint32_t bitCode = crxBitstreamGetZeros(&param->bitStream);
@@ -1090,36 +1091,30 @@ inline void crxDecodeSymbolL1Rounded(CrxBandParam* param,
     if (bitCode >= 41) {
         bitCode = crxBitstreamGetBits(&param->bitStream, 21);
     } else if (param->kParam) {
-        bitCode = crxBitstreamGetBits(&param->bitStream, param->kParam) |
-                  (bitCode << param->kParam);
+        bitCode = crxBitstreamGetBits(&param->bitStream, param->kParam) | (bitCode << param->kParam);
     }
 
     std::int32_t code = -(bitCode & 1) ^ (bitCode >> 1);
-    param->lineBuf1[1] = param->roundedBitsMask * 2 * code + static_cast<bool>(code < 0) + sym;
+    param->lineBuf1[1] = param->roundedBitsMask * 2 * code + (code < 0) + sym;
 
     if (doCode) {
         if (param->lineBuf0[2] > param->lineBuf0[1]) {
-            code = (param->lineBuf0[2] - param->lineBuf0[1] + param->roundedBitsMask -
-                    1) >>
-                   param->roundedBits;
+            code = (param->lineBuf0[2] - param->lineBuf0[1] + param->roundedBitsMask - 1) >> param->roundedBits;
         } else {
-            code = -(
-                       (param->lineBuf0[1] - param->lineBuf0[2] + param->roundedBitsMask) >>
-                       param->roundedBits);
+            code = -((param->lineBuf0[1] - param->lineBuf0[2] + param->roundedBitsMask) >> param->roundedBits);
         }
 
-        param->kParam = crxPredictKParameter(param->kParam,
-                                             (bitCode + 2 * std::abs(code)) >> 1, 15);
-    } else   {
+        param->kParam = crxPredictKParameter(param->kParam, (bitCode + 2 * std::abs(code)) >> 1, 15);
+    } else {
         param->kParam = crxPredictKParameter(param->kParam, bitCode, 15);
     }
 
     ++param->lineBuf1;
 }
 
-int crxDecodeLineRounded(CrxBandParam* param)
+bool crxDecodeLineRounded(CrxBandParam* param)
 {
-    std::int32_t valueReached = 0;
+    bool valueReached = false;
 
     param->lineBuf0[0] = param->lineBuf0[1];
     param->lineBuf1[0] = param->lineBuf0[1];
@@ -1129,13 +1124,12 @@ int crxDecodeLineRounded(CrxBandParam* param)
         if (std::abs(param->lineBuf0[2] - param->lineBuf0[1]) > param->roundedBitsMask) {
             crxDecodeSymbolL1Rounded(param);
             ++param->lineBuf0;
-            valueReached = 1;
-        } else if (valueReached || std::abs(param->lineBuf0[0] - param->lineBuf1[0]) >
-                   param->roundedBitsMask) {
+            valueReached = true;
+        } else if (valueReached || std::abs(param->lineBuf0[0] - param->lineBuf1[0]) > param->roundedBitsMask) {
             crxDecodeSymbolL1Rounded(param);
             ++param->lineBuf0;
-            valueReached = 0;
-        } else   {
+            valueReached = false;
+        } else {
             int nSyms = 0;
 
             if (crxBitstreamGetBits(&param->bitStream, 1)) {
@@ -1169,7 +1163,7 @@ int crxDecodeLineRounded(CrxBandParam* param)
                 }
 
                 if (nSyms > length) {
-                    return -1;
+                    return false;
                 }
             }
 
@@ -1185,23 +1179,22 @@ int crxDecodeLineRounded(CrxBandParam* param)
             }
 
             if (length > 1) {
-                crxDecodeSymbolL1Rounded(param, 0);
+                crxDecodeSymbolL1Rounded(param, false);
                 ++param->lineBuf0;
-                valueReached = std::abs(param->lineBuf0[1] - param->lineBuf0[0]) >
-                               param->roundedBitsMask;
+                valueReached = std::abs(param->lineBuf0[1] - param->lineBuf0[0]) > param->roundedBitsMask;
             } else if (length == 1)   {
-                crxDecodeSymbolL1Rounded(param, 0, 0);
+                crxDecodeSymbolL1Rounded(param, false, false);
             }
         }
     }
 
     if (length == 1) {
-        crxDecodeSymbolL1Rounded(param, 1, 0);
+        crxDecodeSymbolL1Rounded(param, true, false);
     }
 
     param->lineBuf1[1] = param->lineBuf1[0] + 1;
 
-    return 0;
+    return true;
 }
 
 int crxDecodeLineNoRefPrevLine(CrxBandParam* param)
@@ -1535,7 +1528,7 @@ int crxDecodeTopLineRounded(CrxBandParam* param)
     return 0;
 }
 
-int crxDecodeTopLineNoRefPrevLine(CrxBandParam* param)
+bool crxDecodeTopLineNoRefPrevLine(CrxBandParam* param)
 {
     param->lineBuf0[0] = 0;
     param->lineBuf1[0] = 0;
@@ -1587,7 +1580,7 @@ int crxDecodeTopLineNoRefPrevLine(CrxBandParam* param)
                     }
 
                     if (nSyms > length) {
-                        return -1;
+                        return false;
                     }
                 }
             }
@@ -1642,21 +1635,21 @@ int crxDecodeTopLineNoRefPrevLine(CrxBandParam* param)
 
     param->lineBuf1[1] = 0;
 
-    return 0;
+    return true;
 }
 
-int crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
+bool crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
 {
     if (!param || !bandBuf) {
-        return -1;
+        return false;
     }
 
     if (param->curLine >= param->subbandHeight) {
-        return -1;
+        return false;
     }
 
     if (param->curLine == 0) {
-        std::int32_t lineLength = param->subbandWidth + 2;
+        const std::int32_t lineLength = param->subbandWidth + 2;
 
         param->sParam = 0;
         param->kParam = 0;
@@ -1665,10 +1658,10 @@ int crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
             if (param->roundedBitsMask <= 0) {
                 param->lineBuf0 = param->paramData;
                 param->lineBuf1 = param->lineBuf0 + lineLength;
-                std::int32_t* lineBuf = param->lineBuf1 + 1;
+                std::int32_t* const lineBuf = param->lineBuf1 + 1;
 
                 if (crxDecodeTopLine(param)) {
-                    return -1;
+                    return false;
                 }
 
                 memcpy(bandBuf, lineBuf, param->subbandWidth * sizeof(std::int32_t));
@@ -1687,7 +1680,7 @@ int crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
                 std::int32_t* lineBuf = param->lineBuf1 + 1;
 
                 if (crxDecodeTopLineRounded(param)) {
-                    return -1;
+                    return false;
                 }
 
                 memcpy(bandBuf, lineBuf, param->subbandWidth * sizeof(std::int32_t));
@@ -1699,8 +1692,8 @@ int crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
             param->lineBuf1 = param->lineBuf0 + lineLength;
             std::int32_t* lineBuf = param->lineBuf1 + 1;
 
-            if (crxDecodeTopLineNoRefPrevLine(param)) {
-                return -1;
+            if (!crxDecodeTopLineNoRefPrevLine(param)) {
+                return false;
             }
 
             memcpy(bandBuf, lineBuf, param->subbandWidth * sizeof(std::int32_t));
@@ -1721,7 +1714,7 @@ int crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
         std::int32_t* lineBuf = param->lineBuf1 + 1;
 
         if (crxDecodeLineNoRefPrevLine(param)) {
-            return -1;
+            return false;
         }
 
         memcpy(bandBuf, lineBuf, param->subbandWidth * sizeof(std::int32_t));
@@ -1739,8 +1732,8 @@ int crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
 
         std::int32_t* lineBuf = param->lineBuf1 + 1;
 
-        if (crxDecodeLine(param)) {
-            return -1;
+        if (!crxDecodeLine(param)) {
+            return false;
         }
 
         memcpy(bandBuf, lineBuf, param->subbandWidth * sizeof(std::int32_t));
@@ -1758,15 +1751,15 @@ int crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
 
         std::int32_t* lineBuf = param->lineBuf1 + 1;
 
-        if (crxDecodeLineRounded(param)) {
-            return -1;
+        if (!crxDecodeLineRounded(param)) {
+            return false;
         }
 
         memcpy(bandBuf, lineBuf, param->subbandWidth * sizeof(std::int32_t));
         ++param->curLine;
     }
 
-    return 0;
+    return true;
 }
 
 int crxDecodeLineWithIQuantization(CrxSubband* subband)
@@ -1798,7 +1791,7 @@ int crxDecodeLineWithIQuantization(CrxSubband* subband)
         }
     }
 
-    if (crxDecodeLine(subband->bandParam, subband->bandBuf)) {
+    if (!crxDecodeLine(subband->bandParam, subband->bandBuf)) {
         return -1;
     }
 
@@ -2627,7 +2620,7 @@ int DCraw::crxDecodePlane(void* p, std::uint32_t planeNumber)
                 }
 
                 for (int i = 0; i < tile->height; ++i) {
-                    if (crxDecodeLine(planeComp->subBands->bandParam,
+                    if (!crxDecodeLine(planeComp->subBands->bandParam,
                                       planeComp->subBands->bandBuf)) {
                         return -1;
                     }
