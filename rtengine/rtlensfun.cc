@@ -24,6 +24,7 @@
 #include "procparams.h"
 #include "rtlensfun.h"
 #include "settings.h"
+
 namespace rtengine
 {
 
@@ -499,7 +500,7 @@ std::unique_ptr<LFModifier> LFDatabase::getModifier(const LFCamera &camera, cons
     return ret;
 }
 
-Glib::ustring LFDatabase::lastKey;
+std::set<std::string> LFDatabase::notFound;
 
 std::unique_ptr<LFModifier> LFDatabase::findModifier(const procparams::LensProfParams &lensProf, const FramesMetaData *idata, int width, int height, const procparams::CoarseTransformParams &coarse, int rawRotationDeg)
 {
@@ -521,9 +522,9 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(const procparams::LensProfP
         return nullptr;
     }
 
-    Glib::ustring temp = make + model + lens;
-    if (lastKey == temp) {
-        // This combination was not found in last search => do not search again
+    const std::string key = (make + model + lens).collate_key();
+    if (notFound.find(key) != notFound.end()) {
+        // This combination was not found => do not search again
         return nullptr;
     }
     const LFDatabase *db = getInstance();
@@ -555,7 +556,7 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(const procparams::LensProfP
     }
 
     if (!ret) {
-        lastKey = temp;
+        notFound.emplace(key);
     }
 
     return ret;
