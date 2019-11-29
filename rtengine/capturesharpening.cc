@@ -533,8 +533,8 @@ BENCHFUN
     }
 
     constexpr int tileSize = 32;
-    constexpr int border = 5;
-    constexpr int fullTileSize = tileSize + 2 * border;
+    const int border = iterations <= 30 ? 5 : 7;
+    const int fullTileSize = tileSize + 2 * border;
     const float cornerRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
     const float cornerDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
     const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
@@ -569,10 +569,10 @@ BENCHFUN
                             }
                         }
                     }
-                    for (int k = 0, ii = endOfCol ? H - fullTileSize : i; k < fullTileSize; ++k, ++ii) {
-                        for (int l = 0, jj = endOfRow ? W - fullTileSize : j; l < fullTileSize; ++l, ++jj) {
-                            tmpIThr[k][l] = oldLuminance[ii - border][jj - border];
-                            lumThr[k][l] = oldLuminance[ii - border][jj - border];
+                    for (int k = 0, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize; ++k, ++ii) {
+                        for (int l = 0, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize; ++l, ++jj) {
+                            tmpIThr[k][l] = oldLuminance[ii][jj];
+                            lumThr[k][l] = oldLuminance[ii][jj];
                         }
                     }
                 } else {
@@ -651,8 +651,8 @@ BENCHFUN
                 }
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
-                    for (int k = border, ii = endOfCol ? H - fullTileSize - border : i - border; k < fullTileSize - border; ++k) {
-                        for (int l = border, jj = endOfRow ? W - fullTileSize - border : j - border; l < fullTileSize - border; ++l) {
+                    for (int k = border, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize - border; ++k) {
+                        for (int l = border, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize - border; ++l) {
                             luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], std::max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
                         }
                     }
