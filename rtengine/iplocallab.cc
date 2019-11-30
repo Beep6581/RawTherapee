@@ -1688,7 +1688,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 
             double aepsil = (epsilmax - epsilmin) / 90.f;
             double bepsil = epsilmax - 100.f * aepsil;
-            double epsil = aepsil * rad + bepsil;
+            double epsil = aepsil * 0.1 * rad + bepsil;
 
             float blur = 10.f / sk * (thres + 0.8f * rad);
             rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
@@ -1748,11 +1748,6 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 //                rtengine::guidedFilter(guid, blechro, blechro, r1, 0.5 * epsil, multiThread);
             }
 
-            /*
-                       // float blur = 10.f / sk * (thres + 0.8f * rad);
-
-                        rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
-            */
 
 
 #ifdef _OPENMP
@@ -2670,7 +2665,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     double gradient_angle = angs / 180.0 * rtengine::RT_PI;
     double varfeath = 0.01 * lp.feath;
 
-    printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+    //printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
     gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
@@ -7968,7 +7963,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         if (((radius > 1.5 * GAUSS_SKIP)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
             blurz = true;
         }
-printf("OK 1\n");
         const int GW = transformed->W;
         const int GH = transformed->H;
 
@@ -8895,7 +8889,7 @@ printf("OK 1\n");
                         ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
                         if (lp.softradiuscb > 0.f) {
-                            softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
+                            softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
                         }
 
                     }
@@ -9417,28 +9411,9 @@ printf("OK 1\n");
                             for (int x = 0; x < bfw; x++) {
                                 buflight[y][x] /= coef;
                                 bufchro[y][x] /= coefC;
-                                //          guid[y][x] = (bufgb->L[y][x]) / 32768.f;
-                                //          ble[y][x] = (tmp1->L[y][x] - bufgb->L[y][x]) / 32768.f;
                             }
                         }
 
-                        /*
-                                            if (lp.softradiustm > 0.f) {
-                                                guidedFilter(guid, ble, ble, 0.1f * lp.softradiustm / sk, 0.0001, multiThread);
-                                             //   softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
-                                            }
-
-                        #ifdef _OPENMP
-                                            #pragma omp parallel for
-                        #endif
-
-                                            for (int y = 0; y < bfh; y++) {
-                                                for (int x = 0; x < bfw; x++) {
-                                                    tmp1->L[y][x] = 32768.f * LIM01(ble[y][x]) + bufgb->L[y][x];
-                                                }
-                                            }
-                        */
-                        //
                         //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                         transit_shapedetect(8, tmp1.get(), originalmasktm.get(), bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
@@ -10313,7 +10288,7 @@ printf("OK 1\n");
                         mL0 = mL;
                         mC0 = mC;
                         thr = 1.f;
-                        flag = 0;
+                        flag = 1;
                     } else {
                         mL0 = mL = mC0 = mC = 0.f;
                     }
@@ -11308,12 +11283,6 @@ printf("OK 1\n");
 
 
 
-                    /*
-                                    if (lp.softradiusret > 0.f && lp.scalereti != 1) {
-                                    //    softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, 0.01, 0.001, 0.0001f, multiThread);
-                                       //softproc(bufreti, tmpl, lp.softradiusret, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
-                                    }
-                    */
                     transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
@@ -11946,7 +11915,7 @@ printf("OK 1\n");
                                                 }
                         */
                         if (lp.softradiusexp > 0.f && lp.expmet == 0) {
-                            softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
+                            softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
                         }
 
                         transit_shapedetect2(1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
