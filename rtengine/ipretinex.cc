@@ -919,15 +919,17 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
             int r1 = max(int(4 / skip * blur + 0.5), 1);
             int r2 = max(int(25 / skip * blur + 0.5), 1);
 
-            double epsilmax = 0.0001;
+            double epsilmax = 0.0005;
             double epsilmin = 0.00001;
 
             double aepsil = (epsilmax - epsilmin) / 90.f;
             double bepsil = epsilmax - 100.f * aepsil;
-            double epsil = aepsil * rad + bepsil;
-
-            rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
-            rtengine::guidedFilter(guid, blechro, blechro, r1, 0.3 * epsil, multiThread);
+            double epsil = aepsil * 0.1 * rad + bepsil;
+            if (rad < 0.f) {
+                epsil = 0.001;
+            }
+            rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
+            rtengine::guidedFilter(guid, ble, ble, r2, 0.2 * epsil, multiThread);
 
     }
 

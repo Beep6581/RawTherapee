@@ -1734,14 +1734,16 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 
             double aepsil = (epsilmax - epsilmin) / 90.f;
             double bepsil = epsilmax - 100.f * aepsil;
-            double epsil = aepsil * rad + bepsil;
+            double epsil = aepsil * 0.1 * rad + bepsil;
 
             if (rad != 0.f) {
                 float blur = rad;
                 blur = blur < 0.f ? -1.f / blur : 1.f + blur;
                 // int r1 = max(int(4 / sk * blur + 0.5), 1);
                 int r2 = max(int(25 / sk * blur + 0.5), 1);
-
+                if(rad < 0.f) {
+                    epsil = 0.0001;
+                }
                 rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
 //                rtengine::guidedFilter(guid, blechro, blechro, r1, 0.5 * epsil, multiThread);
             }
@@ -3469,7 +3471,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             buildBlendMask(bufcolorig->L, blendblur, bfw, bfh, contra, 1.f);
 
 
-            float radblur = 0.02f * rad;//empirical value
+            float radblur = 0.002f * rad;//empirical value
             float rm = radblur / sk;
 
             if (rm > 0) {
@@ -3664,15 +3666,17 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             int r1 = max(int(4 / sk * blur + 0.5), 1);
             int r2 = max(int(25 / sk * blur + 0.5), 1);
 
-            double epsilmax = 0.0001;
+            double epsilmax = 0.0005;
             double epsilmin = 0.00001;
 
             double aepsil = (epsilmax - epsilmin) / 90.f;
             double bepsil = epsilmax - 100.f * aepsil;
-            double epsil = aepsil * rad + bepsil;
-
-            rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
-            rtengine::guidedFilter(guid, blechro, blechro, r1, 0.3 * epsil, multiThread);
+            double epsil = aepsil * 0.1 * rad + bepsil;
+            if(rad < 0.f) {
+                epsil = 0.001;
+            }
+            rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
+            rtengine::guidedFilter(guid, ble, ble, r2, 0.2 * epsil, multiThread);
         }
 
         LUTf lutTonemaskexp(65536);
@@ -7964,7 +7968,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         if (((radius > 1.5 * GAUSS_SKIP)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
             blurz = true;
         }
-
+printf("OK 1\n");
         const int GW = transformed->W;
         const int GH = transformed->H;
 
@@ -8092,15 +8096,18 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int r1 = max(int(4 / sk * blur + 0.5), 1);
                     int r2 = max(int(25 / sk * blur + 0.5), 1);
 
-                    double epsilmax = 0.0001;
+                    double epsilmax = 0.0005;
                     double epsilmin = 0.00001;
 
                     double aepsil = (epsilmax - epsilmin) / 90.f;
                     double bepsil = epsilmax - 100.f * aepsil;
                     double epsil = aepsil * lp.radmabl + bepsil;
 
-                    rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
-                    rtengine::guidedFilter(guid, blechro, blechro, r1, 0.3 * epsil, multiThread);
+                    if(lp.radmabl < 0.f) {
+                        epsil = 0.001;
+                    }
+                    rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
+                    rtengine::guidedFilter(guid, ble, ble, r2, 0.2 * epsil, multiThread);
 
                     //    guidedFilter(guid, ble, ble, lp.radmabl * 10.f / sk, 0.001, multiThread, 4);
                 }
