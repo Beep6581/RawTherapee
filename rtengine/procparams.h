@@ -1038,6 +1038,7 @@ struct LocallabParams {
         bool special;
         bool toolcol;
         bool enaColorMask;
+        bool fftColorMask;
         std::vector<double> CCmaskcurve;
         std::vector<double> LLmaskcurve;
         std::vector<double> HHmaskcurve;

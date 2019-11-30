@@ -377,7 +377,8 @@ private:
     Gtk::CheckButton* const special;
     Gtk::CheckButton* const toolcol;
     Gtk::CheckButton* const enaColorMask;
-    sigc::connection curvactivConn, inversConn, enaColorMaskConn, specialConn, toolcolConn;
+    Gtk::CheckButton* const fftColorMask;
+    sigc::connection curvactivConn, inversConn, enaColorMaskConn, specialConn, toolcolConn, fftColorMaskConn;
     // Exposure
     Gtk::CheckButton* const enaExpMask;
     sigc::connection enaExpMaskConn;
@@ -519,6 +520,8 @@ private:
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
     Gtk::Frame* const gridFrame;
+    Gtk::Frame* const struFrame;
+    Gtk::Frame* const blurFrame;
     Gtk::Frame* const gridmerFrame;
     Gtk::Frame* const toolcolFrame;
     Gtk::Frame* const toolblFrame;
@@ -586,6 +589,7 @@ private:
     void specialChanged();
     void toolcolChanged();
     void enaColorMaskChanged();
+    void fftColorMaskChanged();
     // Exposure
     void enaExpMaskChanged();
     void enaExpMaskaftChanged();

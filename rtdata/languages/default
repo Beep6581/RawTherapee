@@ -1080,6 +1080,7 @@ HISTORY_MSG_840;Local - CL Curve
 HISTORY_MSG_841;Local - LC curve
 HISTORY_MSG_842;Local - Contrast Threshold Mask blur
 HISTORY_MSG_843;Local - Radius Mask blur
+HISTORY_MSG_844;Local - Color Mask fftw
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2261,6 +2262,7 @@ TP_LOCALLAB_FATLEVEL;Detail levels
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n..
 TP_LOCALLAB_FEATVALUE;Feather gradient
+TP_LOCALLAB_FFTCOL_MASK;FFTW
 TP_LOCALLAB_FFTW2;Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_FFTW;Use Fast Fourier Transform
 TP_LOCALLAB_GAM;Gamma
@@ -2294,9 +2296,11 @@ TP_LOCALLAB_INDSL;Independent (mouse + sliders)
 TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_ISOGR;Coarseness (ISO)
 TP_LOCALLAB_LABEL;Local Adjustements
+TP_LOCALLAB_LABBLURM;Mask Blur
 TP_LOCALLAB_LABGRID;Color correction grid
 TP_LOCALLAB_LABGRIDMERG;Background
 TP_LOCALLAB_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
+TP_LOCALLAB_LABSTRUM;Mask Structure
 TP_LOCALLAB_LAPLACC;Mask Laplacian solve PDE
 TP_LOCALLAB_LAPLACE;Laplacian threshold deltaE
 TP_LOCALLAB_LAPLACEXP;Laplacian threshold
@@ -2322,6 +2326,7 @@ TP_LOCALLAB_MASFRAME;Mask and Merge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves and structure mask (if enabled tool) are used.\nDisabled in Inverse
 TP_LOCALLAB_MASK2;Contrast curve mask
 TP_LOCALLAB_MASK;Mask
+TP_LOCALLAB_MASKCOL;Mask Curves
 TP_LOCALLAB_MASKH;Hue curve mask
 TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a single tool, this requires activating another tool (but without using the tool : sliders to 0,...) where is the mask you want to activate.\nMasks with this ability are marked '+'\nMasks with additional features are marked '*'\nThe number indicates the order of use of the masks.\n\nYou can combine the mask associated with the tool with an inverse mask.\nIn this case the new tool associated with the mask must be selected in inverse.
 TP_LOCALLAB_MED;Medium
@@ -2394,7 +2399,7 @@ TP_LOCALLAB_PROXI;DeltaE weakening
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_RADIUS;Radius
-TP_LOCALLAB_RADMASKCOL;Radius
+TP_LOCALLAB_RADMASKCOL;Smooth Radius Mask
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_RECURS;Recursive references
 TP_LOCALLAB_RECURS_TOOLTIP;Recalculate references for hue, luma, chroma after each module and after each RT-spot.\nAlso useful for working with masks.
@@ -2494,7 +2499,7 @@ TP_LOCALLAB_STRRETI_TOOLTIP;if Strength Retinex < 0.2 only Dehaze is enabled.\ni
 TP_LOCALLAB_STRUC;Structure
 TP_LOCALLAB_STRUCCOL1;Structure Spot
 TP_LOCALLAB_STRUCCOL;Structure
-TP_LOCALLAB_STRUMASKCOL;Structure mask
+TP_LOCALLAB_STRUMASKCOL;Structure mask strength
 TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 TP_LOCALLAB_SYM;Symmetrical (mouse)

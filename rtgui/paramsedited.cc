@@ -1031,6 +1031,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).special = locallab.spots.at(j).special && pSpot.special == otherSpot.special;
                 locallab.spots.at(j).toolcol = locallab.spots.at(j).toolcol && pSpot.toolcol == otherSpot.toolcol;
                 locallab.spots.at(j).enaColorMask = locallab.spots.at(j).enaColorMask && pSpot.enaColorMask == otherSpot.enaColorMask;
+                locallab.spots.at(j).fftColorMask = locallab.spots.at(j).fftColorMask && pSpot.fftColorMask == otherSpot.fftColorMask;
                 locallab.spots.at(j).CCmaskcurve = locallab.spots.at(j).CCmaskcurve && pSpot.CCmaskcurve == otherSpot.CCmaskcurve;
                 locallab.spots.at(j).LLmaskcurve = locallab.spots.at(j).LLmaskcurve && pSpot.LLmaskcurve == otherSpot.LLmaskcurve;
                 locallab.spots.at(j).HHmaskcurve = locallab.spots.at(j).HHmaskcurve && pSpot.HHmaskcurve == otherSpot.HHmaskcurve;
@@ -3088,6 +3089,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).enaColorMask) {
             toEdit.locallab.spots.at(i).enaColorMask = mods.locallab.spots.at(i).enaColorMask;
+        }
+
+        if (locallab.spots.at(i).fftColorMask) {
+            toEdit.locallab.spots.at(i).fftColorMask = mods.locallab.spots.at(i).fftColorMask;
         }
 
         if (locallab.spots.at(i).CCmaskcurve) {
@@ -5188,6 +5193,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     special(v),
     toolcol(v),
     enaColorMask(v),
+    fftColorMask(v),
     CCmaskcurve(v),
     LLmaskcurve(v),
     HHmaskcurve(v),
@@ -5544,6 +5550,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     special = v;
     toolcol = v;
     enaColorMask = v;
+    fftColorMask = v;
     CCmaskcurve = v;
     LLmaskcurve = v;
     HHmaskcurve = v;

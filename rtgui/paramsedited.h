@@ -465,6 +465,7 @@ public:
         bool special;
         bool toolcol;
         bool enaColorMask;
+        bool fftColorMask;
         bool CCmaskcurve;
         bool LLmaskcurve;
         bool HHmaskcurve;

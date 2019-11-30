@@ -2495,6 +2495,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     special(false),
     toolcol(true),
     enaColorMask(false),
+    fftColorMask(false),
     CCmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     LLmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     HHmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
@@ -2852,6 +2853,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && special == other.special
         && toolcol == other.toolcol
         && enaColorMask == other.enaColorMask
+        && fftColorMask == other.fftColorMask
         && CCmaskcurve == other.CCmaskcurve
         && LLmaskcurve == other.LLmaskcurve
         && HHmaskcurve == other.HHmaskcurve
@@ -4210,6 +4212,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).special, "Locallab", "Special_" + std::to_string(i), spot.special, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).toolcol, "Locallab", "Toolcol_" + std::to_string(i), spot.toolcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enaColorMask, "Locallab", "EnaColorMask_" + std::to_string(i), spot.enaColorMask, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftColorMask, "Locallab", "FftColorMask_" + std::to_string(i), spot.fftColorMask, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskcurve, "Locallab", "CCmaskCurve_" + std::to_string(i), spot.CCmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskcurve, "Locallab", "LLmaskCurve_" + std::to_string(i), spot.LLmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskcurve, "Locallab", "HHmaskCurve_" + std::to_string(i), spot.HHmaskcurve, keyFile);
@@ -5672,6 +5675,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Special_" + std::to_string(i), pedited, spot.special, spotEdited.special);
                 assignFromKeyfile(keyFile, "Locallab", "Toolcol_" + std::to_string(i), pedited, spot.toolcol, spotEdited.toolcol);
                 assignFromKeyfile(keyFile, "Locallab", "EnaColorMask_" + std::to_string(i), pedited, spot.enaColorMask, spotEdited.enaColorMask);
+                assignFromKeyfile(keyFile, "Locallab", "FftColorMask_" + std::to_string(i), pedited, spot.fftColorMask, spotEdited.fftColorMask);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskCurve_" + std::to_string(i), pedited, spot.CCmaskcurve, spotEdited.CCmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskCurve_" + std::to_string(i), pedited, spot.LLmaskcurve, spotEdited.LLmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskCurve_" + std::to_string(i), pedited, spot.HHmaskcurve, spotEdited.HHmaskcurve);

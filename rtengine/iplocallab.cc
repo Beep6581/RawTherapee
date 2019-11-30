@@ -371,6 +371,7 @@ struct local_params {
     float adjch;
     int shapmet;
     bool enaColorMask;
+    bool fftColorMask;
     bool enaColorMaskinv;
     bool enaExpMask;
     bool enaExpMaskinv;
@@ -551,6 +552,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.laplacexp = locallab.spots.at(sp).laplacexp;
     lp.balanexp = locallab.spots.at(sp).balanexp;
     lp.linear = locallab.spots.at(sp).linear;
+
+    lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
 
     lp.showmaskcolmet = llColorMask;
     lp.showmaskcolmetinv = llColorMaskinv;
@@ -1664,6 +1667,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
+                    
                     float X, Y, Z;
                     float L = bufcolorig->L[ir][jr];
                     float a = bufcolorig->a[ir][jr];
@@ -1678,6 +1682,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
                     tmpImage->r(ir, jr) = X;
                     tmpImage->g(ir, jr) = Y;
                     tmpImage->b(ir, jr) = Z;
+                    
                     ble[ir][jr] = Y / 32768.f;
                 }
 
@@ -1709,14 +1714,21 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
     } else if (flag == 1) {
         if (rad > 0.f) {
             array2D<float> ble(bfw, bfh);
+            array2D<float> blechro(bfw, bfh);
+            array2D<float> hue(bfw, bfh);
             array2D<float> guid(bfw, bfh);
+
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
 
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
+//                    hue[ir][jr] = xatan2f(bufcolfin->b[ir][jr], bufcolfin->a[ir][jr]);
+//                    float chromah = sqrt(SQR(bufcolfin->b[ir][jr]) + SQR(bufcolfin->a[ir][jr]));
+
                     ble[ir][jr] = (bufcolfin->L[ir][jr]) / 32768.f;
+//                    blechro[ir][jr] = chromah / 32768.f;
                     guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
                 }
 
@@ -1724,9 +1736,21 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
             double bepsil = epsilmax - 100.f * aepsil;
             double epsil = aepsil * rad + bepsil;
 
-            float blur = 10.f / sk * (thres + 0.8f * rad);
-            rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
+            if (rad != 0.f) {
+                float blur = rad;
+                blur = blur < 0.f ? -1.f / blur : 1.f + blur;
+               // int r1 = max(int(4 / sk * blur + 0.5), 1);
+                int r2 = max(int(25 / sk * blur + 0.5), 1);
 
+                rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
+//                rtengine::guidedFilter(guid, blechro, blechro, r1, 0.5 * epsil, multiThread);
+            }
+            
+/*            
+           // float blur = 10.f / sk * (thres + 0.8f * rad);
+
+            rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
+*/
 
 
 #ifdef _OPENMP
@@ -1735,7 +1759,11 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
+                //    float2 sincosval = xsincosf(hue[ir][jr]);
+
                     bufcolfin->L[ir][jr] =  32768.f * ble[ir][jr];
+                //    bufcolfin->a[ir][jr] =  32768.f * sincosval.y * blechro[ir][jr];
+                //    bufcolfin->b[ir][jr] =  32768.f * sincosval.x * blechro[ir][jr];
                 }
         }
 
@@ -3438,8 +3466,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                                  )
 {
     array2D<float> ble(bfw, bfh);
-    array2D<float> blea(bfw, bfh);
-    array2D<float> bleb(bfw, bfh);
+    array2D<float> blechro(bfw, bfh);
+    array2D<float> hue(bfw, bfh);
     array2D<float> guid(bfw, bfh);
     float meanfab, fab;
     mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, chrom);
@@ -3499,10 +3527,10 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             }
 
             if (lp.blurcolmask >= 0.25f) {
-                if (lp.blurcolmask < 200.f) {
+                if (!lp.fftColorMask) {
                     gaussianBlur(bufcolorig->L, blur, bfw, bfh, lp.blurcolmask);
                 } else {
-                    //      ImProcFunctions::fftw_convol_blur2(bufcolorig->L, blur, bfw, bfh, lp.blurcolmask, 0, 0);
+                    ImProcFunctions::fftw_convol_blur2(bufcolorig->L, blur, bfw, bfh, lp.blurcolmask, 0, 0);
                 }
 
                 for (int i = 0; i < bfh; i++) {
@@ -3657,8 +3685,10 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     ble[ir][jr] = bufmaskblurcol->L[ir][jr] / 32768.f;
-                    blea[ir][jr] = bufmaskblurcol->a[ir][jr] / 32768.f;//must be good perhaps more or less, only incidence on LIM blea bleb
-                    bleb[ir][jr] = bufmaskblurcol->b[ir][jr] / 32768.f;
+                    hue[ir][jr] = xatan2f(bufmaskblurcol->b[ir][jr], bufmaskblurcol->a[ir][jr]);
+                    float chromah = sqrt(SQR(bufmaskblurcol->b[ir][jr]) + SQR(bufmaskblurcol->a[ir][jr]));
+                    
+                    blechro[ir][jr] = chromah / 32768.f;//must be good perhaps more or less, only incidence on LIM blea bleb
                     float X, Y, Z;
                     float L = bufcolorig->L[ir][jr];
                     float a = bufcolorig->a[ir][jr];
@@ -3674,7 +3704,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         std::unique_ptr<LabImage> bufprov(new LabImage(bfw, bfh));
 
         bufprov->CopyFrom(bufmaskblurcol);
-        printf("rad=%f \n", rad);
+
+
 
         if (rad != 0.f) {
             float blur = rad;
@@ -3682,9 +3713,15 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             int r1 = max(int(4 / sk * blur + 0.5), 1);
             int r2 = max(int(25 / sk * blur + 0.5), 1);
 
-            rtengine::guidedFilter(guid, ble, ble, r2, 0.0001, multiThread);
-            rtengine::guidedFilter(guid, blea, blea, r1, 0.001, multiThread);
-            rtengine::guidedFilter(guid, bleb, bleb, r1, 0.001, multiThread);
+            double epsilmax = 0.0001;
+            double epsilmin = 0.00001;
+
+            double aepsil = (epsilmax - epsilmin) / 90.f;
+            double bepsil = epsilmax - 100.f * aepsil;
+            double epsil = aepsil * rad + bepsil;
+
+            rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
+            rtengine::guidedFilter(guid, blechro, blechro, r1, 0.3 * epsil, multiThread);
         }
 
         LUTf lutTonemaskexp(65536);
@@ -3696,11 +3733,13 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         for (int ir = 0; ir < bfh; ir++) {
             for (int jr = 0; jr < bfw; jr++) {
+                float2 sincosval = xsincosf(hue[ir][jr]);
                 bufmaskblurcol->L[ir][jr] = lutTonemaskexp[LIM01(ble[ir][jr]) * 65536.f];
-                bufmaskblurcol->a[ir][jr] = blea[ir][jr] * 32768.f;
-                bufmaskblurcol->b[ir][jr] = bleb[ir][jr] * 32768.f;
+                bufmaskblurcol->a[ir][jr] = 32768.f * sincosval.y * blechro[ir][jr];
+                bufmaskblurcol->b[ir][jr] = 32768.f * sincosval.x * blechro[ir][jr];
             }
         }
+
 
         if (strumask > 0.f && astool) {
 
@@ -8011,6 +8050,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             array2D<float> ble(GW, GH);
+            array2D<float> blechro(GW, GH);
+            array2D<float> hue(GW, GH);
             array2D<float> guid(GW, GH);
             float meanfab, fab;
             mean_fab(0, 0, GW, GH, bufgb.get(), original, fab, meanfab, lp.chromabl);
@@ -8093,6 +8134,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufmaskblurbl->a[ir][jr] = kmaskCH;
                         bufmaskblurbl->b[ir][jr] = kmaskCH;
                         ble[ir][jr] = bufmaskblurbl->L[ir][jr] / 32768.f;
+                        hue[ir][jr] = xatan2f(bufmaskblurbl->b[ir][jr], bufmaskblurbl->a[ir][jr]);
+                        float chromah = sqrt(SQR(bufmaskblurbl->b[ir][jr]) + SQR(bufmaskblurbl->a[ir][jr]));
+                        blechro[ir][jr] = chromah / 32768.f;
                         float X, Y, Z;
                         float L = bufgb->L[ir][jr];
                         float a = bufgb->a[ir][jr];
@@ -8108,8 +8152,23 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bufprov->CopyFrom(bufmaskblurbl.get());
 
 
-                if (lp.radmabl > 0.f) {
-                    guidedFilter(guid, ble, ble, lp.radmabl * 10.f / sk, 0.001, multiThread, 4);
+                if (lp.radmabl != 0.f) {
+                    float blur = lp.radmabl;
+                    blur = blur < 0.f ? -1.f / blur : 1.f + blur;
+                    int r1 = max(int(4 / sk * blur + 0.5), 1);
+                    int r2 = max(int(25 / sk * blur + 0.5), 1);
+
+                    double epsilmax = 0.0001;
+                    double epsilmin = 0.00001;
+
+                    double aepsil = (epsilmax - epsilmin) / 90.f;
+                    double bepsil = epsilmax - 100.f * aepsil;
+                    double epsil = aepsil * lp.radmabl + bepsil;
+
+                    rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
+                    rtengine::guidedFilter(guid, blechro, blechro, r1, 0.3 * epsil, multiThread);
+                    
+                //    guidedFilter(guid, ble, ble, lp.radmabl * 10.f / sk, 0.001, multiThread, 4);
                 }
 
                 LUTf lutTonemaskbl(65536);
@@ -8122,9 +8181,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 for (int ir = 0; ir < GH; ir++)
                     for (int jr = 0; jr < GW; jr++) {
                         float L_;
+                        float2 sincosval = xsincosf(hue[ir][jr]);
                         bufmaskblurbl->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
                         L_ = 2.f * bufmaskblurbl->L[ir][jr];
                         bufmaskblurbl->L[ir][jr] = lutTonemaskbl[L_];
+                        bufmaskblurbl->a[ir][jr] = 32768.f * sincosval.y * blechro[ir][jr];
+                        bufmaskblurbl->b[ir][jr] = 32768.f * sincosval.x * blechro[ir][jr];
                     }
 
             }
@@ -13415,7 +13477,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                             if (lp.softradiuscol > 0.f) {
-                                softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
+                                softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
                             }
 
 
@@ -13533,7 +13595,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                             if (lp.softradiuscol > 0.f) {
-                                softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
+                                softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
                             }
 
                             transit_shapedetect2(0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);

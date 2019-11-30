@@ -787,6 +787,8 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
 {
     array2D<float> loctemp(W_L, H_L);
     array2D<float> ble(W_L, H_L);
+    array2D<float> blechro(W_L, H_L);
+    array2D<float> hue(W_L, H_L);
     array2D<float> guid(W_L, H_L);
     std::unique_ptr<LabImage> bufmaskblurreti;
     bufmaskblurreti.reset(new LabImage(W_L, H_L));
@@ -899,6 +901,9 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
             bufmaskblurreti->a[ir][jr] = kmaskCH;
             bufmaskblurreti->b[ir][jr] = kmaskCH;
             ble[ir][jr] = bufmaskblurreti->L[ir][jr] / 32768.f;
+            hue[ir][jr] = xatan2f(bufmaskblurreti->b[ir][jr], bufmaskblurreti->a[ir][jr]);
+            float chromah = sqrt(SQR(bufmaskblurreti->b[ir][jr]) + SQR(bufmaskblurreti->a[ir][jr]));
+            blechro[ir][jr] = chromah / 32768.f;
             guid[ir][jr] = bufreti->L[ir][jr] / 32768.f;
             bufprov->L[ir][jr] = bufmaskblurreti->L[ir][jr];
             bufprov->a[ir][jr] = bufmaskblurreti->a[ir][jr];
@@ -907,8 +912,23 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
         }
     }
 
-    if (rad > 0.f) {
-        guidedFilter(guid, ble, ble, rad * 10.f / skip, 0.001, multiThread, 4);
+    if (rad != 0.f) {
+//        guidedFilter(guid, ble, ble, rad * 10.f / skip, 0.001, multiThread, 4);
+            float blur = rad;
+            blur = blur < 0.f ? -1.f / blur : 1.f + blur;
+            int r1 = max(int(4 / skip * blur + 0.5), 1);
+            int r2 = max(int(25 / skip * blur + 0.5), 1);
+
+            double epsilmax = 0.0001;
+            double epsilmin = 0.00001;
+
+            double aepsil = (epsilmax - epsilmin) / 90.f;
+            double bepsil = epsilmax - 100.f * aepsil;
+            double epsil = aepsil * rad + bepsil;
+
+            rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
+            rtengine::guidedFilter(guid, blechro, blechro, r1, 0.3 * epsil, multiThread);
+
     }
 
     LUTf lutTonemaskreti(65536);
@@ -922,9 +942,12 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
     for (int ir = 0; ir < H_L; ir++)
         for (int jr = 0; jr < W_L; jr++) {
             float L_;
+            float2 sincosval = xsincosf(hue[ir][jr]);
             bufmaskblurreti->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
             L_ = 2.f * bufmaskblurreti->L[ir][jr];
             bufmaskblurreti->L[ir][jr] = lutTonemaskreti[L_];
+            bufmaskblurreti->a[ir][jr] = 32768.f * sincosval.y * blechro[ir][jr];
+            bufmaskblurreti->b[ir][jr] = 32768.f * sincosval.x * blechro[ir][jr];
         }
 
     if (lmaskretilocalcurve && localmaskretiutili) {

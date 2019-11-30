@@ -162,7 +162,7 @@ Locallab::Locallab():
     HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     H2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     rgbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_RGB"))),
-    maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
     maskHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKH"))),
     mask2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     mask2CurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
@@ -280,13 +280,13 @@ Locallab::Locallab():
     slomaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     lapmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     shadmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
-    softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
+    softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 500.0, 0.5, 0.))),
     opacol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OPACOL"), 0.0, 100.0, 0.5, 60.))),
     conthrcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTTHR"), 0.0, 100.0, 0.5, 0.))),
     strumaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     mercol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERDCOL"), 0.0, 100.0, 0.5, 18.))),
     merlucol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERLUCOL"), 0.0, 100.0, 0.5, 32., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    blurcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 200., 0.5, 0.2))),
+    blurcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 100., 0.5, 0.2))),
     contcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTCOL"), 0., 200., 0.5, 0.))),
     // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 3.0, 0.05, 0.0))),
@@ -308,7 +308,7 @@ Locallab::Locallab():
     gammaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slomaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     lapmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
+    softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 500.0, 0.5, 0.))),
     laplacexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACEXP"), 0.0, 100.0, 0.1, 0.))),
     balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.2, 1.2, 0.01, 0.75))),
     linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0., 1., 0.01, 0.3))),
@@ -405,7 +405,7 @@ estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 0.1, 4., 0.01, 1.4))),
 scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 0.1, 10.0, 0.01, 1.0))),
 rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 3, 1, 0))),
 sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
-softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
+softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 500.0, 0.1, 0.))),
 amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50., 100.0, 0.5, 95.))),
 satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100., 100., 0.1, 0.))),//by default satur = 0 ==> use Mantiuk value
 blendmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
@@ -423,7 +423,7 @@ offs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFS"), -16386., 32768., 1., 0.))),
 dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
 depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
 sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 60))),
-softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRETI"), 0.0, 100.0, 0.5, 40.))),
+softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRETI"), -10.0, 500.0, 0.5, 40.))),
 blendmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
 radmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
 chromaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -482,7 +482,7 @@ clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0
 contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
 blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0., 100., 0.1, 0.))),
 sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
-softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
+softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 500.0, 0.5, 0.))),
 blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
 radmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 500.0, 0.1, 0.))),
 chromaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -511,6 +511,7 @@ invers(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
 special(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SPECIAL")))),
 toolcol(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
 enaColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+fftColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTCOL_MASK")))),
 // Exposure
 enaExpMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 enaExpMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASKAFT")))),
@@ -599,6 +600,8 @@ lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACO
 lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
 lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
 gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
+struFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABSTRUM")))),
+blurFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABBLURM")))),
 gridmerFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRIDMERG")))),
 toolcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
 toolblFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
@@ -693,7 +696,9 @@ pe(nullptr)
     strengthgrid->setAdjusterListener(this);
     structcol->setAdjusterListener(this);
     blurcolde->setAdjusterListener(this);
-    blurcol->setAdjusterListener(this);
+
+
+//    blurcol->setAdjusterListener(this);
     contcol->setAdjusterListener(this);
     strcol->setAdjusterListener(this);
     angcol->setAdjusterListener(this);
@@ -708,6 +713,8 @@ pe(nullptr)
     slomaskcol->setAdjusterListener(this);
     shadmaskcol->setAdjusterListener(this);
     strumaskcol->setAdjusterListener(this);
+
+    softradiuscol->setLogScale(10, -10);
     softradiuscol->setAdjusterListener(this);
     opacol->setAdjusterListener(this);
     conthrcol->setAdjusterListener(this);
@@ -929,6 +936,7 @@ pe(nullptr)
 
 
     enaColorMaskConn = enaColorMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaColorMaskChanged));
+    fftColorMaskConn = fftColorMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftColorMaskChanged));
 
     maskCurveEditorG->setCurveListener(this);
 
@@ -1122,31 +1130,46 @@ pe(nullptr)
         merge1colFrame->add(*mergecolBox);
     }
 
-    Gtk::HSeparator* const separatorblur = Gtk::manage(new  Gtk::HSeparator());
 
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*showmaskcolMethodinv, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
-    maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4);
+
+    struFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const strumBox = Gtk::manage(new ToolParamBlock());
+    if (complexsoft < 2) {
+        strumBox->pack_start(*strumaskcol);
+        strumBox->pack_start(*toolcol);
+    }
+    struFrame->add(*strumBox);
 
     if (complexsoft < 2) {
-        maskcolBox->pack_start(*strumaskcol, Gtk::PACK_SHRINK, 0);
+        maskcolBox->pack_start(*struFrame, Gtk::PACK_SHRINK, 0);
     }
 
-    if (complexsoft < 2) {
-        maskcolBox->pack_start(*toolcol);
-    }
-
-    Gtk::HSeparator* const separatorstru = Gtk::manage(new  Gtk::HSeparator());
+    blurFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const blurmBox = Gtk::manage(new ToolParamBlock());
 
     if (complexsoft < 1) {
-        maskcolBox->pack_start(*separatorblur, Gtk::PACK_SHRINK, 2);
-        maskcolBox->pack_start(*contcol);
-        maskcolBox->pack_start(*blurcol);
+        blurmBox->pack_start(*fftColorMask, Gtk::PACK_SHRINK, 0);
     }
 
-    maskcolBox->pack_start(*separatorstru, Gtk::PACK_SHRINK, 2);
+    if (complexsoft < 2) {
+        if(complexsoft < 1) {
+           blurcol->setLimits (0., 500., 0.5, 0.2);
+        }
+        blurmBox->pack_start(*contcol);
+        blurcol->setAdjusterListener(this);
+        blurmBox->pack_start(*blurcol);
+    }
+    blurFrame->add(*blurmBox);
+
+    if (complexsoft < 2) {
+        maskcolBox->pack_start(*blurFrame, Gtk::PACK_SHRINK, 0);
+    }
+
     toolcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const toolcolBox = Gtk::manage(new ToolParamBlock());
 
@@ -1287,6 +1310,7 @@ pe(nullptr)
     lapmaskexp->setAdjusterListener(this);
     strmaskexp->setAdjusterListener(this);
     angmaskexp->setAdjusterListener(this);
+    softradiusexp->setLogScale(10, -10);
     softradiusexp->setAdjusterListener(this);
     laplacexp->setAdjusterListener(this);
     balanexp->setAdjusterListener(this);
@@ -2081,6 +2105,7 @@ pe(nullptr)
     }
 
     sensitm->setAdjusterListener(this);
+    softradiustm->setLogScale(10, -10);
     softradiustm->setAdjusterListener(this);
 
     if (showtooltip) {
@@ -2296,6 +2321,7 @@ pe(nullptr)
     }
 
     sensih->setAdjusterListener(this);
+    softradiusret->setLogScale(10, -10);
     softradiusret->setAdjusterListener(this);
 
     if (showtooltip) {
@@ -2706,6 +2732,7 @@ pe(nullptr)
     }
 
     sensicb->setAdjusterListener(this);
+    softradiuscb->setLogScale(10, -10);
     softradiuscb->setAdjusterListener(this);
     clarityml->setAdjusterListener(this);
     contresid->setAdjusterListener(this);
@@ -4437,6 +4464,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).special = special->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).toolcol = toolcol->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).enaColorMask = enaColorMask->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).fftColorMask = fftColorMask->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = CCmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = LLmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = HHmaskshape->getCurve();
@@ -4876,6 +4904,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).special = pe->locallab.spots.at(pp->locallab.selspot).special || !special->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).toolcol = pe->locallab.spots.at(pp->locallab.selspot).toolcol || !toolcol->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).enaColorMask = pe->locallab.spots.at(pp->locallab.selspot).enaColorMask || !enaColorMask->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).fftColorMask = pe->locallab.spots.at(pp->locallab.selspot).fftColorMask || !fftColorMask->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).HHmaskcurve || !HHmaskshape->isUnChanged();
@@ -5241,6 +5270,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).special = pedited->locallab.spots.at(pp->locallab.selspot).special || !special->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).toolcol = pedited->locallab.spots.at(pp->locallab.selspot).toolcol || !toolcol->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).enaColorMask = pedited->locallab.spots.at(pp->locallab.selspot).enaColorMask || !enaColorMask->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fftColorMask = pedited->locallab.spots.at(pp->locallab.selspot).fftColorMask || !fftColorMask->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmaskcurve || !HHmaskshape->isUnChanged();
@@ -6716,6 +6746,30 @@ void Locallab::enaColorMaskChanged()
                 listener->panelChanged(EvLocallabEnaColorMask, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(EvLocallabEnaColorMask, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+void Locallab::fftColorMaskChanged()
+{
+    // printf("fftColorMaskChanged\n");
+
+    if (multiImage) {
+        if (fftColorMask->get_inconsistent()) {
+            fftColorMask->set_inconsistent(false);
+            fftColorMaskConn.block(true);
+            fftColorMask->set_active(false);
+            fftColorMaskConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expcolor->getEnabled()) {
+        if (listener) {
+            if (fftColorMask->get_active()) {
+                listener->panelChanged(EvLocallabfftColorMask, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvLocallabfftColorMask, M("GENERAL_DISABLED"));
             }
         }
     }
@@ -10008,6 +10062,7 @@ void Locallab::enableListener()
     showmaskcolMethodConn.block(false);
     showmaskcolMethodConninv.block(false);
     enaColorMaskConn.block(false);
+    fftColorMaskConn.block(false);
     // Exposure
     enableexposeConn.block(false);
     inversexConn.block(false);
@@ -10095,7 +10150,7 @@ void Locallab::disableListener()
     toolcolConn.block(true);
     showmaskcolMethodConn.block(true);
     showmaskcolMethodConninv.block(true);
-    enaColorMaskConn.block(true);
+    fftColorMaskConn.block(true);
     // Exposure
     enableexposeConn.block(true);
     inversexConn.block(true);
@@ -10308,6 +10363,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         special->set_active(pp->locallab.spots.at(index).special);
         toolcol->set_active(pp->locallab.spots.at(index).toolcol);
         enaColorMask->set_active(pp->locallab.spots.at(index).enaColorMask);
+        fftColorMask->set_active(pp->locallab.spots.at(index).fftColorMask);
         CCmaskshape->setCurve(pp->locallab.spots.at(index).CCmaskcurve);
         LLmaskshape->setCurve(pp->locallab.spots.at(index).LLmaskcurve);
         HHmaskshape->setCurve(pp->locallab.spots.at(index).HHmaskcurve);
@@ -10350,10 +10406,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             toolcol->set_active(false);
             merMethod->set_active(0);
         }
-
         if (complexsoft > 0) {
-            lapmaskcol->setValue(0);
             LLmaskcolshapewav->reset();
+            fftColorMask->set_active(false);
+        }
+
+        if (complexsoft == 2) {
+            lapmaskcol->setValue(0);
             blurcol->setValue(0.2);
             contcol->setValue(0.);
         }
@@ -10944,6 +11003,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 special->set_inconsistent(multiImage && !spotState->special);
                 toolcol->set_inconsistent(multiImage && !spotState->toolcol);
                 enaColorMask->set_inconsistent(multiImage && !spotState->enaColorMask);
+                fftColorMask->set_inconsistent(multiImage && !spotState->fftColorMask);
                 CCmaskshape->setUnChanged(!spotState->CCmaskcurve);
                 LLmaskshape->setUnChanged(!spotState->LLmaskcurve);
                 HHmaskshape->setUnChanged(!spotState->HHmaskcurve);
