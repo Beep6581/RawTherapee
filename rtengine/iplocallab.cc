@@ -1667,7 +1667,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
-                    
+
                     float X, Y, Z;
                     float L = bufcolorig->L[ir][jr];
                     float a = bufcolorig->a[ir][jr];
@@ -1682,7 +1682,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
                     tmpImage->r(ir, jr) = X;
                     tmpImage->g(ir, jr) = Y;
                     tmpImage->b(ir, jr) = Z;
-                    
+
                     ble[ir][jr] = Y / 32768.f;
                 }
 
@@ -1739,18 +1739,18 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
             if (rad != 0.f) {
                 float blur = rad;
                 blur = blur < 0.f ? -1.f / blur : 1.f + blur;
-               // int r1 = max(int(4 / sk * blur + 0.5), 1);
+                // int r1 = max(int(4 / sk * blur + 0.5), 1);
                 int r2 = max(int(25 / sk * blur + 0.5), 1);
 
                 rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
 //                rtengine::guidedFilter(guid, blechro, blechro, r1, 0.5 * epsil, multiThread);
             }
-            
-/*            
-           // float blur = 10.f / sk * (thres + 0.8f * rad);
 
-            rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
-*/
+            /*
+                       // float blur = 10.f / sk * (thres + 0.8f * rad);
+
+                        rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
+            */
 
 
 #ifdef _OPENMP
@@ -1759,11 +1759,11 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
-                //    float2 sincosval = xsincosf(hue[ir][jr]);
+                    //    float2 sincosval = xsincosf(hue[ir][jr]);
 
                     bufcolfin->L[ir][jr] =  32768.f * ble[ir][jr];
-                //    bufcolfin->a[ir][jr] =  32768.f * sincosval.y * blechro[ir][jr];
-                //    bufcolfin->b[ir][jr] =  32768.f * sincosval.x * blechro[ir][jr];
+                    //    bufcolfin->a[ir][jr] =  32768.f * sincosval.y * blechro[ir][jr];
+                    //    bufcolfin->b[ir][jr] =  32768.f * sincosval.x * blechro[ir][jr];
                 }
         }
 
@@ -2083,71 +2083,37 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, La
 
                 }
 
-                switch (zone) {
-                    case 1: { // inside transition zone
-                        float difL, difa, difb;
+                if (zone > 0) {
+                    float difL, difa, difb;
 
-                        if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
-                            difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
-                            difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
-                            difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
-                        } else  { //dcrop
-                            difL = tmp1.L[y][x] - original->L[y][x];
-                            difa = tmp1.a[y][x] - original->a[y][x];
-                            difb = tmp1.b[y][x] - original->b[y][x];
+                    if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
+                        difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
+                        difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
+                        difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
+                    } else  { //dcrop
+                        difL = tmp1.L[y][x] - original->L[y][x];
+                        difa = tmp1.a[y][x] - original->a[y][x];
+                        difb = tmp1.b[y][x] - original->b[y][x];
 
-                        }
-
-                        difL *= localFactor * reducdEL;
-                        difa *= localFactor * reducdEa;
-                        difb *= localFactor * reducdEb;
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                        transformed->a[y][x] = CLIPC((original->a[y][x] + difa) * factnoise);
-                        transformed->b[y][x] = CLIPC((original->b[y][x] + difb) * factnoise) ;
-
-                        if (blshow) {
-                            transformed->L[y][x] = CLIP(12000.f + 10.f * difL);// * 10.f empirical to can visualize modifications
-                            transformed->a[y][x] = CLIPC(10.f * difa);// * 10.f empirical to can visualize modifications
-                            transformed->b[y][x] = CLIPC(10.f * difb);// * 10.f empirical to can visualize modifications
-                        } else if (previewbl) {
-                            transformed->a[y][x] = 0.f;
-                            transformed->b[y][x] = (10.f * difb);// * 10.f empirical to can visualize modifications
-                        }
-
-                        break;
                     }
 
-                    case 2: { // inside selection => full effect, no transition
-                        float difL, difa, difb;
+                    difL *= localFactor * reducdEL;
+                    difa *= localFactor * reducdEa;
+                    difb *= localFactor * reducdEb;
+                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                    transformed->a[y][x] = CLIPC((original->a[y][x] + difa) * factnoise);
+                    transformed->b[y][x] = CLIPC((original->b[y][x] + difb) * factnoise) ;
 
-                        if (call == 2 /*|| call == 1 || call == 3 */) { //simpleprocess
-                            difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
-                            difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
-                            difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
-                        } else  { //dcrop
-                            difL = tmp1.L[y][x] - original->L[y][x];
-                            difa = tmp1.a[y][x] - original->a[y][x];
-                            difb = tmp1.b[y][x] - original->b[y][x];
-
-                        }
-
-                        difL *= reducdEL;
-                        difa *= reducdEa;
-                        difb *= reducdEb;
-
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                        transformed->a[y][x] = CLIPC((original->a[y][x] + difa) * factnoise);
-                        transformed->b[y][x] = CLIPC((original->b[y][x] + difb) * factnoise);
-
-                        if (blshow) {
-                            transformed->L[y][x] = CLIP(12000.f + 10.f * difL);// * 10.f empirical to can visualize modifications
-                            transformed->a[y][x] = CLIPC(10.f * difa);// * 10.f empirical to can visualize modifications
-                            transformed->b[y][x] = CLIPC(10.f * difb);// * 10.f empirical to can visualize modifications
-                        } else if (previewbl) {
-                            transformed->a[y][x] = 0.f;
-                            transformed->b[y][x] = (10.f * difb);// * 10.f empirical to can visualize modifications
-                        }
+                    if (blshow) {
+                        transformed->L[y][x] = CLIP(12000.f + 10.f * difL);// * 10.f empirical to can visualize modifications
+                        transformed->a[y][x] = CLIPC(10.f * difa);// * 10.f empirical to can visualize modifications
+                        transformed->b[y][x] = CLIPC(10.f * difb);// * 10.f empirical to can visualize modifications
+                    } else if (previewbl) {
+                        transformed->a[y][x] = 0.f;
+                        transformed->b[y][x] = (10.f * difb);// * 10.f empirical to can visualize modifications
                     }
+
+
                 }
 
             }
@@ -2295,7 +2261,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     float kab = 1.f;
     balancedeltaE(kL, kab);
 
-    LabImage *origblur = new LabImage(GW, GH);
+    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
 
     float radius = 3.f / sk;
 #ifdef _OPENMP
@@ -2400,7 +2366,6 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
         }
 
     }
-    delete origblur;
 }
 
 
@@ -2855,28 +2820,14 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
                     originalmas->L[y][x] = CLIP(bufexporig->L[y][x] - bufmaskor->L[y][x]);
                     originalmas->a[y][x] = CLIPC(bufexporig->a[y][x] * (1.f - bufmaskor->a[y][x]));
                     originalmas->b[y][x] = CLIPC(bufexporig->b[y][x] * (1.f - bufmaskor->b[y][x]));
-                    switch (zone) {
 
-                        case 1: {
-                            original->L[y + ystart][x + xstart] += (bl * localFactor * bufmaskor->L[y][x]);
-                            original->a[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->a[y][x]);
-                            original->b[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->b[y][x]);
-                            original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
-                            original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
-                            original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
-                            break;
-                        }
+                    original->L[y + ystart][x + xstart] += (bl * localFactor * bufmaskor->L[y][x]);
+                    original->a[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->a[y][x]);
+                    original->b[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->b[y][x]);
+                    original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
+                    original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
+                    original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
 
-                        case 2: {
-                            original->L[y + ystart][x + xstart] += (bl * bufmaskor->L[y][x]);
-                            original->a[y + ystart][x + xstart] *= (1.f + bl * bufmaskor->a[y][x]);
-                            original->b[y + ystart][x + xstart] *= (1.f + bl * bufmaskor->b[y][x]);
-                            original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
-                            original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
-                            original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
-
-                        }
-                    }
                 }
             } else if (inv == 1) {
                 localFactor = 1.f - localFactor;
@@ -3687,7 +3638,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     ble[ir][jr] = bufmaskblurcol->L[ir][jr] / 32768.f;
                     hue[ir][jr] = xatan2f(bufmaskblurcol->b[ir][jr], bufmaskblurcol->a[ir][jr]);
                     float chromah = sqrt(SQR(bufmaskblurcol->b[ir][jr]) + SQR(bufmaskblurcol->a[ir][jr]));
-                    
+
                     blechro[ir][jr] = chromah / 32768.f;//must be good perhaps more or less, only incidence on LIM blea bleb
                     float X, Y, Z;
                     float L = bufcolorig->L[ir][jr];
@@ -3968,7 +3919,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
     float kab = 1.f;
     balancedeltaE(kL, kab);
 
-    LabImage *origblur = new LabImage(GW, GH);
+    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
 
     float radius = 3.f / sk;
 #ifdef _OPENMP
@@ -4039,7 +3990,6 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
             }
         }
     }
-    delete origblur;
 }
 
 
@@ -4165,7 +4115,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 
         sobelref = log1p(sobelref);
 
-        LabImage *origblur = new LabImage(GW, GH);
+        std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
 
         const float radius = 3.f / sk;
 
@@ -4248,38 +4198,22 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
                     const float affde = reducdE;
 
                     if (rL > 32.768f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
-                        switch (zone) {
+                        if (zone > 0) {
 
-                            case 1: { // inside transition zone
-                                const float difL = (rsv->L[loy - begy][lox - begx] - original->L[y][x]) * localFactor;
-                                transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob * affde);
+                            const float difL = (rsv->L[loy - begy][lox - begx] - original->L[y][x]) * localFactor;
+                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob * affde);
 
-                                const float difa = (rsv->a[loy - begy][lox - begx] - original->a[y][x]) * localFactor;
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob * affde);
+                            const float difa = (rsv->a[loy - begy][lox - begx] - original->a[y][x]) * localFactor;
+                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob * affde);
 
-                                const float difb = (rsv->b[loy - begy][lox - begx] - original->b[y][x]) * localFactor;
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob * affde);
+                            const float difb = (rsv->b[loy - begy][lox - begx] - original->b[y][x]) * localFactor;
+                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob * affde);
 
-                                break;
-
-                            }
-
-                            case 2: { // inside selection => full effect, no transition
-                                const float difL = rsv->L[loy - begy][lox - begx] - original->L[y][x];
-                                transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob * affde);
-
-                                const float difa = rsv->a[loy - begy][lox - begx] - original->a[y][x];;
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob * affde);
-
-                                const float difb = rsv->b[loy - begy][lox - begx] - original->b[y][x];
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob * affde);
-                            }
                         }
                     }
                 }
             }
         }
-        delete origblur;
     }
 }
 
@@ -4493,11 +4427,11 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
                     transformed->b[y + ystart][x + xstart] = CLIPC(difb);
                 } else if (previewexp || previewvib || previewcol || previewSH || previewtm) {//show deltaE
                     if (fabs(difb) < 500.f) {//if too low to be view use L
-                       if(difb < 0.f) {
-                           difb -= 0.5f * diflc;
-                       } else {
-                           difb += 0.5f * diflc;
-                       }
+                        if (difb < 0.f) {
+                            difb -= 0.5f * diflc;
+                        } else {
+                            difb += 0.5f * diflc;
+                        }
                     }
 
                     transformed->a[y + ystart][x + xstart] = 0.f;
@@ -8167,8 +8101,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
                     rtengine::guidedFilter(guid, blechro, blechro, r1, 0.3 * epsil, multiThread);
-                    
-                //    guidedFilter(guid, ble, ble, lp.radmabl * 10.f / sk, 0.001, multiThread, 4);
+
+                    //    guidedFilter(guid, ble, ble, lp.radmabl * 10.f / sk, 0.001, multiThread, 4);
                 }
 
                 LUTf lutTonemaskbl(65536);
