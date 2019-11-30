@@ -189,6 +189,8 @@ private:
     Adjuster* const strumaskcol;
     Adjuster* const mercol;
     Adjuster* const merlucol;
+    Adjuster* const blurcol;
+    Adjuster* const contcol;
     // Exposure
     Adjuster* const expcomp;
     Adjuster* const hlcompr;

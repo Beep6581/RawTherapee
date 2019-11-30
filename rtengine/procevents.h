@@ -865,6 +865,8 @@ enum ProcEventCode {
     EvLocallabSpotcomplexMethod = 838,
     Evlocallabclshape = 839,
     Evlocallablcshape = 840,
+    Evlocallabblurcol = 841,
+    Evlocallabcontcol = 842,
     NUMOFEVENTS
 };
 

@@ -439,6 +439,8 @@ public:
         bool strcolh;
         bool angcol;
         bool blurcolde;
+        bool blurcol;
+        bool contcol;
         bool blendmaskcol;
         bool radmaskcol;
         bool chromaskcol;

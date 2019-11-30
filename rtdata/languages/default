@@ -1078,6 +1078,8 @@ HISTORY_MSG_838;Local - Vib gradient strength H
 HISTORY_MSG_839;Local - Software complexity
 HISTORY_MSG_840;Local - CL Curve
 HISTORY_MSG_841;Local - LC curve
+HISTORY_MSG_842;Local - Contrast Threshold Mask blur
+HISTORY_MSG_843;Local - Radius Mask blur
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2166,6 +2168,7 @@ TP_LOCALLAB_BLUFR;Smooth - Blur - Noise - Grain
 TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n*Blur the background by a RT-spot fully covering the image (high values for scope and transition) - normal or inverse.\n*Isolate the foreground by one or more excluding RT-spot with the tools you want (increse scope), you can use a mask to enhance and amplify the effects 
 TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLURCBDL;Blur levels 0-1-2-3-4
+TP_LOCALLAB_BLURCOL;Radius Mask Blur
 TP_LOCALLAB_BLURDE;Blur Shape detection
 TP_LOCALLAB_BUTTON_ADD;Add
 TP_LOCALLAB_BUTTON_DEL;Delete
@@ -2195,6 +2198,7 @@ TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPLEX_METHOD;Software Complexity
 TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustements rubrics.
+TP_LOCALLAB_CONTCOL;Contrast threshold Mask Blur
 TP_LOCALLAB_CONTRAST;Contrast
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_CONTTHR;Contrast Threshold

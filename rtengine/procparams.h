@@ -1012,6 +1012,8 @@ struct LocallabParams {
         double strcolh;
         double angcol;
         int blurcolde;
+        double blurcol;
+        double contcol;
         int blendmaskcol;
         double radmaskcol;
         double chromaskcol;

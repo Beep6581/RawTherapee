@@ -1005,6 +1005,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).strcolh = locallab.spots.at(j).strcolh && pSpot.strcolh == otherSpot.strcolh;
                 locallab.spots.at(j).angcol = locallab.spots.at(j).angcol && pSpot.angcol == otherSpot.angcol;
                 locallab.spots.at(j).blurcolde = locallab.spots.at(j).blurcolde && pSpot.blurcolde == otherSpot.blurcolde;
+                locallab.spots.at(j).blurcol = locallab.spots.at(j).blurcol && pSpot.blurcol == otherSpot.blurcol;
+                locallab.spots.at(j).contcol = locallab.spots.at(j).contcol && pSpot.contcol == otherSpot.contcol;
                 locallab.spots.at(j).blendmaskcol = locallab.spots.at(j).blendmaskcol && pSpot.blendmaskcol == otherSpot.blendmaskcol;
                 locallab.spots.at(j).radmaskcol = locallab.spots.at(j).radmaskcol && pSpot.radmaskcol == otherSpot.radmaskcol;
                 locallab.spots.at(j).chromaskcol = locallab.spots.at(j).chromaskcol && pSpot.chromaskcol == otherSpot.chromaskcol;
@@ -2962,6 +2964,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).blurcolde) {
             toEdit.locallab.spots.at(i).blurcolde = mods.locallab.spots.at(i).blurcolde;
+        }
+
+        if (locallab.spots.at(i).blurcol) {
+            toEdit.locallab.spots.at(i).blurcol = mods.locallab.spots.at(i).blurcol;
+        }
+
+        if (locallab.spots.at(i).contcol) {
+            toEdit.locallab.spots.at(i).contcol = mods.locallab.spots.at(i).contcol;
         }
 
         if (locallab.spots.at(i).structcol) {
@@ -5152,6 +5162,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     strcolh(v),
     angcol(v),
     blurcolde(v),
+    blurcol(v),
+    contcol(v),
     blendmaskcol(v),
     radmaskcol(v),
     chromaskcol(v),
@@ -5506,6 +5518,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     strcolh = v;
     angcol = v;
     blurcolde = v;
+    blurcol = v;
+    contcol = v;
     blendmaskcol = v;
     radmaskcol = v;
     chromaskcol = v;

@@ -257,6 +257,8 @@ struct local_params {
     float struexp;
     float blurexp;
     float blurcol;
+    float blurcolmask;
+    float contcolmask;
     float blurSH;
     float ligh;
     float lowA, lowB, highA, highB;
@@ -589,7 +591,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     }
 
     if (locallab.spots.at(sp).medMethod == "none") {
-         lp.medmet = -1;
+        lp.medmet = -1;
     } else if (locallab.spots.at(sp).medMethod == "33") {
         lp.medmet = 0;
     } else if (locallab.spots.at(sp).medMethod == "55") {
@@ -775,6 +777,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float structexpo = (float) locallab.spots.at(sp).structexp;
     float blurexpo = (float) locallab.spots.at(sp).blurexpde;
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
+    float blurcolmask = (float) locallab.spots.at(sp).blurcol;
+    float contcolmask = (float) locallab.spots.at(sp).contcol;
     float blurSH = (float) locallab.spots.at(sp).blurSHde;
     float local_transit = locallab.spots.at(sp).transit;
     float local_feather = locallab.spots.at(sp).feather;
@@ -914,6 +918,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
     lp.blurcol = blurcolor;
+    lp.blurcolmask = blurcolmask;
+    lp.contcolmask = 0.01f * contcolmask;
     lp.blurSH = blurSH;
     lp.sens = local_sensi;
     lp.sensh = local_sensih;
@@ -2821,7 +2827,6 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
                     originalmas->L[y][x] = CLIP(bufexporig->L[y][x] - bufmaskor->L[y][x]);
                     originalmas->a[y][x] = CLIPC(bufexporig->a[y][x] * (1.f - bufmaskor->a[y][x]));
                     originalmas->b[y][x] = CLIPC(bufexporig->b[y][x] * (1.f - bufmaskor->b[y][x]));
-
                     switch (zone) {
 
                         case 1: {
@@ -3433,6 +3438,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                                  )
 {
     array2D<float> ble(bfw, bfh);
+    array2D<float> blea(bfw, bfh);
+    array2D<float> bleb(bfw, bfh);
     array2D<float> guid(bfw, bfh);
     float meanfab, fab;
     mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, chrom);
@@ -3472,6 +3479,38 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 gaussianBlur(mb, mb, bfw, bfh, rm);
             }
 
+        }
+
+        JaggedArray<float> blendblur(bfw, bfh);
+
+        JaggedArray<float> blur(bfw, bfh);
+
+        if (lp.contcolmask > 0.f) {
+            float contra = lp.contcolmask;
+            buildBlendMask(bufcolorig->L, blendblur, bfw, bfh, contra, 1.f);
+
+
+            float radblur = 0.02f * rad;//empirical value
+            float rm = radblur / sk;
+
+            if (rm > 0) {
+                float **mb = blendblur;
+                gaussianBlur(mb, mb, bfw, bfh, rm);
+            }
+
+            if (lp.blurcolmask >= 0.25f) {
+                if (lp.blurcolmask < 200.f) {
+                    gaussianBlur(bufcolorig->L, blur, bfw, bfh, lp.blurcolmask);
+                } else {
+                    //      ImProcFunctions::fftw_convol_blur2(bufcolorig->L, blur, bfw, bfh, lp.blurcolmask, 0, 0);
+                }
+
+                for (int i = 0; i < bfh; i++) {
+                    for (int j = 0; j < bfw; j++) {
+                        blur[i][j] = intp(blendblur[i][j], bufcolorig->L[i][j], std::max(blur[i][j], 0.0f));
+                    }
+                }
+            }
         }
 
         bool HHmaskcurve = false;
@@ -3520,6 +3559,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     float kmaskHL = 0.f;
                     float kmaskH = 0.f;
                     float kmasstru = 0.f;
+                    float kmasblur = 0.f;
                     //   float kmaskHH = 0.f;
                     //   float huemah;
                     //  float newhr = 0.f;
@@ -3527,6 +3567,14 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
                     if (strumask > 0.f && !astool) {
                         kmasstru = bufcolorig->L[ir][jr] * blendstru[ir][jr];
+                    }
+
+                    if (lp.contcolmask > 0.f) {
+
+                        if (lp.blurcolmask >= 0.25f) {
+                            float prov = intp(blendstru[ir][jr], bufcolorig->L[ir][jr], max(blur[ir][jr], 0.0f));
+                            kmasblur = bufcolorig->L[ir][jr] - prov ;
+                        }
                     }
 
                     if (locllmasCurve && llmasutili) {
@@ -3595,7 +3643,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
                                         }
                     */
-                    bufmaskblurcol->L[ir][jr] = CLIPLOC(kmaskL + kmaskHL + kmasstru);
+                    bufmaskblurcol->L[ir][jr] = CLIPLOC(kmaskL + kmaskHL + kmasstru + kmasblur);
 //                    if(HHmaskcurve) {
 //                        bufmaskblurcol->a[ir][jr] = CLIPC((kmaskC + chromult * kmaskH) * sincosval.y);
 //                        bufmaskblurcol->b[ir][jr] = CLIPC((kmaskC + chromult * kmaskH) * sincosval.x);
@@ -3609,6 +3657,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     ble[ir][jr] = bufmaskblurcol->L[ir][jr] / 32768.f;
+                    blea[ir][jr] = bufmaskblurcol->a[ir][jr] / 32768.f;//must be good perhaps more or less, only incidence on LIM blea bleb
+                    bleb[ir][jr] = bufmaskblurcol->b[ir][jr] / 32768.f;
                     float X, Y, Z;
                     float L = bufcolorig->L[ir][jr];
                     float a = bufcolorig->a[ir][jr];
@@ -3624,10 +3674,17 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         std::unique_ptr<LabImage> bufprov(new LabImage(bfw, bfh));
 
         bufprov->CopyFrom(bufmaskblurcol);
+        printf("rad=%f \n", rad);
 
+        if (rad != 0.f) {
+            float blur = rad;
+            blur = blur < 0.f ? -1.f / blur : 1.f + blur;
+            int r1 = max(int(4 / sk * blur + 0.5), 1);
+            int r2 = max(int(25 / sk * blur + 0.5), 1);
 
-        if (rad > 0.f) {
-            guidedFilter(guid, ble, ble, rad * 10.f / sk, 0.001, multiThread, 4);
+            rtengine::guidedFilter(guid, ble, ble, r2, 0.0001, multiThread);
+            rtengine::guidedFilter(guid, blea, blea, r1, 0.001, multiThread);
+            rtengine::guidedFilter(guid, bleb, bleb, r1, 0.001, multiThread);
         }
 
         LUTf lutTonemaskexp(65536);
@@ -3640,6 +3697,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         for (int ir = 0; ir < bfh; ir++) {
             for (int jr = 0; jr < bfw; jr++) {
                 bufmaskblurcol->L[ir][jr] = lutTonemaskexp[LIM01(ble[ir][jr]) * 65536.f];
+                bufmaskblurcol->a[ir][jr] = blea[ir][jr] * 32768.f;
+                bufmaskblurcol->b[ir][jr] = bleb[ir][jr] * 32768.f;
             }
         }
 
@@ -4377,12 +4436,12 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
 
             if (zone > 0) {
                 //simplified transformed with deltaE and transition
-                transformed->L[y + ystart][x + xstart] = CLIPLOC(bufexporig->L[y][x] + factorx * realstrdE);
-                diflc = 328.f * factorx * realstrdE;
-                transformed->a[y + ystart][x + xstart] = CLIPC(bufexporig->a[y][x] + factorx * realstradE);
-                difa = 328.f * factorx * realstradE;
-                transformed->b[y + ystart][x + xstart] = CLIPC(bufexporig->b[y][x] + factorx * realstrbdE);
-                difb = 328.f * factorx * realstrbdE;
+                transformed->L[y + ystart][x + xstart] = CLIPLOC(original->L[y + ystart][x + xstart] + factorx * realstrdE);
+                diflc = factorx * realstrdE;
+                transformed->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart] + factorx * realstradE);
+                difa = factorx * realstradE;
+                transformed->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart] + factorx * realstrbdE);
+                difb = factorx * realstrbdE;
                 float maxdifab = max(fabs(difa), fabs(difb));
 
                 if (expshow || vibshow || colshow || SHshow || tmshow) {//show modifications
@@ -4395,7 +4454,11 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
                     transformed->b[y + ystart][x + xstart] = CLIPC(difb);
                 } else if (previewexp || previewvib || previewcol || previewSH || previewtm) {//show deltaE
                     if (fabs(difb) < 500.f) {//if too low to be view use L
-                        difb += 0.2f * diflc;
+                       if(difb < 0.f) {
+                           difb -= 0.5f * diflc;
+                       } else {
+                           difb += 0.5f * diflc;
+                       }
                     }
 
                     transformed->a[y + ystart][x + xstart] = 0.f;
@@ -12498,7 +12561,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     sincosval.x = Chprov == 0.0f ? 0.f : bufcolcalcb / Chprov;
 
                                     if (lp.chro > 0.f) {
-                                        float buf = LIM01(chp / 35000.f);//35000 must be globaly good, more than 32768...anf les than !! to avoid calculation min max 
+                                        float buf = LIM01(chp / 35000.f);//35000 must be globaly good, more than 32768...anf les than !! to avoid calculation min max
                                         buf = color_satur.getVal(buf);
                                         buf *= 35000.f;
                                         chp = buf;
