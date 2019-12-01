@@ -420,7 +420,7 @@ ControlSpotPanel::ControlSpotPanel():
 
     ToolParamBlock* const maskBox = Gtk::manage(new ToolParamBlock());
 
-    if (complexsoft < 2) {
+    if (complexsoft < 1) {
         maskBox->pack_start(*laplac_);
     }
 
