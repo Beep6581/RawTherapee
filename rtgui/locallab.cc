@@ -1520,8 +1520,13 @@ pe(nullptr)
         exposeBox->pack_start(*softradiusexp);
     }
 
-    exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    exposeBox->pack_start(*inversex);
+    exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
+
+    if (complexsoft < 2) {
+        exposeBox->pack_start(*inversex);
+    }
+
+    
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*showmaskexpMethodinv, Gtk::PACK_SHRINK, 4);
