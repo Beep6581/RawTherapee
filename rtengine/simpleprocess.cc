@@ -810,17 +810,7 @@ private:
 
     void stage_denoise()
     {
-        procparams::ProcParams& params = job->pparams;
-        //ImProcFunctions ipf (&params, true);
-        ImProcFunctions &ipf = * (ipf_p.get());
-
-        // perform luma/chroma denoise
-//  CieImage *cieView;
-//  NoisCurve noiseLCurve;
-//    bool lldenoiseutili=false;
-//  Imagefloat *calclum ;
-//    params.dirpyrDenoise.getCurves(noiseLCurve, lldenoiseutili);
-//  if (params.dirpyrDenoise.enabled  && lldenoiseutili) {
+        const procparams::ProcParams& params = job->pparams;
 
         DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;   // make a copy because we cheat here
 
@@ -853,9 +843,7 @@ private:
         }
 
         if (denoiseParams.enabled) {
-            // CurveFactory::denoiseLL(lldenoiseutili, denoiseParams.lcurve, Noisecurve,1);
-            //denoiseParams.getCurves(noiseLCurve);
-//      ipf.RGB_denoise(baseImg, baseImg, calclum, imgsrc->isRAW(), denoiseParams, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, lldenoiseutili);
+            ImProcFunctions &ipf = * (ipf_p.get());
             float nresi, highresi;
             int kall = 2;
             ipf.RGB_denoise(kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, nresi, highresi);
@@ -877,7 +865,7 @@ private:
 
     void stage_transform()
     {
-        procparams::ProcParams& params = job->pparams;
+        const procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
@@ -1095,13 +1083,10 @@ private:
         ipf.vibrance(labView);
         ipf.labColorCorrectionRegions(labView);
 
-        if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
-            ipf.impulsedenoise(labView);
-        }
-
         // for all treatments Defringe, Sharpening, Contrast detail ,Microcontrast they are activated if "CIECAM" function are disabled
 
         if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
+            ipf.impulsedenoise (labView);
             ipf.defringe(labView);
         }
 

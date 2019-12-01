@@ -1205,7 +1205,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 b = 327.68f * Chprov * sincosv.x; //aply Munsell
                             } else {//general case
                                 L = labco->L[i1][j1];
-                                const float Lin = labco->L[i1][j1];
+                                const float Lin = std::max(0.f, L);
 
                                 if (wavclCurve  && cp.finena) {
                                     labco->L[i1][j1] = (0.5f * Lin + 1.5f * wavclCurve[Lin]) / 2.f;   //apply contrast curve

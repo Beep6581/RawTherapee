@@ -20,7 +20,6 @@
 
 #include <gtkmm.h>
 
-#include "dirbrowser.h"
 #include "exportpanel.h"
 #include "filecatalog.h"
 #include "fileselectionlistener.h"
@@ -35,6 +34,7 @@
 
 class BatchToolPanelCoordinator;
 class RTWindow;
+class DirBrowser;
 
 class FilePanel final :
     public Gtk::HPaned,

@@ -18,6 +18,7 @@
  */
 #include <iomanip>
 #include "navigator.h"
+#include "previewwindow.h"
 #include "toolpanel.h"
 #include "../rtengine/color.h"
 #include "../rtengine/rt_math.h"

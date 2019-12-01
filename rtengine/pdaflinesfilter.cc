@@ -206,7 +206,7 @@ std::unique_ptr<RawImageSource::CFALineDenoiseRowBlender> PDAFLinesFilter::lineD
 }
 
 
-int PDAFLinesFilter::markLine(array2D<float> &rawData, PixelsMap &bpMap, int y)
+int PDAFLinesFilter::markLine(const array2D<float> &rawData, PixelsMap &bpMap, int y)
 {
     rowmap_.clear();
     rowmap_.resize((W_+1)/2, false);
@@ -258,7 +258,7 @@ int PDAFLinesFilter::markLine(array2D<float> &rawData, PixelsMap &bpMap, int y)
 }
 
 
-int PDAFLinesFilter::mark(array2D<float> &rawData, PixelsMap &bpMap)
+int PDAFLinesFilter::mark(const array2D<float> &rawData, PixelsMap &bpMap)
 {
 
     if (pattern_.empty()) {

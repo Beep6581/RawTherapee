@@ -1398,6 +1398,7 @@ struct RAWParams {
         enum class PSDemosaicMethod {
             AMAZE,
             AMAZEVNG4,
+            RCDVNG4,
             LMMSE
         };
 

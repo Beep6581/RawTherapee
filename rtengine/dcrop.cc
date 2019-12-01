@@ -196,18 +196,8 @@ void Crop::update(int todo)
 
         params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
 
-        int tilesize;
-        int overlap;
-
-        if (settings->leveldnti == 0) {
-            tilesize = 1024;
-            overlap = 128;
-        }
-
-        if (settings->leveldnti == 1) {
-            tilesize = 768;
-            overlap = 96;
-        }
+        const int tilesize = settings->leveldnti == 0 ? 1024 : 768;
+        const int overlap = settings->leveldnti == 0 ? 128 : 96;
 
         int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
 

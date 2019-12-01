@@ -20,7 +20,6 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "saveformatpanel.h"
 
 class SaveAsDialog :

@@ -225,7 +225,7 @@ void XTransProcess::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void XTransProcess::adjusterAutoToggled(Adjuster* a, bool newval)
+void XTransProcess::adjusterAutoToggled(Adjuster* a)
 {
     if (multiImage) {
         if (dualDemosaicContrast->getAutoInconsistent()) {

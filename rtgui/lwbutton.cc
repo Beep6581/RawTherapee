@@ -153,7 +153,7 @@ bool LWButton::releaseNotify (int x, int y)
 {
 
     bool in = inside (x, y);
-    State nstate = state;
+    State nstate;
     bool action = false;
 
     if (in && (state == Pressed_In || state == Pressed_Out)) {

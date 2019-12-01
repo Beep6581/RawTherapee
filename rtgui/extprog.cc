@@ -22,8 +22,8 @@
 #include <iostream>
 
 #ifdef WIN32
-#include <windows.h>
 #include <shlobj.h>
+#include <shellapi.h>
 #endif
 
 #include <gtkmm.h>
@@ -145,20 +145,19 @@ bool ExtProgStore::searchProgram (const Glib::ustring& name,
 
             filePath = progFilesDir + "\\" + Glib::ustring::compose(exePath, ver);
 
-            if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+            if (Glib::file_test(filePath, Glib::FILE_TEST_EXISTS)) {
                 break;
             }
 
-            if (!exePath86.empty ()) {
+            if (!exePath86.empty()) {
 
                 filePath = progFilesDirx86 + "\\" + Glib::ustring::compose(exePath86, ver);
 
-                if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+                if (Glib::file_test(filePath, Glib::FILE_TEST_EXISTS)) {
                     break;
                 }
             }
-
-            filePath.clear ();
+            filePath.clear();
         }
     } else {
 
@@ -166,21 +165,19 @@ bool ExtProgStore::searchProgram (const Glib::ustring& name,
 
             filePath = progFilesDir + "\\" + exePath;
 
-            if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+            if (Glib::file_test(filePath, Glib::FILE_TEST_EXISTS)) {
                 break;
             }
 
-            if (!exePath86.empty ()) {
+            if (!exePath86.empty()) {
 
                 filePath = progFilesDirx86 + "\\" + exePath86;
 
-                if (Glib::file_test (filePath, Glib::FILE_TEST_EXISTS)) {
+                if (Glib::file_test(filePath, Glib::FILE_TEST_EXISTS)) {
                     break;
                 }
             }
-
-            filePath.clear ();
-
+            filePath.clear();
         } while (false);
     }
 
@@ -264,7 +261,7 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 #endif
 
 #ifdef WIN32
-    if ((uintptr_t)success > 32) {
+    if (reinterpret_cast<uintptr_t>(success) > 32) {
         return true;
     }
 #else
@@ -279,9 +276,9 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
     for (auto ver = 12; ver >= 0; --ver) {
 
         executable = Glib::build_filename (options.gimpDir, "bin", Glib::ustring::compose (Glib::ustring("gimp-2.%1.exe"), ver));
-        auto success = ShellExecute( NULL, "open", executable.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
+        auto lsuccess = ShellExecute( NULL, "open", executable.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
 
-        if ((uintptr_t)success > 32) {
+        if (reinterpret_cast<uintptr_t>(lsuccess) > 32) {
             return true;
         }
     }

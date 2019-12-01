@@ -22,7 +22,8 @@
 
 #include "options.h"
 #include "pointermotionlistener.h"
-#include "previewwindow.h"
+
+class PreviewWindow;
 
 class Navigator :
     public Gtk::Frame,

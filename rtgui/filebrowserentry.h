@@ -23,7 +23,6 @@
 
 #include <gtkmm.h>
 
-#include "crophandler.h"
 #include "editenums.h"
 #include "filethumbnailbuttonset.h"
 #include "imageareatoollistener.h"

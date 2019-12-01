@@ -409,92 +409,88 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
 #ifdef _OPENMP
     #pragma omp parallel for reduction(max:maxRatio) schedule(dynamic, 16)
 #endif
-    for (int row = starty + 3; row < H - 4; row += 3) {
-        for (int col = startx + 3; col < W - 4; col += 3) {
-            const float valtl = rawData[row][col];
-            const float valtr = rawData[row][col + 1];
-            const float valbl = rawData[row + 1][col];
-            const float valbr = rawData[row + 1][col + 1];
-            if (valtl > 1.f) {
-                const float maxValtltr = std::max(valtl, valtr);
-                if (valtr > 1.f && maxValtltr > lowerLimit) {
-                    const float minVal = std::min(valtl, valtr);
-                    if (UNLIKELY(maxValtltr > maxRatio * minVal)) {
-                        bool clipped = false;
-                        if (maxValtltr == valtl) { // check for influence by clipped green in neighborhood
-                            if (rtengine::max(rawData[row - 1][col - 1], valtr, valbl, valbr) >= upperLimit) {
-                                clipped = true;
+    for (int row = starty + 2; row < H - 4; row += 3) {
+        for (int col = startx + 2; col < W - 4; col += 3) {
+            const float valp1p1 = rawData[row + 1][col + 1];
+            const bool squareClipped = rtengine::max(valp1p1, rawData[row + 1][col + 2], rawData[row + 2][col + 1], rawData[row + 2][col + 2]) >= upperLimit;
+            const float greenSolitary = rawData[row][col];
+            if (greenSolitary > 1.f && std::max(rawData[row - 1][col - 1], rawData[row - 1][col + 1]) < upperLimit) {
+                if (greenSolitary < upperLimit) {
+                    const float valp1m1 = rawData[row + 1][col - 1];
+                    if (valp1m1 > 1.f && rtengine::max(rawData[row + 1][col - 2], valp1m1, rawData[row + 2][col - 2], rawData[row + 1][col - 1]) < upperLimit) {
+                        const float maxVal = std::max(greenSolitary, valp1m1);
+                        if (maxVal > lowerLimit) {
+                            const float minVal = std::min(greenSolitary, valp1m1);
+                            if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                maxRatio = maxVal / minVal;
                             }
-                        } else { // check for influence by clipped green in neighborhood
-                            if (rtengine::max(rawData[row - 1][col + 2], valtl, valbl, valbr) >= upperLimit) {
-                                clipped = true;
-                            }
-                        }
-                        if (!clipped) {
-                            maxRatio = maxValtltr / minVal;
                         }
                     }
-                }
-                const float maxValtlbl = std::max(valtl, valbl);
-                if (valbl > 1.f && maxValtlbl > lowerLimit) {
-                    const float minVal = std::min(valtl, valbl);
-                    if (UNLIKELY(maxValtlbl > maxRatio * minVal)) {
-                        bool clipped = false;
-                        if (maxValtlbl == valtl) { // check for influence by clipped green in neighborhood
-                            if (rtengine::max(rawData[row - 1][col - 1], valtr, valbl, valbr) >= upperLimit) {
-                                clipped = true;
+                    if (valp1p1 > 1.f && !squareClipped) {
+                        const float maxVal = std::max(greenSolitary, valp1p1);
+                        if (maxVal > lowerLimit) {
+                            const float minVal = std::min(greenSolitary, valp1p1);
+                            if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                maxRatio = maxVal / minVal;
                             }
-                        } else { // check for influence by clipped green in neighborhood
-                            if (rtengine::max(valtl, valtr, rawData[row + 2][col - 1], valbr) >= upperLimit) {
-                                clipped = true;
-                            }
-                        }
-                        if (!clipped) {
-                            maxRatio = maxValtlbl / minVal;
                         }
                     }
                 }
             }
-            if (valbr > 1.f) {
-                const float maxValblbr = std::max(valbl, valbr);
-                if (valbl > 1.f && maxValblbr > lowerLimit) {
-                    const float minVal = std::min(valbl, valbr);
-                    if (UNLIKELY(maxValblbr > maxRatio * minVal)) {
-                        bool clipped = false;
-                        if (maxValblbr == valbr) { // check for influence by clipped green in neighborhood
-                            if (rtengine::max(valtl, valtr, valbl, rawData[row + 2][col + 2]) >= upperLimit) {
-                                clipped = true;
-                            }
-                        } else { // check for influence by clipped green in neighborhood
-                            if (rtengine::max(valtl, valtr, rawData[row + 2][col - 1], valbr) >= upperLimit) {
-                                clipped = true;
+            if (!squareClipped) {
+                const float valp2p2 = rawData[row + 2][col + 2];
+                if (valp2p2 > 1.f) {
+                    if (valp1p1 > 1.f) {
+                        const float maxVal = std::max(valp1p1, valp2p2);
+                        if (maxVal > lowerLimit) {
+                            const float minVal = std::min(valp1p1, valp2p2);
+                            if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                maxRatio = maxVal / minVal;
                             }
                         }
-                        if (!clipped) {
-                            maxRatio = maxValblbr / minVal;
+                    }
+                    const float greenSolitaryRight = rawData[row + 3][col + 3];
+                    if (rtengine::max(greenSolitaryRight, rawData[row + 4][col + 2], rawData[row + 4][col + 4]) < upperLimit) {
+                        if (greenSolitaryRight > 1.f) {
+                            const float maxVal = std::max(greenSolitaryRight, valp2p2);
+                            if (maxVal > lowerLimit) {
+                                const float minVal = std::min(greenSolitaryRight, valp2p2);
+                                if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                    maxRatio = maxVal / minVal;
+                                }
+                            }
                         }
                     }
                 }
-                const float maxValtrbr = std::max(valtr, valbr);
-                if (valtr > 1.f && maxValtrbr > lowerLimit) {
-                    const float minVal = std::min(valtr, valbr);
-                    if (UNLIKELY(maxValtrbr > maxRatio * minVal)) {
-                        if (maxValtrbr == valbr) { // check for influence by clipped green in neighborhood
-                            if (rtengine::max(valtl, valtr, valbl, rawData[row + 2][col + 2]) >= upperLimit) {
-                                continue;
-                            }
-                        } else { // check for influence by clipped green in neighborhood
-                            if (rtengine::max(rawData[row - 1][col + 2], valtl, valbl, valbr) >= upperLimit) {
-                                continue;
+                const float valp1p2 = rawData[row + 1][col + 2];
+                const float valp2p1 = rawData[row + 2][col + 1];
+                if (valp2p1 > 1.f) {
+                    if (valp1p2 > 1.f) {
+                        const float maxVal = std::max(valp1p2, valp2p1);
+                        if (maxVal > lowerLimit) {
+                            const float minVal = std::min(valp1p2, valp2p1);
+                            if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                maxRatio = maxVal / minVal;
                             }
                         }
-                        maxRatio = maxValtrbr / minVal;
+                    }
+                    const float greenSolitaryLeft = rawData[row + 3][col];
+                    if (rtengine::max(greenSolitaryLeft, rawData[row + 4][col - 1], rawData[row + 4][col + 1]) < upperLimit) {
+                        if (greenSolitaryLeft > 1.f) {
+                            const float maxVal = std::max(greenSolitaryLeft, valp2p1);
+                            if (maxVal > lowerLimit) {
+                                const float minVal = std::min(greenSolitaryLeft, valp2p1);
+                                if (UNLIKELY(maxVal > maxRatio * minVal)) {
+                                    maxRatio = maxVal / minVal;
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
-    return std::sqrt((1.f / (std::log(1.f / maxRatio))) / -2.f);
+    return std::sqrt((1.f / (std::log(1.f / maxRatio) /  2.f)) / -2.f);
 }
 
 bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int border)
@@ -537,8 +533,8 @@ BENCHFUN
     }
 
     constexpr int tileSize = 32;
-    constexpr int border = 5;
-    constexpr int fullTileSize = tileSize + 2 * border;
+    const int border = iterations <= 30 ? 5 : 7;
+    const int fullTileSize = tileSize + 2 * border;
     const float cornerRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
     const float cornerDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
     const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
@@ -573,10 +569,10 @@ BENCHFUN
                             }
                         }
                     }
-                    for (int k = 0, ii = endOfCol ? H - fullTileSize : i; k < fullTileSize; ++k, ++ii) {
-                        for (int l = 0, jj = endOfRow ? W - fullTileSize : j; l < fullTileSize; ++l, ++jj) {
-                            tmpIThr[k][l] = oldLuminance[ii - border][jj - border];
-                            lumThr[k][l] = oldLuminance[ii - border][jj - border];
+                    for (int k = 0, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize; ++k, ++ii) {
+                        for (int l = 0, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize; ++l, ++jj) {
+                            tmpIThr[k][l] = oldLuminance[ii][jj];
+                            lumThr[k][l] = oldLuminance[ii][jj];
                         }
                     }
                 } else {
@@ -618,14 +614,27 @@ BENCHFUN
                         const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - H / 2) + rtengine::SQR(j + tileSize / 2 - W / 2));
                         const float sigmaTile = static_cast<float>(sigma) + distanceFactor * distance;
                         if (sigmaTile >= 0.4f) {
-                            float lkernel7[7][7];
-                            compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
-                            for (int k = 0; k < iterations && !stopped; ++k) {
-                                // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
-                                gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
-                                gauss7x7mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
-                                if (checkIterStop) {
-                                    stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                            if (sigmaTile > 0.84) { // have to use 7x7 kernel
+                                float lkernel7[7][7];
+                                compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
+                                for (int k = 0; k < iterations && !stopped; ++k) {
+                                    // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
+                                    gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
+                                    gauss7x7mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
+                                    if (checkIterStop) {
+                                        stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                                    }
+                                }
+                            } else { // can use 5x5 kernel
+                                float lkernel7[5][5];
+                                compute5x5kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
+                                for (int k = 0; k < iterations && !stopped; ++k) {
+                                    // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
+                                    gauss5x5div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
+                                    gauss5x5mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
+                                    if (checkIterStop) {
+                                        stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                                    }
                                 }
                             }
                         }
@@ -642,8 +651,8 @@ BENCHFUN
                 }
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
-                    for (int k = border, ii = endOfCol ? H - fullTileSize - border : i - border; k < fullTileSize - border; ++k) {
-                        for (int l = border, jj = endOfRow ? W - fullTileSize - border : j - border; l < fullTileSize - border; ++l) {
+                    for (int k = border, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize - border; ++k) {
+                        for (int l = border, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize - border; ++l) {
                             luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], std::max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
                         }
                     }

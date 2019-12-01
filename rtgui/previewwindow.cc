@@ -230,7 +230,7 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
     if (x>imgX || y>imgY || w < imgW || h < imgH) {
         bool inside =     event->x > x - 6 && event->x < x + w - 1 + 6 && event->y > y - 6 && event->y < y + h - 1 + 6;
 
-        CursorShape newType = cursor_type;
+        CursorShape newType;
 
         if (isMoving) {
             mainCropWin->remoteMove ((event->x - press_x) / zoom, (event->y - press_y) / zoom);
