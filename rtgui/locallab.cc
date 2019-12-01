@@ -10469,6 +10469,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (complexsoft == 2) {
             expMethod->set_active(1);
+            inversex->set_active(false);//in case off
             expcomp->setValue(0);
             hlcompr->setValue(0);
             hlcomprthresh->setValue(0);
