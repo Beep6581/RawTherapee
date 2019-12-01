@@ -90,41 +90,36 @@ ThumbBrowserEntryBase* selectOriginalEntry (ThumbBrowserEntryBase* original, Thu
 
 void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 {
-    typedef std::vector<ThumbBrowserEntryBase*> EntryVector;
-    typedef EntryVector::const_iterator EntryIterator;
-    typedef std::map<Glib::ustring, EntryVector> BasenameMap;
-    typedef BasenameMap::const_iterator BasenameIterator;
-
     // Sort all entries into buckets by basename without extension
-    BasenameMap byBasename;
+    std::map<Glib::ustring, std::vector<ThumbBrowserEntryBase*>> byBasename;
 
-    for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
-        const Glib::ustring basename = Glib::path_get_basename ((*entry)->filename.lowercase());
+    for (const auto entry : entries) {
+        const auto basename = Glib::path_get_basename(entry->filename.lowercase());
 
-        const Glib::ustring::size_type pos = basename.find_last_of ('.');
-        if (pos >= basename.length () - 1) {
-            (*entry)->setOriginal (nullptr);
+        const auto pos = basename.find_last_of('.');
+        if (pos >= basename.length() - 1) {
+            entry->setOriginal(nullptr);
             continue;
         }
 
-        const Glib::ustring withoutExtension = basename.substr (0, pos);
+        const auto withoutExtension = basename.substr(0, pos);
 
-        byBasename[withoutExtension].push_back (*entry);
+        byBasename[withoutExtension].push_back(entry);
     }
 
     // Find the original image for each bucket
-    for (BasenameIterator bucket = byBasename.begin (); bucket != byBasename.end (); ++bucket) {
-        const EntryVector& entries = bucket->second;
+    for (const auto& bucket : byBasename) {
+        const auto& lentries = bucket.second;
         ThumbBrowserEntryBase* original = nullptr;
 
         // Select the most likely original in a first pass...
-        for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
-            original = selectOriginalEntry (original, *entry);
+        for (const auto entry : lentries) {
+            original = selectOriginalEntry(original, entry);
         }
 
         // ...and link all other images to it in a second pass.
-        for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
-            (*entry)->setOriginal (*entry != original ? original : nullptr);
+        for (const auto entry : lentries) {
+            entry->setOriginal(entry != original ? original : nullptr);
         }
     }
 }
@@ -487,7 +482,7 @@ FileBrowser::~FileBrowser ()
     delete[] amiExtProg;
 }
 
-void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry)
+void FileBrowser::rightClicked ()
 {
 
     {

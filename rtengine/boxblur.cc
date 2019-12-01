@@ -33,6 +33,7 @@ void boxblur(float** src, float** dst, int radius, int W, int H, bool multiThrea
 {
     //box blur using rowbuffers and linebuffers instead of a full size buffer
 
+    radius = rtengine::min(radius, W - 1, H - 1);
     if (radius == 0) {
         if (src != dst) {
 #ifdef _OPENMP

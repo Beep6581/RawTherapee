@@ -34,6 +34,7 @@ set(RTENGINESOURCEFILES
     amaze_demosaic_RT.cc
     badpixels.cc
     boxblur.cc
+    canon_cr3_decoder.cc
     CA_correct_RT.cc
     calc_distort.cc
     camconst.cc

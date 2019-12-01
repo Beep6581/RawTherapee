@@ -240,7 +240,7 @@ void LockableColorPicker::updateBackBuffer ()
 
 }
 
-void LockableColorPicker::draw (Cairo::RefPtr<Cairo::Context> &cr)
+void LockableColorPicker::draw (const Cairo::RefPtr<Cairo::Context> &cr)
 {
     if (validity == Validity::OUTSIDE) {
         return;
@@ -284,12 +284,12 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B, c
     }
 }
 
-void LockableColorPicker::getImagePosition (rtengine::Coord &imgPos)
+void LockableColorPicker::getImagePosition (rtengine::Coord &imgPos) const
 {
     imgPos = position;
 }
 
-void LockableColorPicker::getScreenPosition (rtengine::Coord &screenPos)
+void LockableColorPicker::getScreenPosition (rtengine::Coord &screenPos) const
 {
     if (cropWindow) {
         cropWindow->imageCoordToScreen(position.x, position.y, screenPos.x, screenPos.y);
@@ -328,7 +328,7 @@ void LockableColorPicker::setSize (Size newSize)
     }
 }
 
-LockableColorPicker::Size LockableColorPicker::getSize ()
+LockableColorPicker::Size LockableColorPicker::getSize () const
 {
     return size;
 }

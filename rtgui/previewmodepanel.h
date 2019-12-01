@@ -19,8 +19,6 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
-
 class ImageArea;
 
 class PreviewModePanel :

@@ -20,7 +20,6 @@
 
 #include <gtkmm.h>
 
-#include "adjuster.h"
 #include "colorprovider.h"
 #include "curvelistener.h"
 #include "guiutils.h"
@@ -58,6 +57,5 @@ public:
     void autoOpenCurve   () override;
     void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 
-    //void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged() override;
 };

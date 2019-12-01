@@ -272,7 +272,7 @@ template<typename T> void wavelet_level<T>::SynthesisFilterHaarVertical (const T
         #pragma omp for nowait
 #endif
 
-        for(int i = 0; i < skip; i++)
+        for(int i = 0; i < std::min(skip, height); i++)
         {
             for(int j = 0; j < width; j++) {
                 dst[width * i + j] = (srcLo[i * width + j] + srcHi[i * width + j]);

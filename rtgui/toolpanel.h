@@ -22,7 +22,6 @@
 
 #include <glibmm/ustring.h>
 
-#include "editbuffer.h"
 #include "guiutils.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"

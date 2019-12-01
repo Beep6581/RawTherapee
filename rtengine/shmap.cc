@@ -351,7 +351,7 @@ void SHMap::forceStat (float max_, float min_, float avg_)
     avg = avg_;
 }
 
-void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale)
+void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, const LUTf& rangefn, int level, int scale)
 {
     //scale is spacing of directional averaging weights
 
