@@ -46,9 +46,13 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
 
 Glib::ustring formatBaseValues(const std::array<float, 3>& rgb)
 {
-    return Glib::ustring::format(std::fixed, std::setprecision(1), rgb[0]) + " " +
-           Glib::ustring::format(std::fixed, std::setprecision(1), rgb[1]) + " " +
-           Glib::ustring::format(std::fixed, std::setprecision(1), rgb[2]);
+    if (rgb[0] <= 0.f && rgb[1] <= 0.f && rgb[2] <= 0.f) {
+        return "- - -";
+    } else {
+        return Glib::ustring::format(std::fixed, std::setprecision(1), rgb[0]) + " " +
+               Glib::ustring::format(std::fixed, std::setprecision(1), rgb[1]) + " " +
+               Glib::ustring::format(std::fixed, std::setprecision(1), rgb[2]);
+    }
 }
 
 }
@@ -166,11 +170,9 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     filmBaseValues[1] = pp->filmNegative.greenBase;
     filmBaseValues[2] = pp->filmNegative.blueBase;
 
-    // If base values are already set in params, display them in the label.
-    // Otherwise, estimated values will be passed in (after processing) via FilmNegListener
-    if (filmBaseValues[0] > 0.f && filmBaseValues[1] > 0.f && filmBaseValues[2] > 0.f) {
-        filmBaseValuesLabel->set_text(formatBaseValues(filmBaseValues));
-    }
+    // If base values are not set in params, estimated values will be passed in later
+    // (after processing) via FilmNegListener
+    filmBaseValuesLabel->set_text(formatBaseValues(filmBaseValues));
 
     enableListener();
 }
