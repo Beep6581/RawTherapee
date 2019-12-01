@@ -1239,7 +1239,13 @@ pe(nullptr)
     }
 
     expMethod->append(M("TP_LOCALLAB_STD"));
-    expMethod->append(M("TP_LOCALLAB_PDE"));
+    if (complexsoft == 1) {
+        expMethod->append(M("TP_LOCALLAB_PDE"));
+    }
+    if (complexsoft == 0) {
+        expMethod->append(M("TP_LOCALLAB_PDE2"));
+    }
+    
     expMethod->set_active(0);
     expMethodConn  = expMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::expMethodChanged));
 
