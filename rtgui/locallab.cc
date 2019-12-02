@@ -10613,7 +10613,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             slomaskvib->setValue(0);
             skinTonesCurve->reset();
         }
-
+ 
         if (complexsoft > 0) {
             lapmaskvib->setValue(0);
             strvibab->setValue(0);
