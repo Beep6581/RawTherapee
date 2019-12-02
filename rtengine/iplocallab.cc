@@ -11435,6 +11435,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
 
+                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+                std::unique_ptr<LabImage> bufmaskblurexp;
+                std::unique_ptr<LabImage> originalmaskexp;
+
                 array2D<float> blend2;
 
                 if (call <= 3) { //simpleprocess, dcrop, improccoordinator
