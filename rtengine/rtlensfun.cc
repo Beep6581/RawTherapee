@@ -35,7 +35,6 @@ namespace rtengine
 LFModifier::~LFModifier()
 {
     if (data_) {
-        MyMutex::MyLock lock(lfModifierMutex);
         data_->Destroy();
     }
 }
@@ -78,11 +77,6 @@ bool LFModifier::isCACorrectionAvailable() const
     return (flags_ & LF_MODIFY_TCA);
 }
 
-#ifdef __GNUC__ // silence warning, can be removed when function is implemented
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 void LFModifier::correctCA(double &x, double &y, int cx, int cy, int channel) const
 {
     assert(channel >= 0 && channel <= 2);
@@ -108,25 +102,39 @@ void LFModifier::correctCA(double &x, double &y, int cx, int cy, int channel) co
     y -= cy;
 }
 
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
+#ifdef _OPENMP
+void LFModifier::processVignette(int width, int height, float** rawData) const
+{
+    #pragma omp parallel for schedule(dynamic,16)
+
+    for (int y = 0; y < height; ++y) {
+        data_->ApplyColorModification(rawData[y], 0, y, width, 1, LF_CR_1(INTENSITY), 0);
+    }
+}
+#else
+void LFModifier::processVignette(int width, int height, float** rawData) const
+{
+    data_->ApplyColorModification(rawData[0], 0, 0, width, height, LF_CR_1(INTENSITY), width * sizeof(float));
+}
+
 #endif
 
-
-void LFModifier::processVignetteLine(int width, int y, float *line) const
+#ifdef _OPENMP
+void LFModifier::processVignette3Channels(int width, int height, float** rawData) const
 {
-    MyMutex::MyLock lock(lfModifierMutex);
-    data_->ApplyColorModification(line, 0, y, width, 1, LF_CR_1(INTENSITY), 0);
+    #pragma omp parallel for schedule(dynamic,16)
+
+    for (int y = 0; y < height; ++y) {
+        data_->ApplyColorModification(rawData[y], 0, y, width, 1, LF_CR_3(RED, GREEN, BLUE), 0);
+    }
+}
+#else
+void LFModifier::processVignette3Channels(int width, int height, float** rawData) const
+{
+    data_->ApplyColorModification(rawData[y], 0, 0, width, height, LF_CR_3(RED, GREEN, BLUE), width * 3 * sizeof(float));
 }
 
-
-void LFModifier::processVignetteLine3Channels(int width, int y, float *line) const
-{
-    MyMutex::MyLock lock(lfModifierMutex);
-    data_->ApplyColorModification(line, 0, y, width, 1, LF_CR_3(RED, GREEN, BLUE), 0);
-}
-
-
+#endif
 Glib::ustring LFModifier::getDisplayString() const
 {
     if (!data_) {
