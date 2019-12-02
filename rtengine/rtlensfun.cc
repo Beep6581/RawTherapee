@@ -500,14 +500,20 @@ std::unique_ptr<LFModifier> LFDatabase::getModifier(const LFCamera &camera, cons
     return ret;
 }
 
-std::set<std::string> LFDatabase::notFound;
-
-std::unique_ptr<LFModifier> LFDatabase::findModifier(const procparams::LensProfParams &lensProf, const FramesMetaData *idata, int width, int height, const procparams::CoarseTransformParams &coarse, int rawRotationDeg)
+std::unique_ptr<LFModifier> LFDatabase::findModifier(
+    const procparams::LensProfParams &lensProf,
+    const FramesMetaData *idata,
+    int width,
+    int height,
+    const procparams::CoarseTransformParams &coarse,
+    int rawRotationDeg
+) const
 {
+    const float focallen = idata->getFocalLen();
+
     Glib::ustring make, model, lens;
-    float focallen = idata->getFocalLen();
     if (lensProf.lfAutoMatch()) {
-        if (focallen <= 0) {
+        if (focallen <= 0.f) {
             return nullptr;
         }
         make = idata->getMake();
@@ -518,6 +524,7 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(const procparams::LensProfP
         model = lensProf.lfCameraModel;
         lens = lensProf.lfLens;
     }
+
     if (make.empty() || model.empty() || lens.empty()) {
         return nullptr;
     }
@@ -527,15 +534,15 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(const procparams::LensProfP
         // This combination was not found => do not search again
         return nullptr;
     }
-    const LFDatabase *db = getInstance();
-    LFCamera c = db->findCamera(make, model);
-    LFLens l = db->findLens(lensProf.lfAutoMatch() ? c : LFCamera(), lens);
-    if (focallen <= 0 && l.data_ && l.data_->MinFocal == l.data_->MaxFocal) {
-        focallen = l.data_->MinFocal;
-    }
-    if (focallen <= 0) {
-        return nullptr;
-    }
+
+    const LFCamera c = findCamera(make, model);
+    const LFLens l = findLens(
+        lensProf.lfAutoMatch()
+            ? c
+            : LFCamera(),
+        lens
+    );
+
     bool swap_xy = false;
     if (rawRotationDeg >= 0) {
         int rot = (coarse.rotate + rawRotationDeg) % 360;
@@ -545,18 +552,28 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(const procparams::LensProfP
         }
     }
 
-    std::unique_ptr<LFModifier> ret = db->getModifier(c, l, idata->getFocalLen(), idata->getFNumber(), idata->getFocusDist(), width, height, swap_xy);
+    std::unique_ptr<LFModifier> ret = getModifier(
+        c,
+        l,
+        idata->getFocalLen(),
+        idata->getFNumber(),
+        idata->getFocusDist(),
+        width,
+        height,
+        swap_xy
+    );
 
     if (settings->verbose) {
         std::cout << "LENSFUN:\n"
                   << "  camera: " << c.getDisplayString() << "\n"
                   << "  lens: " << l.getDisplayString() << "\n"
                   << "  correction: "
-                  << (ret ? ret->getDisplayString() : "NONE") << std::endl;
+                  << (ret ? ret->getDisplayString() : "NONE")
+                  << std::endl;
     }
 
     if (!ret) {
-        notFound.emplace(key);
+        notFound.insert(key);
     }
 
     return ret;

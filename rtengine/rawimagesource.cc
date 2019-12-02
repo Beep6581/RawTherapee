@@ -1395,7 +1395,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
         std::unique_ptr<LensCorrection> pmap;
 
         if (lensProf.useLensfun()) {
-            pmap = LFDatabase::findModifier(lensProf, idata, W, H, coarse, -1);
+            pmap = LFDatabase::getInstance()->findModifier(lensProf, idata, W, H, coarse, -1);
         } else {
             const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile(lensProf.lcpFile);
 
