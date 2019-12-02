@@ -415,7 +415,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     std::unique_ptr<const LensCorrection> pLCPMap;
 
     if (needsLensfun()) {
-        pLCPMap = LFDatabase::findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
+        pLCPMap = LFDatabase::getInstance()->findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
     } else if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile (params->lensProf.lcpFile);
 
