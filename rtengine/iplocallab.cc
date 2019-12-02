@@ -1742,9 +1742,11 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
                 blur = blur < 0.f ? -1.f / blur : 1.f + blur;
                 // int r1 = max(int(4 / sk * blur + 0.5), 1);
                 int r2 = max(int(25 / sk * blur + 0.5), 1);
-                if(rad < 0.f) {
+
+                if (rad < 0.f) {
                     epsil = 0.0001;
                 }
+
                 rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
 //                rtengine::guidedFilter(guid, blechro, blechro, r1, 0.5 * epsil, multiThread);
             }
@@ -3672,9 +3674,11 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             double aepsil = (epsilmax - epsilmin) / 90.f;
             double bepsil = epsilmax - 100.f * aepsil;
             double epsil = aepsil * 0.1 * rad + bepsil;
-            if(rad < 0.f) {
+
+            if (rad < 0.f) {
                 epsil = 0.001;
             }
+
             rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
             rtengine::guidedFilter(guid, ble, ble, r2, 0.2 * epsil, multiThread);
         }
@@ -4323,34 +4327,33 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
         }
     }
 
-        if (lp.equtm  && senstype == 8) //normalize luminance for Tone mapping , at this place we can use for others senstype!
-        {
-            float *datain = new float[bfh * bfw];
-            float *data = new float[bfh * bfw];
+    if (lp.equtm  && senstype == 8) { //normalize luminance for Tone mapping , at this place we can use for others senstype!
+        float *datain = new float[bfh * bfw];
+        float *data = new float[bfh * bfw];
 
 #ifdef _OPENMP
-            #pragma omp parallel for
+        #pragma omp parallel for
 #endif
 
-            for (int y = ystart; y < yend; y++)
-                for (int x = xstart; x < xend; x++) {
-                    datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
-                    data[(y - ystart)* bfw + (x - xstart)] = bufexporig->L[y - ystart][x - xstart];
-                }
+        for (int y = ystart; y < yend; y++)
+            for (int x = xstart; x < xend; x++) {
+                datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
+                data[(y - ystart)* bfw + (x - xstart)] = bufexporig->L[y - ystart][x - xstart];
+            }
 
-            normalize_mean_dt(data, datain, bfh * bfw, 1.f);
+        normalize_mean_dt(data, datain, bfh * bfw, 1.f);
 #ifdef _OPENMP
-            #pragma omp parallel for
+        #pragma omp parallel for
 #endif
 
-            for (int y = ystart; y < yend; y++)
-                for (int x = xstart; x < xend; x++) {
-                    bufexporig->L[y - ystart][x - xstart] = data[(y - ystart) * bfw + x - xstart];
-                }
+        for (int y = ystart; y < yend; y++)
+            for (int x = xstart; x < xend; x++) {
+                bufexporig->L[y - ystart][x - xstart] = data[(y - ystart) * bfw + x - xstart];
+            }
 
-            delete [] datain;
-            delete [] data;
-        }
+        delete [] datain;
+        delete [] data;
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -4433,8 +4436,8 @@ void ImProcFunctions::transit_shapedetect2(int senstype, const LabImage * bufexp
             float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
             float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
             float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
-            
-            if(delt) {
+
+            if (delt) {
                 cli = bufexpfin->L[y][x] - original->L[y + ystart][x + xstart];
                 cla = bufexpfin->a[y][x] - original->a[y + ystart][x + xstart];
                 clb = bufexpfin->b[y][x] - original->b[y + ystart][x + xstart];
@@ -5685,6 +5688,97 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
                         };
 
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
+
+
+static void optfft(int N_fftwsize, int bfh, int bfw, int &bfhr, int &bfwr, bool reduH, bool reduW, struct local_params & lp, int H, int W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy)
+{
+    /*
+                    for (int n=0; n< 17; n++){
+                        for(int m=0; m < 11; m++) {
+                            for(int l=0; l < 8; l++) {
+                                for(int p=0; p < 6; p++) {
+                                    for (int r=0; r < 2; r++){
+                                        int bon = pow(2, n) * pow(3, m) * pow(5, l) * pow(7, p) * pow(13, r);
+                                        if(bon >= 18000  && bon < 18200) printf("b=%i", bon);
+                                    }
+                                }
+                            }
+                        }
+                    }
+    */
+
+
+    int ftsizeH = 1;
+    int ftsizeW = 1;
+
+    for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
+        if (fftw_size[ft] <= bfh) {
+            ftsizeH = fftw_size[ft];
+            break;
+        }
+    }
+
+    for (int ft = 0; ft < N_fftwsize; ft++) {
+        if (fftw_size[ft] <= bfw) {
+            ftsizeW = fftw_size[ft];
+            break;
+        }
+    }
+
+    // printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+    //optimize with size fftw
+    if (ystart == 0 && yend < H) {
+        lp.ly -= (bfh - ftsizeH);
+    } else if (ystart != 0 && yend == H) {
+        lp.lyT -= (bfh - ftsizeH);
+    } else if (ystart != 0 && yend != H) {
+        if (lp.ly <= lp.lyT) {
+            lp.lyT -= (bfh - ftsizeH);
+        } else {
+            lp.ly -= (bfh - ftsizeH);
+        }
+    } else if (ystart == 0 && yend == H) {
+        bfhr = ftsizeH;
+        reduH = true;
+    }
+
+    if (xstart == 0 && xend < W) {
+        lp.lx -= (bfw - ftsizeW);
+    } else if (xstart != 0 && xend == W) {
+        lp.lxL -= (bfw - ftsizeW);
+    } else if (xstart != 0 && xend != W) {
+        if (lp.lx <= lp.lxL) {
+            lp.lxL -= (bfw - ftsizeW);
+        } else {
+            lp.lx -= (bfw - ftsizeW);
+        }
+    } else if (xstart == 0 && xend == W) {
+        bfwr = ftsizeW;
+        reduW = true;
+    }
+
+    //new values optimized
+    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, H);
+    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, W);
+    bfh = bfhr = yend - ystart;
+    bfw = bfwr = xend - xstart;
+
+    if (reduH) {
+        bfhr = ftsizeH;
+    }
+
+    if (reduW) {
+        bfwr = ftsizeW;
+    }
+
+    if (settings->verbose) {
+        printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i bfhr=%i origH=%i ftsizeH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, bfhr, H, ftsizeH);
+        printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i bfwr=%i origW=%i ftsizeW=%i\n", xstart, xend, lp.xc, lp.lxL, lp.lx, bfw, bfwr, W, ftsizeW);
+    }
+}
+
 
 
 static void softlig(float &a, float &b, float minc, float maxc)
@@ -8007,6 +8101,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         if (((radius > 1.5 * GAUSS_SKIP)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
             blurz = true;
         }
+
         const int GW = transformed->W;
         const int GH = transformed->H;
 
@@ -8141,9 +8236,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     double bepsil = epsilmax - 100.f * aepsil;
                     double epsil = aepsil * lp.radmabl + bepsil;
 
-                    if(lp.radmabl < 0.f) {
+                    if (lp.radmabl < 0.f) {
                         epsil = 0.001;
                     }
+
                     rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
                     rtengine::guidedFilter(guid, ble, ble, r2, 0.2 * epsil, multiThread);
 
@@ -9461,7 +9557,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                         transit_shapedetect2(8, bufgb.get(), tmp1.get(), originalmasktm.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
-                      //  transit_shapedetect(8, tmp1.get(), originalmasktm.get(), bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        //  transit_shapedetect(8, tmp1.get(), originalmasktm.get(), bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                         bufgb.reset();
 
                         if (params->locallab.spots.at(sp).recurs) {
@@ -9788,89 +9884,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (bfw >= mSP && bfh >= mSP) {
 
                 if (lp.softmet == 1) {
-                    /*
-                                    for (int n=0; n< 17; n++){
-                                        for(int m=0; m < 11; m++) {
-                                            for(int l=0; l < 8; l++) {
-                                                for(int p=0; p < 6; p++) {
-                                                    for (int r=0; r < 2; r++){
-                                                        int bon = pow(2, n) * pow(3, m) * pow(5, l) * pow(7, p) * pow(13, r);
-                                                        if(bon >= 18000  && bon < 18200) printf("b=%i", bon);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                    */
-                    int ftsizeH = 1;
-                    int ftsizeW = 1;
-
-                    for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
-                        if (fftw_size[ft] <= bfh) {
-                            ftsizeH = fftw_size[ft];
-                            break;
-                        }
-                    }
-
-                    for (int ft = 0; ft < N_fftwsize; ft++) {
-                        if (fftw_size[ft] <= bfw) {
-                            ftsizeW = fftw_size[ft];
-                            break;
-                        }
-                    }
-
-                    // printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
-                    //optimize with size fftw
-                    if (ystart == 0 && yend < original->H) {
-                        lp.ly -= (bfh - ftsizeH);
-                    } else if (ystart != 0 && yend == original->H) {
-                        lp.lyT -= (bfh - ftsizeH);
-                    } else if (ystart != 0 && yend != original->H) {
-                        if (lp.ly <= lp.lyT) {
-                            lp.lyT -= (bfh - ftsizeH);
-                        } else {
-                            lp.ly -= (bfh - ftsizeH);
-                        }
-                    } else if (ystart == 0 && yend == original->H) {
-                        bfhr = ftsizeH;
-                        reduH = true;
-                    }
-
-                    if (xstart == 0 && xend < original->W) {
-                        lp.lx -= (bfw - ftsizeW);
-                    } else if (xstart != 0 && xend == original->W) {
-                        lp.lxL -= (bfw - ftsizeW);
-                    } else if (xstart != 0 && xend != original->W) {
-                        if (lp.lx <= lp.lxL) {
-                            lp.lxL -= (bfw - ftsizeW);
-                        } else {
-                            lp.lx -= (bfw - ftsizeW);
-                        }
-                    } else if (xstart == 0 && xend == original->W) {
-                        bfwr = ftsizeW;
-                        reduW = true;
-                    }
-
-                    //new values optimized
-                    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                    bfh = bfhr = yend - ystart;
-                    bfw = bfwr = xend - xstart;
-
-                    if (reduH) {
-                        bfhr = ftsizeH;
-                    }
-
-                    if (reduW) {
-                        bfwr = ftsizeW;
-                    }
-
-                    if (settings->verbose) {
-                        printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i bfhr=%i origH=%i ftsizeH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, bfhr, original->H, ftsizeH);
-                        printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i bfwr=%i origW=%i ftsizeW=%i\n", xstart, xend, lp.xc, lp.lxL, lp.lx, bfw, bfwr, original->W, ftsizeW);
-                    }
+                    optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
 
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
@@ -9971,70 +9985,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (bfw >= mSP && bfh >= mSP) {
 
                 if (lp.ftwlc) {
-                    int ftsizeH = 1;
-                    int ftsizeW = 1;
-
-                    for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
-                        if (fftw_size[ft] <= bfh) {
-                            ftsizeH = fftw_size[ft];
-                            break;
-                        }
-                    }
-
-                    for (int ft = 0; ft < N_fftwsize; ft++) {
-                        if (fftw_size[ft] <= bfw) {
-                            ftsizeW = fftw_size[ft];
-                            break;
-                        }
-                    }
-
-                    //printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
-                    //optimize with size fftw
-                    if (ystart == 0 && yend < original->H) {
-                        lp.ly -= (bfh - ftsizeH);
-                    } else if (ystart != 0 && yend == original->H) {
-                        lp.lyT -= (bfh - ftsizeH);
-                    } else if (ystart != 0 && yend != original->H) {
-                        if (lp.ly <= lp.lyT) {
-                            lp.lyT -= (bfh - ftsizeH);
-                        } else {
-                            lp.ly -= (bfh - ftsizeH);
-                        }
-                    } else if (ystart == 0 && yend == original->H) {
-                        bfhr = ftsizeH;
-                        reduH = true;
-                    }
-
-                    if (xstart == 0 && xend < original->W) {
-                        lp.lx -= (bfw - ftsizeW);
-                    } else if (xstart != 0 && xend == original->W) {
-                        lp.lxL -= (bfw - ftsizeW);
-                    } else if (xstart != 0 && xend != original->W) {
-                        if (lp.lx <= lp.lxL) {
-                            lp.lxL -= (bfw - ftsizeW);
-                        } else {
-                            lp.lx -= (bfw - ftsizeW);
-                        }
-                    } else if (xstart == 0 && xend == original->W) {
-                        bfwr = ftsizeW;
-                        reduW = true;
-                    }
-
-                    //new values optimized
-                    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                    bfh = bfhr = yend - ystart;
-                    bfw = bfwr = xend - xstart;
-
-                    if (reduH) {
-                        bfhr = ftsizeH;
-                    }
-
-                    if (reduW) {
-                        bfwr = ftsizeW;
-                    }
+                    optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
 
                 array2D<float> buflight(bfw, bfh);
@@ -11008,77 +10959,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (bfw >= mSP && bfh > mSP) {
 
                 if (lp.ftwreti) {
-                    int ftsizeH = 1;
-                    int ftsizeW = 1;
-
-                    for (int ft = 0; ft < N_fftwsize; ft++) { //find best values for FFTW
-                        if (fftw_size[ft] <= bfh) {
-                            ftsizeH = fftw_size[ft];
-                            break;
-                        }
-                    }
-
-                    for (int ft = 0; ft < N_fftwsize; ft++) {
-                        if (fftw_size[ft] <= bfw) {
-                            ftsizeW = fftw_size[ft];
-                            break;
-                        }
-                    }
-
-
-                    if (ystart == 0 && yend < original->H) {
-                        lp.ly -= (bfh - ftsizeH);
-                    } else if (ystart != 0 && yend == original->H) {
-                        lp.lyT -= (bfh - ftsizeH);
-                    } else if (ystart != 0 && yend != original->H) {
-                        if (lp.ly <= lp.lyT) {
-                            lp.lyT -= (bfh - ftsizeH);
-                        } else {
-                            lp.ly -= (bfh - ftsizeH);
-                        }
-                    } else if (ystart == 0 && yend == original->H) {
-                        bfhr = ftsizeH;
-                        reduH = true;
-                    }
-
-                    if (xstart == 0 && xend < original->W) {
-                        lp.lx -= (bfw - ftsizeW);
-                    } else if (xstart != 0 && xend == original->W) {
-                        lp.lxL -= (bfw - ftsizeW);
-                    } else if (xstart != 0 && xend != original->W) {
-                        if (lp.lx <= lp.lxL) {
-                            lp.lxL -= (bfw - ftsizeW);
-                        } else {
-                            lp.lx -= (bfw - ftsizeW);
-                        }
-                    } else if (xstart == 0 && xend == original->W) {
-                        bfwr = ftsizeW;
-                        reduW = true;
-                    }
-
-
-                    //new values optimized
-                    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                    bfh = bfhr = yend - ystart;
-                    bfw = bfwr = xend - xstart;
-
-                    if (reduH) {
-                        bfhr = ftsizeH;
-                    }
-
-                    if (reduW) {
-                        bfwr = ftsizeW;
-                    }
-
-                    if (settings->verbose) {
-                        printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i bfhr=%i origH=%i ftsizeH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, bfhr, original->H, ftsizeH);
-                        printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i bfwr=%i origW=%i ftsizeW=%i\n", xstart, xend, lp.xc, lp.lxL, lp.lx, bfw, bfwr, original->W, ftsizeW);
-                    }
+                    optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
-
 
                 array2D<float> buflight(bfw, bfh);
                 JaggedArray<float> bufchro(bfw, bfh);
@@ -11550,83 +11432,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (bfw >= mSP && bfh >= mSP) {
 
                 if (lp.expmet == 1) {
-
-                    int ftsizeH = 1;
-                    int ftsizeW = 1;
-
-                    for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
-                        if (fftw_size[ft] <= bfh) {
-                            ftsizeH = fftw_size[ft];
-                            break;
-                        }
-                    }
-
-                    for (int ft = 0; ft < N_fftwsize; ft++) {
-                        if (fftw_size[ft] <= bfw) {
-                            ftsizeW = fftw_size[ft];
-                            break;
-                        }
-                    }
-
-                    //optimize with size fftw
-                    if (ystart == 0 && yend < original->H) {
-                        lp.ly -= (bfh - ftsizeH);
-                    } else if (ystart != 0 && yend == original->H) {
-                        lp.lyT -= (bfh - ftsizeH);
-                    } else if (ystart != 0 && yend != original->H) {
-                        if (lp.ly <= lp.lyT) {
-                            lp.lyT -= (bfh - ftsizeH);
-                        } else {
-                            lp.ly -= (bfh - ftsizeH);
-                        }
-                    } else if (ystart == 0 && yend == original->H) {
-                        bfhr = ftsizeH;
-                        reduH = true;
-                    }
-
-                    if (xstart == 0 && xend < original->W) {
-                        lp.lx -= (bfw - ftsizeW);
-                    } else if (xstart != 0 && xend == original->W) {
-                        lp.lxL -= (bfw - ftsizeW);
-                    } else if (xstart != 0 && xend != original->W) {
-                        if (lp.lx <= lp.lxL) {
-                            lp.lxL -= (bfw - ftsizeW);
-                        } else {
-                            lp.lx -= (bfw - ftsizeW);
-                        }
-                    } else if (xstart == 0 && xend == original->W) {
-                        bfwr = ftsizeW;
-                        reduW = true;
-                    }
-
-                    //new values optimized
-                    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                    bfh = bfhr = yend - ystart;
-                    bfw = bfwr = xend - xstart;
-
-                    if (reduH) {
-                        bfhr = ftsizeH;
-                    }
-
-                    if (reduW) {
-                        bfwr = ftsizeW;
-                    }
+                    optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
 
-                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
-                std::unique_ptr<LabImage> bufmaskblurexp;
-                std::unique_ptr<LabImage> originalmaskexp;
-
-                /*
-                array2D<float> buflight(bfw, bfh);
-                JaggedArray<float> bufl_ab(bfw, bfh);
-                JaggedArray<float> buf_a_cat(bfw, bfh);
-                JaggedArray<float> buf_b_cat(bfw, bfh);
-                */
                 array2D<float> blend2;
 
                 if (call <= 3) { //simpleprocess, dcrop, improccoordinator
