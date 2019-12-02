@@ -131,7 +131,7 @@ void LFModifier::processVignette3Channels(int width, int height, float** rawData
 #else
 void LFModifier::processVignette3Channels(int width, int height, float** rawData) const
 {
-    data_->ApplyColorModification(rawData[y], 0, 0, width, height, LF_CR_3(RED, GREEN, BLUE), width * 3 * sizeof(float));
+    data_->ApplyColorModification(rawData[0], 0, 0, width, height, LF_CR_3(RED, GREEN, BLUE), width * 3 * sizeof(float));
 }
 
 #endif
