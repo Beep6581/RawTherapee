@@ -1123,7 +1123,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
 
 
 
-void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance,
+void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance,
                                const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
                                const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                                const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask,
@@ -1275,7 +1275,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
                 kr = sigm;
             }
 
-            if (!fftw) {
+            if (!fftw || (fftw && call != 2)) {
                 if (scale == scal - 1) {
                     gaussianBlur(src, out, W_L, H_L, kg * RetinexScales[scale], true);
                 } else { // reuse result of last iteration

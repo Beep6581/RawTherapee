@@ -1054,9 +1054,9 @@ pe(nullptr)
     gridBox->pack_start(*strengthgrid);
     gridFrame->add(*gridBox);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         superBox->pack_start(*gridFrame);
-    }
+//    }
 
     superFrame->add(*superBox);
     colorBox->pack_start(*superFrame);
@@ -10248,7 +10248,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         labgridmerg->setParams(0, 0, pp->locallab.spots.at(index).labgridAHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, false);
 
         if (complexsoft == 2) {
-            labgrid->setParams(0, 0, 0, 0, false);
+        //    labgrid->setParams(0, 0, 0, 0, false);
         }
 
         strengthgrid->setValue(pp->locallab.spots.at(index).strengthgrid);
