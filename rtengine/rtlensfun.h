@@ -124,7 +124,13 @@ public:
     LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model) const;
     LFLens findLens(const LFCamera &camera, const Glib::ustring &name) const;
 
-    static std::unique_ptr<LFModifier> findModifier(const procparams::LensProfParams &lensProf, const FramesMetaData *idata, int width, int height, const procparams::CoarseTransformParams &coarse, int rawRotationDeg);
+    std::unique_ptr<LFModifier> findModifier(
+        const procparams::LensProfParams &lensProf,
+        const FramesMetaData *idata,
+        int width, int height,
+        const procparams::CoarseTransformParams &coarse,
+        int rawRotationDeg
+    ) const;
 
 private:
     std::unique_ptr<LFModifier> getModifier(const LFCamera &camera, const LFLens &lens,
@@ -136,7 +142,7 @@ private:
     mutable MyMutex lfDBMutex;
     static LFDatabase instance_;
     lfDatabase *data_;
-    static std::set<std::string> notFound;
+    mutable std::set<std::string> notFound;
 };
 
 } // namespace rtengine
