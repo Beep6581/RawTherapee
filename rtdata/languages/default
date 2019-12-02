@@ -2262,7 +2262,7 @@ TP_LOCALLAB_FATLEVEL;Detail levels
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n..
 TP_LOCALLAB_FEATVALUE;Feather gradient
-TP_LOCALLAB_FFTCOL_MASK;FFTW
+TP_LOCALLAB_FFTCOL_MASK;FFTW (to test ?)
 TP_LOCALLAB_FFTW2;Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_FFTW;Use Fast Fourier Transform
 TP_LOCALLAB_GAM;Gamma

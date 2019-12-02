@@ -3450,6 +3450,10 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
         }
 
         JaggedArray<float> blendstru(bfw, bfh);
+        
+        if (lp.blurcolmask >= 0.25f && strumask == 0.f) {
+            strumask = 0.1f; // to enable a small mask make FFT good ...why ??
+        }
 
         if (strumask > 0.f) {
             float delstrumask = 4.1f - strumask;//4.1 = 2 * max slider strumask + 0.1
@@ -3473,8 +3477,11 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             buildBlendMask(bufcolorig->L, blendblur, bfw, bfh, contra, 1.f);
 
 
-            float radblur = 0.002f * rad;//empirical value
+            float radblur = 0.25f + 0.002f * fabs(rad);//empirical value
             float rm = radblur / sk;
+            if(lp.fftColorMask) {
+                if(rm < 1.f) rm = 1.f;
+            }
 
             if (rm > 0) {
                 float **mb = blendblur;
@@ -3482,7 +3489,8 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             }
 
             if (lp.blurcolmask >= 0.25f) {
-                if (!lp.fftColorMask || (lp.fftColorMask && call != 2)) {
+                if (!lp.fftColorMask) { // || (lp.fftColorMask && call != 2)) {
+                    printf("call=%i\n", call);
                     gaussianBlur(bufcolorig->L, blur, bfw, bfh, lp.blurcolmask / sk);
                 } else {
                     ImProcFunctions::fftw_convol_blur2(bufcolorig->L, blur, bfw, bfh, lp.blurcolmask / sk, 0, 0);
@@ -3554,11 +3562,9 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
                     if (lp.contcolmask > 0.f) {
 
                         if (lp.blurcolmask >= 0.25f) {
-                      //      printf("OK 3\n");
 
                             float prov = intp(blendstru[ir][jr], bufcolorig->L[ir][jr], max(blur[ir][jr], 0.0f));
                             kmasblur = bufcolorig->L[ir][jr] - prov ;
-                      //      printf("OK 4\n");
 
                         }
                     }
@@ -5989,7 +5995,8 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
     out = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
 
     if (fftkern == 1) { //allocate memory FFT if kernel fft = 1
-        kern = new float[bfw * bfh];
+       // kern = new float[bfw * bfh];
+        kern = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
         outkern = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
     }
 
@@ -6050,7 +6057,9 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
         }
 
         fftwf_free(outkern);
-        delete [] kern;
+        fftwf_free(kern);
+        
+     //   delete [] kern;
 
     } else if (fftkern == 0) {//whithout FFT kernel
         if (algo == 0) {
@@ -7984,23 +7993,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
                                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
-    /* comment on processus deltaE
-            * the algo uses 3 different ways to manage deltaE according to the type of intervention
-            * if we call "applyproc" : the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
-
-            * direct : in this case we use directly the datas produced upstream by "applyproc", with only a regulation produce for deltaE by reducdE
-            * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise, Sharp, TM
-
-            * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f *  realstrdE
-            * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight, Local contrast
-
-            * with second use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type fli = (100.f + realstrdE) / 100.f;
-            * in this case we found "applyproc" which result in large variations of L : Retinex
-
-            * if you change you must test before
-
-    */
-
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
         BENCHFUN
@@ -8444,8 +8436,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
                 {
                     gaussianBlur(bufmaskblurbl->L, bufmaskorigbl->L, GW, GH, radiusb);
-                    gaussianBlur(bufmaskblurbl->a, bufmaskorigbl->a, GW, GH, 1.f + (0.05f * lp.radmabl) / sk);
-                    gaussianBlur(bufmaskblurbl->b, bufmaskorigbl->b, GW, GH, 1.f + (0.05f * lp.radmabl) / sk);
+                    gaussianBlur(bufmaskblurbl->a, bufmaskorigbl->a, GW, GH, 1.f + (0.005f * lp.radmabl) / sk);
+                    gaussianBlur(bufmaskblurbl->b, bufmaskorigbl->b, GW, GH, 1.f + (0.005f * lp.radmabl) / sk);
                 }
 
                 if (lp.showmaskblmet == 0 || lp.showmaskblmet == 1 || lp.showmaskblmet == 2 || lp.showmaskblmet == 4 || lp.enablMask) {
@@ -8477,11 +8469,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int isogr = params->locallab.spots.at(sp).isogr;
             int strengr = params->locallab.spots.at(sp).strengr;
             int scalegr = params->locallab.spots.at(sp).scalegr;
-
+            //here no optimization FFTW, complex to do ! only cost time
+            
             if (bfw >= mSP && bfh >= mSP) {
 
-                // const int GW = transformed->W;
-                //const int GH = transformed->H;
                 JaggedArray<float> bufchroi(GW, GH);
                 std::unique_ptr<LabImage> bufgbi(new LabImage(GW, GH));
                 JaggedArray<float> bufchro(bfw, bfh);
@@ -9891,7 +9882,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             int bfh = yend - ystart;
             int bfw = xend - xstart;
-            //vriable for fast FFTW
+            //variable for fast FFTW
             int bfhr = bfh;
             int bfwr = bfw;
             bool reduH = false;
@@ -9903,8 +9894,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
 
-                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
-                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -10322,7 +10313,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
                 }
-
+/*
+//use by old function transit_shapedetect keep in case of 
                 float minL =  tmp1->L[0][0] - bufgb->L[0][0];
                 float maxL = minL;
                 float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
@@ -10365,7 +10357,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufchro[y][x] /= coefC;
                     }
                 }
-
+*/
 
                 transit_shapedetect2(call, 10, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 //                transit_shapedetect(10, tmp1.get(), nullptr, bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
@@ -10442,7 +10434,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         //      }
 //&& lp.retiena
 
-        //  if (lp.dehaze > 0 && lp.str < 0.2f  && lp.retiena) {
         if (lp.dehaze > 0 && lp.retiena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);

@@ -1274,8 +1274,8 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
                 kg = 1.f;
                 kr = sigm;
             }
-
-            if (!fftw || (fftw && call != 2)) {
+            printf("call=%i\n", call);
+            if (!fftw) { // || (fftw && call != 2)) {
                 if (scale == scal - 1) {
                     gaussianBlur(src, out, W_L, H_L, kg * RetinexScales[scale], true);
                 } else { // reuse result of last iteration
