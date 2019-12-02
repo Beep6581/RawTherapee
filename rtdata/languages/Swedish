@@ -1883,8 +1883,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
+!HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
 !HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
-!HISTORY_MSG_PDSHARPEN_GAMMA;CS - Gamma
 !HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
 !HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
 !HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
@@ -1898,7 +1898,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
-!HISTORY_MSG_SHARPENING_GAMMA;Sharpening - Gamma
 !HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
@@ -2138,7 +2137,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_FLATFIELD_CLIPCONTROL;Clip control
-!TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
+!TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, value 0 is used.
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYLOOKTABLE;Look table
@@ -2258,7 +2257,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - Normal display.\nMask -  Displays the mask.\nUnsharp mask - Displays the image with a high radius unsharp mask.\nTransmission - Auto/Fixed - Displays the file transmission-map, before any action on contrast and brightness.\n\nAttention: the mask does not correspond to reality, but is amplified to make it more visible.
 !TP_SHARPENING_BLUR;Blur radius
 !TP_SHARPENING_CONTRAST;Contrast threshold
-!TP_SHARPENING_GAMMA;Gamma
+!TP_SHARPENING_ITERCHECK;Auto limit iterations
 !TP_SHARPENING_RADIUS_BOOST;Corner radius boost
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_SOFTLIGHT_LABEL;Soft Light
