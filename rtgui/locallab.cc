@@ -381,7 +381,7 @@ streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
 laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
 sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
 // Blur & Noise
-radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.5, 1000.0, 0.1, 1.5))),
+radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.5, 100.0, 0.1, 1.5))),
 strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
 itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
 guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
@@ -444,7 +444,7 @@ shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
 sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
 sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
 // Local Contrast
-lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 20, 400, 1, 80))),
+lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 10, 100, 1, 80))),
 lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
 lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
 lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
@@ -527,7 +527,7 @@ enavibMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 // Blur & Noise
 activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
 enablMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-fftwbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
+fftwbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
 toolbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
 //TM
 equiltm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
@@ -544,7 +544,7 @@ fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
 // Sharpening
 inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
 // Local contrast
-fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
+fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
 //CBDL
 enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 
@@ -1158,7 +1158,7 @@ pe(nullptr)
 
     if (complexsoft < 2) {
         if(complexsoft < 1) {
-           blurcol->setLimits (0., 500., 0.5, 0.2);
+//           blurcol->setLimits (0.2, 1000., 0.5, 0.2);
         }
         blurmBox->pack_start(*contcol);
         blurcol->setAdjusterListener(this);
@@ -6764,7 +6764,13 @@ void Locallab::enaColorMaskChanged()
 
 void Locallab::fftColorMaskChanged()
 {
-    // printf("fftColorMaskChanged\n");
+    double temp = blurcol->getValue();
+    if (fftColorMask->get_active()) {
+        blurcol->setLimits (0.2, 1000., 0.5, 0.2);
+    } else {
+        blurcol->setLimits (0.2, 100., 0.5, 0.2);
+    }
+    blurcol->setValue(temp);
 
     if (multiImage) {
         if (fftColorMask->get_inconsistent()) {
@@ -6909,6 +6915,13 @@ void Locallab::enablMaskChanged()
 void Locallab::fftwblChanged()
 {
     // printf("fftwblChanged\n");
+    double temp = radius->getValue();
+    if (fftwbl->get_active()) {
+        radius->setLimits (1.5, 1000., 0.5, 1.5);
+    } else {
+        radius->setLimits (1.5, 100., 0.5, 1.5);
+    }
+    radius->setValue(temp);
 
     if (multiImage) {
         if (fftwbl->get_inconsistent()) {
@@ -7386,6 +7399,13 @@ void Locallab::activlumChanged()
 void Locallab::fftwlcChanged()
 {
     // printf("fftwlcChanged\n");
+    double temp = lcradius->getValue();
+    if (fftwlc->get_active()) {
+        lcradius->setLimits (20, 1000, 1, 80);
+    } else {
+        lcradius->setLimits (20, 100, 1, 80);
+    }
+    lcradius->setValue(temp);
 
     if (multiImage) {
         if (fftwlc->get_inconsistent()) {
@@ -10388,6 +10408,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         gammaskcol->setValue(pp->locallab.spots.at(index).gammaskcol);
         slomaskcol->setValue(pp->locallab.spots.at(index).slomaskcol);
 
+//        if(fftColorMask->get_active()){
+//        }
         shadmaskcol->setValue(pp->locallab.spots.at(index).shadmaskcol);
         strumaskcol->setValue(pp->locallab.spots.at(index).strumaskcol);
         lapmaskcol->setValue(pp->locallab.spots.at(index).lapmaskcol);
@@ -10427,6 +10449,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             blurcol->setValue(0.2);
             contcol->setValue(0.);
         }
+
+        if (fftColorMask->get_active()) {
+            blurcol->setLimits (0.2, 1000., 0.5, 0.2);
+        } else {
+            blurcol->setLimits (0.2, 100., 0.5, 0.2);
+        }
+        blurcol->setValue(pp->locallab.spots.at(index).blurcol);
 
         // Exposure
         expexpose->setEnabled(pp->locallab.spots.at(index).expexpose);
@@ -10719,6 +10748,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             LLmaskblshapewav->reset();
         }
 
+        if (fftwbl->get_active()) {
+            radius->setLimits (1.5, 1000., 0.5, 1.5);
+        } else {
+            radius->setLimits (1.5, 100., 0.5, 1.5);
+        }
+        radius->setValue(pp->locallab.spots.at(index).radius);
+
         // Tone Mapping
         exptonemap->setEnabled(pp->locallab.spots.at(index).exptonemap);
         stren->setValue(pp->locallab.spots.at(index).stren);
@@ -10856,6 +10892,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         }
 
         wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
+
+        if (fftwlc->get_active()) {
+            lcradius->setLimits (20, 1000, 1, 80);
+        } else {
+            lcradius->setLimits (20, 100, 1, 80);
+        }
+        lcradius->setValue(pp->locallab.spots.at(index).lcradius);
 
         // Contrast by detail levels
         expcbdl->setEnabled(pp->locallab.spots.at(index).expcbdl);

@@ -2626,7 +2626,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blMethod("guid"),
     blurMethod("norm"),
     medMethod("33"),
-    activlum(false),
+    activlum(true),
     CCmaskblcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
     LLmaskblcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     HHmaskblcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},

@@ -65,7 +65,7 @@ void ImProcFunctions::localContrast(LabImage *lab, float **destination, const rt
         } else {//sigma *= sigma
             kr = sigma;
         }
-     //   printf("kr=%f \n", kr);
+        //OPENMP disabled
         ImProcFunctions::fftw_convol_blur2(lab->L, buf, width, height, kr * sigma, 0, 0);
     }
 #ifdef _OPENMP
