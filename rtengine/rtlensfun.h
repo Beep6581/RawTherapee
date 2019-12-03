@@ -56,8 +56,8 @@ public:
     void correctDistortion(double &x, double &y, int cx, int cy, double scale) const override;
     bool isCACorrectionAvailable() const override;
     void correctCA(double &x, double &y, int cx, int cy, int channel) const override;
-    void processVignetteLine(int width, int y, float *line) const override;
-    void processVignetteLine3Channels(int width, int y, float *line) const override;
+    void processVignette(int width, int height, float** rawData) const override;
+    void processVignette3Channels(int width, int height, float** rawData) const override;
 
     Glib::ustring getDisplayString() const;
 
@@ -68,7 +68,6 @@ private:
     lfModifier *data_;
     bool swap_xy_;
     int flags_;
-    mutable MyMutex lfModifierMutex;
 };
 
 class LFCamera final
