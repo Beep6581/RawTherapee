@@ -1410,32 +1410,13 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
                 if (numFrames == 4) {
                     for (int i = 0; i < 4; ++i) {
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int y = 0; y < H; y++) {
-                            map.processVignetteLine(W, y, (*rawDataFrames[i])[y]);
-                        }
+                        map.processVignette(W, H, *rawDataFrames[i]);
                     }
                 } else {
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = 0; y < H; y++) {
-                        map.processVignetteLine(W, y, rawData[y]);
-                    }
+                    map.processVignette(W, H, rawData);
                 }
             } else if (ri->get_colors() == 3) {
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int y = 0; y < H; y++) {
-                    map.processVignetteLine3Channels(W, y, rawData[y]);
-                }
+                map.processVignette3Channels(W, H, rawData);
             }
         }
     }
