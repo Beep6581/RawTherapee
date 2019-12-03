@@ -1055,7 +1055,7 @@ pe(nullptr)
     gridFrame->add(*gridBox);
 
 //    if (complexsoft < 2) {
-        superBox->pack_start(*gridFrame);
+    superBox->pack_start(*gridFrame);
 //    }
 
     superFrame->add(*superBox);
@@ -1139,10 +1139,12 @@ pe(nullptr)
 
     struFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const strumBox = Gtk::manage(new ToolParamBlock());
+
     if (complexsoft < 2) {
         strumBox->pack_start(*strumaskcol);
         strumBox->pack_start(*toolcol);
     }
+
     struFrame->add(*strumBox);
 
     if (complexsoft < 2) {
@@ -1152,18 +1154,20 @@ pe(nullptr)
     blurFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const blurmBox = Gtk::manage(new ToolParamBlock());
 
-    if (complexsoft < 1) {
+    if (complexsoft < 2) {
         blurmBox->pack_start(*fftColorMask, Gtk::PACK_SHRINK, 0);
     }
 
     if (complexsoft < 2) {
-        if(complexsoft < 1) {
+        if (complexsoft < 1) {
 //           blurcol->setLimits (0.2, 1000., 0.5, 0.2);
         }
+
         blurmBox->pack_start(*contcol);
         blurcol->setAdjusterListener(this);
         blurmBox->pack_start(*blurcol);
     }
+
     blurFrame->add(*blurmBox);
 
     if (complexsoft < 2) {
@@ -1239,13 +1243,15 @@ pe(nullptr)
     }
 
     expMethod->append(M("TP_LOCALLAB_STD"));
+
     if (complexsoft == 1) {
         expMethod->append(M("TP_LOCALLAB_PDE"));
     }
+
     if (complexsoft == 0) {
         expMethod->append(M("TP_LOCALLAB_PDE2"));
     }
-    
+
     expMethod->set_active(0);
     expMethodConn  = expMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::expMethodChanged));
 
@@ -1526,7 +1532,7 @@ pe(nullptr)
         exposeBox->pack_start(*inversex);
     }
 
-    
+
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*showmaskexpMethodinv, Gtk::PACK_SHRINK, 4);
@@ -6765,11 +6771,13 @@ void Locallab::enaColorMaskChanged()
 void Locallab::fftColorMaskChanged()
 {
     double temp = blurcol->getValue();
+
     if (fftColorMask->get_active()) {
-        blurcol->setLimits (0.2, 1000., 0.5, 0.2);
+        blurcol->setLimits(0.2, 1000., 0.5, 0.2);
     } else {
-        blurcol->setLimits (0.2, 100., 0.5, 0.2);
+        blurcol->setLimits(0.2, 100., 0.5, 0.2);
     }
+
     blurcol->setValue(temp);
 
     if (multiImage) {
@@ -6916,11 +6924,13 @@ void Locallab::fftwblChanged()
 {
     // printf("fftwblChanged\n");
     double temp = radius->getValue();
+
     if (fftwbl->get_active()) {
-        radius->setLimits (1.5, 1000., 0.5, 1.5);
+        radius->setLimits(1.5, 1000., 0.5, 1.5);
     } else {
-        radius->setLimits (1.5, 100., 0.5, 1.5);
+        radius->setLimits(1.5, 100., 0.5, 1.5);
     }
+
     radius->setValue(temp);
 
     if (multiImage) {
@@ -7400,11 +7410,13 @@ void Locallab::fftwlcChanged()
 {
     // printf("fftwlcChanged\n");
     double temp = lcradius->getValue();
+
     if (fftwlc->get_active()) {
-        lcradius->setLimits (20, 1000, 1, 80);
+        lcradius->setLimits(20, 1000, 1, 80);
     } else {
-        lcradius->setLimits (20, 100, 1, 80);
+        lcradius->setLimits(20, 100, 1, 80);
     }
+
     lcradius->setValue(temp);
 
     if (multiImage) {
@@ -10268,7 +10280,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         labgridmerg->setParams(0, 0, pp->locallab.spots.at(index).labgridAHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHighmerg / rtengine::procparams::LocallabParams::LABGRIDL_CORR_MAX, false);
 
         if (complexsoft == 2) {
-        //    labgrid->setParams(0, 0, 0, 0, false);
+            //    labgrid->setParams(0, 0, 0, 0, false);
         }
 
         strengthgrid->setValue(pp->locallab.spots.at(index).strengthgrid);
@@ -10408,8 +10420,6 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         gammaskcol->setValue(pp->locallab.spots.at(index).gammaskcol);
         slomaskcol->setValue(pp->locallab.spots.at(index).slomaskcol);
 
-//        if(fftColorMask->get_active()){
-//        }
         shadmaskcol->setValue(pp->locallab.spots.at(index).shadmaskcol);
         strumaskcol->setValue(pp->locallab.spots.at(index).strumaskcol);
         lapmaskcol->setValue(pp->locallab.spots.at(index).lapmaskcol);
@@ -10439,23 +10449,30 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             toolcol->set_active(false);
             merMethod->set_active(0);
         }
+
         if (complexsoft > 0) {
             LLmaskcolshapewav->reset();
-            fftColorMask->set_active(false);
         }
 
         if (complexsoft == 2) {
             lapmaskcol->setValue(0);
             blurcol->setValue(0.2);
             contcol->setValue(0.);
+            fftColorMask->set_active(false);
         }
 
         if (fftColorMask->get_active()) {
-            blurcol->setLimits (0.2, 1000., 0.5, 0.2);
+            blurcol->setLimits(0.2, 1000., 0.5, 0.2);
         } else {
-            blurcol->setLimits (0.2, 100., 0.5, 0.2);
+            blurcol->setLimits(0.2, 100., 0.5, 0.2);
         }
+
         blurcol->setValue(pp->locallab.spots.at(index).blurcol);
+
+        if (complexsoft == 2) {
+            blurcol->setLimits(0.2, 100., 0.5, 0.2);
+            blurcol->setValue(pp->locallab.spots.at(index).blurcol);
+        }
 
         // Exposure
         expexpose->setEnabled(pp->locallab.spots.at(index).expexpose);
@@ -10642,7 +10659,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             slomaskvib->setValue(0);
             skinTonesCurve->reset();
         }
- 
+
         if (complexsoft > 0) {
             lapmaskvib->setValue(0);
             strvibab->setValue(0);
@@ -10749,11 +10766,18 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         }
 
         if (fftwbl->get_active()) {
-            radius->setLimits (1.5, 1000., 0.5, 1.5);
+            radius->setLimits(1.5, 1000., 0.5, 1.5);
         } else {
-            radius->setLimits (1.5, 100., 0.5, 1.5);
+            radius->setLimits(1.5, 100., 0.5, 1.5);
         }
+
         radius->setValue(pp->locallab.spots.at(index).radius);
+
+        if (complexsoft == 2) {
+            radius->setLimits(1.5, 100., 0.5, 1.5);
+            radius->setValue(pp->locallab.spots.at(index).radius);
+        }
+
 
         // Tone Mapping
         exptonemap->setEnabled(pp->locallab.spots.at(index).exptonemap);
@@ -10894,17 +10918,23 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
 
         if (fftwlc->get_active()) {
-            lcradius->setLimits (20, 1000, 1, 80);
+            lcradius->setLimits(20, 1000, 1, 80);
         } else {
-            lcradius->setLimits (20, 100, 1, 80);
+            lcradius->setLimits(20, 100, 1, 80);
         }
+
         lcradius->setValue(pp->locallab.spots.at(index).lcradius);
+
+        if (complexsoft == 2) {
+        lcradius->setLimits(20, 100, 1, 80);
+            lcradius->setValue(pp->locallab.spots.at(index).lcradius);
+        }
 
         // Contrast by detail levels
         expcbdl->setEnabled(pp->locallab.spots.at(index).expcbdl);
 
         for (int i = 0; i < 6; i++) {
-            multiplier[i]->setValue(pp->locallab.spots.at(index).mult[i]);
+        multiplier[i]->setValue(pp->locallab.spots.at(index).mult[i]);
         }
 
         chromacbdl->setValue(pp->locallab.spots.at(index).chromacbdl);
@@ -10927,13 +10957,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         Lmaskcbshape->setCurve(pp->locallab.spots.at(index).Lmaskcbcurve);
 
         if (complexsoft == 2) {
-            for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
                 multiplier[i]->setValue(1.0);
             }
         }
 
         if (complexsoft > 0) {
-            lapmaskcb->setValue(0);
+        lapmaskcb->setValue(0);
         }
 
         // Denoise
@@ -10953,7 +10983,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         detailthr->setValue(pp->locallab.spots.at(index).detailthr);
 
         if (complexsoft == 2) {
-            noiselumf->setValue(0);
+        noiselumf->setValue(0);
             noiselumf0->setValue(0);
             noiselumf2->setValue(0);
             noiselumc->setValue(0);
@@ -10963,7 +10993,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         }
 
         if (pedited) {
-            if (index < (int)pedited->locallab.spots.size()) {
+        if (index < (int)pedited->locallab.spots.size()) {
                 const LocallabParamsEdited::LocallabSpotEdited* spotState = &pedited->locallab.spots.at(index);
 
                 // Control spot settings
