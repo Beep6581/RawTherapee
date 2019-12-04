@@ -868,6 +868,18 @@ enum ProcEventCode {
     Evlocallabblurcol = 841,
     Evlocallabcontcol = 842,
     EvLocallabfftColorMask = 843,
+    EvLocenalog = 844,
+    EvLocallabAuto = 845,
+    EvlocallabsourceGray = 846,
+    EvlocallabsourceGrayAuto = 847,
+    EvlocallabAutoGrayOn = 848,
+    EvlocallabAutoGrayOff = 849,
+    EvlocallabAutogray = 850, 
+    EvlocallabblackEv = 851,
+    EvlocallabwhiteEv = 852,
+    EvlocallabtargetGray = 853,
+    Evlocallabdetail = 854,
+    Evlocallabsensilog = 855,
     NUMOFEVENTS
 };
 

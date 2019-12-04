@@ -1307,6 +1307,19 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).bilateral = locallab.spots.at(j).bilateral && pSpot.bilateral == otherSpot.bilateral;
                 locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
                 locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
+
+                //log encoding
+                locallab.spots.at(j).explog = locallab.spots.at(j).explog && pSpot.explog == otherSpot.explog;
+                locallab.spots.at(j).autocompute = locallab.spots.at(j).autocompute && pSpot.autocompute == otherSpot.autocompute;
+             //   locallab.spots.at(j).autogray = locallab.spots.at(j).autogray && pSpot.autogray == otherSpot.autogray;
+                locallab.spots.at(j).sourceGray = locallab.spots.at(j).sourceGray && pSpot.sourceGray == otherSpot.sourceGray;
+                locallab.spots.at(j).targetGray = locallab.spots.at(j).targetGray && pSpot.targetGray == otherSpot.targetGray;
+                locallab.spots.at(j).Autogray = locallab.spots.at(j).Autogray && pSpot.Autogray == otherSpot.Autogray;
+                locallab.spots.at(j).blackEv = locallab.spots.at(j).blackEv && pSpot.blackEv == otherSpot.blackEv;
+                locallab.spots.at(j).whiteEv = locallab.spots.at(j).whiteEv && pSpot.whiteEv == otherSpot.whiteEv;
+                locallab.spots.at(j).detail = locallab.spots.at(j).detail && pSpot.detail == otherSpot.detail;
+                locallab.spots.at(j).sensilog = locallab.spots.at(j).sensilog && pSpot.sensilog == otherSpot.sensilog;
+
             }
         }
 
@@ -4143,6 +4156,48 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         if (locallab.spots.at(i).detailthr) {
             toEdit.locallab.spots.at(i).detailthr = mods.locallab.spots.at(i).detailthr;
         }
+
+        //log encoding
+        if (locallab.spots.at(i).explog) {
+            toEdit.locallab.spots.at(i).explog = mods.locallab.spots.at(i).explog;
+        }
+
+        if (locallab.spots.at(i).autocompute) {
+            toEdit.locallab.spots.at(i).autocompute = mods.locallab.spots.at(i).autocompute;
+        }
+
+        if (locallab.spots.at(i).sourceGray) {
+            toEdit.locallab.spots.at(i).sourceGray = mods.locallab.spots.at(i).sourceGray;
+        }
+
+        if (locallab.spots.at(i).targetGray) {
+            toEdit.locallab.spots.at(i).targetGray = mods.locallab.spots.at(i).targetGray;
+        }
+
+        if (locallab.spots.at(i).blackEv) {
+            toEdit.locallab.spots.at(i).blackEv = mods.locallab.spots.at(i).blackEv;
+        }
+
+        if (locallab.spots.at(i).whiteEv) {
+            toEdit.locallab.spots.at(i).whiteEv = mods.locallab.spots.at(i).whiteEv;
+        }
+
+        if (locallab.spots.at(i).detail) {
+            toEdit.locallab.spots.at(i).detail = mods.locallab.spots.at(i).detail;
+        }
+
+        if (locallab.spots.at(i).sensilog) {
+            toEdit.locallab.spots.at(i).sensilog = mods.locallab.spots.at(i).sensilog;
+        }
+
+//        if (locallab.spots.at(i).autogray) {
+//            toEdit.locallab.spots.at(i).autogray = mods.locallab.spots.at(i).autogray;
+ //       }
+
+        if (locallab.spots.at(i).Autogray) {
+            toEdit.locallab.spots.at(i).Autogray = mods.locallab.spots.at(i).Autogray;
+        }
+
     }
 
 
@@ -5463,7 +5518,19 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     adjblur(v),
     bilateral(v),
     sensiden(v),
-    detailthr(v)
+    detailthr(v),
+    //log encoding
+    explog(v),
+    autocompute(v),
+    sourceGray(v),
+    targetGray(v),
+//    autogray(v),
+    Autogray(v),
+    blackEv(v),
+    whiteEv(v),
+    detail(v),
+    sensilog(v)
+
 {
 }
 
@@ -5827,6 +5894,18 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     bilateral = v;
     sensiden = v;
     detailthr = v;
+    //log encoding
+    explog = v;
+    autocompute = v;
+    sourceGray = v;
+    targetGray = v;
+//    autogray = v;
+    Autogray = v;
+    blackEv = v;
+    whiteEv = v;
+    detail = v;
+    sensilog = v;
+
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

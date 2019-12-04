@@ -19,6 +19,7 @@
  *  2017 Jacques Desmis <jdesmis@gmail.com>
  *  2018 Pierre Cabrera <pierre.cab@gmail.com>
  */
+#pragma once
 
 #include <array>
 
@@ -62,6 +63,7 @@ private:
     MyExpander* const expcontrast;
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
+    MyExpander* const explog;
     MyExpander* const expmaskcol;
     MyExpander* const expmaskcol1;
     MyExpander* const expmaskexp;
@@ -71,7 +73,7 @@ private:
     MyExpander* const expmasktm;
     MyExpander* const expmaskbl;
     MyExpander* const expmaskvib;
-    sigc::connection enablecolorConn, enableexposeConn, enableshadhighConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
+    sigc::connection enablecolorConn, enableexposeConn, enableshadhighConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn, enablelogConn;
 
     // Curve widgets
     // Color & Light
@@ -370,6 +372,14 @@ private:
     Adjuster* const sensiden;
     Adjuster* const detailthr;
 
+    //Log encoding
+    Adjuster* const sourceGray;
+    Adjuster* const targetGray;
+    Adjuster* const blackEv;
+    Adjuster* const whiteEv;
+    Adjuster* const detail;
+    Adjuster* const sensilog;
+
     // ButtonCheck widgets
     // Color & Light
     Gtk::CheckButton* const curvactiv;
@@ -435,10 +445,12 @@ private:
     //local contrast
     Gtk::CheckButton* const fftwlc;
     sigc::connection fftwlcConn;
-
     //CBDL
     Gtk::CheckButton* const enacbMask;
     sigc::connection enacbMaskConn;
+    //encoding log
+    Gtk::CheckButton* const Autogray;
+    sigc::connection AutograyConn;
 
     // ComboBox widgets
     // Color & Light
@@ -514,6 +526,8 @@ private:
     ThresholdAdjuster* const psThreshold;
 
     // Other widgets
+    Gtk::ToggleButton* const autocompute;
+    sigc::connection autoconn;
     Gtk::Label* const labqualcurv;
     Gtk::Button* const lumacontrastMinusButton;
     Gtk::Button* const lumaneutralButton;
@@ -542,6 +556,8 @@ private:
     Gtk::Frame* const residFrame;
     Gtk::Frame* const clariFrame;
     Gtk::Frame* const grainFrame;
+    Gtk::Frame* const logFrame;
+    Gtk::Frame* const logPFrame;
     ToolParamBlock* const retiBox;
     ToolParamBlock* const maskretiBox;
     ToolParamBlock* const mask7;
@@ -561,6 +577,9 @@ private:
     double nextminT;
     double nextmaxT;
     double nextsigma;
+//    bool lastAutogray;
+//    Adjuster* sourceGray;
+
     int complexsoft;
     /**
      * Used to store the default ProcParams when setDefaults function is called
@@ -663,6 +682,10 @@ private:
     void localcontMethodChanged();
     //CBDL
     void showmaskcbMethodChanged();
+    //log encoding
+    void autocomputeToggled();
+    void AutograyChanged();
+    
     // Other widgets event functions
     void lumacontrastMinusPressed();
     void lumaneutralPressed();

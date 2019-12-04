@@ -1081,6 +1081,12 @@ HISTORY_MSG_841;Local - LC curve
 HISTORY_MSG_842;Local - Contrast Threshold Mask blur
 HISTORY_MSG_843;Local - Radius Mask blur
 HISTORY_MSG_844;Local - Color Mask fftw
+HISTORY_MSG_845;Local - Encoding log
+HISTORY_MSG_846;Local - Encoding auto
+HISTORY_MSG_847;Local - SourceGray
+HISTORY_MSG_848;Local - SourceGray auto
+HISTORY_MSG_849;Local - Auto Grayon
+HISTORY_MSG_849;Local - Auto Grayoff
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2154,10 +2160,12 @@ TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but can reduce the scope of detection.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nThreshold structure take into account the structure level of solid areas
+TP_LOCALLAB_AUTOGRAY;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance deltaE ab-L
 TP_LOCALLAB_BALANEXP;PDE balance
 TP_LOCALLAB_BILATERAL;Bilateral filter
+TP_LOCALLAB_BLACK_EV;Black Ev
 TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLGUID;Guided Filter Luminance
 TP_LOCALLAB_BLINV;Inverse
@@ -2223,6 +2231,7 @@ TP_LOCALLAB_DEHAZ;Strength
 TP_LOCALLAB_DELTAEC;Mask DeltaE Image
 TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_DEPTH;Depth
+TP_LOCALLAB_DETAIL;Detail
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Detail threshold Luminance Chroma (DCT)
 TP_LOCALLAB_DUPLSPOTNAME;Copy
@@ -2316,7 +2325,11 @@ TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lig
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
+TP_LOCALLAB_LOG;Encoding log
+TP_LOCALLAB_LOGAUTO;Automatic
+TP_LOCALLAB_LOGFRA;Source Gray Point
 TP_LOCALLAB_LOGLIN;Logarithm mode
+TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Luminance Background Mask
@@ -2435,6 +2448,7 @@ TP_LOCALLAB_SENSIEXCLU;Scope
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust color to include in exclusion!
 TP_LOCALLAB_SENSIH;Scope
 TP_LOCALLAB_SENSIH_TOOLTIP; Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
+TP_LOCALLAB_SENSILOG;Scope
 TP_LOCALLAB_SENSIS;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
@@ -2487,6 +2501,7 @@ TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Re
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
 TP_LOCALLAB_SOFTRETI;Reduce artifact deltaE
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission map
+TP_LOCALLAB_SOURCE_GRAY;Value
 TP_LOCALLAB_SPECIAL;Special use of RGB curves 
 TP_LOCALLAB_SPOTNAME;Control Spot #
 TP_LOCALLAB_STD;Standard
@@ -2505,6 +2520,7 @@ TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
+TP_LOCALLAB_TARGET_GRAY;Target Gray Point
 TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_THRESDELTAE;Threshold deltaE-scope
 TP_LOCALLAB_THRESRETI;Threshold
@@ -2541,6 +2557,7 @@ TP_LOCALLAB_WAVLOW;Wavelet low
 TP_LOCALLAB_WAVMASK;Mask Levels local contrast
 TP_LOCALLAB_WAVMED;Wavelet normal
 TP_LOCALLAB_WEDIANHI;Median Hi
+TP_LOCALLAB_WHITE_EV;White Ev
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right

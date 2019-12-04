@@ -2766,7 +2766,19 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     adjblur(0),
     bilateral(0),
     sensiden(20),
-    detailthr(0)
+    detailthr(0),
+    //log encoding
+    explog(false),
+    autocompute(false),
+//    autogray(true),
+    sourceGray(18.),
+    targetGray(18.),
+    Autogray(true),
+    blackEv(-5.0),
+    whiteEv(10.0),
+    detail(1),
+    sensilog(30)
+
 {
 }
 
@@ -3144,7 +3156,19 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && adjblur == other.adjblur
         && bilateral == other.bilateral
         && sensiden == other.sensiden
-        && detailthr == other.detailthr;
+        && detailthr == other.detailthr
+        //log encoding
+        && expdenoi == other.expdenoi
+        && autocompute == other.autocompute
+//        && autogray == other.autogray
+        && sourceGray == other.sourceGray
+        && targetGray == other.targetGray
+        && Autogray == other.Autogray
+        && blackEv == other.blackEv
+        && whiteEv == other.whiteEv
+        && detail == other.detail
+        && sensilog == other.sensilog;
+
 }
 
 bool LocallabParams::LocallabSpot::operator !=(const LocallabSpot& other) const
@@ -4489,6 +4513,19 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).bilateral, "Locallab", "Bilateral_" + std::to_string(i), spot.bilateral, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiden, "Locallab", "Sensiden_" + std::to_string(i), spot.sensiden, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detailthr, "Locallab", "Detailthr_" + std::to_string(i), spot.detailthr, keyFile);
+
+                //log encoding
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).explog, "Locallab", "Explog_" + std::to_string(i), spot.explog, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).autocompute, "Locallab", "Autocompute_" + std::to_string(i), spot.autocompute, keyFile);
+//                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).autogray, "Locallab", "autoGray_" + std::to_string(i), spot.autogray, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sourceGray, "Locallab", "SourceGray_" + std::to_string(i), spot.sourceGray, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).targetGray, "Locallab", "TargetGray_" + std::to_string(i), spot.targetGray, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Autogray, "Locallab", "Autogray_" + std::to_string(i), spot.Autogray, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blackEv, "Locallab", "BlackEv_" + std::to_string(i), spot.blackEv, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).whiteEv, "Locallab", "WhiteEv_" + std::to_string(i), spot.whiteEv, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detail, "Locallab", "Detail_" + std::to_string(i), spot.detail, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilog, "Locallab", "Sensilog_" + std::to_string(i), spot.sensilog, keyFile);
+
             }
         }
 
@@ -5998,6 +6035,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + std::to_string(i), pedited, spot.bilateral, spotEdited.bilateral);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + std::to_string(i), pedited, spot.sensiden, spotEdited.sensiden);
                 assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + std::to_string(i), pedited, spot.detailthr, spotEdited.detailthr);
+
+                //log encoding
+                assignFromKeyfile(keyFile, "Locallab", "Explog_" + std::to_string(i), pedited, spot.explog, spotEdited.explog);
+                assignFromKeyfile(keyFile, "Locallab", "Autocompute_" + std::to_string(i), pedited, spot.autocompute, spotEdited.autocompute);
+//                assignFromKeyfile(keyFile, "Locallab", "autoGray_" + std::to_string(i), pedited, spot.autogray, spotEdited.autogray);
+                assignFromKeyfile(keyFile, "Locallab", "SourceGray_" + std::to_string(i), pedited, spot.sourceGray, spotEdited.sourceGray);
+                assignFromKeyfile(keyFile, "Locallab", "TargetGray_" + std::to_string(i), pedited, spot.targetGray, spotEdited.targetGray);
+                assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + std::to_string(i), pedited, spot.Autogray, spotEdited.Autogray);
+                assignFromKeyfile(keyFile, "Locallab", "BlackEv_" + std::to_string(i), pedited, spot.blackEv, spotEdited.blackEv);
+                assignFromKeyfile(keyFile, "Locallab", "WhiteEv_" + std::to_string(i), pedited, spot.whiteEv, spotEdited.whiteEv);
+                assignFromKeyfile(keyFile, "Locallab", "Detail_" + std::to_string(i), pedited, spot.detail, spotEdited.detail);
+                assignFromKeyfile(keyFile, "Locallab", "Sensilog_" + std::to_string(i), pedited, spot.sensilog, spotEdited.sensilog);
+
 
                 locallab.spots.at(i) = spot;
 

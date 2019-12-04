@@ -738,6 +738,18 @@ public:
         bool sensiden;
         bool detailthr;
 
+        //log encoding
+        bool explog;
+        bool autocompute;
+        bool sourceGray;
+        bool targetGray;
+     //   bool autogray;
+        bool Autogray;
+        bool blackEv;
+        bool whiteEv;
+        bool detail;
+        bool sensilog;
+
         LocallabSpotEdited(bool v);
 
         void set(bool v);

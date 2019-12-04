@@ -1311,6 +1311,18 @@ struct LocallabParams {
         int bilateral;
         int sensiden;
         int detailthr;
+        //log encoding
+        bool explog;
+        bool autocompute;
+//        bool autogray;
+        double sourceGray;
+        double targetGray;
+        bool Autogray;
+        double blackEv;
+        double whiteEv;
+        int detail;
+        int sensilog;
+
 
         LocallabSpot();
 
