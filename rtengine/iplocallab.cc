@@ -10631,53 +10631,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     tmpl = new LabImage(Wd, Hd);
 
                 }  else {
-
-                    Imagefloat *tmpImage = nullptr;
-                    bufreti = new LabImage(Wd, Hd);
-
-                    if (lp.dehaze > 0) {
-                        const float depthcombi = 0.5f * lp.depth + 0.5f * (0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart));
-                        DehazeParams dehazeParams;
-                        dehazeParams.enabled = true;
-                        dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
-                        dehazeParams.showDepthMap = false;
-                        dehazeParams.depth = LIM(depthcombi, 0.f, 100.f);
-                        dehazeParams.luminance = params->locallab.spots.at(sp).lumonly;
-
-                        tmpImage = new Imagefloat(Wd, Hd);
-                        lab2rgb(*original, *tmpImage, params->icm.workingProfile);
-                        dehaze(tmpImage, dehazeParams);
-                        rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
-
-                        delete tmpImage;
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < Hd; ir += 1) {
-                            for (int jr = 0; jr < Wd; jr += 1) {
-                                orig[ir][jr] = original->L[ir][jr];
-                                orig1[ir][jr] = bufreti->L[ir][jr];
-                            }
-                        }
-
-                        delete bufreti;
-                        bufreti = nullptr;
-                    } else {
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < Hd; ir += 1) {
-                            for (int jr = 0; jr < Wd; jr += 1) {
-                                orig[ir][jr] = original->L[ir][jr];
-                                orig1[ir][jr] = transformed->L[ir][jr];
-                            }
-                        }
-                    }
-
-                    tmpl = new LabImage(transformed->W, transformed->H);
+                        //
                 }
 
                 //    float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
@@ -10770,13 +10724,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                 } else {
-                    InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
-
-                    if (params->locallab.spots.at(sp).recurs) {
-                        original->CopyFrom(transformed);
-                        float avge;
-                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
-                    }
+                    //
                 }
 
 
@@ -10797,15 +10745,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }  else {
 
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < GH; ir += 1)
-                            for (int jr = 0; jr < GW; jr += 1) {
-                                orig[ir][jr] = sqrt(SQR(original->a[ir][jr]) + SQR(original->b[ir][jr]));
-                                orig1[ir][jr] = sqrt(SQR(transformed->a[ir][jr]) + SQR(transformed->b[ir][jr]));
-                            }
                     }
 
                     float maxChro = orig1[0][0];
@@ -10835,18 +10774,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         0.6,  min(1.0, 0.6 + satreal / 250.0),
                         1, 1
                     });
-                    bool fftw = false;
-
-                    if (params->locallab.spots.at(sp).chrrt > 110.f) { //second step active Retinex Chroma
-                        ImProcFunctions::MSRLocal(call, sp, fftw, 0, nullptr, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1,
-                                                  Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                                                  locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
-                                                  lmaskretilocalcurve, localmaskretiutili,
-                                                  transformed, lp.enaretiMasktmap, lp.enaretiMask,
-                                                  false, 1.f, 1.f, 1.f,
-                                                  1.f, 1.f, 1.f,  1.f, 1.f, 1.f, 50, 1.f, 15.f);
-
-                    }
 
                     if (!lp.invret && call == 1) {
 
@@ -10898,21 +10825,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
                     } else {
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < Hd; ir += 1)
-                            for (int jr = 0; jr < Wd; jr += 1) {
-                                float Chprov = orig1[ir][jr];
-                                float2 sincosval;
-                                sincosval.y = Chprov == 0.0f ? 1.f : transformed->a[ir][jr] / Chprov;
-                                sincosval.x = Chprov == 0.0f ? 0.f : transformed->b[ir][jr] / Chprov;
-                                tmpl->a[ir][jr] = orig[ir][jr] * sincosval.y;
-                                tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
-
-                            }
+                        //
                     }
 
 
@@ -10925,13 +10838,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
                         }
                     } else {
-                        InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
-
-                        if (params->locallab.spots.at(sp).recurs) {
-                            original->CopyFrom(transformed);
-                            float avge;
-                            calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
-                        }
+                        //
                     }
 
                 }
@@ -11097,53 +11004,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     tmpl = new LabImage(Wd, Hd);
 
                 }  else {
-
-                    Imagefloat *tmpImage = nullptr;
-                    bufreti = new LabImage(Wd, Hd);
-
-                    if (lp.dehaze > 0) {
-                        const float depthcombi = 0.5f * lp.depth + 0.5f * (0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart));
-                        DehazeParams dehazeParams;
-                        dehazeParams.enabled = true;
-                        dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
-                        dehazeParams.showDepthMap = false;
-                        dehazeParams.depth = LIM(depthcombi, 0.f, 100.f);
-                        dehazeParams.luminance = params->locallab.spots.at(sp).lumonly;
-
-                        tmpImage = new Imagefloat(Wd, Hd);
-                        lab2rgb(*original, *tmpImage, params->icm.workingProfile);
-                        dehaze(tmpImage, dehazeParams);
-                        rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
-
-                        delete tmpImage;
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < Hd; ir += 1) {
-                            for (int jr = 0; jr < Wd; jr += 1) {
-                                orig[ir][jr] = original->L[ir][jr];
-                                orig1[ir][jr] = bufreti->L[ir][jr];
-                            }
-                        }
-
-                        delete bufreti;
-                        bufreti = nullptr;
-                    } else {
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < Hd; ir += 1) {
-                            for (int jr = 0; jr < Wd; jr += 1) {
-                                orig[ir][jr] = original->L[ir][jr];
-                                orig1[ir][jr] = transformed->L[ir][jr];
-                            }
-                        }
-                    }
-
-                    tmpl = new LabImage(transformed->W, transformed->H);
+                    //
                 }
 
                 //   float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
@@ -11245,13 +11106,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                 } else {
-                    InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
-
-                    if (params->locallab.spots.at(sp).recurs) {
-                        original->CopyFrom(transformed);
-                        float avge;
-                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
-                    }
+                    //
                 }
 
                 if (params->locallab.spots.at(sp).chrrt > 0) {
@@ -11270,16 +11125,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                     }  else {
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < GH; ir += 1)
-                            for (int jr = 0; jr < GW; jr += 1) {
-                                orig[ir][jr] = sqrt(SQR(original->a[ir][jr]) + SQR(original->b[ir][jr]));
-                                orig1[ir][jr] = sqrt(SQR(transformed->a[ir][jr]) + SQR(transformed->b[ir][jr]));
-                            }
+                        //
                     }
 
                     float maxChro = orig1[0][0];
@@ -11309,18 +11155,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         0.6,  min(1.0, 0.6 + satreal / 250.0),
                         1, 1
                     });
-                    bool fftw = false;
-
-                    if (params->locallab.spots.at(sp).chrrt > 40.f) { //second step active Retinex Chroma
-                        ImProcFunctions::MSRLocal(call, sp, fftw, 0, nullptr, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1,
-                                                  Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                                                  locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
-                                                  lmaskretilocalcurve, localmaskretiutili,
-                                                  transformed, lp.enaretiMasktmap, lp.enaretiMask,
-                                                  false, 1.f, 1.f, 1.f,
-                                                  1.f, 1.f, 1.f,  1.f, 1.f, 1.f, 50, 1.f, 15.f);
-
-                    }
 
                     if (!lp.invret && call == 2) {
 
@@ -11372,21 +11206,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
                     } else {
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < Hd; ir += 1)
-                            for (int jr = 0; jr < Wd; jr += 1) {
-                                float Chprov = orig1[ir][jr];
-                                float2 sincosval;
-                                sincosval.y = Chprov == 0.0f ? 1.f : transformed->a[ir][jr] / Chprov;
-                                sincosval.x = Chprov == 0.0f ? 0.f : transformed->b[ir][jr] / Chprov;
-                                tmpl->a[ir][jr] = orig[ir][jr] * sincosval.y;
-                                tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
-
-                            }
+                        //
                     }
 
 
@@ -11399,13 +11219,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
                         }
                     } else {
-                        InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
-
-                        if (params->locallab.spots.at(sp).recurs) {
-                            original->CopyFrom(transformed);
-                            float avge;
-                            calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
-                        }
+                        //
                     }
 
                 }
