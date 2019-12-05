@@ -1253,7 +1253,8 @@ float find_gray(float source_gray, float target_gray)
 // (as seen on pixls.us)
 void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, float scale, bool multiThread)
 {
-    //small adaptations to local adjustemnts J.Desmis 12 2019
+    //small adaptations to local adjustements J.Desmis 12 2019
+    BENCHFUN
     const float gray = lp.sourcegray / 100.f;
     const float shadows_range = lp.blackev;
     const float dynamic_range = lp.whiteev - lp.blackev;
@@ -1391,9 +1392,10 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
 
 
 
-void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, int SCALE)
+void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
-
+    BENCHFUN
+//adpatation to local adjustements Jacques Desmis 12 2019 
     PreviewProps pp(0, 0, fw, fh, SCALE);
 
     Imagefloat img(int(fw / SCALE + 0.5), int(fh / SCALE + 0.5));
@@ -1408,9 +1410,21 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     const float ec = always ? std::pow(2.f, params->toneCurve.expcomp) : 1.f;
 
     constexpr float noise = 1e-5;
+    int h = fh / SCALE;
+    int w = fw / SCALE;
+   // printf("h=%d w=%d\n", h, w);
+   // printf("xsta=%f xend=%f ysta=%f yend=%f\n", xsta, xend, ysta, yend);
+    
 
-    for (int y = 0, h = fh / SCALE; y < h; ++y) {
-        for (int x = 0, w = fw / SCALE; x < w; ++x) {
+    int hsta = ysta * h;
+    int hend = yend * h;
+
+    int wsta = xsta * w;
+    int wend = xend * w;
+
+    //printf("h=%d w=%d hsta=%d hend=%d wsta=%d wend=%d\n", h, w, hsta, hend, wsta, wend);
+    for (int y = hsta; y < hend; ++y) {
+        for (int x = wsta; x < wend; ++x) {
             float r = img.r(y, x), g = img.g(y, x), b = img.b(y, x);
             float m = max(0.f, r, g, b) / 65535.f * ec;
 
@@ -1441,8 +1455,8 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 std::cout << "         gray boundaries: " << gmin << ", " << gmax << std::endl;
             }
 
-            for (int y = 0, h = fh / SCALE; y < h; ++y) {
-                for (int x = 0, w = fw / SCALE; x < w; ++x) {
+            for (int y = ysta; y < yend; ++y) {
+                for (int x = wsta; x < wend; ++x) {
                     float l = img.g(y, x) / 65535.f;
 
                     if (l >= gmin && l <= gmax) {
@@ -1460,7 +1474,6 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 }
             } else if (settings->verbose) {
                 std::cout << "         no samples found in range, resorting to default gray point value" << std::endl;
-                //   lp.sourcegray = LogEncodingParams().sourceGray;
             }
         }
 
@@ -8416,7 +8429,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //encoding lab at the beginning
         if (lp.logena) {
-            printf("OK log\n");
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);

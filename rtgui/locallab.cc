@@ -3322,7 +3322,7 @@ pe(nullptr)
     logBox->pack_start(*sensilog);
 
 
-//    panel->pack_start(*explog, false, false);
+    panel->pack_start(*explog, false, false);
 
     pack_start(*panel);
 
