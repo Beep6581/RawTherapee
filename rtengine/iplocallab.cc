@@ -40,6 +40,7 @@
 #include <omp.h>
 #endif
 #include "../rtgui/thresholdselector.h"
+#include "imagesource.h"
 
 #include "cplx_wavelet_dec.h"
 #include "ciecam02.h"
@@ -54,7 +55,7 @@
 #define blkrad 1    // radius of block averaging
 #define offset2 25   // shift between tiles
 
-#define epsilon 0.001f/(TS*TS) //tolerance
+#define epsilonw 0.001f/(TS*TS) //tolerance
 #define MAXSCOPE 1.25f
 #define MINSCOPE 0.025f
 #define mSP 5  //minimum size Spot
@@ -355,6 +356,7 @@ struct local_params {
     bool exposena;
     bool hsena;
     bool vibena;
+    bool logena;
     bool cut_past;
     float past;
     float satur;
@@ -396,6 +398,16 @@ struct local_params {
     float gammareti;
     float slomareti;
     int scalereti;
+    float sourcegray;
+    float targetgray;
+    float blackev;
+    float whiteev;
+    int detail;
+    int sensilog;
+    bool Autogray;
+    bool autocompute;
+
+
 };
 
 static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius, bool multiThread = false)
@@ -847,6 +859,17 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float gammaskbl = ((float) locallab.spots.at(sp).gammaskbl);
     float slomaskbl = ((float) locallab.spots.at(sp).slomaskbl);
     bool fftbl = locallab.spots.at(sp).fftwbl;
+
+
+    lp.sourcegray = (float) locallab.spots.at(sp).sourceGray;
+    lp.targetgray = (float) locallab.spots.at(sp).targetGray;
+    lp.blackev = (float) locallab.spots.at(sp).blackEv;
+    lp.whiteev  = (float) locallab.spots.at(sp).whiteEv;
+    lp.detail = locallab.spots.at(sp).detail;
+    lp.sensilog = locallab.spots.at(sp).sensilog;
+    lp.Autogray = locallab.spots.at(sp).Autogray;
+    lp.autocompute = locallab.spots.at(sp).autocompute;
+
     lp.deltaem = locallab.spots.at(sp).deltae;
     lp.scalereti = scaleret;
     lp.cir = circr;
@@ -1017,6 +1040,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mullocsh[y] = multish[y];
     }
 
+    lp.logena = locallab.spots.at(sp).explog;
+
     lp.detailsh = locallab.spots.at(sp).detailSH;
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
@@ -1156,6 +1181,292 @@ static void calcTransition(const float lox, const float loy, const float ach, co
                 localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
             }
         }
+    }
+}
+
+
+// Copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
+//J.Desmis 12 2019 - I will try to port a raw process in local adjustements
+// I choose this one because, it is "new"
+// Perhaps - probably no result, but perhaps ??
+
+float find_gray(float source_gray, float target_gray)
+{
+    // find a base such that log2lin(base, source_gray) = target_gray
+    // log2lin is (base^source_gray - 1) / (base - 1), so we solve
+    //
+    //  (base^source_gray - 1) / (base - 1) = target_gray, that is
+    //
+    //  base^source_gray - 1 - base * target_gray + target_gray = 0
+    //
+    // use a bisection method (maybe later change to Netwon)
+
+    if (source_gray <= 0.f) {
+        return 0.f;
+    }
+
+    const auto f =
+    [ = ](float x) -> float {
+        return std::pow(x, source_gray) - 1 - target_gray * x + target_gray;
+    };
+
+    // first find the interval we are interested in
+
+    float lo = 1.f;
+
+    while (f(lo) <= 0.f) {
+        lo *= 2.f;
+    }
+
+    float hi = lo * 2.f;
+
+    while (f(hi) >= 0.f) {
+        hi *= 2.f;
+    }
+
+    if (std::isinf(hi)) {
+        return 0.f;
+    }
+
+    // now search for a zero
+    for (int iter = 0; iter < 100; ++iter) {
+        float mid = lo + (hi - lo) / 2.f;
+        float v = f(mid);
+
+        if (std::abs(v) < 1e-4f || (hi - lo) / lo <= 1e-4f) {
+            return mid;
+        }
+
+        if (v > 0.f) {
+            lo = mid;
+        } else {
+            hi = mid;
+        }
+    }
+
+    return 0.f; // not found
+}
+
+
+// basic log encoding taken from ACESutil.Lin_to_Log2, from
+// https://github.com/ampas/aces-dev
+// (as seen on pixls.us)
+void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, float scale, bool multiThread)
+{
+    //small adaptations to local adjustemnts J.Desmis 12 2019
+    const float gray = lp.sourcegray / 100.f;
+    const float shadows_range = lp.blackev;
+    const float dynamic_range = lp.whiteev - lp.blackev;
+    const float noise = pow_F(2.f, -16.f);
+    const float log2 = xlogf(2.f);
+    const float b = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, lp.targetgray / 100.f) : 0.f;
+    const float linbase = max(b, 0.f);
+    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+
+    const auto apply =
+    [ = ](float x, bool scale = true) -> float {
+        if (scale)
+        {
+            x /= 65535.f;
+        }
+
+        x = max(x, noise);
+        x = max(x / gray, noise);
+        x = max((xlogf(x) / log2 - shadows_range) / dynamic_range, noise);
+        assert(x == x);
+
+        if (linbase > 0.f)
+        {
+            x = xlog2lin(x, linbase);
+        }
+
+        if (scale)
+        {
+            return x * 65535.f;
+        } else
+        {
+            return x;
+        }
+    };
+
+    const auto norm =
+    [&](float r, float g, float b) -> float {
+        return Color::rgbLuminance(r, g, b, ws);
+
+        // other possible alternatives (so far, luminance seems to work
+        // fine though). See also
+        // https://discuss.pixls.us/t/finding-a-norm-to-preserve-ratios-across-non-linear-operations
+        //
+        // MAX
+        //return max(r, g, b);
+        //
+        // Euclidean
+        //return std::sqrt(SQR(r) + SQR(g) + SQR(b));
+
+        // weighted yellow power norm from https://youtu.be/Z0DS7cnAYPk
+        // float rr = 1.22f * r / 65535.f;
+        // float gg = 1.20f * g / 65535.f;
+        // float bb = 0.58f * b / 65535.f;
+        // float rr4 = SQR(rr) * SQR(rr);
+        // float gg4 = SQR(gg) * SQR(gg);
+        // float bb4 = SQR(bb) * SQR(bb);
+        // float den = (rr4 + gg4 + bb4);
+        // if (den > 0.f) {
+        //     return 0.8374319f * ((rr4 * rr + gg4 * gg + bb4 * bb) / den) * 65535.f;
+        // } else {
+        //     return 0.f;
+        // }
+    };
+
+    const int detail = float(max(lp.detail, 0)) / scale + 0.5f;
+
+    if (detail == 0) {
+#ifdef _OPENMP
+        #       pragma omp parallel for if (multiThread)
+#endif
+
+        for (int y = 0; y < rgb->getHeight(); ++y) {
+            for (int x = 0; x < rgb->getWidth(); ++x) {
+                float r = rgb->r(y, x);
+                float g = rgb->g(y, x);
+                float b = rgb->b(y, x);
+                float m = norm(r, g, b);
+
+                if (m > noise) {
+                    float mm = apply(m);
+                    float f = mm / m;
+                    r *= f;
+                    b *= f;
+                    g *= f;
+                }
+
+                assert(r == r);
+                assert(g == g);
+                assert(b == b);
+
+                rgb->r(y, x) = r;
+                rgb->g(y, x) = g;
+                rgb->b(y, x) = b;
+            }
+        }
+    } else {
+        const int W = rgb->getWidth(), H = rgb->getHeight();
+        array2D<float> tmp(W, H);
+#ifdef _OPENMP
+        #       pragma omp parallel for if (multiThread)
+#endif
+
+        for (int y = 0; y < H; ++y) {
+            for (int x = 0; x < W; ++x) {
+                tmp[y][x] = norm(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)) / 65535.f;
+            }
+        }
+
+        const float epsilon = 0.01f + 0.002f * max(detail - 3, 0);
+        guidedFilterLog(10.f, tmp, detail, epsilon, multiThread);
+
+#ifdef _OPENMP
+        #       pragma omp parallel for if (multiThread)
+#endif
+
+        for (int y = 0; y < H; ++y) {
+            for (int x = 0; x < W; ++x) {
+                float &r = rgb->r(y, x);
+                float &g = rgb->g(y, x);
+                float &b = rgb->b(y, x);
+                float m = norm(r, g, b);
+                float t = intp(0.33f, m, tmp[y][x] * 65535.f);
+
+                if (t > noise) {
+                    float c = apply(t);
+                    float f = c / t;
+                    r *= f;
+                    g *= f;
+                    b *= f;
+                }
+            }
+        }
+    }
+}
+
+
+
+void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, int SCALE)
+{
+
+    PreviewProps pp(0, 0, fw, fh, SCALE);
+
+    Imagefloat img(int(fw / SCALE + 0.5), int(fh / SCALE + 0.5));
+    ProcParams neutral;
+//    neutral.exposure.enabled = true;
+    imgsrc->getImage(imgsrc->getWB(), TR_NONE, &img, pp, params->toneCurve, neutral.raw);
+    imgsrc->convertColorSpace(&img, params->icm, imgsrc->getWB());
+
+    float vmin = RT_INFINITY;
+    float vmax = -RT_INFINITY;
+    bool always = true;
+    const float ec = always ? std::pow(2.f, params->toneCurve.expcomp) : 1.f;
+
+    constexpr float noise = 1e-5;
+
+    for (int y = 0, h = fh / SCALE; y < h; ++y) {
+        for (int x = 0, w = fw / SCALE; x < w; ++x) {
+            float r = img.r(y, x), g = img.g(y, x), b = img.b(y, x);
+            float m = max(0.f, r, g, b) / 65535.f * ec;
+
+            if (m > noise) {
+                float l = min(r, g, b) / 65535.f * ec;
+                vmin = min(vmin, l > noise ? l : m);
+                vmax = max(vmax, m);
+            }
+        }
+    }
+
+    if (vmax > vmin) {
+        const float log2 = xlogf(2.f);
+        float dynamic_range = -xlogf(vmin / vmax) / log2;
+
+        if (settings->verbose) {
+            std::cout << "AutoLog: min = " << vmin << ", max = " << vmax
+                      << ", DR = " << dynamic_range << std::endl;
+        }
+
+        if (Autogr[sp]) {
+            double tot = 0.f;
+            int n = 0;
+            float gmax = std::min(vmax / 2.f, 0.25f);
+            float gmin = std::max(vmin * std::pow(2.f, std::max((dynamic_range - 1.f) / 2.f, 1.f)), 0.05f);
+
+            if (settings->verbose) {
+                std::cout << "         gray boundaries: " << gmin << ", " << gmax << std::endl;
+            }
+
+            for (int y = 0, h = fh / SCALE; y < h; ++y) {
+                for (int x = 0, w = fw / SCALE; x < w; ++x) {
+                    float l = img.g(y, x) / 65535.f;
+
+                    if (l >= gmin && l <= gmax) {
+                        tot += l;
+                        ++n;
+                    }
+                }
+            }
+
+            if (n > 0) {
+                sourceg[sp] = tot / n * 100.f;
+
+                if (settings->verbose) {
+                    std::cout << "         computed gray point from " << n << " samples: " << sourceg[sp] << std::endl;
+                }
+            } else if (settings->verbose) {
+                std::cout << "         no samples found in range, resorting to default gray point value" << std::endl;
+                //   lp.sourcegray = LogEncodingParams().sourceGray;
+            }
+        }
+
+        float gray = float(sourceg[sp]) / 100.f;
+        whiteev[sp] = xlogf(vmax / gray) / log2;
+        blackev[sp] = whiteev[sp] - dynamic_range;
     }
 }
 
@@ -5645,6 +5956,8 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
         varsens =  lp.senstm;
     } else if (senstype == 10) { //local contrast
         varsens =  lp.senslc;
+    } else if (senstype == 11) { //encoding log
+        varsens = lp.sensilog;
     }
 
     bool delt = lp.deltaem;
@@ -6561,8 +6874,8 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
         for (int j = 0; j < TS; ++j) {
             float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
-            tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilon;
-            tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilon;
+            tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilonw;
+            tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilonw;
 
         }
     }
@@ -8100,6 +8413,54 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             Exclude_Local(deltasobelL, hueref, chromaref, lumaref, sobelref, meansob, lp, original, transformed, &bufreserv, reserved, cx, cy, sk);
 
         }
+
+//encoding lab at the beginning
+        if (lp.logena) {
+            printf("OK log\n");
+            int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            int bfh = yend - ystart;
+            int bfw = xend - xstart;
+
+            if (bfh >= mSP && bfw >= mSP) {
+                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
+                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = ystart; y < yend; y++) {
+                    for (int x = xstart; x < xend; x++) {
+                        bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
+                        bufexporig->a[y - ystart][x - xstart] = original->a[y][x];
+                        bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
+                    }
+                }
+
+                bufexpfin->CopyFrom(bufexporig.get());
+                Imagefloat *tmpImage = nullptr;
+                tmpImage = new Imagefloat(bfw, bfh);
+                lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                log_encode(tmpImage, lp, float (sk), multiThread);
+
+                rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
+
+                delete tmpImage;
+
+                transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+
+                if (params->locallab.spots.at(sp).recurs) {
+                    original->CopyFrom(transformed);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                }
+            }
+        }
+
+
 
 //Prepare mask for Blur and noise and Denoise
         bool denoiz = false;
@@ -10631,7 +10992,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     tmpl = new LabImage(Wd, Hd);
 
                 }  else {
-                        //
+                    //
                 }
 
                 //    float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;

@@ -381,6 +381,7 @@ public:
     virtual ~LocallabListener() = default;
     virtual void refChanged (double huer, double lumar, double chromar) = 0;
     virtual void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) = 0;
+    virtual void logencodChanged (float blackev, float whiteev, float sourceg, float targetg) = 0;
 };
 
 class AutoColorTonListener

@@ -715,6 +715,7 @@ public:
     void updateToolState(std::vector<int> &tpOpen);
     void refChanged(double huer, double lumar, double chromar);
     void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) override;
+    void logencodChanged (float blackev, float whiteev, float sourceg, float targetg);
     void updateLabel();
     void updateTrans();
 

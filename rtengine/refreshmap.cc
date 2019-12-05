@@ -872,13 +872,13 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,          // Evlocallabblurcol
     LUMINANCECURVE,           // Evlocallabcontcol
     LUMINANCECURVE,          // EvLocallabfftColorMask
-    LUMINANCECURVE,         // EvLocenalog
-    LUMINANCECURVE,          //EvLocallabAuto
-    LUMINANCECURVE,          //EvlocallabsourceGray
-    LUMINANCECURVE,            //EvlocallabsourceGrayAuto
-    LUMINANCECURVE,         //EvlocallabAutoGrayOn
-    LUMINANCECURVE,          //EvlocallabAutoGrayOff
-    LUMINANCECURVE,          //EvlocallabAutoGray
+    RGBCURVE | M_AUTOEXP,    // EvLocenalog
+    AUTOEXP,               //EvLocallabAuto
+    LUMINANCECURVE,               //EvlocallabsourceGray
+    AUTOEXP,                //EvlocallabsourceGrayAuto
+//    AUTOEXP,                 //EvlocallabAutoGrayOn
+//    M_VOID,                  //EvlocallabAutoGrayOff
+    AUTOEXP,                 //EvlocallabAutoGray
     LUMINANCECURVE,          //EvlocallabblackEv
     LUMINANCECURVE,          //EvlocallabwhiteEv
     LUMINANCECURVE,          //EvlocallabtargetGray

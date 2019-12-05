@@ -510,7 +510,7 @@ targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1
 blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
 whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.0, 32.0, 0.1, 10.0))),
 detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0, 5, 1, 1))),
-sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSILOG"), 0, 100, 1, 30))),
+sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSILOG"), 0, 100, 1, 50))),
 
 // ButtonCheck widgets
 // Color & Light
@@ -3436,12 +3436,12 @@ void Locallab::enableToggled(MyExpander *expander)
     } else if (expander == expcbdl) {
         event = EvLocenacbdl;
         expConn = &enablecbdlConn;
-    } else if (expander == expdenoi) {
-        event = EvLocenadenoi;
-        expConn = &enabledenoiConn;
     } else if (expander == explog) {
         event = EvLocenalog;
         expConn = &enablelogConn;
+    } else if (expander == expdenoi) {
+        event = EvLocenadenoi;
+        expConn = &enabledenoiConn;
     } else {
         return;
     }
@@ -3493,6 +3493,24 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expmaskvib->get_expanded());
 
 }
+
+void Locallab::logencodChanged(float blackev, float whiteev, float sourceg, float targetg)
+{
+    GThreadLock lock;
+
+    disableListener();
+//    blackEv->setEnabled(true);
+//    whiteEv->setEnabled(true);
+
+    sourceGray->setValue(sourceg);
+    targetGray->setValue(targetg);
+    blackEv->setValue(blackev);
+    whiteEv->setValue(whiteev);
+
+    enableListener();
+
+}
+
 
 void Locallab::minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax)
 {
@@ -4925,7 +4943,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     //log encoding
                     pp->locallab.spots.at(pp->locallab.selspot).explog = explog->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).autocompute = autocompute->get_active();
-     //               pp->locallab.spots.at(pp->locallab.selspot).autogray = sourceGray->getAutoValue();
+                    //               pp->locallab.spots.at(pp->locallab.selspot).autogray = sourceGray->getAutoValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sourceGray = sourceGray->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).Autogray = Autogray->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).blackEv = blackEv->getValue();
@@ -7007,7 +7025,6 @@ void Locallab::enavibMaskChanged()
 
 void Locallab::enablMaskChanged()
 {
-    // printf("enablmaskChanged\n");
 
     if (multiImage) {
         if (enablMask->get_inconsistent()) {
@@ -7032,21 +7049,21 @@ void Locallab::enablMaskChanged()
 
 void Locallab::autocomputeToggled()
 {
- /*   
-    if (multiImage) {
-        if (autocompute->get_inconsistent()) {
-            autocompute->set_inconsistent(false);
-            autoconn.block(true);
-            autocompute->set_active(false);
-            autoconn.block(false);
-        }
-    }
-*/   
+    /*
+       if (multiImage) {
+           if (autocompute->get_inconsistent()) {
+               autocompute->set_inconsistent(false);
+               autoconn.block(true);
+               autocompute->set_active(false);
+               autoconn.block(false);
+           }
+       }
+    */
     if (listener) {
         if (autocompute->get_active()) {
             listener->panelChanged(EvLocallabAuto, M("GENERAL_ENABLED"));
-            blackEv->setEnabled(false);
-            whiteEv->setEnabled(false);
+            //blackEv->setEnabled(false);
+            //whiteEv->setEnabled(false);
             //targetGray->setEnabled(false);
         } else {
             listener->panelChanged(EvLocallabAuto, M("GENERAL_DISABLED"));
@@ -8085,7 +8102,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     bilateral->setDefault((double)defSpot->bilateral);
     sensiden->setDefault((double)defSpot->sensiden);
     detailthr->setDefault((double)defSpot->detailthr);
-    
+
     //log encoding
     sourceGray->setDefault((double)defSpot->sourceGray);
     blackEv->setDefault((double)defSpot->blackEv);
@@ -9871,14 +9888,14 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
     if (getEnabled() && explog->getEnabled()) {
 
         if (a != sourceGray && a != targetGray && a != detail) {
-         //   autocompute->set_active(false);
+            //   autocompute->set_active(false);
         }
-        
-        
+
+
         if (a == sourceGray) {
             if (listener) {
-             //   printf("OK 1\n");
-             //   if(autocompute->get_active()) printf("AUTO\n"); else printf("PAS\n");
+                //   printf("OK 1\n");
+                //   if(autocompute->get_active()) printf("AUTO\n"); else printf("PAS\n");
                 listener->panelChanged(EvlocallabsourceGray, sourceGray->getTextValue());
                 //listener->panelChanged(autocompute->get_active() ? EvlocallabsourceGrayAuto : EvlocallabsourceGray, a->getTextValue());
             }
@@ -9915,7 +9932,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         }
 
     }
-    
+
 }
 
 
@@ -10427,8 +10444,9 @@ void Locallab::enableListener()
     enabledenoiConn.block(false);
     //encoding log
 //    autoconn.block(false);
+    enablelogConn.block(false);
     AutograyConn.block(false);
-    
+
 }
 
 void Locallab::disableListener()
@@ -10518,9 +10536,10 @@ void Locallab::disableListener()
     // Denoise
     enabledenoiConn.block(true);
     //encoding log
- //   autoconn.block(true);
+//   autoconn.block(true);
+    enablelogConn.block(true);
     AutograyConn.block(true);
- 
+
 }
 
 void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index)
@@ -11186,7 +11205,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         lcradius->setValue(pp->locallab.spots.at(index).lcradius);
 
         if (complexsoft == 2) {
-        lcradius->setLimits(20, 100, 1, 80);
+            lcradius->setLimits(20, 100, 1, 80);
             lcradius->setValue(pp->locallab.spots.at(index).lcradius);
         }
 
@@ -11194,7 +11213,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         expcbdl->setEnabled(pp->locallab.spots.at(index).expcbdl);
 
         for (int i = 0; i < 6; i++) {
-        multiplier[i]->setValue(pp->locallab.spots.at(index).mult[i]);
+            multiplier[i]->setValue(pp->locallab.spots.at(index).mult[i]);
         }
 
         chromacbdl->setValue(pp->locallab.spots.at(index).chromacbdl);
@@ -11217,13 +11236,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         Lmaskcbshape->setCurve(pp->locallab.spots.at(index).Lmaskcbcurve);
 
         if (complexsoft == 2) {
-        for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 6; i++) {
                 multiplier[i]->setValue(1.0);
             }
         }
 
         if (complexsoft > 0) {
-        lapmaskcb->setValue(0);
+            lapmaskcb->setValue(0);
         }
 
         // Denoise
@@ -11243,7 +11262,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         detailthr->setValue(pp->locallab.spots.at(index).detailthr);
 
         if (complexsoft == 2) {
-        noiselumf->setValue(0);
+            noiselumf->setValue(0);
             noiselumf0->setValue(0);
             noiselumf2->setValue(0);
             noiselumc->setValue(0);
@@ -11266,7 +11285,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         sensilog->setValue(pp->locallab.spots.at(index).sensilog);
 
         if (pedited) {
-        if (index < (int)pedited->locallab.spots.size()) {
+            if (index < (int)pedited->locallab.spots.size()) {
                 const LocallabParamsEdited::LocallabSpotEdited* spotState = &pedited->locallab.spots.at(index);
 
                 // Control spot settings
@@ -11697,7 +11716,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 explog->set_inconsistent(!spotState->explog);
                 autocompute->set_inconsistent(multiImage && !spotState->autocompute);
                 sourceGray->setEditedState(spotState->sourceGray ? Edited : UnEdited);
-              //  sourceGray->setAutoInconsistent(multiImage && !spotState->autogray);
+                //  sourceGray->setAutoInconsistent(multiImage && !spotState->autogray);
                 Autogray->set_inconsistent(multiImage && !spotState->Autogray);
                 blackEv->setEditedState(spotState->blackEv ? Edited : UnEdited);
                 whiteEv->setEditedState(spotState->whiteEv ? Edited : UnEdited);
@@ -12178,9 +12197,9 @@ void Locallab::adjusterAutoToggled(Adjuster* a, bool newval)
 
         lastAutogray = sourceGray->getAutoValue();
      //   (a == sourceGray ? lastAutogray : lastAutoRadius) = a->getAutoValue();
-        
+
     }
-    
+
     if (listener) {
         const auto event = (a == sourceGray ?  EvlocallabAutoGrayOff: EvlocallabAutoGrayOn);
         if (sourceGray->getAutoInconsistent()) {
@@ -12191,26 +12210,26 @@ void Locallab::adjusterAutoToggled(Adjuster* a, bool newval)
             listener->panelChanged(event, M("GENERAL_DISABLED"));
         }
     }
-*/
-/*
-    if (listener) {
-        if (a == sourceGray) {
-            if (sourceGray->getAutoInconsistent()) {
-                listener->panelChanged (EvlocallabAutoGrayOff, M ("GENERAL_UNCHANGED"));
-            } else if (sourceGray->getAutoValue()) {
-                listener->panelChanged (EvlocallabAutoGrayOn, M ("GENERAL_ENABLED"));
-            } else {
-                listener->panelChanged (EvlocallabAutoGrayOff, M ("GENERAL_DISABLED"));
+    */
+    /*
+        if (listener) {
+            if (a == sourceGray) {
+                if (sourceGray->getAutoInconsistent()) {
+                    listener->panelChanged (EvlocallabAutoGrayOff, M ("GENERAL_UNCHANGED"));
+                } else if (sourceGray->getAutoValue()) {
+                    listener->panelChanged (EvlocallabAutoGrayOn, M ("GENERAL_ENABLED"));
+                } else {
+                    listener->panelChanged (EvlocallabAutoGrayOff, M ("GENERAL_DISABLED"));
+                }
             }
-        }
-*/        
-        /*
-        if (a == sourceGray) {
-            printf("OK source\n");
-            auto e = (!newval) ? EvlocallabAutoGrayOff : EvlocallabAutoGrayOn;
-            listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
-        }
-        */
+    */
+    /*
+    if (a == sourceGray) {
+        printf("OK source\n");
+        auto e = (!newval) ? EvlocallabAutoGrayOff : EvlocallabAutoGrayOn;
+        listener->panelChanged(e, newval ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+    */
 //    }
 
 }

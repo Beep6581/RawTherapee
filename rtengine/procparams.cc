@@ -2777,7 +2777,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blackEv(-5.0),
     whiteEv(10.0),
     detail(1),
-    sensilog(30)
+    sensilog(50)
 
 {
 }

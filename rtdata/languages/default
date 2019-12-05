@@ -1083,10 +1083,14 @@ HISTORY_MSG_843;Local - Radius Mask blur
 HISTORY_MSG_844;Local - Color Mask fftw
 HISTORY_MSG_845;Local - Encoding log
 HISTORY_MSG_846;Local - Encoding auto
-HISTORY_MSG_847;Local - SourceGray
-HISTORY_MSG_848;Local - SourceGray auto
+HISTORY_MSG_847;Local - Source Gray
+HISTORY_MSG_848;Local - Source Gray auto
 HISTORY_MSG_849;Local - Auto Grayon
-HISTORY_MSG_849;Local - Auto Grayoff
+HISTORY_MSG_850;Local - Black Ev
+HISTORY_MSG_851;Local - White Ev
+HISTORY_MSG_852;Local - Target Gray
+HISTORY_MSG_853;Local - Detail
+HISTORY_MSG_854;Local - Scope encoding log
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

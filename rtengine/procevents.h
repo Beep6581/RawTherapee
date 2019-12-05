@@ -872,17 +872,16 @@ enum ProcEventCode {
     EvLocallabAuto = 845,
     EvlocallabsourceGray = 846,
     EvlocallabsourceGrayAuto = 847,
-    EvlocallabAutoGrayOn = 848,
-    EvlocallabAutoGrayOff = 849,
-    EvlocallabAutogray = 850, 
-    EvlocallabblackEv = 851,
-    EvlocallabwhiteEv = 852,
-    EvlocallabtargetGray = 853,
-    Evlocallabdetail = 854,
-    Evlocallabsensilog = 855,
+//    EvlocallabAutoGrayOn = 848,
+//    EvlocallabAutoGrayOff = 849,
+    EvlocallabAutogray = 848, 
+    EvlocallabblackEv = 849,
+    EvlocallabwhiteEv = 850,
+    EvlocallabtargetGray = 851,
+    Evlocallabdetail = 852,
+    Evlocallabsensilog = 853,
     NUMOFEVENTS
 };
-
 
 class ProcEvent
 {

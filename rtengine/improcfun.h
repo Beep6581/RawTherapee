@@ -25,7 +25,7 @@
 #include "jaggedarray.h"
 #include "pipettebuffer.h"
 #include "array2D.h"
-
+#include "imagesource.h"
 #include <cairomm/cairomm.h>
 
 template<typename T>
@@ -257,6 +257,8 @@ public:
          float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float lumask);
 
     void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, int bfw, int bfh);
+    void log_encode(Imagefloat *rgb, struct local_params & lp, float scale, bool multiThread);
+    void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, int SCALE);
 
     void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance,
         const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
