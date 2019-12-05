@@ -451,6 +451,8 @@ private:
     //encoding log
     Gtk::CheckButton* const Autogray;
     sigc::connection AutograyConn;
+    Gtk::CheckButton* const fullimage;
+    sigc::connection fullimageConn;
 
     // ComboBox widgets
     // Color & Light
@@ -685,7 +687,8 @@ private:
     //log encoding
     void autocomputeToggled();
     void AutograyChanged();
-    
+    void fullimageChanged();
+
     // Other widgets event functions
     void lumacontrastMinusPressed();
     void lumaneutralPressed();

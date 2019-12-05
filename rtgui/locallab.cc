@@ -557,6 +557,7 @@ fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
 enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 //encoding log
 Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
+fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
 
 // ComboBox widgets
 // Color & Light
@@ -3279,6 +3280,7 @@ pe(nullptr)
     autoconn = autocompute->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::autocomputeToggled));
     AutograyConn  = Autogray->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::AutograyChanged));
     //sourceGray = Gtk::manage(new Adjuster(M("TP_LO_SOURCE_GRAY"), 1.0, 100.0, 0.1, 18.0));
+    fullimageConn  = fullimage->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fullimageChanged));
 
     //sourceGray->throwOnButtonRelease();
 
@@ -3307,6 +3309,7 @@ pe(nullptr)
     logPBox->pack_start(*autocompute);
     logPBox->pack_start(*blackEv);
     logPBox->pack_start(*whiteEv);
+    logPBox->pack_start(*fullimage);
     logPFrame->add(*logPBox);
 
     logFrame->set_label_align(0.025, 0.5);
@@ -4946,6 +4949,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     //               pp->locallab.spots.at(pp->locallab.selspot).autogray = sourceGray->getAutoValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sourceGray = sourceGray->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).Autogray = Autogray->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).fullimage = fullimage->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).blackEv = blackEv->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).whiteEv = whiteEv->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).targetGray = targetGray->getValue();
@@ -5324,6 +5328,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).sourceGray = pe->locallab.spots.at(pp->locallab.selspot).sourceGray || sourceGray->getEditedState();
 //                        pe->locallab.spots.at(pp->locallab.selspot).autogray = !sourceGray->getAutoInconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).Autogray = pe->locallab.spots.at(pp->locallab.selspot).Autogray || !Autogray->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).fullimage = pe->locallab.spots.at(pp->locallab.selspot).fullimage || !fullimage->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).blackEv = pe->locallab.spots.at(pp->locallab.selspot).blackEv || blackEv->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).whiteEv = pe->locallab.spots.at(pp->locallab.selspot).whiteEv || whiteEv->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).targetGray = pe->locallab.spots.at(pp->locallab.selspot).targetGray || targetGray->getEditedState();
@@ -5703,6 +5708,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).autocompute = pedited->locallab.spots.at(pp->locallab.selspot).autocompute || !autocompute->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).sourceGray = pedited->locallab.spots.at(pp->locallab.selspot).sourceGray || sourceGray->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).Autogray = pedited->locallab.spots.at(pp->locallab.selspot).Autogray || !Autogray->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fullimage = pedited->locallab.spots.at(pp->locallab.selspot).fullimage || !fullimage->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).blackEv = pedited->locallab.spots.at(pp->locallab.selspot).blackEv || blackEv->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).whiteEv = pedited->locallab.spots.at(pp->locallab.selspot).whiteEv || whiteEv->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).targetGray = pedited->locallab.spots.at(pp->locallab.selspot).targetGray || targetGray->getEditedState();
@@ -7579,6 +7585,29 @@ void Locallab::AutograyChanged()
                 listener->panelChanged(EvlocallabAutogray, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(EvlocallabAutogray, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+void Locallab::fullimageChanged()
+{
+
+    if (multiImage) {
+        if (fullimage->get_inconsistent()) {
+            fullimage->set_inconsistent(false);
+            fullimageConn.block(true);
+            fullimage->set_active(false);
+            fullimageConn.block(false);
+        }
+    }
+
+    if (getEnabled() && explog->getEnabled()) {
+        if (listener) {
+            if (fullimage->get_active()) {
+                listener->panelChanged(Evlocallabfullimage, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabfullimage, M("GENERAL_DISABLED"));
             }
         }
     }
@@ -10446,6 +10475,7 @@ void Locallab::enableListener()
 //    autoconn.block(false);
     enablelogConn.block(false);
     AutograyConn.block(false);
+    fullimageConn.block(false);
 
 }
 
@@ -10539,6 +10569,7 @@ void Locallab::disableListener()
 //   autoconn.block(true);
     enablelogConn.block(true);
     AutograyConn.block(true);
+    fullimageConn.block(true);
 
 }
 
@@ -11278,6 +11309,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 //        sourceGray->setAutoValue(pp->locallab.spots.at(index).autogray);
 //        lastAutogray = pp->locallab.spots.at(index).autogray;
         Autogray->set_active(pp->locallab.spots.at(index).Autogray);
+        fullimage->set_active(pp->locallab.spots.at(index).fullimage);
         blackEv->setValue(pp->locallab.spots.at(index).blackEv);
         whiteEv->setValue(pp->locallab.spots.at(index).whiteEv);
         targetGray->setValue(pp->locallab.spots.at(index).targetGray);
@@ -11718,6 +11750,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sourceGray->setEditedState(spotState->sourceGray ? Edited : UnEdited);
                 //  sourceGray->setAutoInconsistent(multiImage && !spotState->autogray);
                 Autogray->set_inconsistent(multiImage && !spotState->Autogray);
+                fullimage->set_inconsistent(multiImage && !spotState->fullimage);
                 blackEv->setEditedState(spotState->blackEv ? Edited : UnEdited);
                 whiteEv->setEditedState(spotState->whiteEv ? Edited : UnEdited);
                 targetGray->setEditedState(spotState->targetGray ? Edited : UnEdited);

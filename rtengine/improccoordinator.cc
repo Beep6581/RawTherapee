@@ -733,6 +733,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 centx = new float[sizespot];
                 float *centy = nullptr;
                 centy = new float[sizespot];
+                
 
 
                 for (int sp = 0; sp < params->locallab.nbspot && sp < sizespot; sp++) {
@@ -749,6 +750,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locyT[sp] = params->locallab.spots.at(sp).locYT / 2000.0;
                     centx[sp] = params->locallab.spots.at(sp).centerX / 2000.0 + 0.5;
                     centy[sp] = params->locallab.spots.at(sp).centerY / 2000.0 + 0.5;
+                    bool fullim = true;
+                    if(params->locallab.spots.at(sp).fullimage == false) {
+                        fullim = false;
+                    }
 
                     if (log[sp] && autocomput[sp]) {
                         constexpr int SCALE = 10;
@@ -759,6 +764,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         float yend = std::min(static_cast<float>(centy[sp] + locy[sp]), 1.f);
                         float xsta = std::max(static_cast<float>(centx[sp] - locxL[sp]), 0.f);
                         float xend = std::min(static_cast<float>(centx[sp] + locx[sp]), 1.f);
+                        if(fullim) {
+                            ysta = 0.f;
+                            yend = 1.f;
+                            xsta = 0.f;
+                            xend = 1.f;
+                        }
 
                         ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, fw, fh, xsta, xend, ysta, yend, SCALE);
                         params->locallab.spots.at(sp).blackEv = blackev[sp];

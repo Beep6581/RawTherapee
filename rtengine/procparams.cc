@@ -2774,6 +2774,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sourceGray(18.),
     targetGray(18.),
     Autogray(true),
+    fullimage(true),
     blackEv(-5.0),
     whiteEv(10.0),
     detail(1),
@@ -3164,6 +3165,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sourceGray == other.sourceGray
         && targetGray == other.targetGray
         && Autogray == other.Autogray
+        && fullimage == other.fullimage
         && blackEv == other.blackEv
         && whiteEv == other.whiteEv
         && detail == other.detail
@@ -4521,6 +4523,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sourceGray, "Locallab", "SourceGray_" + std::to_string(i), spot.sourceGray, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).targetGray, "Locallab", "TargetGray_" + std::to_string(i), spot.targetGray, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Autogray, "Locallab", "Autogray_" + std::to_string(i), spot.Autogray, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fullimage, "Locallab", "Fullimage_" + std::to_string(i), spot.fullimage, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blackEv, "Locallab", "BlackEv_" + std::to_string(i), spot.blackEv, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).whiteEv, "Locallab", "WhiteEv_" + std::to_string(i), spot.whiteEv, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detail, "Locallab", "Detail_" + std::to_string(i), spot.detail, keyFile);
@@ -6043,6 +6046,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "SourceGray_" + std::to_string(i), pedited, spot.sourceGray, spotEdited.sourceGray);
                 assignFromKeyfile(keyFile, "Locallab", "TargetGray_" + std::to_string(i), pedited, spot.targetGray, spotEdited.targetGray);
                 assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + std::to_string(i), pedited, spot.Autogray, spotEdited.Autogray);
+                assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + std::to_string(i), pedited, spot.fullimage, spotEdited.fullimage);
                 assignFromKeyfile(keyFile, "Locallab", "BlackEv_" + std::to_string(i), pedited, spot.blackEv, spotEdited.blackEv);
                 assignFromKeyfile(keyFile, "Locallab", "WhiteEv_" + std::to_string(i), pedited, spot.whiteEv, spotEdited.whiteEv);
                 assignFromKeyfile(keyFile, "Locallab", "Detail_" + std::to_string(i), pedited, spot.detail, spotEdited.detail);

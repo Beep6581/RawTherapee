@@ -1091,6 +1091,7 @@ HISTORY_MSG_851;Local - White Ev
 HISTORY_MSG_852;Local - Target Gray
 HISTORY_MSG_853;Local - Detail
 HISTORY_MSG_854;Local - Scope encoding log
+HISTORY_MSG_855;Local - Entire image
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2278,6 +2279,7 @@ TP_LOCALLAB_FEATVALUE;Feather gradient
 TP_LOCALLAB_FFTCOL_MASK;FFTW (to test ?)
 TP_LOCALLAB_FFTW2;Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_FFTW;Use Fast Fourier Transform
+TP_LOCALLAB_FULLIMAGE;Calculate DarkEv - WhiteEv - Value on the entire image
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMM;Gamma

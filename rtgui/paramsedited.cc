@@ -1315,6 +1315,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sourceGray = locallab.spots.at(j).sourceGray && pSpot.sourceGray == otherSpot.sourceGray;
                 locallab.spots.at(j).targetGray = locallab.spots.at(j).targetGray && pSpot.targetGray == otherSpot.targetGray;
                 locallab.spots.at(j).Autogray = locallab.spots.at(j).Autogray && pSpot.Autogray == otherSpot.Autogray;
+                locallab.spots.at(j).fullimage = locallab.spots.at(j).fullimage && pSpot.fullimage == otherSpot.fullimage;
                 locallab.spots.at(j).blackEv = locallab.spots.at(j).blackEv && pSpot.blackEv == otherSpot.blackEv;
                 locallab.spots.at(j).whiteEv = locallab.spots.at(j).whiteEv && pSpot.whiteEv == otherSpot.whiteEv;
                 locallab.spots.at(j).detail = locallab.spots.at(j).detail && pSpot.detail == otherSpot.detail;
@@ -4198,6 +4199,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).Autogray = mods.locallab.spots.at(i).Autogray;
         }
 
+        if (locallab.spots.at(i).fullimage) {
+            toEdit.locallab.spots.at(i).fullimage = mods.locallab.spots.at(i).fullimage;
+        }
+
     }
 
 
@@ -5526,6 +5531,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     targetGray(v),
 //    autogray(v),
     Autogray(v),
+    fullimage(v),
     blackEv(v),
     whiteEv(v),
     detail(v),
@@ -5901,6 +5907,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     targetGray = v;
 //    autogray = v;
     Autogray = v;
+    fullimage = v;
     blackEv = v;
     whiteEv = v;
     detail = v;

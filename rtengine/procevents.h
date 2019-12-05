@@ -880,6 +880,7 @@ enum ProcEventCode {
     EvlocallabtargetGray = 851,
     Evlocallabdetail = 852,
     Evlocallabsensilog = 853,
+    Evlocallabfullimage = 854,
     NUMOFEVENTS
 };
 

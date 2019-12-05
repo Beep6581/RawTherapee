@@ -1318,6 +1318,7 @@ struct LocallabParams {
         double sourceGray;
         double targetGray;
         bool Autogray;
+        bool fullimage;
         double blackEv;
         double whiteEv;
         int detail;

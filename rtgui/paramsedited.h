@@ -745,6 +745,7 @@ public:
         bool targetGray;
      //   bool autogray;
         bool Autogray;
+        bool fullimage;
         bool blackEv;
         bool whiteEv;
         bool detail;
