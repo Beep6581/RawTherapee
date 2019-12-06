@@ -116,6 +116,7 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
         }
     }
 }
+           // localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad);
 
 float calcLocalFactor(const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach, const float gradient)
 {
@@ -1088,12 +1089,12 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
 {
     zone = 0;
 
-    if (lox >= lp.xc && lox < (lp.xc + lp.lx) && loy >= lp.yc && loy < lp.yc + lp.ly) {
+    if (lox >= lp.xc && lox < lp.xc + lp.lx && loy >= lp.yc && loy < lp.yc + lp.ly) {
         if (lox < (lp.xc + lp.lx * ach)  && loy < (lp.yc + lp.ly * ach)) {
             zone = 2;
         } else {
             zone = 1;
-            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad);
+            localFactor = LIM01(calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad));
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -1102,7 +1103,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad);
+            localFactor = LIM01(calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad));
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -1112,7 +1113,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad);
+            localFactor = LIM01(calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad));
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -1121,7 +1122,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad);
+            localFactor = LIM01(calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad));
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -1136,7 +1137,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
     // and a factor to calculate the transition in case zone == 1
 
     zone = 0;
-
+ //   float achr = 0.91f * ach;
     if (lox >= lp.xc && lox < (lp.xc + lp.lx) && loy >= lp.yc && loy < lp.yc + lp.ly) {
         float zoneVal = SQR((lox - lp.xc) / (ach * lp.lx)) + SQR((loy - lp.yc) / (ach * lp.ly));
         zone = zoneVal < 1.f ? 2 : 0;
@@ -1145,7 +1146,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
+                localFactor = pow(LIM01(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad)), lp.transweak);
             }
         }
     } else if (lox >= lp.xc && lox < lp.xc + lp.lx && loy < lp.yc && loy > lp.yc - lp.lyT) {
@@ -1156,7 +1157,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
+                localFactor = pow(LIM01(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad)), lp.transweak);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy <= lp.yc && loy > lp.yc - lp.lyT) {
@@ -1167,7 +1168,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
+                localFactor = pow(LIM01(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad)), lp.transweak);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy > lp.yc && loy < lp.yc + lp.ly) {
@@ -1178,7 +1179,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
+                localFactor = pow(LIM01(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad)), lp.transweak);
             }
         }
     }
@@ -4310,7 +4311,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 {
 
     BENCHFUN {
-        const float ach = (float)lp.trans / 100.f;
+        const float ach = (float)lp.trans / 115.f;//work around to fixed bug black line if transition 100% #issue5554
         const float varsens =  lp.sensexclu;
 
         const int limscope = 80;
