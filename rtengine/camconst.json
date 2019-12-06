@@ -1293,6 +1293,11 @@ Camera constants:
         "ranges": { "white": 3788 }
     },
 
+    { // Quality C
+        "make_model": "Fujifilm HS30EXR",
+        "ranges": { "white": 3765 }
+    },
+
     { // Quality B
         "make_model": "FUJIFILM X70",
         "dcraw_matrix": [ 10450,-4329,-878,-3217,11105,2421,-752,1758,6519 ], // DNG_v9.4 D65
