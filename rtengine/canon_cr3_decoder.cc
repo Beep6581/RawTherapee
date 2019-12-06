@@ -87,13 +87,13 @@ void DCraw::selectCRXTrack(unsigned short maxTrack)
     for (unsigned int i = 0; i <= maxTrack && i < RT_canon_CR3_data.CRXTRACKS_MAXCOUNT; ++i) {
         CanonCR3Data::crx_data_header_t* const d = &RT_canon_CR3_data.crx_header[i];
 
-        if (d->MediaType == 1) {// RAW
+        if (d->MediaType == 1) { // RAW
             bitcounts[i] = std::int64_t(d->nBits) * std::int64_t(d->f_width) * std::int64_t(d->f_height);
 
             if (bitcounts[i] > maxbitcount) {
                 maxbitcount = bitcounts[i];
             }
-        } else if (d->MediaType == 2)   {// JPEG
+        } else if (d->MediaType == 2) { // JPEG
             if (d->MediaSize > maxjpegbytes) {
                 maxjpegbytes = d->MediaSize;
                 thumb_offset = d->MediaOffset;
@@ -371,7 +371,7 @@ int DCraw::parseCR3(
             szAtom = szAtomList - oAtom;
             oAtomContent = oAtom + 8;
             szAtomContent = szAtom - 8;
-        } else if (szAtom == 1)   {
+        } else if (szAtom == 1) {
             if ((oAtom + 16) > (oAtomList + szAtomList)) {
                 err = -3;
                 goto fin;
@@ -404,9 +404,9 @@ int DCraw::parseCR3(
             } else {
                 fseek(ifp, -lHdr, SEEK_CUR);
             }
-        } else if (!strcmp(AtomNameStack, "moovuuidCCTP"))   {
+        } else if (!strcmp(AtomNameStack, "moovuuidCCTP")) {
             lHdr = 12;
-        } else if (!strcmp(AtomNameStack, "moovuuidCMT1"))   {
+        } else if (!strcmp(AtomNameStack, "moovuuidCMT1")) {
             const short q_order = order;
             order = get2();
 
@@ -417,7 +417,7 @@ int DCraw::parseCR3(
 
             parse_tiff_ifd(oAtomContent);
             order = q_order;
-        } else if (!strcmp(AtomNameStack, "moovuuidCMT2"))   {
+        } else if (!strcmp(AtomNameStack, "moovuuidCMT2")) {
             const short q_order = order;
             order = get2();
 
@@ -428,7 +428,7 @@ int DCraw::parseCR3(
 
             parse_exif(oAtomContent);
             order = q_order;
-        } else if (!strcmp(AtomNameStack, "moovuuidCMT3"))   {
+        } else if (!strcmp(AtomNameStack, "moovuuidCMT3")) {
             const short q_order = order;
             order = get2();
 
@@ -440,7 +440,7 @@ int DCraw::parseCR3(
             fseek(ifp, -12L, SEEK_CUR);
             parse_makernote(oAtomContent, 0);
             order = q_order;
-        } else if (!strcmp(AtomNameStack, "moovuuidCMT4"))   {
+        } else if (!strcmp(AtomNameStack, "moovuuidCMT4")) {
             const short q_order = order;
             order = get2();
 
@@ -454,7 +454,7 @@ int DCraw::parseCR3(
             fseek(ifp, off, SEEK_SET);
 //      parse_gps_libraw(oAtomContent);
             order = q_order;
-        } else if (!strcmp(AtomNameStack, "moovtrakmdiahdlr"))   {
+        } else if (!strcmp(AtomNameStack, "moovtrakmdiahdlr")) {
             fseek(ifp, 8, SEEK_CUR);
             for (unsigned int c = 0; c < 4; ++c) {
                 HandlerType[c] = fgetc(ifp);
@@ -466,7 +466,7 @@ int DCraw::parseCR3(
                     break;
                 }
             }
-        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsd"))   {
+        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsd")) {
             if (szAtomContent >= 16) {
                 fseek(ifp, 12, SEEK_CUR);
                 lHdr = 8;
@@ -493,9 +493,9 @@ int DCraw::parseCR3(
 
             /*ImageWidth = */ get2();
             /*ImageHeight = */ get2();
-        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAW"))   {
+        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAW")) {
             lHdr = 82;
-        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWCMP1"))   {
+        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWCMP1")) {
             if (szAtomContent >= 40) {
                 fread(CMP1, 1, 36, ifp);
             } else {
@@ -506,9 +506,9 @@ int DCraw::parseCR3(
             if (crxParseImageHeader(CMP1, nTrack)) {
                 RT_canon_CR3_data.crx_header[nTrack].MediaType = 1;
             }
-        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWJPEG"))   {
+        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWJPEG")) {
             RT_canon_CR3_data.crx_header[nTrack].MediaType = 2;
-        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsz"))   {
+        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsz")) {
             if (szAtomContent == 12) {
                 fseek(ifp, 4, SEEK_CUR);
             } else if (szAtomContent == 16) {
@@ -519,7 +519,7 @@ int DCraw::parseCR3(
             }
 
             RT_canon_CR3_data.crx_header[nTrack].MediaSize = get4();
-        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblco64"))   {
+        } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblco64")) {
             if (szAtomContent == 16) {
                 fseek(ifp, 8, SEEK_CUR);
             } else {
@@ -771,7 +771,7 @@ struct CrxImage {
     CrxTile* tiles;
     std::uint64_t mdatOffset;
     std::uint64_t mdatSize;
-    std::int16_t* outBufs[4];// one per plane
+    std::int16_t* outBufs[4]; // one per plane
     std::int16_t* planeBuf;
     LibRaw_abstract_datastream* input;
 };
@@ -931,7 +931,7 @@ inline std::uint32_t crxBitstreamGetBits(CrxBitstream* bitStrm, int bits)
         } while (bitsLeft < bits);
     }
 
-    result = bitData >> (32 - bits);// 32-bits
+    result = bitData >> (32 - bits); // 32-bits
     bitStrm->bitData = bitData << bits;
     bitStrm->bitsLeft = bitsLeft - bits;
     return result;
@@ -1182,7 +1182,7 @@ bool crxDecodeLineRounded(CrxBandParam* param)
                 crxDecodeSymbolL1Rounded(param, false);
                 ++param->lineBuf0;
                 valueReached = std::abs(param->lineBuf0[1] - param->lineBuf0[0]) > param->roundedBitsMask;
-            } else if (length == 1)   {
+            } else if (length == 1) {
                 crxDecodeSymbolL1Rounded(param, false, false);
             }
         }
@@ -1259,7 +1259,7 @@ bool crxDecodeLineNoRefPrevLine(CrxBandParam* param)
                         return false;
                     }
                 }
-            } else if (i > param->subbandWidth)   {
+            } else if (i > param->subbandWidth) {
                 return false;
             }
 
@@ -1688,7 +1688,7 @@ bool crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
             memcpy(bandBuf, lineBuf, param->subbandWidth * sizeof(std::int32_t));
             ++param->curLine;
         }
-    } else if (!param->supportsPartial)   {
+    } else if (!param->supportsPartial) {
         const std::int32_t lineLength = param->subbandWidth + 2;
         param->lineBuf2 = param->nonProgrData;
 
@@ -1708,7 +1708,7 @@ bool crxDecodeLine(CrxBandParam* param, std::uint8_t* bandBuf)
 
         memcpy(bandBuf, lineBuf, param->subbandWidth * sizeof(std::int32_t));
         ++param->curLine;
-    } else if (param->roundedBitsMask <= 0)   {
+    } else if (param->roundedBitsMask <= 0) {
         const std::int32_t lineLength = param->subbandWidth + 2;
 
         if (param->curLine & 1) {
@@ -1769,7 +1769,7 @@ bool crxDecodeLineWithIQuantization(CrxSubband* subband)
             bitCode = crxBitstreamGetBits(&subband->bandParam->bitStream, subband->paramK) | (bitCode << subband->paramK);
         }
 
-        subband->quantValue += -(bitCode & 1) ^ (bitCode >> 1);// converting encoded to signed integer
+        subband->quantValue += -(bitCode & 1) ^ (bitCode >> 1); // converting encoded to signed integer
         subband->paramK = crxPredictKParameter(subband->paramK, bitCode);
 
         if (subband->paramK > 7) {
@@ -1859,7 +1859,7 @@ void crxHorizontal53(
                 lineBufLA[2] = deltaA;
                 lineBufLB[2] = deltaB;
             }
-        } else if (wavelet->width & 1)   {
+        } else if (wavelet->width & 1) {
             lineBufLA[1] = band1Buf[0] + ((lineBufLA[0] + band0Buf[0] - ((band1Buf[0] + 1) >> 1)) >> 1);
             lineBufLA[2] = band0Buf[0] - ((band1Buf[0] + 1) >> 1);
 
@@ -1895,7 +1895,7 @@ bool crxIdwt53FilterDecode(CrxPlaneComp* comp, std::int32_t level)
                 if (!crxIdwt53FilterDecode(comp, level - 1)) {
                     return false;
                 }
-            } else if (!crxDecodeLineWithIQuantization(sband))   {
+            } else if (!crxDecodeLineWithIQuantization(sband)) {
                 return false;
             }
 
@@ -1908,7 +1908,7 @@ bool crxIdwt53FilterDecode(CrxPlaneComp* comp, std::int32_t level)
             if (!crxIdwt53FilterDecode(comp, level - 1)) {
                 return false;
             }
-        } else if (!crxDecodeLineWithIQuantization(sband))   { // LL band
+        } else if (!crxDecodeLineWithIQuantization(sband)) { // LL band
             return false;
         }
 
@@ -1985,7 +1985,7 @@ bool crxIdwt53FilterTransform(CrxPlaneComp* comp, std::uint32_t level)
                         if (wavelet->width & 1) {
                             lineBufL0[2] = delta;
                         }
-                    } else if (wavelet->width & 1)   {
+                    } else if (wavelet->width & 1) {
                         const std::int32_t delta = band0Buf[0] - ((band1Buf[0] + 1) >> 1);
                         lineBufL0[1] = band1Buf[0] + ((lineBufL0[0] + delta) >> 1);
                         lineBufL0[2] = delta;
@@ -2093,7 +2093,7 @@ bool crxIdwt53FilterTransform(CrxPlaneComp* comp, std::uint32_t level)
                     lineBufL0[2] = deltaA;
                     lineBufL1[2] = deltaB;
                 }
-            } else if (wavelet->width & 1)   {
+            } else if (wavelet->width & 1) {
                 std::int32_t delta = band0Buf[0] - ((band1Buf[0] + 1) >> 1);
                 lineBufL0[1] = band1Buf[0] + ((delta + lineBufL0[0]) >> 1);
                 lineBufL0[2] = delta;
@@ -2202,7 +2202,7 @@ bool crxIdwt53FilterInitialize(CrxPlaneComp* comp, std::int32_t prevLevel)
                         if (wavelet->width & 1) {
                             lineBufL2[2] = delta;
                         }
-                    } else if (wavelet->width & 1)   {
+                    } else if (wavelet->width & 1) {
                         const std::int32_t delta = band2Buf[0] - ((band3Buf[0] + 1) >> 1);
 
                         lineBufL2[1] = band3Buf[0] + ((lineBufL2[0] + delta) >> 1);
@@ -2262,7 +2262,7 @@ bool crxIdwt53FilterInitialize(CrxPlaneComp* comp, std::int32_t prevLevel)
                     const std::int32_t delta = band0Buf[0] - ((band1Buf[0] + band1Buf[1] + 2) >> 2);
                     lineBufH0[1] = band1Buf[0] + ((lineBufH0[0] + delta) >> 1);
                     lineBufH0[2] = delta;
-                } else if (wavelet->width & 1)   {
+                } else if (wavelet->width & 1) {
                     const std::int32_t delta = band0Buf[0] - ((band1Buf[0] + 1) >> 1);
                     lineBufH0[1] = band1Buf[0] + ((lineBufH0[0] + delta) >> 1);
                     lineBufH0[2] = delta;
@@ -2321,21 +2321,21 @@ void crxConvertPlaneLine(
             for (int i = 0; i < lineLength; ++i) {
                 img->outBufs[plane][rawOffset + 2 * i] = rtengine::LIM(lineData[i], minVal, maxVal - 1);
             }
-        } else if (img->encType == 3)   {
+        } else if (img->encType == 3) {
             // copy to intermediate planeBuf
             rawOffset = plane * img->planeWidth * img->planeHeight + img->planeWidth * imageRow + imageCol;
 
             for (int i = 0; i < lineLength; ++i) {
                 img->planeBuf[rawOffset + i] = lineData[i];
             }
-        } else if (img->nPlanes == 4)   {
+        } else if (img->nPlanes == 4) {
             const std::int32_t median = 1 << (img->nBits - 1);
             const std::int32_t maxVal = (1 << img->nBits) - 1;
 
             for (int i = 0; i < lineLength; ++i) {
                 img->outBufs[plane][rawOffset + 2 * i] = rtengine::LIM(median + lineData[i], 0, maxVal);
             }
-        } else if (img->nPlanes == 1)   {
+        } else if (img->nPlanes == 1) {
             const std::int32_t maxVal = (1 << img->nBits) - 1;
             const std::int32_t median = 1 << (img->nBits - 1);
 
@@ -2345,7 +2345,7 @@ void crxConvertPlaneLine(
                 img->outBufs[0][rawOffset + i] = rtengine::LIM(median + lineData[i], 0, maxVal);
             }
         }
-    } else if (img->encType == 3 && img->planeBuf)   {
+    } else if (img->encType == 3 && img->planeBuf) {
         const std::int32_t planeSize = img->planeWidth * img->planeHeight;
         const std::int16_t* const plane0 = img->planeBuf + imageRow * img->planeWidth;
         const std::int16_t* const plane1 = plane0 + planeSize;
@@ -2961,7 +2961,7 @@ bool crxSetupImageData(
 
     img->tiles = nullptr;
     img->levels = hdr->imageLevels;
-    img->subbandCount = 3 * img->levels + 1;// 3 bands per level + one last LL
+    img->subbandCount = 3 * img->levels + 1; // 3 bands per level + one last LL
     img->nPlanes = hdr->nPlanes;
     img->nBits = hdr->nBits;
     img->encType = hdr->encType;
