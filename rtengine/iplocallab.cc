@@ -1094,7 +1094,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = LIM01(calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad));
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad);
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -1103,7 +1103,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = LIM01(calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad));
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad);
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -1113,7 +1113,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = LIM01(calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad));
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad);
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -1122,7 +1122,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = LIM01(calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad));
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad);
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -1137,7 +1137,6 @@ static void calcTransition(const float lox, const float loy, const float ach, co
     // and a factor to calculate the transition in case zone == 1
 
     zone = 0;
- //   float achr = 0.91f * ach;
     if (lox >= lp.xc && lox < (lp.xc + lp.lx) && loy >= lp.yc && loy < lp.yc + lp.ly) {
         float zoneVal = SQR((lox - lp.xc) / (ach * lp.lx)) + SQR((loy - lp.yc) / (ach * lp.ly));
         zone = zoneVal < 1.f ? 2 : 0;
@@ -1146,7 +1145,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(LIM01(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad)), lp.transweak);
+                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
             }
         }
     } else if (lox >= lp.xc && lox < lp.xc + lp.lx && loy < lp.yc && loy > lp.yc - lp.lyT) {
@@ -1157,7 +1156,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(LIM01(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad)), lp.transweak);
+                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy <= lp.yc && loy > lp.yc - lp.lyT) {
@@ -1168,7 +1167,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(LIM01(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad)), lp.transweak);
+                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy > lp.yc && loy < lp.yc + lp.ly) {
@@ -1179,7 +1178,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(LIM01(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad)), lp.transweak);
+                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
             }
         }
     }
@@ -4311,7 +4310,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 {
 
     BENCHFUN {
-        const float ach = (float)lp.trans / 115.f;//work around to fixed bug black line if transition 100% #issue5554
+        const float ach = (float)lp.trans / 100.f;
         const float varsens =  lp.sensexclu;
 
         const int limscope = 80;
@@ -4360,7 +4359,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
             for (int y = 0; y < transformed->H; y++)
             {
                 const int loy = cy + y;
-                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+                const bool isZone0 = loy > (lp.yc + lp.ly -1) || loy < lp.yc - lp.lyT; // // -1 fix issue 5554
 
                 if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
                     for (int x = 0; x < transformed->W; x++) {
@@ -4372,6 +4371,15 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 
                 for (int x = 0; x < transformed->W; x++) {
                     const int lox = cx + x;
+                    const bool isZone0x = lox > (lp.xc + lp.lx -1) || lox < lp.xc - lp.lxL; // -1 fix issue 5554
+                    if (isZone0x) { // outside selection and outside transition zone => no effect, keep original values
+                        for (int x = 0; x < transformed->W; x++) {
+                            transformed->L[y][x] = original->L[y][x];
+                        }
+
+                        continue;
+                    }
+
                     const int begx = int (lp.xc - lp.lxL);
                     const int begy = int (lp.yc - lp.lyT);
 
@@ -8335,7 +8343,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
         int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
-
+        int delxy = 0;
         struct local_params lp;
         calcLocalParams(sp, oW, oH, params->locallab, lp, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask);
 
@@ -8371,10 +8379,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-            for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
+            for (int y = std::max(begy - cy, 0); y < ((std::min(yEn - cy, original->H)) + delxy); y++) {
                 const int loy = cy + y;
 
-                for (int x = std::max(begx - cx, 0); x < std::min(xEn - cx, original->W); x++) {
+                for (int x = std::max(begx - cx, 0); x < ((std::min(xEn - cx, original->W)) + delxy); x++) {
                     const int lox = cx + x;
 
                     bufsob[loy - begy][lox - begx] = bufreserv.L[loy - begy][lox - begx] = reserved->L[y][x];
