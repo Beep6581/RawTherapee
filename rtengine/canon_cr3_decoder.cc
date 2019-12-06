@@ -1004,10 +1004,8 @@ bool crxDecodeLine(CrxBandParam* param)
         if (param->lineBuf1[0] != param->lineBuf0[1] || param->lineBuf1[0] != param->lineBuf0[2]) {
             crxDecodeSymbolL1(param, true, true);
         } else {
-            int nSyms = 0;
-
             if (crxBitstreamGetBits(&param->bitStream, 1)) {
-                nSyms = 1;
+                int nSyms = 1;
 
                 while (crxBitstreamGetBits(&param->bitStream, 1)) {
                     nSyms += JS[param->sParam];
@@ -1338,10 +1336,8 @@ bool crxDecodeTopLine(CrxBandParam* param)
         if (param->lineBuf1[0]) {
             param->lineBuf1[1] = param->lineBuf1[0];
         } else {
-            int nSyms = 0;
-
             if (crxBitstreamGetBits(&param->bitStream, 1)) {
-                nSyms = 1;
+                int nSyms = 1;
 
                 while (crxBitstreamGetBits(&param->bitStream, 1)) {
                     nSyms += JS[param->sParam];
@@ -1781,7 +1777,7 @@ bool crxDecodeLineWithIQuantization(CrxSubband* subband)
         return false;
     }
 
-    if (subband->width <= 0) {
+    if (subband->width == 0) {
         return true;
     }
 
@@ -2039,7 +2035,6 @@ bool crxIdwt53FilterTransform(CrxPlaneComp* comp, std::uint32_t level)
 
         std::int32_t* lineBufL0 = wavelet->lineBuf[0];
         std::int32_t* lineBufL1 = wavelet->lineBuf[1];
-        const std::int32_t* lineBufL2 = wavelet->lineBuf[2];
         const std::int32_t* const lineBufH0 = wavelet->lineBuf[wavelet->fltTapH + 3];
         std::int32_t* const lineBufH1 = wavelet->lineBuf[(wavelet->fltTapH + 1) % 5 + 3];
         std::int32_t* const lineBufH2 = wavelet->lineBuf[(wavelet->fltTapH + 2) % 5 + 3];
@@ -2110,7 +2105,7 @@ bool crxIdwt53FilterTransform(CrxPlaneComp* comp, std::uint32_t level)
         // process H bands
         lineBufL0 = wavelet->lineBuf[0];
         lineBufL1 = wavelet->lineBuf[1];
-        lineBufL2 = wavelet->lineBuf[2];
+        const std::int32_t* lineBufL2 = wavelet->lineBuf[2];
 
         for (std::int32_t i = 0; i < wavelet->width; ++i) {
             const std::int32_t delta = lineBufL0[i] - ((lineBufL2[i] + lineBufL1[i] + 2) >> 2);
@@ -2731,7 +2726,7 @@ bool crxReadSubbandHeaders(
         }
 
         band->dataSize = subbandSize - (bitData & 0x7FF);
-        band->supportsPartial = bitData & 0x8000 ? 1 : 0;
+        band->supportsPartial = (bitData & 0x8000) ? 1 : 0;
         band->dataOffset = subbandOffset;
         band->quantValue = (bitData >> 19) & 0xFF;
         band->paramK = 0;
