@@ -129,7 +129,6 @@ public:
     void        flushRawData      () override;
     void        flushRGB          () override;
     void        HLRecovery_Global (const procparams::ToneCurveParams &hrp) override;
-    void        refinement_lassus (int PassCount);
     void        refinement(int PassCount);
     void        setBorder(unsigned int rawBorder) override {border = rawBorder;}
     bool        isRGBSourceModified() const override
@@ -267,7 +266,7 @@ protected:
     void hphd_demosaic();
     void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void igv_interpolate(int winw, int winh);
-    void lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
+    void lmmse_interpolate_omp(int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
     void amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, size_t chunkSize = 1, bool measure = false);//Emil's code for AMaZE
     void dual_demosaic_RT(bool isBayer, const procparams::RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false);
     void fast_demosaic();//Emil's code for fast demosaicing
