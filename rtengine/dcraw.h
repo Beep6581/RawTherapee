@@ -567,12 +567,12 @@ void selectCRXTrack(unsigned short maxTrack);
 int parseCR3(unsigned long long oAtomList,
              unsigned long long szAtomList, short &nesting,
              char *AtomNameStack, unsigned short &nTrack, short &TrackType);
-int crxDecodePlane(void *p, uint32_t planeNumber);
+bool crxDecodePlane(void *p, uint32_t planeNumber);
 void crxLoadDecodeLoop(void *img, int nPlanes);
 void crxConvertPlaneLineDf(void *p, int imageRow);
 void crxLoadFinalizeLoopE3(void *p, int planeHeight);
 void crxLoadRaw();
-int crxParseImageHeader(uchar *cmp1TagData, unsigned int nTrack);
+bool crxParseImageHeader(uchar *cmp1TagData, unsigned int nTrack);
 //-----------------------------------------------------------------------------
 
 };

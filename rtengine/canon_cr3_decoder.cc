@@ -503,7 +503,7 @@ int DCraw::parseCR3(
                 goto fin;
             }
 
-            if (!crxParseImageHeader(CMP1, nTrack)) {
+            if (crxParseImageHeader(CMP1, nTrack)) {
                 RT_canon_CR3_data.crx_header[nTrack].MediaType = 1;
             }
         } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWJPEG"))   {
@@ -2302,64 +2302,63 @@ void crxFreeSubbandData(CrxImage* image, CrxPlaneComp* comp)
     }
 }
 
-void crxConvertPlaneLine(CrxImage* img, int imageRow, int imageCol = 0,
-                         int plane = 0, const std::int32_t* lineData = nullptr,
-                         int lineLength = 0)
+void crxConvertPlaneLine(
+    CrxImage* img,
+    int imageRow,
+    int imageCol = 0,
+    int plane = 0,
+    const std::int32_t* lineData = nullptr,
+    int lineLength = 0
+)
 {
     if (lineData) {
         std::uint64_t rawOffset = 4 * img->planeWidth * imageRow + 2 * imageCol;
 
         if (img->encType == 1) {
-            std::int32_t maxVal = 1 << (img->nBits - 1);
-            std::int32_t minVal = -maxVal;
-            --maxVal;
+            const std::int32_t maxVal = 1 << (img->nBits - 1);
+            const std::int32_t minVal = -maxVal;
 
             for (int i = 0; i < lineLength; ++i) {
-                img->outBufs[plane][rawOffset + 2 * i] =
-                    rtengine::LIM(lineData[i], minVal, maxVal);
+                img->outBufs[plane][rawOffset + 2 * i] = rtengine::LIM(lineData[i], minVal, maxVal - 1);
             }
         } else if (img->encType == 3)   {
             // copy to intermediate planeBuf
-            rawOffset = plane * img->planeWidth * img->planeHeight +
-                        img->planeWidth * imageRow + imageCol;
+            rawOffset = plane * img->planeWidth * img->planeHeight + img->planeWidth * imageRow + imageCol;
 
             for (int i = 0; i < lineLength; ++i) {
                 img->planeBuf[rawOffset + i] = lineData[i];
             }
         } else if (img->nPlanes == 4)   {
-            std::int32_t median = 1 << (img->nBits - 1);
-            std::int32_t maxVal = (1 << img->nBits) - 1;
+            const std::int32_t median = 1 << (img->nBits - 1);
+            const std::int32_t maxVal = (1 << img->nBits) - 1;
 
             for (int i = 0; i < lineLength; ++i) {
-                img->outBufs[plane][rawOffset + 2 * i] =
-                    rtengine::LIM(median + lineData[i], 0, maxVal);
+                img->outBufs[plane][rawOffset + 2 * i] = rtengine::LIM(median + lineData[i], 0, maxVal);
             }
         } else if (img->nPlanes == 1)   {
-            std::int32_t maxVal = (1 << img->nBits) - 1;
-            std::int32_t median = 1 << (img->nBits - 1);
+            const std::int32_t maxVal = (1 << img->nBits) - 1;
+            const std::int32_t median = 1 << (img->nBits - 1);
+
             rawOffset = img->planeWidth * imageRow + imageCol;
 
             for (int i = 0; i < lineLength; ++i) {
-                img->outBufs[0][rawOffset + i] =
-                    rtengine::LIM(median + lineData[i], 0, maxVal);
+                img->outBufs[0][rawOffset + i] = rtengine::LIM(median + lineData[i], 0, maxVal);
             }
         }
     } else if (img->encType == 3 && img->planeBuf)   {
-        std::int32_t planeSize = img->planeWidth * img->planeHeight;
-        std::int16_t* plane0 = img->planeBuf + imageRow * img->planeWidth;
-        std::int16_t* plane1 = plane0 + planeSize;
-        std::int16_t* plane2 = plane1 + planeSize;
-        std::int16_t* plane3 = plane2 + planeSize;
+        const std::int32_t planeSize = img->planeWidth * img->planeHeight;
+        const std::int16_t* const plane0 = img->planeBuf + imageRow * img->planeWidth;
+        const std::int16_t* const plane1 = plane0 + planeSize;
+        const std::int16_t* const plane2 = plane1 + planeSize;
+        const std::int16_t* const plane3 = plane2 + planeSize;
 
-        std::int32_t median = 1 << (img->nBits - 1) << 10;
-        std::int32_t maxVal = (1 << img->nBits) - 1;
-        std::uint32_t rawLineOffset = 4 * img->planeWidth * imageRow;
+        const std::int32_t median = 1 << (img->nBits - 1) << 10;
+        const std::int32_t maxVal = (1 << img->nBits) - 1;
+        const std::uint32_t rawLineOffset = 4 * img->planeWidth * imageRow;
 
         // for this stage - all except imageRow is ignored
         for (int i = 0; i < img->planeWidth; ++i) {
-            std::int32_t gr =
-                median + (plane0[i] << 10) - 168 * plane1[i] - 585 * plane3[i];
-            std::int32_t val = 0;
+            std::int32_t gr = median + (plane0[i] << 10) - 168 * plane1[i] - 585 * plane3[i];
 
             if (gr < 0) {
                 gr = -(((std::abs(gr) + 512) >> 9) & ~1);
@@ -2368,7 +2367,7 @@ void crxConvertPlaneLine(CrxImage* img, int imageRow, int imageCol = 0,
             }
 
             // Essentially R = round(median + P0 + 1.474*P3)
-            val = (median + (plane0[i] << 10) + 1510 * plane3[i] + 512) >> 10;
+            std::int32_t val = (median + (plane0[i] << 10) + 1510 * plane3[i] + 512) >> 10;
             img->outBufs[0][rawLineOffset + 2 * i] = rtengine::LIM(val, 0, maxVal);
             // Essentially G1 = round(median + P0 + P2 - 0.164*P1 - 0.571*P3)
             val = (plane2[i] + gr + 1) >> 1;
@@ -2383,18 +2382,27 @@ void crxConvertPlaneLine(CrxImage* img, int imageRow, int imageCol = 0,
     }
 }
 
-int crxParamInit(CrxBandParam** param, std::uint64_t subbandMdatOffset,
-                 std::uint64_t subbandDataSize, std::uint32_t subbandWidth,
-                 std::uint32_t subbandHeight, std::int32_t supportsPartial,
-                 std::uint32_t roundedBitsMask, LibRaw_abstract_datastream* input)
+bool crxParamInit(
+    CrxBandParam** param,
+    std::uint64_t subbandMdatOffset,
+    std::uint64_t subbandDataSize,
+    std::uint32_t subbandWidth,
+    std::uint32_t subbandHeight,
+    std::int32_t supportsPartial,
+    std::uint32_t roundedBitsMask,
+    LibRaw_abstract_datastream* input
+)
 {
-    std::int32_t progrDataSize = supportsPartial ? 0 : sizeof(std::int32_t) * subbandWidth;
-    std::int32_t paramLength = 2 * subbandWidth + 4;
-    std::uint8_t* paramBuf = static_cast<std::uint8_t*>(calloc(
-                            1, sizeof(CrxBandParam) + sizeof(std::int32_t) * paramLength + progrDataSize));
+    const std::int32_t progrDataSize =
+        supportsPartial
+            ? 0
+            : sizeof(std::int32_t) * subbandWidth;
+    const std::int32_t paramLength = 2 * subbandWidth + 4;
+
+    std::uint8_t* paramBuf = static_cast<std::uint8_t*>(calloc(1, sizeof(CrxBandParam) + sizeof(std::int32_t) * paramLength + progrDataSize));
 
     if (!paramBuf) {
-        return -1;
+        return false;
     }
 
     *param = reinterpret_cast<CrxBandParam*>(paramBuf);
@@ -2403,7 +2411,9 @@ int crxParamInit(CrxBandParam** param, std::uint64_t subbandMdatOffset,
 
     (*param)->paramData = reinterpret_cast<std::int32_t*>(paramBuf);
     (*param)->nonProgrData =
-        progrDataSize ? (*param)->paramData + paramLength : nullptr;
+        progrDataSize
+            ? (*param)->paramData + paramLength
+            : nullptr;
     (*param)->subbandWidth = subbandWidth;
     (*param)->subbandHeight = subbandHeight;
     (*param)->roundedBits = 0;
@@ -2420,39 +2430,42 @@ int crxParamInit(CrxBandParam** param, std::uint64_t subbandMdatOffset,
 
     crxFillBuffer(&(*param)->bitStream);
 
-    return 0;
+    return true;
 }
 
-int crxSetupSubbandData(CrxImage* img, CrxPlaneComp* planeComp,
-                        const CrxTile* tile, std::uint32_t mdatOffset)
+bool crxSetupSubbandData(
+    CrxImage* img,
+    CrxPlaneComp* planeComp,
+    const CrxTile* tile,
+    std::uint32_t mdatOffset
+)
 {
     long compDataSize = 0;
     long waveletDataOffset = 0;
     long compCoeffDataOffset = 0;
-    std::int32_t toSubbands = 3 * img->levels + 1;
-    std::int32_t transformWidth = 0;
+    const std::int32_t toSubbands = 3 * img->levels + 1;
 
-    CrxSubband* subbands = planeComp->subBands;
+    CrxSubband* const subbands = planeComp->subBands;
 
     // calculate sizes
     for (std::int32_t subbandNum = 0; subbandNum < toSubbands; ++subbandNum) {
-        subbands[subbandNum].bandSize =
-            subbands[subbandNum].width * sizeof(std::int32_t); // 4bytes
+        subbands[subbandNum].bandSize = subbands[subbandNum].width * sizeof(std::int32_t); // 4 bytes
         compDataSize += subbands[subbandNum].bandSize;
     }
 
     if (img->levels) {
-        std::int32_t encLevels = img->levels ? img->levels : 1;
+        const std::int32_t encLevels =
+            img->levels
+                ? img->levels
+                : 1;
         waveletDataOffset = (compDataSize + 7) & ~7;
-        compDataSize =
-            (sizeof(CrxWaveletTransform) * encLevels + waveletDataOffset + 7) & ~7;
+        compDataSize = (sizeof(CrxWaveletTransform) * encLevels + waveletDataOffset + 7) & ~7;
         compCoeffDataOffset = compDataSize;
 
         // calc wavelet line buffer sizes (always at one level up from current)
         for (int level = 0; level < img->levels; ++level) {
             if (level < img->levels - 1) {
-                compDataSize += 8 * sizeof(std::int32_t) *
-                                planeComp->subBands[3 * (level + 1) + 2].width;
+                compDataSize += 8 * sizeof(std::int32_t) * planeComp->subBands[3 * (level + 1) + 2].width;
             } else {
                 compDataSize += 8 * sizeof(std::int32_t) * tile->width;
             }
@@ -2463,31 +2476,31 @@ int crxSetupSubbandData(CrxImage* img, CrxPlaneComp* planeComp,
     planeComp->compBuf = static_cast<std::uint8_t*>(malloc(compDataSize));
 
     if (!planeComp->compBuf) {
-        return -1;
+        return false;
     }
 
     // subbands buffer and sizes initialisation
-    std::uint64_t subbandMdatOffset = img->mdatOffset + mdatOffset;
+    const std::uint64_t subbandMdatOffset = img->mdatOffset + mdatOffset;
     std::uint8_t* subbandBuf = planeComp->compBuf;
 
     for (std::int32_t subbandNum = 0; subbandNum < toSubbands; ++subbandNum) {
         subbands[subbandNum].bandBuf = subbandBuf;
         subbandBuf += subbands[subbandNum].bandSize;
-        subbands[subbandNum].mdatOffset =
-            subbandMdatOffset + subbands[subbandNum].dataOffset;
+        subbands[subbandNum].mdatOffset = subbandMdatOffset + subbands[subbandNum].dataOffset;
     }
 
     // wavelet data initialisation
     if (img->levels) {
-        CrxWaveletTransform* waveletTransforms =
-            reinterpret_cast<CrxWaveletTransform*>(planeComp->compBuf + waveletDataOffset);
+        CrxWaveletTransform* const waveletTransforms = reinterpret_cast<CrxWaveletTransform*>(planeComp->compBuf + waveletDataOffset);
         std::int32_t* paramData = reinterpret_cast<std::int32_t*>(planeComp->compBuf + compCoeffDataOffset);
 
         planeComp->waveletTransform = waveletTransforms;
         waveletTransforms[0].subband0Buf = reinterpret_cast<std::int32_t*>(subbands->bandBuf);
 
         for (int level = 0; level < img->levels; ++level) {
-            std::int32_t band = 3 * level + 1;
+            const std::int32_t band = 3 * level + 1;
+
+            std::int32_t transformWidth = 0;
 
             if (level >= img->levels - 1) {
                 waveletTransforms[level].height = tile->height;
@@ -2499,28 +2512,19 @@ int crxSetupSubbandData(CrxImage* img, CrxPlaneComp* planeComp,
 
             waveletTransforms[level].width = transformWidth;
             waveletTransforms[level].lineBuf[0] = paramData;
-            waveletTransforms[level].lineBuf[1] =
-                waveletTransforms[level].lineBuf[0] + transformWidth;
-            waveletTransforms[level].lineBuf[2] =
-                waveletTransforms[level].lineBuf[1] + transformWidth;
-            waveletTransforms[level].lineBuf[3] =
-                waveletTransforms[level].lineBuf[2] + transformWidth;
-            waveletTransforms[level].lineBuf[4] =
-                waveletTransforms[level].lineBuf[3] + transformWidth;
-            waveletTransforms[level].lineBuf[5] =
-                waveletTransforms[level].lineBuf[4] + transformWidth;
-            waveletTransforms[level].lineBuf[6] =
-                waveletTransforms[level].lineBuf[5] + transformWidth;
-            waveletTransforms[level].lineBuf[7] =
-                waveletTransforms[level].lineBuf[6] + transformWidth;
+            waveletTransforms[level].lineBuf[1] = waveletTransforms[level].lineBuf[0] + transformWidth;
+            waveletTransforms[level].lineBuf[2] = waveletTransforms[level].lineBuf[1] + transformWidth;
+            waveletTransforms[level].lineBuf[3] = waveletTransforms[level].lineBuf[2] + transformWidth;
+            waveletTransforms[level].lineBuf[4] = waveletTransforms[level].lineBuf[3] + transformWidth;
+            waveletTransforms[level].lineBuf[5] = waveletTransforms[level].lineBuf[4] + transformWidth;
+            waveletTransforms[level].lineBuf[6] = waveletTransforms[level].lineBuf[5] + transformWidth;
+            waveletTransforms[level].lineBuf[7] = waveletTransforms[level].lineBuf[6] + transformWidth;
             waveletTransforms[level].curLine = 0;
             waveletTransforms[level].curH = 0;
             waveletTransforms[level].fltTapH = 0;
             waveletTransforms[level].subband1Buf = reinterpret_cast<std::int32_t*>(subbands[band].bandBuf);
-            waveletTransforms[level].subband2Buf =
-                reinterpret_cast<std::int32_t*>(subbands[band + 1].bandBuf);
-            waveletTransforms[level].subband3Buf =
-                reinterpret_cast<std::int32_t*>(subbands[band + 2].bandBuf);
+            waveletTransforms[level].subband2Buf = reinterpret_cast<std::int32_t*>(subbands[band + 1].bandBuf);
+            waveletTransforms[level].subband3Buf = reinterpret_cast<std::int32_t*>(subbands[band + 2].bandBuf);
 
             paramData = waveletTransforms[level].lineBuf[7] + transformWidth;
         }
@@ -2537,71 +2541,73 @@ int crxSetupSubbandData(CrxImage* img, CrxPlaneComp* planeComp,
                 supportsPartial = 1;
             }
 
-            if (crxParamInit(&subbands[subbandNum].bandParam,
-                             subbands[subbandNum].mdatOffset,
-                             subbands[subbandNum].dataSize,
-                             subbands[subbandNum].width, subbands[subbandNum].height,
-                             supportsPartial, roundedBitsMask, img->input)) {
-                return -1;
+            if (
+                !crxParamInit(
+                    &subbands[subbandNum].bandParam,
+                    subbands[subbandNum].mdatOffset,
+                    subbands[subbandNum].dataSize,
+                    subbands[subbandNum].width,
+                    subbands[subbandNum].height,
+                    supportsPartial,
+                    roundedBitsMask,
+                    img->input
+                )
+            ) {
+                return false;
             }
         }
     }
 
-    return 0;
+    return true;
 }
-}   // namespace
 
-int DCraw::crxDecodePlane(void* p, std::uint32_t planeNumber)
+} // namespace
+
+bool DCraw::crxDecodePlane(void* p, std::uint32_t planeNumber)
 {
-    CrxImage* img = static_cast<CrxImage*>(p);
+    CrxImage* const img = static_cast<CrxImage*>(p);
     int imageRow = 0;
 
     for (int tRow = 0; tRow < img->tileRows; ++tRow) {
         int imageCol = 0;
 
         for (int tCol = 0; tCol < img->tileCols; ++tCol) {
-            CrxTile* tile = img->tiles + tRow * img->tileRows + tCol;
-            CrxPlaneComp* planeComp = tile->comps + planeNumber;
-            std::uint64_t tileMdatOffset = tile->dataOffset + planeComp->dataOffset;
+            const CrxTile* const tile = img->tiles + tRow * img->tileRows + tCol;
+            CrxPlaneComp* const planeComp = tile->comps + planeNumber;
+            const std::uint64_t tileMdatOffset = tile->dataOffset + planeComp->dataOffset;
 
             // decode single tile
-            if (crxSetupSubbandData(img, planeComp, tile, tileMdatOffset)) {
-                return -1;
+            if (!crxSetupSubbandData(img, planeComp, tile, tileMdatOffset)) {
+                return false;
             }
 
             if (img->levels) {
                 if (!crxIdwt53FilterInitialize(planeComp, img->levels - 1)) {
-                    return -1;
+                    return false;
                 }
 
                 for (int i = 0; i < tile->height; ++i) {
-                    if (!crxIdwt53FilterDecode(planeComp, img->levels - 1) ||
-                            !crxIdwt53FilterTransform(planeComp, img->levels - 1)) {
-                        return -1;
+                    if (!crxIdwt53FilterDecode(planeComp, img->levels - 1) || !crxIdwt53FilterTransform(planeComp, img->levels - 1)) {
+                        return false;
                     }
 
-                    std::int32_t* lineData =
-                        crxIdwt53FilterGetLine(planeComp, img->levels - 1);
-                    crxConvertPlaneLine(img, imageRow + i, imageCol, planeNumber,
-                                        lineData, tile->width);
+                    const std::int32_t* const lineData = crxIdwt53FilterGetLine(planeComp, img->levels - 1);
+                    crxConvertPlaneLine(img, imageRow + i, imageCol, planeNumber, lineData, tile->width);
                 }
             } else {
                 // we have the only subband in this case
                 if (!planeComp->subBands->dataSize) {
-                    memset(planeComp->subBands->bandBuf, 0,
-                           planeComp->subBands->bandSize);
-                    return 0;
+                    memset(planeComp->subBands->bandBuf, 0, planeComp->subBands->bandSize);
+                    return true;
                 }
 
                 for (int i = 0; i < tile->height; ++i) {
-                    if (!crxDecodeLine(planeComp->subBands->bandParam,
-                                      planeComp->subBands->bandBuf)) {
-                        return -1;
+                    if (!crxDecodeLine(planeComp->subBands->bandParam, planeComp->subBands->bandBuf)) {
+                        return false;
                     }
 
-                    std::int32_t* lineData = reinterpret_cast<std::int32_t*>(planeComp->subBands->bandBuf);
-                    crxConvertPlaneLine(img, imageRow + i, imageCol, planeNumber,
-                                        lineData, tile->width);
+                    const std::int32_t* const lineData = reinterpret_cast<std::int32_t*>(planeComp->subBands->bandBuf);
+                    crxConvertPlaneLine(img, imageRow + i, imageCol, planeNumber, lineData, tile->width);
                 }
             }
 
@@ -2611,7 +2617,7 @@ int DCraw::crxDecodePlane(void* p, std::uint32_t planeNumber)
         imageRow += img->tiles[tRow * img->tileRows].height;
     }
 
-    return 0;
+    return true;
 }
 
 namespace
@@ -2619,9 +2625,13 @@ namespace
 
 using crx_data_header_t = DCraw::CanonCR3Data::crx_data_header_t;
 
-int crxReadSubbandHeaders(CrxImage* img, CrxTile* tile,
-                          CrxPlaneComp* comp, std::uint8_t** subbandMdatPtr,
-                          std::uint32_t* mdatSize)
+bool crxReadSubbandHeaders(
+    CrxImage* img,
+    CrxTile* tile,
+    CrxPlaneComp* comp,
+    std::uint8_t** subbandMdatPtr,
+    std::uint32_t* mdatSize
+)
 {
     CrxSubband* band = comp->subBands + img->subbandCount - 1; // set to last band
     std::uint32_t bandHeight = tile->height;
@@ -2635,14 +2645,12 @@ int crxReadSubbandHeaders(CrxImage* img, CrxTile* tile,
         // Coefficient structure is a bit unclear and convoluted:
         //   3 levels max - 8 groups (for tile width rounded to 8 bytes)
         //                  of 3 band per level 4 sets of coefficients for each
-        const std::int32_t* rowExCoef =
-            exCoefNumTbl + 0x60 * (img->levels - 1) + 12 * (tile->width & 7);
-        const std::int32_t* colExCoef =
-            exCoefNumTbl + 0x60 * (img->levels - 1) + 12 * (tile->height & 7);
+        const std::int32_t* rowExCoef = exCoefNumTbl + 0x60 * (img->levels - 1) + 12 * (tile->width & 7);
+        const std::int32_t* colExCoef = exCoefNumTbl + 0x60 * (img->levels - 1) + 12 * (tile->height & 7);
 
         for (int level = 0; level < img->levels; ++level) {
-            std::int32_t widthOddPixel = bandWidth & 1;
-            std::int32_t heightOddPixel = bandHeight & 1;
+            const std::int32_t widthOddPixel = bandWidth & 1;
+            const std::int32_t heightOddPixel = bandHeight & 1;
             bandWidth = (widthOddPixel + bandWidth) >> 1;
             bandHeight = (heightOddPixel + bandHeight) >> 1;
 
@@ -2683,18 +2691,15 @@ int crxReadSubbandHeaders(CrxImage* img, CrxTile* tile,
             band -= 3;
         }
 
-        bandWidthExCoef = bandHeightExCoef = 0;
+        bandWidthExCoef = 0;
+        bandHeightExCoef = 0;
 
         if (tile->tileFlag & E_HAS_TILES_ON_THE_RIGHT) {
-            bandWidthExCoef =
-                exCoefNumTbl[0x60 * (img->levels - 1) + 12 * (tile->width & 7) +
-                                  4 * (img->levels - 1) + 1];
+            bandWidthExCoef = exCoefNumTbl[0x60 * (img->levels - 1) + 12 * (tile->width & 7) + 4 * (img->levels - 1) + 1];
         }
 
         if (tile->tileFlag & E_HAS_TILES_ON_THE_BOTTOM) {
-            bandHeightExCoef =
-                exCoefNumTbl[0x60 * (img->levels - 1) + 12 * (tile->height & 7) +
-                                  4 * (img->levels - 1) + 1];
+            bandHeightExCoef = exCoefNumTbl[0x60 * (img->levels - 1) + 12 * (tile->height & 7) + 4 * (img->levels - 1) + 1];
         }
     }
 
@@ -2702,7 +2707,7 @@ int crxReadSubbandHeaders(CrxImage* img, CrxTile* tile,
     band->height = bandHeightExCoef + bandHeight;
 
     if (!img->subbandCount) {
-        return 0;
+        return true;
     }
 
     std::int32_t subbandOffset = 0;
@@ -2710,19 +2715,19 @@ int crxReadSubbandHeaders(CrxImage* img, CrxTile* tile,
 
     for (unsigned int curSubband = 0; curSubband < img->subbandCount; curSubband++, band++) {
         if (*mdatSize < 0xC) {
-            return -1;
+            return false;
         }
 
         if (sgetn(2, *subbandMdatPtr) != 0xFF03) {
-            return -1;
+            return false;
         }
 
-        std::uint32_t bitData = sgetn(4, *subbandMdatPtr + 8);
-        std::uint32_t subbandSize = sgetn(4, *subbandMdatPtr + 4);
+        const std::uint32_t bitData = sgetn(4, *subbandMdatPtr + 8);
+        const std::uint32_t subbandSize = sgetn(4, *subbandMdatPtr + 4);
 
         if (curSubband != bitData >> 28) {
             band->dataSize = subbandSize;
-            return -1;
+            return false;
         }
 
         band->dataSize = subbandSize - (bitData & 0x7FF);
@@ -2740,32 +2745,39 @@ int crxReadSubbandHeaders(CrxImage* img, CrxTile* tile,
         *mdatSize -= 0xC;
     }
 
-    return 0;
+    return true;
 }
 
-int crxReadImageHeaders(crx_data_header_t* hdr, CrxImage* img, std::uint8_t* mdatPtr,
-                        std::uint32_t mdatSize)
+bool crxReadImageHeaders(
+    crx_data_header_t* hdr,
+    CrxImage* img,
+    std::uint8_t* mdatPtr,
+    std::uint32_t mdatSize
+)
 {
-    unsigned int nTiles = img->tileRows * img->tileCols;
+    const unsigned int nTiles = img->tileRows * img->tileCols;
 
     if (!nTiles) {
-        return -1;
+        return false;
     }
 
     if (!img->tiles) {
-        img->tiles = static_cast<CrxTile*>(malloc(
-                         sizeof(CrxTile) * nTiles +
-                         sizeof(CrxPlaneComp) * nTiles * img->nPlanes +
-                         sizeof(CrxSubband) * nTiles * img->nPlanes * img->subbandCount));
+        img->tiles = static_cast<CrxTile*>(
+            malloc(
+                sizeof(CrxTile) * nTiles
+                + sizeof(CrxPlaneComp) * nTiles * img->nPlanes
+                + sizeof(CrxSubband) * nTiles * img->nPlanes * img->subbandCount
+            )
+        );
 
         if (!img->tiles) {
-            return -1;
+            return false;
         }
 
         // memory areas in allocated chunk
         CrxTile* tile = img->tiles;
-        CrxPlaneComp* comps = reinterpret_cast<CrxPlaneComp*>(tile + nTiles);
-        CrxSubband* bands = reinterpret_cast<CrxSubband*>(comps + img->nPlanes * nTiles);
+        CrxPlaneComp* const comps = reinterpret_cast<CrxPlaneComp*>(tile + nTiles);
+        CrxSubband* const bands = reinterpret_cast<CrxSubband*>(comps + img->nPlanes * nTiles);
 
         for (unsigned int curTile = 0; curTile < nTiles; curTile++, tile++) {
             tile->tileFlag = 0; // tile neighbouring flags
@@ -2827,8 +2839,7 @@ int crxReadImageHeaders(crx_data_header_t* hdr, CrxImage* img, std::uint8_t* mda
                     comp->waveletTransform = nullptr;
 
                     if (img->subbandCount) {
-                        for (int curBand = 0; curBand < img->subbandCount;
-                                curBand++, band++) {
+                        for (int curBand = 0; curBand < img->subbandCount; curBand++, band++) {
                             band->supportsPartial = 0;
                             band->quantValue = 4;
                             band->bandParam = nullptr;
@@ -2847,15 +2858,15 @@ int crxReadImageHeaders(crx_data_header_t* hdr, CrxImage* img, std::uint8_t* mda
 
     for (unsigned int curTile = 0; curTile < nTiles; curTile++, tile++) {
         if (dataSize < 0xC) {
-            return -1;
+            return false;
         }
 
         if (sgetn(2, dataPtr) != 0xFF01) {
-            return -1;
+            return false;
         }
 
         if (sgetn(2, dataPtr + 8) != curTile) {
-            return -1;
+            return false;
         }
 
         dataSize -= 0xC;
@@ -2863,7 +2874,7 @@ int crxReadImageHeaders(crx_data_header_t* hdr, CrxImage* img, std::uint8_t* mda
         tile->tileSize = sgetn(4, dataPtr + 4);
         tile->dataOffset = tileOffset;
 
-        std::int32_t hdrExtraBytes = sgetn(2, dataPtr + 2) - 8;
+        const std::int32_t hdrExtraBytes = sgetn(2, dataPtr + 2) - 8;
         tileOffset += tile->tileSize;
         dataPtr += hdrExtraBytes + 0xC;
         dataSize -= hdrExtraBytes;
@@ -2873,15 +2884,15 @@ int crxReadImageHeaders(crx_data_header_t* hdr, CrxImage* img, std::uint8_t* mda
 
         for (int compNum = 0; compNum < img->nPlanes; compNum++, comp++) {
             if (dataSize < 0xC) {
-                return -1;
+                return false;
             }
 
             if (sgetn(2, dataPtr) != 0xFF02) {
-                return -1;
+                return false;
             }
 
             if (compNum != dataPtr[8] >> 4) {
-                return -1;
+                return false;
             }
 
             comp->compSize = sgetn(4, dataPtr + 4);
@@ -2900,42 +2911,52 @@ int crxReadImageHeaders(crx_data_header_t* hdr, CrxImage* img, std::uint8_t* mda
 
             if (compHdrRoundedBits) {
                 if (img->levels || !comp->supportsPartial) {
-                    return -1;
+                    return false;
                 }
 
                 comp->roundedBitsMask = 1 << (compHdrRoundedBits - 1);
             }
 
-            if (crxReadSubbandHeaders(img, tile, comp, &dataPtr, &dataSize)) {
-                return -1;
+            if (!crxReadSubbandHeaders(img, tile, comp, &dataPtr, &dataSize)) {
+                return false;
             }
         }
     }
 
-    return 0;
+    return true;
 }
 
-int crxSetupImageData(crx_data_header_t* hdr, CrxImage* img, std::int16_t* outBuf,
-                      std::uint64_t mdatOffset, std::uint32_t mdatSize,
-                      std::uint8_t* mdatHdrPtr)
+bool crxSetupImageData(
+    crx_data_header_t* hdr,
+    CrxImage* img,
+    std::int16_t* outBuf,
+    std::uint64_t mdatOffset,
+    std::uint32_t mdatSize,
+    std::uint8_t* mdatHdrPtr
+)
 {
-    int IncrBitTable[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0,
-                            0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0
-                           };
+    constexpr bool IncrBitTable[32] = {
+        false, false, false, false, false, false, false, false, false, true, true, false, false, false, true, false,
+        false, false, true, false, false, true, true, true, false, true, true, true, false, false, false, false
+    };
 
     img->planeWidth = hdr->f_width;
     img->planeHeight = hdr->f_height;
 
-    if (hdr->tileWidth < 0x16 || hdr->tileHeight < 0x16 ||
-            img->planeWidth > 0x7FFF || img->planeHeight > 0x7FFF) {
-        return -1;
+    if (
+        hdr->tileWidth < 0x16
+        || hdr->tileHeight < 0x16
+        || img->planeWidth > 0x7FFF
+        || img->planeHeight > 0x7FFF
+    ) {
+        return false;
     }
 
     img->tileCols = (img->planeWidth + hdr->tileWidth - 1) / hdr->tileWidth;
     img->tileRows = (img->planeHeight + hdr->tileHeight - 1) / hdr->tileHeight;
 
     if (img->planeWidth - hdr->tileWidth * (img->tileCols - 1) < 0x16 || img->planeHeight - hdr->tileHeight * (img->tileRows - 1) < 0x16) {
-        return -1;
+        return false;
     }
 
     img->tiles = nullptr;
@@ -2957,16 +2978,16 @@ int crxSetupImageData(crx_data_header_t* hdr, CrxImage* img, std::int16_t* outBu
     // intermediate plane buffer. At the moment though it's too many changes so
     // left as is.
     if (img->encType == 3 && img->nPlanes == 4 && img->nBits > 8) {
-        img->planeBuf =
-            static_cast<std::int16_t*>(malloc(img->planeHeight * img->planeWidth * img->nPlanes *
-                             ((img->samplePrecision + 7) >> 3)));
+        img->planeBuf = static_cast<std::int16_t*>(
+            malloc(img->planeHeight * img->planeWidth * img->nPlanes * ((img->samplePrecision + 7) >> 3))
+        );
 
         if (!img->planeBuf) {
-            return -1;
+            return false;
         }
     }
 
-    std::int32_t rowSize = 2 * img->planeWidth;
+    const std::int32_t rowSize = 2 * img->planeWidth;
 
     if (img->nPlanes == 1) {
         img->outBufs[0] = outBuf;
@@ -3018,10 +3039,10 @@ int crxSetupImageData(crx_data_header_t* hdr, CrxImage* img, std::int16_t* outBu
     return crxReadImageHeaders(hdr, img, mdatHdrPtr, mdatSize);
 }
 
-int crxFreeImageData(CrxImage* img)
+void crxFreeImageData(CrxImage* img)
 {
     CrxTile* tile = img->tiles;
-    int nTiles = img->tileRows * img->tileCols;
+    const int nTiles = img->tileRows * img->tileCols;
 
     if (img->tiles) {
         for (std::int32_t curTile = 0; curTile < nTiles; curTile++, tile++) {
@@ -3040,15 +3061,14 @@ int crxFreeImageData(CrxImage* img)
         free(img->planeBuf);
         img->planeBuf = nullptr;
     }
-
-    return 0;
 }
+
 }   // namespace
 
 void DCraw::crxLoadDecodeLoop(void* img, int nPlanes)
 {
 #ifdef _OPENMP
-    int results[4]; // nPlanes is always <= 4
+    bool results[4]; // nPlanes is always <= 4
     #pragma omp parallel for
 
     for (std::int32_t plane = 0; plane < nPlanes; ++plane) {
@@ -3056,7 +3076,7 @@ void DCraw::crxLoadDecodeLoop(void* img, int nPlanes)
     }
 
     for (std::int32_t plane = 0; plane < nPlanes; ++plane) {
-        if (results[plane]) {
+        if (!results[plane]) {
             derror();
         }
     }
@@ -3064,7 +3084,7 @@ void DCraw::crxLoadDecodeLoop(void* img, int nPlanes)
 #else
 
     for (std::int32_t plane = 0; plane < nPlanes; ++plane) {
-        if (crxDecodePlane(img, plane)) {
+        if (!crxDecodePlane(img, plane)) {
             derror();
         }
     }
@@ -3092,14 +3112,11 @@ void DCraw::crxLoadRaw()
 {
     CrxImage img;
 
-    if (RT_canon_CR3_data.crx_track_selected >=
-            RT_canon_CR3_data.CRXTRACKS_MAXCOUNT) {
+    if (RT_canon_CR3_data.crx_track_selected >= RT_canon_CR3_data.CRXTRACKS_MAXCOUNT) {
         derror();
     }
 
-    crx_data_header_t hdr =
-        RT_canon_CR3_data
-        .crx_header[RT_canon_CR3_data.crx_track_selected];
+    crx_data_header_t hdr = RT_canon_CR3_data.crx_header[RT_canon_CR3_data.crx_track_selected];
 
     LibRaw_abstract_datastream input = {ifp};
     img.input = &input; // libraw_internal_data.internal_data.input;
@@ -3114,7 +3131,7 @@ void DCraw::crxLoadRaw()
 
 //  /*imgdata.color.*/maximum = (1 << hdr.nBits) - 1;
 
-    std::uint8_t* hdrBuf = static_cast<std::uint8_t*>(malloc(hdr.mdatHdrSize));
+    std::uint8_t* const hdrBuf = static_cast<std::uint8_t*>(malloc(hdr.mdatHdrSize));
 
     // read image header
 #ifdef _OPENMP
@@ -3124,8 +3141,7 @@ void DCraw::crxLoadRaw()
 #ifndef _OPENMP
         /*libraw_internal_data.internal_data.input->*/ input.lock();
 #endif
-        /*libraw_internal_data.internal_data.input->*/ input.seek(
-            data_offset, SEEK_SET);
+        /*libraw_internal_data.internal_data.input->*/ input.seek(data_offset, SEEK_SET);
         /*libraw_internal_data.internal_data.input->*/ input.read(hdrBuf, 1, hdr.mdatHdrSize);
 #ifndef _OPENMP
         /*libraw_internal_data.internal_data.input->*/ input.unlock();
@@ -3133,9 +3149,7 @@ void DCraw::crxLoadRaw()
     }
 
     // parse and setup the image data
-    if (crxSetupImageData(&hdr, &img, reinterpret_cast<std::int16_t*>(raw_image),
-                          hdr.MediaOffset /*data_offset*/,
-                          hdr.MediaSize /*RT_canon_CR3_data.data_size*/, hdrBuf)) {
+    if (!crxSetupImageData(&hdr, &img, reinterpret_cast<std::int16_t*>(raw_image), hdr.MediaOffset /*data_offset*/, hdr.MediaSize /*RT_canon_CR3_data.data_size*/, hdrBuf)) {
         derror();
     }
 
@@ -3150,18 +3164,17 @@ void DCraw::crxLoadRaw()
     crxFreeImageData(&img);
 }
 
-int DCraw::crxParseImageHeader(uchar* cmp1TagData, unsigned int nTrack)
+bool DCraw::crxParseImageHeader(uchar* cmp1TagData, unsigned int nTrack)
 {
     if (nTrack >= RT_canon_CR3_data.CRXTRACKS_MAXCOUNT) {
-        return -1;
+        return false;
     }
 
     if (!cmp1TagData) {
-        return -1;
+        return false;
     }
 
-    crx_data_header_t* hdr =
-        &RT_canon_CR3_data.crx_header[nTrack];
+    crx_data_header_t* const hdr = &RT_canon_CR3_data.crx_header[nTrack];
 
     hdr->version = sgetn(2, cmp1TagData + 4);
     hdr->f_width = sgetn(4, cmp1TagData + 8);
@@ -3179,45 +3192,55 @@ int DCraw::crxParseImageHeader(uchar* cmp1TagData, unsigned int nTrack)
 
     // validation
     if (hdr->version != 0x100 || !hdr->mdatHdrSize) {
-        return -1;
+        return false;
     }
 
     if (hdr->encType == 1) {
         if (hdr->nBits > 15) {
-            return -1;
+            return false;
         }
     } else {
         if (hdr->encType && hdr->encType != 3) {
-            return -1;
+            return false;
         }
 
         if (hdr->nBits > 14) {
-            return -1;
+            return false;
         }
     }
 
     if (hdr->nPlanes == 1) {
         if (hdr->cfaLayout || hdr->encType) {
-            return -1;
+            return false;
         }
 
         if (hdr->nBits != 8) {
-            return -1;
+            return false;
         }
-    } else if (hdr->nPlanes != 4 || (hdr->f_width & 1) || (hdr->f_height & 1) ||
-               (hdr->tileWidth & 1) || (hdr->tileHeight & 1) || hdr->cfaLayout > 3 ||
-               (hdr->encType && hdr->encType != 1 && hdr->encType != 3) ||
-               hdr->nBits == 8) {
-        return -1;
+    } else if (
+        hdr->nPlanes != 4
+        || (hdr->f_width & 1)
+        || (hdr->f_height & 1)
+        || (hdr->tileWidth & 1)
+        || (hdr->tileHeight & 1)
+        || hdr->cfaLayout > 3
+        || (
+            hdr->encType
+            && hdr->encType != 1
+            && hdr->encType != 3
+        )
+        || hdr->nBits == 8
+    ) {
+        return false;
     }
 
     if (hdr->tileWidth > hdr->f_width || hdr->tileHeight > hdr->f_height) {
-        return -1;
+        return false;
     }
 
     if (hdr->imageLevels > 3 || hdr->hasTileCols > 1 || hdr->hasTileRows > 1) {
-        return -1;
+        return false;
     }
 
-    return 0;
+    return true;
 }
