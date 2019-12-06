@@ -17,34 +17,37 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
+
 #include <glib.h>
 #include <glibmm/ustring.h>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
 #include "alignedbuffer.h"
+#include "calc_distort.h"
+#include "ciecam02.h"
 #include "cieimage.h"
-#include "labimage.h"
-#include "rtengine.h"
-#include "improcfun.h"
+#include "clutstore.h"
+#include "color.h"
 #include "curves.h"
 #include "dcp.h"
+#include "EdgePreservingDecomposition.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
 #include "imagesource.h"
-#include "rtthumbnail.h"
-#include "utils.h"
-#include "iccmatrices.h"
-#include "color.h"
-#include "calc_distort.h"
-#include "rt_math.h"
-#include "EdgePreservingDecomposition.h"
 #include "improccoordinator.h"
-#include "clutstore.h"
-#include "ciecam02.h"
+#include "improcfun.h"
+#include "labimage.h"
+#include "procparams.h"
+#include "rt_math.h"
+#include "rtengine.h"
+#include "rtthumbnail.h"
 #include "satandvalueblendingcurve.h"
 #include "StopWatch.h"
-#include "procparams.h"
+#include "utils.h"
+
 #include "../rtgui/editcallbacks.h"
 
 #ifdef _DEBUG
@@ -299,7 +302,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
         monitor = ICCStore::getInstance()->getProfile (monitorProfile);
 #else
-        monitor = ICCStore::getInstance()->getProfile (options.rtSettings.srgb);
+        monitor = ICCStore::getInstance()->getProfile (settings->srgb);
 #endif
     }
 
