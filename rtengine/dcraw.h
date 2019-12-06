@@ -184,7 +184,7 @@ public:
             int32_t mdatHdrSize;
             // Not from header, but from datastream
             uint32_t MediaSize;
-            INT64 MediaOffset;
+            int64_t MediaOffset;
             uint32_t MediaType; /* 1 -> /C/RAW, 2-> JPEG */
         };
         static constexpr size_t CRXTRACKS_MAXCOUNT = 16;

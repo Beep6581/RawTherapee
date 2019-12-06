@@ -449,9 +449,9 @@ int DCraw::parseCR3(
                 goto fin;
             }
 
-            const std::int64_t off = ftell(ifp); // FIXME: ftell() returns int
+            const long off = ftell(ifp);
             parse_gps(oAtomContent);
-            fseek(ifp, off, SEEK_SET); // FIXME: fseek() takes int offset
+            fseek(ifp, off, SEEK_SET);
 //      parse_gps_libraw(oAtomContent);
             order = q_order;
         } else if (!strcmp(AtomNameStack, "moovtrakmdiahdlr"))   {
@@ -468,7 +468,7 @@ int DCraw::parseCR3(
             }
         } else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsd"))   {
             if (szAtomContent >= 16) {
-                fseek(ifp, 12L, SEEK_CUR);
+                fseek(ifp, 12, SEEK_CUR);
                 lHdr = 8;
             } else {
                 err = -7;
@@ -670,7 +670,7 @@ struct LibRaw_abstract_datastream {
     void unlock()
     {
     }
-    void seek(int p, int how)
+    void seek(long p, int how)
     {
         fseek(ifp, p, how);
     }

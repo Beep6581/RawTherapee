@@ -56,28 +56,26 @@ IMFILE* fopen (const char* fname);
 IMFILE* gfopen (const char* fname);
 IMFILE* fopen (unsigned* buf, int size);
 void fclose (IMFILE* f);
-inline int ftell (IMFILE* f)
+inline long ftell (IMFILE* f)
 {
-
     return f->pos;
 }
 
 inline int feof (IMFILE* f)
 {
-
     return f->eof;
 }
 
-inline void fseek (IMFILE* f, int p, int how)
+inline void fseek (IMFILE* f, long p, int how)
 {
-    int fpos = f->pos;
+    ssize_t fpos = f->pos;
 
     if (how == SEEK_SET) {
         f->pos = p;
     } else if (how == SEEK_CUR) {
         f->pos += p;
     } else if (how == SEEK_END) {
-        if(p <= 0 && -p <= f->size) {
+        if (p <= 0 && -p <= f->size) {
             f->pos = f->size + p;
         }
         return;
