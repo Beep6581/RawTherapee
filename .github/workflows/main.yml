@@ -12,6 +12,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: brew install gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++ little-cms2 libiptcdata fftw lensfun llvm expat pkgconfig libomp
+    - name: create and move to build directory
+      run: mkdir build && cd build
     - name: cmake
       env:
         CMAKE_CXX_STANDARD: 11
@@ -25,4 +27,4 @@ jobs:
           -DLENSFUNDBDIR="./share/lensfun" \
           -DLDFLAGS="-L/usr/local/opt/libffi/lib -L/usr/local/opt/libxml2/lib -L/usr/local/opt/expat/lib -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
           -DCXXFLAGS="-I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/llvm/include" \
-          .
+          ..
