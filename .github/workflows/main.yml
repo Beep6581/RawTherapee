@@ -1,6 +1,7 @@
 name: CI
 
-on: [push]
+on:
+  - push
 
 jobs:
   build:
@@ -9,9 +10,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+    - name: Install dependencies
+      run: brew install gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++ little-cms2 libiptcdata fftw lensfun wget llvm cmake expat pkgconfig libomp
