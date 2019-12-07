@@ -3805,6 +3805,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->structexclu = pp->locallab.spots.at(i).structexclu;
         r->struc = pp->locallab.spots.at(i).struc;
 
+
         if (pp->locallab.spots.at(i).shapeMethod == "IND") {
             r->shapeMethod = 0;
         } else if (pp->locallab.spots.at(i).shapeMethod == "SYM") {
@@ -3813,6 +3814,10 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->shapeMethod = 2;
         } else {
             r->shapeMethod = 3;
+        }
+
+        if (complexsoft == 2) {
+            r->shapeMethod = 0;
         }
 
         r->locX = pp->locallab.spots.at(i).locX;
@@ -3844,6 +3849,11 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->balan = pp->locallab.spots.at(i).balan;
         r->transitweak = pp->locallab.spots.at(i).transitweak;
         r->transitgrad = pp->locallab.spots.at(i).transitgrad;
+        if (complexsoft == 2) {
+            r->transitweak = 1;
+            r->transitgrad = 0;
+        }
+        
         r->scopemask = pp->locallab.spots.at(i).scopemask;
         r->lumask = pp->locallab.spots.at(i).lumask;
         r->avoid = pp->locallab.spots.at(i).avoid;
@@ -3958,6 +3968,9 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->sensiexclu = newSpot->sensiexclu;
             r->structexclu = newSpot->structexclu;
             r->struc = newSpot->struc;
+            if (complexsoft == 2) {
+                r->shapeMethod = 0;
+            }
 
             if (newSpot->shapeMethod == "IND") {
                 r->shapeMethod = 0;
@@ -4017,6 +4030,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balan = newSpot->balan;
             r->transitweak = newSpot->transitweak;
             r->transitgrad = newSpot->transitgrad;
+            if (complexsoft == 2) {
+                r->transitweak = 1;
+                r->transitgrad = 0;
+            }
             r->scopemask = newSpot->scopemask;
             r->lumask = newSpot->lumask;
             r->avoid = newSpot->avoid;
@@ -4227,6 +4244,9 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             } else {
                 r->shapeMethod = 3;
             }
+            if (complexsoft == 2) {
+                r->shapeMethod = 0;
+            }
 
             // Calculate spot size and center position according to preview area
             if (provider && !batchMode) {
@@ -4276,6 +4296,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balan = newSpot->balan;
             r->transitweak = newSpot->transitweak;
             r->transitgrad = newSpot->transitgrad;
+            if (complexsoft == 2) {
+                r->transitweak = 1;
+                r->transitgrad = 0;
+            }
+
             r->scopemask = newSpot->scopemask;
             r->lumask = newSpot->lumask;
             r->avoid = newSpot->avoid;
@@ -4395,7 +4420,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
                     pp->locallab.spots.at(pp->locallab.selspot).structexclu = r->structexclu;
                     pp->locallab.spots.at(pp->locallab.selspot).struc = r->struc;
-
+                    if (complexsoft == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "IND";
+                        r->shapeMethod = 0;
+                    }
                     if (r->shapeMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "IND";
                     } else if (r->shapeMethod == 1) {
@@ -4435,6 +4463,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).balan = r->balan;
                     pp->locallab.spots.at(pp->locallab.selspot).transitweak = r->transitweak;
                     pp->locallab.spots.at(pp->locallab.selspot).transitgrad = r->transitgrad;
+                    if (complexsoft == 2) {
+                        r->transitweak = 1;
+                        r->transitgrad = 0;
+                        pp->locallab.spots.at(pp->locallab.selspot).transitweak = r->transitweak;
+                        pp->locallab.spots.at(pp->locallab.selspot).transitgrad = r->transitgrad;
+                    }
+                    
                     pp->locallab.spots.at(pp->locallab.selspot).scopemask = r->scopemask;
                     pp->locallab.spots.at(pp->locallab.selspot).lumask = r->lumask;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
@@ -10576,9 +10611,17 @@ void Locallab::disableListener()
 void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index)
 {
     // printf("updateLocallabGUI\n");
+        ControlSpotPanel::SpotRow* const r = new ControlSpotPanel::SpotRow();
 
     // Update GUI values
     if (index < pp->locallab.nbspot && index < (int)pp->locallab.spots.size()) {
+        //controlspotpanel
+        if (complexsoft == 2) {
+            r->shapeMethod = 0;
+            r->transitweak = 1;
+            r->transitgrad = 0;
+        }
+
         // Color & Light
         expcolor->setEnabled(pp->locallab.spots.at(index).expcolor);
         curvactiv->set_active(pp->locallab.spots.at(index).curvactiv);
