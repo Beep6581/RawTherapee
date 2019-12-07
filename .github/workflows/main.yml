@@ -13,7 +13,7 @@ jobs:
     - name: test getting the git branch of the triggering ref 
       run: echo ${GITHUB_REF##*/}
     - name: Install dependencies
-      run: brew install gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++ little-cms2 libiptcdata fftw lensfun wget llvm cmake expat pkgconfig libomp
+      run: brew install gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++ little-cms2 libiptcdata fftw lensfun llvm expat pkgconfig libomp
     - name: cmake
       env:
         CMAKE_CXX_STANDARD: 11
