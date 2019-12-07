@@ -18,11 +18,13 @@ jobs:
       env:
         CMAKE_CXX_STANDARD: 11
         PKG_CONFIG_PATH: /usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/expat/lib/pkgconfig
+        RAW_THERAPEE_MAJOR: '5'
+        RAW_THERAPEE_MINOR: '7'
       run: |
         cmake \
           -DCMAKE_BUILD_TYPE="release" \
           -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-          -DCACHE_NAME_SUFFIX="5-${GITHUB_REF##*/}" \
+          -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_MAJOR}.${RAW_THERAPEE_MINOR}-${GITHUB_REF##*/}" \
           -DPROC_TARGET_NUMBER="2" \
           -DPROC_LABEL="generic processor" \
           -DWITH_LTO="OFF" \
