@@ -17,7 +17,7 @@ jobs:
         CMAKE_CXX_STANDARD: 11
       run: |
         cmake \
-          -DCMAKE_BUILD_TYPE="release"  \
+          -DCMAKE_BUILD_TYPE="release" \
           -DCACHE_NAME_SUFFIX="5-${GITHUB_REF##*/}" \
           -DPROC_TARGET_NUMBER="2" \
           -DWITH_LTO="OFF" \
