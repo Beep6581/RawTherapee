@@ -40,4 +40,5 @@ jobs:
           ..
         make --jobs 8
         make install
-        make macosx_bundle
+        sudo make macosx_bundle
+
