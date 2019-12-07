@@ -36,3 +36,6 @@ jobs:
           -DOpenMP_CXX_LIB_NAMES="libomp" \
           -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include" \
           ..
+        make --jobs 8
+        make install
+        make macosx_bundle
