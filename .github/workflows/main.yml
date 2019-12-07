@@ -22,6 +22,5 @@ jobs:
           -DCMAKE_BUILD_TYPE="release"  \
           -DCACHE_NAME_SUFFIX="5-${GITHUB_REF##*/}" \
           -DPROC_TARGET_NUMBER="2" \
-          -DBUILD_BUNDLE="ON" \
           -DWITH_LTO="OFF" \
           -DLENSFUNDBDIR="./share/lensfun"
