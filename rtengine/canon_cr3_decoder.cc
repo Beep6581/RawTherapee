@@ -705,7 +705,7 @@ struct CrxBandParam {
     std::int32_t kParam;
     std::int32_t* paramData;
     std::int32_t* nonProgrData;
-    std::int8_t supportsPartial;
+    bool supportsPartial;
 };
 
 struct CrxWaveletTransform {
@@ -727,7 +727,7 @@ struct CrxSubband {
     std::uint8_t* bandBuf;
     std::int32_t bandSize;
     std::uint64_t dataSize;
-    std::int8_t supportsPartial;
+    bool supportsPartial;
     std::int32_t quantValue;
     std::uint16_t width;
     std::uint16_t height;
@@ -742,7 +742,7 @@ struct CrxPlaneComp {
     std::int8_t compNumber;
     std::int64_t dataOffset;
     std::int32_t compSize;
-    std::int8_t supportsPartial;
+    bool supportsPartial;
     std::int32_t roundedBitsMask;
     std::int8_t tileFlag;
 };
@@ -2383,7 +2383,7 @@ bool crxParamInit(
     std::uint64_t subbandDataSize,
     std::uint32_t subbandWidth,
     std::uint32_t subbandHeight,
-    std::int32_t supportsPartial,
+    bool supportsPartial,
     std::uint32_t roundedBitsMask,
     LibRaw_abstract_datastream* input
 )
@@ -2528,12 +2528,12 @@ bool crxSetupSubbandData(
     // decoding params and bitstream initialisation
     for (std::int32_t subbandNum = 0; subbandNum < toSubbands; ++subbandNum) {
         if (subbands[subbandNum].dataSize) {
-            std::int32_t supportsPartial = 0;
+            bool supportsPartial = false;
             std::uint32_t roundedBitsMask = 0;
 
             if (planeComp->supportsPartial && subbandNum == 0) {
                 roundedBitsMask = planeComp->roundedBitsMask;
-                supportsPartial = 1;
+                supportsPartial = true;
             }
 
             if (
@@ -2726,7 +2726,7 @@ bool crxReadSubbandHeaders(
         }
 
         band->dataSize = subbandSize - (bitData & 0x7FF);
-        band->supportsPartial = (bitData & 0x8000) ? 1 : 0;
+        band->supportsPartial = bitData & 0x8000;
         band->dataOffset = subbandOffset;
         band->quantValue = (bitData >> 19) & 0xFF;
         band->paramK = 0;
@@ -2827,7 +2827,7 @@ bool crxReadImageHeaders(
 
                 for (int curComp = 0; curComp < img->nPlanes; curComp++, comp++) {
                     comp->compNumber = curComp;
-                    comp->supportsPartial = 1;
+                    comp->supportsPartial = true;
                     comp->tileFlag = tile->tileFlag;
                     comp->subBands = band;
                     comp->compBuf = nullptr;
@@ -2835,7 +2835,7 @@ bool crxReadImageHeaders(
 
                     if (img->subbandCount) {
                         for (int curBand = 0; curBand < img->subbandCount; curBand++, band++) {
-                            band->supportsPartial = 0;
+                            band->supportsPartial = false;
                             band->quantValue = 4;
                             band->bandParam = nullptr;
                             band->dataSize = 0;
