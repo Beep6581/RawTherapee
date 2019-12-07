@@ -19,13 +19,18 @@
 #include "options.h"
 #include <cstdio>
 #include <glib/gstdio.h>
+#include <glibmm/keyfile.h>
+#include <iostream>
 #include <sstream>
 #include "multilangmgr.h"
 #include "addsetids.h"
 #include "guiutils.h"
+#include "pathutils.h"
 #include "version.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/rtengine.h"
+#include "../rtengine/utils.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -1258,7 +1263,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
-                	pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
+                    pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
                 }
 
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {

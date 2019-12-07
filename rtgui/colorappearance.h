@@ -16,25 +16,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _COLORAPPEARANCE_H_
-#define _COLORAPPEARANCE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
-#include "toolpanel.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
-#include "mycurve.h"
-#include "guiutils.h"
 #include "colorprovider.h"
+#include "curvelistener.h"
+#include "guiutils.h"
+#include "toolpanel.h"
+
+class DiagonalCurveEditor;
+class CurveEditorGroup;
+class CurveEditor;
 
 class ColorAppearance final :
-        public ToolParamBlock,
-        public AdjusterListener,
-        public FoldableToolPanel,
-        public rtengine::AutoCamListener,
-        public CurveListener,
-        public ColorProvider
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public rtengine::AutoCamListener,
+    public CurveListener,
+    public ColorProvider
 {
 public:
     ColorAppearance ();
@@ -45,7 +47,7 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setBatchMode   (bool batchMode) override;
     void adjusterChanged     (Adjuster* a, double newval) override;
-    void adjusterAutoToggled (Adjuster* a, bool newval) override;
+    void adjusterAutoToggled (Adjuster* a) override;
 //    void adjusterAdapToggled (Adjuster* a, bool newval);
     void enabledChanged      () override;
     void surroundChanged     ();
@@ -173,5 +175,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif

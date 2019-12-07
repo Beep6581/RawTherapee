@@ -19,22 +19,31 @@
 #pragma once
 
 #include "adjuster.h"
+#include "checkbox.h"
 #include "toolpanel.h"
 
-class PdSharpening final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoContrastListener, public rtengine::AutoRadiusListener
+class PdSharpening final :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public rtengine::AutoContrastListener,
+    public rtengine::AutoRadiusListener,
+    public CheckBoxListener
 {
 
 protected:
     Adjuster* contrast;
-    Adjuster* gamma;
     Adjuster* dradius;
+    Adjuster* dradiusOffset;
     Adjuster* diter;
+    CheckBox* itercheck;
 
     bool lastAutoContrast;
     bool lastAutoRadius;
     rtengine::ProcEvent EvPdShrContrast;
+    rtengine::ProcEvent EvPdShrCheckIter;
     rtengine::ProcEvent EvPdShrDRadius;
-    rtengine::ProcEvent EvPdSharpenGamma;
+    rtengine::ProcEvent EvPdShrDRadiusOffset;
     rtengine::ProcEvent EvPdShrDIterations;
     rtengine::ProcEvent EvPdShrAutoContrast;
     rtengine::ProcEvent EvPdShrAutoRadius;
@@ -50,13 +59,14 @@ public:
     void setDefaults (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setBatchMode (bool batchMode) override;
 
-    void adjusterAutoToggled (Adjuster* a, bool newval) override;
+    void adjusterAutoToggled (Adjuster* a) override;
     void adjusterChanged (Adjuster* a, double newval) override;
     void enabledChanged () override;
 
     void autoContrastChanged (double autoContrast) override;
     void autoRadiusChanged (double autoRadius) override;
 
-    void setAdjusterBehavior (bool contrastadd, bool gammaadd, bool radiusadd, bool iteradds);
+    void setAdjusterBehavior (bool contrastadd, bool radiusadd, bool iteradd);
     void trimValues (rtengine::procparams::ProcParams* pp) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 };

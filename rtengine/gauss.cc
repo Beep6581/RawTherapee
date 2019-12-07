@@ -16,12 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "gauss.h"
-#include "rt_math.h"
 #include <cmath>
 #include <cstdlib>
-#include "opthelper.h"
+#include <cstring>
+
+#include "gauss.h"
+
 #include "boxblur.h"
+#include "opthelper.h"
+#include "rt_math.h"
+
 namespace
 {
 
@@ -1349,7 +1353,7 @@ template<class T> void gaussVerticalmult (T** src, T** dst, const int W, const i
 }
 #endif
 
-template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int H, const double sigma, T *buffer = nullptr, eGaussType gausstype = GAUSS_STANDARD, T** buffer2 = nullptr)
+template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int H, const double sigma, bool useBoxBlur, eGaussType gausstype = GAUSS_STANDARD, T** buffer2 = nullptr)
 {
     static constexpr auto GAUSS_SKIP = 0.25;
     static constexpr auto GAUSS_3X3_LIMIT = 0.6;
@@ -1357,7 +1361,7 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
     static constexpr auto GAUSS_7X7_LIMIT = 1.15;
     static constexpr auto GAUSS_DOUBLE = 25.0;
 
-    if(buffer) {
+    if (useBoxBlur) {
         // special variant for very large sigma, currently only used by retinex algorithm
         // use iterated boxblur to approximate gaussian blur
         // Compute ideal averaging filter width and number of iterations
@@ -1393,10 +1397,10 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
             sizes[i] = ((i < m ? wl : wu) - 1) / 2;
         }
 
-        rtengine::boxblur(src, dst, buffer, sizes[0], sizes[0], W, H);
+        rtengine::boxblur(src, dst, sizes[0], W, H, true);
 
         for(int i = 1; i < n; i++) {
-            rtengine::boxblur(dst, dst, buffer, sizes[i], sizes[i], W, H);
+            rtengine::boxblur(dst, dst, sizes[i], W, H, true);
         }
     } else {
         if (sigma < GAUSS_SKIP) {
@@ -1532,8 +1536,8 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
 }
 }
 
-void gaussianBlur(float** src, float** dst, const int W, const int H, const double sigma, float *buffer, eGaussType gausstype, float** buffer2)
+void gaussianBlur(float** src, float** dst, const int W, const int H, const double sigma, bool useBoxBlur, eGaussType gausstype, float** buffer2)
 {
-    gaussianBlurImpl<float>(src, dst, W, H, sigma, buffer, gausstype, buffer2);
+    gaussianBlurImpl<float>(src, dst, W, H, sigma, useBoxBlur, gausstype, buffer2);
 }
 

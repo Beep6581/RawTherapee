@@ -16,6 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include "cieimage.h"
+#include "dcp.h"
+#include "imagefloat.h"
+#include "labimage.h"
 #include "rtengine.h"
 #include "colortemp.h"
 #include "imagesource.h"
@@ -25,7 +29,8 @@
 #include "clutstore.h"
 #include "processingjob.h"
 #include "procparams.h"
-#include <glibmm.h>
+#include <glibmm/ustring.h>
+#include <glibmm/thread.h>
 #include "../rtgui/options.h"
 #include "rawimagesource.h"
 #include "../rtgui/multilangmgr.h"
@@ -34,7 +39,6 @@
 
 namespace rtengine
 {
-extern const Settings* settings;
 
 namespace
 {
@@ -240,7 +244,6 @@ private:
             bool dehacontlutili = false;
             bool mapcontlutili = false;
             bool useHsl = false;
-//        multi_array2D<float, 3> conversionBuffer(1, 1);
             multi_array2D<float, 4> conversionBuffer (1, 1);
             imgsrc->retinexPrepareBuffers (params.icm, params.retinex, conversionBuffer, dummy);
             imgsrc->retinexPrepareCurves (params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
@@ -804,17 +807,7 @@ private:
 
     void stage_denoise()
     {
-        procparams::ProcParams& params = job->pparams;
-        //ImProcFunctions ipf (&params, true);
-        ImProcFunctions &ipf = * (ipf_p.get());
-
-        // perform luma/chroma denoise
-//  CieImage *cieView;
-//  NoisCurve noiseLCurve;
-//    bool lldenoiseutili=false;
-//  Imagefloat *calclum ;
-//    params.dirpyrDenoise.getCurves(noiseLCurve, lldenoiseutili);
-//  if (params.dirpyrDenoise.enabled  && lldenoiseutili) {
+        const procparams::ProcParams& params = job->pparams;
 
         DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;   // make a copy because we cheat here
 
@@ -847,9 +840,7 @@ private:
         }
 
         if (denoiseParams.enabled) {
-            // CurveFactory::denoiseLL(lldenoiseutili, denoiseParams.lcurve, Noisecurve,1);
-            //denoiseParams.getCurves(noiseLCurve);
-//      ipf.RGB_denoise(baseImg, baseImg, calclum, imgsrc->isRAW(), denoiseParams, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, lldenoiseutili);
+            ImProcFunctions &ipf = * (ipf_p.get());
             float nresi, highresi;
             int kall = 2;
             ipf.RGB_denoise (kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, nresi, highresi);
@@ -871,7 +862,7 @@ private:
 
     void stage_transform()
     {
-        procparams::ProcParams& params = job->pparams;
+        const procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
@@ -1000,7 +991,7 @@ private:
         }
 
         autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-        DCPProfile::ApplyState as;
+        DCPProfileApplyState as;
         DCPProfile *dcpProf = imgsrc->getDCP (params.icm, as);
 
         LUTu histToneCurve;
@@ -1086,13 +1077,10 @@ private:
         ipf.vibrance (labView);
         ipf.labColorCorrectionRegions(labView);
 
-        if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
-            ipf.impulsedenoise (labView);
-        }
-
         // for all treatments Defringe, Sharpening, Contrast detail ,Microcontrast they are activated if "CIECAM" function are disabled
 
         if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
+            ipf.impulsedenoise (labView);
             ipf.defringe (labView);
         }
 

@@ -16,31 +16,36 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <clocale>
+
+#include <lcms2.h>
+
+#include <glib/gstdio.h>
+
+#include <glibmm/ustring.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/keyfile.h>
+
+#include "cieimage.h"
+#include "color.h"
+#include "colortemp.h"
+#include "curves.h"
+#include "dcp.h"
+#include "iccstore.h"
+#include "image8.h"
+#include "improcfun.h"
+#include "jpeg.h"
+#include "labimage.h"
+#include "median.h"
+#include "procparams.h"
+#include "rawimage.h"
+#include "rawimagesource.h"
 #include "rtengine.h"
 #include "rtthumbnail.h"
-#include "../rtgui/options.h"
-#include "image8.h"
-#include <lcms2.h>
-#include "curves.h"
-#include <glibmm.h>
-#include "improcfun.h"
-#include "colortemp.h"
-#include "mytime.h"
-#include "utils.h"
-#include "iccstore.h"
-#include "iccmatrices.h"
-#include "rawimagesource.h"
-#include "stdimagesource.h"
-#include <glib/gstdio.h>
-#include "rawimage.h"
-#include "jpeg.h"
-#include "../rtgui/ppversion.h"
-#include "improccoordinator.h"
 #include "settings.h"
-#include "procparams.h"
-#include <locale.h>
+#include "stdimagesource.h"
 #include "StopWatch.h"
-#include "median.h"
+#include "utils.h"
 
 namespace
 {
@@ -183,12 +188,8 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], 
 
 }
 
-extern Options options;
-
 namespace rtengine
 {
-
-extern const Settings *settings;
 
 using namespace procparams;
 
@@ -329,7 +330,7 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.inputProfile = "(camera)";
-    neutral.icm.workingProfile = options.rtSettings.srgb;
+    neutral.icm.workingProfile = settings->srgb;
 
     src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
     double thresholdDummy = 0.f;
@@ -428,7 +429,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     // did we succeed?
     if ( err ) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             std::cout << "Could not extract thumb from " << fname.c_str() << std::endl;
         }
         delete tpp;
@@ -1236,7 +1237,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ImProcFunctions ipf (&params, forHistogramMatching); // enable multithreading when forHistogramMatching is true
     ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
-    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(options.rtSettings.monitorIntent), false, false);
+    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(settings->monitorIntent), false, false);
 
     LUTu hist16 (65536);
 
@@ -1363,7 +1364,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = nullptr;
-    DCPProfile::ApplyState as;
+    DCPProfileApplyState as;
 
     if (isRaw) {
         cmsHPROFILE dummy;
@@ -2126,11 +2127,11 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
 
         return true;
     } catch (Glib::Error &err) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::readData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::readData / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
     }
@@ -2177,11 +2178,11 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         keyData = keyFile.to_data ();
 
     } catch (Glib::Error& err) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::writeData / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
         }
     }
@@ -2193,7 +2194,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
     FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (!f) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::writeData / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
 

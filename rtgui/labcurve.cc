@@ -20,6 +20,11 @@
 
 #include "labcurve.h"
 
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "options.h"
+
+#include "../rtengine/color.h"
 #include "../rtengine/improcfun.h"
 #include "../rtengine/procparams.h"
 #include "editcallbacks.h"

@@ -17,6 +17,9 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 #include "cropwindow.h"
 
@@ -30,9 +33,10 @@
 #include "editcallbacks.h"
 #include "editbuffer.h"
 #include "editwidgets.h"
+#include "pointermotionlistener.h"
+#include "rtsurface.h"
 
 #include "../rtengine/dcrop.h"
-#include "../rtengine/mytime.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/rt_math.h"
 
@@ -256,7 +260,7 @@ void CropWindow::getCropAnchorPosition (int& x, int& y)
     cropHandler.getAnchorPosition(x, y);
 }
 
-void CropWindow::setCropAnchorPosition (int& x, int& y)
+void CropWindow::setCropAnchorPosition (int x, int y)
 {
     cropHandler.setAnchorPosition(x, y);
 }

@@ -55,7 +55,7 @@ void WhiteBalance::init ()
 
 void WhiteBalance::cleanup ()
 {
-    for (unsigned int i = 0; i < toUnderlying(WBEntry::Type::CUSTOM) + 1; i++) {
+    for (int i = 0; i < toUnderlying(WBEntry::Type::CUSTOM) + 1; i++) {
         wbPixbufs[i].reset();
     }
 }

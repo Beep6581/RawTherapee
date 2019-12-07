@@ -16,27 +16,37 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <glibmm/thread.h>
+
 #include "improccoordinator.h"
-#include "curves.h"
-#include "mytime.h"
-#include "refreshmap.h"
-#include "../rtgui/ppversion.h"
+
+#include "cieimage.h"
+#include "color.h"
 #include "colortemp.h"
-#include "improcfun.h"
+#include "curves.h"
+#include "dcp.h"
 #include "iccstore.h"
+#include "image8.h"
+#include "imagefloat.h"
+#include "improcfun.h"
+#include "labimage.h"
+#include "lcp.h"
 #include "procparams.h"
 #include "tweakoperator.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include "color.h"
+#include "refreshmap.h"
+
+#include "../rtgui/options.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator() :
     orig_prev(nullptr),
@@ -246,9 +256,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
     MyMutex::MyLock processingLock(mProcessing);
 
-    constexpr int numofphases = 15;
-    int readyphase = 0;
-
     bool highDetailNeeded = options.prevdemo == PD_Sidecar ? true : (todo & M_HIGHQUAL);
 
     // Check if any detail crops need high detail. If not, take a fast path short cut
@@ -288,8 +295,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             rp.xtranssensor.ccSteps = 0;
             //rp.deadPixelFilter = rp.hotPixelFilter = false;
         }
-
-        progress("Applying white balance, color correction & sRGB conversion...", 100 * readyphase / numofphases);
 
         if (frameCountListener) {
             frameCountListener->FrameCountChanged(imgsrc->getFrameCount(), params->raw.bayersensor.imageNum);
@@ -549,11 +554,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.firstAnalysis(orig_prev, *params, vhist16);
         }
 
-        readyphase++;
-
         oprevi = orig_prev;
-
-        progress ("Spot Removal...", 100 * readyphase / numofphases);
 
         if (todo & M_SPOT) {
             if (params->spot.enabled && !params->spot.entries.empty()) {
@@ -592,7 +593,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.ToneMapFattal02(oprevi);
         }
 
-        progress ("Rotate / Distortion...", 100 * readyphase / numofphases);
         // Remove transformation if unneeded
         bool needstransform = ipf.needsTransform();
 
@@ -618,11 +618,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.dirpyrequalizer(&labcbdl, scale);
             ipf.lab2rgb(labcbdl, *oprevi, params->icm.workingProfile);
         }
-
-        readyphase++;
-        progress("Preparing shadow/highlight map...", 100 * readyphase / numofphases);
-
-        readyphase++;
 
         if (todo & M_AUTOEXP) {
             if (params->toneCurve.autoexp) {
@@ -659,8 +654,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
             }
         }
-
-        progress("Exposure curve & CIELAB conversion...", 100 * readyphase / numofphases);
 
         if (todo &  (M_AUTOEXP | M_RGBCURVE)) {
             if (params->icm.workingTRC == "Custom") { //exec TRC IN free
@@ -783,7 +776,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double ggm = 33.;
                 double bbm = 33.;
 
-                DCPProfile::ApplyState as;
+                DCPProfileApplyState as;
                 DCPProfile *dcpProf = imgsrc->getDCP(params->icm, as);
 
                 ipf.rgbProc (oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, params->toneCurve.saturation,
@@ -808,8 +801,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             int x1, y1, x2, y2;
             params->crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
         }
-
-        readyphase++;
 
         if (todo & (M_LUMACURVE | M_CROP)) {
             LUTu lhist16(32768);
@@ -853,8 +844,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (todo & (M_LUMINANCE + M_COLOR)) {
             nprevl->CopyFrom(oprevl);
 
-            progress("Applying Color Boost...", 100 * readyphase / numofphases);
-
             histCCurve.clear();
             histLCurve.clear();
             ipf.chromiLuminanceCurve(nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
@@ -865,72 +854,22 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 ipf.EPDToneMap(nprevl, 0, scale);
             }
 
-            // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
-            readyphase++;
-
-            /* Issue 2785, disabled some 1:1 tools
-                    if (scale==1) {
-                        if((params->colorappearance.enabled && !settings->autocielab) || (!params->colorappearance.enabled)){
-                            progress ("Denoising luminance impulse...",100*readyphase/numofphases);
-                            ipf.impulsedenoise (nprevl);
-                            readyphase++;
-                        }
-                        if((params->colorappearance.enabled && !settings->autocielab) || (!params->colorappearance.enabled)){
-                            progress ("Defringing...",100*readyphase/numofphases);
-                            ipf.defringe (nprevl);
-                            readyphase++;
-                        }
-                        if (params->sharpenEdge.enabled) {
-                            progress ("Edge sharpening...",100*readyphase/numofphases);
-                            ipf.MLsharpen (nprevl);
-                            readyphase++;
-                        }
-                        if (params->sharpenMicro.enabled) {
-                            if(( params->colorappearance.enabled && !settings->autocielab) || (!params->colorappearance.enabled)){
-                                progress ("Microcontrast...",100*readyphase/numofphases);
-                                ipf.MLmicrocontrast (nprevl);
-                                readyphase++;
-                            }
-                        }
-                        if(((params->colorappearance.enabled && !settings->autocielab) || (!params->colorappearance.enabled)) && params->sharpening.enabled) {
-                            progress ("Sharpening...",100*readyphase/numofphases);
-
-                            float **buffer = new float*[pH];
-                            for (int i=0; i<pH; i++)
-                                buffer[i] = new float[pW];
-
-                            ipf.sharpening (nprevl, (float**)buffer);
-
-                            for (int i=0; i<pH; i++)
-                                delete [] buffer[i];
-                            delete [] buffer;
-                            readyphase++;
-                        }
-                    }
-            */
             if (params->dirpyrequalizer.cbdlMethod == "aft") {
                 if (((params->colorappearance.enabled && !settings->autocielab) || (!params->colorappearance.enabled))) {
-                    progress("Pyramid wavelet...", 100 * readyphase / numofphases);
                     ipf.dirpyrequalizer(nprevl, scale);
-                    //ipf.Lanczoslab (ip_wavelet(LabImage * lab, LabImage * dst, const procparams::EqualizerParams & eqparams), nprevl, 1.f/scale);
-                    readyphase++;
                 }
             }
 
 
             wavcontlutili = false;
-            //CurveFactory::curveWavContL ( wavcontlutili,params->wavelet.lcurve, wavclCurve, LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,int skip);
             CurveFactory::curveWavContL(wavcontlutili, params->wavelet.wavclCurve, wavclCurve, scale == 1 ? 1 : 16);
 
 
             if ((params->wavelet.enabled)) {
                 WaveletParams WaveParams = params->wavelet;
-                //      WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY);
                 WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
                 int kall = 0;
-                progress("Wavelet...", 100 * readyphase / numofphases);
-                //  ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, scale);
                 ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
             }
@@ -938,7 +877,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         ipf.softLight(nprevl);
 
             if (params->colorappearance.enabled) {
-                //L histo  and Chroma histo for ciecam
+                // L histo  and Chroma histo for ciecam
                 // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
                 int x1, y1, x2, y2;
                 params->crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
@@ -1019,8 +958,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->colorappearance.autoybscen && acListener && params->colorappearance.enabled) {
                     acListener->ybCamChanged((int) yb);    //real value Yb scene
                 }
-
-                readyphase++;
             } else {
                 // CIECAM is disabled, we free up its image buffer to save some space
                 if (ncie) {
@@ -1055,8 +992,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
     if (panningRelatedChange || (todo & M_MONITOR)) {
-        progress("Conversion to RGB...", 100 * readyphase / numofphases);
-
         if ((todo != CROP && todo != MINUPDATE) || (todo & M_MONITOR)) {
             MyMutex::MyLock prevImgLock(previmg->getMutex());
 
@@ -1068,7 +1003,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete workimg;
                 workimg = ipf.lab2rgb(nprevl, 0, 0, pW, pH, params->icm);
             } catch (char * str) {
-                progress("Error converting file...", 0);
                 return;
             }
         }
@@ -1086,8 +1020,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         {
             imageListener->imageReady(params->crop);
         }
-
-        readyphase++;
 
         if (hListener) {
             updateLRGBHistograms();
@@ -1274,15 +1206,6 @@ void ImProcCoordinator::updateLRGBHistograms()
         }
     }
 
-}
-
-void ImProcCoordinator::progress(Glib::ustring str, int pr)
-{
-
-    /*  if (plistener) {
-        plistener->setProgressStr (str);
-        plistener->setProgress ((double)pr / 100.0);
-      }*/
 }
 
 bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, double tempBias)

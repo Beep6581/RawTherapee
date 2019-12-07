@@ -16,13 +16,15 @@
  */
 #include <numeric>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
+#include "inspector.h"
 #include "multilangmgr.h"
 #include "options.h"
+#include "rtscalable.h"
 #include "thumbbrowserbase.h"
+#include "thumbbrowserentrybase.h"
 
-#include "../rtengine/mytime.h"
 #include "../rtengine/rt_math.h"
 
 using namespace std;
@@ -965,7 +967,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
             }
 
             MYWRITERLOCK_RELEASE(l);
-            rightClicked (fileDescr);
+            rightClicked ();
         }
     } // end of MYWRITERLOCK(l, entryRW);
 

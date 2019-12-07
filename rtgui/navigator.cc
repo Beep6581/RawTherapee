@@ -18,15 +18,11 @@
  */
 #include <iomanip>
 #include "navigator.h"
+#include "previewwindow.h"
 #include "toolpanel.h"
-#include "../rtengine/iccmatrices.h"
-#include "../rtengine/iccstore.h"
-#include "../rtengine/curves.h"
 #include "../rtengine/color.h"
 #include "../rtengine/rt_math.h"
 #include "options.h"
-
-extern Options options;
 
 using namespace rtengine;
 

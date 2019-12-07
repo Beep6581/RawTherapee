@@ -20,13 +20,16 @@
 #include "wavelet.h"
 #include <cmath>
 
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "editcallbacks.h"
 #include "guiutils.h"
 #include "rtimage.h"
+#include "options.h"
+#include "../rtengine/color.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
-extern Options options;
 
 namespace
 {

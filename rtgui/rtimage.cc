@@ -20,9 +20,10 @@
 
 #include "rtimage.h"
 
+#include <cassert>
 #include <iostream>
 
-#include "options.h"
+#include "../rtengine/settings.h"
 
 namespace
 {
@@ -214,7 +215,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::u
         }
         */
     } catch (const Glib::Exception& exception) {
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             std::cerr << "Failed to load image \"" << fileName << "\": " << exception.what() << std::endl;
         }
     }

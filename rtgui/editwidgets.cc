@@ -18,8 +18,10 @@
  */
 
 #include "editwidgets.h"
+
 #include "editbuffer.h"
 #include "editcallbacks.h"
+#include "rtsurface.h"
 
 const std::vector<double> Geometry::dash = {3., 1.5};
 

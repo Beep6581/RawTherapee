@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IPTCPANEL_
-#define _IPTCPANEL_
+#pragma once
 
 #include <memory>
 
@@ -26,7 +25,9 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class IPTCPanel : public Gtk::VBox, public ToolPanel
+class IPTCPanel :
+    public Gtk::VBox,
+    public ToolPanel
 {
 
 private:
@@ -92,5 +93,3 @@ public:
     void copyClicked    ();
     void pasteClicked   ();
 };
-
-#endif

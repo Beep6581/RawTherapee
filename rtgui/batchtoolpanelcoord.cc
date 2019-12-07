@@ -16,12 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include "bayerpreprocess.h"
+#include "bayerprocess.h"
+
 #include "multilangmgr.h"
 #include "batchtoolpanelcoord.h"
 #include "options.h"
 #include "filepanel.h"
 #include "procparamchangers.h"
 #include "addsetids.h"
+#include "thumbnail.h"
 
 using namespace rtengine::procparams;
 
@@ -152,7 +157,7 @@ void BatchToolPanelCoordinator::initSession ()
             cacorrection->setAdjusterBehavior (false);
             sharpening->setAdjusterBehavior (false, false, false, false, false, false, false);
             prsharpening->setAdjusterBehavior (false, false, false, false, false, false, false);
-            pdSharpening->setAdjusterBehavior (false, false, false, false);
+            pdSharpening->setAdjusterBehavior (false, false, false);
             sharpenEdge->setAdjusterBehavior (false, false);
             sharpenMicro->setAdjusterBehavior (false, false, false);
             epd->setAdjusterBehavior (false, false, false, false, false);

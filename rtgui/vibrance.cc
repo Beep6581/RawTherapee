@@ -18,6 +18,10 @@
  */
 
 #include "vibrance.h"
+
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "options.h"
 #include "../rtengine/color.h"
 
 using namespace rtengine;

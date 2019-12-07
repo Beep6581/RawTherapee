@@ -21,6 +21,7 @@
 #include <string>
 #include "guiutils.h"
 #include "multilangmgr.h"
+#include "popuptogglebutton.h"
 #include "../rtengine/LUT.h"
 
 #include <cstring>

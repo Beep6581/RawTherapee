@@ -21,11 +21,10 @@
 #include "options.h"
 #include "../rtengine/color.h"
 #include "../rtengine/rt_math.h"
+#include "../rtengine/utils.h"
 #include "imagearea.h"
 #include "multilangmgr.h"
 #include "navigator.h"
-
-extern Options options;
 
 LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
 : cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S15),
@@ -241,7 +240,7 @@ void LockableColorPicker::updateBackBuffer ()
 
 }
 
-void LockableColorPicker::draw (Cairo::RefPtr<Cairo::Context> &cr)
+void LockableColorPicker::draw (const Cairo::RefPtr<Cairo::Context> &cr)
 {
     if (validity == Validity::OUTSIDE) {
         return;
@@ -285,12 +284,12 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B, c
     }
 }
 
-void LockableColorPicker::getImagePosition (rtengine::Coord &imgPos)
+void LockableColorPicker::getImagePosition (rtengine::Coord &imgPos) const
 {
     imgPos = position;
 }
 
-void LockableColorPicker::getScreenPosition (rtengine::Coord &screenPos)
+void LockableColorPicker::getScreenPosition (rtengine::Coord &screenPos) const
 {
     if (cropWindow) {
         cropWindow->imageCoordToScreen(position.x, position.y, screenPos.x, screenPos.y);
@@ -329,7 +328,7 @@ void LockableColorPicker::setSize (Size newSize)
     }
 }
 
-LockableColorPicker::Size LockableColorPicker::getSize ()
+LockableColorPicker::Size LockableColorPicker::getSize () const
 {
     return size;
 }

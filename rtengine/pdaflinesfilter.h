@@ -21,10 +21,14 @@
 #pragma once
 
 #include <vector>
-#include "rawimagesource.h"
-#include "noncopyable.h"
 
-namespace rtengine {
+#include "noncopyable.h"
+#include "rawimagesource.h"
+
+namespace rtengine
+{
+
+class RawImage;
 
 class PDAFLinesFilter: public rtengine::NonCopyable
 {
@@ -32,12 +36,12 @@ public:
     explicit PDAFLinesFilter(RawImage *ri);
     ~PDAFLinesFilter();
     
-    int mark(array2D<float> &rawData, PixelsMap &bpMap);
+    int mark(const array2D<float> &rawData, PixelsMap &bpMap);
     RawImageSource::GreenEqulibrateThreshold &greenEqThreshold();
     std::unique_ptr<RawImageSource::CFALineDenoiseRowBlender> lineDenoiseRowBlender();
 
 private:
-    int markLine(array2D<float> &rawData, PixelsMap &bpMap, int y);
+    int markLine(const array2D<float>& rawData, PixelsMap &bpMap, int y);
 
     RawImage *ri_;
     int W_;

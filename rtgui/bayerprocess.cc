@@ -23,6 +23,7 @@
 #include "options.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -671,7 +672,7 @@ void BayerProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
     }
 }
 
-void BayerProcess::adjusterAutoToggled(Adjuster* a, bool newval)
+void BayerProcess::adjusterAutoToggled(Adjuster* a)
 {
     if (multiImage) {
         if (dualDemosaicContrast->getAutoInconsistent()) {

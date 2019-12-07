@@ -19,12 +19,20 @@
 
 #include <gtkmm.h>
 #include "rtwindow.h"
-#include "options.h"
+#include "cachemanager.h"
 #include "preferences.h"
 #include "iccprofilecreator.h"
 #include "cursormanager.h"
+#include "editwindow.h"
 #include "rtimage.h"
+#include "thumbnail.h"
 #include "whitebalance.h"
+#include "../rtengine/settings.h"
+#include "batchqueuepanel.h"
+#include "batchqueueentry.h"
+#include "editorpanel.h"
+#include "filepanel.h"
+#include "filmsimulation.h"
 
 float fontScale = 1.f;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
@@ -36,14 +44,14 @@ extern unsigned char initialGdkScale;
 static gboolean
 osx_should_quit_cb (GtkosxApplication *app, gpointer data)
 {
-    RTWindow *rtWin = (RTWindow *)data;
+    RTWindow * const rtWin = static_cast<RTWindow*>(data);
     return rtWin->on_delete_event (0);
 }
 
 static void
 osx_will_quit_cb (GtkosxApplication *app, gpointer data)
 {
-    RTWindow *rtWin = (RTWindow *)data;
+    RTWindow *rtWin = static_cast<RTWindow*>(data);
     rtWin->on_delete_event (0);
     gtk_main_quit ();
 }
@@ -67,7 +75,7 @@ bool RTWindow::osxFileOpenEvent (Glib::ustring path)
 static gboolean
 osx_open_file_cb (GtkosxApplication *app, gchar *path_, gpointer data)
 {
-    RTWindow *rtWin = (RTWindow *)data;
+    RTWindow *rtWin = static_cast<RTWindow*>(data);
 
     if (!argv1.empty()) {
         // skip handling if we have a file argument or else we get double open of same file
@@ -168,9 +176,9 @@ RTWindow::RTWindow ()
             #endif
             //GTK318
             if (options.pseudoHiDPISupport) {
-            	fontScale = options.fontSize / (float)RTScalable::baseFontSize;
+                fontScale = options.fontSize / (float)RTScalable::baseFontSize;
             }
-            if (options.rtSettings.verbose) {
+            if (rtengine::settings->verbose) {
                 printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
             }
         } else {
@@ -196,18 +204,18 @@ RTWindow::RTWindow ()
                     pt = fontSize / Pango::SCALE;
                 }
                 if (options.pseudoHiDPISupport) {
-                	fontScale = (float)pt / (float)RTScalable::baseFontSize;
+                    fontScale = (float)pt / (float)RTScalable::baseFontSize;
                 }
                 if ((int)initialGdkScale > 1 || pt != RTScalable::baseFontSize) {
                     css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
-                    if (options.rtSettings.verbose) {
+                    if (rtengine::settings->verbose) {
                         printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, fontScale);
                     }
                 }
             }
         }
         if (!css.empty()) {
-            if (options.rtSettings.verbose) {
+            if (rtengine::settings->verbose) {
                 printf("CSS:\n%s\n\n", css.c_str());
             }
             try {
@@ -223,13 +231,6 @@ RTWindow::RTWindow ()
             }
         }
     }
-
-#ifndef NDEBUG
-    else if (!screen) {
-        printf ("ERROR: Can't get default screen!\n");
-    }
-
-#endif
 
     // ------- end loading theme files
 
@@ -456,10 +457,9 @@ RTWindow::~RTWindow()
     g_object_unref (osxApp);
 #endif
 
-    if (fpanel) {
-        delete fpanel;
-    }
-
+    delete fpanel;
+    delete iFullscreen;
+    delete iFullscreen_exit;
     RTImage::cleanup();
 }
 
@@ -652,8 +652,8 @@ void RTWindow::remEditorPanel (EditorPanel* ep)
 
             set_title_decorated ("");
         } else {
-            EditorPanel* ep = static_cast<EditorPanel*> (mainNB->get_nth_page (mainNB->get_current_page()));
-            set_title_decorated (ep->getFileName());
+            const EditorPanel* lep = static_cast<EditorPanel*> (mainNB->get_nth_page (mainNB->get_current_page()));
+            set_title_decorated (lep->getFileName());
         }
 
         // TODO: ask what to do: close & apply, close & apply selection, close & revert, cancel
@@ -1161,4 +1161,9 @@ void RTWindow::createSetmEditor()
     epanel->tbTopPanel_1_visible (true); //show the toggle Top Panel button
     mainNB->append_page (*epanel, *editorLabelGrid);
 
+}
+
+bool RTWindow::isSingleTabMode() const
+{
+    return !options.tabbedUI && ! (options.multiDisplayMode > 0);
 }

@@ -26,7 +26,6 @@
 #include "editcallbacks.h"
 #include "guiutils.h"
 #include "toolpanel.h"
-#include "wbprovider.h"
 
 class FilmNegProvider
 {
@@ -36,7 +35,7 @@ public:
     virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) = 0;
 };
 
-class FilmNegative :
+class FilmNegative final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel,

@@ -18,19 +18,22 @@
  *
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
-#ifndef _POPUPCOMMON_
-#define _POPUPCOMMON_
+#pragma once
 
 #include <vector>
+
 #include <glibmm/ustring.h>
+
 #include <sigc++/signal.h>
 
 namespace Gtk
 {
+
 class Grid;
 class Menu;
 class Button;
 class ImageMenuItem;
+
 }
 
 typedef struct _GdkEventButton GdkEventButton;
@@ -101,5 +104,3 @@ inline int PopUpCommon::getSelected () const
 {
     return posToIndex(selected);
 }
-
-#endif

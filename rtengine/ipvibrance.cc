@@ -23,16 +23,11 @@
 #include "rtengine.h"
 #include "improcfun.h"
 #include "iccstore.h"
-#include "mytime.h"
-#include "../rtgui/thresholdselector.h"
+#include "labimage.h"
 #include "curves.h"
 #include "color.h"
 #include "procparams.h"
 #include "StopWatch.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 
 using namespace std;
 

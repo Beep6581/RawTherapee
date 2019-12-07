@@ -17,14 +17,14 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "adjuster.h"
+
 #include <sigc++/slot.h>
 #include <cmath>
-#include "multilangmgr.h"
-#include "../rtengine/rtengine.h"
-#include "options.h"
-#include "guiutils.h"
-#include "rtimage.h"
 
+#include "multilangmgr.h"
+#include "options.h"
+#include "rtimage.h"
+#include "../rtengine/rt_math.h"
 
 namespace {
 
@@ -246,7 +246,7 @@ void Adjuster::autoToggled ()
     }
 
     if (adjusterListener != nullptr && !blocked) {
-        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
+        adjusterListener->adjusterAutoToggled(this);
     }
 }
 
@@ -493,7 +493,7 @@ bool Adjuster::notifyListenerAutoToggled ()
 {
 
     if (adjusterListener != nullptr && !blocked) {
-        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
+        adjusterListener->adjusterAutoToggled(this);
     }
 
     return false;

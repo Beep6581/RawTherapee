@@ -16,21 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _HISTOGRAMPANEL_
-#define _HISTOGRAMPANEL_
-
+#pragma once
 
 #include <gtkmm.h>
-#include <glibmm.h>
-#include <cairomm/cairomm.h>
-#include "../rtengine/LUT.h"
-#include "../rtengine/improccoordinator.h"
-#include "guiutils.h"
 
+#include <glibmm/ustring.h>
+
+#include <cairomm/cairomm.h>
+
+#include "guiutils.h"
 #include "pointermotionlistener.h"
+
+#include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
 
 class HistogramArea;
+
 struct HistogramAreaIdleHelper {
     HistogramArea* harea;
     bool destroyed;
@@ -164,8 +165,8 @@ public:
     type_signal_factor_changed signal_factor_changed();
 
 private:
-    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int vsize);
-    void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int & ui, int & oi);
+    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int vsize);
+    void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int & ui, int & oi);
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
@@ -252,5 +253,3 @@ public:
     // drawModeListener interface
     void toggleButtonMode () override;
 };
-
-#endif

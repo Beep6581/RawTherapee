@@ -217,16 +217,6 @@ bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference)
     }
 }
 
-void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
-{
-
-    if (options.thumbInterp == 0) {
-        rtengine::nearestInterp (src, sw, sh, dst, dw, dh);
-    } else if (options.thumbInterp == 1) {
-        rtengine::bilinearInterp (src, sw, sh, dst, dw, dh);
-    }
-}
-
 bool confirmOverwrite (Gtk::Window& parent, const std::string& filename)
 {
     bool safe = true;
@@ -956,22 +946,21 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
         const double lowerBound = adjust->get_lower();
         double value = adjust->get_value();
         double step  = adjust->get_step_increment();
-        double value2 = 0.;
 
         if (event->direction == GDK_SCROLL_DOWN) {
-            value2 = rtengine::min<double>(value + step, upperBound);
+            const double value2 = rtengine::min<double>(value + step, upperBound);
 
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_UP) {
-            value2 = rtengine::max<double>(value - step, lowerBound);
+            const double value2 = rtengine::max<double>(value - step, lowerBound);
 
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_SMOOTH) {
-            value2 = rtengine::LIM<double>(value + event->delta_y * step, lowerBound, upperBound);
+            const double value2 = rtengine::LIM<double>(value + event->delta_y * step, lowerBound, upperBound);
 
             if (value2 != value) {
                 scroll->set_value(value2);

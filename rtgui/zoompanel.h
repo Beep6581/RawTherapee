@@ -16,13 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _ZOOMPANEL_
-#define _ZOOMPANEL_
+#pragma once
 
 #include <gtkmm.h>
 
 class ImageArea;
-class ZoomPanel : public Gtk::Grid
+
+class ZoomPanel :
+    public Gtk::Grid
 {
 
 protected:
@@ -48,6 +49,3 @@ public:
     void newCropClicked     ();
     void refreshZoomLabel   ();
 };
-
-#endif
-

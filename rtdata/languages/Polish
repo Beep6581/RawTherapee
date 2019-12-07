@@ -563,8 +563,8 @@ MAIN_TOOLTIP_BACKCOLOR1;Kolor tła podglądu: <b>Czarny</b>\nSkrót: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Kolor tła podglądu: <b>Biały</b>\nSkrót: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Zablokuj</b> / <b>Odblokuj</b> widok <b>Przed</b>\n\n<b>Zablokuj</b>: nie zmieniaj widoku <b>Przed</b> - \nPrzydatne w porównywaniu zablokowanego obrazu z obrazem na ktorym wykonano wiele zmian.\n\n<b>Odblokuj</b>: widok <b>Przed</b> będzie śledził widok <b>Po</b> o jeden krok do tyłu, pokazując obraz przed efektem aktualnie użytego narzędzia.
 MAIN_TOOLTIP_HIDEHP;Pokaż/ukryj lewy panel (razem z historią).\nSkrót: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Pokaż obcięte prześwietlenia.\nSkrót: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Pokaż obcięte niedoświetlenia.\nSkrót: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Pokaż obcięte prześwietlenia.\nSkrót: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Pokaż obcięte niedoświetlenia.\nSkrót: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Podgląd <b>kanału niebieskiego</b>.\nSkrót: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Podgląd <b>maski ostrości</b>.\nSkrót: <b>Shift-f</b>\n\nDokładniejsze w przypadku zdjęc o płytkiej głębi ostrości, niskim pozimie szumów i o większym przybliżeniu. W przypadku zdjęć o wyższym poziomie szumów maska ostrości będzie dokładniejsza przy mniejszym zoomie (10-30%).
 MAIN_TOOLTIP_PREVIEWG;Podgląd <b>kanału zielonego</b>.\nSkrót: <b>g</b>
@@ -1600,6 +1600,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1617,6 +1618,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
 !HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
 !HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
+!HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
 !HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 !HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 !HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
@@ -1637,6 +1639,13 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
+!HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
+!HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
+!HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
+!HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
+!HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
+!HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
+!HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 !HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
@@ -1892,6 +1901,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_CROP_SELECTCROP;Select
 !TP_DEHAZE_DEPTH;Depth
 !TP_DEHAZE_LABEL;Haze Removal
+!TP_DEHAZE_LUMINANCE;Luminance only
 !TP_DEHAZE_SHOW_DEPTH_MAP;Show depth map
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
@@ -1934,9 +1944,9 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
@@ -1975,6 +1985,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_METADATA_STRIP;Strip all metadata
 !TP_METADATA_TUNNEL;Copy unchanged
 !TP_NEUTRAL;Reset
+!TP_PDSHARPENING_LABEL;Capture Sharpening
 !TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
@@ -2125,6 +2136,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_RETINEX_VIEW_UNSHARP;Unsharp mask
 !TP_SHARPENING_BLUR;Blur radius
 !TP_SHARPENING_CONTRAST;Contrast threshold
+!TP_SHARPENING_ITERCHECK;Auto limit iterations
+!TP_SHARPENING_RADIUS_BOOST;Corner radius boost
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_SOFTLIGHT_LABEL;Soft Light
 !TP_SOFTLIGHT_STRENGTH;Strength

@@ -16,25 +16,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FILECATALOG_
-#define _FILECATALOG_
+#pragma once
 
-#include "filebrowser.h"
-#include "exiffiltersettings.h"
-#include <giomm.h>
-#include "fileselectionlistener.h"
 #include <set>
-#include "fileselectionchangelistener.h"
-#include "coarsepanel.h"
-#include "toolbar.h"
-#include "filterpanel.h"
+
+#include <giomm.h>
+
+#include "exiffiltersettings.h"
 #include "exportpanel.h"
+#include "filebrowser.h"
+#include "fileselectionchangelistener.h"
+#include "fileselectionlistener.h"
+#include "filterpanel.h"
 #include "previewloader.h"
-#include "multilangmgr.h"
 #include "threadutils.h"
+
 #include "../rtengine/noncopyable.h"
 
 class FilePanel;
+class CoarsePanel;
+class ToolBar;
+
 /*
  * Class:
  *   - handling the list of file (add/remove them)
@@ -288,5 +290,3 @@ inline void FileCatalog::setDirSelector (const FileCatalog::DirSelectionSlot& se
 {
     this->selectDir = selectDir;
 }
-
-#endif

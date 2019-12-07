@@ -16,20 +16,29 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __TOOLPANEL__
-#define __TOOLPANEL__
+#pragma once
 
 #include <gtkmm.h>
-#include <glibmm.h>
-#include "../rtengine/rtengine.h"
-#include "editbuffer.h"
+
+#include <glibmm/ustring.h>
+
 #include "guiutils.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"
-#include "../rtengine/noncopyable.h"
 
-class ToolPanel;
-class FoldableToolPanel;
+#include "../rtengine/noncopyable.h"
+#include "../rtengine/rtengine.h"
+
+namespace rtengine
+{
+    class ProcEvent;
+
+namespace procparams
+{
+
+class ProcParams;
+}
+}
 class EditDataProvider;
 
 class ToolPanelListener
@@ -48,20 +57,23 @@ public:
 };
 
 /// @brief This class control the space around the group of tools inside a tab, as well as the space separating each tool. */
-class ToolVBox : public Gtk::VBox
+class ToolVBox :
+    public Gtk::VBox
 {
 public:
     ToolVBox();
 };
 
 /// @brief This class control the space around a tool's block of parameter. */
-class ToolParamBlock : public Gtk::VBox
+class ToolParamBlock :
+    public Gtk::VBox
 {
 public:
     ToolParamBlock();
 };
 
-class ToolPanel : public rtengine::NonCopyable
+class ToolPanel :
+    public rtengine::NonCopyable
 {
 
 protected:
@@ -145,7 +157,8 @@ public:
     }
 };
 
-class FoldableToolPanel : public ToolPanel
+class FoldableToolPanel :
+    public ToolPanel
 {
 
 protected:
@@ -227,5 +240,3 @@ public:
         return exp->signal_enabled_toggled();
     }
 };
-
-#endif

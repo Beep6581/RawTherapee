@@ -640,11 +640,11 @@ spinbutton entry {
 }
 spinbutton button {
     margin: 0;
-	padding: 0;
-	border-radius: 0;
+    padding: 0;
+    border-radius: 0;
 }
 spinbutton button.up {
-	border-radius: 0 0.16666666666666666666em 0.16666666666666666666em 0;
+    border-radius: 0 0.16666666666666666666em 0.16666666666666666666em 0;
 }
 
 entry:disabled, spinbutton:disabled {
@@ -841,7 +841,7 @@ flowboxchild:selected {
     color: #CCCCCC;
     padding: 0;
     margin: 0 0.25em 0 0.25em;
-	font-size: 1.1em;
+    font-size: 1.1em;
 }
 #MyExpanderTitle:hover {
     background-color: #202020;
@@ -955,7 +955,7 @@ fontchooser scrolledwindow,
 }
 
 #PlacesPaned {
-	margin: 0;
+    margin: 0;
     padding: 0 0.4166666666666666em 0 0;
 }
 #PlacesPaned > box:nth-child(1) scrolledwindow + grid {
@@ -1050,7 +1050,7 @@ dialog frame > label:not(.dummy) {
 #LabelRightNotebook {
     padding: 0.4166666666666666em;
     margin: 0.1666666666666666em;
-	font-size: 1.25em;
+    font-size: 1.25em;
 }
 
 #ToolPanelNotebook {

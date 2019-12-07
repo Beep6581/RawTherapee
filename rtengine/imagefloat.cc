@@ -17,12 +17,14 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <tiffio.h>
+
+#include "colortemp.h"
 #include "imagefloat.h"
 #include "image16.h"
 #include "image8.h"
+#include "labimage.h"
 #include <cstring>
 #include "rtengine.h"
-#include "mytime.h"
 #include "iccstore.h"
 #include "alignedbuffer.h"
 #include "rt_math.h"

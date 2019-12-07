@@ -24,14 +24,9 @@
 #include <cmath>
 #include "../rtengine/LUT.h"
 #include "rtimage.h"
-#include "../rtengine/improccoordinator.h"
 #include "../rtengine/color.h"
-#include "../rtengine/opthelper.h"
-#include "../rtengine/iccstore.h"
 
 using namespace rtengine;
-
-extern Options options;
 
 
 //
@@ -988,7 +983,7 @@ void HistogramArea::on_realize ()
 }
 
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
-                              LUTu & data, double scale, int hsize, int vsize)
+                              const LUTu & data, double scale, int hsize, int vsize)
 {
     double s = RTScalable::getScale();
 
@@ -1018,7 +1013,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 }
 
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
-                              LUTu & data, double scale, int hsize, int & ui, int & oi)
+                              const LUTu & data, double scale, int hsize, int & ui, int & oi)
 {
     int s = 8 * RTScalable::getScale();
 

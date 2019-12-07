@@ -22,9 +22,12 @@
 #include "multilangmgr.h"
 #include "options.h"
 #include "profilestorecombobox.h"
+#include "paramsedited.h"
+#include "pathutils.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/procevents.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -275,9 +278,27 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
         return;
     }
 
-    Gtk::FileChooserDialog dialog (getToplevelWindow (this), M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
-    bindCurrentFolder (dialog, options.loadSaveProfilePath);
-    dialog.set_current_name (lastFilename);
+    // If it's a partial profile, it's more intuitive to first allow the user
+    // to choose which parameters to save before showing the Save As dialog
+    // #5491
+    const auto isPartial = event->state & Gdk::CONTROL_MASK;
+    if (isPartial) {
+        if (!partialProfileDlg) {
+            partialProfileDlg = new PartialPasteDlg(Glib::ustring(), parent);
+        }
+
+        partialProfileDlg->set_title(M("PROFILEPANEL_SAVEPPASTE"));
+        const auto response = partialProfileDlg->run();
+        partialProfileDlg->hide();
+
+        if (response != Gtk::RESPONSE_OK) {
+            return;
+        }
+    }
+
+    Gtk::FileChooserDialog dialog(getToplevelWindow(this), M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    bindCurrentFolder(dialog, options.loadSaveProfilePath);
+    dialog.set_current_name(lastFilename);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
     try {
@@ -294,36 +315,32 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
     dialog.add_button(M("GENERAL_SAVE"), Gtk::RESPONSE_OK);
 
     //Add filters, so that only certain file types can be selected:
-
-    Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
+    auto filter_pp = Gtk::FileFilter::create();
     filter_pp->set_name(M("FILECHOOSER_FILTER_PP"));
     filter_pp->add_pattern("*" + paramFileExtension);
     dialog.add_filter(filter_pp);
 
-    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    auto filter_any = Gtk::FileFilter::create();
     filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
     filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
-//    dialog.set_do_overwrite_confirmation (true);
-
-    bool done = false;
+    bool done = true;
 
     do {
         if (dialog.run() == Gtk::RESPONSE_OK) {
 
             std::string fname = dialog.get_filename();
-            Glib::ustring ext = getExtension (fname);
 
-            if (("." + ext) != paramFileExtension) {
+            if (("." + getExtension(fname)) != paramFileExtension) {
                 fname += paramFileExtension;
             }
 
-            if (!confirmOverwrite (dialog, fname)) {
+            if (!confirmOverwrite(dialog, fname)) {
                 continue;
             }
 
-            lastFilename = Glib::path_get_basename (fname);
+            lastFilename = Glib::path_get_basename(fname);
 
             const PartialProfile* toSave;
 
@@ -332,60 +349,36 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
             } else if (isLastSavedSelected()) {
                 toSave = lastsaved;
             } else {
-                const ProfileStoreEntry* entry = profiles->getSelectedEntry();
-                toSave = entry ? ProfileStore::getInstance()->getProfile (profiles->getSelectedEntry()) : nullptr;
+                const auto entry = profiles->getSelectedEntry();
+                toSave = entry ? ProfileStore::getInstance()->getProfile(entry) : nullptr;
             }
 
             if (toSave) {
-                if (event->state & Gdk::CONTROL_MASK) {
-                    // opening the partial paste dialog window
-                    if(!partialProfileDlg) {
-                        partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
-                    }
-                    partialProfileDlg->set_title(M("PROFILEPANEL_SAVEPPASTE"));
-                    int i = partialProfileDlg->run();
-                    partialProfileDlg->hide();
-
-                    if (i != Gtk::RESPONSE_OK) {
-                        return;
-                    }
-
-                    // saving the partial profile
+                int retCode;
+                if (isPartial) {
+                    // Build partial profile
                     PartialProfile ppTemp(true);
-                    partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
-                    int retCode = ppTemp.pparams->save (fname, "", true, ppTemp.pedited);
+                    partialProfileDlg->applyPaste(ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
+                    // Save partial profile
+                    retCode = ppTemp.pparams->save(fname, "", true, ppTemp.pedited);
+                    // Cleanup
                     ppTemp.deleteInstance();
-
-                    if (retCode) {
-                        writeFailed(dialog, fname);
-                    } else {
-                        done = true;
-                        bool ccPrevState = changeconn.block(true);
-                        ProfileStore::getInstance()->parseProfiles();
-                        changeconn.block (ccPrevState);
-                    }
                 } else {
-                    // saving a full profile
-                    int retCode = toSave->pparams->save (fname);
-
-                    if (retCode) {
-                        writeFailed(dialog, fname);
-                    } else {
-                        done = true;
-                        bool ccPrevState = changeconn.block(true);
-                        ProfileStore::getInstance()->parseProfiles();
-                        changeconn.block (ccPrevState);
-                    }
+                    // Save full profile
+                    retCode = toSave->pparams->save(fname);
                 }
-            } else {
-                done = true;
+
+                if (!retCode) {
+                    const auto ccPrevState = changeconn.block(true);
+                    ProfileStore::getInstance()->parseProfiles();
+                    changeconn.block(ccPrevState);
+                } else {
+                    done = false;
+                    writeFailed(dialog, fname);
+                }
             }
-        } else {
-            done = true;
         }
     } while (!done);
-
-    return;
 }
 
 /*
@@ -465,7 +458,6 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
     dialog.add_button(M("GENERAL_OPEN"), Gtk::RESPONSE_OK);
 
     //Add filters, so that only certain file types can be selected:
-
     Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
     filter_pp->set_name(M("FILECHOOSER_FILTER_PP"));
     filter_pp->add_pattern("*" + paramFileExtension);

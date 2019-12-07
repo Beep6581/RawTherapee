@@ -21,20 +21,25 @@
 #pragma once
 
 #include <memory>
+#include <set>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include <lensfun.h>
 
 #include "lcp.h"
 #include "noncopyable.h"
 
-namespace rtengine {
+namespace rtengine
+{
+
+class FramesMetaData;
 
 namespace procparams
 {
 
+struct CoarseTransformParams;
 struct LensProfParams;
 
 }
@@ -51,8 +56,8 @@ public:
     void correctDistortion(double &x, double &y, int cx, int cy, double scale) const override;
     bool isCACorrectionAvailable() const override;
     void correctCA(double &x, double &y, int cx, int cy, int channel) const override;
-    void processVignetteLine(int width, int y, float *line) const override;
-    void processVignetteLine3Channels(int width, int y, float *line) const override;
+    void processVignette(int width, int height, float** rawData) const override;
+    void processVignette3Channels(int width, int height, float** rawData) const override;
 
     Glib::ustring getDisplayString() const;
 
@@ -63,7 +68,6 @@ private:
     lfModifier *data_;
     bool swap_xy_;
     int flags_;
-    mutable MyMutex lfModifierMutex;
 };
 
 class LFCamera final
@@ -119,7 +123,13 @@ public:
     LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model) const;
     LFLens findLens(const LFCamera &camera, const Glib::ustring &name) const;
 
-    static std::unique_ptr<LFModifier> findModifier(const procparams::LensProfParams &lensProf, const FramesMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg);
+    std::unique_ptr<LFModifier> findModifier(
+        const procparams::LensProfParams &lensProf,
+        const FramesMetaData *idata,
+        int width, int height,
+        const procparams::CoarseTransformParams &coarse,
+        int rawRotationDeg
+    ) const;
 
 private:
     std::unique_ptr<LFModifier> getModifier(const LFCamera &camera, const LFLens &lens,
@@ -131,6 +141,7 @@ private:
     mutable MyMutex lfDBMutex;
     static LFDatabase instance_;
     lfDatabase *data_;
+    mutable std::set<std::string> notFound;
 };
 
 } // namespace rtengine

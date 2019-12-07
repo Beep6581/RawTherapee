@@ -744,6 +744,7 @@ HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - region show mask
 HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
 HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
 HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
+HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
@@ -764,12 +765,13 @@ HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
-HISTORY_MSG_PDSHARPEN_CONTRAST;CAS - Contrast threshold
-HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CAS - Auto threshold
-HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CAS - Auto radius
-HISTORY_MSG_PDSHARPEN_GAMMA;CAS - Gamma
-HISTORY_MSG_PDSHARPEN_ITERATIONS;CAS - Iterations
-HISTORY_MSG_PDSHARPEN_RADIUS;CAS - Radius
+HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
+HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
+HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
+HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
+HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
+HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
+HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
@@ -780,7 +782,6 @@ HISTORY_MSG_RAW_BORDER;Raw border
 HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
-HISTORY_MSG_SHARPENING_GAMMA;Sharpening - Gamma
 HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
@@ -938,8 +939,8 @@ MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>white</b>\nShortcut:
 MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>middle grey</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication.\nShortcut: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication.\nShortcut: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Preview the <b>blue channel</b>.\nShortcut: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>focus mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\nZoom out to 10-30% to improve detection accuracy on noisy images.
 MAIN_TOOLTIP_PREVIEWG;Preview the <b>green channel</b>.\nShortcut: <b>g</b>
@@ -1540,6 +1541,7 @@ TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
 TP_DEHAZE_DEPTH;Depth
 TP_DEHAZE_LABEL;Haze Removal
+TP_DEHAZE_LUMINANCE;Luminance only
 TP_DEHAZE_SHOW_DEPTH_MAP;Show depth map
 TP_DEHAZE_STRENGTH;Strength
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
@@ -1650,9 +1652,9 @@ TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 TP_FILMNEGATIVE_BLUE;Blue ratio
 TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 TP_FILMNEGATIVE_LABEL;Film Negative
-TP_FILMNEGATIVE_PICK;Pick white and black spots
+TP_FILMNEGATIVE_PICK;Pick neutral spots
 TP_FILMNEGATIVE_RED;Red ratio
 TP_FILMSIMULATION_LABEL;Film Simulation
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
@@ -1666,7 +1668,7 @@ TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Clip control
-TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
+TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, value 0 is used.
 TP_FLATFIELD_LABEL;Flat-Field
 TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 TP_GRADIENT_CENTER;Center
@@ -1803,7 +1805,6 @@ TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness:\n0 = rectangle,\n50 = fitted ellipse,
 TP_PCVIGNETTE_STRENGTH;Strength
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners).
 TP_PDSHARPENING_LABEL;Capture Sharpening
-TP_PDSHARPENING_AUTORADIUS_TOOLTIP;If the checkbox is checked, RawTherapee calculates a value based on the raw data of the image.
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
@@ -2032,13 +2033,14 @@ TP_SHARPENING_BLUR;Blur radius
 TP_SHARPENING_CONTRAST;Contrast threshold
 TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Edge tolerance
-TP_SHARPENING_GAMMA;Gamma
 TP_SHARPENING_HALOCONTROL;Halo control
 TP_SHARPENING_HCAMOUNT;Amount
+TP_SHARPENING_ITERCHECK;Auto limit iterations
 TP_SHARPENING_LABEL;Sharpening
 TP_SHARPENING_METHOD;Method
 TP_SHARPENING_ONLYEDGES;Sharpen only edges
 TP_SHARPENING_RADIUS;Radius
+TP_SHARPENING_RADIUS_BOOST;Corner radius boost
 TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Amount
 TP_SHARPENING_RLD_DAMPING;Damping

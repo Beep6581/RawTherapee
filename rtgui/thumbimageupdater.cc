@@ -23,9 +23,11 @@
 #include <gtkmm.h>
 
 #include "thumbimageupdater.h"
+#include "thumbbrowserentrybase.h"
 
 #include "guiutils.h"
 #include "threadutils.h"
+#include "thumbnail.h"
 
 #include "../rtengine/procparams.h"
 

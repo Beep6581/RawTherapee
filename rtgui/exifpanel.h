@@ -16,16 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _EXIFPANEL_
-#define _EXIFPANEL_
+#pragma once
 
 #include <memory>
 
 #include <gtkmm.h>
 
 #include "toolpanel.h"
+#include "../rtexif/rtexif.h"
 
-class ExifPanel : public Gtk::VBox, public ToolPanel
+class ExifPanel :
+    public Gtk::VBox,
+    public ToolPanel
 {
 
 private:
@@ -114,5 +116,3 @@ public:
     void notifyListener();
 
 };
-
-#endif

@@ -169,9 +169,10 @@ void ParamsEdited::set(bool v)
     pdsharpening.contrast           = v;
     pdsharpening.autoContrast           = v;
     pdsharpening.autoRadius           = v;
-    pdsharpening.gamma   = v;
     pdsharpening.deconvradius   = v;
+    pdsharpening.deconvradiusOffset   = v;
     pdsharpening.deconviter     = v;
+    pdsharpening.deconvitercheck     = v;
     prsharpening.enabled            = v;
     prsharpening.contrast           = v;
     prsharpening.radius             = v;
@@ -591,6 +592,7 @@ void ParamsEdited::set(bool v)
     dehaze.strength = v;
     dehaze.showDepthMap = v;
     dehaze.depth = v;
+    dehaze.luminance = v;
     metadata.mode = v;
     filmNegative.enabled = v;
     filmNegative.redRatio = v;
@@ -758,9 +760,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         pdsharpening.contrast = pdsharpening.contrast && p.pdsharpening.contrast == other.pdsharpening.contrast;
         pdsharpening.autoContrast = pdsharpening.autoContrast && p.pdsharpening.autoContrast == other.pdsharpening.autoContrast;
         pdsharpening.autoRadius = pdsharpening.autoRadius && p.pdsharpening.autoRadius == other.pdsharpening.autoRadius;
-        pdsharpening.gamma = pdsharpening.gamma && p.pdsharpening.gamma == other.pdsharpening.gamma;
         pdsharpening.deconvradius = pdsharpening.deconvradius && p.pdsharpening.deconvradius == other.pdsharpening.deconvradius;
+        pdsharpening.deconvradiusOffset = pdsharpening.deconvradiusOffset && p.pdsharpening.deconvradiusOffset == other.pdsharpening.deconvradiusOffset;
         pdsharpening.deconviter = pdsharpening.deconviter && p.pdsharpening.deconviter == other.pdsharpening.deconviter;
+        pdsharpening.deconvitercheck = pdsharpening.deconvitercheck && p.pdsharpening.deconvitercheck == other.pdsharpening.deconvitercheck;
         prsharpening.enabled = prsharpening.enabled && p.prsharpening.enabled == other.prsharpening.enabled;
         prsharpening.contrast = prsharpening.contrast && p.prsharpening.contrast == other.prsharpening.contrast;
         prsharpening.radius = prsharpening.radius && p.prsharpening.radius == other.prsharpening.radius;
@@ -1164,6 +1167,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dehaze.strength = dehaze.strength && p.dehaze.strength == other.dehaze.strength;
         dehaze.showDepthMap = dehaze.showDepthMap && p.dehaze.showDepthMap == other.dehaze.showDepthMap;
         dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
+        dehaze.luminance = dehaze.luminance && p.dehaze.luminance == other.dehaze.luminance;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
         filmNegative.enabled = filmNegative.enabled && p.filmNegative.enabled == other.filmNegative.enabled;
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
@@ -1744,16 +1748,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.pdsharpening.autoRadius = mods.pdsharpening.autoRadius;
     }
 
-    if (pdsharpening.gamma) {
-        toEdit.pdsharpening.gamma = dontforceSet && options.baBehav[ADDSET_SHARP_GAMMA] ? toEdit.pdsharpening.gamma + mods.pdsharpening.gamma : mods.pdsharpening.gamma;
-    }
-
     if (pdsharpening.deconvradius) {
         toEdit.pdsharpening.deconvradius = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.pdsharpening.deconvradius + mods.pdsharpening.deconvradius : mods.pdsharpening.deconvradius;
     }
 
+    if (pdsharpening.deconvradiusOffset) {
+        toEdit.pdsharpening.deconvradiusOffset = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.pdsharpening.deconvradiusOffset + mods.pdsharpening.deconvradiusOffset : mods.pdsharpening.deconvradiusOffset;
+    }
+
     if (pdsharpening.deconviter) {
         toEdit.pdsharpening.deconviter = dontforceSet && options.baBehav[ADDSET_SHARP_ITER] ? toEdit.pdsharpening.deconviter + mods.pdsharpening.deconviter : mods.pdsharpening.deconviter;
+    }
+
+    if (pdsharpening.deconvitercheck) {
+        toEdit.pdsharpening.deconvitercheck =  mods.pdsharpening.deconvitercheck;
     }
 
     if (prsharpening.enabled) {
@@ -3238,6 +3246,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.dehaze.showDepthMap = mods.dehaze.showDepthMap;
     }
 
+    if (dehaze.luminance) {
+        toEdit.dehaze.luminance = mods.dehaze.luminance;
+    }
+
     if (metadata.mode) {
         toEdit.metadata.mode = mods.metadata.mode;
     }
@@ -3309,5 +3321,5 @@ bool FilmNegativeParamsEdited::isUnchanged() const
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const
 {
-    return enabled && contrast && autoContrast && autoRadius && gamma && deconvradius && deconviter;
+    return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvitercheck;
 }

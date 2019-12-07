@@ -21,21 +21,18 @@
 #include <array>
 #include <ctime>
 #include <string>
+#include <memory>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include <lcms2.h>
 
 #include "iimage.h"
 #include "imageformat.h"
-#include "LUT.h"
 #include "procevents.h"
 #include "rawmetadatalocation.h"
 #include "rt_math.h"
 #include "settings.h"
-#include "utils.h"
-
-#include "../rtexif/rtexif.h"
 
 #include "../rtgui/threadutils.h"
 
@@ -45,7 +42,18 @@
  *
  */
 
+template<typename T>
+class LUT;
+
+using LUTu = LUT<uint32_t>;
+
 class EditDataProvider;
+namespace rtexif
+{
+
+class TagDirectory;
+
+}
 
 namespace rtengine
 {
@@ -574,7 +582,7 @@ public:
   * @param baseDir base directory of RT's installation dir
   * @param userSettingsDir RT's base directory in the user's settings dir
   * @param loadAll if false, don't load the various dependencies (profiles, HALDClut files, ...), they'll be loaded from disk each time they'll be used (launching time improvement) */
-int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll = true);
+int init (const Settings* s, const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir, bool loadAll = true);
 
 /** Cleanup the RT engine (static variables) */
 void cleanup ();

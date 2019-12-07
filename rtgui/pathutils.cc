@@ -16,6 +16,8 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <glibmm/miscutils.h>
+
 #include "pathutils.h"
 
 

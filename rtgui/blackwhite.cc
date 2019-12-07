@@ -21,11 +21,15 @@
 
 #include "blackwhite.h"
 
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "guiutils.h"
 #include "rtimage.h"
+#include "options.h"
 
 #include "../rtengine/color.h"
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

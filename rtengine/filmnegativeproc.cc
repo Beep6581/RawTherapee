@@ -19,27 +19,19 @@
 #include <cmath>
 #include <iostream>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
+#include "rawimage.h"
 #include "rawimagesource.h"
 
+#include "coord.h"
 #include "mytime.h"
 #include "opthelper.h"
+#include "pixelsmap.h"
 #include "procparams.h"
 #include "rt_algo.h"
 #include "rtengine.h"
-
+#include "sleef.h"
 //#define BENCHMARK
 #include "StopWatch.h"
-
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
 
 namespace
 {
@@ -77,8 +69,8 @@ bool channelsAvg(
     }
 
     std::array<int, 3> pxCount = {}; // Per-channel sample counts
-    for (int c = spotPos.x - spotSize; c < spotPos.x + spotSize; ++c) {
-        for (int r = spotPos.y - spotSize; r < spotPos.y + spotSize; ++r) {
+    for (int c = x1; c < x2; ++c) {
+        for (int r = y1; r < y2; ++r) {
             const int ch = ri->getSensorType() == rtengine::ST_BAYER ? ri->FC(r,c) : ri->XTRANSFC(r,c);
 
             ++pxCount[ch];
@@ -98,7 +90,7 @@ bool channelsAvg(
 
 }
 
-bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
+bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const procparams::FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
 {
     newExps = {
         static_cast<float>(currentParams.redRatio * currentParams.greenExp),

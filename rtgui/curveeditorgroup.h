@@ -16,18 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CURVEEDITORGROUP_
-#define _CURVEEDITORGROUP_
+#pragma once
 
-#include <gtkmm.h>
 #include <fstream>
 #include <string>
+
+#include <gtkmm.h>
+
 #include "guiutils.h"
 #include "mycurve.h"
-#include "myflatcurve.h"
-#include "mydiagonalcurve.h"
 #include "shcselector.h"
-#include "adjuster.h"
+
+#include "../rtengine/diagonalcurvetypes.h"
+#include "../rtengine/flatcurvetypes.h"
 
 class CurveEditor;
 class DiagonalCurveEditorSubGroup;
@@ -39,7 +40,7 @@ class FlatCurveEditorSubGroup;
  * - to start a new line of curve button, use the 'newLine' method
  * - if you add more than one curve, you must add a "CurveEditor* ce" parameter to your listener
  */
-class CurveEditorGroup : public Gtk::Grid, public CurveListener
+class CurveEditorGroup final : public Gtk::Grid, public CurveListener
 {
 
     friend class CurveEditor;
@@ -169,5 +170,3 @@ protected:
     virtual const std::vector<double> getCurveFromGUI (int type) = 0;
 
 };
-
-#endif

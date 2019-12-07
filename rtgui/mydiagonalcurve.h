@@ -16,28 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _MYDIAGONALCURVE_
-#define _MYDIAGONALCURVE_
+#pragma once
+
+#include <vector>
 
 #include <gtkmm.h>
-#include <vector>
-#include "curvelistener.h"
+
 #include "cursormanager.h"
+#include "curvelistener.h"
 #include "mycurve.h"
-#include "../rtengine/LUT.h"
 
+#include "../rtengine/diagonalcurvetypes.h"
 
-// For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
-enum DiagonalCurveType {
-    DCT_Empty = -1,     // Also used for identity curves
-    DCT_Linear,         // 0
-    DCT_Spline,         // 1
-    DCT_Parametric,     // 2
-    DCT_NURBS,          // 3
-    DCT_CatumullRom,    // 4
-    // Insert new curve type above this line
-    DCT_Unchanged       // Must remain the last of the enum
-};
+template<typename T>
+class LUT;
+
+using LUTf = LUT<float>;
 
 class DiagonalCurveDescr
 {
@@ -91,7 +85,7 @@ public:
     bool handleEvents (GdkEvent* event) override;
     void setActiveParam (int ac);
     void reset (const std::vector<double> &resetCurve, double identityValue = 0.5) override;
-    void updateBackgroundHistogram (LUTu & hist);
+    void updateBackgroundHistogram (const LUTu & hist);
 
     void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey) override;
     bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) override;
@@ -101,5 +95,3 @@ public:
     void setPos(double pos, int chanIdx) override;
     void stopNumericalAdjustment() override;
 };
-
-#endif

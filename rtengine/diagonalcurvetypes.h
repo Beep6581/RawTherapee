@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2004-2019 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,23 +15,17 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
- */
-#ifndef _ILABEL_
-#define _ILABEL_
+*/
+#pragma once
 
-#include <gtkmm.h>
-
-class ILabel : public Gtk::DrawingArea
-{
-
-    Glib::ustring label;
-
-public:
-    explicit ILabel (const Glib::ustring &lab);
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
-    void on_realize() override;
-    void on_style_updated () override;
+// For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
+enum DiagonalCurveType {
+    DCT_Empty = -1,     // Also used for identity curves
+    DCT_Linear,         // 0
+    DCT_Spline,         // 1
+    DCT_Parametric,     // 2
+    DCT_NURBS,          // 3
+    DCT_CatumullRom,    // 4
+    // Insert new curve type above this line
+    DCT_Unchanged       // Must remain the last of the enum
 };
-
-#endif
-

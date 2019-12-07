@@ -15,14 +15,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _INDCLIPPEDPANEL_
-#define _INDCLIPPEDPANEL_
+#pragma once
 
-#include <gtkmm.h>
 #include <iostream>
 
+#include <gtkmm.h>
+
 class ImageArea;
-class IndicateClippedPanel : public Gtk::HBox
+
+class IndicateClippedPanel :
+    public Gtk::HBox
 {
 
 protected:
@@ -59,5 +61,3 @@ public:
         return indClippedH->get_active();
     }
 };
-
-#endif

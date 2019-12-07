@@ -24,8 +24,11 @@
 #include "addsetids.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
+#include "../rtengine/iccstore.h"
+#include "../rtengine/procparams.h"
 #include <sstream>
 #include "rtimage.h"
+#include "rtwindow.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -49,7 +52,6 @@ void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::stri
 }
 }
 
-extern Options options;
 extern Glib::ustring argv0;
 Glib::RefPtr<Gtk::CssProvider> themecss;
 Glib::RefPtr<Gtk::CssProvider> fontcss;
@@ -126,7 +128,7 @@ Preferences::~Preferences ()
     get_size (options.preferencesWidth, options.preferencesHeight);
 }
 
-int Preferences::getThemeRowNumber (Glib::ustring& longThemeFName)
+int Preferences::getThemeRowNumber (const Glib::ustring& longThemeFName)
 {
 
     if (regex->match (longThemeFName + ".css", matchInfo)) {

@@ -20,7 +20,19 @@
 
 #include <vector>
 
-#include "../rtengine/rtengine.h"
+namespace rtengine
+{
+
+namespace procparams
+{
+
+class ProcParams;
+
+class PartialProfile;
+
+}
+
+}
 
 struct GeneralParamsEdited {
     bool rank;
@@ -203,9 +215,10 @@ struct CaptureSharpeningParamsEdited {
     bool contrast;
     bool autoContrast;
     bool autoRadius;
-    bool gamma;
     bool deconvradius;
+    bool deconvradiusOffset;
     bool deconviter;
+    bool deconvitercheck;
     bool isUnchanged() const;
 };
 
@@ -603,6 +616,7 @@ struct DehazeParamsEdited {
     bool strength;
     bool showDepthMap;
     bool depth;
+    bool luminance;
 };
 
 struct RAWParamsEdited {

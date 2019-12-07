@@ -21,12 +21,15 @@
 #include <cstring>
 #include <iomanip>
 
+#include "cropguilistener.h"
 #include "cursormanager.h"
 #include "guiutils.h"
 #include "inspector.h"
 #include "rtimage.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
+#include "thumbnail.h"
+#include "toolbar.h"
 
 #include "../rtengine/procparams.h"
 
@@ -115,7 +118,7 @@ void FileBrowserEntry::calcThumbnailSize ()
 {
 
     if (thumbnail) {
-        thumbnail->getThumbnailSize (prew, preh);
+        prew = thumbnail->getThumbnailWidth(preh);
     }
 }
 

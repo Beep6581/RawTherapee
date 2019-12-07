@@ -19,7 +19,9 @@
 //
 ////////////////////////////////////////////////////////////////
 
+#include "color.h"
 #include "rtengine.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rt_algo.h"
 #include "rt_math.h"
@@ -959,7 +961,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
         free(buffer);
     }
 
-    xtransborder_interpolate(8, red, green, blue);
+    xtransborder_interpolate(passes > 1 ? 8 : 11, red, green, blue);
 }
 #undef CLIP
 void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
