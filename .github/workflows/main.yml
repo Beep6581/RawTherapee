@@ -10,5 +10,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: test getting the git branch of the triggering ref 
+      run: echo ${GITHUB_REF##*/}
     - name: Install dependencies
       run: brew install gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++ little-cms2 libiptcdata fftw lensfun wget llvm cmake expat pkgconfig libomp
+    - name: cmake
+      env:
+        CMAKE_CXX_STANDARD: 11
+      run: |
+        cmake \
+          -DCMAKE_BUILD_TYPE="release"  \
+          -DCACHE_NAME_SUFFIX="5-${GITHUB_REF##*/}" \
+          -DPROC_TARGET_NUMBER="2" \
+          -DBUILD_BUNDLE="ON" \
+          -DWITH_LTO="OFF" \
+          -DLENSFUNDBDIR="./share/lensfun"
