@@ -18,11 +18,13 @@ jobs:
         PKG_CONFIG_PATH: /usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/expat/lib/pkgconfig
         RAW_THERAPEE_MAJOR: '5'
         RAW_THERAPEE_MINOR: '7'
+        C_FLAGS: -Xpreprocessor -fopenmp /usr/local/Cellar/libomp/9.0.0/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/llvm/include
       run: |
         mkdir build && cd build
         cmake \
           -DCMAKE_BUILD_TYPE="release" \
           -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+          -DCMAKE_EXE_LINKER_FLAGS="-L/usr/local/opt/libffi/lib -L/usr/local/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libxml2/lib -L/usr/local/opt/expat/lib -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
           -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_MAJOR}.${RAW_THERAPEE_MINOR}-${GITHUB_REF##*/}" \
           -DPROC_TARGET_NUMBER="2" \
           -DPROC_LABEL="generic processor" \
@@ -32,10 +34,9 @@ jobs:
           -DOpenMP_CXX_FLAGS=-fopenmp=libomp \
           -DOpenMP_C_LIB_NAMES="libomp" \
           -DOpenMP_CXX_LIB_NAMES="libomp" \
-          -DOpenMP_libomp_LIBRARY="/usr/local/lib/libomp.dylib" \
-          -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include" \
-          -DOpenMP_CXX_LIB_NAMES="libomp" \
-          -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include" \
+          -DOpenMP_libomp_LIBRARY="/usr/local/Cellar/libomp/9.0.0/lib/libomp.dylib" \
+          -DOpenMP_C_FLAGS="${C_FLAGS}" \
+          -DOpenMP_CXX_FLAGS="${C_FLAGS}" \
           ..
         make --jobs 8
         make install
