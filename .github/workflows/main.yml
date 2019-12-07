@@ -24,6 +24,7 @@ jobs:
           -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
           -DCACHE_NAME_SUFFIX="5-${GITHUB_REF##*/}" \
           -DPROC_TARGET_NUMBER="2" \
+          -DPROC_LABEL="generic processor" \
           -DWITH_LTO="OFF" \
           -DLENSFUNDBDIR="./share/lensfun" \
           -DLDFLAGS="-L/usr/local/opt/libffi/lib -L/usr/local/opt/libxml2/lib -L/usr/local/opt/expat/lib -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
