@@ -27,6 +27,12 @@ jobs:
           -DPROC_LABEL="generic processor" \
           -DWITH_LTO="OFF" \
           -DLENSFUNDBDIR="./share/lensfun" \
-          -DLDFLAGS="-L/usr/local/opt/libffi/lib -L/usr/local/opt/libxml2/lib -L/usr/local/opt/expat/lib -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
-          -DCXXFLAGS="-I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/llvm/include" \
+          -DOpenMP_C_FLAGS=-fopenmp=libomp \
+          -DOpenMP_CXX_FLAGS=-fopenmp=libomp \
+          -DOpenMP_C_LIB_NAMES="libomp" \
+          -DOpenMP_CXX_LIB_NAMES="libomp" \
+          -DOpenMP_libomp_LIBRARY="/usr/local/lib/libomp.dylib" \
+          -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include" \
+          -DOpenMP_CXX_LIB_NAMES="libomp" \
+          -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include" \
           ..
