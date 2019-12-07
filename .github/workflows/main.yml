@@ -23,4 +23,5 @@ jobs:
           -DCACHE_NAME_SUFFIX="5-${GITHUB_REF##*/}" \
           -DPROC_TARGET_NUMBER="2" \
           -DWITH_LTO="OFF" \
-          -DLENSFUNDBDIR="./share/lensfun"
+          -DLENSFUNDBDIR="./share/lensfun" \
+          .
