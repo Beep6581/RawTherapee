@@ -20,12 +20,13 @@ jobs:
         RAW_THERAPEE_MINOR: '7'
         C_FLAGS: -Xpreprocessor -fopenmp /usr/local/Cellar/libomp/9.0.0/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/llvm/include
       run: |
+        REF=${GITHUB_REF##*/}
         mkdir build && cd build
         cmake \
           -DCMAKE_BUILD_TYPE="release" \
           -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
           -DCMAKE_EXE_LINKER_FLAGS="-L/usr/local/opt/libffi/lib -L/usr/local/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libxml2/lib -L/usr/local/opt/expat/lib -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
-          -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_MAJOR}.${RAW_THERAPEE_MINOR}-${GITHUB_REF##*/}" \
+          -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_MAJOR}.${RAW_THERAPEE_MINOR}-${REF}" \
           -DPROC_TARGET_NUMBER="2" \
           -DPROC_LABEL="generic processor" \
           -DWITH_LTO="OFF" \
