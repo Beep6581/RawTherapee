@@ -12,8 +12,6 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: brew install gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++ little-cms2 libiptcdata fftw lensfun llvm expat pkgconfig libomp
-    - name: create and move to build directory
-      run: mkdir build && cd build
     - name: cmake
       env:
         CMAKE_CXX_STANDARD: 11
@@ -21,6 +19,7 @@ jobs:
         RAW_THERAPEE_MAJOR: '5'
         RAW_THERAPEE_MINOR: '7'
       run: |
+        mkdir build && cd build
         cmake \
           -DCMAKE_BUILD_TYPE="release" \
           -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
