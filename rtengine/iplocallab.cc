@@ -10836,7 +10836,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         //      }
 //&& lp.retiena
 
-        if (lp.dehaze > 0 && lp.retiena) {
+        if (lp.dehaze != 0 && lp.retiena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -10864,7 +10864,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 //calc dehaze
                 Imagefloat *tmpImage = nullptr;
 
-                if (lp.dehaze > 0) {
+                if (lp.dehaze != 0) {
                     DehazeParams dehazeParams;
                     dehazeParams.enabled = true;
                     dehazeParams.strength = lp.dehaze;
@@ -10873,7 +10873,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     dehazeParams.luminance = params->locallab.spots.at(sp).lumonly;
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
-                    dehaze(tmpImage, dehazeParams);
+                    dehazeloc(tmpImage, dehazeParams);
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                     delete tmpImage;
