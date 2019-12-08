@@ -21,7 +21,10 @@
 #include "alpha.h"
 #include "procparams.h"
 #include "imagesource.h"
+#include "imagefloat.h"
+#include "rt_math.h"
 #include <iostream>
+#include <set>
 
 namespace rtengine
 {

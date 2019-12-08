@@ -24,11 +24,11 @@
 #include <glibmm/ustring.h>
 
 #include "editcoordsys.h"
+#include "rtsurface.h"
 #include "../rtengine/coord.h"
 #include "../rtengine/rt_math.h"
 
 class ObjectMOBuffer;
-class RTSurface;
 
 /** @file
  *

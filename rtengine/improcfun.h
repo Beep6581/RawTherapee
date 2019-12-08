@@ -56,6 +56,8 @@ class Image8;
 class Imagefloat;
 class LabImage;
 class wavelet_decomposition;
+class ImageSource;
+class ColorTemp;
 
 namespace procparams
 {
@@ -248,7 +250,7 @@ public:
     float MadRgb(const float * DataList, int datalen);
 
     // spot removal tool
-    void removeSpots (Imagefloat* img, ImageSource* imgsrc, const std::vector<SpotEntry> &entries, const PreviewProps &pp, const ColorTemp &currWB, const ColorManagementParams *cmp, int tr);
+    void removeSpots (rtengine::Imagefloat* img, rtengine::ImageSource* imgsrc, const std::vector<procparams::SpotEntry> &entries, const PreviewProps &pp, const rtengine::ColorTemp &currWB, const procparams::ColorManagementParams *cmp, int tr);
 
     // pyramid wavelet
     void dirpyr_equalizer(const float * const * src, float ** dst, int srcwidth, int srcheight, const float * const * l_a, const float * const * l_b, const double * mult, double dirpyrThreshold, double skinprot, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet

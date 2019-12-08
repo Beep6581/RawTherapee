@@ -576,8 +576,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             spotprev->copyData(oprevi);
         }
         
-        readyphase++;
-
         if ((todo & M_HDR) && (params->fattal.enabled || params->dehaze.enabled)) {
             if (fattal_11_dcrop_cache) {
                 delete fattal_11_dcrop_cache;
