@@ -42,22 +42,107 @@
 #define MINNEIGH 0.1
 #define MAXNEIGH 1500
 #define CENTERNEIGH 200
+#define MINRAD 1.5
+#define MAXRAD 1000
+#define CENTERRAD 100
 
 using namespace rtengine;
 
 extern Options options;
+
+
+static double blurSlider2radius(double sval)
+{
+
+    // slider range: 0 - 1000
+    double radius;
+
+    if (sval <= 100) {
+        // linear below center-temp
+        radius = MINRAD + (sval / 100.0) * (CENTERRAD - MINRAD);
+    } else {
+        const double slope = (double)(CENTERRAD - MINRAD) / (MAXRAD - CENTERRAD);
+        double x = (sval - 100) / 100; // x 0..1
+        double y = x * slope + (1.0 - slope) * pow(x, 4.0);
+        radius = CENTERRAD + y * (MAXRAD - CENTERRAD);
+    }
+
+    if (radius < MINRAD) {
+        radius = MINRAD;
+    }
+
+    if (radius > MAXRAD) {
+        radius = MAXRAD;
+    }
+    return radius;
+}
+
+static double blurRadius2Slider(double radius)
+{
+
+    double sval;
+
+    if (radius <= CENTERRAD) {
+        sval = ((radius - MINRAD) / (CENTERRAD - MINRAD)) * 100.0;
+    } else {
+        const double slope = (double)(CENTERRAD - MINRAD) / (MAXRAD - CENTERRAD);
+        const double y = (radius - CENTERRAD) / (MAXRAD - CENTERRAD);
+        double x = pow(y, 0.25); // rough guess of x, will be a little lower
+        double k = 0.1;
+        bool add = true;
+
+        // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
+        // from tests, worst case is about 20 iterations, ie no problem
+        for (;;) {
+            double y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
+
+            if (100. * fabs(y1 - y) < 0.1) {
+                break;
+            }
+
+            if (y1 < y) {
+                if (!add) {
+                    k /= 2;
+                }
+
+                x += k;
+                add = true;
+            } else {
+                if (add) {
+                    k /= 2;
+                }
+
+                x -= k;
+                add = false;
+            }
+        }
+
+        sval = 100.0 + x * 100.0;
+    }
+
+    if (sval < 0.) {
+        sval = 0.;
+    }
+
+    if (sval > 1000.) {
+        sval = 1000.;
+    }
+
+    return sval;
+}
+
 static double retiSlider2neigh(double sval)
 {
 
     // slider range: 0 - 5000
     double neigh;
 
-    if (sval <= 1000) {
+    if (sval <= 200) {
         // linear below center-temp
-        neigh = MINNEIGH + (sval / 1000.0) * (CENTERNEIGH - MINNEIGH);
+        neigh = MINNEIGH + (sval / 200.0) * (CENTERNEIGH - MINNEIGH);
     } else {
         const double slope = (double)(CENTERNEIGH - MINNEIGH) / (MAXNEIGH - CENTERNEIGH);
-        double x = (sval - 1000) / 1000; // x 0..1
+        double x = (sval - 200) / 200; // x 0..1
         double y = x * slope + (1.0 - slope) * pow(x, 4.0);
         neigh = CENTERNEIGH + y * (MAXNEIGH - CENTERNEIGH);
     }
@@ -79,7 +164,7 @@ static double retiNeigh2Slider(double neigh)
     double sval;
 
     if (neigh <= CENTERNEIGH) {
-        sval = ((neigh - MINNEIGH) / (CENTERNEIGH - MINNEIGH)) * 1000.0;
+        sval = ((neigh - MINNEIGH) / (CENTERNEIGH - MINNEIGH)) * 200.0;
     } else {
         const double slope = (double)(CENTERNEIGH - MINNEIGH) / (MAXNEIGH - CENTERNEIGH);
         const double y = (neigh - CENTERNEIGH) / (MAXNEIGH - CENTERNEIGH);
@@ -92,7 +177,7 @@ static double retiNeigh2Slider(double neigh)
         for (;;) {
             double y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
 
-            if (1000 * fabs(y1 - y) < 0.1) {
+            if (200 * fabs(y1 - y) < 0.1) {
                 break;
             }
 
@@ -113,15 +198,15 @@ static double retiNeigh2Slider(double neigh)
             }
         }
 
-        sval = 1000.0 + x * 1000.0;
+        sval = 200.0 + x * 200.0;
     }
 
-    if (sval < 0) {
-        sval = 0;
+    if (sval < 0.) {
+        sval = 0.;
     }
 
-    if (sval > 5000) {
-        sval = 5000;
+    if (sval > 1500.) {
+        sval = 1500.;
     }
 
     return sval;
@@ -382,7 +467,7 @@ streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
 laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
 sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
 // Blur & Noise
-radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.5, 100.0, 0.1, 1.5))),
+radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), MINRAD, MAXRAD, 0.1, 1.5, nullptr, nullptr, &blurSlider2radius, &blurRadius2Slider))),
 strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
 itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
 guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
@@ -535,7 +620,7 @@ enavibMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 // Blur & Noise
 activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
 enablMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-fftwbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
+fftwbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTWBLUR")))),
 toolbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
 //TM
 equiltm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
@@ -2960,6 +3045,7 @@ pe(nullptr)
 
     if (showtooltip) {
         sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
+        radius->set_tooltip_text(M("TP_LOCALLAB_RADIUS_TOOLTIP"));
     }
 
     sensibn->setAdjusterListener(this);
@@ -3189,7 +3275,6 @@ pe(nullptr)
 //    blurrBox->pack_start(*expmaskbl);
     expblur->add(*blurrBox, false);
     expblur->setLevel(2);
-
     panel->pack_start(*expblur, false, false);
 
 
@@ -7121,13 +7206,13 @@ void Locallab::fftwblChanged()
 {
     // printf("fftwblChanged\n");
     double temp = radius->getValue();
-
+/*
     if (fftwbl->get_active()) {
         radius->setLimits(1.5, 1000., 0.5, 1.5);
     } else {
         radius->setLimits(1.5, 100., 0.5, 1.5);
     }
-
+*/
     radius->setValue(temp);
 
     if (multiImage) {
@@ -11118,20 +11203,23 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             lapmaskbl->setValue(0);
             LLmaskblshapewav->reset();
         }
-
+/*
         if (fftwbl->get_active()) {
             radius->setLimits(1.5, 1000., 0.5, 1.5);
         } else {
             radius->setLimits(1.5, 100., 0.5, 1.5);
         }
-
+*/
         radius->setValue(pp->locallab.spots.at(index).radius);
-
+/*
         if (complexsoft == 2) {
             radius->setLimits(1.5, 100., 0.5, 1.5);
             radius->setValue(pp->locallab.spots.at(index).radius);
         }
-
+*/
+        if (complexsoft == 2) {
+            fftwbl->set_active(false);
+        }
 
         // Tone Mapping
         exptonemap->setEnabled(pp->locallab.spots.at(index).exptonemap);

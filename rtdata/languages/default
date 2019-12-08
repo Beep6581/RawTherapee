@@ -2278,8 +2278,9 @@ TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n..
 TP_LOCALLAB_FEATVALUE;Feather gradient
 TP_LOCALLAB_FFTCOL_MASK;FFTW (to test ?)
-TP_LOCALLAB_FFTW2;Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_FFTW;Use Fast Fourier Transform
+TP_LOCALLAB_FFTW2;Use Fast Fourier Transform (TIF, JPG,..)
+TP_LOCALLAB_FFTWBLUR;Always Use Fast Fourier Transform
 TP_LOCALLAB_FULLIMAGE;Calculate DarkEv - WhiteEv - Value on the entire image
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
@@ -2420,6 +2421,7 @@ TP_LOCALLAB_PROXI;DeltaE weakening
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_RADIUS;Radius
+TP_LOCALLAB_RADIUS_TOOLTIP;Above Radius 30 Use Fast Fourier Transform
 TP_LOCALLAB_RADMASKCOL;Smooth Radius Mask
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_RECURS;Recursive references

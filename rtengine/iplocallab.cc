@@ -8905,7 +8905,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                     if (lp.blurmet == 0  && lp.blmet == 0  && radius > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
-                        if (fft) { //  && call == 2)
+                        if (fft || lp.rad > 30.f) {
                             ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfw, bfh, radius, 0, 0);
 
                             if (!lp.actsp) {
@@ -8929,7 +8929,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                     } else if (lp.blurmet == 1  && lp.blmet == 0 && radius > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
-                        if (fft) { //  && call == 2)
+                        if (fft || lp.rad > 30.f) {
                             ImProcFunctions::fftw_convol_blur2(original->L, tmp1->L, GW, GH, radius, 0, 0);
 
                             if (!lp.actsp) {
