@@ -24,6 +24,7 @@
 #include <exiv2/exiv2.hpp>
 #include <memory>
 #include "procparams.h"
+#include "cache.h"
 
 namespace rtengine {
 
@@ -74,11 +75,10 @@ private:
     Exiv2::ExifData exif_data_;
     Exiv2::IptcData iptc_data_;
     Exiv2::XmpData xmp_data_;
-};
 
-// Glib::ustring get_xmp_sidecar_path(const Glib::ustring &path);
-// Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring &fname,
-//                                  bool merge_xmp_sidecar);
-// Exiv2::XmpData read_exiv2_xmp(const Glib::ustring &fname);
+    typedef std::pair<std::shared_ptr<Exiv2::Image>, Glib::TimeVal> CacheVal;
+    typedef Cache<Glib::ustring, CacheVal> ImageCache;
+    static std::unique_ptr<ImageCache> cache_;
+};
 
 } // namespace rtengine
