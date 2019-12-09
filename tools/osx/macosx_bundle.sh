@@ -117,7 +117,7 @@ msg "Copying dependencies from ${GTK_PREFIX}:"
 CheckLink "${EXECUTABLE}"
 
 msg "Copying library modules from ${GTK_PREFIX}:"
-ditto --arch "${arch}" {"/usr/local/Cellar/gdk-pixbuf/2*/lib","${LIB}"}/gdk-pixbuf-2.0
+ditto --arch "${arch}" {"/usr/local/opt/gdk-pixbuf/lib","${LIB}"}/gdk-pixbuf-2.0
 ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gtk-3.0
 
 msg "Removing static libraries and cache files:"
