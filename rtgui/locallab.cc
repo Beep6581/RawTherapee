@@ -768,6 +768,7 @@ pe(nullptr)
     setExpandAlignProperties(expmaskcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskcol->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskcol));
     expmaskcol->setLevel(2);
+
     setExpandAlignProperties(expmaskcol1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskcol1->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskcol1));
     expmaskcol1->setLevel(2);
@@ -775,6 +776,10 @@ pe(nullptr)
     if (showtooltip) {
         expmaskcol->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
+
+
+
+
 
     curvactivConn = curvactiv->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::curvactivChanged));
     lightness->setAdjusterListener(this);
@@ -1324,10 +1329,10 @@ pe(nullptr)
     expmaskcol->add(*mergecolFrame, false);
 
     if (complexsoft < 2) {
-        colorBox->pack_start(*expmaskcol1);
+        colorBox->pack_start(*expmaskcol1, false, false);
     }
 
-    colorBox->pack_start(*expmaskcol);
+    colorBox->pack_start(*expmaskcol, false, false);
 
     expcolor->add(*colorBox, false);
     expcolor->setLevel(2);
@@ -1662,7 +1667,7 @@ pe(nullptr)
 
     maskexpBox->pack_start(*mask2expCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskexp->add(*maskexpBox, false);
-    exposeBox->pack_start(*expmaskexp);
+    exposeBox->pack_start(*expmaskexp, false, false);
 
     expexpose->add(*exposeBox, false);
     expexpose->setLevel(2);
@@ -1890,7 +1895,7 @@ pe(nullptr)
     }
 
     expmasksh->add(*maskSHBox, false);
-    shadhighBox->pack_start(*expmasksh);
+    shadhighBox->pack_start(*expmasksh, false, false);
 
 
     expshadhigh->add(*shadhighBox, false);
@@ -2115,7 +2120,7 @@ pe(nullptr)
     maskvibBox->pack_start(*mask2vibCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
     expmaskvib->add(*maskvibBox, false);
-    vibranceBox->pack_start(*expmaskvib);
+    vibranceBox->pack_start(*expmaskvib, false, false);
     expvibrance->add(*vibranceBox, false);
     expvibrance->setLevel(2);
 
@@ -2354,7 +2359,7 @@ pe(nullptr)
 
 //    tmBox->pack_start(*softradiustm);//always bad with TM ??
     tmBox->pack_start(*sensitm);
-    tmBox->pack_start(*expmasktm);
+    tmBox->pack_start(*expmasktm, false, false);
 
     exptonemap->add(*tmBox, false);
     exptonemap->setLevel(2);
@@ -2628,7 +2633,7 @@ pe(nullptr)
     retiBox->pack_start(*transLabels2);
     retiBox->pack_start(*LocalcurveEditortransT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    retiBox->pack_start(*expmaskreti);
+    retiBox->pack_start(*expmaskreti, false, false);
 //    retiBox->pack_start(*inversret);
     retitoolFrame->add(*retiBox);
     genBox->pack_start(*retitoolFrame);
@@ -2998,7 +3003,7 @@ pe(nullptr)
 //    }
 
     cbdlBox->pack_start(*sensicb);
-    cbdlBox->pack_start(*expmaskcb);
+    cbdlBox->pack_start(*expmaskcb, false, false);
     expcbdl->add(*cbdlBox, false);
     expcbdl->setLevel(2);
 
@@ -3239,7 +3244,9 @@ pe(nullptr)
     maskblBox->pack_start(*toolblFrame);
 
     expmaskbl->add(*maskblBox, false);
-    panel->pack_start(*expmaskbl);
+    panel->pack_start(*expmaskbl, false, false);
+
+
 
 
     grainFrame->set_label_align(0.025, 0.5);

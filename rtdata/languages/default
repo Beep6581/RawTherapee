@@ -2189,7 +2189,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
-TP_LOCALLAB_CBDL;Contrast by detail levels - Big defects : grease..
+TP_LOCALLAB_CBDL;Contrast by detail levels - Big defects
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
 TP_LOCALLAB_CH;Curves CL - LC
@@ -2207,7 +2207,7 @@ TP_LOCALLAB_CLARISOFT;Soft radius
 TP_LOCALLAB_CLARITYML;Clarity
 TP_LOCALLAB_CLARI_TOOLTIP;Under or equal level wavelet 4, 'Sharp mask' is enabled.\nAbove level wavelet 5 'Clarity' is enabled.
 TP_LOCALLAB_CLIPTM;Clip Restored datas (gain)
-TP_LOCALLAB_COFR;Color & Light - Small defects : red eyes, dust
+TP_LOCALLAB_COFR;Color & Light - Small defects
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPLEX_METHOD;Software Complexity
@@ -2398,12 +2398,12 @@ TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 TP_LOCALLAB_NEIGH;Radius
 TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse (Wav)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=0.02
-TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery(DCT)
+TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery (DCT)
 TP_LOCALLAB_NOISECHROFINE;Chroma fine (Wav)
 TP_LOCALLAB_NOISEDETAIL_TOOLTIP;Disabled if slider = 100
 TP_LOCALLAB_NOISELEQUAL;Equalizer white-black
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse (Wav)
-TP_LOCALLAB_NOISELUMDETAIL;Luminance detail recovery(DCT)
+TP_LOCALLAB_NOISELUMDETAIL;Luminance detail recovery (DCT)
 TP_LOCALLAB_NOISELUMFINE;Luminance fine 1 (Wav)
 TP_LOCALLAB_NOISELUMFINETWO;Luminance fine 2 (Wav)
 TP_LOCALLAB_NOISELUMFINEZERO;Luminance fine 0 (Wav)
@@ -2466,7 +2466,7 @@ TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadows compression & tonal width
-TP_LOCALLAB_SHADHIGH;Shadows Highlights-Gradient- Tone Equalizer-TRC
+TP_LOCALLAB_SHADHIGH;Shadows Highlights-Gradient - Tone Equalizer - TRC
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Can be used instead - or in complement - of exposure module in difficult cases.\nThe use of Denoise may be necessary : lightening the shadows.\n\nCan be used as graduated filter (increase Scope)
 TP_LOCALLAB_SHAMASKCOL;Shadows mask
 TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
@@ -2504,7 +2504,7 @@ TP_LOCALLAB_SHOWVI;3 - Mask and modifications
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_SLOSH;Slope
-TP_LOCALLAB_SOFT;Soft Light and Original Retinex
+TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Retinex method.\nIts acts on grey and balance luminance.
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
