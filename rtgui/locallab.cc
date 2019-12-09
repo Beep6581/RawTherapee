@@ -43,7 +43,7 @@
 #define MAXNEIGH 1500
 #define CENTERNEIGH 200
 #define MINRAD 1.5
-#define MAXRAD 1000
+#define MAXRAD 10000
 #define CENTERRAD 100
 
 using namespace rtengine;
@@ -124,8 +124,8 @@ static double blurRadius2Slider(double radius)
         sval = 0.;
     }
 
-    if (sval > 1000.) {
-        sval = 1000.;
+    if (sval > 10000.) {
+        sval = 10000.;
     }
 
     return sval;
@@ -480,7 +480,7 @@ gammaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01,
 slomaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
 lapmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
 shadmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))),
-isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
+isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 0))),
 strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
 scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
 strumaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
@@ -6464,11 +6464,16 @@ void Locallab::merMethodChanged()
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
-        sensi->set_sensitive(false);
-        structcol->set_sensitive(false);
-        blurcolde->set_sensitive(false);
-        blurcol->set_sensitive(false);
-        contcol->set_sensitive(false);
+       // sensi->set_sensitive(false);
+        sensi->set_sensitive(true);
+//        structcol->set_sensitive(false);
+//        blurcolde->set_sensitive(false);
+//        blurcol->set_sensitive(false);
+//        contcol->set_sensitive(false);
+        structcol->set_sensitive(true);
+        blurcolde->set_sensitive(true);
+        blurcol->set_sensitive(true);
+        contcol->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
@@ -6476,12 +6481,18 @@ void Locallab::merMethodChanged()
         strcolh->set_sensitive(true);
         conthrcol->show();
         gridmerFrame->hide();
+       
     } else if (merMethod->get_active_row_number() == 3) {
-        sensi->set_sensitive(false);
-        structcol->set_sensitive(false);
-        blurcolde->set_sensitive(false);
-        blurcol->set_sensitive(false);
-        contcol->set_sensitive(false);
+      //  sensi->set_sensitive(false);
+        sensi->set_sensitive(true);
+//        structcol->set_sensitive(false);
+//        blurcolde->set_sensitive(false);
+//        blurcol->set_sensitive(false);
+//        contcol->set_sensitive(false);
+        structcol->set_sensitive(true);
+        blurcolde->set_sensitive(true);
+        blurcol->set_sensitive(true);
+        contcol->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
@@ -6490,20 +6501,27 @@ void Locallab::merMethodChanged()
         mask7->show();
         conthrcol->show();
         gridmerFrame->hide();
+        
     } else if (merMethod->get_active_row_number() == 4) {
         mask7->show();
         conthrcol->hide();
-        blurcolde->set_sensitive(false);
-        blurcol->set_sensitive(false);
-        contcol->set_sensitive(false);
-        sensi->set_sensitive(false);
-        structcol->set_sensitive(false);
+//        blurcolde->set_sensitive(false);
+//        blurcol->set_sensitive(false);
+//        contcol->set_sensitive(false);
+    //    sensi->set_sensitive(false);
+        sensi->set_sensitive(true);
+//        structcol->set_sensitive(false);
+        structcol->set_sensitive(true);
+        blurcolde->set_sensitive(true);
+        blurcol->set_sensitive(true);
+        contcol->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
         strcolh->set_sensitive(true);
         gridmerFrame->show();
+       
     }
 
     if (getEnabled() && expcolor->getEnabled()) {
@@ -11987,46 +12005,64 @@ void Locallab::updateSpecificGUIState()
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
-        structcol->set_sensitive(false);
+//        structcol->set_sensitive(false);
         strcolh->set_sensitive(true);
-        sensi->set_sensitive(false);
-        blurcolde->set_sensitive(false);
-        blurcol->set_sensitive(false);
-        contcol->set_sensitive(false);
+//        sensi->set_sensitive(false);
+        sensi->set_sensitive(true);
+//        blurcolde->set_sensitive(false);
+//        blurcol->set_sensitive(false);
+//        contcol->set_sensitive(false);
+        structcol->set_sensitive(true);
+        blurcolde->set_sensitive(true);
+        blurcol->set_sensitive(true);
+        contcol->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
         conthrcol->show();
         gridmerFrame->hide();
+        
     } else if (merMethod->get_active_row_number() == 3) {
         conthrcol->show();
-        structcol->set_sensitive(false);
-        sensi->set_sensitive(false);
-        blurcolde->set_sensitive(false);
-        blurcol->set_sensitive(false);
-        contcol->set_sensitive(false);
+//        structcol->set_sensitive(false);
+ //       sensi->set_sensitive(false);
+        sensi->set_sensitive(true);
+//        blurcolde->set_sensitive(false);
+//        blurcol->set_sensitive(false);
+//        contcol->set_sensitive(false);
         strcolh->set_sensitive(true);
+        structcol->set_sensitive(true);
+        blurcolde->set_sensitive(true);
+        blurcol->set_sensitive(true);
+        contcol->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
         mask7->show();
         gridmerFrame->hide();
+       
     } else if (merMethod->get_active_row_number() == 3) {
         mask7->show();
-        structcol->set_sensitive(false);
+//        structcol->set_sensitive(false);
         strcolh->set_sensitive(true);
-        sensi->set_sensitive(false);
-        blurcolde->set_sensitive(false);
-        blurcol->set_sensitive(false);
-        contcol->set_sensitive(false);
+//        sensi->set_sensitive(false);
+        sensi->set_sensitive(true);
+//        blurcolde->set_sensitive(false);
+//        blurcol->set_sensitive(false);
+//        contcol->set_sensitive(false);
+        structcol->set_sensitive(true);
+        blurcolde->set_sensitive(true);
+        blurcol->set_sensitive(true);
+        contcol->set_sensitive(true);
         H2CurveEditorG->set_sensitive(true);
         rgbCurveEditorG->set_sensitive(false);
         special->set_sensitive(false);
         invers->set_sensitive(false);
         conthrcol->hide();
         gridmerFrame->show();
+        
     }
 
     // Update Exposure GUI according to black adjuster state (to be compliant with adjusterChanged function)

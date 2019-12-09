@@ -13488,7 +13488,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                             if (nottransit) {
-
+                            //new 9 december 2019
+                            transit_shapedetect2(call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+/*
+Befor 12 2019
                                 //special only transition
                                 //may be we can add preview...
 #ifdef _OPENMP
@@ -13518,7 +13521,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     }
                                 }
 
-
+*/
                             }
 
 
