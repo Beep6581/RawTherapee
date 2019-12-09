@@ -33,7 +33,7 @@ jobs:
         PKG_CONFIG_PATH: /usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/expat/lib/pkgconfig
         RAW_THERAPEE_MAJOR: '5'
         RAW_THERAPEE_MINOR: '7'
-        C_FLAGS: -Xpreprocessor -fopenmp /usr/local/Cellar/libomp/9.0.0/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/libiconv/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/llvm/include
+        C_FLAGS: -Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/libiconv/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/llvm/include
       run: |
         REF=${GITHUB_REF##*/}
         mkdir build && cd build
@@ -50,7 +50,7 @@ jobs:
           -DOpenMP_CXX_FLAGS=-fopenmp=libomp \
           -DOpenMP_C_LIB_NAMES="libomp" \
           -DOpenMP_CXX_LIB_NAMES="libomp" \
-          -DOpenMP_libomp_LIBRARY="/usr/local/Cellar/libomp/9.0.0/lib/libomp.dylib" \
+          -DOpenMP_libomp_LIBRARY="/usr/local/lib/libomp.dylib" \
           -DOpenMP_C_FLAGS="${C_FLAGS}" \
           -DOpenMP_CXX_FLAGS="${C_FLAGS}" \
           -DCMAKE_AR="/usr/local/opt/llvm/bin/llvm-ar" \
