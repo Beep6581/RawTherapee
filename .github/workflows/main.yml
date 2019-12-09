@@ -25,7 +25,6 @@ jobs:
         make --jobs 2
         make DESTDIR="${destDir}" install
         sudo mv opt/local /usr/local/opt/libiconv
-        cd -
     - name: print /usr/local/lib contents
       run: ls -al /usr/local/lib
     - name: cmake
