@@ -53,6 +53,8 @@ jobs:
           -DOpenMP_libomp_LIBRARY="/usr/local/Cellar/libomp/9.0.0/lib/libomp.dylib" \
           -DOpenMP_C_FLAGS="${C_FLAGS}" \
           -DOpenMP_CXX_FLAGS="${C_FLAGS}" \
+          -DCMAKE_AR="/usr/local/opt/llvm/bin/llvm-ar" \
+          -DCMAKE_RANLIB="/usr/local/opt/llvm/bin/llvm-ranlib" \
           ..
         make --jobs 2
         make install
