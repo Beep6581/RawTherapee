@@ -40,7 +40,7 @@ jobs:
         cmake \
           -DCMAKE_BUILD_TYPE="release" \
           -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-          -DCMAKE_EXE_LINKER_FLAGS="-L/usr/local/lib -L/usr/local/opt/libiconv/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libxml2/lib -L/usr/local/opt/expat/lib -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+          -DCMAKE_EXE_LINKER_FLAGS="-L/usr/local/lib -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib -L/usr/local/opt/libiconv/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libxml2/lib -L/usr/local/opt/expat/lib" \
           -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_MAJOR}.${RAW_THERAPEE_MINOR}-${REF}" \
           -DPROC_TARGET_NUMBER="2" \
           -DPROC_LABEL="generic processor" \
