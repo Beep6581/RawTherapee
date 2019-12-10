@@ -112,7 +112,7 @@ install -d  "${RESOURCES}" \
 
 msg "Copying release files:"
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
-ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
+ditto "Resources" "${RESOURCES}"
 
 msg "Copying dependencies from ${GTK_PREFIX}:"
 CheckLink "${EXECUTABLE}"
