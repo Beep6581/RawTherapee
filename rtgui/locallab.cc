@@ -3564,6 +3564,15 @@ void Locallab::enableToggled(MyExpander *expander)
 
 void Locallab::writeOptions(std::vector<int> &tpOpen)
 {
+    tpOpen.push_back(expmaskcol->get_expanded());
+    tpOpen.push_back(expmaskcol1->get_expanded());
+    tpOpen.push_back(expmaskexp->get_expanded());
+    tpOpen.push_back(expmasksh->get_expanded());
+    tpOpen.push_back(expmaskcb->get_expanded());
+    tpOpen.push_back(expmaskreti->get_expanded());
+    tpOpen.push_back(expmasktm->get_expanded());
+    tpOpen.push_back(expmaskbl->get_expanded());
+    tpOpen.push_back(expmaskvib->get_expanded());
     tpOpen.push_back(expsettings->getExpanded());
     tpOpen.push_back(expcolor->get_expanded());
     tpOpen.push_back(expexpose->get_expanded());
@@ -3578,15 +3587,6 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expcbdl->get_expanded());
     tpOpen.push_back(expdenoi->get_expanded());
     tpOpen.push_back(explog->get_expanded());
-    tpOpen.push_back(expmaskcol->get_expanded());
-    tpOpen.push_back(expmaskcol1->get_expanded());
-    tpOpen.push_back(expmaskexp->get_expanded());
-    tpOpen.push_back(expmasksh->get_expanded());
-    tpOpen.push_back(expmaskcb->get_expanded());
-    tpOpen.push_back(expmaskreti->get_expanded());
-    tpOpen.push_back(expmasktm->get_expanded());
-    tpOpen.push_back(expmaskbl->get_expanded());
-    tpOpen.push_back(expmaskvib->get_expanded());
 
 }
 
@@ -3756,30 +3756,30 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 24) {
+    if (tpOpen.size() >= 23) {
         expsettings->setExpanded(tpOpen.at(0));
-        expcolor->set_expanded(tpOpen.at(1));
-        expexpose->set_expanded(tpOpen.at(2));
-        expshadhigh->set_expanded(tpOpen.at(3));
-        expvibrance->set_expanded(tpOpen.at(4));
-        expsoft->set_expanded(tpOpen.at(5));
-        expblur->set_expanded(tpOpen.at(6));
-        exptonemap->set_expanded(tpOpen.at(7));
-        expreti->set_expanded(tpOpen.at(8));
-        expsharp->set_expanded(tpOpen.at(9));
-        expcontrast->set_expanded(tpOpen.at(10));
-        expcbdl->set_expanded(tpOpen.at(11));
-        expdenoi->set_expanded(tpOpen.at(12));
-        explog->set_expanded(tpOpen.at(13));
-        expmaskcol->set_expanded(tpOpen.at(14));
-        expmaskcol1->set_expanded(tpOpen.at(15));
-        expmaskexp->set_expanded(tpOpen.at(16));
-        expmasksh->set_expanded(tpOpen.at(17));
-        expmaskcb->set_expanded(tpOpen.at(18));
-        expmaskreti->set_expanded(tpOpen.at(19));
-        expmasktm->set_expanded(tpOpen.at(20));
-        expmaskbl->set_expanded(tpOpen.at(21));
-        expmaskvib->set_expanded(tpOpen.at(22));
+        expmaskcol->set_expanded(tpOpen.at(1));
+        expmaskcol1->set_expanded(tpOpen.at(2));
+        expmaskexp->set_expanded(tpOpen.at(3));
+        expmasksh->set_expanded(tpOpen.at(4));
+        expmaskcb->set_expanded(tpOpen.at(5));
+        expmaskreti->set_expanded(tpOpen.at(6));
+        expmasktm->set_expanded(tpOpen.at(7));
+        expmaskbl->set_expanded(tpOpen.at(8));
+        expmaskvib->set_expanded(tpOpen.at(9));
+        expcolor->set_expanded(tpOpen.at(10));
+        expexpose->set_expanded(tpOpen.at(11));
+        expshadhigh->set_expanded(tpOpen.at(12));
+        expvibrance->set_expanded(tpOpen.at(13));
+        expsoft->set_expanded(tpOpen.at(14));
+        expblur->set_expanded(tpOpen.at(15));
+        exptonemap->set_expanded(tpOpen.at(16));
+        expreti->set_expanded(tpOpen.at(17));
+        expsharp->set_expanded(tpOpen.at(18));
+        expcontrast->set_expanded(tpOpen.at(19));
+        expcbdl->set_expanded(tpOpen.at(20));
+        expdenoi->set_expanded(tpOpen.at(21));
+        explog->set_expanded(tpOpen.at(22));
     }
 }
 
