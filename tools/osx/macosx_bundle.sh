@@ -155,26 +155,26 @@ ditto {"/usr/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "/usr/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
 
 # Copy libjpeg-turbo into the app bundle
-cp /usr/local/lib/libjpeg.*.dylib "${RESOURCES}/../Frameworks"
+cp /usr/local/lib/libjpeg.*.dylib "${CONTENTS}/Frameworks"
 
 # Copy libexpat into the app bundle (which is keg-only)
-cp /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${RESOURCES}/../Frameworks"
+cp /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"
 
 # Copy libz into the app bundle
-cp /usr/lib/libz.1.dylib "${RESOURCES}/../Frameworks"
+cp /usr/lib/libz.1.dylib "${CONTENTS}/Frameworks"
 
 # Copy libtiff into the app bundle
-cp /usr/local/lib/libtiff.5.dylib "${RESOURCES}/../Frameworks"
+cp /usr/local/lib/libtiff.5.dylib "${CONTENTS}/Frameworks"
 
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"
 cp /usr/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
 
 # Copy liblensfun to Frameworks
-cp /usr/local/lib/liblensfun.2.dylib "${RESOURCES}/../Frameworks"
+cp /usr/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks"
 
 # Copy libomp to Frameworks
-cp /usr/local/lib/libomp.dylib "${RESOURCES}/../Frameworks"
+cp /usr/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 # Install names
 find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
