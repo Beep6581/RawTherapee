@@ -35,6 +35,8 @@
 #include "jaggedarray.h"
 #include "rt_algo.h"
 #include "settings.h"
+#include "../rtgui/options.h"
+
 #include "utils.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -320,6 +322,7 @@ struct local_params {
     int softmet;
     int blurmet;
     int blmet;
+    int shmeth;
     int medmet;
     int locmet;
     float noiself;
@@ -607,6 +610,13 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).blMethod == "guid") {
         lp.blmet = 2;
     }
+
+    if (locallab.spots.at(sp).shMethod == "std") {
+        lp.shmeth = 0;
+    } else if (locallab.spots.at(sp).shMethod == "tone") {
+        lp.shmeth = 1;
+    }
+
 
     if (locallab.spots.at(sp).medMethod == "none") {
         lp.medmet = -1;
@@ -4995,11 +5005,11 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             }
         }
 
-        if (params->locallab.spots.at(sp).shMethod == "std") {
+        if (lp.shmeth == 0) {
             ImProcFunctions::shadowsHighlights(temp, lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
         }
 
-        if (params->locallab.spots.at(sp).shMethod == "tone") {
+        if (lp.shmeth == 1) {
             int GH = transformed->H;
             int GW = transformed->W;
 
@@ -8337,6 +8347,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
         BENCHFUN
+        int complexsoft = options.complexity;
+
 #ifdef _DEBUG
 // init variables to display Munsell corrections
         MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
@@ -10002,6 +10014,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
 
+            if(complexsoft == 2) {
+                lp.shmeth = 1;
+            }
+
             if (bfw >= mSP && bfh >= mSP) {
 
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
@@ -10116,7 +10132,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-                        if (params->locallab.spots.at(sp).shMethod == "std") {
+                        if (lp.shmeth == 0) {
                             ImProcFunctions::shadowsHighlights(bufexpfin.get(), lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
                         }
 
@@ -10137,7 +10153,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
                         }
 
-                        if (params->locallab.spots.at(sp).shMethod == "tone") {
+                        if (lp.shmeth == 1) {
                             double scal = (double)(sk);
                             Imagefloat *tmpImage = nullptr;
                             tmpImage = new Imagefloat(bfw, bfh);
@@ -11634,7 +11650,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         bool enablefat = false;
 
         if (params->locallab.spots.at(sp).fatamount > 1.f) {
-            enablefat = true;
+            enablefat = true;;
         }
 
         bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)));
@@ -11651,15 +11667,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfwr = bfw;
             bool reduH = false;
             bool reduW = false;
-
+            
+            if(complexsoft == 2) {
+                lp.expmet = 1;
+                lp.laplacexp = 0.f;
+            }
+            
             if (bfw >= mSP && bfh >= mSP) {
-
+                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+                
                 if (lp.expmet == 1) {
                     optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
 
-                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskblurexp;
                 std::unique_ptr<LabImage> originalmaskexp;
 
@@ -11954,6 +11975,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 delete [] dataor;
                             }
                         }
+printf("OK 10\n");
 
                         //shadows with ipshadowshighlight
                         if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
