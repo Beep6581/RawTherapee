@@ -146,7 +146,7 @@ cp -pRL {"/usr/local","${RESOURCES}"}/share/glib-2.0/schemas
 
 msg "Copying shared files from ${GTK_PREFIX}:"
 set -x
-sudo find / -name mime
+find /usr -name mime
 cp -pRL {"/usr/local","${RESOURCES}"}/share/mime
 set +x
 # GTK3 themes
