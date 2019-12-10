@@ -130,6 +130,7 @@ install -d "${ETC}/gtk-3.0"
 # Make Frameworks folder flat
 mv "${LIB}"/gdk-pixbuf-2.0/2*/loaders/*.so "${LIB}"
 mv "${LIB}"/gtk-3.0/3*/immodules/*.so "${LIB}"
+mv "${LIB}"/gtk-3.0/3*/printbackends/*.so "${LIB}"
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
