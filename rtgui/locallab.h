@@ -66,6 +66,7 @@ private:
     MyExpander* const explog;
     MyExpander* const expmaskcol;
     MyExpander* const expmaskcol1;
+    MyExpander* const expcurvcol;
     MyExpander* const expmaskexp;
     MyExpander* const expmasksh;
     MyExpander* const expmaskcb;
@@ -73,6 +74,8 @@ private:
     MyExpander* const expmasktm;
     MyExpander* const expmaskbl;
     MyExpander* const expmaskvib;
+    MyExpander* const expgradcol;
+
     sigc::connection enablecolorConn, enableexposeConn, enableshadhighConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn, enablelogConn;
 
     // Curve widgets
@@ -545,7 +548,6 @@ private:
     Gtk::Frame* const merge1colFrame;
     Gtk::Frame* const pdeFrame;
     Gtk::Frame* const fatFrame;
-    Gtk::Frame* const gradcolFrame;
     Gtk::Frame* const gradFrame;
     Gtk::Frame* const gradFramemask;
     Gtk::Frame* const gradSHFrame;

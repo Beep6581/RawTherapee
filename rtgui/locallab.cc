@@ -232,6 +232,7 @@ Locallab::Locallab():
     explog(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_LOG")))),
     expmaskcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
     expmaskcol1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC1")))),
+    expcurvcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPCURV")))),
     expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWE")))),
     expmasksh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
     expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
@@ -239,6 +240,7 @@ Locallab::Locallab():
     expmasktm(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWT")))),
     expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
     expmaskvib(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWVI")))),
+    expgradcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
 
 
     // CurveEditorGroup widgets
@@ -707,7 +709,6 @@ mergecolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")))),
 merge1colFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")))),
 pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
 fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
-gradcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 gradFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 gradFramemask(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 gradSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
@@ -777,7 +778,13 @@ pe(nullptr)
         expmaskcol->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
 
+    setExpandAlignProperties(expgradcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expgradcol->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expgradcol));
+    expgradcol->setLevel(2);
 
+    setExpandAlignProperties(expcurvcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expcurvcol->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcurvcol));
+    expcurvcol->setLevel(2);
 
 
 
@@ -830,7 +837,6 @@ pe(nullptr)
     if (showtooltip) {
         radmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-        //   chromaskcol->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
     }
 
     if (showtooltip) {
@@ -1067,8 +1073,6 @@ pe(nullptr)
         LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     }
 
-//   maskCurveEditorG->curveListComplete();
-//    maskHCurveEditorG->setCurveListener(this);
 
     HHmaskshape->setIdentityValue(0.);
     HHmaskshape->setResetCurve(FlatCurveType(defSpot.HHmaskcurve.at(0)), defSpot.HHmaskcurve);
@@ -1128,7 +1132,6 @@ pe(nullptr)
         conthrcol->set_tooltip_text(M("TP_LOCALLAB_MERGEOPA_TOOLTIP"));
     }
 
-    gradcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradcolBox = Gtk::manage(new ToolParamBlock());
     gradcolBox->pack_start(*strcol);
 
@@ -1141,7 +1144,6 @@ pe(nullptr)
     }
 
     gradcolBox->pack_start(*angcol);
-    gradcolFrame->add(*gradcolBox);
 
 
     ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
@@ -1159,9 +1161,7 @@ pe(nullptr)
     gridBox->pack_start(*strengthgrid);
     gridFrame->add(*gridBox);
 
-//    if (complexsoft < 2) {
     superBox->pack_start(*gridFrame);
-//    }
 
     superFrame->add(*superBox);
     colorBox->pack_start(*superFrame);
@@ -1175,40 +1175,48 @@ pe(nullptr)
         colorBox->pack_start(*blurcolde);
     }
 
-
-    colorBox->pack_start(*gradcolFrame);
-
     if (complexsoft < 2) {
         colorBox->pack_start(*softradiuscol);
     }
 
+    colorBox->pack_start(*invers);
+
+    expgradcol->add(*gradcolBox, false);
+    colorBox->pack_start(*expgradcol, false, false);
+
+
+    ToolParamBlock* const curvBox = Gtk::manage(new ToolParamBlock());
+
     Gtk::HBox* const qualcurvbox = Gtk::manage(new Gtk::HBox());
     qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start(*qualitycurveMethod);
-    colorBox->pack_start(*qualcurvbox);
-    colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4);
+    curvBox->pack_start(*qualcurvbox);
+    curvBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4);
 
     if (complexsoft < 2) {
-        colorBox->pack_start(*clCurveEditorG, Gtk::PACK_SHRINK, 4);
+        curvBox->pack_start(*clCurveEditorG, Gtk::PACK_SHRINK, 4);
     }
 
     if (complexsoft < 2) {
-        colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4);
+        curvBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4);
     }
 
     if (complexsoft < 2) {
-        colorBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4);
+        curvBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4);
     }
 
     if (complexsoft < 2) {
-        colorBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4);
+        curvBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4);
     }
 
     if (complexsoft < 2) {
-        colorBox->pack_start(*special);
+        curvBox->pack_start(*special);
     }
 
-    colorBox->pack_start(*invers);
+    expcurvcol->add(*curvBox, false);
+    
+    colorBox->pack_start(*expcurvcol, false, false);
+
     Gtk::HSeparator* const separatormer = Gtk::manage(new  Gtk::HSeparator());
 
     if (showtooltip) {
@@ -1264,10 +1272,6 @@ pe(nullptr)
     }
 
     if (complexsoft < 2) {
-        if (complexsoft < 1) {
-//           blurcol->setLimits (0.2, 1000., 0.5, 0.2);
-        }
-
         blurmBox->pack_start(*contcol);
         blurcol->setAdjusterListener(this);
         blurmBox->pack_start(*blurcol);
@@ -3481,6 +3485,7 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         explog->set_expanded(explog == expander);
         expmaskcol->set_expanded(expmaskcol == expander);
         expmaskcol1->set_expanded(expmaskcol1 == expander);
+        expcurvcol->set_expanded(expcurvcol == expander);
         expmaskexp->set_expanded(expmaskexp == expander);
         expmasksh->set_expanded(expmasksh == expander);
         expmaskcb->set_expanded(expmaskcb == expander);
@@ -3488,6 +3493,7 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         expmasktm->set_expanded(expmasktm == expander);
         expmaskbl->set_expanded(expmaskbl == expander);
         expmaskvib->set_expanded(expmaskvib == expander);
+        expgradcol->set_expanded(expgradcol == expander);
 
     }
 }
@@ -3565,7 +3571,9 @@ void Locallab::enableToggled(MyExpander *expander)
 void Locallab::writeOptions(std::vector<int> &tpOpen)
 {
     tpOpen.push_back(expmaskcol->get_expanded());
+    tpOpen.push_back(expgradcol->get_expanded());
     tpOpen.push_back(expmaskcol1->get_expanded());
+    tpOpen.push_back(expcurvcol->get_expanded());
     tpOpen.push_back(expmaskexp->get_expanded());
     tpOpen.push_back(expmasksh->get_expanded());
     tpOpen.push_back(expmaskcb->get_expanded());
@@ -3756,30 +3764,32 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 23) {
+    if (tpOpen.size() >= 25) {
         expsettings->setExpanded(tpOpen.at(0));
         expmaskcol->set_expanded(tpOpen.at(1));
         expmaskcol1->set_expanded(tpOpen.at(2));
-        expmaskexp->set_expanded(tpOpen.at(3));
-        expmasksh->set_expanded(tpOpen.at(4));
-        expmaskcb->set_expanded(tpOpen.at(5));
-        expmaskreti->set_expanded(tpOpen.at(6));
-        expmasktm->set_expanded(tpOpen.at(7));
-        expmaskbl->set_expanded(tpOpen.at(8));
-        expmaskvib->set_expanded(tpOpen.at(9));
-        expcolor->set_expanded(tpOpen.at(10));
-        expexpose->set_expanded(tpOpen.at(11));
-        expshadhigh->set_expanded(tpOpen.at(12));
-        expvibrance->set_expanded(tpOpen.at(13));
-        expsoft->set_expanded(tpOpen.at(14));
-        expblur->set_expanded(tpOpen.at(15));
-        exptonemap->set_expanded(tpOpen.at(16));
-        expreti->set_expanded(tpOpen.at(17));
-        expsharp->set_expanded(tpOpen.at(18));
-        expcontrast->set_expanded(tpOpen.at(19));
-        expcbdl->set_expanded(tpOpen.at(20));
-        expdenoi->set_expanded(tpOpen.at(21));
-        explog->set_expanded(tpOpen.at(22));
+        expgradcol->set_expanded(tpOpen.at(3));
+        expcurvcol->set_expanded(tpOpen.at(4));
+        expmaskexp->set_expanded(tpOpen.at(5));
+        expmasksh->set_expanded(tpOpen.at(6));
+        expmaskcb->set_expanded(tpOpen.at(7));
+        expmaskreti->set_expanded(tpOpen.at(8));
+        expmasktm->set_expanded(tpOpen.at(9));
+        expmaskbl->set_expanded(tpOpen.at(10));
+        expmaskvib->set_expanded(tpOpen.at(11));
+        expcolor->set_expanded(tpOpen.at(12));
+        expexpose->set_expanded(tpOpen.at(13));
+        expshadhigh->set_expanded(tpOpen.at(14));
+        expvibrance->set_expanded(tpOpen.at(15));
+        expsoft->set_expanded(tpOpen.at(16));
+        expblur->set_expanded(tpOpen.at(17));
+        exptonemap->set_expanded(tpOpen.at(18));
+        expreti->set_expanded(tpOpen.at(19));
+        expsharp->set_expanded(tpOpen.at(20));
+        expcontrast->set_expanded(tpOpen.at(21));
+        expcbdl->set_expanded(tpOpen.at(22));
+        expdenoi->set_expanded(tpOpen.at(23));
+        explog->set_expanded(tpOpen.at(24));
     }
 }
 
@@ -3861,39 +3871,6 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->spotMethod = 1;
         }
 
-        /*
-                if (pp->locallab.spots.at(i).mergeMethod == "none") {
-                    r->mergeMethod = 0;
-                    expmaskcol1->hide();
-                    expmaskcol->show();
-
-                } else if (pp->locallab.spots.at(i).mergeMethod == "short") {
-                    r->mergeMethod = 1;
-                    expmaskcol1->hide();
-                    expmaskcol->show();
-
-                } else if (pp->locallab.spots.at(i).mergeMethod == "orig") {
-                    r->mergeMethod = 2;
-                    expmaskcol1->show();
-                    expmaskcol->hide();
-
-                } else if (pp->locallab.spots.at(i).mergeMethod == "origmas") {
-                    r->mergeMethod = 3;
-                    expmaskcol1->show();
-                    expmaskcol->show();
-
-                } else if (pp->locallab.spots.at(i).mergeMethod == "lastspot") {
-                    r->mergeMethod = 4;
-                    expmaskcol1->show();
-                    expmaskcol->hide();
-
-                } else if (pp->locallab.spots.at(i).mergeMethod == "lastspotmas") {
-                    r->mergeMethod = 5;
-                    expmaskcol1->show();
-                    expmaskcol->hide();
-
-                }
-        */
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
         r->structexclu = pp->locallab.spots.at(i).structexclu;
         r->struc = pp->locallab.spots.at(i).struc;
@@ -4028,36 +4005,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->spotMethod = 1;
             }
 
-            /*
-                        if (newSpot->mergeMethod == "none") {
-                            r->mergeMethod = 0;
-                            expmaskcol1->hide();
-                            expmaskcol->show();
-
-                        } else if (newSpot->mergeMethod == "short") {
-                            r->mergeMethod = 1;
-                            expmaskcol1->hide();
-                            expmaskcol->show();
-
-                        } else if (newSpot->mergeMethod == "orig") {
-                            r->mergeMethod = 2;
-                            expmaskcol1->show();
-                            expmaskcol->hide();
-                        } else if (newSpot->mergeMethod == "origmas") {
-                            r->mergeMethod = 3;
-                            expmaskcol1->show();
-                            expmaskcol->show();
-                        } else if (newSpot->mergeMethod == "lastspot") {
-                            r->mergeMethod = 4;
-                            expmaskcol1->show();
-                            expmaskcol->hide();
-                        } else if (newSpot->mergeMethod == "lastspotmas") {
-                            r->mergeMethod = 5;
-                            expmaskcol1->show();
-                            expmaskcol->show();
-
-                        }
-            */
             r->sensiexclu = newSpot->sensiexclu;
             r->structexclu = newSpot->structexclu;
             r->struc = newSpot->struc;
@@ -4297,33 +4244,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->spotMethod = 1;
             }
 
-            /*
-                        if (newSpot->mergeMethod == "none") {
-                            r->mergeMethod = 0;
-                            expmaskcol1->hide();
-                            expmaskcol->show();
-                        } else if (newSpot->mergeMethod == "short") {
-                            r->mergeMethod = 1;
-                            expmaskcol1->hide();
-                            expmaskcol->show();
-                        } else if (newSpot->mergeMethod == "orig") {
-                            r->mergeMethod = 2;
-                            expmaskcol1->show();
-                            expmaskcol->hide();
-                        } else if (newSpot->mergeMethod == "origmas") {
-                            r->mergeMethod = 3;
-                            expmaskcol1->show();
-                            expmaskcol->show();
-                        } else if (newSpot->mergeMethod == "lastspot") {
-                            r->mergeMethod = 4;
-                            expmaskcol1->show();
-                            expmaskcol->hide();
-                        } else if (newSpot->mergeMethod == "lastspotmas") {
-                            r->mergeMethod = 5;
-                            expmaskcol1->show();
-                            expmaskcol->show();
-                        }
-            */
             r->sensiexclu = newSpot->sensiexclu;
             r->structexclu = newSpot->structexclu;
             r->struc = newSpot->struc;
@@ -4481,35 +4401,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "exc";
                     }
 
-                    /*
-                                        if (r->mergeMethod == 0) {
-                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "none";
-                                            expmaskcol1->hide();
-                                            expmaskcol->show();
-
-                                        } else if (r->mergeMethod == 1) {
-                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "short";
-                                            expmaskcol1->hide();
-                                            expmaskcol->show();
-                                        } else if (r->mergeMethod == 2) {
-                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "orig";
-                                            expmaskcol1->show();
-                                            expmaskcol->hide();
-                                        } else if (r->mergeMethod == 3) {
-                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "origmas";
-                                            expmaskcol1->show();
-                                            expmaskcol->show();
-                                        } else if (r->mergeMethod == 4) {
-                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "lastspot";
-                                            expmaskcol1->show();
-                                            expmaskcol->hide();
-                                        } else if (r->mergeMethod == 5) {
-                                            pp->locallab.spots.at(pp->locallab.selspot).mergeMethod = "lastspotmas";
-                                            expmaskcol1->show();
-                                            expmaskcol->show();
-
-                                        }
-                    */
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
                     pp->locallab.spots.at(pp->locallab.selspot).structexclu = r->structexclu;
                     pp->locallab.spots.at(pp->locallab.selspot).struc = r->struc;
