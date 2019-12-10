@@ -138,7 +138,8 @@ rm -r "${LIB}"/gdk-pixbuf-2.0
 "${GTK_PREFIX}/bin/gtk-query-immodules-3.0" "${LIB}"/{im*.so,libprint*.so} > "${ETC}/gtk-3.0/gtk.immodules"
 sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
-ditto {"/usr/local","${RESOURCES}"}/share/glib-2.0/schemas
+mkdir -p ${RESOURCES}/share/glib-2.0
+cp -pRL {"/usr/local","${RESOURCES}"}/share/glib-2.0/schemas
 "/usr/local/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 msg "Copying shared files from ${GTK_PREFIX}:"
