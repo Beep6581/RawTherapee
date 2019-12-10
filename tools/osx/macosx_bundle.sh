@@ -143,7 +143,10 @@ cp -pRL {"/usr/local","${RESOURCES}"}/share/glib-2.0/schemas
 "/usr/local/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 msg "Copying shared files from ${GTK_PREFIX}:"
+set -x
+find /usr/local -name mime
 ditto {"/usr/local","${RESOURCES}"}/share/mime
+set +x
 # GTK3 themes
 ditto {"/usr/local","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
 ditto {"/usr/local","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
