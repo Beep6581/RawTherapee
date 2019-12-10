@@ -240,6 +240,8 @@ Locallab::Locallab():
     expmasktm(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWT")))),
     expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
     expmaskvib(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWVI")))),
+    expgradexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
+    exptoolexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPTOOL")))),
     expgradcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
 
 
@@ -1580,7 +1582,11 @@ pe(nullptr)
     ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
     gradBox->pack_start(*strexp);
     gradBox->pack_start(*angexp);
-    gradFrame->add(*gradBox);
+//    gradFrame->add(*gradBox);
+    
+    setExpandAlignProperties(expgradexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expgradexp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expgradexp));
+    expgradexp->setLevel(2);
 
     gradFramemask->set_label_align(0.025, 0.5);
 
@@ -1591,6 +1597,7 @@ pe(nullptr)
 
 
     ToolParamBlock* const exposeBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const toolBox = Gtk::manage(new ToolParamBlock());
 
     if (complexsoft < 2) {
         exposeBox->pack_start(*expMethod);
@@ -1600,25 +1607,31 @@ pe(nullptr)
         exposeBox->pack_start(*pdeFrame);
     }
 
-    if (complexsoft < 2) {
-        exposeBox->pack_start(*black);
-    }
 
-//    if (complexsoft < 2) {
     exposeBox->pack_start(*fatFrame);
-//    }
 
-    exposeBox->pack_start(*expcomp);
 
+    toolBox->pack_start(*expcomp);
     if (complexsoft < 2) {
-        exposeBox->pack_start(*hlcompr);
-        exposeBox->pack_start(*hlcomprthresh);
-        exposeBox->pack_start(*shadex);
-        exposeBox->pack_start(*shcompr);
-        exposeBox->pack_start(*expchroma);
+        toolBox->pack_start(*black);
     }
 
-    exposeBox->pack_start(*warm);
+    if (complexsoft < 2) {
+        toolBox->pack_start(*hlcompr);
+        toolBox->pack_start(*hlcomprthresh);
+        toolBox->pack_start(*shadex);
+        toolBox->pack_start(*shcompr);
+        toolBox->pack_start(*expchroma);
+    }
+
+    toolBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
+    toolBox->pack_start(*warm);
+
+    setExpandAlignProperties(exptoolexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    exptoolexp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), exptoolexp));
+    exptoolexp->setLevel(2);
+    exptoolexp->add(*toolBox, false);
+
     exposeBox->pack_start(*sensiex);
 
     if (complexsoft < 2) {
@@ -1628,14 +1641,20 @@ pe(nullptr)
     if (complexsoft < 2) {
         exposeBox->pack_start(*blurexpde);
     }
+    exposeBox->pack_start(*exptoolexp);
 
-    exposeBox->pack_start(*gradFrame);
+
+    setExpandAlignProperties(expgradexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expgradexp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expgradexp));
+    expgradexp->setLevel(2);
+
+    expgradexp->add(*gradBox, false);
+    exposeBox->pack_start(*expgradexp);
+  
 
     if (complexsoft < 2) {
         exposeBox->pack_start(*softradiusexp);
     }
-
-    exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
 
     if (complexsoft < 2) {
         exposeBox->pack_start(*inversex);
@@ -3494,6 +3513,8 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         expmaskbl->set_expanded(expmaskbl == expander);
         expmaskvib->set_expanded(expmaskvib == expander);
         expgradcol->set_expanded(expgradcol == expander);
+        exptoolexp->set_expanded(exptoolexp == expander);
+        expgradexp->set_expanded(expgradexp == expander);
 
     }
 }
@@ -3568,31 +3589,36 @@ void Locallab::enableToggled(MyExpander *expander)
     }
 }
 
+
+
+
 void Locallab::writeOptions(std::vector<int> &tpOpen)
 {
+    tpOpen.push_back(expsettings->getExpanded());
     tpOpen.push_back(expmaskcol->get_expanded());
-    tpOpen.push_back(expgradcol->get_expanded());
     tpOpen.push_back(expmaskcol1->get_expanded());
+    tpOpen.push_back(expgradcol->get_expanded());
     tpOpen.push_back(expcurvcol->get_expanded());
+    tpOpen.push_back(expcolor->get_expanded());
+    tpOpen.push_back(exptoolexp->get_expanded());
+    tpOpen.push_back(expgradexp->get_expanded());
     tpOpen.push_back(expmaskexp->get_expanded());
+    tpOpen.push_back(expexpose->get_expanded());
     tpOpen.push_back(expmasksh->get_expanded());
+    tpOpen.push_back(expshadhigh->get_expanded());
     tpOpen.push_back(expmaskcb->get_expanded());
+    tpOpen.push_back(expcbdl->get_expanded());
     tpOpen.push_back(expmaskreti->get_expanded());
+    tpOpen.push_back(expreti->get_expanded());
     tpOpen.push_back(expmasktm->get_expanded());
+    tpOpen.push_back(exptonemap->get_expanded());
     tpOpen.push_back(expmaskbl->get_expanded());
     tpOpen.push_back(expmaskvib->get_expanded());
-    tpOpen.push_back(expsettings->getExpanded());
-    tpOpen.push_back(expcolor->get_expanded());
-    tpOpen.push_back(expexpose->get_expanded());
-    tpOpen.push_back(expshadhigh->get_expanded());
     tpOpen.push_back(expvibrance->get_expanded());
     tpOpen.push_back(expsoft->get_expanded());
     tpOpen.push_back(expblur->get_expanded());
-    tpOpen.push_back(exptonemap->get_expanded());
-    tpOpen.push_back(expreti->get_expanded());
     tpOpen.push_back(expsharp->get_expanded());
     tpOpen.push_back(expcontrast->get_expanded());
-    tpOpen.push_back(expcbdl->get_expanded());
     tpOpen.push_back(expdenoi->get_expanded());
     tpOpen.push_back(explog->get_expanded());
 
@@ -3764,32 +3790,35 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 25) {
+    if (tpOpen.size() >= 27) {
         expsettings->setExpanded(tpOpen.at(0));
         expmaskcol->set_expanded(tpOpen.at(1));
         expmaskcol1->set_expanded(tpOpen.at(2));
         expgradcol->set_expanded(tpOpen.at(3));
         expcurvcol->set_expanded(tpOpen.at(4));
-        expmaskexp->set_expanded(tpOpen.at(5));
-        expmasksh->set_expanded(tpOpen.at(6));
-        expmaskcb->set_expanded(tpOpen.at(7));
-        expmaskreti->set_expanded(tpOpen.at(8));
-        expmasktm->set_expanded(tpOpen.at(9));
-        expmaskbl->set_expanded(tpOpen.at(10));
-        expmaskvib->set_expanded(tpOpen.at(11));
-        expcolor->set_expanded(tpOpen.at(12));
-        expexpose->set_expanded(tpOpen.at(13));
-        expshadhigh->set_expanded(tpOpen.at(14));
-        expvibrance->set_expanded(tpOpen.at(15));
-        expsoft->set_expanded(tpOpen.at(16));
-        expblur->set_expanded(tpOpen.at(17));
-        exptonemap->set_expanded(tpOpen.at(18));
-        expreti->set_expanded(tpOpen.at(19));
-        expsharp->set_expanded(tpOpen.at(20));
-        expcontrast->set_expanded(tpOpen.at(21));
-        expcbdl->set_expanded(tpOpen.at(22));
-        expdenoi->set_expanded(tpOpen.at(23));
-        explog->set_expanded(tpOpen.at(24));
+        expcolor->set_expanded(tpOpen.at(5));
+        exptoolexp->set_expanded(tpOpen.at(6));
+        expgradexp->set_expanded(tpOpen.at(7));
+        expmaskexp->set_expanded(tpOpen.at(8));
+        expexpose->set_expanded(tpOpen.at(9));
+        expmasksh->set_expanded(tpOpen.at(10));
+        expshadhigh->set_expanded(tpOpen.at(11));
+        expmaskcb->set_expanded(tpOpen.at(12));
+        expcbdl->set_expanded(tpOpen.at(13));
+        expmaskreti->set_expanded(tpOpen.at(14));
+        expreti->set_expanded(tpOpen.at(15));
+        expmasktm->set_expanded(tpOpen.at(16));
+        exptonemap->set_expanded(tpOpen.at(17));
+        expmaskbl->set_expanded(tpOpen.at(18));
+        expmaskvib->set_expanded(tpOpen.at(19));
+        expvibrance->set_expanded(tpOpen.at(20));
+        expsoft->set_expanded(tpOpen.at(21));
+        expblur->set_expanded(tpOpen.at(22));
+        expsharp->set_expanded(tpOpen.at(23));
+        expcontrast->set_expanded(tpOpen.at(24));
+        expdenoi->set_expanded(tpOpen.at(25));
+        explog->set_expanded(tpOpen.at(26));
+        
     }
 }
 

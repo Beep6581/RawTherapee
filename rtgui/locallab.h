@@ -74,6 +74,8 @@ private:
     MyExpander* const expmasktm;
     MyExpander* const expmaskbl;
     MyExpander* const expmaskvib;
+    MyExpander* const expgradexp;
+    MyExpander* const exptoolexp;
     MyExpander* const expgradcol;
 
     sigc::connection enablecolorConn, enableexposeConn, enableshadhighConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn, enablelogConn;
