@@ -11678,7 +11678,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
                 
                 if (lp.expmet == 1) {
-                    optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                 //   optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
 
                 std::unique_ptr<LabImage> bufmaskblurexp;
