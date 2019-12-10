@@ -130,12 +130,14 @@ install -d "${ETC}/gtk-3.0"
 # Make Frameworks folder flat
 mv "${LIB}"/gdk-pixbuf-2.0/2*/loaders/*.so "${LIB}"
 mv "${LIB}"/gtk-3.0/3*/immodules/*.so "${LIB}"
-mv "${LIB}"/gtk-3.0/3*/printbackends/*.so "${LIB}"
+# the print*.so lead to errors when running gtk-query-immodules-3.0, just seeing what the app does without, since they are not in immodules
+# and including them leads to errors and a completely empty gtk.immodules file
+# mv "${LIB}"/gtk-3.0/3*/printbackends/*.so "${LIB}"
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
 "${GDK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/libpix*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
-"${GTK_PREFIX}/bin/gtk-query-immodules-3.0" "${LIB}"/{im*.so,libprint*.so} > "${ETC}/gtk-3.0/gtk.immodules"
+"${GTK_PREFIX}/bin/gtk-query-immodules-3.0" "${LIB}"/{im*.so} > "${ETC}/gtk-3.0/gtk.immodules"
 sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 mkdir -p ${RESOURCES}/share/glib-2.0
