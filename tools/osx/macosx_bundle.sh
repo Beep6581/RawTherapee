@@ -145,16 +145,15 @@ cp -pRL {"/usr/local","${RESOURCES}"}/share/glib-2.0/schemas
 "/usr/local/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 msg "Copying shared files from ${GTK_PREFIX}:"
-set -x
-find /usr -name mime
 cp -pRL {"/usr/local","${RESOURCES}"}/share/mime
-set +x
+
 # GTK3 themes
 ditto {"/usr/local","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
 ditto {"/usr/local","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
 # Adwaita icons
 iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "48x48/devices")
 for f in "${iconfolders[@]}"; do
+    mkdir -p ${RESOURCES}/share/icons/Adwaita/${f}
     cp -pRL {"/usr/local","${RESOURCES}"}/share/icons/Adwaita/"$f"
 done
 ditto {"/usr/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
