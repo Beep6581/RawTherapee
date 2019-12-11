@@ -154,7 +154,7 @@ ditto {"/usr/local","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
 iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "48x48/devices")
 for f in "${iconfolders[@]}"; do
     mkdir -p ${RESOURCES}/share/icons/Adwaita/${f}
-    cp -pRL {"/usr/local","${RESOURCES}"}/share/icons/Adwaita/"$f"
+    cp /usr/local/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
 done
 ditto {"/usr/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "/usr/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
