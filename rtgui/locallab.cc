@@ -225,6 +225,7 @@ Locallab::Locallab():
     expblur(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     exptonemap(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     expreti(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
+    expretitools(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPRETITOOLS")))),
     expsharp(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     expcontrast(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST")))),
     expcbdl(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
@@ -2443,6 +2444,10 @@ pe(nullptr)
         expmaskreti->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
 
+    setExpandAlignProperties(expretitools, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expretitools->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expretitools));
+    expretitools->setLevel(2);
+
     retinexMethod->append(M("TP_RETINEX_LOW"));
     retinexMethod->append(M("TP_RETINEX_UNIFORM"));
     retinexMethod->append(M("TP_RETINEX_HIGH"));
@@ -2659,33 +2664,42 @@ pe(nullptr)
     ToolParamBlock* const genBox = Gtk::manage(new ToolParamBlock());
     genBox->pack_start(*auxBox);
 
+    ToolParamBlock* const toolretiBox = Gtk::manage(new ToolParamBlock());
 
     retiBox->pack_start(*retinexMethod);
     retiBox->pack_start(*fftwreti);
     retiBox->pack_start(*equilret);
-    retiBox->pack_start(*chrrt);
     retiBox->pack_start(*neigh);
     retiBox->pack_start(*vart);
     retiBox->pack_start(*scalereti);
-    retiBox->pack_start(*darkness);
-    retiBox->pack_start(*lightnessreti);
-    retiBox->pack_start(*softradiusret);
     retiBox->pack_start(*limd);
-    retiBox->pack_start(*cliptm);
     retiBox->pack_start(*offs);
-    retiBox->pack_start(*mMLabels);
-    retiBox->pack_start(*transLabels);
-    retiBox->pack_start(*transLabels2);
-    retiBox->pack_start(*LocalcurveEditortransT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+
+    toolretiBox->pack_start(*chrrt);
+    toolretiBox->pack_start(*darkness);
+    toolretiBox->pack_start(*lightnessreti);
+    toolretiBox->pack_start(*cliptm);
+    toolretiBox->pack_start(*softradiusret);
+    toolretiBox->pack_start(*LocalcurveEditortransT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+
+    toolretiBox->pack_start(*mMLabels);
+    toolretiBox->pack_start(*transLabels);
+    toolretiBox->pack_start(*transLabels2);
+    toolretiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4);
+    expretitools->add(*toolretiBox, false);
+    retiBox->pack_start(*expretitools, false, false);
+
+    
     retiBox->pack_start(*expmaskreti, false, false);
 //    retiBox->pack_start(*inversret);
+
     retitoolFrame->add(*retiBox);
     genBox->pack_start(*retitoolFrame);
     expreti->add(*genBox, false);
     expreti->setLevel(2);
 
     panel->pack_start(*expreti, false, false);
+
 
     // Sharpening
     Gtk::HBox* const sharpTitleHBox = Gtk::manage(new Gtk::HBox());
@@ -3530,6 +3544,7 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         expmaskexp->set_expanded(expmaskexp == expander);
         expmasksh->set_expanded(expmasksh == expander);
         expmaskcb->set_expanded(expmaskcb == expander);
+        expretitools->set_expanded(expretitools == expander);
         expmaskreti->set_expanded(expmaskreti == expander);
         expmasktm->set_expanded(expmasktm == expander);
         expmaskbl->set_expanded(expmaskbl == expander);
@@ -3635,6 +3650,7 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expshadhigh->get_expanded());
     tpOpen.push_back(expmaskcb->get_expanded());
     tpOpen.push_back(expcbdl->get_expanded());
+    tpOpen.push_back(expretitools->get_expanded());
     tpOpen.push_back(expmaskreti->get_expanded());
     tpOpen.push_back(expreti->get_expanded());
     tpOpen.push_back(expmasktm->get_expanded());
@@ -3818,7 +3834,7 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 30) {
+    if (tpOpen.size() >= 31) {
         expsettings->setExpanded(tpOpen.at(0));
         expmaskcol->set_expanded(tpOpen.at(1));
         expmaskcol1->set_expanded(tpOpen.at(2));
@@ -3835,20 +3851,21 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
         expshadhigh->set_expanded(tpOpen.at(13));
         expmaskcb->set_expanded(tpOpen.at(14));
         expcbdl->set_expanded(tpOpen.at(15));
-        expmaskreti->set_expanded(tpOpen.at(16));
-        expreti->set_expanded(tpOpen.at(17));
-        expmasktm->set_expanded(tpOpen.at(18));
-        exptonemap->set_expanded(tpOpen.at(19));
-        expmaskbl->set_expanded(tpOpen.at(20));
-        expgradvib->set_expanded(tpOpen.at(21));
-        expmaskvib->set_expanded(tpOpen.at(22));
-        expvibrance->set_expanded(tpOpen.at(23));
-        expsoft->set_expanded(tpOpen.at(24));
-        expblur->set_expanded(tpOpen.at(25));
-        expsharp->set_expanded(tpOpen.at(26));
-        expcontrast->set_expanded(tpOpen.at(27));
-        expdenoi->set_expanded(tpOpen.at(28));
-        explog->set_expanded(tpOpen.at(29));
+        expretitools->set_expanded(tpOpen.at(16));
+        expmaskreti->set_expanded(tpOpen.at(17));
+        expreti->set_expanded(tpOpen.at(18));
+        expmasktm->set_expanded(tpOpen.at(19));
+        exptonemap->set_expanded(tpOpen.at(20));
+        expmaskbl->set_expanded(tpOpen.at(21));
+        expgradvib->set_expanded(tpOpen.at(22));
+        expmaskvib->set_expanded(tpOpen.at(23));
+        expvibrance->set_expanded(tpOpen.at(24));
+        expsoft->set_expanded(tpOpen.at(25));
+        expblur->set_expanded(tpOpen.at(26));
+        expsharp->set_expanded(tpOpen.at(27));
+        expcontrast->set_expanded(tpOpen.at(28));
+        expdenoi->set_expanded(tpOpen.at(29));
+        explog->set_expanded(tpOpen.at(30));
         
     }
 }

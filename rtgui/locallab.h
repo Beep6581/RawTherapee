@@ -59,6 +59,7 @@ private:
     MyExpander* const expblur;
     MyExpander* const exptonemap;
     MyExpander* const expreti;
+    MyExpander* const expretitools;
     MyExpander* const expsharp;
     MyExpander* const expcontrast;
     MyExpander* const expcbdl;
