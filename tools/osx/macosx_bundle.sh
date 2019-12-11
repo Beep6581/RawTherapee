@@ -136,8 +136,8 @@ mv "${LIB}"/gtk-3.0/3*/immodules/*.so "${LIB}"
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
-"${GDK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/libpix*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
-"${GTK_PREFIX}/bin/gtk-query-immodules-3.0" "${LIB}"/{im*.so} > "${ETC}/gtk-3.0/gtk.immodules"
+"${GDK_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+"${GTK_PREFIX}"/bin/gtk-query-immodules-3.0 "${LIB}"/im*.so > "${ETC}"/gtk-3.0/gtk.immodules
 sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 mkdir -p ${RESOURCES}/share/glib-2.0
