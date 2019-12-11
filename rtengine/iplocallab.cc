@@ -5659,7 +5659,7 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
 
-static void optfft(int N_fftwsize, int bfh, int bfw, int &bfhr, int &bfwr, bool reduH, bool reduW, struct local_params & lp, int H, int W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy)
+void optfft(int &N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, bool &reduH, bool &reduW, struct local_params & lp, int &H, int &W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy)
 {
     /*
                     for (int n=0; n< 17; n++){
@@ -11674,12 +11674,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
             
             if (bfw >= mSP && bfh >= mSP) {
-                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
                 
                 if (lp.expmet == 1) {
-                 //   optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                    optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
+
+                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
 
                 std::unique_ptr<LabImage> bufmaskblurexp;
                 std::unique_ptr<LabImage> originalmaskexp;
