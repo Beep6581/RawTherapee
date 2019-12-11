@@ -1320,6 +1320,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).whiteEv = locallab.spots.at(j).whiteEv && pSpot.whiteEv == otherSpot.whiteEv;
                 locallab.spots.at(j).detail = locallab.spots.at(j).detail && pSpot.detail == otherSpot.detail;
                 locallab.spots.at(j).sensilog = locallab.spots.at(j).sensilog && pSpot.sensilog == otherSpot.sensilog;
+                locallab.spots.at(j).baselog = locallab.spots.at(j).baselog && pSpot.baselog == otherSpot.baselog;
 
             }
         }
@@ -4191,6 +4192,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensilog = mods.locallab.spots.at(i).sensilog;
         }
 
+        if (locallab.spots.at(i).baselog) {
+            toEdit.locallab.spots.at(i).baselog = mods.locallab.spots.at(i).baselog;
+        }
+
 //        if (locallab.spots.at(i).autogray) {
 //            toEdit.locallab.spots.at(i).autogray = mods.locallab.spots.at(i).autogray;
  //       }
@@ -5535,7 +5540,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blackEv(v),
     whiteEv(v),
     detail(v),
-    sensilog(v)
+    sensilog(v),
+    baselog(v)
 
 {
 }
@@ -5912,6 +5918,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     whiteEv = v;
     detail = v;
     sensilog = v;
+    baselog = v;
 
 }
 

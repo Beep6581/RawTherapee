@@ -750,6 +750,7 @@ public:
         bool whiteEv;
         bool detail;
         bool sensilog;
+        bool baselog;
 
         LocallabSpotEdited(bool v);
 

@@ -2778,7 +2778,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blackEv(-5.0),
     whiteEv(10.0),
     detail(1),
-    sensilog(50)
+    sensilog(50),
+    baselog(2.)
 
 {
 }
@@ -3169,7 +3170,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blackEv == other.blackEv
         && whiteEv == other.whiteEv
         && detail == other.detail
-        && sensilog == other.sensilog;
+        && sensilog == other.sensilog
+        && baselog == other.baselog;
 
 }
 
@@ -4528,6 +4530,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).whiteEv, "Locallab", "WhiteEv_" + std::to_string(i), spot.whiteEv, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detail, "Locallab", "Detail_" + std::to_string(i), spot.detail, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilog, "Locallab", "Sensilog_" + std::to_string(i), spot.sensilog, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).baselog, "Locallab", "Baselog_" + std::to_string(i), spot.baselog, keyFile);
 
             }
         }
@@ -6051,6 +6054,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "WhiteEv_" + std::to_string(i), pedited, spot.whiteEv, spotEdited.whiteEv);
                 assignFromKeyfile(keyFile, "Locallab", "Detail_" + std::to_string(i), pedited, spot.detail, spotEdited.detail);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilog_" + std::to_string(i), pedited, spot.sensilog, spotEdited.sensilog);
+                assignFromKeyfile(keyFile, "Locallab", "Baselog_" + std::to_string(i), pedited, spot.baselog, spotEdited.baselog);
 
 
                 locallab.spots.at(i) = spot;

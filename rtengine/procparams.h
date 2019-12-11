@@ -1323,6 +1323,7 @@ struct LocallabParams {
         double whiteEv;
         int detail;
         int sensilog;
+        double baselog;
 
 
         LocallabSpot();

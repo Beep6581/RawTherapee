@@ -410,6 +410,7 @@ struct local_params {
     int sensilog;
     bool Autogray;
     bool autocompute;
+    float baselog;
 
 
 };
@@ -880,6 +881,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sensilog = locallab.spots.at(sp).sensilog;
     lp.Autogray = locallab.spots.at(sp).Autogray;
     lp.autocompute = locallab.spots.at(sp).autocompute;
+    lp.baselog = (float) locallab.spots.at(sp).baselog;
 
     lp.deltaem = locallab.spots.at(sp).deltae;
     lp.scalereti = scaleret;
@@ -1262,14 +1264,16 @@ float find_gray(float source_gray, float target_gray)
 // https://github.com/ampas/aces-dev
 // (as seen on pixls.us)
 void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, float scale, bool multiThread)
-{
-    //small adaptations to local adjustements J.Desmis 12 2019
+{   /* J.Desmis 12 2019
+        small adaptations to local adjustements
+        replace log2 by log(lp.baselog) allows diferentiation between low and high lights
+    */
     BENCHFUN
     const float gray = lp.sourcegray / 100.f;
     const float shadows_range = lp.blackev;
     const float dynamic_range = lp.whiteev - lp.blackev;
     const float noise = pow_F(2.f, -16.f);
-    const float log2 = xlogf(2.f);
+    const float log2 = xlogf(lp.baselog);
     const float b = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, lp.targetgray / 100.f) : 0.f;
     const float linbase = max(b, 0.f);
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);

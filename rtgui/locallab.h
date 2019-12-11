@@ -388,6 +388,7 @@ private:
     Adjuster* const whiteEv;
     Adjuster* const detail;
     Adjuster* const sensilog;
+    Adjuster* const baselog;
 
     // ButtonCheck widgets
     // Color & Light
