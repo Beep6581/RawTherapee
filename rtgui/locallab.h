@@ -77,6 +77,7 @@ private:
     MyExpander* const expgradexp;
     MyExpander* const exptoolexp;
     MyExpander* const expgradsh;
+    MyExpander* const exptrcsh;
     MyExpander* const expgradvib;
     MyExpander* const expgradcol;
 

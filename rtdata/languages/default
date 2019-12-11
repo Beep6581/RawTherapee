@@ -2271,6 +2271,7 @@ TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposu
 TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPTOOL;Tools exposure
+TP_LOCALLAB_EXPTRC;Tone Response Curve - TRC
 TP_LOCALLAB_FATAMOUNT;Amount
 TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATDETAIL;Detail
