@@ -555,10 +555,7 @@ private:
     Gtk::Frame* const merge1colFrame;
     Gtk::Frame* const pdeFrame;
     Gtk::Frame* const fatFrame;
-    Gtk::Frame* const gradFrame;
     Gtk::Frame* const gradFramemask;
-    Gtk::Frame* const gradSHFrame;
-    Gtk::Frame* const gradvibFrame;
     Gtk::Frame* const fatSHFrame;
     Gtk::Frame* const gamFrame;
     Gtk::Frame* const dehaFrame;

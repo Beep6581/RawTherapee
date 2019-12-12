@@ -716,10 +716,7 @@ mergecolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")))),
 merge1colFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")))),
 pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
 fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
-gradFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 gradFramemask(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
-gradSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
-gradvibFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
 fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
 gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
 dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
@@ -1582,12 +1579,10 @@ pe(nullptr)
     pdeFrame->add(*pdeBox);
     fatFrame->add(*fatBox);
 
-    gradFrame->set_label_align(0.025, 0.5);
 
     ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
     gradBox->pack_start(*strexp);
     gradBox->pack_start(*angexp);
-//    gradFrame->add(*gradBox);
     
 
     gradFramemask->set_label_align(0.025, 0.5);
@@ -1859,7 +1854,7 @@ pe(nullptr)
 
     exptrcsh->add(*gammBox, false);
 
-    gradSHFrame->set_label_align(0.025, 0.5);
+//    gradSHFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradSHBox = Gtk::manage(new ToolParamBlock());
     gradSHBox->pack_start(*strSH);
     gradSHBox->pack_start(*angSH);
@@ -2021,7 +2016,6 @@ pe(nullptr)
 
     curveEditorGG->curveListComplete();
 
-    gradvibFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradvibBox = Gtk::manage(new ToolParamBlock());
     gradvibBox->pack_start(*strvib);
 
@@ -2034,7 +2028,6 @@ pe(nullptr)
     }
 
     gradvibBox->pack_start(*angvib);
-//    gradvibFrame->add(*gradvibBox);
 
     setExpandAlignProperties(expgradvib, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expgradvib->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expgradvib));
@@ -2077,7 +2070,6 @@ pe(nullptr)
     }
 
 //    if (complexsoft < 2) {
-      //  vibranceBox->pack_start(*gradvibFrame, Gtk::PACK_SHRINK, 0);
         vibranceBox->pack_start(*expgradvib);
 //    }
 
@@ -7414,6 +7406,7 @@ void Locallab::inversChanged()
         gridFrame->hide();
         showmaskcolMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         merge1colFrame->show();
+        expgradcol->show();
 
     } else if (invers->get_active()) {
         sensi->show();
@@ -7435,6 +7428,8 @@ void Locallab::inversChanged()
         showmaskcolMethod->hide();
         showmaskcolMethodinv->show();
         merge1colFrame->hide();
+               expgradcol->hide();
+ 
     } else {
         sensi->show();
         llCurveEditorG->show();
@@ -7454,6 +7449,7 @@ void Locallab::inversChanged()
         showmaskcolMethodinv->hide();
         showmaskcolMethod->show();
         merge1colFrame->show();
+        expgradcol->show();
 
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -7496,8 +7492,7 @@ void Locallab::inversexChanged()
         shadex->show();
         expMethod->show();
         exnoiseMethod->show();
-        gradFrame->show();
-
+        expgradexp->show();
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             softradiusexp->show();
@@ -7525,7 +7520,7 @@ void Locallab::inversexChanged()
         showmaskexpMethod->hide();
         showmaskexpMethodinv->show();
         expMethod->set_active(0);
-        gradFrame->hide();
+        expgradexp->hide();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -7547,7 +7542,7 @@ void Locallab::inversexChanged()
         shadex->show();
         expMethod->show();
         exnoiseMethod->show();
-        gradFrame->show();
+        expgradexp->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -7600,8 +7595,8 @@ void Locallab::inversshChanged()
         expmasksh->show();
         showmaskSHMethod->show();
         showmaskSHMethodinv->hide();
-        gradSHFrame->show();
-
+//        gradSHFrame->show();
+        expgradsh->show();
         showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inverssh->get_active()) {
         //  printf("Inv SH\n");
@@ -7611,7 +7606,7 @@ void Locallab::inversshChanged()
         showmaskSHMethod->hide();
         showmaskSHMethodinv->show();
 //        shMethod->set_active(0);
-        gradSHFrame->hide();
+        expgradsh->hide();
 
     } else {
         //   printf("Pas Inv SH\n");
@@ -7620,7 +7615,7 @@ void Locallab::inversshChanged()
         blurSHde->show();
         showmaskSHMethod->show();
         showmaskSHMethodinv->hide();
-        gradSHFrame->show();
+        expgradsh->show();
 
         if (batchMode) {
             showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -11928,6 +11923,7 @@ void Locallab::updateSpecificGUIState()
         showmaskcolMethodinv->hide();
         gridFrame->hide();
         merge1colFrame->show();
+        expgradcol->show();
 
     } else if (invers->get_active()) {
         llCurveEditorG->show();
@@ -11945,6 +11941,8 @@ void Locallab::updateSpecificGUIState()
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         showmaskcolMethodinv->show();
         merge1colFrame->hide();
+        expgradcol->hide();
+
     } else {
         llCurveEditorG->show();
         clCurveEditorG->show();
@@ -11961,6 +11959,7 @@ void Locallab::updateSpecificGUIState()
         showmaskcolMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
         showmaskcolMethodinv->hide();
         merge1colFrame->show();
+        expgradcol->show();
 
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -12070,7 +12069,7 @@ void Locallab::updateSpecificGUIState()
         expMethod->show();
         expmaskexp->show();
         exnoiseMethod->show();
-        gradFrame->show();
+        expgradexp->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -12096,7 +12095,7 @@ void Locallab::updateSpecificGUIState()
         showmaskexpMethodinv->show();
         showmaskexpMethod->hide();
         softradiusexp->show();
-        gradFrame->hide();
+        expgradexp->hide();
 
         expMethod->set_active(0);
 
@@ -12118,7 +12117,7 @@ void Locallab::updateSpecificGUIState()
         expmaskexp->show();
         showmaskexpMethodinv->hide();
         showmaskexpMethod->show();
-        gradFrame->show();
+        expgradexp->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -12148,12 +12147,13 @@ void Locallab::updateSpecificGUIState()
         showmaskSHMethodinv->show();
         showmaskSHMethod->hide();
 //        shMethod->set_active(0);
-        gradSHFrame->hide();
+        expgradsh->hide();
 
         if (shMethod->get_active_row_number() == 0) {
             for (int i = 0; i < 5; i++) {
                 multipliersh[i]->hide();
             }
+            expgradsh->hide();
 
             detailSH->hide();
             gamFrame->hide();
@@ -12168,7 +12168,7 @@ void Locallab::updateSpecificGUIState()
             }
 
             gamFrame->show();
-            gradSHFrame->show();
+            expgradsh->hide();
 
             detailSH->show();
             highlights->hide();
@@ -12184,7 +12184,7 @@ void Locallab::updateSpecificGUIState()
         expmasksh->show();
         showmaskSHMethodinv->hide();
         showmaskSHMethod->show();
-        gradSHFrame->show();
+        expgradsh->show();
 
         if (batchMode) {
             showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
