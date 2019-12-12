@@ -22,7 +22,7 @@ jobs:
         mkdir build && cd build
         destDir="$(pwd)"
         ../configure --prefix=/opt/local --disable-static 'CFLAGS=-arch x86_64 -mmacosx-version-min=10.9' 'LDFLAGS=-arch x86_64 -mmacosx-version-min=10.9' CXXFLAGS="-arch x86_64 -mmacosx-version-min=10.9"
-        make --jobs 2
+        make --jobs
         make DESTDIR="${destDir}" install
         sudo mv opt/local /usr/local/opt/libiconv
     - name: print /usr/local/lib contents
@@ -57,7 +57,7 @@ jobs:
           -DCMAKE_AR="/usr/local/opt/llvm/bin/llvm-ar" \
           -DCMAKE_RANLIB="/usr/local/opt/llvm/bin/llvm-ranlib" \
           ..
-        make --jobs 2
+        make --jobs
         make install
         sudo make macosx_bundle
         ARTIFACT=(RawTherapee*.zip)
