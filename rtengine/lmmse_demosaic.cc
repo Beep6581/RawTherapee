@@ -131,7 +131,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
     if (applyGamma) {
         gamtab = &(Color::gammatab_24_17a);
     } else {
-        gamtab = new LUTf(65536, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
+        gamtab = new LUTf(65536, LUT_CLIP_BELOW);
         gamtab->makeIdentity(65535.f);
     }
 
@@ -623,7 +623,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
             for (int ii = 0; ii < 3; ii++)
                 if (ii != c) {
                     float *rix = qix[ii] + rr * cc1 + cc;
-                    (*(rgb[ii]))[row][col] = (*gamtab)[65535.f * rix[0]];
+                    (*(rgb[ii]))[row][col] = std::max(0.f, (*gamtab)[65535.f * rix[0]]);
                 } else {
                     (*(rgb[ii]))[row][col] = CLIP(rawData[row][col]);
                 }
@@ -651,9 +651,6 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
 
 }
 
-#ifdef __SSE2__
-#define CLIPV(a) vclampf(a,ZEROV,c65535v)
-#endif
 void RawImageSource::refinement(int PassCount)
 {
     int width = W;
@@ -694,7 +691,6 @@ void RawImageSource::refinement(int PassCount)
                 vfloat dLv, dRv, dUv, dDv, v0v;
                 vfloat onev = F2V(1.f);
                 vfloat zd5v = F2V(0.5f);
-                vfloat c65535v = F2V(65535.f);
 
                 for (; col < width - 8; col += 8) {
                     int indx = row * width + col;
@@ -704,7 +700,7 @@ void RawImageSource::refinement(int PassCount)
                     dRv = onev / (onev + vabsf(LC2VFU(pix[c][  2]) - LC2VFU(pix[c][0])) + vabsf(LC2VFU(pix[1][ 1]) - LC2VFU(pix[1][ -1])));
                     dUv = onev / (onev + vabsf(LC2VFU(pix[c][-w2]) - LC2VFU(pix[c][0])) + vabsf(LC2VFU(pix[1][w1]) - LC2VFU(pix[1][-w1])));
                     dDv = onev / (onev + vabsf(LC2VFU(pix[c][ w2]) - LC2VFU(pix[c][0])) + vabsf(LC2VFU(pix[1][w1]) - LC2VFU(pix[1][-w1])));
-                    v0v = CLIPV(LC2VFU(pix[c][0]) + zd5v + ((LC2VFU(pix[1][-1]) - LC2VFU(pix[c][-1])) * dLv + (LC2VFU(pix[1][1]) - LC2VFU(pix[c][1])) * dRv + (LC2VFU(pix[1][-w1]) - LC2VFU(pix[c][-w1])) * dUv + (LC2VFU(pix[1][w1]) - LC2VFU(pix[c][w1])) * dDv ) / (dLv + dRv + dUv + dDv));
+                    v0v = vmaxf(ZEROV, LC2VFU(pix[c][0]) + zd5v + ((LC2VFU(pix[1][-1]) - LC2VFU(pix[c][-1])) * dLv + (LC2VFU(pix[1][1]) - LC2VFU(pix[c][1])) * dRv + (LC2VFU(pix[1][-w1]) - LC2VFU(pix[c][-w1])) * dUv + (LC2VFU(pix[1][w1]) - LC2VFU(pix[c][w1])) * dDv ) / (dLv + dRv + dUv + dDv));
                     STC2VFU(pix[1][0], v0v);
                 }
 
@@ -719,7 +715,7 @@ void RawImageSource::refinement(int PassCount)
                     float dU = 1.f / (1.f + fabsf(pix[c][-w2] - pix[c][0]) + fabsf(pix[1][w1] - pix[1][-w1]));
                     float dD = 1.f / (1.f + fabsf(pix[c][ w2] - pix[c][0]) + fabsf(pix[1][w1] - pix[1][-w1]));
                     float v0 = (pix[c][0] + 0.5f + ((pix[1][ -1] - pix[c][ -1]) * dL + (pix[1][  1] - pix[c][  1]) * dR + (pix[1][-w1] - pix[c][-w1]) * dU + (pix[1][ w1] - pix[c][ w1]) * dD ) / (dL + dR + dU + dD));
-                    pix[1][0] = CLIP(v0);
+                    pix[1][0] = std::max(0.f, v0);
                 }
             }
 
@@ -735,7 +731,6 @@ void RawImageSource::refinement(int PassCount)
                 vfloat dLv, dRv, dUv, dDv, v0v;
                 vfloat onev = F2V(1.f);
                 vfloat zd5v = F2V(0.5f);
-                vfloat c65535v = F2V(65535.f);
 
                 for (; col < width - 8; col += 8) {
                     int indx = row * width + col;
@@ -747,7 +742,7 @@ void RawImageSource::refinement(int PassCount)
                         dRv = onev / (onev + vabsf(LC2VFU(pix[1][  2]) - LC2VFU(pix[1][0])) + vabsf(LC2VFU(pix[c][ 1]) - LC2VFU(pix[c][ -1])));
                         dUv = onev / (onev + vabsf(LC2VFU(pix[1][-w2]) - LC2VFU(pix[1][0])) + vabsf(LC2VFU(pix[c][w1]) - LC2VFU(pix[c][-w1])));
                         dDv = onev / (onev + vabsf(LC2VFU(pix[1][ w2]) - LC2VFU(pix[1][0])) + vabsf(LC2VFU(pix[c][w1]) - LC2VFU(pix[c][-w1])));
-                        v0v = CLIPV(LC2VFU(pix[1][0]) + zd5v - ((LC2VFU(pix[1][-1]) - LC2VFU(pix[c][-1])) * dLv + (LC2VFU(pix[1][1]) - LC2VFU(pix[c][1])) * dRv + (LC2VFU(pix[1][-w1]) - LC2VFU(pix[c][-w1])) * dUv + (LC2VFU(pix[1][w1]) - LC2VFU(pix[c][w1])) * dDv ) / (dLv + dRv + dUv + dDv));
+                        v0v = vmaxf(ZEROV, LC2VFU(pix[1][0]) + zd5v - ((LC2VFU(pix[1][-1]) - LC2VFU(pix[c][-1])) * dLv + (LC2VFU(pix[1][1]) - LC2VFU(pix[c][1])) * dRv + (LC2VFU(pix[1][-w1]) - LC2VFU(pix[c][-w1])) * dUv + (LC2VFU(pix[1][w1]) - LC2VFU(pix[c][w1])) * dDv ) / (dLv + dRv + dUv + dDv));
                         STC2VFU(pix[c][0], v0v);
                     }
                 }
@@ -765,7 +760,7 @@ void RawImageSource::refinement(int PassCount)
                         float dU = 1.f / (1.f + fabsf(pix[1][-w2] - pix[1][0]) + fabsf(pix[c][w1] - pix[c][-w1]));
                         float dD = 1.f / (1.f + fabsf(pix[1][ w2] - pix[1][0]) + fabsf(pix[c][w1] - pix[c][-w1]));
                         float v0 = (pix[1][0] + 0.5f - ((pix[1][ -1] - pix[c][ -1]) * dL + (pix[1][  1] - pix[c][  1]) * dR + (pix[1][-w1] - pix[c][-w1]) * dU + (pix[1][ w1] - pix[c][ w1]) * dD ) / (dL + dR + dU + dD));
-                        pix[c][0] = CLIP(v0);
+                        pix[c][0] = std::max(0.f, v0);
                     }
                 }
             }
@@ -782,7 +777,6 @@ void RawImageSource::refinement(int PassCount)
                 vfloat dLv, dRv, dUv, dDv, v0v;
                 vfloat onev = F2V(1.f);
                 vfloat zd5v = F2V(0.5f);
-                vfloat c65535v = F2V(65535.f);
 
                 for (; col < width - 8; col += 8) {
                     int indx = row * width + col;
@@ -794,7 +788,7 @@ void RawImageSource::refinement(int PassCount)
                     dRv = onev / (onev + vabsf(LC2VFU(pix[d][  2]) - LC2VFU(pix[d][0])) + vabsf(LC2VFU(pix[1][ 1]) - LC2VFU(pix[1][ -1])));
                     dUv = onev / (onev + vabsf(LC2VFU(pix[d][-w2]) - LC2VFU(pix[d][0])) + vabsf(LC2VFU(pix[1][w1]) - LC2VFU(pix[1][-w1])));
                     dDv = onev / (onev + vabsf(LC2VFU(pix[d][ w2]) - LC2VFU(pix[d][0])) + vabsf(LC2VFU(pix[1][w1]) - LC2VFU(pix[1][-w1])));
-                    v0v = CLIPV(LC2VFU(pix[1][0]) + zd5v - ((LC2VFU(pix[1][-1]) - LC2VFU(pix[c][-1])) * dLv + (LC2VFU(pix[1][1]) - LC2VFU(pix[c][1])) * dRv + (LC2VFU(pix[1][-w1]) - LC2VFU(pix[c][-w1])) * dUv + (LC2VFU(pix[1][w1]) - LC2VFU(pix[c][w1])) * dDv ) / (dLv + dRv + dUv + dDv));
+                    v0v = vmaxf(ZEROV, LC2VFU(pix[1][0]) + zd5v - ((LC2VFU(pix[1][-1]) - LC2VFU(pix[c][-1])) * dLv + (LC2VFU(pix[1][1]) - LC2VFU(pix[c][1])) * dRv + (LC2VFU(pix[1][-w1]) - LC2VFU(pix[c][-w1])) * dUv + (LC2VFU(pix[1][w1]) - LC2VFU(pix[c][w1])) * dDv ) / (dLv + dRv + dUv + dDv));
                     STC2VFU(pix[c][0], v0v);
                 }
 
@@ -811,7 +805,7 @@ void RawImageSource::refinement(int PassCount)
                     float dU = 1.f / (1.f + fabsf(pix[d][-w2] - pix[d][0]) + fabsf(pix[1][w1] - pix[1][-w1]));
                     float dD = 1.f / (1.f + fabsf(pix[d][ w2] - pix[d][0]) + fabsf(pix[1][w1] - pix[1][-w1]));
                     float v0 = (pix[1][0] + 0.5f - ((pix[1][ -1] - pix[c][ -1]) * dL + (pix[1][  1] - pix[c][  1]) * dR + (pix[1][-w1] - pix[c][-w1]) * dU + (pix[1][ w1] - pix[c][ w1]) * dD ) / (dL + dR + dU + dD));
-                    pix[c][0] = CLIP(v0);
+                    pix[c][0] = std::max(0.f, v0);
                 }
             }
         } // end parallel

@@ -400,11 +400,11 @@ void RawImageSource::eahd_demosaic ()
                 int vc = homv[imx][j];
 
                 if (hc > vc) {
-                    green[i - 1][j] = gh[(i - 1) % 4][j];
+                    green[i - 1][j] = std::max(0.f, gh[(i - 1) % 4][j]);
                 } else if (hc < vc) {
-                    green[i - 1][j] = gv[(i - 1) % 4][j];
+                    green[i - 1][j] = std::max(0.f, gv[(i - 1) % 4][j]);
                 } else {
-                    green[i - 1][j] = (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2;
+                    green[i - 1][j] = std::max(0.f, (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2);
                 }
             }
         }
@@ -421,11 +421,11 @@ void RawImageSource::eahd_demosaic ()
             int vc = homv[(i - 1) % 3][j];
 
             if (hc > vc) {
-                green[i - 1][j] = gh[(i - 1) % 4][j];
+                green[i - 1][j] = std::max(0.f, gh[(i - 1) % 4][j]);
             } else if (hc < vc) {
-                green[i - 1][j] = gv[(i - 1) % 4][j];
+                green[i - 1][j] = std::max(0.f, gv[(i - 1) % 4][j]);
             } else {
-                green[i - 1][j] = (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2;
+                green[i - 1][j] = std::max(0.f, (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2);
             }
         }
 
