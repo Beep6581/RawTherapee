@@ -3618,6 +3618,9 @@ void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int 
 
         fftwf_free(datashow);
     }
+
+    fftwf_free(data);
+
 }
 
 void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, LabImage* reserved, int inv, const struct local_params & lp,
@@ -6302,6 +6305,9 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
             }
         }
     }
+
+    fftwf_free(data);
+
 }
 
 
