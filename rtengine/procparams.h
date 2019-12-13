@@ -1277,6 +1277,7 @@ struct LocallabParams {
         Glib::ustring localcontMethod;
         std::vector<double> locwavcurve;
         Threshold<int> csthreshold;
+        std::vector<double> loclevwavcurve;
 
         // Contrast by detail levels
         bool expcbdl;

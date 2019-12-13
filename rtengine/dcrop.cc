@@ -927,6 +927,7 @@ void Crop::update(int todo)
         bool lcmasblutili = parent->lcmasblutili;
         bool llmasblutili = parent->llmasblutili;
         bool locwavutili = parent->locwavutili;
+        bool loclevwavutili = parent->loclevwavutili;
         bool lmasutiliblwav = parent->lmasutiliblwav;
         bool lmasutilicolwav = parent->lmasutilicolwav;
 
@@ -966,6 +967,7 @@ void Crop::update(int todo)
         LocwavCurve locwavCurve;
         LocwavCurve loclmasCurveblwav;
         LocwavCurve loclmasCurvecolwav;
+        LocwavCurve loclevwavCurve;
 
         LocretigainCurverab locRETgainCurverab;
         locallutili = false;
@@ -1009,6 +1011,7 @@ void Crop::update(int todo)
                 loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav, lmasutilicolwav);
 
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
+                loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve, loclevwavutili);
                 locallutili = false;
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
                 localclutili = false;
@@ -1100,6 +1103,7 @@ void Crop::update(int todo)
                             loclmasCurveblwav,lmasutiliblwav,
                             loclmasCurvecolwav,lmasutilicolwav,
                             locwavCurve, locwavutili,
+                            loclevwavCurve, loclevwavutili,
                             LHutili, HHutili, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                             huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                             parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
@@ -1131,6 +1135,7 @@ void Crop::update(int todo)
                             loclmasCurveblwav,lmasutiliblwav,
                             loclmasCurvecolwav,lmasutilicolwav,
                             locwavCurve, locwavutili,
+                            loclevwavCurve, loclevwavutili,
                             LHutili, HHutili, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                             huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                             minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
@@ -1186,6 +1191,7 @@ void Crop::update(int todo)
                 locccmasblCurve.Reset();
                 lochhmasblCurve.Reset();
                 locwavCurve.Reset();
+                loclevwavCurve.Reset();
                 loclmasCurveblwav.Reset();
                 loclmasCurvecolwav.Reset();
 

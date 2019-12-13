@@ -702,6 +702,7 @@ public:
         bool blurlc;
         bool localcontMethod;
         bool locwavcurve;
+        bool loclevwavcurve;
         bool csthreshold;
         // Contrast by detail levels
         bool expcbdl;

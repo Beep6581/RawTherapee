@@ -3992,7 +3992,10 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             const int numThreads = 1;
 
 #endif
-            wavcontrast4(bufmaskblurcol->L, contrast, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, maxlvl);
+            LocwavCurve dummy;
+            bool loclevwavutili = false;
+            bool wavcurvelev = false;
+            wavcontrast4(bufmaskblurcol->L, contrast, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, dummy, loclevwavutili, wavcurvelev, maxlvl);
 
         }
 
@@ -6729,7 +6732,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     fftwf_destroy_plan(plan_backward_blox[1]);
     fftwf_cleanup();
 }
-void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, int & maxlvl)
+void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev, int & maxlvl)
 {
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
 
@@ -6843,86 +6846,94 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, 
     int leve = maxlvl;
 
     float ****templevel = nullptr;
-    templevel = new float***[dir];
 
-    //allocate memory for 3 DIR n levels, H_L, W_L
-    for (int d = 0; d < dir; d++) {
-        templevel[d] = new float**[leve];
+    if (wavcurvelev) {
+        templevel = new float***[dir];
 
-        for (int k = 0; k < leve; k++) {
-            templevel[d][k] = new float*[H_L];
+        //allocate memory for 3 DIR n levels, H_L, W_L
+        for (int d = 0; d < dir; d++) {
+            templevel[d] = new float**[leve];
 
-            for (int i = 0; i < H_L; i++) {
-                templevel[d][k][i] = new float[W_L];
-            }
-        }
-    }
+            for (int k = 0; k < leve; k++) {
+                templevel[d][k] = new float*[H_L];
 
-    //fill array templevel with wavelet value level dir
-    for (int dir = 1; dir < 4; dir++) {
-        for (int level = level_bl; level < maxlvl; ++level) {
-            int W_L = wdspot->level_W(level);
-            int H_L = wdspot->level_H(level);
-            float **wav_L = wdspot->level_coeffs(level);
-
-            for (int y = 0; y < H_L; y++) {
-                for (int x = 0; x < W_L; x++) {
-                    float val  = wav_L[dir][y * W_L + x];
-                    templevel[dir - 1][level][y][x] = val;
+                for (int i = 0; i < H_L; i++) {
+                    templevel[d][k][i] = new float[W_L];
                 }
             }
         }
-    }
 
-    //blur level and dir
-    for (int dir = 1; dir < 4; dir++) {
-        for (int level = level_bl; level < maxlvl; ++level) {
-            int W_L = wdspot->level_W(level);
-            int H_L = wdspot->level_H(level);
-            #pragma omp parallel
-            {
-                gaussianBlur(templevel[dir - 1][level], templevel[dir - 1][level], W_L, H_L, radlevblur);
-            }
-        }
-    }
+        //fill array templevel with wavelet value level dir
+        for (int dir = 1; dir < 4; dir++) {
+            for (int level = level_bl; level < maxlvl; ++level) {
+                int W_L = wdspot->level_W(level);
+                int H_L = wdspot->level_H(level);
+                float **wav_L = wdspot->level_coeffs(level);
 
-    //put blur values in wavelet level and dir
-    for (int dir = 1; dir < 4; dir++) {
-        for (int level = level_bl; level < maxlvl; ++level) {
-            int W_L = wdspot->level_W(level);
-            int H_L = wdspot->level_H(level);
-            float **wav_L = wdspot->level_coeffs(level);
-
-            for (int y = 0; y < H_L; y++) {
-                for (int x = 0; x < W_L; x++) {
-                    wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
+                for (int y = 0; y < H_L; y++) {
+                    for (int x = 0; x < W_L; x++) {
+                        float val  = wav_L[dir][y * W_L + x];
+                        templevel[dir - 1][level][y][x] = val;
+                    }
                 }
             }
         }
-    }
 
+        //blur level and dir
+        for (int dir = 1; dir < 4; dir++) {
+            for (int level = level_bl; level < maxlvl; ++level) {
+                int W_L = wdspot->level_W(level);
+                int H_L = wdspot->level_H(level);
 
-    //free memory
-    for (int i = 0; i < dir; i++) {
-        for (int j = 0; j < leve; j++) {
-            for (int l = 0; l < H_L; l++) {
-                delete [] templevel[i][j][l];
+                if (loclevwavCurve && loclevwavutili) {
+
+                    float klev = (loclevwavCurve[level * 50.f]);
+
+                    #pragma omp parallel
+                    {
+                        gaussianBlur(templevel[dir - 1][level], templevel[dir - 1][level], W_L, H_L, radlevblur * klev);
+                    }
+                }
             }
         }
-    }
 
-    for (int i = 0; i < dir; i++) {
-        for (int j = 0; j < leve; j++) {
-            delete [] templevel[i][j];
+        //put blur values in wavelet level and dir
+        for (int dir = 1; dir < 4; dir++) {
+            for (int level = level_bl; level < maxlvl; ++level) {
+                int W_L = wdspot->level_W(level);
+                int H_L = wdspot->level_H(level);
+                float **wav_L = wdspot->level_coeffs(level);
+
+                for (int y = 0; y < H_L; y++) {
+                    for (int x = 0; x < W_L; x++) {
+                        wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
+                    }
+                }
+            }
         }
+
+
+        //free memory
+        for (int i = 0; i < dir; i++) {
+            for (int j = 0; j < leve; j++) {
+                for (int l = 0; l < H_L; l++) {
+                    delete [] templevel[i][j][l];
+                }
+            }
+        }
+
+        for (int i = 0; i < dir; i++) {
+            for (int j = 0; j < leve; j++) {
+                delete [] templevel[i][j];
+            }
+        }
+
+        for (int i = 0; i < dir; i++) {
+            delete [] templevel[i];
+        }
+
+        delete [] templevel;
     }
-
-    for (int i = 0; i < dir; i++) {
-        delete [] templevel[i];
-    }
-
-    delete [] templevel;
-
 
     if (locwavCurve && locwavutili) {
         for (int dir = 1; dir < 4; dir++) {
@@ -8468,6 +8479,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocwavCurve & loclmasCurveblwav, bool & lmasutiliblwav,
                                 const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav,
                                 const LocwavCurve & locwavCurve, bool & locwavutili,
+                                const LocwavCurve & loclevwavCurve, bool & loclevwavutili,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                                 double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int &lastsav,
                                 int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
@@ -8862,8 +8874,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 int level_br = params->locallab.spots.at(sp).csthresholdblur.getBottomRight();
                 int level_hr = params->locallab.spots.at(sp).csthresholdblur.getTopRight();
 
-
-                wavcontrast4(bufmaskblurbl->L, contrast, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
+                LocwavCurve dummy;
+                bool loclevwavutili = false;
+                bool wavcurvelev = false;
+                wavcontrast4(bufmaskblurbl->L, contrast, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, dummy, loclevwavutili, wavcurvelev, maxlvl);
             }
 
             int shado = params->locallab.spots.at(sp).shadmaskbl;
@@ -10530,7 +10544,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
         }
 
-        if ((lp.lcamount > 0.f || wavcurve || params->locallab.spots.at(sp).residblur > 0.f || params->locallab.spots.at(sp).levelblur > 0.f || params->locallab.spots.at(sp).residcont != 0.f || params->locallab.spots.at(sp).clarilres != 0.f || params->locallab.spots.at(sp).claricres != 0.f) && call < 3  && lp.lcena) {
+        bool wavcurvelev = false;
+
+        if (loclevwavCurve && loclevwavutili) {
+            if (lp.locmet == 1) {
+                for (int i = 0; i < 500; i++) {
+                    if (loclevwavCurve[i] != 0.) {
+                        wavcurvelev = true;
+                    }
+                }
+            }
+        }
+
+
+        if ((lp.lcamount > 0.f || wavcurve || wavcurvelev || params->locallab.spots.at(sp).residblur > 0.f || params->locallab.spots.at(sp).levelblur > 0.f || params->locallab.spots.at(sp).residcont != 0.f || params->locallab.spots.at(sp).clarilres != 0.f || params->locallab.spots.at(sp).claricres != 0.f) && call < 3  && lp.lcena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -10777,7 +10804,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const bool blurlc = params->locallab.spots.at(sp).blurlc;
                     const float radlevblur = (params->locallab.spots.at(sp).levelblur) / sk;
 
-                    wavcontrast4(tmp1->L, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, maxlvl);
+                    wavcontrast4(tmp1->L, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, loclevwavCurve, loclevwavutili, wavcurvelev, maxlvl);
 
                     const float satur = params->locallab.spots.at(sp).residchro;
 
