@@ -939,9 +939,9 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
                                 avg[3]++;
                             }
 
-                        red[row + top][col + left] = avg[0] / avg[3];
-                        green[row + top][col + left] = avg[1] / avg[3];
-                        blue[row + top][col + left] = avg[2] / avg[3];
+                        red[row + top][col + left] = std::max(0.f, avg[0] / avg[3]);
+                        green[row + top][col + left] = std::max(0.f, avg[1] / avg[3]);
+                        blue[row + top][col + left] = std::max(0.f, avg[2] / avg[3]);
                     }
 
                 if(plistenerActive && ((++progressCounter) % 32 == 0)) {

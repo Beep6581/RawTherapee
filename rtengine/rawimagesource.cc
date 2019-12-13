@@ -2554,12 +2554,10 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float val = rawData[row][col];
-                    int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
-                    int c4 = (c == 1 && !(row & 1)) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
-                    val -= cblacksom[c4];
-                    val *= scale_mul[c4];
-                    rawData[row][col] = (val);
+                    const int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
+                    const int c4 = ( c == 1 && !(row & 1) ) ? 3 : c;    // four  colors,  0=R, 1=G1, 2=B, 3=G2
+                    const float val = max(0.f, rawData[row][col] - cblacksom[c4]) * scale_mul[c4];
+                    rawData[row][col] = val;
                     tmpchmax[c] = max(tmpchmax[c], val);
                 }
             }
@@ -2586,10 +2584,8 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float val = rawData[row][col];
-                    val -= cblacksom[0];
-                    val *= scale_mul[0];
-                    rawData[row][col] = (val);
+                    const float val = max(0.f, rawData[row][col] - cblacksom[0]) * scale_mul[0];
+                    rawData[row][col] = val;
                     tmpchmax = max(tmpchmax, val);
                 }
             }
@@ -2615,12 +2611,9 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float val = rawData[row][col];
-                    int c = ri->XTRANSFC(row, col);
-                    val -= cblacksom[c];
-                    val *= scale_mul[c];
-
-                    rawData[row][col] = (val);
+                    const int c = ri->XTRANSFC(row, col);
+                    const float val = max(0.f, rawData[row][col] - cblacksom[c]) * scale_mul[c];
+                    rawData[row][col] = val;
                     tmpchmax[c] = max(tmpchmax[c], val);
                 }
             }
@@ -2649,10 +2642,8 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             {
                 for (int col = winx; col < winx + winw; col++) {
                     for (int c = 0; c < 3; c++) {                 // three colors,  0=R, 1=G,  2=B
-                        float val = rawData[row][3 * col + c];
-                        val -= cblacksom[c];
-                        val *= scale_mul[c];
-                        rawData[row][3 * col + c] = (val);
+                        const float val = max(0.f, rawData[row][3 * col + c] - cblacksom[c]) * scale_mul[c];
+                        rawData[row][3 * col + c] = val;
                         tmpchmax[c] = max(tmpchmax[c], val);
                     }
                 }

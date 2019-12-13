@@ -1470,48 +1470,48 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
                         vfloat bluev1 = greenv - (temp00v * vdup(LVFU(Dgrb[1][(indx - v1) >> 1])) + (onev - vdup(LVFU(hvwt[(indx + 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[1][(indx + 1 + offset) >> 1])) + (onev - vdup(LVFU(hvwt[(indx - 1 + offset) >> 1]))) * vdup(LVFU(Dgrb[1][(indx - 1 + offset) >> 1])) + temp01v * vdup(LVFU(Dgrb[1][(indx + v1) >> 1]))) * tempv;
                         vfloat redv2  = greenv - vdup(LVFU(Dgrb[0][indx >> 1]));
                         vfloat bluev2 = greenv - vdup(LVFU(Dgrb[1][indx >> 1]));
-                        STVFU(red[row][col], c65535v * vself(selmask, redv1, redv2));
-                        STVFU(blue[row][col], c65535v * vself(selmask, bluev1, bluev2));
+                        STVFU(red[row][col], vmaxf(c65535v * vself(selmask, redv1, redv2), ZEROV));
+                        STVFU(blue[row][col], vmaxf(c65535v * vself(selmask, bluev1, bluev2), ZEROV));
                     }
 
                     if(offset == 0) {
                         for (; indx < rr * ts + cc1 - 16 - (cc1 & 1); indx++, col++) {
                             float temp =  1.f / (hvwt[(indx - v1) >> 1] + 2.f - hvwt[(indx + 1) >> 1] - hvwt[(indx - 1) >> 1] + hvwt[(indx + v1) >> 1]);
-                            red[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
-                                                        temp);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
-                                                         temp);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
+                                                        temp));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
+                                                         temp));
 
                             indx++;
                             col++;
-                            red[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]));
                         }
 
                         if(cc1 & 1) { // width of tile is odd
                             float temp =  1.f / (hvwt[(indx - v1) >> 1] + 2.f - hvwt[(indx + 1) >> 1] - hvwt[(indx - 1) >> 1] + hvwt[(indx + v1) >> 1]);
-                            red[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
-                                                        temp);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
-                                                         temp);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
+                                                        temp));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
+                                                         temp));
                         }
                     } else {
                         for (; indx < rr * ts + cc1 - 16 - (cc1 & 1); indx++, col++) {
-                            red[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]));
 
                             indx++;
                             col++;
                             float temp =  1.f / (hvwt[(indx - v1) >> 1] + 2.f - hvwt[(indx + 1) >> 1] - hvwt[(indx - 1) >> 1] + hvwt[(indx + v1) >> 1]);
-                            red[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
-                                                        temp);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
-                                                         temp);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
+                                                        temp));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
+                                                         temp));
                         }
 
                         if(cc1 & 1) { // width of tile is odd
-                            red[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]));
                         }
                     }
 
@@ -1520,41 +1520,41 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
                     if((fc(cfarray, rr, 2) & 1) == 1) {
                         for (; indx < rr * ts + cc1 - 16 - (cc1 & 1); indx++, col++) {
                             float temp =  1.f / (hvwt[(indx - v1) >> 1] + 2.f - hvwt[(indx + 1) >> 1] - hvwt[(indx - 1) >> 1] + hvwt[(indx + v1) >> 1]);
-                            red[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
-                                                        temp);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
-                                                         temp);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
+                                                        temp));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
+                                                         temp));
 
                             indx++;
                             col++;
-                            red[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]));
                         }
 
                         if(cc1 & 1) { // width of tile is odd
                             float temp =  1.f / (hvwt[(indx - v1) >> 1] + 2.f - hvwt[(indx + 1) >> 1] - hvwt[(indx - 1) >> 1] + hvwt[(indx + v1) >> 1]);
-                            red[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
-                                                        temp);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
-                                                         temp);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
+                                                        temp));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
+                                                         temp));
                         }
                     } else {
                         for (; indx < rr * ts + cc1 - 16 - (cc1 & 1); indx++, col++) {
-                            red[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]));
 
                             indx++;
                             col++;
                             float temp =  1.f / (hvwt[(indx - v1) >> 1] + 2.f - hvwt[(indx + 1) >> 1] - hvwt[(indx - 1) >> 1] + hvwt[(indx + v1) >> 1]);
-                            red[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
-                                                        temp);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
-                                                         temp);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[0][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[0][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[0][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[0][(indx + v1) >> 1]) *
+                                                        temp));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - ((hvwt[(indx - v1) >> 1]) * Dgrb[1][(indx - v1) >> 1] + (1.f - hvwt[(indx + 1) >> 1]) * Dgrb[1][(indx + 1) >> 1] + (1.f - hvwt[(indx - 1) >> 1]) * Dgrb[1][(indx - 1) >> 1] + (hvwt[(indx + v1) >> 1]) * Dgrb[1][(indx + v1) >> 1]) *
+                                                         temp));
                         }
 
                         if(cc1 & 1) { // width of tile is odd
-                            red[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]);
-                            blue[row][col] = 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]);
+                            red[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[0][indx >> 1]));
+                            blue[row][col] = std::max(0.f, 65535.f * (rgbgreen[indx] - Dgrb[1][indx >> 1]));
                         }
                     }
 
@@ -1568,13 +1568,13 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
 #ifdef __SSE2__
 
                     for (; cc < cc1 - 19; cc += 4) {
-                        STVFU(green[row][cc + left], LVF(rgbgreen[rr * ts + cc]) * c65535v);
+                        STVFU(green[row][cc + left], vmaxf(LVF(rgbgreen[rr * ts + cc]) * c65535v, ZEROV));
                     }
 
 #endif
 
                     for (; cc < cc1 - 16; cc++) {
-                        green[row][cc + left] = 65535.f * rgbgreen[rr * ts + cc];
+                        green[row][cc + left] = std::max(0.f, 65535.f * rgbgreen[rr * ts + cc]);
                     }
                 }
 
