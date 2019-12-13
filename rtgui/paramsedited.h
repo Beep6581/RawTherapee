@@ -691,12 +691,14 @@ public:
         bool lclightness;
         bool levelwav;
         bool residcont;
+        bool residblur;
         bool residchro;
         bool clarilres;
         bool claricres;
         bool clarisoft;
         bool sensilc;
         bool fftwlc;
+        bool blurlc;
         bool localcontMethod;
         bool locwavcurve;
         bool csthreshold;

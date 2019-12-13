@@ -61,6 +61,7 @@ private:
     MyExpander* const expreti;
     MyExpander* const expretitools;
     MyExpander* const expsharp;
+    MyExpander* const expcontrastpyr;
     MyExpander* const expcontrast;
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
@@ -345,6 +346,7 @@ private:
     Adjuster* const lclightness;
     Adjuster* const levelwav;
     Adjuster* const residcont;
+    Adjuster* const residblur;
     Adjuster* const clarilres;
     Adjuster* const clarisoft;
     Adjuster* const claricres;
@@ -455,6 +457,9 @@ private:
     //local contrast
     Gtk::CheckButton* const fftwlc;
     sigc::connection fftwlcConn;
+    Gtk::CheckButton* const blurlc;
+    sigc::connection blurlcConn;
+    
     //CBDL
     Gtk::CheckButton* const enacbMask;
     sigc::connection enacbMaskConn;
@@ -563,6 +568,7 @@ private:
     Gtk::Frame* const retitoolFrame;
     Gtk::Frame* const residFrame;
     Gtk::Frame* const clariFrame;
+    Gtk::Frame* const blurresidFrame;
     Gtk::Frame* const grainFrame;
     Gtk::Frame* const logFrame;
     Gtk::Frame* const logPFrame;
@@ -650,6 +656,7 @@ private:
     void inversshaChanged();
     // local contrast
     void fftwlcChanged();
+    void blurlcChanged();
     //CBDL
     void enacbMaskChanged();
     // ComboBox event functions

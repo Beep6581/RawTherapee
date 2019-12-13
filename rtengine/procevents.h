@@ -882,6 +882,8 @@ enum ProcEventCode {
     Evlocallabsensilog = 853,
     Evlocallabfullimage = 854,
     Evlocallabbaselog = 855,
+    Evlocallabresidblur = 856,
+    Evlocallabblurlc = 857,
     NUMOFEVENTS
 };
 

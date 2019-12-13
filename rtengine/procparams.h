@@ -1265,12 +1265,14 @@ struct LocallabParams {
         double lclightness;
         int levelwav;
         double residcont;
+        double residblur;
         double residchro;
         double clarilres;
         double claricres;
         double clarisoft;
         int sensilc;
         bool fftwlc;
+        bool blurlc;
         Glib::ustring localcontMethod;
         std::vector<double> locwavcurve;
         Threshold<int> csthreshold;

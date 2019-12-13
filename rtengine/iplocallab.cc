@@ -118,7 +118,7 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
         }
     }
 }
-           // localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad);
+// localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad);
 
 float calcLocalFactor(const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach, const float gradient)
 {
@@ -1149,6 +1149,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
     // and a factor to calculate the transition in case zone == 1
 
     zone = 0;
+
     if (lox >= lp.xc && lox < (lp.xc + lp.lx) && loy >= lp.yc && loy < lp.yc + lp.ly) {
         float zoneVal = SQR((lox - lp.xc) / (ach * lp.lx)) + SQR((loy - lp.yc) / (ach * lp.ly));
         zone = zoneVal < 1.f ? 2 : 0;
@@ -1264,7 +1265,8 @@ float find_gray(float source_gray, float target_gray)
 // https://github.com/ampas/aces-dev
 // (as seen on pixls.us)
 void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, float scale, bool multiThread)
-{   /* J.Desmis 12 2019
+{
+    /* J.Desmis 12 2019
         small adaptations to local adjustements
         replace log2 by log(lp.baselog) allows diferentiation between low and high lights
     */
@@ -1409,7 +1411,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
 void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     BENCHFUN
-//adpatation to local adjustements Jacques Desmis 12 2019 
+//adpatation to local adjustements Jacques Desmis 12 2019
     PreviewProps pp(0, 0, fw, fh, SCALE);
 
     Imagefloat img(int(fw / SCALE + 0.5), int(fh / SCALE + 0.5));
@@ -1426,9 +1428,9 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     constexpr float noise = 1e-5;
     int h = fh / SCALE;
     int w = fw / SCALE;
-   // printf("h=%d w=%d\n", h, w);
-   // printf("xsta=%f xend=%f ysta=%f yend=%f\n", xsta, xend, ysta, yend);
-    
+    // printf("h=%d w=%d\n", h, w);
+    // printf("xsta=%f xend=%f ysta=%f yend=%f\n", xsta, xend, ysta, yend);
+
 
     int hsta = ysta * h;
     int hend = yend * h;
@@ -3990,7 +3992,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             const int numThreads = 1;
 
 #endif
-            wavcontrast4(bufmaskblurcol->L, contrast, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, maxlvl);
+            wavcontrast4(bufmaskblurcol->L, contrast, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, maxlvl);
 
         }
 
@@ -4376,7 +4378,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
             for (int y = 0; y < transformed->H; y++)
             {
                 const int loy = cy + y;
-                const bool isZone0 = loy > (lp.yc + lp.ly -1) || loy < lp.yc - lp.lyT; // // -1 fix issue 5554
+                const bool isZone0 = loy > (lp.yc + lp.ly - 1) || loy < lp.yc - lp.lyT; // // -1 fix issue 5554
 
                 if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
                     for (int x = 0; x < transformed->W; x++) {
@@ -4388,7 +4390,8 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 
                 for (int x = 0; x < transformed->W; x++) {
                     const int lox = cx + x;
-                    const bool isZone0x = lox > (lp.xc + lp.lx -1) || lox < lp.xc - lp.lxL; // -1 fix issue 5554
+                    const bool isZone0x = lox > (lp.xc + lp.lx - 1) || lox < lp.xc - lp.lxL; // -1 fix issue 5554
+
                     if (isZone0x) { // outside selection and outside transition zone => no effect, keep original values
                         for (int x = 0; x < transformed->W; x++) {
                             transformed->L[y][x] = original->L[y][x];
@@ -6727,7 +6730,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     fftwf_cleanup();
 }
 
-void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, int & maxlvl)
+void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, int & maxlvl)
 {
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
 
@@ -6736,11 +6739,43 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, int bfw, int bf
     }
 
     maxlvl = wdspot->maxlevel();
+    int W_L = wdspot->level_W(0);
+    int H_L = wdspot->level_H(0);
+    float *wav_L0 = wdspot->coeff0;
 
-    if (contrast != 0) {
-        int W_L = wdspot->level_W(0);
-        int H_L = wdspot->level_H(0);
-        float *wav_L0 = wdspot->coeff0;
+    if (radblur > 0.f) {
+        array2D<float> bufl(W_L, H_L);
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < H_L; y++) {
+            for (int x = 0; x < W_L; x++) {
+                bufl[y][x]  = wav_L0[y * W_L + x];
+            }
+        }
+
+        #pragma omp parallel
+        {
+            gaussianBlur(bufl, bufl, W_L, H_L, radblur);
+        }
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < H_L; y++) {
+            for (int x = 0; x < W_L; x++) {
+                wav_L0[y * W_L + x] = bufl[y][x];
+            }
+        }
+    }
+
+    if (contrast != 0.) {
+//        int W_L = wdspot->level_W(0);
+//        int H_L = wdspot->level_H(0);
+//        float *wav_L0 = wdspot->coeff0;
+
 
         double avedbl = 0.0; // use double precision for large summations
 
@@ -8744,7 +8779,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 int level_hr = params->locallab.spots.at(sp).csthresholdblur.getTopRight();
 
 
-                wavcontrast4(bufmaskblurbl->L, contrast, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
+                wavcontrast4(bufmaskblurbl->L, contrast, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
             }
 
             int shado = params->locallab.spots.at(sp).shadmaskbl;
@@ -8879,7 +8914,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfwr = bfw;
             bool reduH = false;
             bool reduW = false;
-           
+
             bool fft = params->locallab.spots.at(sp).fftwbl;
             int isogr = params->locallab.spots.at(sp).isogr;
             int strengr = params->locallab.spots.at(sp).strengr;
@@ -10031,7 +10066,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
 
-            if(complexsoft == 2) {
+            if (complexsoft == 2) {
                 lp.shmeth = 1;
             }
 
@@ -10654,12 +10689,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int level_hl = params->locallab.spots.at(sp).csthreshold.getTopLeft();
                     int level_br = params->locallab.spots.at(sp).csthreshold.getBottomRight();
                     int level_hr = params->locallab.spots.at(sp).csthreshold.getTopRight();
+                    const float radblur = (params->locallab.spots.at(sp).residblur) / sk;
+                    const bool blurlc = params->locallab.spots.at(sp).blurlc;
 
-                    wavcontrast4(tmp1->L, contrast, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, maxlvl);
+                    wavcontrast4(tmp1->L, contrast, radblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, maxlvl);
 
                     const float satur = params->locallab.spots.at(sp).residchro;
 
-                    if (satur != 0.f) {
+                    if (satur != 0.f || radblur > 0.f) {
 
                         wavelet_decomposition *wdspota = new wavelet_decomposition(tmp1->a[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, 6);
 
@@ -10672,13 +10709,44 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int W_La = wdspota->level_W(0);
                         int H_La = wdspota->level_H(0);
 
+                        if (radblur > 0.f && !blurlc) {
+                            array2D<float> bufa(W_La, H_La);
 #ifdef _OPENMP
-                        #pragma omp parallel for if (multiThread)
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                        for (int i = 0; i < W_La * H_La; i++) {
-                            wav_ab0a[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));//more progressive than linear
-                            wav_ab0a[i] = CLIPC(wav_ab0a[i]);
+                            for (int y = 0; y < H_La; y++) {
+                                for (int x = 0; x < W_La; x++) {
+                                    bufa[y][x]  = wav_ab0a [y * W_La + x];
+                                }
+                            }
+
+                            #pragma omp parallel
+                            {
+                                gaussianBlur(bufa, bufa, W_La, H_La, radblur);
+                            }
+
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                            for (int y = 0; y < H_La; y++) {
+                                for (int x = 0; x < W_La; x++) {
+                                    wav_ab0a[y * W_La + x] = bufa[y][x];
+                                }
+                            }
+
+                        }
+
+                        if (satur != 0.f) {
+#ifdef _OPENMP
+                            #pragma omp parallel for if (multiThread)
+#endif
+
+                            for (int i = 0; i < W_La * H_La; i++) {
+                                wav_ab0a[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));//more progressive than linear
+                                wav_ab0a[i] = CLIPC(wav_ab0a[i]);
+                            }
                         }
 
                         wdspota->reconstruct(tmp1->a[0], 1.f);
@@ -10695,13 +10763,46 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int W_Lb = wdspotb->level_W(0);
                         int H_Lb = wdspotb->level_H(0);
 
+                        if (radblur > 0.f && !blurlc) {
+                            array2D<float> bufb(W_Lb, H_Lb);
 #ifdef _OPENMP
-                        #pragma omp parallel for if (multiThread)
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                        for (int i = 0; i < W_Lb * H_Lb; i++) {
-                            wav_ab0b[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));
-                            wav_ab0b[i] = CLIPC(wav_ab0b[i]);
+                            for (int y = 0; y < H_Lb; y++) {
+                                for (int x = 0; x < W_Lb; x++) {
+                                    bufb[y][x]  = wav_ab0b [y * W_Lb + x];
+                                }
+                            }
+
+                            #pragma omp parallel
+                            {
+                                gaussianBlur(bufb, bufb, W_Lb, H_Lb, radblur);
+                            }
+
+
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                            for (int y = 0; y < H_Lb; y++) {
+                                for (int x = 0; x < W_Lb; x++) {
+                                    wav_ab0b[y * W_Lb + x] = bufb[y][x];
+                                }
+                            }
+
+                        }
+
+                        if (satur != 0.f) {
+
+#ifdef _OPENMP
+                            #pragma omp parallel for if (multiThread)
+#endif
+
+                            for (int i = 0; i < W_Lb * H_Lb; i++) {
+                                wav_ab0b[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));
+                                wav_ab0b[i] = CLIPC(wav_ab0b[i]);
+                            }
                         }
 
                         wdspotb->reconstruct(tmp1->b[0], 1.f);
@@ -11684,14 +11785,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfwr = bfw;
             bool reduH = false;
             bool reduW = false;
-            
-            if(complexsoft == 2) {
+
+            if (complexsoft == 2) {
                 lp.expmet = 1;
                 lp.laplacexp = 0.f;
             }
-            
+
             if (bfw >= mSP && bfh >= mSP) {
-                
+
                 if (lp.expmet == 1) {
                     optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
                 }
@@ -11993,7 +12094,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 delete [] dataor;
                             }
                         }
-printf("OK 10\n");
+
+                        printf("OK 10\n");
 
                         //shadows with ipshadowshighlight
                         if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
@@ -13528,40 +13630,40 @@ printf("OK 10\n");
 
 
                             if (nottransit) {
-                            //new 9 december 2019
-                            transit_shapedetect2(call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
-/*
-Befor 12 2019
-                                //special only transition
-                                //may be we can add preview...
-#ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
-#endif
+                                //new 9 december 2019
+                                transit_shapedetect2(call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                                /*
+                                Befor 12 2019
+                                                                //special only transition
+                                                                //may be we can add preview...
+                                #ifdef _OPENMP
+                                                                #pragma omp parallel for schedule(dynamic,16)
+                                #endif
 
-                                for (int y = 0; y < bfh; y++) {
-                                    const int loy = y + ystart + cy;
+                                                                for (int y = 0; y < bfh; y++) {
+                                                                    const int loy = y + ystart + cy;
 
-                                    for (int x = 0; x < bfw; x++) {
-                                        const int lox = x + xstart + cx;
-                                        int zone = 0;
-                                        float localFactor = 1.f;
-                                        const float achm = (float)lp.trans / 100.f;
+                                                                    for (int x = 0; x < bfw; x++) {
+                                                                        const int lox = x + xstart + cx;
+                                                                        int zone = 0;
+                                                                        float localFactor = 1.f;
+                                                                        const float achm = (float)lp.trans / 100.f;
 
-                                        if (lp.shapmet == 0) {
-                                            calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                        } else if (lp.shapmet == 1) {
-                                            calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
-                                        }
+                                                                        if (lp.shapmet == 0) {
+                                                                            calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                                                        } else if (lp.shapmet == 1) {
+                                                                            calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                                                        }
 
-                                        if (zone > 0) {
-                                            transformed->L[y + ystart][x + xstart] = bufcolfin->L[y][x] * localFactor + (1.f - localFactor) * reserved->L[y + ystart][x + xstart];
-                                            transformed->a[y + ystart][x + xstart] = bufcolfin->a[y][x] * localFactor + (1.f - localFactor) * reserved->a[y + ystart][x + xstart];
-                                            transformed->b[y + ystart][x + xstart] = bufcolfin->b[y][x] * localFactor + (1.f - localFactor) * reserved->b[y + ystart][x + xstart];
-                                        }
-                                    }
-                                }
+                                                                        if (zone > 0) {
+                                                                            transformed->L[y + ystart][x + xstart] = bufcolfin->L[y][x] * localFactor + (1.f - localFactor) * reserved->L[y + ystart][x + xstart];
+                                                                            transformed->a[y + ystart][x + xstart] = bufcolfin->a[y][x] * localFactor + (1.f - localFactor) * reserved->a[y + ystart][x + xstart];
+                                                                            transformed->b[y + ystart][x + xstart] = bufcolfin->b[y][x] * localFactor + (1.f - localFactor) * reserved->b[y + ystart][x + xstart];
+                                                                        }
+                                                                    }
+                                                                }
 
-*/
+                                */
                             }
 
 

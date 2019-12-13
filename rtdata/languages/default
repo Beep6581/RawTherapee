@@ -1093,6 +1093,8 @@ HISTORY_MSG_853;Local - Detail
 HISTORY_MSG_854;Local - Scope encoding log
 HISTORY_MSG_855;Local - Entire image
 HISTORY_MSG_856;Local - Base log
+HISTORY_MSG_857;Local - Contrast Blur Residual
+HISTORY_MSG_858;Local - Contrast Luminance only 
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2186,6 +2188,8 @@ TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLURCBDL;Blur levels 0-1-2-3-4
 TP_LOCALLAB_BLURCOL;Radius Mask Blur
 TP_LOCALLAB_BLURDE;Blur Shape detection
+TP_LOCALLAB_BLURLC;Luminance only
+TP_LOCALLAB_BLURRESIDFRA;Blur Residual
 TP_LOCALLAB_BUTTON_ADD;Add
 TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
@@ -2339,7 +2343,8 @@ TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
-TP_LOCALLAB_LOC_CONTRAST;Local contrast
+TP_LOCALLAB_LOC_CONTRAST;Local contrast & Wavelet Pyramid
+TP_LOCALLAB_LOC_CONTRASTPYR;Wavelet Pyramid
 TP_LOCALLAB_LOG;Encoding log
 TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGFRA;Source Gray Point
@@ -2437,6 +2442,7 @@ TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
 TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
 TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
 TP_LOCALLAB_RESID;Residual Image
+TP_LOCALLAB_RESIDBLUR;Blur
 TP_LOCALLAB_RESIDCHRO;Residual image Chroma
 TP_LOCALLAB_RESIDCONT;Residual image Contrast
 TP_LOCALLAB_RETI;Dehaze - Retinex Strong local contrast
