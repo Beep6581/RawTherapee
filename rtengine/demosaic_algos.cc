@@ -215,7 +215,6 @@ void RawImageSource::border_interpolate( int winw, int winh, int lborders, const
 // Adapted to RawTherapee by Jacques Desmis 3/2013
 // SSE version by Ingo Weyrich 5/2013
 #ifdef __SSE2__
-#define CLIPV(a) vclampf(a,zerov,c65535v)
 void RawImageSource::igv_interpolate(int winw, int winh)
 {
     static const float eps = 1e-5f, epssq = 1e-5f; //mod epssq -10f =>-5f Jacques 3/2013 to prevent artifact (divide by zero)
@@ -284,9 +283,9 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 
             for (col = 0, indx = row * width + col; col < width - 7; col += 8, indx += 8) {
                 temp1v = LVFU( rawData[row][col] );
-                temp1v = CLIPV( temp1v );
+                temp1v = vmaxf(temp1v, ZEROV);
                 temp2v = LVFU( rawData[row][col + 4] );
-                temp2v = CLIPV( temp2v );
+                temp2v = vmaxf(temp2v, ZEROV);
                 tempv = _mm_shuffle_ps( temp1v, temp2v, _MM_SHUFFLE( 2, 0, 2, 0 ) );
                 _mm_storeu_ps( &dest1[indx >> 1], tempv );
                 tempv = _mm_shuffle_ps( temp1v, temp2v, _MM_SHUFFLE( 3, 1, 3, 1 ) );
@@ -294,10 +293,10 @@ void RawImageSource::igv_interpolate(int winw, int winh)
             }
 
             for (; col < width; col++, indx += 2) {
-                dest1[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT data
+                dest1[indx >> 1] = std::max(0.f, rawData[row][col]); //rawData = RT data
                 col++;
                 if(col < width)
-                    dest2[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT data
+                    dest2[indx >> 1] = std::max(0.f, rawData[row][col]); //rawData = RT data
             }
         }
 
@@ -556,42 +555,42 @@ void RawImageSource::igv_interpolate(int winw, int winh)
                 temp2v = LVFU( src2[(indx + 1) >> 1] );
                 tempv = _mm_shuffle_ps( temp1v, temp2v, _MM_SHUFFLE( 1, 0, 1, 0 ) );
                 tempv = _mm_shuffle_ps( tempv, tempv, _MM_SHUFFLE( 3, 1, 2, 0 ) );
-                _mm_storeu_ps( &green[row][col], CLIPV( tempv ));
+                _mm_storeu_ps( &green[row][col], vmaxf(tempv, ZEROV));
                 temp5v = LVFU(redsrc0[indx >> 1]);
                 temp6v = LVFU(redsrc1[(indx + 1) >> 1]);
                 temp3v = _mm_shuffle_ps( temp5v, temp6v, _MM_SHUFFLE( 1, 0, 1, 0 ) );
                 temp3v = _mm_shuffle_ps( temp3v, temp3v, _MM_SHUFFLE( 3, 1, 2, 0 ) );
-                temp3v = CLIPV( tempv - c65535v * temp3v );
+                temp3v = vmaxf(tempv - c65535v * temp3v, ZEROV);
                 _mm_storeu_ps( &red[row][col], temp3v);
                 temp7v = LVFU(bluesrc0[indx >> 1]);
                 temp8v = LVFU(bluesrc1[(indx + 1) >> 1]);
                 temp4v = _mm_shuffle_ps( temp7v, temp8v, _MM_SHUFFLE( 1, 0, 1, 0 ) );
                 temp4v = _mm_shuffle_ps( temp4v, temp4v, _MM_SHUFFLE( 3, 1, 2, 0 ) );
-                temp4v = CLIPV( tempv - c65535v * temp4v );
+                temp4v = vmaxf(tempv - c65535v * temp4v, ZEROV);
                 _mm_storeu_ps( &blue[row][col], temp4v);
 
                 tempv = _mm_shuffle_ps( temp1v, temp2v, _MM_SHUFFLE( 3, 2, 3, 2 ) );
                 tempv = _mm_shuffle_ps( tempv, tempv, _MM_SHUFFLE( 3, 1, 2, 0 ) );
-                _mm_storeu_ps( &green[row][col + 4], CLIPV( tempv ));
+                _mm_storeu_ps( &green[row][col + 4], vmaxf(tempv, ZEROV));
 
                 temp3v = _mm_shuffle_ps( temp5v, temp6v, _MM_SHUFFLE( 3, 2, 3, 2 ) );
                 temp3v = _mm_shuffle_ps( temp3v, temp3v, _MM_SHUFFLE( 3, 1, 2, 0 ) );
-                temp3v = CLIPV( tempv - c65535v * temp3v );
+                temp3v = vmaxf(tempv - c65535v * temp3v, ZEROV);
                 _mm_storeu_ps( &red[row][col + 4], temp3v);
                 temp4v = _mm_shuffle_ps( temp7v, temp8v, _MM_SHUFFLE( 3, 2, 3, 2 ) );
                 temp4v = _mm_shuffle_ps( temp4v, temp4v, _MM_SHUFFLE( 3, 1, 2, 0 ) );
-                temp4v = CLIPV( tempv - c65535v * temp4v );
+                temp4v = vmaxf(tempv - c65535v * temp4v, ZEROV);
                 _mm_storeu_ps( &blue[row][col + 4], temp4v);
             }
 
             for(; col < width - 7; col++, indx += 2) {
-                red  [row][col] = CLIP(src1[indx >> 1] - 65535.f * redsrc0[indx >> 1]);
-                green[row][col] = CLIP(src1[indx >> 1]);
-                blue [row][col] = CLIP(src1[indx >> 1] - 65535.f * bluesrc0[indx >> 1]);
+                red  [row][col] = std::max(0.f, src1[indx >> 1] - 65535.f * redsrc0[indx >> 1]);
+                green[row][col] = std::max(0.f, src1[indx >> 1]);
+                blue [row][col] = std::max(0.f, src1[indx >> 1] - 65535.f * bluesrc0[indx >> 1]);
                 col++;
-                red  [row][col] = CLIP(src2[(indx + 1) >> 1] - 65535.f * redsrc1[(indx + 1) >> 1]);
-                green[row][col] = CLIP(src2[(indx + 1) >> 1]);
-                blue [row][col] = CLIP(src2[(indx + 1) >> 1] - 65535.f * bluesrc1[(indx + 1) >> 1]);
+                red  [row][col] = std::max(0.f, src2[(indx + 1) >> 1] - 65535.f * redsrc1[(indx + 1) >> 1]);
+                green[row][col] = std::max(0.f, src2[(indx + 1) >> 1]);
+                blue [row][col] = std::max(0.f, src2[(indx + 1) >> 1] - 65535.f * bluesrc1[(indx + 1) >> 1]);
             }
         }
     }// End of parallelization
@@ -606,7 +605,6 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     free(vdif);
     free(hdif);
 }
-#undef CLIPV
 #else
 void RawImageSource::igv_interpolate(int winw, int winh)
 {
@@ -649,7 +647,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
         for (int row = 0; row < height - 0; row++)
             for (int col = 0, indx = row * width + col; col < width - 0; col++, indx++) {
                 int c = FC(row, col);
-                rgb[c][indx] = CLIP(rawData[row][col]); //rawData = RT data
+                rgb[c][indx] = std::max(0.f, rawData[row][col]); //rawData = RT data
             }
 
 #ifdef _OPENMP
@@ -848,9 +846,9 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 
         for(int row = 7; row < height - 7; row++)
             for(int col = 7, indx = row * width + col; col < width - 7; col++, indx++) {
-                red  [row][col] = CLIP(rgb[1][indx] - 65535.f * chr[0][indx]);
-                green[row][col] = CLIP(rgb[1][indx]);
-                blue [row][col] = CLIP(rgb[1][indx] - 65535.f * chr[1][indx]);
+                red  [row][col] = std::max(0.f, rgb[1][indx] - 65535.f * chr[0][indx]);
+                green[row][col] = std::max(0.f, rgb[1][indx]);
+                blue [row][col] = std::max(0.f, rgb[1][indx] - 65535.f * chr[1][indx]);
             }
     }// End of parallelization
     border_interpolate(winw, winh, 8, rawData, red, green, blue);
@@ -1520,9 +1518,9 @@ BENCHFUN
 */
         for(int y = 0; y < TILESIZE && y0 + y < H; y++) {
             for (int j = 0; j < TILESIZE && x0 + j < W; j++) {
-                red[y0 + y][x0 + j]   = tile[(y + TILEBORDER) * CACHESIZE + TILEBORDER + j][0];
-                green[y0 + y][x0 + j] = tile[(y + TILEBORDER) * CACHESIZE + TILEBORDER + j][1];
-                blue[y0 + y][x0 + j]  = tile[(y + TILEBORDER) * CACHESIZE + TILEBORDER + j][2];
+                red[y0 + y][x0 + j]   = std::max(0.f, tile[(y + TILEBORDER) * CACHESIZE + TILEBORDER + j][0]);
+                green[y0 + y][x0 + j] = std::max(0.f, tile[(y + TILEBORDER) * CACHESIZE + TILEBORDER + j][1]);
+                blue[y0 + y][x0 + j]  = std::max(0.f, tile[(y + TILEBORDER) * CACHESIZE + TILEBORDER + j][2]);
             }
         }
 
