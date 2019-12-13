@@ -1398,6 +1398,11 @@ Camera constants:
         "raw_crop": [ 4, 4, -4, -4 ] // full raw 6016x4016, Official 6000x4000
     },
 
+    { // Quality C, only raw crop
+        "make_model": "Leica SL2",
+        "raw_crop": [ 0, 0, 0, -18 ] // 18 rows at bottom are garbage
+    },
+
     { // Quality C
         "make_model": "LG mobile LG-H815",
         "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
