@@ -700,6 +700,10 @@ namespace rtengine
 
 void RawImageSource::captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) {
 
+    if (!(ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1)) {
+        return;
+    }
+
     if (plistener) {
         plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
         plistener->setProgress(0.0);
