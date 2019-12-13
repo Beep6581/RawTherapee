@@ -3992,7 +3992,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             const int numThreads = 1;
 
 #endif
-            wavcontrast4(bufmaskblurcol->L, contrast, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, maxlvl);
+            wavcontrast4(bufmaskblurcol->L, contrast, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, maxlvl);
 
         }
 
@@ -6729,8 +6729,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     fftwf_destroy_plan(plan_backward_blox[1]);
     fftwf_cleanup();
 }
-
-void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, int & maxlvl)
+void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, int & maxlvl)
 {
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
 
@@ -6839,6 +6838,91 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, 
         ahigh = 1.f / (level_hr - level_br);
         bhigh =  -ahigh * level_br;
     }
+
+    int dir = 3;
+    int leve = maxlvl;
+
+    float ****templevel = nullptr;
+    templevel = new float***[dir];
+
+    //allocate memory for 3 DIR n levels, H_L, W_L
+    for (int d = 0; d < dir; d++) {
+        templevel[d] = new float**[leve];
+
+        for (int k = 0; k < leve; k++) {
+            templevel[d][k] = new float*[H_L];
+
+            for (int i = 0; i < H_L; i++) {
+                templevel[d][k][i] = new float[W_L];
+            }
+        }
+    }
+
+    //fill array templevel with wavelet value level dir
+    for (int dir = 1; dir < 4; dir++) {
+        for (int level = level_bl; level < maxlvl; ++level) {
+            int W_L = wdspot->level_W(level);
+            int H_L = wdspot->level_H(level);
+            float **wav_L = wdspot->level_coeffs(level);
+
+            for (int y = 0; y < H_L; y++) {
+                for (int x = 0; x < W_L; x++) {
+                    float val  = wav_L[dir][y * W_L + x];
+                    templevel[dir - 1][level][y][x] = val;
+                }
+            }
+        }
+    }
+
+    //blur level and dir
+    for (int dir = 1; dir < 4; dir++) {
+        for (int level = level_bl; level < maxlvl; ++level) {
+            int W_L = wdspot->level_W(level);
+            int H_L = wdspot->level_H(level);
+            #pragma omp parallel
+            {
+                gaussianBlur(templevel[dir - 1][level], templevel[dir - 1][level], W_L, H_L, radlevblur);
+            }
+        }
+    }
+
+    //put blur values in wavelet level and dir
+    for (int dir = 1; dir < 4; dir++) {
+        for (int level = level_bl; level < maxlvl; ++level) {
+            int W_L = wdspot->level_W(level);
+            int H_L = wdspot->level_H(level);
+            float **wav_L = wdspot->level_coeffs(level);
+
+            for (int y = 0; y < H_L; y++) {
+                for (int x = 0; x < W_L; x++) {
+                    wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
+                }
+            }
+        }
+    }
+
+
+    //free memory
+    for (int i = 0; i < dir; i++) {
+        for (int j = 0; j < leve; j++) {
+            for (int l = 0; l < H_L; l++) {
+                delete [] templevel[i][j][l];
+            }
+        }
+    }
+
+    for (int i = 0; i < dir; i++) {
+        for (int j = 0; j < leve; j++) {
+            delete [] templevel[i][j];
+        }
+    }
+
+    for (int i = 0; i < dir; i++) {
+        delete [] templevel[i];
+    }
+
+    delete [] templevel;
+
 
     if (locwavCurve && locwavutili) {
         for (int dir = 1; dir < 4; dir++) {
@@ -7174,7 +7258,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 }
 
-void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params& lp, LabImage* originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage* original, LabImage* transformed, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
 //local denoise
@@ -8349,7 +8433,7 @@ float triangle(float a, float a1, float b)
     return a1;
 }
 
-void rgbtone(float& maxval, float& medval, float& minval, LUTf & lutToneCurve)
+void rgbtone(float & maxval, float & medval, float & minval, LUTf & lutToneCurve)
 {
     float minvalold = minval, medvalold = medval, maxvalold = maxval;
 
@@ -8387,7 +8471,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                                 double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int &lastsav,
                                 int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
-                                float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+                                float & minCD, float & maxCD, float & mini, float & maxi, float & Tmean, float & Tsigma, float & Tmin, float & Tmax)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
@@ -8779,7 +8863,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 int level_hr = params->locallab.spots.at(sp).csthresholdblur.getTopRight();
 
 
-                wavcontrast4(bufmaskblurbl->L, contrast, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
+                wavcontrast4(bufmaskblurbl->L, contrast, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
             }
 
             int shado = params->locallab.spots.at(sp).shadmaskbl;
@@ -10691,8 +10775,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int level_hr = params->locallab.spots.at(sp).csthreshold.getTopRight();
                     const float radblur = (params->locallab.spots.at(sp).residblur) / sk;
                     const bool blurlc = params->locallab.spots.at(sp).blurlc;
+                    const float radlevblur = (params->locallab.spots.at(sp).levelblur) / sk;
 
-                    wavcontrast4(tmp1->L, contrast, radblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, maxlvl);
+                    wavcontrast4(tmp1->L, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, maxlvl);
 
                     const float satur = params->locallab.spots.at(sp).residchro;
 

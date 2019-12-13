@@ -546,6 +546,7 @@ lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.
 levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
 residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
 residblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDBLUR"), 0., 100., 0.5, 0.))),
+levelblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELBLUR"), 0., 100., 0.5, 0.))),
 clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
 clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARISOFT"), 0., 100., 0.5, 0.))),
 claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
@@ -727,6 +728,7 @@ retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
 retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
 residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
 clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
+blurlevelFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURLEVELFRA")))),
 blurresidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURRESIDFRA")))),
 grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
 logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
@@ -2811,6 +2813,7 @@ pe(nullptr)
 
     residcont->setAdjusterListener(this);
     residblur->setAdjusterListener(this);
+    levelblur->setAdjusterListener(this);
     residchro->setAdjusterListener(this);
     clarilres->setAdjusterListener(this);
     clarisoft->setAdjusterListener(this);
@@ -2840,12 +2843,18 @@ pe(nullptr)
     blurcontraBox->pack_start(*blurlc);
     blurresidFrame->add(*blurcontraBox);
 
+    blurlevelFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const blurlevcontBox = Gtk::manage(new ToolParamBlock());
+    blurlevcontBox->pack_start(*levelblur);
+    blurlevelFrame->add(*blurlevcontBox);
+
     setExpandAlignProperties(expcontrastpyr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expcontrastpyr->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrastpyr));
     expcontrastpyr->setLevel(2);
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
     blurcontBox->pack_start(*clariFrame);
     blurcontBox->pack_start(*blurresidFrame);
+    blurcontBox->pack_start(*blurlevelFrame);
 
     expcontrastpyr->add(*blurcontBox, false);
 
@@ -5005,6 +5014,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).levelwav = levelwav->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).residcont = residcont->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).residblur = residblur->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).levelblur = levelblur->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).residchro = residchro->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).clarilres = clarilres->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).claricres = claricres->getValue();
@@ -5393,6 +5403,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).levelwav = pe->locallab.spots.at(pp->locallab.selspot).levelwav || levelwav->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).residcont = pe->locallab.spots.at(pp->locallab.selspot).residcont || residcont->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).residblur = pe->locallab.spots.at(pp->locallab.selspot).residblur || residblur->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).levelblur = pe->locallab.spots.at(pp->locallab.selspot).levelblur || levelblur->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).residchro = pe->locallab.spots.at(pp->locallab.selspot).residchro || residchro->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).clarilres = pe->locallab.spots.at(pp->locallab.selspot).clarilres || clarilres->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).claricres = pe->locallab.spots.at(pp->locallab.selspot).claricres || claricres->getEditedState();
@@ -5778,6 +5789,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).levelwav = pedited->locallab.spots.at(pp->locallab.selspot).levelwav || levelwav->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).residcont = pedited->locallab.spots.at(pp->locallab.selspot).residcont || residcont->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).residblur = pedited->locallab.spots.at(pp->locallab.selspot).residblur || residblur->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).levelblur = pedited->locallab.spots.at(pp->locallab.selspot).levelblur || levelblur->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).residchro = pedited->locallab.spots.at(pp->locallab.selspot).residchro || residchro->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).clarilres = pedited->locallab.spots.at(pp->locallab.selspot).clarilres || clarilres->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).claricres = pedited->locallab.spots.at(pp->locallab.selspot).claricres || claricres->getEditedState();
@@ -6275,6 +6287,7 @@ void Locallab::localcontMethodChanged()
         levelwav->hide();
         residcont->hide();
         residblur->hide();
+        levelblur->hide();
         residchro->hide();
         clarilres->hide();
         claricres->hide();
@@ -6292,6 +6305,7 @@ void Locallab::localcontMethodChanged()
         levelwav->show();
         residcont->show();
         residblur->show();
+        levelblur->show();
         residchro->show();
         clarilres->show();
         claricres->show();
@@ -8269,6 +8283,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     levelwav->setDefault(defSpot->levelwav);
     residcont->setDefault(defSpot->residcont);
     residblur->setDefault(defSpot->residblur);
+    levelblur->setDefault(defSpot->levelblur);
     residchro->setDefault(defSpot->residchro);
     clarilres->setDefault(defSpot->clarilres);
     claricres->setDefault(defSpot->claricres);
@@ -8500,6 +8515,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         levelwav->setDefaultEditedState(Irrelevant);
         residcont->setDefaultEditedState(Irrelevant);
         residblur->setDefaultEditedState(Irrelevant);
+        levelblur->setDefaultEditedState(Irrelevant);
         residchro->setDefaultEditedState(Irrelevant);
         clarilres->setDefaultEditedState(Irrelevant);
         claricres->setDefaultEditedState(Irrelevant);
@@ -8736,6 +8752,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         levelwav->setDefaultEditedState(defSpotState->levelwav ? Edited : UnEdited);
         residcont->setDefaultEditedState(defSpotState->residcont ? Edited : UnEdited);
         residblur->setDefaultEditedState(defSpotState->residblur ? Edited : UnEdited);
+        levelblur->setDefaultEditedState(defSpotState->levelblur ? Edited : UnEdited);
         residchro->setDefaultEditedState(defSpotState->residchro ? Edited : UnEdited);
         clarilres->setDefaultEditedState(defSpotState->clarilres ? Edited : UnEdited);
         claricres->setDefaultEditedState(defSpotState->claricres ? Edited : UnEdited);
@@ -9890,6 +9907,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == levelblur) {
+            if (listener) {
+                listener->panelChanged(Evlocallablevelblur, levelblur->getTextValue());
+            }
+        }
+
         if (a == residchro) {
             if (listener) {
                 listener->panelChanged(Evlocallabresidchro, residchro->getTextValue());
@@ -10365,6 +10388,7 @@ void Locallab::setBatchMode(bool batchMode)
     levelwav->showEditedCB();
     residcont->showEditedCB();
     residblur->showEditedCB();
+    levelblur->showEditedCB();
     residchro->showEditedCB();
     clarilres->showEditedCB();
     claricres->showEditedCB();
@@ -11412,6 +11436,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         levelwav->setValue(pp->locallab.spots.at(index).levelwav);
         residcont->setValue(pp->locallab.spots.at(index).residcont);
         residblur->setValue(pp->locallab.spots.at(index).residblur);
+        levelblur->setValue(pp->locallab.spots.at(index).levelblur);
         residchro->setValue(pp->locallab.spots.at(index).residchro);
         clarilres->setValue(pp->locallab.spots.at(index).clarilres);
         claricres->setValue(pp->locallab.spots.at(index).claricres);
@@ -11904,6 +11929,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 levelwav->setEditedState(spotState->levelwav ? Edited : UnEdited);
                 residcont->setEditedState(spotState->residcont ? Edited : UnEdited);
                 residblur->setEditedState(spotState->residblur ? Edited : UnEdited);
+                levelblur->setEditedState(spotState->levelblur ? Edited : UnEdited);
                 residchro->setEditedState(spotState->residchro ? Edited : UnEdited);
                 clarilres->setEditedState(spotState->clarilres ? Edited : UnEdited);
                 claricres->setEditedState(spotState->claricres ? Edited : UnEdited);
@@ -12408,6 +12434,7 @@ void Locallab::updateSpecificGUIState()
         levelwav->hide();
         residcont->hide();
         residblur->hide();
+        levelblur->hide();
         residchro->hide();
         clarilres->hide();
         claricres->hide();
@@ -12425,6 +12452,7 @@ void Locallab::updateSpecificGUIState()
         levelwav->show();
         residcont->show();
         residblur->show();
+        levelblur->show();
         residchro->show();
         clarilres->show();
         claricres->show();

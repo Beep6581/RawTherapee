@@ -2723,6 +2723,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     levelwav(4),
     residcont(0.0),
     residblur(0.0),
+    levelblur(0.0),
     residchro(0.0),
     clarilres(0.0),
     claricres(0.0),
@@ -3108,6 +3109,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && levelwav == other.levelwav
         && residcont == other.residcont
         && residblur == other.residblur
+        && levelblur == other.levelblur
         && residchro == other.residchro
         && clarilres == other.clarilres
         && claricres == other.claricres
@@ -4473,6 +4475,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).levelwav, "Locallab", "Levelwav_" + std::to_string(i), spot.levelwav, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).residcont, "Locallab", "Residcont_" + std::to_string(i), spot.residcont, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).residblur, "Locallab", "Residblur_" + std::to_string(i), spot.residblur, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).levelblur, "Locallab", "Levelblur_" + std::to_string(i), spot.levelblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).residchro, "Locallab", "Residchro_" + std::to_string(i), spot.residchro, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).clarilres, "Locallab", "ClariLres_" + std::to_string(i), spot.clarilres, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).claricres, "Locallab", "ClariCres_" + std::to_string(i), spot.claricres, keyFile);
@@ -5987,6 +5990,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Levelwav_" + std::to_string(i), pedited, spot.levelwav, spotEdited.levelwav);
                 assignFromKeyfile(keyFile, "Locallab", "Residcont_" + std::to_string(i), pedited, spot.residcont, spotEdited.residcont);
                 assignFromKeyfile(keyFile, "Locallab", "Residblur_" + std::to_string(i), pedited, spot.residblur, spotEdited.residblur);
+                assignFromKeyfile(keyFile, "Locallab", "Levelblur_" + std::to_string(i), pedited, spot.levelblur, spotEdited.levelblur);
                 assignFromKeyfile(keyFile, "Locallab", "Residchro_" + std::to_string(i), pedited, spot.residchro, spotEdited.residchro);
                 assignFromKeyfile(keyFile, "Locallab", "ClariLres_" + std::to_string(i), pedited, spot.clarilres, spotEdited.clarilres);
                 assignFromKeyfile(keyFile, "Locallab", "ClariCres_" + std::to_string(i), pedited, spot.claricres, spotEdited.claricres);

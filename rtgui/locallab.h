@@ -347,6 +347,7 @@ private:
     Adjuster* const levelwav;
     Adjuster* const residcont;
     Adjuster* const residblur;
+    Adjuster* const levelblur;
     Adjuster* const clarilres;
     Adjuster* const clarisoft;
     Adjuster* const claricres;
@@ -568,6 +569,7 @@ private:
     Gtk::Frame* const retitoolFrame;
     Gtk::Frame* const residFrame;
     Gtk::Frame* const clariFrame;
+    Gtk::Frame* const blurlevelFrame;
     Gtk::Frame* const blurresidFrame;
     Gtk::Frame* const grainFrame;
     Gtk::Frame* const logFrame;

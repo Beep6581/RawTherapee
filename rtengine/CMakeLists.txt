@@ -117,7 +117,6 @@ set(RTENGINESOURCEFILES
     processingjob.cc
     procparams.cc
     profilestore.cc
-    pyramid_1.cc
     rawflatfield.cc
     rawimage.cc
     rawimagesource.cc

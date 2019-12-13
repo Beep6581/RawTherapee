@@ -1266,6 +1266,7 @@ struct LocallabParams {
         int levelwav;
         double residcont;
         double residblur;
+        double levelblur;
         double residchro;
         double clarilres;
         double claricres;

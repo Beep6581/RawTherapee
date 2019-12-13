@@ -692,6 +692,7 @@ public:
         bool levelwav;
         bool residcont;
         bool residblur;
+        bool levelblur;
         bool residchro;
         bool clarilres;
         bool claricres;
