@@ -557,7 +557,7 @@ clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARISOFT"), 0., 100., 0.5, 0.
 claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
 sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
 residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100, 100, 1, 0))),
-sigma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.3, 2., 0.01, 1.))),
+sigma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
 multiplier(
 [this]() -> std::array<Adjuster*, 6> {
     std::array<Adjuster*, 6> res = {};

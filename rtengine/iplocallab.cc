@@ -6831,8 +6831,22 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, 
                 int W_L = wdspot->level_W(level);
                 int H_L = wdspot->level_H(level);
                 float **wav_L = wdspot->level_coeffs(level);
-                mea[0] = mean[level] / 6.f;
-                mea[1] = mean[level] / 2.f;
+                float rap =  mean[level] - 2.f * sigm * sigma[level];
+
+                if (rap > 0.f) {
+                    mea[0] = rap;
+                } else {
+                    mea[0] = mean[level] / 6.f;
+                }
+
+                rap =  mean[level] - sigm * sigma[level];
+
+                if (rap > 0.f) {
+                    mea[1] = rap;
+                } else {
+                    mea[1] = mean[level] / 2.f;
+                }
+
                 mea[2] = mean[level]; // 50% data
                 mea[3] = mean[level] + sigm * sigma[level] / 2.f;
                 mea[4] = mean[level] + sigm * sigma[level]; //66%
@@ -6845,17 +6859,14 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, 
 
                     float cpMul = 200.f * (locconwavCurve[level * 50.f] - 0.5f);
 
-                    if(cpMul > 0.f) {
+                    if (cpMul > 0.f) {
                         cpMul *= 2.f;
                     }
 
                     cpMul /= sk;
 
                     for (int i = 0; i < W_L * H_L; i++) {
-
-                        if (cpMul < 0.f) {
-                            beta = 1.f; // disabled for negatives values "less contrast"
-                        } else {
+                        {
                             float WavCL = fabsf(wav_L[dir][i]);
 
                             //reduction amplification: max action between mean / 2 and mean + sigma
@@ -6883,7 +6894,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, 
                             }
                         }
 
-                        float alpha = (1024.f + 15.f * (float) cpMul * beta) / 1024.f ;
+                        float alpha = max((1024.f + 15.f * (float) cpMul * beta) / 1024.f, 0.02f) ;
                         wav_L[dir][i] *= alpha;
                     }
                 }
