@@ -1261,6 +1261,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).residblur = locallab.spots.at(j).residblur && pSpot.residblur == otherSpot.residblur;
                 locallab.spots.at(j).levelblur = locallab.spots.at(j).levelblur && pSpot.levelblur == otherSpot.levelblur;
                 locallab.spots.at(j).residchro = locallab.spots.at(j).residchro && pSpot.residchro == otherSpot.residchro;
+                locallab.spots.at(j).sigma = locallab.spots.at(j).sigma && pSpot.sigma == otherSpot.sigma;
                 locallab.spots.at(j).clarilres = locallab.spots.at(j).clarilres && pSpot.clarilres == otherSpot.clarilres;
                 locallab.spots.at(j).claricres = locallab.spots.at(j).claricres && pSpot.claricres == otherSpot.claricres;
                 locallab.spots.at(j).clarisoft = locallab.spots.at(j).clarisoft && pSpot.clarisoft == otherSpot.clarisoft;
@@ -1270,6 +1271,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).localcontMethod = locallab.spots.at(j).localcontMethod && pSpot.localcontMethod == otherSpot.localcontMethod;
                 locallab.spots.at(j).locwavcurve = locallab.spots.at(j).locwavcurve && pSpot.locwavcurve == otherSpot.locwavcurve;
                 locallab.spots.at(j).loclevwavcurve = locallab.spots.at(j).loclevwavcurve && pSpot.loclevwavcurve == otherSpot.loclevwavcurve;
+                locallab.spots.at(j).locconwavcurve = locallab.spots.at(j).locconwavcurve && pSpot.locconwavcurve == otherSpot.locconwavcurve;
                 locallab.spots.at(j).csthreshold = locallab.spots.at(j).csthreshold && pSpot.csthreshold == otherSpot.csthreshold;
                 // Contrast by detail levels
                 locallab.spots.at(j).expcbdl = locallab.spots.at(j).expcbdl && pSpot.expcbdl == otherSpot.expcbdl;
@@ -3999,6 +4001,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).residchro   = mods.locallab.spots.at(i).residchro;
         }
 
+        if (locallab.spots.at(i).sigma) {
+            toEdit.locallab.spots.at(i).sigma   = mods.locallab.spots.at(i).sigma;
+        }
+
         if (locallab.spots.at(i).clarilres) {
             toEdit.locallab.spots.at(i).clarilres   = mods.locallab.spots.at(i).clarilres;
         }
@@ -4033,6 +4039,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).loclevwavcurve) {
             toEdit.locallab.spots.at(i).loclevwavcurve = mods.locallab.spots.at(i).loclevwavcurve;
+        }
+
+        if (locallab.spots.at(i).locconwavcurve) {
+            toEdit.locallab.spots.at(i).locconwavcurve = mods.locallab.spots.at(i).locconwavcurve;
         }
 
         if (locallab.spots.at(i).csthreshold) {
@@ -5507,6 +5517,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     residblur(v),
     levelblur(v),
     residchro(v),
+    sigma(v),
     clarilres(v),
     claricres(v),
     clarisoft(v),
@@ -5516,6 +5527,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     localcontMethod(v),
     locwavcurve(v),
     loclevwavcurve(v),
+    locconwavcurve(v),
     csthreshold(v),
     // Contrast by detail levels
     expcbdl(v),
@@ -5884,6 +5896,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     residblur = v;
     levelblur = v;
     residchro = v;
+    sigma = v;
     clarilres = v;
     claricres = v;
     clarisoft = v;
@@ -5893,6 +5906,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     localcontMethod = v;
     locwavcurve = v;
     loclevwavcurve = v;
+    locconwavcurve = v;
     csthreshold = v;
     // Contrast by detail levels
     expcbdl = v;

@@ -168,6 +168,8 @@ private:
     FlatCurveEditor* const wavshape;
     CurveEditorGroup* const LocalcurveEditorwavlev;
     FlatCurveEditor* const wavshapelev;
+    CurveEditorGroup* const LocalcurveEditorwavcon;
+    FlatCurveEditor* const wavshapecon;
 
     //Cbdl
     CurveEditorGroup* const maskcbCurveEditorG;
@@ -355,6 +357,7 @@ private:
     Adjuster* const claricres;
     Adjuster* const sensilc;
     Adjuster* const residchro;
+    Adjuster* const sigma;
     // Contrast by detail levels
     const std::array<Adjuster*, 6> multiplier;
     Adjuster* const chromacbdl;
@@ -573,6 +576,7 @@ private:
     Gtk::Frame* const clariFrame;
     Gtk::Frame* const blurlevelFrame;
     Gtk::Frame* const blurresidFrame;
+    Gtk::Frame* const contFrame;
     Gtk::Frame* const grainFrame;
     Gtk::Frame* const logFrame;
     Gtk::Frame* const logPFrame;

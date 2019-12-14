@@ -1117,6 +1117,7 @@ private:
             LocwavCurve loclmasCurvecolwav;
             LocwavCurve locwavCurve;
             LocwavCurve loclevwavCurve;
+            LocwavCurve locconwavCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf lclocalcurve(65536, 0);
             LUTf cllocalcurve(65536, 0);
@@ -1192,6 +1193,7 @@ private:
                 bool llmasblutili = false;
                 bool locwavutili = false;
                 bool loclevwavutili = false;
+                bool locconwavutili = false;
                 bool lmasutiliblwav = false;
                 bool lmasutilicolwav = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
@@ -1228,6 +1230,7 @@ private:
 
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
                 loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve, loclevwavutili);
+                locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve, locconwavutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveLocal(localclutili, params.locallab.spots.at(sp).clcurve, cllocalcurve, 1);
                 CurveFactory::curveLocal(locallcutili, params.locallab.spots.at(sp).lccurve, lclocalcurve, 1);
@@ -1300,6 +1303,7 @@ private:
                         loclmasCurvecolwav,lmasutilicolwav,
                         locwavCurve, locwavutili,
                         loclevwavCurve, loclevwavutili,
+                        locconwavCurve, locconwavutili,
                         LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);

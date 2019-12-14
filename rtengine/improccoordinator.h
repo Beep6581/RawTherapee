@@ -285,6 +285,7 @@ protected:
     LocwavCurve loclmasCurveblwav;
     LocwavCurve loclmasCurvecolwav;
     LocwavCurve loclevwavCurve;
+    LocwavCurve locconwavCurve;
 
     bool locallutili;
     bool localclutili;
@@ -327,6 +328,7 @@ protected:
     bool llmasblutili;
     bool locwavutili;
     bool loclevwavutili;
+    bool locconwavutili;
     bool lmasutiliblwav;
     bool lmasutilicolwav;
     bool LHutili;

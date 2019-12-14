@@ -299,6 +299,7 @@ public:
                 const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav,
                 const LocwavCurve & locwavCurve, bool & locwavutili,
                 const LocwavCurve & loclevwavCurve, bool & loclevwavutili,
+                const LocwavCurve & locconwavCurve, bool & locconwavutili,
                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                 double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
                 int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
@@ -312,7 +313,7 @@ public:
     static void strcurv_data(std::string retistr, int *s_datc, int &siz);
     void blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread);
 
-    void wavcontrast4(float ** tmp, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev, int & maxlvl);
+    void wavcontrast4(float ** tmp, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev, const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon, float sigm, int & maxlvl);
     void transit_shapedetect2(int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
 
     void transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref,  const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);

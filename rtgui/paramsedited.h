@@ -694,6 +694,7 @@ public:
         bool residblur;
         bool levelblur;
         bool residchro;
+        bool sigma;
         bool clarilres;
         bool claricres;
         bool clarisoft;
@@ -703,6 +704,7 @@ public:
         bool localcontMethod;
         bool locwavcurve;
         bool loclevwavcurve;
+        bool locconwavcurve;
         bool csthreshold;
         // Contrast by detail levels
         bool expcbdl;

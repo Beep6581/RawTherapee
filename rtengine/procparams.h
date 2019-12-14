@@ -1268,6 +1268,7 @@ struct LocallabParams {
         double residblur;
         double levelblur;
         double residchro;
+        double sigma;
         double clarilres;
         double claricres;
         double clarisoft;
@@ -1278,6 +1279,7 @@ struct LocallabParams {
         std::vector<double> locwavcurve;
         Threshold<int> csthreshold;
         std::vector<double> loclevwavcurve;
+        std::vector<double> locconwavcurve;
 
         // Contrast by detail levels
         bool expcbdl;
