@@ -553,9 +553,7 @@ residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))
 residblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDBLUR"), 0., 100., 0.5, 0.))),
 levelblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELBLUR"), 0., 100., 0.5, 0.))),
 clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
-//clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARISOFT"), 0., 100., 0.5, 0.))),
-clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 1000.0, 0.5, 0.))),
-
+clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 1000.0, 0.5, 1.))),
 claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
 sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
 residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100, 100, 1, 0))),
@@ -704,7 +702,7 @@ retinexMethod(Gtk::manage(new MyComboBoxText())),
 showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
 //Local contrast
 localcontMethod(Gtk::manage(new MyComboBoxText())),
-csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 5, 5, 0, false))),
+csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 6, 6, 0, false))),
 //CBDL
 showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
 
@@ -2870,7 +2868,7 @@ pe(nullptr)
         clariBox->pack_start(*claricres);
 
         clariBox->pack_start(*clarisoft);
-//    clariBox->pack_start(*origlc);
+    clariBox->pack_start(*origlc);
 
     clariFrame->add(*clariBox);
 

@@ -8533,6 +8533,131 @@ void rgbtone(float & maxval, float & medval, float & minval, LUTf & lutToneCurve
     medval = minval + ((maxval - minval) * (medvalold - minvalold) / (maxvalold - minvalold));
 }
 
+void clarimerge(float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavelet_level, int sk, bool numThreads)
+{
+    if (mL != 0.f && mC == 0.f) {
+        mC = 0.0001f;
+        exec = true;
+    }
+
+    if (mC != 0.f && mL == 0.f) {
+        mL = 0.0001f;
+        exec = true;
+    }
+
+    if (mL != 0.f && mC != 0.f) {
+        exec = true;
+    }
+
+    if (mL != 0.f) {
+
+        wavelet_decomposition *wdspotresid = new wavelet_decomposition(tmpresid->L[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+
+        if (wdspotresid->memoryAllocationFailed) {
+            return;
+        }
+
+        int maxlvlresid = wdspotresid->maxlevel();
+
+        if (maxlvlresid > 4) {//Clarity
+            for (int dir = 1; dir < 4; dir++) {
+                for (int level = 0; level < maxlvlresid; ++level) {
+                    int W_L = wdspotresid->level_W(level);
+                    int H_L = wdspotresid->level_H(level);
+                    float **wav_Lresid = wdspotresid->level_coeffs(level);
+
+                    for (int i = 0; i < W_L * H_L; i++) {
+                        wav_Lresid[dir][i] = 0.f;
+                    }
+                }
+            }
+        } else {//Sharp
+            float *wav_L0resid = wdspotresid->coeff0;
+            int W_L = wdspotresid->level_W(0);
+            int H_L = wdspotresid->level_H(0);
+
+            for (int i = 0; i < W_L * H_L; i++) {
+                wav_L0resid[i] = 0.f;
+            }
+        }
+
+        wdspotresid->reconstruct(tmpresid->L[0], 1.f);
+        delete wdspotresid;
+    }
+
+
+    if (mC != 0.f) {
+
+        wavelet_decomposition *wdspotresida = new wavelet_decomposition(tmpresid->a[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+
+        if (wdspotresida->memoryAllocationFailed) {
+            return;
+        }
+
+        int maxlvlresid = wdspotresida->maxlevel();
+
+        if (maxlvlresid > 4) {//Clarity
+            for (int dir = 1; dir < 4; dir++) {
+                for (int level = 0; level < maxlvlresid; ++level) {
+                    int W_L = wdspotresida->level_W(level);
+                    int H_L = wdspotresida->level_H(level);
+                    float **wav_Lresida = wdspotresida->level_coeffs(level);
+
+                    for (int i = 0; i < W_L * H_L; i++) {
+                        wav_Lresida[dir][i] = 0.f;
+                    }
+                }
+            }
+        } else {//Sharp
+            float *wav_L0resida = wdspotresida->coeff0;
+            int W_L = wdspotresida->level_W(0);
+            int H_L = wdspotresida->level_H(0);
+
+            for (int i = 0; i < W_L * H_L; i++) {
+                wav_L0resida[i] = 0.f;
+            }
+        }
+
+        wdspotresida->reconstruct(tmpresid->a[0], 1.f);
+        delete wdspotresida;
+    }
+
+    if (mC != 0.f) {
+
+        wavelet_decomposition *wdspotresidb = new wavelet_decomposition(tmpresid->b[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+
+        if (wdspotresidb->memoryAllocationFailed) {
+            return;
+        }
+
+        int maxlvlresid = wdspotresidb->maxlevel();
+
+        if (maxlvlresid > 4) {//Clarity
+            for (int dir = 1; dir < 4; dir++) {
+                for (int level = 0; level < maxlvlresid; ++level) {
+                    int W_L = wdspotresidb->level_W(level);
+                    int H_L = wdspotresidb->level_H(level);
+                    float **wav_Lresidb = wdspotresidb->level_coeffs(level);
+
+                    for (int i = 0; i < W_L * H_L; i++) {
+                        wav_Lresidb[dir][i] = 0.f;
+                    }
+                }
+            }
+        } else {//Sharp
+            float *wav_L0residb = wdspotresidb->coeff0;
+            int W_L = wdspotresidb->level_W(0);
+            int H_L = wdspotresidb->level_H(0);
+
+            for (int i = 0; i < W_L * H_L; i++) {
+                wav_L0residb[i] = 0.f;
+            }
+        }
+
+        wdspotresidb->reconstruct(tmpresid->b[0], 1.f);
+        delete wdspotresidb;
+    }
+}
 
 void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,
                                 const LocretigainCurve & locRETgainCcurve, const LocretitransCurve & locRETtransCcurve,
@@ -10763,7 +10888,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     wavelet_level = min(wavelet_level, maxlevelspot);
 
                     bool exec = false;
+                    bool origlc = params->locallab.spots.at(sp).origlc;
 
+                    if (origlc) {//merge only with original
+                        clarimerge(mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
+                    }
 
                     int maxlvl;
                     const float contrast = params->locallab.spots.at(sp).residcont;
@@ -10775,7 +10904,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const bool blurlc = params->locallab.spots.at(sp).blurlc;
                     const float radlevblur = (params->locallab.spots.at(sp).levelblur) / sk;
                     const float sigma = params->locallab.spots.at(sp).sigma;
-                    bool origlc = params->locallab.spots.at(sp).origlc;
 
                     wavcontrast4(tmp1->L, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, sigma, maxlvl);
 
@@ -10895,144 +11023,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-//copy previous calculation in merge possibilities
+                    if (!origlc) {//merge all files
+                        exec = false;
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16)
 #endif
-
-                    for (int y = 0; y < bfhr; y++) {
-                        for (int x = 0; x < bfwr; x++) {
-                            tmpresid->L[y][x] = tmp1->L[y][x];
-                            tmpresid->a[y][x] = tmp1->a[y][x];
-                            tmpresid->b[y][x] = tmp1->b[y][x];
-                        }
-                    }
-
-
-                    if (mL != 0.f && mC == 0.f) {
-                        mC = 0.0001f;
-                        exec = true;
-                    }
-
-                    if (mC != 0.f && mL == 0.f) {
-                        mL = 0.0001f;
-                        exec = true;
-                    }
-
-                    if (mL != 0.f && mC != 0.f) {
-                        exec = true;
-                    }
-
-                    if (mL != 0.f) {
-
-                        wavelet_decomposition *wdspotresid = new wavelet_decomposition(tmpresid->L[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
-
-                        if (wdspotresid->memoryAllocationFailed) {
-                            return;
-                        }
-
-                        int maxlvlresid = wdspotresid->maxlevel();
-
-                        if (maxlvlresid > 4) {//Clarity
-                            for (int dir = 1; dir < 4; dir++) {
-                                for (int level = 0; level < maxlvlresid; ++level) {
-                                    int W_L = wdspotresid->level_W(level);
-                                    int H_L = wdspotresid->level_H(level);
-                                    float **wav_Lresid = wdspotresid->level_coeffs(level);
-
-                                    for (int i = 0; i < W_L * H_L; i++) {
-                                        wav_Lresid[dir][i] = 0.f;
-                                    }
-                                }
-                            }
-                        } else {//Sharp
-                            float *wav_L0resid = wdspotresid->coeff0;
-                            int W_L = wdspotresid->level_W(0);
-                            int H_L = wdspotresid->level_H(0);
-
-                            for (int i = 0; i < W_L * H_L; i++) {
-                                wav_L0resid[i] = 0.f;
+//copy previous calculation in merge possibilities
+                        for (int y = 0; y < bfhr; y++) {
+                            for (int x = 0; x < bfwr; x++) {
+                                tmpresid->L[y][x] = tmp1->L[y][x];
+                                tmpresid->a[y][x] = tmp1->a[y][x];
+                                tmpresid->b[y][x] = tmp1->b[y][x];
                             }
                         }
 
-                        wdspotresid->reconstruct(tmpresid->L[0], 1.f);
-                        delete wdspotresid;
+                        clarimerge(mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
                     }
-
-
-                    if (mC != 0.f) {
-
-                        wavelet_decomposition *wdspotresida = new wavelet_decomposition(tmpresid->a[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
-
-                        if (wdspotresida->memoryAllocationFailed) {
-                            return;
-                        }
-
-                        int maxlvlresid = wdspotresida->maxlevel();
-
-                        if (maxlvlresid > 4) {//Clarity
-                            for (int dir = 1; dir < 4; dir++) {
-                                for (int level = 0; level < maxlvlresid; ++level) {
-                                    int W_L = wdspotresida->level_W(level);
-                                    int H_L = wdspotresida->level_H(level);
-                                    float **wav_Lresida = wdspotresida->level_coeffs(level);
-
-                                    for (int i = 0; i < W_L * H_L; i++) {
-                                        wav_Lresida[dir][i] = 0.f;
-                                    }
-                                }
-                            }
-                        } else {//Sharp
-                            float *wav_L0resida = wdspotresida->coeff0;
-                            int W_L = wdspotresida->level_W(0);
-                            int H_L = wdspotresida->level_H(0);
-
-                            for (int i = 0; i < W_L * H_L; i++) {
-                                wav_L0resida[i] = 0.f;
-                            }
-                        }
-
-                        wdspotresida->reconstruct(tmpresid->a[0], 1.f);
-                        delete wdspotresida;
-                    }
-
-
-                    if (mC != 0.f) {
-
-                        wavelet_decomposition *wdspotresidb = new wavelet_decomposition(tmpresid->b[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
-
-                        if (wdspotresidb->memoryAllocationFailed) {
-                            return;
-                        }
-
-                        int maxlvlresid = wdspotresidb->maxlevel();
-
-                        if (maxlvlresid > 4) {//Clarity
-                            for (int dir = 1; dir < 4; dir++) {
-                                for (int level = 0; level < maxlvlresid; ++level) {
-                                    int W_L = wdspotresidb->level_W(level);
-                                    int H_L = wdspotresidb->level_H(level);
-                                    float **wav_Lresidb = wdspotresidb->level_coeffs(level);
-
-                                    for (int i = 0; i < W_L * H_L; i++) {
-                                        wav_Lresidb[dir][i] = 0.f;
-                                    }
-                                }
-                            }
-                        } else {//Sharp
-                            float *wav_L0residb = wdspotresidb->coeff0;
-                            int W_L = wdspotresidb->level_W(0);
-                            int H_L = wdspotresidb->level_H(0);
-
-                            for (int i = 0; i < W_L * H_L; i++) {
-                                wav_L0residb[i] = 0.f;
-                            }
-                        }
-
-                        wdspotresidb->reconstruct(tmpresid->b[0], 1.f);
-                        delete wdspotresidb;
-                    }
-
 
                     float thr = 0.001f;
                     int flag = 0;
@@ -11055,8 +11061,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     if (exec) {
-                        origlc = false;
-                        LabImage *mergfile = origlc ? tmpres.get() : tmp1.get();
+                        bool origl = false;
+                        // origlc = false;
+                        LabImage *mergfile = origl ? tmpres.get() : tmp1.get();
 
 #ifdef _OPENMP
                         #pragma omp parallel for
