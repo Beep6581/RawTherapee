@@ -39,8 +39,8 @@ static const FileFormat file_formats[] =
 {
   {
     N_("Raw Canon"),
-    "image/x-canon-cr2,image/x-canon-crw",
-    "cr2,crw",
+    "image/x-canon-cr2,image/x-canon-cr3,image/x-canon-crw",
+    "cr2,cr3,crw",
     NULL,
 
     "file-rawtherapee-canon-load",

@@ -473,8 +473,18 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
                 }
             }
 
+#ifdef __SSE2__
+            // flush denormals to zero for gaussian blur to avoid performance penalty if there are a lot of zero values in the mask
+            const auto oldMode = _MM_GET_FLUSH_ZERO_MODE();
+            _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+#endif
+
             // blur blend mask to smooth transitions
             gaussianBlur(blend, blend, W, H, 2.0);
+
+#ifdef __SSE2__
+            _MM_SET_FLUSH_ZERO_MODE(oldMode);
+#endif
         }
     }
 }

@@ -541,6 +541,7 @@ BENCHFUN
 
     double progress = startVal;
     const double progressStep = (endVal - startVal) * rtengine::SQR(tileSize) / (W * H);
+    constexpr float minBlend = 0.01f;
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -563,10 +564,16 @@ BENCHFUN
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
                     if (checkIterStop) {
+                        float maxVal = 0.f;
                         for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
                             for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
                                 iterCheck[k][l] = oldLuminance[ii][jj] * clipmask[ii][jj] * 0.5f;
+                                maxVal = std::max(maxVal, clipmask[ii][jj]);
                             }
+                        }
+                        if (maxVal < minBlend) {
+                            // no pixel of the tile has a blend factor >= minBlend => skip the tile
+                            continue;
                         }
                     }
                     for (int k = 0, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize; ++k, ++ii) {
@@ -577,10 +584,16 @@ BENCHFUN
                     }
                 } else {
                     if (checkIterStop) {
+                        float maxVal = 0.f;
                         for (int ii = 0; ii < tileSize; ++ii) {
                             for (int jj = 0; jj < tileSize; ++jj) {
                                 iterCheck[ii][jj] = oldLuminance[i + ii][j + jj] * clipmask[i + ii][j + jj] * 0.5f;
+                                maxVal = std::max(maxVal, clipmask[i + ii][j + jj]);
                             }
+                        }
+                        if (maxVal < minBlend) {
+                            // no pixel of the tile has a blend factor >= minBlend => skip the tile
+                            continue;
                         }
                     }
                     for (int ii = i; ii < i + fullTileSize; ++ii) {
@@ -686,6 +699,10 @@ namespace rtengine
 {
 
 void RawImageSource::captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) {
+
+    if (!(ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1)) {
+        return;
+    }
 
     if (plistener) {
         plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));

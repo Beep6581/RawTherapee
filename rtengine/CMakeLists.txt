@@ -103,6 +103,7 @@ set(RTENGINESOURCEFILES
     labimage.cc
     lcp.cc
     lj92.c
+    lmmse_demosaic.cc
     loadinitial.cc
     myfile.cc
     panasonic_decoders.cc
