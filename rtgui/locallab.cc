@@ -2781,9 +2781,13 @@ pe(nullptr)
     csThreshold->setAdjusterListener(this);
 
     LocalcurveEditorwav->setCurveListener(this);
+    std::vector<GradientMilestone> botMilestones;
+    botMilestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+    botMilestones.push_back( GradientMilestone(1., 1., 1., 1.) );
 
     wavshape->setIdentityValue(0.);
     wavshape->setResetCurve(FlatCurveType(defSpot.locwavcurve.at(0)), defSpot.locwavcurve);
+    wavshape->setBottomBarBgGradient(botMilestones);
 
     if (showtooltip) {
 //        wavshape->setTooltip(M("TP_RETINEX_WAV_TOOLTIP"));
