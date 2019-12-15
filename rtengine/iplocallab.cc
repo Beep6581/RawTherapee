@@ -11070,56 +11070,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                         if (softr > 0.f && fabs(mL) > 0.001f) {
-                            softproc(mergfile, tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
+                            softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
                         }
                     }
                 }
 
-                /*
-                //use by old function transit_shapedetect keep in case of
-                                float minL =  tmp1->L[0][0] - bufgb->L[0][0];
-                                float maxL = minL;
-                                float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
-                                float maxC = minC;
-
-                #ifdef _OPENMP
-                                #pragma omp parallel for reduction(max:maxL) reduction(min:minL) reduction(min:minC) reduction(max:maxC)schedule(dynamic,16)
-                #endif
-
-                                for (int ir = 0; ir < bfhr; ir++) {
-                                    for (int jr = 0; jr < bfwr; jr++) {
-                                        buflight[ir][jr] =  tmp1->L[ir][jr] - bufgb->L[ir][jr];
-                                        bufchro[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
-                                        minL = rtengine::min(minL, buflight[ir][jr]);
-                                        maxL = rtengine::max(maxL, buflight[ir][jr]);
-                                        minC = rtengine::min(minC, bufchro[ir][jr]);
-                                        maxC = rtengine::max(maxC, bufchro[ir][jr]);
-                                    }
-                                }
-
-                                float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
-
-                                if (coef == 0.f) { //prevent bad behavior
-                                    coef = 1.f;
-                                }
-
-                                float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-
-                                if (coefC == 0.f) { //prevent bad behavior
-                                    coefC = 1.f;
-                                }
-
-                #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
-                #endif
-
-                                for (int y = 0; y < bfhr; y++) {
-                                    for (int x = 0; x < bfwr; x++) {
-                                        buflight[y][x] /= coef;
-                                        bufchro[y][x] /= coefC;
-                                    }
-                                }
-                */
 
                 transit_shapedetect2(call, 10, bufgb.get(), tmp1.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 //                transit_shapedetect(10, tmp1.get(), nullptr, bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
