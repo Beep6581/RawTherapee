@@ -2212,7 +2212,7 @@ TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CLARICRES;Merge Chroma
-TP_LOCALLAB_CLARIFRA;Sharp mask and Clarity
+TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend images 
 TP_LOCALLAB_CLARILRES;Merge Luma
 TP_LOCALLAB_CLARISOFT;Soft radius
 TP_LOCALLAB_CLARITYML;Clarity
