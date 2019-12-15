@@ -465,6 +465,8 @@ private:
     sigc::connection fftwlcConn;
     Gtk::CheckButton* const blurlc;
     sigc::connection blurlcConn;
+    Gtk::CheckButton* const origlc;
+    sigc::connection origlcConn;
     
     //CBDL
     Gtk::CheckButton* const enacbMask;
@@ -665,6 +667,7 @@ private:
     // local contrast
     void fftwlcChanged();
     void blurlcChanged();
+    void origlcChanged();
     //CBDL
     void enacbMaskChanged();
     // ComboBox event functions

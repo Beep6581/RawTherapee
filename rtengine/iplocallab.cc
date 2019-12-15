@@ -10775,6 +10775,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const bool blurlc = params->locallab.spots.at(sp).blurlc;
                     const float radlevblur = (params->locallab.spots.at(sp).levelblur) / sk;
                     const float sigma = params->locallab.spots.at(sp).sigma;
+                    bool origlc = params->locallab.spots.at(sp).origlc;
 
                     wavcontrast4(tmp1->L, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, sigma, maxlvl);
 
@@ -11054,19 +11055,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     if (exec) {
+                        origlc = false;
+                        LabImage *mergfile = origlc ? tmpres.get() : tmp1.get();
+
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
 
                         for (int x = 0; x < bfh; x++)
                             for (int y = 0; y < bfw; y++) {
-                                tmp1->L[x][y] = CLIPLOC((1.f + mL0) * tmp1->L[x][y] - mL * tmpresid->L[x][y]);
-                                tmp1->a[x][y] = CLIPC((1.f + mC0) * tmp1->a[x][y] - mC * tmpresid->a[x][y]);
-                                tmp1->b[x][y] = CLIPC((1.f + mC0) * tmp1->b[x][y] - mC * tmpresid->b[x][y]);
+                                tmp1->L[x][y] = CLIPLOC((1.f + mL0) * mergfile->L[x][y] - mL * tmpresid->L[x][y]);
+                                tmp1->a[x][y] = CLIPC((1.f + mC0) * mergfile->a[x][y] - mC * tmpresid->a[x][y]);
+                                tmp1->b[x][y] = CLIPC((1.f + mC0) * mergfile->b[x][y] - mC * tmpresid->b[x][y]);
                             }
 
                         if (softr > 0.f && fabs(mL) > 0.001f) {
-                            softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
+                            softproc(mergfile, tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
                         }
                     }
                 }

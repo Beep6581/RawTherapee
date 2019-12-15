@@ -888,6 +888,7 @@ enum ProcEventCode {
     EvlocallabwavCurvelev = 859,
     EvlocallabwavCurvecon = 860,
     Evlocallabsigma = 861,
+    Evlocallaboriglc = 862,
     NUMOFEVENTS
 };
 

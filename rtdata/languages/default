@@ -1099,6 +1099,7 @@ HISTORY_MSG_859;Local - Contrast Maximum Blur levels
 HISTORY_MSG_860;Local - Contrast Curve Blur levels
 HISTORY_MSG_861;Local - Contrast Curve Contrast levels
 HISTORY_MSG_862;Local - Contrast Sigma luminance
+HISTORY_MSG_862;Local - Contrast Merge Original
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2430,6 +2431,7 @@ TP_LOCALLAB_NOISEMETH;Denoise
 TP_LOCALLAB_NONENOISE;None
 TP_LOCALLAB_OFFS;Offset
 TP_LOCALLAB_OPACOL;Opacity
+TP_LOCALLAB_ORIGCOL;Merge only with original image
 TP_LOCALLAB_PASTELS2;Vibrance
 TP_LOCALLAB_PDE;Dynamic Range compression + Standard
 TP_LOCALLAB_PDE2;Laplacian PDE - Dynamic Range compression + Standard

@@ -1275,6 +1275,7 @@ struct LocallabParams {
         int sensilc;
         bool fftwlc;
         bool blurlc;
+        bool origlc;
         Glib::ustring localcontMethod;
         std::vector<double> locwavcurve;
         Threshold<int> csthreshold;
