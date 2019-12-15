@@ -63,6 +63,7 @@ namespace rtengine
 
 struct cont_params {
     float mul[10];
+    float sigm;
     int chrom;
     int chro;
     int contrast;
@@ -224,6 +225,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     if (params->wavelet.BAmethod == "cur") {
         cp.BAmet = 2;
     }
+    cp.sigm = params->wavelet.sigma;
 
     cp.tmstrength = params->wavelet.tmrs;
     //cp.tonemap = params->wavelet.tmr;
@@ -2997,15 +2999,29 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
         //for each pixel and each level
         float beta;
         float mea[9];
-        mea[0] = mean[level] / 6.f;
-        mea[1] = mean[level] / 2.f;
+        float rap =  mean[level] - 2.f * cp.sigm * sigma[level];
+
+        if (rap > 0.f) {
+            mea[0] = rap;
+        } else {
+            mea[0] = mean[level] / 6.f;
+        }
+
+        rap =  mean[level] - cp.sigm * sigma[level];
+
+        if (rap > 0.f) {
+            mea[1] = rap;
+        } else {
+            mea[1] = mean[level] / 2.f;
+        }
+        
         mea[2] = mean[level]; // 50% data
-        mea[3] = mean[level] + sigma[level] / 2.f;
-        mea[4] = mean[level] + sigma[level]; //66%
-        mea[5] = mean[level] + 1.2f * sigma[level];
-        mea[6] = mean[level] + 1.5f * sigma[level]; //
-        mea[7] = mean[level] + 2.f * sigma[level]; //95%
-        mea[8] = mean[level] + 2.5f * sigma[level]; //99%
+        mea[3] = mean[level] + cp.sigm * sigma[level] / 2.f;
+        mea[4] = mean[level] + cp.sigm * sigma[level]; //66%
+        mea[5] = mean[level] + cp.sigm * 1.2f * sigma[level];
+        mea[6] = mean[level] + cp.sigm * 1.5f * sigma[level]; //
+        mea[7] = mean[level] + cp.sigm * 2.f * sigma[level]; //95%
+        mea[8] = mean[level] + cp.sigm * 2.5f * sigma[level]; //99%
 
         bool useChromAndHue = (skinprot != 0.f || cp.HSmet);
         float modchro;

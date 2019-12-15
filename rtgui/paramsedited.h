@@ -520,6 +520,7 @@ struct WaveletParamsEdited {
     bool Tilesmethod;
     bool daubcoeffmethod;
     bool Dirmethod;
+    bool sigma;
     bool rescon;
     bool resconH;
     bool reschro;

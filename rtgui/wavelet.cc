@@ -80,6 +80,7 @@ Wavelet::Wavelet() :
     tmr(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_BALCHRO")))),
     showmask(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_SHOWMASK")))),
     neutralchButton(Gtk::manage(new Gtk::Button(M("TP_WAVELET_NEUTRAL")))),
+    sigma(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMA"), 0.2, 2.5, 0.01, 1.))),
     rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), 0, 100, 1, 0))),
     resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), 0, 100, 1, 0))),
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
@@ -173,6 +174,7 @@ Wavelet::Wavelet() :
     EvWavedgs = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVEDGS");
     EvWavscale = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSCALE");
     EvWavradius = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVRADIUS");
+    EvWavsigma = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSIGMA");
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -324,6 +326,9 @@ Wavelet::Wavelet() :
         correction[i]->setAdjusterListener(this);
         levBox->pack_start(*correction[i]);
     }
+
+    sigma->setAdjusterListener(this);
+    levBox->pack_start(*sigma, Gtk::PACK_SHRINK);
 
     levBox->pack_start(*sup);
     sup->setAdjusterListener(this);
@@ -1226,6 +1231,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     lastavoid = pp->wavelet.avoid;
     lastshowmask = pp->wavelet.showmask;
     lasttmr = pp->wavelet.tmr;
+    sigma->setValue(pp->wavelet.sigma);
     rescon->setValue(pp->wavelet.rescon);
     resconH->setValue(pp->wavelet.resconH);
     reschro->setValue(pp->wavelet.reschro);
@@ -1377,6 +1383,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         tmr->set_inconsistent(!pedited->wavelet.tmr);
         edgthresh->setEditedState(pedited->wavelet.edgthresh ? Edited : UnEdited);
         rescon->setEditedState(pedited->wavelet.rescon ? Edited : UnEdited);
+        sigma->setEditedState(pedited->wavelet.sigma ? Edited : UnEdited);
         resconH->setEditedState(pedited->wavelet.resconH ? Edited : UnEdited);
         reschro->setEditedState(pedited->wavelet.reschro ? Edited : UnEdited);
         tmrs->setEditedState(pedited->wavelet.tmrs ? Edited : UnEdited);
@@ -1558,6 +1565,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.avoid          = avoid->get_active();
     pp->wavelet.showmask       = showmask->get_active();
     pp->wavelet.tmr            = tmr->get_active();
+    pp->wavelet.sigma          = sigma->getValue();
     pp->wavelet.rescon         = rescon->getValue();
     pp->wavelet.resconH        = resconH->getValue();
     pp->wavelet.reschro        = reschro->getValue();
@@ -1668,6 +1676,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.HSmethod        = HSmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.Dirmethod       = Dirmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.edgthresh       = edgthresh->getEditedState();
+        pedited->wavelet.sigma           = sigma->getEditedState();
         pedited->wavelet.rescon          = rescon->getEditedState();
         pedited->wavelet.resconH         = resconH->getEditedState();
         pedited->wavelet.reschro         = reschro->getEditedState();
@@ -1902,6 +1911,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     strength->setDefault(defParams->wavelet.strength);
     balance->setDefault(defParams->wavelet.balance);
     iter->setDefault(defParams->wavelet.iter);
+    sigma->setDefault(defParams->wavelet.sigma);
     rescon->setDefault(defParams->wavelet.rescon);
     resconH->setDefault(defParams->wavelet.resconH);
     reschro->setDefault(defParams->wavelet.reschro);
@@ -1963,6 +1973,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         softrad->setDefaultEditedState(pedited->wavelet.softrad ? Edited : UnEdited);
         softradend->setDefaultEditedState(pedited->wavelet.softradend ? Edited : UnEdited);
 
+        sigma->setDefault(defParams->wavelet.sigma);
         rescon->setDefault(defParams->wavelet.rescon);
         resconH->setDefault(defParams->wavelet.resconH);
         reschro->setDefault(defParams->wavelet.reschro);
@@ -2013,6 +2024,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
             correctionch[i]->setDefaultEditedState(pedited->wavelet.ch[i] ? Edited : UnEdited);
         }
     } else {
+        sigma->setDefaultEditedState(Irrelevant);
         rescon->setDefaultEditedState(Irrelevant);
         resconH->setDefaultEditedState(Irrelevant);
         reschro->setDefaultEditedState(Irrelevant);
@@ -2540,6 +2552,7 @@ void Wavelet::setBatchMode(bool batchMode)
     opacityCurveEditorWL->setBatchMode(batchMode);
     curveEditorRES->setBatchMode(batchMode);
     curveEditorGAM->setBatchMode(batchMode);
+    sigma->showEditedCB();
     rescon->showEditedCB();
     resconH->showEditedCB();
     reschro->showEditedCB();
@@ -2621,6 +2634,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavtiles, edgthresh->getTextValue());
         } else if (a == rescon) {
             listener->panelChanged(EvWavrescon, rescon->getTextValue());
+        } else if (a == sigma) {
+            listener->panelChanged(EvWavsigma, sigma->getTextValue());
         } else if (a == resconH) {
             listener->panelChanged(EvWavresconH, resconH->getTextValue());
         } else if (a == reschro) {

@@ -790,6 +790,7 @@ HISTORY_MSG_WAVCLARI;Clarity
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_MSG_WAVMERGEL;Merge L
 HISTORY_MSG_WAVMERGEC;Merge C
+HISTORY_MSG_WAVSIGMA;Sigma
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
@@ -2236,6 +2237,7 @@ TP_WAVELET_RESCONH;Highlights
 TP_WAVELET_RESID;Residual Image
 TP_WAVELET_SAT;Saturated chroma
 TP_WAVELET_SETTINGS;Wavelet Settings
+TP_WAVELET_SIGMA;Sigma
 TP_WAVELET_SKIN;Skin targetting/protection
 TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 TP_WAVELET_SKY;Sky targetting/protection
