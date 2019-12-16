@@ -1323,6 +1323,11 @@ Camera constants:
         "ranges": { "white": 16100 }
     },
 
+    { // Quality C, bisected from the overexposed region of one pre-release sample file
+        "make_model": "FUJIFILM X-A7",
+        "ranges": { "white": 16382 }
+    },
+
     { // Quality B
         "make_model": "FUJIFILM X-A10",
         "dcraw_matrix": [ 11540,-4999,-991,-2949,10963,2278,-382,1049,5605 ], // DNGv9.12 D65
