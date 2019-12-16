@@ -90,6 +90,7 @@ public:
     bool on_window_state_event (GdkEventWindowState* event) override;
     void on_mainNB_switch_page (Gtk::Widget* widget, guint page_num);
 
+    void showRawPedia();
     void showICCProfileCreator ();
     void showPreferences ();
     void on_realize () override;
