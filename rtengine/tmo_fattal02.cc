@@ -1056,7 +1056,7 @@ inline int find_fast_dim(int dim)
 } // namespace
 
 
-void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level)
+void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level, bool Lalone, float **Lum, int WW, int HH)
 {
     if (!fatParams.enabled) {
         return;
@@ -1080,8 +1080,16 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
         return;
     }
 
-    int w = rgb->getWidth();
-    int h = rgb->getHeight();
+    int w;
+    int h;
+    if(Lalone) {
+        w = WW;
+        h = HH;
+    } else {
+         w = rgb->getWidth();
+         h = rgb->getHeight();
+    }
+    
 
     Array2Df Yr(w, h);
 
@@ -1090,16 +1098,21 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
     constexpr float min_luminance = 1.f;
 
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
-
+printf("OK 1\n");
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
 #endif
 
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
-            Yr(x, y) = std::max(luminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x), ws), min_luminance);       // clip really black pixels
+            if(Lalone) {
+                Yr(x, y) = std::max(2.f * Lum[y][x], min_luminance);       // clip really black pixels
+            } else {
+                Yr(x, y) = std::max(luminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x), ws), min_luminance);       // clip really black pixels
+            }
         }
     }
+printf("OK 2\n");
 
     float oldMedian;
     const float percentile = float(LIM(fatParams.anchor, 1, 100)) / 100.f;
@@ -1139,8 +1152,10 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
     }
 
     rescale_nearest(Yr, L, multiThread);
+printf("OK 3\n");
 
     tmo_fattal02(w2, h2, L, L, alpha, beta, noise, detail_level, multiThread);
+printf("OK 4\n");
 
     const float hr = float(h2) / float(h);
     const float wr = float(w2) / float(w);
@@ -1161,6 +1176,7 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 
             float Y = std::max(Yr(x, y), epsilon);
             float l = std::max(L(xx, yy), epsilon) * (scale / Y);
+            if(!Lalone) {
             rgb->r(y, x) *= l;
             rgb->g(y, x) *= l;
             rgb->b(y, x) *= l;
@@ -1168,8 +1184,12 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
             assert(std::isfinite(rgb->r(y, x)));
             assert(std::isfinite(rgb->g(y, x)));
             assert(std::isfinite(rgb->b(y, x)));
+            } else {
+                Lum[y][x] *= (0.5f * l);
+            }
         }
     }
+printf("OK 5\n");
 
 }
 

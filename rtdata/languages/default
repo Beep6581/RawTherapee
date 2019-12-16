@@ -1100,6 +1100,9 @@ HISTORY_MSG_860;Local - Contrast Curve Blur levels
 HISTORY_MSG_861;Local - Contrast Curve Contrast levels
 HISTORY_MSG_862;Local - Contrast Sigma luminance
 HISTORY_MSG_863;Local - Contrast Merge Original
+HISTORY_MSG_864;Local - Contrast Detail
+HISTORY_MSG_865;Local - Contrast Anchor
+HISTORY_MSG_866;Local - Contrast Curve compression
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2222,6 +2225,7 @@ TP_LOCALLAB_CLIPTM;Clip Restored datas (gain)
 TP_LOCALLAB_COFR;Color & Light - Small defects
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
+TP_LOCALLAB_COMPFRA;Levels Dynamic Range Compression
 TP_LOCALLAB_COMPLEX_METHOD;Software Complexity
 TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustements rubrics.
 TP_LOCALLAB_CONTCOL;Contrast threshold Mask Blur
@@ -2583,6 +2587,7 @@ TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
 TP_LOCALLAB_WAV;Levels local contrast
+TP_LOCALLAB_WAVCOMP;Compression by Level
 TP_LOCALLAB_WAVCON;Contrast by Level
 TP_LOCALLAB_WAVE;Wavelet
 TP_LOCALLAB_WAVHIGH;Wavelet high

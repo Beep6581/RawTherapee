@@ -872,7 +872,7 @@ private:
         ipf.firstAnalysis(baseImg, params, hist16);
 
         ipf.dehaze(baseImg, params.dehaze);
-        ipf.ToneMapFattal02(baseImg, params.fattal, 3);
+        ipf.ToneMapFattal02(baseImg, params.fattal, 3, false, nullptr, 0, 0);
 
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
@@ -1118,6 +1118,7 @@ private:
             LocwavCurve locwavCurve;
             LocwavCurve loclevwavCurve;
             LocwavCurve locconwavCurve;
+            LocwavCurve loccompwavCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf lclocalcurve(65536, 0);
             LUTf cllocalcurve(65536, 0);
@@ -1194,6 +1195,7 @@ private:
                 bool locwavutili = false;
                 bool loclevwavutili = false;
                 bool locconwavutili = false;
+                bool loccompwavutili = false;
                 bool lmasutiliblwav = false;
                 bool lmasutilicolwav = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
@@ -1231,6 +1233,7 @@ private:
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
                 loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve, loclevwavutili);
                 locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve, locconwavutili);
+                loccompwavCurve.Set(params.locallab.spots.at(sp).loccompwavcurve, loccompwavutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveLocal(localclutili, params.locallab.spots.at(sp).clcurve, cllocalcurve, 1);
                 CurveFactory::curveLocal(locallcutili, params.locallab.spots.at(sp).lccurve, lclocalcurve, 1);
@@ -1304,6 +1307,7 @@ private:
                         locwavCurve, locwavutili,
                         loclevwavCurve, loclevwavutili,
                         locconwavCurve, locconwavutili,
+                        loccompwavCurve, loccompwavutili,
                         LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
