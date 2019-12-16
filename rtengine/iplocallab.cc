@@ -3999,7 +3999,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             bool wavcurvecon = false;
             bool loccompwavutili = false;
             bool wavcurvecomp = false;
-            wavcontrast4(bufmaskblurcol->L, contrast, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, 1.f, maxlvl, 0.f, 0.f);
+            wavcontrast4(bufmaskblurcol->L, contrast, 0.f, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, 1.f, maxlvl, 0.f, 0.f);
 
         }
 
@@ -6736,7 +6736,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     fftwf_destroy_plan(plan_backward_blox[1]);
     fftwf_cleanup();
 }
-void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads,
+void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads,
                                    const LocwavCurve & locwavCurve, bool & locwavutili, const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev,
                                    const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon,
                                    const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp,
@@ -6752,6 +6752,39 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, 
     int W_L = wdspot->level_W(0);
     int H_L = wdspot->level_H(0);
     float *wav_L0 = wdspot->coeff0;
+
+    FattalToneMappingParams fatParams;
+    fatParams.threshold = fatdet;
+    fatParams.anchor = fatanch;
+
+    if (fatres > 0.f) {
+        fatParams.enabled = true;
+        fatParams.amount = fatres;
+        array2D<float> bufl(W_L, H_L);
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < H_L; y++) {
+            for (int x = 0; x < W_L; x++) {
+                bufl[y][x]  = wav_L0[y * W_L + x];
+            }
+        }
+
+        ToneMapFattal02(nullptr, fatParams, 3, true, bufl, W_L, H_L);
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < H_L; y++) {
+            for (int x = 0; x < W_L; x++) {
+                wav_L0[y * W_L + x] = bufl[y][x];
+            }
+        }
+
+    }
+
 
     if (radblur > 0.f) {
         array2D<float> bufl(W_L, H_L);
@@ -6933,11 +6966,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, 
     float ****templevel = nullptr;
 
     if (wavcurvelev  || wavcurvecomp) {
-        FattalToneMappingParams fatParams;
         fatParams.enabled = wavcurvecomp;
-        fatParams.threshold = fatdet;
-        fatParams.amount = 50;
-        fatParams.anchor = fatanch;
 
         templevel = new float***[dir];
 
@@ -6972,6 +7001,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, 
 
 //Compress dynamic range
         if (wavcurvecomp) {
+            printf("Dynamic Range levels\n");
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = level_bl; level < maxlvl; ++level) {
                     int W_L = wdspot->level_W(level);
@@ -6992,7 +7022,9 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float radblur, 
 
 
         //blur level and dir
-        if (wavcurvelev) {
+        if (wavcurvelev && radlevblur > 0.f) {
+            printf("Blur levels\n");
+            
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = level_bl; level < maxlvl; ++level) {
                     int W_L = wdspot->level_W(level);
@@ -9121,7 +9153,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bool wavcurvecon = false;
                 bool loccompwavutili = false;
                 bool wavcurvecomp = false;
-                wavcontrast4(bufmaskblurbl->L, contrast, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp,  1.f, maxlvl, 0.f, 0.f);
+                wavcontrast4(bufmaskblurbl->L, contrast, 0.f, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp,  1.f, maxlvl, 0.f, 0.f);
             }
 
             int shado = params->locallab.spots.at(sp).shadmaskbl;
@@ -10954,8 +10986,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const float sigma = params->locallab.spots.at(sp).sigma;
                     const float fatdet = params->locallab.spots.at(sp).fatdet;
                     const float fatanch = params->locallab.spots.at(sp).fatanch;
+                    const float fatres = params->locallab.spots.at(sp).fatres;
 
-                    wavcontrast4(tmp1->L, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, sigma, maxlvl, fatdet, fatanch);
+                    wavcontrast4(tmp1->L, contrast, fatres, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, sigma, maxlvl, fatdet, fatanch);
 
                     const float satur = params->locallab.spots.at(sp).residchro;
 

@@ -1098,7 +1098,6 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
     constexpr float min_luminance = 1.f;
 
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
-printf("OK 1\n");
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
 #endif
@@ -1112,7 +1111,6 @@ printf("OK 1\n");
             }
         }
     }
-printf("OK 2\n");
 
     float oldMedian;
     const float percentile = float(LIM(fatParams.anchor, 1, 100)) / 100.f;
@@ -1152,10 +1150,8 @@ printf("OK 2\n");
     }
 
     rescale_nearest(Yr, L, multiThread);
-printf("OK 3\n");
 
     tmo_fattal02(w2, h2, L, L, alpha, beta, noise, detail_level, multiThread);
-printf("OK 4\n");
 
     const float hr = float(h2) / float(h);
     const float wr = float(w2) / float(w);
@@ -1189,7 +1185,6 @@ printf("OK 4\n");
             }
         }
     }
-printf("OK 5\n");
 
 }
 

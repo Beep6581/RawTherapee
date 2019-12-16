@@ -362,6 +362,7 @@ private:
     Adjuster* const sigma;
     Adjuster* const fatdet;
     Adjuster* const fatanch;
+    Adjuster* const fatres;
     // Contrast by detail levels
     const std::array<Adjuster*, 6> multiplier;
     Adjuster* const chromacbdl;
@@ -581,7 +582,6 @@ private:
     Gtk::Frame* const residFrame;
     Gtk::Frame* const clariFrame;
     Gtk::Frame* const blurlevelFrame;
-    Gtk::Frame* const blurresidFrame;
     Gtk::Frame* const contFrame;
     Gtk::Frame* const compFrame;
     Gtk::Frame* const grainFrame;

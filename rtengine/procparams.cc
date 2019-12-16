@@ -2728,6 +2728,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sigma(1.0),
     fatdet(40.0),
     fatanch(50.0),
+    fatres(0.0),
     clarilres(0.0),
     claricres(0.0),
     clarisoft(1.0),
@@ -3121,6 +3122,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sigma == other.sigma
         && fatdet == other.fatdet
         && fatanch == other.fatanch
+        && fatres == other.fatres
         && clarilres == other.clarilres
         && claricres == other.claricres
         && clarisoft == other.clarisoft
@@ -4494,6 +4496,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sigma, "Locallab", "Sigma_" + std::to_string(i), spot.sigma, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatdet, "Locallab", "Fatdet_" + std::to_string(i), spot.fatdet, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatanch, "Locallab", "Fatanch_" + std::to_string(i), spot.fatanch, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatres, "Locallab", "Fatres_" + std::to_string(i), spot.fatres, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).clarilres, "Locallab", "ClariLres_" + std::to_string(i), spot.clarilres, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).claricres, "Locallab", "ClariCres_" + std::to_string(i), spot.claricres, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).clarisoft, "Locallab", "Clarisoft_" + std::to_string(i), spot.clarisoft, keyFile);
@@ -6016,6 +6019,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sigma_" + std::to_string(i), pedited, spot.sigma, spotEdited.sigma);
                 assignFromKeyfile(keyFile, "Locallab", "Fatdet_" + std::to_string(i), pedited, spot.fatdet, spotEdited.fatdet);
                 assignFromKeyfile(keyFile, "Locallab", "Fatanch_" + std::to_string(i), pedited, spot.fatanch, spotEdited.fatanch);
+                assignFromKeyfile(keyFile, "Locallab", "Fatres_" + std::to_string(i), pedited, spot.fatres, spotEdited.fatres);
                 assignFromKeyfile(keyFile, "Locallab", "ClariLres_" + std::to_string(i), pedited, spot.clarilres, spotEdited.clarilres);
                 assignFromKeyfile(keyFile, "Locallab", "ClariCres_" + std::to_string(i), pedited, spot.claricres, spotEdited.claricres);
                 assignFromKeyfile(keyFile, "Locallab", "Clarisoft_" + std::to_string(i), pedited, spot.clarisoft, spotEdited.clarisoft);

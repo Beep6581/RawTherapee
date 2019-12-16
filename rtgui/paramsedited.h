@@ -697,6 +697,7 @@ public:
         bool sigma;
         bool fatdet;
         bool fatanch;
+        bool fatres;
         bool clarilres;
         bool claricres;
         bool clarisoft;

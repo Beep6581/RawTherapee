@@ -563,6 +563,7 @@ residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100, 100, 1, 0))
 sigma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
 fatdet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
 fatanch(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+fatres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATRES"), 0., 100., 1., 0.))),
 
 multiplier(
 [this]() -> std::array<Adjuster*, 6> {
@@ -742,7 +743,6 @@ retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
 residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
 clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
 blurlevelFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURLEVELFRA")))),
-blurresidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURRESIDFRA")))),
 contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTFRA")))),
 compFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPFRA")))),
 grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
@@ -2871,6 +2871,7 @@ pe(nullptr)
     sigma->setAdjusterListener(this);
     fatdet->setAdjusterListener(this);
     fatanch->setAdjusterListener(this);
+    fatres->setAdjusterListener(this);
     clarilres->setAdjusterListener(this);
     clarisoft->setLogScale(10, -10);
     clarisoft->setAdjusterListener(this);
@@ -2883,24 +2884,23 @@ pe(nullptr)
     clariFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const clariBox = Gtk::manage(new ToolParamBlock());
     clariBox->pack_start(*clarilres);
-
-        clariBox->pack_start(*claricres);
-
-        clariBox->pack_start(*clarisoft);
+    clariBox->pack_start(*claricres);
+    clariBox->pack_start(*clarisoft);
     clariBox->pack_start(*origlc);
 
     clariFrame->add(*clariBox);
 
-    blurresidFrame->set_label_align(0.025, 0.5);
-    ToolParamBlock* const blurcontraBox = Gtk::manage(new ToolParamBlock());
-    blurcontraBox->pack_start(*residblur);
-    blurcontraBox->pack_start(*blurlc);
-    blurresidFrame->add(*blurcontraBox);
+
+    Gtk::HSeparator* const separatorblu = Gtk::manage(new  Gtk::HSeparator());
 
     blurlevelFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const blurlevcontBox = Gtk::manage(new ToolParamBlock());
     blurlevcontBox->pack_start(*levelblur);
     blurlevcontBox->pack_start(*LocalcurveEditorwavlev, Gtk::PACK_SHRINK, 4);
+    blurlevcontBox->pack_start(*separatorblu);
+    blurlevcontBox->pack_start(*residblur);
+    blurlevcontBox->pack_start(*blurlc);
+    
     blurlevelFrame->add(*blurlevcontBox);
 
     contFrame->set_label_align(0.025, 0.5);
@@ -2909,11 +2909,15 @@ pe(nullptr)
     contlevBox->pack_start(*LocalcurveEditorwavcon, Gtk::PACK_SHRINK, 4);
     contFrame->add(*contlevBox);
 
+    Gtk::HSeparator* const separatorcomp = Gtk::manage(new  Gtk::HSeparator());
+
     compFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const compBox = Gtk::manage(new ToolParamBlock());
     compBox->pack_start(*fatdet);
     compBox->pack_start(*fatanch);
     compBox->pack_start(*LocalcurveEditorwavcomp, Gtk::PACK_SHRINK, 4);
+    compBox->pack_start(*separatorcomp);
+    compBox->pack_start(*fatres);
     compFrame->add(*compBox);
 
     setExpandAlignProperties(expcontrastpyr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -2923,7 +2927,6 @@ pe(nullptr)
     blurcontBox->pack_start(*clariFrame);
     blurcontBox->pack_start(*contFrame);
     blurcontBox->pack_start(*compFrame);
-    blurcontBox->pack_start(*blurresidFrame);
     blurcontBox->pack_start(*blurlevelFrame);
 
     expcontrastpyr->add(*blurcontBox, false);
@@ -5092,6 +5095,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).sigma = sigma->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fatdet = fatdet->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fatanch = fatanch->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).fatres = fatres->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).clarilres = clarilres->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).claricres = claricres->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).clarisoft = clarisoft->getValue();
@@ -5488,6 +5492,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).sigma = pe->locallab.spots.at(pp->locallab.selspot).sigma || sigma->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fatdet = pe->locallab.spots.at(pp->locallab.selspot).fatdet || fatdet->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fatanch = pe->locallab.spots.at(pp->locallab.selspot).fatanch || fatanch->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).fatres = pe->locallab.spots.at(pp->locallab.selspot).fatres || fatres->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).clarilres = pe->locallab.spots.at(pp->locallab.selspot).clarilres || clarilres->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).claricres = pe->locallab.spots.at(pp->locallab.selspot).claricres || claricres->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).clarisoft = pe->locallab.spots.at(pp->locallab.selspot).clarisoft || clarisoft->getEditedState();
@@ -5881,6 +5886,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).sigma = pedited->locallab.spots.at(pp->locallab.selspot).sigma || sigma->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fatdet = pedited->locallab.spots.at(pp->locallab.selspot).fatdet || fatdet->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fatanch = pedited->locallab.spots.at(pp->locallab.selspot).fatanch || fatanch->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fatres = pedited->locallab.spots.at(pp->locallab.selspot).fatres || fatres->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).clarilres = pedited->locallab.spots.at(pp->locallab.selspot).clarilres || clarilres->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).claricres = pedited->locallab.spots.at(pp->locallab.selspot).claricres || claricres->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).clarisoft = pedited->locallab.spots.at(pp->locallab.selspot).clarisoft || clarisoft->getEditedState();
@@ -6405,6 +6411,7 @@ void Locallab::localcontMethodChanged()
         sigma->hide();
         fatdet->hide();
         fatanch->hide();
+        fatres->hide();
         clarilres->hide();
         claricres->hide();
         clarisoft->hide();
@@ -6430,6 +6437,7 @@ void Locallab::localcontMethodChanged()
         sigma->show();
         fatdet->show();
         fatanch->show();
+        fatres->show();
         clarilres->show();
         claricres->show();
         clarisoft->show();
@@ -8438,6 +8446,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     sigma->setDefault(defSpot->sigma);
     fatdet->setDefault(defSpot->fatdet);
     fatanch->setDefault(defSpot->fatanch);
+    fatres->setDefault(defSpot->fatres);
     clarilres->setDefault(defSpot->clarilres);
     claricres->setDefault(defSpot->claricres);
     clarisoft->setDefault(defSpot->clarisoft);
@@ -8673,6 +8682,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         sigma->setDefaultEditedState(Irrelevant);
         fatdet->setDefaultEditedState(Irrelevant);
         fatanch->setDefaultEditedState(Irrelevant);
+        fatres->setDefaultEditedState(Irrelevant);
         clarilres->setDefaultEditedState(Irrelevant);
         claricres->setDefaultEditedState(Irrelevant);
         clarisoft->setDefaultEditedState(Irrelevant);
@@ -8913,6 +8923,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         sigma->setDefaultEditedState(defSpotState->sigma ? Edited : UnEdited);
         fatdet->setDefaultEditedState(defSpotState->fatdet ? Edited : UnEdited);
         fatanch->setDefaultEditedState(defSpotState->fatanch ? Edited : UnEdited);
+        fatres->setDefaultEditedState(defSpotState->fatres ? Edited : UnEdited);
         clarilres->setDefaultEditedState(defSpotState->clarilres ? Edited : UnEdited);
         claricres->setDefaultEditedState(defSpotState->claricres ? Edited : UnEdited);
         clarisoft->setDefaultEditedState(defSpotState->clarisoft ? Edited : UnEdited);
@@ -10096,6 +10107,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == fatres) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfatres, fatres->getTextValue());
+            }
+        }
+
         if (a == clarilres) {
             if (listener) {
                 listener->panelChanged(Evlocallabclarilres, clarilres->getTextValue());
@@ -10570,6 +10587,7 @@ void Locallab::setBatchMode(bool batchMode)
     sigma->showEditedCB();
     fatdet->showEditedCB();
     fatanch->showEditedCB();
+    fatres->showEditedCB();
     clarilres->showEditedCB();
     claricres->showEditedCB();
     clarisoft->showEditedCB();
@@ -11623,6 +11641,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         sigma->setValue(pp->locallab.spots.at(index).sigma);
         fatdet->setValue(pp->locallab.spots.at(index).fatdet);
         fatanch->setValue(pp->locallab.spots.at(index).fatanch);
+        fatres->setValue(pp->locallab.spots.at(index).fatres);
         clarilres->setValue(pp->locallab.spots.at(index).clarilres);
         claricres->setValue(pp->locallab.spots.at(index).claricres);
         clarisoft->setValue(pp->locallab.spots.at(index).clarisoft);
@@ -12123,6 +12142,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sigma->setEditedState(spotState->sigma ? Edited : UnEdited);
                 fatdet->setEditedState(spotState->fatdet ? Edited : UnEdited);
                 fatanch->setEditedState(spotState->fatanch ? Edited : UnEdited);
+                fatres->setEditedState(spotState->fatres ? Edited : UnEdited);
                 clarilres->setEditedState(spotState->clarilres ? Edited : UnEdited);
                 claricres->setEditedState(spotState->claricres ? Edited : UnEdited);
                 clarisoft->setEditedState(spotState->clarisoft ? Edited : UnEdited);
@@ -12635,6 +12655,7 @@ void Locallab::updateSpecificGUIState()
         sigma->hide();
         fatdet->hide();
         fatanch->hide();
+        fatres->hide();
         clarilres->hide();
         claricres->hide();
         clarisoft->hide();
@@ -12659,6 +12680,7 @@ void Locallab::updateSpecificGUIState()
         sigma->show();
         fatdet->show();
         fatanch->show();
+        fatres->show();
         residchro->show();
         clarilres->show();
         claricres->show();

@@ -1264,6 +1264,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sigma = locallab.spots.at(j).sigma && pSpot.sigma == otherSpot.sigma;
                 locallab.spots.at(j).fatdet = locallab.spots.at(j).fatdet && pSpot.fatdet == otherSpot.fatdet;
                 locallab.spots.at(j).fatanch = locallab.spots.at(j).fatanch && pSpot.fatanch == otherSpot.fatanch;
+                locallab.spots.at(j).fatres = locallab.spots.at(j).fatres && pSpot.fatres == otherSpot.fatres;
                 locallab.spots.at(j).clarilres = locallab.spots.at(j).clarilres && pSpot.clarilres == otherSpot.clarilres;
                 locallab.spots.at(j).claricres = locallab.spots.at(j).claricres && pSpot.claricres == otherSpot.claricres;
                 locallab.spots.at(j).clarisoft = locallab.spots.at(j).clarisoft && pSpot.clarisoft == otherSpot.clarisoft;
@@ -4017,6 +4018,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).fatanch   = mods.locallab.spots.at(i).fatanch;
         }
 
+        if (locallab.spots.at(i).fatres) {
+            toEdit.locallab.spots.at(i).fatres   = mods.locallab.spots.at(i).fatres;
+        }
+
         if (locallab.spots.at(i).clarilres) {
             toEdit.locallab.spots.at(i).clarilres   = mods.locallab.spots.at(i).clarilres;
         }
@@ -5540,6 +5545,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sigma(v),
     fatdet(v),
     fatanch(v),
+    fatres(v),
     clarilres(v),
     claricres(v),
     clarisoft(v),
@@ -5923,6 +5929,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sigma = v;
     fatdet = v;
     fatanch = v;
+    fatres = v;
     clarilres = v;
     claricres = v;
     clarisoft = v;

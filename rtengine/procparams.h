@@ -1271,6 +1271,7 @@ struct LocallabParams {
         double sigma;
         double fatdet;
         double fatanch;
+        double fatres;
         double clarilres;
         double claricres;
         double clarisoft;
