@@ -131,11 +131,16 @@ void Spot::read (const ProcParams* pp, const ParamsEdited* pedited)
     activeSpot = -1;
     lastObject = -1;
 
-    if (spots.size() != oldSize) {
-        createGeometry();
+    if (batchMode) {
+        editedCheckBox->set_label(Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), spots.size()));
     }
+    else {
+        if (spots.size() != oldSize) {
+            createGeometry();
+        }
 
-    updateGeometry();
+        updateGeometry();
+    }
 
     enableListener ();
 }
@@ -147,7 +152,7 @@ void Spot::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->spot.enabled = !get_inconsistent();
-        pedited->spot.entries = !editedCheckBox->get_active();
+        pedited->spot.entries = editedCheckBox->get_active();
     }
 }
 
@@ -160,8 +165,10 @@ void Spot::resetPressed()
         editedCheckBox->set_active (true);
         editedConn.block (false);
 
+        editedCheckBox->set_label(Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), spots.size()));
+
         if (listener) {
-            listener->panelChanged (EvSpotEntry, Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), spots.size()));
+            listener->panelChanged (EvSpotEntry, Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), 0));
         }
     } else {
         if (!spots.empty()) {
@@ -783,7 +790,7 @@ void Spot::tweakParams(procparams::ProcParams& pparams)
     //params->raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
 
     // -> disabling all transform
-    //params->coarse = CoarseTransformParams();
+    //pparams.coarse = CoarseTransformParams();
     pparams.lensProf = LensProfParams();
     pparams.cacorrection = CACorrParams();
     pparams.distortion = DistortionParams();
