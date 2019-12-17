@@ -192,6 +192,7 @@ struct local_params {
     float dxx, dyy;
     float iterat;
     float balance;
+    float balanceh;
     int cir;
     float thr;
     float stru;
@@ -527,6 +528,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     double local_dxy = locallab.spots.at(sp).iter / 8000.0; //for proxi = 2==> # 1 pixel
     float iterati = (float) locallab.spots.at(sp).iter;
     float balanc = (float) locallab.spots.at(sp).balan;
+    float balanch = (float) locallab.spots.at(sp).balanh;
 
     if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
         iterati = 2.f;
@@ -1020,6 +1022,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.shiter = local_shariter;
     lp.iterat = iterati;
     lp.balance = balanc;
+    lp.balanceh = balanch;
     lp.dxx = w * local_dxy;
     lp.dyy = h * local_dxy;
     lp.thr = thre;
@@ -2290,6 +2293,18 @@ static void balancedeltaE(float kL, float &kab)
     kab = abal * kL + bbal;
 }
 
+static void balancedeltaEH(float kH, float &kch)
+{
+    float mincurs = 0.3f;//minimum slider balan_
+    float maxcurs = 1.7f;//maximum slider balan_
+    float maxkab = 1.35;//0.5 * (3 - 0.3)
+    float minkab = 0.65;//0.5 * (3 - 1.7)
+    float abal = (maxkab - minkab) / (mincurs - maxcurs);
+    float bbal = maxkab - mincurs * abal;
+    kch = abal * kH + bbal;
+}
+
+
 static void calcreducdE(float dE, float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float &reducdE)
 {
     if (dE > maxdE) {
@@ -3092,14 +3107,17 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 }
 
 void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* bufcolorig, const float hueref, const float chromaref, const float lumaref,
-                                    float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance)
+                                    float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh)
 {
     const float refa = chromaref * cos(hueref);
     const float refb = chromaref * sin(hueref);
     const float refL = lumaref;
     float kL = balance; //lp.balance;
     float kab = 1.f;
+    float kH = balanceh;
+    float kch = 1.f;
     balancedeltaE(kL, kab);
+    balancedeltaEH(kH, kch);
 
     float reducdE = 1.f;
 #ifdef _OPENMP
@@ -3108,7 +3126,11 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
 
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
-            float tempdE = sqrt(kab * (SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f)) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
+            float chrodelta = 0.5f * SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f);
+            float hueh = xatan2f(bufcolorig->b[y][x], bufcolorig->a[y][x]);
+            float huedelta = 125.f * SQR(hueref - hueh); 
+         //   float tempdE = sqrt(kab * (SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f)) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
+            float tempdE = sqrt(kab * (kch * chrodelta  + kH * huedelta) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
 
             if (tempdE > maxdE) {
                 reducdE = 0.f;
@@ -4061,7 +4083,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
             float** rdE = *(rdEBuffer.get());
 
-            deltaEforMask(rdE, bfw, bfh, bufreserv.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, lp.balance);
+            deltaEforMask(rdE, bfw, bfh, bufreserv.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, lp.balance, lp.balanceh);
             std::unique_ptr<LabImage> delta(new LabImage(bfw, bfh));
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -6056,7 +6078,11 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     //balance deltaE
     float kL = lp.balance;
     float kab = 1.f;
+    float kH = lp.balanceh;
+    float kch = 1.f;
     balancedeltaE(kL, kab);
+    balancedeltaEH(kH, kch);
+    
     kab /= SQR(327.68f);
     kL /= SQR(327.68f);
 
@@ -6182,7 +6208,12 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
             }
 
             //deltaE
-            const float dE = rsob + sqrt(kab * (SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x])) + kL * SQR(refL - maskptr->L[y][x]));
+            float chrodelta = 0.5f * (SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]));
+            float hueh = xatan2f(maskptr->b[y][x], maskptr->a[y][x]);
+            float huedelta = 125.f * SQR(hueref - hueh); 
+            
+      //      const float dE = rsob + sqrt(kab * (SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x])) + kL * SQR(refL - maskptr->L[y][x]));
+            const float dE = rsob + sqrt(kab * (kch * chrodelta  + kH * huedelta) + kL * SQR(refL - maskptr->L[y][x]));
             float reducdE;
             //reduction action with deltaE
             calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
@@ -9289,7 +9320,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(GW, GH));
                 float** rdE = *(rdEBuffer.get());
 
-                deltaEforMask(rdE, GW, GH, bufgb.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.balance);
+                deltaEforMask(rdE, GW, GH, bufgb.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.balance, lp.balanceh);
                 std::unique_ptr<LabImage> delta(new LabImage(GW, GH));
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -11554,7 +11585,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                           lmaskretilocalcurve, localmaskretiutili,
                                           transformed, lp.enaretiMasktmap, lp.enaretiMask,
                                           delt, hueref, chromaref, lumaref,
-                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco, lp.balance, lumask);
+                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco, lp.balance, lp.balanceh, lumask);
 #ifdef _OPENMP
                 #pragma omp parallel for
 #endif
@@ -11927,7 +11958,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                           lmaskretilocalcurve, localmaskretiutili,
                                           transformed, lp.enaretiMasktmap, lp.enaretiMask,
                                           delt, hueref, chromaref, lumaref,
-                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco, lp.balance, lumask);
+                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco, lp.balance, lp.balanceh, lumask);
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -13449,7 +13480,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
                             float** rdE = *(rdEBuffer.get());
 
-                            deltaEforMask(rdE, bfw, bfh, bufreser.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, mercol, lp.balance);
+                            deltaEforMask(rdE, bfw, bfh, bufreser.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, mercol, lp.balance, lp.balanceh);
 
                             if (lp.mergecolMethod == 0) {  //normal
 

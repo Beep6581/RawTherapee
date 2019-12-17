@@ -980,6 +980,7 @@ struct LocallabParams {
         double thresh;
         double iter;
         double balan;
+        double balanh;
         double transitweak;
         double transitgrad;
         bool avoid;

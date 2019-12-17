@@ -235,7 +235,7 @@ public:
                  float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope);
                  
     void deltaEforMask(float **rdE, int bfw, int bfh, LabImage* bufcolorig, const float hueref, const float chromaref, const float lumaref,
-                          float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance);
+                          float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh);
     void discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t);
     void rex_poisson_dct(float * data, size_t nx, size_t ny, double m);
     void mean_dt(const float * data, size_t size, double * mean_p, double * dt_p);
@@ -254,7 +254,7 @@ public:
          LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
          LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread,
          bool delt, const float hueref, const float chromaref, const float lumaref,
-         float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float lumask);
+         float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask);
 
     //3 functions from Alberto Griggio, adapted J.Desmis 2019
     void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, int bfw, int bfh);
@@ -268,7 +268,7 @@ public:
         LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
         LabImage * transformed, bool retiMasktmap, bool retiMask,
         bool delt, const float hueref, const float chromaref, const float lumaref,
-        float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float lumask);
+        float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask);
 
 
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, float &avg);

@@ -69,6 +69,7 @@ ControlSpotPanel::ControlSpotPanel():
     thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 10.0, 0.1, 2.0))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
     balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0))),
     transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 10.0, 0.1, 1.0))),
     transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
@@ -375,12 +376,14 @@ ControlSpotPanel::ControlSpotPanel():
 
     artifBox->pack_start(*iter_);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         artifBox->pack_start(*balan_);
-    }
+        artifBox->pack_start(*balanh_);
+//    }
 
     iter_->setAdjusterListener(this);
     balan_->setAdjusterListener(this);
+    balanh_->setAdjusterListener(this);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
     /*
@@ -761,6 +764,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     thresh_->setValue((double)row[spots_.thresh]);
     iter_->setValue((double)row[spots_.iter]);
     balan_->setValue((double)row[spots_.balan]);
+    balanh_->setValue((double)row[spots_.balanh]);
     transitweak_->setValue((double)row[spots_.transitweak]);
     transitgrad_->setValue((double)row[spots_.transitgrad]);
     scopemask_->setValue((double)row[spots_.scopemask]);
@@ -1245,6 +1249,14 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (a == balanh_) {
+        row[spots_.balanh] = balanh_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotbalanh, balanh_->getTextValue());
+        }
+    }
+
     if (a == transitweak_) {
         row[spots_.transitweak] = transitweak_->getValue();
 
@@ -1521,6 +1533,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     thresh_->block(cond);
     iter_->block(cond);
     balan_->block(cond);
+    balanh_->block(cond);
     transitweak_->block(cond);
     transitgrad_->block(cond);
     scopemask_->block(cond);
@@ -1558,6 +1571,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     thresh_->set_sensitive(cond);
     iter_->set_sensitive(cond);
     balan_->set_sensitive(cond);
+    balanh_->set_sensitive(cond);
     transitweak_->set_sensitive(cond);
     transitgrad_->set_sensitive(cond);
     scopemask_->set_sensitive(cond);
@@ -2203,6 +2217,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->thresh = row[spots_.thresh];
             r->iter = row[spots_.iter];
             r->balan = row[spots_.balan];
+            r->balanh = row[spots_.balanh];
             r->transitweak = row[spots_.transitweak];
             r->transitgrad = row[spots_.transitgrad];
             r->scopemask = row[spots_.scopemask];
@@ -2339,6 +2354,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.thresh] = newSpot->thresh;
     row[spots_.iter] = newSpot->iter;
     row[spots_.balan] = newSpot->balan;
+    row[spots_.balanh] = newSpot->balanh;
     row[spots_.transitweak] = newSpot->transitweak;
     row[spots_.transitgrad] = newSpot->transitgrad;
     row[spots_.scopemask] = newSpot->scopemask;
@@ -2394,6 +2410,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.thresh] = spot->thresh;
             row[spots_.iter] = spot->iter;
             row[spots_.balan] = spot->balan;
+            row[spots_.balanh] = spot->balanh;
             row[spots_.transitweak] = spot->transitweak;
             row[spots_.transitgrad] = spot->transitgrad;
             row[spots_.scopemask] = spot->scopemask;
@@ -2495,6 +2512,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->thresh = thresh_->getEditedState();
     se->iter = iter_->getEditedState();
     se->balan = balan_->getEditedState();
+    se->balanh = balanh_->getEditedState();
     se->transitweak = transitweak_->getEditedState();
     se->transitgrad = transitgrad_->getEditedState();
     se->scopemask = scopemask_->getEditedState();
@@ -2581,6 +2599,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     thresh_->setEditedState(se->thresh ? Edited : UnEdited);
     iter_->setEditedState(se->iter ? Edited : UnEdited);
     balan_->setEditedState(se->balan ? Edited : UnEdited);
+    balanh_->setEditedState(se->balanh ? Edited : UnEdited);
     transitweak_->setEditedState(se->transitweak ? Edited : UnEdited);
     transitgrad_->setEditedState(se->transitgrad ? Edited : UnEdited);
     scopemask_->setEditedState(se->scopemask ? Edited : UnEdited);
@@ -2634,6 +2653,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
     thresh_->setDefault(defSpot->thresh);
     iter_->setDefault(defSpot->iter);
     balan_->setDefault(defSpot->balan);
+    balanh_->setDefault(defSpot->balanh);
     transitweak_->setDefault(defSpot->transitweak);
     transitgrad_->setDefault(defSpot->transitgrad);
     scopemask_->setDefault(defSpot->scopemask);
@@ -2656,6 +2676,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         thresh_->setDefaultEditedState(Irrelevant);
         iter_->setDefaultEditedState(Irrelevant);
         balan_->setDefaultEditedState(Irrelevant);
+        balanh_->setDefaultEditedState(Irrelevant);
         transitweak_->setDefaultEditedState(Irrelevant);
         transitgrad_->setDefaultEditedState(Irrelevant);
         scopemask_->setDefaultEditedState(Irrelevant);
@@ -2682,6 +2703,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         thresh_->setDefaultEditedState(defSpotState->thresh ? Edited : UnEdited);
         iter_->setDefaultEditedState(defSpotState->iter ? Edited : UnEdited);
         balan_->setDefaultEditedState(defSpotState->balan ? Edited : UnEdited);
+        balanh_->setDefaultEditedState(defSpotState->balanh ? Edited : UnEdited);
         transitweak_->setDefaultEditedState(defSpotState->transitweak ? Edited : UnEdited);
         transitgrad_->setDefaultEditedState(defSpotState->transitgrad ? Edited : UnEdited);
         scopemask_->setDefaultEditedState(defSpotState->scopemask ? Edited : UnEdited);
@@ -2709,6 +2731,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
     thresh_->showEditedCB();
     iter_->showEditedCB();
     balan_->showEditedCB();
+    balanh_->showEditedCB();
     transitweak_->showEditedCB();
     transitgrad_->showEditedCB();
     scopemask_->showEditedCB();
@@ -2754,6 +2777,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(thresh);
     add(iter);
     add(balan);
+    add(balanh);
     add(transitweak);
     add(transitgrad);
     add(scopemask);

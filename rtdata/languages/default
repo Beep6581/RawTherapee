@@ -1103,6 +1103,7 @@ HISTORY_MSG_863;Local - Contrast Merge Original
 HISTORY_MSG_864;Local - Contrast Detail
 HISTORY_MSG_865;Local - Contrast Anchor
 HISTORY_MSG_867;Local - Contrast Amount residual
+HISTORY_MSG_868;Local - balance deltaE C-H
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2179,6 +2180,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but
 TP_LOCALLAB_AUTOGRAY;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance deltaE ab-L
+TP_LOCALLAB_BALANH;Balance deltaE C-H
 TP_LOCALLAB_BALANEXP;PDE balance
 TP_LOCALLAB_BASELOG;Logarithm base
 TP_LOCALLAB_BILATERAL;Bilateral filter

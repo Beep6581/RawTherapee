@@ -64,6 +64,7 @@ public:
         double thresh;
         double iter;
         double balan;
+        double balanh;
         double transitweak;
         double transitgrad;
         int scopemask;
@@ -105,6 +106,7 @@ public:
         bool thresh;
         bool iter;
         bool balan;
+        bool balanh;
         bool transitweak;
         bool transitgrad;
         bool scopemask;
@@ -335,6 +337,7 @@ private:
         Gtk::TreeModelColumn<double> thresh;
         Gtk::TreeModelColumn<double> iter;
         Gtk::TreeModelColumn<double> balan;
+        Gtk::TreeModelColumn<double> balanh;
         Gtk::TreeModelColumn<double> transitweak;
         Gtk::TreeModelColumn<double> transitgrad;
         Gtk::TreeModelColumn<int> scopemask;
@@ -410,6 +413,7 @@ private:
     Adjuster* const thresh_;
     Adjuster* const iter_;
     Adjuster* const balan_;
+    Adjuster* const balanh_;
     Adjuster* const transitweak_;
     Adjuster* const transitgrad_;
     Adjuster* const scopemask_;

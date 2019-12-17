@@ -407,6 +407,7 @@ public:
         bool thresh;
         bool iter;
         bool balan;
+        bool balanh;
         bool transitweak;
         bool transitgrad;
         bool avoid;
