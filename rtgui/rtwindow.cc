@@ -386,7 +386,7 @@ RTWindow::RTWindow ()
         Gtk::Button* helpBtn = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (helpBtn, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         helpBtn->set_relief(Gtk::RELIEF_NONE);
-        helpBtn->set_image (*Gtk::manage (new RTImage ("info.png")));
+        helpBtn->set_image (*Gtk::manage (new RTImage ("questionmark.png")));
         helpBtn->set_tooltip_markup (M ("GENERAL_HELP"));
         helpBtn->signal_clicked().connect (sigc::mem_fun (*this, &RTWindow::showRawPedia));
 
@@ -921,10 +921,7 @@ void RTWindow::writeToolExpandedStatus (std::vector<int> &tpOpen)
 
 void RTWindow::showRawPedia()
 {
-    const Glib::ustring& uri = "https://rawpedia.rawtherapee.com/";
-    guint32 err = 0;
-    RTWindow *rtWin = this;
-    rtWin->show_uri(uri, err);
+    show_uri("https://rawpedia.rawtherapee.com/", GDK_CURRENT_TIME);
 }
 
 void RTWindow::showICCProfileCreator ()
