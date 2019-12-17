@@ -1056,7 +1056,7 @@ inline int find_fast_dim(int dim)
 } // namespace
 
 
-void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level, bool Lalone, float **Lum, int WW, int HH)
+void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level, int Lalone, float **Lum, int WW, int HH)
 {
     if (!fatParams.enabled) {
         return;
@@ -1082,14 +1082,13 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 
     int w;
     int h;
-    if(Lalone) {
+    if(Lalone != 0) {
         w = WW;
         h = HH;
     } else {
          w = rgb->getWidth();
          h = rgb->getHeight();
     }
-    
 
     Array2Df Yr(w, h);
 
@@ -1104,7 +1103,7 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
-            if(Lalone) {
+            if(Lalone != 0) {
                 Yr(x, y) = std::max(2.f * Lum[y][x], min_luminance);       // clip really black pixels
             } else {
                 Yr(x, y) = std::max(luminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x), ws), min_luminance);       // clip really black pixels
@@ -1172,7 +1171,7 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 
             float Y = std::max(Yr(x, y), epsilon);
             float l = std::max(L(xx, yy), epsilon) * (scale / Y);
-            if(!Lalone) {
+            if(Lalone == 0) {
             rgb->r(y, x) *= l;
             rgb->g(y, x) *= l;
             rgb->b(y, x) *= l;
@@ -1181,7 +1180,11 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
             assert(std::isfinite(rgb->g(y, x)));
             assert(std::isfinite(rgb->b(y, x)));
             } else {
-                Lum[y][x] *= (0.5f * l);
+                if(Lalone == 1) {
+                    Lum[y][x] *= (0.5f * l);
+                } else if(Lalone == -1){
+                    Lum[y][x] *= (-0.5f * l);
+                }
             }
         }
     }

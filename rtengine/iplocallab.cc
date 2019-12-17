@@ -4052,7 +4052,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             Imagefloat *tmpImagefat = nullptr;
             tmpImagefat = new Imagefloat(bfw, bfh);
             lab2rgb(*bufmaskblurcol, *tmpImagefat, params->icm.workingProfile);
-            ToneMapFattal02(tmpImagefat, fatParams, nlev, false, nullptr, 0, 0);
+            ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0);
             rgb2lab(*tmpImagefat, *bufmaskblurcol, params->icm.workingProfile);
             delete tmpImagefat;
         }
@@ -6736,6 +6736,8 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     fftwf_destroy_plan(plan_backward_blox[1]);
     fftwf_cleanup();
 }
+
+
 void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads,
                                    const LocwavCurve & locwavCurve, bool & locwavutili, const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev,
                                    const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon,
@@ -6743,7 +6745,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
                                    float sigm, int & maxlvl, float fatdet, float fatanch)
 {
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
-
+    //first decomposition for compress dynamic range positive values and other process 
     if (wdspot->memoryAllocationFailed) {
         return;
     }
@@ -6771,7 +6773,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
             }
         }
 
-        ToneMapFattal02(nullptr, fatParams, 3, true, bufl, W_L, H_L);
+        ToneMapFattal02(nullptr, fatParams, 3, 1, bufl, W_L, H_L);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
@@ -6944,8 +6946,6 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
     float blow = 0.f;
 
     if (level_hl != level_bl) {
-        //    alow = 0.5f / (level_hl - level_bl);//to test with 0.5
-        //    blow = 0.5f -alow * level_bl;
         alow = 1.f / (level_hl - level_bl);
         blow = -alow * level_bl;
     }
@@ -6954,8 +6954,6 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
     float bhigh = 0.f;
 
     if (level_hr != level_br) {
-        //   ahigh = 0.5f / (level_hr - level_br);//to test with 0.5
-        //   bhigh = 0.5f -ahigh * level_br;
         ahigh = 1.f / (level_hr - level_br);
         bhigh =  -ahigh * level_br;
     }
@@ -6983,25 +6981,34 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
             }
         }
 
+
         //fill array templevel with wavelet value level dir
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot->level_W(level);
                 int H_L = wdspot->level_H(level);
                 float **wav_L = wdspot->level_coeffs(level);
+                //      float **wav_LN = wdspotneg->level_coeffs(level);
 
                 for (int y = 0; y < H_L; y++) {
                     for (int x = 0; x < W_L; x++) {
                         float val  = wav_L[dir][y * W_L + x];
-                        templevel[dir - 1][level][y][x] = val;
+
+//                        if (val >= 0.f) {
+                            templevel[dir - 1][level][y][x] = val;
+//                        } else {
+//                            templevel[dir - 1][level][y][x] = 0.f;
+//                        }
                     }
                 }
             }
         }
 
-//Compress dynamic range
+
+//Compress dynamic range positives values decomposition
         if (wavcurvecomp) {
-            printf("Dynamic Range levels\n");
+//            printf("Dynamic Range levels\n");
+
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = level_bl; level < maxlvl; ++level) {
                     int W_L = wdspot->level_W(level);
@@ -7012,7 +7019,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
                         float klev = (loccompwavCurve[level * 50.f]);
                         fatParams.amount = 50.f * klev;
                         {
-                            ToneMapFattal02(nullptr, fatParams, 3, true, templevel[dir - 1][level], W_L, H_L);
+                            ToneMapFattal02(nullptr, fatParams, 3, 1, templevel[dir - 1][level], W_L, H_L);
                         }
                     }
                 }
@@ -7023,8 +7030,8 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
 
         //blur level and dir
         if (wavcurvelev && radlevblur > 0.f) {
-            printf("Blur levels\n");
-            
+//            printf("Blur levels\n");
+
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = level_bl; level < maxlvl; ++level) {
                     int W_L = wdspot->level_W(level);
@@ -7058,26 +7065,29 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
         }
 
 
-        //free memory
-        for (int i = 0; i < dir; i++) {
-            for (int j = 0; j < leve; j++) {
-                for (int l = 0; l < H_L; l++) {
-                    delete [] templevel[i][j][l];
+        //free memory templevel
+        if (wavcurvelev  || wavcurvecomp) {
+            for (int i = 0; i < dir; i++) {
+                for (int j = 0; j < leve; j++) {
+                    for (int l = 0; l < H_L; l++) {
+                        delete [] templevel[i][j][l];
+                    }
                 }
             }
-        }
 
-        for (int i = 0; i < dir; i++) {
-            for (int j = 0; j < leve; j++) {
-                delete [] templevel[i][j];
+            for (int i = 0; i < dir; i++) {
+                for (int j = 0; j < leve; j++) {
+                    delete [] templevel[i][j];
+                }
             }
-        }
 
-        for (int i = 0; i < dir; i++) {
-            delete [] templevel[i];
-        }
+            for (int i = 0; i < dir; i++) {
+                delete [] templevel[i];
+            }
 
-        delete [] templevel;
+            delete [] templevel;
+
+        }
     }
 
     if (locwavCurve && locwavutili) {
@@ -7149,9 +7159,112 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
             }
         }
     }
-
+    //reconstruct all and compress dynamic range positive
     wdspot->reconstruct(tmp[0], 1.f);
     delete wdspot;
+
+//compress dynamic range negative in case of - seems no need
+    float ****templevelN = nullptr;
+    bool negativ = false;
+    
+    if (wavcurvecomp  && negativ) {
+        array2D<float> tmpneg(bfw, bfh);
+        for (int y = 0; y < bfh; y++) {
+            for (int x = 0; x < bfw; x++) {
+                tmpneg[y][x]  = tmp[y][x];
+            }
+        }
+      
+        wavelet_decomposition *wdspotneg = new wavelet_decomposition(tmpneg[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+
+        if (wdspotneg->memoryAllocationFailed) {
+            return;
+        }
+        maxlvl = wdspotneg->maxlevel();
+        int W_L = wdspotneg->level_W(0);
+        int H_L = wdspotneg->level_H(0);
+
+        fatParams.enabled = wavcurvecomp;
+
+        templevelN = new float***[dir];
+
+        //allocate memory for 3 DIR n levels, H_L, W_L
+        for (int d = 0; d < dir; d++) {
+            templevelN[d] = new float**[leve];
+
+            for (int k = 0; k < leve; k++) {
+                templevelN[d][k] = new float*[H_L];
+
+                for (int i = 0; i < H_L; i++) {
+                    templevelN[d][k][i] = new float[W_L];
+                }
+            }
+        }
+
+
+        for (int dir = 1; dir < 4; dir++) {
+            for (int level = level_bl; level < maxlvl; ++level) {
+                int W_L = wdspotneg->level_W(level);
+                int H_L = wdspotneg->level_H(level);
+                float **wav_LN = wdspotneg->level_coeffs(level);
+
+                for (int y = 0; y < H_L; y++) {
+                    for (int x = 0; x < W_L; x++) {
+                        float valN  = wav_LN[dir][y * W_L + x];
+
+                            templevelN[dir - 1][level][y][x] = -valN;
+
+                    }
+                }
+            }
+        }
+
+        for (int dir = 1; dir < 4; dir++) {
+            for (int level = level_bl; level < maxlvl; ++level) {
+                int W_L = wdspotneg->level_W(level);
+                int H_L = wdspotneg->level_H(level);
+
+                if (loccompwavCurve && loccompwavutili) {
+
+                    float klev = (loccompwavCurve[level * 50.f]);
+                    fatParams.amount = 50.f * klev;
+                    {
+                        ToneMapFattal02(nullptr, fatParams, 3, -1, templevelN[dir - 1][level], W_L, H_L);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < dir; i++) {
+            for (int j = 0; j < leve; j++) {
+                for (int l = 0; l < H_L; l++) {
+                    delete [] templevelN[i][j][l];
+                }
+            }
+        }
+
+        for (int i = 0; i < dir; i++) {
+            for (int j = 0; j < leve; j++) {
+                delete [] templevelN[i][j];
+            }
+        }
+
+        for (int i = 0; i < dir; i++) {
+            delete [] templevelN[i];
+        }
+
+        delete [] templevelN;
+
+        wdspotneg->reconstruct(tmpneg[0], 1.f);
+
+        for (int y = 0; y < bfh; y++) {
+            for (int x = 0; x < bfw; x++) {
+                tmp[y][x]  = tmpneg[y][x];
+            }
+        }
+
+        delete wdspotneg;
+    }
 }
 
 
@@ -12286,7 +12399,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 int nlev = params->locallab.spots.at(sp).fatlevel;
                                 tmpImagefat = new Imagefloat(bfwr, bfhr);
                                 lab2rgb(*bufexpfin, *tmpImagefat, params->icm.workingProfile);
-                                ToneMapFattal02(tmpImagefat, fatParams, nlev, false, nullptr, 0, 0);
+                                ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0);
                                 rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
                                 delete tmpImagefat;
                             }

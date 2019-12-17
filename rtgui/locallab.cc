@@ -2930,6 +2930,9 @@ pe(nullptr)
     blurcontBox->pack_start(*blurlevelFrame);
 
     expcontrastpyr->add(*blurcontBox, false);
+    if (showtooltip) {
+        fatdet->set_tooltip_text(M("TP_LOCALLAB_COMPFRAME_TOOLTIP"));
+    }
 
     ToolParamBlock* const contrastBox = Gtk::manage(new ToolParamBlock());
 

@@ -2220,12 +2220,13 @@ TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend images
 TP_LOCALLAB_CLARILRES;Merge Luma
 TP_LOCALLAB_CLARISOFT;Soft radius
 TP_LOCALLAB_CLARITYML;Clarity
-TP_LOCALLAB_CLARI_TOOLTIP;Under or equal level wavelet 4, 'Sharp mask' is enabled.\nAbove level wavelet 5 'Clarity' is enabled.
+TP_LOCALLAB_CLARI_TOOLTIP;Under or equal level wavelet 4, 'Sharp mask' is enabled.\nAbove level wavelet 5 'Clarity' is enabled.\nUsefull if you use 'Level dynamic Range Compression'
 TP_LOCALLAB_CLIPTM;Clip Restored datas (gain)
 TP_LOCALLAB_COFR;Color & Light - Small defects
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPFRA;Levels Dynamic Range Compression
+TP_LOCALLAB_COMPFRAME_TOOLTIP;Allows special effects. You can reduce artifacts with 'Clarity & Sharp mask - Blend Images".\nUses a lot of resources
 TP_LOCALLAB_COMPLEX_METHOD;Software Complexity
 TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustements rubrics.
 TP_LOCALLAB_CONTCOL;Contrast threshold Mask Blur
