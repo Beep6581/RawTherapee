@@ -69,7 +69,7 @@ ControlSpotPanel::ControlSpotPanel():
     thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 10.0, 0.1, 2.0))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
     balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0))),
+    balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")),Gtk::manage(new RTImage("circle-red-green-small.png"))))),
     transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 10.0, 0.1, 1.0))),
     transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),

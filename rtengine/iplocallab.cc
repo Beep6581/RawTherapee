@@ -95,6 +95,7 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
     if (gamm2 < 1.0) {
         std::swap(pwr, gamm);
     }
+printf("OK calcgamm\n");
 
     rtengine::Color::calcGamma(pwr, ts, 0, g_a); // call to calcGamma with selected gamma and slope
 
@@ -3112,7 +3113,8 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
     const float refa = chromaref * cos(hueref);
     const float refb = chromaref * sin(hueref);
     const float refL = lumaref;
-    float kL = balance; //lp.balance;
+    
+    float kL = balance;
     float kab = 1.f;
     float kH = balanceh;
     float kch = 1.f;
@@ -3126,11 +3128,11 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
 
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
-            float chrodelta = 0.5f * SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f);
-            float hueh = xatan2f(bufcolorig->b[y][x], bufcolorig->a[y][x]);
-            float huedelta = 125.f * SQR(hueref - hueh); 
-         //   float tempdE = sqrt(kab * (SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f)) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
-            float tempdE = sqrt(kab * (kch * chrodelta  + kH * huedelta) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
+           float abdelta2 = SQR(refa - bufcolorig->a[y][x]/327.68f) + SQR(refb - bufcolorig->b[y][x]/327.68f);
+           float chrodelta2 = SQR(sqrt(SQR(bufcolorig->a[y][x]/327.68f) + SQR(bufcolorig->b[y][x]/327.68f)) - (chromaref ));
+           float huedelta2 = abdelta2 - chrodelta2;
+            
+           float tempdE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
 
             if (tempdE > maxdE) {
                 reducdE = 0.f;
@@ -3938,7 +3940,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
             rtengine::guidedFilter(guid, ble, ble, r2, 0.2 * epsil, multiThread);
         }
-
+printf("OK A\n");
         LUTf lutTonemaskexp(65536);
         calcGammaLut(gamma, slope, lutTonemaskexp);
 
@@ -6082,7 +6084,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     float kch = 1.f;
     balancedeltaE(kL, kab);
     balancedeltaEH(kH, kch);
-    
+
     kab /= SQR(327.68f);
     kL /= SQR(327.68f);
 
@@ -6167,112 +6169,142 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel if (multiThread)
+#endif
+    {
+#ifdef __SSE2__
+//        float atan2Buffer[transformed->W] ALIGNED16;//keep in case of
 #endif
 
-    for (int y = 0; y < bfh; y++) {
-        const int loy = y + ystart + cy;
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
 
-        for (int x = 0; x < bfw; x++) {
-            const int lox = x + xstart + cx;
-            int zone = 0;
-            float localFactor = 1.f;
-            const float achm = (float)lp.trans / 100.f;
+        for (int y = 0; y < bfh; y++) {
 
-            //claculate transition
-            if (lp.shapmet == 0) {
-                calcTransition(lox, loy, achm, lp, zone, localFactor);
-            } else if (lp.shapmet == 1) {
-                calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+            const int loy = y + ystart + cy;
+#ifdef __SSE2__
+/* //keep in case of
+            int i = 0;
+
+            for (; i < bfw - 3; i += 4) {
+                vfloat av = LVFU(maskptr->a[y][i]);
+                vfloat bv = LVFU(maskptr->b[y][i]);
+                STVFU(atan2Buffer[i], xatan2f(bv, av));
             }
 
-            float rsob = 0.f;
+            for (; i < bfw; i++) {
+                atan2Buffer[i] = xatan2f(maskptr->b[y][i], maskptr->a[y][i]);
+            }
+*/
+#endif
 
-            //claculate additive sobel to deltaE
-            if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || ((senstype == 0) && lp.struco > 0.f))) {
-                const float csob = xlogf(1.f + std::min(blend2[y][x] / 100.f, 60.f) + 0.001f);
+            for (int x = 0; x < bfw; x++) {
+                const int lox = x + xstart + cx;
+                int zone = 0;
+                float localFactor = 1.f;
+                const float achm = (float)lp.trans / 100.f;
 
-                float rs;
-
-                if (k) {
-                    rs = sobelref / csob;
-                } else {
-                    rs = csob / sobelref;
+                //claculate transition
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, achm, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                 }
 
-                if (rs > 0.f && senstype == 1) {
-                    rsob =  1.1f * lp.struexp * rs;
-                } else if (rs > 0.f && (senstype == 0)) {
-                    rsob =  1.1f * lp.struco * rs;
-                }
-            }
+//                float hueh = 0;
+#ifdef __SSE2__
+//                hueh = atan2Buffer[x];
+#else
+//                hueh = xatan2f(maskptr->b[y][x], maskptr->a[y][x]);
+#endif
 
-            //deltaE
-            float chrodelta = 0.5f * (SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]));
-            float hueh = xatan2f(maskptr->b[y][x], maskptr->a[y][x]);
-            float huedelta = 125.f * SQR(hueref - hueh); 
-            
-      //      const float dE = rsob + sqrt(kab * (SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x])) + kL * SQR(refL - maskptr->L[y][x]));
-            const float dE = rsob + sqrt(kab * (kch * chrodelta  + kH * huedelta) + kL * SQR(refL - maskptr->L[y][x]));
-            float reducdE;
-            //reduction action with deltaE
-            calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
+                float rsob = 0.f;
 
-            float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
-            float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
-            float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
+                //claculate additive sobel to deltaE
+                if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || ((senstype == 0) && lp.struco > 0.f))) {
+                    const float csob = xlogf(1.f + std::min(blend2[y][x] / 100.f, 60.f) + 0.001f);
 
-            if (delt) {
-                cli = bufexpfin->L[y][x] - original->L[y + ystart][x + xstart];
-                cla = bufexpfin->a[y][x] - original->a[y + ystart][x + xstart];
-                clb = bufexpfin->b[y][x] - original->b[y + ystart][x + xstart];
-            }
+                    float rs;
 
-            const float previewint = settings->previewselection;
-            const float realstrdE = reducdE * cli;
-            const float realstradE = reducdE * cla;
-            const float realstrbdE = reducdE * clb;
-
-            float factorx = localFactor;
-            float diflc = 0.f;
-            float difa = 0.f;
-            float difb = 0.f;
-
-            if (zone > 0) {
-                //simplified transformed with deltaE and transition
-                transformed->L[y + ystart][x + xstart] = CLIPLOC(original->L[y + ystart][x + xstart] + factorx * realstrdE);
-                diflc = factorx * realstrdE;
-                transformed->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart] + factorx * realstradE);
-                difa = factorx * realstradE;
-                transformed->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart] + factorx * realstrbdE);
-                difb = factorx * realstrbdE;
-                float maxdifab = max(fabs(difa), fabs(difb));
-
-                if (expshow || vibshow || colshow || SHshow || tmshow) {//show modifications
-                    if (diflc < 1000.f) {//if too low to be view use ab
-                        diflc += 0.5f * maxdifab;
+                    if (k) {
+                        rs = sobelref / csob;
+                    } else {
+                        rs = csob / sobelref;
                     }
 
-                    transformed->L[y + ystart][x + xstart] = CLIP(12000.f + diflc);
-                    transformed->a[y + ystart][x + xstart] = CLIPC(difa);
-                    transformed->b[y + ystart][x + xstart] = CLIPC(difb);
-                } else if (previewexp || previewvib || previewcol || previewSH || previewtm) {//show deltaE
-                    if (fabs(difb) < 500.f) {//if too low to be view use L
-                        if (difb < 0.f) {
-                            difb -= 0.5f * diflc;
-                        } else {
-                            difb += 0.5f * diflc;
+                    if (rs > 0.f && senstype == 1) {
+                        rsob =  1.1f * lp.struexp * rs;
+                    } else if (rs > 0.f && (senstype == 0)) {
+                        rsob =  1.1f * lp.struco * rs;
+                    }
+                }
+
+                //deltaE
+                float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
+                float chrodelta2 = SQR(sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
+                float huedelta2 = abdelta2 - chrodelta2;
+
+                const float dE = rsob + sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
+                float reducdE;
+                //reduction action with deltaE
+                calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
+
+                float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
+                float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
+                float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
+
+                if (delt) {
+                    cli = bufexpfin->L[y][x] - original->L[y + ystart][x + xstart];
+                    cla = bufexpfin->a[y][x] - original->a[y + ystart][x + xstart];
+                    clb = bufexpfin->b[y][x] - original->b[y + ystart][x + xstart];
+                }
+
+                const float previewint = settings->previewselection;
+                const float realstrdE = reducdE * cli;
+                const float realstradE = reducdE * cla;
+                const float realstrbdE = reducdE * clb;
+
+                float factorx = localFactor;
+                float diflc = 0.f;
+                float difa = 0.f;
+                float difb = 0.f;
+
+                if (zone > 0) {
+                    //simplified transformed with deltaE and transition
+                    transformed->L[y + ystart][x + xstart] = CLIPLOC(original->L[y + ystart][x + xstart] + factorx * realstrdE);
+                    diflc = factorx * realstrdE;
+                    transformed->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart] + factorx * realstradE);
+                    difa = factorx * realstradE;
+                    transformed->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart] + factorx * realstrbdE);
+                    difb = factorx * realstrbdE;
+                    float maxdifab = max(fabs(difa), fabs(difb));
+
+                    if (expshow || vibshow || colshow || SHshow || tmshow) {//show modifications
+                        if (diflc < 1000.f) {//if too low to be view use ab
+                            diflc += 0.5f * maxdifab;
                         }
+
+                        transformed->L[y + ystart][x + xstart] = CLIP(12000.f + diflc);
+                        transformed->a[y + ystart][x + xstart] = CLIPC(difa);
+                        transformed->b[y + ystart][x + xstart] = CLIPC(difb);
+                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm) {//show deltaE
+                        if (fabs(difb) < 500.f) {//if too low to be view use L
+                            if (difb < 0.f) {
+                                difb -= 0.5f * diflc;
+                            } else {
+                                difb += 0.5f * diflc;
+                            }
+                        }
+
+                        transformed->a[y + ystart][x + xstart] = 0.f;
+                        transformed->b[y + ystart][x + xstart] = (previewint * difb);
                     }
 
-                    transformed->a[y + ystart][x + xstart] = 0.f;
-                    transformed->b[y + ystart][x + xstart] = (previewint * difb);
                 }
-
             }
         }
     }
-
 }
 
 
@@ -6776,7 +6808,8 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
                                    float sigm, int & maxlvl, float fatdet, float fatanch)
 {
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
-    //first decomposition for compress dynamic range positive values and other process 
+
+    //first decomposition for compress dynamic range positive values and other process
     if (wdspot->memoryAllocationFailed) {
         return;
     }
@@ -7026,7 +7059,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
                         float val  = wav_L[dir][y * W_L + x];
 
 //                        if (val >= 0.f) {
-                            templevel[dir - 1][level][y][x] = val;
+                        templevel[dir - 1][level][y][x] = val;
 //                        } else {
 //                            templevel[dir - 1][level][y][x] = 0.f;
 //                        }
@@ -7190,6 +7223,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
             }
         }
     }
+
     //reconstruct all and compress dynamic range positive
     wdspot->reconstruct(tmp[0], 1.f);
     delete wdspot;
@@ -7197,20 +7231,22 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
 //compress dynamic range negative in case of - seems no need
     float ****templevelN = nullptr;
     bool negativ = false;
-    
+
     if (wavcurvecomp  && negativ) {
         array2D<float> tmpneg(bfw, bfh);
+
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 tmpneg[y][x]  = tmp[y][x];
             }
         }
-      
+
         wavelet_decomposition *wdspotneg = new wavelet_decomposition(tmpneg[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
 
         if (wdspotneg->memoryAllocationFailed) {
             return;
         }
+
         maxlvl = wdspotneg->maxlevel();
         int W_L = wdspotneg->level_W(0);
         int H_L = wdspotneg->level_H(0);
@@ -7243,7 +7279,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
                     for (int x = 0; x < W_L; x++) {
                         float valN  = wav_LN[dir][y * W_L + x];
 
-                            templevelN[dir - 1][level][y][x] = -valN;
+                        templevelN[dir - 1][level][y][x] = -valN;
 
                     }
                 }

@@ -4258,7 +4258,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->thresh = newSpot->thresh;
             r->iter = newSpot->iter;
             r->balan = newSpot->balan;
-            r->balanh = newSpot->balan;
+            r->balanh = newSpot->balanh;
             r->transitweak = newSpot->transitweak;
             r->transitgrad = newSpot->transitgrad;
             if (complexsoft == 2) {
