@@ -343,7 +343,7 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_PERSPECTIVE_LABEL"));
-    appendBehavList (mi, M ("TP_PERSPECTIVE_HORIZONTAL") + ", " + M ("TP_PERSPECTIVE_VERTICAL"), ADDSET_PERSPECTIVE, false);
+    appendBehavList (mi, M ("TP_PERSPECTIVE_HORIZONTAL") + ", " + M ("TP_PERSPECTIVE_VERTICAL") + ", " + M ("TP_PERSPECTIVE_VERTICAL_BIAS") + ", " + M ("TP_PERSPECTIVE_FOV"), ADDSET_PERSPECTIVE, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_GRADIENT_LABEL"));

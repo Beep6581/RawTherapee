@@ -1851,7 +1851,9 @@ LensProfParams::LcMode LensProfParams::getMethodNumber(const Glib::ustring& mode
 
 PerspectiveParams::PerspectiveParams() :
     horizontal(0.0),
-    vertical(0.0)
+    vertical(0.0),
+    vBias(0.0),
+    fov(65.0)
 {
 }
 
@@ -1859,7 +1861,9 @@ bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
 {
     return
         horizontal == other.horizontal
-        && vertical == other.vertical;
+        && vertical == other.vertical
+        && vBias == other.vBias
+        && fov == other.fov;
 }
 
 bool PerspectiveParams::operator !=(const PerspectiveParams& other) const
@@ -3343,6 +3347,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 // Perspective correction
         saveToKeyfile(!pedited || pedited->perspective.horizontal, "Perspective", "Horizontal", perspective.horizontal, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.vertical, "Perspective", "Vertical", perspective.vertical, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.vBias, "Perspective", "VerticalBias", perspective.vBias, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.fov, "Perspective", "FOV", perspective.fov, keyFile);
 
 // Gradient
         saveToKeyfile(!pedited || pedited->gradient.enabled, "Gradient", "Enabled", gradient.enabled, keyFile);
@@ -4420,6 +4426,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("Perspective")) {
             assignFromKeyfile(keyFile, "Perspective", "Horizontal", pedited, perspective.horizontal, pedited->perspective.horizontal);
             assignFromKeyfile(keyFile, "Perspective", "Vertical", pedited, perspective.vertical, pedited->perspective.vertical);
+            assignFromKeyfile(keyFile, "Perspective", "VerticalBias", pedited, perspective.vBias, pedited->perspective.vBias);
+            assignFromKeyfile(keyFile, "Perspective", "FOV", pedited, perspective.fov, pedited->perspective.fov);
         }
 
         if (keyFile.has_group("Gradient")) {

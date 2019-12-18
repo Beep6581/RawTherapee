@@ -1803,9 +1803,11 @@ TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness:\n0 = rectangle,\n50 = fitted ellipse,
 TP_PCVIGNETTE_STRENGTH;Strength
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners).
 TP_PDSHARPENING_LABEL;Capture Sharpening
+TP_PERSPECTIVE_FOV;Field of view
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
+TP_PERSPECTIVE_VERTICAL_BIAS;Vertical bias
 TP_PFCURVE_CURVEEDITOR_CH;Hue
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color.\nHigher = more,\nLower = less.
 TP_PREPROCESS_DEADPIXFILT;Dead pixel filter

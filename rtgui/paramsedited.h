@@ -396,6 +396,8 @@ struct LensProfParamsEdited {
 struct PerspectiveParamsEdited {
     bool horizontal;
     bool vertical;
+    bool vBias;
+    bool fov;
 };
 
 struct GradientParamsEdited {

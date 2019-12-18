@@ -907,6 +907,8 @@ struct LensProfParams {
 struct PerspectiveParams {
     double  horizontal;
     double  vertical;
+    double  vBias;
+    double  fov;
 
     PerspectiveParams();
 

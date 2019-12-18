@@ -236,19 +236,37 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     double cost = cos (params->rotate.degree * rtengine::RT_PI / 180.0);
     double sint = sin (params->rotate.degree * rtengine::RT_PI / 180.0);
 
-    // auxiliary variables for vertical perspective correction
-    double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
-    double vpteta  = fabs (vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt ((-oW * oW * tan (vpalpha) * tan (vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan (vpalpha) * sqrt (16 * maxRadius * maxRadius + oW * oW * tan (vpalpha) * tan (vpalpha))) / (maxRadius * maxRadius * 8)));
-    double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
-
-    // auxiliary variables for horizontal perspective correction
-    double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
-    double hpteta  = fabs (hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt ((-oH * oH * tan (hpalpha) * tan (hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan (hpalpha) * sqrt (16 * maxRadius * maxRadius + oH * oH * tan (hpalpha) * tan (hpalpha))) / (maxRadius * maxRadius * 8)));
-    double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
-
     double ascale = ascaleDef > 0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0);
+
+    // auxiliary variables for perspective correction
+    const double f = maxRadius / tan(params->perspective.fov / 360.0 * rtengine::RT_PI);
+    const double phtheta = params->perspective.horizontal / -180.0 * rtengine::RT_PI;
+    const double pvtheta = params->perspective.vertical / -180.0 * rtengine::RT_PI;
+    const double pbtheta = params->perspective.vBias / -180.0 * rtengine::RT_PI;
+    const double phcos = cos(phtheta);
+    const double pvcos = cos(pvtheta);
+    const double pbcos = cos(pbtheta);
+    const double phsin = sin(phtheta);
+    const double pvsin = sin(pvtheta);
+    const double pbsin = sin(pbtheta);
+    // Coordinates of distorted image center.
+    const double pxoffset = f * phsin * pvcos;
+    const double pyoffset = -f * (phcos * pvcos * pbsin + pvsin * pbcos);
+    const double pz = f * (phcos * pvcos * pbcos - pvsin * pbsin);
+    // Inverse transformation matrix.
+    const double p_xx = f * phcos;
+    const double p_xy = f * phsin * pbsin;
+    const double p_xz = f * phsin * pbcos;
+    const double p_yx = f * phsin * pvsin;
+    const double p_yy = f * (pvcos * pbcos - phcos * pvsin * pbsin);
+    const double p_yz = f * (-pvcos * pbsin - phcos * pvsin * pbcos);
+    const double p_zx = -phsin * pvcos;
+    const double p_zy = phcos * pvcos * pbsin + pvsin * pbcos;
+    const double p_zz = phcos * pvcos * pbcos - pvsin * pbsin;
+    // z is known, can calculate these in advance.
+    const double pz_xz = pz * p_xz;
+    const double pz_yz = pz * p_yz;
+    const double pz_zz = pz * p_zz;
 
     for (size_t i = 0; i < src.size(); i++) {
         double x_d = src[i].x, y_d = src[i].y;
@@ -264,13 +282,13 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         y_d += ascale * (0 - h2);     // centering y coord & scale
 
         if (needsPerspective()) {
-            // horizontal perspective transformation
-            y_d *= maxRadius / (maxRadius + x_d * hptanpt);
-            x_d *= maxRadius * hpcospt / (maxRadius + x_d * hptanpt);
-
-            // vertical perspective transformation
-            x_d *= maxRadius / (maxRadius - y_d * vptanpt);
-            y_d *= maxRadius * vpcospt / (maxRadius - y_d * vptanpt);
+            x_d -= pxoffset;
+            y_d -= pyoffset;
+            const double normalizer = p_zx * x_d + p_zy * y_d + pz_zz;
+            const double x_d_new = p_xx * x_d + p_xy * y_d + pz_xz;
+            y_d = p_yx * x_d + p_yy * y_d + pz_yz;
+            x_d = x_d_new / normalizer;
+            y_d /= normalizer;
         }
 
         // rotate
@@ -903,27 +921,41 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double cost = cos(params->rotate.degree * rtengine::RT_PI / 180.0);
     const double sint = sin(params->rotate.degree * rtengine::RT_PI / 180.0);
 
-    // auxiliary variables for vertical perspective correction
-    const double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    const double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
-    const double vpteta = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oW * tan(vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
-                          oW * tan(vpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oW * tan(vpalpha)))) / (SQR(maxRadius) * 8)));
-    const double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos(vpteta);
-    const double vptanpt = tan(vpteta);
-
-    // auxiliary variables for horizontal perspective correction
-    const double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    const double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
-    const double hpteta = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oH * tan(hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
-                          oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
-    const double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos(hpteta);
-    const double hptanpt = tan(hpteta);
-
     const double ascale = params->commonTrans.autofill ? getTransformAutoFill(oW, oH, pLCPMap) : 1.0;
 
     const bool darkening = (params->vignetting.amount <= 0.0);
     const double centerFactorx = cx - w2;
     const double centerFactory = cy - h2;
+
+    // auxiliary variables for perspective correction
+    const double f = maxRadius / tan(params->perspective.fov / 360.0 * rtengine::RT_PI);
+    const double phtheta = params->perspective.horizontal / -180.0 * rtengine::RT_PI;
+    const double pvtheta = params->perspective.vertical / -180.0 * rtengine::RT_PI;
+    const double pbtheta = params->perspective.vBias / -180.0 * rtengine::RT_PI;
+    const double phcos = cos(phtheta);
+    const double pvcos = cos(pvtheta);
+    const double pbcos = cos(pbtheta);
+    const double phsin = sin(phtheta);
+    const double pvsin = sin(pvtheta);
+    const double pbsin = sin(pbtheta);
+    // Coordinates of distorted image center.
+    const double pxoffset = f * phsin * pvcos;
+    const double pyoffset = -f * (phcos * pvcos * pbsin + pvsin * pbcos);
+    const double pz = f * (phcos * pvcos * pbcos - pvsin * pbsin);
+    // Inverse transformation matrix.
+    const double p_xx = f * phcos;
+    const double p_xy = f * phsin * pbsin;
+    const double p_xz = f * phsin * pbcos;
+    const double p_yx = f * phsin * pvsin;
+    const double p_yy = f * (pvcos * pbcos - phcos * pvsin * pbsin);
+    const double p_yz = f * (-pvcos * pbsin - phcos * pvsin * pbcos);
+    const double p_zx = -phsin * pvcos;
+    const double p_zy = phcos * pvcos * pbsin + pvsin * pbcos;
+    const double p_zz = phcos * pvcos * pbcos - pvsin * pbsin;
+    // z is known, can calculate these in advance.
+    const double pz_xz = pz * p_xz;
+    const double pz_yz = pz * p_yz;
+    const double pz_zz = pz * p_zz;
 
     // main cycle
 #ifdef _OPENMP
@@ -946,13 +978,13 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             y_d += ascale * centerFactory; // centering y coord & scale
 
             if (enablePerspective) {
-                // horizontal perspective transformation
-                y_d *= maxRadius / (maxRadius + x_d * hptanpt);
-                x_d *= maxRadius * hpcospt / (maxRadius + x_d * hptanpt);
-
-                // vertical perspective transformation
-                x_d *= maxRadius / (maxRadius - y_d * vptanpt);
-                y_d *= maxRadius * vpcospt / (maxRadius - y_d * vptanpt);
+                x_d -= pxoffset;
+                y_d -= pyoffset;
+                const double normalizer = p_zx * x_d + p_zy * y_d + pz_zz;
+                const double x_d_new = p_xx * x_d + p_xy * y_d + pz_xz;
+                y_d = p_yx * x_d + p_yy * y_d + pz_yz;
+                x_d = x_d_new / normalizer;
+                y_d /= normalizer;
             }
 
             // rotate
@@ -1150,7 +1182,7 @@ bool ImProcFunctions::needsRotation () const
 
 bool ImProcFunctions::needsPerspective () const
 {
-    return params->perspective.horizontal || params->perspective.vertical;
+    return params->perspective.horizontal || params->perspective.vertical || params->perspective.vBias;
 }
 
 bool ImProcFunctions::needsGradient () const

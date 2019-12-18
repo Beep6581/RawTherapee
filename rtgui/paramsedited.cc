@@ -336,6 +336,8 @@ void ParamsEdited::set(bool v)
     lensProf.lfLens = v;
     perspective.horizontal = v;
     perspective.vertical = v;
+    perspective.vBias = v;
+    perspective.fov = v;
     gradient.enabled = v;
     gradient.degree = v;
     gradient.feather = v;
@@ -919,6 +921,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         lensProf.lfLens = lensProf.lfLens && p.lensProf.lfLens == other.lensProf.lfLens;
         perspective.horizontal = perspective.horizontal && p.perspective.horizontal == other.perspective.horizontal;
         perspective.vertical = perspective.vertical && p.perspective.vertical == other.perspective.vertical;
+        perspective.vBias = perspective.vBias && p.perspective.vBias == other.perspective.vBias;
+        perspective.fov = perspective.fov && p.perspective.fov == other.perspective.fov;
         gradient.enabled = gradient.enabled && p.gradient.enabled == other.gradient.enabled;
         gradient.degree = gradient.degree && p.gradient.degree == other.gradient.degree;
         gradient.feather = gradient.feather && p.gradient.feather == other.gradient.feather;
@@ -2315,6 +2319,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (perspective.vertical) {
         toEdit.perspective.vertical = dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vertical + mods.perspective.vertical : mods.perspective.vertical;
+    }
+
+    if (perspective.vBias) {
+        toEdit.perspective.vBias = dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vBias + mods.perspective.vBias : mods.perspective.vBias;
+    }
+
+    if (perspective.fov) {
+        toEdit.perspective.fov = dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.fov + mods.perspective.fov : mods.perspective.fov;
     }
 
     if (gradient.enabled) {

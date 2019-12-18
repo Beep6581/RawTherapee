@@ -32,6 +32,8 @@ class PerspCorrection final :
 protected:
     Adjuster* horiz;
     Adjuster* vert;
+    Adjuster* vBias;
+    Adjuster* fov;
 
 public:
 
