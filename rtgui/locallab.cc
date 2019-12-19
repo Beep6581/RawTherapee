@@ -3,7 +3,7 @@
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>frame
  *
- *F
+ *
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  RawTherapee is free software: you can redistribute it and/or modify
@@ -227,8 +227,9 @@ Locallab::Locallab():
     expreti(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     expretitools(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPRETITOOLS")))),
     expsharp(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
-    expcontrastpyr(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOC_CONTRASTPYR")))),
-    expcontrast(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST")))),
+//    expcontrastpyr(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOC_CONTRASTPYR")))),
+    expcontrastpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
+    expcontrast(Gtk::manage(new MyExpander(true,M("TP_LOCALLAB_LOC_CONTRAST")))),
     expcbdl(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     expdenoi(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     explog(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_LOG")))),
@@ -972,7 +973,7 @@ pe(nullptr)
 
         float R, G, B;
 
-        for (int i = 0; i < 7; ++i)
+        for (int i = 0; i < 6; ++i)
         {
             const float x = static_cast<float>(i) * (1.f / 6.f);
             Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
@@ -2920,6 +2921,15 @@ pe(nullptr)
     compBox->pack_start(*fatres);
     compFrame->add(*compBox);
 
+    Gtk::HBox* const LCTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const LCLabel = Gtk::manage(new Gtk::Label());
+//    RTImage* const LCImage2 = Gtk::manage(new RTImage("wavelets.png"));
+    LCLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR")) + Glib::ustring("</b>"));
+    LCLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+//    LCTitleHBox->pack_start(*LCImage2, Gtk::PACK_SHRINK, 0);
+    LCTitleHBox->pack_start(*LCLabel, Gtk::PACK_EXPAND_WIDGET, 0);
+    expcontrastpyr->setLabel(LCTitleHBox);
+
     setExpandAlignProperties(expcontrastpyr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expcontrastpyr->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrastpyr));
     expcontrastpyr->setLevel(2);
@@ -3181,7 +3191,7 @@ pe(nullptr)
     BLLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     BLTitleHBox->pack_start(*BLLabel, Gtk::PACK_EXPAND_WIDGET, 0);
     RTImage* const BLImage = Gtk::manage(new RTImage("one-to-one-small.png"));
-
+    
     if (showtooltip) {
         BLImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
     }
