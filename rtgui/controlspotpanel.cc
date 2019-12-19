@@ -386,6 +386,12 @@ ControlSpotPanel::ControlSpotPanel():
     balanh_->setAdjusterListener(this);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
+    
+    if (showtooltip) {
+        balan_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
+        balanh_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
+    }
+    
     /*
         Gtk::HBox* const ctboxmergemethod = Gtk::manage(new Gtk::HBox());
         Gtk::Label* const labelmergemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MERGETYPE") + ":"));

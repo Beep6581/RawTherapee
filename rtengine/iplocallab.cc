@@ -95,7 +95,8 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
     if (gamm2 < 1.0) {
         std::swap(pwr, gamm);
     }
-printf("OK calcgamm\n");
+
+    printf("OK calcgamm\n");
 
     rtengine::Color::calcGamma(pwr, ts, 0, g_a); // call to calcGamma with selected gamma and slope
 
@@ -2347,8 +2348,8 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, La
 
     const int GW = transformed->W;
     const int GH = transformed->H;
-    
-   
+
+
     const float refa = chromaref * cos(hueref);
     const float refb = chromaref * sin(hueref);
     const bool usemaskbl = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 4);
@@ -2425,7 +2426,6 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, La
                     continue;
                 }
 
-//                float rL = original->L[y][x] / 327.6f;
                 float dEL = sqrt(0.9f * SQR(refa - maskptr->a[y][x] / 327.6f) + 0.9f * SQR(refb - maskptr->b[y][x] / 327.8f) + 1.2f * SQR(lumaref - maskptr->L[y][x] / 327.8f));
                 float dEa = sqrt(1.2f * SQR(refa - maskptr->a[y][x] / 327.6f) + 1.f * SQR(refb - maskptr->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - maskptr->L[y][x] / 327.8f));
                 float dEb = sqrt(1.f * SQR(refa - maskptr->a[y][x] / 327.6f) + 1.2f * SQR(refb - maskptr->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - maskptr->L[y][x] / 327.8f));
@@ -2620,8 +2620,8 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
     const float refa = chromaref * cos(hueref) * 327.68f;
     const float refb = chromaref * sin(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
-    
-    
+
+
     const bool blshow = (lp.showmaskblmet == 1 || lp.showmaskblmet == 2);
     const bool previewbl = (lp.showmaskblmet == 4);
 
@@ -3129,7 +3129,7 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
     const float refa = chromaref * cos(hueref);
     const float refb = chromaref * sin(hueref);
     const float refL = lumaref;
-    
+
     float kL = balance;
     float kab = 1.f;
     float kH = balanceh;
@@ -3144,11 +3144,11 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
 
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
-           float abdelta2 = SQR(refa - bufcolorig->a[y][x]/327.68f) + SQR(refb - bufcolorig->b[y][x]/327.68f);
-           float chrodelta2 = SQR(sqrt(SQR(bufcolorig->a[y][x]/327.68f) + SQR(bufcolorig->b[y][x]/327.68f)) - (chromaref ));
-           float huedelta2 = abdelta2 - chrodelta2;
-            
-           float tempdE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
+            float abdelta2 = SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f);
+            float chrodelta2 = SQR(sqrt(SQR(bufcolorig->a[y][x] / 327.68f) + SQR(bufcolorig->b[y][x] / 327.68f)) - (chromaref));
+            float huedelta2 = abdelta2 - chrodelta2;
+
+            float tempdE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
 
             if (tempdE > maxdE) {
                 reducdE = 0.f;
@@ -3956,7 +3956,8 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
             rtengine::guidedFilter(guid, ble, ble, r2, 0.2 * epsil, multiThread);
         }
-printf("OK A\n");
+
+        printf("OK A\n");
         LUTf lutTonemaskexp(65536);
         calcGammaLut(gamma, slope, lutTonemaskexp);
 
@@ -4260,7 +4261,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                 float chrodelta2 = SQR(sqrt(SQR(origblur->a[y][x]) + SQR(origblur->b[y][x])) - (chromaref * 327.68f));
                 float huedelta2 = abdelta2 - chrodelta2;
                 float dE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
-                
+
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.senssha, reducdE);
 
                 switch (zone) {
@@ -4365,6 +4366,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     continue;
                 }
+
                 //deltaE
                 float abdelta2 = SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x]);
                 float chrodelta2 = SQR(sqrt(SQR(origblur->a[y][x]) + SQR(origblur->b[y][x])) - (chromaref * 327.68f));
@@ -4372,7 +4374,6 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
 
                 const float dE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
 
-//                const float dE = sqrt(kab * (SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x])) + kL * SQR(refL - origblur->L[y][x]));
 
                 float reducdE = 0.f;
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
@@ -4411,7 +4412,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
         const float refa = chromaref * cos(hueref) * 327.68f;
         const float refb = chromaref * sin(hueref) * 327.68f;
         const float refL = lumaref * 327.68f;
-       // lumaref *= 327.68f;
+        // lumaref *= 327.68f;
         //balance deltaE
         float kL = lp.balance;
         float kab = 1.f;
@@ -4512,14 +4513,12 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
                         }
                     }
 
-//                    const float rL = origblur->L[y][x];
                     float abdelta2 = SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x]);
                     float chrodelta2 = SQR(sqrt(SQR(origblur->a[y][x]) + SQR(origblur->b[y][x])) - (chromaref * 327.68f));
                     float huedelta2 = abdelta2 - chrodelta2;
                     const float dE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
                     const float rL = origblur->L[y][x];
 
-//                    const float dE = sqrt(kab * SQR(refa - origblur->a[y][x]) + kab * SQR(refb - origblur->b[y][x]) + kL * SQR(lumaref - rL));
 
                     float reducdE;
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
@@ -4564,8 +4563,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
         int GW = transformed->W;
         int GH = transformed->H;
 
-       // const float refa = chromaref * cos(hueref);
-       // const float refb = chromaref * sin(hueref);
+        // const float refa = chromaref * cos(hueref);
+        // const float refb = chromaref * sin(hueref);
 
         const float refa = chromaref * cos(hueref) * 327.68f;
         const float refb = chromaref * sin(hueref) * 327.68f;
@@ -4654,7 +4653,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                     float huedelta2 = 0.f;
 
                     if (!usemaskreti) {
-                      //  dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                         abdelta2 = SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x]);
                         chrodelta2 = SQR(sqrt(SQR(origblur->a[y][x]) + SQR(origblur->b[y][x])) - (chromaref * 327.68f));
                         huedelta2 = abdelta2 - chrodelta2;
@@ -4666,14 +4664,11 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                             huedelta2 = abdelta2 - chrodelta2;
                             dE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - buforigmas->L[y - ystart][x - xstart]));
 
-                          //  dE = sqrt(kab * SQR(refa - buforigmas->a[y - ystart][x - xstart] / 327.68f) + kab * SQR(refb - buforigmas->b[y - ystart][x - xstart] / 327.68f) + kL * SQR(lumaref - buforigmas->L[y - ystart][x - xstart] / 327.68f));
                         } else {
                             abdelta2 = SQR(refa - buforigmas->a[y][x]) + SQR(refb - buforigmas->b[y][x]);
                             chrodelta2 = SQR(sqrt(SQR(buforigmas->a[y][x]) + SQR(buforigmas->b[y][x])) - (chromaref * 327.68f));
                             huedelta2 = abdelta2 - chrodelta2;
                             dE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - buforigmas->L[y][x]));
-                            
-                         //   dE = sqrt(kab * SQR(refa - buforigmas->a[y][x] / 327.68f) + kab * SQR(refb - buforigmas->b[y][x] / 327.68f) + kL * SQR(lumaref - buforigmas->L[y][x] / 327.68f));
                         }
                     }
 
@@ -5378,8 +5373,6 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                 float huedelta2 = abdelta2 - chrodelta2;
                 const float dE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
 
-                //  float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-              // float dE = sqrt(kab * SQR(refa - maskptr->a[y][x] / 327.68f) + kab * SQR(refb - maskptr->b[y][x] / 327.68f) + kL * SQR(lumaref - maskptr->L[y][x] / 327.68f));
 
                 float reducdE = 0.f;
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
@@ -5971,14 +5964,12 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
                     continue;
                 }
 
-                //  const float dE = sqrt(kab * (SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x])) + kL * SQR(refL - origblur->L[y][x]));
 
                 float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
                 float chrodelta2 = SQR(sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
                 float huedelta2 = abdelta2 - chrodelta2;
                 const float dE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
 
-                //const float dE = sqrt(kab * (SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x])) + kL * SQR(refL - maskptr->L[y][x]));
 
                 float reducdE;
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn, reducdE);
@@ -6286,19 +6277,19 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 
             const int loy = y + ystart + cy;
 #ifdef __SSE2__
-/* //keep in case of
-            int i = 0;
+            /* //keep in case of
+                        int i = 0;
 
-            for (; i < bfw - 3; i += 4) {
-                vfloat av = LVFU(maskptr->a[y][i]);
-                vfloat bv = LVFU(maskptr->b[y][i]);
-                STVFU(atan2Buffer[i], xatan2f(bv, av));
-            }
+                        for (; i < bfw - 3; i += 4) {
+                            vfloat av = LVFU(maskptr->a[y][i]);
+                            vfloat bv = LVFU(maskptr->b[y][i]);
+                            STVFU(atan2Buffer[i], xatan2f(bv, av));
+                        }
 
-            for (; i < bfw; i++) {
-                atan2Buffer[i] = xatan2f(maskptr->b[y][i], maskptr->a[y][i]);
-            }
-*/
+                        for (; i < bfw; i++) {
+                            atan2Buffer[i] = xatan2f(maskptr->b[y][i], maskptr->a[y][i]);
+                        }
+            */
 #endif
 
             for (int x = 0; x < bfw; x++) {

@@ -759,7 +759,7 @@ HISTORY_MSG_508;Local Spot circrad
 HISTORY_MSG_509;Local Spot quality method
 HISTORY_MSG_510;Local Spot transition
 HISTORY_MSG_511;Local Spot thresh
-HISTORY_MSG_512;Local Spot deltaE-weakening
+HISTORY_MSG_512;Local Spot ΔE -weakening
 HISTORY_MSG_513;Local Spot scope
 HISTORY_MSG_514;Local Spot structure
 HISTORY_MSG_515;Local Adjustements
@@ -890,7 +890,7 @@ HISTORY_MSG_641;Local - Use SH mask
 HISTORY_MSG_642;Local - radius SH
 HISTORY_MSG_643;Local - Blur SH
 HISTORY_MSG_644;Local - inverse SH
-HISTORY_MSG_645;Local - balance deltaE ab-L
+HISTORY_MSG_645;Local - balance ΔE ab-L
 HISTORY_MSG_646;Local - Exp mask chroma
 HISTORY_MSG_647;Local - Exp mask gamma
 HISTORY_MSG_648;Local - Exp mask slope
@@ -1021,8 +1021,8 @@ HISTORY_MSG_780;Local - Color Mask shadows
 HISTORY_MSG_781;Local - Contrast Mask Wavelet level
 HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
 HISTORY_MSG_783;Local - Color Wavelet levels
-HISTORY_MSG_784;Local - Mask DeltaE
-HISTORY_MSG_785;Local - Mask Scope DeltaE
+HISTORY_MSG_784;Local - Mask ΔE
+HISTORY_MSG_785;Local - Mask Scope ΔE
 HISTORY_MSG_786;Local - SH method
 HISTORY_MSG_787;Local - Equalizer multiplier
 HISTORY_MSG_788;Local - Equalizer detail
@@ -1103,7 +1103,7 @@ HISTORY_MSG_863;Local - Contrast Merge Original
 HISTORY_MSG_864;Local - Contrast Detail
 HISTORY_MSG_865;Local - Contrast Anchor
 HISTORY_MSG_867;Local - Contrast Amount residual
-HISTORY_MSG_868;Local - balance deltaE C-H
+HISTORY_MSG_868;Local - balance ΔE C-H
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2179,9 +2179,10 @@ TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but can reduce the scope of detection.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nThreshold structure take into account the structure level of solid areas
 TP_LOCALLAB_AUTOGRAY;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
-TP_LOCALLAB_BALAN;Balance deltaE ab-L
-TP_LOCALLAB_BALANH;Balance deltaE C-H
-TP_LOCALLAB_BALANEXP;PDE balance
+TP_LOCALLAB_BALAN;Balance ΔE ab-L
+TP_LOCALLAB_BALANH;Balance ΔE C-H
+TP_LOCALLAB_BALAN_TOOLTIP;Change algorithm ΔE parameter.\nMore or less ab-L, more or less C - H.\nNot for Denoise
+TP_LOCALLAB_BALANEXP;ΔØ PDE balance
 TP_LOCALLAB_BASELOG;Logarithm base
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLACK_EV;Black Ev
@@ -2254,9 +2255,9 @@ TP_LOCALLAB_DARKRETI;Darkness
 TP_LOCALLAB_DEHAFRA;Dehaze
 TP_LOCALLAB_DEHAZ;Strength
 TP_LOCALLAB_DEHAZ_TOOLTIP;Negative values add haze
-TP_LOCALLAB_DELTAEC;Mask DeltaE Image
+TP_LOCALLAB_DELTAEC;Mask ΔE Image
 TP_LOCALLAB_DENOIS;Denoise
-TP_LOCALLAB_DEPTH;Depth
+TP_LOCALLAB_DEPTH;Depth 
 TP_LOCALLAB_DETAIL;Detail (Guided Filter)
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Detail threshold Luminance Chroma (DCT)
@@ -2344,10 +2345,10 @@ TP_LOCALLAB_LABGRID;Color correction grid
 TP_LOCALLAB_LABGRIDMERG;Background
 TP_LOCALLAB_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
 TP_LOCALLAB_LABSTRUM;Mask Structure
-TP_LOCALLAB_LAPLACC;Mask Laplacian solve PDE
-TP_LOCALLAB_LAPLACE;Laplacian threshold deltaE
-TP_LOCALLAB_LAPLACEXP;Laplacian threshold
-TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
+TP_LOCALLAB_LAPLACC;ΔØ Mask Laplacian solve PDE
+TP_LOCALLAB_LAPLACE;Δ - Laplacian threshold ΔE
+TP_LOCALLAB_LAPLACEXP;∆ - Laplacian threshold
+TP_LOCALLAB_LAPMASKCOL;∆ - Laplacian threshold mask
 TP_LOCALLAB_LAPRAD_TOOLTIP;Avoid using Radius and Laplace Threshold simultaneously
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\n
 TP_LOCALLAB_LEVELBLUR;Maximum Blur levels
@@ -2382,7 +2383,7 @@ TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Low
 TP_LOCALLAB_MEDNONE;None
 TP_LOCALLAB_MERCOL;Color
-TP_LOCALLAB_MERDCOL;Merge background (deltaE)
+TP_LOCALLAB_MERDCOL;Merge background (ΔE)
 TP_LOCALLAB_MERELE;Lighten only
 TP_LOCALLAB_MERFIV;Addition
 TP_LOCALLAB_MERFOR;Color Dodge
@@ -2442,11 +2443,11 @@ TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_ORIGLC;Merge only with original image
 TP_LOCALLAB_PASTELS2;Vibrance
 TP_LOCALLAB_PDE;Dynamic Range compression + Standard
-TP_LOCALLAB_PDE2;Laplacian PDE - Dynamic Range compression + Standard
+TP_LOCALLAB_PDE2;ΔØ Laplacian PDE - Dynamic Range compression + Standard
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure.\n
-TP_LOCALLAB_PREVIEWSEL;Preview selection deltaE
-TP_LOCALLAB_PROXI;DeltaE weakening
+TP_LOCALLAB_PREVIEWSEL;Preview selection ΔE
+TP_LOCALLAB_PROXI;ΔE weakening
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_RADIUS;Radius
@@ -2477,7 +2478,7 @@ TP_LOCALLAB_SAVREST;Save - Restore Current Image
 TP_LOCALLAB_SCALEGR;Scale
 TP_LOCALLAB_SCALERETI;Scale
 TP_LOCALLAB_SCALTM;Scale
-TP_LOCALLAB_SCOPEMASK;Scope Mask DeltaE Image
+TP_LOCALLAB_SCOPEMASK;Scope Mask ΔE Image
 TP_LOCALLAB_SCOPEMASK_TOOLTIP;Enabled if Mask DeltaE Image is enabled.\nLow values avoid retouching selected area
 TP_LOCALLAB_SENSI;Scope
 TP_LOCALLAB_SENSIBN;Scope
@@ -2515,7 +2516,7 @@ TP_LOCALLAB_SHOWCB;2+ - Mask and modifications
 TP_LOCALLAB_SHOWDCT;Show process Fourier
 TP_LOCALLAB_SHOWE;7+ - Mask and modifications
 TP_LOCALLAB_SHOWFOURIER;Fourier (dct)
-TP_LOCALLAB_SHOWLAPLACE;Laplacian (first)
+TP_LOCALLAB_SHOWLAPLACE;∆ Laplacian (first)
 TP_LOCALLAB_SHOWMASK;Show mask
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR or Blur).\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Show process Fourier:\nShows the different stages of the process.\nLaplace - builds the second derivative according to the threshold (first step).\nFourier -shows the transformed Laplacian with DCT.\nPoisson - show solution of Poisson DCE.\nNormalize - show result whithout normalization luminance.
@@ -2539,7 +2540,7 @@ TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Retinex method.\nIts acts on grey and balance luminance.
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
-TP_LOCALLAB_SOFTRETI;Reduce artifact deltaE
+TP_LOCALLAB_SOFTRETI;Reduce artifact ΔE
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission map
 TP_LOCALLAB_SOURCE_GRAY;Value
 TP_LOCALLAB_SPECIAL;Special use of RGB curves 
@@ -2562,7 +2563,7 @@ TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_TARGET_GRAY;Target Gray Point
 TP_LOCALLAB_THRES;Threshold structure
-TP_LOCALLAB_THRESDELTAE;Threshold deltaE-scope
+TP_LOCALLAB_THRESDELTAE;Threshold ΔE-scope
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_TLABEL2;TM Effective Tm=%1 TM=%2
 TP_LOCALLAB_TLABEL;TM Datas Min=%1 Max=%2 Mean=%3 Sigma=%4 (Threshold)
