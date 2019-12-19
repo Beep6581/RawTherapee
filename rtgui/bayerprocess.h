@@ -88,7 +88,7 @@ public:
     void methodChanged();
     void imageNumberChanged();
     void adjusterChanged(Adjuster* a, double newval) override;
-    void adjusterAutoToggled (Adjuster* a, bool newval) override;
+    void adjusterAutoToggled (Adjuster* a) override;
     void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void pixelShiftMotionMethodChanged();
     void pixelShiftDemosaicMethodChanged();

@@ -341,34 +341,31 @@ void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt)
  * the Preferences).
  *
  * The result is a complete ProcParams with default values merged with the values
- * from the default Raw or Image ProcParams, then with the values from the loaded
- * ProcParams (sidecar or cache file).
- */
+ * from the loaded ProcParams (sidecar or cache file).
+*/
 void Thumbnail::loadProcParams ()
 {
     MyMutex::MyLock lock(mutex);
 
     pparamsValid = false;
     pparams->setDefaults();
-    const PartialProfile *defaultPP = ProfileStore::getInstance()->getDefaultPartialProfile(getType() == FT_Raw);
-    defaultPP->applyTo(pparams.get());
 
     if (options.paramsLoadLocation == PLL_Input) {
         // try to load it from params file next to the image file
-        int ppres = pparams->load (fname + paramFileExtension);
+        const int ppres = pparams->load(fname + paramFileExtension);
         pparamsValid = !ppres && pparams->ppVersion >= 220;
 
         // if no success, try to load the cached version of the procparams
         if (!pparamsValid) {
-            pparamsValid = !pparams->load (getCacheFileName ("profiles", paramFileExtension));
+            pparamsValid = !pparams->load(getCacheFileName("profiles", paramFileExtension));
         }
     } else {
         // try to load it from cache
-        pparamsValid = !pparams->load (getCacheFileName ("profiles", paramFileExtension));
+        pparamsValid = !pparams->load(getCacheFileName("profiles", paramFileExtension));
 
         // if no success, try to load it from params file next to the image file
         if (!pparamsValid) {
-            int ppres = pparams->load (fname + paramFileExtension);
+            const int ppres = pparams->load(fname + paramFileExtension);
             pparamsValid = !ppres && pparams->ppVersion >= 220;
         }
     }
@@ -590,10 +587,8 @@ void Thumbnail::decreaseRef ()
     cachemgr->closeThumbnail (this);
 }
 
-void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::ProcParams *pparams)
+int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcParams *pparams) const
 {
-    MyMutex::MyLock lock(mutex);
-
     int tw_ = tw;
     int th_ = th;
     float imgRatio_ = imgRatio;
@@ -613,20 +608,17 @@ void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::Pr
 
         if (thisCoarse != ppCoarse) {
             // different orientation -> swapping width & height
-            int tmp = th_;
-            th_ = tw_;
-            tw_ = tmp;
-
+            std::swap(th_, tw_);
             if (imgRatio_ >= 0.0001f) {
                 imgRatio_ = 1.f / imgRatio_;
             }
         }
     }
 
-    if (imgRatio_ > 0.) {
-        w = (int)(imgRatio_ * (float)h);
+    if (imgRatio_ > 0.f) {
+        return imgRatio_ * h;
     } else {
-        w = tw_ * h / th_;
+        return tw_ * h / th_;
     }
 }
 

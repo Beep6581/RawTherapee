@@ -28,15 +28,22 @@
 #include "soundman.h"
 #include "rtimage.h"
 #include "rtwindow.h"
+#include "filepanel.h"
 #include "guiutils.h"
 #include "popupbutton.h"
 #include "options.h"
+#include "navigator.h"
+#include "previewwindow.h"
 #include "progressconnector.h"
 #include "procparamchangers.h"
 #include "placesbrowser.h"
 #include "pathutils.h"
 #include "thumbnail.h"
 #include "toolpanelcoord.h"
+
+#ifdef WIN32
+#include "windows.h"
+#endif
 
 using namespace rtengine::procparams;
 
@@ -2060,6 +2067,7 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
 {
     img->free ();
     int errore = pc->returnValue();
+    setProgressState(false);
     delete pc;
 
     if (!errore) {

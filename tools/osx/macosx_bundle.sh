@@ -99,6 +99,7 @@ MACOS="${CONTENTS}/MacOS"
 LIB="${CONTENTS}/Frameworks"
 ETC="${RESOURCES}/etc"
 EXECUTABLE="${MACOS}/rawtherapee"
+GDK_PREFIX="/usr/local/opt/gdk-pixbuf"
 
 msg "Removing old files:"
 rm -rf "${APP}" "${PROJECT_NAME}_*.dmg" "*zip"
@@ -111,13 +112,13 @@ install -d  "${RESOURCES}" \
 
 msg "Copying release files:"
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
-ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
+ditto "Resources" "${RESOURCES}"
 
 msg "Copying dependencies from ${GTK_PREFIX}:"
 CheckLink "${EXECUTABLE}"
 
 msg "Copying library modules from ${GTK_PREFIX}:"
-ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
+ditto --arch "${arch}" {"${GDK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
 ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gtk-3.0
 
 msg "Removing static libraries and cache files:"
@@ -129,50 +130,56 @@ install -d "${ETC}/gtk-3.0"
 # Make Frameworks folder flat
 mv "${LIB}"/gdk-pixbuf-2.0/2*/loaders/*.so "${LIB}"
 mv "${LIB}"/gtk-3.0/3*/immodules/*.so "${LIB}"
+# the print*.so lead to errors when running gtk-query-immodules-3.0, just seeing what the app does without, since they are not in immodules
+# and including them leads to errors and a completely empty gtk.immodules file
+# mv "${LIB}"/gtk-3.0/3*/printbackends/*.so "${LIB}"
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
-"${GTK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/libpix*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
-"${GTK_PREFIX}/bin/gtk-query-immodules-3.0"  "${LIB}"/{im*.so,libprint*.so}      > "${ETC}/gtk-3.0/gtk.immodules"
+"${GDK_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+"${GTK_PREFIX}"/bin/gtk-query-immodules-3.0 "${LIB}"/im*.so > "${ETC}"/gtk-3.0/gtk.immodules
 sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
-ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
-"${GTK_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
+mkdir -p ${RESOURCES}/share/glib-2.0
+cp -pRL {"/usr/local","${RESOURCES}"}/share/glib-2.0/schemas
+"/usr/local/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 msg "Copying shared files from ${GTK_PREFIX}:"
-ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/mime
+cp -pRL {"/usr/local","${RESOURCES}"}/share/mime
+
 # GTK3 themes
-ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
-ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
+ditto {"/usr/local","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
+ditto {"/usr/local","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
 # Adwaita icons
 iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "48x48/devices")
 for f in "${iconfolders[@]}"; do
-    ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/"$f"
+    mkdir -p ${RESOURCES}/share/icons/Adwaita/${f}
+    cp /usr/local/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
 done
-ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
-"${GTK_PREFIX}/bin/gtk-update-icon-cache-3.0" "${RESOURCES}/share/icons/Adwaita"
+ditto {"/usr/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
+"/usr/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
 
 # Copy libjpeg-turbo into the app bundle
-cp /opt/local/lib/libjpeg.62.dylib "${RESOURCES}/../Frameworks"
+cp /usr/local/lib/libjpeg.*.dylib "${CONTENTS}/Frameworks"
 
-# Copy libexpat into the app bundle
-cp /opt/local/lib/libexpat.1.dylib "${RESOURCES}/../Frameworks"
+# Copy libexpat into the app bundle (which is keg-only)
+cp /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"
 
 # Copy libz into the app bundle
-cp /opt/local/lib/libz.1.dylib "${RESOURCES}/../Frameworks"
+cp /usr/lib/libz.1.dylib "${CONTENTS}/Frameworks"
 
 # Copy libtiff into the app bundle
-cp /opt/local/lib/libtiff.5.dylib "${RESOURCES}/../Frameworks"
+cp /usr/local/lib/libtiff.5.dylib "${CONTENTS}/Frameworks"
 
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"
-cp /opt/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+cp /usr/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
 
 # Copy liblensfun to Frameworks
-cp /opt/local/lib/liblensfun.2.dylib "${RESOURCES}/../Frameworks"
+cp /usr/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks"
 
 # Copy libomp to Frameworks
-cp /opt/local/lib/libomp.dylib "${RESOURCES}/../Frameworks"
+cp /usr/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 # Install names
 find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do

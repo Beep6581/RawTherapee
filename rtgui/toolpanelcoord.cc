@@ -309,13 +309,17 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::hide();
+                    xtransprocess->FoldableToolPanel::hide();
+                    xtransrawexposure->FoldableToolPanel::hide();
                     sensorbayer->FoldableToolPanel::show();
+                    bayerprocess->FoldableToolPanel::show();
+                    bayerpreprocess->FoldableToolPanel::show();
+                    rawcacorrection->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::show();
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
-
                     return false;
                 }
             );
@@ -326,13 +330,17 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::show();
+                    xtransprocess->FoldableToolPanel::show();
+                    xtransrawexposure->FoldableToolPanel::show();
                     sensorbayer->FoldableToolPanel::hide();
+                    bayerprocess->FoldableToolPanel::hide();
+                    bayerpreprocess->FoldableToolPanel::hide();
+                    rawcacorrection->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::show();
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
-
                     return false;
                 }
             );
@@ -343,13 +351,17 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorbayer->FoldableToolPanel::hide();
+                    bayerprocess->FoldableToolPanel::hide();
+                    bayerpreprocess->FoldableToolPanel::hide();
+                    rawcacorrection->FoldableToolPanel::hide();
                     sensorxtrans->FoldableToolPanel::hide();
+                    xtransprocess->FoldableToolPanel::hide();
+                    xtransrawexposure->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::hide();
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
-
                     return false;
                 }
             );
@@ -359,13 +371,17 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorbayer->FoldableToolPanel::hide();
+                    bayerprocess->FoldableToolPanel::hide();
+                    bayerpreprocess->FoldableToolPanel::hide();
+                    rawcacorrection->FoldableToolPanel::hide();
                     sensorxtrans->FoldableToolPanel::hide();
+                    xtransprocess->FoldableToolPanel::hide();
+                    xtransrawexposure->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::hide();
                     filmNegative->FoldableToolPanel::hide();
                     pdSharpening->FoldableToolPanel::hide();
                     retinex->FoldableToolPanel::setGrayedOut(false);
-
                     return false;
                 }
             );
@@ -375,10 +391,18 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
             [this]() -> bool
             {
                 rawPanelSW->set_sensitive(false);
+                sensorbayer->FoldableToolPanel::hide();
+                bayerprocess->FoldableToolPanel::hide();
+                bayerpreprocess->FoldableToolPanel::hide();
+                rawcacorrection->FoldableToolPanel::hide();
+                sensorxtrans->FoldableToolPanel::hide();
+                xtransprocess->FoldableToolPanel::hide();
+                xtransrawexposure->FoldableToolPanel::hide();
+                preprocess->FoldableToolPanel::hide();
+                flatfield->FoldableToolPanel::hide();
                 filmNegative->FoldableToolPanel::hide();
                 pdSharpening->FoldableToolPanel::hide();
                 retinex->FoldableToolPanel::setGrayedOut(true);
-
                 return false;
             }
         );

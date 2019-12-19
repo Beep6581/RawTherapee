@@ -152,7 +152,7 @@ inline void gauss5x5div (float** RESTRICT src, float** RESTRICT dst, float** RES
     for (int i = 2; i < tileSize - 2; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 2; j < tileSize - 2; ++j) {
-            const float val = c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+            const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
                               c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
@@ -178,10 +178,10 @@ inline void gauss7x7div(float** RESTRICT src, float** RESTRICT dst, float** REST
     for (int i = 3; i < tileSize - 3; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 3; j < tileSize - 3; ++j) {
-            const float val = c31 * (src[i - 3][j - 1] + src[i - 3][j + 1] + src[i - 1][j - 3] + src[i - 1][j + 3] + src[i + 1][j - 3] + src[i + 1][j + 3] + src[i + 3][j - 1] + src[i + 3][j + 1]) +
+            const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
                               c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
                               c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] * c21 + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
                               c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
@@ -221,7 +221,7 @@ inline void gauss5x5mult (float** RESTRICT src, float** RESTRICT dst, const int 
     for (int i = 2; i < tileSize - 2; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 2; j < tileSize - 2; ++j) {
-            const float val = c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+            const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
                               c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
@@ -247,10 +247,10 @@ inline void gauss7x7mult(float** RESTRICT src, float** RESTRICT dst, const int t
     for (int i = 3; i < tileSize - 3; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 3; j < tileSize - 3; ++j) {
-            const float val = c31 * (src[i - 3][j - 1] + src[i - 3][j + 1] + src[i - 1][j - 3] + src[i - 1][j + 3] + src[i + 1][j - 3] + src[i + 1][j + 3] + src[i + 3][j - 1] + src[i + 3][j + 1]) +
+            const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
                               c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
                               c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] * c21 + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
                               c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
@@ -533,14 +533,15 @@ BENCHFUN
     }
 
     constexpr int tileSize = 32;
-    constexpr int border = 5;
-    constexpr int fullTileSize = tileSize + 2 * border;
+    const int border = iterations <= 30 ? 5 : 7;
+    const int fullTileSize = tileSize + 2 * border;
     const float cornerRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
     const float cornerDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
     const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
 
     double progress = startVal;
     const double progressStep = (endVal - startVal) * rtengine::SQR(tileSize) / (W * H);
+    constexpr float minBlend = 0.01f;
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -562,26 +563,50 @@ BENCHFUN
                 // fill tiles
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
+                    float maxVal = 0.f;
                     if (checkIterStop) {
                         for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
                             for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
                                 iterCheck[k][l] = oldLuminance[ii][jj] * clipmask[ii][jj] * 0.5f;
+                                maxVal = std::max(maxVal, clipmask[ii][jj]);
+                            }
+                        }
+                    } else {
+                        for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
+                            for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
+                                maxVal = std::max(maxVal, clipmask[ii][jj]);
                             }
                         }
                     }
-                    for (int k = 0, ii = endOfCol ? H - fullTileSize : i; k < fullTileSize; ++k, ++ii) {
-                        for (int l = 0, jj = endOfRow ? W - fullTileSize : j; l < fullTileSize; ++l, ++jj) {
-                            tmpIThr[k][l] = oldLuminance[ii - border][jj - border];
-                            lumThr[k][l] = oldLuminance[ii - border][jj - border];
+                    if (maxVal < minBlend) {
+                        // no pixel of the tile has a blend factor >= minBlend => skip the tile
+                        continue;
+                    }
+                    for (int k = 0, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize; ++k, ++ii) {
+                        for (int l = 0, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize; ++l, ++jj) {
+                            tmpIThr[k][l] = oldLuminance[ii][jj];
+                            lumThr[k][l] = oldLuminance[ii][jj];
                         }
                     }
                 } else {
+                    float maxVal = 0.f;
                     if (checkIterStop) {
                         for (int ii = 0; ii < tileSize; ++ii) {
                             for (int jj = 0; jj < tileSize; ++jj) {
                                 iterCheck[ii][jj] = oldLuminance[i + ii][j + jj] * clipmask[i + ii][j + jj] * 0.5f;
+                                maxVal = std::max(maxVal, clipmask[i + ii][j + jj]);
                             }
                         }
+                    } else {
+                        for (int ii = 0; ii < tileSize; ++ii) {
+                            for (int jj = 0; jj < tileSize; ++jj) {
+                                maxVal = std::max(maxVal, clipmask[i + ii][j + jj]);
+                            }
+                        }
+                    }
+                    if (maxVal < minBlend) {
+                        // no pixel of the tile has a blend factor >= minBlend => skip the tile
+                        continue;
                     }
                     for (int ii = i; ii < i + fullTileSize; ++ii) {
                         for (int jj = j; jj < j + fullTileSize; ++jj) {
@@ -651,8 +676,8 @@ BENCHFUN
                 }
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
-                    for (int k = border, ii = endOfCol ? H - fullTileSize - border : i - border; k < fullTileSize - border; ++k) {
-                        for (int l = border, jj = endOfRow ? W - fullTileSize - border : j - border; l < fullTileSize - border; ++l) {
+                    for (int k = border, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize - border; ++k) {
+                        for (int l = border, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize - border; ++l) {
                             luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], std::max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
                         }
                     }
@@ -686,6 +711,10 @@ namespace rtengine
 {
 
 void RawImageSource::captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) {
+
+    if (!(ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1)) {
+        return;
+    }
 
     if (plistener) {
         plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));

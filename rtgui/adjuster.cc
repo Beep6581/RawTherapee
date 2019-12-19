@@ -230,23 +230,8 @@ void Adjuster::setDefaultEditedState (EditedState eState)
 void Adjuster::autoToggled ()
 {
 
-    if (!editedCheckBox) {
-        // If not used in the BatchEditor panel
-        if (automatic->get_active()) {
-            // Disable the slider and spin button
-            spin->set_sensitive(false);
-            slider->set_sensitive(false);
-            reset->set_sensitive(false);
-        } else {
-            // Enable the slider and spin button
-            spin->set_sensitive(true);
-            slider->set_sensitive(true);
-            reset->set_sensitive(true);
-        }
-    }
-
-    if (adjusterListener != nullptr && !blocked) {
-        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
+    if (adjusterListener && !blocked) {
+        adjusterListener->adjusterAutoToggled(this);
     }
 }
 
@@ -380,6 +365,9 @@ void Adjuster::spinChanged ()
         if (adjusterListener && !blocked) {
             if (!buttonReleaseSlider.connected() || afterReset) {
                 eventPending = false;
+                if (automatic) {
+                    setAutoValue(false);
+                }
                 adjusterListener->adjusterChanged(this, spin->get_value());
             } else {
                 eventPending = true;
@@ -419,6 +407,9 @@ void Adjuster::sliderChanged ()
         if (adjusterListener && !blocked) {
             if (!buttonReleaseSlider.connected() || afterReset) {
                 eventPending = false;
+                if (automatic) {
+                    setAutoValue(false);
+                }
                 adjusterListener->adjusterChanged(this, spin->get_value());
             } else {
                 eventPending = true;
@@ -459,21 +450,6 @@ void Adjuster::setAutoValue (bool a)
         const bool oldVal = autoChange.block(true);
         automatic->set_active(a);
         autoChange.block(oldVal);
-
-        if (!editedCheckBox) {
-            // If not used in the BatchEditor panel
-            if (a) {
-                // Disable the slider and spin button
-                spin->set_sensitive(false);
-                slider->set_sensitive(false);
-                reset->set_sensitive(false);
-            } else {
-                // Enable the slider and spin button
-                spin->set_sensitive(true);
-                slider->set_sensitive(true);
-                reset->set_sensitive(true);
-            }
-        }
     }
 }
 
@@ -481,6 +457,9 @@ bool Adjuster::notifyListener ()
 {
 
     if (eventPending && adjusterListener != nullptr && !blocked) {
+        if (automatic) {
+            setAutoValue(false);
+        }
         adjusterListener->adjusterChanged(this, spin->get_value());
     }
 
@@ -493,7 +472,7 @@ bool Adjuster::notifyListenerAutoToggled ()
 {
 
     if (adjusterListener != nullptr && !blocked) {
-        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
+        adjusterListener->adjusterAutoToggled(this);
     }
 
     return false;
@@ -571,6 +550,9 @@ void Adjuster::showEditedCB ()
 void Adjuster::editedToggled ()
 {
     if (adjusterListener && !blocked) {
+        if (automatic) {
+            setAutoValue(false);
+        }
         adjusterListener->adjusterChanged(this, spin->get_value());
     }
 

@@ -22,21 +22,21 @@
 
 #include <giomm.h>
 
-#include "coarsepanel.h"
 #include "exiffiltersettings.h"
 #include "exportpanel.h"
 #include "filebrowser.h"
 #include "fileselectionchangelistener.h"
 #include "fileselectionlistener.h"
 #include "filterpanel.h"
-#include "multilangmgr.h"
 #include "previewloader.h"
 #include "threadutils.h"
-#include "toolbar.h"
 
 #include "../rtengine/noncopyable.h"
 
 class FilePanel;
+class CoarsePanel;
+class ToolBar;
+
 /*
  * Class:
  *   - handling the list of file (add/remove them)

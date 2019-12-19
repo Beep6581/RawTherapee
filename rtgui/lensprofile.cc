@@ -761,7 +761,7 @@ bool LensProfilePanel::checkLensfunCanCorrect(bool automatch)
 
     rtengine::procparams::ProcParams lpp;
     write(&lpp);
-    const std::unique_ptr<LFModifier> mod(LFDatabase::findModifier(lpp.lensProf, metadata, 100, 100, lpp.coarse, -1));
+    const std::unique_ptr<LFModifier> mod(LFDatabase::getInstance()->findModifier(lpp.lensProf, metadata, 100, 100, lpp.coarse, -1));
     return static_cast<bool>(mod);
 }
 

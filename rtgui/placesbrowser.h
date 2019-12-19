@@ -22,8 +22,6 @@
 
 #include <giomm.h>
 
-#include "multilangmgr.h"
-
 class PlacesBrowser :
     public Gtk::VBox
 {

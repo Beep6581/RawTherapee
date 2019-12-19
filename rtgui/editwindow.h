@@ -20,9 +20,10 @@
 
 #include <gtkmm.h>
 
-#include "editorpanel.h"
-#include "filepanel.h"
 #include "rtimage.h"
+
+class EditorPanel;
+class RTWindow;
 
 class EditWindow :
     public Gtk::Window
