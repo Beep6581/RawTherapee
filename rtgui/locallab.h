@@ -71,6 +71,7 @@ private:
     MyExpander* const expcurvcol;
     MyExpander* const expmaskexp;
     MyExpander* const expmasksh;
+    MyExpander* const expmasklc;
     MyExpander* const expmaskcb;
     MyExpander* const expmaskreti;
     MyExpander* const expmasktm;
@@ -172,7 +173,11 @@ private:
     FlatCurveEditor* const wavshapecon;
     CurveEditorGroup* const LocalcurveEditorwavcomp;
     FlatCurveEditor* const wavshapecomp;
-
+    CurveEditorGroup* const masklcCurveEditorG;
+//    DiagonalCurveEditor* const Lmasklcshape;
+    FlatCurveEditor* const CCmasklcshape;
+    FlatCurveEditor* const LLmasklcshape;
+    FlatCurveEditor* const HHmasklcshape;
     //Cbdl
     CurveEditorGroup* const maskcbCurveEditorG;
     CurveEditorGroup* const mask2cbCurveEditorG;
@@ -476,6 +481,8 @@ private:
     sigc::connection blurlcConn;
     Gtk::CheckButton* const origlc;
     sigc::connection origlcConn;
+    Gtk::CheckButton* const enalcMask;
+    sigc::connection enalcMaskConn;
     
     //CBDL
     Gtk::CheckButton* const enacbMask;
@@ -552,6 +559,10 @@ private:
     MyComboBoxText* const localcontMethod;
     sigc::connection localcontMethodConn;
     ThresholdAdjuster* const csThreshold;
+    MyComboBoxText* const showmasklcMethod;
+    sigc::connection showmasklcMethodConn;
+
+
     //CBDL
     MyComboBoxText* const showmaskcbMethod;
     sigc::connection showmaskcbMethodConn;
@@ -677,6 +688,7 @@ private:
     void fftwlcChanged();
     void blurlcChanged();
     void origlcChanged();
+    void enalcMaskChanged();
     //CBDL
     void enacbMaskChanged();
     // ComboBox event functions
@@ -715,6 +727,7 @@ private:
     void showmaskretiMethodChanged();
     //Local contrast
     void localcontMethodChanged();
+    void showmasklcMethodChanged();
     //CBDL
     void showmaskcbMethodChanged();
     //log encoding
@@ -764,6 +777,7 @@ public:
         int vibMask;
         int SHMask;
         int SHMaskinv;
+        int lcMask;
         int cbMask;
         int retiMask;
         int softMask;

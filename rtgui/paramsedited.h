@@ -712,6 +712,10 @@ public:
         bool locconwavcurve;
         bool loccompwavcurve;
         bool csthreshold;
+        bool CCmasklccurve;
+        bool LLmasklccurve;
+        bool HHmasklccurve;
+        bool enalcMask;
         // Contrast by detail levels
         bool expcbdl;
         bool mult[6];

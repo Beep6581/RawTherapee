@@ -2743,6 +2743,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     loclevwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.0, 0.0, 0.35, 0.5, 0., 0.35, 0.35, 1.0, 0.0, 0.35, 0.35},
     locconwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     loccompwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.0, 0.0, 0.35, 0.5, 0., 0.35, 0.35, 1.0, 0.0, 0.35, 0.35},
+    CCmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
+    LLmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
+    HHmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
+    enalcMask(false),
+
     // Contrast by detail levels
     expcbdl(false),
     mult{1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
@@ -3139,6 +3144,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && loclevwavcurve == other.loclevwavcurve
         && locconwavcurve == other.locconwavcurve
         && loccompwavcurve == other.loccompwavcurve
+        && CCmasklccurve == other.CCmasklccurve
+        && LLmasklccurve == other.LLmasklccurve
+        && HHmasklccurve == other.HHmasklccurve
+        && enalcMask == other.enalcMask
         // Constrast by detail levels
         && expcbdl == other.expcbdl
         && [this, &other]()->bool {
@@ -4515,6 +4524,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locconwavcurve, "Locallab", "LocconwavCurve_" + std::to_string(i), spot.locconwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loccompwavcurve, "Locallab", "LoccompwavCurve_" + std::to_string(i), spot.loccompwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).csthreshold, "Locallab", "CSThreshold_" + std::to_string(i), spot.csthreshold.toVector(), keyFile);
+
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmasklccurve, "Locallab", "CCmasklcCurve_" + std::to_string(i), spot.CCmasklccurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmasklccurve, "Locallab", "LLmasklcCurve_" + std::to_string(i), spot.LLmasklccurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmasklccurve, "Locallab", "HHmasklcCurve_" + std::to_string(i), spot.HHmasklccurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enalcMask, "Locallab", "EnalcMask_" + std::to_string(i), spot.enalcMask, keyFile);
+
                 // Contrast by detail levels
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcbdl, "Locallab", "Expcbdl_" + std::to_string(i), spot.expcbdl, keyFile);
 
@@ -6039,6 +6054,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "LoclevwavCurve_" + std::to_string(i), pedited, spot.loclevwavcurve, spotEdited.loclevwavcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LocconwavCurve_" + std::to_string(i), pedited, spot.locconwavcurve, spotEdited.locconwavcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LoccompwavCurve_" + std::to_string(i), pedited, spot.loccompwavcurve, spotEdited.loccompwavcurve);
+
+                assignFromKeyfile(keyFile, "Locallab", "CCmasklcCurve_" + std::to_string(i), pedited, spot.CCmasklccurve, spotEdited.CCmasklccurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmasklcCurve_" + std::to_string(i), pedited, spot.LLmasklccurve, spotEdited.LLmasklccurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmasklcCurve_" + std::to_string(i), pedited, spot.HHmasklccurve, spotEdited.HHmasklccurve);
+                assignFromKeyfile(keyFile, "Locallab", "EnalcMask_" + std::to_string(i), pedited, spot.enalcMask, spotEdited.enalcMask);
+
                 if (keyFile.has_key("Locallab", "CSThreshold_" + std::to_string(i))) {
 
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThreshold_" + std::to_string(i));

@@ -1286,6 +1286,10 @@ struct LocallabParams {
         std::vector<double> loclevwavcurve;
         std::vector<double> locconwavcurve;
         std::vector<double> loccompwavcurve;
+        std::vector<double> CCmasklccurve;
+        std::vector<double> LLmasklccurve;
+        std::vector<double> HHmasklccurve;
+        bool enalcMask;
 
         // Contrast by detail levels
         bool expcbdl;
