@@ -357,6 +357,7 @@ protected:
     int locallSHMask;
     int locallSHMaskinv;
     int locallvibMask;
+    int localllcMask;
     int locallcbMask;
     int locallretiMask;
     int locallsoftMask;
@@ -431,7 +432,7 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility (int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv,  int locallvibMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask, int locallblMask) override
+    void setLocallabMaskVisibility (int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv,  int locallvibMask, int localllcMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask, int locallblMask) override
     {
         this->locallColorMask = locallColorMask;
         this->locallColorMaskinv = locallColorMaskinv;
@@ -440,6 +441,7 @@ public:
         this->locallSHMask = locallSHMask;
         this->locallvibMask = locallvibMask;
         this->locallSHMaskinv = locallSHMaskinv;
+        this->localllcMask = localllcMask;
         this->locallcbMask = locallcbMask;
         this->locallretiMask = locallretiMask;
         this->locallsoftMask = locallsoftMask;

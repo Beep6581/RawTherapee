@@ -357,6 +357,9 @@ Locallab::Locallab():
     wavshapecomp(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcomp->addCurve(CT_Flat, "", nullptr, false, false))),
 
     masklcCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    mask2lcCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+
+    Lmasklcshape(static_cast<DiagonalCurveEditor*>(mask2lcCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     CCmasklcshape(static_cast<FlatCurveEditor*>(masklcCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
     LLmasklcshape(static_cast<FlatCurveEditor*>(masklcCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     HHmasklcshape(static_cast<FlatCurveEditor *>(masklcCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
@@ -575,6 +578,9 @@ sigma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
 fatdet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
 fatanch(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
 fatres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATRES"), 0., 100., 1., 0.))),
+blendmasklc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+radmasklc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 1000.0, 0.1, 0.))),
+chromasklc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
 
 multiplier(
 [this]() -> std::array<Adjuster*, 6> {
@@ -2900,6 +2906,10 @@ pe(nullptr)
     claricres->setAdjusterListener(this);
 
     sensilc->setAdjusterListener(this);
+    blendmasklc->setAdjusterListener(this);
+    radmasklc->setLogScale(10, -10);
+    radmasklc->setAdjusterListener(this);
+    chromasklc->setAdjusterListener(this);
 
 
 
@@ -3032,6 +3042,19 @@ pe(nullptr)
 
     masklcCurveEditorG->curveListComplete();
 
+    mask2lcCurveEditorG->setCurveListener(this);
+    Lmasklcshape->setResetCurve(DiagonalCurveType(defSpot.Lmasklccurve.at(0)), defSpot.Lmasklccurve);
+
+    if (showtooltip) {
+        Lmasklcshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+    }
+
+    const std::vector<GradientMilestone>& mLmasklcshape = zero_one_shape;
+    Lmasklcshape->setBottomBarBgGradient(mLmasklcshape);
+    Lmasklcshape->setLeftBarBgGradient(mLmasklcshape);
+    mask2lcCurveEditorG->curveListComplete();
+    
+
     enalcMaskConn = enalcMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enalcMaskChanged));
 
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
@@ -3051,8 +3074,10 @@ pe(nullptr)
     masklcBox->pack_start(*showmasklcMethod, Gtk::PACK_SHRINK, 4);
     masklcBox->pack_start(*enalcMask, Gtk::PACK_SHRINK, 0);
     masklcBox->pack_start(*masklcCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-//    maskcbBox->pack_start(*blendmaskcb, Gtk::PACK_SHRINK, 0);
-//    maskcbBox->pack_start(*radmaskcb, Gtk::PACK_SHRINK, 0);
+    masklcBox->pack_start(*blendmasklc, Gtk::PACK_SHRINK, 0);
+    masklcBox->pack_start(*radmasklc, Gtk::PACK_SHRINK, 0);
+    masklcBox->pack_start(*chromasklc, Gtk::PACK_SHRINK, 0);
+    masklcBox->pack_start(*mask2lcCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
     if (complexsoft < 1) {
 //        maskcbBox->pack_start(*lapmaskcb, Gtk::PACK_SHRINK, 0);
@@ -3741,6 +3766,7 @@ Locallab::~Locallab()
     delete maskretiCurveEditorG;
     delete mask2retiCurveEditorG;
     delete maskcbCurveEditorG;
+    delete mask2lcCurveEditorG;
     delete mask2cbCurveEditorG;
 }
 
@@ -5248,6 +5274,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).CCmasklccurve = CCmasklcshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHmasklccurve = HHmasklcshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).enalcMask = enalcMask->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).blendmasklc = blendmasklc->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).radmasklc = radmasklc->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).chromasklc = chromasklc->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).Lmasklccurve = Lmasklcshape->getCurve();
 
                     // Contrast by detail levels
                     pp->locallab.spots.at(pp->locallab.selspot).expcbdl = expcbdl->getEnabled();
@@ -5647,6 +5677,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).LLmasklccurve = pe->locallab.spots.at(pp->locallab.selspot).LLmasklccurve || !LLmasklcshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHmasklccurve = pe->locallab.spots.at(pp->locallab.selspot).HHmasklccurve || !HHmasklcshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).enalcMask = pe->locallab.spots.at(pp->locallab.selspot).enalcMask || !enalcMask->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).blendmasklc = pe->locallab.spots.at(pp->locallab.selspot).blendmasklc || blendmasklc->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).radmasklc = pe->locallab.spots.at(pp->locallab.selspot).radmasklc || radmasklc->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).chromasklc = pe->locallab.spots.at(pp->locallab.selspot).chromasklc || chromasklc->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).Lmasklccurve = pe->locallab.spots.at(pp->locallab.selspot).Lmasklccurve || !Lmasklcshape->isUnChanged();
 
 
                         // Contrast by detail levels
@@ -6049,6 +6083,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmasklccurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmasklccurve || !LLmasklcshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHmasklccurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmasklccurve || !HHmasklcshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).enalcMask = pedited->locallab.spots.at(pp->locallab.selspot).enalcMask || !enalcMask->get_inconsistent();
+
+                        pedited->locallab.spots.at(pp->locallab.selspot).blendmasklc = pedited->locallab.spots.at(pp->locallab.selspot).blendmasklc || blendmasklc->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).radmasklc = pedited->locallab.spots.at(pp->locallab.selspot).radmasklc || radmasklc->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).chromasklc = pedited->locallab.spots.at(pp->locallab.selspot).chromasklc || chromasklc->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).Lmasklccurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmasklccurve || !Lmasklcshape->isUnChanged();
 
                         // Contrast by detail levels
                         pedited->locallab.spots.at(pp->locallab.selspot).expcbdl = pedited->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
@@ -6563,6 +6602,12 @@ void Locallab::curveChanged(CurveEditor* ce)
         if (ce == HHmasklcshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmasklcshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == Lmasklcshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmasklcshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
 
@@ -8701,6 +8746,9 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     clarisoft->setDefault(defSpot->clarisoft);
     sensilc->setDefault((double)defSpot->sensilc);
     csThreshold->setDefault<int>(defSpot->csthreshold);
+    blendmasklc->setDefault((double)defSpot->blendmasklc);
+    radmasklc->setDefault(defSpot->radmasklc);
+    chromasklc->setDefault(defSpot->chromasklc);
 
     // Contrast by detail levels
     for (int i = 0; i < 6; i++) {
@@ -8937,6 +8985,9 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         clarisoft->setDefaultEditedState(Irrelevant);
         sensilc->setDefaultEditedState(Irrelevant);
         csThreshold->setDefaultEditedState(Irrelevant);
+        blendmasklc->setDefaultEditedState(Irrelevant);
+        radmasklc->setDefaultEditedState(Irrelevant);
+        chromasklc->setDefaultEditedState(Irrelevant);
 
         // Contrast by detail levels
         for (int i = 0; i < 6; i++) {
@@ -9178,6 +9229,9 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         clarisoft->setDefaultEditedState(defSpotState->clarisoft ? Edited : UnEdited);
         sensilc->setDefaultEditedState(defSpotState->sensilc ? Edited : UnEdited);
         csThreshold->setDefaultEditedState(defSpotState->csthreshold ? Edited : UnEdited);
+        blendmasklc->setDefaultEditedState(defSpotState->blendmasklc ? Edited : UnEdited);
+        radmasklc->setDefaultEditedState(defSpotState->radmasklc ? Edited : UnEdited);
+        chromasklc->setDefaultEditedState(defSpotState->chromasklc ? Edited : UnEdited);
 
         // Contrast by detail levels
         for (int i = 0; i < 6; i++) {
@@ -10385,6 +10439,25 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(Evlocallabsensilc, sensilc->getTextValue());
             }
         }
+
+        if (a == blendmasklc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblendmasklc, blendmasklc->getTextValue());
+            }
+        }
+
+        if (a == radmasklc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradmasklc, radmasklc->getTextValue());
+            }
+        }
+
+        if (a == chromasklc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromasklc, chromasklc->getTextValue());
+            }
+        }
+
     }
 
     // Contrast by detail levels
@@ -10842,6 +10915,9 @@ void Locallab::setBatchMode(bool batchMode)
     clarisoft->showEditedCB();
     csThreshold->showEditedCB();
     sensilc->showEditedCB();
+    blendmasklc->showEditedCB();
+    radmasklc->showEditedCB();
+    chromasklc->showEditedCB();
 
     // Contrast by detail levels
     for (int i = 0; i < 6; i++) {
@@ -11931,6 +12007,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         LLmasklcshape->setCurve(pp->locallab.spots.at(index).LLmasklccurve);
         HHmasklcshape->setCurve(pp->locallab.spots.at(index).HHmasklccurve);
         enalcMask->set_active(pp->locallab.spots.at(index).enalcMask);
+        blendmasklc->setValue(pp->locallab.spots.at(index).blendmasklc);
+        radmasklc->setValue(pp->locallab.spots.at(index).radmasklc);
+        chromasklc->setValue(pp->locallab.spots.at(index).chromasklc);
+        Lmasklcshape->setCurve(pp->locallab.spots.at(index).Lmasklccurve);
 
         if (fftwlc->get_active()) {
             lcradius->setLimits(20, 1000, 1, 80);
@@ -12421,6 +12501,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 HHmasklcshape->setUnChanged(!spotState->HHmasklccurve);
                 CCmasklcshape->setUnChanged(!spotState->CCmasklccurve);
                 enalcMask->set_inconsistent(multiImage && !spotState->enalcMask);
+                blendmasklc->setEditedState(spotState->blendmasklc ? Edited : UnEdited);
+                radmasklc->setEditedState(spotState->radmasklc ? Edited : UnEdited);
+                chromasklc->setEditedState(spotState->chromasklc ? Edited : UnEdited);
+                Lmasklcshape->setUnChanged(!spotState->Lmasklccurve);
 
                 if (!spotState->retinexMethod) {
                     localcontMethod->set_active_text(M("GENERAL_UNCHANGED"));

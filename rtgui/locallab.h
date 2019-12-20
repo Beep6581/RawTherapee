@@ -174,7 +174,8 @@ private:
     CurveEditorGroup* const LocalcurveEditorwavcomp;
     FlatCurveEditor* const wavshapecomp;
     CurveEditorGroup* const masklcCurveEditorG;
-//    DiagonalCurveEditor* const Lmasklcshape;
+    CurveEditorGroup* const mask2lcCurveEditorG;
+    DiagonalCurveEditor* const Lmasklcshape;
     FlatCurveEditor* const CCmasklcshape;
     FlatCurveEditor* const LLmasklcshape;
     FlatCurveEditor* const HHmasklcshape;
@@ -372,6 +373,9 @@ private:
     Adjuster* const fatdet;
     Adjuster* const fatanch;
     Adjuster* const fatres;
+    Adjuster* const blendmasklc;
+    Adjuster* const radmasklc;
+    Adjuster* const chromasklc;
     // Contrast by detail levels
     const std::array<Adjuster*, 6> multiplier;
     Adjuster* const chromacbdl;

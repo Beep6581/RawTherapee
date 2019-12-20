@@ -716,6 +716,10 @@ public:
         bool LLmasklccurve;
         bool HHmasklccurve;
         bool enalcMask;
+        bool blendmasklc;
+        bool radmasklc;
+        bool chromasklc;
+        bool Lmasklccurve;
         // Contrast by detail levels
         bool expcbdl;
         bool mult[6];

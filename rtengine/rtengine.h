@@ -524,7 +524,7 @@ public:
 
     virtual void        updateUnLock() = 0;
 
-    virtual void        setLocallabMaskVisibility(int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallvibMask, int locallSHMask, int locallSHMaskinv, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask, int locallblMask) = 0;
+    virtual void        setLocallabMaskVisibility(int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallvibMask, int locallSHMask, int locallSHMaskinv, int localllcMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask, int locallblMask) = 0;
 
     /** Creates and returns a Crop instance that acts as a window on the image
       * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber

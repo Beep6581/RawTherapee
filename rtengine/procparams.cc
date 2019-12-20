@@ -2747,6 +2747,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     LLmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     HHmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     enalcMask(false),
+    blendmasklc(0),
+    radmasklc(0.0),
+    chromasklc(0.0),
+    Lmasklccurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
 
     // Contrast by detail levels
     expcbdl(false),
@@ -3148,6 +3152,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && LLmasklccurve == other.LLmasklccurve
         && HHmasklccurve == other.HHmasklccurve
         && enalcMask == other.enalcMask
+        && blendmasklc == other.blendmasklc
+        && radmasklc == other.radmasklc
+        && chromasklc == other.chromasklc
+        && Lmasklccurve == other.Lmasklccurve
         // Constrast by detail levels
         && expcbdl == other.expcbdl
         && [this, &other]()->bool {
@@ -4529,6 +4537,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmasklccurve, "Locallab", "LLmasklcCurve_" + std::to_string(i), spot.LLmasklccurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmasklccurve, "Locallab", "HHmasklcCurve_" + std::to_string(i), spot.HHmasklccurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enalcMask, "Locallab", "EnalcMask_" + std::to_string(i), spot.enalcMask, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmasklc, "Locallab", "Blendmasklc_" + std::to_string(i), spot.blendmasklc, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmasklc, "Locallab", "Radmasklc_" + std::to_string(i), spot.radmasklc, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromasklc, "Locallab", "Chromasklc_" + std::to_string(i), spot.chromasklc, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmasklccurve, "Locallab", "LmasklcCurve_" + std::to_string(i), spot.Lmasklccurve, keyFile);
 
                 // Contrast by detail levels
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcbdl, "Locallab", "Expcbdl_" + std::to_string(i), spot.expcbdl, keyFile);
@@ -6059,6 +6071,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "LLmasklcCurve_" + std::to_string(i), pedited, spot.LLmasklccurve, spotEdited.LLmasklccurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmasklcCurve_" + std::to_string(i), pedited, spot.HHmasklccurve, spotEdited.HHmasklccurve);
                 assignFromKeyfile(keyFile, "Locallab", "EnalcMask_" + std::to_string(i), pedited, spot.enalcMask, spotEdited.enalcMask);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmasklc_" + std::to_string(i), pedited, spot.blendmasklc, spotEdited.blendmasklc);
+                assignFromKeyfile(keyFile, "Locallab", "Radmasklc_" + std::to_string(i), pedited, spot.radmasklc, spotEdited.radmasklc);
+                assignFromKeyfile(keyFile, "Locallab", "Chromasklc_" + std::to_string(i), pedited, spot.chromasklc, spotEdited.chromasklc);
+                assignFromKeyfile(keyFile, "Locallab", "LmasklcCurve_" + std::to_string(i), pedited, spot.Lmasklccurve, spotEdited.Lmasklccurve);
 
                 if (keyFile.has_key("Locallab", "CSThreshold_" + std::to_string(i))) {
 
