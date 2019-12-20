@@ -4433,6 +4433,10 @@ void CLASS foveon_interpolate()
 
 void CLASS crop_masked_pixels()
 {
+  if (data_error) {
+    return;
+  }
+
   int row, col;
   unsigned r, c, m, mblack[8], zero, val;
 
