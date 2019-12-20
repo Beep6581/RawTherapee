@@ -1319,6 +1319,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).bilateral = locallab.spots.at(j).bilateral && pSpot.bilateral == otherSpot.bilateral;
                 locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
                 locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
+                locallab.spots.at(j).locwavcurveden = locallab.spots.at(j).locwavcurveden && pSpot.locwavcurveden == otherSpot.locwavcurveden;
 
                 //log encoding
                 locallab.spots.at(j).explog = locallab.spots.at(j).explog && pSpot.explog == otherSpot.explog;
@@ -4219,6 +4220,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).detailthr = mods.locallab.spots.at(i).detailthr;
         }
 
+        if (locallab.spots.at(i).locwavcurveden) {
+            toEdit.locallab.spots.at(i).locwavcurveden = mods.locallab.spots.at(i).locwavcurveden;
+        }
+
         //log encoding
         if (locallab.spots.at(i).explog) {
             toEdit.locallab.spots.at(i).explog = mods.locallab.spots.at(i).explog;
@@ -5601,6 +5606,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     bilateral(v),
     sensiden(v),
     detailthr(v),
+    locwavcurveden(v),
     //log encoding
     explog(v),
     autocompute(v),
@@ -5990,6 +5996,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     bilateral = v;
     sensiden = v;
     detailthr = v;
+    locwavcurveden = v;
     //log encoding
     explog = v;
     autocompute = v;

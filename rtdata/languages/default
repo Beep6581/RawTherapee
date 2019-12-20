@@ -1104,6 +1104,7 @@ HISTORY_MSG_864;Local - Contrast Detail
 HISTORY_MSG_865;Local - Contrast Anchor
 HISTORY_MSG_867;Local - Contrast Amount residual
 HISTORY_MSG_868;Local - balance ΔE C-H
+HISTORY_MSG_869;Local - denoise curve luminance
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2594,6 +2595,7 @@ TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Bala
 TP_LOCALLAB_WAV;Levels local contrast
 TP_LOCALLAB_WAVCOMP;Compression by Level
 TP_LOCALLAB_WAVCON;Contrast by Level
+TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 - 4)
 TP_LOCALLAB_WAVE;Ψ Wavelet
 TP_LOCALLAB_WAVHIGH;Ψ Wavelet high
 TP_LOCALLAB_WAVLEV;Blur by Level

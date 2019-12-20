@@ -363,7 +363,11 @@ Locallab::Locallab():
     CCmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
     LLmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     HHmaskcbshape(static_cast<FlatCurveEditor *>(maskcbCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+    //Denoise
+    LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
 
+    wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
+    
     // Adjuster widgets
     // Color & Light
     lightness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTNESS"), -100, 500, 1, 0))),
@@ -3476,6 +3480,18 @@ pe(nullptr)
     expdenoi->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expdenoi));
     enabledenoiConn = expdenoi->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expdenoi));
 
+    LocalcurveEditorwavden->setCurveListener(this);
+
+    wavshapeden->setIdentityValue(0.);
+    wavshapeden->setResetCurve(FlatCurveType(defSpot.locwavcurveden.at(0)), defSpot.locwavcurveden);
+
+    if (showtooltip) {
+//        wavshape->setTooltip(M("TP_RETINEX_WAV_TOOLTIP"));
+    }
+
+    LocalcurveEditorwavden->curveListComplete();
+
+
     noiselumf->setAdjusterListener(this);
     noiselumf0->setAdjusterListener(this);
     noiselumf2->setAdjusterListener(this);
@@ -3518,10 +3534,11 @@ pe(nullptr)
     ToolParamBlock* const denoisBox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
-    wavBox->pack_start(*noiselumf0);
-    wavBox->pack_start(*noiselumf);
-    wavBox->pack_start(*noiselumf2);
-    wavBox->pack_start(*noiselumc);
+    wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4);
+//    wavBox->pack_start(*noiselumf0);
+//    wavBox->pack_start(*noiselumf);
+//    wavBox->pack_start(*noiselumf2);
+//    wavBox->pack_start(*noiselumc);
     wavBox->pack_start(*noiselumdetail);
     wavBox->pack_start(*noiselequal);
     wavBox->pack_start(*noisechrof);
@@ -3628,6 +3645,7 @@ Locallab::~Locallab()
     delete LocalcurveEditorgainT;
     delete LocalcurveEditorwav;
     delete LocalcurveEditorwavlev;
+    delete LocalcurveEditorwavden;
     delete LocalcurveEditorwavcon;
     delete LocalcurveEditorwavcomp;
     delete masktmCurveEditorG;
@@ -5175,6 +5193,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).bilateral = bilateral->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensiden = sensiden->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).detailthr = detailthr->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).locwavcurveden = wavshapeden->getCurve();
 
                     //log encoding
                     pp->locallab.spots.at(pp->locallab.selspot).explog = explog->getEnabled();
@@ -5567,6 +5586,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).bilateral = pe->locallab.spots.at(pp->locallab.selspot).bilateral || bilateral->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensiden = pe->locallab.spots.at(pp->locallab.selspot).sensiden || sensiden->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).detailthr = pe->locallab.spots.at(pp->locallab.selspot).detailthr || detailthr->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).locwavcurveden = pe->locallab.spots.at(pp->locallab.selspot).locwavcurveden || !wavshapeden->isUnChanged();
 
                         //log encoding
                         pe->locallab.spots.at(pp->locallab.selspot).explog = pe->locallab.spots.at(pp->locallab.selspot).explog || !explog->get_inconsistent();
@@ -5961,6 +5981,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).bilateral = pedited->locallab.spots.at(pp->locallab.selspot).bilateral || bilateral->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiden = pedited->locallab.spots.at(pp->locallab.selspot).sensiden || sensiden->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).detailthr = pedited->locallab.spots.at(pp->locallab.selspot).detailthr || detailthr->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).locwavcurveden = pedited->locallab.spots.at(pp->locallab.selspot).locwavcurveden || !wavshapeden->isUnChanged();
 
                         //log encoding
                         pedited->locallab.spots.at(pp->locallab.selspot).explog = pedited->locallab.spots.at(pp->locallab.selspot).explog || !explog->get_inconsistent();
@@ -6416,8 +6437,23 @@ void Locallab::curveChanged(CurveEditor* ce)
         }
 
     }
+    //denoise
+    if (getEnabled() && expdenoi->getEnabled()) {
+
+        if (ce == wavshapeden) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurveden, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+    }
+    
 
 }
+
+
+
+
 
 void Locallab::localcontMethodChanged()
 {
@@ -11756,6 +11792,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         bilateral->setValue(pp->locallab.spots.at(index).bilateral);
         sensiden->setValue(pp->locallab.spots.at(index).sensiden);
         detailthr->setValue(pp->locallab.spots.at(index).detailthr);
+        wavshapeden->setCurve(pp->locallab.spots.at(index).locwavcurveden);
 
         if (complexsoft == 2) {
             noiselumf->setValue(0);
@@ -12221,6 +12258,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 bilateral->setEditedState(spotState->bilateral ? Edited : UnEdited);
                 sensiden->setEditedState(spotState->sensiden ? Edited : UnEdited);
                 detailthr->setEditedState(spotState->detailthr ? Edited : UnEdited);
+                wavshapeden->setUnChanged(!spotState->locwavcurveden);
 
                 //log encoding
                 explog->set_inconsistent(!spotState->explog);

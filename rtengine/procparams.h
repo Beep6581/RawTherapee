@@ -1323,6 +1323,7 @@ struct LocallabParams {
         int bilateral;
         int sensiden;
         int detailthr;
+        std::vector<double> locwavcurveden;
         //log encoding
         bool explog;
         bool autocompute;

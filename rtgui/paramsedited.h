@@ -749,6 +749,7 @@ public:
         bool bilateral;
         bool sensiden;
         bool detailthr;
+        bool locwavcurveden;
 
         //log encoding
         bool explog;

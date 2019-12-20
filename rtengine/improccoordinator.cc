@@ -219,6 +219,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lhmascbutili(false),
     llmascbutili(false),
     locwavutili(false),
+    locwavdenutili(false),
     loclevwavutili(false),
     locconwavutili(false),
     loccompwavutili(false),
@@ -1082,6 +1083,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     llmasblutili = false;
                     lcmasutili = false;
                     locwavutili = false;
+                    locwavdenutili = false;
                     loclevwavutili = false;
                     locconwavutili = false;
                     loccompwavutili = false;
@@ -1123,6 +1125,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     loclevwavCurve.Set(params->locallab.spots.at(sp).loclevwavcurve, loclevwavutili);
                     locconwavCurve.Set(params->locallab.spots.at(sp).locconwavcurve, locconwavutili);
                     loccompwavCurve.Set(params->locallab.spots.at(sp).loccompwavcurve, loccompwavutili);
+                    locwavCurveden.Set(params->locallab.spots.at(sp).locwavcurveden, locwavdenutili);
                     CurveFactory::curveLocal(locallutili, params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
                     CurveFactory::curveLocal(localclutili, params->locallab.spots.at(sp).clcurve, cllocalcurve, sca);
                     CurveFactory::curveLocal(locallcutili, params->locallab.spots.at(sp).lccurve, lclocalcurve, sca);
@@ -1151,9 +1154,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     // Reference parameters  computation
                     if (params->locallab.spots.at(sp).spotMethod == "exc") {
-                        ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
+                        ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                     } else {
-                        ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
+                        ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                     }
 
                     /*
@@ -1233,6 +1236,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       loclevwavCurve, loclevwavutili,
                                       locconwavCurve, locconwavutili,
                                       loccompwavCurve, loccompwavutili,
+                                      locwavCurveden, locwavdenutili,
                                       LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                       huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav,
                                       locallColorMask, locallColorMaskinv, locallExpMask, locallExpMaskinv, locallSHMask, locallSHMaskinv, locallvibMask, locallcbMask, locallretiMask, locallsoftMask, localltmMask, locallblMask,
@@ -1272,6 +1276,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       loclevwavCurve, loclevwavutili,
                                       locconwavCurve, locconwavutili,
                                       loccompwavCurve, loccompwavutili,
+                                      locwavCurveden, locwavdenutili,
                                       LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                       huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                       minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
@@ -1281,9 +1286,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     //recalculate references after
                     if (params->locallab.spots.at(sp).spotMethod == "exc") {
-                        ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg);
+                        ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
                     } else {
-                        ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg);
+                        ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
                     }
 
                     if (sp == params->locallab.selspot  && params->locallab.spots.at(sp).recurs) {
@@ -1351,7 +1356,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locwavCurve.Reset();
                     loclevwavCurve.Reset();
                     locconwavCurve.Reset();
-                    loccompwavCurve.Reset();
+                    locwavCurveden.Reset();
+                    locwavCurve.Reset();
                     loclmasCurveblwav.Reset();
                     loclmasCurvecolwav.Reset();
                 }

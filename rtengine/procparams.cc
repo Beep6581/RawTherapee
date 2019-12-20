@@ -2779,6 +2779,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     bilateral(0),
     sensiden(20),
     detailthr(0),
+    locwavcurveden{(double)FCT_MinMaxCPoints, 0.0, 0.0, 0.0, 0.35, 0.5, 0., 0.35, 0.35, 1.0, 0.0, 0.35, 0.35},
     //log encoding
     explog(false),
     autocompute(false),
@@ -3183,6 +3184,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && bilateral == other.bilateral
         && sensiden == other.sensiden
         && detailthr == other.detailthr
+        && locwavcurveden == other.locwavcurveden
         //log encoding
         && expdenoi == other.expdenoi
         && autocompute == other.autocompute
@@ -4553,6 +4555,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).bilateral, "Locallab", "Bilateral_" + std::to_string(i), spot.bilateral, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiden, "Locallab", "Sensiden_" + std::to_string(i), spot.sensiden, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detailthr, "Locallab", "Detailthr_" + std::to_string(i), spot.detailthr, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locwavcurveden, "Locallab", "LocwavCurveden_" + std::to_string(i), spot.locwavcurveden, keyFile);
 
                 //log encoding
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).explog, "Locallab", "Explog_" + std::to_string(i), spot.explog, keyFile);
@@ -6089,6 +6092,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + std::to_string(i), pedited, spot.bilateral, spotEdited.bilateral);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + std::to_string(i), pedited, spot.sensiden, spotEdited.sensiden);
                 assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + std::to_string(i), pedited, spot.detailthr, spotEdited.detailthr);
+                assignFromKeyfile(keyFile, "Locallab", "LocwavCurveden_" + std::to_string(i), pedited, spot.locwavcurveden, spotEdited.locwavcurveden);
 
                 //log encoding
                 assignFromKeyfile(keyFile, "Locallab", "Explog_" + std::to_string(i), pedited, spot.explog, spotEdited.explog);

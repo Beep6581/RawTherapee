@@ -181,6 +181,10 @@ private:
     FlatCurveEditor* const LLmaskcbshape;
     FlatCurveEditor* const HHmaskcbshape;
 
+    //Denoise
+    CurveEditorGroup* const LocalcurveEditorwavden;
+    FlatCurveEditor* const wavshapeden;
+
     // Adjuster widgets
     // Color & Light
     Adjuster* const lightness;

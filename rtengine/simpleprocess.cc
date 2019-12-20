@@ -1119,6 +1119,7 @@ private:
             LocwavCurve loclevwavCurve;
             LocwavCurve locconwavCurve;
             LocwavCurve loccompwavCurve;
+            LocwavCurve locwavCurveden;
             LUTf lllocalcurve(65536, 0);
             LUTf lclocalcurve(65536, 0);
             LUTf cllocalcurve(65536, 0);
@@ -1193,6 +1194,7 @@ private:
                 bool lhmasblutili = false;
                 bool llmasblutili = false;
                 bool locwavutili = false;
+                bool locwavdenutili = false;
                 bool loclevwavutili = false;
                 bool locconwavutili = false;
                 bool loccompwavutili = false;
@@ -1231,6 +1233,7 @@ private:
                 loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav, lmasutilicolwav);
 
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
+                locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden, locwavdenutili);
                 loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve, loclevwavutili);
                 locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve, locconwavutili);
                 loccompwavCurve.Set(params.locallab.spots.at(sp).loccompwavcurve, loccompwavutili);
@@ -1265,9 +1268,9 @@ private:
                 int lastsav;
                 float avge;
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
+                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
-                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumare,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avge,
@@ -1308,6 +1311,7 @@ private:
                         loclevwavCurve, loclevwavutili,
                         locconwavCurve, locconwavutili,
                         loccompwavCurve, loccompwavutili,
+                        locwavCurveden, locwavdenutili,
                         LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
@@ -1315,9 +1319,9 @@ private:
                 lastorigView->CopyFrom(labView);
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
+                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
-                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
 
                 // Clear local curves
