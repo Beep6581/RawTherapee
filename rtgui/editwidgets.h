@@ -55,7 +55,7 @@ class RTSurface;
  *    - drag1
  *    - button1Released
  *
- * Actually, only curves does use this class, and everything is handled for curve implementor (as much as possible).
+ * Actually, only curves does use this class, and everything is handled for curve implementer (as much as possible).
  * See the curve's class documentation to see how to implement the curve's pipette feature.
  *
  * ### Event handling
