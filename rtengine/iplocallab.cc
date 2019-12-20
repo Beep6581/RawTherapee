@@ -3748,7 +3748,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
 
         if (strumask > 0.f) {
             float delstrumask = 4.1f - strumask;//4.1 = 2 * max slider strumask + 0.1
-            buildBlendMask(bufcolorig->L, blendstru, bfw, bfh, delstrumask, 1.f);
+            buildBlendMask(bufcolorig->L, blendstru, bfw, bfh, delstrumask);
             float radblur = 0.02f * fabs(0.1f * rad);//empirical value
             float rm = radblur / sk;
 
@@ -3765,7 +3765,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
 
         if (lp.contcolmask > 0.f) {
             float contra = lp.contcolmask;
-            buildBlendMask(bufcolorig->L, blendblur, bfw, bfh, contra, 1.f);
+            buildBlendMask(bufcolorig->L, blendblur, bfw, bfh, contra);
 
 
             float radblur = 0.25f + 0.002f * fabs(rad);//empirical value
@@ -9271,7 +9271,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 if (strumask > 0.f) {
                     float delstrumask = 4.1f - strumask;//4.1 = 2 * max slider strumask + 0.1
-                    buildBlendMask(bufgb->L, blendstru, GW, GH, delstrumask, 1.f);
+                    buildBlendMask(bufgb->L, blendstru, GW, GH, delstrumask);
                     float radblur = 0.02f * 0.1f * fabs(lp.radmabl);
                     float rm = radblur / sk;
 
@@ -13628,7 +13628,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                             JaggedArray<float> blend(bfw, bfh);
-                            buildBlendMask(lumreserv, blend, bfw, bfh, conthr, 1.f);
+                            buildBlendMask(lumreserv, blend, bfw, bfh, conthr);
                             float rm = 20.f / sk;
 
                             if (rm > 0) {

@@ -800,7 +800,7 @@ BENCHFUN
         }
 
         array2D<float>& blend = red; // red will be overridden anyway => we can use its buffer to store the blend mask
-        buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast, clipMask);
+        buildBlendMask(L, blend, W, H, contrast, sharpeningParams.autoContrast, clipMask);
         if (plistener) {
             plistener->setProgress(0.2);
         }
@@ -849,7 +849,7 @@ BENCHFUN
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     array2D<float>& blend = clipMask; // we can share blend and clipMask buffer here
-    buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast, clipMask);
+    buildBlendMask(L, blend, W, H, contrast, sharpeningParams.autoContrast, clipMask);
     if (plistener) {
         plistener->setProgress(0.2);
     }

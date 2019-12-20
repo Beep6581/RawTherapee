@@ -105,7 +105,7 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const procparams::RAWParams 
     JaggedArray<float> blend(winw, winh);
     float contrastf = contrast / 100.f;
 
-    buildBlendMask(L, blend, winw, winh, contrastf, 1.f, autoContrast);
+    buildBlendMask(L, blend, winw, winh, contrastf, autoContrast);
     contrast = contrastf * 100.f;
 
     array2D<float>& redTmp = L; // L is not needed anymore => reuse it
