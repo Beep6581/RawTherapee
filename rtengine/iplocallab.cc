@@ -7080,7 +7080,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
 
                 if (locconwavCurve && locconwavutili) {
 
-                    float cpMul = 200.f * (locconwavCurve[level * 50.f] - 0.5f);
+                    float cpMul = 200.f * (locconwavCurve[level * 55.5f] - 0.5f);
 
                     if (cpMul > 0.f) {
                         cpMul *= 2.f;
@@ -7199,7 +7199,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
 
                     if (loccompwavCurve && loccompwavutili) {
 
-                        float klev = (loccompwavCurve[level * 50.f]);
+                        float klev = (loccompwavCurve[level * 55.5f]);
                         fatParams.amount = 50.f * klev;
                         {
                             ToneMapFattal02(nullptr, fatParams, 3, 1, templevel[dir - 1][level], W_L, H_L);
@@ -7222,7 +7222,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
 
                     if (loclevwavCurve && loclevwavutili) {
 
-                        float klev = 0.25f * (loclevwavCurve[level * 50.f]);
+                        float klev = 0.25f * (loclevwavCurve[level * 55.5f]);
                         #pragma omp parallel
                         {
                             gaussianBlur(templevel[dir - 1][level], templevel[dir - 1][level], W_L, H_L, radlevblur * klev);
@@ -7412,7 +7412,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, float fatres, f
 
                 if (loccompwavCurve && loccompwavutili) {
 
-                    float klev = (loccompwavCurve[level * 50.f]);
+                    float klev = (loccompwavCurve[level * 55.5f]);
                     fatParams.amount = 50.f * klev;
                     {
                         ToneMapFattal02(nullptr, fatParams, 3, -1, templevelN[dir - 1][level], W_L, H_L);
