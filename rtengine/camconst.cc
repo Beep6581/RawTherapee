@@ -253,7 +253,7 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
         }
 
         if (i % 4 != 0) {
-            fprintf(stderr, "\"masked_areas\" array length must be divisable by 4\n");
+            fprintf(stderr, "\"masked_areas\" array length must be divisible by 4\n");
             goto parse_error;
         }
     }
