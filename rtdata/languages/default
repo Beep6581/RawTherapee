@@ -1114,6 +1114,7 @@ HISTORY_MSG_875;Local - LC mask blend
 HISTORY_MSG_876;Local - LC mask radius
 HISTORY_MSG_877;Local - LC mask chroma
 HISTORY_MSG_878;Local - LC mask curve contrast
+HISTORY_MSG_879;Local - LC Chroma levels
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2224,6 +2225,7 @@ TP_LOCALLAB_CH;Curves CL - LC
 TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
+TP_LOCALLAB_CHROMALEV;Chroma levels
 TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_CHRRT;Chroma

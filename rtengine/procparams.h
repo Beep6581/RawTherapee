@@ -1270,6 +1270,7 @@ struct LocallabParams {
         double levelblur;
         double residchro;
         double sigma;
+        double chromalev;
         double fatdet;
         double fatanch;
         double fatres;

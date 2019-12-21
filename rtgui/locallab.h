@@ -370,6 +370,7 @@ private:
     Adjuster* const sensilc;
     Adjuster* const residchro;
     Adjuster* const sigma;
+    Adjuster* const chromalev;
     Adjuster* const fatdet;
     Adjuster* const fatanch;
     Adjuster* const fatres;

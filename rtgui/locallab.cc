@@ -575,6 +575,7 @@ claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 
 sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
 residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100, 100, 1, 0))),
 sigma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
+chromalev(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMALEV"), 0.01, 2., 0.01, 1.))),
 fatdet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
 fatanch(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
 fatres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATRES"), 0., 100., 1., 0.))),
@@ -2897,6 +2898,7 @@ pe(nullptr)
     levelblur->setAdjusterListener(this);
     residchro->setAdjusterListener(this);
     sigma->setAdjusterListener(this);
+    chromalev->setAdjusterListener(this);
     fatdet->setAdjusterListener(this);
     fatanch->setAdjusterListener(this);
     fatres->setAdjusterListener(this);
@@ -2938,6 +2940,7 @@ pe(nullptr)
     contFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const contlevBox = Gtk::manage(new ToolParamBlock());
     contlevBox->pack_start(*sigma);
+    contlevBox->pack_start(*chromalev);
     contlevBox->pack_start(*LocalcurveEditorwavcon, Gtk::PACK_SHRINK, 4);
     contFrame->add(*contlevBox);
 
@@ -5249,6 +5252,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).levelblur = levelblur->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).residchro = residchro->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sigma = sigma->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).chromalev = chromalev->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fatdet = fatdet->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fatanch = fatanch->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fatres = fatres->getValue();
@@ -5657,6 +5661,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).levelblur = pe->locallab.spots.at(pp->locallab.selspot).levelblur || levelblur->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).residchro = pe->locallab.spots.at(pp->locallab.selspot).residchro || residchro->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sigma = pe->locallab.spots.at(pp->locallab.selspot).sigma || sigma->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).chromalev = pe->locallab.spots.at(pp->locallab.selspot).chromalev || chromalev->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fatdet = pe->locallab.spots.at(pp->locallab.selspot).fatdet || fatdet->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fatanch = pe->locallab.spots.at(pp->locallab.selspot).fatanch || fatanch->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fatres = pe->locallab.spots.at(pp->locallab.selspot).fatres || fatres->getEditedState();
@@ -6064,6 +6069,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).levelblur = pedited->locallab.spots.at(pp->locallab.selspot).levelblur || levelblur->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).residchro = pedited->locallab.spots.at(pp->locallab.selspot).residchro || residchro->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sigma = pedited->locallab.spots.at(pp->locallab.selspot).sigma || sigma->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).chromalev = pedited->locallab.spots.at(pp->locallab.selspot).chromalev || chromalev->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fatdet = pedited->locallab.spots.at(pp->locallab.selspot).fatdet || fatdet->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fatanch = pedited->locallab.spots.at(pp->locallab.selspot).fatanch || fatanch->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fatres = pedited->locallab.spots.at(pp->locallab.selspot).fatres || fatres->getEditedState();
@@ -6640,6 +6646,7 @@ void Locallab::localcontMethodChanged()
         levelblur->hide();
         residchro->hide();
         sigma->hide();
+        chromalev->hide();
         fatdet->hide();
         fatanch->hide();
         fatres->hide();
@@ -6666,6 +6673,7 @@ void Locallab::localcontMethodChanged()
         levelblur->show();
         residchro->show();
         sigma->show();
+        chromalev->show();
         fatdet->show();
         fatanch->show();
         fatres->show();
@@ -8739,6 +8747,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     levelblur->setDefault(defSpot->levelblur);
     residchro->setDefault(defSpot->residchro);
     sigma->setDefault(defSpot->sigma);
+    chromalev->setDefault(defSpot->chromalev);
     fatdet->setDefault(defSpot->fatdet);
     fatanch->setDefault(defSpot->fatanch);
     fatres->setDefault(defSpot->fatres);
@@ -8978,6 +8987,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         levelblur->setDefaultEditedState(Irrelevant);
         residchro->setDefaultEditedState(Irrelevant);
         sigma->setDefaultEditedState(Irrelevant);
+        chromalev->setDefaultEditedState(Irrelevant);
         fatdet->setDefaultEditedState(Irrelevant);
         fatanch->setDefaultEditedState(Irrelevant);
         fatres->setDefaultEditedState(Irrelevant);
@@ -9222,6 +9232,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         levelblur->setDefaultEditedState(defSpotState->levelblur ? Edited : UnEdited);
         residchro->setDefaultEditedState(defSpotState->residchro ? Edited : UnEdited);
         sigma->setDefaultEditedState(defSpotState->sigma ? Edited : UnEdited);
+        chromalev->setDefaultEditedState(defSpotState->chromalev ? Edited : UnEdited);
         fatdet->setDefaultEditedState(defSpotState->fatdet ? Edited : UnEdited);
         fatanch->setDefaultEditedState(defSpotState->fatanch ? Edited : UnEdited);
         fatres->setDefaultEditedState(defSpotState->fatres ? Edited : UnEdited);
@@ -10399,6 +10410,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == chromalev) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromalev, chromalev->getTextValue());
+            }
+        }
+
         if (a == fatdet) {
             if (listener) {
                 listener->panelChanged(Evlocallabfatdet, fatdet->getTextValue());
@@ -10908,6 +10925,7 @@ void Locallab::setBatchMode(bool batchMode)
     levelblur->showEditedCB();
     residchro->showEditedCB();
     sigma->showEditedCB();
+    chromalev->showEditedCB();
     fatdet->showEditedCB();
     fatanch->showEditedCB();
     fatres->showEditedCB();
@@ -11970,6 +11988,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         levelblur->setValue(pp->locallab.spots.at(index).levelblur);
         residchro->setValue(pp->locallab.spots.at(index).residchro);
         sigma->setValue(pp->locallab.spots.at(index).sigma);
+        chromalev->setValue(pp->locallab.spots.at(index).chromalev);
         fatdet->setValue(pp->locallab.spots.at(index).fatdet);
         fatanch->setValue(pp->locallab.spots.at(index).fatanch);
         fatres->setValue(pp->locallab.spots.at(index).fatres);
@@ -12482,6 +12501,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 levelblur->setEditedState(spotState->levelblur ? Edited : UnEdited);
                 residchro->setEditedState(spotState->residchro ? Edited : UnEdited);
                 sigma->setEditedState(spotState->sigma ? Edited : UnEdited);
+                chromalev->setEditedState(spotState->chromalev ? Edited : UnEdited);
                 fatdet->setEditedState(spotState->fatdet ? Edited : UnEdited);
                 fatanch->setEditedState(spotState->fatanch ? Edited : UnEdited);
                 fatres->setEditedState(spotState->fatres ? Edited : UnEdited);
@@ -13005,6 +13025,7 @@ void Locallab::updateSpecificGUIState()
         levelblur->hide();
         residchro->hide();
         sigma->hide();
+        chromalev->hide();
         fatdet->hide();
         fatanch->hide();
         fatres->hide();
@@ -13030,6 +13051,7 @@ void Locallab::updateSpecificGUIState()
         residblur->show();
         levelblur->show();
         sigma->show();
+        chromalev->show();
         fatdet->show();
         fatanch->show();
         fatres->show();

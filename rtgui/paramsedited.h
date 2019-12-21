@@ -696,6 +696,7 @@ public:
         bool levelblur;
         bool residchro;
         bool sigma;
+        bool chromalev;
         bool fatdet;
         bool fatanch;
         bool fatres;

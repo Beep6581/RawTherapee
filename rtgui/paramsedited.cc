@@ -1263,6 +1263,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).levelblur = locallab.spots.at(j).levelblur && pSpot.levelblur == otherSpot.levelblur;
                 locallab.spots.at(j).residchro = locallab.spots.at(j).residchro && pSpot.residchro == otherSpot.residchro;
                 locallab.spots.at(j).sigma = locallab.spots.at(j).sigma && pSpot.sigma == otherSpot.sigma;
+                locallab.spots.at(j).chromalev = locallab.spots.at(j).chromalev && pSpot.chromalev == otherSpot.chromalev;
                 locallab.spots.at(j).fatdet = locallab.spots.at(j).fatdet && pSpot.fatdet == otherSpot.fatdet;
                 locallab.spots.at(j).fatanch = locallab.spots.at(j).fatanch && pSpot.fatanch == otherSpot.fatanch;
                 locallab.spots.at(j).fatres = locallab.spots.at(j).fatres && pSpot.fatres == otherSpot.fatres;
@@ -4026,6 +4027,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sigma   = mods.locallab.spots.at(i).sigma;
         }
 
+        if (locallab.spots.at(i).chromalev) {
+            toEdit.locallab.spots.at(i).chromalev   = mods.locallab.spots.at(i).chromalev;
+        }
+
         if (locallab.spots.at(i).fatdet) {
             toEdit.locallab.spots.at(i).fatdet   = mods.locallab.spots.at(i).fatdet;
         }
@@ -5597,6 +5602,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     levelblur(v),
     residchro(v),
     sigma(v),
+    chromalev(v),
     fatdet(v),
     fatanch(v),
     fatres(v),
@@ -5992,6 +5998,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     levelblur = v;
     residchro = v;
     sigma = v;
+    chromalev = v;
     fatdet = v;
     fatanch = v;
     fatres = v;
