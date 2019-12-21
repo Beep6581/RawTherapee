@@ -6434,7 +6434,6 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = (previewint * difb);
                     }
-
                 }
             }
         }

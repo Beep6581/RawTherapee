@@ -3597,8 +3597,9 @@ pe(nullptr)
     wavshapeden->setResetCurve(FlatCurveType(defSpot.locwavcurveden.at(0)), defSpot.locwavcurveden);
 
     if (showtooltip) {
-//        wavshape->setTooltip(M("TP_RETINEX_WAV_TOOLTIP"));
+        wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
     }
+
 
     LocalcurveEditorwavden->curveListComplete();
 
