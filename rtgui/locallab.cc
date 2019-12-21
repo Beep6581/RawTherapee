@@ -1211,9 +1211,9 @@ pe(nullptr)
     colorBox->pack_start(*superFrame);
     colorBox->pack_start(*sensi);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         colorBox->pack_start(*structcol);
-    }
+//    }
 
     if (complexsoft < 2) {
         colorBox->pack_start(*blurcolde);
@@ -1671,9 +1671,9 @@ pe(nullptr)
 
     exposeBox->pack_start(*sensiex);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         exposeBox->pack_start(*structexp);
-    }
+//    }
 
     if (complexsoft < 2) {
         exposeBox->pack_start(*blurexpde);
