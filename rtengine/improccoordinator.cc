@@ -188,6 +188,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lmaskretilocalcurve(65536, 0),
     lmaskcblocalcurve(65536, 0),
     lmaskbllocalcurve(65536, 0),
+    lmasklclocalcurve(65536, 0),
     locallutili(false),
     localclutili(false),
     locallcutili(false),
@@ -206,6 +207,7 @@ ImProcCoordinator::ImProcCoordinator() :
     localmaskretiutili(false),
     localmaskcbutili(false),
     localmaskblutili(false),
+    localmasklcutili(false),
     lcmasexputili(false),
     lhmasexputili(false),
     llmasexputili(false),
@@ -215,6 +217,9 @@ ImProcCoordinator::ImProcCoordinator() :
     lcmasvibutili(false),
     lhmasvibutili(false),
     llmasvibutili(false),
+    lcmaslcutili(false),
+    lhmaslcutili(false),
+    llmaslcutili(false),
     lcmascbutili(false),
     lhmascbutili(false),
     llmascbutili(false),
@@ -1063,6 +1068,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     localmaskretiutili = false;
                     localmaskcbutili = false;
                     localmaskblutili = false;
+                    localmasklcutili = false;
                     lcmasSHutili = false;
                     lhmasSHutili = false;
                     llmasSHutili = false;
@@ -1072,6 +1078,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     lcmascbutili = false;
                     lhmascbutili = false;
                     llmascbutili = false;
+                    lcmaslcutili = false;
+                    lhmaslcutili = false;
+                    llmaslcutili = false;
                     lcmasretiutili = false;
                     lhmasretiutili = false;
                     llmasretiutili = false;
@@ -1109,6 +1118,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locllmascbCurve.Set(params->locallab.spots.at(sp).LLmaskcbcurve, llmascbutili);
                     locccmascbCurve.Set(params->locallab.spots.at(sp).CCmaskcbcurve, lcmascbutili);
                     lochhmascbCurve.Set(params->locallab.spots.at(sp).HHmaskcbcurve, lhmascbutili);
+                    locllmaslcCurve.Set(params->locallab.spots.at(sp).LLmasklccurve, llmaslcutili);
+                    locccmaslcCurve.Set(params->locallab.spots.at(sp).CCmasklccurve, lcmaslcutili);
+                    lochhmaslcCurve.Set(params->locallab.spots.at(sp).HHmasklccurve, lhmaslcutili);
                     locllmasretiCurve.Set(params->locallab.spots.at(sp).LLmaskreticurve, llmasretiutili);
                     locccmasretiCurve.Set(params->locallab.spots.at(sp).CCmaskreticurve, lcmasretiutili);
                     lochhmasretiCurve.Set(params->locallab.spots.at(sp).HHmaskreticurve, lhmasretiutili);
@@ -1140,6 +1152,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     CurveFactory::curvemaskLocal(localmaskretiutili, params->locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, sca);
                     CurveFactory::curvemaskLocal(localmaskcbutili, params->locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, sca);
                     CurveFactory::curvemaskLocal(localmaskblutili, params->locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, sca);
+                    CurveFactory::curvemaskLocal(localmasklcutili, params->locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, sca);
                     double ecomp = params->locallab.spots.at(sp).expcomp;
                     double black = params->locallab.spots.at(sp).black;
                     double hlcompr = params->locallab.spots.at(sp).hlcompr;
@@ -1208,7 +1221,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float Tsigma;
                     float Tmin;
                     float Tmax;
-
                     if (sp == params->locallab.selspot) {
                         ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                                       lllocalcurve, locallutili,
@@ -1223,6 +1235,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       lmaskretilocalcurve, localmaskretiutili,
                                       lmaskcblocalcurve, localmaskcbutili,
                                       lmaskbllocalcurve, localmaskblutili,
+                                      lmasklclocalcurve, localmasklcutili,
                                       locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                       locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                       locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
@@ -1230,6 +1243,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
                                       locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                                       locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
+                                      locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
                                       loclmasCurveblwav, lmasutiliblwav,
                                       loclmasCurvecolwav, lmasutilicolwav,
                                       locwavCurve, locwavutili,
@@ -1263,6 +1277,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       lmaskretilocalcurve, localmaskretiutili,
                                       lmaskcblocalcurve, localmaskcbutili,
                                       lmaskbllocalcurve, localmaskblutili,
+                                      lmasklclocalcurve, localmasklcutili,
                                       locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                       locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                       locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
@@ -1270,6 +1285,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
                                       locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                                       locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
+                                      locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
                                       loclmasCurveblwav, lmasutiliblwav,
                                       loclmasCurvecolwav, lmasutilicolwav,
                                       locwavCurve, locwavutili,
@@ -1321,6 +1337,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     lmaskretilocalcurve.clear();
                     lmaskcblocalcurve.clear();
                     lmaskbllocalcurve.clear();
+                    lmasklclocalcurve.clear();
                     hltonecurveloc.clear();
                     shtonecurveloc.clear();
                     tonecurveloc.clear();
@@ -1353,6 +1370,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locllmasblCurve.Reset();
                     locccmasblCurve.Reset();
                     lochhmasblCurve.Reset();
+                    locllmaslcCurve.Reset();
+                    locccmaslcCurve.Reset();
+                    lochhmaslcCurve.Reset();
                     locwavCurve.Reset();
                     loclevwavCurve.Reset();
                     locconwavCurve.Reset();

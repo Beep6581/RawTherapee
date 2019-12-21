@@ -250,6 +250,7 @@ protected:
     LUTf lmaskretilocalcurve;
     LUTf lmaskcblocalcurve;
     LUTf lmaskbllocalcurve;
+    LUTf lmasklclocalcurve;
 //    LUTu lhist16loc;
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;
@@ -269,6 +270,9 @@ protected:
     LocCCmaskCurve locccmasvibCurve;
     LocLLmaskCurve locllmasvibCurve;
     LocHHmaskCurve lochhmasvibCurve;
+    LocCCmaskCurve locccmaslcCurve;
+    LocLLmaskCurve locllmaslcCurve;
+    LocHHmaskCurve lochhmaslcCurve;
     LocCCmaskCurve locccmascbCurve;
     LocLLmaskCurve locllmascbCurve;
     LocHHmaskCurve lochhmascbCurve;
@@ -307,6 +311,7 @@ protected:
     bool localmaskretiutili;
     bool localmaskcbutili;
     bool localmaskblutili;
+    bool localmasklcutili;
     bool lcmasexputili;
     bool lhmasexputili;
     bool llmasexputili;
@@ -316,6 +321,9 @@ protected:
     bool lcmasvibutili;
     bool lhmasvibutili;
     bool llmasvibutili;
+    bool lcmaslcutili;
+    bool lhmaslcutili;
+    bool llmaslcutili;
     bool lcmascbutili;
     bool lhmascbutili;
     bool llmascbutili;

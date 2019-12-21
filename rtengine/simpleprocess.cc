@@ -1101,6 +1101,9 @@ private:
             LocCCmaskCurve locccmasvibCurve;
             LocLLmaskCurve locllmasvibCurve;
             LocHHmaskCurve lochhmasvibCurve;
+            LocCCmaskCurve locccmaslcCurve;
+            LocLLmaskCurve locllmaslcCurve;
+            LocHHmaskCurve lochhmaslcCurve;
             LocCCmaskCurve locccmascbCurve;
             LocLLmaskCurve locllmascbCurve;
             LocHHmaskCurve lochhmascbCurve;
@@ -1138,6 +1141,7 @@ private:
             LUTf lmaskretilocalcurve(65536, 0);
             LUTf lmaskcblocalcurve(65536, 0);
             LUTf lmaskbllocalcurve(65536, 0);
+            LUTf lmasklclocalcurve(65536, 0);
 
            // int maxspot = 1;
             float** shbuffer = nullptr;
@@ -1172,6 +1176,7 @@ private:
                 bool localmaskretiutili = false;
                 bool localmaskcbutili = false;
                 bool localmaskblutili = false;
+                bool localmasklcutili = false;
                 bool lcmasexputili = false;
                 bool lhmasexputili = false;
                 bool llmasexputili = false;
@@ -1181,6 +1186,9 @@ private:
                 bool lcmasvibutili = false;
                 bool lhmasvibutili = false;
                 bool llmasvibutili = false;
+                bool lcmaslcutili = false;
+                bool lhmaslcutili = false;
+                bool llmaslcutili = false;
                 bool lcmascbutili = false;
                 bool lhmascbutili = false;
                 bool llmascbutili = false;
@@ -1251,6 +1259,7 @@ private:
                 CurveFactory::curvemaskLocal(localmaskretiutili, params.locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskcbutili, params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskblutili, params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, 1);
+                CurveFactory::curvemaskLocal(localmasklcutili, params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
                 double black = params.locallab.spots.at(sp).black;
@@ -1298,6 +1307,7 @@ private:
                         lmaskretilocalcurve, localmaskretiutili,
                         lmaskcblocalcurve, localmaskcbutili,
                         lmaskbllocalcurve, localmaskblutili,
+                        lmasklclocalcurve, localmasklcutili,
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                         locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
@@ -1305,6 +1315,7 @@ private:
                         locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                         locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
+                        locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
                         loclmasCurveblwav,lmasutiliblwav,
                         loclmasCurvecolwav,lmasutilicolwav,
                         locwavCurve, locwavutili,

@@ -1106,6 +1106,14 @@ HISTORY_MSG_865;Local - Contrast Anchor
 HISTORY_MSG_867;Local - Contrast Amount residual
 HISTORY_MSG_868;Local - balance ΔE C-H
 HISTORY_MSG_869;Local - denoise curve luminance
+HISTORY_MSG_870;Local - LC mask curve LC(H)
+HISTORY_MSG_871;Local - LC mask curve C(C)
+HISTORY_MSG_872;Local - LC mask curve L(L)
+HISTORY_MSG_873;Local - LC mask enable
+HISTORY_MSG_875;Local - LC mask blend
+HISTORY_MSG_876;Local - LC mask radius
+HISTORY_MSG_877;Local - LC mask chroma
+HISTORY_MSG_878;Local - LC mask curve contrast
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2513,12 +2521,13 @@ TP_LOCALLAB_SHARRADIUS;Radius
 TP_LOCALLAB_SHORTC;Short Curves 'L' Mask
 TP_LOCALLAB_SHORTCMASK_TOOLTIP;Short circuit the 2 curves L(L) and L(H).\nAllows you to mix the current image with the original image modified by the mask job.\nUsable with masks 2, 3, 4, 6, 7
 TP_LOCALLAB_SHOWC1;Merge file
-TP_LOCALLAB_SHOWC;8+* - Mask and modifications
+TP_LOCALLAB_SHOWC;9+* - Mask and modifications
 TP_LOCALLAB_SHOWCB;2+ - Mask and modifications
 TP_LOCALLAB_SHOWDCT;Show process Fourier
-TP_LOCALLAB_SHOWE;7+ - Mask and modifications
+TP_LOCALLAB_SHOWE;8+ - Mask and modifications
 TP_LOCALLAB_SHOWFOURIER;Fourier (dct)
 TP_LOCALLAB_SHOWLAPLACE;∆ Laplacian (first)
+TP_LOCALLAB_SHOWLC;6 - Mask and modifications
 TP_LOCALLAB_SHOWMASK;Show mask
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR or Blur).\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Show process Fourier:\nShows the different stages of the process.\nLaplace - builds the second derivative according to the threshold (first step).\nFourier -shows the transformed Laplacian with DCT.\nPoisson - show solution of Poisson DCE.\nNormalize - show result whithout normalization luminance.
@@ -2528,7 +2537,7 @@ TP_LOCALLAB_SHOWMODIFMASK;Show modifications whith mask
 TP_LOCALLAB_SHOWNORMAL;Normalize luminance (no)
 TP_LOCALLAB_SHOWPLUS;1+* - Mask and modifications - Smooth-Blur & Denoise
 TP_LOCALLAB_SHOWPOISSON;Poisson (pde)
-TP_LOCALLAB_SHOWR;6 - Mask and modifications
+TP_LOCALLAB_SHOWR;7 - Mask and modifications
 TP_LOCALLAB_SHOWS;5+* - Mask and modifications
 TP_LOCALLAB_SHOWSTRUC;Show structure Spot
 TP_LOCALLAB_SHOWSTRUCEX;Show structure Spot - disabled in "normal"

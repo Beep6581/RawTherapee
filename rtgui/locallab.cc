@@ -238,7 +238,7 @@ Locallab::Locallab():
     expcurvcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPCURV")))),
     expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWE")))),
     expmasksh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
-    expmasklc(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
+    expmasklc(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWLC")))),
     expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
     expmaskreti(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWR")))),
     expmasktm(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWT")))),
@@ -3094,7 +3094,7 @@ pe(nullptr)
 //    }
 
     expmasklc->add(*masklcBox, false);
-//    contrastBox->pack_start(*expmasklc, false, false);
+    contrastBox->pack_start(*expmasklc, false, false);
     expcontrast->add(*contrastBox, false);
     expcontrast->setLevel(2);
 
