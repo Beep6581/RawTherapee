@@ -697,6 +697,7 @@ public:
         bool residchro;
         bool sigma;
         bool chromalev;
+        bool chromablu;
         bool fatdet;
         bool fatanch;
         bool fatres;

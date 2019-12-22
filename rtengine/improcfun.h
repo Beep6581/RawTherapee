@@ -321,7 +321,7 @@ public:
         const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev, 
         const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon, 
         const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp, 
-        float sigm, int & maxlvl, float fatdet, float fatanch, float chromalev);
+        float sigm, int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc);
 
     void transit_shapedetect2(int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
 

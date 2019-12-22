@@ -371,6 +371,7 @@ private:
     Adjuster* const residchro;
     Adjuster* const sigma;
     Adjuster* const chromalev;
+    Adjuster* const chromablu;
     Adjuster* const fatdet;
     Adjuster* const fatanch;
     Adjuster* const fatres;

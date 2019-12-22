@@ -1115,6 +1115,7 @@ HISTORY_MSG_876;Local - LC mask radius
 HISTORY_MSG_877;Local - LC mask chroma
 HISTORY_MSG_878;Local - LC mask curve contrast
 HISTORY_MSG_879;Local - LC Chroma levels
+HISTORY_MSG_880;Local - LC Chroma blur levels
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2210,7 +2211,7 @@ TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLURCBDL;Blur levels 0-1-2-3-4
 TP_LOCALLAB_BLURCOL;Radius Mask Blur
 TP_LOCALLAB_BLURDE;Blur Shape detection
-TP_LOCALLAB_BLURLC;Luminance Residual Image Only
+TP_LOCALLAB_BLURLC;Luminance Only
 TP_LOCALLAB_BLURLEVELFRA;Blur Levels 
 TP_LOCALLAB_BLURRESIDFRA;Blur Residual
 TP_LOCALLAB_BUTTON_ADD;Add
@@ -2226,6 +2227,7 @@ TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
 TP_LOCALLAB_CHROMALEV;Chroma levels
+TP_LOCALLAB_CHROMABLU;Chroma levels
 TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_CHRRT;Chroma
