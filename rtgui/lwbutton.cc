@@ -14,10 +14,11 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "lwbutton.h"
 #include "guiutils.h"
+#include "rtsurface.h"
 
 LWButton::LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring* tooltip)
     : xpos(0), ypos(0), halign(ha), valign(va), icon(i), bgr(0.0), bgg(0.0), bgb(0.0), fgr(0.0), fgg(0.0), fgb(0.0), state(Normal), listener(nullptr), actionCode(aCode), actionData(aData), toolTip(tooltip)
@@ -152,7 +153,7 @@ bool LWButton::releaseNotify (int x, int y)
 {
 
     bool in = inside (x, y);
-    State nstate = state;
+    State nstate;
     bool action = false;
 
     if (in && (state == Pressed_In || state == Pressed_Out)) {

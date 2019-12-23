@@ -14,30 +14,28 @@
 *  GNU General Public License for more details.
 *
 *  You should have received a copy of the GNU General Public License
-*  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <algorithm>
+#include <cassert>
 #include <cstring>
 
+#include <glibmm/ustring.h>
+#include <glibmm/fileutils.h>
 #include <glib/gstdio.h>
 
 #ifdef WIN32
 #include <shlobj.h>
-#include <windows.h>
 #endif
 
 #include "lcp.h"
 
+#include "opthelper.h"
 #include "procparams.h"
+#include "rt_math.h"
 #include "settings.h"
-
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
+#include "utils.h"
 
 class rtengine::LCPProfile::LCPPersModel
 {
@@ -984,7 +982,7 @@ rtengine::LCPMapper::LCPMapper(
     bool useCADistP,
     int fullWidth,
     int fullHeight,
-    const CoarseTransformParams& coarse,
+    const procparams::CoarseTransformParams& coarse,
     int rawRotationDeg
 ) :
     enableCA(false),
@@ -1137,6 +1135,17 @@ void rtengine::LCPMapper::correctCA(double& x, double& y, int cx, int cy, int ch
     y -= cy;
 }
 
+void rtengine::LCPMapper::processVignette(int width, int height, float** rawData) const
+{
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+    for (int y = 0; y < height; ++y) {
+        processVignetteLine(width, y, rawData[y]);
+    }
+}
+
 void rtengine::LCPMapper::processVignetteLine(int width, int y, float* line) const
 {
     // No need for swapXY, since vignette is in RAW and always before rotation
@@ -1172,6 +1181,17 @@ void rtengine::LCPMapper::processVignetteLine(int width, int y, float* line) con
             const float rsqr = xd * xd + yd;
             line[x] += line[x] * rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));
         }
+    }
+}
+
+void rtengine::LCPMapper::processVignette3Channels(int width, int height, float** rawData) const
+{
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+    for (int y = 0; y < height; ++y) {
+        processVignetteLine3Channels(width, y, rawData[y]);
     }
 }
 

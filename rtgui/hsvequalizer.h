@@ -12,24 +12,28 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  2010 Ilya Popov <ilia_popov@rambler.ru>
  */
-
-#ifndef HSVEQUALIZER_H_INCLUDED
-#define HSVEQUALIZER_H_INCLUDED
+#pragma once
 
 #include <gtkmm.h>
-#include "adjuster.h"
-#include "toolpanel.h"
-#include "guiutils.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
+
 #include "colorprovider.h"
+#include "curvelistener.h"
+#include "guiutils.h"
+#include "toolpanel.h"
 
+class CurveEditor;
+class CurveEditorGroup;
+class FlatCurveEditor;
 
-class HSVEqualizer : public ToolParamBlock, public FoldableToolPanel, public CurveListener, public ColorProvider
+class HSVEqualizer final :
+    public ToolParamBlock,
+    public FoldableToolPanel,
+    public CurveListener,
+    public ColorProvider
 {
 
 protected:
@@ -53,8 +57,5 @@ public:
     void autoOpenCurve   () override;
     void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 
-    //void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged() override;
 };
-
-#endif

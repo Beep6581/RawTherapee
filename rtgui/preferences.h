@@ -14,22 +14,28 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __PREFERENCES_H__
-#define __PREFERENCES_H__
+#pragma once
+
+#include <vector>
 
 #include <gtkmm.h>
-#include "adjuster.h"
-#include "options.h"
-#include <vector>
-#include "rtwindow.h"
-#include "dynamicprofilepanel.h"
 
-class Preferences : public Gtk::Dialog, public ProfileStoreListener
+#include "dynamicprofilepanel.h"
+#include "options.h"
+#include "../rtengine/profilestore.h"
+
+class RTWindow;
+class Splash;
+
+class Preferences :
+    public Gtk::Dialog,
+    public ProfileStoreListener
 {
 
-    class ExtensionColumns : public Gtk::TreeModel::ColumnRecord
+    class ExtensionColumns :
+        public Gtk::TreeModel::ColumnRecord
     {
     public:
         Gtk::TreeModelColumn<bool>  enabled;
@@ -242,7 +248,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     void switchFontTo  (const Glib::ustring &newFontFamily, const int newFontSize);
     bool splashClosed (GdkEventAny* event);
 
-    int getThemeRowNumber (Glib::ustring& longThemeFName);
+    int getThemeRowNumber (const Glib::ustring& longThemeFName);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 
@@ -303,5 +309,3 @@ public:
 //    void selectICCProfileDir ();
 //    void selectMonitorProfile ();
 };
-
-#endif

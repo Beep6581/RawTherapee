@@ -14,16 +14,19 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PERSPECTIVE_PANEL_H_
-#define _PERSPECTIVE_PANEL_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class PerspCorrection : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class PerspCorrection final :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -43,5 +46,3 @@ public:
     void setAdjusterBehavior (bool badd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };
-
-#endif

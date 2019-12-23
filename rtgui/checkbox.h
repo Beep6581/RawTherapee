@@ -14,12 +14,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CHECKBOX_H_
-#define _CHECKBOX_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "editedstate.h"
 #include "guiutils.h"
 
@@ -72,5 +72,3 @@ public:
     void set_tooltip_markup (const Glib::ustring& tooltip);
     */
 };
-
-#endif

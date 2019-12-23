@@ -14,21 +14,21 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "shmap.h"
 #include "gauss.h"
+#include "imagefloat.h"
 #include "rtengine.h"
 #include "rt_math.h"
 #include "rawimagesource.h"
+#include "sleef.h"
 #include "jaggedarray.h"
 #undef THREAD_PRIORITY_NORMAL
 #include "opthelper.h"
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 SHMap::SHMap (int w, int h) : max_f(0.f), min_f(0.f), avg(0.f), W(w), H(h)
 {
@@ -85,21 +85,14 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
     if (!hq) {
         fillLuminance( img, map, lumi);
 
-        float *buffer = nullptr;
-
-        if(radius > 40.) {
-            // When we pass another buffer to gaussianBlur, it will use iterated boxblur which is less prone to artifacts
-            buffer = new float[W * H];
-        }
+        const bool useBoxBlur = radius > 40.0; // boxblur is less prone to artifacts for large radi
 
 #ifdef _OPENMP
-        #pragma omp parallel
+        #pragma omp parallel if (!useBoxBlur)
 #endif
         {
-            gaussianBlur (map, map, W, H, radius, buffer);
+            gaussianBlur (map, map, W, H, radius, useBoxBlur);
         }
-
-        delete [] buffer;
     }
 
     else {
@@ -358,7 +351,7 @@ void SHMap::forceStat (float max_, float min_, float avg_)
     avg = avg_;
 }
 
-void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale)
+void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, const LUTf& rangefn, int level, int scale)
 {
     //scale is spacing of directional averaging weights
 

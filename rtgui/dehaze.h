@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -23,17 +23,19 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class Dehaze: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class Dehaze final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 private:
     Adjuster *strength;
     Adjuster *depth;
-    Gtk::CheckButton *showDepthMap;    
+    Gtk::CheckButton *showDepthMap;
+    Gtk::CheckButton *luminance;
 
     rtengine::ProcEvent EvDehazeEnabled;
     rtengine::ProcEvent EvDehazeStrength;
     rtengine::ProcEvent EvDehazeDepth;
     rtengine::ProcEvent EvDehazeShowDepthMap;
+    rtengine::ProcEvent EvDehazeLuminance;
     
 public:
 
@@ -47,6 +49,7 @@ public:
     void adjusterChanged(Adjuster *a, double newval) override;
     void enabledChanged() override;
     void showDepthMapChanged();
+    void luminanceChanged();
     void setAdjusterBehavior(bool strengthAdd);
 };
 

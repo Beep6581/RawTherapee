@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cstring>
 
@@ -23,6 +23,7 @@
 #include "myflatcurve.h"
 
 #include "editcallbacks.h"
+#include "rtscalable.h"
 
 #include "../rtengine/curves.h"
 
@@ -652,7 +653,6 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     curve.y.insert (ity, 0);
                     curve.leftTangent.insert (itlt, 0);
                     curve.rightTangent.insert (itrt, 0);
-                    num++;
 
                     if (mod_type & GDK_CONTROL_MASK) {
                         clampedY = point.getVal01(clampedX);

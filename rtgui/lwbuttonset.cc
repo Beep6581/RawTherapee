@@ -14,9 +14,11 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "lwbuttonset.h"
+#include "lwbutton.h"
+#include "rtscalable.h"
 
 LWButtonSet::LWButtonSet () : aw(0), ah(0), ax(-1), ay(-1)
 {

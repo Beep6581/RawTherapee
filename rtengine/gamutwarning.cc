@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,10 +23,14 @@
  * also distributed under the GPL V3+
  */
 
-#include "gamutwarning.h"
 #include <iostream>
 
-namespace rtengine {
+#include "gamutwarning.h"
+#include "iccstore.h"
+#include "image8.h"
+
+namespace rtengine
+{
 
 GamutWarning::GamutWarning(cmsHPROFILE iprof, cmsHPROFILE gamutprof, RenderingIntent intent, bool gamutbpc):
     lab2ref(nullptr),
@@ -125,6 +129,5 @@ inline void GamutWarning::mark(Image8 *image, int y, int x)
     image->g(y, x) = 255;
     image->b(y, x) = 255;
 }
-
 
 } // namespace rtengine

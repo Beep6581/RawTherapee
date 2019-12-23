@@ -14,19 +14,21 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FAVORITBROWSER_
-#define _FAVORITBROWSER_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "dirbrowserremoteinterface.h"
 #include "dirselectionlistener.h"
 
-class FavoritBrowser : public Gtk::VBox, public DirSelectionListener
+class FavoritBrowser :
+    public Gtk::VBox,
+    public DirSelectionListener
 {
-
-    class FavoritColumns : public Gtk::TreeModel::ColumnRecord
+    class FavoritColumns :
+        public Gtk::TreeModel::ColumnRecord
     {
     public:
         Gtk::TreeModelColumn<Glib::RefPtr<Gio::Icon> >   icon;
@@ -61,7 +63,3 @@ public:
     void delPressed ();
     void selectionChanged ();
 };
-
-#endif
-
-

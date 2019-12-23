@@ -15,11 +15,13 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "toolbar.h"
 #include "multilangmgr.h"
 #include "guiutils.h"
+#include "lockablecolorpicker.h"
+#include "rtimage.h"
 
 ToolBar::ToolBar () : showColPickers(true), listener (nullptr), pickerListener(nullptr)
 {

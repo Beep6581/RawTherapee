@@ -18,13 +18,12 @@
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
 
 #include <cmath>
 
-#include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
 
@@ -63,7 +62,7 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     float noisevar = SQR(3 * noise * 65535); // _noise_ (as a fraction of saturation) is input to the algorithm
     float noisevarm4 = 4.0f * noisevar;
-    float* RawDataTmp = (float*)malloc( width * height * sizeof(float));
+    float* RawDataTmp = (float*)malloc(static_cast<unsigned long>(width) * height * sizeof(float));
 #ifdef _OPENMP
     #pragma omp parallel
 #endif

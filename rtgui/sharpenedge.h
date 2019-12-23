@@ -14,21 +14,24 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *
  *  Manuel Llorens' algorithm of edge sharpening
  *
  *
  */
-#ifndef _SHARPENEDGE_H_
-#define _SHARPENEDGE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SharpenEdge : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class SharpenEdge final :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -56,5 +59,3 @@ public:
     void chanthree_toggled   ();
 
 };
-
-#endif

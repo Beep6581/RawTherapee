@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -23,7 +23,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class SoftLight: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class SoftLight final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 private:
     Adjuster *strength;

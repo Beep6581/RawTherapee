@@ -445,9 +445,7 @@ static unsigned char* ensure(printbuffer * const p, size_t needed)
             p->buffer = NULL;
 
             return NULL;
-        }
-        if (newbuffer)
-        {
+        } else {
             memcpy(newbuffer, p->buffer, p->offset + 1);
         }
         p->hooks.deallocate(p->buffer);
@@ -1436,7 +1434,7 @@ fail:
 static cJSON_bool print_array(const cJSON * const item, printbuffer * const output_buffer)
 {
     unsigned char *output_pointer = NULL;
-    size_t length = 0;
+    size_t length;
     cJSON *current_element = item->child;
 
     if (output_buffer == NULL)

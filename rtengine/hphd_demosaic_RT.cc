@@ -14,16 +14,15 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"
-#include "rawimage.h"
 #include "rt_math.h"
-#include "procparams.h"
 #include "../rtgui/multilangmgr.h"
 #include "opthelper.h"
 //#define BENCHMARK
@@ -218,7 +217,7 @@ void hphd_green(const RawImage *ri, const array2D<float> &rawData, float** hpmap
 
                     const float e4 = 1.f / (dx + (std::fabs(d1) + std::fabs(d2)) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
-                    green[i][j] = rawData[i][j] * 0.5f + (e2 * g2 + e4 * g4) / (e2 + e4);
+                    green[i][j] = std::max(0.f, rawData[i][j] * 0.5f + (e2 * g2 + e4 * g4) / (e2 + e4));
                 } else if (hpmap[i][j] == 2) {
                     const float g1 = rawData[i - 1][j] - rawData[i - 2][j] * 0.5f;
                     const float g3 = rawData[i + 1][j] - rawData[i + 2][j] * 0.5f;
@@ -238,7 +237,7 @@ void hphd_green(const RawImage *ri, const array2D<float> &rawData, float** hpmap
 
                     const float e3 = 1.f / (dy + (std::fabs(d1) + std::fabs(d2)) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
-                    green[i][j] = rawData[i][j] * 0.5f + (e1 * g1 + e3 * g3) / (e1 + e3);
+                    green[i][j] = std::max(0.f, rawData[i][j] * 0.5f + (e1 * g1 + e3 * g3) / (e1 + e3));
                 } else {
                     const float g1 = rawData[i - 1][j] - rawData[i - 2][j] * 0.5f;
                     const float g2 = rawData[i][j + 1] - rawData[i][j + 2] * 0.5f;
@@ -276,7 +275,7 @@ void hphd_green(const RawImage *ri, const array2D<float> &rawData, float** hpmap
 
                     const float e4 = 1.f / (dx + (std::fabs(d1) + std::fabs(d2)) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
-                    green[i][j] = rawData[i][j] * 0.5f + ((e1 * g1 + e2 * g2) + (e3 * g3 + e4 * g4)) / (e1 + e2 + e3 + e4);
+                    green[i][j] = std::max(0.f, rawData[i][j] * 0.5f + ((e1 * g1 + e2 * g2) + (e3 * g3 + e4 * g4)) / (e1 + e2 + e3 + e4));
                 }
             }
         }
@@ -353,7 +352,7 @@ void RawImageSource::hphd_demosaic ()
         interpolate_row_rb_mul_pp(rawData, red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
     }
 
-    border_interpolate2(W, H, 4, rawData, red, green, blue);
+    border_interpolate(W, H, 4, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgress(1.0);

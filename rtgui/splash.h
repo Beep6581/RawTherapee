@@ -14,14 +14,14 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __SPLASH__
-#define __SPLASH__
+#pragma once
 
 #include <gtkmm.h>
 
-class SplashImage : public Gtk::DrawingArea
+class SplashImage :
+    public Gtk::DrawingArea
 {
 
 private:
@@ -59,5 +59,3 @@ public:
     //virtual bool on_button_release_event (GdkEventButton* event);
     void closePressed();
 };
-
-#endif

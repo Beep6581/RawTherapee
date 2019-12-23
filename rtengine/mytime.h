@@ -14,12 +14,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
 #ifdef WIN32
-#include <windows.h>
+#include <profileapi.h>
 #elif defined __APPLE__
 #include <sys/time.h>
 #else

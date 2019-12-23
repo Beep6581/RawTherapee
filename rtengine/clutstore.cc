@@ -1,7 +1,11 @@
 #include <algorithm>
 
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+
 #include "clutstore.h"
 
+#include "colortemp.h"
 #include "iccstore.h"
 #include "imagefloat.h"
 #include "opthelper.h"

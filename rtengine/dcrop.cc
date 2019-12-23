@@ -15,14 +15,21 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include "cieimage.h"
 #include "curves.h"
+#include "dcp.h"
 #include "dcrop.h"
+#include "image8.h"
+#include "imagefloat.h"
+#include "labimage.h"
 #include "mytime.h"
 #include "procparams.h"
 #include "refreshmap.h"
 #include "rt_math.h"
+
 #include "../rtgui/editcallbacks.h"
 
 namespace
@@ -39,8 +46,6 @@ constexpr T skips(T a, T b)
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 Crop::Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr),
@@ -190,18 +195,8 @@ void Crop::update(int todo)
 
         params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
 
-        int tilesize;
-        int overlap;
-
-        if (settings->leveldnti == 0) {
-            tilesize = 1024;
-            overlap = 128;
-        }
-
-        if (settings->leveldnti == 1) {
-            tilesize = 768;
-            overlap = 96;
-        }
+        const int tilesize = settings->leveldnti == 0 ? 1024 : 768;
+        const int overlap = settings->leveldnti == 0 ? 128 : 96;
 
         int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
 
@@ -824,7 +819,7 @@ void Crop::update(int todo)
             }
         }
         double rrm, ggm, bbm;
-        DCPProfile::ApplyState as;
+        DCPProfileApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;

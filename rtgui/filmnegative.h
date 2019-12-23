@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -26,7 +26,6 @@
 #include "editcallbacks.h"
 #include "guiutils.h"
 #include "toolpanel.h"
-#include "wbprovider.h"
 
 class FilmNegProvider
 {
@@ -36,7 +35,7 @@ public:
     virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) = 0;
 };
 
-class FilmNegative :
+class FilmNegative final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel,

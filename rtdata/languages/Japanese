@@ -8,30 +8,6 @@
 #08 2012-12-22 a3novy
 #09 2013-04-01 a3novy
 #10 2013-04-19 a3novy
-#11 2013-09-10 firefly
-#12 2013-10-28 firefly
-#13 2014-01-07 firefly
-#14 2014-01-15 firefly
-#15 2014-02-25 firefly
-#16 2014-04-07 firefly
-#17 2014-04-08 firefly
-#18 2014-05-16 firefly
-#19 2014-07-13 firefly
-#20 2014-07-24 firefly
-#21 2014-09-11 firefly
-#22 2014-10-21 firefly
-#23 2014-11-07 firefly
-#24 2014-11-18 firefly
-#25 2015-01-05 firefly
-#26 2015-02-17 firefly
-#27 2015-02-21 firefly
-#28 2015-03-03 firefly
-#29 2015-04-20 firefly
-#30 2015-05-01 firefly
-#31 2015-05-31 firefly
-#32 2015-06-13 firefly
-#33 2015-07-20 firefly
-#34 2015-08-12 firefly
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -49,7 +25,7 @@ CURVEEDITOR_CURVE;カーブ
 CURVEEDITOR_CURVES;カーブ
 CURVEEDITOR_CUSTOM;カスタム
 CURVEEDITOR_DARKS;ダーク
-CURVEEDITOR_EDITPOINT_HINT;ボタンを押すと数値で入出力を編集出来ます\n\n編集したいカーブ上のポイントを右クリックします\n編集を無効にする場合はポイント以外の部分んで右クリックします
+CURVEEDITOR_EDITPOINT_HINT;ボタンを押すと数値で入出力を編集出来ます\n\n編集したいカーブ上のポイントを右クリックします\n編集を無効にする場合はポイント以外の部分で右クリックします
 CURVEEDITOR_HIGHLIGHTS;ハイライト
 CURVEEDITOR_LIGHTS;ライト
 CURVEEDITOR_LINEAR;リニア
@@ -489,8 +465,8 @@ HISTORY_MSG_205;CAM02 ホット／バッドピクセル
 HISTORY_MSG_206;CAT02 - 自動で順応
 HISTORY_MSG_207;フリンジ低減　-　色相カーブ
 HISTORY_MSG_208;ブルー／レッド　イコライザ
-HISTORY_MSG_210;グラデーションフィルター - 角度
-HISTORY_MSG_211;グラデーションフィルター
+HISTORY_MSG_210;減光フィルター - 角度
+HISTORY_MSG_211;減光フィルター
 HISTORY_MSG_212;ビネットフィルター - 強さ
 HISTORY_MSG_213;ビネットフィルター
 HISTORY_MSG_214;白黒
@@ -517,10 +493,10 @@ HISTORY_MSG_234;白黒　‘後の‘カーブのタイプ
 HISTORY_MSG_235;白黒 チャンネルミキサー 自動
 HISTORY_MSG_236;--未使用--
 HISTORY_MSG_237;白黒 チャンネルミキサー
-HISTORY_MSG_238;グラデーションフィルター　フェザー処理
-HISTORY_MSG_239;グラデーションフィルター　強さ
-HISTORY_MSG_240;グラデーションフィルター　中央
-HISTORY_MSG_241;ビネットフィルター　フェザー処理
+HISTORY_MSG_238;減光フィルター　フェザー
+HISTORY_MSG_239;減光フィルター　強さ
+HISTORY_MSG_240;減光フィルター　中央
+HISTORY_MSG_241;ビネットフィルター　フェザー
 HISTORY_MSG_242;ビネットフィルター　形状
 HISTORY_MSG_243;半径
 HISTORY_MSG_244;ビネットフィルター　強さ
@@ -757,6 +733,7 @@ HISTORY_MSG_490;DRC - 量
 HISTORY_MSG_491;ホワイトバランス
 HISTORY_MSG_492;RGBカーブ
 HISTORY_MSG_493;L*a*b*調整
+HISTORY_MSG_494;キャプチャーシャープニング
 HISTORY_MSG_CLAMPOOG;色域外の色を切り取る
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - カラー補正
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - 色の補正
@@ -774,6 +751,7 @@ HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - マスクの表示
 HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - スロープ
 HISTORY_MSG_DEHAZE_DEPTH;霞除去 - 深度
 HISTORY_MSG_DEHAZE_ENABLED;霞除去
+HISTORY_MSG_DEHAZE_LUMINANCE;霞除去 - 輝度のみ
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;霞除去 - 深度マップの表示
 HISTORY_MSG_DEHAZE_STRENGTH;霞除去 - 強さ
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;デュアルデモザイク - 自動しきい値
@@ -794,6 +772,13 @@ HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;ローカルコントラスト - 明るい�
 HISTORY_MSG_LOCALCONTRAST_RADIUS;ローカルコントラスト - 半径
 HISTORY_MSG_METADATA_MODE;メタデータ コピーモード
 HISTORY_MSG_MICROCONTRAST_CONTRAST;マイクロコントラスト - コントラストのしきい値
+HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - しきい値の自動設定
+HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - シグマの自動設定
+HISTORY_MSG_PDSHARPEN_CHECKITER;CS - 繰り返しの自動制限
+HISTORY_MSG_PDSHARPEN_CONTRAST;CS - コントラストのしきい値
+HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - 繰り返し
+HISTORY_MSG_PDSHARPEN_RADIUS;CS - シグマ
+HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - 周辺のシグマを増やす
 HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - 振れに対するデモザイクの方式
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;ラインノイズフィルタの方向
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
@@ -933,7 +918,7 @@ MAIN_MSG_SETPATHFIRST;この関数を使用するには、最初に環境設定�
 MAIN_MSG_TOOMANYOPENEDITORS;編集画面が多すぎます\n操作を続けるには何れかの画面を閉じてください
 MAIN_MSG_WRITEFAILED;書き込みに失敗しました\n\n<b>"%1"</b>\n\nフォルダが在るか書き込み権限を持っているか確認してください
 MAIN_TAB_ADVANCED;高度な機能
-MAIN_TAB_ADVANCED_TOOLTIP;ショートカット: <b>Alt-w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;ショートカット: <b>Alt</b>-<b>a</b>
 MAIN_TAB_COLOR;カラー
 MAIN_TAB_COLOR_TOOLTIP;ショートカット: <b>Alt-c</b>
 MAIN_TAB_DETAIL;CbDL
@@ -1023,7 +1008,7 @@ PARTIALPASTE_FLATFIELDBLURRADIUS;フラットフィールド ぼかし半径
 PARTIALPASTE_FLATFIELDBLURTYPE;フラットフィールド ぼかしタイプ
 PARTIALPASTE_FLATFIELDCLIPCONTROL;フラットフィールド　クリップコントロール
 PARTIALPASTE_FLATFIELDFILE;フラットフィールド ファイル
-PARTIALPASTE_GRADIENT;グラデーションフィルター
+PARTIALPASTE_GRADIENT;減光フィルター
 PARTIALPASTE_HSVEQUALIZER;HSV イコライザ
 PARTIALPASTE_ICMSETTINGS;ICM 設定
 PARTIALPASTE_IMPULSEDENOISE;インパルス・ノイズ低減
@@ -1562,6 +1547,7 @@ TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
 TP_DEHAZE_DEPTH;深度
 TP_DEHAZE_LABEL;霞除去
+TP_DEHAZE_LUMINANCE;輝度のみ
 TP_DEHAZE_SHOW_DEPTH_MAP;深度マップの表示
 TP_DEHAZE_STRENGTH;強さ
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;自動（多分割方式）
@@ -1672,9 +1658,9 @@ TP_EXPOS_BLACKPOINT_LABEL;raw ブラック・ポイント
 TP_EXPOS_WHITEPOINT_LABEL;raw ホワイト・ポイント
 TP_FILMNEGATIVE_BLUE;ブルーの比率
 TP_FILMNEGATIVE_GREEN;参考指数(コントラスト)
-TP_FILMNEGATIVE_GUESS_TOOLTIP;画像の中でニュートラルな参考ポイントを2点選んで指数を計算します;白い(明るいグレー)1点と黒い(暗いグレー)1点を選びます。順番は関係ありません。2つ目のポイントが選択されると指数が更新されます。
+TP_FILMNEGATIVE_GUESS_TOOLTIP;原画像の中で色相がニュートラルな部分2か所をピックすることでレッドとブルーの比率を自動で設定します。明るさが異なる2か所をピックします。その後、ホワイトバランスを設定します。
 TP_FILMNEGATIVE_LABEL;ネガフィルム
-TP_FILMNEGATIVE_PICK;白と黒のポイントをピックアップする
+TP_FILMNEGATIVE_PICK;ニュートラルなポイントをピック
 TP_FILMNEGATIVE_RED;レッドの比率
 TP_FILMSIMULATION_LABEL;フィルムシミュレーション
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapeeはフィルムシミュレーション機能に使う画像をHald CLUTフォルダーの中から探すよう設計されています（プログラムに組み込むにはフォルダーが大き過ぎるため）。\n変更するには、環境設定 > 画像処理 > フィルムシミュレーションと進み\nどのフォルダーが使われているか確認します。機能を利用する場合は、Hald CLUTだけが入っているフォルダーを指定するか、 この機能を使わない場合はそのフォルダーを空にしておきます。\n\n詳しくはRawPediaを参照して下さい。\n\nフィルム画像のスキャンを止めますか？
@@ -1698,9 +1684,9 @@ TP_GRADIENT_CENTER_Y;中央　Y軸
 TP_GRADIENT_CENTER_Y_TOOLTIP;アンカーポイントの位置　y軸: -100=上端, 0=中央, +100=下端
 TP_GRADIENT_DEGREE;角度
 TP_GRADIENT_DEGREE_TOOLTIP;回転角度の度数
-TP_GRADIENT_FEATHER;フェザー処理
-TP_GRADIENT_FEATHER_TOOLTIP;対角線に対するグラデーションの幅の割合
-TP_GRADIENT_LABEL;グラデーションフィルター
+TP_GRADIENT_FEATHER;フェザー
+TP_GRADIENT_FEATHER_TOOLTIP;対角線に対する減光の幅の割合
+TP_GRADIENT_LABEL;減光フィルター
 TP_GRADIENT_STRENGTH;強さ
 TP_GRADIENT_STRENGTH_TOOLTIP;終点位置でのフィルターの強さ
 TP_HLREC_BLEND;ブレンド
@@ -1817,13 +1803,14 @@ TP_METADATA_STRIP;メタデータを全て取り除く
 TP_METADATA_TUNNEL;変更なしでコピー
 TP_NEUTRAL;リセット
 TP_NEUTRAL_TIP;露光量補正のスライダー値をニュートラルにリセットします。\n自動露光補正の調整値ついても同様にリセットされます
-TP_PCVIGNETTE_FEATHER;フェザー処理
-TP_PCVIGNETTE_FEATHER_TOOLTIP;フェザー処理：　0=四隅だけ、50=中央までの半分、100=中央まで
+TP_PCVIGNETTE_FEATHER;フェザー
+TP_PCVIGNETTE_FEATHER_TOOLTIP;フェザー：　0=四隅だけ、50=中央までの半分、100=中央まで
 TP_PCVIGNETTE_LABEL;ビネットフィルター
 TP_PCVIGNETTE_ROUNDNESS;フィルター形状
 TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;形状：　0=長方形、50=楕円形、100=円形
 TP_PCVIGNETTE_STRENGTH;強さ
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;終点位置でのフィルターの強さ（四隅）
+TP_PDSHARPENING_LABEL;キャプチャーシャープニング
 TP_PERSPECTIVE_HORIZONTAL;水平
 TP_PERSPECTIVE_LABEL;パースペクティブ
 TP_PERSPECTIVE_VERTICAL;垂直
@@ -2054,10 +2041,12 @@ TP_SHARPENING_EDRADIUS;半径
 TP_SHARPENING_EDTOLERANCE;エッジ許容
 TP_SHARPENING_HALOCONTROL;ハロ抑制
 TP_SHARPENING_HCAMOUNT;適用量
+TP_SHARPENING_ITERCHECK;繰り返しの自動制限
 TP_SHARPENING_LABEL;シャープニング
 TP_SHARPENING_METHOD;方式
 TP_SHARPENING_ONLYEDGES;エッジのみシャープニング
 TP_SHARPENING_RADIUS;半径
+TP_SHARPENING_RADIUS_BOOST;周辺のシグマを増やす
 TP_SHARPENING_RLD;RL デコンボリューション
 TP_SHARPENING_RLD_AMOUNT;適用量
 TP_SHARPENING_RLD_DAMPING;減衰
@@ -2311,6 +2300,7 @@ TP_WBALANCE_TUNGSTEN;タングステン
 TP_WBALANCE_WATER1;水中 1
 TP_WBALANCE_WATER2;水中 2
 TP_WBALANCE_WATER_HEADER;水中
+The last update by firefly 2019-12-21
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;新規ディテール ウィンドウを開く
 ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>z</b>
@@ -2319,3 +2309,8 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!GENERAL_HELP;Help

@@ -26,12 +26,13 @@
 /*RT*/#include <omp.h>
 /*RT*/#endif
 
+#include <memory>
 #include <utility>
 #include <vector>
 #include "opthelper.h"
 //#define BENCHMARK
 #include "StopWatch.h"
-
+#include "utils.h"
 #include <zlib.h>
 #include <stdint.h>
 
@@ -2417,59 +2418,63 @@ void CLASS hasselblad_correct()
 
 void CLASS hasselblad_load_raw()
 {
-  struct jhead jh;
-  int shot, row, col, *back[5], len[2], diff[12], pred, sh, f, s, c;
-  unsigned upix, urow, ucol;
-  ushort *ip;
+    struct jhead jh;
+    int diff[12];
 
-  if (!ljpeg_start (&jh, 0)) return;
-  order = 0x4949;
-  ph1_bithuff_t ph1_bithuff(this, ifp, order);
-  hb_bits(-1);
-  back[4] = (int *) calloc (raw_width, 3*sizeof **back);
-  merror (back[4], "hasselblad_load_raw()");
-  FORC3 back[c] = back[4] + c*raw_width;
-  cblack[6] >>= sh = tiff_samples > 1;
-  shot = LIM(shot_select, 1, tiff_samples) - 1;
-  for (row=0; row < raw_height; row++) {
-    FORC4 back[(c+3) & 3] = back[c];
-    for (col=0; col < raw_width; col+=2) {
-      for (s=0; s < tiff_samples*2; s+=2) {
-	FORC(2) len[c] = ph1_huff(jh.huff[0]);
-	FORC(2) {
-	  diff[s+c] = hb_bits(len[c]);
-	  if ((diff[s+c] & (1 << (len[c]-1))) == 0)
-	    diff[s+c] -= (1 << len[c]) - 1;
-	  if (diff[s+c] == 65535) diff[s+c] = -32768;
-	}
-      }
-      for (s=col; s < col+2; s++) {
-	pred = 0x8000 + load_flags;
-	if (col) pred = back[2][s-2];
-	if (col && row > 1) switch (jh.psv) {
-	  case 11: pred += back[0][s]/2 - back[0][s-2]/2;  break;
-	}
-	f = (row & 1)*3 ^ ((col+s) & 1);
-	FORC (tiff_samples) {
-	  pred += diff[(s & 1)*tiff_samples+c];
-	  upix = pred >> sh & 0xffff;
-	  if (raw_image && c == shot)
-	    RAW(row,s) = upix;
-	  if (image) {
-	    urow = row-top_margin  + (c & 1);
-	    ucol = col-left_margin - ((c >> 1) & 1);
-	    ip = &image[urow*width+ucol][f];
-	    if (urow < height && ucol < width)
-	      *ip = c < 4 ? upix : (*ip + upix) >> 1;
-	  }
-	}
-	back[2][s] = pred;
-      }
+    if (!ljpeg_start (&jh, 0)) {
+        return;
     }
-  }
-  free (back[4]);
-  ljpeg_end (&jh);
-  if (image) mix_green = 1;
+    order = 0x4949;
+    ph1_bithuff_t ph1_bithuff(this, ifp, order);
+    hb_bits(-1);
+    const int shot = LIM(shot_select, 1, tiff_samples) - 1;
+    const int predictor_init = static_cast<int>(0x8000 + load_flags);
+    for (int row = 0; row < raw_height; ++row) {
+        int stashed_predictors[2] = {predictor_init, predictor_init};
+        for (int col = 0; col < raw_width; col += 2) {
+            for (int s = 0; s < tiff_samples * 2; s += 2) {
+                const int len[2]= {
+                    static_cast<int>(ph1_huff(jh.huff[0])),
+                    static_cast<int>(ph1_huff(jh.huff[0]))
+                };
+                for (int c = 0; c < 2; ++c) {
+                    diff[s + c] = hb_bits(len[c]);
+                    if ((diff[s + c] & (1 << (len[c] - 1))) == 0) {
+                        diff[s + c] -= (1 << len[c]) - 1;
+                    }
+                    if (diff[s + c] == 65535) {
+                        diff[s + c] = -32768;
+                    }
+                }
+            }
+            for (int s = col; s < col + 2; ++s) {
+                int pred = stashed_predictors[s & 1];
+                for (int c = 0; c < tiff_samples; ++c) {
+                    pred += diff[(s & 1) * tiff_samples + c];
+                    const unsigned upix = pred & 0xffff;
+                    if (raw_image && c == shot) {
+                        RAW(row, s) = upix;
+                    }
+                    if (image) {
+                        const int f = (row & 1) * 3 ^ ((col + s) & 1);
+                        const unsigned urow = row - top_margin  + (c & 1);
+                        const unsigned ucol = col - left_margin - ((c >> 1) & 1);
+                        ushort* const ip = &image[urow * width + ucol][f];
+                        if (urow < height && ucol < width) {
+                            *ip = c < 4 ? upix : (*ip + upix) >> 1;
+                        }
+                    }
+                    if (c == (tiff_samples-1)) {
+                      stashed_predictors[s & 1] = pred;
+                    }
+                }
+            }
+        }
+    }
+    ljpeg_end(&jh);
+    if (image) {
+        mix_green = 1;
+    }
 }
 
 void CLASS leaf_hdr_load_raw()
@@ -2683,93 +2688,6 @@ void CLASS canon_rmf_load_raw()
   maximum = curve[0x3ff];
 }
 
-unsigned CLASS pana_bits_t::operator() (int nbits, unsigned *bytes)
-{
-/*RT  static uchar buf[0x4000]; */
-/*RT  static int vbits;*/
-  int byte;
-
-  if (!nbits && !bytes) return vbits=0;
-  if (!vbits) {
-    fread (buf+load_flags, 1, 0x4000-load_flags, ifp);
-    fread (buf, 1, load_flags, ifp);
-  }
-  if (encoding == 5) {
-    for (byte = 0; byte < 16; byte++)
-    {
-      bytes[byte] = buf[vbits++];
-      vbits &= 0x3FFF;
-    }
-    return 0;
-  } else {
-    vbits = (vbits - nbits) & 0x1ffff;
-    byte = vbits >> 3 ^ 0x3ff0;
-    return (buf[byte] | buf[byte+1] << 8) >> (vbits & 7) & ~(-1 << nbits);
-  }
-}
-
-void CLASS panasonic_load_raw()
-{
-  pana_bits_t pana_bits(ifp,load_flags, RT_pana_info.encoding);
-  int row, col, i, j, sh=0, pred[2], nonz[2];
-  unsigned bytes[16] = {};
-  ushort *raw_block_data;
-
-  pana_bits(0, 0);
-  int enc_blck_size = RT_pana_info.bpp == 12 ? 10 : 9;
-  if (RT_pana_info.encoding == 5) {
-    for (row = 0; row < raw_height; row++)
-    {
-      raw_block_data = raw_image + row * raw_width;
-
-      for (col = 0; col < raw_width; col += enc_blck_size) {
-        pana_bits(0, bytes);
-
-        if (RT_pana_info.bpp == 12) {
-          raw_block_data[col] = ((bytes[1] & 0xF) << 8) + bytes[0];
-          raw_block_data[col + 1] = 16 * bytes[2] + (bytes[1] >> 4);
-          raw_block_data[col + 2] = ((bytes[4] & 0xF) << 8) + bytes[3];
-          raw_block_data[col + 3] = 16 * bytes[5] + (bytes[4] >> 4);
-          raw_block_data[col + 4] = ((bytes[7] & 0xF) << 8) + bytes[6];
-          raw_block_data[col + 5] = 16 * bytes[8] + (bytes[7] >> 4);
-          raw_block_data[col + 6] = ((bytes[10] & 0xF) << 8) + bytes[9];
-          raw_block_data[col + 7] = 16 * bytes[11] + (bytes[10] >> 4);
-          raw_block_data[col + 8] = ((bytes[13] & 0xF) << 8) + bytes[12];
-          raw_block_data[col + 9] = 16 * bytes[14] + (bytes[13] >> 4);
-        }
-        else if (RT_pana_info.bpp == 14) {
-          raw_block_data[col] = bytes[0] + ((bytes[1] & 0x3F) << 8);
-          raw_block_data[col + 1] = (bytes[1] >> 6) + 4 * (bytes[2]) +
-            ((bytes[3] & 0xF) << 10);
-          raw_block_data[col + 2] = (bytes[3] >> 4) + 16 * (bytes[4]) +
-            ((bytes[5] & 3) << 12);
-          raw_block_data[col + 3] = ((bytes[5] & 0xFC) >> 2) + (bytes[6] << 6);
-          raw_block_data[col + 4] = bytes[7] + ((bytes[8] & 0x3F) << 8);
-          raw_block_data[col + 5] = (bytes[8] >> 6) + 4 * bytes[9] + ((bytes[10] & 0xF) << 10);
-          raw_block_data[col + 6] = (bytes[10] >> 4) + 16 * bytes[11] + ((bytes[12] & 3) << 12);
-          raw_block_data[col + 7] = ((bytes[12] & 0xFC) >> 2) + (bytes[13] << 6);
-          raw_block_data[col + 8] = bytes[14] + ((bytes[15] & 0x3F) << 8);
-        }
-      }
-    }
-  } else {
-    for (row=0; row < height; row++)
-      for (col=0; col < raw_width; col++) {
-        if ((i = col % 14) == 0)
-          pred[0] = pred[1] = nonz[0] = nonz[1] = 0;
-        if (i % 3 == 2) sh = 4 >> (3 - pana_bits(2));
-        if (nonz[i & 1]) {
-          if ((j = pana_bits(8))) {
-            if ((pred[i & 1] -= 0x80 << sh) < 0 || sh == 4)
-              pred[i & 1] &= ~(-1 << sh);
-            pred[i & 1] += j << sh;
-          }
-        } else if ((nonz[i & 1] = pana_bits(8)) || i > 11)
-          pred[i & 1] = nonz[i & 1] << 4 | pana_bits(4);
-        if ((RAW(row,col) = pred[col & 1]) > 4098 && col < width) derror();
-      }
-  }
-}
 
 void CLASS olympus_load_raw()
 {
@@ -4216,8 +4134,8 @@ void CLASS foveon_interpolate()
 	  foveon_avg (image[row*width]+c, dscr[1], cfilt) * 3
 	  - ddft[0][c][0] ) / 4 - ddft[0][c][1];
   }
-  memcpy (black, black+8, sizeof *black*8);
-  memcpy (black+height-11, black+height-22, 11*sizeof *black);
+  memmove (black, black+8, sizeof *black*8);
+  memmove (black+height-11, black+height-22, 11*sizeof *black);
   memcpy (last, black, sizeof last);
 
   for (row=1; row < height-1; row++) {
@@ -4515,6 +4433,10 @@ void CLASS foveon_interpolate()
 
 void CLASS crop_masked_pixels()
 {
+  if (data_error) {
+    return;
+  }
+
   int row, col;
   unsigned r, c, m, mblack[8], zero, val;
 
@@ -5677,13 +5599,26 @@ nf: order = 0x4949;
   else if (!strcmp (buf,"AOC") ||
 	   !strcmp (buf,"QVC"))
     fseek (ifp, -4, SEEK_CUR);
+  // ALB -- taken from LibRaw ------------------------------------------------
+  else if (!strncmp(buf, "CMT3", 4))
+  {
+    order = sget2((uchar *)(buf + 4));
+    fseek(ifp, 2L, SEEK_CUR);
+  }
+  else if (RT_canon_CR3_data.CR3_CTMDtag)
+  {
+    order = sget2((uchar *)buf);
+    fseek(ifp, -2L, SEEK_CUR);
+  }
+  // -------------------------------------------------------------------------
+
   else {
     fseek (ifp, -10, SEEK_CUR);
     if (!strncmp(make,"SAMSUNG",7))
       base = ftell(ifp);
   }
   entries = get2();
-  if (entries > 1000) return;
+  if (entries > 2000) return;
   morder = order;
   while (entries--) {
     order = morder;
@@ -5888,16 +5823,335 @@ get2_256:
       parse_thumb_note (base, 136, 137);
     }
     if (tag == 0x4001 && len > 500) {
-      i = len == 582 ? 50 : len == 653 ? 68 : len == 5120 ? 142 : 126;
-      fseek (ifp, i, SEEK_CUR);
-      FORC4 cam_mul[c ^ (c >> 1)] = get2();
-      for (i+=18; i <= len; i+=10) {
-	get2();
-	FORC4 sraw_mul[c ^ (c >> 1)] = get2();
-	if (sraw_mul[1] == 1170) break;
+      // i = len == 582 ? 50 : len == 653 ? 68 : len == 5120 ? 142 : 126;
+      // fseek (ifp, i, SEEK_CUR);
+      // FORC4 cam_mul[c ^ (c >> 1)] = get2();
+      // for (i+=18; i <= len; i+=10) {
+      //   get2();
+      //   FORC4 sraw_mul[c ^ (c >> 1)] = get2();
+      //   if (sraw_mul[1] == 1170) break;
+      // }
+        // -- ALB -- adapted from LibRaw --------------------------------------
+    int bls = 0;
+    long int offsetChannelBlackLevel = 0L;
+    long int offsetChannelBlackLevel2 = 0L;
+    long int offsetWhiteLevels = 0L;
+    struct {
+        int AverageBlackLevel;
+        int ColorDataSubVer;
+        int NormalWhiteLevel;
+        int SpecularWhiteLevel;
+    } imCanon = { 0, 0, 0, 0 };
+    long int save1 = ftell(ifp);
+
+    switch (len)
+    {
+
+    case 582:
+      // imCanon.ColorDataVer = 1; // 20D / 350D
+
+      fseek(ifp, save1 + (0x0019 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+      // fseek(ifp, save1 + (0x001e << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0041 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Custom1][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0046 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Custom2][c ^ (c >> 1)] = get2();
+
+      // fseek(ifp, save1 + (0x0023 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 2);
+      // fseek(ifp, save1 + (0x004b << 1), SEEK_SET);
+      // Canon_WBCTpresets(1); // ABCT
+      offsetChannelBlackLevel = save1 + (0x00a6 << 1);
+      break;
+
+    case 653:
+      // imCanon.ColorDataVer = 2; // 1Dmk2 / 1DsMK2
+
+      // fseek(ifp, save1 + (0x0018 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+      fseek(ifp, save1 + (0x0022 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+      // fseek(ifp, save1 + (0x0090 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Custom1][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0095 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Custom2][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x009a << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Custom3][c ^ (c >> 1)] = get2();
+
+      // fseek(ifp, save1 + (0x0027 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x00a4 << 1), SEEK_SET);
+      // Canon_WBCTpresets(1); // ABCT
+      offsetChannelBlackLevel = save1 + (0x011e << 1);
+      break;
+
+    case 796:
+      // imCanon.ColorDataVer = 3; // 1DmkIIN / 5D / 30D / 400D
+      // imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + (0x003f << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+      // fseek(ifp, save1 + (0x0044 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0049 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Measured][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0071 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Custom1][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0076 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Custom2][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x007b << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Custom3][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0080 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Custom][c ^ (c >> 1)] = get2();
+
+      // fseek(ifp, save1 + (0x004e << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x0085 << 1), SEEK_SET);
+      // Canon_WBCTpresets(0); // BCAT
+      offsetChannelBlackLevel = save1 + (0x00c4 << 1);
+      break;
+
+    // 1DmkIII / 1DSmkIII / 1DmkIV / 5DmkII
+    // 7D / 40D / 50D / 60D / 450D / 500D
+    // 550D / 1000D / 1100D
+    case 674:
+    case 692:
+    case 702:
+    case 1227:
+    case 1250:
+    case 1251:
+    case 1337:
+    case 1338:
+    case 1346:
+      // imCanon.ColorDataVer = 4;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + (0x003f << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+      // fseek(ifp, save1 + (0x0044 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0049 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Measured][c ^ (c >> 1)] = get2();
+
+      fseek(ifp, save1 + (0x004e << 1), SEEK_SET);
+      FORC4 sraw_mul[c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0053 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x00a8 << 1), SEEK_SET);
+      // Canon_WBCTpresets(0); // BCAT
+
+      if ((imCanon.ColorDataSubVer == 4) ||
+          (imCanon.ColorDataSubVer == 5))
+      {
+        offsetChannelBlackLevel = save1 + (0x02b4 << 1);
+        offsetWhiteLevels = save1 + (0x02b8 << 1);
       }
+      else if ((imCanon.ColorDataSubVer == 6) ||
+               (imCanon.ColorDataSubVer == 7))
+      {
+        offsetChannelBlackLevel = save1 + (0x02cb << 1);
+        offsetWhiteLevels = save1 + (0x02cf << 1);
+      }
+      else if (imCanon.ColorDataSubVer == 9)
+      {
+        offsetChannelBlackLevel = save1 + (0x02cf << 1);
+        offsetWhiteLevels = save1 + (0x02d3 << 1);
+      }
+      else
+        offsetChannelBlackLevel = save1 + (0x00e7 << 1);
+      break;
+
+    case 5120:  // PowerShot G10, G12, G5 X, G7 X, G9 X, EOS M3, EOS M5, EOS M6
+      // imCanon.ColorDataVer = 5;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + (0x0047 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      if (imCanon.ColorDataSubVer == 0xfffc)
+      { // -4: G7 X Mark II, G9 X Mark II, G1 X Mark III, M5, M100, M6
+        // fseek(ifp, save1 + (0x004f << 1), SEEK_SET);
+        // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+        // fseek(ifp, 8, SEEK_CUR);
+        // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Measured][c ^ (c >> 1)] =
+        //     get2();
+        // fseek(ifp, 8, SEEK_CUR);
+        // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Other][c ^ (c >> 1)] = get2();
+        // fseek(ifp, 8, SEEK_CUR);
+        // Canon_WBpresets(8, 24);
+        // fseek(ifp, 168, SEEK_CUR);
+        // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_FL_WW][c ^ (c >> 1)] = get2();
+        // fseek(ifp, 24, SEEK_CUR);
+        // Canon_WBCTpresets(2); // BCADT
+        offsetChannelBlackLevel = save1 + (0x014d << 1);
+        offsetWhiteLevels = save1 + (0x0569 << 1);
+      }
+      else if (imCanon.ColorDataSubVer == 0xfffd)
+      { // -3: M10/M3/G1 X/G1 X II/G10/G11/G12/G15/G16/G3 X/G5 X/G7 X/G9
+        // X/S100/S110/S120/S90/S95/SX1 IX/SX50 HS/SX60 HS
+        // fseek(ifp, save1 + (0x004c << 1), SEEK_SET);
+        // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+        // get2();
+        // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Measured][c ^ (c >> 1)] =
+        //     get2();
+        // get2();
+        // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Other][c ^ (c >> 1)] = get2();
+        // get2();
+        // Canon_WBpresets(2, 12);
+        // fseek(ifp, save1 + (0x00ba << 1), SEEK_SET);
+        // Canon_WBCTpresets(2); // BCADT
+        offsetChannelBlackLevel = save1 + (0x0108 << 1);
+      }
+      break;
+
+    case 1273:
+    case 1275:
+      // imCanon.ColorDataVer = 6; // 600D / 1200D
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + (0x003f << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+      // fseek(ifp, save1 + (0x0044 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0049 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Measured][c ^ (c >> 1)] = get2();
+
+      fseek(ifp, save1 + (0x0062 << 1), SEEK_SET);
+      FORC4 sraw_mul[c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0067 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x00bc << 1), SEEK_SET);
+      // Canon_WBCTpresets(0); // BCAT
+      offsetChannelBlackLevel = save1 + (0x01df << 1);
+      offsetWhiteLevels = save1 + (0x01e3 << 1);
+      break;
+
+    // 1DX / 5DmkIII / 6D / 100D / 650D / 700D / EOS M / 7DmkII / 750D / 760D
+    case 1312:
+    case 1313:
+    case 1316:
+    case 1506:
+      // imCanon.ColorDataVer = 7;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + (0x003f << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+      // fseek(ifp, save1 + (0x0044 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0049 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Measured][c ^ (c >> 1)] = get2();
+
+      fseek(ifp, save1 + (0x007b << 1), SEEK_SET);
+      FORC4 sraw_mul[c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0080 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x00d5 << 1), SEEK_SET);
+      // Canon_WBCTpresets(0); // BCAT
+
+      if (imCanon.ColorDataSubVer == 10)
+      {
+        offsetChannelBlackLevel = save1 + (0x01f8 << 1);
+        offsetWhiteLevels = save1 + (0x01fc << 1);
+      }
+      else if (imCanon.ColorDataSubVer == 11)
+      {
+        offsetChannelBlackLevel = save1 + (0x02d8 << 1);
+        offsetWhiteLevels = save1 + (0x02dc << 1);
+      }
+      break;
+
+    // 5DS / 5DS R / 80D / 1300D / 1500D / 3000D / 5D4 / 800D / 77D / 6D II /
+    // 200D
+    case 1560:
+    case 1592:
+    case 1353:
+    case 1602:
+      // imCanon.ColorDataVer = 8;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + (0x003f << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+      // fseek(ifp, save1 + (0x0044 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0049 << 1), SEEK_SET);
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Measured][c ^ (c >> 1)] = get2();
+
+      fseek(ifp, save1 + (0x0080 << 1), SEEK_SET);
+      FORC4 sraw_mul[c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0085 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x0107 << 1), SEEK_SET);
+      // Canon_WBCTpresets(0); // BCAT
+
+      if (imCanon.ColorDataSubVer == 14)
+      { // 1300D / 1500D / 3000D
+        offsetChannelBlackLevel = save1 + (0x022c << 1);
+        offsetWhiteLevels = save1 + (0x0230 << 1);
+      }
+      else
+      {
+        offsetChannelBlackLevel = save1 + (0x030a << 1);
+        offsetWhiteLevels = save1 + (0x030e << 1);
+      }
+      break;
+
+    case 1820: // M50, ColorDataSubVer 16
+    case 1824: // EOS R, SX740HS, ColorDataSubVer 17
+    case 1816: // EOS RP, SX70HS, ColorDataSubVer 18;
+               // EOS M6 Mark II, EOS 90D, G7XmkIII, ColorDataSubVer 19
+      // imCanon.ColorDataVer = 9;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + (0x0047 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+      // get2();
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Auto][c ^ (c >> 1)] = get2();
+      // get2();
+      // FORC4 imgdata.color.WB_Coeffs[LIBRAW_WBI_Measured][c ^ (c >> 1)] = get2();
+      // fseek(ifp, save1 + (0x0088 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x010a << 1), SEEK_SET);
+      // Canon_WBCTpresets(0);
+      offsetChannelBlackLevel = save1 + (0x0318 << 1);
+      offsetChannelBlackLevel2 = save1 + (0x0149 << 1);
+      offsetWhiteLevels = save1 + (0x031c << 1);
+      break;
     }
-    if (tag == 0x4021 && get4() && get4())
+
+    if (offsetChannelBlackLevel)
+    {
+      fseek(ifp, offsetChannelBlackLevel, SEEK_SET);
+      FORC4
+          bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+      imCanon.AverageBlackLevel = bls / 4;
+      // RT_blacklevel_from_constant = ThreeValBool::F;
+    }
+    if (offsetWhiteLevels)
+    {
+      if ((offsetWhiteLevels - offsetChannelBlackLevel) != 8L)
+        fseek(ifp, offsetWhiteLevels, SEEK_SET);
+      imCanon.NormalWhiteLevel = get2();
+      imCanon.SpecularWhiteLevel = get2();
+      // FORC4
+      //   imgdata.color.linear_max[c] = imCanon.SpecularWhiteLevel;
+      maximum = imCanon.SpecularWhiteLevel;
+      // RT_whitelevel_from_constant = ThreeValBool::F;
+    }
+
+    if(!imCanon.AverageBlackLevel && offsetChannelBlackLevel2)
+    {
+        fseek(ifp, offsetChannelBlackLevel2, SEEK_SET);
+        FORC4
+            bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+        imCanon.AverageBlackLevel = bls / 4;
+        // RT_blacklevel_from_constant = ThreeValBool::F;
+    }
+    fseek(ifp, save1, SEEK_SET);
+
+    //---------------------------------------------------------------------
+    }    if (tag == 0x4021 && get4() && get4())
       FORC4 cam_mul[c] = 1024;
     if (tag == 0xa021)
       FORC4 cam_mul[c ^ (c >> 1)] = get4();
@@ -6765,7 +7019,8 @@ int CLASS parse_tiff (int base)
 
 void CLASS apply_tiff()
 {
-  int max_samp=0, ties=0, os, ns, raw=-1, thm=-1, i;
+  int max_samp=0, ties=0, /*os, ns,*/ raw=-1, thm=-1, i;
+  uint64_t os, ns; // RT
   struct jhead jh;
 
   thumb_misc = 16;
@@ -6795,6 +7050,7 @@ void CLASS apply_tiff()
     }
     if ((tiff_ifd[i].comp != 6 || tiff_ifd[i].samples != 3) &&
 	(tiff_ifd[i].width | tiff_ifd[i].height) < 0x10000 &&
+    (unsigned)tiff_ifd[i].bps < 33 && (unsigned)tiff_ifd[i].samples < 13 && // RT
 	 ns && ((ns > os && (ties = 1)) ||
 		(ns == os && shot_select == ties++))) {
       raw_width     = tiff_ifd[i].width;
@@ -6862,7 +7118,7 @@ void CLASS apply_tiff()
 		     load_raw = &CLASS olympus_load_raw;
                    // ------- RT -------
                    if (!strncmp(make,"SONY",4) &&
-                       !strncmp(model,"ILCE-7RM3",9) &&
+                       (!strncmp(model,"ILCE-7RM3",9) || !strncmp(model,"ILCE-7RM4",9)) &&
                        tiff_samples == 4 &&
                        tiff_ifd[raw].bytes == raw_width*raw_height*tiff_samples*2) {
                        load_raw = &CLASS sony_arq_load_raw;
@@ -9395,6 +9651,11 @@ void CLASS identify()
     parse_foveon();
   else if (!memcmp (head,"CI",2))
     parse_cine();
+  //---  RT  ----------------------------------------------------------------
+  else if (!memcmp(head + 4, "ftypcrx ", 8)) {
+    parse_canon_cr3();
+  }
+  //-------------------------------------------------------------------------
   if (make[0] == 0)
     for (zero_fsize=i=0; i < sizeof table / sizeof *table; i++)
       if (fsize == table[i].fsize) {
@@ -10753,8 +11014,6 @@ void CLASS nikon_14bit_load_raw()
     }
     free(buf);
 }
-
-//-----------------------------------------------------------------------------
 
 /* RT: Delete from here */
 /*RT*/#undef SQR

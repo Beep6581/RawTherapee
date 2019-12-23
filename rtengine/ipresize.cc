@@ -14,16 +14,18 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "improcfun.h"
 
 #include "alignedbuffer.h"
+#include "imagefloat.h"
+#include "labimage.h"
 #include "opthelper.h"
 #include "rt_math.h"
 #include "procparams.h"
-#include "sleef.c"
+#include "sleef.h"
 
 //#define PROFILE
 

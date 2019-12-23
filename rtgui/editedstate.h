@@ -14,12 +14,8 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _EDITEDSTATE_
-#define _EDITEDSTATE_
+#pragma once
 
 enum EditedState { UnEdited = 0, Edited = 1, Irrelevant = 2 };
-
-#endif
-

@@ -15,11 +15,13 @@
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
 
+#include "color.h"
 #include "rtengine.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rt_algo.h"
 #include "rt_math.h"
@@ -937,9 +939,9 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
                                 avg[3]++;
                             }
 
-                        red[row + top][col + left] = avg[0] / avg[3];
-                        green[row + top][col + left] = avg[1] / avg[3];
-                        blue[row + top][col + left] = avg[2] / avg[3];
+                        red[row + top][col + left] = std::max(0.f, avg[0] / avg[3]);
+                        green[row + top][col + left] = std::max(0.f, avg[1] / avg[3]);
+                        blue[row + top][col + left] = std::max(0.f, avg[2] / avg[3]);
                     }
 
                 if(plistenerActive && ((++progressCounter) % 32 == 0)) {
@@ -959,7 +961,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
         free(buffer);
     }
 
-    xtransborder_interpolate(8, red, green, blue);
+    xtransborder_interpolate(passes > 1 ? 8 : 11, red, green, blue);
 }
 #undef CLIP
 void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)

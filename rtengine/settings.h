@@ -14,11 +14,11 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _RTSETTINGS_
-#define _RTSETTINGS_
+#pragma once
 
+#include <glibmm/ustring.h>
 namespace rtengine
 {
 
@@ -96,7 +96,5 @@ public:
       * @param s a pointer to the Settings instance to destroy. */
     static void      destroy(Settings* s);
 };
+extern const Settings* settings;
 }
-
-#endif
-

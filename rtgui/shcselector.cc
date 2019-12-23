@@ -14,12 +14,15 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <iomanip>
 
 #include "shcselector.h"
 #include "multilangmgr.h"
 #include "mycurve.h"
+#include "rtscalable.h"
 
 SHCSelector::SHCSelector() : movingPosition(-1), tmpX(0.0), tmpPos(0.0), wslider(0.0), cl(nullptr), coloredBar(RTO_Left2Right)
 {

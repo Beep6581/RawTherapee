@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
@@ -24,7 +24,10 @@
 #include "diagonalcurveeditorsubgroup.h"
 #include "flatcurveeditorsubgroup.h"
 #include "multilangmgr.h"
+#include "popuptogglebutton.h"
 #include "rtimage.h"
+#include "options.h"
+#include "pathutils.h"
 
 CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), line(0), curve_reset(nullptr),
     displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)

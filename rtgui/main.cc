@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef __GNUC__
@@ -33,12 +33,17 @@
 #include <cstdlib>
 #include <locale.h>
 #include <lensfun.h>
+#include "cachemanager.h"
+#include "editorpanel.h"
+#include "filecatalog.h"
+#include "filepanel.h"
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/procparams.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -48,12 +53,11 @@
 #else
 #include <glibmm/thread.h>
 #include "conio.h"
+#include "windows.h"
 #endif
 
 // Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
 #define ECLIPSE_ARGS 0
-
-extern Options options;
 
 // stores path to data files
 Glib::ustring argv0;
@@ -220,7 +224,7 @@ bool init_rt()
     extProgStore->init();
     SoundManager::init();
 
-    if ( !options.rtSettings.verbose ) {
+    if (!rtengine::settings->verbose) {
         TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
     }
 
@@ -529,13 +533,13 @@ int main (int argc, char **argv)
     int ret = 0;
 
     if (options.pseudoHiDPISupport) {
-		// Reading/updating GDK_SCALE early if it exists
-		const gchar *gscale = g_getenv("GDK_SCALE");
-		if (gscale && gscale[0] == '2') {
-			initialGdkScale = 2;
-		}
-		// HOMBRE: On Windows, if resolution is set to 200%, Gtk internal variables are SCALE=2 and DPI=96
-		g_setenv("GDK_SCALE", "1", true);
+        // Reading/updating GDK_SCALE early if it exists
+        const gchar *gscale = g_getenv("GDK_SCALE");
+        if (gscale && gscale[0] == '2') {
+            initialGdkScale = 2;
+        }
+        // HOMBRE: On Windows, if resolution is set to 200%, Gtk internal variables are SCALE=2 and DPI=96
+        g_setenv("GDK_SCALE", "1", true);
     }
 
     gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));

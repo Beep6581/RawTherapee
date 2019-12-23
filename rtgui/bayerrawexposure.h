@@ -14,28 +14,23 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BAYERRAWEXPOSURE_H_
-#define _BAYERRAWEXPOSURE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "checkbox.h"
 #include "toolpanel.h"
 
-class BayerRAWExposure : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel
+class BayerRAWExposure final :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public CheckBoxListener,
+    public FoldableToolPanel
 {
-
-protected:
-    Adjuster* PexBlack0;
-    Adjuster* PexBlack1;
-    Adjuster* PexBlack2;
-    Adjuster* PexBlack3;
-    CheckBox* PextwoGreen;
-
 public:
-
     BayerRAWExposure ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
@@ -46,6 +41,11 @@ public:
     void checkBoxToggled     (CheckBox* c, CheckValue newval) override;
     void setAdjusterBehavior (bool pexblackadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
-};
 
-#endif
+protected:
+    Adjuster* PexBlack0;
+    Adjuster* PexBlack1;
+    Adjuster* PexBlack2;
+    Adjuster* PexBlack3;
+    CheckBox* PextwoGreen;
+};

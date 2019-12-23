@@ -14,9 +14,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 #include "cropwindow.h"
 
@@ -30,9 +33,10 @@
 #include "editcallbacks.h"
 #include "editbuffer.h"
 #include "editwidgets.h"
+#include "pointermotionlistener.h"
+#include "rtsurface.h"
 
 #include "../rtengine/dcrop.h"
-#include "../rtengine/mytime.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/rt_math.h"
 
@@ -51,7 +55,7 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
       backColor(options.bgcolor), decorated(true), isFlawnOver(false), titleHeight(30), sideBorderWidth(3), lowerBorderWidth(3),
       upperBorderWidth(1), sepWidth(2), xpos(30), ypos(30), width(0), height(0), imgAreaX(0), imgAreaY(0), imgAreaW(0), imgAreaH(0),
       imgX(-1), imgY(-1), imgW(1), imgH(1), iarea(parent), cropZoom(0), zoomVersion(0), exposeVersion(0), cropgl(nullptr),
-      pmlistener(nullptr), pmhlistener(nullptr), observedCropWin(nullptr),
+      pmlistener(nullptr), pmhlistener(nullptr), scrollAccum(0.0), observedCropWin(nullptr),
       crop_custom_ratio(0.f)
 {
     initZoomSteps();
@@ -256,7 +260,7 @@ void CropWindow::getCropAnchorPosition (int& x, int& y)
     cropHandler.getAnchorPosition(x, y);
 }
 
-void CropWindow::setCropAnchorPosition (int& x, int& y)
+void CropWindow::setCropAnchorPosition (int x, int y)
 {
     cropHandler.setAnchorPosition(x, y);
 }
@@ -295,11 +299,16 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, 
     } else {
         delta = deltaY;
     }
-    if (delta == 0.0 && direction == GDK_SCROLL_SMOOTH) {
-        // sometimes this case happens. To avoid zooming into the wrong direction in this case, we just do nothing
-        return;
+
+    if (direction == GDK_SCROLL_SMOOTH) {
+        scrollAccum += delta;
+        //Only change zoom level if we've accumulated +/- 1.0 of deltas.  This conditional handles the previous delta=0.0 case
+        if (abs(scrollAccum) < 1.0) {
+            return;
+        }
     }
-    bool isUp = direction == GDK_SCROLL_UP || (direction == GDK_SCROLL_SMOOTH && delta < 0.0);
+    bool isUp = direction == GDK_SCROLL_UP || (direction == GDK_SCROLL_SMOOTH && scrollAccum < 0.0);
+    scrollAccum = 0.0;
     if ((state & GDK_CONTROL_MASK) && onArea(ColorPicker, x, y)) {
         // resizing a color picker
         if (isUp) {
@@ -1483,9 +1492,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                     const float kernel_size2 = SQR(2.f * blur_radius2 + 1.f); // count of pixels in the small blur kernel
                     const float rkernel_size2 = 1.0f / kernel_size2;        // reciprocal of kernel_size to avoid divisions
 
-                    // aloocate buffer for precalculated Luminance
+                    // allocate buffer for precalculated Luminance
                     float* tmpL = (float*)malloc(bHeight * bWidth * sizeof(float) );
-                    // aloocate buffers for sums and sums of squares of small kernel
+                    // allocate buffers for sums and sums of squares of small kernel
                     float* tmpLsum = (float*)malloc((bHeight) * (bWidth) * sizeof(float) );
                     float* tmpLsumSq = (float*)malloc((bHeight) * (bWidth) * sizeof(float) );
                     float* tmpstdDev2 = (float*)malloc((bHeight) * (bWidth) * sizeof(float) );
@@ -1622,7 +1631,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                                     && stdDev_L2 > stdDev_L //this is the key to select fine detail within lower contrast on larger scale
                                     && stdDev_L > focus_threshby10 //options.highlightThreshold
                                ) {
-                                // transpareny depends on sdtDev_L2 and maxstdDev_L2
+                                // transparency depends on sdtDev_L2 and maxstdDev_L2
                                 float transparency = 1.f - std::min(stdDev_L2 / maxstdDev_L2, 1.0f) ;
                                 // first row of circle
                                 guint8* currtmp = &curr[0] + (-3 * pixRowStride);

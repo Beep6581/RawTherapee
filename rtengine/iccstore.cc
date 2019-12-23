@@ -14,11 +14,13 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cstring>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
 #include <glib/gstdio.h>
 
 #ifdef WIN32
@@ -32,6 +34,7 @@
 #include "iccstore.h"
 
 #include "iccmatrices.h"
+#include "utils.h"
 
 #include "../rtgui/options.h"
 #include "../rtgui/threadutils.h"
@@ -41,12 +44,6 @@
 
 #include "cJSON.h"
 #define inkc_constant 0x696E6B43
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
 
 namespace
 {

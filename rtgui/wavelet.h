@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  2014 Jacques Desmis <jdesmis@gmail.com>
  */
@@ -22,16 +22,18 @@
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
+#include "curvelistener.h"
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
 #include "guiutils.h"
-#include "options.h"
 
+class CurveEditor;
+class CurveEditorGroup;
+class DiagonalCurveEditor;
 class EditDataProvider;
+class FlatCurveEditor;
 
-class Wavelet :
+class Wavelet final :
     public ToolParamBlock,
     public ThresholdAdjusterListener,
     public AdjusterListener,

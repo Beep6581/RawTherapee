@@ -15,18 +15,24 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "improcfun.h"
 
+#include "array2D.h"
+#include "color.h"
+#include "curves.h"
 #include "gauss.h"
 #include "guidedfilter.h"
+#include "iccstore.h"
+#include "labimage.h"
 #include "opthelper.h"
 #include "procparams.h"
-#include "sleef.c"
+#include "sleef.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 void ImProcFunctions::shadowsHighlights(LabImage *lab)
 {

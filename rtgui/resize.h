@@ -14,16 +14,16 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _RESIZE_H_
-#define _RESIZE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "guiutils.h"
-#include "toolpanel.h"
 #include "guiutils.h"
+#include "toolpanel.h"
 
 class Resize final :
     public ToolParamBlock,
@@ -86,5 +86,3 @@ private:
 
     static constexpr int MAX_SCALE = 16; // 16 to match the main preview max scale of 1600%
 };
-
-#endif

@@ -14,20 +14,19 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
 
 #include <array>
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "rt_math.h"
 #include "LUT.h"
-#include "labimage.h"
 #include "iccmatrices.h"
 #include "lcms2.h"
-#include "sleef.c"
+#include "sleef.h"
 
 #define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
 
@@ -209,6 +208,13 @@ public:
     {
         return r * workingspace[1][0] + g * workingspace[1][1] + b * workingspace[1][2];
     }
+
+#ifdef __SSE2__
+    static vfloat rgbLuminance(vfloat r, vfloat g, vfloat b, const vfloat workingspace[3])
+    {
+        return r * workingspace[0] + g * workingspace[1] + b * workingspace[2];
+    }
+#endif
 
     /**
     * @brief Convert red/green/blue to L*a*b
@@ -1063,12 +1069,11 @@ public:
     */
     static inline double gamma2     (double x)      //  g3                  1+g4
     {
-      //  return x <= 0.003041 ? x * 12.92310 : 1.055 * exp(log(x) / 2.39990) - 0.055;//calculate with calcgamma
+        //  return x <= 0.003041 ? x * 12.92310 : 1.055 * exp(log(x) / 2.39990) - 0.055;//calculate with calcgamma
         //return x <= 0.0031308 ? x * 12.92310 : 1.055 * exp(log(x) / sRGBGammaCurve) - 0.055;//standard discontinuous
-		//very small differences between the 2
+        //very small differences between the 2
         return x <= 0.003040 ? x * 12.92310 : 1.055 * exp(log(x) / sRGBGammaCurve) - 0.055;//continuous
-      //  return x <= 0.003041 ? x * 12.92310 : 1.055011 * exp(log(x) / sRGBGammaCurve) - 0.055011;//continuous
-
+        //  return x <= 0.003041 ? x * 12.92310 : 1.055011 * exp(log(x) / sRGBGammaCurve) - 0.055011;//continuous
     }
 
 
@@ -1080,12 +1085,11 @@ public:
     */
     static inline double igamma2    (double x)      //g2
     {
-       // return x <= 0.039289 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * 2.39990);//calculate with calcgamma
-       // return x <= 0.04045 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);//standard discontinuous
-		//very small differences between the 4
+        // return x <= 0.039289 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * 2.39990);//calculate with calcgamma
+        // return x <= 0.04045 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);//standard discontinuous
+        //very small differences between the 4
         return x <= 0.039286 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);//continuous
-      //  return x <= 0.039293 ? x / 12.92310 : exp(log((x + 0.055011) / 1.055011) * sRGBGammaCurve);//continuous
-
+        //  return x <= 0.039293 ? x / 12.92310 : exp(log((x + 0.055011) / 1.055011) * sRGBGammaCurve);//continuous
     }
 
 
@@ -1368,7 +1372,7 @@ public:
     * @param HH hue before [-PI ; +PI]
     * @param Chprov1 chroma after [0 ; 180 (can be superior)]
     * @param CC chroma before [0 ; 180]
-    * @param corectionHuechroma hue correction depending on chromaticity (saturation), in radians [0 ; 0.45] (return value)
+    * @param correctionHueChroma hue correction depending on chromaticity (saturation), in radians [0 ; 0.45] (return value)
     * @param correctlum hue correction depending on luminance (brightness, contrast,...), in radians [0 ; 0.45] (return value)
     * @param munsDbgInfo (Debug target only) object to collect information
     */
@@ -1802,6 +1806,29 @@ public:
         }
 
         return (hr);
+    }
+
+    static inline void RGB2Y(const float* R, const float* G, const float* B, float* Y1, float * Y2, int W) {
+        int i = 0;
+#ifdef __SSE2__
+        const vfloat c1v = F2V(0.2627f);
+        const vfloat c2v = F2V(0.6780f);
+        const vfloat c3v = F2V(0.0593f);
+        for (; i < W - 3; i += 4) {
+            const vfloat Rv = vmaxf(LVFU(R[i]), ZEROV);
+            const vfloat Gv = vmaxf(LVFU(G[i]), ZEROV);
+            const vfloat Bv = vmaxf(LVFU(B[i]), ZEROV);
+            vfloat yv = c1v * Rv + c2v * Gv + c3v * Bv;
+            STVFU(Y1[i], yv);
+            STVFU(Y2[i], yv);
+        }
+#endif
+        for (; i < W; ++i) {
+            const float r = std::max(R[i], 0.f);
+            const float g = std::max(G[i], 0.f);
+            const float b = std::max(B[i], 0.f);
+            Y1[i] = Y2[i] = 0.2627f * r + 0.6780f * g + 0.0593f * b;
+        }
     }
 
 };

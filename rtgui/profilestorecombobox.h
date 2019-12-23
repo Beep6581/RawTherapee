@@ -14,23 +14,19 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PROFILESTORECOMBOBOX_
-#define _PROFILESTORECOMBOBOX_
+#pragma once
 
 #include <map>
 #include <vector>
-#include <glibmm.h>
 
-#include "../rtengine/rtengine.h"
-#include "../rtengine/profilestore.h"
+#include <glibmm/ustring.h>
 
-#include "threadutils.h"
-#include "paramsedited.h"
 #include "guiutils.h"
+#include "threadutils.h"
 
-
+class ProfileStoreEntry;
 /**
  * @brief subclass of Gtk::Label with extra fields for Combobox and Menu, to link with a ProfileStoreEntry
  */
@@ -92,5 +88,3 @@ public:
     Gtk::TreeIter addRow (const ProfileStoreEntry *profileStoreEntry);
     void deleteRow (const ProfileStoreEntry *profileStoreEntry);
 };
-
-#endif

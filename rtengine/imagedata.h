@@ -14,19 +14,26 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __IMAGEDATA_H__
-#define __IMAGEDATA_H__
+#pragma once
 
 #include <cstdio>
 #include <memory>
-#include "rawimage.h"
 #include <string>
-#include <glibmm.h>
-#include "../rtexif/rtexif.h"
+#include <vector>
+
+#include <glibmm/ustring.h>
+
 #include <libiptcdata/iptc-data.h>
-#include "rtengine.h"
+
+#include "imageio.h"
+
+namespace rtexif
+{
+
+class TagDirectory;
+}
 
 namespace rtengine
 {
@@ -133,4 +140,3 @@ public:
 
 
 }
-#endif

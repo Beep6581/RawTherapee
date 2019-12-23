@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "coloredbar.h"
@@ -142,7 +142,7 @@ void ColoredBar::updateBackBuffer(Gtk::DrawingArea &drawingArea)
                 case (RTO_Left2Right):
                     for (int py = 0; py < h; ++py) {
                         for (int px = 0; px < w; ++px) {
-                        	unsigned char *pixel = surfaceData + (py * w + px) * 4;
+                            unsigned char *pixel = surfaceData + (py * w + px) * 4;
                             double x_ = double(      px);
                             //double y_ = double((h-1)-py);  unused
                             double x01 = x_        / double(w - 1);
@@ -158,7 +158,7 @@ void ColoredBar::updateBackBuffer(Gtk::DrawingArea &drawingArea)
                 case (RTO_Right2Left):
                     for (int py = 0; py < h; ++py) {
                         for (int px = 0; px < w; ++px) {
-                        	unsigned char *pixel = surfaceData + (py * w + px) * 4;
+                            unsigned char *pixel = surfaceData + (py * w + px) * 4;
                             //double x_ = double((w-1)-px);  unused
                             //double y_ = double((h-1)-py);  unused
                             double x01 = double(px) / double(w - 1);
@@ -174,7 +174,7 @@ void ColoredBar::updateBackBuffer(Gtk::DrawingArea &drawingArea)
                 case (RTO_Bottom2Top):
                     for (int py = 0; py < h; ++py) {
                         for (int px = 0; px < w; ++px) {
-                        	unsigned char *pixel = surfaceData + (py * w + px) * 4;
+                            unsigned char *pixel = surfaceData + (py * w + px) * 4;
                             //double x_ = double((w-1)-px);  unused
                             //double y_ = double((h-1)-py);  unused
                             double x01 = double(px) / double(w - 1);
@@ -191,7 +191,7 @@ void ColoredBar::updateBackBuffer(Gtk::DrawingArea &drawingArea)
                 default:
                     for (int py = 0; py < h; ++py) {
                         for (int px = 0; px < w; ++px) {
-                        	unsigned char *pixel = surfaceData + (py * w + px) * 4;
+                            unsigned char *pixel = surfaceData + (py * w + px) * 4;
                             double x_ = double(      px);
                             double y_ = double(      py);
                             double x01 = x_ / double(w - 1);

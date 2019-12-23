@@ -14,23 +14,26 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
-#ifndef _POPUPCOMMON_
-#define _POPUPCOMMON_
+#pragma once
 
 #include <vector>
+
 #include <glibmm/ustring.h>
+
 #include <sigc++/signal.h>
 
 namespace Gtk
 {
+
 class Grid;
 class Menu;
 class Button;
 class ImageMenuItem;
+
 }
 
 typedef struct _GdkEventButton GdkEventButton;
@@ -101,5 +104,3 @@ inline int PopUpCommon::getSelected () const
 {
     return posToIndex(selected);
 }
-
-#endif

@@ -14,18 +14,25 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <functional>
+
 #include <strings.h>
-#include <glib/gstdio.h>
+
 #include <tiff.h>
 
+#include <glib/gstdio.h>
+
+#include <glibmm/convert.h>
+
 #include "imagedata.h"
-#include "iptcpairs.h"
 #include "imagesource.h"
-#include "rt_math.h"
+#include "iptcpairs.h"
 #include "procparams.h"
+#include "rt_math.h"
+#include "utils.h"
+#include "../rtexif/rtexif.h"
 
 #pragma GCC diagnostic warning "-Wextra"
 #define PRINT_HDR_PS_DETECTION 0

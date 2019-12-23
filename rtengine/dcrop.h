@@ -14,15 +14,13 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
 #include "improccoordinator.h"
 #include "rtengine.h"
 #include "improcfun.h"
-#include "image8.h"
-#include "image16.h"
 #include "imagesource.h"
 #include "procevents.h"
 #include "pipettebuffer.h"
@@ -30,6 +28,8 @@
 
 namespace rtengine
 {
+
+class Image8;
 
 using namespace procparams;
 

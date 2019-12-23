@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "filecatalog.h"
 
@@ -25,17 +25,23 @@
 #include <glib/gstdio.h>
 
 #include "../rtengine/rt_math.h"
+#include "../rtengine/procparams.h"
 
 #include "guiutils.h"
 #include "options.h"
 #include "rtimage.h"
 #include "cachemanager.h"
 #include "multilangmgr.h"
+#include "coarsepanel.h"
 #include "filepanel.h"
 #include "renamedlg.h"
 #include "thumbimageupdater.h"
 #include "batchqueue.h"
+#include "batchqueueentry.h"
 #include "placesbrowser.h"
+#include "pathutils.h"
+#include "thumbnail.h"
+#include "toolbar.h"
 
 using namespace std;
 
@@ -602,7 +608,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList()
 
                 names.push_back(Glib::build_filename(selectedDirectory, fname));
             } catch (Glib::Exception& exception) {
-                if (options.rtSettings.verbose) {
+                if (rtengine::settings->verbose) {
                     std::cerr << exception.what() << std::endl;
                 }
             }
@@ -610,7 +616,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList()
 
     } catch (Glib::Exception& exception) {
 
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             std::cerr << "Failed to list directory \"" << selectedDirectory << "\": " << exception.what() << std::endl;
         }
 
@@ -1218,9 +1224,8 @@ void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bo
 
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params, fastmode && options.fastexport_use_fast_pipeline);
 
-            int pw;
-            int ph = BatchQueue::calcMaxThumbnailHeight();
-            th->getThumbnailSize (pw, ph);
+            const int ph = BatchQueue::calcMaxThumbnailHeight();
+            const int pw = th->getThumbnailWidth(ph);
 
             // processThumbImage is the processing intensive part, but adding to queue must be ordered
             //#pragma omp ordered

@@ -14,35 +14,55 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMPROCFUN_H_
-#define _IMPROCFUN_H_
+#pragma once
 
-#include "imagefloat.h"
-#include "image16.h"
-#include "image8.h"
-#include "shmap.h"
+#include <memory>
+
 #include "coord2d.h"
-#include "color.h"
-#include "labimage.h"
-#include "cieimage.h"
-#include "LUT.h"
-#include "lcp.h"
-#include "dcp.h"
-#include "curves.h"
-#include "cplx_wavelet_dec.h"
-#include "pipettebuffer.h"
 #include "gamutwarning.h"
+#include "pipettebuffer.h"
 
+template<typename T>
+class LUT;
+
+using LUTu = LUT<uint32_t>;
+using LUTf = LUT<float>;
+
+template<typename T, const size_t num>
+class multi_array2D;
 namespace rtengine
 {
+
+class ColorAppearance;
+class ColorGradientCurve;
+class DCPProfile;
+class DCPProfileApplyState;
+class FlatCurve;
+class FramesMetaData;
+class LensCorrection;
+class NoiseCurve;
+class OpacityCurve;
+class ToneCurve;
+class WavCurve;
+class WavOpacityCurveBY;
+class WavOpacityCurveRG;
+class WavOpacityCurveW;
+class WavOpacityCurveWL;
+
+class CieImage;
+class Image8;
+class Imagefloat;
+class LabImage;
+class wavelet_decomposition;
 
 namespace procparams
 {
 
 class ProcParams;
 
+struct ColorManagementParams;
 struct DirPyrDenoiseParams;
 struct SharpeningParams;
 struct VignettingParams;
@@ -57,7 +77,7 @@ class ImProcFunctions
     cmsHTRANSFORM monitorTransform;
     std::unique_ptr<GamutWarning> gamutWarning;
 
-    const ProcParams* params;
+    const procparams::ProcParams* params;
     double scale;
     bool multiThread;
 
@@ -67,125 +87,15 @@ class ImProcFunctions
     void transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap);
     void transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap);
 
-    bool needsCA();
-    bool needsDistortion();
-    bool needsRotation();
-    bool needsPerspective();
-    bool needsGradient();
-    bool needsVignetting();
-    bool needsLCP();
-    bool needsLensfun();
+    bool needsCA() const;
+    bool needsDistortion() const;
+    bool needsRotation() const;
+    bool needsPerspective() const;
+    bool needsGradient() const;
+    bool needsVignetting() const;
+    bool needsLCP() const;
+    bool needsLensfun() const;
 //   static cmsUInt8Number* Mempro = NULL;
-
-    inline void interpolateTransformCubic(Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul)
-    {
-        const double A = -0.85;
-
-        double w[4];
-
-        {
-            double t1, t2;
-            t1 = -A * (Dx - 1.0) * Dx;
-            t2 = (3.0 - 2.0 * Dx) * Dx * Dx;
-            w[3] = t1 * Dx;
-            w[2] = t1 * (Dx - 1.0) + t2;
-            w[1] = -t1 * Dx + 1.0 - t2;
-            w[0] = -t1 * (Dx - 1.0);
-        }
-
-        double rd, gd, bd;
-        double yr[4] = {0.0}, yg[4] = {0.0}, yb[4] = {0.0};
-
-        for (int k = ys, kx = 0; k < ys + 4; k++, kx++) {
-            rd = gd = bd = 0.0;
-
-            for (int i = xs, ix = 0; i < xs + 4; i++, ix++) {
-                rd += src->r(k, i) * w[ix];
-                gd += src->g(k, i) * w[ix];
-                bd += src->b(k, i) * w[ix];
-            }
-
-            yr[kx] = rd;
-            yg[kx] = gd;
-            yb[kx] = bd;
-        }
-
-
-        {
-            double t1, t2;
-
-            t1 = -A * (Dy - 1.0) * Dy;
-            t2 = (3.0 - 2.0 * Dy) * Dy * Dy;
-            w[3] = t1 * Dy;
-            w[2] = t1 * (Dy - 1.0) + t2;
-            w[1] = -t1 * Dy + 1.0 - t2;
-            w[0] = -t1 * (Dy - 1.0);
-        }
-
-        rd = gd = bd = 0.0;
-
-        for (int i = 0; i < 4; i++) {
-            rd += yr[i] * w[i];
-            gd += yg[i] * w[i];
-            bd += yb[i] * w[i];
-        }
-
-        *r = rd * mul;
-        *g = gd * mul;
-        *b = bd * mul;
-
-        //  if (xs==100 && ys==100)
-        //    printf ("r=%g, g=%g\n", *r, *g);
-    }
-
-    inline void interpolateTransformChannelsCubic(float** src, int xs, int ys, double Dx, double Dy, float *r, double mul)
-    {
-        const double A = -0.85;
-
-        double w[4];
-
-        {
-            double t1, t2;
-            t1 = -A * (Dx - 1.0) * Dx;
-            t2 = (3.0 - 2.0 * Dx) * Dx * Dx;
-            w[3] = t1 * Dx;
-            w[2] = t1 * (Dx - 1.0) + t2;
-            w[1] = -t1 * Dx + 1.0 - t2;
-            w[0] = -t1 * (Dx - 1.0);
-        }
-
-        double rd;
-        double yr[4] = {0.0};
-
-        for (int k = ys, kx = 0; k < ys + 4; k++, kx++) {
-            rd = 0.0;
-
-            for (int i = xs, ix = 0; i < xs + 4; i++, ix++) {
-                rd += src[k][i] * w[ix];
-            }
-
-            yr[kx] = rd;
-        }
-
-
-        {
-            double t1, t2;
-            t1 = -A * (Dy - 1.0) * Dy;
-            t2 = (3.0 - 2.0 * Dy) * Dy * Dy;
-            w[3] = t1 * Dy;
-            w[2] = t1 * (Dy - 1.0) + t2;
-            w[1] = -t1 * Dy + 1.0 - t2;
-            w[0] = -t1 * (Dy - 1.0);
-        }
-
-        rd = 0.0;
-
-        for (int i = 0; i < 4; i++) {
-            rd += yr[i] * w[i];
-        }
-
-        *r = rd * mul;
-    }
 
 
 public:
@@ -200,7 +110,7 @@ public:
 
     double lumimul[3];
 
-    explicit ImProcFunctions(const ProcParams* iparams, bool imultiThread = true)
+    explicit ImProcFunctions(const procparams::ProcParams* iparams, bool imultiThread = true)
         : monitorTransform(nullptr), params(iparams), scale(1), multiThread(imultiThread), lumimul{} {}
     ~ImProcFunctions();
     bool needsLuminanceOnly()
@@ -209,19 +119,24 @@ public:
     }
     void setScale(double iscale);
 
-    bool needsTransform();
-    bool needsPCVignetting();
+    bool needsTransform() const;
+    bool needsPCVignetting() const;
 
     void firstAnalysis(const Imagefloat* const working, const procparams::ProcParams &params, LUTu & vhist16);
     void updateColorProfiles(const Glib::ustring& monitorProfile, RenderingIntent monitorIntent, bool softProof, bool gamutCheck);
-    void rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                           int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clcurve, LUTf & cl2curve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
-                 const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve, size_t chunkSize = 1, bool measure = false);
-    void rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                           int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clcurve, LUTf & cl2curve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
-                 const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob,
-                 double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve, size_t chunkSize = 1, bool measure = false);
-    void labtoning(float r, float g, float b, float &ro, float &go, float &bo, int algm, int metchrom, int twoc, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, LUTf & clToningcurve, LUTf & cl2Toningcurve, float iplow, float iphigh, double wp[3][3], double wip[3][3]);
+    void rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve,
+                 int sat, const LUTf& rCurve, const LUTf& gCurve, const LUTf& bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve& ctColorCurve,
+                 const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clcurve, const LUTf& cl2curve, const ToneCurve& customToneCurve1,
+                 const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
+                 double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf,
+                 const DCPProfileApplyState& asIn, LUTu& histToneCurve, size_t chunkSize = 1, bool measure = false);
+    void rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve,
+                 int sat, const LUTf& rCurve, const LUTf& gCurve, const LUTf& bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve& ctColorCurve,
+                 const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clcurve, const LUTf& cl2curve, const ToneCurve& customToneCurve1,
+                 const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
+                 double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr,
+                 int hlcomprthresh, DCPProfile *dcpProf, const DCPProfileApplyState& asIn, LUTu& histToneCurve, size_t chunkSize = 1, bool measure = false);
+    void labtoning(float r, float g, float b, float &ro, float &go, float &bo, int algm, int metchrom, int twoc, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, const LUTf & clToningcurve, const LUTf & cl2Toningcurve, float iplow, float iphigh, double wp[3][3], double wip[3][3]);
     void toning2col(float r, float g, float b, float &ro, float &go, float &bo, float iplow, float iphigh, float rl, float gl, float bl, float rh, float gh, float bh, float SatLow, float SatHigh, float balanS, float balanH, float reducac, int mode, int preser, float strProtect);
     void toningsmh(float r, float g, float b, float &ro, float &go, float &bo, float RedLow, float GreenLow, float BlueLow, float RedMed, float GreenMed, float BlueMed, float RedHigh, float GreenHigh, float BlueHigh, float reducac, int mode, float strProtect);
     void toningsmh2(float r, float g, float b, float &ro, float &go, float &bo, float low[3], float satLow, float med[3], float satMed, float high[3], float satHigh, float reducac, int mode, int preser);
@@ -231,24 +146,24 @@ public:
     void retreavergb(float &r, float &g, float &b);
     void moyeqt(Imagefloat* working, float &moyS, float &eqty);
 
-    void luminanceCurve(LabImage* lold, LabImage* lnew, LUTf &curve);
-    void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
+    void luminanceCurve(LabImage* lold, LabImage* lnew, const LUTf &curve);
+    void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const procparams::ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
                         LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
                         bool showSharpMask = false);
-    void chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve, LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLurve);
+    void chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, const LUTf& acurve, const LUTf& bcurve, const LUTf& satcurve, const LUTf& satclcurve, const LUTf& clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLurve);
     void vibrance(LabImage* lab);         //Jacques' vibrance
 //    void colorCurve       (LabImage* lold, LabImage* lnew);
     void sharpening(LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask = false);
     void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
     void transform(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage);
-    float resizeScale(const ProcParams* params, int fw, int fh, int &imw, int &imh);
+    float resizeScale(const procparams::ProcParams* params, int fw, int fh, int &imw, int &imh);
     void lab2monitorRgb(LabImage* lab, Image8* image);
     void resize(Imagefloat* src, Imagefloat* dst, float dScale);
     void Lanczos(const LabImage* src, LabImage* dst, float scale);
     void Lanczos(const Imagefloat* src, Imagefloat* dst, float scale);
 
-    void deconvsharpening(float** luminance, float** buffer, int W, int H, const procparams::SharpeningParams &sharpenParam);
+    void deconvsharpening(float** luminance, float** buffer, const float* const * blend, int W, int H, const procparams::SharpeningParams &sharpenParam, double Scale);
     void MLsharpen(LabImage* lab); // Manuel's clarity / sharpening
     void MLmicrocontrast(float** luminance, int W, int H);   //Manuel's microcontrast
     void MLmicrocontrast(LabImage* lab);   //Manuel's microcontrast
@@ -308,20 +223,20 @@ public:
     void Median_Denoise(float **src, float **dst, float upperBound, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
     void RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &nresi, float &highresi);
     void RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, const bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope);
-    void RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &minredaut, float & minblueaut, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread = false);
-    void RGBtile_denoise(float * fLblox, int hblproc, float noisevar_Ldetail, float * nbrwt, float * blurbuffer);     //for DCT
+    void RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, bool isRAW, const LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &minredaut, float & minblueaut, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread = false);
+    void RGBtile_denoise(float * fLblox, int hblproc, float noisevar_Ldetail);     //for DCT
     void RGBoutput_tile_row(float *bloxrow_L, float ** Ldetail, float ** tilemask_out, int height, int width, int top);
-    bool WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge);
-    bool WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb);
-    void WaveletDenoiseAll_info(int levwav, wavelet_decomposition &WaveletCoeffs_a,
-                                wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float & minblueaut, int schoice, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
+    bool WaveletDenoiseAllL(const wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge);
+    bool WaveletDenoiseAllAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb);
+    void WaveletDenoiseAll_info(int levwav, const wavelet_decomposition &WaveletCoeffs_a,
+                                const wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float & minblueaut, int schoice, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
                                 float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb);
 
-    bool WaveletDenoiseAll_BiShrinkL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3]);
-    bool WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float noisevar_ab,
+    bool WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3]);
+    bool WaveletDenoiseAll_BiShrinkAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float noisevar_ab,
                                       const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb);
-    void ShrinkAllL(wavelet_decomposition &WaveletCoeffs_L, float **buffer, int level, int dir, float *noisevarlum, float * madL, float * vari, int edge);
-    void ShrinkAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float **buffer, int level, int dir,
+    void ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, float **buffer, int level, int dir, float *noisevarlum, float * madL, float * vari, int edge);
+    void ShrinkAllAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab, float **buffer, int level, int dir,
                      float *noisevarchrom, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, float * madL, float * madaab = nullptr, bool madCalculated = false);
     void ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b,
                         int W_ab, int H_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
@@ -357,13 +272,13 @@ public:
     // CieImage *ciec;
     void workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false) const;
 
-    bool transCoord(int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr);
-    bool transCoord(int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr);
+    bool transCoord(int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr) const;
+    bool transCoord(int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr) const;
     static void getAutoExp(const LUTu & histogram, int histcompr, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
     static double getAutoDistor(const Glib::ustring& fname, int thumb_size);
-    double getTransformAutoFill(int oW, int oH, const LensCorrection *pLCPMap = nullptr);
+    double getTransformAutoFill(int oW, int oH, const LensCorrection *pLCPMap = nullptr) const;
     void rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
     void lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace);
 };
+
 }
-#endif

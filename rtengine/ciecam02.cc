@@ -14,13 +14,13 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "ciecam02.h"
-#include "rtengine.h"
+#include "rt_math.h"
 #include "curves.h"
 #include <math.h>
-#include "sleef.c"
+#include "sleef.h"
 
 #ifdef _DEBUG
 #include "settings.h"
@@ -33,10 +33,6 @@
 
 namespace rtengine
 {
-
-#ifdef _DEBUG
-extern const Settings* settings;
-#endif
 
 void Ciecam02::curvecolorfloat (float satind, float satval, float &sres, float parsat)
 {
@@ -145,8 +141,8 @@ void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf 
     }
 
     outCurve *= 32767.f;
-	//printf("out500=%f out15000=%f\n", outCurve[500], outCurve[15000]);
-	//outCurve.dump("brig");
+    //printf("out500=%f out15000=%f\n", outCurve[500], outCurve[15000]);
+    //outCurve.dump("brig");
 }
 
 /**
@@ -408,7 +404,7 @@ void Ciecam02::calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, v
 #endif
 
 void Ciecam02::initcam1float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
-                              float &cz, float &aw, float &wh, float &pfl, float &fl, float &c)
+                              float &cz, float &aw, float &wh, float &pfl, float &fl, float c)
 {
     n = yb / yw;
 

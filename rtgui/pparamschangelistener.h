@@ -14,14 +14,32 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PPARAMSCHANGELISTENER_
-#define _PPARAMSCHANGELISTENER_
+#pragma once
 
-#include "../rtengine/rtengine.h"
-#include <glibmm.h>
-#include "paramsedited.h"
+struct ParamsEdited;
+
+namespace Glib
+{
+
+class ustring;
+
+}
+namespace rtengine
+{
+
+class ProcEvent;
+
+namespace procparams
+{
+
+class ProcParams;
+
+
+}
+
+}
 
 class PParamsChangeListener
 {
@@ -43,6 +61,3 @@ public:
     virtual void beginBatchPParamsChange(int numberOfEntries) = 0;
     virtual void endBatchPParamsChange() = 0;
 };
-
-#endif
-

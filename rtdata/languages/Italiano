@@ -519,8 +519,8 @@ MAIN_TOOLTIP_BACKCOLOR1;Colore di sfondo dell'anteprima: <b>Nero</b>\nScorciatoi
 MAIN_TOOLTIP_BACKCOLOR2;Colore di sfondo dell'anteprima: <b>Bianco</b>\nScorciatoia: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Blocca</b>/<b>Sblocca</b> la vista <b>Prima</b>\n\n<b>Blocca</b>: Conserva la vista <b>Prima</b>.\nUtile per valutare l'effetto cumulativo di diversi strumenti.\nIn più, possono essere confrontati diversi passi della cronologia.\n\n<b>Sblocca</b>: la vista <b>Prima</b> segue di un passo la vista <b>Dopo</b>, mostrando l'immagine prima dell'effetto dello strumento corrente.
 MAIN_TOOLTIP_HIDEHP;Mostra/Nascondi il pannello sinistro (inclusa la cronologia)\nScorciatoia: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Indicazione delle alteluci tosate.\nScorciatoia: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Indicazione delle ombre tosate.\nScorciatoia: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Indicazione delle alteluci tosate.\nScorciatoia: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Indicazione delle ombre tosate.\nScorciatoia: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Anteprima del <b>Canale Blu</b>.\nScorciatoia: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Anteprima della <b>Focus Mask</b>.\nScorciatoia: <b>Maiuscolo-F</b>\n\nPiù accurato su immagini con bassa profondità di campo, poco rumore e ad elevati livelli di zoom.\n\nPer aumentare l'accuratezza della rilevazione su immagini con molto rumore, riduci le dimensioni del 10-30%.
 MAIN_TOOLTIP_PREVIEWG;Anteprima del <b>Canale Verde</b>.\nScorciatoia: <b>g</b>
@@ -1285,6 +1285,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_CURRENT;Current
+!GENERAL_HELP;Help
 !GENERAL_OPEN;Open
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...
@@ -1518,6 +1519,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1535,6 +1537,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
 !HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
 !HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
+!HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
 !HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 !HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 !HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
@@ -1555,6 +1558,13 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
+!HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
+!HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
+!HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
+!HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
+!HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
+!HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
+!HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 !HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
@@ -1640,7 +1650,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TAB_ADVANCED;Advanced
-!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
+!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt</b>-<b>a</b>
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 !MAIN_TAB_INSPECT; Inspect
@@ -1852,6 +1862,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_CROP_SELECTCROP;Select
 !TP_DEHAZE_DEPTH;Depth
 !TP_DEHAZE_LABEL;Haze Removal
+!TP_DEHAZE_LUMINANCE;Luminance only
 !TP_DEHAZE_SHOW_DEPTH_MAP;Show depth map
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
@@ -1908,16 +1919,16 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_FILMSIMULATION_LABEL;Film Simulation
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_FILMSIMULATION_STRENGTH;Strength
 !TP_FILMSIMULATION_ZEROCLUTSFOUND;Set HaldCLUT directory in Preferences
 !TP_FLATFIELD_CLIPCONTROL;Clip control
-!TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
+!TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, value 0 is used.
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYHUESATMAP;Base table
@@ -1954,6 +1965,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_METADATA_STRIP;Strip all metadata
 !TP_METADATA_TUNNEL;Copy unchanged
 !TP_NEUTRAL;Reset
+!TP_PDSHARPENING_LABEL;Capture Sharpening
 !TP_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
 !TP_PREPROCESS_HOTPIXFILT;Hot pixel filter
@@ -2119,6 +2131,8 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_RETINEX_VIEW_UNSHARP;Unsharp mask
 !TP_SHARPENING_BLUR;Blur radius
 !TP_SHARPENING_CONTRAST;Contrast threshold
+!TP_SHARPENING_ITERCHECK;Auto limit iterations
+!TP_SHARPENING_RADIUS_BOOST;Corner radius boost
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_SOFTLIGHT_LABEL;Soft Light
 !TP_SOFTLIGHT_STRENGTH;Strength

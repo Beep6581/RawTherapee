@@ -15,19 +15,21 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-#include "improcfun.h"
+#include "array2D.h"
+#include "color.h"
+#include "curves.h"
 #include "guidedfilter.h"
+#include "iccstore.h"
+#include "improcfun.h"
+#include "labimage.h"
 #include "procparams.h"
+#include "sleef.h"
+
 //#define BENCHMARK
 #include "StopWatch.h"
-#include "sleef.c"
 
 namespace {
 
@@ -51,7 +53,8 @@ void fastlin2log(float *x, float factor, float base, int w)
 
 }
 
-namespace rtengine {
+namespace rtengine
+{
 
 void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
 {

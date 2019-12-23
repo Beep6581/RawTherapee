@@ -12,16 +12,18 @@
 *  GNU General Public License for more details.
 *
 *  You should have received a copy of the GNU General Public License
-*  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "editwindow.h"
+#include "editorpanel.h"
+#include "filepanel.h"
+#include "../rtengine/procparams.h"
 #include "options.h"
 #include "preferences.h"
 #include "cursormanager.h"
 #include "rtwindow.h"
 #include <gtk/gtk.h>
-#include "rtimage.h"
 #include "threadutils.h"
 
 extern Glib::ustring argv0;

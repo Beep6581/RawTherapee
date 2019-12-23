@@ -14,18 +14,23 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "options.h"
 #include <cstdio>
 #include <glib/gstdio.h>
+#include <glibmm/keyfile.h>
+#include <iostream>
 #include <sstream>
 #include "multilangmgr.h"
 #include "addsetids.h"
 #include "guiutils.h"
+#include "pathutils.h"
 #include "version.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/rtengine.h"
+#include "../rtengine/utils.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -220,7 +225,7 @@ Glib::ustring Options::getPreferredProfilePath()
   *
   *@param profName  path + filename of the procparam to look for. A filename without path can be provided for backward compatibility.
   *                 In this case, this parameter will be updated with the new format.
-  *@return Send back the absolute path of the given filename or "Neutral" if "Neutral" has been set to profName. Implementor will have
+  *@return Send back the absolute path of the given filename or "Neutral" if "Neutral" has been set to profName. Implementer will have
   *        to test for this particular value. If the absolute path is invalid (e.g. the file doesn't exist), it will return an empty string.
   */
 Glib::ustring Options::findProfilePath(Glib::ustring &profName)
@@ -1258,7 +1263,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
-                	pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
+                    pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
                 }
 
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {
@@ -2473,6 +2478,18 @@ bool Options::is_parse_extention(Glib::ustring fname)
 bool Options::has_retained_extention(const Glib::ustring& fname)
 {
     return parsedExtensionsSet.find(getExtension(fname).lowercase()) != parsedExtensionsSet.end();
+}
+
+// Pattern matches "5.1" from "5.1-23-g12345678", when comparing option.version to RTVERSION
+bool Options::is_new_version() {
+    const std::string vs[] = {versionString, version};
+    std::vector<std::string> vMajor;
+
+    for (const auto& v : vs) {
+        vMajor.emplace_back(v, 0, v.find_first_not_of("0123456789."));
+    }
+
+    return vMajor.size() == 2 && vMajor[0] != vMajor[1];
 }
 
 /*

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "whitebalance.h"
 
@@ -55,7 +55,7 @@ void WhiteBalance::init ()
 
 void WhiteBalance::cleanup ()
 {
-    for (unsigned int i = 0; i < toUnderlying(WBEntry::Type::CUSTOM) + 1; i++) {
+    for (int i = 0; i < toUnderlying(WBEntry::Type::CUSTOM) + 1; i++) {
         wbPixbufs[i].reset();
     }
 }

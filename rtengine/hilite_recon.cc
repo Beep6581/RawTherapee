@@ -20,7 +20,7 @@
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
 
@@ -287,8 +287,6 @@ void boxblur_resamp(const float* const* src, float** dst, float** temp, int H, i
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue)
 {

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "inspector.h"
 #include "guiutils.h"
@@ -22,9 +22,10 @@
 #include "cursormanager.h"
 #include "guiutils.h"
 #include "options.h"
+#include "pathutils.h"
+#include "rtscalable.h"
 #include "../rtengine/previewimage.h"
-
-extern Options options;
+#include "../rtengine/rt_math.h"
 
 InspectorBuffer::InspectorBuffer(const Glib::ustring &imagePath) : currTransform(0), fromRaw(false)
 {

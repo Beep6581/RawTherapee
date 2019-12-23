@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
 
@@ -23,10 +23,14 @@
 #include "tonecurve.h"
 
 #include "adjuster.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "eventmapper.h"
 #include "ppversion.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 #include "editcallbacks.h"
 
 using namespace rtengine;

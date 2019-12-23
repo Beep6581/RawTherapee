@@ -14,22 +14,28 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMPROCCOORDINATOR_H_
-#define _IMPROCCOORDINATOR_H_
+#pragma once
 
 #include <memory>
 
-#include "rtengine.h"
-#include "improcfun.h"
-#include "image8.h"
-#include "image16.h"
-#include "imagesource.h"
-#include "procevents.h"
+#include "array2D.h"
+#include "colortemp.h"
+#include "curves.h"
 #include "dcrop.h"
+#include "imagesource.h"
+#include "improcfun.h"
 #include "LUT.h"
+#include "procevents.h"
+#include "rtengine.h"
+
 #include "../rtgui/threadutils.h"
+
+namespace Glib
+{
+class Thread;
+}
 
 namespace rtengine
 {
@@ -77,7 +83,7 @@ protected:
     bool softProof;
     bool gamutCheck;
     bool sharpMask;
-
+    bool sharpMaskChanged;
     int scale;
     bool highDetailPreprocessComputed;
     bool highDetailRawComputed;
@@ -161,6 +167,8 @@ protected:
     FlatFieldAutoClipListener *flatFieldAutoClipListener;
     AutoContrastListener *bayerAutoContrastListener;
     AutoContrastListener *xtransAutoContrastListener;
+    AutoContrastListener *pdSharpenAutoContrastListener;
+    AutoRadiusListener *pdSharpenAutoRadiusListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
 
@@ -178,7 +186,6 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
-    void progress (Glib::ustring str, int pr);
     void reallocAll ();
     void updateLRGBHistograms ();
     void setScale (int prevscale);
@@ -277,7 +284,7 @@ public:
     void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const override;
     void setSoftProofing   (bool softProof, bool gamutCheck) override;
     void getSoftProofing   (bool &softProof, bool &gamutCheck) override;
-    void setSharpMask      (bool sharpMask) override;
+    ProcEvent setSharpMask (bool sharpMask) override;
     bool updateTryLock () override
     {
         return updaterThreadStart.trylock();
@@ -363,6 +370,16 @@ public:
         xtransAutoContrastListener = acl;
     }
 
+    void setpdSharpenAutoRadiusListener  (AutoRadiusListener* acl) override
+    {
+        pdSharpenAutoRadiusListener = acl;
+    }
+
+    void setpdSharpenAutoContrastListener  (AutoContrastListener* acl) override
+    {
+        pdSharpenAutoContrastListener = acl;
+    }
+
     void setImageTypeListener  (ImageTypeListener* itl) override
     {
         imageTypeListener = itl;
@@ -396,5 +413,5 @@ public:
     } denoiseInfoStore;
 
 };
+
 }
-#endif

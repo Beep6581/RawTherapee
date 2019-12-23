@@ -13,23 +13,23 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BATCHQUEUE_
-#define _BATCHQUEUE_
+#pragma once
 
 #include <set>
 
 #include <gtkmm.h>
 
-#include "../rtengine/rtengine.h"
-
-#include "batchqueueentry.h"
+#include "lwbutton.h"
 #include "lwbuttonset.h"
-#include "options.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
+
+#include "../rtengine/rtengine.h"
 #include "../rtengine/noncopyable.h"
+
+class BatchQueueEntry;
 
 class BatchQueueListener
 {
@@ -74,7 +74,7 @@ public:
     void error(const Glib::ustring& descr) override;
     rtengine::ProcessingJob* imageReady(rtengine::IImagefloat* img) override;
 
-    void rightClicked (ThumbBrowserEntryBase* entry) override;
+    void rightClicked () override;
     void doubleClicked (ThumbBrowserEntryBase* entry) override;
     bool keyPressed (GdkEventKey* event) override;
     void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
@@ -124,5 +124,3 @@ private:
 
     IdleRegister idle_register;
 };
-
-#endif

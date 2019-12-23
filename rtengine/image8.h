@@ -14,20 +14,18 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 //
 // A class representing a 8 bit rgb image without alpha channel
 //
-#ifndef _IMAGE8_
-#define _IMAGE8_
+#pragma once
 
 #include "imageio.h"
-#include "rtengine.h"
-#include "imagefloat.h"
 
 namespace rtengine
 {
+class Imagefloat;
 
 class Image8 : public IImage8, public ImageIO
 {
@@ -104,4 +102,3 @@ public:
 };
 
 }
-#endif

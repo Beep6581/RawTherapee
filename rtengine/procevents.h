@@ -14,16 +14,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __PROCEVENT__
-#define __PROCEVENT__
+#pragma once
 
 namespace rtengine
 {
-
-
-
 
 // Aligned so the first entry starts on line 30
 enum ProcEventCode {
@@ -520,7 +516,8 @@ enum ProcEventCode {
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
     EvLEnabled = 492,
-//    EvPixelShiftOneGreen = 493,   can be reused
+    EvPdShrEnabled = 493,
+    EvPdShrMaskToggled = 494,
 
     NUMOFEVENTS
 
@@ -539,13 +536,11 @@ private:
 };
 
 
-inline bool operator==(ProcEvent a, ProcEvent b) { return int(a) == int(b); }
-inline bool operator==(ProcEvent a, ProcEventCode b) { return int(a) == int(b); }
-inline bool operator==(ProcEventCode a, ProcEvent b) { return int(a) == int(b); }
-inline bool operator!=(ProcEvent a, ProcEvent b) { return int(a) != int(b); }
-inline bool operator!=(ProcEvent a, ProcEventCode b) { return int(a) != int(b); }
-inline bool operator!=(ProcEventCode a, ProcEvent b) { return int(a) != int(b); }
+inline bool operator ==(ProcEvent a, ProcEvent b) { return int(a) == int(b); }
+inline bool operator ==(ProcEvent a, ProcEventCode b) { return int(a) == int(b); }
+inline bool operator ==(ProcEventCode a, ProcEvent b) { return int(a) == int(b); }
+inline bool operator !=(ProcEvent a, ProcEvent b) { return int(a) != int(b); }
+inline bool operator !=(ProcEvent a, ProcEventCode b) { return int(a) != int(b); }
+inline bool operator !=(ProcEventCode a, ProcEvent b) { return int(a) != int(b); }
 
 }
-#endif
-

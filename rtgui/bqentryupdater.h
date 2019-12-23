@@ -14,16 +14,26 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BQENTRYUPDATER_
-#define _BQENTRYUPDATER_
+#pragma once
 
-#include <glibmm.h>
-#include "../rtengine/rtengine.h"
+#include <glibmm/thread.h>
+
 #include "threadutils.h"
-#include "thumbnail.h"
 
+class Thumbnail;
+
+namespace rtengine
+{
+namespace procparams
+{
+
+class ProcParams;
+
+}
+
+}
 class BQEntryUpdateListener
 {
 
@@ -39,7 +49,7 @@ class BatchQueueEntryUpdater
         guint8* oimg;
         int ow, oh, newh;
         BQEntryUpdateListener* listener;
-        rtengine::ProcParams* pparams;
+        rtengine::procparams::ProcParams* pparams;
         Thumbnail* thumbnail;
     };
 
@@ -53,7 +63,7 @@ protected:
 public:
     BatchQueueEntryUpdater ();
 
-    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams = nullptr, Thumbnail* thumbnail = nullptr);
+    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::procparams::ProcParams* pparams = nullptr, Thumbnail* thumbnail = nullptr);
     void removeJobs (BQEntryUpdateListener* listener);
     void terminate  ();
 
@@ -61,5 +71,3 @@ public:
 };
 
 extern BatchQueueEntryUpdater batchQueueEntryUpdater;
-
-#endif

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /*
@@ -52,8 +52,8 @@
  *
  *          !! locked arrays cannot be resized and cannot be unlocked again !!
  */
-#ifndef ARRAY2D_H_
-#define ARRAY2D_H_
+#pragma once
+
 #include <csignal>  // for raise()
 #include <cassert>
 
@@ -249,7 +249,7 @@ public:
         ar_realloc(w, h, offset);
 
         if (flags & ARRAY2D_CLEAR_DATA) {
-            memset(data + offset, 0, w * h * sizeof(T));
+            memset(data + offset, 0, static_cast<unsigned long>(w) * h * sizeof(T));
         }
     }
 
@@ -313,4 +313,3 @@ public:
         return list[index];
     }
 };
-#endif /* array2D_H_ */

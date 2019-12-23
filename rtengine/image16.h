@@ -14,22 +14,20 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 //
 // A class representing a 16 bit rgb image with separate planes and 16 byte aligned data
 //
-#ifndef _IMAGE16_
-#define _IMAGE16_
+#pragma once
 
 #include "imageio.h"
-#include "rtengine.h"
-#include "imagefloat.h"
 
 namespace rtengine
 {
 
 class Image8;
+class Imagefloat;
 
 class Image16 : public IImage16, public ImageIO
 {
@@ -109,4 +107,3 @@ public:
 };
 
 }
-#endif

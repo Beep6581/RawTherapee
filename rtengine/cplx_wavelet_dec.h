@@ -12,14 +12,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  2010 Ilya Popov <ilia_popov@rambler.ru>
  *  2012 Emil Martinec <ejmartin@uchicago.edu>
  */
-
-#ifndef CPLX_WAVELET_DEC_H_INCLUDED
-#define CPLX_WAVELET_DEC_H_INCLUDED
+#pragma once
 
 #include <cstddef>
 #include <cmath>
@@ -266,5 +264,3 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
 }
 
 }
-
-#endif

@@ -14,13 +14,25 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
 #include <vector>
 
-#include "../rtengine/rtengine.h"
+namespace rtengine
+{
+
+namespace procparams
+{
+
+class ProcParams;
+
+class PartialProfile;
+
+}
+
+}
 
 struct GeneralParamsEdited {
     bool rank;
@@ -179,7 +191,9 @@ struct SharpenMicroParamsEdited {
 struct SharpeningParamsEdited {
     bool enabled;
     bool contrast;
+    bool autoContrast;
     bool blurradius;
+    bool gamma;
     bool radius;
     bool amount;
     bool threshold;
@@ -194,6 +208,18 @@ struct SharpeningParamsEdited {
     bool deconvradius;
     bool deconviter;
     bool deconvdamping;
+};
+
+struct CaptureSharpeningParamsEdited {
+    bool enabled;
+    bool contrast;
+    bool autoContrast;
+    bool autoRadius;
+    bool deconvradius;
+    bool deconvradiusOffset;
+    bool deconviter;
+    bool deconvitercheck;
+    bool isUnchanged() const;
 };
 
 struct VibranceParamsEdited {
@@ -583,6 +609,7 @@ struct DehazeParamsEdited {
     bool strength;
     bool showDepthMap;
     bool depth;
+    bool luminance;
 };
 
 struct RAWParamsEdited {
@@ -684,6 +711,7 @@ struct ParamsEdited {
     ColorToningEdited colorToning;
     RetinexParamsEdited retinex;
     SharpeningParamsEdited sharpening;
+    CaptureSharpeningParamsEdited pdsharpening;
     SharpeningParamsEdited prsharpening;
     SharpenEdgeParamsEdited sharpenEdge;
     SharpenMicroParamsEdited sharpenMicro;

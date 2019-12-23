@@ -14,17 +14,24 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FLATFIELD_H_
-#define _FLATFIELD_H_
+#pragma once
 
 #include <memory>
+
 #include <gtkmm.h>
+
 #include "adjuster.h"
-#include "toolpanel.h"
-#include "../rtengine/rawimage.h"
 #include "guiutils.h"
+#include "toolpanel.h"
+
+namespace rtengine
+{
+
+class RawImage;
+
+}
 
 class FFProvider
 {
@@ -35,7 +42,7 @@ public:
     // add other info here
 };
 
-class FlatField : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::FlatFieldAutoClipListener
+class FlatField final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::FlatFieldAutoClipListener
 {
 
 protected:
@@ -72,7 +79,7 @@ public:
     void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
 
     void adjusterChanged            (Adjuster* a, double newval) override;
-    void adjusterAutoToggled        (Adjuster* a, bool newval) override;
+    void adjusterAutoToggled        (Adjuster* a) override;
     void flatFieldFileChanged       ();
     void flatFieldFile_Reset        ();
     void flatFieldAutoSelectChanged ();
@@ -84,5 +91,3 @@ public:
     };
     void flatFieldAutoClipValueChanged(int n = 0) override;
 };
-
-#endif

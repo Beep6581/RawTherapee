@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "batchqueueentry.h"
 
@@ -25,8 +25,10 @@
 #include "rtimage.h"
 #include "multilangmgr.h"
 #include "thumbbrowserbase.h"
+#include "thumbnail.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/rtengine.h"
 
 bool BatchQueueEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;

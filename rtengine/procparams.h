@@ -14,16 +14,17 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
 #include <cmath>
 #include <cstdio>
+#include <map>
 #include <type_traits>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <lcms2.h>
 
 #include "noncopyable.h"
@@ -494,7 +495,9 @@ struct ColorToningParams {
 struct SharpeningParams {
     bool           enabled;
     double         contrast;
+    bool           autoContrast;
     double         blurradius;
+    double         gamma;
     double         radius;
     int            amount;
     Threshold<int> threshold;
@@ -538,6 +541,22 @@ struct SharpenMicroParams {
 
     bool operator ==(const SharpenMicroParams& other) const;
     bool operator !=(const SharpenMicroParams& other) const;
+};
+
+struct CaptureSharpeningParams {
+    bool           enabled;
+    bool           autoContrast;
+    bool           autoRadius;
+    double         contrast;
+    double         deconvradius;
+    double         deconvradiusOffset;
+    int            deconviter;
+    bool           deconvitercheck;
+
+    CaptureSharpeningParams();
+
+    bool operator ==(const CaptureSharpeningParams& other) const;
+    bool operator !=(const CaptureSharpeningParams& other) const;
 };
 
 /**
@@ -1325,6 +1344,7 @@ struct DehazeParams {
     int strength;
     bool showDepthMap;
     int depth;
+    bool luminance;
 
     DehazeParams();
 
@@ -1368,6 +1388,7 @@ struct RAWParams {
         enum class PSDemosaicMethod {
             AMAZE,
             AMAZEVNG4,
+            RCDVNG4,
             LMMSE
         };
 
@@ -1528,6 +1549,7 @@ public:
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters
     SharpeningParams        prsharpening;    ///< Sharpening parameters for post resize sharpening
+    CaptureSharpeningParams pdsharpening;    ///< Sharpening parameters for post demosaic sharpening
     SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
     SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
     VibranceParams          vibrance;        ///< Vibrance parameters

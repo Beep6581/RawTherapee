@@ -15,15 +15,17 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
+#include <lcms2.h>
+
 #include <gtkmm.h>
 #include "adjuster.h"
-#include "options.h"
 #include <vector>
-#include "rtwindow.h"
+
+class RTWindow;
 
 class ICCProfileCreator : public Gtk::Dialog, public AdjusterListener
 {

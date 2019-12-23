@@ -14,15 +14,17 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <tiffio.h>
+
+#include "colortemp.h"
 #include "imagefloat.h"
 #include "image16.h"
 #include "image8.h"
+#include "labimage.h"
 #include <cstring>
 #include "rtengine.h"
-#include "mytime.h"
 #include "iccstore.h"
 #include "alignedbuffer.h"
 #include "rt_math.h"

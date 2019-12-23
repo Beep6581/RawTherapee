@@ -14,12 +14,10 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _ADJUSTER_H_
-#define _ADJUSTER_H_
+#pragma once
 
-#include <gtkmm.h>
 #include "editedstate.h"
 #include "guiutils.h"
 
@@ -30,7 +28,7 @@ class AdjusterListener
 public:
     virtual ~AdjusterListener() = default;
     virtual void adjusterChanged (Adjuster* a, double newval) = 0;
-    virtual void adjusterAutoToggled (Adjuster* a, bool newval) {}
+    virtual void adjusterAutoToggled (Adjuster* a) {}
 };
 
 typedef double(*double2double_fun)(double val);
@@ -130,5 +128,3 @@ public:
     void trimValue (int &val) const;
     void setLogScale(double base, double pivot, bool anchorMiddle = false);
 };
-
-#endif
