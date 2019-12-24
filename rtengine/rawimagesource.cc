@@ -2409,6 +2409,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 
         if (riDark && W == riDark->get_width() && H == riDark->get_height()) { // This works also for xtrans-sensors, because black[0] to black[4] are equal for these
             StopWatch Stop1("darkframe subtraction");
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
             for (int row = 0; row < H; row++) {
                 const int c0 = FC(row, 0);
                 const float black0 = black[(c0 == 1 && !(row & 1) ) ? 3 : c0];
