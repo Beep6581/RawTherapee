@@ -54,6 +54,15 @@ template <typename T>
 Matrix<T> rotationMatrix(T radians, Axis axis);
 
 /**
+ * Creates a 3 dimensional transformation matrix for scaling.
+ * @param x Scale in x-direction
+ * @param y Scale in y-direction
+ * @param z Scale in z-direction
+ */
+template <typename T>
+Matrix<T> scaleMatrix(T x, T y, T z);
+
+/**
  * Creates a 3 dimensional transformation matrix for translation.
  * @param x Translation in the the x-direction.
  * @param y Translation in the the y-direction.

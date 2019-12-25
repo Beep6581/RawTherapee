@@ -148,6 +148,23 @@ Matrix<T> rotationMatrix(double radians, Axis axis)
 }
 
 template <typename T>
+Matrix<T> scaleMatrix(T x, T y, T z)
+{
+    Matrix<T> matrix;
+
+    for (int i = 0; i < 4; i++) {
+        matrix[i].fill(0);
+    }
+
+    matrix[0][0] = x;
+    matrix[1][1] = y;
+    matrix[2][2] = z;
+    matrix[3][3] = 1;
+
+    return matrix;
+}
+
+template <typename T>
 Matrix<T> translationMatrix(T x, T y, T z)
 {
     Matrix<T> matrix;
