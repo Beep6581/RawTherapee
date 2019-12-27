@@ -6947,24 +6947,9 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
         return;
     }
 
+    //declare a and b if need
     wavelet_decomposition *wdspota = nullptr;
     wavelet_decomposition *wdspotb = nullptr;
-
-    if (chromalev != 1.f  || chromablu != 1.f) {
-        wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
-
-        //first decomposition for compress dynamic range positive values and other process
-        if (wdspota->memoryAllocationFailed) {
-            return;
-        }
-
-        wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
-
-        //first decomposition for compress dynamic range positive values and other process
-        if (wdspotb->memoryAllocationFailed) {
-            return;
-        }
-    }
 
     maxlvl = wdspot->maxlevel();
     int W_L = wdspot->level_W(0);
@@ -7078,9 +7063,24 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
     float MaxN[10];
     Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
 
-    if (wavcurvecon) {
+    if (wavcurvecon) {//contrast  by levels
         float beta;
         float mea[9];
+
+        if (chromalev != 1.f) {// a and b if need -
+            //if users says too memory, I can do 3 pass L then a then b
+            wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+
+            if (wdspota->memoryAllocationFailed) {
+                return;
+            }
+
+            wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+
+            if (wdspotb->memoryAllocationFailed) {
+                return;
+            }
+        }
 
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
@@ -7170,6 +7170,15 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
                 }
             }
         }
+
+        if (chromalev != 1.f) {
+            wdspota->reconstruct(tmpa[0], 1.f);
+            wdspotb->reconstruct(tmpb[0], 1.f);
+            delete wdspota;
+            delete wdspotb;
+        }
+
+
     }
 
     float alow = 1.f;
@@ -7192,10 +7201,13 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
     int leve = maxlvl;
 
     float ****templevel = nullptr;
+
     float ****templevela = nullptr;
+
     float ****templevelb = nullptr;
 
-    if (wavcurvelev  || wavcurvecomp) {
+
+    if (wavcurvelev  || wavcurvecomp) {//compress dynamic and blur
         fatParams.enabled = wavcurvecomp;
 
         templevel = new float***[dir];
@@ -7213,26 +7225,9 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
             }
         }
 
-        if (chromablu != 1.f) {
-            templevela = new float***[dir];
-            templevelb = new float***[dir];
-
-            //allocate memory for 3 DIR n levels, H_L, W_L
-            for (int d = 0; d < dir; d++) {
-                templevela[d] = new float**[leve];
-                templevelb[d] = new float**[leve];
-
-                for (int k = 0; k < leve; k++) {
-                    templevela[d][k] = new float*[H_L];
-                    templevelb[d][k] = new float*[H_L];
-
-                    for (int i = 0; i < H_L; i++) {
-                        templevela[d][k][i] = new float[W_L];
-                        templevelb[d][k][i] = new float[W_L];
-                    }
-                }
-            }
-
+        if (templevel == nullptr) {
+            fprintf(stderr, "allocation error\n");
+            return;
         }
 
 
@@ -7241,30 +7236,12 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot->level_W(level);
                 int H_L = wdspot->level_H(level);
-                float **wav_a = nullptr;
-                float **wav_b = nullptr;
                 float **wav_L = wdspot->level_coeffs(level);
-                //      float **wav_LN = wdspotneg->level_coeffs(level);
-                if (chromablu != 1.f) {
-                    wav_a = wdspota->level_coeffs(level);
-                    wav_b = wdspotb->level_coeffs(level);
-                }
 
                 for (int y = 0; y < H_L; y++) {
                     for (int x = 0; x < W_L; x++) {
                         float val  = wav_L[dir][y * W_L + x];
-                        if (chromablu != 1.f) {
-                            float vala  = wav_a[dir][y * W_L + x];
-                            float valb  = wav_b[dir][y * W_L + x];
-                            templevela[dir - 1][level][y][x] = vala;
-                            templevelb[dir - 1][level][y][x] = valb;
-
-                        }
-//                        if (val >= 0.f) {
                         templevel[dir - 1][level][y][x] = val;
-//                        } else {
-//                            templevel[dir - 1][level][y][x] = 0.f;
-//                        }
                     }
                 }
             }
@@ -7309,49 +7286,38 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
                         #pragma omp parallel
                         {
                             gaussianBlur(templevel[dir - 1][level], templevel[dir - 1][level], W_L, H_L, radlevblur * klev);
+                        }
+                    }
+                }
+            }
 
-                            if (chromablu != 1.f && !blurlc) {
-                                gaussianBlur(templevela[dir - 1][level], templevela[dir - 1][level], W_L, H_L, radlevblur * klev * chromablu);
-                                gaussianBlur(templevelb[dir - 1][level], templevelb[dir - 1][level], W_L, H_L, radlevblur * klev * chromablu);
-                                
-                            }
 
+        }
+
+        //put tonemap or blur values in wavelet level and dir
+        if (wavcurvecomp || (wavcurvelev && radlevblur > 0.f)) {
+
+            for (int dir = 1; dir < 4; dir++) {
+                for (int level = level_bl; level < maxlvl; ++level) {
+                    int W_L = wdspot->level_W(level);
+                    int H_L = wdspot->level_H(level);
+                    float **wav_L = wdspot->level_coeffs(level);
+
+                    for (int y = 0; y < H_L; y++) {
+                        for (int x = 0; x < W_L; x++) {
+                            wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
                         }
                     }
                 }
             }
         }
 
-        //put blur values in wavelet level and dir
-        for (int dir = 1; dir < 4; dir++) {
-            for (int level = level_bl; level < maxlvl; ++level) {
-                int W_L = wdspot->level_W(level);
-                int H_L = wdspot->level_H(level);
-                float **wav_L = wdspot->level_coeffs(level);
-                float **wav_a = nullptr;
-                float **wav_b = nullptr;
-                //      float **wav_LN = wdspotneg->level_coeffs(level);
-                if (chromablu != 1.f) {
-                    wav_a = wdspota->level_coeffs(level);
-                    wav_b = wdspotb->level_coeffs(level);
-                }
-
-                for (int y = 0; y < H_L; y++) {
-                    for (int x = 0; x < W_L; x++) {
-                        wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
-                        if (chromablu != 1.f) {
-                            wav_a[dir][y * W_L + x] = templevela[dir - 1][level][y][x];
-                            wav_b[dir][y * W_L + x] = templevelb[dir - 1][level][y][x];
-                        }
-                        
-                    }
-                }
-            }
-        }
 
 
         //free memory templevel
         if (wavcurvelev  || wavcurvecomp) {
+
+
             for (int i = 0; i < dir; i++) {
                 for (int j = 0; j < leve; j++) {
                     for (int l = 0; l < H_L; l++) {
@@ -7373,37 +7339,10 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
             delete [] templevel;
 
 
-
-            if (chromablu != 1.f) {
-                for (int i = 0; i < dir; i++) {
-                    for (int j = 0; j < leve; j++) {
-                        for (int l = 0; l < H_L; l++) {
-                            delete [] templevela[i][j][l];
-                            delete [] templevelb[i][j][l];
-                        }
-                    }
-                }
-
-                for (int i = 0; i < dir; i++) {
-                    for (int j = 0; j < leve; j++) {
-                        delete [] templevela[i][j];
-                        delete [] templevelb[i][j];
-                    }
-                }
-
-                for (int i = 0; i < dir; i++) {
-                    delete [] templevela[i];
-                    delete [] templevelb[i];
-                }
-
-                delete [] templevela;
-                delete [] templevelb;
-
-            }
         }
     }
 
-    if (locwavCurve && locwavutili) {
+    if (locwavCurve && locwavutili) {//simple local contrast in function luminance
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot->level_W(level);
@@ -7473,122 +7412,150 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
         }
     }
 
-    //reconstruct all and compress dynamic range positive
+    //reconstruct all for L
     wdspot->reconstruct(tmp[0], 1.f);
-
-    if (chromalev != 1.f || chromablu != 1.f) {
-        wdspota->reconstruct(tmpa[0], 1.f);
-        wdspotb->reconstruct(tmpb[0], 1.f);
-        delete wdspota;
-        delete wdspotb;
-    }
-
     delete wdspot;
 
-//compress dynamic range negative in case of - seems no need
-    float ****templevelN = nullptr;
-    bool negativ = false;
+    if (wavcurvelev && radlevblur > 0.f) {//chroma if need
+        if (!blurlc) {
 
-    if (wavcurvecomp  && negativ) {
-        array2D<float> tmpneg(bfw, bfh);
+            wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
 
-        for (int y = 0; y < bfh; y++) {
-            for (int x = 0; x < bfw; x++) {
-                tmpneg[y][x]  = tmp[y][x];
+            if (wdspota->memoryAllocationFailed) {
+                return;
             }
-        }
 
-        wavelet_decomposition *wdspotneg = new wavelet_decomposition(tmpneg[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+            wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
 
-        if (wdspotneg->memoryAllocationFailed) {
-            return;
-        }
-
-        maxlvl = wdspotneg->maxlevel();
-        int W_L = wdspotneg->level_W(0);
-        int H_L = wdspotneg->level_H(0);
-
-        fatParams.enabled = wavcurvecomp;
-
-        templevelN = new float***[dir];
-
-        //allocate memory for 3 DIR n levels, H_L, W_L
-        for (int d = 0; d < dir; d++) {
-            templevelN[d] = new float**[leve];
-
-            for (int k = 0; k < leve; k++) {
-                templevelN[d][k] = new float*[H_L];
-
-                for (int i = 0; i < H_L; i++) {
-                    templevelN[d][k][i] = new float[W_L];
-                }
+            if (wdspotb->memoryAllocationFailed) {
+                return;
             }
-        }
 
 
-        for (int dir = 1; dir < 4; dir++) {
-            for (int level = level_bl; level < maxlvl; ++level) {
-                int W_L = wdspotneg->level_W(level);
-                int H_L = wdspotneg->level_H(level);
-                float **wav_LN = wdspotneg->level_coeffs(level);
+            templevela = new float***[dir];
+            templevelb = new float***[dir];
 
-                for (int y = 0; y < H_L; y++) {
-                    for (int x = 0; x < W_L; x++) {
-                        float valN  = wav_LN[dir][y * W_L + x];
+            //allocate memory for 3 DIR n levels, H_L, W_L
+            for (int d = 0; d < dir; d++) {
+                templevela[d] = new float**[leve];
+                templevelb[d] = new float**[leve];
 
-                        templevelN[dir - 1][level][y][x] = -valN;
+                for (int k = 0; k < leve; k++) {
+                    templevela[d][k] = new float*[H_L];
+                    templevelb[d][k] = new float*[H_L];
 
+                    for (int i = 0; i < H_L; i++) {
+                        templevela[d][k][i] = new float[W_L];
+                        templevelb[d][k][i] = new float[W_L];
                     }
                 }
             }
-        }
 
-        for (int dir = 1; dir < 4; dir++) {
-            for (int level = level_bl; level < maxlvl; ++level) {
-                int W_L = wdspotneg->level_W(level);
-                int H_L = wdspotneg->level_H(level);
+            if (templevela == nullptr) {
+                fprintf(stderr, "allocation error\n");
+                return;
+            }
 
-                if (loccompwavCurve && loccompwavutili) {
+            if (templevelb == nullptr) {
+                fprintf(stderr, "allocation error\n");
+                return;
+            }
 
-                    float klev = (loccompwavCurve[level * 55.5f]);
-                    fatParams.amount = 50.f * klev;
-                    {
-                        ToneMapFattal02(nullptr, fatParams, 3, -1, templevelN[dir - 1][level], W_L, H_L);
+            //fill array templevel with wavelet value level dir
+            for (int dir = 1; dir < 4; dir++) {
+                for (int level = level_bl; level < maxlvl; ++level) {
+                    int W_L = wdspota->level_W(level);
+                    int H_L = wdspota->level_H(level);
+                    float **wav_a = nullptr;
+                    float **wav_b = nullptr;
+
+                    wav_a = wdspota->level_coeffs(level);
+                    wav_b = wdspotb->level_coeffs(level);
+
+                    for (int y = 0; y < H_L; y++) {
+                        for (int x = 0; x < W_L; x++) {
+
+                            float vala  = wav_a[dir][y * W_L + x];
+                            float valb  = wav_b[dir][y * W_L + x];
+                            templevela[dir - 1][level][y][x] = vala;
+                            templevelb[dir - 1][level][y][x] = valb;
+
+                        }
                     }
                 }
             }
-        }
 
-        for (int i = 0; i < dir; i++) {
-            for (int j = 0; j < leve; j++) {
-                for (int l = 0; l < H_L; l++) {
-                    delete [] templevelN[i][j][l];
+            for (int dir = 1; dir < 4; dir++) {
+                for (int level = level_bl; level < maxlvl; ++level) {
+                    int W_L = wdspota->level_W(level);
+                    int H_L = wdspota->level_H(level);
+
+                    if (loclevwavCurve && loclevwavutili) {
+
+                        float klev = 0.25f * (loclevwavCurve[level * 55.5f]);
+                        #pragma omp parallel
+                        {
+                            gaussianBlur(templevela[dir - 1][level], templevela[dir - 1][level], W_L, H_L, radlevblur * klev * chromablu);
+                            gaussianBlur(templevelb[dir - 1][level], templevelb[dir - 1][level], W_L, H_L, radlevblur * klev * chromablu);
+                        }
+                    }
                 }
             }
-        }
 
-        for (int i = 0; i < dir; i++) {
-            for (int j = 0; j < leve; j++) {
-                delete [] templevelN[i][j];
+            for (int dir = 1; dir < 4; dir++) {
+                for (int level = level_bl; level < maxlvl; ++level) {
+                    int W_L = wdspota->level_W(level);
+                    int H_L = wdspota->level_H(level);
+                    float **wav_a = nullptr;
+                    float **wav_b = nullptr;
+
+                    wav_a = wdspota->level_coeffs(level);
+                    wav_b = wdspotb->level_coeffs(level);
+
+                    for (int y = 0; y < H_L; y++) {
+                        for (int x = 0; x < W_L; x++) {
+
+                            wav_a[dir][y * W_L + x] = templevela[dir - 1][level][y][x];
+                            wav_b[dir][y * W_L + x] = templevelb[dir - 1][level][y][x];
+
+                        }
+                    }
+                }
             }
-        }
 
-        for (int i = 0; i < dir; i++) {
-            delete [] templevelN[i];
-        }
+            wdspota->reconstruct(tmpa[0], 1.f);
+            wdspotb->reconstruct(tmpb[0], 1.f);
+            delete wdspota;
+            delete wdspotb;
 
-        delete [] templevelN;
 
-        wdspotneg->reconstruct(tmpneg[0], 1.f);
-
-        for (int y = 0; y < bfh; y++) {
-            for (int x = 0; x < bfw; x++) {
-                tmp[y][x]  = tmpneg[y][x];
+            for (int i = 0; i < dir; i++) {
+                for (int j = 0; j < leve; j++) {
+                    for (int l = 0; l < H_L; l++) {
+                        delete [] templevela[i][j][l];
+                        delete [] templevelb[i][j][l];
+                    }
+                }
             }
-        }
 
-        delete wdspotneg;
+            for (int i = 0; i < dir; i++) {
+                for (int j = 0; j < leve; j++) {
+                    delete [] templevela[i][j];
+                    delete [] templevelb[i][j];
+                }
+            }
+
+            for (int i = 0; i < dir; i++) {
+                delete [] templevela[i];
+                delete [] templevelb[i];
+            }
+
+            delete [] templevela;
+            delete [] templevelb;
+
+        }
     }
+
 }
 
 
