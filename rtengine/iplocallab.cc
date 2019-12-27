@@ -62,6 +62,7 @@
 #define MINSCOPE 0.025f
 #define mSP 5  //minimum size Spot
 #define mDEN 64  //minimum size Spot Denoise
+#define mSPsharp 12  //minimum size Spot Sharp
 
 #define CLIPC(a) LIM(a, -42000.f, 42000.f)  // limit a and b  to 130 probably enough ?
 #define CLIPL(x) LIM(x,0.f,40000.f) // limit L to about L=120 probably enough ?
@@ -11686,7 +11687,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
             JaggedArray<float> loctemp(bfw, bfh);
 
-            if (call == 2) { //call from simpleprocess
+            if (call == 2 && (bfw >= mSPsharp && bfh >= mSPsharp)) { //call from simpleprocess
                 JaggedArray<float> bufsh(bfw, bfh, true);
                 JaggedArray<float> hbuffer(bfw, bfh);
                 int begy = lp.yc - lp.lyT;
