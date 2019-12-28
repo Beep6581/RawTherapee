@@ -52,7 +52,7 @@
 #include "guidedfilter.h"
 
 #define TS 64       // Tile size
-#define offset 25   // shift between tiles
+#define offset1 25   // shift between tiles
 #define fTS ((TS/2+1))  // second dimension of Fourier tiles
 #define blkrad 1    // radius of block averaging
 #define offset2 25   // shift between tiles
@@ -4079,7 +4079,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             bool wavcurvecon = false;
             bool loccompwavutili = false;
             bool wavcurvecomp = false;
-            wavcontrast4(bufmaskblurcol->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false);
+            wavcontrast4(bufmaskblurcol->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false);
 
         }
 
@@ -6939,7 +6939,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
                                    const LocwavCurve & locwavCurve, bool & locwavutili, const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev,
                                    const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon,
                                    const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp,
-                                   float sigm, int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc)
+                                   float sigm, float offs, int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc)
 {
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
 
@@ -7096,8 +7096,8 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
                     wav_a = wdspota->level_coeffs(level);
                     wav_b = wdspotb->level_coeffs(level);
                 }
-
-                float rap =  mean[level] - 2.f * sigm * sigma[level];
+                //offset
+                float rap =  offs * mean[level] - 2.f * sigm * sigma[level];
 
                 if (rap > 0.f) {
                     mea[0] = rap;
@@ -7105,7 +7105,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
                     mea[0] = mean[level] / 6.f;
                 }
 
-                rap =  mean[level] - sigm * sigma[level];
+                rap =  offs * mean[level] - sigm * sigma[level];
 
                 if (rap > 0.f) {
                     mea[1] = rap;
@@ -7113,13 +7113,13 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
                     mea[1] = mean[level] / 2.f;
                 }
 
-                mea[2] = mean[level]; // 50% data
-                mea[3] = mean[level] + sigm * sigma[level] / 2.f;
-                mea[4] = mean[level] + sigm * sigma[level]; //66%
-                mea[5] = mean[level] + sigm * 1.2f * sigma[level];
-                mea[6] = mean[level] + sigm * 1.5f * sigma[level]; //
-                mea[7] = mean[level] + sigm * 2.f * sigma[level]; //95%
-                mea[8] = mean[level] + sigm * 2.5f * sigma[level]; //99%
+                mea[2] = offs * mean[level]; // 50% data
+                mea[3] = offs * mean[level] + sigm * sigma[level] / 2.f;
+                mea[4] = offs * mean[level] + sigm * sigma[level]; //66%
+                mea[5] = offs * mean[level] + sigm * 1.2f * sigma[level];
+                mea[6] = offs * mean[level] + sigm * 1.5f * sigma[level]; //
+                mea[7] = offs * mean[level] + sigm * 2.f * sigma[level]; //95%
+                mea[8] = offs * mean[level] + sigm * 2.5f * sigma[level]; //99%
 
                 if (locconwavCurve && locconwavutili) {
 
@@ -7608,8 +7608,8 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 
 
-    const int numblox_W = ceil((static_cast<float>(GW)) / (offset)) + 2 * blkrad;
-    const int numblox_H = ceil((static_cast<float>(GH)) / (offset)) + 2 * blkrad;
+    const int numblox_W = ceil((static_cast<float>(GW)) / (offset1)) + 2 * blkrad;
+    const int numblox_H = ceil((static_cast<float>(GH)) / (offset1)) + 2 * blkrad;
 
 
     //residual between input and denoised L channel
@@ -7635,15 +7635,15 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 #endif
         float *Lblox = LbloxArray[subThread];
         float *fLblox = fLbloxArray[subThread];
-        float pBuf[GW + TS + 2 * blkrad * offset] ALIGNED16;
+        float pBuf[GW + TS + 2 * blkrad * offset1] ALIGNED16;
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for (int vblk = 0; vblk < numblox_H; ++vblk) {
 
-            int top = (vblk - blkrad) * offset;
-            float * datarow = pBuf + blkrad * offset;
+            int top = (vblk - blkrad) * offset1;
+            float * datarow = pBuf + blkrad * offset1;
 
             for (int i = 0; i < TS; ++i) {
                 int row = top + i;
@@ -7659,17 +7659,17 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
                     datarow[j] = ((*Lin)[rr][j] - tmp1[rr][j]);
                 }
 
-                for (int j = -blkrad * offset; j < 0; ++j) {
+                for (int j = -blkrad * offset1; j < 0; ++j) {
                     datarow[j] = datarow[MIN(-j, GW - 1)];
                 }
 
-                for (int j = GW; j < GW + TS + blkrad * offset; ++j) {
+                for (int j = GW; j < GW + TS + blkrad * offset1; ++j) {
                     datarow[j] = datarow[MAX(0, 2 * GW - 2 - j)];
                 }//now we have a padded data row
 
                 //now fill this row of the blocks with Lab high pass data
                 for (int hblk = 0; hblk < numblox_W; ++hblk) {
-                    int left = (hblk - blkrad) * offset;
+                    int left = (hblk - blkrad) * offset1;
                     int indx = (hblk) * TS; //index of block in malloc
 
                     if (top + i >= 0 && top + i < GH) {
@@ -7738,7 +7738,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
                 fftwf_execute_r2r(plan_backward_blox[1], fLblox, Lblox);    //for DCT
             }
 
-            int topproc = (vblk - blkrad) * offset;
+            int topproc = (vblk - blkrad) * offset1;
 
             //add row of blocks to output image tile
             ImProcFunctions::RGBoutput_tile_row(Lblox, Ldetail, tilemask_out, GH, GW, topproc);
@@ -7870,9 +7870,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
             int GW = transformed->W;
             int GH = transformed->H;
-            int max_numblox_W = ceil((static_cast<float>(GW)) / (offset)) + 2 * blkrad;
+            int max_numblox_W = ceil((static_cast<float>(GW)) / (offset1)) + 2 * blkrad;
             // calculate min size of numblox_W.
-            int min_numblox_W = ceil((static_cast<float>(GW)) / (offset)) + 2 * blkrad;
+            int min_numblox_W = ceil((static_cast<float>(GW)) / (offset1)) + 2 * blkrad;
 
 
             for (int ir = 0; ir < GH; ir++)
@@ -8416,9 +8416,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 array2D<float> *Ain = nullptr;
                 array2D<float> *Bin = nullptr;
 
-                int max_numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
+                int max_numblox_W = ceil((static_cast<float>(bfw)) / (offset1)) + 2 * blkrad;
                 // calculate min size of numblox_W.
-                int min_numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
+                int min_numblox_W = ceil((static_cast<float>(bfw)) / (offset1)) + 2 * blkrad;
                 // these are needed only for creation of the plans and will be freed before entering the parallel loop
 
 
@@ -9559,7 +9559,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bool wavcurvecon = false;
                 bool loccompwavutili = false;
                 bool wavcurvecomp = false;
-                wavcontrast4(bufmaskblurbl->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp,  1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false);
+                wavcontrast4(bufmaskblurbl->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp,  1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false);
             }
 
             int shado = params->locallab.spots.at(sp).shadmaskbl;
@@ -11484,13 +11484,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         const bool blurlc = params->locallab.spots.at(sp).blurlc;
                         const float radlevblur = (params->locallab.spots.at(sp).levelblur) / sk;
                         const float sigma = params->locallab.spots.at(sp).sigma;
+                        const float offs = params->locallab.spots.at(sp).offset;
                         const float fatdet = params->locallab.spots.at(sp).fatdet;
                         const float fatanch = params->locallab.spots.at(sp).fatanch;
                         const float fatres = params->locallab.spots.at(sp).fatres;
                         const float chrol = params->locallab.spots.at(sp).chromalev;
                         const float chrobl = params->locallab.spots.at(sp).chromablu;
 
-                        wavcontrast4(tmp1->L, tmp1->a, tmp1->b, contrast, fatres, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, sigma, maxlvl, fatdet, fatanch, chrol, chrobl, blurlc);
+                        wavcontrast4(tmp1->L, tmp1->a, tmp1->b, contrast, fatres, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, sigma, offs, maxlvl, fatdet, fatanch, chrol, chrobl, blurlc);
 
                         const float satur = params->locallab.spots.at(sp).residchro;
 

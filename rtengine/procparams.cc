@@ -2727,6 +2727,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     levelblur(0.0),
     residchro(0.0),
     sigma(1.0),
+    offset(1.0),
     chromalev(1.0),
     chromablu(1.0),
     fatdet(40.0),
@@ -3134,6 +3135,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && levelblur == other.levelblur
         && residchro == other.residchro
         && sigma == other.sigma
+        && offset == other.offset
         && chromalev == other.chromalev
         && chromablu == other.chromablu
         && fatdet == other.fatdet
@@ -4520,6 +4522,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).levelblur, "Locallab", "Levelblur_" + std::to_string(i), spot.levelblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).residchro, "Locallab", "Residchro_" + std::to_string(i), spot.residchro, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sigma, "Locallab", "Sigma_" + std::to_string(i), spot.sigma, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).offset, "Locallab", "Offset_" + std::to_string(i), spot.offset, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromalev, "Locallab", "Chromalev_" + std::to_string(i), spot.chromalev, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromablu, "Locallab", "Chromablu_" + std::to_string(i), spot.chromablu, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatdet, "Locallab", "Fatdet_" + std::to_string(i), spot.fatdet, keyFile);
@@ -6057,6 +6060,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Levelblur_" + std::to_string(i), pedited, spot.levelblur, spotEdited.levelblur);
                 assignFromKeyfile(keyFile, "Locallab", "Residchro_" + std::to_string(i), pedited, spot.residchro, spotEdited.residchro);
                 assignFromKeyfile(keyFile, "Locallab", "Sigma_" + std::to_string(i), pedited, spot.sigma, spotEdited.sigma);
+                assignFromKeyfile(keyFile, "Locallab", "Offset_" + std::to_string(i), pedited, spot.offset, spotEdited.offset);
                 assignFromKeyfile(keyFile, "Locallab", "Chromalev_" + std::to_string(i), pedited, spot.chromalev, spotEdited.chromalev);
                 assignFromKeyfile(keyFile, "Locallab", "Chromablu_" + std::to_string(i), pedited, spot.chromablu, spotEdited.chromablu);
                 assignFromKeyfile(keyFile, "Locallab", "Fatdet_" + std::to_string(i), pedited, spot.fatdet, spotEdited.fatdet);

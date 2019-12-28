@@ -1116,6 +1116,7 @@ HISTORY_MSG_877;Local - LC mask chroma
 HISTORY_MSG_878;Local - LC mask curve contrast
 HISTORY_MSG_879;Local - LC Chroma levels
 HISTORY_MSG_880;Local - LC Chroma blur levels
+HISTORY_MSG_881;Local - Contrast Offset Luminance
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2453,6 +2454,7 @@ TP_LOCALLAB_NOISELUMFINEZERO;Luminance fine 0 (Wav)
 TP_LOCALLAB_NOISEMETH;Denoise
 TP_LOCALLAB_NONENOISE;None
 TP_LOCALLAB_OFFS;Offset
+TP_LOCALLAB_OFFSETWAV;Offset
 TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_ORIGLC;Merge only with original image
 TP_LOCALLAB_PASTELS2;Vibrance
