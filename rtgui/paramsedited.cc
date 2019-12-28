@@ -336,8 +336,16 @@ void ParamsEdited::set(bool v)
     lensProf.lfLens = v;
     perspective.horizontal = v;
     perspective.vertical = v;
-    perspective.vBias = v;
-    perspective.fov = v;
+    perspective.camera_crop_factor = v;
+    perspective.camera_focal_length = v;
+    perspective.camera_shift_horiz = v;
+    perspective.camera_shift_vert = v;
+    perspective.projection_pitch = v;
+    perspective.projection_rotate = v;
+    perspective.projection_scale = v;
+    perspective.projection_shift_horiz = v;
+    perspective.projection_shift_vert = v;
+    perspective.projection_yaw = v;
     gradient.enabled = v;
     gradient.degree = v;
     gradient.feather = v;
@@ -921,8 +929,16 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         lensProf.lfLens = lensProf.lfLens && p.lensProf.lfLens == other.lensProf.lfLens;
         perspective.horizontal = perspective.horizontal && p.perspective.horizontal == other.perspective.horizontal;
         perspective.vertical = perspective.vertical && p.perspective.vertical == other.perspective.vertical;
-        perspective.vBias = perspective.vBias && p.perspective.vBias == other.perspective.vBias;
-        perspective.fov = perspective.fov && p.perspective.fov == other.perspective.fov;
+        perspective.camera_crop_factor = perspective.camera_crop_factor && p.perspective.camera_crop_factor == other.perspective.camera_crop_factor;
+        perspective.camera_focal_length = perspective.camera_focal_length && p.perspective.camera_focal_length == other.perspective.camera_focal_length;
+        perspective.camera_shift_horiz = perspective.camera_shift_horiz && p.perspective.camera_shift_horiz == other.perspective.camera_shift_horiz;
+        perspective.camera_shift_vert = perspective.camera_shift_vert && p.perspective.camera_shift_vert == other.perspective.camera_shift_vert;
+        perspective.projection_pitch = perspective.projection_pitch && p.perspective.projection_pitch == other.perspective.projection_pitch;
+        perspective.projection_rotate = perspective.projection_rotate && p.perspective.projection_rotate == other.perspective.projection_rotate;
+        perspective.projection_scale = perspective.projection_scale && p.perspective.projection_scale == other.perspective.projection_scale;
+        perspective.projection_shift_horiz = perspective.projection_shift_horiz && p.perspective.projection_shift_horiz == other.perspective.projection_shift_horiz;
+        perspective.projection_shift_vert = perspective.projection_shift_vert && p.perspective.projection_shift_vert == other.perspective.projection_shift_vert;
+        perspective.projection_yaw = perspective.projection_yaw && p.perspective.projection_yaw == other.perspective.projection_yaw;
         gradient.enabled = gradient.enabled && p.gradient.enabled == other.gradient.enabled;
         gradient.degree = gradient.degree && p.gradient.degree == other.gradient.degree;
         gradient.feather = gradient.feather && p.gradient.feather == other.gradient.feather;
@@ -2321,12 +2337,44 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.perspective.vertical = dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vertical + mods.perspective.vertical : mods.perspective.vertical;
     }
 
-    if (perspective.vBias) {
-        toEdit.perspective.vBias = dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vBias + mods.perspective.vBias : mods.perspective.vBias;
+    if (perspective.camera_crop_factor) {
+        toEdit.perspective.camera_crop_factor = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH] ? toEdit.perspective.camera_crop_factor + mods.perspective.camera_crop_factor : mods.perspective.camera_crop_factor;
     }
 
-    if (perspective.fov) {
-        toEdit.perspective.fov = dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.fov + mods.perspective.fov : mods.perspective.fov;
+    if (perspective.camera_focal_length) {
+        toEdit.perspective.camera_focal_length = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH] ? toEdit.perspective.camera_focal_length + mods.perspective.camera_focal_length : mods.perspective.camera_focal_length;
+    }
+
+    if (perspective.camera_shift_horiz) {
+        toEdit.perspective.camera_shift_horiz = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_SHIFT] ? toEdit.perspective.camera_shift_horiz + mods.perspective.camera_shift_horiz : mods.perspective.camera_shift_horiz;
+    }
+
+    if (perspective.camera_shift_vert) {
+        toEdit.perspective.camera_shift_vert = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_SHIFT] ? toEdit.perspective.camera_shift_vert + mods.perspective.camera_shift_vert : mods.perspective.camera_shift_vert;
+    }
+
+    if (perspective.projection_pitch) {
+        toEdit.perspective.projection_pitch = dontforceSet && options.baBehav[ADDSET_PERSP_PROJ_ANGLE] ? toEdit.perspective.projection_pitch + mods.perspective.projection_pitch : mods.perspective.projection_pitch;
+    }
+
+    if (perspective.projection_rotate) {
+        toEdit.perspective.projection_rotate = dontforceSet && options.baBehav[ADDSET_PERSP_PROJ_ROTATE] ? toEdit.perspective.projection_rotate + mods.perspective.projection_rotate : mods.perspective.projection_rotate;
+    }
+
+    if (perspective.projection_scale) {
+        toEdit.perspective.projection_scale = dontforceSet && options.baBehav[ADDSET_PERSP_PROJ_SCALE] ? toEdit.perspective.projection_scale + mods.perspective.projection_scale : mods.perspective.projection_scale;
+    }
+
+    if (perspective.projection_shift_horiz) {
+        toEdit.perspective.projection_shift_horiz = dontforceSet && options.baBehav[ADDSET_PERSP_PROJ_SHIFT] ? toEdit.perspective.projection_shift_horiz + mods.perspective.projection_shift_horiz : mods.perspective.projection_shift_horiz;
+    }
+
+    if (perspective.projection_shift_vert) {
+        toEdit.perspective.projection_shift_vert = dontforceSet && options.baBehav[ADDSET_PERSP_PROJ_SHIFT] ? toEdit.perspective.projection_shift_vert + mods.perspective.projection_shift_vert : mods.perspective.projection_shift_vert;
+    }
+
+    if (perspective.projection_yaw) {
+        toEdit.perspective.projection_yaw = dontforceSet && options.baBehav[ADDSET_PERSP_PROJ_ANGLE] ? toEdit.perspective.projection_yaw + mods.perspective.projection_yaw : mods.perspective.projection_yaw;
     }
 
     if (gradient.enabled) {

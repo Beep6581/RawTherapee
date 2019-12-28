@@ -1852,8 +1852,16 @@ LensProfParams::LcMode LensProfParams::getMethodNumber(const Glib::ustring& mode
 PerspectiveParams::PerspectiveParams() :
     horizontal(0.0),
     vertical(0.0),
-    vBias(0.0),
-    fov(65.0)
+    camera_crop_factor(1.0),
+    camera_focal_length(24.0),
+    camera_shift_horiz(0.0),
+    camera_shift_vert(0.0),
+    projection_pitch(0.0),
+    projection_rotate(0.0),
+    projection_scale(1.0),
+    projection_shift_horiz(0.0),
+    projection_shift_vert(0.0),
+    projection_yaw(0.0)
 {
 }
 
@@ -1862,8 +1870,16 @@ bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
     return
         horizontal == other.horizontal
         && vertical == other.vertical
-        && vBias == other.vBias
-        && fov == other.fov;
+        && camera_focal_length == other.camera_focal_length
+        && camera_crop_factor == other.camera_crop_factor
+        && camera_shift_horiz == other.camera_shift_horiz
+        && camera_shift_vert == other.camera_shift_vert
+        && projection_shift_horiz == other.projection_shift_horiz
+        && projection_shift_vert == other.projection_shift_vert
+        && projection_scale == other.projection_scale
+        && projection_rotate == other.projection_rotate
+        && projection_pitch == other.projection_pitch
+        && projection_yaw == other.projection_yaw;
 }
 
 bool PerspectiveParams::operator !=(const PerspectiveParams& other) const
@@ -3347,8 +3363,16 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 // Perspective correction
         saveToKeyfile(!pedited || pedited->perspective.horizontal, "Perspective", "Horizontal", perspective.horizontal, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.vertical, "Perspective", "Vertical", perspective.vertical, keyFile);
-        saveToKeyfile(!pedited || pedited->perspective.vBias, "Perspective", "VerticalBias", perspective.vBias, keyFile);
-        saveToKeyfile(!pedited || pedited->perspective.fov, "Perspective", "FOV", perspective.fov, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.camera_crop_factor, "Perspective", "CameraCropFactor", perspective.camera_crop_factor, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.camera_focal_length, "Perspective", "CameraFocalLength", perspective.camera_focal_length, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.camera_shift_horiz, "Perspective", "CameraShiftHorizontal", perspective.camera_shift_horiz, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.camera_shift_vert, "Perspective", "CameraShiftVertical", perspective.camera_shift_vert, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.projection_pitch, "Perspective", "ProjectionPitch", perspective.projection_pitch, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.projection_rotate, "Perspective", "ProjectionRotate", perspective.projection_rotate, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.projection_scale, "Perspective", "ProjectionScale", perspective.projection_scale, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.projection_shift_horiz, "Perspective", "ProjectionShiftHorizontal", perspective.projection_shift_horiz, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.projection_shift_vert, "Perspective", "ProjectionShiftVertical", perspective.projection_shift_vert, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.projection_yaw, "Perspective", "ProjectionYaw", perspective.projection_yaw, keyFile);
 
 // Gradient
         saveToKeyfile(!pedited || pedited->gradient.enabled, "Gradient", "Enabled", gradient.enabled, keyFile);
@@ -4426,8 +4450,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("Perspective")) {
             assignFromKeyfile(keyFile, "Perspective", "Horizontal", pedited, perspective.horizontal, pedited->perspective.horizontal);
             assignFromKeyfile(keyFile, "Perspective", "Vertical", pedited, perspective.vertical, pedited->perspective.vertical);
-            assignFromKeyfile(keyFile, "Perspective", "VerticalBias", pedited, perspective.vBias, pedited->perspective.vBias);
-            assignFromKeyfile(keyFile, "Perspective", "FOV", pedited, perspective.fov, pedited->perspective.fov);
+            assignFromKeyfile(keyFile, "Perspective", "CameraShiftHorizontal", pedited, perspective.camera_shift_horiz, pedited->perspective.camera_shift_horiz);
+            assignFromKeyfile(keyFile, "Perspective", "CameraShiftVertical", pedited, perspective.camera_shift_vert, pedited->perspective.camera_shift_vert);
+            assignFromKeyfile(keyFile, "Perspective", "CameraCropFactor", pedited, perspective.camera_crop_factor, pedited->perspective.camera_crop_factor);
+            assignFromKeyfile(keyFile, "Perspective", "CameraFocalLength", pedited, perspective.camera_focal_length, pedited->perspective.camera_focal_length);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionPitch", pedited, perspective.projection_pitch, pedited->perspective.projection_pitch);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionRotate", pedited, perspective.projection_rotate, pedited->perspective.projection_rotate);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionScale", pedited, perspective.projection_scale, pedited->perspective.projection_scale);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftHorizontal", pedited, perspective.projection_shift_horiz, pedited->perspective.projection_shift_horiz);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftVertical", pedited, perspective.projection_shift_vert, pedited->perspective.projection_shift_vert);
+            assignFromKeyfile(keyFile, "Perspective", "ProjectionYaw", pedited, perspective.projection_yaw, pedited->perspective.projection_yaw);
         }
 
         if (keyFile.has_group("Gradient")) {

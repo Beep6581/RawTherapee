@@ -518,6 +518,12 @@ enum ProcEventCode {
     EvLEnabled = 492,
     EvPdShrEnabled = 493,
     EvPdShrMaskToggled = 494,
+    EvPerspCamFocalLength = 495,
+    EvPerspCamShift = 496,
+    EvPerspProjAngle = 497,
+    EvPerspProjRotate = 498,
+    EvPerspProjScale = 499,
+    EvPerspProjShift = 500,
 
     NUMOFEVENTS
 

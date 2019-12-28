@@ -32,8 +32,16 @@ class PerspCorrection final :
 protected:
     Adjuster* horiz;
     Adjuster* vert;
-    Adjuster* vBias;
-    Adjuster* fov;
+    Adjuster* camera_crop_factor;
+    Adjuster* camera_focal_length;
+    Adjuster* camera_shift_horiz;
+    Adjuster* camera_shift_vert;
+    Adjuster* projection_pitch;
+    Adjuster* projection_rotate;
+    Adjuster* projection_scale;
+    Adjuster* projection_shift_horiz;
+    Adjuster* projection_shift_vert;
+    Adjuster* projection_yaw;
 
 public:
 
@@ -45,6 +53,6 @@ public:
     void setBatchMode   (bool batchMode) override;
 
     void adjusterChanged (Adjuster* a, double newval) override;
-    void setAdjusterBehavior (bool badd);
+    void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add, bool projection_scale_add);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };

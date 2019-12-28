@@ -521,7 +521,13 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RGBCURVE,         // EvRGBEnabled
     LUMINANCECURVE,   // EvLEnabled
     DEMOSAIC,         // EvPdShrEnabled
-    CAPTURESHARPEN    // EvPdShrMaskToggled
+    CAPTURESHARPEN,   // EvPdShrMaskToggled
+    TRANSFORM,        // EvPerspCamFocalLength
+    TRANSFORM,        // EvPerspCamShift
+    TRANSFORM,        // EvPerspProjAngle
+    TRANSFORM,        // EvPerspProjRotate
+    TRANSFORM,        // EvPerspProjScale
+    TRANSFORM         // EvPerspProjShift
 
 };
 

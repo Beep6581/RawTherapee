@@ -21,6 +21,7 @@
 #include "imagefloat.h"
 #include "improcfun.h"
 
+#include "homogeneouscoordinates.h"
 #include "procparams.h"
 #include "rt_math.h"
 #include "rtengine.h"
@@ -203,6 +204,84 @@ namespace rtengine
 
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
 
+/**
+ * Creates an inverse transformation matrix for camera-geometry-based
+ * perspective correction. Unless otherwise specified, units are the same as the
+ * units of the vectors which the matrix will transform. The projection_*
+ * parameters are applied in the order they appear.
+ * @param camera_focal_length Camera's focal length.
+ * @param camera_shift_horiz Camera lens's shift to the right.
+ * @param camera_shift_vert Camera lens's shift upwards.
+ * @param camera_pitch Camera's pitch in radians. Up is positive.
+ * @param camera_yaw Camera's yaw in radians. Right is positive.
+ * Up is positive.
+ * @param projection_shift_horiz Shift of perspective-corrected image to the
+ * right.
+ * @param projection_shift_vert Shift of perspective-corrected image upwards.
+ * @param projection_rotate Rotation of perspective-corrected image
+ * counter-clockwise in radians.
+ * @param projection_yaw Yaw in radians of simulated perspective distortion.
+ * Right is positive.
+ * @param projection_pitch Pitch in radians of simulated perspective distortion.
+ * Up is positive.
+ * @param projection_scale Scale factor of perspective-corrected image.
+ */
+homogeneous::Matrix<double> perspectiveMatrix(double camera_focal_length, double
+        camera_shift_horiz, double camera_shift_vert, double camera_pitch,
+        double camera_yaw, double projection_yaw, double projection_pitch,
+        double projection_rotate, double projection_shift_horiz, double
+        projection_shift_vert, double projection_scale)
+{
+    const double projection_scale_inverse = 1.0 / projection_scale;
+    homogeneous::Vector<double> center;
+    center[0] = 0;
+    center[1] = 0;
+    center[2] = camera_focal_length;
+    center[3] = 1;
+
+    // Locations of image center after rotations.
+    const homogeneous::Vector<double> camera_center_yaw_pitch =
+        homogeneous::rotationMatrix<double>(camera_yaw, homogeneous::Axis::Y) *
+        homogeneous::rotationMatrix<double>(camera_pitch, homogeneous::Axis::X) *
+        center;
+    const homogeneous::Vector<double> projection_center_yaw_pitch =
+        homogeneous::rotationMatrix<double>(-projection_yaw, homogeneous::Axis::Y) *
+        homogeneous::rotationMatrix<double>(-projection_pitch, homogeneous::Axis::X) *
+        center;
+
+    // The following comments refer to the forward transformation.
+    const homogeneous::Matrix<double> matrix =
+        // Lens/sensor shift and move to z == camera_focal_length.
+        homogeneous::translationMatrix<double>(-camera_shift_horiz,
+                -camera_shift_vert, -camera_focal_length) *
+        // Perspective correction.
+        homogeneous::projectionMatrix<double>(camera_focal_length, homogeneous::Axis::Z) *
+        homogeneous::rotationMatrix<double>(-camera_pitch, homogeneous::Axis::X) *
+        homogeneous::rotationMatrix<double>(-camera_yaw, homogeneous::Axis::Y) *
+        // Re-center after perspective rotation.
+        homogeneous::translationMatrix<double>(camera_center_yaw_pitch[0],
+                camera_center_yaw_pitch[1], camera_center_yaw_pitch[2] - camera_focal_length) *
+        // Translate corrected image.
+        homogeneous::translationMatrix<double>(-projection_shift_horiz,
+                -projection_shift_vert, 0) *
+        // Rotate corrected image.
+        homogeneous::rotationMatrix<double>(projection_rotate, homogeneous::Axis::Z) *
+        // Un-center for perspective rotation.
+        homogeneous::translationMatrix<double>(projection_center_yaw_pitch[0],
+                projection_center_yaw_pitch[1], camera_focal_length - projection_center_yaw_pitch[2]) *
+        // Simulate perspective transformation.
+        homogeneous::projectionMatrix<double>(projection_center_yaw_pitch[2], homogeneous::Axis::Z) *
+        homogeneous::rotationMatrix<double>(projection_yaw, homogeneous::Axis::Y) *
+        homogeneous::rotationMatrix<double>(projection_pitch, homogeneous::Axis::X) *
+        // Move to z == 0.
+        homogeneous::translationMatrix<double>(0, 0, camera_focal_length) *
+        // Scale corrected image.
+        homogeneous::scaleMatrix<double>(projection_scale_inverse,
+                projection_scale_inverse, 1);
+
+    return matrix;
+}
+
 bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef,
                                   const LensCorrection *pLCPMap) const
 {
@@ -239,34 +318,24 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     double ascale = ascaleDef > 0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0);
 
     // auxiliary variables for perspective correction
-    const double f = maxRadius / tan(params->perspective.fov / 360.0 * rtengine::RT_PI);
-    const double phtheta = params->perspective.horizontal / -180.0 * rtengine::RT_PI;
-    const double pvtheta = params->perspective.vertical / -180.0 * rtengine::RT_PI;
-    const double pbtheta = params->perspective.vBias / -180.0 * rtengine::RT_PI;
-    const double phcos = cos(phtheta);
-    const double pvcos = cos(pvtheta);
-    const double pbcos = cos(pbtheta);
-    const double phsin = sin(phtheta);
-    const double pvsin = sin(pvtheta);
-    const double pbsin = sin(pbtheta);
-    // Coordinates of distorted image center.
-    const double pxoffset = f * phsin * pvcos;
-    const double pyoffset = -f * (phcos * pvcos * pbsin + pvsin * pbcos);
-    const double pz = f * (phcos * pvcos * pbcos - pvsin * pbsin);
-    // Inverse transformation matrix.
-    const double p_xx = f * phcos;
-    const double p_xy = f * phsin * pbsin;
-    const double p_xz = f * phsin * pbcos;
-    const double p_yx = f * phsin * pvsin;
-    const double p_yy = f * (pvcos * pbcos - phcos * pvsin * pbsin);
-    const double p_yz = f * (-pvcos * pbsin - phcos * pvsin * pbcos);
-    const double p_zx = -phsin * pvcos;
-    const double p_zy = phcos * pvcos * pbsin + pvsin * pbcos;
-    const double p_zz = phcos * pvcos * pbcos - pvsin * pbsin;
-    // z is known, can calculate these in advance.
-    const double pz_xz = pz * p_xz;
-    const double pz_yz = pz * p_yz;
-    const double pz_zz = pz * p_zz;
+    const double f = params->perspective.camera_focal_length *
+        params->perspective.camera_crop_factor * (maxRadius / sqrt(18.0*18.0 +
+                    12.0*12.0));
+    const double p_camera_yaw = params->perspective.horizontal / 180.0 * rtengine::RT_PI;
+    const double p_camera_pitch = params->perspective.vertical / 180.0 * rtengine::RT_PI;
+    const double p_camera_shift_horiz = oW / 100.0 * params->perspective.camera_shift_horiz;
+    const double p_camera_shift_vert = oH / -100.0 * params->perspective.camera_shift_vert;
+    const double p_projection_shift_horiz = oW / 100.0 * params->perspective.projection_shift_horiz;
+    const double p_projection_shift_vert = oH / -100.0 * params->perspective.projection_shift_vert;
+    const double p_projection_rotate = params->perspective.projection_rotate * rtengine::RT_PI_180;
+    const double p_projection_yaw = -params->perspective.projection_yaw * rtengine::RT_PI_180;
+    const double p_projection_pitch = -params->perspective.projection_pitch * rtengine::RT_PI_180;
+    const double p_projection_scale = params->perspective.projection_scale;
+    const homogeneous::Matrix<double> p_matrix = perspectiveMatrix(f,
+            p_camera_shift_horiz, p_camera_shift_vert, p_camera_pitch,
+            p_camera_yaw, p_projection_yaw, p_projection_pitch,
+            p_projection_rotate, p_projection_shift_horiz,
+            p_projection_shift_vert, p_projection_scale);
 
     for (size_t i = 0; i < src.size(); i++) {
         double x_d = src[i].x, y_d = src[i].y;
@@ -282,13 +351,11 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         y_d += ascale * (0 - h2);     // centering y coord & scale
 
         if (needsPerspective()) {
-            x_d -= pxoffset;
-            y_d -= pyoffset;
-            const double normalizer = p_zx * x_d + p_zy * y_d + pz_zz;
-            const double x_d_new = p_xx * x_d + p_xy * y_d + pz_xz;
-            y_d = p_yx * x_d + p_yy * y_d + pz_yz;
-            x_d = x_d_new / normalizer;
-            y_d /= normalizer;
+            const double w = p_matrix[3][0] * x_d + p_matrix[3][1] * y_d + p_matrix[3][3];
+            const double xw = p_matrix[0][0] * x_d + p_matrix[0][1] * y_d + p_matrix[0][3];
+            const double yw = p_matrix[1][0] * x_d + p_matrix[1][1] * y_d + p_matrix[1][3];
+            x_d = xw / w;
+            y_d = yw / w;
         }
 
         // rotate
@@ -928,34 +995,24 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double centerFactory = cy - h2;
 
     // auxiliary variables for perspective correction
-    const double f = maxRadius / tan(params->perspective.fov / 360.0 * rtengine::RT_PI);
-    const double phtheta = params->perspective.horizontal / -180.0 * rtengine::RT_PI;
-    const double pvtheta = params->perspective.vertical / -180.0 * rtengine::RT_PI;
-    const double pbtheta = params->perspective.vBias / -180.0 * rtengine::RT_PI;
-    const double phcos = cos(phtheta);
-    const double pvcos = cos(pvtheta);
-    const double pbcos = cos(pbtheta);
-    const double phsin = sin(phtheta);
-    const double pvsin = sin(pvtheta);
-    const double pbsin = sin(pbtheta);
-    // Coordinates of distorted image center.
-    const double pxoffset = f * phsin * pvcos;
-    const double pyoffset = -f * (phcos * pvcos * pbsin + pvsin * pbcos);
-    const double pz = f * (phcos * pvcos * pbcos - pvsin * pbsin);
-    // Inverse transformation matrix.
-    const double p_xx = f * phcos;
-    const double p_xy = f * phsin * pbsin;
-    const double p_xz = f * phsin * pbcos;
-    const double p_yx = f * phsin * pvsin;
-    const double p_yy = f * (pvcos * pbcos - phcos * pvsin * pbsin);
-    const double p_yz = f * (-pvcos * pbsin - phcos * pvsin * pbcos);
-    const double p_zx = -phsin * pvcos;
-    const double p_zy = phcos * pvcos * pbsin + pvsin * pbcos;
-    const double p_zz = phcos * pvcos * pbcos - pvsin * pbsin;
-    // z is known, can calculate these in advance.
-    const double pz_xz = pz * p_xz;
-    const double pz_yz = pz * p_yz;
-    const double pz_zz = pz * p_zz;
+    const double f = params->perspective.camera_focal_length *
+        params->perspective.camera_crop_factor * (maxRadius / sqrt(18.0*18.0 +
+                    12.0*12.0));
+    const double p_camera_yaw = params->perspective.horizontal / 180.0 * rtengine::RT_PI;
+    const double p_camera_pitch = params->perspective.vertical / 180.0 * rtengine::RT_PI;
+    const double p_camera_shift_horiz = oW / 100.0 * params->perspective.camera_shift_horiz;
+    const double p_camera_shift_vert = oH / -100.0 * params->perspective.camera_shift_vert;
+    const double p_projection_shift_horiz = oW / 100.0 * params->perspective.projection_shift_horiz;
+    const double p_projection_shift_vert = oH / -100.0 * params->perspective.projection_shift_vert;
+    const double p_projection_rotate = params->perspective.projection_rotate * rtengine::RT_PI_180;
+    const double p_projection_yaw = -params->perspective.projection_yaw * rtengine::RT_PI_180;
+    const double p_projection_pitch = -params->perspective.projection_pitch * rtengine::RT_PI_180;
+    const double p_projection_scale = params->perspective.projection_scale;
+    const homogeneous::Matrix<double> p_matrix = perspectiveMatrix(f,
+            p_camera_shift_horiz, p_camera_shift_vert, p_camera_pitch,
+            p_camera_yaw, p_projection_yaw, p_projection_pitch,
+            p_projection_rotate, p_projection_shift_horiz,
+            p_projection_shift_vert, p_projection_scale);
 
     // main cycle
 #ifdef _OPENMP
@@ -978,13 +1035,11 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             y_d += ascale * centerFactory; // centering y coord & scale
 
             if (enablePerspective) {
-                x_d -= pxoffset;
-                y_d -= pyoffset;
-                const double normalizer = p_zx * x_d + p_zy * y_d + pz_zz;
-                const double x_d_new = p_xx * x_d + p_xy * y_d + pz_xz;
-                y_d = p_yx * x_d + p_yy * y_d + pz_yz;
-                x_d = x_d_new / normalizer;
-                y_d /= normalizer;
+                const double w = p_matrix[3][0] * x_d + p_matrix[3][1] * y_d + p_matrix[3][3];
+                const double xw = p_matrix[0][0] * x_d + p_matrix[0][1] * y_d + p_matrix[0][3];
+                const double yw = p_matrix[1][0] * x_d + p_matrix[1][1] * y_d + p_matrix[1][3];
+                x_d = xw / w;
+                y_d = yw / w;
             }
 
             // rotate
@@ -1182,7 +1237,15 @@ bool ImProcFunctions::needsRotation () const
 
 bool ImProcFunctions::needsPerspective () const
 {
-    return params->perspective.horizontal || params->perspective.vertical || params->perspective.vBias;
+    return params->perspective.horizontal || params->perspective.vertical ||
+        params->perspective.camera_shift_horiz ||
+        params->perspective.camera_shift_vert ||
+        params->perspective.projection_pitch ||
+        params->perspective.projection_rotate ||
+        params->perspective.projection_scale != 1.0 ||
+        params->perspective.projection_shift_horiz ||
+        params->perspective.projection_shift_vert ||
+        params->perspective.projection_yaw;
 }
 
 bool ImProcFunctions::needsGradient () const
