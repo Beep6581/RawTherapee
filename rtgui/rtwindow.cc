@@ -921,7 +921,8 @@ void RTWindow::writeToolExpandedStatus (std::vector<int> &tpOpen)
 
 void RTWindow::showRawPedia()
 {
-    show_uri("https://rawpedia.rawtherapee.com/", GDK_CURRENT_TIME);
+    GError* gerror = nullptr;
+    gtk_show_uri(nullptr, "https://rawpedia.rawtherapee.com/", GDK_CURRENT_TIME, &gerror);
 }
 
 void RTWindow::showICCProfileCreator ()
