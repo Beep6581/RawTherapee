@@ -229,7 +229,8 @@ Locallab::Locallab():
     expsharp(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
 //    expcontrastpyr(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOC_CONTRASTPYR")))),
     expcontrastpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
-    expcontrast(Gtk::manage(new MyExpander(true,M("TP_LOCALLAB_LOC_CONTRAST")))),
+    expcontrast(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
+//    expcontrast(Gtk::manage(new MyExpander(true,M("TP_LOCALLAB_LOC_CONTRAST")))),
     expcbdl(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     expdenoi(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     explog(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_LOG")))),
@@ -2752,6 +2753,11 @@ pe(nullptr)
     sharpTitleHBox->pack_end(*sharpImage, Gtk::PACK_SHRINK, 0);
     expsharp->setLabel(sharpTitleHBox);
     expsharp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsharp));
+
+    if (showtooltip) {
+        expsharp->set_tooltip_text(M("TP_LOCALLAB_EXPSHARP_TOOLTIP"));
+    }
+
     enablesharpConn = expsharp->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expsharp));
 
     sharcontrast->setAdjusterListener(this);
@@ -2799,6 +2805,16 @@ pe(nullptr)
     panel->pack_start(*expsharp, false, false);
 
     // Local Contrast
+    Gtk::HBox* const contTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const contLabel = Gtk::manage(new Gtk::Label());
+    contLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRAST")) + Glib::ustring("</b>"));
+    contLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    contTitleHBox->pack_start(*contLabel, Gtk::PACK_EXPAND_WIDGET, 0);
+    RTImage* const contImage = Gtk::manage(new RTImage("one-to-one-small.png"));
+    
+    contTitleHBox->pack_end(*contImage, Gtk::PACK_SHRINK, 0);
+    expcontrast->setLabel(contTitleHBox);
+    
     expcontrast->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrast));
     enablecontrastConn = expcontrast->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcontrast));
     fftwlcConn  = fftwlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftwlcChanged));

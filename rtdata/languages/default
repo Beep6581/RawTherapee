@@ -2307,6 +2307,7 @@ TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposu
 TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
+TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39
 TP_LOCALLAB_EXPTOOL;Tools exposure
 TP_LOCALLAB_EXPTRC;Tone Response Curve - TRC
 TP_LOCALLAB_FATAMOUNT;Amount

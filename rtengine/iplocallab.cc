@@ -7116,7 +7116,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
                                    const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp,
                                    float sigm, float offs, int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc)
 {
-    wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+    wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
 
     //first decomposition for compress dynamic range positive values and other process
     if (wdspot->memoryAllocationFailed) {
@@ -7404,7 +7404,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
     delete wdspot;
 
     if (wavcurvecon  && (chromalev != 1.f)) { // a and b if need ) {//contrast  by levels for chroma a and b
-        wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+        wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
 
         if (wdspota->memoryAllocationFailed) {
             return;
@@ -7414,7 +7414,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
         wdspota->reconstruct(tmpa[0], 1.f);
         delete wdspota;
 
-        wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+        wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
 
         if (wdspotb->memoryAllocationFailed) {
             return;
@@ -7429,7 +7429,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
     if (wavcurvelev && radlevblur > 0.f) {//chroma blur if need
         if (!blurlc) {
             // a
-            wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+            wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
 
             if (wdspota->memoryAllocationFailed) {
                 return;
@@ -7483,7 +7483,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
 
 
             //b
-            wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+            wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
 
             if (wdspotb->memoryAllocationFailed) {
                 return;
@@ -11427,8 +11427,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                         }
-                    } else if (lp.locmet == 1) { //wavelet
-                        int wavelet_level = params->locallab.spots.at(sp).levelwav;
+                    } else if (lp.locmet == 1) { //wavelet && sk ==1
+                        int wavelet_level = params->locallab.spots.at(sp).csthreshold.getBottomRight();
                         float mL = (float)(params->locallab.spots.at(sp).clarilres / 100.f);
                         float mC = (float)(params->locallab.spots.at(sp).claricres / 100.f);
                         float softr = (float)(params->locallab.spots.at(sp).clarisoft);
@@ -11444,12 +11444,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int minwin = min(bfw, bfh);
                         int maxlevelspot = 9;
 
+                        // adap maximum level wavelet to size of crop
                         while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
                             --maxlevelspot ;
                         }
 
-                        wavelet_level = min(wavelet_level, maxlevelspot);
+                        // printf("minwin=%i maxlevelavant=%i  maxlespot=%i\n", minwin, wavelet_level, maxlevelspot);
 
+                        wavelet_level = min(wavelet_level, maxlevelspot);
+                       // printf("maxlevel=%i\n", wavelet_level);
                         bool exec = false;
                         bool origlc = params->locallab.spots.at(sp).origlc;
 
@@ -11457,7 +11460,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             clarimerge(mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
                         }
 
-                        int maxlvl;
+                        int maxlvl = wavelet_level;
                         const float contrast = params->locallab.spots.at(sp).residcont;
                         int level_bl = params->locallab.spots.at(sp).csthreshold.getBottomLeft();
                         int level_hl = params->locallab.spots.at(sp).csthreshold.getTopLeft();
@@ -11673,10 +11676,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             if (call == 2) { //call from simpleprocess
                 printf("bfw=%i bfh=%i\n", bfw, bfh);
-                if(bfw < mSPsharp || bfh < mSPsharp ) {
+
+                if (bfw < mSPsharp || bfh < mSPsharp) {
                     printf("too small RT-spot - minimum size 39 * 39\n");
                     return;
                 }
+
                 JaggedArray<float> bufsh(bfw, bfh, true);
                 JaggedArray<float> hbuffer(bfw, bfh);
                 int begy = lp.yc - lp.lyT;
