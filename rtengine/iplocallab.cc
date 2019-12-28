@@ -6934,6 +6934,100 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     fftwf_cleanup();
 }
 
+void ImProcFunctions::wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
+                             const LocwavCurve & locconwavCurve, bool & locconwavutili, float sigm, float offs, float chromalev, int sk)
+{
+    float mean[10];
+    float meanN[10];
+    float sigma[10];
+    float sigmaN[10];
+    float MaxP[10];
+    float MaxN[10];
+    Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+    float beta;
+    float mea[9];
+
+
+    for (int dir = 1; dir < 4; dir++) {
+        for (int level = level_bl; level < maxlvl; ++level) {
+            int W_L = wdspot.level_W(level);
+            int H_L = wdspot.level_H(level);
+
+            float **wav_L = wdspot.level_coeffs(level);
+            //offset
+            float rap =  offs * mean[level] - 2.f * sigm * sigma[level];
+
+            if (rap > 0.f) {
+                mea[0] = rap;
+            } else {
+                mea[0] = mean[level] / 6.f;
+            }
+
+            rap =  offs * mean[level] - sigm * sigma[level];
+
+            if (rap > 0.f) {
+                mea[1] = rap;
+            } else {
+                mea[1] = mean[level] / 2.f;
+            }
+
+            mea[2] = offs * mean[level]; // 50% data
+            mea[3] = offs * mean[level] + sigm * sigma[level] / 2.f;
+            mea[4] = offs * mean[level] + sigm * sigma[level]; //66%
+            mea[5] = offs * mean[level] + sigm * 1.2f * sigma[level];
+            mea[6] = offs * mean[level] + sigm * 1.5f * sigma[level]; //
+            mea[7] = offs * mean[level] + sigm * 2.f * sigma[level]; //95%
+            mea[8] = offs * mean[level] + sigm * 2.5f * sigma[level]; //99%
+
+            if (locconwavCurve && locconwavutili) {
+
+                float cpMul = 200.f * (locconwavCurve[level * 55.5f] - 0.5f);
+
+                if (cpMul > 0.f) {
+                    cpMul *= 3.5f;
+                }
+
+                cpMul /= sk;
+
+                for (int i = 0; i < W_L * H_L; i++) {
+                    {
+                        float WavCL = fabsf(wav_L[dir][i]);
+
+                        //reduction amplification: max action between mean / 2 and mean + sigma
+                        // arbitrary coefficient, we can add a slider !!
+                        if (WavCL < mea[0]) {
+                            beta = 0.6f;    //preserve very low contrast (sky...)
+                        } else if (WavCL < mea[1]) {
+                            beta = 0.8f;
+                        } else if (WavCL < mea[2]) {
+                            beta = 1.f;    //standard
+                        } else if (WavCL < mea[3]) {
+                            beta = 1.f;
+                        } else if (WavCL < mea[4]) {
+                            beta = 0.8f;    //+sigma
+                        } else if (WavCL < mea[5]) {
+                            beta = 0.6f;
+                        } else if (WavCL < mea[6]) {
+                            beta = 0.4f;
+                        } else if (WavCL < mea[7]) {
+                            beta = 0.2f;    // + 2 sigma
+                        } else if (WavCL < mea[8]) {
+                            beta = 0.1f;
+                        } else {
+                            beta = 0.0f;
+                        }
+                    }
+
+                    float alpha = max((1024.f + 15.f * (float) cpMul * beta) / 1024.f, 0.02f) ;
+                    wav_L[dir][i] *= alpha * chromalev;
+                }
+            }
+        }
+    }
+
+}
+
+
 void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl,
                               const LocwavCurve & loclevwavCurve, bool & loclevwavutili,
                               const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
@@ -6941,8 +7035,9 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
 {
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for schedule(dynamic,16)
 #endif
+
     for (int dir = 1; dir < 4; dir++) {
         for (int level = level_bl; level < maxlvl; ++level) {
             int W_L = wdspot.level_W(level);
@@ -6995,8 +7090,9 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
     }
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for schedule(dynamic,16)
 #endif
+
     for (int dir = 1; dir < 4; dir++) {
         for (int level = level_bl; level < maxlvl; ++level) {
             int W_L = wdspot.level_W(level);
@@ -7134,134 +7230,6 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
 
     }
 
-
-    float mean[10];
-    float meanN[10];
-    float sigma[10];
-    float sigmaN[10];
-    float MaxP[10];
-    float MaxN[10];
-    Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-
-    if (wavcurvecon) {//contrast  by levels
-        float beta;
-        float mea[9];
-
-        if (chromalev != 1.f) {// a and b if need -
-            //if users says too memory, I can do 3 pass L then a then b
-            wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
-
-            if (wdspota->memoryAllocationFailed) {
-                return;
-            }
-
-            wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
-
-            if (wdspotb->memoryAllocationFailed) {
-                return;
-            }
-        }
-
-        for (int dir = 1; dir < 4; dir++) {
-            for (int level = level_bl; level < maxlvl; ++level) {
-                int W_L = wdspot->level_W(level);
-                int H_L = wdspot->level_H(level);
-                float **wav_a = nullptr;
-                float **wav_b = nullptr;
-
-                float **wav_L = wdspot->level_coeffs(level);
-
-                if (chromalev != 1.f) {
-                    wav_a = wdspota->level_coeffs(level);
-                    wav_b = wdspotb->level_coeffs(level);
-                }
-
-                //offset
-                float rap =  offs * mean[level] - 2.f * sigm * sigma[level];
-
-                if (rap > 0.f) {
-                    mea[0] = rap;
-                } else {
-                    mea[0] = mean[level] / 6.f;
-                }
-
-                rap =  offs * mean[level] - sigm * sigma[level];
-
-                if (rap > 0.f) {
-                    mea[1] = rap;
-                } else {
-                    mea[1] = mean[level] / 2.f;
-                }
-
-                mea[2] = offs * mean[level]; // 50% data
-                mea[3] = offs * mean[level] + sigm * sigma[level] / 2.f;
-                mea[4] = offs * mean[level] + sigm * sigma[level]; //66%
-                mea[5] = offs * mean[level] + sigm * 1.2f * sigma[level];
-                mea[6] = offs * mean[level] + sigm * 1.5f * sigma[level]; //
-                mea[7] = offs * mean[level] + sigm * 2.f * sigma[level]; //95%
-                mea[8] = offs * mean[level] + sigm * 2.5f * sigma[level]; //99%
-
-                if (locconwavCurve && locconwavutili) {
-
-                    float cpMul = 200.f * (locconwavCurve[level * 55.5f] - 0.5f);
-
-                    if (cpMul > 0.f) {
-                        cpMul *= 3.5f;
-                    }
-
-                    cpMul /= sk;
-
-                    for (int i = 0; i < W_L * H_L; i++) {
-                        {
-                            float WavCL = fabsf(wav_L[dir][i]);
-
-                            //reduction amplification: max action between mean / 2 and mean + sigma
-                            // arbitrary coefficient, we can add a slider !!
-                            if (WavCL < mea[0]) {
-                                beta = 0.6f;    //preserve very low contrast (sky...)
-                            } else if (WavCL < mea[1]) {
-                                beta = 0.8f;
-                            } else if (WavCL < mea[2]) {
-                                beta = 1.f;    //standard
-                            } else if (WavCL < mea[3]) {
-                                beta = 1.f;
-                            } else if (WavCL < mea[4]) {
-                                beta = 0.8f;    //+sigma
-                            } else if (WavCL < mea[5]) {
-                                beta = 0.6f;
-                            } else if (WavCL < mea[6]) {
-                                beta = 0.4f;
-                            } else if (WavCL < mea[7]) {
-                                beta = 0.2f;    // + 2 sigma
-                            } else if (WavCL < mea[8]) {
-                                beta = 0.1f;
-                            } else {
-                                beta = 0.0f;
-                            }
-                        }
-
-                        float alpha = max((1024.f + 15.f * (float) cpMul * beta) / 1024.f, 0.02f) ;
-                        wav_L[dir][i] *= alpha;
-
-                        if (chromalev != 1.f) {
-                            wav_a[dir][i] *= alpha * chromalev;
-                            wav_b[dir][i] *= alpha * chromalev;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (chromalev != 1.f) {
-            wdspota->reconstruct(tmpa[0], 1.f);
-            wdspotb->reconstruct(tmpb[0], 1.f);
-            delete wdspota;
-            delete wdspotb;
-        }
-
-
-    }
-
     float alow = 1.f;
     float blow = 0.f;
 
@@ -7348,7 +7316,20 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
         }
     }
 
+    if (wavcurvecon) {//contrast  by levels for luminance
+        wavcbd(*wdspot, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, 1.f, sk);
+    }
+
+
     if (locwavCurve && locwavutili) {//simple local contrast in function luminance
+        float mean[10];
+        float meanN[10];
+        float sigma[10];
+        float sigmaN[10];
+        float MaxP[10];
+        float MaxN[10];
+        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot->level_W(level);
@@ -7421,6 +7402,29 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
     //reconstruct all for L
     wdspot->reconstruct(tmp[0], 1.f);
     delete wdspot;
+
+    if (wavcurvecon  && (chromalev != 1.f)) { // a and b if need ) {//contrast  by levels for chroma a and b
+        wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+
+        if (wdspota->memoryAllocationFailed) {
+            return;
+        }
+
+        wavcbd(*wdspota, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, chromalev, sk);
+        wdspota->reconstruct(tmpa[0], 1.f);
+        delete wdspota;
+
+        wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, level_br, 1, sk, numThreads, 6);
+
+        if (wdspotb->memoryAllocationFailed) {
+            return;
+        }
+
+        wavcbd(*wdspotb, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, chromalev, sk);
+        wdspotb->reconstruct(tmpb[0], 1.f);
+        delete wdspotb;
+
+    }
 
     if (wavcurvelev && radlevblur > 0.f) {//chroma blur if need
         if (!blurlc) {

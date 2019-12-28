@@ -328,6 +328,9 @@ public:
                 const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
                 float radlevblur, int process, procparams::FattalToneMappingParams &fatParams, float chromablu);
 
+    void wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
+                const LocwavCurve & locconwavCurve, bool & locconwavutili, float sigm, float offs, float chromalev, int sk);
+
     void transit_shapedetect2(int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
 
     void transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref,  const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
