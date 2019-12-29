@@ -383,8 +383,10 @@ void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewC
 
     Glib::ustring dname = dirTreeModel->get_iter (path)->get_value (dtColumns.dirname);
 
-    if (Glib::file_test (dname, Glib::FILE_TEST_IS_DIR))
+    if (Glib::file_test (dname, Glib::FILE_TEST_IS_DIR)) {
         dirSelectionSignal (dname, Glib::ustring());
+        dirtree->expand_row(path, false);
+    }
 }
 
 Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
