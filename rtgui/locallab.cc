@@ -687,6 +687,7 @@ fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
 blurlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLURLC")))),
 origlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ORIGLC")))),
 enalcMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+wavblur(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLURLEVELFRA")))),
 //CBDL
 enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 //encoding log
@@ -2833,6 +2834,7 @@ pe(nullptr)
     }
     
     blurlcConn  = blurlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::blurlcChanged));
+    wavblurConn  = wavblur->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavblurChanged));
     origlcConn  = origlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::origlcChanged));
     csThreshold->setAdjusterListener(this);
 
@@ -2948,7 +2950,13 @@ pe(nullptr)
     Gtk::HSeparator* const separatorblu = Gtk::manage(new  Gtk::HSeparator());
 
     blurlevelFrame->set_label_align(0.025, 0.5);
-    ToolParamBlock* const blurlevcontBox = Gtk::manage(new ToolParamBlock());
+    Gtk::VBox *blurlevcontBox = Gtk::manage ( new Gtk::VBox());
+    blurlevcontBox->set_spacing(2);
+
+    wavblur->set_active (true);
+    blurlevelFrame->set_label_widget(*wavblur);
+    
+//    ToolParamBlock* const blurlevcontBox = Gtk::manage(new ToolParamBlock());
     blurlevcontBox->pack_start(*levelblur);
     blurlevcontBox->pack_start(*chromablu);
     blurlevcontBox->pack_start(*LocalcurveEditorwavlev, Gtk::PACK_SHRINK, 4);
@@ -5286,6 +5294,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).sensilc = sensilc->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fftwlc = fftwlc->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).blurlc = blurlc->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).wavblur = wavblur->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).origlc = origlc->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).locwavcurve = wavshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).csthreshold = csThreshold->getValue<int>();
@@ -5697,6 +5706,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).sensilc = pe->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fftwlc = pe->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).blurlc = pe->locallab.spots.at(pp->locallab.selspot).blurlc || !blurlc->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).wavblur = pe->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).origlc = pe->locallab.spots.at(pp->locallab.selspot).origlc || !origlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).localcontMethod = pe->locallab.spots.at(pp->locallab.selspot).localcontMethod || localcontMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).locwavcurve = pe->locallab.spots.at(pp->locallab.selspot).locwavcurve || !wavshape->isUnChanged();
@@ -6107,6 +6117,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).sensilc = pedited->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fftwlc = pedited->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).blurlc = pedited->locallab.spots.at(pp->locallab.selspot).blurlc || !blurlc->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).wavblur = pedited->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).origlc = pedited->locallab.spots.at(pp->locallab.selspot).origlc || !origlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve || !wavshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).loclevwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).loclevwavcurve || !wavshapelev->isUnChanged();
@@ -6695,6 +6706,7 @@ void Locallab::localcontMethodChanged()
         LocalcurveEditorwavcomp->hide();
         fftwlc->show();
         blurlc->show();
+        wavblur->show();
         origlc->hide();
     } else if (localcontMethod->get_active_row_number() == 1) {
         levelwav->show();
@@ -6724,6 +6736,7 @@ void Locallab::localcontMethodChanged()
         LocalcurveEditorwavcomp->hide();
         fftwlc->hide();
         blurlc->show();
+        wavblur->show();
         origlc->show();
     }
 
@@ -8269,6 +8282,29 @@ void Locallab::blurlcChanged()
                 listener->panelChanged(Evlocallabblurlc, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(Evlocallabblurlc, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+void Locallab::wavblurChanged()
+{
+
+    if (multiImage) {
+        if (wavblur->get_inconsistent()) {
+            wavblur->set_inconsistent(false);
+            wavblurConn.block(true);
+            wavblur->set_active(false);
+            wavblurConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            if (wavblur->get_active()) {
+                listener->panelChanged(Evlocallabwavblur, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabwavblur, M("GENERAL_DISABLED"));
             }
         }
     }
@@ -11282,6 +11318,7 @@ void Locallab::enableListener()
     localcontMethodConn.block(false);
     fftwlcConn.block(false);
     blurlcConn.block(false);
+    wavblurConn.block(false);
     origlcConn.block(false);
     showmasklcMethodConn.block(false);
     enalcMaskConn.block(false);
@@ -11380,6 +11417,7 @@ void Locallab::disableListener()
     localcontMethodConn.block(true);
     fftwlcConn.block(true);
     blurlcConn.block(true);
+    wavblurConn.block(true);
     origlcConn.block(true);
     showmasklcMethodConn.block(true);
     enalcMaskConn.block(true);
@@ -12052,6 +12090,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         sensilc->setValue(pp->locallab.spots.at(index).sensilc);
         fftwlc->set_active(pp->locallab.spots.at(index).fftwlc);
         blurlc->set_active(pp->locallab.spots.at(index).blurlc);
+        wavblur->set_active(pp->locallab.spots.at(index).wavblur);
         origlc->set_active(pp->locallab.spots.at(index).origlc);
         csThreshold->setValue<int>(pp->locallab.spots.at(index).csthreshold);
 
@@ -12567,6 +12606,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sensilc->setEditedState(spotState->sensilc ? Edited : UnEdited);
                 fftwlc->set_inconsistent(multiImage && !spotState->fftwlc);
                 blurlc->set_inconsistent(multiImage && !spotState->blurlc);
+                wavblur->set_inconsistent(multiImage && !spotState->wavblur);
                 origlc->set_inconsistent(multiImage && !spotState->origlc);
                 wavshape->setUnChanged(!spotState->locwavcurve);
                 wavshapelev->setUnChanged(!spotState->loclevwavcurve);
@@ -13102,6 +13142,7 @@ void Locallab::updateSpecificGUIState()
         LocalcurveEditorwavcomp->hide();
         fftwlc->show();
         blurlc->show();
+        wavblur->show();
         origlc->hide();
     } else if (localcontMethod->get_active_row_number() == 1) {
         levelwav->show();
@@ -13131,6 +13172,7 @@ void Locallab::updateSpecificGUIState()
         LocalcurveEditorwavcomp->show();
         fftwlc->hide();
         blurlc->show();
+        wavblur->show();
         origlc->show();
     }
 

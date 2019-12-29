@@ -321,7 +321,7 @@ public:
         const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev, 
         const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon, 
         const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp, 
-        float sigm, float offs,int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc);
+        float sigm, float offs,int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena);
         
     void wavcont(wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl, 
                 const LocwavCurve & loclevwavCurve, bool & loclevwavutili, 

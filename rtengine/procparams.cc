@@ -2739,6 +2739,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensilc(19),
     fftwlc(false),
     blurlc(true),
+    wavblur(false),
     origlc(false),
     localcontMethod("loc"),
     locwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
@@ -3147,6 +3148,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensilc == other.sensilc
         && fftwlc == other.fftwlc
         && blurlc == other.blurlc
+        && wavblur == other.wavblur
         && origlc == other.origlc
         && localcontMethod == other.localcontMethod
         && locwavcurve == other.locwavcurve
@@ -4534,6 +4536,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilc, "Locallab", "Sensilc_" + std::to_string(i), spot.sensilc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftwlc, "Locallab", "Fftwlc_" + std::to_string(i), spot.fftwlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurlc, "Locallab", "Blurlc_" + std::to_string(i), spot.blurlc, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavblur, "Locallab", "Wavblur_" + std::to_string(i), spot.wavblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).origlc, "Locallab", "Origlc_" + std::to_string(i), spot.origlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localcontMethod, "Locallab", "localcontMethod_" + std::to_string(i), spot.localcontMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locwavcurve, "Locallab", "LocwavCurve_" + std::to_string(i), spot.locwavcurve, keyFile);
@@ -6072,6 +6075,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + std::to_string(i), pedited, spot.sensilc, spotEdited.sensilc);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + std::to_string(i), pedited, spot.fftwlc, spotEdited.fftwlc);
                 assignFromKeyfile(keyFile, "Locallab", "Blurlc_" + std::to_string(i), pedited, spot.blurlc, spotEdited.blurlc);
+                assignFromKeyfile(keyFile, "Locallab", "Wavblur_" + std::to_string(i), pedited, spot.wavblur, spotEdited.wavblur);
                 assignFromKeyfile(keyFile, "Locallab", "Origlc_" + std::to_string(i), pedited, spot.origlc, spotEdited.origlc);
                 assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + std::to_string(i), pedited, spot.localcontMethod, spotEdited.localcontMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurve_" + std::to_string(i), pedited, spot.locwavcurve, spotEdited.locwavcurve);

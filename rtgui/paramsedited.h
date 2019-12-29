@@ -708,6 +708,7 @@ public:
         bool sensilc;
         bool fftwlc;
         bool blurlc;
+        bool wavblur;
         bool origlc;
         bool localcontMethod;
         bool locwavcurve;
