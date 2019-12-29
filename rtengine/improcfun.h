@@ -258,7 +258,7 @@ public:
 
     //3 functions from Alberto Griggio, adapted J.Desmis 2019
     void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, int bfw, int bfh);
-    void log_encode(Imagefloat *rgb, struct local_params & lp, float scale, bool multiThread);
+    void log_encode(Imagefloat *rgb, struct local_params & lp, float scale, bool multiThread, int bfw, int bfh);
     void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE);
 
     void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance,

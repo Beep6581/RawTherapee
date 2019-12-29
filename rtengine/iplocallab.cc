@@ -1309,7 +1309,7 @@ float find_gray(float source_gray, float target_gray)
 // basic log encoding taken from ACESutil.Lin_to_Log2, from
 // https://github.com/ampas/aces-dev
 // (as seen on pixls.us)
-void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, float scale, bool multiThread)
+void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, float scale, bool multiThread, int bfw, int bfh)
 {
     /* J.Desmis 12 2019
         small adaptations to local adjustements
@@ -1380,15 +1380,16 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
         // }
     };
 
-    const int detail = float(max(lp.detail, 0)) / scale + 0.5f;
-
-    if (detail == 0) {
+    const int detail2 = float(max(lp.detail, 0)) / scale + 0.5f;
+    const int detail = lp.detail;
+    const int W = rgb->getWidth(), H = rgb->getHeight();
+    if (detail == 0) {//no preser contrast
 #ifdef _OPENMP
         #       pragma omp parallel for if (multiThread)
 #endif
 
-        for (int y = 0; y < rgb->getHeight(); ++y) {
-            for (int x = 0; x < rgb->getWidth(); ++x) {
+        for (int y = 0; y < H; ++y) {
+            for (int x = 0; x < W; ++x) {
                 float r = rgb->r(y, x);
                 float g = rgb->g(y, x);
                 float b = rgb->b(y, x);
@@ -1411,7 +1412,8 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
                 rgb->b(y, x) = b;
             }
         }
-    } else {
+    } else if (detail > 1) {//old process ==>2
+
         const int W = rgb->getWidth(), H = rgb->getHeight();
         array2D<float> tmp(W, H);
 #ifdef _OPENMP
@@ -1424,8 +1426,8 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
             }
         }
 
-        const float epsilon = 0.01f + 0.002f * max(detail - 3, 0);
-        guidedFilterLog(10.f, tmp, detail, epsilon, multiThread);
+        const float epsilon = 0.01f + 0.002f * max(detail2 - 3, 0);
+        guidedFilterLog(10.f, tmp, detail2, epsilon, multiThread);
 
 #ifdef _OPENMP
         #       pragma omp parallel for if (multiThread)
@@ -1448,7 +1450,49 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
                 }
             }
         }
+    } else if (detail == 1) {//preserve local contrast
+        
+        array2D<float> Y(W, H);
+        {
+            constexpr float base_posterization = 20.f;
+            array2D<float> Y2(W, H);
+        
+#ifdef _OPENMP
+#           pragma omp parallel for if (multiThread)
+#endif
+            for (int y = 0; y < H; ++y) {
+                for (int x = 0; x < W; ++x) {
+                    Y2[y][x] = norm(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)) / 65535.f;
+                    float l = xlogf(std::max(Y2[y][x], 1e-9f));
+                    float ll = round(l * base_posterization) / base_posterization;
+                    Y[y][x] = xexpf(ll);
+                }
+            }
+            const float radius = max(max(bfw, W), max(bfh, H)) / 30.f;
+            const float epsilon = 0.005f;
+            rtengine::guidedFilter(Y2, Y, Y, radius, epsilon, multiThread);
+        }
+        
+#ifdef _OPENMP
+#       pragma omp parallel for if (multiThread)
+#endif
+        for (int y = 0; y < H; ++y) {
+            for (int x = 0; x < W; ++x) {
+                float &r = rgb->r(y, x);
+                float &g = rgb->g(y, x);
+                float &b = rgb->b(y, x);
+                float t = Y[y][x];
+                if (t > noise) {
+                    float c = apply(t, false);
+                    float f = c / t;
+                    r *= f;
+                    g *= f;
+                    b *= f;
+                }
+            }
+        }
     }
+
 }
 
 
@@ -9279,7 +9323,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 Imagefloat *tmpImage = nullptr;
                 tmpImage = new Imagefloat(bfw, bfh);
                 lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
-                log_encode(tmpImage, lp, float (sk), multiThread);
+                log_encode(tmpImage, lp, float (sk), multiThread, bfw, bfh);
 
                 rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
