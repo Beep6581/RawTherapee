@@ -1118,6 +1118,7 @@ HISTORY_MSG_879;Local - LC Chroma levels
 HISTORY_MSG_880;Local - LC Chroma blur levels
 HISTORY_MSG_881;Local - Contrast Offset Luminance
 HISTORY_MSG_882;Local - Contrast Blur
+HISTORY_MSG_883;Local - Contrast By Levels
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

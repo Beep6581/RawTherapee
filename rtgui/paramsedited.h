@@ -709,6 +709,7 @@ public:
         bool fftwlc;
         bool blurlc;
         bool wavblur;
+        bool wavcont;
         bool origlc;
         bool localcontMethod;
         bool locwavcurve;

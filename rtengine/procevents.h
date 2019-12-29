@@ -908,6 +908,7 @@ enum ProcEventCode {
     Evlocallabchromablu = 879,
     Evlocallaboffset = 880,
     Evlocallabwavblur = 881,
+    Evlocallabwavcont = 882,
     NUMOFEVENTS
 };
 

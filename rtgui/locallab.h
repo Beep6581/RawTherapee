@@ -492,6 +492,8 @@ private:
     sigc::connection enalcMaskConn;
     Gtk::CheckButton* const wavblur;
     sigc::connection wavblurConn;
+    Gtk::CheckButton* const wavcont;
+    sigc::connection wavcontConn;
     
     
     //CBDL
@@ -700,6 +702,7 @@ private:
     void origlcChanged();
     void enalcMaskChanged();
     void wavblurChanged();
+    void wavcontChanged();
     //CBDL
     void enacbMaskChanged();
     // ComboBox event functions
