@@ -527,7 +527,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     TRANSFORM,        // EvPerspProjAngle
     TRANSFORM,        // EvPerspProjRotate
     TRANSFORM,        // EvPerspProjScale
-    TRANSFORM         // EvPerspProjShift
+    TRANSFORM,        // EvPerspProjShift
+    TRANSFORM,        // EvPerspCamAngle
+    TRANSFORM         // EvPerspMethod
 
 };
 

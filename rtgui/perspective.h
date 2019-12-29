@@ -30,12 +30,17 @@ class PerspCorrection final :
 {
 
 protected:
+    MyComboBoxText* method;
+    Gtk::VBox* simple;
     Adjuster* horiz;
     Adjuster* vert;
+    Gtk::VBox* camera_based;
     Adjuster* camera_crop_factor;
     Adjuster* camera_focal_length;
+    Adjuster* camera_pitch;
     Adjuster* camera_shift_horiz;
     Adjuster* camera_shift_vert;
+    Adjuster* camera_yaw;
     Adjuster* projection_pitch;
     Adjuster* projection_rotate;
     Adjuster* projection_scale;
@@ -53,6 +58,7 @@ public:
     void setBatchMode   (bool batchMode) override;
 
     void adjusterChanged (Adjuster* a, double newval) override;
-    void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add, bool projection_scale_add);
+    void methodChanged (void);
+    void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add, bool projection_scale_add);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };

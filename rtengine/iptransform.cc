@@ -286,6 +286,10 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
                                   const LensCorrection *pLCPMap) const
 {
 
+    enum PerspType { NONE, SIMPLE, CAMERA_BASED };
+    const PerspType perspectiveType = needsPerspective() ? (
+            (params->perspective.method == "camera_based") ?
+            PerspType::CAMERA_BASED : PerspType::SIMPLE ) : PerspType::NONE;
     bool clipped = false;
 
     red.clear ();
@@ -318,11 +322,21 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     double ascale = ascaleDef > 0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0);
 
     // auxiliary variables for perspective correction
+    // Simple.
+    double vpdeg = params->perspective.vertical / 100.0 * 45.0;
+    double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
+    double vpteta  = fabs (vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt ((-oW * oW * tan (vpalpha) * tan (vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan (vpalpha) * sqrt (16 * maxRadius * maxRadius + oW * oW * tan (vpalpha) * tan (vpalpha))) / (maxRadius * maxRadius * 8)));
+    double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
+    double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
+    double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
+    double hpteta  = fabs (hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt ((-oH * oH * tan (hpalpha) * tan (hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan (hpalpha) * sqrt (16 * maxRadius * maxRadius + oH * oH * tan (hpalpha) * tan (hpalpha))) / (maxRadius * maxRadius * 8)));
+    double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
+    // Camera-based.
     const double f = params->perspective.camera_focal_length *
         params->perspective.camera_crop_factor * (maxRadius / sqrt(18.0*18.0 +
                     12.0*12.0));
-    const double p_camera_yaw = params->perspective.horizontal / 180.0 * rtengine::RT_PI;
-    const double p_camera_pitch = params->perspective.vertical / 180.0 * rtengine::RT_PI;
+    const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
+    const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
     const double p_camera_shift_horiz = oW / 100.0 * params->perspective.camera_shift_horiz;
     const double p_camera_shift_vert = oH / -100.0 * params->perspective.camera_shift_vert;
     const double p_projection_shift_horiz = oW / 100.0 * params->perspective.projection_shift_horiz;
@@ -350,12 +364,25 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         x_d += ascale * (0 - w2);     // centering x coord & scale
         y_d += ascale * (0 - h2);     // centering y coord & scale
 
-        if (needsPerspective()) {
-            const double w = p_matrix[3][0] * x_d + p_matrix[3][1] * y_d + p_matrix[3][3];
-            const double xw = p_matrix[0][0] * x_d + p_matrix[0][1] * y_d + p_matrix[0][3];
-            const double yw = p_matrix[1][0] * x_d + p_matrix[1][1] * y_d + p_matrix[1][3];
-            x_d = xw / w;
-            y_d = yw / w;
+        switch (perspectiveType) {
+            case PerspType::NONE:
+                break;
+            case PerspType::SIMPLE:
+                // horizontal perspective transformation
+                y_d *= maxRadius / (maxRadius + x_d * hptanpt);
+                x_d *= maxRadius * hpcospt / (maxRadius + x_d * hptanpt);
+
+                // vertical perspective transformation
+                x_d *= maxRadius / (maxRadius - y_d * vptanpt);
+                y_d *= maxRadius * vpcospt / (maxRadius - y_d * vptanpt);
+                break;
+            case PerspType::CAMERA_BASED:
+                const double w = p_matrix[3][0] * x_d + p_matrix[3][1] * y_d + p_matrix[3][3];
+                const double xw = p_matrix[0][0] * x_d + p_matrix[0][1] * y_d + p_matrix[0][3];
+                const double yw = p_matrix[1][0] * x_d + p_matrix[1][1] * y_d + p_matrix[1][3];
+                x_d = xw / w;
+                y_d = yw / w;
+                break;
         }
 
         // rotate
@@ -933,13 +960,16 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap)
 {
     // set up stuff, depending on the mode we are
+    enum PerspType { NONE, SIMPLE, CAMERA_BASED };
     const bool enableLCPDist = pLCPMap && params->lensProf.useDist;
     const bool enableCA = highQuality && needsCA();
     const bool enableGradient = needsGradient();
     const bool enablePCVignetting = needsPCVignetting();
     const bool enableVignetting = needsVignetting();
-    const bool enablePerspective = needsPerspective();
     const bool enableDistortion = needsDistortion();
+    const PerspType perspectiveType = needsPerspective() ? (
+            (params->perspective.method == "camera_based") ?
+            PerspType::CAMERA_BASED : PerspType::SIMPLE ) : PerspType::NONE;
 
     const double w2 = static_cast<double>(oW)  / 2.0 - 0.5;
     const double h2 = static_cast<double>(oH)  / 2.0 - 0.5;
@@ -995,11 +1025,25 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double centerFactory = cy - h2;
 
     // auxiliary variables for perspective correction
+    // Simple.
+    const double vpdeg = params->perspective.vertical / 100.0 * 45.0;
+    const double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
+    const double vpteta = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oW * tan(vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
+                          oW * tan(vpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oW * tan(vpalpha)))) / (SQR(maxRadius) * 8)));
+    const double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos(vpteta);
+    const double vptanpt = tan(vpteta);
+    const double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
+    const double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
+    const double hpteta = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oH * tan(hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
+                          oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
+    const double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos(hpteta);
+    const double hptanpt = tan(hpteta);
+    // Camera-based.
     const double f = params->perspective.camera_focal_length *
         params->perspective.camera_crop_factor * (maxRadius / sqrt(18.0*18.0 +
                     12.0*12.0));
-    const double p_camera_yaw = params->perspective.horizontal / 180.0 * rtengine::RT_PI;
-    const double p_camera_pitch = params->perspective.vertical / 180.0 * rtengine::RT_PI;
+    const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
+    const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
     const double p_camera_shift_horiz = oW / 100.0 * params->perspective.camera_shift_horiz;
     const double p_camera_shift_vert = oH / -100.0 * params->perspective.camera_shift_vert;
     const double p_projection_shift_horiz = oW / 100.0 * params->perspective.projection_shift_horiz;
@@ -1034,12 +1078,25 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             x_d += ascale * centerFactorx; // centering x coord & scale
             y_d += ascale * centerFactory; // centering y coord & scale
 
-            if (enablePerspective) {
-                const double w = p_matrix[3][0] * x_d + p_matrix[3][1] * y_d + p_matrix[3][3];
-                const double xw = p_matrix[0][0] * x_d + p_matrix[0][1] * y_d + p_matrix[0][3];
-                const double yw = p_matrix[1][0] * x_d + p_matrix[1][1] * y_d + p_matrix[1][3];
-                x_d = xw / w;
-                y_d = yw / w;
+            switch (perspectiveType) {
+                case PerspType::NONE:
+                    break;
+                case PerspType::SIMPLE:
+                    // horizontal perspective transformation
+                    y_d *= maxRadius / (maxRadius + x_d * hptanpt);
+                    x_d *= maxRadius * hpcospt / (maxRadius + x_d * hptanpt);
+
+                    // vertical perspective transformation
+                    x_d *= maxRadius / (maxRadius - y_d * vptanpt);
+                    y_d *= maxRadius * vpcospt / (maxRadius - y_d * vptanpt);
+                    break;
+                case PerspType::CAMERA_BASED:
+                    const double w = p_matrix[3][0] * x_d + p_matrix[3][1] * y_d + p_matrix[3][3];
+                    const double xw = p_matrix[0][0] * x_d + p_matrix[0][1] * y_d + p_matrix[0][3];
+                    const double yw = p_matrix[1][0] * x_d + p_matrix[1][1] * y_d + p_matrix[1][3];
+                    x_d = xw / w;
+                    y_d = yw / w;
+                    break;
             }
 
             // rotate
@@ -1237,15 +1294,19 @@ bool ImProcFunctions::needsRotation () const
 
 bool ImProcFunctions::needsPerspective () const
 {
-    return params->perspective.horizontal || params->perspective.vertical ||
-        params->perspective.camera_shift_horiz ||
-        params->perspective.camera_shift_vert ||
-        params->perspective.projection_pitch ||
-        params->perspective.projection_rotate ||
-        params->perspective.projection_scale != 1.0 ||
-        params->perspective.projection_shift_horiz ||
-        params->perspective.projection_shift_vert ||
-        params->perspective.projection_yaw;
+    return ( (params->perspective.method == "simple") &&
+            (params->perspective.horizontal || params->perspective.vertical) )
+        || ( (params->perspective.method == "camera_based") && (
+                    params->perspective.camera_pitch ||
+                    params->perspective.camera_shift_horiz ||
+                    params->perspective.camera_shift_vert ||
+                    params->perspective.camera_yaw ||
+                    params->perspective.projection_pitch ||
+                    params->perspective.projection_rotate ||
+                    params->perspective.projection_scale != 1.0 ||
+                    params->perspective.projection_shift_horiz ||
+                    params->perspective.projection_shift_vert ||
+                    params->perspective.projection_yaw) );
 }
 
 bool ImProcFunctions::needsGradient () const

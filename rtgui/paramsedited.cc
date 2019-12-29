@@ -334,12 +334,15 @@ void ParamsEdited::set(bool v)
     lensProf.lfCameraMake = v;
     lensProf.lfCameraModel = v;
     lensProf.lfLens = v;
+    perspective.method = v;
     perspective.horizontal = v;
     perspective.vertical = v;
     perspective.camera_crop_factor = v;
     perspective.camera_focal_length = v;
+    perspective.camera_pitch = v;
     perspective.camera_shift_horiz = v;
     perspective.camera_shift_vert = v;
+    perspective.camera_yaw = v;
     perspective.projection_pitch = v;
     perspective.projection_rotate = v;
     perspective.projection_scale = v;
@@ -927,13 +930,16 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         lensProf.lfCameraMake = lensProf.lfCameraMake && p.lensProf.lfCameraMake == other.lensProf.lfCameraMake;
         lensProf.lfCameraModel = lensProf.lfCameraModel && p.lensProf.lfCameraModel == other.lensProf.lfCameraModel;
         lensProf.lfLens = lensProf.lfLens && p.lensProf.lfLens == other.lensProf.lfLens;
+        perspective.method = perspective.method && p.perspective.method == other.perspective.method;
         perspective.horizontal = perspective.horizontal && p.perspective.horizontal == other.perspective.horizontal;
         perspective.vertical = perspective.vertical && p.perspective.vertical == other.perspective.vertical;
         perspective.camera_crop_factor = perspective.camera_crop_factor && p.perspective.camera_crop_factor == other.perspective.camera_crop_factor;
         perspective.camera_focal_length = perspective.camera_focal_length && p.perspective.camera_focal_length == other.perspective.camera_focal_length;
+        perspective.camera_pitch = perspective.camera_pitch && p.perspective.camera_pitch == other.perspective.camera_pitch;
         perspective.camera_shift_horiz = perspective.camera_shift_horiz && p.perspective.camera_shift_horiz == other.perspective.camera_shift_horiz;
         perspective.camera_shift_vert = perspective.camera_shift_vert && p.perspective.camera_shift_vert == other.perspective.camera_shift_vert;
         perspective.projection_pitch = perspective.projection_pitch && p.perspective.projection_pitch == other.perspective.projection_pitch;
+        perspective.camera_yaw = perspective.camera_yaw && p.perspective.camera_yaw == other.perspective.camera_yaw;
         perspective.projection_rotate = perspective.projection_rotate && p.perspective.projection_rotate == other.perspective.projection_rotate;
         perspective.projection_scale = perspective.projection_scale && p.perspective.projection_scale == other.perspective.projection_scale;
         perspective.projection_shift_horiz = perspective.projection_shift_horiz && p.perspective.projection_shift_horiz == other.perspective.projection_shift_horiz;
@@ -2329,6 +2335,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.lensProf.lfLens = mods.lensProf.lfLens;
     }
 
+    if (perspective.method) {
+        toEdit.perspective.method = mods.perspective.method;
+    }
+
     if (perspective.horizontal) {
         toEdit.perspective.horizontal = dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.horizontal + mods.perspective.horizontal : mods.perspective.horizontal;
     }
@@ -2345,12 +2355,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.perspective.camera_focal_length = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH] ? toEdit.perspective.camera_focal_length + mods.perspective.camera_focal_length : mods.perspective.camera_focal_length;
     }
 
+    if (perspective.camera_pitch) {
+        toEdit.perspective.camera_pitch = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_ANGLE] ? toEdit.perspective.camera_pitch + mods.perspective.camera_pitch : mods.perspective.camera_pitch;
+    }
+
     if (perspective.camera_shift_horiz) {
         toEdit.perspective.camera_shift_horiz = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_SHIFT] ? toEdit.perspective.camera_shift_horiz + mods.perspective.camera_shift_horiz : mods.perspective.camera_shift_horiz;
     }
 
     if (perspective.camera_shift_vert) {
         toEdit.perspective.camera_shift_vert = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_SHIFT] ? toEdit.perspective.camera_shift_vert + mods.perspective.camera_shift_vert : mods.perspective.camera_shift_vert;
+    }
+
+    if (perspective.camera_yaw) {
+        toEdit.perspective.camera_yaw = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_ANGLE] ? toEdit.perspective.camera_yaw + mods.perspective.camera_yaw : mods.perspective.camera_yaw;
     }
 
     if (perspective.projection_pitch) {
