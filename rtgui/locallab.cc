@@ -2822,6 +2822,9 @@ pe(nullptr)
     enablecontrastConn = expcontrast->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcontrast));
     fftwlcConn  = fftwlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftwlcChanged));
     csThreshold->setAdjusterListener(this);
+    if (showtooltip) {
+        expcontrast->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
+    }
 
     if (showtooltip) {
         fftwlc->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
