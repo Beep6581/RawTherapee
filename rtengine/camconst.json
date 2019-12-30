@@ -1323,6 +1323,11 @@ Camera constants:
         "ranges": { "white": 16100 }
     },
 
+    { // Quality C, bisected from the overexposed region of one pre-release sample file
+        "make_model": "FUJIFILM X-A7",
+        "ranges": { "white": 16382 }
+    },
+
     { // Quality B
         "make_model": "FUJIFILM X-A10",
         "dcraw_matrix": [ 11540,-4999,-991,-2949,10963,2278,-382,1049,5605 ], // DNGv9.12 D65
@@ -1396,6 +1401,11 @@ Camera constants:
         "make_model": "LEICA SL (Typ 601)",
         "dcraw_matrix": [ 11492,-4930,-1188,-5593,14673,873,-609,1474,6343 ], // DNGv9.3 D65
         "raw_crop": [ 4, 4, -4, -4 ] // full raw 6016x4016, Official 6000x4000
+    },
+
+    { // Quality C, only raw crop
+        "make_model": "Leica SL2",
+        "raw_crop": [ 0, 0, 0, -18 ] // 18 rows at bottom are garbage
     },
 
     { // Quality C

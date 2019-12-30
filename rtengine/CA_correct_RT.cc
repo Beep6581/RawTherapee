@@ -1258,12 +1258,12 @@ float* RawImageSource::CA_correct_RT(
                     int indx = (row * width + col) >> 1;
 #ifdef __SSE2__
                     for (; col < width - 7 - cb; col += 8, indx += 4) {
-                        vfloat val = LVFU(RawDataTmp[indx]);
+                        const vfloat val = vmaxf(LVFU(RawDataTmp[indx]), ZEROV);
                         STC2VFU(rawData[row][col], val);
                     }
 #endif
                     for (; col < width - cb; col += 2, indx++) {
-                        rawData[row][col] = RawDataTmp[indx];
+                        rawData[row][col] = std::max(0.f, RawDataTmp[indx]);
                     }
                 }
 

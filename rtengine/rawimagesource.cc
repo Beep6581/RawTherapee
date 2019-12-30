@@ -42,7 +42,7 @@
 #include "../rtgui/options.h"
 
 //#define BENCHMARK
-//#include "StopWatch.h"
+#include "StopWatch.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -2413,11 +2413,10 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData )
 {
-    // TODO: Change type of black[] to float to avoid conversions
-    unsigned short black[4] = {
-        (unsigned short)ri->get_cblack(0), (unsigned short)ri->get_cblack(1),
-        (unsigned short)ri->get_cblack(2), (unsigned short)ri->get_cblack(3)
-    };
+    const float black[4] = {
+                     static_cast<float>(ri->get_cblack(0)), static_cast<float>(ri->get_cblack(1)),
+                     static_cast<float>(ri->get_cblack(2)), static_cast<float>(ri->get_cblack(3))
+                     };
 
     if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) {
         if (!rawData) {
@@ -2425,11 +2424,22 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
         }
 
         if (riDark && W == riDark->get_width() && H == riDark->get_height()) { // This works also for xtrans-sensors, because black[0] to black[4] are equal for these
+            StopWatch Stop1("darkframe subtraction");
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
             for (int row = 0; row < H; row++) {
-                for (int col = 0; col < W; col++) {
-                    int c  = FC(row, col);
-                    int c4 = ( c == 1 && !(row & 1) ) ? 3 : c;
-                    rawData[row][col] = max(src->data[row][col] + black[c4] - riDark->data[row][col], 0.0f);
+                const int c0 = FC(row, 0);
+                const float black0 = black[(c0 == 1 && !(row & 1) ) ? 3 : c0];
+                const int c1 = FC(row, 1);
+                const float black1 = black[(c1 == 1 && !(row & 1) ) ? 3 : c1];
+                int col;
+                for (col = 0; col < W - 1; col += 2) {
+                    rawData[row][col] = max(src->data[row][col] + black0 - riDark->data[row][col], 0.0f);
+                    rawData[row][col + 1] = max(src->data[row][col + 1] + black1 - riDark->data[row][col + 1], 0.0f);
+                }
+                if (col < W) {
+                    rawData[row][col] = max(src->data[row][col] + black0 - riDark->data[row][col], 0.0f);
                 }
             }
         } else {
@@ -2559,12 +2569,10 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float val = rawData[row][col];
-                    int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
-                    int c4 = ( c == 1 && !(row & 1) ) ? 3 : c;    // four  colors,  0=R, 1=G1, 2=B, 3=G2
-                    val -= cblacksom[c4];
-                    val *= scale_mul[c4];
-                    rawData[row][col] = (val);
+                    const int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
+                    const int c4 = ( c == 1 && !(row & 1) ) ? 3 : c;    // four  colors,  0=R, 1=G1, 2=B, 3=G2
+                    const float val = max(0.f, rawData[row][col] - cblacksom[c4]) * scale_mul[c4];
+                    rawData[row][col] = val;
                     tmpchmax[c] = max(tmpchmax[c], val);
                 }
             }
@@ -2591,10 +2599,8 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float val = rawData[row][col];
-                    val -= cblacksom[0];
-                    val *= scale_mul[0];
-                    rawData[row][col] = (val);
+                    const float val = max(0.f, rawData[row][col] - cblacksom[0]) * scale_mul[0];
+                    rawData[row][col] = val;
                     tmpchmax = max(tmpchmax, val);
                 }
             }
@@ -2620,12 +2626,9 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float val = rawData[row][col];
-                    int c = ri->XTRANSFC(row, col);
-                    val -= cblacksom[c];
-                    val *= scale_mul[c];
-
-                    rawData[row][col] = (val);
+                    const int c = ri->XTRANSFC(row, col);
+                    const float val = max(0.f, rawData[row][col] - cblacksom[c]) * scale_mul[c];
+                    rawData[row][col] = val;
                     tmpchmax[c] = max(tmpchmax[c], val);
                 }
             }
@@ -2654,10 +2657,8 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             {
                 for (int col = winx; col < winx + winw; col++) {
                     for (int c = 0; c < 3; c++) {                 // three colors,  0=R, 1=G,  2=B
-                        float val = rawData[row][3 * col + c];
-                        val -= cblacksom[c];
-                        val *= scale_mul[c];
-                        rawData[row][3 * col + c] = (val);
+                        const float val = max(0.f, rawData[row][3 * col + c] - cblacksom[c]) * scale_mul[c];
+                        rawData[row][3 * col + c] = val;
                         tmpchmax[c] = max(tmpchmax[c], val);
                     }
                 }

@@ -263,10 +263,9 @@ void cfaboxblur(const float* const * riFlatFile, float* cfablur, int boxH, int b
 namespace rtengine
 {
 
-void RawImageSource::processFlatField(const procparams::RAWParams &raw, const RawImage *riFlatFile, const unsigned short black[4])
+void RawImageSource::processFlatField(const procparams::RAWParams &raw, const RawImage *riFlatFile, const float black[4])
 {
 //    BENCHFUN
-    const float fblack[4] = {static_cast<float>(black[0]), static_cast<float>(black[1]), static_cast<float>(black[2]), static_cast<float>(black[3])};
     std::unique_ptr<float[]> cfablur(new float[H * W]);
 
     const int BS = raw.ff_BlurRadius + (raw.ff_BlurRadius & 1);
@@ -292,7 +291,7 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
                 const int col = 2 * (W >> 2) + n;
                 const int c  = ri->get_colors() != 1 ? FC(row, col) : 0;
                 const int c4 = ri->get_colors() != 1 ? ((c == 1 && !(row & 1)) ? 3 : c) : 0;
-                refcolor[m][n] = std::max(0.0f, cfablur[row * W + col] - fblack[c4]);
+                refcolor[m][n] = std::max(0.0f, cfablur[row * W + col] - black[c4]);
             }
 
         float limitFactor = 1.f;
@@ -315,16 +314,16 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
                                 clippedBefore = true;
                                 break;
                             }
-                            const float tempval = (rawVal - fblack[c4]) * (refcolor[m][n] / std::max(1e-5f, cfablur[(row + m) * W + col + n] - fblack[c4]));
+                            const float tempval = (rawVal - black[c4]) * (refcolor[m][n] / std::max(1e-5f, cfablur[(row + m) * W + col + n] - black[c4]));
                             maxval = std::max(maxval, tempval);
                         }
                     }
 
                     // now we have the max value for the channel
                     // if it clips, calculate factor to avoid clipping
-                    if (maxval + fblack[c4] >= ri->get_white(c4)) {
+                    if (maxval + black[c4] >= ri->get_white(c4)) {
                         if (!clippedBefore) {
-                            limitFactor = std::min(limitFactor, ri->get_white(c4) / (maxval + fblack[c4]));
+                            limitFactor = std::min(limitFactor, ri->get_white(c4) / (maxval + black[c4]));
                         } else {
                             limitFactor = 1.f;
                         }
@@ -361,8 +360,8 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
         const vfloat refcolorv[2] = {_mm_set_ps(refcolor[0][1], refcolor[0][0], refcolor[0][1], refcolor[0][0]),
                                      _mm_set_ps(refcolor[1][1], refcolor[1][0], refcolor[1][1], refcolor[1][0])
                                     };
-        const vfloat blackv[2] = {_mm_set_ps(fblack[c4[0][1]], fblack[c4[0][0]], fblack[c4[0][1]], fblack[c4[0][0]]),
-                                  _mm_set_ps(fblack[c4[1][1]], fblack[c4[1][0]], fblack[c4[1][1]], fblack[c4[1][0]])
+        const vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
+                                  _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
                                  };
 
         const vfloat onev = F2V(1.f);
@@ -389,9 +388,9 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
 #endif
 
             for (; col < W; ++col) {
-                const float blur = cfablur[row * W + col] - fblack[c4[row & 1][col & 1]];
+                const float blur = cfablur[row * W + col] - black[c4[row & 1][col & 1]];
                 const float vignettecorr = blur <= minValue ? 1.f : refcolor[row & 1][col & 1] / blur;
-                rawData[row][col] = (rawData[row][col] - fblack[c4[row & 1][col & 1]]) * vignettecorr + fblack[c4[row & 1][col & 1]];
+                rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * vignettecorr + black[c4[row & 1][col & 1]];
             }
         }
     } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
@@ -404,7 +403,7 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
                 const int row = 2 * (H >> 2) + m;
                 const int col = 2 * (W >> 2) + n;
                 const int c  = riFlatFile->XTRANSFC(row, col);
-                refcolor[c] += std::max(0.0f, cfablur[row * W + col] - fblack[c]);
+                refcolor[c] += std::max(0.0f, cfablur[row * W + col] - black[c]);
                 cCount[c] ++;
             }
 
@@ -430,14 +429,14 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
                         clippedBefore = true;
                         break;
                     }
-                    const float tempval = (rawVal - fblack[0]) * (refcolor[ri->XTRANSFC(row, col)] / std::max(1e-5f, cfablur[(row) * W + col] - fblack[0]));
+                    const float tempval = (rawVal - black[0]) * (refcolor[ri->XTRANSFC(row, col)] / std::max(1e-5f, cfablur[(row) * W + col] - black[0]));
                     maxval = std::max(maxval, tempval);
                 }
             }
 
             // there's only one white level for xtrans
-            if (!clippedBefore && maxval + fblack[0] > ri->get_white(0)) {
-                limitFactor = ri->get_white(0) / (maxval + fblack[0]);
+            if (!clippedBefore && maxval + black[0] > ri->get_white(0)) {
+                limitFactor = ri->get_white(0) / (maxval + black[0]);
                 flatFieldAutoClipValue = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
             }
         } else {
@@ -458,9 +457,9 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
         for (int row = 0; row < H; ++row) {
             for (int col = 0; col < W; ++col) {
                 const int c = ri->XTRANSFC(row, col);
-                const float blur = cfablur[(row) * W + col] - fblack[c];
+                const float blur = cfablur[(row) * W + col] - black[c];
                 const float vignettecorr = blur <= minValue ? 1.f : refcolor[c] / blur;
-                rawData[row][col] = (rawData[row][col] - fblack[c]) * vignettecorr + fblack[c];
+                rawData[row][col] = (rawData[row][col] - black[c]) * vignettecorr + black[c];
             }
         }
     }
@@ -488,8 +487,8 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
             }
 
 #ifdef __SSE2__
-            const vfloat blackv[2] = {_mm_set_ps(fblack[c4[0][1]], fblack[c4[0][0]], fblack[c4[0][1]], fblack[c4[0][0]]),
-                                      _mm_set_ps(fblack[c4[1][1]], fblack[c4[1][0]], fblack[c4[1][1]], fblack[c4[1][0]])
+            const vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
+                                      _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
                                      };
 
             const vfloat epsv = F2V(1e-5f);
@@ -513,9 +512,9 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
 #endif
 
                 for (; col < W; ++col) {
-                    const float linecorr = SQR(std::max(1e-5f, cfablur[row * W + col] - fblack[c4[row & 1][col & 1]])) /
-                                           (std::max(1e-5f, cfablur1[row * W + col] - fblack[c4[row & 1][col & 1]]) * std::max(1e-5f, cfablur2[row * W + col] - fblack[c4[row & 1][col & 1]]));
-                    rawData[row][col] = (rawData[row][col] - fblack[c4[row & 1][col & 1]]) * linecorr + fblack[c4[row & 1][col & 1]];
+                    const float linecorr = SQR(std::max(1e-5f, cfablur[row * W + col] - black[c4[row & 1][col & 1]])) /
+                                           (std::max(1e-5f, cfablur1[row * W + col] - black[c4[row & 1][col & 1]]) * std::max(1e-5f, cfablur2[row * W + col] - black[c4[row & 1][col & 1]]));
+                    rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * linecorr + black[c4[row & 1][col & 1]];
                 }
             }
         } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
@@ -526,9 +525,9 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, const Ra
             for (int row = 0; row < H; ++row) {
                 for (int col = 0; col < W; ++col) {
                     const int c  = ri->XTRANSFC(row, col);
-                    const float hlinecorr = std::max(1e-5f, cfablur[(row) * W + col] - fblack[c]) / std::max(1e-5f, cfablur1[(row) * W + col] - fblack[c]);
-                    const float vlinecorr = std::max(1e-5f, cfablur[(row) * W + col] - fblack[c]) / std::max(1e-5f, cfablur2[(row) * W + col] - fblack[c]);
-                    rawData[row][col] = (rawData[row][col] - fblack[c]) * hlinecorr * vlinecorr + fblack[c];
+                    const float hlinecorr = std::max(1e-5f, cfablur[(row) * W + col] - black[c]) / std::max(1e-5f, cfablur1[(row) * W + col] - black[c]);
+                    const float vlinecorr = std::max(1e-5f, cfablur[(row) * W + col] - black[c]) / std::max(1e-5f, cfablur2[(row) * W + col] - black[c]);
+                    rawData[row][col] = (rawData[row][col] - black[c]) * hlinecorr * vlinecorr + black[c];
                 }
             }
         }

@@ -452,23 +452,23 @@ void RawImageSource::fast_demosaic()
 #ifdef __SSE2__
 
                     for (j = left + 2, cc = 2; j < right - 5; j += 4, cc += 4) {
-                        _mm_storeu_ps(&red[i][j], LVFU(redtile[rr * TS + cc]));
-                        _mm_storeu_ps(&green[i][j], LVFU(greentile[rr * TS + cc]));
-                        _mm_storeu_ps(&blue[i][j], LVFU(bluetile[rr * TS + cc]));
+                        _mm_storeu_ps(&red[i][j], vmaxf(LVFU(redtile[rr * TS + cc]), ZEROV));
+                        _mm_storeu_ps(&green[i][j], vmaxf(LVFU(greentile[rr * TS + cc]), ZEROV));
+                        _mm_storeu_ps(&blue[i][j], vmaxf(LVFU(bluetile[rr * TS + cc]), ZEROV));
                     }
 
                     for (; j < right - 2; j++, cc++) {
-                        red[i][j] = redtile[rr * TS + cc];
-                        green[i][j] = greentile[rr * TS + cc];
-                        blue[i][j] = bluetile[rr * TS + cc];
+                        red[i][j] = std::max(0.f, redtile[rr * TS + cc]);
+                        green[i][j] = std::max(0.f, greentile[rr * TS + cc]);
+                        blue[i][j] = std::max(0.f, bluetile[rr * TS + cc]);
                     }
 
 #else
 
                     for (int j = left + 2, cc = 2; j < right - 2; j++, cc++) {
-                        red[i][j] = redtile[rr * TS + cc];
-                        green[i][j] = greentile[rr * TS + cc];
-                        blue[i][j] = bluetile[rr * TS + cc];
+                        red[i][j] = std::max(0.f, redtile[rr * TS + cc]);
+                        green[i][j] = std::max(0.f, greentile[rr * TS + cc]);
+                        blue[i][j] = std::max(0.f, bluetile[rr * TS + cc]);
                     }
 
 #endif

@@ -299,7 +299,7 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     maxOut = rtengine::LIM(maxOut, minVal, maxVal);
 }
 
-void buildBlendMask(const float* const * luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast, float ** clipMask) {
+void buildBlendMask(const float* const * luminance, float **blend, int W, int H, float &contrastThreshold, bool autoContrast, float ** clipMask) {
 
     if (autoContrast) {
         constexpr float minLuminance = 2000.f;
@@ -403,7 +403,7 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
     if(contrastThreshold == 0.f) {
         for(int j = 0; j < H; ++j) {
             for(int i = 0; i < W; ++i) {
-                blend[j][i] = amount;
+                blend[j][i] = 1.f;
             }
         }
     } else {
@@ -415,7 +415,6 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
 #ifdef __SSE2__
             const vfloat contrastThresholdv = F2V(contrastThreshold);
             const vfloat scalev = F2V(scale);
-            const vfloat amountv = F2V(amount);
 #endif
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -429,14 +428,14 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
                         vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
                                                   SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
 
-                        STVFU(blend[j][i], LVFU(clipMask[j][i]) * amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                        STVFU(blend[j][i], LVFU(clipMask[j][i]) * calcBlendFactor(contrastv, contrastThresholdv));
                     }
                 } else {
                     for(; i < W - 5; i += 4) {
                         vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
                                                   SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
 
-                        STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                        STVFU(blend[j][i], calcBlendFactor(contrastv, contrastThresholdv));
                     }
                 }
 #endif
@@ -445,7 +444,7 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
                     float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
                                            rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
 
-                    blend[j][i] = (clipMask ? clipMask[j][i] : 1.f) * amount * calcBlendFactor(contrast, contrastThreshold);
+                    blend[j][i] = (clipMask ? clipMask[j][i] : 1.f) * calcBlendFactor(contrast, contrastThreshold);
                 }
             }
 
@@ -473,8 +472,18 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
                 }
             }
 
+#ifdef __SSE2__
+            // flush denormals to zero for gaussian blur to avoid performance penalty if there are a lot of zero values in the mask
+            const auto oldMode = _MM_GET_FLUSH_ZERO_MODE();
+            _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+#endif
+
             // blur blend mask to smooth transitions
             gaussianBlur(blend, blend, W, H, 2.0);
+
+#ifdef __SSE2__
+            _MM_SET_FLUSH_ZERO_MODE(oldMode);
+#endif
         }
     }
 }

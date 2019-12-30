@@ -1373,7 +1373,7 @@ public:
     * @param HH hue before [-PI ; +PI]
     * @param Chprov1 chroma after [0 ; 180 (can be superior)]
     * @param CC chroma before [0 ; 180]
-    * @param corectionHuechroma hue correction depending on chromaticity (saturation), in radians [0 ; 0.45] (return value)
+    * @param correctionHueChroma hue correction depending on chromaticity (saturation), in radians [0 ; 0.45] (return value)
     * @param correctlum hue correction depending on luminance (brightness, contrast,...), in radians [0 ; 0.45] (return value)
     * @param munsDbgInfo (Debug target only) object to collect information
     */
