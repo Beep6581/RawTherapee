@@ -2306,5 +2306,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Out\nBližnjica: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!GENERAL_HELP;Help
 !HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
 !TP_SHARPENING_ITERCHECK;Auto limit iterations

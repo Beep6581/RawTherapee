@@ -2067,6 +2067,7 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
 {
     img->free ();
     int errore = pc->returnValue();
+    setProgressState(false);
     delete pc;
 
     if (!errore) {

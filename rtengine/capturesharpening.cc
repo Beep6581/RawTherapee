@@ -152,7 +152,7 @@ inline void gauss5x5div (float** RESTRICT src, float** RESTRICT dst, float** RES
     for (int i = 2; i < tileSize - 2; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 2; j < tileSize - 2; ++j) {
-            const float val = c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+            const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
                               c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
@@ -178,10 +178,10 @@ inline void gauss7x7div(float** RESTRICT src, float** RESTRICT dst, float** REST
     for (int i = 3; i < tileSize - 3; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 3; j < tileSize - 3; ++j) {
-            const float val = c31 * (src[i - 3][j - 1] + src[i - 3][j + 1] + src[i - 1][j - 3] + src[i - 1][j + 3] + src[i + 1][j - 3] + src[i + 1][j + 3] + src[i + 3][j - 1] + src[i + 3][j + 1]) +
+            const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
                               c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
                               c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] * c21 + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
                               c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
@@ -221,7 +221,7 @@ inline void gauss5x5mult (float** RESTRICT src, float** RESTRICT dst, const int 
     for (int i = 2; i < tileSize - 2; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 2; j < tileSize - 2; ++j) {
-            const float val = c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+            const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
                               c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
@@ -247,10 +247,10 @@ inline void gauss7x7mult(float** RESTRICT src, float** RESTRICT dst, const int t
     for (int i = 3; i < tileSize - 3; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 3; j < tileSize - 3; ++j) {
-            const float val = c31 * (src[i - 3][j - 1] + src[i - 3][j + 1] + src[i - 1][j - 3] + src[i - 1][j + 3] + src[i + 1][j - 3] + src[i + 1][j + 3] + src[i + 3][j - 1] + src[i + 3][j + 1]) +
+            const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
                               c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
                               c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
-                              c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] * c21 + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
                               c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
@@ -563,18 +563,24 @@ BENCHFUN
                 // fill tiles
                 if (endOfRow || endOfCol) {
                     // special handling for small tiles at end of row or column
+                    float maxVal = 0.f;
                     if (checkIterStop) {
-                        float maxVal = 0.f;
                         for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
                             for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
                                 iterCheck[k][l] = oldLuminance[ii][jj] * clipmask[ii][jj] * 0.5f;
                                 maxVal = std::max(maxVal, clipmask[ii][jj]);
                             }
                         }
-                        if (maxVal < minBlend) {
-                            // no pixel of the tile has a blend factor >= minBlend => skip the tile
-                            continue;
+                    } else {
+                        for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
+                            for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
+                                maxVal = std::max(maxVal, clipmask[ii][jj]);
+                            }
                         }
+                    }
+                    if (maxVal < minBlend) {
+                        // no pixel of the tile has a blend factor >= minBlend => skip the tile
+                        continue;
                     }
                     for (int k = 0, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize; ++k, ++ii) {
                         for (int l = 0, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize; ++l, ++jj) {
@@ -583,18 +589,24 @@ BENCHFUN
                         }
                     }
                 } else {
+                    float maxVal = 0.f;
                     if (checkIterStop) {
-                        float maxVal = 0.f;
                         for (int ii = 0; ii < tileSize; ++ii) {
                             for (int jj = 0; jj < tileSize; ++jj) {
                                 iterCheck[ii][jj] = oldLuminance[i + ii][j + jj] * clipmask[i + ii][j + jj] * 0.5f;
                                 maxVal = std::max(maxVal, clipmask[i + ii][j + jj]);
                             }
                         }
-                        if (maxVal < minBlend) {
-                            // no pixel of the tile has a blend factor >= minBlend => skip the tile
-                            continue;
+                    } else {
+                        for (int ii = 0; ii < tileSize; ++ii) {
+                            for (int jj = 0; jj < tileSize; ++jj) {
+                                maxVal = std::max(maxVal, clipmask[i + ii][j + jj]);
+                            }
                         }
+                    }
+                    if (maxVal < minBlend) {
+                        // no pixel of the tile has a blend factor >= minBlend => skip the tile
+                        continue;
                     }
                     for (int ii = i; ii < i + fullTileSize; ++ii) {
                         for (int jj = j; jj < j + fullTileSize; ++jj) {
@@ -788,7 +800,7 @@ BENCHFUN
         }
 
         array2D<float>& blend = red; // red will be overridden anyway => we can use its buffer to store the blend mask
-        buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast, clipMask);
+        buildBlendMask(L, blend, W, H, contrast, sharpeningParams.autoContrast, clipMask);
         if (plistener) {
             plistener->setProgress(0.2);
         }
@@ -837,7 +849,7 @@ BENCHFUN
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     array2D<float>& blend = clipMask; // we can share blend and clipMask buffer here
-    buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast, clipMask);
+    buildBlendMask(L, blend, W, H, contrast, sharpeningParams.autoContrast, clipMask);
     if (plistener) {
         plistener->setProgress(0.2);
     }

@@ -225,7 +225,7 @@ Glib::ustring Options::getPreferredProfilePath()
   *
   *@param profName  path + filename of the procparam to look for. A filename without path can be provided for backward compatibility.
   *                 In this case, this parameter will be updated with the new format.
-  *@return Send back the absolute path of the given filename or "Neutral" if "Neutral" has been set to profName. Implementor will have
+  *@return Send back the absolute path of the given filename or "Neutral" if "Neutral" has been set to profName. Implementer will have
   *        to test for this particular value. If the absolute path is invalid (e.g. the file doesn't exist), it will return an empty string.
   */
 Glib::ustring Options::findProfilePath(Glib::ustring &profName)
