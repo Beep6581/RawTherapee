@@ -293,35 +293,31 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
     auto dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
     auto subDirs = listSubDirs (dir, options.fbShowHidden);
 
-    if (subDirs.empty()) {
-        dirtree->collapse_row(path);
-    } else {
-        Gtk::TreeNodeChildren children = iter->children();
-        std::list<Gtk::TreeIter> forErase(children.begin(), children.end());
+    Gtk::TreeNodeChildren children = iter->children();
+    std::list<Gtk::TreeIter> forErase(children.begin(), children.end());
 
-        std::sort (subDirs.begin (), subDirs.end (), [] (const Glib::ustring& firstDir, const Glib::ustring& secondDir)
-        {
-            switch (options.dirBrowserSortType) {
-            default:
-            case Gtk::SORT_ASCENDING:
-                return firstDir < secondDir;
-            case Gtk::SORT_DESCENDING:
-                return firstDir > secondDir;
-            }
-        });
-
-        for (auto it = subDirs.begin(), end = subDirs.end(); it != end; ++it) {
-            addDir(iter, *it);
+    std::sort (subDirs.begin (), subDirs.end (), [] (const Glib::ustring& firstDir, const Glib::ustring& secondDir)
+    {
+        switch (options.dirBrowserSortType) {
+        default:
+        case Gtk::SORT_ASCENDING:
+            return firstDir < secondDir;
+        case Gtk::SORT_DESCENDING:
+            return firstDir > secondDir;
         }
+    });
 
-        for (auto it = forErase.begin(), end = forErase.end(); it != end; ++it) {
-            dirTreeModel->erase(*it);
-        }
-
-        dirTreeModel->set_sort_column(prevSortColumn, prevSortType);
-
-        expandSuccess = true;
+    for (auto it = subDirs.begin(), end = subDirs.end(); it != end; ++it) {
+        addDir(iter, *it);
     }
+
+    for (auto it = forErase.begin(), end = forErase.end(); it != end; ++it) {
+        dirTreeModel->erase(*it);
+    }
+
+    dirTreeModel->set_sort_column(prevSortColumn, prevSortType);
+
+    expandSuccess = true;
 
     Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory ();
     iter->set_value (dtColumns.monitor, monitor);
