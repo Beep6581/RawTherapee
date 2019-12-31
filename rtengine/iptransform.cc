@@ -124,9 +124,9 @@ inline void interpolateTransformCubicLog(rtengine::Imagefloat* src, int xs, int 
     const vfloat w1Vert = F2V(1.f - (t1Vert * Dy) - t2Vert);
     const vfloat w0Vert = F2V(t1Vert - (t1Vert * Dy));
 
-    const vfloat rv = (w0Vert * xlogf(LVFU(src->r(ys, xs))) + w1Vert * xlogf(LVFU(src->r(ys + 1, xs)))) + (w2Vert * xlogf(LVFU(src->r(ys + 2, xs))) + w3Vert * xlogf(LVFU(src->r(ys + 3, xs))));
-    const vfloat gv = (w0Vert * xlogf(LVFU(src->g(ys, xs))) + w1Vert * xlogf(LVFU(src->g(ys + 1, xs)))) + (w2Vert * xlogf(LVFU(src->g(ys + 2, xs))) + w3Vert * xlogf(LVFU(src->g(ys + 3, xs))));
-    const vfloat bv = (w0Vert * xlogf(LVFU(src->b(ys, xs))) + w1Vert * xlogf(LVFU(src->b(ys + 1, xs)))) + (w2Vert * xlogf(LVFU(src->b(ys + 2, xs))) + w3Vert * xlogf(LVFU(src->b(ys + 3, xs))));
+    const vfloat rv = (w0Vert * xlogf1(LVFU(src->r(ys, xs))) + w1Vert * xlogf1(LVFU(src->r(ys + 1, xs)))) + (w2Vert * xlogf1(LVFU(src->r(ys + 2, xs))) + w3Vert * xlogf1(LVFU(src->r(ys + 3, xs))));
+    const vfloat gv = (w0Vert * xlogf1(LVFU(src->g(ys, xs))) + w1Vert * xlogf1(LVFU(src->g(ys + 1, xs)))) + (w2Vert * xlogf1(LVFU(src->g(ys + 2, xs))) + w3Vert * xlogf1(LVFU(src->g(ys + 3, xs))));
+    const vfloat bv = (w0Vert * xlogf1(LVFU(src->b(ys, xs))) + w1Vert * xlogf1(LVFU(src->b(ys + 1, xs)))) + (w2Vert * xlogf1(LVFU(src->b(ys + 2, xs))) + w3Vert * xlogf1(LVFU(src->b(ys + 3, xs))));
 
     // Horizontal
     const float t1Hor = A * (Dx - Dx * Dx);
@@ -183,9 +183,9 @@ inline void interpolateTransformCubicLog(rtengine::Imagefloat* src, int xs, int 
 
     float rv[4], gv[4], bv[4];
     for (int i = 0; i < 4; ++i) {
-        rv[i] = w0Vert * xlogf(src->r(ys, xs + i)) + w1Vert * xlogf(src->r(ys + 1, xs + i)) + w2Vert * xlogf(src->r(ys + 2, xs + i)) + w3Vert * xlogf(src->r(ys + 3, xs + i));
-        gv[i] = w0Vert * xlogf(src->g(ys, xs + i)) + w1Vert * xlogf(src->g(ys + 1, xs + i)) + w2Vert * xlogf(src->g(ys + 2, xs + i)) + w3Vert * xlogf(src->g(ys + 3, xs + i));
-        bv[i] = w0Vert * xlogf(src->b(ys, xs + i)) + w1Vert * xlogf(src->b(ys + 1, xs + i)) + w2Vert * xlogf(src->b(ys + 2, xs + i)) + w3Vert * xlogf(src->b(ys + 3, xs + i));
+        rv[i] = w0Vert * xlogf1(src->r(ys, xs + i)) + w1Vert * xlogf1(src->r(ys + 1, xs + i)) + w2Vert * xlogf1(src->r(ys + 2, xs + i)) + w3Vert * xlogf1(src->r(ys + 3, xs + i));
+        gv[i] = w0Vert * xlogf1(src->g(ys, xs + i)) + w1Vert * xlogf1(src->g(ys + 1, xs + i)) + w2Vert * xlogf1(src->g(ys + 2, xs + i)) + w3Vert * xlogf1(src->g(ys + 3, xs + i));
+        bv[i] = w0Vert * xlogf1(src->b(ys, xs + i)) + w1Vert * xlogf1(src->b(ys + 1, xs + i)) + w2Vert * xlogf1(src->b(ys + 2, xs + i)) + w3Vert * xlogf1(src->b(ys + 3, xs + i));
     }
 
     // Horizontal
@@ -235,7 +235,7 @@ inline void interpolateTransformChannelsCubicLog(const float* const* src, int xs
     const vfloat w1Vert = F2V(1.f - (t1Vert * Dy) - t2Vert);
     const vfloat w0Vert = F2V(t1Vert - (t1Vert * Dy));
 
-    const vfloat cv = (w0Vert * xlogf(LVFU(src[ys][xs])) + w1Vert * xlogf(LVFU(src[ys + 1][xs]))) + (w2Vert * xlogf(LVFU(src[ys + 2][xs])) + w3Vert * xlogf(LVFU(src[ys + 3][xs])));
+    const vfloat cv = (w0Vert * xlogf1(LVFU(src[ys][xs])) + w1Vert * xlogf1(LVFU(src[ys + 1][xs]))) + (w2Vert * xlogf1(LVFU(src[ys + 2][xs])) + w3Vert * xlogf1(LVFU(src[ys + 3][xs])));
 
     // Horizontal
     const float t1Hor = A * (Dx - Dx * Dx);
@@ -286,7 +286,7 @@ inline void interpolateTransformChannelsCubicLog(const float* const* src, int xs
 
     float cv[4];
     for (int i = 0; i < 4; ++i) {
-        cv[i] = w0Vert * xlogf(src[ys][xs + i]) + w1Vert * xlogf(src[ys + 1][xs + i]) + w2Vert * xlogf(src[ys + 2][xs + i]) + w3Vert * xlogf(src[ys + 3][xs + i]);
+        cv[i] = w0Vert * xlogf1(src[ys][xs + i]) + w1Vert * xlogf1(src[ys + 1][xs + i]) + w2Vert * xlogf1(src[ys + 2][xs + i]) + w3Vert * xlogf1(src[ys + 3][xs + i]);
     }
 
     // Horizontal
@@ -1118,23 +1118,19 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
 
                     if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {
                         // all interpolation pixels inside image
-                        if (!useLog) {
+                        if (!highQuality) {
+                            transformed->r(y, x) = vignmul * (original->r(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r(yc, xc + 1) * Dx * (1.0 - Dy) + original->r(yc + 1, xc) * (1.0 - Dx) * Dy + original->r(yc + 1, xc + 1) * Dx * Dy);
+                            transformed->g(y, x) = vignmul * (original->g(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g(yc, xc + 1) * Dx * (1.0 - Dy) + original->g(yc + 1, xc) * (1.0 - Dx) * Dy + original->g(yc + 1, xc + 1) * Dx * Dy);
+                            transformed->b(y, x) = vignmul * (original->b(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b(yc, xc + 1) * Dx * (1.0 - Dy) + original->b(yc + 1, xc) * (1.0 - Dx) * Dy + original->b(yc + 1, xc + 1) * Dx * Dy);
+                        } else if (!useLog) {
                             if (enableCA) {
                                 interpolateTransformChannelsCubic(chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], vignmul);
-                            } else if (!highQuality) {
-                                transformed->r(y, x) = vignmul * (original->r(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r(yc, xc + 1) * Dx * (1.0 - Dy) + original->r(yc + 1, xc) * (1.0 - Dx) * Dy + original->r(yc + 1, xc + 1) * Dx * Dy);
-                                transformed->g(y, x) = vignmul * (original->g(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g(yc, xc + 1) * Dx * (1.0 - Dy) + original->g(yc + 1, xc) * (1.0 - Dx) * Dy + original->g(yc + 1, xc + 1) * Dx * Dy);
-                                transformed->b(y, x) = vignmul * (original->b(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b(yc, xc + 1) * Dx * (1.0 - Dy) + original->b(yc + 1, xc) * (1.0 - Dx) * Dy + original->b(yc + 1, xc + 1) * Dx * Dy);
                             } else {
                                 interpolateTransformCubic(original, xc - 1, yc - 1, Dx, Dy, transformed->r(y, x), transformed->g(y, x), transformed->b(y, x), vignmul);
                             }
                         } else {
                             if (enableCA) {
                                 interpolateTransformChannelsCubicLog(chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], vignmul);
-                            } else if (!highQuality) {
-                                transformed->r(y, x) = vignmul * (original->r(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r(yc, xc + 1) * Dx * (1.0 - Dy) + original->r(yc + 1, xc) * (1.0 - Dx) * Dy + original->r(yc + 1, xc + 1) * Dx * Dy);
-                                transformed->g(y, x) = vignmul * (original->g(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g(yc, xc + 1) * Dx * (1.0 - Dy) + original->g(yc + 1, xc) * (1.0 - Dx) * Dy + original->g(yc + 1, xc + 1) * Dx * Dy);
-                                transformed->b(y, x) = vignmul * (original->b(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b(yc, xc + 1) * Dx * (1.0 - Dy) + original->b(yc + 1, xc) * (1.0 - Dx) * Dy + original->b(yc + 1, xc + 1) * Dx * Dy);
                             } else {
                                 interpolateTransformCubicLog(original, xc - 1, yc - 1, Dx, Dy, transformed->r(y, x), transformed->g(y, x), transformed->b(y, x), vignmul);
                             }

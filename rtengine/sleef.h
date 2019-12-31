@@ -1206,6 +1206,30 @@ __inline float xlogf(float d) {
     return x;
 }
 
+__inline float xlogf1(float d) { // does xlogf(vmaxf(d, 1.f)) but faster
+    float x, x2, t, m;
+    int e;
+
+    e = ilogbp1f(d * 0.7071f);
+    m = ldexpkf(d, -e);
+
+    x = (m-1.0f) / (m+1.0f);
+    x2 = x * x;
+
+    t = 0.2371599674224853515625f;
+    t = mlaf(t, x2, 0.285279005765914916992188f);
+    t = mlaf(t, x2, 0.400005519390106201171875f);
+    t = mlaf(t, x2, 0.666666567325592041015625f);
+    t = mlaf(t, x2, 2.0f);
+
+    x = x * t + 0.693147180559945286226764f * e;
+
+    if (xisinff(d)) x = rtengine::RT_INFINITY_F;
+    if (d <= 1.f) x = 0;
+
+    return x;
+}
+
 __inline float xexpf(float d) {
     if(d<=-104.0f) return 0.0f;
 
