@@ -86,6 +86,29 @@ float normn (float a, float b, int n)
     }
 }
 
+void logEncode(rtengine::Imagefloat *original, bool multiThread) {
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
+#endif
+
+    for (int y = 0; y < original->getHeight(); ++y) {
+        int x = 0;
+#ifdef __SSE2__
+        for (; x < original->getWidth() - 3; x += 4) {
+            STVFU(original->r(y, x), xlogf1(LVFU(original->r(y, x))));
+            STVFU(original->g(y, x), xlogf1(LVFU(original->g(y, x))));
+            STVFU(original->b(y, x), xlogf1(LVFU(original->b(y, x))));
+        }
+#endif
+        for (; x < original->getWidth(); ++x) {
+            original->r(y, x) = xlogf1(original->r(y, x));
+            original->g(y, x) = xlogf1(original->g(y, x));
+            original->b(y, x) = xlogf1(original->b(y, x));
+        }
+    }
+}
+
 #ifdef __SSE2__
 inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys, float Dx, float Dy, float &r, float &g, float &b, float mul)
 {
@@ -124,9 +147,9 @@ inline void interpolateTransformCubicLog(rtengine::Imagefloat* src, int xs, int 
     const vfloat w1Vert = F2V(1.f - (t1Vert * Dy) - t2Vert);
     const vfloat w0Vert = F2V(t1Vert - (t1Vert * Dy));
 
-    const vfloat rv = (w0Vert * xlogf1(LVFU(src->r(ys, xs))) + w1Vert * xlogf1(LVFU(src->r(ys + 1, xs)))) + (w2Vert * xlogf1(LVFU(src->r(ys + 2, xs))) + w3Vert * xlogf1(LVFU(src->r(ys + 3, xs))));
-    const vfloat gv = (w0Vert * xlogf1(LVFU(src->g(ys, xs))) + w1Vert * xlogf1(LVFU(src->g(ys + 1, xs)))) + (w2Vert * xlogf1(LVFU(src->g(ys + 2, xs))) + w3Vert * xlogf1(LVFU(src->g(ys + 3, xs))));
-    const vfloat bv = (w0Vert * xlogf1(LVFU(src->b(ys, xs))) + w1Vert * xlogf1(LVFU(src->b(ys + 1, xs)))) + (w2Vert * xlogf1(LVFU(src->b(ys + 2, xs))) + w3Vert * xlogf1(LVFU(src->b(ys + 3, xs))));
+    const vfloat rv = (w0Vert * LVFU(src->r(ys, xs)) + w1Vert * LVFU(src->r(ys + 1, xs))) + (w2Vert * LVFU(src->r(ys + 2, xs)) + w3Vert * LVFU(src->r(ys + 3, xs)));
+    const vfloat gv = (w0Vert * LVFU(src->g(ys, xs)) + w1Vert * LVFU(src->g(ys + 1, xs))) + (w2Vert * LVFU(src->g(ys + 2, xs)) + w3Vert * LVFU(src->g(ys + 3, xs)));
+    const vfloat bv = (w0Vert * LVFU(src->b(ys, xs)) + w1Vert * LVFU(src->b(ys + 1, xs))) + (w2Vert * LVFU(src->b(ys + 2, xs)) + w3Vert * LVFU(src->b(ys + 3, xs)));
 
     // Horizontal
     const float t1Hor = A * (Dx - Dx * Dx);
@@ -183,9 +206,9 @@ inline void interpolateTransformCubicLog(rtengine::Imagefloat* src, int xs, int 
 
     float rv[4], gv[4], bv[4];
     for (int i = 0; i < 4; ++i) {
-        rv[i] = w0Vert * xlogf1(src->r(ys, xs + i)) + w1Vert * xlogf1(src->r(ys + 1, xs + i)) + w2Vert * xlogf1(src->r(ys + 2, xs + i)) + w3Vert * xlogf1(src->r(ys + 3, xs + i));
-        gv[i] = w0Vert * xlogf1(src->g(ys, xs + i)) + w1Vert * xlogf1(src->g(ys + 1, xs + i)) + w2Vert * xlogf1(src->g(ys + 2, xs + i)) + w3Vert * xlogf1(src->g(ys + 3, xs + i));
-        bv[i] = w0Vert * xlogf1(src->b(ys, xs + i)) + w1Vert * xlogf1(src->b(ys + 1, xs + i)) + w2Vert * xlogf1(src->b(ys + 2, xs + i)) + w3Vert * xlogf1(src->b(ys + 3, xs + i));
+        rv[i] = w0Vert * src->r(ys, xs + i) + w1Vert * src->r(ys + 1, xs + i) + w2Vert * src->r(ys + 2, xs + i) + w3Vert * src->r(ys + 3, xs + i);
+        gv[i] = w0Vert * src->g(ys, xs + i) + w1Vert * src->g(ys + 1, xs + i) + w2Vert * src->g(ys + 2, xs + i) + w3Vert * src->g(ys + 3, xs + i);
+        bv[i] = w0Vert * src->b(ys, xs + i) + w1Vert * src->b(ys + 1, xs + i) + w2Vert * src->b(ys + 2, xs + i) + w3Vert * src->b(ys + 3, xs + i);
     }
 
     // Horizontal
@@ -235,7 +258,7 @@ inline void interpolateTransformChannelsCubicLog(const float* const* src, int xs
     const vfloat w1Vert = F2V(1.f - (t1Vert * Dy) - t2Vert);
     const vfloat w0Vert = F2V(t1Vert - (t1Vert * Dy));
 
-    const vfloat cv = (w0Vert * xlogf1(LVFU(src[ys][xs])) + w1Vert * xlogf1(LVFU(src[ys + 1][xs]))) + (w2Vert * xlogf1(LVFU(src[ys + 2][xs])) + w3Vert * xlogf1(LVFU(src[ys + 3][xs])));
+    const vfloat cv = (w0Vert * LVFU(src[ys][xs]) + w1Vert * LVFU(src[ys + 1][xs])) + (w2Vert * LVFU(src[ys + 2][xs]) + w3Vert * LVFU(src[ys + 3][xs]));
 
     // Horizontal
     const float t1Hor = A * (Dx - Dx * Dx);
@@ -286,7 +309,7 @@ inline void interpolateTransformChannelsCubicLog(const float* const* src, int xs
 
     float cv[4];
     for (int i = 0; i < 4; ++i) {
-        cv[i] = w0Vert * xlogf1(src[ys][xs + i]) + w1Vert * xlogf1(src[ys + 1][xs + i]) + w2Vert * xlogf1(src[ys + 2][xs + i]) + w3Vert * xlogf1(src[ys + 3][xs + i]);
+        cv[i] = w0Vert * src[ys][xs + i] + w1Vert * src[ys + 1][xs + i] + w2Vert * src[ys + 2][xs + i] + w3Vert * src[ys + 3][xs + i];
     }
 
     // Horizontal
@@ -953,6 +976,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 
 void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap)
 {
+    BENCHFUN
     // set up stuff, depending on the mode we are
     const bool enableLCPDist = pLCPMap && params->lensProf.useDist;
     const bool enableCA = highQuality && needsCA();
@@ -1028,10 +1052,13 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double ascale = params->commonTrans.autofill ? getTransformAutoFill(oW, oH, pLCPMap) : 1.0;
 
     const bool darkening = (params->vignetting.amount <= 0.0);
-    const bool useLog = params->pdsharpening.enabled;
+    const bool useLog = params->pdsharpening.enabled && highQuality;
     const double centerFactorx = cx - w2;
     const double centerFactory = cy - h2;
 
+    if (useLog) {
+        logEncode(original, multiThread);
+    }
     // main cycle
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
@@ -1142,12 +1169,22 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                         const int x1 = LIM(xc, 0, original->getWidth() - 1);
                         const int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
 
-                        if (enableCA) {
-                            chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
+                        if (useLog) {
+                            if (enableCA) {
+                                chTrans[c][y][x] = vignmul * xexpf(chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
+                            } else {
+                                transformed->r(y, x) = vignmul * xexpf(original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
+                                transformed->g(y, x) = vignmul * xexpf(original->g(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g(y1, x2) * Dx * (1.0 - Dy) + original->g(y2, x1) * (1.0 - Dx) * Dy + original->g(y2, x2) * Dx * Dy);
+                                transformed->b(y, x) = vignmul * xexpf(original->b(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b(y1, x2) * Dx * (1.0 - Dy) + original->b(y2, x1) * (1.0 - Dx) * Dy + original->b(y2, x2) * Dx * Dy);
+                            }
                         } else {
-                            transformed->r(y, x) = vignmul * (original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
-                            transformed->g(y, x) = vignmul * (original->g(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g(y1, x2) * Dx * (1.0 - Dy) + original->g(y2, x1) * (1.0 - Dx) * Dy + original->g(y2, x2) * Dx * Dy);
-                            transformed->b(y, x) = vignmul * (original->b(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b(y1, x2) * Dx * (1.0 - Dy) + original->b(y2, x1) * (1.0 - Dx) * Dy + original->b(y2, x2) * Dx * Dy);
+                            if (enableCA) {
+                                chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
+                            } else {
+                                transformed->r(y, x) = vignmul * (original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
+                                transformed->g(y, x) = vignmul * (original->g(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g(y1, x2) * Dx * (1.0 - Dy) + original->g(y2, x1) * (1.0 - Dx) * Dy + original->g(y2, x2) * Dx * Dy);
+                                transformed->b(y, x) = vignmul * (original->b(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b(y1, x2) * Dx * (1.0 - Dy) + original->b(y2, x1) * (1.0 - Dx) * Dy + original->b(y2, x2) * Dx * Dy);
+                            }
                         }
                     }
                 } else {
@@ -1180,6 +1217,10 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
     chTrans[0] = transformed->r.ptrs;
     chTrans[1] = transformed->g.ptrs;
     chTrans[2] = transformed->b.ptrs;
+
+    if (useLog) {
+        logEncode(original, multiThread);
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
@@ -1216,8 +1257,11 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
                         int y2 = LIM (yc + 1, 0, original->getHeight() - 1);
                         int x1 = LIM (xc,   0, original->getWidth() - 1);
                         int x2 = LIM (xc + 1, 0, original->getWidth() - 1);
-
-                        chTrans[c][y][x] = (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
+                        if (!useLog) {
+                            chTrans[c][y][x] = (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
+                        } else {
+                            chTrans[c][y][x] = (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
+                        }
                     }
                 } else {
                     // not valid (source pixel x,y not inside source image, etc.)
