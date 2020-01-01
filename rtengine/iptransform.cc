@@ -155,9 +155,11 @@ inline void interpolateTransformCubicLog(rtengine::Imagefloat* src, int xs, int 
     const float t1Hor = A * (Dx - Dx * Dx);
     const float t2Hor = (3.f - 2.f * Dx) * Dx * Dx;
     const vfloat weight = _mm_set_ps(t1Hor * Dx, t1Hor * Dx - t1Hor + t2Hor, 1.f - (t1Hor * Dx) - t2Hor, t1Hor - (t1Hor * Dx));
-    r = mul * xexpf(vhadd(weight * rv));
-    g = mul * xexpf(vhadd(weight * gv));
-    b = mul * xexpf(vhadd(weight * bv));
+    const vfloat tempv = _mm_setr_ps(vhadd(weight * rv), vhadd(weight * gv), vhadd(weight * bv), 0.f);
+    const vfloat resultv = xexpf(tempv);
+    r = mul * resultv[0];
+    g = mul * resultv[1];
+    b = mul * resultv[2];
 }
 #else
 inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys, float Dx, float Dy, float &r, float &g, float &b, float mul)
