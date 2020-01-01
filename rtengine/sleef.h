@@ -894,6 +894,15 @@ __inline double xlog1p(double a) {
 
 #define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
 
+#ifdef __SSE2__
+__inline int xrintf(float x) {
+    return _mm_cvt_ss2si(_mm_set_ss(x));
+}
+#else
+__inline int xrintf(float x) {
+    return x + (x < 0 ? -0.5f : 0.5f);
+}
+#endif
 __inline int32_t floatToRawIntBits(float d) {
     union {
         float f;
@@ -980,7 +989,7 @@ __inline float xsinf(float d) {
     int q;
     float u, s;
 
-    q = rint(d * rtengine::RT_1_PI_F);
+    q = xrintf(d * rtengine::RT_1_PI_F);
 
     d = mlaf(q, -PI4_Af*4, d);
     d = mlaf(q, -PI4_Bf*4, d);
@@ -1009,7 +1018,7 @@ __inline float xcosf(float d) {
     int q;
     float u, s;
 
-    q = 1 + 2*rint(d * rtengine::RT_1_PI_F - 0.5f);
+    q = 1 + 2*xrintf(d * rtengine::RT_1_PI_F - 0.5f);
 
     d = mlaf(q, -PI4_Af*2, d);
     d = mlaf(q, -PI4_Bf*2, d);
@@ -1041,7 +1050,7 @@ __inline float2 xsincosf(float d) {
     float u, s, t;
     float2 r;
 
-    q = rint(d * rtengine::RT_2_PI_F);
+    q = xrintf(d * rtengine::RT_2_PI_F);
 
     s = d;
 
@@ -1083,7 +1092,7 @@ __inline float xtanf(float d) {
     int q;
     float u, s, x;
 
-    q = rint(d * (float)(2 * rtengine::RT_1_PI));
+    q = xrintf(d * (float)(2 * rtengine::RT_1_PI));
 
     x = d;
 
@@ -1233,7 +1242,7 @@ __inline float xlogf1(float d) { // does xlogf(vmaxf(d, 1.f)) but faster
 __inline float xexpf(float d) {
     if(d<=-104.0f) return 0.0f;
 
-    int q = rint(d * R_LN2f);
+    int q = xrintf(d * R_LN2f);
     float s, u;
 
     s = mlaf(q, -L2Uf, d);
