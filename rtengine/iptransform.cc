@@ -86,25 +86,25 @@ float normn (float a, float b, int n)
     }
 }
 
-void logEncode(rtengine::Imagefloat *original, bool multiThread) {
+void logEncode(rtengine::Imagefloat *src, rtengine::Imagefloat *dest, bool multiThread) {
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
 #endif
 
-    for (int y = 0; y < original->getHeight(); ++y) {
+    for (int y = 0; y < src->getHeight(); ++y) {
         int x = 0;
 #ifdef __SSE2__
-        for (; x < original->getWidth() - 3; x += 4) {
-            STVFU(original->r(y, x), xlogf1(LVFU(original->r(y, x))));
-            STVFU(original->g(y, x), xlogf1(LVFU(original->g(y, x))));
-            STVFU(original->b(y, x), xlogf1(LVFU(original->b(y, x))));
+        for (; x < src->getWidth() - 3; x += 4) {
+            STVFU(dest->r(y, x), xlogf1(LVFU(src->r(y, x))));
+            STVFU(dest->g(y, x), xlogf1(LVFU(src->g(y, x))));
+            STVFU(dest->b(y, x), xlogf1(LVFU(src->b(y, x))));
         }
 #endif
-        for (; x < original->getWidth(); ++x) {
-            original->r(y, x) = xlogf1(original->r(y, x));
-            original->g(y, x) = xlogf1(original->g(y, x));
-            original->b(y, x) = xlogf1(original->b(y, x));
+        for (; x < src->getWidth(); ++x) {
+            dest->r(y, x) = xlogf1(src->r(y, x));
+            dest->g(y, x) = xlogf1(src->g(y, x));
+            dest->b(y, x) = xlogf1(src->b(y, x));
         }
     }
 }
@@ -536,7 +536,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
 
 void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
                                  const FramesMetaData *metadata,
-                                 int rawRotationDeg, bool fullImage)
+                                 int rawRotationDeg, bool fullImage, bool useOriginalBuffer)
 {
     double focalLen = metadata->getFocalLen();
     double focalLen35mm = metadata->getFocalLen35mm();
@@ -584,10 +584,10 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
                 dest = tmpimg.get();
             }
         }
-        transformGeneral(highQuality, original, dest, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get());
+        transformGeneral(highQuality, original, dest, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get(), useOriginalBuffer);
         
         if (highQuality && dest != transformed) {
-            transformLCPCAOnly(dest, transformed, cx, cy, pLCPMap.get());
+            transformLCPCAOnly(dest, transformed, cx, cy, pLCPMap.get(), useOriginalBuffer);
         }
     }
 }
@@ -976,7 +976,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 }
 
 
-void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap)
+void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap, bool useOriginalBuffer)
 {
 
     // set up stuff, depending on the mode we are
@@ -1058,8 +1058,15 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double centerFactorx = cx - w2;
     const double centerFactory = cy - h2;
 
+    std::unique_ptr<Imagefloat> tempLog;
     if (useLog) {
-        logEncode(original, multiThread);
+        if (!useOriginalBuffer) {
+            tempLog.reset(new Imagefloat(original->getWidth(), original->getHeight()));
+            logEncode(original, tempLog.get(), multiThread);
+            original = tempLog.get();
+        } else {
+            logEncode(original, original, multiThread);
+        }
     }
     // main cycle
 #ifdef _OPENMP
@@ -1205,7 +1212,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
 }
 
 
-void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap)
+void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap, bool useOriginalBuffer)
 {
     assert(pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable());
     const bool useLog = params->pdsharpening.enabled;
@@ -1220,8 +1227,15 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
     chTrans[1] = transformed->g.ptrs;
     chTrans[2] = transformed->b.ptrs;
 
+    std::unique_ptr<Imagefloat> tempLog;
     if (useLog) {
-        logEncode(original, multiThread);
+        if (!useOriginalBuffer) {
+            tempLog.reset(new Imagefloat(original->getWidth(), original->getHeight()));
+            logEncode(original, tempLog.get(), multiThread);
+            original = tempLog.get();
+        } else {
+            logEncode(original, original, multiThread);
+        }
     }
 
 #ifdef _OPENMP
