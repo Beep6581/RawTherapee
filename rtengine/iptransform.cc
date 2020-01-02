@@ -1054,7 +1054,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double ascale = params->commonTrans.autofill ? getTransformAutoFill(oW, oH, pLCPMap) : 1.0;
 
     const bool darkening = (params->vignetting.amount <= 0.0);
-    const bool useLog = params->pdsharpening.enabled && highQuality;
+    const bool useLog = params->commonTrans.method == "log" && highQuality;
     const double centerFactorx = cx - w2;
     const double centerFactory = cy - h2;
 
@@ -1215,7 +1215,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
 void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap, bool useOriginalBuffer)
 {
     assert(pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable());
-    const bool useLog = params->pdsharpening.enabled;
+    const bool useLog = params->commonTrans.method == "log";
 
     float** chOrig[3];
     chOrig[0] = original->r.ptrs;
