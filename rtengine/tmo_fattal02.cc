@@ -416,7 +416,7 @@ void calculateFiMatrix(Array2Df* FI, Array2Df* gradients[],
     delete[] fi;
 }
 
-void solve_pde_fft(Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread);
+void solve_pde_fft(Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread, int algo);
 
 void tmo_fattal02(size_t width,
                   size_t height,
@@ -426,7 +426,7 @@ void tmo_fattal02(size_t width,
                   float beta,
                   float noise,
                   int detail_level,
-                  bool multithread)
+                  bool multithread, int algo)
 {
 // #ifdef TIMER_PROFILING
 //     msec_timer stop_watch;
@@ -435,6 +435,7 @@ void tmo_fattal02(size_t width,
     // static const float black_point = 0.1f;
     // static const float white_point = 0.5f;
     static const float gamma = 1.0f; // 0.8f;
+//paramet
 
     // static const int   detail_level = 3;
     if (detail_level < 0) {
@@ -466,7 +467,7 @@ void tmo_fattal02(size_t width,
 
 
     int size = width * height;
-
+//paramet
     // find max value, normalize to range 0..100 and take logarithm
     // float minLum = Y (0, 0);
     float maxLum = Y(0, 0);
@@ -481,6 +482,11 @@ void tmo_fattal02(size_t width,
 
     Array2Df* H = new Array2Df(width, height);
     float temp = 100.f / maxLum;
+
+    if (algo == 1) {
+        temp = 1.f;
+    }
+
 #ifdef _OPENMP
     #pragma omp parallel if(multithread)
 #endif
@@ -649,7 +655,7 @@ void tmo_fattal02(size_t width,
     // solve pde and exponentiate (ie recover compressed image)
     {
         MyMutex::MyLock lock(*fftwMutex);
-        solve_pde_fft(FI, &L, Gx, multithread);
+        solve_pde_fft(FI, &L, Gx, multithread, algo);
     }
     delete Gx;
     delete FI;
@@ -868,7 +874,7 @@ std::vector<double> get_lambda(int n)
 // not modified and the equation might not have a solution but an
 // approximate solution with a minimum error is then calculated
 // double precision version
-void solve_pde_fft(Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*, pfs::Progress &ph,
+void solve_pde_fft(Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread, int algo)/*, pfs::Progress &ph,
                                               bool adjust_bound)*/
 {
     // ph.setValue(20);
@@ -933,21 +939,23 @@ void solve_pde_fft(Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*,
     // a solution which has no positive values: U_new(x,y)=U(x,y)-max
     // (not really needed but good for numerics as we later take exp(U))
     //DEBUG_STR << "solve_pde_fft: removing constant from solution" << std::endl;
-    float maxVal = 0.f;
+    if (algo == 0) {
+        float maxVal = 0.f;
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(max:maxVal) if(multithread)
+        #pragma omp parallel for reduction(max:maxVal) if(multithread)
 #endif
 
-    for (int i = 0; i < width * height; i++) {
-        maxVal = std::max(maxVal, (*U)(i));
-    }
+        for (int i = 0; i < width * height; i++) {
+            maxVal = std::max(maxVal, (*U)(i));
+        }
 
 #ifdef _OPENMP
-    #pragma omp parallel for if(multithread)
+        #pragma omp parallel for if(multithread)
 #endif
 
-    for (int i = 0; i < width * height; i++) {
-        (*U)(i) -= maxVal;
+        for (int i = 0; i < width * height; i++) {
+            (*U)(i) -= maxVal;
+        }
     }
 }
 
@@ -1056,7 +1064,9 @@ inline int find_fast_dim(int dim)
 } // namespace
 
 
-void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level, int Lalone, float **Lum, int WW, int HH)
+void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level, int Lalone, float **Lum, int WW, int HH, int algo)
+//algo allows to use ART algorithme algo = 0 RT, algo = 1 ART
+//Lalone allows to use L without RGB values in RT mode
 {
     if (!fatParams.enabled) {
         return;
@@ -1082,12 +1092,13 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 
     int w;
     int h;
-    if(Lalone != 0) {
+
+    if (Lalone != 0) {
         w = WW;
         h = HH;
     } else {
-         w = rgb->getWidth();
-         h = rgb->getHeight();
+        w = rgb->getWidth();
+        h = rgb->getHeight();
     }
 
     Array2Df Yr(w, h);
@@ -1103,7 +1114,7 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
-            if(Lalone != 0) {
+            if (Lalone != 0) {
                 Yr(x, y) = std::max(2.f * Lum[y][x], min_luminance);       // clip really black pixels
             } else {
                 Yr(x, y) = std::max(luminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x), ws), min_luminance);       // clip really black pixels
@@ -1112,8 +1123,13 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
     }
 
     float oldMedian;
-    const float percentile = float(LIM(fatParams.anchor, 1, 100)) / 100.f;
-    findMinMaxPercentile (Yr.data(), static_cast<size_t>(Yr.getRows()) * Yr.getCols(), percentile, oldMedian, percentile, oldMedian, multiThread);
+    float percentile = 1.f;
+
+    if (algo == 0) {
+        percentile = float(LIM(fatParams.anchor, 1, 100)) / 100.f;
+        findMinMaxPercentile(Yr.data(), static_cast<size_t>(Yr.getRows()) * Yr.getCols(), percentile, oldMedian, percentile, oldMedian, multiThread);
+    }
+
     // median filter on the deep shadows, to avoid boosting noise
     // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
     int w2 = find_fast_dim(w) + 1;
@@ -1150,14 +1166,65 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 
     rescale_nearest(Yr, L, multiThread);
 
-    tmo_fattal02(w2, h2, L, L, alpha, beta, noise, detail_level, multiThread);
+    tmo_fattal02(w2, h2, L, L, alpha, beta, noise, detail_level, multiThread, 0);
 
     const float hr = float(h2) / float(h);
     const float wr = float(w2) / float(w);
 
-    float newMedian;
-    findMinMaxPercentile (L.data(), static_cast<size_t>(L.getRows()) * L.getCols(), percentile, newMedian, percentile, newMedian, multiThread);
-    const float scale = (oldMedian == 0.f || newMedian == 0.f) ? 65535.f : (oldMedian / newMedian); // avoid Nan
+    float offset = 0.f;
+    float scale = 65535.f;
+
+    if (algo == 0) {
+        float newMedian;
+        findMinMaxPercentile(L.data(), static_cast<size_t>(L.getRows()) * L.getCols(), percentile, newMedian, percentile, newMedian, multiThread);
+        scale = (oldMedian == 0.f || newMedian == 0.f) ? 65535.f : (oldMedian / newMedian); // avoid Nan
+    } else {
+
+        scale = 65535.f;
+        {
+            float ratio = 0.f;
+            int ww, hh;
+
+            if (w >= h) {
+                ratio = 200.f / w;
+                ww = 200;
+                hh = ratio * h;
+            } else {
+                ratio = 200.f / h;
+                hh = 200;
+                ww = ratio * w;
+            }
+
+            Array2Df tmp(ww, hh);
+            int sz = ww * hh;
+            int idx = sz / 2;
+            int oidx = LIM(int(sz * 0.05f + 0.5f), 1, sz - 1);
+            rescale_nearest(Yr, tmp, multiThread);
+            std::sort(tmp.data(), tmp.data() + sz);
+            float oldMedian = tmp(idx);
+            float old_min = 0.f;
+
+            for (int i = 0; i <= oidx; ++i) {
+                old_min += tmp(i);
+            }
+
+            old_min /= oidx;
+            rescale_nearest(L, tmp, multiThread);
+            std::sort(tmp.data(), tmp.data() + sz);
+            float newMedian = tmp(idx);
+            scale = (oldMedian == 0.f || newMedian == 0.f) ? 65535.f : (oldMedian / newMedian); // avoid Nan
+            float new_min = 0.f;
+
+            for (int i = 0; i <= oidx; ++i) {
+                new_min += tmp(i);
+            }
+
+            new_min /= oidx;
+            offset = old_min - new_min;
+        }
+
+
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if(multiThread)
@@ -1171,18 +1238,25 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 
             float Y = std::max(Yr(x, y), epsilon);
             float l = std::max(L(xx, yy), epsilon) * (scale / Y);
-            if(Lalone == 0) {
-            rgb->r(y, x) *= l;
-            rgb->g(y, x) *= l;
-            rgb->b(y, x) *= l;
 
-            assert(std::isfinite(rgb->r(y, x)));
-            assert(std::isfinite(rgb->g(y, x)));
-            assert(std::isfinite(rgb->b(y, x)));
+            if (Lalone == 0) {
+//                rgb->r(y, x) *= l;
+//                rgb->g(y, x) *= l;
+//                rgb->b(y, x) *= l;
+                float &r = rgb->r(y, x);
+                float &g = rgb->g(y, x);
+                float &b = rgb->b(y, x);
+                r = max(r * l - offset, 0.f);
+                g = max(g * l - offset, 0.f);
+                b = max(b * l - offset, 0.f);
+
+                assert(std::isfinite(rgb->r(y, x)));
+                assert(std::isfinite(rgb->g(y, x)));
+                assert(std::isfinite(rgb->b(y, x)));
             } else {
-                if(Lalone == 1) {
-                    Lum[y][x] *= (0.5f * l);
-                } else if(Lalone == -1){
+                if (Lalone == 1) {
+                    Lum[y][x] *= (0.5f * l - offset);
+                } else if (Lalone == -1) {
                     Lum[y][x] *= (-0.5f * l);
                 }
             }

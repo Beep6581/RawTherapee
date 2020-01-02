@@ -983,8 +983,8 @@ HISTORY_MSG_741;Local - Local contrast Residual C
 HISTORY_MSG_742;Local - Exp Laplacian gamma
 HISTORY_MSG_743;Local - Exp Fattal Amount
 HISTORY_MSG_744;Local - Exp Fattal Detail
-HISTORY_MSG_745;Local - Exp Fattal Anchor
-HISTORY_MSG_746;Local - Exp Fattal levels
+HISTORY_MSG_745;Local - Exp Fattal Offset
+HISTORY_MSG_746;Local - Exp Fattal Sigma
 HISTORY_MSG_747;Local Spot created
 HISTORY_MSG_748;Local - Exp Denoise
 HISTORY_MSG_749;Local - Reti Depth
@@ -2316,11 +2316,11 @@ TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values a
 TP_LOCALLAB_EXPTOOL;Tools exposure
 TP_LOCALLAB_EXPTRC;Tone Response Curve - TRC
 TP_LOCALLAB_FATAMOUNT;Amount
-TP_LOCALLAB_FATANCHOR;Anchor
+TP_LOCALLAB_FATANCHOR;Offset
 TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.\nAnchor allows selection according to the images over or under exposed.\nUseful to increase Luminance for a Second spot near the current and using mask
-TP_LOCALLAB_FATLEVEL;Detail levels
+TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATRES;Amount Residual Image
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n..

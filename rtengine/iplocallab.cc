@@ -1383,6 +1383,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
     const int detail2 = float(max(lp.detail, 0)) / scale + 0.5f;
     const int detail = lp.detail;
     const int W = rgb->getWidth(), H = rgb->getHeight();
+
     if (detail == 0) {//no preser contrast
 #ifdef _OPENMP
         #       pragma omp parallel for if (multiThread)
@@ -1451,15 +1452,16 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
             }
         }
     } else if (detail == 1) {//preserve local contrast
-        
+
         array2D<float> Y(W, H);
         {
             constexpr float base_posterization = 20.f;
             array2D<float> Y2(W, H);
-        
+
 #ifdef _OPENMP
-#           pragma omp parallel for if (multiThread)
+            #           pragma omp parallel for if (multiThread)
 #endif
+
             for (int y = 0; y < H; ++y) {
                 for (int x = 0; x < W; ++x) {
                     Y2[y][x] = norm(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)) / 65535.f;
@@ -1468,20 +1470,23 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
                     Y[y][x] = xexpf(ll);
                 }
             }
+
             const float radius = max(max(bfw, W), max(bfh, H)) / 30.f;
             const float epsilon = 0.005f;
             rtengine::guidedFilter(Y2, Y, Y, radius, epsilon, multiThread);
         }
-        
+
 #ifdef _OPENMP
-#       pragma omp parallel for if (multiThread)
+        #       pragma omp parallel for if (multiThread)
 #endif
+
         for (int y = 0; y < H; ++y) {
             for (int x = 0; x < W; ++x) {
                 float &r = rgb->r(y, x);
                 float &g = rgb->g(y, x);
                 float &b = rgb->b(y, x);
                 float t = Y[y][x];
+
                 if (t > noise) {
                     float c = apply(t, false);
                     float f = c / t;
@@ -3543,7 +3548,7 @@ void ImProcFunctions::mean_dt(const float * data, size_t size, double * mean_p, 
 
 }
 
-void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod)
+void ImProcFunctions::normalize_mean_dt(float * data,  float * ref, size_t size, float mod, float sigm)
 {
     /*
      * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -3577,10 +3582,10 @@ void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t 
 
     /* normalize the array */
     ptr_data = data;
-    ptr_dataold = data;
+    ptr_dataold = ref;//data;
 
     for (i = 0; i < size; i++) {
-        *ptr_data = mod * (a * *ptr_data + b) + (1.f - mod) * *ptr_dataold;//normalize mean and stdv and balance PDE
+        *ptr_data = mod * (a * *ptr_data + sigm * b) + (1.f - mod) * *ptr_dataold;//normalize mean and stdv and balance PDE
         ptr_data++;
     }
 
@@ -3721,7 +3726,7 @@ void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int 
     }
 
     if (show != 4 && normalize == 1) {
-        normalize_mean_dt(data, datain, bfw * bfh, 1.f);
+        normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f);
     }
 
     if (show == 0  || show == 4) {
@@ -4176,7 +4181,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             Imagefloat *tmpImagefat = nullptr;
             tmpImagefat = new Imagefloat(bfw, bfh);
             lab2rgb(*bufmaskblurcol, *tmpImagefat, params->icm.workingProfile);
-            ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0);
+            ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0, 0);
             rgb2lab(*tmpImagefat, *bufmaskblurcol, params->icm.workingProfile);
             delete tmpImagefat;
         }
@@ -4961,7 +4966,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                     data[(y - ystart)* bfw + (x - xstart)] = bufexporig->L[y - ystart][x - xstart];
                 }
 
-            normalize_mean_dt(data, datain, bfh * bfw, 1.f);
+            normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f);
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -6302,7 +6307,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                 data[(y - ystart)* bfw + (x - xstart)] = bufexporig->L[y - ystart][x - xstart];
             }
 
-        normalize_mean_dt(data, datain, bfh * bfw, 1.f);
+        normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -6543,7 +6548,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
         fftwf_cleanup_threads();
     }
 
-    normalize_mean_dt(data, dataor, bfw * bfh, mod);
+    normalize_mean_dt(data, dataor, bfw * bfh, mod, 1.f);
     {
 
 #ifdef _OPENMP
@@ -7126,7 +7131,7 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
                     float klev = (loccompwavCurve[level * 55.5f]);
                     fatParams.amount = 50.f * klev;
                     {
-                        ToneMapFattal02(nullptr, fatParams, 3, 1, templevel[dir - 1][level], W_L, H_L);
+                        ToneMapFattal02(nullptr, fatParams, 3, 1, templevel[dir - 1][level], W_L, H_L, 0);
                     }
                 }
             }
@@ -7194,7 +7199,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
             }
         }
 
-        ToneMapFattal02(nullptr, fatParams, 3, 1, bufl, W_L, H_L);
+        ToneMapFattal02(nullptr, fatParams, 3, 1, bufl, W_L, H_L, 0);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
@@ -7326,7 +7331,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
         if (wavcurvelev && radlevblur > 0.f && blurena) {
             wavcont(*wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, radlevblur, 1, fatParams, 1.f);
         }
- 
+
         if (wavcurvecomp && comprena) {
             wavcont(*wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, radlevblur, 2, fatParams, 1.f);
         }
@@ -11496,7 +11501,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         // printf("minwin=%i maxlevelavant=%i  maxlespot=%i\n", minwin, wavelet_level, maxlevelspot);
 
                         wavelet_level = min(wavelet_level, maxlevelspot);
-                       // printf("maxlevel=%i\n", wavelet_level);
+                        // printf("maxlevel=%i\n", wavelet_level);
                         bool exec = false;
                         bool origlc = params->locallab.spots.at(sp).origlc;
 
@@ -12009,7 +12014,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             data[ir * Wd + jr] = orig[ir][jr];
                         }
 
-                    normalize_mean_dt(data, datain, Hd * Wd, 1.f);
+                    normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f);
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif
@@ -12384,7 +12389,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             data[ir * Wd + jr] = orig[ir][jr];
                         }
 
-                    normalize_mean_dt(data, datain, Hd * Wd, 1.f);
+                    normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f);
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif
@@ -12823,17 +12828,56 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                             if (enablefat) {
+                                float *datain = new float[bfwr * bfhr];
+                                float *dataout = new float[bfwr * bfhr];
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int y = 0; y < bfhr; y++) {
+                                    for (int x = 0; x < bfwr; x++) {
+                                        float L = bufexpfin->L[y][x];
+                                        datain[y * bfwr + x] = L;
+                                    }
+                                }
+
                                 FattalToneMappingParams fatParams;
                                 fatParams.enabled = true;
                                 fatParams.threshold = params->locallab.spots.at(sp).fatdetail;
                                 fatParams.amount = params->locallab.spots.at(sp).fatamount;
-                                fatParams.anchor = params->locallab.spots.at(sp).fatanchor;
-                                int nlev = params->locallab.spots.at(sp).fatlevel;
+                                fatParams.anchor = 50.f; //params->locallab.spots.at(sp).fatanchor;
+                                float sigm = params->locallab.spots.at(sp).fatlevel;
+                                float mean = params->locallab.spots.at(sp).fatanchor;
                                 tmpImagefat = new Imagefloat(bfwr, bfhr);
                                 lab2rgb(*bufexpfin, *tmpImagefat, params->icm.workingProfile);
-                                ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0);
+                                ToneMapFattal02(tmpImagefat, fatParams, 3, 0, nullptr, 0, 0, 1);//last parameter = 1 ==>ART algorithm
                                 rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
                                 delete tmpImagefat;
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int y = 0; y < bfhr; y++) {
+                                    for (int x = 0; x < bfwr; x++) {
+                                        float L = bufexpfin->L[y][x];
+                                        dataout[y * bfwr + x] = L;
+                                    }
+                                }
+
+                                normalize_mean_dt(dataout, datain, bfwr * bfhr, mean, sigm);
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int y = 0; y < bfhr; y++) {
+                                    for (int x = 0; x < bfwr; x++) {
+                                        bufexpfin->L[y][x] = dataout[y * bfwr + x];
+                                    }
+                                }
+
+
+                                delete [] datain;
+                                delete [] dataout;
                             }
 
 

@@ -241,7 +241,7 @@ public:
     void mean_dt(const float * data, size_t size, double * mean_p, double * dt_p);
     double *cos_table(size_t size);
 
-    void normalize_mean_dt(float *data, const float *ref, size_t size, float mod);
+    void normalize_mean_dt(float *data, float *ref, size_t size, float mod, float sigm);
     void retinex_pde(float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, float *dE, int show, int dEenable, int normalize);
     void exposure_pde(float *dataor, float *datain, float * dataout, int bfw, int bfh, float thresh, float mod);
     void fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern, int algo);
@@ -422,7 +422,7 @@ public:
 
     void dehaze(Imagefloat *rgb, const procparams::DehazeParams &dehazeParams);
     void dehazeloc(Imagefloat *rgb, const procparams::DehazeParams &dehazeParams);
-    void ToneMapFattal02(Imagefloat *rgb, const procparams::FattalToneMappingParams &fatParams, int detail_level, int Lalone, float **Lum, int WW, int HH);
+    void ToneMapFattal02(Imagefloat *rgb, const procparams::FattalToneMappingParams &fatParams, int detail_level, int Lalone, float **Lum, int WW, int HH, int algo);
     void localContrast(LabImage *lab, float **destination, const procparams::LocalContrastParams &localContrastParams, bool fftwlc, double scale);
     void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
    // void shadowsHighlights(LabImage *lab);

@@ -1094,7 +1094,7 @@ struct LocallabParams {
         double fatamount;
         double fatdetail;
         double fatanchor;
-        int fatlevel;
+        double fatlevel;
         // Shadow highlight
         Glib::ustring shMethod;
         int multsh[5];

@@ -428,15 +428,15 @@ Locallab::Locallab():
     lapmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 1000.0, 0.5, 0.))),
     laplacexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACEXP"), 0.0, 100.0, 0.1, 0.))),
-    balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.2, 1.2, 0.01, 0.75))),
+    balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.5, 1.5, 0.01, 1.0))),
     linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0., 1., 0.01, 0.3))),
     gamm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMM"), 0.2, 1.3, 0.01, 0.4))),
     fatamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
-    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.25, 2.5, 0.05, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     strmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
     angmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.))),
-    fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0, 3, 1, 2))),
+    fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.25, 2.5, 0.05, 1.))),
     multipliersh(
         [this]() -> std::array<Adjuster *, 5>
 {
@@ -1618,9 +1618,9 @@ pe(nullptr)
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         fatBox->pack_start(*fatlevel);
-    }
+//    }
 
     fatBox->pack_start(*fatanchor);
     pdeFrame->add(*pdeBox);
@@ -5068,7 +5068,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).fatamount = fatamount->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fatdetail = fatdetail->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fatanchor = fatanchor->getValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).fatlevel = fatlevel->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).fatlevel = fatlevel->getValue();
 
                     // Shadow highlight
                     pp->locallab.spots.at(pp->locallab.selspot).expshadhigh = expshadhigh->getEnabled();
