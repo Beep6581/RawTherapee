@@ -119,7 +119,7 @@ public:
     }
     void setScale(double iscale);
 
-    bool needsTransform() const;
+    bool needsTransform(int oW, int oH, int rawRotationDeg, const FramesMetaData *metadata) const;
     bool needsPCVignetting() const;
 
     void firstAnalysis(const Imagefloat* const working, const procparams::ProcParams &params, LUTu & vhist16);

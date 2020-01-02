@@ -1358,9 +1358,14 @@ bool ImProcFunctions::needsLensfun() const
     return params->lensProf.useLensfun();
 }
 
-bool ImProcFunctions::needsTransform () const
+bool ImProcFunctions::needsTransform (int oW, int oH, int rawRotationDeg, const FramesMetaData *metadata) const
 {
-    return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP() || needsLensfun();
+    bool needsLf = needsLensfun();
+    if (needsLf) {
+        std::unique_ptr<const LensCorrection> pLCPMap = LFDatabase::getInstance()->findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
+        needsLf = pLCPMap.get();
+    }
+    return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP() || needsLf;
 }
 
 

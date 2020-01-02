@@ -872,7 +872,7 @@ private:
         ipf.ToneMapFattal02(baseImg);
 
         // perform transform (excepted resizing)
-        if (ipf.needsTransform()) {
+        if (ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {
             Imagefloat* trImg = nullptr;
             if (ipf.needsLuminanceOnly()) {
                 trImg = baseImg;
