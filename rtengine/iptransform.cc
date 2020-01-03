@@ -1217,15 +1217,7 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
     assert(pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable());
     const bool useLog = params->commonTrans.method == "log";
 
-    float** chOrig[3];
-    chOrig[0] = original->r.ptrs;
-    chOrig[1] = original->g.ptrs;
-    chOrig[2] = original->b.ptrs;
-
-    float** chTrans[3];
-    chTrans[0] = transformed->r.ptrs;
-    chTrans[1] = transformed->g.ptrs;
-    chTrans[2] = transformed->b.ptrs;
+    float** chTrans[3] = {transformed->r.ptrs, transformed->g.ptrs, transformed->b.ptrs};
 
     std::unique_ptr<Imagefloat> tempLog;
     if (useLog) {
@@ -1237,6 +1229,7 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
             logEncode(original, original, multiThread);
         }
     }
+    float** chOrig[3] = {original->r.ptrs, original->g.ptrs, original->b.ptrs};
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
@@ -1276,7 +1269,7 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
                         if (!useLog) {
                             chTrans[c][y][x] = (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
                         } else {
-                            chTrans[c][y][x] = (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
+                            chTrans[c][y][x] = xexpf(chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
                         }
                     }
                 } else {
