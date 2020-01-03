@@ -1240,16 +1240,18 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
             float l = std::max(L(xx, yy), epsilon) * (scale / Y);
 
             if (Lalone == 0) {
-//                rgb->r(y, x) *= l;
-//                rgb->g(y, x) *= l;
-//                rgb->b(y, x) *= l;
                 float &r = rgb->r(y, x);
                 float &g = rgb->g(y, x);
                 float &b = rgb->b(y, x);
-                r = max(r * l - offset, 0.f);
-                g = max(g * l - offset, 0.f);
-                b = max(b * l - offset, 0.f);
-
+                if(l > 1.f) {
+                    r = max(r * l - offset, r);
+                    g = max(g * l - offset, g);
+                    b = max(b * l - offset, b);
+                } else {
+                    r *= l;
+                    g *= l;
+                    b *= l;
+                }
                 assert(std::isfinite(rgb->r(y, x)));
                 assert(std::isfinite(rgb->g(y, x)));
                 assert(std::isfinite(rgb->b(y, x)));
@@ -1257,7 +1259,7 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
                 if (Lalone == 1) {
                     Lum[y][x] *= (0.5f * l - offset);
                 } else if (Lalone == -1) {
-                    Lum[y][x] *= (-0.5f * l);
+                    Lum[y][x] *= (-0.5f * l + offset);
                 }
             }
         }

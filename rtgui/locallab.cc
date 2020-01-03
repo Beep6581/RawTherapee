@@ -2907,7 +2907,11 @@ pe(nullptr)
     wavshapecompre->setResetCurve(FlatCurveType(defSpot.loccomprewavcurve.at(0)), defSpot.loccomprewavcurve);
 
     if (showtooltip) {
-//        wavshape->setTooltip(M("TP_RETINEX_WAV_TOOLTIP"));
+//       wavshapecompre->setTooltip(M("TP_LOCALLAB_COMPRESS_TOOLTIP"));
+//       wavshapecomp->setTooltip(M("TP_LOCALLAB_COMPRESS_TOOLTIP"));
+    }
+    if (showtooltip) {
+        llshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
 
     LocalcurveEditorwavcompre->curveListComplete();
@@ -3022,6 +3026,7 @@ pe(nullptr)
     compreBox->pack_start(*LocalcurveEditorwavcompre, Gtk::PACK_SHRINK, 4);
     compreBox->pack_start(*residcomp);
     compreFrame->add(*compreBox);
+
     
 //    ToolParamBlock* const compBox = Gtk::manage(new ToolParamBlock());
     compBox->pack_start(*fatdet);
@@ -3030,6 +3035,7 @@ pe(nullptr)
     compBox->pack_start(*separatorcomp);
     compBox->pack_start(*fatres);
     compFrame->add(*compBox);
+
 
     Gtk::HBox* const LCTitleHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const LCLabel = Gtk::manage(new Gtk::Label());
