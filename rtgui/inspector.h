@@ -47,11 +47,14 @@ private:
     rtengine::Coord center;
     std::vector<InspectorBuffer*> images;
     InspectorBuffer* currImage;
-    double zoom;
+    bool scaled;
     bool active;
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;
+
+    Gtk::Window window;
+    bool on_key_release(GdkEventKey *event);
 
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     void deleteBuffers();
@@ -61,6 +64,11 @@ private:
 public:
     Inspector();
     ~Inspector() override;
+
+    /** @brief Show or hide window
+     * @param scaled fit image into window
+     */
+    void showWindow(bool scaled);
 
     /** @brief Mouse movement to a new position
      * @param pos Location of the mouse, in percentage (i.e. [0;1] range) relative to the full size image ; -1,-1 == out of the image

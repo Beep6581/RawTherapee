@@ -82,14 +82,34 @@ InspectorBuffer::~InspectorBuffer() {
 //    return deg;
 //}
 
-Inspector::Inspector () : currImage(nullptr), zoom(0.0), active(false)
+Inspector::Inspector () : currImage(nullptr), scaled(false), active(false)
 {
     set_name("Inspector");
+    window.add_events(Gdk::KEY_PRESS_MASK);
+    window.signal_key_release_event().connect(sigc::mem_fun(*this, &Inspector::on_key_release));
+    window.set_title("RawTherapee Inspector");
+    window.add(*this);
+    window.show_all();
+    window.set_visible(false);
+    active = true; // always track inspected thumbnails
 }
 
 Inspector::~Inspector()
 {
     deleteBuffers();
+}
+
+void Inspector::showWindow(bool scaled)
+{
+    this->scaled = scaled;
+    window.fullscreen();
+    window.set_visible(true);
+}
+
+bool Inspector::on_key_release(GdkEventKey *event)
+{
+    window.set_visible(false);
+    return true;
 }
 
 bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
@@ -116,10 +136,18 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         rtengine::Coord availableSize;
         rtengine::Coord topLeft;
         rtengine::Coord dest(0, 0);
-        availableSize.x = win->get_width();
-        availableSize.y = win->get_height();
+        int deviceScale = get_scale_factor();
+        availableSize.x = win->get_width() * deviceScale;
+        availableSize.y = win->get_height() * deviceScale;
         int imW = currImage->imgBuffer.getWidth();
         int imH = currImage->imgBuffer.getHeight();
+        double scale = 1.0;
+        if (scaled) {
+            // reduce size of image to fit into window
+            scale = rtengine::min<double>(1.0, rtengine::min<double>((double)availableSize.x/imW, (double)availableSize.y/imH));
+            availableSize.x /= scale;
+            availableSize.y /= scale;
+        }
 
         if (imW < availableSize.x) {
             // center the image in the available space along X
@@ -163,24 +191,48 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
         // draw the background
-        style->render_background(cr, 0, 0, get_width(), get_height());
+        //style->render_background(cr, 0, 0, get_width(), get_height());
 
-        /* --- old method
+        ///* --- old method (the new method does not seem to work)
         c = style->get_background_color (Gtk::STATE_FLAG_NORMAL);
         cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->set_line_width (0);
         cr->rectangle (0, 0, availableSize.x, availableSize.y);
         cr->fill ();
-        */
+        //*/
 
-        currImage->imgBuffer.copySurface(win);
+        bool scaledImage = scaled && (imW > win->get_width() || imH > win->get_height());
+	if (deviceScale == 1 && !scaledImage) {
+            // standard drawing
+            currImage->imgBuffer.copySurface(win);
+	}
+	else {
+            // consider device scale and image scale
+            if (deviceScale > 1) {
+                // use full device resolution and let it scale the image (macOS)
+                cairo_surface_set_device_scale(cr->get_target()->cobj(), scale, scale);
+                scaledImage = false;
+            }
+            Glib::RefPtr<Gdk::Pixbuf> crop = Gdk::Pixbuf::create(currImage->imgBuffer.getSurface(), topLeft.x, topLeft.y, rtengine::min<int>(imW, availableSize.x), rtengine::min<int>(imH, availableSize.y));
+            if (!scaledImage) {
+                Gdk::Cairo::set_source_pixbuf(cr, crop, dest.x, dest.y);
+            }
+            else {
+                // assume that the device does not support scaling (Linux)
+                crop = crop->scale_simple(imW*scale, imH*scale, Gdk::INTERP_BILINEAR);
+                Gdk::Cairo::set_source_pixbuf(cr, crop, dest.x*scale, dest.y*scale);
+            }
+            cr->paint();
+	}
 
+        /* --- not for separate window
         // draw the frame
         c = style->get_border_color (Gtk::STATE_FLAG_NORMAL);
         cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->set_line_width (1);
         cr->rectangle (0.5, 0.5, availableSize.x - 1, availableSize.y - 1);
         cr->stroke ();
+        */
     }
 
     return true;
@@ -309,7 +361,7 @@ void Inspector::setActive(bool state)
         flushBuffers();
     }
 
-    active = state;
+    //active = state;
 }
 
 
