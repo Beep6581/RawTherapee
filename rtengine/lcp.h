@@ -168,7 +168,7 @@ private:
 class LensCorrection {
 public:
     virtual ~LensCorrection() {}
-    virtual void correctDistortion(double &x, double &y, int cx, int cy, double scale) const = 0;
+    virtual void correctDistortion(double &x, double &y, int cx, int cy) const = 0;
     virtual bool isCACorrectionAvailable() const = 0;
     virtual void correctCA(double &x, double &y, int cx, int cy, int channel) const = 0;
     virtual void processVignette(int width, int height, float** rawData) const = 0;
@@ -196,7 +196,7 @@ public:
     );
 
 
-    void correctDistortion(double &x, double &y, int cx, int cy, double scale) const override;  // MUST be the first stage
+    void correctDistortion(double &x, double &y, int cx, int cy) const override;  // MUST be the first stage
     bool isCACorrectionAvailable() const override;
     void correctCA(double& x, double& y, int cx, int cy, int channel) const override;
     void processVignette(int width, int height, float** rawData) const override;

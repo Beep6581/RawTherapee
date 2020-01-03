@@ -267,7 +267,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         }
 
         if (pLCPMap && params->lensProf.useDist) {
-            pLCPMap->correctDistortion(x_d, y_d, 0, 0, 1);
+            pLCPMap->correctDistortion(x_d, y_d, 0, 0);
         }
 
         // rotate
@@ -946,7 +946,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             }
 
             if (enableLCPDist) {
-                pLCPMap->correctDistortion(x_d, y_d, w2, h2, 1); // must be first transform
+                pLCPMap->correctDistortion(x_d, y_d, w2, h2); // must be first transform
             }
 
             // rotate
