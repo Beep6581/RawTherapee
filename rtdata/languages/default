@@ -1123,6 +1123,7 @@ HISTORY_MSG_883;Local - Contrast By Levels
 HISTORY_MSG_884;Local - Contrast Dynamic Range Laplacian
 HISTORY_MSG_885;Local - Contrast Dynamic Range Wavelet
 HISTORY_MSG_886;Local - Contrast Wavelet Curve Compression
+HISTORY_MSG_887;Local - Contrast Wavelet Compression Residual
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2488,6 +2489,7 @@ TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
 TP_LOCALLAB_RESID;Residual Image
 TP_LOCALLAB_RESIDBLUR;Blur Residual Image
 TP_LOCALLAB_RESIDCHRO;Residual image Chroma
+TP_LOCALLAB_RESIDCOMP;Compress Residual image
 TP_LOCALLAB_RESIDCONT;Residual image Contrast
 TP_LOCALLAB_RETI;Dehaze - Retinex Strong local contrast
 TP_LOCALLAB_RETIFRA;Retinex

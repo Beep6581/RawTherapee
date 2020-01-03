@@ -371,6 +371,7 @@ private:
     Adjuster* const claricres;
     Adjuster* const sensilc;
     Adjuster* const residchro;
+    Adjuster* const residcomp;
     Adjuster* const sigma;
     Adjuster* const offset;
     Adjuster* const chromalev;

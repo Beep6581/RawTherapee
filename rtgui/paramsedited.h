@@ -695,6 +695,7 @@ public:
         bool residblur;
         bool levelblur;
         bool residchro;
+        bool residcomp;
         bool sigma;
         bool offset;
         bool chromalev;

@@ -1269,6 +1269,7 @@ struct LocallabParams {
         double residblur;
         double levelblur;
         double residchro;
+        double residcomp;
         double sigma;
         double offset;
         double chromalev;
