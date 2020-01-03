@@ -253,15 +253,8 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     for (size_t i = 0; i < src.size(); i++) {
         double x_d = src[i].x, y_d = src[i].y;
 
-        if (pLCPMap && params->lensProf.useDist) {
-            pLCPMap->correctDistortion(x_d, y_d, 0, 0, ascale);
-        } else {
-            x_d *= ascale;
-            y_d *= ascale;
-        }
-
-        x_d += ascale * (0 - w2);     // centering x coord & scale
-        y_d += ascale * (0 - h2);     // centering y coord & scale
+        y_d = ascale * (y_d - h2);     // centering x coord & scale
+        x_d = ascale * (x_d - w2);     // centering x coord & scale
 
         if (needsPerspective()) {
             // horizontal perspective transformation
@@ -271,6 +264,10 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
             // vertical perspective transformation
             x_d *= maxRadius / (maxRadius - y_d * vptanpt);
             y_d *= maxRadius * vpcospt / (maxRadius - y_d * vptanpt);
+        }
+
+        if (pLCPMap && params->lensProf.useDist) {
+            pLCPMap->correctDistortion(x_d, y_d, 0, 0, 1);
         }
 
         // rotate
@@ -935,15 +932,8 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             double x_d = x;
             double y_d = y;
 
-            if (enableLCPDist) {
-                pLCPMap->correctDistortion(x_d, y_d, cx, cy, ascale); // must be first transform
-            } else {
-                x_d *= ascale;
-                y_d *= ascale;
-            }
-
-            x_d += ascale * centerFactorx; // centering x coord & scale
-            y_d += ascale * centerFactory; // centering y coord & scale
+            x_d = ascale * (x_d + centerFactorx);     // centering x coord & scale
+            y_d = ascale * (y_d + centerFactory);     // centering y coord & scale
 
             if (enablePerspective) {
                 // horizontal perspective transformation
@@ -953,6 +943,10 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                 // vertical perspective transformation
                 x_d *= maxRadius / (maxRadius - y_d * vptanpt);
                 y_d *= maxRadius * vpcospt / (maxRadius - y_d * vptanpt);
+            }
+
+            if (enableLCPDist) {
+                pLCPMap->correctDistortion(x_d, y_d, w2, h2, 1); // must be first transform
             }
 
             // rotate
