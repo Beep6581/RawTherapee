@@ -2316,7 +2316,8 @@ TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values a
 TP_LOCALLAB_EXPTOOL;Tools exposure
 TP_LOCALLAB_EXPTRC;Tone Response Curve - TRC
 TP_LOCALLAB_FATAMOUNT;Amount
-TP_LOCALLAB_FATANCHOR;Offset
+TP_LOCALLAB_FATANCHOR;Anchor
+TP_LOCALLAB_FATANCHORA;Offset
 TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.\nAnchor allows selection according to the images over or under exposed.\nUseful to increase Luminance for a Second spot near the current and using mask

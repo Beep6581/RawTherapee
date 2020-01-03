@@ -434,7 +434,7 @@ Locallab::Locallab():
     fatamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
 //    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.25, 2.5, 0.05, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.1, 3.0, 0.05, 1.))),
+    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHORA"), 0.1, 3.0, 0.05, 1.))),
     strmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
     angmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.25, 2.5, 0.05, 1.))),
@@ -1619,9 +1619,9 @@ pe(nullptr)
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
 
-//    if (complexsoft < 2) {
+    if (complexsoft < 2) {
         fatBox->pack_start(*fatlevel);
-//    }
+    }
 
     fatBox->pack_start(*fatanchor);
     pdeFrame->add(*pdeBox);
@@ -2992,7 +2992,7 @@ pe(nullptr)
     compFrame->set_label_align(0.025, 0.5);
     Gtk::VBox *compBox = Gtk::manage ( new Gtk::VBox());
     compBox->set_spacing(2);
-    wavcomp->set_active (true);
+    wavcomp->set_active (false);
     compFrame->set_label_widget(*wavcomp);
     
 //    ToolParamBlock* const compBox = Gtk::manage(new ToolParamBlock());
@@ -3018,7 +3018,9 @@ pe(nullptr)
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
     blurcontBox->pack_start(*clariFrame);
     blurcontBox->pack_start(*contFrame);
-    blurcontBox->pack_start(*compFrame);
+    if (complexsoft < 2) {
+        blurcontBox->pack_start(*compFrame);
+    }
     blurcontBox->pack_start(*blurlevelFrame);
 
     expcontrastpyr->add(*blurcontBox, false);
@@ -11818,7 +11820,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (complexsoft > 0) {
             laplacexp->setValue(0);
-            fatlevel->setValue(2);
+            fatlevel->setValue(1.);
         }
 
         // Shadow highlight
@@ -12184,6 +12186,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             lcamount->setValue(0);
          //   residchro->setValue(0);
             fftwlc->set_active(false);
+            wavcomp->set_active(false);
           //  blurlc->set_active(false);
         }
 
