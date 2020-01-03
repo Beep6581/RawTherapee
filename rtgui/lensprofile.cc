@@ -586,6 +586,9 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
 
 LensProfilePanel::LFDbHelper::LFDbHelper()
 {
+    lensfunCameraModel = Gtk::TreeStore::create(lensfunModelCam);
+    lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
+
 #ifdef _OPENMP
 #pragma omp parallel sections if (!settings->verbose)
 #endif
@@ -594,14 +597,12 @@ LensProfilePanel::LFDbHelper::LFDbHelper()
 #pragma omp section
 #endif
         {
-            lensfunCameraModel = Gtk::TreeStore::create(lensfunModelCam);
             fillLensfunCameras();
         }
 #ifdef _OPENMP
 #pragma omp section
 #endif
         {
-            lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
             fillLensfunLenses();
         }
     }
