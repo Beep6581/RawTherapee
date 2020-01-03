@@ -357,6 +357,9 @@ Locallab::Locallab():
     LocalcurveEditorwavcomp(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCOMP"))),
     wavshapecomp(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcomp->addCurve(CT_Flat, "", nullptr, false, false))),
 
+    LocalcurveEditorwavcompre(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCOMPRE"))),
+    wavshapecompre(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcompre->addCurve(CT_Flat, "", nullptr, false, false))),
+
     masklcCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2lcCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
 
@@ -691,6 +694,7 @@ enalcMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 wavblur(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLURLEVELFRA")))),
 wavcont(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CONTFRA")))),
 wavcomp(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPFRA")))),
+wavcompre(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPREFRA")))),
 //CBDL
 enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 //encoding log
@@ -772,6 +776,7 @@ clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
 blurlevelFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURLEVELFRA")))),
 contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTFRA")))),
 compFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPFRA")))),
+compreFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPREFRA")))),
 grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
 logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
 logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
@@ -2843,6 +2848,7 @@ pe(nullptr)
     wavblurConn  = wavblur->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavblurChanged));
     wavcontConn  = wavcont->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcontChanged));
     wavcompConn  = wavcomp->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcompChanged));
+    wavcompreConn  = wavcompre->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcompreChanged));
     origlcConn  = origlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::origlcChanged));
     csThreshold->setAdjusterListener(this);
 
@@ -2893,6 +2899,17 @@ pe(nullptr)
     }
 
     LocalcurveEditorwavcomp->curveListComplete();
+
+    LocalcurveEditorwavcompre->setCurveListener(this);
+
+    wavshapecompre->setIdentityValue(0.);
+    wavshapecompre->setResetCurve(FlatCurveType(defSpot.loccomprewavcurve.at(0)), defSpot.loccomprewavcurve);
+
+    if (showtooltip) {
+//        wavshape->setTooltip(M("TP_RETINEX_WAV_TOOLTIP"));
+    }
+
+    LocalcurveEditorwavcompre->curveListComplete();
 
     localcontMethod->append(M("TP_LOCALLAB_LOCCONT"));
     localcontMethod->append(M("TP_LOCALLAB_WAVE"));
@@ -2994,6 +3011,14 @@ pe(nullptr)
     compBox->set_spacing(2);
     wavcomp->set_active (false);
     compFrame->set_label_widget(*wavcomp);
+
+    compreFrame->set_label_align(0.025, 0.5);
+    Gtk::VBox *compreBox = Gtk::manage ( new Gtk::VBox());
+    compreBox->set_spacing(2);
+    wavcompre->set_active (false);
+    compreFrame->set_label_widget(*wavcompre);
+    compreBox->pack_start(*LocalcurveEditorwavcompre, Gtk::PACK_SHRINK, 4);
+    compreFrame->add(*compreBox);
     
 //    ToolParamBlock* const compBox = Gtk::manage(new ToolParamBlock());
     compBox->pack_start(*fatdet);
@@ -3018,6 +3043,7 @@ pe(nullptr)
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
     blurcontBox->pack_start(*clariFrame);
     blurcontBox->pack_start(*contFrame);
+    blurcontBox->pack_start(*compreFrame);
     if (complexsoft < 2) {
         blurcontBox->pack_start(*compFrame);
     }
@@ -3813,6 +3839,7 @@ Locallab::~Locallab()
     delete LocalcurveEditorwavden;
     delete LocalcurveEditorwavcon;
     delete LocalcurveEditorwavcomp;
+    delete LocalcurveEditorwavcompre;
     delete masktmCurveEditorG;
     delete maskblCurveEditorG;
     delete mask2blCurveEditorG;
@@ -5317,12 +5344,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).wavblur = wavblur->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcont = wavcont->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcomp = wavcomp->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).wavcompre = wavcompre->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).origlc = origlc->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).locwavcurve = wavshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).csthreshold = csThreshold->getValue<int>();
                     pp->locallab.spots.at(pp->locallab.selspot).loclevwavcurve = wavshapelev->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).locconwavcurve = wavshapecon->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).loccompwavcurve = wavshapecomp->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).loccomprewavcurve = wavshapecompre->getCurve();
 
                     if (localcontMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).localcontMethod = "loc";
@@ -5731,6 +5760,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).wavblur = pe->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavcont = pe->locallab.spots.at(pp->locallab.selspot).wavcont || !wavcont->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavcomp = pe->locallab.spots.at(pp->locallab.selspot).wavcomp || !wavcomp->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).wavcompre = pe->locallab.spots.at(pp->locallab.selspot).wavcompre || !wavcompre->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).origlc = pe->locallab.spots.at(pp->locallab.selspot).origlc || !origlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).localcontMethod = pe->locallab.spots.at(pp->locallab.selspot).localcontMethod || localcontMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).locwavcurve = pe->locallab.spots.at(pp->locallab.selspot).locwavcurve || !wavshape->isUnChanged();
@@ -5738,6 +5768,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).csthreshold = pe->locallab.spots.at(pp->locallab.selspot).csthreshold || csThreshold->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).locconwavcurve = pe->locallab.spots.at(pp->locallab.selspot).locconwavcurve || !wavshapecon->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).loccompwavcurve = pe->locallab.spots.at(pp->locallab.selspot).loccompwavcurve || !wavshapecomp->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).loccomprewavcurve = pe->locallab.spots.at(pp->locallab.selspot).loccomprewavcurve || !wavshapecompre->isUnChanged();
 
                         pe->locallab.spots.at(pp->locallab.selspot).CCmasklccurve = pe->locallab.spots.at(pp->locallab.selspot).CCmasklccurve || !CCmasklcshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmasklccurve = pe->locallab.spots.at(pp->locallab.selspot).LLmasklccurve || !LLmasklcshape->isUnChanged();
@@ -6144,12 +6175,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).wavblur = pedited->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavcont = pedited->locallab.spots.at(pp->locallab.selspot).wavcont || !wavcont->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavcomp = pedited->locallab.spots.at(pp->locallab.selspot).wavcomp || !wavcomp->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).wavcompre = pedited->locallab.spots.at(pp->locallab.selspot).wavcompre || !wavcompre->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).origlc = pedited->locallab.spots.at(pp->locallab.selspot).origlc || !origlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve || !wavshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).loclevwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).loclevwavcurve || !wavshapelev->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).csthreshold = pedited->locallab.spots.at(pp->locallab.selspot).csthreshold || csThreshold->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).locconwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).locconwavcurve || !wavshapecon->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).loccompwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).loccompwavcurve || !wavshapecomp->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).loccomprewavcurve = pedited->locallab.spots.at(pp->locallab.selspot).loccomprewavcurve || !wavshapecompre->isUnChanged();
 
                         pedited->locallab.spots.at(pp->locallab.selspot).CCmasklccurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmasklccurve || !CCmasklcshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmasklccurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmasklccurve || !LLmasklcshape->isUnChanged();
@@ -6659,6 +6692,12 @@ void Locallab::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == wavshapecompre) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurvecompre, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
         if (ce == CCmasklcshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmasklcshape, M("HISTORY_CUSTOMCURVE"));
@@ -6730,6 +6769,7 @@ void Locallab::localcontMethodChanged()
         LocalcurveEditorwavlev->hide();
         LocalcurveEditorwavcon->hide();
         LocalcurveEditorwavcomp->hide();
+        LocalcurveEditorwavcompre->hide();
         fftwlc->show();
         blurlc->show();
         wavblur->show();
@@ -6760,6 +6800,7 @@ void Locallab::localcontMethodChanged()
         LocalcurveEditorwavlev->hide();
         LocalcurveEditorwavcon->hide();
         LocalcurveEditorwavcomp->hide();
+        LocalcurveEditorwavcompre->hide();
         fftwlc->hide();
         blurlc->show();
         wavblur->show();
@@ -8377,6 +8418,29 @@ void Locallab::wavcompChanged()
                 listener->panelChanged(Evlocallabwavcomp, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(Evlocallabwavcomp, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+void Locallab::wavcompreChanged()
+{
+
+    if (multiImage) {
+        if (wavcompre->get_inconsistent()) {
+            wavcompre->set_inconsistent(false);
+            wavcompreConn.block(true);
+            wavcompre->set_active(false);
+            wavcompreConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            if (wavcompre->get_active()) {
+                listener->panelChanged(Evlocallabwavcompre, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabwavcompre, M("GENERAL_DISABLED"));
             }
         }
     }
@@ -11393,6 +11457,7 @@ void Locallab::enableListener()
     wavblurConn.block(false);
     wavcontConn.block(false);
     wavcompConn.block(false);
+    wavcompreConn.block(false);
     origlcConn.block(false);
     showmasklcMethodConn.block(false);
     enalcMaskConn.block(false);
@@ -11494,6 +11559,7 @@ void Locallab::disableListener()
     wavblurConn.block(true);
     wavcontConn.block(true);
     wavcompConn.block(true);
+    wavcompreConn.block(true);
     origlcConn.block(true);
     showmasklcMethodConn.block(true);
     enalcMaskConn.block(true);
@@ -12169,6 +12235,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         wavblur->set_active(pp->locallab.spots.at(index).wavblur);
         wavcont->set_active(pp->locallab.spots.at(index).wavcont);
         wavcomp->set_active(pp->locallab.spots.at(index).wavcomp);
+        wavcompre->set_active(pp->locallab.spots.at(index).wavcompre);
         origlc->set_active(pp->locallab.spots.at(index).origlc);
         csThreshold->setValue<int>(pp->locallab.spots.at(index).csthreshold);
 
@@ -12194,6 +12261,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         wavshapelev->setCurve(pp->locallab.spots.at(index).loclevwavcurve);
         wavshapecon->setCurve(pp->locallab.spots.at(index).locconwavcurve);
         wavshapecomp->setCurve(pp->locallab.spots.at(index).loccompwavcurve);
+        wavshapecompre->setCurve(pp->locallab.spots.at(index).loccomprewavcurve);
 
         CCmasklcshape->setCurve(pp->locallab.spots.at(index).CCmasklccurve);
         LLmasklcshape->setCurve(pp->locallab.spots.at(index).LLmasklccurve);
@@ -12688,12 +12756,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 wavblur->set_inconsistent(multiImage && !spotState->wavblur);
                 wavcont->set_inconsistent(multiImage && !spotState->wavcont);
                 wavcomp->set_inconsistent(multiImage && !spotState->wavcomp);
+                wavcompre->set_inconsistent(multiImage && !spotState->wavcompre);
                 origlc->set_inconsistent(multiImage && !spotState->origlc);
                 wavshape->setUnChanged(!spotState->locwavcurve);
                 wavshapelev->setUnChanged(!spotState->loclevwavcurve);
                 csThreshold->setEditedState(spotState->csthreshold ? Edited : UnEdited);
                 wavshapecon->setUnChanged(!spotState->locconwavcurve);
                 wavshapecomp->setUnChanged(!spotState->loccompwavcurve);
+                wavshapecompre->setUnChanged(!spotState->loccomprewavcurve);
 
                 LLmasklcshape->setUnChanged(!spotState->LLmasklccurve);
                 HHmasklcshape->setUnChanged(!spotState->HHmasklccurve);
@@ -13221,6 +13291,7 @@ void Locallab::updateSpecificGUIState()
         LocalcurveEditorwavlev->hide();
         LocalcurveEditorwavcon->hide();
         LocalcurveEditorwavcomp->hide();
+        LocalcurveEditorwavcompre->hide();
         fftwlc->show();
         blurlc->show();
         wavblur->show();
@@ -13251,6 +13322,7 @@ void Locallab::updateSpecificGUIState()
         LocalcurveEditorwavlev->show();
         LocalcurveEditorwavcon->show();
         LocalcurveEditorwavcomp->show();
+        LocalcurveEditorwavcompre->show();
         fftwlc->hide();
         blurlc->show();
         wavblur->show();

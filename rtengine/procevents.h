@@ -910,6 +910,8 @@ enum ProcEventCode {
     Evlocallabwavblur = 881,
     Evlocallabwavcont = 882,
     Evlocallabwavcomp = 883,
+    Evlocallabwavcompre = 884,
+    EvlocallabwavCurvecompre = 885,
     NUMOFEVENTS
 };
 

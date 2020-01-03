@@ -210,6 +210,7 @@ public:
 
     void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params& cp, int W_L, int H_L, float max0, float min0);
     void CompressDR(float *Source, int W_L, int H_L, float Compression, float DetailBoost);
+    void Compresslevels(float **Source, int W_L, int H_L, float Compression, float DetailBoost);
     void ContrastResid(float * WavCoeffs_L0, struct cont_params &cp, int W_L, int H_L, float max0, float min0);
 
     void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
@@ -303,6 +304,7 @@ public:
                 const LocwavCurve & loclevwavCurve, bool & loclevwavutili,
                 const LocwavCurve & locconwavCurve, bool & locconwavutili,
                 const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
+                const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
                 const LocwavCurve & locwavCurveden, bool & locwavdenutili,
                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                 double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
@@ -321,11 +323,13 @@ public:
         const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev, 
         const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon, 
         const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp, 
-        float sigm, float offs,int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena);
+        const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili, bool wavcurvecompre, 
+        float sigm, float offs,int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena);
         
     void wavcont(wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl, 
                 const LocwavCurve & loclevwavCurve, bool & loclevwavutili, 
                 const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
+                const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
                 float radlevblur, int process, procparams::FattalToneMappingParams &fatParams, float chromablu);
 
     void wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,

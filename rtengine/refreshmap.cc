@@ -913,7 +913,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,       //Evlocallaboffset
     LUMINANCECURVE,       //Evlocallabwavblur
     LUMINANCECURVE,       //Evlocallabwavcont
-    LUMINANCECURVE       //Evlocallabwavcomp
+    LUMINANCECURVE,       //Evlocallabwavcomp
+    LUMINANCECURVE,         //Evlocallabwavcompre
+    LUMINANCECURVE         //EvlocallabwavCurvecompre
 
 };
 

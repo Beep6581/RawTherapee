@@ -1285,6 +1285,7 @@ struct LocallabParams {
         bool wavblur;
         bool wavcont;
         bool wavcomp;
+        bool wavcompre;
         bool origlc;
         Glib::ustring localcontMethod;
         std::vector<double> locwavcurve;
@@ -1292,6 +1293,7 @@ struct LocallabParams {
         std::vector<double> loclevwavcurve;
         std::vector<double> locconwavcurve;
         std::vector<double> loccompwavcurve;
+        std::vector<double> loccomprewavcurve;
         std::vector<double> CCmasklccurve;
         std::vector<double> LLmasklccurve;
         std::vector<double> HHmasklccurve;

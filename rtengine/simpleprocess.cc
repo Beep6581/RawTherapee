@@ -1122,6 +1122,7 @@ private:
             LocwavCurve loclevwavCurve;
             LocwavCurve locconwavCurve;
             LocwavCurve loccompwavCurve;
+            LocwavCurve loccomprewavCurve;
             LocwavCurve locwavCurveden;
             LUTf lllocalcurve(65536, 0);
             LUTf lclocalcurve(65536, 0);
@@ -1206,6 +1207,7 @@ private:
                 bool loclevwavutili = false;
                 bool locconwavutili = false;
                 bool loccompwavutili = false;
+                bool loccomprewavutili = false;
                 bool lmasutiliblwav = false;
                 bool lmasutilicolwav = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
@@ -1245,6 +1247,7 @@ private:
                 loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve, loclevwavutili);
                 locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve, locconwavutili);
                 loccompwavCurve.Set(params.locallab.spots.at(sp).loccompwavcurve, loccompwavutili);
+                loccomprewavCurve.Set(params.locallab.spots.at(sp).loccomprewavcurve, loccomprewavutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveLocal(localclutili, params.locallab.spots.at(sp).clcurve, cllocalcurve, 1);
                 CurveFactory::curveLocal(locallcutili, params.locallab.spots.at(sp).lccurve, lclocalcurve, 1);
@@ -1322,6 +1325,7 @@ private:
                         loclevwavCurve, loclevwavutili,
                         locconwavCurve, locconwavutili,
                         loccompwavCurve, loccompwavutili,
+                        loccomprewavCurve, loccomprewavutili,
                         locwavCurveden, locwavdenutili,
                         LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

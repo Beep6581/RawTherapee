@@ -711,12 +711,14 @@ public:
         bool wavblur;
         bool wavcont;
         bool wavcomp;
+        bool wavcompre;
         bool origlc;
         bool localcontMethod;
         bool locwavcurve;
         bool loclevwavcurve;
         bool locconwavcurve;
         bool loccompwavcurve;
+        bool loccomprewavcurve;
         bool csthreshold;
         bool CCmasklccurve;
         bool LLmasklccurve;

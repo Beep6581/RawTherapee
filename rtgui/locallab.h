@@ -173,6 +173,8 @@ private:
     FlatCurveEditor* const wavshapecon;
     CurveEditorGroup* const LocalcurveEditorwavcomp;
     FlatCurveEditor* const wavshapecomp;
+    CurveEditorGroup* const LocalcurveEditorwavcompre;
+    FlatCurveEditor* const wavshapecompre;
     CurveEditorGroup* const masklcCurveEditorG;
     CurveEditorGroup* const mask2lcCurveEditorG;
     DiagonalCurveEditor* const Lmasklcshape;
@@ -496,6 +498,8 @@ private:
     sigc::connection wavcontConn;
     Gtk::CheckButton* const wavcomp;
     sigc::connection wavcompConn;
+    Gtk::CheckButton* const wavcompre;
+    sigc::connection wavcompreConn;
 
     //CBDL
     Gtk::CheckButton* const enacbMask;
@@ -612,6 +616,7 @@ private:
     Gtk::Frame* const blurlevelFrame;
     Gtk::Frame* const contFrame;
     Gtk::Frame* const compFrame;
+    Gtk::Frame* const compreFrame;
     Gtk::Frame* const grainFrame;
     Gtk::Frame* const logFrame;
     Gtk::Frame* const logPFrame;
@@ -705,6 +710,7 @@ private:
     void wavblurChanged();
     void wavcontChanged();
     void wavcompChanged();
+    void wavcompreChanged();
     //CBDL
     void enacbMaskChanged();
     // ComboBox event functions

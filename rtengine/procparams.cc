@@ -2742,6 +2742,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     wavblur(false),
     wavcont(false),
     wavcomp(false),
+    wavcompre(false),
     origlc(false),
     localcontMethod("loc"),
     locwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
@@ -2749,6 +2750,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     loclevwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.0, 0.0, 0.35, 0.5, 0., 0.35, 0.35, 1.0, 0.0, 0.35, 0.35},
     locconwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     loccompwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.0, 0.0, 0.35, 0.5, 0., 0.35, 0.35, 1.0, 0.0, 0.35, 0.35},
+    loccomprewavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     CCmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
     LLmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     HHmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
@@ -3153,6 +3155,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && wavblur == other.wavblur
         && wavcont == other.wavcont
         && wavcomp == other.wavcomp
+        && wavcompre == other.wavcompre
         && origlc == other.origlc
         && localcontMethod == other.localcontMethod
         && locwavcurve == other.locwavcurve
@@ -3160,6 +3163,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && loclevwavcurve == other.loclevwavcurve
         && locconwavcurve == other.locconwavcurve
         && loccompwavcurve == other.loccompwavcurve
+        && loccomprewavcurve == other.loccomprewavcurve
         && CCmasklccurve == other.CCmasklccurve
         && LLmasklccurve == other.LLmasklccurve
         && HHmasklccurve == other.HHmasklccurve
@@ -4543,12 +4547,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavblur, "Locallab", "Wavblur_" + std::to_string(i), spot.wavblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcont, "Locallab", "Wavcont_" + std::to_string(i), spot.wavcont, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcomp, "Locallab", "Wavcomp_" + std::to_string(i), spot.wavcomp, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcompre, "Locallab", "Wavcompre_" + std::to_string(i), spot.wavcompre, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).origlc, "Locallab", "Origlc_" + std::to_string(i), spot.origlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localcontMethod, "Locallab", "localcontMethod_" + std::to_string(i), spot.localcontMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locwavcurve, "Locallab", "LocwavCurve_" + std::to_string(i), spot.locwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loclevwavcurve, "Locallab", "LoclevwavCurve_" + std::to_string(i), spot.loclevwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locconwavcurve, "Locallab", "LocconwavCurve_" + std::to_string(i), spot.locconwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loccompwavcurve, "Locallab", "LoccompwavCurve_" + std::to_string(i), spot.loccompwavcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loccomprewavcurve, "Locallab", "LoccomprewavCurve_" + std::to_string(i), spot.loccomprewavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).csthreshold, "Locallab", "CSThreshold_" + std::to_string(i), spot.csthreshold.toVector(), keyFile);
 
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmasklccurve, "Locallab", "CCmasklcCurve_" + std::to_string(i), spot.CCmasklccurve, keyFile);
@@ -6084,12 +6090,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Wavblur_" + std::to_string(i), pedited, spot.wavblur, spotEdited.wavblur);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcont_" + std::to_string(i), pedited, spot.wavcont, spotEdited.wavcont);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcomp_" + std::to_string(i), pedited, spot.wavcomp, spotEdited.wavcomp);
+                assignFromKeyfile(keyFile, "Locallab", "Wavcompre_" + std::to_string(i), pedited, spot.wavcompre, spotEdited.wavcompre);
                 assignFromKeyfile(keyFile, "Locallab", "Origlc_" + std::to_string(i), pedited, spot.origlc, spotEdited.origlc);
                 assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + std::to_string(i), pedited, spot.localcontMethod, spotEdited.localcontMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurve_" + std::to_string(i), pedited, spot.locwavcurve, spotEdited.locwavcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LoclevwavCurve_" + std::to_string(i), pedited, spot.loclevwavcurve, spotEdited.loclevwavcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LocconwavCurve_" + std::to_string(i), pedited, spot.locconwavcurve, spotEdited.locconwavcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LoccompwavCurve_" + std::to_string(i), pedited, spot.loccompwavcurve, spotEdited.loccompwavcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LoccomprewavCurve_" + std::to_string(i), pedited, spot.loccomprewavcurve, spotEdited.loccomprewavcurve);
 
                 assignFromKeyfile(keyFile, "Locallab", "CCmasklcCurve_" + std::to_string(i), pedited, spot.CCmasklccurve, spotEdited.CCmasklccurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmasklcCurve_" + std::to_string(i), pedited, spot.LLmasklccurve, spotEdited.LLmasklccurve);

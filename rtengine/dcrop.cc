@@ -936,6 +936,7 @@ void Crop::update(int todo)
         bool loclevwavutili = parent->loclevwavutili;
         bool locconwavutili = parent->locconwavutili;
         bool loccompwavutili = parent->loccompwavutili;
+        bool loccomprewavutili = parent->loccomprewavutili;
         bool lmasutiliblwav = parent->lmasutiliblwav;
         bool lmasutilicolwav = parent->lmasutilicolwav;
 
@@ -981,6 +982,7 @@ void Crop::update(int todo)
         LocwavCurve loclevwavCurve;
         LocwavCurve locconwavCurve;
         LocwavCurve loccompwavCurve;
+        LocwavCurve loccomprewavCurve;
         LocwavCurve locwavCurveden;
 
         LocretigainCurverab locRETgainCurverab;
@@ -1032,6 +1034,7 @@ void Crop::update(int todo)
                 loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve, loclevwavutili);
                 locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve, locconwavutili);
                 loccompwavCurve.Set(params.locallab.spots.at(sp).loccompwavcurve, loccompwavutili);
+                loccomprewavCurve.Set(params.locallab.spots.at(sp).loccomprewavcurve, loccomprewavutili);
                 locallutili = false;
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
                 localclutili = false;
@@ -1128,6 +1131,7 @@ void Crop::update(int todo)
                             loclevwavCurve, loclevwavutili,
                             locconwavCurve, locconwavutili,
                             loccompwavCurve, loccompwavutili,
+                            loccomprewavCurve, loccomprewavutili,
                             locwavCurveden, locwavdenutili,
                             LHutili, HHutili, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                             huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
@@ -1165,6 +1169,7 @@ void Crop::update(int todo)
                             loclevwavCurve, loclevwavutili,
                             locconwavCurve, locconwavutili,
                             loccompwavCurve, loccompwavutili,
+                            loccomprewavCurve, loccomprewavutili,
                             locwavCurveden, locwavdenutili,
                             LHutili, HHutili, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                             huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
