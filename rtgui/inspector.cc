@@ -85,6 +85,7 @@ InspectorBuffer::~InspectorBuffer() {
 Inspector::Inspector () : currImage(nullptr), scaled(false), active(false)
 {
     set_name("Inspector");
+    window.set_visible(false);
     window.add_events(Gdk::KEY_PRESS_MASK);
     window.signal_key_release_event().connect(sigc::mem_fun(*this, &Inspector::on_key_release));
     window.set_title("RawTherapee Inspector");
