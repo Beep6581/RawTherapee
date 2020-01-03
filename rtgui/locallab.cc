@@ -640,11 +640,11 @@ bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
 sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 20))),
 detailthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILTHR"), 0, 100, 1, 0))),
 //log encoding
-sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 18.0))),
+sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
 targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
 blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
 whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.0, 32.0, 0.1, 10.0))),
-detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0, 2, 1, 1))),
+detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
 sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSILOG"), 0, 100, 1, 50))),
 baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 8., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))), 
 
@@ -5433,7 +5433,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).blackEv = blackEv->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).whiteEv = whiteEv->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).targetGray = targetGray->getValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).detail = detail->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).detail = detail->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensilog = sensilog->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).baselog = baselog->getValue();
 

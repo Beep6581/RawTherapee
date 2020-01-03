@@ -2802,13 +2802,13 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     explog(false),
     autocompute(false),
 //    autogray(true),
-    sourceGray(18.),
+    sourceGray(10.),
     targetGray(18.),
     Autogray(true),
     fullimage(true),
     blackEv(-5.0),
     whiteEv(10.0),
-    detail(1),
+    detail(0.6),
     sensilog(50),
     baselog(2.)
 

@@ -1090,7 +1090,7 @@ HISTORY_MSG_849;Local - Auto Grayon
 HISTORY_MSG_850;Local - Black Ev
 HISTORY_MSG_851;Local - White Ev
 HISTORY_MSG_852;Local - Target Gray
-HISTORY_MSG_853;Local - Detail
+HISTORY_MSG_853;Local - Local contrast
 HISTORY_MSG_854;Local - Scope encoding log
 HISTORY_MSG_855;Local - Entire image
 HISTORY_MSG_856;Local - Base log
@@ -2282,7 +2282,7 @@ TP_LOCALLAB_DEHAZ_TOOLTIP;Negative values add haze
 TP_LOCALLAB_DELTAEC;Mask ΔE Image
 TP_LOCALLAB_DENOIS;Ψ Denoise
 TP_LOCALLAB_DEPTH;Depth 
-TP_LOCALLAB_DETAIL;Detail (Guided Filter)
+TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Detail threshold Luminance Chroma (DCT ƒ)
 TP_LOCALLAB_DUPLSPOTNAME;Copy

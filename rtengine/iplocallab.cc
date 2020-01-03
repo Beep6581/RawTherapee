@@ -415,7 +415,7 @@ struct local_params {
     float targetgray;
     float blackev;
     float whiteev;
-    int detail;
+    float detail;
     int sensilog;
     bool Autogray;
     bool autocompute;
@@ -1350,7 +1350,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
             return x;
         }
     };
-
+    printf("sc=%f\n", scale);
     const auto norm =
     [&](float r, float g, float b) -> float {
         return Color::rgbLuminance(r, g, b, ws);
@@ -1380,11 +1380,11 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
         // }
     };
 
-    const int detail2 = float(max(lp.detail, 0)) / scale + 0.5f;
-    const int detail = lp.detail;
+//    const int detail2 = float(max(lp.detail, 0)) / scale + 0.5f;
+    const float detail = lp.detail;
     const int W = rgb->getWidth(), H = rgb->getHeight();
 
-    if (detail == 0) {//no preser contrast
+    if (detail == 0.f) {//no local contrast
 #ifdef _OPENMP
         #       pragma omp parallel for if (multiThread)
 #endif
@@ -1413,45 +1413,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
                 rgb->b(y, x) = b;
             }
         }
-    } else if (detail > 1) {//old process ==>2
-
-        const int W = rgb->getWidth(), H = rgb->getHeight();
-        array2D<float> tmp(W, H);
-#ifdef _OPENMP
-        #       pragma omp parallel for if (multiThread)
-#endif
-
-        for (int y = 0; y < H; ++y) {
-            for (int x = 0; x < W; ++x) {
-                tmp[y][x] = norm(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)) / 65535.f;
-            }
-        }
-
-        const float epsilon = 0.01f + 0.002f * max(detail2 - 3, 0);
-        guidedFilterLog(10.f, tmp, detail2, epsilon, multiThread);
-
-#ifdef _OPENMP
-        #       pragma omp parallel for if (multiThread)
-#endif
-
-        for (int y = 0; y < H; ++y) {
-            for (int x = 0; x < W; ++x) {
-                float &r = rgb->r(y, x);
-                float &g = rgb->g(y, x);
-                float &b = rgb->b(y, x);
-                float m = norm(r, g, b);
-                float t = intp(0.33f, m, tmp[y][x] * 65535.f);
-
-                if (t > noise) {
-                    float c = apply(t);
-                    float f = c / t;
-                    r *= f;
-                    g *= f;
-                    b *= f;
-                }
-            }
-        }
-    } else if (detail == 1) {//preserve local contrast
+    } else  {//local contrast
 
         array2D<float> Y(W, H);
         {
@@ -1475,6 +1437,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
             const float epsilon = 0.005f;
             rtengine::guidedFilter(Y2, Y, Y, radius, epsilon, multiThread);
         }
+        const float blend = detail;
 
 #ifdef _OPENMP
         #       pragma omp parallel for if (multiThread)
@@ -1490,6 +1453,9 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
                 if (t > noise) {
                     float c = apply(t, false);
                     float f = c / t;
+                    float t2 = norm(r, g, b);
+                    float f2 = apply(t2) / t2;
+                    f = intp(blend, f, f2);
                     r *= f;
                     g *= f;
                     b *= f;

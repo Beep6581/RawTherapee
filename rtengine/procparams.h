@@ -1351,7 +1351,7 @@ struct LocallabParams {
         bool fullimage;
         double blackEv;
         double whiteEv;
-        int detail;
+        double detail;
         int sensilog;
         double baselog;
 
