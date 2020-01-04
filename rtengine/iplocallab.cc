@@ -7049,7 +7049,7 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
     //J.Desmis 12-2019
 
     float exponent;
-
+    printf("maxp=%f maxn=%f\n", maxp, maxn);
     if (detailBoost > 0.f && detailBoost < 0.05f) {
         float betemp = expf(-(2.f - detailBoost + 0.693147f)) - 1.f; //0.69315 = log(2)
         exponent = 1.2f * xlogf(-betemp);
@@ -7077,9 +7077,9 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
 
     for (int y = 0; y < H_L; y++) {
         for (int x = 0; x < W_L; x++) {
-            if (Source[y][x] >= 0.f && Source[y][x] < (maxp - thres)) {
+            if (Source[y][x] >= 0.f) {
                 Source[y][x] = xexpf(xlogf(Source[y][x] + thres) * exponent);
-            } else if (Source[y][x] < 0.f && Source[y][x] > (maxn + thres)) {
+            } else if (Source[y][x] < 0.f) {
                 Source[y][x] = -xexpf(xlogf(-Source[y][x] + thres) * exponent);
             }
         }
@@ -7178,7 +7178,7 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
                     }
                     
                     float thresref = mean[level];
-                    float thresreal = 0.2f * thres * thresref;
+                    float thresreal = 0.2f * thres * thresref;//to take into account noise and artifacts
                     
                     
                     Compresslevels(templevel[dir - 1][level], W_L, H_L, compression, detailBoost, thresreal, MaxP[level], MaxN[level]);
