@@ -374,6 +374,7 @@ private:
     Adjuster* const residcomp;
     Adjuster* const sigma;
     Adjuster* const offset;
+    Adjuster* const threswav;
     Adjuster* const chromalev;
     Adjuster* const chromablu;
     Adjuster* const fatdet;

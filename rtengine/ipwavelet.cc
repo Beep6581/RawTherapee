@@ -1432,15 +1432,15 @@ void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compress
     float exponent;
 
     if (DetailBoost > 0.f && DetailBoost < 0.05f ) {
-        float betemp = expf (- (2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
+        float betemp = expf (- (2.f - DetailBoost + 0.693147f)) - 1.f; //0.693147 = log(2)
         exponent = 1.2f * xlogf( -betemp);
         exponent /= 20.f;
     } else if (DetailBoost >= 0.05f && DetailBoost < 0.25f ) {
-        float betemp = expf (- (2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
+        float betemp = expf (- (2.f - DetailBoost + 0.693147f)) - 1.f;
         exponent = 1.2f * xlogf( -betemp);
         exponent /= (-75.f * DetailBoost + 23.75f);
     } else if (DetailBoost >= 0.25f) {
-        float betemp = expf (- (2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
+        float betemp = expf (- (2.f - DetailBoost + 0.693147f)) - 1.f;
         exponent = 1.2f * xlogf( -betemp);
         exponent /= (-2.f * DetailBoost + 5.5f);
     } else {
@@ -1448,6 +1448,7 @@ void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compress
     }
 
     exponent += 1.f;
+    const float eps = 0.0001f;
 
     // now calculate Source = pow(Source, exponent)
 #ifdef __SSE2__
@@ -1456,17 +1457,19 @@ void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compress
 #endif
     {
         vfloat exponentv = F2V(exponent);
+        __m128 epsv = _mm_set1_ps( eps );
+        
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for (int i = 0; i < n - 3; i += 4) {
-            STVFU(Source[i], xexpf(xlogf(LVFU(Source[i])) * exponentv));
+            STVFU(Source[i], xexpf(xlogf(LVFU(Source[i]) + epsv) * exponentv));
         }
     }
 
     for (int i = n - (n % 4); i < n; i++) {
-        Source[i] = xexpf(xlogf(Source[i]) * exponent);
+        Source[i] = xexpf(xlogf(Source[i] + eps) * exponent);
     }
 
 #else

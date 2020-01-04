@@ -1272,6 +1272,7 @@ struct LocallabParams {
         double residcomp;
         double sigma;
         double offset;
+        double threswav;
         double chromalev;
         double chromablu;
         double fatdet;

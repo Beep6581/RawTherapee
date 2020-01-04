@@ -210,7 +210,7 @@ public:
 
     void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params& cp, int W_L, int H_L, float max0, float min0);
     void CompressDR(float *Source, int W_L, int H_L, float Compression, float DetailBoost);
-    void Compresslevels(float **Source, int W_L, int H_L, float Compression, float DetailBoost);
+    void Compresslevels(float **Source, int W_L, int H_L, float compression, float detailBoost, float thres, float maxp, float maxn);
     void ContrastResid(float * WavCoeffs_L0, struct cont_params &cp, int W_L, int H_L, float max0, float min0);
 
     void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
@@ -324,13 +324,13 @@ public:
         const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon, 
         const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp, 
         const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili, bool wavcurvecompre, 
-        float sigm, float offs,int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress);
+        float sigm, float offs,int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres);
         
     void wavcont(wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl, 
                 const LocwavCurve & loclevwavCurve, bool & loclevwavutili, 
                 const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
                 const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
-                float radlevblur, int process, procparams::FattalToneMappingParams &fatParams, float chromablu);
+                float radlevblur, int process, procparams::FattalToneMappingParams &fatParams, float chromablu, float thres);
 
     void wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
                 const LocwavCurve & locconwavCurve, bool & locconwavutili, float sigm, float offs, float chromalev, int sk);
