@@ -132,7 +132,18 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     const auto f_subsample =
         [=](array2D<float> &d, const array2D<float> &s) -> void
         {
-            rescaleBilinear(s, d, multithread);
+            if (d.width() == s.width() && d.height() == s.height()) {
+#ifdef _OPENMP
+                #pragma omp parallel for if (multithread)
+#endif
+                for (int y = 0; y < s.height(); ++y) {
+                    for (int x = 0; x < s.width(); ++x) {
+                        d[y][x] = s[y][x];
+                    }
+                }
+            } else {
+                rescaleBilinear(s, d, multithread);
+            }
         };
 
     // const auto f_upsample = f_subsample;
