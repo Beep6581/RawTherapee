@@ -162,7 +162,7 @@ ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "${LOCAL_PREFIX}/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
 
 # Copy libjpeg-turbo into the app bundle
-cp ${LOCAL_PREFIX}/local/local/lib/libjpeg.*.dylib "${CONTENTS}/Frameworks"
+cp ${LOCAL_PREFIX}/local/lib/libjpeg.*.dylib "${CONTENTS}/Frameworks"
 
 # Copy libexpat into the app bundle (which is keg-only)
 #cp ${LOCAL_PREFIX}/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"
