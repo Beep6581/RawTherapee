@@ -82,12 +82,19 @@ InspectorBuffer::~InspectorBuffer() {
 //    return deg;
 //}
 
-Inspector::Inspector () : currImage(nullptr), scaled(false), active(false)
+Inspector::Inspector () : currImage(nullptr), scaled(false), active(false), pinned(false)
 {
     set_name("Inspector");
     window.set_visible(false);
+
     window.add_events(Gdk::KEY_PRESS_MASK);
+    window.add_events(Gdk::BUTTON_PRESS_MASK);
+    window.add_events(Gdk::SCROLL_MASK);
     window.signal_key_release_event().connect(sigc::mem_fun(*this, &Inspector::on_key_release));
+    window.signal_button_press_event().connect(sigc::mem_fun(*this, &Inspector::on_button_press));
+    window.signal_key_press_event().connect(sigc::mem_fun(*this, &Inspector::on_key_press));
+    window.signal_scroll_event().connect(sigc::mem_fun(*this, &Inspector::on_scroll));
+
     window.set_title("RawTherapee Inspector");
     window.add(*this);
     window.show_all();
@@ -105,11 +112,73 @@ void Inspector::showWindow(bool scaled)
     this->scaled = scaled;
     window.fullscreen();
     window.set_visible(true);
+    pinned = false;
 }
 
 bool Inspector::on_key_release(GdkEventKey *event)
 {
-    window.set_visible(false);
+    if (!pinned) {
+        switch (event->keyval) {
+        case GDK_KEY_f:
+        case GDK_KEY_F:
+            window.set_visible(false);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Inspector::on_button_press(GdkEventButton *event)
+{
+    if (event->type == GDK_BUTTON_PRESS) {
+        if (!pinned)
+            // pin window with mouse click
+            pinned = true;
+        else
+            // release window with another mouse click
+            window.set_visible(false);
+        return true;
+    }
+    return false;
+}
+
+bool Inspector::on_key_press(GdkEventKey *event)
+{
+    switch (event->keyval) {
+    case GDK_KEY_z:
+    case GDK_KEY_F:
+        scaled = false;
+        queue_draw();
+        return true;
+    case GDK_KEY_f:
+        scaled = true;
+        queue_draw();
+        return true;
+    case GDK_KEY_Escape:
+        window.set_visible(false);
+        return true;
+    }
+
+    return false;
+}
+
+bool Inspector::on_scroll(GdkEventScroll *event)
+{
+    if (!currImage)
+        return false;
+
+    rtengine::Coord margin; // limit for scroll area
+    int deviceScale = get_scale_factor();
+    int imW = currImage->imgBuffer.getWidth();
+    int imH = currImage->imgBuffer.getHeight();
+    margin.x = (window.get_width() * deviceScale) / 2;
+    margin.y = (window.get_height() * deviceScale) / 2;
+    int new_x = rtengine::min<int>(center.x + event->delta_x * deviceScale, imW - margin.x);
+    int new_y = rtengine::min<int>(center.y + event->delta_y * deviceScale, imH - margin.y);
+
+    center.set(rtengine::max<int>(margin.x, new_x), rtengine::max<int>(margin.y, new_y));
+    queue_draw();
+
     return true;
 }
 

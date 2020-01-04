@@ -49,12 +49,16 @@ private:
     InspectorBuffer* currImage;
     bool scaled;
     bool active;
+    bool pinned;
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;
 
     Gtk::Window window;
     bool on_key_release(GdkEventKey *event);
+    bool on_button_press(GdkEventButton *event);
+    bool on_key_press(GdkEventKey *event);
+    bool on_scroll(GdkEventScroll *event);
 
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     void deleteBuffers();
