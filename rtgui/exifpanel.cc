@@ -233,7 +233,7 @@ void ExifPanel::refreshTags()
         for (const auto& p : *changeList) {
             try {
                 exif[p.first] = p.second;
-            } catch (const Exiv2::AnyError& exc) {
+            } catch (const std::exception& exc) {
             }
         }
 
@@ -258,7 +258,7 @@ void ExifPanel::refreshTags()
                 addTag(tag.key(), tag.tagLabel(), tag.print(&exif), false, false);
             }
         }
-    } catch (const Exiv2::AnyError& exc) {
+    } catch (const std::exception& exc) {
         return;
     }
 

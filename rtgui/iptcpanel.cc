@@ -502,7 +502,7 @@ void IPTCPanel::setImageData (const FramesMetaData* id)
                     (*embeddedData)[tag.key()].push_back(tag.toString());
                 }
             }
-        } catch (const Exiv2::AnyError& exc) {
+        } catch (const std::exception& exc) {
             embeddedData->clear();
         }
     }

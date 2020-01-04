@@ -1385,7 +1385,7 @@ bool ImageIO::saveMetadata(const Glib::ustring &fname) const
         // }
         // dst->writeMetadata();
         return true;
-    } catch (const Exiv2::AnyError& exc) {
+    } catch (const std::exception& exc) {
         std::cout << "EXIF ERROR: " << exc.what() << std::endl;
         return false;
     }

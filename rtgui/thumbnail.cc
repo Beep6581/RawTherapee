@@ -1231,7 +1231,7 @@ void Thumbnail::saveMetadata()
             std::cout << "saved edited metadata for " << fname << " to "
                       << fn << std::endl;
         }
-    } catch (Exiv2::AnyError &exc) {
+    } catch (std::exception &exc) {
         std::cerr << "ERROR saving metadata for " << fname << " to " << fn
                   << ": " << exc.what() << std::endl;
     }
