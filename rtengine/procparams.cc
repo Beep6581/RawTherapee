@@ -2729,7 +2729,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     residcomp(0.0),
     sigma(1.0),
     offset(1.0),
-    threswav(0.1),
+    threswav(0.05),
     chromalev(1.0),
     chromablu(1.0),
     fatdet(40.0),
