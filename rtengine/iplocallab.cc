@@ -12663,7 +12663,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             enablefat = true;;
         }
 
-        bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)));
+        bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.blac != 0 || lp.war != 0 || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)));
 
         if (!lp.invex  && execex) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);

@@ -2734,7 +2734,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     fatdet(40.0),
     fatanch(50.0),
     fatres(0.0),
-    clarilres(0.0),
+    clarilres(0.5),
     claricres(0.0),
     clarisoft(1.0),
     sensilc(19),

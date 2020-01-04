@@ -574,7 +574,7 @@ levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
 residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
 residblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDBLUR"), 0., 100., 0.5, 0.))),
 levelblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELBLUR"), 0., 100., 0.5, 0.))),
-clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
+clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.5))),
 clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 1000.0, 0.5, 1.))),
 claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
 sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
@@ -1663,9 +1663,9 @@ pe(nullptr)
 
 
     toolBox->pack_start(*expcomp);
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         toolBox->pack_start(*black);
-    }
+//    }
 
     if (complexsoft < 2) {
         toolBox->pack_start(*hlcompr);
@@ -11865,7 +11865,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             expcomp->setValue(0);
             hlcompr->setValue(0);
             hlcomprthresh->setValue(0);
-            black->setValue(0);
+          //  black->setValue(0);
             shadex->setValue(0);
             shcompr->setValue(0);
             expchroma->setValue(0);
