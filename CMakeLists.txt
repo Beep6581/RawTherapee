@@ -263,7 +263,11 @@ if(APPLE)
     if("${NOTARY}")
         set(NOTARY "${NOTARY}" CACHE STRING "Notarization Identity")
     endif()
-
+    if("${LOCAL_PREFIX}")
+        set(LOCAL_PREFIX "${LOCAL_PREFIX}" CACHE STRING "macos/gtk parent directory, ie. /usr or /opt")
+    else()
+        set(LOCAL_PREFIX "/usr")
+    endif()
 endif()
 
 # Enforce absolute paths for non-bundle builds:
