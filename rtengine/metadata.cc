@@ -54,6 +54,10 @@ Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring& fname)
 #else
     auto image = Exiv2::ImageFactory::open(Glib::filename_from_utf8(fname));
 #endif
+    image->readMetadata();
+    if (!image->good()) {
+        throw Exiv2::Error(Exiv2::kerErrorMessage, "exiv2: invalid image");
+    }
     return image;
 }
 
@@ -100,7 +104,6 @@ void Exiv2Metadata::load() const
         } else {
             auto img = open_exiv2(src_);
             image_.reset(img.release());
-            image_->readMetadata();
             if (cache_) {
                 cache_->set(src_, CacheVal(image_, finfo->modification_time()));
             }
@@ -197,7 +200,6 @@ void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst) const
 void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
 {
     auto dst = open_exiv2(path);
-    dst->readMetadata();
     if (image_.get()) {
         dst->setMetadata(*image_);
         if (merge_xmp_) {
@@ -323,7 +325,6 @@ Exiv2::XmpData Exiv2Metadata::getXmpSidecar(const Glib::ustring &path)
     auto fname = xmpSidecarPath(path);
     if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
         auto image = open_exiv2(fname);
-        image->readMetadata();
         ret = image->xmpData();
     }
     return ret;
