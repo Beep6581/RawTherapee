@@ -7044,24 +7044,24 @@ void ImProcFunctions::wavcbd(wavelet_decomposition &wdspot, int level_bl, int ma
 
 }
 
-void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float compression, float detailBoost, float thres)//, float maxp, float maxn)
+void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float compression, float detailattenuator, float thres)//, float maxp, float maxn)
 {
     //J.Desmis 12-2019
 
     float exponent;
    // printf("maxp=%f maxn=%f\n", maxp, maxn);
-    if (detailBoost > 0.f && detailBoost < 0.05f) {
-        float betemp = expf(-(2.f - detailBoost + 0.693147f)) - 1.f; //0.69315 = log(2)
+    if (detailattenuator > 0.f && detailattenuator < 0.05f) {
+        float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f; //0.69315 = log(2)
         exponent = 1.2f * xlogf(-betemp);
         exponent /= 20.f;
-    } else if (detailBoost >= 0.05f && detailBoost < 0.25f) {
-        float betemp = expf(-(2.f - detailBoost + 0.693147f)) - 1.f;
+    } else if (detailattenuator >= 0.05f && detailattenuator < 0.25f) {
+        float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f;
         exponent = 1.2f * xlogf(-betemp);
-        exponent /= (-75.f * detailBoost + 23.75f);
-    } else if (detailBoost >= 0.25f) {
-        float betemp = expf(-(2.f - detailBoost + 0.693147f)) - 1.f;
+        exponent /= (-75.f * detailattenuator + 23.75f);
+    } else if (detailattenuator >= 0.25f) {
+        float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f;
         exponent = 1.2f * xlogf(-betemp);
-        exponent /= (-2.f * detailBoost + 5.5f);
+        exponent /= (-2.f * detailattenuator + 5.5f);
     } else {
         exponent = (compression - 1.0f) / 20.f;
     }
@@ -7164,24 +7164,26 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
                 int W_L = wdspot.level_W(level);
                 int H_L = wdspot.level_H(level);
                 if (loccomprewavCurve && loccomprewavutili) {
-                    float klev = 2.f * (loccomprewavCurve[level * 55.5f] - 0.5f);
+                    float klev =(loccomprewavCurve[level * 55.5f] - 0.75f);
 
                     if (klev < 0.f) {
-                        klev *= 2.f;
+                        klev *= 2.6666f;//compression increase contraste
+                    } else {
+                        klev *= 4.f;//dilatation reduce contraste - detailattenuator
                     }
 
                     float compression = expf(-klev);
-                    float  detailBoost = klev;
+                    float  detailattenuator = klev;
 
                     if (klev < 0.0f) {
-                        detailBoost = 0.0f;
+                        detailattenuator = 0.0f;
                     }
                     
                     float thresref = mean[level];
-                    float thresreal = 0.1f * thres * thresref;//to take into account noise and artifacts
+                    float thresreal = 0.1f * thres * thresref;//small values to take into account noise and artifacts
                //     printf("mean=%f sig=%f\n", mean[level], sigma[level]);
                     
-                    Compresslevels(templevel[dir - 1][level], W_L, H_L, compression, detailBoost, thresreal);//, MaxP[level], MaxN[level]);
+                    Compresslevels(templevel[dir - 1][level], W_L, H_L, compression, detailattenuator, thresreal);//, MaxP[level], MaxN[level]);
                 }
             }
         }
@@ -11378,7 +11380,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         if (loccomprewavCurve && loccomprewavutili) {
             if (lp.locmet == 1) {
                 for (int i = 0; i < 500; i++) {
-                    if (loccomprewavCurve[i] != 0.5) {
+                    if (loccomprewavCurve[i] != 0.75) {
                         wavcurvecompre = true;
                     }
                 }
@@ -11572,8 +11574,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float mL = (float)(params->locallab.spots.at(sp).clarilres / 100.f);
                         float mC = (float)(params->locallab.spots.at(sp).claricres / 100.f);
                         float softr = (float)(params->locallab.spots.at(sp).clarisoft);
-                        float mL0;
-                        float mC0;
+                        float mL0 = 0.f;
+                        float mC0 = 0.f;
 #ifdef _OPENMP
                         const int numThreads = omp_get_max_threads();
 #else
@@ -11780,7 +11782,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             mL0 = mL = mC0 = mC = 0.f;
                         }
 
-                        if (exec) {
+                        if (exec  || compreena) {
                             bool origl = false;
                             // origlc = false;
                             LabImage *mergfile = origl ? tmpres.get() : tmp1.get();
@@ -11796,7 +11798,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     tmp1->b[x][y] = CLIPC((1.f + mC0) * mergfile->b[x][y] - mC * tmpresid->b[x][y]);
                                 }
 
-                            if (softr > 0.f && fabs(mL) > 0.001f) {
+                            if (softr > 0.f && (compreena || fabs(mL) > 0.001f)) {
                                 softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
                             }
                         }

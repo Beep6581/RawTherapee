@@ -2242,7 +2242,7 @@ TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CLARICRES;Merge Chroma
-TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend images 
+TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend & Soft images 
 TP_LOCALLAB_CLARILRES;Merge Luma
 TP_LOCALLAB_CLARISOFT;Soft radius
 TP_LOCALLAB_CLARITYML;Clarity
@@ -2252,9 +2252,9 @@ TP_LOCALLAB_COFR;Color & Light - Small defects
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPFRA;Levels Dynamic Laplacian Range Compression ƒ
-TP_LOCALLAB_COMPREFRA;Levels Dynamic Wavelet Range Compression
-TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
-TP_LOCALLAB_COMPFRAME_TOOLTIP;Allows special effects. You can reduce artifacts with 'Clarity & Sharp mask - Blend Images".\nUses a lot of resources
+TP_LOCALLAB_COMPREFRA;Levels Dynamic Wavelet Range (un)Compression
+TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend & Soft Images' by adjusting 'Soft radius' to reduce artifacts.
+TP_LOCALLAB_COMPFRAME_TOOLTIP;Allows special effects. You can reduce artifacts with 'Clarity & Sharp mask - Blend & Soft Images".\nUses a lot of resources
 TP_LOCALLAB_COMPLEX_METHOD;Software Complexity
 TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustements rubrics.
 TP_LOCALLAB_CONTCOL;Contrast threshold Mask Blur
@@ -2625,7 +2625,7 @@ TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
 TP_LOCALLAB_WAV;Levels local contrast
 TP_LOCALLAB_WAVCOMP;Compression by Level
-TP_LOCALLAB_WAVCOMPRE;Compression by Level
+TP_LOCALLAB_WAVCOMPRE;(un)Compression by Level
 TP_LOCALLAB_WAVCON;Contrast by Level
 TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2  + 3 and more)
 TP_LOCALLAB_WASDEN_TOOLTIP;Denoise luminance for the 3 first levels (fine).\nThe right limit of the curve correspond to coarse : level 3 and beyond
