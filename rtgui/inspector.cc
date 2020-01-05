@@ -86,16 +86,14 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), active(false), pinn
 {
     set_name("Inspector");
     window.set_visible(false);
+    window.set_title("RawTherapee Inspector");
 
     window.add_events(Gdk::KEY_PRESS_MASK);
-    window.add_events(Gdk::BUTTON_PRESS_MASK);
-    window.add_events(Gdk::SCROLL_MASK);
     window.signal_key_release_event().connect(sigc::mem_fun(*this, &Inspector::on_key_release));
-    window.signal_button_press_event().connect(sigc::mem_fun(*this, &Inspector::on_button_press));
     window.signal_key_press_event().connect(sigc::mem_fun(*this, &Inspector::on_key_press));
-    window.signal_scroll_event().connect(sigc::mem_fun(*this, &Inspector::on_scroll));
 
-    window.set_title("RawTherapee Inspector");
+    add_events(Gdk::BUTTON_PRESS_MASK | Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
+
     window.add(*this);
     window.show_all();
     window.set_visible(false);
@@ -128,20 +126,6 @@ bool Inspector::on_key_release(GdkEventKey *event)
     return false;
 }
 
-bool Inspector::on_button_press(GdkEventButton *event)
-{
-    if (event->type == GDK_BUTTON_PRESS) {
-        if (!pinned)
-            // pin window with mouse click
-            pinned = true;
-        else
-            // release window with another mouse click
-            window.set_visible(false);
-        return true;
-    }
-    return false;
-}
-
 bool Inspector::on_key_press(GdkEventKey *event)
 {
     switch (event->keyval) {
@@ -162,7 +146,18 @@ bool Inspector::on_key_press(GdkEventKey *event)
     return false;
 }
 
-bool Inspector::on_scroll(GdkEventScroll *event)
+bool Inspector::on_button_press_event(GdkEventButton *event)
+{
+    if (event->type == GDK_BUTTON_PRESS) {
+        if (!pinned)
+            // pin window with mouse click
+            pinned = true;
+        return true;
+    }
+    return false;
+}
+
+bool Inspector::on_scroll_event(GdkEventScroll *event)
 {
     if (!currImage)
         return false;
@@ -173,10 +168,46 @@ bool Inspector::on_scroll(GdkEventScroll *event)
     int imH = currImage->imgBuffer.getHeight();
     margin.x = (window.get_width() * deviceScale) / 2;
     margin.y = (window.get_height() * deviceScale) / 2;
-    int new_x = rtengine::min<int>(center.x + event->delta_x * deviceScale, imW - margin.x);
-    int new_y = rtengine::min<int>(center.y + event->delta_y * deviceScale, imH - margin.y);
 
-    center.set(rtengine::max<int>(margin.x, new_x), rtengine::max<int>(margin.y, new_y));
+#ifdef GDK_WINDOWING_QUARTZ
+    // event reports speed of scroll wheel
+    double step_x = -event->delta_x;
+    double step_y = event->delta_y;
+#else
+    // assume fixed step of 5%
+    double step_x = 5;
+    double step_y = 5;
+#endif
+    int delta_x = 0;
+    int delta_y = 0;
+    switch (event->direction) {
+    case GDK_SCROLL_SMOOTH:
+#ifdef GDK_WINDOWING_QUARTZ
+        // no additional step for smooth scrolling
+        delta_x = event->delta_x * deviceScale;
+        delta_y = event->delta_y * deviceScale;
+#else
+        // apply step to smooth scrolling as well
+        delta_x = event->delta_x * deviceScale * step_x * imW / 100;
+        delta_y = event->delta_y * deviceScale * step_y * imH / 100;
+#endif
+        break;
+    case GDK_SCROLL_DOWN:
+        delta_y = step_y * deviceScale * imH / 100;
+        break;
+    case GDK_SCROLL_UP:
+        delta_y = -step_y * deviceScale * imH / 100;
+        break;
+    case GDK_SCROLL_LEFT:
+        delta_x = step_x * deviceScale * imW / 100;
+        break;
+    case GDK_SCROLL_RIGHT:
+        delta_x = -step_x * deviceScale * imW / 100;
+        break;
+    }
+
+    center.set(rtengine::LIM<int>(center.x + delta_x, margin.x, imW - margin.x),
+               rtengine::LIM<int>(center.y + delta_y, margin.y, imH - margin.y));
     queue_draw();
 
     return true;
@@ -272,11 +303,11 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         //*/
 
         bool scaledImage = scaled && (imW > win->get_width() || imH > win->get_height());
-	if (deviceScale == 1 && !scaledImage) {
+        if (deviceScale == 1 && !scaledImage) {
             // standard drawing
             currImage->imgBuffer.copySurface(win);
-	}
-	else {
+        }
+        else {
             // consider device scale and image scale
             if (deviceScale > 1) {
                 // use full device resolution and let it scale the image (macOS)
@@ -293,7 +324,7 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
                 Gdk::Cairo::set_source_pixbuf(cr, crop, dest.x*scale, dest.y*scale);
             }
             cr->paint();
-	}
+        }
 
         /* --- not for separate window
         // draw the frame

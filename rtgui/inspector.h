@@ -56,9 +56,10 @@ private:
 
     Gtk::Window window;
     bool on_key_release(GdkEventKey *event);
-    bool on_button_press(GdkEventButton *event);
     bool on_key_press(GdkEventKey *event);
-    bool on_scroll(GdkEventScroll *event);
+
+    bool on_button_press_event(GdkEventButton *event) override;
+    bool on_scroll_event(GdkEventScroll *event) override;
 
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     void deleteBuffers();
