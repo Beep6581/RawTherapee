@@ -532,7 +532,7 @@ __inline double xlog(double d) {
 
     x = x * t + 0.693147180559945286226764 * e;
 
-    if (xisinf(d)) x = rtengine::RT_INFINITY;
+    if (xispinf(d)) x = rtengine::RT_INFINITY;
     if (d < 0) x = rtengine::RT_NAN;
     if (d == 0) x = -rtengine::RT_INFINITY;
 
@@ -864,7 +864,7 @@ __inline double xlog10(double a) {
     double2 d = mul_dd(logk(a), dd(0.43429448190325176116, 6.6494347733425473126e-17));
     double x = d.x + d.y;
 
-    if (xisinf(a)) x = rtengine::RT_INFINITY;
+    if (xispinf(a)) x = rtengine::RT_INFINITY;
     if (a < 0) x = rtengine::RT_NAN;
     if (a == 0) x = -rtengine::RT_INFINITY;
 
@@ -875,7 +875,7 @@ __inline double xlog1p(double a) {
     double2 d = logk2(add2_ss(a, 1));
     double x = d.x + d.y;
 
-    if (xisinf(a)) x = rtengine::RT_INFINITY;
+    if (xispinf(a)) x = rtengine::RT_INFINITY;
     if (a < -1) x = rtengine::RT_NAN;
     if (a == -1) x = -rtengine::RT_INFINITY;
 
@@ -1208,7 +1208,7 @@ __inline float xlogf(float d) {
 
     x = x * t + 0.693147180559945286226764f * e;
 
-    if (xisinff(d)) x = rtengine::RT_INFINITY_F;
+    if (xispinff(d)) x = rtengine::RT_INFINITY_F;
     if (d < 0) x = rtengine::RT_NAN_F;
     if (d == 0) x = -rtengine::RT_INFINITY_F;
 
@@ -1233,7 +1233,7 @@ __inline float xlogf1(float d) { // does xlogf(vmaxf(d, 1.f)) but faster
 
     x = x * t + 0.693147180559945286226764f * e;
 
-    if (xisinff(d)) x = rtengine::RT_INFINITY_F;
+    if (xispinff(d)) x = rtengine::RT_INFINITY_F;
     if (d <= 1.f) x = 0;
 
     return x;
