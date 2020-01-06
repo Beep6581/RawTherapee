@@ -63,6 +63,7 @@
 #define mSP 5  //minimum size Spot
 #define mDEN 64  //minimum size Spot Denoise
 #define mSPsharp 39  //minimum size Spot Sharp due to buildblendmask
+#define mSPwav 32  //minimum size Spot Wavelet
 
 #define CLIPC(a) LIM(a, -42000.f, 42000.f)  // limit a and b  to 130 probably enough ?
 #define CLIPL(x) LIM(x,0.f,40000.f) // limit L to about L=120 probably enough ?
@@ -7372,7 +7373,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
 
 
     if (wavcurvelev  || wavcurvecomp  || wavcurvecompre) {//compress dynamic and blur
-
+/*
         float mean[10];
         float meanN[10];
         float sigma[10];
@@ -7380,7 +7381,7 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
         float MaxP[10];
         float MaxN[10];
         Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-
+*/
         fatParams.enabled = wavcurvecomp;
 
         templevel = new float***[dir];
@@ -11401,7 +11402,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool reduH = false;
             bool reduW = false;
 
-            if (bfw >= mSP && bfh >= mSP) {
+ //           if (bfw >= mSP && bfh >= mSP) {
+            if (bfw >= mSPwav && bfh >= mSPwav) {//avoid too small spot for wavelet
+                
 
                 if (lp.ftwlc) {
                     optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
