@@ -417,7 +417,6 @@ Locallab::Locallab():
     shadex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHADEX"), 0, 100, 1, 0))),
     shcompr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHADEXCOMP"), 0, 100, 1, 50))),
     expchroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EXPCHROMA"), -50, 100, 1, 30))),
-    warm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
@@ -487,6 +486,7 @@ sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 100.0, 0.01, 12.92))
 // Vibrance
 saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
 pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
+warm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
 sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
 blendmaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
 radmaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 1000.0, 0.1, 0.))),
@@ -1462,11 +1462,6 @@ pe(nullptr)
     shcompr->setAdjusterListener(this);
     expchroma->setAdjusterListener(this);
 
-    if (showtooltip) {
-        warm->set_tooltip_text(M("TP_LOCALLAB_WARM_TOOLTIP"));
-    }
-
-    warm->setAdjusterListener(this);
 
     if (showtooltip) {
         sensiex->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
@@ -1677,7 +1672,7 @@ pe(nullptr)
     }
 
     toolBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
-    toolBox->pack_start(*warm);
+//    toolBox->pack_start(*warm);
 
     setExpandAlignProperties(exptoolexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     exptoolexp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), exptoolexp));
@@ -2009,6 +2004,12 @@ pe(nullptr)
 
     pastels->setAdjusterListener(this);
 
+    if (showtooltip) {
+        warm->set_tooltip_text(M("TP_LOCALLAB_WARM_TOOLTIP"));
+    }
+
+    warm->setAdjusterListener(this);
+
 
     if (showtooltip) {
         psThreshold->set_tooltip_markup(M("TP_VIBRANCE_PSTHRESHOLD_TOOLTIP"));
@@ -2101,6 +2102,7 @@ pe(nullptr)
     }
 
     vibranceBox->pack_start(*pastels, Gtk::PACK_SHRINK, 0);
+    vibranceBox->pack_start(*warm, Gtk::PACK_SHRINK, 0);
 
     if (complexsoft < 2) {
         vibranceBox->pack_start(*psThreshold, Gtk::PACK_SHRINK, 0);
@@ -5056,7 +5058,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).shadex = shadex->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shcompr = shcompr->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).expchroma = expchroma->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).warm = warm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensiex = sensiex->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).structexp = structexp->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).blurexpde = blurexpde->getIntValue();
@@ -5153,6 +5154,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                     // Vibrance
                     pp->locallab.spots.at(pp->locallab.selspot).expvibrance = expvibrance->getEnabled();
+                    pp->locallab.spots.at(pp->locallab.selspot).warm = warm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).saturated = saturated->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).pastels = pastels->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).psthreshold = psThreshold->getValue<int>();
@@ -5546,7 +5548,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).shadex = pe->locallab.spots.at(pp->locallab.selspot).shadex || shadex->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).shcompr = pe->locallab.spots.at(pp->locallab.selspot).shcompr || shcompr->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).expchroma = pe->locallab.spots.at(pp->locallab.selspot).expchroma || expchroma->getEditedState();
-                        pe->locallab.spots.at(pp->locallab.selspot).warm = pe->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensiex = pe->locallab.spots.at(pp->locallab.selspot).sensiex || sensiex->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).structexp = pe->locallab.spots.at(pp->locallab.selspot).structexp || structexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).blurexpde = pe->locallab.spots.at(pp->locallab.selspot).blurexpde || blurexpde->getEditedState();
@@ -5617,6 +5618,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         // Vibrance
                         pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).saturated = pe->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).warm = pe->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).pastels = pe->locallab.spots.at(pp->locallab.selspot).pastels || pastels->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).psthreshold = pe->locallab.spots.at(pp->locallab.selspot).psthreshold || psThreshold->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).protectskins = pe->locallab.spots.at(pp->locallab.selspot).protectskins || !protectSkins->get_inconsistent();
@@ -5961,7 +5963,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).shadex = pedited->locallab.spots.at(pp->locallab.selspot).shadex || shadex->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).shcompr = pedited->locallab.spots.at(pp->locallab.selspot).shcompr || shcompr->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).expchroma = pedited->locallab.spots.at(pp->locallab.selspot).expchroma || expchroma->getEditedState();
-                        pedited->locallab.spots.at(pp->locallab.selspot).warm = pedited->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiex = pedited->locallab.spots.at(pp->locallab.selspot).sensiex || sensiex->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).structexp = pedited->locallab.spots.at(pp->locallab.selspot).structexp || structexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).blurexpde = pedited->locallab.spots.at(pp->locallab.selspot).blurexpde || blurexpde->getEditedState();
@@ -6032,6 +6033,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         // Vibrance
                         pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).saturated = pedited->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).warm = pedited->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).pastels = pedited->locallab.spots.at(pp->locallab.selspot).pastels || pastels->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).psthreshold = pedited->locallab.spots.at(pp->locallab.selspot).psthreshold || psThreshold->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).protectskins = pedited->locallab.spots.at(pp->locallab.selspot).protectskins || !protectSkins->get_inconsistent();
@@ -8829,7 +8831,6 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     shadex->setDefault((double)defSpot->shadex);
     shcompr->setDefault((double)defSpot->shcompr);
     expchroma->setDefault((double)defSpot->expchroma);
-    warm->setDefault((double)defSpot->warm);
     sensiex->setDefault((double)defSpot->sensiex);
     structexp->setDefault((double)defSpot->structexp);
     blurexpde->setDefault((double)defSpot->blurexpde);
@@ -8881,6 +8882,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
 
     // Vibrance
     saturated->setDefault((double)defSpot->saturated);
+    warm->setDefault((double)defSpot->warm);
     pastels->setDefault((double)defSpot->pastels);
     psThreshold->setDefault<int>(defSpot->psthreshold);
     sensiv->setDefault((double)defSpot->sensiv);
@@ -9073,7 +9075,6 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         shadex->setDefaultEditedState(Irrelevant);
         shcompr->setDefaultEditedState(Irrelevant);
         expchroma->setDefaultEditedState(Irrelevant);
-        warm->setDefaultEditedState(Irrelevant);
         sensiex->setDefaultEditedState(Irrelevant);
         structexp->setDefaultEditedState(Irrelevant);
         blurexpde->setDefaultEditedState(Irrelevant);
@@ -9126,6 +9127,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         // Vibrance
         saturated->setDefaultEditedState(Irrelevant);
         pastels->setDefaultEditedState(Irrelevant);
+        warm->setDefaultEditedState(Irrelevant);
         psThreshold->setDefaultEditedState(Irrelevant);
         sensiv->setDefaultEditedState(Irrelevant);
         blendmaskvib->setDefaultEditedState(Irrelevant);
@@ -9322,7 +9324,6 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         shadex->setDefaultEditedState(defSpotState->shadex ? Edited : UnEdited);
         shcompr->setDefaultEditedState(defSpotState->shcompr ? Edited : UnEdited);
         expchroma->setDefaultEditedState(defSpotState->expchroma ? Edited : UnEdited);
-        warm->setDefaultEditedState(defSpotState->warm ? Edited : UnEdited);
         sensiex->setDefaultEditedState(defSpotState->sensiex ? Edited : UnEdited);
         structexp->setDefaultEditedState(defSpotState->structexp ? Edited : UnEdited);
         blurexpde->setDefaultEditedState(defSpotState->blurexpde ? Edited : UnEdited);
@@ -9375,6 +9376,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         // Vibrance
         saturated->setDefaultEditedState(defSpotState->saturated ? Edited : UnEdited);
         pastels->setDefaultEditedState(defSpotState->pastels ? Edited : UnEdited);
+        warm->setDefaultEditedState(defSpotState->warm ? Edited : UnEdited);
         psThreshold->setDefaultEditedState(defSpotState->psthreshold ? Edited : UnEdited);
         sensiv->setDefaultEditedState(defSpotState->sensiv ? Edited : UnEdited);
         blendmaskvib->setDefaultEditedState(defSpotState->blendmaskvib ? Edited : UnEdited);
@@ -9805,11 +9807,6 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
-        if (a == warm) {
-            if (listener) {
-                listener->panelChanged(Evlocallabwarm, warm->getTextValue());
-            }
-        }
 
         if (a == sensiex) {
             if (listener) {
@@ -10098,6 +10095,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == pastels) {
             if (listener) {
                 listener->panelChanged(EvlocallabPastels, pastels->getTextValue());
+            }
+        }
+
+        if (a == warm) {
+            if (listener) {
+                listener->panelChanged(Evlocallabwarm, warm->getTextValue());
             }
         }
 
@@ -11044,7 +11047,6 @@ void Locallab::setBatchMode(bool batchMode)
     shadex->showEditedCB();
     shcompr->showEditedCB();
     expchroma->showEditedCB();
-    warm->showEditedCB();
     sensiex->showEditedCB();
     structexp->showEditedCB();
     blurexpde->showEditedCB();
@@ -11097,6 +11099,7 @@ void Locallab::setBatchMode(bool batchMode)
     // Vibrance
     saturated->showEditedCB();
     pastels->showEditedCB();
+    warm->showEditedCB();
     psThreshold->showEditedCB();
     sensiv->showEditedCB();
     blendmaskvib->showEditedCB();
@@ -11847,7 +11850,6 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         shadex->setValue(pp->locallab.spots.at(index).shadex);
         shcompr->setValue(pp->locallab.spots.at(index).shcompr);
         expchroma->setValue(pp->locallab.spots.at(index).expchroma);
-        warm->setValue(pp->locallab.spots.at(index).warm);
         sensiex->setValue(pp->locallab.spots.at(index).sensiex);
         structexp->setValue(pp->locallab.spots.at(index).structexp);
         blurexpde->setValue(pp->locallab.spots.at(index).blurexpde);
@@ -11992,6 +11994,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         expvibrance->setEnabled(pp->locallab.spots.at(index).expvibrance);
         saturated->setValue(pp->locallab.spots.at(index).saturated);
         pastels->setValue(pp->locallab.spots.at(index).pastels);
+        warm->setValue(pp->locallab.spots.at(index).warm);
         psThreshold->setValue<int>(pp->locallab.spots.at(index).psthreshold);
         protectSkins->set_active(pp->locallab.spots.at(index).protectskins);
         avoidColorShift->set_active(pp->locallab.spots.at(index).avoidcolorshift);
@@ -12536,7 +12539,6 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 hlcomprthresh->setEditedState(spotState->hlcomprthresh ? Edited : UnEdited);
                 black->setEditedState(spotState->black ? Edited : UnEdited);
                 shadex->setEditedState(spotState->shadex ? Edited : UnEdited);
-                warm->setEditedState(spotState->warm ? Edited : UnEdited);
                 shcompr->setEditedState(spotState->shcompr ? Edited : UnEdited);
                 expchroma->setEditedState(spotState->expchroma ? Edited : UnEdited);
                 sensiex->setEditedState(spotState->sensiex ? Edited : UnEdited);
@@ -12621,6 +12623,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 expvibrance->set_inconsistent(!spotState->expvibrance);
                 saturated->setEditedState(spotState->saturated ? Edited : UnEdited);
                 pastels->setEditedState(spotState->pastels ? Edited : UnEdited);
+                warm->setEditedState(spotState->warm ? Edited : UnEdited);
                 psThreshold->setEditedState(spotState->psthreshold ? Edited : UnEdited);
                 protectSkins->set_inconsistent(multiImage && !spotState->protectskins);
                 avoidColorShift->set_inconsistent(multiImage && !spotState->avoidcolorshift);

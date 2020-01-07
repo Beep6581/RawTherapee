@@ -489,7 +489,6 @@ public:
         bool shadex;
         bool shcompr;
         bool expchroma;
-        bool warm;
         bool sensiex;
         bool structexp;
         bool blurexpde;
@@ -556,6 +555,7 @@ public:
         bool expvibrance;
         bool saturated;
         bool pastels;
+        bool warm;
         bool psthreshold;
         bool protectskins;
         bool avoidcolorshift;

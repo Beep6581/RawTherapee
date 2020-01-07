@@ -1063,7 +1063,6 @@ struct LocallabParams {
         int shadex;
         int shcompr;
         int expchroma;
-        int warm;
         int sensiex;
         int structexp;
         int blurexpde;
@@ -1130,6 +1129,7 @@ struct LocallabParams {
         bool expvibrance;
         int saturated;
         int pastels;
+        int warm;
         Threshold<int> psthreshold;
         bool protectskins;
         bool avoidcolorshift;

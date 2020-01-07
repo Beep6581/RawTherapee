@@ -1056,7 +1056,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).shadex = locallab.spots.at(j).shadex && pSpot.shadex == otherSpot.shadex;
                 locallab.spots.at(j).shcompr = locallab.spots.at(j).shcompr && pSpot.shcompr == otherSpot.shcompr;
                 locallab.spots.at(j).expchroma = locallab.spots.at(j).expchroma && pSpot.expchroma == otherSpot.expchroma;
-                locallab.spots.at(j).warm = locallab.spots.at(j).warm && pSpot.warm == otherSpot.warm;
                 locallab.spots.at(j).sensiex = locallab.spots.at(j).sensiex && pSpot.sensiex == otherSpot.sensiex;
                 locallab.spots.at(j).structexp = locallab.spots.at(j).structexp && pSpot.structexp == otherSpot.structexp;
                 locallab.spots.at(j).blurexpde = locallab.spots.at(j).blurexpde && pSpot.blurexpde == otherSpot.blurexpde;
@@ -1125,6 +1124,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
                 locallab.spots.at(j).pastels = locallab.spots.at(j).pastels && pSpot.pastels == otherSpot.pastels;
+                locallab.spots.at(j).warm = locallab.spots.at(j).warm && pSpot.warm == otherSpot.warm;
                 locallab.spots.at(j).psthreshold = locallab.spots.at(j).psthreshold && pSpot.psthreshold == otherSpot.psthreshold;
                 locallab.spots.at(j).protectskins = locallab.spots.at(j).protectskins && pSpot.protectskins == otherSpot.protectskins;
                 locallab.spots.at(j).avoidcolorshift = locallab.spots.at(j).avoidcolorshift && pSpot.avoidcolorshift == otherSpot.avoidcolorshift;
@@ -3230,10 +3230,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).expchroma = mods.locallab.spots.at(i).expchroma;
         }
 
-        if (locallab.spots.at(i).warm) {
-            toEdit.locallab.spots.at(i).warm = mods.locallab.spots.at(i).warm;
-        }
-
         if (locallab.spots.at(i).sensiex) {
             toEdit.locallab.spots.at(i).sensiex = mods.locallab.spots.at(i).sensiex;
         }
@@ -3493,6 +3489,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).pastels) {
             toEdit.locallab.spots.at(i).pastels = mods.locallab.spots.at(i).pastels;
+        }
+
+        if (locallab.spots.at(i).warm) {
+            toEdit.locallab.spots.at(i).warm = mods.locallab.spots.at(i).warm;
         }
 
         if (locallab.spots.at(i).psthreshold) {
@@ -5445,7 +5445,6 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     shadex(v),
     shcompr(v),
     expchroma(v),
-    warm(v),
     sensiex(v),
     structexp(v),
     blurexpde(v),
@@ -5512,6 +5511,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     expvibrance(v),
     saturated(v),
     pastels(v),
+    warm(v),
     psthreshold(v),
     protectskins(v),
     avoidcolorshift(v),
@@ -5848,7 +5848,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     shadex = v;
     shcompr = v;
     expchroma = v;
-    warm = v;
     sensiex = v;
     structexp = v;
     blurexpde = v;
@@ -5917,6 +5916,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expvibrance = v;
     saturated = v;
     pastels = v;
+    warm = v;
     psthreshold = v;
     protectskins = v;
     avoidcolorshift = v;
