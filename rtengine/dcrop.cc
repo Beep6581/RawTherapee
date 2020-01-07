@@ -174,8 +174,6 @@ void Crop::update(int todo)
     int widIm = parent->fw;//full image
     int heiIm = parent->fh;
 
-    bool needstransform  = parent->ipf.needsTransform();
-
     if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
         MyMutex::MyLock lock(parent->minit);  // Also used in improccoord
 
@@ -767,8 +765,9 @@ void Crop::update(int todo)
         }
     }
 
+    const bool needstransform  = parent->ipf.needsTransform(skips(parent->fw, skip), skips(parent->fh, skip), parent->imgsrc->getRotateDegree(), parent->imgsrc->getMetaData());
     // transform
-    if (needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) {
+    if (needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE)) && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) {
         if (!transCrop) {
             transCrop = new Imagefloat(cropw, croph);
         }
@@ -785,10 +784,7 @@ void Crop::update(int todo)
             baseCrop = transCrop;
         }
     } else {
-        if (transCrop) {
-            delete transCrop;
-        }
-
+        delete transCrop;
         transCrop = nullptr;
     }
 
@@ -1566,41 +1562,42 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
 
     parent->ipf.transCoord(parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
 
-    if (check_need_larger_crop_for_lcp_distortion(parent->fw, parent->fh, orx, ory, orw, orh, *parent->params)) {
-        // TODO - this is an estimate of the max distortion relative to the image size. ATM it is hardcoded to be 15%, which seems enough. If not, need to revise
-        int dW = int (double (parent->fw) * 0.15 / (2 * skip));
-        int dH = int (double (parent->fh) * 0.15 / (2 * skip));
-        int x1 = orx - dW;
-        int x2 = orx + orw + dW;
-        int y1 = ory - dH;
-        int y2 = ory + orh + dH;
+    if (parent->ipf.needsTransform(skips(parent->fw, skip), skips(parent->fh, skip), parent->imgsrc->getRotateDegree(), parent->imgsrc->getMetaData())) {
+        if (check_need_larger_crop_for_lcp_distortion(parent->fw, parent->fh, orx, ory, orw, orh, *parent->params)) {
+            // TODO - this is an estimate of the max distortion relative to the image size. ATM it is hardcoded to be 15%, which seems enough. If not, need to revise
+            int dW = int (double (parent->fw) * 0.15 / (2 * skip));
+            int dH = int (double (parent->fh) * 0.15 / (2 * skip));
+            int x1 = orx - dW;
+            int x2 = orx + orw + dW;
+            int y1 = ory - dH;
+            int y2 = ory + orh + dH;
 
-        if (x1 < 0) {
-            x2 += -x1;
-            x1 = 0;
+            if (x1 < 0) {
+                x2 += -x1;
+                x1 = 0;
+            }
+
+            if (x2 > parent->fw) {
+                x1 -= x2 - parent->fw;
+                x2 = parent->fw;
+            }
+
+            if (y1 < 0) {
+                y2 += -y1;
+                y1 = 0;
+            }
+
+            if (y2 > parent->fh) {
+                y1 -= y2 - parent->fh;
+                y2 = parent->fh;
+            }
+
+            orx = max(x1, 0);
+            ory = max(y1, 0);
+            orw = min(x2 - x1, parent->fw - orx);
+            orh = min(y2 - y1, parent->fh - ory);
         }
-
-        if (x2 > parent->fw) {
-            x1 -= x2 - parent->fw;
-            x2 = parent->fw;
-        }
-
-        if (y1 < 0) {
-            y2 += -y1;
-            y1 = 0;
-        }
-
-        if (y2 > parent->fh) {
-            y1 -= y2 - parent->fh;
-            y2 = parent->fh;
-        }
-
-        orx = max(x1, 0);
-        ory = max(y1, 0);
-        orw = min(x2 - x1, parent->fw - orx);
-        orh = min(y2 - y1, parent->fh - ory);
     }
-
     leftBorder  = skips(rqx1 - bx1, skip);
     upperBorder = skips(rqy1 - by1, skip);
 

@@ -1247,12 +1247,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
     
     // perform transform
-    if (ipf.needsTransform()) {
+    int origFW;
+    int origFH;
+    double tscale = 0.0;
+    getDimensions (origFW, origFH, tscale);
+    if (ipf.needsTransform(origFW * tscale + 0.5, origFH * tscale + 0.5, 0, metadata)) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
-        int origFW;
-        int origFH;
-        double tscale = 0.0;
-        getDimensions (origFW, origFH, tscale);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, metadata, 0, true); // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;

@@ -875,7 +875,7 @@ private:
         ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
 
         // perform transform (excepted resizing)
-        if (ipf.needsTransform()) {
+        if (ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {
             Imagefloat* trImg = nullptr;
 
             if (ipf.needsLuminanceOnly()) {
@@ -885,7 +885,7 @@ private:
             }
 
             ipf.transform(baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh,
-                          imgsrc->getMetaData(), imgsrc->getRotateDegree(), true);
+                           imgsrc->getMetaData(), imgsrc->getRotateDegree(), true, true);
 
             if (trImg != baseImg) {
                 delete baseImg;
