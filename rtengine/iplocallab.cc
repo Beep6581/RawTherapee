@@ -7045,12 +7045,13 @@ void ImProcFunctions::wavcbd(wavelet_decomposition &wdspot, int level_bl, int ma
 
 }
 
-void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float compression, float detailattenuator, float thres)//, float maxp, float maxn)
+void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float compression, float detailattenuator, float thres, float mean, float maxp, float meanN, float maxN, float madL)
 {
     //J.Desmis 12-2019
 
     float exponent;
-   // printf("maxp=%f maxn=%f\n", maxp, maxn);
+
+    // printf("maxp=%f maxn=%f\n", maxp, maxn);
     if (detailattenuator > 0.f && detailattenuator < 0.05f) {
         float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f; //0.69315 = log(2)
         exponent = 1.2f * xlogf(-betemp);
@@ -7068,9 +7069,20 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
     }
 
     exponent += 1.f;
-    if(thres == 0.f) {
-        thres =  0.00001f;
-    }
+
+
+    float ap = (thres - 1.f) / (maxp - mean);
+    float bp = 1.f - ap * mean;
+
+    float a0 = (1.33f * thres - 1.f) / (1.f - mean);
+    float b0 = 1.f - a0 * mean;
+
+    float apn = (thres - 1.f) / (maxN - meanN);
+    float bpn = 1.f - apn * meanN;
+
+    float a0n = (1.33f * thres - 1.f) / (1.f - meanN);
+    float b0n = 1.f - a0n * meanN;
+
 
 #ifdef _OPENMP
     #pragma omp parallel for
@@ -7078,10 +7090,25 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
 
     for (int y = 0; y < H_L; y++) {
         for (int x = 0; x < W_L; x++) {
+            float expone = 1.f;
+
             if (Source[y][x] >= 0.f) {
-                Source[y][x] = xexpf(xlogf(Source[y][x] + thres) * exponent);
+
+                if (Source[y][x] > mean) {
+                    expone = 1.f + (exponent - 1.f) * (ap * Source[y][x] + bp);
+                } else {
+                    expone = 1.f + (exponent - 1.f) * (a0 * Source[y][x] + b0);
+                }
+
+                Source[y][x] = xexpf(xlogf(Source[y][x] + 0.05f * madL) * expone);
             } else if (Source[y][x] < 0.f) {
-                Source[y][x] = -xexpf(xlogf(-Source[y][x] + thres) * exponent);
+                if (-Source[y][x] > mean) {
+                    expone = 1.f + (exponent - 1.f) * (apn * -Source[y][x] + bpn);
+                } else {
+                    expone = 1.f + (exponent - 1.f) * (a0n * -Source[y][x] + b0n);
+                }
+
+                Source[y][x] = -xexpf(xlogf(-Source[y][x] + 0.05f * madL) * expone);
             }
         }
     }
@@ -7095,6 +7122,7 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
                               const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
                               float radlevblur, int process, FattalToneMappingParams &fatParams, float chromablu, float thres)
 {
+    float madL[10][3];
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -7105,7 +7133,7 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
             int W_L = wdspot.level_W(level);
             int H_L = wdspot.level_H(level);
             float **wav_L = wdspot.level_coeffs(level);
-
+            madL[level][dir - 1] = Mad(wav_L[dir], W_L * H_L);//evaluate noise by level
             for (int y = 0; y < H_L; y++) {
                 for (int x = 0; x < W_L; x++) {
                     float val  = wav_L[dir][y * W_L + x];
@@ -7159,13 +7187,15 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
         float MaxP[10];
         float MaxN[10];
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+      //  printf("levbl=%i maxlvl=%i\n", level_bl, maxlvl);
 
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
                 int H_L = wdspot.level_H(level);
+
                 if (loccomprewavCurve && loccomprewavutili) {
-                    float klev =(loccomprewavCurve[level * 55.5f] - 0.75f);
+                    float klev = (loccomprewavCurve[level * 55.5f] - 0.75f);
 
                     if (klev < 0.f) {
                         klev *= 2.6666f;//compression increase contraste
@@ -7179,12 +7209,12 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
                     if (klev < 0.0f) {
                         detailattenuator = 0.0f;
                     }
-                    
-                    float thresref = mean[level];
-                    float thresreal = 0.1f * thres * thresref;//small values to take into account noise and artifacts
-               //     printf("mean=%f sig=%f\n", mean[level], sigma[level]);
-                    
-                    Compresslevels(templevel[dir - 1][level], W_L, H_L, compression, detailattenuator, thresreal);//, MaxP[level], MaxN[level]);
+
+                  //  float thresref = mean[level];
+                  //  float thresreal = 0.1f * thres * thresref;//small values to take into account noise and artifacts
+                    //     printf("mean=%f sig=%f\n", mean[level], sigma[level]);
+
+                    Compresslevels(templevel[dir - 1][level], W_L, H_L, compression, detailattenuator, thres,  mean[level], MaxP[level], meanN[level], MaxN[level], madL[level][dir - 1]);
                 }
             }
         }
@@ -7373,15 +7403,15 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
 
 
     if (wavcurvelev  || wavcurvecomp  || wavcurvecompre) {//compress dynamic and blur
-/*
-        float mean[10];
-        float meanN[10];
-        float sigma[10];
-        float sigmaN[10];
-        float MaxP[10];
-        float MaxN[10];
-        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-*/
+        /*
+                float mean[10];
+                float meanN[10];
+                float sigma[10];
+                float sigmaN[10];
+                float MaxP[10];
+                float MaxN[10];
+                Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+        */
         fatParams.enabled = wavcurvecomp;
 
         templevel = new float***[dir];
@@ -11402,9 +11432,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool reduH = false;
             bool reduW = false;
 
- //           if (bfw >= mSP && bfh >= mSP) {
+//           if (bfw >= mSP && bfh >= mSP) {
             if (bfw >= mSPwav && bfh >= mSPwav) {//avoid too small spot for wavelet
-                
+
 
                 if (lp.ftwlc) {
                     optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);

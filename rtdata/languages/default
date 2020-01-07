@@ -1124,7 +1124,7 @@ HISTORY_MSG_884;Local - Contrast Dynamic Range Laplacian
 HISTORY_MSG_885;Local - Contrast Dynamic Range Wavelet
 HISTORY_MSG_886;Local - Contrast Wavelet Curve Compression
 HISTORY_MSG_887;Local - Contrast Wavelet Compression Residual
-HISTORY_MSG_888;Local - Contrast Wavelet Threshold
+HISTORY_MSG_888;Local - Contrast Wavelet Balance Threshold
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2596,7 +2596,7 @@ TP_LOCALLAB_TARGET_GRAY;Target Gray Point
 TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_THRESDELTAE;Threshold ΔE-scope
 TP_LOCALLAB_THRESRETI;Threshold
-TP_LOCALLAB_THRESWAV;Threshold
+TP_LOCALLAB_THRESWAV;Balance Threshold
 TP_LOCALLAB_TLABEL2;TM Effective Tm=%1 TM=%2
 TP_LOCALLAB_TLABEL;TM Datas Min=%1 Max=%2 Mean=%3 Sigma=%4 (Threshold)
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can act on Threshold to normalize
