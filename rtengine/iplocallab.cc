@@ -7213,7 +7213,7 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
 
                   //  float thresref = mean[level];
                   //  float thresreal = 0.1f * thres * thresref;//small values to take into account noise and artifacts
-                    //     printf("mean=%f sig=%f\n", mean[level], sigma[level]);
+                         printf("mean=%f level=%i\n", mean[level], level);
 
                     Compresslevels(templevel[dir - 1][level], W_L, H_L, compression, detailattenuator, thres,  mean[level], MaxP[level], meanN[level], MaxN[level], madL[level][dir - 1]);
                 }
@@ -7395,7 +7395,6 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, f
 
     int dir = 3;
     int leve = maxlvl;
-
     float ****templevel = nullptr;
 
     float ****templevela = nullptr;
@@ -11609,7 +11608,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         }
                     } else if (lp.locmet == 1) { //wavelet && sk ==1
-                        int wavelet_level = params->locallab.spots.at(sp).csthreshold.getBottomRight();
+                        int wavelet_level = 1 + params->locallab.spots.at(sp).csthreshold.getBottomRight();//retriev with +1 maximum wavelet_level
                         float mL = (float)(params->locallab.spots.at(sp).clarilres / 100.f);
                         float mC = (float)(params->locallab.spots.at(sp).claricres / 100.f);
                         float softr = (float)(params->locallab.spots.at(sp).clarisoft);
@@ -11623,17 +11622,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
                         // adap maximum level wavelet to size of RT-spot
                         int minwin = min(bfw, bfh);
-                        int maxlevelspot = 9;
+                        int maxlevelspot = 10;//maximum possible
 
                         // adap maximum level wavelet to size of crop
                         while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
                             --maxlevelspot ;
                         }
-
                         // printf("minwin=%i maxlevelavant=%i  maxlespot=%i\n", minwin, wavelet_level, maxlevelspot);
 
                         wavelet_level = min(wavelet_level, maxlevelspot);
-                        // printf("maxlevel=%i\n", wavelet_level);
+                    //    printf("maxlevel=%i\n", wavelet_level);
                         bool exec = false;
                         bool origlc = params->locallab.spots.at(sp).origlc;
 
