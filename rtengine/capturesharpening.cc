@@ -131,8 +131,10 @@ inline void gauss3x3div (float** RESTRICT src, float** RESTRICT dst, float** RES
     const float c00 = kernel[1][1];
 
     for (int i = 1; i < tileSize - 1; i++) {
-#ifdef __clang__
+#if defined(__clang__)
         #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
 #endif
         for (int j = 1; j < tileSize - 1; j++) {
             const float val = c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + 
@@ -154,8 +156,10 @@ inline void gauss5x5div (float** RESTRICT src, float** RESTRICT dst, float** RES
 
     for (int i = 2; i < tileSize - 2; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
-#ifdef __clang__
+#if defined(__clang__)
         #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
 #endif
         for (int j = 2; j < tileSize - 2; ++j) {
             const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
@@ -183,8 +187,10 @@ inline void gauss7x7div(float** RESTRICT src, float** RESTRICT dst, float** REST
 
     for (int i = 3; i < tileSize - 3; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
-#ifdef __clang__
+#if defined(__clang__)
         #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
 #endif
         for (int j = 3; j < tileSize - 3; ++j) {
             const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
@@ -208,8 +214,10 @@ inline void gauss3x3mult(float** RESTRICT src, float** RESTRICT dst, const int t
     const float c00 = kernel[1][1];
 
     for (int i = 1; i < tileSize - 1; i++) {
-#ifdef __clang__
+#if defined(__clang__)
         #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
 #endif
         for (int j = 1; j < tileSize - 1; j++) {
             const float val = c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + 
@@ -232,8 +240,10 @@ inline void gauss5x5mult (float** RESTRICT src, float** RESTRICT dst, const int 
 
     for (int i = 2; i < tileSize - 2; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
-#ifdef __clang__
+#if defined(__clang__)
         #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
 #endif
         for (int j = 2; j < tileSize - 2; ++j) {
             const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
@@ -261,8 +271,10 @@ inline void gauss7x7mult(float** RESTRICT src, float** RESTRICT dst, const int t
 
     for (int i = 3; i < tileSize - 3; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
-#ifdef __clang__
+#if defined(__clang__)
         #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
 #endif
         for (int j = 3; j < tileSize - 3; ++j) {
             const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
