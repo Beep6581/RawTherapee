@@ -1282,12 +1282,15 @@ struct LocallabParams {
         double clarilres;
         double claricres;
         double clarisoft;
+        double strwav;
+        double angwav;
         int sensilc;
         bool fftwlc;
         bool blurlc;
         bool wavblur;
         bool wavcont;
         bool wavcomp;
+        bool wavgradl;
         bool wavcompre;
         bool origlc;
         Glib::ustring localcontMethod;

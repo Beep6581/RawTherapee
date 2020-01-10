@@ -1125,6 +1125,9 @@ HISTORY_MSG_885;Local - Contrast Dynamic Range Wavelet
 HISTORY_MSG_886;Local - Contrast Wavelet Curve Compression
 HISTORY_MSG_887;Local - Contrast Wavelet Compression Residual
 HISTORY_MSG_888;Local - Contrast Wavelet Balance Threshold
+HISTORY_MSG_889;Local - Contrast Wavelet Graduated Strength
+HISTORY_MSG_890;Local - Contrast Wavelet Graduated angle
+HISTORY_MSG_891;Local - Contrast Wavelet Graduated
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2358,6 +2361,7 @@ TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Filter Hue strength
 TP_LOCALLAB_GRADSTRLUM;Gradient strength Luminance
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
 TP_LOCALLAB_GRAINFRA;Film Grain   1:1
+TP_LOCALLAB_GRALWFRA;Graduated Filter Local contrast
 TP_LOCALLAB_GRIDFRAME_TOOLTIP;It is desirable that the spot is in a flat area.\n\nOnly mode NORMAL and eventually Hue, Saturation, Color, Luminosity are concerned by Merge background 
 TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct

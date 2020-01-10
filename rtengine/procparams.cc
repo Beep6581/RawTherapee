@@ -2739,12 +2739,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     clarilres(0.0),
     claricres(0.0),
     clarisoft(1.0),
+    strwav(0.0),
+    angwav(0.0),
     sensilc(30),
     fftwlc(false),
     blurlc(true),
     wavblur(false),
     wavcont(false),
     wavcomp(false),
+    wavgradl(false),
     wavcompre(false),
     origlc(false),
     localcontMethod("loc"),
@@ -3154,12 +3157,15 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && clarilres == other.clarilres
         && claricres == other.claricres
         && clarisoft == other.clarisoft
+        && strwav == other.strwav
+        && angwav == other.angwav
         && sensilc == other.sensilc
         && fftwlc == other.fftwlc
         && blurlc == other.blurlc
         && wavblur == other.wavblur
         && wavcont == other.wavcont
         && wavcomp == other.wavcomp
+        && wavgradl == other.wavgradl
         && wavcompre == other.wavcompre
         && origlc == other.origlc
         && localcontMethod == other.localcontMethod
@@ -4549,12 +4555,15 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).clarilres, "Locallab", "ClariLres_" + std::to_string(i), spot.clarilres, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).claricres, "Locallab", "ClariCres_" + std::to_string(i), spot.claricres, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).clarisoft, "Locallab", "Clarisoft_" + std::to_string(i), spot.clarisoft, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Strwav_" + std::to_string(i), spot.strwav, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).angwav, "Locallab", "Angwav_" + std::to_string(i), spot.angwav, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilc, "Locallab", "Sensilc_" + std::to_string(i), spot.sensilc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftwlc, "Locallab", "Fftwlc_" + std::to_string(i), spot.fftwlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurlc, "Locallab", "Blurlc_" + std::to_string(i), spot.blurlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavblur, "Locallab", "Wavblur_" + std::to_string(i), spot.wavblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcont, "Locallab", "Wavcont_" + std::to_string(i), spot.wavcont, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcomp, "Locallab", "Wavcomp_" + std::to_string(i), spot.wavcomp, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavgradl, "Locallab", "Wavgradl_" + std::to_string(i), spot.wavgradl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcompre, "Locallab", "Wavcompre_" + std::to_string(i), spot.wavcompre, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).origlc, "Locallab", "Origlc_" + std::to_string(i), spot.origlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localcontMethod, "Locallab", "localcontMethod_" + std::to_string(i), spot.localcontMethod, keyFile);
@@ -6099,12 +6108,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ClariLres_" + std::to_string(i), pedited, spot.clarilres, spotEdited.clarilres);
                 assignFromKeyfile(keyFile, "Locallab", "ClariCres_" + std::to_string(i), pedited, spot.claricres, spotEdited.claricres);
                 assignFromKeyfile(keyFile, "Locallab", "Clarisoft_" + std::to_string(i), pedited, spot.clarisoft, spotEdited.clarisoft);
+                assignFromKeyfile(keyFile, "Locallab", "Strwav_" + std::to_string(i), pedited, spot.strwav, spotEdited.strwav);
+                assignFromKeyfile(keyFile, "Locallab", "Angwav_" + std::to_string(i), pedited, spot.angwav, spotEdited.angwav);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + std::to_string(i), pedited, spot.sensilc, spotEdited.sensilc);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + std::to_string(i), pedited, spot.fftwlc, spotEdited.fftwlc);
                 assignFromKeyfile(keyFile, "Locallab", "Blurlc_" + std::to_string(i), pedited, spot.blurlc, spotEdited.blurlc);
                 assignFromKeyfile(keyFile, "Locallab", "Wavblur_" + std::to_string(i), pedited, spot.wavblur, spotEdited.wavblur);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcont_" + std::to_string(i), pedited, spot.wavcont, spotEdited.wavcont);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcomp_" + std::to_string(i), pedited, spot.wavcomp, spotEdited.wavcomp);
+                assignFromKeyfile(keyFile, "Locallab", "Wavgradl_" + std::to_string(i), pedited, spot.wavgradl, spotEdited.wavgradl);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcompre_" + std::to_string(i), pedited, spot.wavcompre, spotEdited.wavcompre);
                 assignFromKeyfile(keyFile, "Locallab", "Origlc_" + std::to_string(i), pedited, spot.origlc, spotEdited.origlc);
                 assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + std::to_string(i), pedited, spot.localcontMethod, spotEdited.localcontMethod);

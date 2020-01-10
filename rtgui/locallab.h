@@ -384,6 +384,8 @@ private:
     Adjuster* const blendmasklc;
     Adjuster* const radmasklc;
     Adjuster* const chromasklc;
+    Adjuster* const strwav;
+    Adjuster* const angwav;
     // Contrast by detail levels
     const std::array<Adjuster*, 6> multiplier;
     Adjuster* const chromacbdl;
@@ -503,6 +505,8 @@ private:
     sigc::connection wavcompConn;
     Gtk::CheckButton* const wavcompre;
     sigc::connection wavcompreConn;
+    Gtk::CheckButton* const wavgradl;
+    sigc::connection wavgradlConn;
 
     //CBDL
     Gtk::CheckButton* const enacbMask;
@@ -616,6 +620,7 @@ private:
     Gtk::Frame* const retitoolFrame;
     Gtk::Frame* const residFrame;
     Gtk::Frame* const clariFrame;
+    Gtk::Frame* const gradwavFrame;
     Gtk::Frame* const blurlevelFrame;
     Gtk::Frame* const contFrame;
     Gtk::Frame* const compFrame;
@@ -714,6 +719,7 @@ private:
     void wavcontChanged();
     void wavcompChanged();
     void wavcompreChanged();
+    void wavgradlChanged();
     //CBDL
     void enacbMaskChanged();
     // ComboBox event functions

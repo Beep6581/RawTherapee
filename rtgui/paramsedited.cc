@@ -1276,12 +1276,15 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).clarilres = locallab.spots.at(j).clarilres && pSpot.clarilres == otherSpot.clarilres;
                 locallab.spots.at(j).claricres = locallab.spots.at(j).claricres && pSpot.claricres == otherSpot.claricres;
                 locallab.spots.at(j).clarisoft = locallab.spots.at(j).clarisoft && pSpot.clarisoft == otherSpot.clarisoft;
+                locallab.spots.at(j).strwav = locallab.spots.at(j).strwav && pSpot.strwav == otherSpot.strwav;
+                locallab.spots.at(j).angwav = locallab.spots.at(j).angwav && pSpot.angwav == otherSpot.angwav;
                 locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
                 locallab.spots.at(j).fftwlc = locallab.spots.at(j).fftwlc && pSpot.fftwlc == otherSpot.fftwlc;
                 locallab.spots.at(j).blurlc = locallab.spots.at(j).blurlc && pSpot.blurlc == otherSpot.blurlc;
                 locallab.spots.at(j).wavblur = locallab.spots.at(j).wavblur && pSpot.wavblur == otherSpot.wavblur;
                 locallab.spots.at(j).wavcont = locallab.spots.at(j).wavcont && pSpot.wavcont == otherSpot.wavcont;
                 locallab.spots.at(j).wavcomp = locallab.spots.at(j).wavcomp && pSpot.wavcomp == otherSpot.wavcomp;
+                locallab.spots.at(j).wavgradl = locallab.spots.at(j).wavgradl && pSpot.wavgradl == otherSpot.wavgradl;
                 locallab.spots.at(j).wavcompre = locallab.spots.at(j).wavcompre && pSpot.wavcompre == otherSpot.wavcompre;
                 locallab.spots.at(j).origlc = locallab.spots.at(j).origlc && pSpot.origlc == otherSpot.origlc;
                 locallab.spots.at(j).localcontMethod = locallab.spots.at(j).localcontMethod && pSpot.localcontMethod == otherSpot.localcontMethod;
@@ -4086,6 +4089,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).clarisoft   = mods.locallab.spots.at(i).clarisoft;
         }
 
+        if (locallab.spots.at(i).strwav) {
+            toEdit.locallab.spots.at(i).strwav   = mods.locallab.spots.at(i).strwav;
+        }
+
+        if (locallab.spots.at(i).angwav) {
+            toEdit.locallab.spots.at(i).angwav   = mods.locallab.spots.at(i).angwav;
+        }
+
         if (locallab.spots.at(i).sensilc) {
             toEdit.locallab.spots.at(i).sensilc   = mods.locallab.spots.at(i).sensilc;
         }
@@ -4108,6 +4119,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).wavcomp) {
             toEdit.locallab.spots.at(i).wavcomp = mods.locallab.spots.at(i).wavcomp;
+        }
+
+        if (locallab.spots.at(i).wavgradl) {
+            toEdit.locallab.spots.at(i).wavgradl = mods.locallab.spots.at(i).wavgradl;
         }
 
         if (locallab.spots.at(i).wavcompre) {
@@ -5664,12 +5679,15 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     clarilres(v),
     claricres(v),
     clarisoft(v),
+    strwav(v),
+    angwav(v),
     sensilc(v),
     fftwlc(v),
     blurlc(v),
     wavblur(v),
     wavcont(v),
     wavcomp(v),
+    wavgradl(v),
     wavcompre(v),
     origlc(v),
     localcontMethod(v),
@@ -6069,12 +6087,15 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     clarilres = v;
     claricres = v;
     clarisoft = v;
+    strwav = v;
+    angwav = v;
     sensilc = v;
     fftwlc = v;
     blurlc = v;
     wavblur = v;
     wavcont = v;
     wavcomp = v;
+    wavgradl = v;
     wavcompre = v;
     origlc = v;
     localcontMethod = v;

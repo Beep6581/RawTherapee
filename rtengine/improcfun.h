@@ -224,7 +224,7 @@ public:
     void idirpyr(LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab,
                  int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/);
     //locallab
-    void maskcalccol(int call, bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, LabImage* reserved, int inv, const struct local_params & lp,
+    void maskcalccol(int call, bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, LabImage* reserved, int inv, struct local_params & lp,
                  float strumask, bool astool,
                  const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, 
                  const LocLLmaskCurve & locllmasCurve, bool & llmasutili, 
@@ -319,7 +319,7 @@ public:
     static void strcurv_data(std::string retistr, int *s_datc, int &siz);
     void blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread);
 
-    void wavcontrast4(float ** tmp, float ** tmpa, float ** tmpb, float contrast, float fatres, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, 
+    void wavcontrast4(struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float fatres, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, bool wavcurve,
         const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev, 
         const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon, 
         const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp, 

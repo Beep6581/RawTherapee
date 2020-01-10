@@ -591,6 +591,8 @@ fatres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATRES"), 0., 100., 1., 0.))),
 blendmasklc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
 radmasklc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 1000.0, 0.1, 0.))),
 chromasklc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
+angwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
 
 multiplier(
 [this]() -> std::array<Adjuster*, 6> {
@@ -697,6 +699,7 @@ wavblur(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLURLEVELFRA")))),
 wavcont(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CONTFRA")))),
 wavcomp(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPFRA")))),
 wavcompre(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPREFRA")))),
+wavgradl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GRALWFRA")))),
 //CBDL
 enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 //encoding log
@@ -775,6 +778,7 @@ retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
 retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
 residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
 clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
+gradwavFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADWAVFRA")))),
 blurlevelFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURLEVELFRA")))),
 contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTFRA")))),
 compFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPFRA")))),
@@ -2853,6 +2857,7 @@ pe(nullptr)
     wavcontConn  = wavcont->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcontChanged));
     wavcompConn  = wavcomp->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcompChanged));
     wavcompreConn  = wavcompre->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcompreChanged));
+    wavgradlConn  = wavgradl->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavgradlChanged));
     origlcConn  = origlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::origlcChanged));
     csThreshold->setAdjusterListener(this);
 
@@ -2969,6 +2974,8 @@ pe(nullptr)
     radmasklc->setLogScale(10, -10);
     radmasklc->setAdjusterListener(this);
     chromasklc->setAdjusterListener(this);
+    strwav->setAdjusterListener(this);
+    angwav->setAdjusterListener(this);
 
 
 
@@ -2981,6 +2988,13 @@ pe(nullptr)
 
     clariFrame->add(*clariBox);
 
+    gradwavFrame->set_label_align(0.025, 0.5);
+    wavgradl->set_active (false);
+    gradwavFrame->set_label_widget(*wavgradl);
+    ToolParamBlock* const gradwavBox = Gtk::manage(new ToolParamBlock());
+    gradwavBox->pack_start(*strwav);
+    gradwavBox->pack_start(*angwav);
+    gradwavFrame->add(*gradwavBox);
 
     Gtk::HSeparator* const separatorblu = Gtk::manage(new  Gtk::HSeparator());
 
@@ -3056,6 +3070,7 @@ pe(nullptr)
     expcontrastpyr->setLevel(2);
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
     blurcontBox->pack_start(*clariFrame);
+    blurcontBox->pack_start(*gradwavFrame);
     blurcontBox->pack_start(*contFrame);
     blurcontBox->pack_start(*compreFrame);
     if (complexsoft < 2) {
@@ -5361,7 +5376,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).wavcont = wavcont->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcomp = wavcomp->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcompre = wavcompre->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).wavgradl = wavgradl->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).origlc = origlc->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).strwav = strwav->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).angwav = angwav->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).locwavcurve = wavshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).csthreshold = csThreshold->getValue<int>();
                     pp->locallab.spots.at(pp->locallab.selspot).loclevwavcurve = wavshapelev->getCurve();
@@ -5772,12 +5790,15 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).clarilres = pe->locallab.spots.at(pp->locallab.selspot).clarilres || clarilres->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).claricres = pe->locallab.spots.at(pp->locallab.selspot).claricres || claricres->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).clarisoft = pe->locallab.spots.at(pp->locallab.selspot).clarisoft || clarisoft->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strwav = pe->locallab.spots.at(pp->locallab.selspot).strwav || strwav->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).angwav = pe->locallab.spots.at(pp->locallab.selspot).angwav || angwav->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensilc = pe->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fftwlc = pe->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).blurlc = pe->locallab.spots.at(pp->locallab.selspot).blurlc || !blurlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavblur = pe->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavcont = pe->locallab.spots.at(pp->locallab.selspot).wavcont || !wavcont->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavcomp = pe->locallab.spots.at(pp->locallab.selspot).wavcomp || !wavcomp->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).wavgradl = pe->locallab.spots.at(pp->locallab.selspot).wavgradl || !wavgradl->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavcompre = pe->locallab.spots.at(pp->locallab.selspot).wavcompre || !wavcompre->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).origlc = pe->locallab.spots.at(pp->locallab.selspot).origlc || !origlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).localcontMethod = pe->locallab.spots.at(pp->locallab.selspot).localcontMethod || localcontMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -6189,12 +6210,15 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).clarilres = pedited->locallab.spots.at(pp->locallab.selspot).clarilres || clarilres->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).claricres = pedited->locallab.spots.at(pp->locallab.selspot).claricres || claricres->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).clarisoft = pedited->locallab.spots.at(pp->locallab.selspot).clarisoft || clarisoft->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strwav = pedited->locallab.spots.at(pp->locallab.selspot).strwav || strwav->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).angwav = pedited->locallab.spots.at(pp->locallab.selspot).angwav || angwav->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensilc = pedited->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fftwlc = pedited->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).blurlc = pedited->locallab.spots.at(pp->locallab.selspot).blurlc || !blurlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavblur = pedited->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavcont = pedited->locallab.spots.at(pp->locallab.selspot).wavcont || !wavcont->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavcomp = pedited->locallab.spots.at(pp->locallab.selspot).wavcomp || !wavcomp->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).wavgradl = pedited->locallab.spots.at(pp->locallab.selspot).wavgradl || !wavgradl->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavcompre = pedited->locallab.spots.at(pp->locallab.selspot).wavcompre || !wavcompre->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).origlc = pedited->locallab.spots.at(pp->locallab.selspot).origlc || !origlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve || !wavshape->isUnChanged();
@@ -6796,6 +6820,8 @@ void Locallab::localcontMethodChanged()
         blurlc->show();
         wavblur->show();
         origlc->hide();
+        strwav->hide();
+        angwav->hide();
     } else if (localcontMethod->get_active_row_number() == 1) {
         levelwav->show();
         residcont->show();
@@ -6829,6 +6855,8 @@ void Locallab::localcontMethodChanged()
         blurlc->show();
         wavblur->show();
         origlc->show();
+        strwav->show();
+        angwav->show();
     }
 
     // printf("localcontMethodChanged\n");
@@ -8447,6 +8475,29 @@ void Locallab::wavcompChanged()
     }
 }
 
+void Locallab::wavgradlChanged()
+{
+
+    if (multiImage) {
+        if (wavgradl->get_inconsistent()) {
+            wavgradl->set_inconsistent(false);
+            wavgradlConn.block(true);
+            wavgradl->set_active(false);
+            wavgradlConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            if (wavgradl->get_active()) {
+                listener->panelChanged(Evlocallabwavgradl, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabwavgradl, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
 void Locallab::wavcompreChanged()
 {
 
@@ -8986,6 +9037,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     clarilres->setDefault(defSpot->clarilres);
     claricres->setDefault(defSpot->claricres);
     clarisoft->setDefault(defSpot->clarisoft);
+    strwav->setDefault(defSpot->strwav);
+    angwav->setDefault(defSpot->angwav);
     sensilc->setDefault((double)defSpot->sensilc);
     csThreshold->setDefault<int>(defSpot->csthreshold);
     blendmasklc->setDefault((double)defSpot->blendmasklc);
@@ -9230,6 +9283,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         clarilres->setDefaultEditedState(Irrelevant);
         claricres->setDefaultEditedState(Irrelevant);
         clarisoft->setDefaultEditedState(Irrelevant);
+        strwav->setDefaultEditedState(Irrelevant);
+        angwav->setDefaultEditedState(Irrelevant);
         sensilc->setDefaultEditedState(Irrelevant);
         csThreshold->setDefaultEditedState(Irrelevant);
         blendmasklc->setDefaultEditedState(Irrelevant);
@@ -9479,6 +9534,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         clarilres->setDefaultEditedState(defSpotState->clarilres ? Edited : UnEdited);
         claricres->setDefaultEditedState(defSpotState->claricres ? Edited : UnEdited);
         clarisoft->setDefaultEditedState(defSpotState->clarisoft ? Edited : UnEdited);
+        strwav->setDefaultEditedState(defSpotState->strwav ? Edited : UnEdited);
+        angwav->setDefaultEditedState(defSpotState->angwav ? Edited : UnEdited);
         sensilc->setDefaultEditedState(defSpotState->sensilc ? Edited : UnEdited);
         csThreshold->setDefaultEditedState(defSpotState->csthreshold ? Edited : UnEdited);
         blendmasklc->setDefaultEditedState(defSpotState->blendmasklc ? Edited : UnEdited);
@@ -10717,6 +10774,18 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == strwav) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrwav, strwav->getTextValue());
+            }
+        }
+
+        if (a == angwav) {
+            if (listener) {
+                listener->panelChanged(Evlocallabangwav, angwav->getTextValue());
+            }
+        }
+
         if (a == sensilc) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensilc, sensilc->getTextValue());
@@ -11201,6 +11270,8 @@ void Locallab::setBatchMode(bool batchMode)
     clarilres->showEditedCB();
     claricres->showEditedCB();
     clarisoft->showEditedCB();
+    strwav->showEditedCB();
+    angwav->showEditedCB();
     csThreshold->showEditedCB();
     sensilc->showEditedCB();
     blendmasklc->showEditedCB();
@@ -11502,6 +11573,7 @@ void Locallab::enableListener()
     wavblurConn.block(false);
     wavcontConn.block(false);
     wavcompConn.block(false);
+    wavgradlConn.block(false);
     wavcompreConn.block(false);
     origlcConn.block(false);
     showmasklcMethodConn.block(false);
@@ -11604,6 +11676,7 @@ void Locallab::disableListener()
     wavblurConn.block(true);
     wavcontConn.block(true);
     wavcompConn.block(true);
+    wavgradlConn.block(true);
     wavcompreConn.block(true);
     origlcConn.block(true);
     showmasklcMethodConn.block(true);
@@ -12276,12 +12349,15 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         clarilres->setValue(pp->locallab.spots.at(index).clarilres);
         claricres->setValue(pp->locallab.spots.at(index).claricres);
         clarisoft->setValue(pp->locallab.spots.at(index).clarisoft);
+        strwav->setValue(pp->locallab.spots.at(index).strwav);
+        angwav->setValue(pp->locallab.spots.at(index).angwav);
         sensilc->setValue(pp->locallab.spots.at(index).sensilc);
         fftwlc->set_active(pp->locallab.spots.at(index).fftwlc);
         blurlc->set_active(pp->locallab.spots.at(index).blurlc);
         wavblur->set_active(pp->locallab.spots.at(index).wavblur);
         wavcont->set_active(pp->locallab.spots.at(index).wavcont);
         wavcomp->set_active(pp->locallab.spots.at(index).wavcomp);
+        wavgradl->set_active(pp->locallab.spots.at(index).wavgradl);
         wavcompre->set_active(pp->locallab.spots.at(index).wavcompre);
         origlc->set_active(pp->locallab.spots.at(index).origlc);
         csThreshold->setValue<int>(pp->locallab.spots.at(index).csthreshold);
@@ -12799,12 +12875,15 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 clarilres->setEditedState(spotState->clarilres ? Edited : UnEdited);
                 claricres->setEditedState(spotState->claricres ? Edited : UnEdited);
                 clarisoft->setEditedState(spotState->clarisoft ? Edited : UnEdited);
+                strwav->setEditedState(spotState->strwav ? Edited : UnEdited);
+                angwav->setEditedState(spotState->angwav ? Edited : UnEdited);
                 sensilc->setEditedState(spotState->sensilc ? Edited : UnEdited);
                 fftwlc->set_inconsistent(multiImage && !spotState->fftwlc);
                 blurlc->set_inconsistent(multiImage && !spotState->blurlc);
                 wavblur->set_inconsistent(multiImage && !spotState->wavblur);
                 wavcont->set_inconsistent(multiImage && !spotState->wavcont);
                 wavcomp->set_inconsistent(multiImage && !spotState->wavcomp);
+                wavgradl->set_inconsistent(multiImage && !spotState->wavgradl);
                 wavcompre->set_inconsistent(multiImage && !spotState->wavcompre);
                 origlc->set_inconsistent(multiImage && !spotState->origlc);
                 wavshape->setUnChanged(!spotState->locwavcurve);
@@ -13332,6 +13411,8 @@ void Locallab::updateSpecificGUIState()
         clarilres->hide();
         claricres->hide();
         clarisoft->hide();
+        strwav->hide();
+        angwav->hide();
         clariFrame->hide();
         csThreshold->hide();
         lcradius->show();
@@ -13365,6 +13446,8 @@ void Locallab::updateSpecificGUIState()
         clarilres->show();
         claricres->show();
         clarisoft->show();
+        strwav->show();
+        angwav->show();
         clariFrame->show();
         csThreshold->show();
         lcradius->hide();

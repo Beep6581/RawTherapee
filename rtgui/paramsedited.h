@@ -708,12 +708,15 @@ public:
         bool clarilres;
         bool claricres;
         bool clarisoft;
+        bool strwav;
+        bool angwav;
         bool sensilc;
         bool fftwlc;
         bool blurlc;
         bool wavblur;
         bool wavcont;
         bool wavcomp;
+        bool wavgradl;
         bool wavcompre;
         bool origlc;
         bool localcontMethod;
