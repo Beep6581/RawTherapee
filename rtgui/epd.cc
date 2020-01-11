@@ -71,11 +71,11 @@ void EdgePreservingDecompositionUI::read(const ProcParams *pp, const ParamsEdite
     strength->set_sensitive (true);
     gamma->set_sensitive (true);
 
-    if(pp->wavelet.enabled) {
-        if(pp->wavelet.tmrs == 0) {
+    if(pp->wavelet.enabled) { 
+        if(pp->wavelet.tmrs == 0 || pp->wavelet.TMmethod == "cont") {
             strength->set_sensitive (true);
             gamma->set_sensitive (true);
-        } else {
+        } else if(pp->wavelet.tmrs != 0 && pp->wavelet.TMmethod == "tm") {
             strength->set_sensitive (false);
             gamma->set_sensitive (false);
         }
@@ -101,11 +101,11 @@ void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
     strength->set_sensitive (true);
     gamma->set_sensitive (true);
 
-    if(pp->wavelet.enabled) {
-        if(pp->wavelet.tmrs == 0) {
+    if(pp->wavelet.enabled) { 
+        if(pp->wavelet.tmrs == 0 || pp->wavelet.TMmethod == "cont") {
             strength->set_sensitive (true);
             gamma->set_sensitive (true);
-        } else {
+        } else if(pp->wavelet.tmrs != 0 && pp->wavelet.TMmethod == "tm") {
             strength->set_sensitive (false);
             gamma->set_sensitive (false);
         }
