@@ -69,6 +69,7 @@ void EdgePreservingDecompositionUI::read(const ProcParams *pp, const ParamsEdite
 
     setEnabled(pp->epd.enabled);
     strength->set_sensitive (true);
+    gamma->set_sensitive (true);
 
     if(pp->wavelet.enabled) {
         if(pp->wavelet.tmrs == 0) {
@@ -98,6 +99,7 @@ void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
     pp->epd.reweightingIterates = reweightingIterates->getValue();
     pp->epd.enabled = getEnabled();
     strength->set_sensitive (true);
+    gamma->set_sensitive (true);
 
     if(pp->wavelet.enabled) {
         if(pp->wavelet.tmrs == 0) {
