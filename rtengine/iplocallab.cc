@@ -912,7 +912,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float gammasktm = ((float) locallab.spots.at(sp).gammasktm);
     float slomasktm = ((float) locallab.spots.at(sp).slomasktm);
     bool wavgradl = locallab.spots.at(sp).wavgradl;
-    
+
     float blendmaskbl = ((float) locallab.spots.at(sp).blendmaskbl) / 100.f ;
     float radmaskbl = ((float) locallab.spots.at(sp).radmaskbl);
     float chromaskbl = ((float) locallab.spots.at(sp).chromaskbl);
@@ -1507,10 +1507,19 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     int wend = xend * w;
 
     //printf("h=%d w=%d hsta=%d hend=%d wsta=%d wend=%d\n", h, w, hsta, hend, wsta, wend);
+    float mean = 0.f;
+    int nc = 0;
+
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {
             float r = img.r(y, x), g = img.g(y, x), b = img.b(y, x);
             float m = max(0.f, r, g, b) / 65535.f * ec;
+            float rgam = Color::gamma_srgb(r / 65535.f);
+            float ggam = Color::gamma_srgb(g / 65535.f);
+            float bgam = Color::gamma_srgb(b / 65535.f);
+            float lum = 0.2126f * rgam + 0.7152f * ggam + 0.0722f * bgam;
+            mean += lum;
+            nc++;
 
             if (m > noise) {
                 float l = min(r, g, b) / 65535.f * ec;
@@ -1519,6 +1528,30 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             }
         }
     }
+
+    mean = mean / nc;
+    float yb = 18.f;
+
+    if (mean < 0.15f) {
+        yb = 3.0f;
+    } else if (mean < 0.3f) {
+        yb = 5.0f;
+    } else if (mean < 0.4f) {
+        yb = 10.0f;
+    } else if (mean < 0.45f) {
+        yb = 15.0f;
+    } else if (mean < 0.5f) {
+        yb = 18.0f;
+    } else if (mean < 0.55f) {
+        yb = 23.0f;
+    } else if (mean < 0.6f) {
+        yb = 30.0f;
+    } else {
+        yb = 45.f;
+    }
+
+    //approximation sourcegray yb  source = 0.4 * yb
+
 
     if (vmax > vmin) {
         const float log2 = xlogf(2.f);
@@ -1557,7 +1590,8 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                     std::cout << "         computed gray point from " << n << " samples: " << sourceg[sp] << std::endl;
                 }
             } else if (settings->verbose) {
-                std::cout << "         no samples found in range, resorting to default gray point value" << std::endl;
+                sourceg[sp] = 0.4f * yb;
+                std::cout << "         no samples found in range, resorting to Yb gray point value " << sourceg[sp]  << std::endl;
             }
         }
 
@@ -4108,7 +4142,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             bool loccomprewavutili = false;
             bool wavcurvecompre = false;
             bool wavcurve = false;
-            wavcontrast4(lp, bufmaskblurcol->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav,  wavcurve, dummy,loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
+            wavcontrast4(lp, bufmaskblurcol->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav,  wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
 
         }
 
@@ -7296,7 +7330,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 factorwav[y][x] = factor;
             }
 
-           // printf("fact=%f\n", factmax);
+            // printf("fact=%f\n", factmax);
         }
 
         if (lp.strwav < 0.f) {
@@ -7671,6 +7705,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                             } else {
                                 absciss = amean * fabsf(val);
                             }
+
                             float klev = 1.f;
 
                             if (level >= level_hl && level <= level_hr) {
