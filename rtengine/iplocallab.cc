@@ -236,6 +236,8 @@ struct local_params {
     float angvib;
     float angwav;
     float strwav;
+    float anglog;
+    float strlog;
     float softradiusexp;
     float softradiuscol;
     float softradiuscb;
@@ -835,6 +837,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float angvib = ((float) locallab.spots.at(sp).angvib);
     float strwav = ((float) locallab.spots.at(sp).strwav);
     float angwav = ((float) locallab.spots.at(sp).angwav);
+    float strlog = ((float) locallab.spots.at(sp).strlog);
+    float anglog = ((float) locallab.spots.at(sp).anglog);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
@@ -974,6 +978,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.angvib = angvib;
     lp.strwav = strwav;
     lp.angwav = angwav;
+    lp.strlog = strlog;
+    lp.anglog = anglog;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
@@ -3009,6 +3015,9 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     } else if (indic == 10) {
         stops = lp.strwav;
         angs = lp.angwav;
+    } else if (indic == 11) {
+        stops = lp.strlog;
+        angs = lp.anglog;
     }
 
 
@@ -9624,7 +9633,25 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                 delete tmpImage;
+                //here begin graduated filter
+                //first solution "easy" but we can do other with log_encode...to see the results
+                if (lp.strlog != 0.f) {
+                    struct grad_params gplog;
+                    calclocalGradientParams(lp, gplog, ystart, xstart, bfw, bfh, 11);
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
 
+                    for (int ir = 0; ir < bfh; ir++)
+                        for (int jr = 0; jr < bfw; jr++) {
+                            double factor = 1.0;
+                            factor = ImProcFunctions::calcGradientFactor(gplog, jr, ir);
+                            bufexpfin->L[ir][jr] *= factor;
+                        }
+                }
+                
+                
+                //end graduated
                 transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {

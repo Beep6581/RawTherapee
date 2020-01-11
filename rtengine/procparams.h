@@ -1359,6 +1359,8 @@ struct LocallabParams {
         double detail;
         int sensilog;
         double baselog;
+        double strlog;
+        double anglog;
 
 
         LocallabSpot();

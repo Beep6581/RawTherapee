@@ -786,6 +786,8 @@ public:
         bool detail;
         bool sensilog;
         bool baselog;
+        bool strlog;
+        bool anglog;
 
         LocallabSpotEdited(bool v);
 

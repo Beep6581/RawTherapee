@@ -650,6 +650,8 @@ whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.0, 32.0, 0.1, 10.0
 detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
 sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSILOG"), 0, 100, 1, 50))),
 baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 8., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))), 
+strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
+anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
 
 // ButtonCheck widgets
 // Color & Light
@@ -786,6 +788,7 @@ compreFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPREFRA")))),
 grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
 logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
 logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
+gradlogFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")))),
 //    retiBox(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
 retiBox(Gtk::manage(new ToolParamBlock())),
 maskretiBox(Gtk::manage(new ToolParamBlock())),
@@ -3792,6 +3795,8 @@ pe(nullptr)
     blackEv->delay = options.adjusterMaxDelay;
     whiteEv->delay = options.adjusterMaxDelay;
     targetGray->delay = options.adjusterMaxDelay;
+    strlog->delay = options.adjusterMaxDelay;
+    anglog->delay = options.adjusterMaxDelay;
 
     sourceGray->setAdjusterListener(this);
     blackEv->setAdjusterListener(this);
@@ -3800,6 +3805,8 @@ pe(nullptr)
     detail->setAdjusterListener(this);
     sensilog->setAdjusterListener(this);
     baselog->setAdjusterListener(this);
+    strlog->setAdjusterListener(this);
+    anglog->setAdjusterListener(this);
 
     whiteEv->setLogScale(16, 0);
     blackEv->setLogScale(2, -8);
@@ -3822,12 +3829,20 @@ pe(nullptr)
     logFBox->pack_start(*sourceGray);
     logFrame->add(*logFBox);
 
+    gradlogFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const gradlogBox = Gtk::manage(new ToolParamBlock());
+    gradlogBox->pack_start(*strlog);
+    gradlogBox->pack_start(*anglog);
+    gradlogFrame->add(*gradlogBox);
+
     logBox->pack_start(*logPFrame);
     logBox->pack_start(*logFrame);
     logBox->pack_start(*targetGray);
     logBox->pack_start(*detail);
     logBox->pack_start(*baselog);
     logBox->pack_start(*sensilog);
+    logBox->pack_start(*gradlogFrame);
+
 
 
     panel->pack_start(*explog, false, false);
@@ -5460,6 +5475,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).detail = detail->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensilog = sensilog->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).baselog = baselog->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strlog = strlog->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).anglog = anglog->getValue();
 
                 }
 
@@ -5877,6 +5894,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).detail = pe->locallab.spots.at(pp->locallab.selspot).detail || detail->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensilog = pe->locallab.spots.at(pp->locallab.selspot).sensilog || sensilog->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).baselog = pe->locallab.spots.at(pp->locallab.selspot).baselog || baselog->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strlog = pe->locallab.spots.at(pp->locallab.selspot).strlog || strlog->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).anglog = pe->locallab.spots.at(pp->locallab.selspot).anglog || anglog->getEditedState();
 
                     }
                 }
@@ -6295,6 +6314,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).detail = pedited->locallab.spots.at(pp->locallab.selspot).detail || detail->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensilog = pedited->locallab.spots.at(pp->locallab.selspot).sensilog || sensilog->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).baselog = pedited->locallab.spots.at(pp->locallab.selspot).baselog || baselog->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strlog = pedited->locallab.spots.at(pp->locallab.selspot).strlog || strlog->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).anglog = pedited->locallab.spots.at(pp->locallab.selspot).anglog || anglog->getEditedState();
 
                     }
                 }
@@ -9087,6 +9108,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     detail->setDefault((double)defSpot->detail);
     sensilog->setDefault((double)defSpot->sensilog);
     baselog->setDefault((double)defSpot->baselog);
+    strlog->setDefault(defSpot->strlog);
+    anglog->setDefault(defSpot->anglog);
 
     // Set default edited states for adjusters and threshold adjusters
     if (!pedited) {
@@ -9333,6 +9356,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         detail->setDefaultEditedState(Irrelevant);
         sensilog->setDefaultEditedState(Irrelevant);
         baselog->setDefaultEditedState(Irrelevant);
+        strlog->setDefaultEditedState(Irrelevant);
+        anglog->setDefaultEditedState(Irrelevant);
 
     } else {
         const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
@@ -9585,6 +9610,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         detail->setDefaultEditedState(defSpotState->detail ? Edited : UnEdited);
         sensilog->setDefaultEditedState(defSpotState->sensilog ? Edited : UnEdited);
         baselog->setDefaultEditedState(defSpotState->baselog ? Edited : UnEdited);
+        strlog->setDefaultEditedState(defSpotState->strlog ? Edited : UnEdited);
+        anglog->setDefaultEditedState(defSpotState->anglog ? Edited : UnEdited);
 
     }
 }
@@ -11046,6 +11073,18 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == strlog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrlog, strlog->getTextValue());
+            }
+        }
+
+        if (a == anglog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabanglog, anglog->getTextValue());
+            }
+        }
+
     }
 
 }
@@ -11319,6 +11358,8 @@ void Locallab::setBatchMode(bool batchMode)
     detail->showEditedCB();
     sensilog->showEditedCB();
     baselog->showEditedCB();
+    strlog->showEditedCB();
+    anglog->showEditedCB();
 
 
     // Set batch mode for comboBoxText
@@ -12485,6 +12526,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         detail->setValue(pp->locallab.spots.at(index).detail);
         sensilog->setValue(pp->locallab.spots.at(index).sensilog);
         baselog->setValue(pp->locallab.spots.at(index).baselog);
+        strlog->setValue(pp->locallab.spots.at(index).strlog);
+        anglog->setValue(pp->locallab.spots.at(index).anglog);
 
         if (pedited) {
             if (index < (int)pedited->locallab.spots.size()) {
@@ -12962,6 +13005,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 detail->setEditedState(spotState->detail ? Edited : UnEdited);
                 sensilog->setEditedState(spotState->sensilog ? Edited : UnEdited);
                 baselog->setEditedState(spotState->baselog ? Edited : UnEdited);
+                strlog->setEditedState(spotState->strlog ? Edited : UnEdited);
+                anglog->setEditedState(spotState->anglog ? Edited : UnEdited);
 
             }
         }

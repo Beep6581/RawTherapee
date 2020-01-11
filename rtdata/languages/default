@@ -1128,6 +1128,8 @@ HISTORY_MSG_888;Local - Contrast Wavelet Balance Threshold
 HISTORY_MSG_889;Local - Contrast Wavelet Graduated Strength
 HISTORY_MSG_890;Local - Contrast Wavelet Graduated angle
 HISTORY_MSG_891;Local - Contrast Wavelet Graduated
+HISTORY_MSG_892;Local - Encoding log Graduated Strength
+HISTORY_MSG_893;Local - Encoding log Graduated angle
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2352,6 +2354,7 @@ TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees : -180 0 +180
 TP_LOCALLAB_GRADFRA;Graduated Filter
 TP_LOCALLAB_GRADGEN_TOOLTIP;Graduated filter is supplied with Color and Light & merge file, Exposure & mask, Shadows Highlight, Vibrance.\n\nVibrance, Color and Light & merge file, are provided with GF luminance, chrominance, Hue.\nFeather is located in settings. 
+TP_LOCALLAB_GRADLOGFRA;Graduated Filter Luminance
 TP_LOCALLAB_GRADSTR;Gradient strength
 TP_LOCALLAB_GRADSTRAB_TOOLTIP;Filter chroma strength
 TP_LOCALLAB_GRADSTRCHRO;Gradient strength Chrominance

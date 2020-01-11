@@ -2815,7 +2815,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     whiteEv(10.0),
     detail(0.6),
     sensilog(50),
-    baselog(2.)
+    baselog(2.),
+    strlog(0.0),
+    anglog(0.0)
 
 {
 }
@@ -3241,7 +3243,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && whiteEv == other.whiteEv
         && detail == other.detail
         && sensilog == other.sensilog
-        && baselog == other.baselog;
+        && baselog == other.baselog
+        && strlog == other.strlog
+        && anglog == other.anglog;
 
 }
 
@@ -4638,6 +4642,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detail, "Locallab", "Detail_" + std::to_string(i), spot.detail, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilog, "Locallab", "Sensilog_" + std::to_string(i), spot.sensilog, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).baselog, "Locallab", "Baselog_" + std::to_string(i), spot.baselog, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strlog, "Locallab", "Strlog_" + std::to_string(i), spot.strlog, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).anglog, "Locallab", "Anglog_" + std::to_string(i), spot.anglog, keyFile);
 
             }
         }
@@ -6203,6 +6209,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Detail_" + std::to_string(i), pedited, spot.detail, spotEdited.detail);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilog_" + std::to_string(i), pedited, spot.sensilog, spotEdited.sensilog);
                 assignFromKeyfile(keyFile, "Locallab", "Baselog_" + std::to_string(i), pedited, spot.baselog, spotEdited.baselog);
+                assignFromKeyfile(keyFile, "Locallab", "Strlog_" + std::to_string(i), pedited, spot.strlog, spotEdited.strlog);
+                assignFromKeyfile(keyFile, "Locallab", "Anglog_" + std::to_string(i), pedited, spot.anglog, spotEdited.anglog);
 
 
                 locallab.spots.at(i) = spot;

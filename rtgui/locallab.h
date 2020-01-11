@@ -425,6 +425,8 @@ private:
     Adjuster* const detail;
     Adjuster* const sensilog;
     Adjuster* const baselog;
+    Adjuster* const strlog;
+    Adjuster* const anglog;
 
     // ButtonCheck widgets
     // Color & Light
@@ -628,6 +630,7 @@ private:
     Gtk::Frame* const grainFrame;
     Gtk::Frame* const logFrame;
     Gtk::Frame* const logPFrame;
+    Gtk::Frame* const gradlogFrame;
     ToolParamBlock* const retiBox;
     ToolParamBlock* const maskretiBox;
     ToolParamBlock* const mask7;
