@@ -1006,11 +1006,6 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
         calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
     }
 
-    const std::array<const float* const*, 3> chOrig = {
-        original->r.ptrs,
-        original->g.ptrs,
-        original->b.ptrs
-    };
     const std::array<float* const*, 3> chTrans = {
         transformed->r.ptrs,
         transformed->g.ptrs,
@@ -1068,6 +1063,13 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             logEncode(original, original, multiThread);
         }
     }
+
+    const std::array<const float* const*, 3> chOrig = {
+        original->r.ptrs,
+        original->g.ptrs,
+        original->b.ptrs
+    };
+
     // main cycle
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
