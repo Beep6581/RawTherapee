@@ -26,7 +26,7 @@
 #include "procparams.h"
 #include "color.h"
 #include "rt_algo.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "opthelper.h"
 #include "../rtgui/multilangmgr.h"
