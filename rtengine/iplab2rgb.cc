@@ -38,14 +38,8 @@ namespace {
 
 inline void copyAndClampLine(const float *src, unsigned char *dst, const int W)
 {
-    for (int j = 0, iy = 0; j < W; ++j) {
-        float r = src[iy] * MAXVALF;
-        float g = src[iy+1] * MAXVALF;
-        float b = src[iy+2] * MAXVALF;
-        dst[iy] = uint16ToUint8Rounded(CLIP(r));
-        dst[iy+1] = uint16ToUint8Rounded(CLIP(g));
-        dst[iy+2] = uint16ToUint8Rounded(CLIP(b));
-        iy += 3;
+    for (int j = 0; j < W * 3; ++j) {
+        dst[j] = uint16ToUint8Rounded(CLIP(src[j] * MAXVALF));
     }
 }
 
@@ -90,8 +84,8 @@ void ImProcFunctions::lab2monitorRgb(LabImage* lab, Image8* image)
 {
     if (monitorTransform) {
 
-        int W = lab->W;
-        int H = lab->H;
+        const int W = lab->W;
+        const int H = lab->H;
         unsigned char * data = image->data;
 
         // cmsDoTransform is relatively expensive
@@ -100,18 +94,19 @@ void ImProcFunctions::lab2monitorRgb(LabImage* lab, Image8* image)
 #endif
         {
             AlignedBuffer<float> pBuf(3 * lab->W);
-            AlignedBuffer<float> mBuf(3 * lab->W);
 
+            AlignedBuffer<float> mBuf;
             AlignedBuffer<float> gwBuf1;
             AlignedBuffer<float> gwBuf2;
 
             if (gamutWarning) {
                 gwBuf1.resize(3 * lab->W);
                 gwBuf2.resize(3 * lab->W);
+                mBuf.resize(3 * lab->W);
             }
 
             float *buffer = pBuf.data;
-            float *outbuffer = mBuf.data;
+            float *outbuffer = gamutWarning ? mBuf.data : pBuf.data; // make in place transformations when gamutWarning is not needed
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -132,7 +127,7 @@ void ImProcFunctions::lab2monitorRgb(LabImage* lab, Image8* image)
                     buffer[iy++] = rb[j] / 327.68f;
                 }
 
-                cmsDoTransform (monitorTransform, buffer, outbuffer, W);
+                cmsDoTransform(monitorTransform, buffer, outbuffer, W);
                 copyAndClampLine(outbuffer, data + ix, W);
 
                 if (gamutWarning) {
