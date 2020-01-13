@@ -131,6 +131,11 @@ inline void gauss3x3div (float** RESTRICT src, float** RESTRICT dst, float** RES
     const float c00 = kernel[1][1];
 
     for (int i = 1; i < tileSize - 1; i++) {
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
         for (int j = 1; j < tileSize - 1; j++) {
             const float val = c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + 
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) + 
@@ -151,6 +156,11 @@ inline void gauss5x5div (float** RESTRICT src, float** RESTRICT dst, float** RES
 
     for (int i = 2; i < tileSize - 2; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
         for (int j = 2; j < tileSize - 2; ++j) {
             const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
@@ -177,6 +187,11 @@ inline void gauss7x7div(float** RESTRICT src, float** RESTRICT dst, float** REST
 
     for (int i = 3; i < tileSize - 3; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
         for (int j = 3; j < tileSize - 3; ++j) {
             const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
                               c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
@@ -199,6 +214,11 @@ inline void gauss3x3mult(float** RESTRICT src, float** RESTRICT dst, const int t
     const float c00 = kernel[1][1];
 
     for (int i = 1; i < tileSize - 1; i++) {
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
         for (int j = 1; j < tileSize - 1; j++) {
             const float val = c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + 
                               c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) + 
@@ -220,6 +240,11 @@ inline void gauss5x5mult (float** RESTRICT src, float** RESTRICT dst, const int 
 
     for (int i = 2; i < tileSize - 2; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
         for (int j = 2; j < tileSize - 2; ++j) {
             const float val = c21 * ((src[i - 2][j - 1] + src[i - 2][j + 1]) + (src[i - 1][j - 2] + src[i - 1][j + 2]) + (src[i + 1][j - 2] + src[i + 1][j + 2]) + (src[i + 2][j - 1] + src[i + 2][j + 1])) +
                               c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
@@ -246,6 +271,11 @@ inline void gauss7x7mult(float** RESTRICT src, float** RESTRICT dst, const int t
 
     for (int i = 3; i < tileSize - 3; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
+#endif
         for (int j = 3; j < tileSize - 3; ++j) {
             const float val = c31 * ((src[i - 3][j - 1] + src[i - 3][j + 1]) + (src[i - 1][j - 3] + src[i - 1][j + 3]) + (src[i + 1][j - 3] + src[i + 1][j + 3]) + (src[i + 3][j - 1] + src[i + 3][j + 1])) +
                               c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
@@ -495,28 +525,25 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
 
 bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int border)
 {
-    bool stopped = false;
-    for (int ii = border; !stopped && ii < fullTileSize - border; ++ii) {
+    for (int ii = border; ii < fullTileSize - border; ++ii) {
 #ifdef __SSE2__
         for (int jj = border; jj < fullTileSize - border; jj += 4) {
-            if (_mm_movemask_ps((vfloat)vmaskf_lt(LVFU(tmpIThr[ii][jj]), LVFU(iterCheck[ii - border][jj - border])))) {
-                stopped = true;
-                break;
+            if (UNLIKELY(_mm_movemask_ps((vfloat)vmaskf_lt(LVFU(tmpIThr[ii][jj]), LVFU(iterCheck[ii - border][jj - border]))))) {
+                return true;
             }
         }
 #else
         for (int jj = border; jj < fullTileSize - border; ++jj) {
             if (tmpIThr[ii][jj] < iterCheck[ii - border][jj - border]) {
-                stopped = true;
-                break;
+                return true;
             }
         }
 #endif
     }
-    return stopped;
+    return false;
 }
 
-void CaptureDeconvSharpening (float ** clipmask, float** luminance, float** oldLuminance, const float * const * blend, int W, int H, double sigma, double sigmaCornerOffset, int iterations, bool checkIterStop, rtengine::ProgressListener* plistener, double startVal, double endVal)
+void CaptureDeconvSharpening (float** luminance, const float* const * oldLuminance, const float * const * blend, int W, int H, double sigma, double sigmaCornerOffset, int iterations, bool checkIterStop, rtengine::ProgressListener* plistener, double startVal, double endVal)
 {
 BENCHFUN
     const bool is5x5 = (sigma <= 0.84 && sigmaCornerOffset == 0.0);
@@ -541,6 +568,7 @@ BENCHFUN
 
     double progress = startVal;
     const double progressStep = (endVal - startVal) * rtengine::SQR(tileSize) / (W * H);
+
     constexpr float minBlend = 0.01f;
 
 #ifdef _OPENMP
@@ -567,14 +595,14 @@ BENCHFUN
                     if (checkIterStop) {
                         for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
                             for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
-                                iterCheck[k][l] = oldLuminance[ii][jj] * clipmask[ii][jj] * 0.5f;
-                                maxVal = std::max(maxVal, clipmask[ii][jj]);
+                                iterCheck[k][l] = oldLuminance[ii][jj] * blend[ii][jj] * 0.5f;
+                                maxVal = std::max(maxVal, blend[ii][jj]);
                             }
                         }
                     } else {
                         for (int k = 0, ii = endOfCol ? H - fullTileSize + border : i; k < tileSize; ++k, ++ii) {
                             for (int l = 0, jj = endOfRow ? W - fullTileSize + border : j; l < tileSize; ++l, ++jj) {
-                                maxVal = std::max(maxVal, clipmask[ii][jj]);
+                                maxVal = std::max(maxVal, blend[ii][jj]);
                             }
                         }
                     }
@@ -593,14 +621,14 @@ BENCHFUN
                     if (checkIterStop) {
                         for (int ii = 0; ii < tileSize; ++ii) {
                             for (int jj = 0; jj < tileSize; ++jj) {
-                                iterCheck[ii][jj] = oldLuminance[i + ii][j + jj] * clipmask[i + ii][j + jj] * 0.5f;
-                                maxVal = std::max(maxVal, clipmask[i + ii][j + jj]);
+                                iterCheck[ii][jj] = oldLuminance[i + ii][j + jj] * blend[i + ii][j + jj] * 0.5f;
+                                maxVal = std::max(maxVal, blend[i + ii][j + jj]);
                             }
                         }
                     } else {
                         for (int ii = 0; ii < tileSize; ++ii) {
                             for (int jj = 0; jj < tileSize; ++jj) {
-                                maxVal = std::max(maxVal, clipmask[i + ii][j + jj]);
+                                maxVal = std::max(maxVal, blend[i + ii][j + jj]);
                             }
                         }
                     }
@@ -615,23 +643,22 @@ BENCHFUN
                         }
                     }
                 }
-                bool stopped = false;
                 if (is3x3) {
-                    for (int k = 0; k < iterations && !stopped; ++k) {
+                    for (int k = 0; k < iterations; ++k) {
                         // apply 3x3 gaussian blur and divide luminance by result of gaussian blur
                         gauss3x3div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel3);
                         gauss3x3mult(tmpThr, tmpIThr, fullTileSize, kernel3);
-                        if (checkIterStop) {
-                            stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                        if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                            break;
                         }
                     }
                 } else if (is5x5) {
-                    for (int k = 0; k < iterations && !stopped; ++k) {
+                    for (int k = 0; k < iterations; ++k) {
                         // apply 5x5 gaussian blur and divide luminance by result of gaussian blur
                         gauss5x5div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel5);
                         gauss5x5mult(tmpThr, tmpIThr, fullTileSize, kernel5);
-                        if (checkIterStop) {
-                            stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                        if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                            break;
                         }
                     }
                 } else {
@@ -642,34 +669,34 @@ BENCHFUN
                             if (sigmaTile > 0.84) { // have to use 7x7 kernel
                                 float lkernel7[7][7];
                                 compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
-                                for (int k = 0; k < iterations && !stopped; ++k) {
+                                for (int k = 0; k < iterations; ++k) {
                                     // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                                     gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
                                     gauss7x7mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
-                                    if (checkIterStop) {
-                                        stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                                    if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                                        break;
                                     }
                                 }
                             } else { // can use 5x5 kernel
-                                float lkernel7[5][5];
-                                compute5x5kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
-                                for (int k = 0; k < iterations && !stopped; ++k) {
+                                float lkernel5[5][5];
+                                compute5x5kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel5);
+                                for (int k = 0; k < iterations; ++k) {
                                     // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
-                                    gauss5x5div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel7);
-                                    gauss5x5mult(tmpThr, tmpIThr, fullTileSize, lkernel7);
-                                    if (checkIterStop) {
-                                        stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                                    gauss5x5div(tmpIThr, tmpThr, lumThr, fullTileSize, lkernel5);
+                                    gauss5x5mult(tmpThr, tmpIThr, fullTileSize, lkernel5);
+                                    if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                                        break;
                                     }
                                 }
                             }
                         }
                     } else {
-                        for (int k = 0; k < iterations && !stopped; ++k) {
+                        for (int k = 0; k < iterations; ++k) {
                             // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
                             gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, kernel7);
                             gauss7x7mult(tmpThr, tmpIThr, fullTileSize, kernel7);
-                            if (checkIterStop) {
-                                stopped = checkForStop(tmpIThr, iterCheck, fullTileSize, border);
+                            if (checkIterStop && k < iterations - 1 && checkForStop(tmpIThr, iterCheck, fullTileSize, border)) {
+                                break;
                             }
                         }
                     }
@@ -689,12 +716,12 @@ BENCHFUN
                     }
                 }
                 if (plistener) {
-                    if (++progresscounter % 16 == 0) {
+                    if (++progresscounter % 32 == 0) {
 #ifdef _OPENMP
                         #pragma omp critical(csprogress)
 #endif
                         {
-                            progress += 16.0 * progressStep;
+                            progress += 32.0 * progressStep;
                             progress = rtengine::min(progress, endVal);
                             plistener->setProgress(progress);
                         }
@@ -721,6 +748,7 @@ void RawImageSource::captureSharpening(const procparams::CaptureSharpeningParams
         plistener->setProgress(0.0);
     }
 BENCHFUN
+
     constexpr float xyz_rgb[3][3] = {          // XYZ from RGB
                                     { 0.412453, 0.357580, 0.180423 },
                                     { 0.212671, 0.715160, 0.072169 },
@@ -799,8 +827,7 @@ BENCHFUN
             plistener->setProgress(0.1);
         }
 
-        array2D<float>& blend = red; // red will be overridden anyway => we can use its buffer to store the blend mask
-        buildBlendMask(L, blend, W, H, contrast, sharpeningParams.autoContrast, clipMask);
+        buildBlendMask(L, clipMask, W, H, contrast, sharpeningParams.autoContrast, clipMask);
         if (plistener) {
             plistener->setProgress(0.2);
         }
@@ -810,7 +837,7 @@ BENCHFUN
 #endif
         for (int i = 0; i < H; ++i) {
             for (int j = 0; j < W; ++j) {
-                red[i][j] = green[i][j] = blue[i][j] = blend[i][j] * 16384.f;
+                red[i][j] = green[i][j] = blue[i][j] = clipMask[i][j] * 16384.f;
             }
         }
         if (plistener) {
@@ -847,18 +874,18 @@ BENCHFUN
     if (plistener) {
         plistener->setProgress(0.1);
     }
+
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
-    array2D<float>& blend = clipMask; // we can share blend and clipMask buffer here
-    buildBlendMask(L, blend, W, H, contrast, sharpeningParams.autoContrast, clipMask);
+    buildBlendMask(L, clipMask, W, H, contrast, sharpeningParams.autoContrast, clipMask);
     if (plistener) {
         plistener->setProgress(0.2);
     }
     conrastThreshold = contrast * 100.f;
-
-    CaptureDeconvSharpening(clipMask, YNew, YOld, blend, W, H, radius, sharpeningParams.deconvradiusOffset, sharpeningParams.deconviter, sharpeningParams.deconvitercheck, plistener, 0.2, 0.9);
+    CaptureDeconvSharpening(YNew, YOld, clipMask, W, H, radius, sharpeningParams.deconvradiusOffset, sharpeningParams.deconviter, sharpeningParams.deconvitercheck, plistener, 0.2, 0.9);
     if (plistener) {
         plistener->setProgress(0.9);
     }
+
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
@@ -866,7 +893,7 @@ BENCHFUN
         int j = 0;
 #ifdef __SSE2__
         for (; j < W - 3; j += 4) {
-            const vfloat factor = vmaxf(LVFU(YNew[i][j]), ZEROV) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f));
+            const vfloat factor = LVFU(YNew[i][j]) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f));
             STVFU(red[i][j], LVFU(redVals[i][j]) * factor);
             STVFU(green[i][j], LVFU(greenVals[i][j]) * factor);
             STVFU(blue[i][j], LVFU(blueVals[i][j]) * factor);
@@ -874,7 +901,7 @@ BENCHFUN
 
 #endif
         for (; j < W; ++j) {
-            const float factor = std::max(YNew[i][j], 0.f) / std::max(YOld[i][j], 0.00001f);
+            const float factor = YNew[i][j] / std::max(YOld[i][j], 0.00001f);
             red[i][j] = redVals[i][j] * factor;
             green[i][j] = greenVals[i][j] * factor;
             blue[i][j] = blueVals[i][j] * factor;
