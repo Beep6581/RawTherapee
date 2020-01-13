@@ -551,7 +551,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         oprevi = orig_prev;
 
         // Remove transformation if unneeded
-        bool needstransform = ipf.needsTransform();
+        bool needstransform = ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData());
 
         if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled))) {
             assert(oprevi);
@@ -1565,7 +1565,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw);
     ImProcFunctions ipf(&ppar, true);
 
-    if (ipf.needsTransform()) {
+    if (ipf.needsTransform(fW, fH, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {
         Imagefloat* trImg = new Imagefloat(fW, fH);
         ipf.transform(im, trImg, 0, 0, 0, 0, fW, fH, fW, fH,
                       imgsrc->getMetaData(), imgsrc->getRotateDegree(), true);

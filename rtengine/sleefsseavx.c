@@ -1253,6 +1253,30 @@ static INLINE vfloat xlogf(vfloat d) {
     return x;
 }
 
+static INLINE vfloat xlogf1(vfloat d) { // does xlogf(vmaxf(d, 1.f)) but faster
+    vfloat x, x2, t, m;
+    vint2 e;
+
+    e = vilogbp1f(vmulf(d, vcast_vf_f(0.7071f)));
+    m = vldexpf(d, vsubi2(vcast_vi2_i(0), e));
+
+    x = vdivf(vaddf(vcast_vf_f(-1.0f), m), vaddf(vcast_vf_f(1.0f), m));
+    x2 = vmulf(x, x);
+
+    t = vcast_vf_f(0.2371599674224853515625f);
+    t = vmlaf(t, x2, vcast_vf_f(0.285279005765914916992188f));
+    t = vmlaf(t, x2, vcast_vf_f(0.400005519390106201171875f));
+    t = vmlaf(t, x2, vcast_vf_f(0.666666567325592041015625f));
+    t = vmlaf(t, x2, vcast_vf_f(2.0f));
+
+    x = vaddf(vmulf(x, t), vmulf(vcast_vf_f(0.693147180559945286226764f), vcast_vf_vi2(e)));
+
+    x = vself(vmaskf_ispinf(d), vcast_vf_f(INFINITYf), x);
+    x = vselfnotzero(vmaskf_le(d, vcast_vf_f(1.f)), x);
+
+    return x;
+}
+
 static INLINE vfloat xlogf0(vfloat d) {
     vfloat x, x2, t, m;
     vint2 e;
