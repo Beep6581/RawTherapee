@@ -1903,7 +1903,7 @@ pe(nullptr)
     ToolParamBlock* const gammBox = Gtk::manage(new ToolParamBlock());
     gammBox->pack_start(*gamSH);
     gammBox->pack_start(*sloSH);
-//    gamFrame->add(*gammBox);
+    gamFrame->add(*gammBox);
 
     setExpandAlignProperties(exptrcsh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     exptrcsh->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), exptrcsh));
@@ -1924,9 +1924,10 @@ pe(nullptr)
     expgradsh->add(*gradSHBox, false);
 
     shadhighBox->pack_start(*detailSH);
+    shadhighBox->pack_start(*gamFrame);
 
     if (complexsoft < 2) {
- //       shadhighBox->pack_start(*gamFrame);
+     //   shadhighBox->pack_start(*gamFrame);
         shadhighBox->pack_start(*exptrcsh);
     }
 
@@ -3406,9 +3407,9 @@ pe(nullptr)
     expcbdl->add(*cbdlBox, false);
     expcbdl->setLevel(2);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         panel->pack_start(*expcbdl, false, false);
-    }
+//    }
 
     // Blur & Noise
     Gtk::HBox* const BLTitleHBox = Gtk::manage(new Gtk::HBox());
@@ -3776,9 +3777,9 @@ pe(nullptr)
     expdenoi->add(*denoisBox, false);
     expdenoi->setLevel(2);
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         panel->pack_start(*expdenoi, false, false);
-    }
+//    }
 
     // log encoding
     explog->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), explog));
@@ -12087,8 +12088,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         if (complexsoft == 2) {
             gammaskSH->setValue(1);
             slomaskSH->setValue(0);
-            strSH->setValue(0);
-            angSH->setValue(0);
+           // strSH->setValue(0);
+           // angSH->setValue(0);
         }
 
         if (complexsoft > 0) {
@@ -12474,13 +12475,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         LLmaskcbshape->setCurve(pp->locallab.spots.at(index).LLmaskcbcurve);
         HHmaskcbshape->setCurve(pp->locallab.spots.at(index).HHmaskcbcurve);
         Lmaskcbshape->setCurve(pp->locallab.spots.at(index).Lmaskcbcurve);
-
+/*
         if (complexsoft == 2) {
             for (int i = 0; i < 6; i++) {
                 multiplier[i]->setValue(1.0);
             }
         }
-
+*/
         if (complexsoft > 0) {
             lapmaskcb->setValue(0);
         }
@@ -12501,7 +12502,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         sensiden->setValue(pp->locallab.spots.at(index).sensiden);
         detailthr->setValue(pp->locallab.spots.at(index).detailthr);
         wavshapeden->setCurve(pp->locallab.spots.at(index).locwavcurveden);
-
+/*
         if (complexsoft == 2) {
             noiselumf->setValue(0);
             noiselumf0->setValue(0);
@@ -12511,7 +12512,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             noisechroc->setValue(0);
             bilateral->setValue(0);
         }
-
+*/
         //log encoding
         explog->setEnabled(pp->locallab.spots.at(index).explog);
         autocompute->set_active(pp->locallab.spots.at(index).autocompute);
