@@ -1909,7 +1909,7 @@ pe(nullptr)
     exptrcsh->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), exptrcsh));
     exptrcsh->setLevel(2);
 
-    exptrcsh->add(*gammBox, false);
+//    exptrcsh->add(*gammBox, false);
 
 //    gradSHFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradSHBox = Gtk::manage(new ToolParamBlock());
@@ -1924,11 +1924,11 @@ pe(nullptr)
     expgradsh->add(*gradSHBox, false);
 
     shadhighBox->pack_start(*detailSH);
-    shadhighBox->pack_start(*gamFrame);
+ //   shadhighBox->pack_start(*gamFrame);
 
     if (complexsoft < 2) {
      //   shadhighBox->pack_start(*gamFrame);
-        shadhighBox->pack_start(*exptrcsh);
+    //    shadhighBox->pack_start(*exptrcsh);
     }
 
     shadhighBox->pack_start(*highlights);
@@ -1941,6 +1941,7 @@ pe(nullptr)
     if (complexsoft < 2) {
         shadhighBox->pack_start(*blurSHde);
     }
+    shadhighBox->pack_start(*gamFrame);
 
 //    shadhighBox->pack_start(*gradSHFrame);
     shadhighBox->pack_start(*expgradsh);
@@ -7299,7 +7300,7 @@ void Locallab::shMethodChanged()
         }
 
         detailSH->hide();
-        gamFrame->hide();
+//        gamFrame->hide();
         highlights->show();
         h_tonalwidth->show();
         shadows->show();
@@ -7312,7 +7313,7 @@ void Locallab::shMethodChanged()
         }
 
         detailSH->show();
-        gamFrame->show();
+//        gamFrame->show();
         highlights->hide();
         h_tonalwidth->hide();
         shadows->hide();
@@ -13270,7 +13271,7 @@ void Locallab::updateSpecificGUIState()
             expgradsh->hide();
 
             detailSH->hide();
-            gamFrame->hide();
+ //           gamFrame->hide();
             highlights->show();
             h_tonalwidth->show();
             shadows->show();
@@ -13281,7 +13282,7 @@ void Locallab::updateSpecificGUIState()
                 multipliersh[i]->show();
             }
 
-            gamFrame->show();
+//            gamFrame->show();
             expgradsh->hide();
 
             detailSH->show();
@@ -13357,7 +13358,7 @@ void Locallab::updateSpecificGUIState()
         }
 
         detailSH->hide();
-        gamFrame->hide();
+//        gamFrame->hide();
         highlights->show();
         h_tonalwidth->show();
         shadows->show();
@@ -13369,7 +13370,7 @@ void Locallab::updateSpecificGUIState()
         }
 
         detailSH->show();
-        gamFrame->show();
+//        gamFrame->show();
         highlights->hide();
         h_tonalwidth->hide();
         shadows->hide();

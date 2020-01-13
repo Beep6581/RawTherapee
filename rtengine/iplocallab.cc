@@ -615,6 +615,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.enavibMask = locallab.spots.at(sp).enavibMask && llvibMask == 0 && lllcMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llSHMask == 0;
     lp.enalcMask = locallab.spots.at(sp).enalcMask && lllcMask == 0 && llcbMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0  && llblMask == 0 && llvibMask == 0;
 
+  //  printf("llColorMask=%i lllcMask=%i llExpMask=%i  llSHMask=%i llcbMask=%i llretiMask=%i lltmMask=%i llblMask=%i llvibMask=%i\n", llColorMask, lllcMask, llExpMask, llSHMask, llcbMask, llretiMask, lltmMask, llblMask, llvibMask);
     if (locallab.spots.at(sp).softMethod == "soft") {
         lp.softmet = 0;
     } else if (locallab.spots.at(sp).softMethod == "reti") {
@@ -7269,7 +7270,7 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
 
                     //  float thresref = mean[level];
                     //  float thresreal = 0.1f * thres * thresref;//small values to take into account noise and artifacts
-                    printf("mean=%f level=%i\n", mean[level], level);
+                    //printf("mean=%f level=%i\n", mean[level], level);
 
                     Compresslevels(templevel[dir - 1][level], W_L, H_L, compression, detailattenuator, thres,  mean[level], MaxP[level], meanN[level], MaxN[level], madL[level][dir - 1]);
                 }
