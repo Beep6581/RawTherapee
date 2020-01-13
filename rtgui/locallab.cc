@@ -7156,6 +7156,9 @@ void Locallab::showmaskcolMethodChanged()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasklcMethod->set_active(0);
+    showmaskcbMethod->set_active(0);
+    
     enableListener();
 
     if (listener) {
@@ -7375,6 +7378,7 @@ void Locallab::showmaskvibMethodChanged()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmaskvibMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7389,6 +7393,7 @@ void Locallab::showmaskSHMethodChangedinv()
     // When one mask state is changed, other masks are deactivated
     disableListener();
     showmaskexpMethodinv->set_active(0);
+    showmaskSHMethod->set_active(0);
     showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskexpMethod->set_active(0);
@@ -7501,6 +7506,7 @@ void Locallab::showmasktmMethodChanged()
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
+    showmaskblMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7526,6 +7532,7 @@ void Locallab::showmaskretiMethodChanged()
     showmaskcbMethod->set_active(0);
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
+    showmaskblMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7550,6 +7557,7 @@ void Locallab::showmasksoftMethodChanged()
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasktmMethod->set_active(0);
+    showmaskblMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7574,6 +7582,7 @@ void Locallab::resetMaskVisibility()
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
+    showmaskblMethod->set_active(0);
     enableListener();
 }
 
