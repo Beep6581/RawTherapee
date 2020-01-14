@@ -197,6 +197,7 @@ struct local_params {
     float iterat;
     float balance;
     float balanceh;
+    int colorde;
     int cir;
     float thr;
     float stru;
@@ -542,6 +543,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float iterati = (float) locallab.spots.at(sp).iter;
     float balanc = (float) locallab.spots.at(sp).balan;
     float balanch = (float) locallab.spots.at(sp).balanh;
+    int colorde = (int) locallab.spots.at(sp).colorde;
 
     if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
         iterati = 2.f;
@@ -1081,6 +1083,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.iterat = iterati;
     lp.balance = balanc;
     lp.balanceh = balanch;
+    lp.colorde = colorde;
     lp.dxx = w * local_dxy;
     lp.dyy = h * local_dxy;
     lp.thr = thre;
@@ -6470,7 +6473,11 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     clb = bufexpfin->b[y][x] - original->b[y + ystart][x + xstart];
                 }
 
-                const float previewint = settings->previewselection;
+               // const float previewint = settings->previewselection;
+                if(lp.colorde == 0) {
+                    lp.colorde = -1;//to avoid black
+                }
+
                 const float realstrdE = reducdE * cli;
                 const float realstradE = reducdE * cla;
                 const float realstrbdE = reducdE * clb;
@@ -6499,16 +6506,9 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         transformed->a[y + ystart][x + xstart] = CLIPC(difa);
                         transformed->b[y + ystart][x + xstart] = CLIPC(difb);
                     } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc) {//show deltaE
-                        if (fabs(difb) < 500.f) {//if too low to be view use L
-                            if (difb < 0.f) {
-                                difb -= 0.5f * diflc;
-                            } else {
-                                difb += 0.5f * diflc;
-                            }
-                        }
-
+                        difb = reducdE * 20000.f * lp.colorde;
                         transformed->a[y + ystart][x + xstart] = 0.f;
-                        transformed->b[y + ystart][x + xstart] = (previewint * difb);
+                        transformed->b[y + ystart][x + xstart] = difb;
                     }
                 }
             }

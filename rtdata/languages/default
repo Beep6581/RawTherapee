@@ -1130,6 +1130,7 @@ HISTORY_MSG_890;Local - Contrast Wavelet Graduated angle
 HISTORY_MSG_891;Local - Contrast Wavelet Graduated
 HISTORY_MSG_892;Local - Encoding log Graduated Strength
 HISTORY_MSG_893;Local - Encoding log Graduated angle
+HISTORY_MSG_894;Local - Color Preview dE
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2259,6 +2260,7 @@ TP_LOCALLAB_CLIPTM;Clip Restored datas (gain)
 TP_LOCALLAB_COFR;Color & Light - Small defects
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
+TP_LOCALLAB_COLORDE;Color preview selection ΔE
 TP_LOCALLAB_COMPFRA;Levels Dynamic Laplacian Range Compression ƒ
 TP_LOCALLAB_COMPREFRA;Levels Dynamic Wavelet Range (un)Compression
 TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend & Soft Images' by adjusting 'Soft radius' to reduce artifacts.

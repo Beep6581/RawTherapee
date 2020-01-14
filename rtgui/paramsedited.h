@@ -409,6 +409,7 @@ public:
         bool iter;
         bool balan;
         bool balanh;
+        bool colorde;
         bool transitweak;
         bool transitgrad;
         bool avoid;

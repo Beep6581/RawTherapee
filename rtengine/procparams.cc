@@ -2439,6 +2439,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     iter(2.0),
     balan(1.0),
     balanh(1.0),
+    colorde(-5.0),
     transitweak(1.0),
     transitgrad(0.0),
     avoid(false),
@@ -2851,6 +2852,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && iter == other.iter
         && balan == other.balan
         && balanh == other.balanh
+        && colorde == other.colorde
         && transitweak == other.transitweak
         && transitgrad == other.transitgrad
         && avoid == other.avoid
@@ -4258,6 +4260,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).iter, "Locallab", "Iter_" + std::to_string(i), spot.iter, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).balan, "Locallab", "Balan_" + std::to_string(i), spot.balan, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).balanh, "Locallab", "Balanh_" + std::to_string(i), spot.balanh, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).colorde, "Locallab", "Colorde_" + std::to_string(i), spot.colorde, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).transitweak, "Locallab", "Transitweak_" + std::to_string(i), spot.transitweak, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).transitgrad, "Locallab", "Transitgrad_" + std::to_string(i), spot.transitgrad, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).avoid, "Locallab", "Avoid_" + std::to_string(i), spot.avoid, keyFile);
@@ -5779,6 +5782,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Iter_" + std::to_string(i), pedited, spot.iter, spotEdited.iter);
                 assignFromKeyfile(keyFile, "Locallab", "Balan_" + std::to_string(i), pedited, spot.balan, spotEdited.balan);
                 assignFromKeyfile(keyFile, "Locallab", "Balanh_" + std::to_string(i), pedited, spot.balanh, spotEdited.balanh);
+                assignFromKeyfile(keyFile, "Locallab", "Colorde_" + std::to_string(i), pedited, spot.colorde, spotEdited.colorde);
                 assignFromKeyfile(keyFile, "Locallab", "Transitweak_" + std::to_string(i), pedited, spot.transitweak, spotEdited.transitweak);
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + std::to_string(i), pedited, spot.transitgrad, spotEdited.transitgrad);
                 assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, spot.avoid, spotEdited.avoid);
