@@ -6507,7 +6507,13 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         transformed->b[y + ystart][x + xstart] = CLIPC(difb);
                     } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc) {//show deltaE
                         difb = reducdE * 10000.f * lp.colorde;
-                    
+                        float darklim = 5000.f;
+                        if(transformed->L[y + ystart][x + xstart] < darklim) {//enhance dark luminance as user can see!
+                            float dark = transformed->L[y + ystart][x + xstart];
+                            float aa = -1.f;
+                            float bb = darklim;
+                            transformed->L[y + ystart][x + xstart] = dark * aa + bb;
+                        }
                         if(lp.colorde <= 0) {
                             transformed->a[y + ystart][x + xstart] = 0.f;
                             transformed->b[y + ystart][x + xstart] = difb;
