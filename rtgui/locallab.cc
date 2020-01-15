@@ -7378,13 +7378,13 @@ void Locallab::showmaskvibMethodChanged()
     showmaskcolMethod->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskSHMethodinv->set_active(0);
+    showmaskSHMethod->set_active(0);
     showmasklcMethod->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
-    showmaskvibMethod->set_active(0);
     enableListener();
 
     if (listener) {
