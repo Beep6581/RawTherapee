@@ -188,6 +188,16 @@ public:
         }
     }
 
+    void fill(const T val, bool multiThread = false)
+    {
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
+        for (int i = 0; i < x * y; ++i) {
+            data[i] = val;
+        }
+    }
+
     void free()
     {
         if ((owner) && (data)) {
