@@ -99,31 +99,7 @@ void compute3x3kernel(float sigma, float kernel[3][3]) {
     }
 }
 
-inline void initTile(float** dst, const int tileSize)
-{
-
-    // first rows
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < tileSize; ++j) {
-            dst[i][j] = 1.f;
-        }
-    }
-
-    // left and right border
-    for (int i = 3; i < tileSize - 3; ++i) {
-        dst[i][0] = dst[i][1] = dst[i][2] = 1.f;
-        dst[i][tileSize - 3] = dst[i][tileSize - 2] = dst[i][tileSize - 1] = 1.f;
-    }
-
-    // last rows
-    for (int i = tileSize - 3 ; i < tileSize; ++i) {
-        for (int j = 0; j < tileSize; ++j) {
-            dst[i][j] = 1.f;
-        }
-    }
-}
-
-inline void gauss3x3div (float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[3][3])
+void gauss3x3div (float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[3][3])
 {
 
     const float c11 = kernel[0][0];
@@ -145,7 +121,7 @@ inline void gauss3x3div (float** RESTRICT src, float** RESTRICT dst, float** RES
     }
 }
 
-inline void gauss5x5div (float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[5][5])
+void gauss5x5div (float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[5][5])
 {
 
     const float c21 = kernel[0][1];
@@ -173,7 +149,7 @@ inline void gauss5x5div (float** RESTRICT src, float** RESTRICT dst, float** RES
     }
 }
 
-inline void gauss7x7div(float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[7][7])
+void gauss7x7div(float** RESTRICT src, float** RESTRICT dst, float** RESTRICT divBuffer, const int tileSize, const float kernel[7][7])
 {
 
     const float c31 = kernel[0][2];
@@ -207,7 +183,7 @@ inline void gauss7x7div(float** RESTRICT src, float** RESTRICT dst, float** REST
     }
 }
 
-inline void gauss3x3mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[3][3])
+void gauss3x3mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[3][3])
 {
     const float c11 = kernel[0][0];
     const float c10 = kernel[0][1];
@@ -229,7 +205,7 @@ inline void gauss3x3mult(float** RESTRICT src, float** RESTRICT dst, const int t
 
 }
 
-inline void gauss5x5mult (float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[5][5])
+void gauss5x5mult (float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[5][5])
 {
 
     const float c21 = kernel[0][1];
@@ -257,7 +233,7 @@ inline void gauss5x5mult (float** RESTRICT src, float** RESTRICT dst, const int 
     }
 }
 
-inline void gauss7x7mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[7][7])
+void gauss7x7mult(float** RESTRICT src, float** RESTRICT dst, const int tileSize, const float kernel[7][7])
 {
 
     const float c31 = kernel[0][2];
@@ -578,9 +554,9 @@ BENCHFUN
         int progresscounter = 0;
         array2D<float> tmpIThr(fullTileSize, fullTileSize);
         array2D<float> tmpThr(fullTileSize, fullTileSize);
+        tmpThr.fill(1.f);
         array2D<float> lumThr(fullTileSize, fullTileSize);
         array2D<float> iterCheck(tileSize, tileSize);
-        initTile(tmpThr, fullTileSize);
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16) collapse(2)
 #endif
@@ -705,13 +681,13 @@ BENCHFUN
                     // special handling for small tiles at end of row or column
                     for (int k = border, ii = endOfCol ? H - fullTileSize : i - border; k < fullTileSize - border; ++k) {
                         for (int l = border, jj = endOfRow ? W - fullTileSize : j - border; l < fullTileSize - border; ++l) {
-                            luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], std::max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
+                            luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], tmpIThr[k][l], luminance[ii + k][jj + l]);
                         }
                     }
                 } else {
                     for (int ii = border; ii < fullTileSize - border; ++ii) {
                         for (int jj = border; jj < fullTileSize - border; ++jj) {
-                            luminance[i + ii - border][j + jj - border] = rtengine::intp(blend[i + ii - border][j + jj - border], std::max(tmpIThr[ii][jj], 0.0f), luminance[i + ii - border][j + jj - border]);
+                            luminance[i + ii - border][j + jj - border] = rtengine::intp(blend[i + ii - border][j + jj - border], tmpIThr[ii][jj], luminance[i + ii - border][j + jj - border]);
                         }
                     }
                 }
