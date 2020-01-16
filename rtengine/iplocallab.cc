@@ -6501,10 +6501,12 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
-
-                        transformed->L[y + ystart][x + xstart] = CLIP(12000.f + diflc);
-                        transformed->a[y + ystart][x + xstart] = CLIPC(difa);
-                        transformed->b[y + ystart][x + xstart] = CLIPC(difb);
+                        
+                        float ampli = 1.f + fabs(lp.colorde);
+                        ampli = 2.f + 0.5f * (ampli - 2.f);
+                        transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
+                        transformed->a[y + ystart][x + xstart] = CLIPC(ampli * difa);
+                        transformed->b[y + ystart][x + xstart] = CLIPC(ampli * difb);
                     } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc) {//show deltaE
                         difb = reducdE * 10000.f * lp.colorde;
                         float darklim = 5000.f;

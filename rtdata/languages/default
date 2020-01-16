@@ -2260,7 +2260,7 @@ TP_LOCALLAB_CLIPTM;Clip Restored datas (gain)
 TP_LOCALLAB_COFR;Color & Light - Small defects
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
-TP_LOCALLAB_COLORDE;Color preview selection ΔE
+TP_LOCALLAB_COLORDE;Color preview selection ΔE - Intensity Show Modifications
 TP_LOCALLAB_COMPFRA;Levels Dynamic Laplacian Range Compression ƒ
 TP_LOCALLAB_COMPREFRA;Levels Dynamic Wavelet Range (un)Compression
 TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend & Soft Images' by adjusting 'Soft radius' to reduce artifacts.
