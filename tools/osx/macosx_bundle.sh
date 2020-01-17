@@ -93,7 +93,8 @@ PWD:                    ${PWD}
 __EOS__
 
 LOCAL_PREFIX="$(cmake .. -LA -N | grep "LOCAL_PREFIX" | cut -d "=" -f2)"
-
+EXPATLIB="$(cmake .. -LA -N | grep "pkgcfg_lib_EXPAT_expat" | cut -d "=" -f2)"
+ 
 APP="${PROJECT_NAME}.app"
 CONTENTS="${APP}/Contents"
 RESOURCES="${CONTENTS}/Resources"
@@ -165,7 +166,8 @@ ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
 cp ${LOCAL_PREFIX}/local/lib/libjpeg.*.dylib "${CONTENTS}/Frameworks"
 
 # Copy libexpat into the app bundle (which is keg-only)
-#cp ${LOCAL_PREFIX}/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"
+
+if [[ -d /usr/local/Cellar/expat ]]; then cp /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else cp "${EXPATLIB}" "${CONTENTS}/Frameworks"; fi
 
 # Copy libz into the app bundle
 cp /usr/lib/libz.1.dylib "${CONTENTS}/Frameworks"
