@@ -94,6 +94,7 @@ set(RTENGINESOURCEFILES
     ipretinex.cc
     ipshadowshighlights.cc
     ipsharpen.cc
+    ipsharpenedges.cc
     ipsoftlight.cc
     iptransform.cc
     ipvibrance.cc
