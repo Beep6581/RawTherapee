@@ -30,7 +30,7 @@
 #include "settings.h"
 #include "sleef.h"
 
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 using namespace std;
