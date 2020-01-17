@@ -20,7 +20,6 @@
 #pragma once
 
 #include <array>
-#include <glibmm/ustring.h>
 
 #include "rt_math.h"
 #include "LUT.h"
@@ -29,6 +28,13 @@
 #include "sleef.h"
 
 #define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {

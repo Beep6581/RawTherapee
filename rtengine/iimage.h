@@ -20,7 +20,6 @@
 
 #include <vector>
 
-#include <glibmm/ustring.h>
 #include <lcms2.h>
 
 #include "alignedbuffer.h"
@@ -40,6 +39,13 @@
 #define TR_ROT      3
 
 #define CHECK_BOUNDS 0
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {

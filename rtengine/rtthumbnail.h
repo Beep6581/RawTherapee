@@ -18,8 +18,6 @@
  */
 #pragma once
 
-#include <glibmm/ustring.h>
-
 #include <lcms2.h>
 
 #include "image16.h"
@@ -29,6 +27,13 @@
 #include "rawmetadatalocation.h"
 
 #include "../rtgui/threadutils.h"
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {

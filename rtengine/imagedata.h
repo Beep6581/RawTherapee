@@ -23,11 +23,17 @@
 #include <string>
 #include <vector>
 
-#include <glibmm/ustring.h>
 
 #include <libiptcdata/iptc-data.h>
 
 #include "imageio.h"
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtexif
 {
