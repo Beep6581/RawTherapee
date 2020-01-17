@@ -127,18 +127,18 @@ BENCHFUN
                     const float contrast = std::min(std::sqrt(SQR(L[offset + 1] - L[offset - 1]) + SQR(L[offset + width] - L[offset - width])) * chmax[c], 1.f);
 
                     // new possible values
-                    if (inintervall(L[offset], L[offset - 1], L[offset + 1])) {
+                    if (inintervall(v, L[offset - 1], L[offset + 1])) {
                         float f1 = fabs(L[offset - 2] - L[offset - 1]);
-                        float f2 = L[offset - 1] - L[offset];
+                        float f2 = L[offset - 1] - v;
                         float f3 = (L[offset - 1] - L[offset - width]) * (L[offset - 1] - L[offset + width]);
-                        float f4 = std::sqrt(fabs(L[offset - 1] - L[offset - width2]) * fabs(L[offset - 1] - L[offset + width2]));
-                        const float difL = f1 * SQR(f2) * SQR(f3) * f4;
+                        float f4 = std::sqrt(fabs((L[offset - 1] - L[offset - width2]) * (L[offset - 1] - L[offset + width2])));
+                        const float difL = f1 * SQR(f2 * f3) * f4;
                         if (difL > 0.f) {
                             f1 = fabs(L[offset + 2] - L[offset + 1]);
-                            f2 = L[offset + 1] - L[offset];
+                            f2 = L[offset + 1] - v;
                             f3 = (L[offset + 1] - L[offset - width]) * (L[offset + 1] - L[offset + width]);
-                            f4 = std::sqrt(fabs(L[offset + 1] - L[offset - width2]) * fabs(L[offset + 1] - L[offset + width2]));
-                            const float difR = f1 * SQR(f2) * SQR(f3) * f4;
+                            f4 = std::sqrt(fabs((L[offset + 1] - L[offset - width2]) * (L[offset + 1] - L[offset + width2])));
+                            const float difR = f1 * SQR(f2 * f3) * f4;
                             if (difR > 0.f) {
                                 lumH = (L[offset - 1] * difR + L[offset + 1] * difL) / (difL + difR);
                                 lumH = intp(contrast, lumH, v);
@@ -146,18 +146,18 @@ BENCHFUN
                         }
                     }
 
-                    if (inintervall(L[offset], L[offset - width], L[offset + width])) {
+                    if (inintervall(v, L[offset - width], L[offset + width])) {
                         float f1 = fabs(L[offset - width2] - L[offset - width]);
-                        float f2 = L[offset - width] - L[offset];
+                        float f2 = L[offset - width] - v;
                         float f3 = (L[offset - width] - L[offset - 1]) * (L[offset - width] - L[offset + 1]);
-                        float f4 = std::sqrt(fabs(L[offset - width] - L[offset - 2]) * fabs(L[offset - width] - L[offset + 2]));
-                        const float difT = f1 * SQR(f2) * SQR(f3) * f4;
+                        float f4 = std::sqrt(fabs((L[offset - width] - L[offset - 2]) * (L[offset - width] - L[offset + 2])));
+                        const float difT = f1 * SQR(f2 * f3) * f4;
                         if (difT > 0.f) {
                             f1 = fabs(L[offset + width2] - L[offset + width]);
-                            f2 = L[offset + width] - L[offset];
+                            f2 = L[offset + width] - v;
                             f3 = (L[offset + width] - L[offset - 1]) * (L[offset + width] - L[offset + 1]);
-                            f4 = std::sqrt(fabs(L[offset + width] - L[offset - 2]) * fabs(L[offset + width] - L[offset + 2]));
-                            const float difB = f1 * SQR(f2) * SQR(f3) * f4;
+                            f4 = std::sqrt(fabs((L[offset + width] - L[offset - 2]) * (L[offset + width] - L[offset + 2])));
+                            const float difB = f1 * SQR(f2 * f3) * f4;
                             if (difB > 0.f) {
                                 lumV = (L[offset - width] * difB + L[offset + width] * difT) / (difT + difB);
                                 lumV = intp(contrast, lumV, v);
@@ -165,18 +165,18 @@ BENCHFUN
                         }
                     }
 
-                    if (inintervall(L[offset], L[offset - 1 - width], L[offset + 1 + width])) {
+                    if (inintervall(v, L[offset - 1 - width], L[offset + 1 + width])) {
                         float f1 = fabs(L[offset - 2 - width2] - L[offset - 1 - width]);
-                        float f2 = L[offset - 1 - width] - L[offset];
+                        float f2 = L[offset - 1 - width] - v;
                         float f3 = (L[offset - 1 - width] - L[offset - width + 1]) * (L[offset - 1 - width] - L[offset + width - 1]);
-                        float f4 = std::sqrt(fabs(L[offset - 1 - width] - L[offset - width2 + 2]) * fabs(L[offset - 1 - width] - L[offset + width2 - 2]));
-                        const float difLT = f1 * SQR(f2) * SQR(f3) * f4;
+                        float f4 = std::sqrt(fabs((L[offset - 1 - width] - L[offset - width2 + 2]) * (L[offset - 1 - width] - L[offset + width2 - 2])));
+                        const float difLT = f1 * SQR(f2 * f3) * f4;
                         if (difLT > 0.f) {
                             f1 = fabs(L[offset + 2 + width2] - L[offset + 1 + width]);
-                            f2 = L[offset + 1 + width] - L[offset];
+                            f2 = L[offset + 1 + width] - v;
                             f3 = (L[offset + 1 + width] - L[offset - width + 1]) * (L[offset + 1 + width] - L[offset + width - 1]);
-                            f4 = std::sqrt(fabs(L[offset + 1 + width] - L[offset - width2 + 2]) * fabs(L[offset + 1 + width] - L[offset + width2 - 2]));
-                            const float difRB = f1 * SQR(f2) * SQR(f3) * f4;
+                            f4 = std::sqrt(fabs((L[offset + 1 + width] - L[offset - width2 + 2]) * (L[offset + 1 + width] - L[offset + width2 - 2])));
+                            const float difRB = f1 * SQR(f2 * f3) * f4;
                             if (difRB > 0.f) {
                                 lumD1 = (L[offset - 1 - width] * difRB + L[offset + 1 + width] * difLT) / (difLT + difRB);
                                 lumD1 = intp(contrast, lumD1, v);
@@ -184,18 +184,18 @@ BENCHFUN
                         }
                     }
 
-                    if (inintervall(L[offset], L[offset + 1 - width], L[offset] > L[offset - 1 + width])) {
+                    if (inintervall(v, L[offset + 1 - width], L[offset - 1 + width])) {
                         float f1 = fabs(L[offset - 2 + width2] - L[offset - 1 + width]);
-                        float f2 = L[offset - 1 + width] - L[offset];
+                        float f2 = L[offset - 1 + width] - v;
                         float f3 = (L[offset - 1 + width] - L[offset - width - 1]) * (L[offset - 1 + width] - L[offset + width + 1]);
-                        float f4 = std::sqrt(fabs(L[offset - 1 + width] - L[offset - width2 - 2]) * fabs(L[offset - 1 + width] - L[offset + width2 + 2]));
-                        const float difLB = f1 * SQR(f2) * SQR(f3) * f4;
+                        float f4 = std::sqrt(fabs((L[offset - 1 + width] - L[offset - width2 - 2]) * (L[offset - 1 + width] - L[offset + width2 + 2])));
+                        const float difLB = f1 * SQR(f2 * f3) * f4;
                         if (difLB > 0.f) {
                             f1 = fabs(L[offset + 2 - width2] - L[offset + 1 - width]);
-                            f2 = L[offset + 1 - width] - L[offset];
+                            f2 = L[offset + 1 - width] - v;
                             f3 = (L[offset + 1 - width] - L[offset + width + 1]) * (L[offset + 1 - width] - L[offset - width - 1]);
-                            f4 = std::sqrt(fabs(L[offset + 1 - width] - L[offset + width2 + 2]) * fabs(L[offset + 1 - width] - L[offset - width2 - 2]));
-                            const float difRT = f1 * SQR(f2) * SQR(f3) * f4;
+                            f4 = std::sqrt(fabs((L[offset + 1 - width] - L[offset + width2 + 2]) * (L[offset + 1 - width] - L[offset - width2 - 2])));
+                            const float difRT = f1 * SQR(f2 * f3) * f4;
                             if (difRT > 0.f) {
                                 lumD2 = (L[offset + 1 - width] * difLB + L[offset - 1 + width] * difRT) / (difLB + difRT);
                                 lumD2 = intp(contrast, lumD2, v);
