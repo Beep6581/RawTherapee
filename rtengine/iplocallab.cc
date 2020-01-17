@@ -6300,6 +6300,17 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     kab /= SQR(327.68f);
     kL /= SQR(327.68f);
 
+    if(lp.colorde == 0) {
+        lp.colorde = -1;//to avoid black
+    }
+
+    float ampli = 1.f + fabs(lp.colorde);
+    ampli = 2.f + 0.5f * (ampli - 2.f);
+
+    float darklim = 5000.f;
+    float aadark = -1.f;
+    float bbdark = darklim;
+
     const bool usemaskvib = (lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 4) && senstype == 2;
     const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
     const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
@@ -6474,9 +6485,6 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                 }
 
                // const float previewint = settings->previewselection;
-                if(lp.colorde == 0) {
-                    lp.colorde = -1;//to avoid black
-                }
 
                 const float realstrdE = reducdE * cli;
                 const float realstradE = reducdE * cla;
@@ -6502,25 +6510,20 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                             diflc += 0.5f * maxdifab;
                         }
                         
-                        float ampli = 1.f + fabs(lp.colorde);
-                        ampli = 2.f + 0.5f * (ampli - 2.f);
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
                         transformed->a[y + ystart][x + xstart] = CLIPC(ampli * difa);
                         transformed->b[y + ystart][x + xstart] = CLIPC(ampli * difb);
                     } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc) {//show deltaE
-                        difb = reducdE * 10000.f * lp.colorde;
-                        float darklim = 5000.f;
+                        float difbdisp = reducdE * 10000.f * lp.colorde;
                         if(transformed->L[y + ystart][x + xstart] < darklim) {//enhance dark luminance as user can see!
                             float dark = transformed->L[y + ystart][x + xstart];
-                            float aa = -1.f;
-                            float bb = darklim;
-                            transformed->L[y + ystart][x + xstart] = dark * aa + bb;
+                            transformed->L[y + ystart][x + xstart] = dark * aadark + bbdark;
                         }
                         if(lp.colorde <= 0) {
                             transformed->a[y + ystart][x + xstart] = 0.f;
-                            transformed->b[y + ystart][x + xstart] = difb;
+                            transformed->b[y + ystart][x + xstart] = difbdisp;
                         } else {
-                            transformed->a[y + ystart][x + xstart] = -difb;
+                            transformed->a[y + ystart][x + xstart] = -difbdisp;
                             transformed->b[y + ystart][x + xstart] = 0.f;
                         }
                     }
