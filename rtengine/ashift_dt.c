@@ -51,6 +51,7 @@ using namespace std;
 #define LENSSHIFT_RANGE_SOFT 1              // allowed min/max range for lensshift parameters with manual adjustment
 #define SHEAR_RANGE 0.2                     // allowed min/max range for shear parameter
 #define SHEAR_RANGE_SOFT 0.5                // allowed min/max range for shear parameter with manual adjustment
+#define CAMERA_ANGLE_RANGE_SOFT 80
 #define MIN_LINE_LENGTH 5                   // the minimum length of a line in pixels to be regarded as relevant
 #define MAX_TANGENTIAL_DEVIATION 30         // by how many degrees a line may deviate from the +/-180 and +/-90 to be regarded as relevant
 #define LSD_SCALE 0.99                      // LSD: scaling factor for line detection
@@ -96,6 +97,8 @@ using namespace std;
 // For parameter optimization we are using the Nelder-Mead simplex method
 // implemented by Michael F. Hutt.
 #include "ashift_nmsimplex.c"
+
+#include "homogeneouscoordinates.h"
 
 
 //-----------------------------------------------------------------------------
@@ -292,6 +295,8 @@ typedef struct dt_iop_ashift_params_t
   float cr;
   float ct;
   float cb;
+  float camera_pitch;
+  float camera_yaw;
 } dt_iop_ashift_params_t;
 
 typedef struct dt_iop_ashift_line_t
@@ -335,10 +340,14 @@ typedef struct dt_iop_ashift_fit_params_t
   float lensshift_v;
   float lensshift_h;
   float shear;
+  float camera_pitch;
+  float camera_yaw;
   float rotation_range;
   float lensshift_v_range;
   float lensshift_h_range;
   float shear_range;
+  float camera_pitch_range;
+  float camera_yaw_range;
 } dt_iop_ashift_fit_params_t;
 
 typedef struct dt_iop_ashift_cropfit_params_t
@@ -384,6 +393,8 @@ typedef struct dt_iop_ashift_gui_data_t
   float lensshift_v_range;
   float lensshift_h_range;
   float shear_range;
+  float camera_pitch_range;
+  float camera_yaw_range;
   dt_iop_ashift_line_t *lines;
   int lines_in_width;
   int lines_in_height;
@@ -639,9 +650,16 @@ static void print_roi(const dt_iop_roi_t *roi, const char *label)
 
 #define MAT3SWAP(a, b) { float (*tmp)[3] = (a); (a) = (b); (b) = tmp; }
 
+/*
 static void homography(float *homograph, const float angle, const float shift_v, const float shift_h,
                        const float shear, const float f_length_kb, const float orthocorr, const float aspect,
                        const int width, const int height, dt_iop_ashift_homodir_t dir)
+*/
+static void homography(float *homograph, const float angle, const float shift_v,
+    const float shift_h, const float shear, const float camera_pitch, const
+    float camera_yaw, const float f_length_kb, const float orthocorr, const
+    float aspect, const int width, const int height, dt_iop_ashift_homodir_t
+    dir)
 {
   // calculate homograph that combines all translations, rotations
   // and warping into one single matrix operation.
@@ -652,7 +670,11 @@ static void homography(float *homograph, const float angle, const float shift_v,
 
   const float u = width;
   const float v = height;
+  const float rot = M_PI * angle / 180.0f;
+  const float pitch = M_PI * camera_pitch / 180.0f;
+  const float yaw = M_PI * camera_yaw / 180.0f;
 
+  /*
   const float phi = M_PI * angle / 180.0f;
   const float cosi = cos(phi);
   const float sini = sin(phi);
@@ -675,16 +697,19 @@ static void homography(float *homograph, const float angle, const float shift_v,
   const float alpha_h = CLAMP(atan(rad_h), -1.5f, 1.5f);
   const float rt_h = sin(0.5f * alpha_h);
   const float r_h = fmax(0.1f, 2.0f * (vertifac - 1.0f) * rt_h * rt_h + 1.0f);
+  */
 
+  const float f = f_length_kb * (sqrt(u*u + v*v) / sqrt(36.0*36.0 + 24.0*24.0));
 
   // three intermediate buffers for matrix calculation ...
-  float m1[3][3], m2[3][3], m3[3][3];
+  float m1[3][3]/*, m2[3][3]*/, m3[3][3];
 
   // ... and some pointers to handle them more intuitively
   float (*mwork)[3] = m1;
-  float (*minput)[3] = m2;
+  //float (*minput)[3] = m2;
   float (*moutput)[3] = m3;
 
+  /*
   // Step 1: flip x and y coordinates (see above)
   memset(minput, 0, 9 * sizeof(float));
   minput[0][1] = 1.0f;
@@ -800,8 +825,43 @@ static void homography(float *homograph, const float angle, const float shift_v,
   MAT3SWAP(minput, moutput);
   // multiply mwork * minput -> moutput
   mat3mul((float *)moutput, (float *)mwork, (float *)minput);
+  */
 
+  rtengine::homogeneous::Vector<float> center;
+  center[0] = 0.0f;
+  center[1] = 0.0f;
+  center[2] = f;
+  center[3] = 1.0f;
 
+  using rtengine::operator*;
+
+    // Location of image center after rotations.
+  const rtengine::homogeneous::Vector<float> camera_center_yaw_pitch =
+      rtengine::homogeneous::rotationMatrix<float>(pitch, rtengine::homogeneous::Axis::X) *
+      rtengine::homogeneous::rotationMatrix<float>(yaw, rtengine::homogeneous::Axis::Y) *
+      center;
+
+  const rtengine::homogeneous::Matrix<float> matrix =
+      // Perspective correction.
+      rtengine::homogeneous::projectionMatrix<float>(camera_center_yaw_pitch[2], rtengine::homogeneous::Axis::Z) *
+      rtengine::homogeneous::rotationMatrix<float>(yaw, rtengine::homogeneous::Axis::Y) *
+      rtengine::homogeneous::rotationMatrix<float>(pitch, rtengine::homogeneous::Axis::X) *
+      // Rotation.
+      rtengine::homogeneous::rotationMatrix<float>(rot, rtengine::homogeneous::Axis::Z) *
+      // Lens/sensor shift and move to z == camera_focal_length.
+      rtengine::homogeneous::translationMatrix<float>((0.01f * shift_h - 0.5f) * u, (-0.01f * shift_v - 0.5f) * v, f);
+
+  m3[0][0] = matrix[0][0];
+  m3[0][1] = matrix[0][1];
+  m3[0][2] = matrix[0][3];
+  m3[1][0] = matrix[1][0];
+  m3[1][1] = matrix[1][1];
+  m3[1][2] = matrix[1][3];
+  m3[2][0] = matrix[3][0];
+  m3[2][1] = matrix[3][1];
+  m3[2][2] = matrix[3][3];
+
+  /*
   // Step 10: find x/y offsets and apply according correction so that
   // no negative coordinates occur in output vector
   float umin = FLT_MAX, vmin = FLT_MAX;
@@ -830,6 +890,7 @@ static void homography(float *homograph, const float angle, const float shift_v,
   MAT3SWAP(minput, moutput);
   // multiply mwork * minput -> moutput
   mat3mul((float *)moutput, (float *)mwork, (float *)minput);
+  */
 
 
   // on request we either keep the final matrix for forward conversions
@@ -1920,10 +1981,16 @@ static double model_fitness(double *params, void *data)
   float lensshift_v = fit->lensshift_v;
   float lensshift_h = fit->lensshift_h;
   float shear = fit->shear;
+  float camera_pitch = fit->camera_pitch;
+  float camera_yaw = fit->camera_yaw;
   float rotation_range = fit->rotation_range;
+  /*
   float lensshift_v_range = fit->lensshift_v_range;
   float lensshift_h_range = fit->lensshift_h_range;
   float shear_range = fit->shear_range;
+  */
+  float camera_pitch_range = fit->camera_pitch_range;
+  float camera_yaw_range = fit->camera_yaw_range;
 
   int pcount = 0;
 
@@ -1934,6 +2001,7 @@ static double model_fitness(double *params, void *data)
     pcount++;
   }
 
+  /*
   if(isnan(lensshift_v))
   {
     lensshift_v = ilogit(params[pcount], -lensshift_v_range, lensshift_v_range);
@@ -1951,6 +2019,19 @@ static double model_fitness(double *params, void *data)
     shear = ilogit(params[pcount], -shear_range, shear_range);
     pcount++;
   }
+  */
+
+  if(isnan(camera_pitch))
+  {
+    camera_pitch = ilogit(params[pcount], -camera_pitch_range, camera_pitch_range);
+    pcount++;
+  }
+
+  if(isnan(camera_yaw))
+  {
+    camera_yaw = ilogit(params[pcount], -camera_yaw_range, camera_yaw_range);
+    pcount++;
+  }
 
   assert(pcount == fit->params_count);
 
@@ -1960,7 +2041,7 @@ static double model_fitness(double *params, void *data)
 
   // generate homograph out of the parameters
   float homograph[3][3];
-  homography((float *)homograph, rotation, lensshift_v, lensshift_h, shear, f_length_kb,
+  homography((float *)homograph, rotation, lensshift_v, lensshift_h, shear, camera_pitch, camera_yaw, f_length_kb,
              orthocorr, aspect, width, height, ASHIFT_HOMOGRAPH_FORWARD);
 
   // accounting variables
@@ -2018,8 +2099,12 @@ static double model_fitness(double *params, void *data)
   //double sum = sqrt(v + h) * 1.0e6;
 
 #ifdef ASHIFT_DEBUG
+  /*
   printf("fitness with rotation %f, lensshift_v %f, lensshift_h %f, shear %f -> lines %d, quality %10f\n",
          rotation, lensshift_v, lensshift_h, shear, count, sum);
+  */
+  printf("fitness with rotation %f, camera_pitch %f, camera_yaw %f -> lines %d, quality %10f\n",
+         rotation, camera_pitch, camera_yaw, count, sum);
 #endif
 
   return sum;
@@ -2050,10 +2135,14 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   fit.lensshift_v = p->lensshift_v;
   fit.lensshift_h = p->lensshift_h;
   fit.shear = p->shear;
+  fit.camera_pitch = p->camera_pitch;
+  fit.camera_yaw = p->camera_yaw;
   fit.rotation_range = g->rotation_range;
   fit.lensshift_v_range = g->lensshift_v_range;
   fit.lensshift_h_range = g->lensshift_h_range;
   fit.shear_range = g->shear_range;
+  fit.camera_pitch_range = g->camera_pitch_range;
+  fit.camera_yaw_range = g->camera_yaw_range;
   fit.linetype = ASHIFT_LINE_RELEVANT | ASHIFT_LINE_SELECTED;
   fit.linemask = ASHIFT_LINE_MASK;
   fit.params_count = 0;
@@ -2086,6 +2175,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
     fit.rotation = NAN;
   }
 
+  /*
   if(mdir & ASHIFT_FIT_LENS_VERT)
   {
     // we fit vertical lens shift
@@ -2111,6 +2201,25 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
     params[pcount] = logit(fit.shear, -fit.shear_range, fit.shear_range);
     pcount++;
     fit.shear = NAN;
+  }
+  */
+
+  if(mdir & ASHIFT_FIT_LENS_VERT)
+  {
+    // we fit pitch
+    fit.params_count++;
+    params[pcount] = logit(fit.camera_pitch, -fit.camera_pitch_range, fit.camera_pitch_range);
+    pcount++;
+    fit.camera_pitch = NAN;
+  }
+
+  if(mdir & ASHIFT_FIT_LENS_HOR)
+  {
+    // we fit yaw
+    fit.params_count++;
+    params[pcount] = logit(fit.camera_yaw, -fit.camera_yaw_range, fit.camera_yaw_range);
+    pcount++;
+    fit.camera_yaw = NAN;
   }
 
   if(mdir & ASHIFT_FIT_LINES_VERT)
@@ -2162,14 +2271,23 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   // fit was successful: now consolidate the results (order matters!!!)
   pcount = 0;
   fit.rotation = isnan(fit.rotation) ? ilogit(params[pcount++], -fit.rotation_range, fit.rotation_range) : fit.rotation;
+  /*
   fit.lensshift_v = isnan(fit.lensshift_v) ? ilogit(params[pcount++], -fit.lensshift_v_range, fit.lensshift_v_range) : fit.lensshift_v;
   fit.lensshift_h = isnan(fit.lensshift_h) ? ilogit(params[pcount++], -fit.lensshift_h_range, fit.lensshift_h_range) : fit.lensshift_h;
   fit.shear = isnan(fit.shear) ? ilogit(params[pcount++], -fit.shear_range, fit.shear_range) : fit.shear;
+  */
+  fit.camera_pitch = isnan(fit.camera_pitch) ? ilogit(params[pcount++], -fit.camera_pitch_range, fit.camera_pitch_range) : fit.camera_pitch;
+  fit.camera_yaw = isnan(fit.camera_yaw) ? ilogit(params[pcount++], -fit.camera_yaw_range, fit.camera_yaw_range) : fit.camera_yaw;
 #ifdef ASHIFT_DEBUG
+  /*
   printf("params after optimization (%d iterations): rotation %f, lensshift_v %f, lensshift_h %f, shear %f\n",
          iter, fit.rotation, fit.lensshift_v, fit.lensshift_h, fit.shear);
+  */
+  printf("params after optimization (%d iterations): rotation %f, camera_pitch %f, camera_yaw %f\n",
+         iter, fit.rotation, fit.camera_pitch, fit.camera_yaw);
 #endif
 
+  /*
   // sanity check: in case of extreme values the image gets distorted so strongly that it spans an insanely huge area. we check that
   // case and assume values that increase the image area by more than a factor of 4 as being insane.
   float homograph[3][3];
@@ -2202,12 +2320,17 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
 #endif
     return NMS_INSANE;
   }
+  */
 
   // now write the results into structure p
   p->rotation = fit.rotation;
+  /*
   p->lensshift_v = fit.lensshift_v;
   p->lensshift_h = fit.lensshift_h;
   p->shear = fit.shear;
+  */
+  p->camera_pitch = fit.camera_pitch;
+  p->camera_yaw = fit.camera_yaw;
   return NMS_SUCCESS;
 }
 
@@ -2291,6 +2414,10 @@ static void model_probe(dt_iop_module_t *module, dt_iop_ashift_params_t *p, dt_i
 #endif // if 0
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// RT: BEGIN COMMENT (no crop support yet)
+//-----------------------------------------------------------------------------
+#if 0
 // function to keep crop fitting parameters within constraints
 static void crop_constraint(double *params, int pcount)
 {
@@ -2383,7 +2510,12 @@ static double crop_fitness(double *params, void *data)
   // and return -A to allow Nelder-Mead simplex to search for the minimum
   return -A;
 }
+#endif // if 0
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// RT: BEGIN COMMENT
+#if 0
 // strategy: for a given center of the crop area and a specific aspect angle
 // we calculate the largest crop area that still lies within the output image;
 // now we allow a Nelder-Mead simplex to search for the center coordinates
@@ -2561,9 +2693,11 @@ failed:
   dt_control_log(_("automatic cropping failed"));
   return;
 }
+#endif // if 0
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// RT: BEGIN COMMENT
+// RT: BEGIN COMMENT (no crop support yet)
 //-----------------------------------------------------------------------------
 #if 0
 // manually adjust crop area by shifting its center
@@ -2804,8 +2938,10 @@ static int do_fit(dt_iop_module_t *module, dt_iop_ashift_params_t *p, dt_iop_ash
 
   g->fitting = 0;
 
+  /*
   // finally apply cropping
   do_crop(module, p);
+  */
 
   return TRUE;
 
@@ -3042,7 +3178,7 @@ int process_cl(struct dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, cl_m
   }
 
   float ihomograph[3][3];
-  homography((float *)ihomograph, d->rotation, d->lensshift_v, d->lensshift_h, d->shear, d->f_length_kb,
+  homography((float *)ihomograph, d->rotation, d->lensshift_v, d->lensshift_h, d->shear, d->f_length_kb, d->camera_pitch, d->camera_yaw,
              d->orthocorr, d->aspect, piece->buf_in.width, piece->buf_in.height, ASHIFT_HOMOGRAPH_INVERTED);
 
   // clipping offset

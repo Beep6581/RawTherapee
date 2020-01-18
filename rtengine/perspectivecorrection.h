@@ -28,28 +28,16 @@ namespace rtengine {
 
 class PerspectiveCorrection {
 public:
-    PerspectiveCorrection();
-    void init(int width, int height, const procparams::PerspectiveParams &params, bool fill, const FramesMetaData *meta);
-    void operator()(double &x, double &y);
-
-    enum Direction {
-        HORIZONTAL,
-        VERTICAL,
-        BOTH
+    struct Params
+    {
+        double angle;
+        double pitch;
+        double yaw;
     };
-    static procparams::PerspectiveParams autocompute(ImageSource *src, Direction dir, const procparams::ProcParams *pparams, const FramesMetaData *metadata);
 
-    static void autocrop(int width, int height, bool fixratio, const procparams::PerspectiveParams &params, const FramesMetaData *metadata, int &x, int &y, int &w, int &h);
+    static Params autocompute(ImageSource *src, bool corr_pitch, bool corr_yaw, const procparams::ProcParams *pparams, const FramesMetaData *metadata);
 
-private:
-    void correct(double &x, double &y, double scale, double offx, double offy);
-    void calc_scale(int w, int h, const procparams::PerspectiveParams &params, bool fill);
-    
-    bool ok_;
-    double scale_;
-    double offx_;
-    double offy_;
-    float ihomograph_[3][3];
+    //static void autocrop(int width, int height, bool fixratio, const procparams::PerspectiveParams &params, const FramesMetaData *metadata, int &x, int &y, int &w, int &h);
 };
 
 } // namespace rtengine

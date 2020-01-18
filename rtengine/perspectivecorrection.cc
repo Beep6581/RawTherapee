@@ -55,6 +55,8 @@
 #include <string.h>
 
 #include "../rtgui/threadutils.h"
+#include "colortemp.h"
+#include "imagefloat.h"
 #include "settings.h"
 
 namespace rtengine { extern const Settings *settings; }
@@ -97,76 +99,12 @@ inline int mat3inv(float *const dst, const float *const src)
 #include "ashift_dt.c"
 
 
-procparams::PerspectiveParams import_meta(const procparams::PerspectiveParams &pp, const FramesMetaData *metadata)
-{
-    procparams::PerspectiveParams ret(pp);
-    if (metadata && ret.flength == 0) {
-        double f = metadata->getFocalLen();
-        double f35 = metadata->getFocalLen35mm();
-        if (f > 0 && f35 > 0) {
-            ret.flength = f;
-            ret.cropfactor = f35 / f;
-        } else if (f > 0) {
-            ret.flength = f;
-        }
-    }
-    return ret;
-}
-
 } // namespace
-
-
-PerspectiveCorrection::PerspectiveCorrection():
-    ok_(false),
-    scale_(1.0),
-    offx_(0.0),
-    offy_(0.0)
-{
-}
-
-
-void PerspectiveCorrection::init(int width, int height, const procparams::PerspectiveParams &params, bool fill, const FramesMetaData *metadata)
-{
-    if (params.enabled) {
-        auto pp = import_meta(params, metadata);
-        homography((float *)ihomograph_, params.angle, params.vertical / 100.0, -params.horizontal / 100.0, params.shear / 100.0, params.flength * params.cropfactor, 100.f, params.aspect, width, height, ASHIFT_HOMOGRAPH_INVERTED);
-
-        ok_ = true;
-        calc_scale(width, height, pp, fill);
-    } else {
-        ok_ = false;
-    }
-}
-
-
-inline void PerspectiveCorrection::correct(double &x, double &y, double scale, double offx, double offy)
-{
-    if (ok_) {       
-        float pin[3], pout[3];
-        pout[0] = x;
-        pout[1] = y;
-        pout[0] *= scale;
-        pout[1] *= scale;
-        pout[0] += offx;
-        pout[1] += offy;
-        pout[2] = 1.f;
-        mat3mulv(pin, (float *)ihomograph_, pout);
-        pin[0] /= pin[2];
-        pin[1] /= pin[2];
-        x = pin[0];
-        y = pin[1];
-    }
-}
-
-
-void PerspectiveCorrection::operator()(double &x, double &y)
-{
-    correct(x, y, scale_, offx_, offy_);
-}
 
 
 namespace {
 
+/*
 std::vector<Coord2D> get_corners(int w, int h)
 {
     int x1 = 0, y1 = 0;
@@ -180,9 +118,10 @@ std::vector<Coord2D> get_corners(int w, int h)
     };
     return corners;
 }
+*/
 
 void init_dt_structures(dt_iop_ashift_params_t *p, dt_iop_ashift_gui_data_t *g,
-                        const procparams::PerspectiveParams *params)
+                        const procparams::ProcParams *params)
 {
     dt_iop_ashift_params_t dp = {
         0.0f,
@@ -199,7 +138,9 @@ void init_dt_structures(dt_iop_ashift_params_t *p, dt_iop_ashift_gui_data_t *g,
         0.0f,
         1.0f,
         0.0f,
-        1.0f
+        1.0f,
+        0.0f,
+        0.0f
     };
     *p = dp;
 
@@ -223,6 +164,8 @@ void init_dt_structures(dt_iop_ashift_params_t *p, dt_iop_ashift_gui_data_t *g,
     g->lensshift_v_range = LENSSHIFT_RANGE_SOFT;
     g->lensshift_h_range = LENSSHIFT_RANGE_SOFT;
     g->shear_range = SHEAR_RANGE_SOFT;
+    g->camera_pitch_range = CAMERA_ANGLE_RANGE_SOFT;
+    g->camera_yaw_range = CAMERA_ANGLE_RANGE_SOFT;
     g->lines_suppressed = 0;
     g->lines_version = 0;
     g->show_guides = 0;
@@ -242,17 +185,18 @@ void init_dt_structures(dt_iop_ashift_params_t *p, dt_iop_ashift_gui_data_t *g,
     g->crop_cx = g->crop_cy = 1.0f;
 
     if (params) {
-        p->rotation = params->angle;
-        p->lensshift_v = params->vertical / 100.0;
-        p->lensshift_h = -params->horizontal / 100.0;
-        p->shear = params->shear / 100.0;
-        p->f_length = params->flength;
-        p->crop_factor = params->cropfactor;
-        p->aspect = params->aspect;
+        p->rotation = params->rotate.degree;
+        p->lensshift_v = params->perspective.camera_shift_vert;
+        p->lensshift_h = params->perspective.camera_shift_horiz;
+        p->f_length = params->perspective.camera_focal_length;
+        p->crop_factor = params->perspective.camera_crop_factor;
+        p->camera_pitch = params->perspective.camera_pitch;
+        p->camera_yaw = params->perspective.camera_yaw;
     }
 }
 
 
+/*
 void get_view_size(int w, int h, const procparams::PerspectiveParams &params, double &cw, double &ch)
 {
     double min_x = RT_INFINITY, max_x = -RT_INFINITY;
@@ -278,47 +222,27 @@ void get_view_size(int w, int h, const procparams::PerspectiveParams &params, do
     cw = max_x - min_x;
     ch = max_y - min_y;
 }    
+*/
 
 } // namespace
 
 
-void PerspectiveCorrection::calc_scale(int w, int h, const procparams::PerspectiveParams &params, bool fill)
+PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *src, bool corr_pitch, bool corr_yaw, const procparams::ProcParams *pparams, const FramesMetaData *metadata)
 {
-    double cw, ch;
-    get_view_size(w, h, params, cw, ch);
-
-    if (!fill) {
-        scale_ = max(cw / double(w), ch / double(h));
-        offx_ = (cw - w * scale_) * 0.5;
-        offy_ = (ch - h * scale_) * 0.5;
-    } else {
-        dt_iop_ashift_params_t p;
-        dt_iop_ashift_gui_data_t g;
-        init_dt_structures(&p, &g, &params);
-        dt_iop_module_t module = { &g, false };
-        g.buf_width = w;
-        g.buf_height = h;
-        p.cropmode = ASHIFT_CROP_ASPECT;
-        do_crop(&module, &p);
-        offx_ = p.cl * cw;
-        offy_ = p.ct * ch;
-        scale_ = (p.cr - p.cl) * cw/double(w);
-    }
-}
-
-
-procparams::PerspectiveParams PerspectiveCorrection::autocompute(ImageSource *src, Direction dir, const procparams::ProcParams *pparams, const FramesMetaData *metadata)
-{
-    auto pcp = import_meta(pparams->perspective, metadata);
+    auto pcp = procparams::PerspectiveParams(pparams->perspective);
     procparams::PerspectiveParams dflt;
+    /*
     pcp.horizontal = dflt.horizontal;
     pcp.vertical = dflt.vertical;
     pcp.angle = dflt.angle;
     pcp.shear = dflt.shear;
+    */
+    pcp.camera_pitch = dflt.camera_pitch;
+    pcp.camera_yaw = dflt.camera_yaw;
     
     dt_iop_ashift_params_t p;
     dt_iop_ashift_gui_data_t g;
-    init_dt_structures(&p, &g, &pcp);
+    init_dt_structures(&p, &g, pparams);
     dt_iop_module_t module;
     module.gui_data = &g;
     module.is_raw = src->isRAW();
@@ -336,9 +260,11 @@ procparams::PerspectiveParams PerspectiveCorrection::autocompute(ImageSource *sr
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.outputProfile = ColorManagementParams::NoICMString;    
-    src->getImage(src->getWB(), tr, img.get(), pp, neutral.exposure, neutral.raw);
+    src->getImage(src->getWB(), tr, img.get(), pp, neutral.toneCurve, neutral.raw);
     src->convertColorSpace(img.get(), pparams->icm, src->getWB());
 
+    neutral.commonTrans.autofill = false; // Ensures crop factor is correct.
+    // TODO: Ensure image borders of rotated image do not get detected as lines.
     neutral.rotate = pparams->rotate;
     neutral.distortion = pparams->distortion;
     neutral.lensProf = pparams->lensProf;
@@ -371,16 +297,12 @@ procparams::PerspectiveParams PerspectiveCorrection::autocompute(ImageSource *sr
     }
 
     dt_iop_ashift_fitaxis_t fitaxis = ASHIFT_FIT_NONE;
-    switch (dir) {
-    case HORIZONTAL:
-        fitaxis = ASHIFT_FIT_HORIZONTALLY;
-        break;  
-    case VERTICAL:
-        fitaxis = ASHIFT_FIT_VERTICALLY;
-        break;
-    default:
+    if (corr_pitch && corr_yaw) {
         fitaxis = ASHIFT_FIT_BOTH_SHEAR;
-        break;
+    } else if (corr_pitch) {
+        fitaxis = ASHIFT_FIT_VERTICALLY;
+    } else if (corr_yaw) {
+        fitaxis = ASHIFT_FIT_HORIZONTALLY;
     }
 
     // reset the pseudo-random seed for repeatability -- ashift_dt uses rand()
@@ -388,7 +310,11 @@ procparams::PerspectiveParams PerspectiveCorrection::autocompute(ImageSource *sr
     srand(1);
     
     auto res = do_get_structure(&module, &p, ASHIFT_ENHANCE_EDGES) && do_fit(&module, &p, fitaxis);
-    procparams::PerspectiveParams retval = pparams->perspective;
+    Params retval = {
+        .angle = p.rotation,
+        .pitch = p.camera_pitch,
+        .yaw = p.camera_yaw
+    };
 
     // cleanup the gui
     if (g.lines) free(g.lines);
@@ -396,16 +322,16 @@ procparams::PerspectiveParams PerspectiveCorrection::autocompute(ImageSource *sr
     if (g.points_idx) free(g.points_idx);
     free(g.buf);
 
-    if (res) {
-        retval.horizontal = -p.lensshift_h * 100;
-        retval.vertical = p.lensshift_v * 100;
-        retval.angle = p.rotation;
-        retval.shear = p.shear * 100;
+    if (!res) {
+        retval.angle = pparams->rotate.degree;
+        retval.pitch = pparams->perspective.camera_pitch;
+        retval.yaw = pparams->perspective.camera_yaw;
     }
     return retval;
 }
 
 
+/*
 void PerspectiveCorrection::autocrop(int width, int height, bool fixratio, const procparams::PerspectiveParams &params, const FramesMetaData *metadata, int &x, int &y, int &w, int &h)
 {
     auto pp = import_meta(params, metadata);
@@ -429,5 +355,6 @@ void PerspectiveCorrection::autocrop(int width, int height, bool fixratio, const
     w = (p.cr - p.cl) * cw;
     h = (p.cb - p.ct) * ch;
 }
+*/
 
 } // namespace rtengine
