@@ -2170,7 +2170,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   {
     // we fit rotation
     fit.params_count++;
-    params[pcount] = logit(fit.rotation, -fit.rotation_range, fit.rotation_range);
+    params[pcount] = logit(0, -fit.rotation_range, fit.rotation_range);
     pcount++;
     fit.rotation = NAN;
   }
@@ -2208,7 +2208,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   {
     // we fit pitch
     fit.params_count++;
-    params[pcount] = logit(fit.camera_pitch, -fit.camera_pitch_range, fit.camera_pitch_range);
+    params[pcount] = logit(0, -fit.camera_pitch_range, fit.camera_pitch_range);
     pcount++;
     fit.camera_pitch = NAN;
   }
@@ -2217,7 +2217,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   {
     // we fit yaw
     fit.params_count++;
-    params[pcount] = logit(fit.camera_yaw, -fit.camera_yaw_range, fit.camera_yaw_range);
+    params[pcount] = logit(0, -fit.camera_yaw_range, fit.camera_yaw_range);
     pcount++;
     fit.camera_yaw = NAN;
   }
