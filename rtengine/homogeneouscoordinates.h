@@ -51,7 +51,7 @@ Matrix<T> projectionMatrix(T location, Axis normal);
  * @param axis Axis of rotation.
  */
 template <typename T>
-Matrix<T> rotationMatrix(T radians, Axis axis);
+Matrix<T> rotationMatrix(double radians, Axis axis);
 
 /**
  * Creates a 3 dimensional transformation matrix for scaling.
