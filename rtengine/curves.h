@@ -30,8 +30,6 @@
 #include "sleef.h"
 #define CURVES_MIN_POLY_POINTS  1000
 
-#include "rt_math.h"
-
 #define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
 
 namespace Glib

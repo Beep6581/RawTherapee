@@ -27,7 +27,6 @@
 #include "imagesource.h"
 #include "improcfun.h"
 #include "LUT.h"
-#include "procevents.h"
 #include "rtengine.h"
 
 #include "../rtgui/threadutils.h"
