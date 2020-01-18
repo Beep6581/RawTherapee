@@ -21,6 +21,7 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
+#include "lensgeomlistener.h"
 #include "toolpanel.h"
 
 class PerspCorrection final :
@@ -34,6 +35,9 @@ protected:
     Gtk::VBox* simple;
     Adjuster* horiz;
     Adjuster* vert;
+    Gtk::Button* auto_pitch;
+    Gtk::Button* auto_yaw;
+    Gtk::Button* auto_pitch_yaw;
     Gtk::VBox* camera_based;
     Adjuster* camera_crop_factor;
     Adjuster* camera_focal_length;
@@ -47,6 +51,7 @@ protected:
     Adjuster* projection_shift_horiz;
     Adjuster* projection_shift_vert;
     Adjuster* projection_yaw;
+    LensGeomListener* lens_geom_listener;
 
 public:
 
@@ -58,7 +63,12 @@ public:
     void setBatchMode   (bool batchMode) override;
 
     void adjusterChanged (Adjuster* a, double newval) override;
+    void autoCorrectionPressed (Gtk::Button* b);
     void methodChanged (void);
     void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add, bool projection_scale_add);
+    void setLensGeomListener (LensGeomListener* listener)
+    {
+        lens_geom_listener = listener;
+    }
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };

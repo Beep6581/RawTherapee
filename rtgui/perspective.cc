@@ -28,10 +28,16 @@ using namespace rtengine::procparams;
 PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("TP_PERSPECTIVE_LABEL"))
 {
 
+    lens_geom_listener = nullptr;
+
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
     Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
     Gtk::Image* ipersVL =   Gtk::manage (new RTImage ("perspective-vertical-bottom-small.png"));
     Gtk::Image* ipersVR =   Gtk::manage (new RTImage ("perspective-vertical-top-small.png"));
+
+    Gtk::Image* ipers_auto_pitch = Gtk::manage (new RTImage ("perspective-vertical-bottom.png"));
+    Gtk::Image* ipers_auto_yaw = Gtk::manage (new RTImage ("perspective-horizontal-left.png"));
+    Gtk::Image* ipers_auto_pitch_yaw = Gtk::manage (new RTImage ("perspective-horizontal-vertical.png"));
 
     Gtk::Image* ipers_cam_yaw_left = Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
     Gtk::Image* ipers_cam_yaw_right = Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
@@ -89,6 +95,22 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
                 -85, 85, 0.1, 0, ipers_cam_yaw_left, ipers_cam_yaw_right));
     camera_yaw->setAdjusterListener (this);
 
+    auto_pitch = Gtk::manage (new Gtk::Button ());
+    auto_pitch->set_image(*ipers_auto_pitch);
+    auto_pitch->signal_pressed().connect( sigc::bind(sigc::mem_fun(*this, &PerspCorrection::autoCorrectionPressed), auto_pitch) );
+
+    auto_yaw = Gtk::manage (new Gtk::Button ());
+    auto_yaw->set_image(*ipers_auto_yaw);
+    auto_yaw->signal_pressed().connect( sigc::bind(sigc::mem_fun(*this, &PerspCorrection::autoCorrectionPressed), auto_yaw) );
+
+    auto_pitch_yaw = Gtk::manage (new Gtk::Button ());
+    auto_pitch_yaw->set_image(*ipers_auto_pitch_yaw);
+    auto_pitch_yaw->signal_pressed().connect( sigc::bind(sigc::mem_fun(*this, &PerspCorrection::autoCorrectionPressed), auto_pitch_yaw) );
+
+    Gtk::HBox* auto_hbox = Gtk::manage (new Gtk::HBox());
+    Gtk::Label* auto_label = Gtk::manage (new Gtk::Label (M("GENERAL_AUTO") + ": "));
+    auto_hbox->pack_start(*auto_label, Gtk::PACK_SHRINK);
+
     Gtk::Frame* pca_frame = Gtk::manage (new Gtk::Frame
             (M("TP_PERSPECTIVE_POST_CORRECTION_ADJUSTMENT_FRAME")));
     pca_frame->set_label_align(0.025, 0.5);
@@ -122,12 +144,17 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     simple->pack_start (*horiz);
     simple->pack_start (*vert);
 
+    auto_hbox->pack_start (*auto_pitch);
+    auto_hbox->pack_start (*auto_yaw);
+    auto_hbox->pack_start (*auto_pitch_yaw);
+
     camera_vbox->pack_start (*camera_focal_length);
     camera_vbox->pack_start (*camera_crop_factor);
     camera_vbox->pack_start (*camera_shift_horiz);
     camera_vbox->pack_start (*camera_shift_vert);
     camera_vbox->pack_start (*camera_pitch);
     camera_vbox->pack_start (*camera_yaw);
+    camera_vbox->pack_start (*auto_hbox);
     camera_frame->add(*camera_vbox);
     camera_based->pack_start(*camera_frame);
 
@@ -354,6 +381,32 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+void PerspCorrection::autoCorrectionPressed(Gtk::Button* b)
+{
+    if (!lens_geom_listener) {
+        return;
+    }
+
+    double rot = 0;
+    double pitch = 0;
+    double yaw = 0;
+
+    if (b == auto_pitch) {
+        lens_geom_listener->autoPerspRequested(true, false, rot, pitch, yaw);
+    } else if (b == auto_yaw) {
+        lens_geom_listener->autoPerspRequested(false, true, rot, pitch, yaw);
+    } else if (b == auto_pitch_yaw) {
+        lens_geom_listener->autoPerspRequested(true, true, rot, pitch, yaw);
+    }
+
+    disableListener();
+    camera_pitch->setValue(pitch);
+    camera_yaw->setValue(yaw);
+    enableListener();
+
+    adjusterChanged(camera_pitch, pitch);
+}
+
 void PerspCorrection::methodChanged (void)
 {
 
@@ -430,6 +483,10 @@ void PerspCorrection::setBatchMode (bool batchMode)
     projection_shift_horiz->showEditedCB ();
     projection_shift_vert->showEditedCB ();
     projection_yaw->showEditedCB ();
+
+    auto_pitch->set_sensitive(false);
+    auto_yaw->set_sensitive(false);
+    auto_pitch_yaw->set_sensitive(false);
 
     method->append (M("GENERAL_UNCHANGED"));
 }
