@@ -47,9 +47,13 @@ private:
     rtengine::Coord center;
     std::vector<InspectorBuffer*> images;
     InspectorBuffer* currImage;
-    bool scaled;
+    bool scaled;  // fit image into window
+    double scale; // current scale
+    double zoomScale, zoomScaleBegin; // scale during zoom
+    rtengine::Coord centerBegin, dcenterBegin; // center during zoom
     bool active;
     bool pinned;
+    bool dirty;
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;
@@ -60,6 +64,11 @@ private:
 
     bool on_button_press_event(GdkEventButton *event) override;
     bool on_scroll_event(GdkEventScroll *event) override;
+
+    Glib::RefPtr<Gtk::GestureZoom> gestureZoom;
+    void beginZoom(double x, double y);
+    void on_zoom_begin(GdkEventSequence *);
+    void on_zoom_scale_changed(double zscale);
 
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     void deleteBuffers();

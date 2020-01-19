@@ -82,7 +82,7 @@ InspectorBuffer::~InspectorBuffer() {
 //    return deg;
 //}
 
-Inspector::Inspector () : currImage(nullptr), scaled(false), active(false), pinned(false)
+Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomScale(1.0), zoomScaleBegin(1.0), active(false), pinned(false), dirty(false)
 {
     set_name("Inspector");
     window.set_visible(false);
@@ -93,6 +93,9 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), active(false), pinn
     window.signal_key_press_event().connect(sigc::mem_fun(*this, &Inspector::on_key_press));
 
     add_events(Gdk::BUTTON_PRESS_MASK | Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
+    gestureZoom = Gtk::GestureZoom::create(*this);
+    gestureZoom->signal_begin().connect(sigc::mem_fun(*this, &Inspector::on_zoom_begin));
+    gestureZoom->signal_scale_changed().connect(sigc::mem_fun(*this, &Inspector::on_zoom_scale_changed));
 
     window.add(*this);
     window.show_all();
@@ -119,6 +122,7 @@ bool Inspector::on_key_release(GdkEventKey *event)
         switch (event->keyval) {
         case GDK_KEY_f:
         case GDK_KEY_F:
+            zoomScale = 1.0;
             window.set_visible(false);
             return true;
         }
@@ -131,14 +135,19 @@ bool Inspector::on_key_press(GdkEventKey *event)
     switch (event->keyval) {
     case GDK_KEY_z:
     case GDK_KEY_F:
+        if (pinned || scaled)
+            zoomScale = 1.0; // reset if not key hold
         scaled = false;
         queue_draw();
         return true;
     case GDK_KEY_f:
+        if (pinned || !scaled)
+            zoomScale = 1.0; // reset if not key hold
         scaled = true;
         queue_draw();
         return true;
     case GDK_KEY_Escape:
+        zoomScale = 1.0;
         window.set_visible(false);
         return true;
     }
@@ -162,12 +171,10 @@ bool Inspector::on_scroll_event(GdkEventScroll *event)
     if (!currImage)
         return false;
 
-    rtengine::Coord margin; // limit for scroll area
+    bool alt = event->state & GDK_MOD1_MASK;
     int deviceScale = get_scale_factor();
     int imW = currImage->imgBuffer.getWidth();
     int imH = currImage->imgBuffer.getHeight();
-    margin.x = (window.get_width() * deviceScale) / 2;
-    margin.y = (window.get_height() * deviceScale) / 2;
 
 #ifdef GDK_WINDOWING_QUARTZ
     // event reports speed of scroll wheel
@@ -206,15 +213,66 @@ bool Inspector::on_scroll_event(GdkEventScroll *event)
         break;
     }
 
+    if (alt) {
+        // zoom
+        beginZoom(event->x, event->y);
+        if (std::fabs(delta_y) > std::fabs(delta_x))
+            on_zoom_scale_changed(1.0 + (double)delta_y / imH / deviceScale);
+        else
+            on_zoom_scale_changed(1.0 + (double)delta_x / imW / deviceScale);
+        return true;
+    }
+
+    // scroll
+    rtengine::Coord margin; // limit for scroll area
+    margin.x = rtengine::min<int>(window.get_width() * deviceScale / scale, imW) / 2;
+    margin.y = rtengine::min<int>(window.get_height() * deviceScale / scale, imH) / 2;
     center.set(rtengine::LIM<int>(center.x + delta_x, margin.x, imW - margin.x),
                rtengine::LIM<int>(center.y + delta_y, margin.y, imH - margin.y));
-    queue_draw();
+
+    if (!dirty) {
+        dirty = true;
+        queue_draw();
+    }
 
     return true;
 }
 
+void Inspector::beginZoom(double x, double y)
+{
+    int deviceScale = get_scale_factor();
+    dcenterBegin.x = (x - window.get_width()/2) / scale * deviceScale;
+    dcenterBegin.y = (y - window.get_height()/2) / scale * deviceScale;
+    centerBegin = center;
+    zoomScaleBegin = zoomScale;
+}
+
+void Inspector::on_zoom_begin(GdkEventSequence *s)
+{
+    double x, y;
+    if (gestureZoom->get_point(s, x, y))
+        beginZoom(x, y);
+}
+
+void Inspector::on_zoom_scale_changed(double zscale)
+{
+    if (!currImage)
+        return;
+
+    zoomScale = rtengine::LIM<double>(zoomScaleBegin * zscale, 0.01, 16.0);
+    double dcenterRatio = 1.0 - zoomScaleBegin / zoomScale;
+    center.x = centerBegin.x + dcenterBegin.x * dcenterRatio;
+    center.y = centerBegin.y + dcenterBegin.y * dcenterRatio;
+
+    if (!dirty) {
+        dirty = true;
+        queue_draw();
+    }
+}
+
 bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
+    dirty = false;
 
     Glib::RefPtr<Gdk::Window> win = get_window();
 
@@ -240,15 +298,21 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         int deviceScale = get_scale_factor();
         availableSize.x = win->get_width() * deviceScale;
         availableSize.y = win->get_height() * deviceScale;
-        int imW = currImage->imgBuffer.getWidth();
-        int imH = currImage->imgBuffer.getHeight();
-        double scale = 1.0;
+        int imW = rtengine::max<int>(currImage->imgBuffer.getWidth(), 1);
+        int imH = rtengine::max<int>(currImage->imgBuffer.getHeight(), 1);
+        scale = rtengine::min<double>((double)availableSize.x / imW, (double)availableSize.y / imH);
         if (scaled) {
-            // reduce size of image to fit into window
-            scale = rtengine::min<double>(1.0, rtengine::min<double>((double)availableSize.x/imW, (double)availableSize.y/imH));
-            availableSize.x /= scale;
-            availableSize.y /= scale;
+            // reduce size of image to fit into window, no further zoom down
+            zoomScale = rtengine::max<double>(zoomScale, 1.0);
+            scale *= zoomScale;
         }
+        else {
+            // limit zoom to fill at least complete window or 1:1
+            zoomScale = rtengine::max<double>(zoomScale, rtengine::min<double>(1.0, scale));
+            scale = zoomScale;
+        }
+        availableSize.x /= scale;
+        availableSize.y /= scale;
 
         if (imW < availableSize.x) {
             // center the image in the available space along X
@@ -275,7 +339,6 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
             topLeft.y -= availableSize.y;
             topLeft.y = rtengine::max<int>(topLeft.y, 0);
         }
-
         //printf("center: %d, %d   (img: %d, %d)  (availableSize: %d, %d)  (topLeft: %d, %d)\n", center.x, center.y, imW, imH, availableSize.x, availableSize.y, topLeft.x, topLeft.y);
 
         // define the destination area
@@ -302,7 +365,7 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         cr->fill ();
         //*/
 
-        bool scaledImage = scaled && (imW > win->get_width() || imH > win->get_height());
+        bool scaledImage = scale != 1.0;
         if (deviceScale == 1 && !scaledImage) {
             // standard drawing
             currImage->imgBuffer.copySurface(win);
@@ -314,13 +377,15 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
                 cairo_surface_set_device_scale(cr->get_target()->cobj(), scale, scale);
                 scaledImage = false;
             }
-            Glib::RefPtr<Gdk::Pixbuf> crop = Gdk::Pixbuf::create(currImage->imgBuffer.getSurface(), topLeft.x, topLeft.y, rtengine::min<int>(imW, availableSize.x), rtengine::min<int>(imH, availableSize.y));
+            int viewW = rtengine::min<int>(imW, availableSize.x);
+            int viewH = rtengine::min<int>(imH, availableSize.y);
+            Glib::RefPtr<Gdk::Pixbuf> crop = Gdk::Pixbuf::create(currImage->imgBuffer.getSurface(), topLeft.x, topLeft.y, viewW, viewH);
             if (!scaledImage) {
                 Gdk::Cairo::set_source_pixbuf(cr, crop, dest.x, dest.y);
             }
             else {
-                // assume that the device does not support scaling (Linux)
-                crop = crop->scale_simple(imW*scale, imH*scale, Gdk::INTERP_BILINEAR);
+                // scale crop as the device does not seem to support it (Linux)
+                crop = crop->scale_simple(viewW*scale, viewH*scale, Gdk::INTERP_BILINEAR);
                 Gdk::Cairo::set_source_pixbuf(cr, crop, dest.x*scale, dest.y*scale);
             }
             cr->paint();
