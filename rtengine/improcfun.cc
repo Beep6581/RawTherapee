@@ -5131,11 +5131,11 @@ void ImProcFunctions::EPDToneMapCIE (CieImage *ncie, float a_w, float c_, int Wi
     if (!params->epd.enabled) {
         return;
     }
-
+/*
     if (params->wavelet.enabled  && params->wavelet.tmrs != 0) {
         return;
     }
-
+*/
     float stren = params->epd.strength;
     float edgest = params->epd.edgeStopping;
     float sca = params->epd.scale;
@@ -5245,11 +5245,11 @@ void ImProcFunctions::EPDToneMap (LabImage *lab, unsigned int Iterates, int skip
     if (!params->epd.enabled) {
         return;
     }
-
+/*
     if (params->wavelet.enabled  && params->wavelet.tmrs != 0) {
         return;
     }
-
+*/
     float stren = params->epd.strength;
     float edgest = params->epd.edgeStopping;
     float sca = params->epd.scale;
@@ -5590,7 +5590,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
 
     whiteclipg = CurveFactory::igamma2 ((float) (whiteclipg / 65535.0)) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
 
-    //corection with gamma
+    //correction with gamma
     black = (int) ((65535 * black) / whiteclipg);
     //expcomp = log(65535.0 / (whiteclipg)) / log(2.0);
 

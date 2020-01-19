@@ -1732,13 +1732,14 @@ bool CoarseTransformParams::operator !=(const CoarseTransformParams& other) cons
 }
 
 CommonTransformParams::CommonTransformParams() :
+    method("log"),
     autofill(true)
 {
 }
 
 bool CommonTransformParams::operator ==(const CommonTransformParams& other) const
 {
-    return autofill == other.autofill;
+    return method == other.method && autofill == other.autofill;
 }
 
 bool CommonTransformParams::operator !=(const CommonTransformParams& other) const
@@ -3350,6 +3351,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->coarse.vflip, "Coarse Transformation", "VerticalFlip", coarse.vflip, keyFile);
 
 // Common properties for transformations
+        saveToKeyfile(!pedited || pedited->commonTrans.method, "Common Properties for Transformations", "Method", commonTrans.method, keyFile);
         saveToKeyfile(!pedited || pedited->commonTrans.autofill, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, keyFile);
 
 // Rotation
@@ -4403,6 +4405,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("Common Properties for Transformations")) {
+            if (keyFile.has_key("Common Properties for Transformations", "Method")) {
+                assignFromKeyfile(keyFile, "Common Properties for Transformations", "Method", pedited, commonTrans.method, pedited->commonTrans.method);
+            } else {
+                commonTrans.method = "lin";
+            }
             assignFromKeyfile(keyFile, "Common Properties for Transformations", "AutoFill", pedited, commonTrans.autofill, pedited->commonTrans.autofill);
         }
 

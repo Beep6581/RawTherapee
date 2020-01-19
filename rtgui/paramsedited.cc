@@ -321,6 +321,7 @@ void ParamsEdited::set(bool v)
     coarse.rotate = v;
     coarse.hflip = v;
     coarse.vflip = v;
+    commonTrans.method = v;
     commonTrans.autofill = v;
     rotate.degree = v;
     distortion.amount = v;
@@ -918,6 +919,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         coarse.rotate = coarse.rotate && p.coarse.rotate == other.coarse.rotate;
         coarse.hflip = coarse.hflip && p.coarse.hflip == other.coarse.hflip;
         coarse.vflip = coarse.vflip && p.coarse.vflip == other.coarse.vflip;
+        commonTrans.method = commonTrans.method && p.commonTrans.method == other.commonTrans.method;
         commonTrans.autofill = commonTrans.autofill && p.commonTrans.autofill == other.commonTrans.autofill;
         rotate.degree = rotate.degree && p.rotate.degree == other.rotate.degree;
         distortion.amount = distortion.amount && p.distortion.amount == other.distortion.amount;
@@ -2291,6 +2293,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (coarse.vflip) {
         toEdit.coarse.vflip = mods.coarse.vflip;
+    }
+
+    if (commonTrans.method) {
+        toEdit.commonTrans.method = mods.commonTrans.method;
     }
 
     if (commonTrans.autofill) {

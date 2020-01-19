@@ -2264,6 +2264,7 @@ ZOOMPANEL_ZOOMOUT;Afastar\nAtalho: <b>-</b>
 !FILEBROWSER_POPUPREMOVE;Delete permanently
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
+!GENERAL_HELP;Help
 !HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
 !HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
