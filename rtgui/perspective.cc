@@ -87,6 +87,9 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     camera_shift_vert = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL"), -100, 100, 0.01, 0));
     camera_shift_vert->setAdjusterListener (this);
 
+    camera_roll = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_ROLL"), -45, 45, 0.01, 0));
+    camera_roll->setAdjusterListener (this);
+
     camera_pitch = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_PITCH"),
                 -85, 85, 0.1, 0, ipers_cam_pitch_left, ipers_cam_pitch_right));
     camera_pitch->setAdjusterListener (this);
@@ -152,6 +155,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     camera_vbox->pack_start (*camera_crop_factor);
     camera_vbox->pack_start (*camera_shift_horiz);
     camera_vbox->pack_start (*camera_shift_vert);
+    camera_vbox->pack_start (*camera_roll);
     camera_vbox->pack_start (*camera_pitch);
     camera_vbox->pack_start (*camera_yaw);
     camera_vbox->pack_start (*auto_hbox);
@@ -195,6 +199,7 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
         camera_crop_factor->setEditedState (pedited->perspective.camera_crop_factor ? Edited : UnEdited);
         camera_focal_length->setEditedState (pedited->perspective.camera_focal_length ? Edited : UnEdited);
         camera_pitch->setEditedState (pedited->perspective.camera_pitch ? Edited : UnEdited);
+        camera_roll->setEditedState (pedited->perspective.camera_roll ? Edited : UnEdited);
         camera_shift_horiz->setEditedState (pedited->perspective.camera_shift_horiz ? Edited : UnEdited);
         camera_shift_vert->setEditedState (pedited->perspective.camera_shift_vert ? Edited : UnEdited);
         camera_yaw->setEditedState (pedited->perspective.camera_yaw ? Edited : UnEdited);
@@ -211,6 +216,7 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
     camera_crop_factor->setValue (pp->perspective.camera_crop_factor);
     camera_focal_length->setValue (pp->perspective.camera_focal_length);
     camera_pitch->setValue (pp->perspective.camera_pitch);
+    camera_roll->setValue (pp->perspective.camera_roll);
     camera_shift_horiz->setValue (pp->perspective.camera_shift_horiz);
     camera_shift_vert->setValue (pp->perspective.camera_shift_vert);
     camera_yaw->setValue (pp->perspective.camera_yaw);
@@ -240,6 +246,7 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
     pp->perspective.camera_crop_factor= camera_crop_factor->getValue ();
     pp->perspective.camera_focal_length = camera_focal_length->getValue ();
     pp->perspective.camera_pitch = camera_pitch->getValue ();
+    pp->perspective.camera_roll = camera_roll->getValue ();
     pp->perspective.camera_shift_horiz = camera_shift_horiz->getValue ();
     pp->perspective.camera_shift_vert = camera_shift_vert->getValue ();
     pp->perspective.camera_yaw = camera_yaw->getValue ();
@@ -263,6 +270,7 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->perspective.camera_crop_factor= camera_crop_factor->getEditedState ();
         pedited->perspective.camera_focal_length = camera_focal_length->getEditedState ();
         pedited->perspective.camera_pitch = camera_pitch->getEditedState();
+        pedited->perspective.camera_roll = camera_roll->getEditedState();
         pedited->perspective.camera_shift_horiz = camera_shift_horiz->getEditedState();
         pedited->perspective.camera_shift_vert = camera_shift_vert->getEditedState();
         pedited->perspective.camera_yaw = camera_yaw->getEditedState();
@@ -283,6 +291,7 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
     camera_crop_factor->setDefault (defParams->perspective.camera_crop_factor);
     camera_focal_length->setDefault (defParams->perspective.camera_focal_length);
     camera_pitch->setDefault (defParams->perspective.camera_pitch);
+    camera_roll->setDefault (defParams->perspective.camera_roll);
     camera_shift_horiz->setDefault (defParams->perspective.camera_shift_horiz);
     camera_shift_vert->setDefault (defParams->perspective.camera_shift_vert);
     camera_yaw->setDefault (defParams->perspective.camera_yaw);
@@ -299,6 +308,7 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
         camera_crop_factor->setDefaultEditedState (pedited->perspective.camera_crop_factor ? Edited : UnEdited);
         camera_focal_length->setDefaultEditedState (pedited->perspective.camera_focal_length ? Edited : UnEdited);
         camera_pitch->setDefaultEditedState (pedited->perspective.camera_pitch ? Edited : UnEdited);
+        camera_roll->setDefaultEditedState (pedited->perspective.camera_roll ? Edited : UnEdited);
         camera_shift_horiz->setDefaultEditedState (pedited->perspective.camera_shift_horiz ? Edited : UnEdited);
         camera_shift_vert->setDefaultEditedState (pedited->perspective.camera_shift_vert ? Edited : UnEdited);
         camera_yaw->setDefaultEditedState (pedited->perspective.camera_yaw ? Edited : UnEdited);
@@ -314,6 +324,7 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
         camera_crop_factor->setDefaultEditedState (Irrelevant);
         camera_focal_length->setDefaultEditedState (Irrelevant);
         camera_pitch->setDefaultEditedState (Irrelevant);
+        camera_roll->setDefaultEditedState (Irrelevant);
         camera_shift_horiz->setDefaultEditedState (Irrelevant);
         camera_shift_vert->setDefaultEditedState (Irrelevant);
         camera_yaw->setDefaultEditedState (Irrelevant);
@@ -350,9 +361,11 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
                         camera_shift_horiz->getValue(),
                         M("TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL"),
                         camera_shift_vert->getValue()));
-        } else if (a == camera_pitch || a == camera_yaw) {
+        } else if (a == camera_pitch || a == camera_roll|| a == camera_yaw) {
             listener->panelChanged (EvPerspCamAngle,
-                    Glib::ustring::compose("%1=%2\n%3=%4",
+                    Glib::ustring::compose("%1=%2\n%3=%4\n%5=%6",
+                        M("TP_PERSPECTIVE_CAMERA_ROLL"),
+                        camera_roll->getValue(),
                         M("TP_PERSPECTIVE_CAMERA_YAW"),
                         camera_yaw->getValue(),
                         M("TP_PERSPECTIVE_CAMERA_PITCH"),
@@ -401,6 +414,7 @@ void PerspCorrection::autoCorrectionPressed(Gtk::Button* b)
 
     disableListener();
     camera_pitch->setValue(pitch);
+    camera_roll->setValue(rot);
     camera_yaw->setValue(yaw);
     enableListener();
 
@@ -435,6 +449,7 @@ void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_a
     camera_crop_factor->setAddMode(camera_focal_length_add);
     camera_focal_length->setAddMode(camera_focal_length_add);
     camera_pitch->setAddMode(camera_angle_add);
+    camera_roll->setAddMode(camera_angle_add);
     camera_shift_horiz->setAddMode(camera_shift_add);
     camera_shift_vert->setAddMode(camera_shift_add);
     camera_yaw->setAddMode(camera_angle_add);
@@ -454,6 +469,7 @@ void PerspCorrection::trimValues (rtengine::procparams::ProcParams* pp)
     camera_crop_factor->trimValue(pp->perspective.camera_crop_factor);
     camera_focal_length->trimValue(pp->perspective.camera_focal_length);
     camera_pitch->trimValue(pp->perspective.camera_pitch);
+    camera_roll->trimValue(pp->perspective.camera_roll);
     camera_shift_horiz->trimValue(pp->perspective.camera_shift_horiz);
     camera_shift_vert->trimValue(pp->perspective.camera_shift_vert);
     camera_yaw->trimValue(pp->perspective.camera_yaw);
@@ -474,6 +490,7 @@ void PerspCorrection::setBatchMode (bool batchMode)
     camera_crop_factor->showEditedCB ();
     camera_focal_length->showEditedCB ();
     camera_pitch->showEditedCB ();
+    camera_roll->showEditedCB ();
     camera_shift_horiz->showEditedCB ();
     camera_shift_vert->showEditedCB ();
     camera_yaw->showEditedCB ();

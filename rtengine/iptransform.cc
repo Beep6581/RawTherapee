@@ -212,6 +212,7 @@ namespace rtengine
  * @param camera_focal_length Camera's focal length.
  * @param camera_shift_horiz Camera lens's shift to the right.
  * @param camera_shift_vert Camera lens's shift upwards.
+ * @param camera_roll Camera's roll in radians. Counter-clockwise is positive.
  * @param camera_pitch Camera's pitch in radians. Up is positive.
  * @param camera_yaw Camera's yaw in radians. Right is positive.
  * Up is positive.
@@ -227,10 +228,11 @@ namespace rtengine
  * @param projection_scale Scale factor of perspective-corrected image.
  */
 homogeneous::Matrix<double> perspectiveMatrix(double camera_focal_length, double
-        camera_shift_horiz, double camera_shift_vert, double camera_pitch,
-        double camera_yaw, double projection_yaw, double projection_pitch,
-        double projection_rotate, double projection_shift_horiz, double
-        projection_shift_vert, double projection_scale)
+        camera_shift_horiz, double camera_shift_vert, double camera_roll, double
+        camera_pitch, double camera_yaw, double projection_yaw, double
+        projection_pitch, double projection_rotate, double
+        projection_shift_horiz, double projection_shift_vert, double
+        projection_scale)
 {
     const double projection_scale_inverse = 1.0 / projection_scale;
     homogeneous::Vector<double> center;
@@ -254,6 +256,8 @@ homogeneous::Matrix<double> perspectiveMatrix(double camera_focal_length, double
         // Lens/sensor shift and move to z == camera_focal_length.
         homogeneous::translationMatrix<double>(-camera_shift_horiz,
                 -camera_shift_vert, -camera_focal_length) *
+        // Camera roll.
+        homogeneous::rotationMatrix<double>(camera_roll, homogeneous::Axis::Z) *
         // Perspective correction.
         homogeneous::projectionMatrix<double>(camera_focal_length, homogeneous::Axis::Z) *
         homogeneous::rotationMatrix<double>(-camera_pitch, homogeneous::Axis::X) *
@@ -337,6 +341,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
                     12.0*12.0));
     const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
     const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
+    const double p_camera_roll = params->perspective.camera_roll * rtengine::RT_PI_180;
     const double p_camera_shift_horiz = oW / 100.0 * params->perspective.camera_shift_horiz;
     const double p_camera_shift_vert = oH / -100.0 * params->perspective.camera_shift_vert;
     const double p_projection_shift_horiz = oW / 100.0 * params->perspective.projection_shift_horiz;
@@ -346,8 +351,8 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     const double p_projection_pitch = -params->perspective.projection_pitch * rtengine::RT_PI_180;
     const double p_projection_scale = params->perspective.projection_scale;
     const homogeneous::Matrix<double> p_matrix = perspectiveMatrix(f,
-            p_camera_shift_horiz, p_camera_shift_vert, p_camera_pitch,
-            p_camera_yaw, p_projection_yaw, p_projection_pitch,
+            p_camera_shift_horiz, p_camera_shift_vert, p_camera_roll,
+            p_camera_pitch, p_camera_yaw, p_projection_yaw, p_projection_pitch,
             p_projection_rotate, p_projection_shift_horiz,
             p_projection_shift_vert, p_projection_scale);
 
@@ -1044,6 +1049,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     12.0*12.0));
     const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
     const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
+    const double p_camera_roll = params->perspective.camera_roll * rtengine::RT_PI_180;
     const double p_camera_shift_horiz = oW / 100.0 * params->perspective.camera_shift_horiz;
     const double p_camera_shift_vert = oH / -100.0 * params->perspective.camera_shift_vert;
     const double p_projection_shift_horiz = oW / 100.0 * params->perspective.projection_shift_horiz;
@@ -1053,8 +1059,8 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double p_projection_pitch = -params->perspective.projection_pitch * rtengine::RT_PI_180;
     const double p_projection_scale = params->perspective.projection_scale;
     const homogeneous::Matrix<double> p_matrix = perspectiveMatrix(f,
-            p_camera_shift_horiz, p_camera_shift_vert, p_camera_pitch,
-            p_camera_yaw, p_projection_yaw, p_projection_pitch,
+            p_camera_shift_horiz, p_camera_shift_vert, p_camera_roll,
+            p_camera_pitch, p_camera_yaw, p_projection_yaw, p_projection_pitch,
             p_projection_rotate, p_projection_shift_horiz,
             p_projection_shift_vert, p_projection_scale);
 
@@ -1298,6 +1304,7 @@ bool ImProcFunctions::needsPerspective () const
             (params->perspective.horizontal || params->perspective.vertical) )
         || ( (params->perspective.method == "camera_based") && (
                     params->perspective.camera_pitch ||
+                    params->perspective.camera_roll ||
                     params->perspective.camera_shift_horiz ||
                     params->perspective.camera_shift_vert ||
                     params->perspective.camera_yaw ||

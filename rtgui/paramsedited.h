@@ -400,6 +400,7 @@ struct PerspectiveParamsEdited {
     bool camera_crop_factor;
     bool camera_focal_length;
     bool camera_pitch;
+    bool camera_roll;
     bool camera_shift_horiz;
     bool camera_shift_vert;
     bool camera_yaw;

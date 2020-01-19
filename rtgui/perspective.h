@@ -42,6 +42,7 @@ protected:
     Adjuster* camera_crop_factor;
     Adjuster* camera_focal_length;
     Adjuster* camera_pitch;
+    Adjuster* camera_roll;
     Adjuster* camera_shift_horiz;
     Adjuster* camera_shift_vert;
     Adjuster* camera_yaw;

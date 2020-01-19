@@ -670,7 +670,7 @@ static void homography(float *homograph, const float angle, const float shift_v,
 
   const float u = width;
   const float v = height;
-  const float rot = M_PI * angle / 180.0f;
+  const float rot = -M_PI * angle / 180.0f;
   const float pitch = M_PI * camera_pitch / 180.0f;
   const float yaw = M_PI * camera_yaw / 180.0f;
 

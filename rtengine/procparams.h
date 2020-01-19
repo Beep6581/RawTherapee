@@ -911,6 +911,7 @@ struct PerspectiveParams {
     double  camera_crop_factor;
     double  camera_focal_length;
     double  camera_pitch;
+    double  camera_roll;
     double  camera_shift_horiz;
     double  camera_shift_vert;
     double  camera_yaw;

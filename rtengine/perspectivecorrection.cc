@@ -45,6 +45,7 @@
 
 #include "perspectivecorrection.h"
 #include "improcfun.h"
+#include "procparams.h"
 #include "rt_math.h"
 #include <string.h>
 #include <math.h>
@@ -121,7 +122,7 @@ std::vector<Coord2D> get_corners(int w, int h)
 */
 
 void init_dt_structures(dt_iop_ashift_params_t *p, dt_iop_ashift_gui_data_t *g,
-                        const procparams::ProcParams *params)
+                        const procparams::PerspectiveParams *params)
 {
     dt_iop_ashift_params_t dp = {
         0.0f,
@@ -185,13 +186,13 @@ void init_dt_structures(dt_iop_ashift_params_t *p, dt_iop_ashift_gui_data_t *g,
     g->crop_cx = g->crop_cy = 1.0f;
 
     if (params) {
-        p->rotation = params->rotate.degree;
-        p->lensshift_v = params->perspective.camera_shift_vert;
-        p->lensshift_h = params->perspective.camera_shift_horiz;
-        p->f_length = params->perspective.camera_focal_length;
-        p->crop_factor = params->perspective.camera_crop_factor;
-        p->camera_pitch = params->perspective.camera_pitch;
-        p->camera_yaw = params->perspective.camera_yaw;
+        p->rotation = params->camera_roll;
+        p->lensshift_v = params->camera_shift_vert;
+        p->lensshift_h = params->camera_shift_horiz;
+        p->f_length = params->camera_focal_length;
+        p->crop_factor = params->camera_crop_factor;
+        p->camera_pitch = params->camera_pitch;
+        p->camera_yaw = params->camera_yaw;
     }
 }
 
@@ -238,11 +239,12 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
     pcp.shear = dflt.shear;
     */
     pcp.camera_pitch = dflt.camera_pitch;
+    pcp.camera_roll = dflt.camera_roll;
     pcp.camera_yaw = dflt.camera_yaw;
     
     dt_iop_ashift_params_t p;
     dt_iop_ashift_gui_data_t g;
-    init_dt_structures(&p, &g, pparams);
+    init_dt_structures(&p, &g, &pparams->perspective);
     dt_iop_module_t module;
     module.gui_data = &g;
     module.is_raw = src->isRAW();
@@ -323,7 +325,7 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
     free(g.buf);
 
     if (!res) {
-        retval.angle = pparams->rotate.degree;
+        retval.angle = pparams->perspective.camera_roll;
         retval.pitch = pparams->perspective.camera_pitch;
         retval.yaw = pparams->perspective.camera_yaw;
     }

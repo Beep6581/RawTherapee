@@ -340,6 +340,7 @@ void ParamsEdited::set(bool v)
     perspective.camera_crop_factor = v;
     perspective.camera_focal_length = v;
     perspective.camera_pitch = v;
+    perspective.camera_roll = v;
     perspective.camera_shift_horiz = v;
     perspective.camera_shift_vert = v;
     perspective.camera_yaw = v;
@@ -936,6 +937,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         perspective.camera_crop_factor = perspective.camera_crop_factor && p.perspective.camera_crop_factor == other.perspective.camera_crop_factor;
         perspective.camera_focal_length = perspective.camera_focal_length && p.perspective.camera_focal_length == other.perspective.camera_focal_length;
         perspective.camera_pitch = perspective.camera_pitch && p.perspective.camera_pitch == other.perspective.camera_pitch;
+        perspective.camera_roll = perspective.camera_roll && p.perspective.camera_roll == other.perspective.camera_roll;
         perspective.camera_shift_horiz = perspective.camera_shift_horiz && p.perspective.camera_shift_horiz == other.perspective.camera_shift_horiz;
         perspective.camera_shift_vert = perspective.camera_shift_vert && p.perspective.camera_shift_vert == other.perspective.camera_shift_vert;
         perspective.projection_pitch = perspective.projection_pitch && p.perspective.projection_pitch == other.perspective.projection_pitch;
@@ -2357,6 +2359,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (perspective.camera_pitch) {
         toEdit.perspective.camera_pitch = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_ANGLE] ? toEdit.perspective.camera_pitch + mods.perspective.camera_pitch : mods.perspective.camera_pitch;
+    }
+
+    if (perspective.camera_roll) {
+        toEdit.perspective.camera_roll = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_ANGLE] ? toEdit.perspective.camera_roll + mods.perspective.camera_roll : mods.perspective.camera_roll;
     }
 
     if (perspective.camera_shift_horiz) {
