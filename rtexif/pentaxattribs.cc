@@ -1391,7 +1391,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         int a = t->toInt (0, BYTE);
-        double b = static_cast<float>(10 * (a >> 2)) * std::pow(4.f, static_cast<float>((a & 0x03) - 2));
+        double b = static_cast<double>(10 * (a >> 2)) * std::pow(4.0, static_cast<double>((a & 0x03) - 2));
 
         if (b > 1.0) {
             char buffer[32];
@@ -1404,7 +1404,7 @@ public:
     double toDouble (const Tag* t, int ofs) override
     {
         int a = t->toInt (ofs, BYTE);
-        double b = static_cast<float>(10 * (a >> 2)) * std::pow(4.f, static_cast<float>((a & 0x03) - 2));
+        double b = static_cast<double>(10 * (a >> 2)) * std::pow(4.0, static_cast<double>((a & 0x03) - 2));
 
         if (b > 1.0) {
             return b;
