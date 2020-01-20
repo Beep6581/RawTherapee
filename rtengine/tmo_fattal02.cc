@@ -308,7 +308,7 @@ float calculateGradients (Array2Df* H, Array2Df* G, int k, bool multithread)
             // however, the impact is not visible so we ignore this here
 
             (*G) (x, y) = sqrt (gx * gx + gy * gy) / divider;
-            avgGrad += (*G) (x, y);
+            avgGrad += static_cast<double>((*G) (x, y));
         }
     }
 
@@ -381,7 +381,7 @@ void calculateFiMatrix (Array2Df* FI, Array2Df* gradients[],
 #endif
             for ( int y = 0; y < height; y++ ) {
                 for ( int x = 0; x < width; x++ ) {
-                    float grad = ((*gradients[k]) (x, y) < 1e-4f) ? 1e-4 : (*gradients[k]) (x, y);
+                    float grad = ((*gradients[k]) (x, y) < 1e-4f) ? 1e-4f : (*gradients[k]) (x, y);
                     float a = alfa * avgGrad[k];
                     float value = pow ((grad + noise) / a, beta - 1.0f);
 
@@ -603,8 +603,8 @@ void tmo_fattal02 (size_t width,
             // sets index+1 based on the boundary assumption H(N+1)=H(N-1)
             unsigned int xp1 = (x + 1 >= width ?  width - 2  : x + 1);
             // forward differences in H, so need to use between-points approx of FI
-            (*Gx) (x, y) = ((*H) (xp1, y) - (*H) (x, y)) * 0.5 * ((*FI) (xp1, y) + (*FI) (x, y));
-            (*Gy) (x, y) = ((*H) (x, yp1) - (*H) (x, y)) * 0.5 * ((*FI) (x, yp1) + (*FI) (x, y));
+            (*Gx) (x, y) = ((*H) (xp1, y) - (*H) (x, y)) * 0.5f * ((*FI) (xp1, y) + (*FI) (x, y));
+            (*Gy) (x, y) = ((*H) (x, yp1) - (*H) (x, y)) * 0.5f * ((*FI) (x, yp1) + (*FI) (x, y));
         }
     }
 
@@ -747,7 +747,7 @@ void transform_ev2normal (Array2Df *A, Array2Df *T, bool multithread)
     }
 
     for (int y = 1 ; y < height - 1 ; y++ ) {
-        (*A) (0, y) *= 0.5;
+        (*A) (0, y) *= 0.5f;
         (*A) (width - 1, y) *= 0.5f;
     }
 
@@ -912,7 +912,7 @@ void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*
 
     for (int y = 0 ; y < height ; y++ ) {
         for (int x = 0 ; x < width ; x++ ) {
-            (*F_tr) (x, y) = (*F_tr) (x, y) / (l1[y] + l2[x]);
+            (*F_tr) (x, y) = static_cast<double>((*F_tr) (x, y)) / (l1[y] + l2[x]);
         }
     }
 

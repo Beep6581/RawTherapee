@@ -48,7 +48,7 @@ void fillCurveArrayVib (DiagonalCurve* diagCurve, LUTf &outCurve)
             // change to [0,1] range
             // apply custom/parametric/NURBS curve, if any
             // and store result in a temporary array
-            outCurve[i] = 65535.f * diagCurve->getVal ( double (i) / 65535.0 );
+            outCurve[i] = 65535.0 * diagCurve->getVal(i / 65535.0);
         }
     } else {
         outCurve.makeIdentity();
@@ -606,7 +606,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                 bool inGamut;
 
                 const float fyy = Color::c1By116 * Lprov + Color::c16By116;
-                const float yy_ = (Lprov > Color::epskap) ? fyy * fyy*fyy : Lprov / Color::kappaf;
+                const float yy_ = (Lprov > static_cast<float>(Color::epskap)) ? fyy * fyy*fyy : Lprov / Color::kappaf;
                 float ChprovOld = std::numeric_limits<float>::min();
                 do {
                     inGamut = true;

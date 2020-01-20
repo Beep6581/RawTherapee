@@ -538,8 +538,8 @@ BENCHFUN
     constexpr int tileSize = 32;
     const int border = iterations <= 30 ? 5 : 7;
     const int fullTileSize = tileSize + 2 * border;
-    const float cornerRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
-    const float cornerDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
+    const double cornerRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
+    const double cornerDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
     const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
 
     double progress = startVal;
@@ -642,7 +642,7 @@ BENCHFUN
                         const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - H / 2) + rtengine::SQR(j + tileSize / 2 - W / 2));
                         const float sigmaTile = static_cast<float>(sigma) + distanceFactor * distance;
                         if (sigmaTile >= 0.4f) {
-                            if (sigmaTile > 0.84) { // have to use 7x7 kernel
+                            if (sigmaTile > 0.84f) { // have to use 7x7 kernel
                                 float lkernel7[7][7];
                                 compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
                                 for (int k = 0; k < iterations; ++k) {
@@ -731,7 +731,7 @@ BENCHFUN
                                     { 0.019334, 0.119193, 0.950227 }
                                 };
 
-    float contrast = conrastThreshold / 100.f;
+    float contrast = conrastThreshold / 100.0;
 
     const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
 
