@@ -617,7 +617,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.enavibMask = locallab.spots.at(sp).enavibMask && llvibMask == 0 && lllcMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llSHMask == 0;
     lp.enalcMask = locallab.spots.at(sp).enalcMask && lllcMask == 0 && llcbMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0  && llblMask == 0 && llvibMask == 0;
 
-  //  printf("llColorMask=%i lllcMask=%i llExpMask=%i  llSHMask=%i llcbMask=%i llretiMask=%i lltmMask=%i llblMask=%i llvibMask=%i\n", llColorMask, lllcMask, llExpMask, llSHMask, llcbMask, llretiMask, lltmMask, llblMask, llvibMask);
+    //  printf("llColorMask=%i lllcMask=%i llExpMask=%i  llSHMask=%i llcbMask=%i llretiMask=%i lltmMask=%i llblMask=%i llvibMask=%i\n", llColorMask, lllcMask, llExpMask, llSHMask, llcbMask, llretiMask, lltmMask, llblMask, llvibMask);
     if (locallab.spots.at(sp).softMethod == "soft") {
         lp.softmet = 0;
     } else if (locallab.spots.at(sp).softMethod == "reti") {
@@ -3017,7 +3017,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
         stops = lp.strvibh;
         angs = lp.angvib;
     } else if (indic == 10) {
-        stops = lp.strwav;
+        stops = fabs(lp.strwav);
         angs = lp.angwav;
     } else if (indic == 11) {
         stops = lp.strlog;
@@ -6300,7 +6300,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     kab /= SQR(327.68f);
     kL /= SQR(327.68f);
 
-    if(lp.colorde == 0) {
+    if (lp.colorde == 0) {
         lp.colorde = -1;//to avoid black
     }
 
@@ -6484,7 +6484,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     clb = bufexpfin->b[y][x] - original->b[y + ystart][x + xstart];
                 }
 
-               // const float previewint = settings->previewselection;
+                // const float previewint = settings->previewselection;
 
                 const float realstrdE = reducdE * cli;
                 const float realstradE = reducdE * cla;
@@ -6509,17 +6509,19 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
-                        
+
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
                         transformed->a[y + ystart][x + xstart] = CLIPC(ampli * difa);
                         transformed->b[y + ystart][x + xstart] = CLIPC(ampli * difb);
                     } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc) {//show deltaE
                         float difbdisp = reducdE * 10000.f * lp.colorde;
-                        if(transformed->L[y + ystart][x + xstart] < darklim) {//enhance dark luminance as user can see!
+
+                        if (transformed->L[y + ystart][x + xstart] < darklim) { //enhance dark luminance as user can see!
                             float dark = transformed->L[y + ystart][x + xstart];
                             transformed->L[y + ystart][x + xstart] = dark * aadark + bbdark;
                         }
-                        if(lp.colorde <= 0) {
+
+                        if (lp.colorde <= 0) {
                             transformed->a[y + ystart][x + xstart] = 0.f;
                             transformed->b[y + ystart][x + xstart] = difbdisp;
                         } else {
@@ -7343,34 +7345,15 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         array2D<float> factorwav(W_Lm, H_Lm);
         calclocalGradientParams(lp, gpwav, 0, 0, W_Lm, H_Lm, 10);
 
-        float factmax = -100000.f;
 
         for (int y = 0; y < H_Lm; y++) {
             for (int x = 0; x < W_Lm; x++) {
                 float factor = ImProcFunctions::calcGradientFactor(gpwav, x, y);
-                //printf("fact=%f ", factor);
-
-                if (factor > factmax) {
-                    factmax = factor;
-                }
-
                 factorwav[y][x] = factor;
-            }
+                factorwav[y][x] = 1.f - factorwav[y][x];
 
-            // printf("fact=%f\n", factmax);
-        }
-
-        if (lp.strwav < 0.f) {
-            factmax *= -1;
-        }
-
-        for (int y = 0; y < H_Lm; y++) {
-            for (int x = 0; x < W_Lm; x++) {
                 if (lp.strwav < 0.f) {
-                    factorwav[y][x] /= factmax;
-                    factorwav[y][x] = -(factorwav[y][x] + 1.f);
-                } else {
-                    factorwav[y][x] = 1.f - factorwav[y][x];
+                    factorwav[y][x] *= -1.f;
                 }
             }
         }
@@ -9656,13 +9639,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                 delete tmpImage;
+
                 //here begin graduated filter
                 //first solution "easy" but we can do other with log_encode...to see the results
                 if (lp.strlog != 0.f) {
                     struct grad_params gplog;
                     calclocalGradientParams(lp, gplog, ystart, xstart, bfw, bfh, 11);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                     for (int ir = 0; ir < bfh; ir++)
@@ -9672,8 +9656,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufexpfin->L[ir][jr] *= factor;
                         }
                 }
-                
-                
+
+
                 //end graduated
                 transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
