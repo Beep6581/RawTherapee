@@ -1462,8 +1462,8 @@ static int line_detect(float *in, const int width, const int height, const int x
       ashift_lines[lct].length = sqrt((px2 - px1) * (px2 - px1) + (py2 - py1) * (py2 - py1));
       ashift_lines[lct].width = lsd_lines[n * 7 + 4] / scale;
 
-      // ...  and weight (= length * width * angle precision)
-      const float weight = ashift_lines[lct].length * ashift_lines[lct].width * lsd_lines[n * 7 + 5];
+      // ...  and weight (= angle precision * length * width)
+      const float weight = lsd_lines[n * 7 + 5] * ashift_lines[lct].length * ashift_lines[lct].width;
       ashift_lines[lct].weight = weight;
 
 
@@ -2083,10 +2083,10 @@ static double model_fitness(double *params, void *data)
     float s = vec3scalar(L, A);
 
     // sum up weighted s^2 for both directions individually
-    sumsq_v += isvertical ? s * s * lines[n].weight : 0.0;
+    sumsq_v += isvertical ? (double)s * s * lines[n].weight : 0.0;
     weight_v  += isvertical ? lines[n].weight : 0.0;
     count_v += isvertical ? 1 : 0;
-    sumsq_h += !isvertical ? s * s * lines[n].weight : 0.0;
+    sumsq_h += !isvertical ? (double)s * s * lines[n].weight : 0.0;
     weight_h  += !isvertical ? lines[n].weight : 0.0;
     count_h += !isvertical ? 1 : 0;
     count++;
@@ -2128,7 +2128,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   fit.lines_count = g->lines_count;
   fit.width = g->lines_in_width;
   fit.height = g->lines_in_height;
-  fit.f_length_kb = (p->mode == ASHIFT_MODE_GENERIC) ? DEFAULT_F_LENGTH : p->f_length * p->crop_factor;
+  fit.f_length_kb = (p->mode == ASHIFT_MODE_GENERIC) ? (float)DEFAULT_F_LENGTH : p->f_length * p->crop_factor;
   fit.orthocorr = (p->mode == ASHIFT_MODE_GENERIC) ? 0.0f : p->orthocorr;
   fit.aspect = (p->mode == ASHIFT_MODE_GENERIC) ? 1.0f : p->aspect;
   fit.rotation = p->rotation;
