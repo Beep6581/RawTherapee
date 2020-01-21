@@ -74,6 +74,7 @@ static double blurSlider2radius(double sval)
     if (radius > MAXRAD) {
         radius = MAXRAD;
     }
+
     return radius;
 }
 
@@ -380,7 +381,7 @@ Locallab::Locallab():
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
 
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
-    
+
     // Adjuster widgets
     // Color & Light
     lightness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTNESS"), -100, 500, 1, 0))),
@@ -649,7 +650,7 @@ blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.
 whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.0, 32.0, 0.1, 10.0))),
 detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
 sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSILOG"), 0, 100, 1, 50))),
-baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 8., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))), 
+baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 8., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
 strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
 anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
 
@@ -1238,7 +1239,7 @@ pe(nullptr)
     colorBox->pack_start(*sensi);
 
 //    if (complexsoft < 2) {
-        colorBox->pack_start(*structcol);
+    colorBox->pack_start(*structcol);
 //    }
 
     if (complexsoft < 2) {
@@ -1284,7 +1285,7 @@ pe(nullptr)
     }
 
     expcurvcol->add(*curvBox, false);
-    
+
     colorBox->pack_start(*expcurvcol, false, false);
 
     Gtk::HSeparator* const separatormer = Gtk::manage(new  Gtk::HSeparator());
@@ -1644,7 +1645,7 @@ pe(nullptr)
     ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
     gradBox->pack_start(*strexp);
     gradBox->pack_start(*angexp);
-    
+
 
     gradFramemask->set_label_align(0.025, 0.5);
 
@@ -1671,7 +1672,7 @@ pe(nullptr)
 
     toolBox->pack_start(*expcomp);
 //    if (complexsoft < 2) {
-        toolBox->pack_start(*black);
+    toolBox->pack_start(*black);
 //    }
 
     if (complexsoft < 2) {
@@ -1693,12 +1694,13 @@ pe(nullptr)
     exposeBox->pack_start(*sensiex);
 
 //    if (complexsoft < 2) {
-        exposeBox->pack_start(*structexp);
+    exposeBox->pack_start(*structexp);
 //    }
 
     if (complexsoft < 2) {
         exposeBox->pack_start(*blurexpde);
     }
+
     exposeBox->pack_start(*exptoolexp);
 
 
@@ -1708,7 +1710,7 @@ pe(nullptr)
 
     expgradexp->add(*gradBox, false);
     exposeBox->pack_start(*expgradexp);
-  
+
 
     if (complexsoft < 2) {
         exposeBox->pack_start(*softradiusexp);
@@ -1919,8 +1921,8 @@ pe(nullptr)
     ToolParamBlock* const gradSHBox = Gtk::manage(new ToolParamBlock());
     gradSHBox->pack_start(*strSH);
     gradSHBox->pack_start(*angSH);
- //   gradSHFrame->add(*gradSHBox);
-    
+//   gradSHFrame->add(*gradSHBox);
+
     setExpandAlignProperties(expgradsh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expgradsh->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expgradsh));
     expgradsh->setLevel(2);
@@ -1928,11 +1930,11 @@ pe(nullptr)
     expgradsh->add(*gradSHBox, false);
 
     shadhighBox->pack_start(*detailSH);
- //   shadhighBox->pack_start(*gamFrame);
+//   shadhighBox->pack_start(*gamFrame);
 
     if (complexsoft < 2) {
-     //   shadhighBox->pack_start(*gamFrame);
-    //    shadhighBox->pack_start(*exptrcsh);
+        //   shadhighBox->pack_start(*gamFrame);
+        //    shadhighBox->pack_start(*exptrcsh);
     }
 
     shadhighBox->pack_start(*highlights);
@@ -1945,6 +1947,7 @@ pe(nullptr)
     if (complexsoft < 2) {
         shadhighBox->pack_start(*blurSHde);
     }
+
     shadhighBox->pack_start(*gamFrame);
 
 //    shadhighBox->pack_start(*gradSHFrame);
@@ -2140,7 +2143,7 @@ pe(nullptr)
     }
 
 //    if (complexsoft < 2) {
-        vibranceBox->pack_start(*expgradvib);
+    vibranceBox->pack_start(*expgradvib);
 //    }
 
     enavibMaskConn = enavibMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enavibMaskChanged));
@@ -2754,7 +2757,7 @@ pe(nullptr)
     expretitools->add(*toolretiBox, false);
     retiBox->pack_start(*expretitools, false, false);
 
-    
+
     retiBox->pack_start(*expmaskreti, false, false);
 //    retiBox->pack_start(*inversret);
 
@@ -2855,14 +2858,15 @@ pe(nullptr)
     contLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     contTitleHBox->pack_start(*contLabel, Gtk::PACK_EXPAND_WIDGET, 0);
     RTImage* const contImage = Gtk::manage(new RTImage("one-to-one-small.png"));
-    
+
     contTitleHBox->pack_end(*contImage, Gtk::PACK_SHRINK, 0);
     expcontrast->setLabel(contTitleHBox);
-    
+
     expcontrast->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrast));
     enablecontrastConn = expcontrast->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcontrast));
     fftwlcConn  = fftwlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftwlcChanged));
     csThreshold->setAdjusterListener(this);
+
     if (showtooltip) {
         expcontrast->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
     }
@@ -2870,7 +2874,7 @@ pe(nullptr)
     if (showtooltip) {
         fftwlc->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
     }
-    
+
     setExpandAlignProperties(expmasklc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmasklc->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmasklc));
     expmasklc->setLevel(2);
@@ -2878,7 +2882,7 @@ pe(nullptr)
     if (showtooltip) {
         expmasklc->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
-    
+
     blurlcConn  = blurlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::blurlcChanged));
     wavblurConn  = wavblur->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavblurChanged));
     wavcontConn  = wavcont->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcontChanged));
@@ -2890,8 +2894,8 @@ pe(nullptr)
 
     LocalcurveEditorwav->setCurveListener(this);
     std::vector<GradientMilestone> botMilestones;
-    botMilestones.push_back( GradientMilestone(0., 0., 0., 0.) );
-    botMilestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+    botMilestones.push_back(GradientMilestone(0., 0., 0., 0.));
+    botMilestones.push_back(GradientMilestone(1., 1., 1., 1.));
 
     wavshape->setIdentityValue(0.);
     wavshape->setResetCurve(FlatCurveType(defSpot.locwavcurve.at(0)), defSpot.locwavcurve);
@@ -2945,6 +2949,7 @@ pe(nullptr)
 //       wavshapecompre->setTooltip(M("TP_LOCALLAB_COMPRESS_TOOLTIP"));
 //       wavshapecomp->setTooltip(M("TP_LOCALLAB_COMPRESS_TOOLTIP"));
     }
+
     if (showtooltip) {
         llshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     }
@@ -3016,7 +3021,7 @@ pe(nullptr)
     clariFrame->add(*clariBox);
 
     gradwavFrame->set_label_align(0.025, 0.5);
-    wavgradl->set_active (false);
+    wavgradl->set_active(false);
     gradwavFrame->set_label_widget(*wavgradl);
     ToolParamBlock* const gradwavBox = Gtk::manage(new ToolParamBlock());
     gradwavBox->pack_start(*strwav);
@@ -3026,12 +3031,12 @@ pe(nullptr)
     Gtk::HSeparator* const separatorblu = Gtk::manage(new  Gtk::HSeparator());
 
     blurlevelFrame->set_label_align(0.025, 0.5);
-    Gtk::VBox *blurlevcontBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::VBox *blurlevcontBox = Gtk::manage(new Gtk::VBox());
     blurlevcontBox->set_spacing(2);
 
-    wavblur->set_active (true);
+    wavblur->set_active(true);
     blurlevelFrame->set_label_widget(*wavblur);
-    
+
 //    ToolParamBlock* const blurlevcontBox = Gtk::manage(new ToolParamBlock());
     blurlevcontBox->pack_start(*levelblur);
     blurlevcontBox->pack_start(*chromablu);
@@ -3039,16 +3044,16 @@ pe(nullptr)
     blurlevcontBox->pack_start(*separatorblu);
     blurlevcontBox->pack_start(*residblur);
     blurlevcontBox->pack_start(*blurlc);
-    
+
     blurlevelFrame->add(*blurlevcontBox);
 
     contFrame->set_label_align(0.025, 0.5);
 //    ToolParamBlock* const contlevBox = Gtk::manage(new ToolParamBlock());
-    Gtk::VBox *contlevBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::VBox *contlevBox = Gtk::manage(new Gtk::VBox());
     contlevBox->set_spacing(2);
-    wavcont->set_active (true);
+    wavcont->set_active(true);
     contFrame->set_label_widget(*wavcont);
-    
+
     contlevBox->pack_start(*sigma);
     contlevBox->pack_start(*offset);
     contlevBox->pack_start(*chromalev);
@@ -3058,22 +3063,22 @@ pe(nullptr)
     Gtk::HSeparator* const separatorcomp = Gtk::manage(new  Gtk::HSeparator());
 
     compFrame->set_label_align(0.025, 0.5);
-    Gtk::VBox *compBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::VBox *compBox = Gtk::manage(new Gtk::VBox());
     compBox->set_spacing(2);
-    wavcomp->set_active (false);
+    wavcomp->set_active(false);
     compFrame->set_label_widget(*wavcomp);
 
     compreFrame->set_label_align(0.025, 0.5);
-    Gtk::VBox *compreBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::VBox *compreBox = Gtk::manage(new Gtk::VBox());
     compreBox->set_spacing(2);
-    wavcompre->set_active (false);
+    wavcompre->set_active(false);
     compreFrame->set_label_widget(*wavcompre);
     compreBox->pack_start(*LocalcurveEditorwavcompre, Gtk::PACK_SHRINK, 4);
     compreBox->pack_start(*threswav);
     compreBox->pack_start(*residcomp);
     compreFrame->add(*compreBox);
 
-    
+
 //    ToolParamBlock* const compBox = Gtk::manage(new ToolParamBlock());
     compBox->pack_start(*fatdet);
     compBox->pack_start(*fatanch);
@@ -3100,12 +3105,15 @@ pe(nullptr)
     blurcontBox->pack_start(*gradwavFrame);
     blurcontBox->pack_start(*contFrame);
     blurcontBox->pack_start(*compreFrame);
+
     if (complexsoft < 2) {
         blurcontBox->pack_start(*compFrame);
     }
+
     blurcontBox->pack_start(*blurlevelFrame);
 
     expcontrastpyr->add(*blurcontBox, false);
+
     if (showtooltip) {
         fatdet->set_tooltip_text(M("TP_LOCALLAB_COMPFRAME_TOOLTIP"));
     }
@@ -3132,13 +3140,13 @@ pe(nullptr)
 //   }
 
 //    if (complexsoft < 2) {
-        contrastBox->pack_start(*residchro);
+    contrastBox->pack_start(*residchro);
 //    }
     contrastBox->pack_start(*sensilc);
 
 //    if (complexsoft < 2) {
     contrastBox->pack_start(*expcontrastpyr);
-    
+
 //    contrastBox->pack_start(*clariFrame);
 //    }
 
@@ -3146,6 +3154,7 @@ pe(nullptr)
     if (complexsoft < 2) {
         contrastBox->pack_start(*fftwlc);
     }
+
     masklcCurveEditorG->setCurveListener(this);
     CCmasklcshape->setIdentityValue(0.);
     CCmasklcshape->setResetCurve(FlatCurveType(defSpot.CCmasklccurve.at(0)), defSpot.CCmasklccurve);
@@ -3188,7 +3197,7 @@ pe(nullptr)
     Lmasklcshape->setBottomBarBgGradient(mLmasklcshape);
     Lmasklcshape->setLeftBarBgGradient(mLmasklcshape);
     mask2lcCurveEditorG->curveListComplete();
-    
+
 
     enalcMaskConn = enalcMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enalcMaskChanged));
 
@@ -3431,7 +3440,7 @@ pe(nullptr)
     expcbdl->setLevel(2);
 
 //    if (complexsoft < 2) {
-        panel->pack_start(*expcbdl, false, false);
+    panel->pack_start(*expcbdl, false, false);
 //    }
 
     // Blur & Noise
@@ -3441,7 +3450,7 @@ pe(nullptr)
     BLLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     BLTitleHBox->pack_start(*BLLabel, Gtk::PACK_EXPAND_WIDGET, 0);
     RTImage* const BLImage = Gtk::manage(new RTImage("one-to-one-small.png"));
-    
+
     if (showtooltip) {
         BLImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
     }
@@ -3801,7 +3810,7 @@ pe(nullptr)
     expdenoi->setLevel(2);
 
 //    if (complexsoft < 2) {
-        panel->pack_start(*expdenoi, false, false);
+    panel->pack_start(*expdenoi, false, false);
 //    }
 
     // log encoding
@@ -4275,7 +4284,7 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
         expcontrast->set_expanded(tpOpen.at(30));
         expdenoi->set_expanded(tpOpen.at(31));
         explog->set_expanded(tpOpen.at(32));
-        
+
     }
 }
 
@@ -4407,11 +4416,12 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->colorde = pp->locallab.spots.at(i).colorde;
         r->transitweak = pp->locallab.spots.at(i).transitweak;
         r->transitgrad = pp->locallab.spots.at(i).transitgrad;
+
         if (complexsoft == 2) {
             r->transitweak = 1;
             r->transitgrad = 0;
         }
-        
+
         r->scopemask = pp->locallab.spots.at(i).scopemask;
         r->lumask = pp->locallab.spots.at(i).lumask;
         r->avoid = pp->locallab.spots.at(i).avoid;
@@ -4496,6 +4506,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->sensiexclu = newSpot->sensiexclu;
             r->structexclu = newSpot->structexclu;
             r->struc = newSpot->struc;
+
             if (complexsoft == 2) {
                 r->shapeMethod = 0;
             }
@@ -4560,10 +4571,12 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->colorde = newSpot->colorde;
             r->transitweak = newSpot->transitweak;
             r->transitgrad = newSpot->transitgrad;
+
             if (complexsoft == 2) {
                 r->transitweak = 1;
                 r->transitgrad = 0;
             }
+
             r->scopemask = newSpot->scopemask;
             r->lumask = newSpot->lumask;
             r->avoid = newSpot->avoid;
@@ -4747,6 +4760,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             } else {
                 r->shapeMethod = 3;
             }
+
             if (complexsoft == 2) {
                 r->shapeMethod = 0;
             }
@@ -4801,6 +4815,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->colorde = newSpot->colorde;
             r->transitweak = newSpot->transitweak;
             r->transitgrad = newSpot->transitgrad;
+
             if (complexsoft == 2) {
                 r->transitweak = 1;
                 r->transitgrad = 0;
@@ -4896,10 +4911,12 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
                     pp->locallab.spots.at(pp->locallab.selspot).structexclu = r->structexclu;
                     pp->locallab.spots.at(pp->locallab.selspot).struc = r->struc;
+
                     if (complexsoft == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "IND";
                         r->shapeMethod = 0;
                     }
+
                     if (r->shapeMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "IND";
                     } else if (r->shapeMethod == 1) {
@@ -4941,13 +4958,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).colorde = r->colorde;
                     pp->locallab.spots.at(pp->locallab.selspot).transitweak = r->transitweak;
                     pp->locallab.spots.at(pp->locallab.selspot).transitgrad = r->transitgrad;
+
                     if (complexsoft == 2) {
                         r->transitweak = 1;
                         r->transitgrad = 0;
                         pp->locallab.spots.at(pp->locallab.selspot).transitweak = r->transitweak;
                         pp->locallab.spots.at(pp->locallab.selspot).transitgrad = r->transitgrad;
                     }
-                    
+
                     pp->locallab.spots.at(pp->locallab.selspot).scopemask = r->scopemask;
                     pp->locallab.spots.at(pp->locallab.selspot).lumask = r->lumask;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
@@ -6818,6 +6836,7 @@ void Locallab::curveChanged(CurveEditor* ce)
         }
 
     }
+
     //denoise
     if (getEnabled() && expdenoi->getEnabled()) {
 
@@ -6828,7 +6847,7 @@ void Locallab::curveChanged(CurveEditor* ce)
         }
 
     }
-    
+
 
 }
 
@@ -7079,7 +7098,7 @@ void Locallab::merMethodChanged()
         gridmerFrame->hide();
     } else if (merMethod->get_active_row_number() == 2) {
         mask7->show();
-       // sensi->set_sensitive(false);
+        // sensi->set_sensitive(false);
         sensi->set_sensitive(true);
 //        structcol->set_sensitive(false);
 //        blurcolde->set_sensitive(false);
@@ -7096,9 +7115,9 @@ void Locallab::merMethodChanged()
         strcolh->set_sensitive(true);
         conthrcol->show();
         gridmerFrame->hide();
-       
+
     } else if (merMethod->get_active_row_number() == 3) {
-      //  sensi->set_sensitive(false);
+        //  sensi->set_sensitive(false);
         sensi->set_sensitive(true);
 //        structcol->set_sensitive(false);
 //        blurcolde->set_sensitive(false);
@@ -7116,14 +7135,14 @@ void Locallab::merMethodChanged()
         mask7->show();
         conthrcol->show();
         gridmerFrame->hide();
-        
+
     } else if (merMethod->get_active_row_number() == 4) {
         mask7->show();
         conthrcol->hide();
 //        blurcolde->set_sensitive(false);
 //        blurcol->set_sensitive(false);
 //        contcol->set_sensitive(false);
-    //    sensi->set_sensitive(false);
+        //    sensi->set_sensitive(false);
         sensi->set_sensitive(true);
 //        structcol->set_sensitive(false);
         structcol->set_sensitive(true);
@@ -7136,7 +7155,7 @@ void Locallab::merMethodChanged()
         invers->set_sensitive(false);
         strcolh->set_sensitive(true);
         gridmerFrame->show();
-       
+
     }
 
     if (getEnabled() && expcolor->getEnabled()) {
@@ -7187,7 +7206,7 @@ void Locallab::showmaskcolMethodChanged()
     showmasklcMethod->set_active(0);
     showmaskcbMethod->set_active(0);
     showmasksharMethod->set_active(0);
-    
+
     enableListener();
 
     if (listener) {
@@ -7928,13 +7947,13 @@ void Locallab::fftwblChanged()
 {
     // printf("fftwblChanged\n");
     double temp = radius->getValue();
-/*
-    if (fftwbl->get_active()) {
-        radius->setLimits(1.5, 1000., 0.5, 1.5);
-    } else {
-        radius->setLimits(1.5, 100., 0.5, 1.5);
-    }
-*/
+    /*
+        if (fftwbl->get_active()) {
+            radius->setLimits(1.5, 1000., 0.5, 1.5);
+        } else {
+            radius->setLimits(1.5, 100., 0.5, 1.5);
+        }
+    */
     radius->setValue(temp);
 
     if (multiImage) {
@@ -8184,8 +8203,8 @@ void Locallab::inversChanged()
         showmaskcolMethod->hide();
         showmaskcolMethodinv->show();
         merge1colFrame->hide();
-               expgradcol->hide();
- 
+        expgradcol->hide();
+
     } else {
         sensi->show();
         llCurveEditorG->show();
@@ -8249,6 +8268,7 @@ void Locallab::inversexChanged()
         expMethod->show();
         exnoiseMethod->show();
         expgradexp->show();
+
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             softradiusexp->show();
@@ -11824,7 +11844,7 @@ void Locallab::disableListener()
 void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index)
 {
     // printf("updateLocallabGUI\n");
-        ControlSpotPanel::SpotRow* const r = new ControlSpotPanel::SpotRow();
+    ControlSpotPanel::SpotRow* const r = new ControlSpotPanel::SpotRow();
 
     // Update GUI values
     if (index < pp->locallab.nbspot && index < (int)pp->locallab.spots.size()) {
@@ -12084,7 +12104,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             expcomp->setValue(0);
             hlcompr->setValue(0);
             hlcomprthresh->setValue(0);
-          //  black->setValue(0);
+            //  black->setValue(0);
             shadex->setValue(0);
             shcompr->setValue(0);
             expchroma->setValue(0);
@@ -12172,8 +12192,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         if (complexsoft == 2) {
             gammaskSH->setValue(1);
             slomaskSH->setValue(0);
-           // strSH->setValue(0);
-           // angSH->setValue(0);
+            // strSH->setValue(0);
+            // angSH->setValue(0);
         }
 
         if (complexsoft > 0) {
@@ -12330,20 +12350,22 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             lapmaskbl->setValue(0);
             LLmaskblshapewav->reset();
         }
-/*
-        if (fftwbl->get_active()) {
-            radius->setLimits(1.5, 1000., 0.5, 1.5);
-        } else {
-            radius->setLimits(1.5, 100., 0.5, 1.5);
-        }
-*/
+
+        /*
+                if (fftwbl->get_active()) {
+                    radius->setLimits(1.5, 1000., 0.5, 1.5);
+                } else {
+                    radius->setLimits(1.5, 100., 0.5, 1.5);
+                }
+        */
         radius->setValue(pp->locallab.spots.at(index).radius);
-/*
-        if (complexsoft == 2) {
-            radius->setLimits(1.5, 100., 0.5, 1.5);
-            radius->setValue(pp->locallab.spots.at(index).radius);
-        }
-*/
+
+        /*
+                if (complexsoft == 2) {
+                    radius->setLimits(1.5, 100., 0.5, 1.5);
+                    radius->setValue(pp->locallab.spots.at(index).radius);
+                }
+        */
         if (complexsoft == 2) {
             fftwbl->set_active(false);
         }
@@ -12496,14 +12518,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (complexsoft == 2) {
             localcontMethod->set_active(1);
-         //   claricres->setValue(0);
-         //   clarisoft->setValue(0);
+            //   claricres->setValue(0);
+            //   clarisoft->setValue(0);
             lcradius->setValue(80);
             lcamount->setValue(0);
-         //   residchro->setValue(0);
+            //   residchro->setValue(0);
             fftwlc->set_active(false);
             wavcomp->set_active(false);
-          //  blurlc->set_active(false);
+            //  blurlc->set_active(false);
         }
 
         wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
@@ -12559,13 +12581,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         LLmaskcbshape->setCurve(pp->locallab.spots.at(index).LLmaskcbcurve);
         HHmaskcbshape->setCurve(pp->locallab.spots.at(index).HHmaskcbcurve);
         Lmaskcbshape->setCurve(pp->locallab.spots.at(index).Lmaskcbcurve);
-/*
-        if (complexsoft == 2) {
-            for (int i = 0; i < 6; i++) {
-                multiplier[i]->setValue(1.0);
-            }
-        }
-*/
+
+        /*
+                if (complexsoft == 2) {
+                    for (int i = 0; i < 6; i++) {
+                        multiplier[i]->setValue(1.0);
+                    }
+                }
+        */
         if (complexsoft > 0) {
             lapmaskcb->setValue(0);
         }
@@ -12586,17 +12609,17 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         sensiden->setValue(pp->locallab.spots.at(index).sensiden);
         detailthr->setValue(pp->locallab.spots.at(index).detailthr);
         wavshapeden->setCurve(pp->locallab.spots.at(index).locwavcurveden);
-/*
-        if (complexsoft == 2) {
-            noiselumf->setValue(0);
-            noiselumf0->setValue(0);
-            noiselumf2->setValue(0);
-            noiselumc->setValue(0);
-            noisechrof->setValue(0);
-            noisechroc->setValue(0);
-            bilateral->setValue(0);
-        }
-*/
+        /*
+                if (complexsoft == 2) {
+                    noiselumf->setValue(0);
+                    noiselumf0->setValue(0);
+                    noiselumf2->setValue(0);
+                    noiselumc->setValue(0);
+                    noisechrof->setValue(0);
+                    noisechroc->setValue(0);
+                    bilateral->setValue(0);
+                }
+        */
         //log encoding
         explog->setEnabled(pp->locallab.spots.at(index).explog);
         autocompute->set_active(pp->locallab.spots.at(index).autocompute);
@@ -13213,11 +13236,11 @@ void Locallab::updateSpecificGUIState()
         invers->set_sensitive(false);
         conthrcol->show();
         gridmerFrame->hide();
-        
+
     } else if (merMethod->get_active_row_number() == 3) {
         conthrcol->show();
 //        structcol->set_sensitive(false);
- //       sensi->set_sensitive(false);
+//       sensi->set_sensitive(false);
         sensi->set_sensitive(true);
 //        blurcolde->set_sensitive(false);
 //        blurcol->set_sensitive(false);
@@ -13233,7 +13256,7 @@ void Locallab::updateSpecificGUIState()
         invers->set_sensitive(false);
         mask7->show();
         gridmerFrame->hide();
-       
+
     } else if (merMethod->get_active_row_number() == 3) {
         mask7->show();
 //        structcol->set_sensitive(false);
@@ -13253,7 +13276,7 @@ void Locallab::updateSpecificGUIState()
         invers->set_sensitive(false);
         conthrcol->hide();
         gridmerFrame->show();
-        
+
     }
 
     // Update Exposure GUI according to black adjuster state (to be compliant with adjusterChanged function)
@@ -13352,10 +13375,11 @@ void Locallab::updateSpecificGUIState()
             for (int i = 0; i < 5; i++) {
                 multipliersh[i]->hide();
             }
+
             expgradsh->hide();
 
             detailSH->hide();
- //           gamFrame->hide();
+//           gamFrame->hide();
             highlights->show();
             h_tonalwidth->show();
             shadows->show();

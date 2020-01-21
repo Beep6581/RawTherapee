@@ -1472,10 +1472,11 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, floa
                 float &b = rgb->b(y, x);
                 float t = Y[y][x];
                 float t2;
+
                 if (t > noise && (t2 = norm(r, g, b)) > noise) {
                     float c = apply(t, false);
                     float f = c / t;
-                 //   float t2 = norm(r, g, b);
+                    //   float t2 = norm(r, g, b);
                     float f2 = apply(t2) / t2;
                     f = intp(blend, f, f2);
                     assert(std::isfinite(f));
@@ -4406,11 +4407,13 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                     case 0: { // outside selection and outside transition zone => full effect, no transition
                         float difL = loctemp[y][x] - original->L[y][x];
                         transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-                        if(sharshow) {
+
+                        if (sharshow) {
                             transformed->a[y][x] = 0.f;
                             transformed->b[y][x] = ampli * 5.f * difL * reducdE;
-                        } else if(previewshar) {
+                        } else if (previewshar) {
                             float difbdisp = reducview * 10000.f * lp.colorde;
+
                             if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
                                 float dark = transformed->L[y][x];
                                 transformed->L[y][x] = dark * aadark + bbdark;
@@ -4423,7 +4426,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                                 transformed->a[y][x] = -difbdisp;
                                 transformed->b[y][x] = 0.f;
                             }
-                    
+
                         }
 
                         break;
@@ -4436,11 +4439,13 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                         difL *= factorx;
 
                         transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-                        if(sharshow) {
+
+                        if (sharshow) {
                             transformed->a[y][x] = 0.f;
                             transformed->b[y][x] = ampli * 5.f * difL * reducdE;
-                        } else if(previewshar) {
+                        } else if (previewshar) {
                             float difbdisp = reducview * 10000.f * lp.colorde;
+
                             if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
                                 float dark = transformed->L[y][x];
                                 transformed->L[y][x] = dark * aadark + bbdark;
@@ -4453,7 +4458,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                                 transformed->a[y][x] = -difbdisp;
                                 transformed->b[y][x] = 0.f;
                             }
-                    
+
                         }
 
                         break;
@@ -4580,24 +4585,26 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
                 }
 
                 transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-                if(sharshow) {
+
+                if (sharshow) {
                     transformed->a[y][x] = 0.f;
                     transformed->b[y][x] = ampli * 5.f * difL * reducdE;
-                } else if(previewshar) {
-                        float difbdisp = reducview * 10000.f * lp.colorde;
-                        if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
-                            float dark = transformed->L[y][x];
-                            transformed->L[y][x] = dark * aadark + bbdark;
-                        }
+                } else if (previewshar) {
+                    float difbdisp = reducview * 10000.f * lp.colorde;
 
-                        if (lp.colorde <= 0) {
-                            transformed->a[y][x] = 0.f;
-                            transformed->b[y][x] = difbdisp;
-                        } else {
-                            transformed->a[y][x] = -difbdisp;
-                            transformed->b[y][x] = 0.f;
-                        }
-                    
+                    if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
+                        float dark = transformed->L[y][x];
+                        transformed->L[y][x] = dark * aadark + bbdark;
+                    }
+
+                    if (lp.colorde <= 0) {
+                        transformed->a[y][x] = 0.f;
+                        transformed->b[y][x] = difbdisp;
+                    } else {
+                        transformed->a[y][x] = -difbdisp;
+                        transformed->b[y][x] = 0.f;
+                    }
+
                 }
             }
         }
@@ -6604,7 +6611,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     difb = factorx * realstrbdE;
                     float maxdifab = max(fabs(difa), fabs(difb));
 
-                    if(origshow) {//original Retinex
+                    if (origshow) { //original Retinex
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
 
@@ -11648,15 +11655,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     for (int y = 0; y < bfhr; y++) {
                         for (int x = 0; x < bfwr; x++) {
-                            //      datain[y * bfwr + x] = temp->L[y][x] - bufexpfin->L[y][x];
                             datain[y * bfwr + x] = bufexpfin->L[y][x];
                         }
                     }
+
                     int showorig = lp.showmasksoftmet;
-                    if(lp.showmasksoftmet >= 5) {
+
+                    if (lp.showmasksoftmet >= 5) {
                         showorig = 0;
                     }
-                    //ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE, lp.showmasksoftmet, 1, 1);
+
                     ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE, showorig, 1, 1);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -12167,7 +12175,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                     transit_shapedetect2(call, 10, bufgb.get(), tmp1.get(), originalmasklc.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-//                transit_shapedetect(10, tmp1.get(), nullptr, bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                     tmp1.reset();
                 }
 
