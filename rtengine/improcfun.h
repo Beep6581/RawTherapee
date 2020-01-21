@@ -353,7 +353,7 @@ public:
     void Sharp_Local(int call, float **loctemp,  int senstype, const float hueref,  const float chromaref, const float lumaref, local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
 
 //    void Sharp_Local(int call, float **loctemp,  int senstype, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
-    void InverseSharp_Local(float **loctemp, const float hueref, const float lumaref, const float chromaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
+    void InverseSharp_Local(float **loctemp, const float hueref, const float lumaref, const float chromaref, local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
 
 
     void Tile_calc(int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip);

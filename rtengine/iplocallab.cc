@@ -4313,7 +4313,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
     }
 }
 
-void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, const float lumaref, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, const float lumaref, const float chromaref, local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 //local sharp
     //  BENCHFUN
@@ -4332,6 +4332,19 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
     balancedeltaEH(kH, kch);
     kab /= SQR(327.68f);
     kL /= SQR(327.68f);
+    const bool sharshow = (lp.showmasksharmet == 1);
+    const bool previewshar = (lp.showmasksharmet == 2);
+
+    if (lp.colorde == 0) {
+        lp.colorde = -1;//to avoid black
+    }
+
+    float ampli = 1.f + fabs(lp.colorde);
+    ampli = 2.f + 0.5f * (ampli - 2.f);
+
+    float darklim = 5000.f;
+    float aadark = -1.f;
+    float bbdark = darklim;
 
     std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
 
@@ -4375,17 +4388,38 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                 }
 
                 float reducdE = 0.f;
+                float reducview = 0.f;
                 float abdelta2 = SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x]);
                 float chrodelta2 = SQR(sqrt(SQR(origblur->a[y][x]) + SQR(origblur->b[y][x])) - (chromaref * 327.68f));
                 float huedelta2 = abdelta2 - chrodelta2;
                 float dE = sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
 
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.senssha, reducdE);
+                reducview = reducdE;
 
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => full effect, no transition
                         float difL = loctemp[y][x] - original->L[y][x];
                         transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
+                        if(sharshow) {
+                            transformed->a[y][x] = 0.f;
+                            transformed->b[y][x] = ampli * 5.f * difL * reducdE;
+                        } else if(previewshar) {
+                            float difbdisp = reducview * 10000.f * lp.colorde;
+                            if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
+                                float dark = transformed->L[y][x];
+                                transformed->L[y][x] = dark * aadark + bbdark;
+                            }
+
+                            if (lp.colorde <= 0) {
+                                transformed->a[y][x] = 0.f;
+                                transformed->b[y][x] = difbdisp;
+                            } else {
+                                transformed->a[y][x] = -difbdisp;
+                                transformed->b[y][x] = 0.f;
+                            }
+                    
+                        }
 
                         break;
                     }
@@ -4397,6 +4431,26 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                         difL *= factorx;
 
                         transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
+                        if(sharshow) {
+                            transformed->a[y][x] = 0.f;
+                            transformed->b[y][x] = ampli * 5.f * difL * reducdE;
+                        } else if(previewshar) {
+                            float difbdisp = reducview * 10000.f * lp.colorde;
+                            if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
+                                float dark = transformed->L[y][x];
+                                transformed->L[y][x] = dark * aadark + bbdark;
+                            }
+
+                            if (lp.colorde <= 0) {
+                                transformed->a[y][x] = 0.f;
+                                transformed->b[y][x] = difbdisp;
+                            } else {
+                                transformed->a[y][x] = -difbdisp;
+                                transformed->b[y][x] = 0.f;
+                            }
+                    
+                        }
+
                         break;
                     }
 
@@ -4523,9 +4577,9 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
                 transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
                 if(sharshow) {
                     transformed->a[y][x] = 0.f;
-                    transformed->b[y][x] = 20.f * difL * reducdE;
+                    transformed->b[y][x] = ampli * 5.f * difL * reducdE;
                 } else if(previewshar) {
-                        float difbdisp = reducdE * 10000.f * lp.colorde;
+                        float difbdisp = reducview * 10000.f * lp.colorde;
                         if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
                             float dark = transformed->L[y][x];
                             transformed->L[y][x] = dark * aadark + bbdark;
