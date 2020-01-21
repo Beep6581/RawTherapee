@@ -2257,6 +2257,8 @@ pe(nullptr)
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWFOURIER"));
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWPOISSON"));
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWNORMAL"));
+    showmasksoftMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+    showmasksoftMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
 
     showmasksoftMethod->set_active(0);
 

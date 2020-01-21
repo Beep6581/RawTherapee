@@ -6358,6 +6358,8 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
     const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2)  &&  senstype == 8);
     const bool lcshow = ((lp.showmasklcmet == 1 || lp.showmasklcmet == 2)  &&  senstype == 10);
+    const bool origshow = ((lp.showmasksoftmet == 5)  &&  senstype == 3);
+
 
     const bool previewvib = ((lp.showmaskvibmet == 4)  &&  senstype == 2);
     const bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
@@ -6365,6 +6367,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
     const bool previewtm = ((lp.showmasktmmet == 4)  &&  senstype == 8);
     const bool previewlc = ((lp.showmasklcmet == 4)  &&  senstype == 10);
+    const bool previeworig = ((lp.showmasksoftmet == 6)  &&  senstype == 3);
 
     float radius = 3.f / sk;
 
@@ -6596,7 +6599,11 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     difb = factorx * realstrbdE;
                     float maxdifab = max(fabs(difa), fabs(difb));
 
-                    if (expshow || vibshow || colshow || SHshow || tmshow || lcshow) {//show modifications
+                    if(origshow) {//original Retinex
+                        transformed->a[y + ystart][x + xstart] = 0.f;
+                        transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
+
+                    } else if (expshow || vibshow || colshow || SHshow || tmshow || lcshow) {//show modifications
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
@@ -6604,7 +6611,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
                         transformed->a[y + ystart][x + xstart] = CLIPC(ampli * difa);
                         transformed->b[y + ystart][x + xstart] = CLIPC(ampli * difb);
-                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc) {//show deltaE
+                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previeworig) {//show deltaE
                         float difbdisp = reducdE * 10000.f * lp.colorde;
 
                         if (transformed->L[y + ystart][x + xstart] < darklim) { //enhance dark luminance as user can see!
@@ -11640,8 +11647,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             datain[y * bfwr + x] = bufexpfin->L[y][x];
                         }
                     }
-
-                    ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE, lp.showmasksoftmet, 1, 1);
+                    int showorig = lp.showmasksoftmet;
+                    if(lp.showmasksoftmet >= 5) {
+                        showorig = 0;
+                    }
+                    //ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE, lp.showmasksoftmet, 1, 1);
+                    ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE, showorig, 1, 1);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
