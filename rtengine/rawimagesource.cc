@@ -25,6 +25,7 @@
 #include "dcp.h"
 #include "dfmanager.h"
 #include "ffmanager.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
 #include "imagefloat.h"
 #include "improcfun.h"

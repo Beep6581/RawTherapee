@@ -33,6 +33,7 @@
 #include "opthelper.h"
 #include "ciecam02.h"
 #include "color.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
 
 using namespace std;
