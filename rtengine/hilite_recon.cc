@@ -496,7 +496,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
                 && blue[i + miny][j + minx] < max_f[2]
             ) {
                 // if one or more channels is highlight but none are blown, add to highlight accumulator
-                hipass_sum += channelblur[0][i][j];
+                hipass_sum += static_cast<double>(channelblur[0][i][j]);
                 ++hipass_norm;
 
                 hilite_full[0][i][j] = red[i + miny][j + minx];
@@ -507,7 +507,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         }
     }
 
-    const float hipass_ave = 2.f * hipass_sum / (hipass_norm + epsilon);
+    const float hipass_ave = 2.0 * hipass_sum / (hipass_norm + static_cast<double>(epsilon));
 
     if (plistener) {
         progress += 0.05;

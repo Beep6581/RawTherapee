@@ -147,6 +147,7 @@ public:
     constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
     constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
     constexpr static double epskap = 8.0;
+    constexpr static float epskapf = epskap;
 
     constexpr static float c1By116 = 1.0 / 116.0;
     constexpr static float c16By116 = 16.0 / 116.0;
