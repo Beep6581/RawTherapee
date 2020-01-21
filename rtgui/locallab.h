@@ -581,6 +581,10 @@ private:
     sigc::connection retinexMethodConn;
     MyComboBoxText* const showmaskretiMethod;
     sigc::connection showmaskretiMethodConn;
+    //Sharpening
+    MyComboBoxText* const showmasksharMethod;
+    sigc::connection showmasksharMethodConn;
+    
     //local contrast
     MyComboBoxText* const localcontMethod;
     sigc::connection localcontMethodConn;
@@ -621,6 +625,7 @@ private:
     Gtk::Frame* const retiFrame;
     Gtk::Frame* const retitoolFrame;
     Gtk::Frame* const residFrame;
+    Gtk::Frame* const sharFrame;
     Gtk::Frame* const clariFrame;
     Gtk::Frame* const gradwavFrame;
     Gtk::Frame* const blurlevelFrame;
@@ -759,6 +764,9 @@ private:
     // Retinex
     void retinexMethodChanged();
     void showmaskretiMethodChanged();
+    //sharp
+    void showmasksharMethodChanged();
+    
     //Local contrast
     void localcontMethodChanged();
     void showmasklcMethodChanged();
@@ -817,6 +825,7 @@ public:
         int softMask;
         int tmMask;
         int blMask;
+        int sharMask;
     };
 
     void resetMaskVisibility();

@@ -744,6 +744,9 @@ showmasktmMethod(Gtk::manage(new MyComboBoxText())),
 // Retinex
 retinexMethod(Gtk::manage(new MyComboBoxText())),
 showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
+//sharp
+showmasksharMethod(Gtk::manage(new MyComboBoxText())),
+
 //Local contrast
 localcontMethod(Gtk::manage(new MyComboBoxText())),
 csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 6, 6, 0, false))),
@@ -779,6 +782,7 @@ dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
 retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
 retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
 residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
+sharFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")))),
 clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
 gradwavFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADWAVFRA")))),
 blurlevelFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURLEVELFRA")))),
@@ -2802,6 +2806,21 @@ pe(nullptr)
 
     inversshaConn  = inverssha->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversshaChanged));
 
+    showmasksharMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
+    showmasksharMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+    showmasksharMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
+    showmasksharMethod->set_active(0);
+
+    if (showtooltip) {
+        showmasksharMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
+    }
+
+    showmasksharMethodConn  = showmasksharMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmasksharMethodChanged));
+    sharFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const sharfBox = Gtk::manage(new ToolParamBlock());
+    sharfBox->pack_start(*showmasksharMethod);
+    sharFrame->add(*sharfBox);
+
     ToolParamBlock* const sharpBox = Gtk::manage(new ToolParamBlock());
     sharpBox->pack_start(*sharcontrast);
     sharpBox->pack_start(*sharradius);
@@ -2821,6 +2840,7 @@ pe(nullptr)
 
     sharpBox->pack_start(*sensisha);
     sharpBox->pack_start(*inverssha);
+    sharpBox->pack_start(*sharFrame);
     expsharp->add(*sharpBox, false);
     expsharp->setLevel(2);
 
@@ -7164,6 +7184,7 @@ void Locallab::showmaskcolMethodChanged()
     showmaskblMethod->set_active(0);
     showmasklcMethod->set_active(0);
     showmaskcbMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     
     enableListener();
 
@@ -7190,6 +7211,7 @@ void Locallab::showmaskcolMethodChangedinv()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7215,10 +7237,37 @@ void Locallab::showmaskexpMethodChangedinv()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
         listener->panelChanged(EvlocallabshowmaskexpMethodinv, "");
+    }
+}
+
+void Locallab::showmasksharMethodChanged()
+{
+    // printf("showmasksharMethodChanged\n");
+
+    // When one mask state is changed, other masks are deactivated
+    disableListener();
+    showmaskcolMethodinv->set_active(0);
+    showmaskcolMethod->set_active(0);
+    showmaskexpMethod->set_active(0);
+    showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
+    showmasklcMethod->set_active(0);
+    showmaskcbMethod->set_active(0);
+    showmaskvibMethod->set_active(0);
+    showmaskretiMethod->set_active(0);
+    showmasksoftMethod->set_active(0);
+    showmasktmMethod->set_active(0);
+    showmaskblMethod->set_active(0);
+    showmaskexpMethodinv->set_active(0);
+    enableListener();
+
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmasksharMethod, "");
     }
 }
 
@@ -7240,6 +7289,7 @@ void Locallab::showmaskexpMethodChanged()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7360,6 +7410,7 @@ void Locallab::showmaskSHMethodChanged()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7385,6 +7436,7 @@ void Locallab::showmaskvibMethodChanged()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7410,6 +7462,7 @@ void Locallab::showmaskSHMethodChangedinv()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7435,6 +7488,7 @@ void Locallab::showmasklcMethodChanged()
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
     showmaskcbMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7461,6 +7515,7 @@ void Locallab::showmaskcbMethodChanged()
     showmasktmMethod->set_active(0);
     showmasklcMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7486,6 +7541,7 @@ void Locallab::showmaskblMethodChanged()
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7513,6 +7569,7 @@ void Locallab::showmasktmMethodChanged()
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7539,6 +7596,7 @@ void Locallab::showmaskretiMethodChanged()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7564,6 +7622,7 @@ void Locallab::showmasksoftMethodChanged()
     showmaskretiMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -7589,6 +7648,7 @@ void Locallab::resetMaskVisibility()
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
     showmaskblMethod->set_active(0);
+    showmasksharMethod->set_active(0);
     enableListener();
 }
 
@@ -7608,6 +7668,7 @@ Locallab::llMaskVisibility* Locallab::getMaskVisibility()
     maskStruct->softMask = showmasksoftMethod->get_active_row_number();
     maskStruct->tmMask = showmasktmMethod->get_active_row_number();
     maskStruct->blMask = showmaskblMethod->get_active_row_number();
+    maskStruct->sharMask = showmasksharMethod->get_active_row_number();
     return maskStruct;
 }
 
@@ -11415,6 +11476,7 @@ void Locallab::setBatchMode(bool batchMode)
     showmaskretiMethod->hide();
     showmasktmMethod->hide();
     showmaskblMethod->hide();
+    showmasksharMethod->hide();
 }
 
 std::vector<double> Locallab::getCurvePoints(ThresholdSelector* tAdjuster) const
@@ -11640,6 +11702,8 @@ void Locallab::enableListener()
     enablecbdlConn.block(false);
     enacbMaskConn.block(false);
     showmaskcbMethodConn.block(false);
+    //sharp
+    showmasksharMethodConn.block(false);
     // Denoise
     enabledenoiConn.block(false);
     //encoding log
@@ -11743,6 +11807,8 @@ void Locallab::disableListener()
     enablecbdlConn.block(true);
     enacbMaskConn.block(true);
     showmaskcbMethodConn.block(true);
+    //sharp
+    showmasksharMethodConn.block(true);
     // Denoise
     enabledenoiConn.block(true);
     //encoding log

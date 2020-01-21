@@ -262,6 +262,7 @@ ImProcCoordinator::ImProcCoordinator() :
     locallcbMask(0),
     locallretiMask(0),
     locallsoftMask(0),
+    locallsharMask(0),
     retistrsav(nullptr)
 
 {
@@ -1257,7 +1258,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       locwavCurveden, locwavdenutili,
                                       LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                       huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav,
-                                      locallColorMask, locallColorMaskinv, locallExpMask, locallExpMaskinv, locallSHMask, locallSHMaskinv, locallvibMask, localllcMask, locallcbMask, locallretiMask, locallsoftMask, localltmMask, locallblMask,
+                                      locallColorMask, locallColorMaskinv, locallExpMask, locallExpMaskinv, locallSHMask, locallSHMaskinv, locallvibMask, localllcMask, locallsharMask, locallcbMask, locallretiMask, locallsoftMask, localltmMask, locallblMask,
                                       minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                         if (locallListener) {
@@ -1299,7 +1300,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       loccomprewavCurve, loccomprewavutili,
                                       locwavCurveden, locwavdenutili,
                                       LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                      huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                       minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                     }
 
