@@ -312,20 +312,6 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
 
     constexpr float MAX_OUT_VALUE = 65000.f;
 
-    // Backup the original scale_mul values
-    const std::array<float, 3> orig_scale_mul = { scale_mul[0], scale_mul[1], scale_mul[2] };
-
-    // Overwrite scaling coefficients that were set in RawImageSource::load, to cancel
-    // the effect of the auto-WB feature in get_colorsCoeff, which was called with forceAutoWB=true
-    // This is to ensure channel multipliers are consistent between multiple shots of the same camera
-    {
-        ri->get_colorsCoeff(ref_pre_mul, scale_mul, c_black, false);
-        refwb_red = ri->get_pre_mul(0) / ref_pre_mul[0];
-        refwb_green = ri->get_pre_mul(1) / ref_pre_mul[1];
-        refwb_blue = ri->get_pre_mul(2) / ref_pre_mul[2];
-        initialGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
-    }
-
     // Get multipliers for a known, fixed WB setting, that will be the starting point
     // for balancing the converted image.
     const std::array<double, 3> wb_mul = calcWBMults(
@@ -336,7 +322,8 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
         printf("Fixed WB mults: %g %g %g\n", wb_mul[0], wb_mul[1], wb_mul[2]);
     }
 
-
+    // Compensation factor to restore the non-autoWB initialGain (see RawImageSource::load)
+    const float autoGainComp = camInitialGain / initialGain;
 
     std::array<float, 3> mults;  // Channel normalization multipliers
 
@@ -378,15 +365,10 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
             filmBaseValues[c] = pow_F(24.f / 512.f, 1.f / exps[c]) * medians[c];
 
             if (oldChannelScaling) {
-                const float autoGainComp = scale_mul[c] / orig_scale_mul[c];
-
                 // If using the old channel scaling method, apply WB multipliers here to undo their
                 // effect later, since fixed wb compensation was not used in previous version.
-                // Also, compensate for the modified scale_mul (see call to get_colorsCoeff above),
-                // since the previous version used default scaling with forceAutoWB = true.
-
-                filmBaseValues[c] /= pow_F((wb_mul[c] * autoGainComp), 1.f / exps[c]) / autoGainComp;
-
+                // Also, undo the effect of the autoGainComp factor (see below).
+                filmBaseValues[c] /= pow_F((wb_mul[c] / autoGainComp), 1.f / exps[c]);// / autoGainComp;
             }
 
         }
@@ -413,14 +395,16 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
         // Determine the channel multiplier so that the film base value is 1/512th of max.
         mults[c] = (MAX_OUT_VALUE / 512.f) / fb[c];
 
-        // Alter multipliers to compensate for the mutation of scale_mul: source values
-        // in rawData still have the default scaling (forceAutoWB=true), but will be processed
-        // with the new, non-autoWB scale_mul downstream.
-        mults[c] *= pow_F(scale_mul[c] / orig_scale_mul[c], exps[c]);
-
         // Un-apply the fixed WB multipliers, to reverse their effect later in the WB tool.
-        // This way, the output image will be adapted to this WB setting
+        // This way, the output image will be adapted to this fixed WB setting
         mults[c] /= wb_mul[c];
+
+        // Also compensate for the initialGain difference between the default scaling (forceAutoWB=true)
+        // and the non-autoWB scaling (see camInitialGain).
+        // This effectively restores camera scaling multipliers, and gives us stable multipliers
+        // (not depending on image content).
+        mults[c] *= autoGainComp;
+
     }
 
     if (settings->verbose) {
