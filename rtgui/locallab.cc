@@ -6955,6 +6955,7 @@ void Locallab::softMethodChanged()
     if (softMethod->get_active_row_number() == 0) {
         laplace->hide();
         ctboxsoftmethod->hide();
+        showmasksoftMethod->set_active(0);
     } else {
         laplace->show();
         ctboxsoftmethod->show();
@@ -13455,6 +13456,7 @@ void Locallab::updateSpecificGUIState()
     if (softMethod->get_active_row_number() == 0) {
         laplace->hide();
         ctboxsoftmethod->hide();
+         showmasksoftMethod->set_active(0);
     } else if (softMethod->get_active_row_number() == 1) {
         laplace->show();
         ctboxsoftmethod->show();
