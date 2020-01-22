@@ -2500,6 +2500,7 @@ TP_LOCALLAB_RECURS_TOOLTIP;Recalculate references for hue, luma, chroma after ea
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
 TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
 TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
+TP_LOCALLAB_RESETSHOW;Reset All Show Modifications
 TP_LOCALLAB_RESID;Residual Image
 TP_LOCALLAB_RESIDBLUR;Blur Residual Image
 TP_LOCALLAB_RESIDCHRO;Residual image Chroma

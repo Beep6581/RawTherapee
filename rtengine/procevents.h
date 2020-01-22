@@ -921,6 +921,7 @@ enum ProcEventCode {
     Evlocallabanglog = 892,
     EvLocallabSpotcolorde = 893,
     EvlocallabshowmasksharMethod = 894,
+    Evlocallabshowreset = 895,
     NUMOFEVENTS
 };
 

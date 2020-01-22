@@ -607,7 +607,9 @@ private:
     Gtk::Button* const lumacontrastMinusButton;
     Gtk::Button* const lumaneutralButton;
     Gtk::Button* const lumacontrastPlusButton;
-    sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
+    Gtk::Button* const resetshowButton;
+    
+    sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn, resetshowButtonConn;
     Gtk::Frame* const gridFrame;
     Gtk::Frame* const struFrame;
     Gtk::Frame* const blurFrame;
@@ -781,6 +783,7 @@ private:
     void lumacontrastMinusPressed();
     void lumaneutralPressed();
     void lumacontrastPlusPressed();
+    void resetshowPressed();
 
     // Locallab GUI management function
     void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index);

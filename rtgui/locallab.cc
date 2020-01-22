@@ -766,6 +766,8 @@ labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":")))
 lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
 lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
 lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
+resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW")))),
+
 gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
 struFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABSTRUM")))),
 blurFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABBLURM")))),
@@ -3879,6 +3881,9 @@ pe(nullptr)
 
 
     panel->pack_start(*explog, false, false);
+    
+    panel->pack_start(*resetshowButton);
+    resetshowButtonConn = resetshowButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::resetshowPressed));
 
     pack_start(*panel);
 
@@ -7186,6 +7191,46 @@ void Locallab::mergecolMethodChanged()
             listener->panelChanged(EvLocallabmergecolMethod, mergecolMethod->get_active_text());
         }
     }
+}
+
+void Locallab::resetshowPressed()
+{
+    disableListener();
+    showmaskcolMethod->set_active(0);
+    showmaskcolMethodinv->set_active(0);
+    showmaskexpMethod->set_active(0);
+    showmaskexpMethodinv->set_active(0);
+    showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
+    showmaskvibMethod->set_active(0);
+    showmaskretiMethod->set_active(0);
+    showmasksoftMethod->set_active(0);
+    showmasktmMethod->set_active(0);
+    showmaskblMethod->set_active(0);
+    showmasklcMethod->set_active(0);
+    showmaskcbMethod->set_active(0);
+    showmasksharMethod->set_active(0);
+
+    enableListener();
+    showmaskcolMethodChanged();
+    showmasksharMethodChanged();
+    showmaskcolMethodChangedinv();
+    showmaskexpMethodChangedinv();
+    showmaskexpMethodChanged();
+    showmaskSHMethodChanged();
+    showmaskvibMethodChanged();
+    showmaskSHMethodChangedinv();
+    showmasklcMethodChanged();
+    showmaskcbMethodChanged();
+    showmaskblMethodChanged();
+    showmasktmMethodChanged();
+    showmaskretiMethodChanged();
+    showmasksoftMethodChanged();
+
+    if (listener) {
+        listener->panelChanged(Evlocallabshowreset, "");
+    }
+    
 }
 
 void Locallab::showmaskcolMethodChanged()
@@ -11734,7 +11779,7 @@ void Locallab::enableListener()
     enablelogConn.block(false);
     AutograyConn.block(false);
     fullimageConn.block(false);
-
+    resetshowButtonConn.block(false);
 }
 
 void Locallab::disableListener()
@@ -11839,7 +11884,7 @@ void Locallab::disableListener()
     enablelogConn.block(true);
     AutograyConn.block(true);
     fullimageConn.block(true);
-
+    resetshowButtonConn.block(true);
 }
 
 void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index)
