@@ -541,7 +541,7 @@ public:
 };
 SAAntiBlurInterpreter saAntiBlurInterpreter;
 
-class SALensIDInterpreter : public IntLensInterpreter<int>
+class SALensIDInterpreter final : public IntLensInterpreter<int>
 {
 public:
     SALensIDInterpreter ()
@@ -1192,7 +1192,7 @@ public:
 };
 SALensIDInterpreter saLensIDInterpreter;
 
-class SALensID2Interpreter : public IntLensInterpreter< int >
+class SALensID2Interpreter final : public IntLensInterpreter< int >
 {
 public:
     SALensID2Interpreter ()

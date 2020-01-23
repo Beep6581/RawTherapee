@@ -35,7 +35,7 @@ class BatchQueuePanel;
 class EditorPanel;
 class FilePanel;
 class PLDBridge;
-class RTWindow :
+class RTWindow final :
     public Gtk::Window,
     public rtengine::ProgressListener,
     public rtengine::NonCopyable

@@ -38,7 +38,7 @@ class TagDirectory;
 namespace rtengine
 {
 
-class FrameData
+class FrameData final
 {
 
 protected:
@@ -95,7 +95,7 @@ public:
     int getRating () const;
 };
 
-class FramesData : public FramesMetaData {
+class FramesData final : public FramesMetaData {
 private:
     // frame's root IFD, can be a file root IFD or a SUB-IFD
     std::vector<std::unique_ptr<FrameData>> frames;

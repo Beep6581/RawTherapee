@@ -696,7 +696,7 @@ public:
 };
 PAColorSpaceInterpreter paColorSpaceInterpreter;
 
-class PALensTypeInterpreter : public IntLensInterpreter< int >
+class PALensTypeInterpreter final: public IntLensInterpreter< int >
 {
 public:
     PALensTypeInterpreter ()
