@@ -2269,6 +2269,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
+!GENERAL_HELP;Help
 !HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
 !HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power

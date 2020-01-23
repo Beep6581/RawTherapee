@@ -365,6 +365,7 @@ struct CoarseTransformParamsEdited {
 };
 
 struct CommonTransformParamsEdited {
+    bool method;
     bool autofill;
 };
 

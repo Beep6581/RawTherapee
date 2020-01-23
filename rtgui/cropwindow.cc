@@ -1492,9 +1492,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                     const float kernel_size2 = SQR(2.f * blur_radius2 + 1.f); // count of pixels in the small blur kernel
                     const float rkernel_size2 = 1.0f / kernel_size2;        // reciprocal of kernel_size to avoid divisions
 
-                    // aloocate buffer for precalculated Luminance
+                    // allocate buffer for precalculated Luminance
                     float* tmpL = (float*)malloc(bHeight * bWidth * sizeof(float) );
-                    // aloocate buffers for sums and sums of squares of small kernel
+                    // allocate buffers for sums and sums of squares of small kernel
                     float* tmpLsum = (float*)malloc((bHeight) * (bWidth) * sizeof(float) );
                     float* tmpLsumSq = (float*)malloc((bHeight) * (bWidth) * sizeof(float) );
                     float* tmpstdDev2 = (float*)malloc((bHeight) * (bWidth) * sizeof(float) );
@@ -1631,7 +1631,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                                     && stdDev_L2 > stdDev_L //this is the key to select fine detail within lower contrast on larger scale
                                     && stdDev_L > focus_threshby10 //options.highlightThreshold
                                ) {
-                                // transpareny depends on sdtDev_L2 and maxstdDev_L2
+                                // transparency depends on sdtDev_L2 and maxstdDev_L2
                                 float transparency = 1.f - std::min(stdDev_L2 / maxstdDev_L2, 1.0f) ;
                                 // first row of circle
                                 guint8* currtmp = &curr[0] + (-3 * pixRowStride);
