@@ -64,6 +64,7 @@ private:
 
     bool on_button_press_event(GdkEventButton *event) override;
     bool on_scroll_event(GdkEventScroll *event) override;
+    void moveCenter(int delta_x, int delta_y, int imW, int imH, int deviceScale);
 
     Glib::RefPtr<Gtk::GestureZoom> gestureZoom;
     void beginZoom(double x, double y);

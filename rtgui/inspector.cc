@@ -217,18 +217,14 @@ bool Inspector::on_scroll_event(GdkEventScroll *event)
         // zoom
         beginZoom(event->x, event->y);
         if (std::fabs(delta_y) > std::fabs(delta_x))
-            on_zoom_scale_changed(1.0 + (double)delta_y / imH / deviceScale);
+            on_zoom_scale_changed(1.0 - (double)delta_y / imH / deviceScale);
         else
-            on_zoom_scale_changed(1.0 + (double)delta_x / imW / deviceScale);
+            on_zoom_scale_changed(1.0 - (double)delta_x / imW / deviceScale);
         return true;
     }
 
     // scroll
-    rtengine::Coord margin; // limit for scroll area
-    margin.x = rtengine::min<int>(window.get_width() * deviceScale / scale, imW) / 2;
-    margin.y = rtengine::min<int>(window.get_height() * deviceScale / scale, imH) / 2;
-    center.set(rtengine::LIM<int>(center.x + delta_x, margin.x, imW - margin.x),
-               rtengine::LIM<int>(center.y + delta_y, margin.y, imH - margin.y));
+    moveCenter(delta_x, delta_y, imW, imH, deviceScale);
 
     if (!dirty) {
         dirty = true;
@@ -238,13 +234,30 @@ bool Inspector::on_scroll_event(GdkEventScroll *event)
     return true;
 }
 
+void Inspector::moveCenter(int delta_x, int delta_y, int imW, int imH, int deviceScale)
+{
+    rtengine::Coord margin; // limit to image size
+    margin.x = rtengine::min<int>(window.get_width() * deviceScale / scale, imW) / 2;
+    margin.y = rtengine::min<int>(window.get_height() * deviceScale / scale, imH) / 2;
+    center.set(rtengine::LIM<int>(center.x + delta_x, margin.x, imW - margin.x),
+               rtengine::LIM<int>(center.y + delta_y, margin.y, imH - margin.y));
+}
+
 void Inspector::beginZoom(double x, double y)
 {
     int deviceScale = get_scale_factor();
+    int imW = currImage->imgBuffer.getWidth();
+    int imH = currImage->imgBuffer.getHeight();
+
+    // limit center to image size
+    moveCenter(0, 0, imW, imH, deviceScale);
+
+    // store center and current position for zooming
     dcenterBegin.x = (x - window.get_width()/2) / scale * deviceScale;
     dcenterBegin.y = (y - window.get_height()/2) / scale * deviceScale;
     centerBegin = center;
     zoomScaleBegin = zoomScale;
+
 }
 
 void Inspector::on_zoom_begin(GdkEventSequence *s)
