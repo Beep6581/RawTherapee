@@ -1279,6 +1279,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).clarisoft = locallab.spots.at(j).clarisoft && pSpot.clarisoft == otherSpot.clarisoft;
                 locallab.spots.at(j).strwav = locallab.spots.at(j).strwav && pSpot.strwav == otherSpot.strwav;
                 locallab.spots.at(j).angwav = locallab.spots.at(j).angwav && pSpot.angwav == otherSpot.angwav;
+                locallab.spots.at(j).strengthw = locallab.spots.at(j).strengthw && pSpot.strengthw == otherSpot.strengthw;
+                locallab.spots.at(j).radiusw = locallab.spots.at(j).radiusw && pSpot.radiusw == otherSpot.radiusw;
+                locallab.spots.at(j).detailw = locallab.spots.at(j).detailw && pSpot.detailw == otherSpot.detailw;
+                locallab.spots.at(j).gradw = locallab.spots.at(j).gradw && pSpot.gradw == otherSpot.gradw;
+                locallab.spots.at(j).tloww = locallab.spots.at(j).tloww && pSpot.tloww == otherSpot.tloww;
+                locallab.spots.at(j).thigw = locallab.spots.at(j).thigw && pSpot.thigw == otherSpot.thigw;
+                locallab.spots.at(j).locedgwavcurve = locallab.spots.at(j).locedgwavcurve && pSpot.locedgwavcurve == otherSpot.locedgwavcurve;
                 locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
                 locallab.spots.at(j).fftwlc = locallab.spots.at(j).fftwlc && pSpot.fftwlc == otherSpot.fftwlc;
                 locallab.spots.at(j).blurlc = locallab.spots.at(j).blurlc && pSpot.blurlc == otherSpot.blurlc;
@@ -4104,6 +4111,34 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).angwav   = mods.locallab.spots.at(i).angwav;
         }
 
+        if (locallab.spots.at(i).strengthw) {
+            toEdit.locallab.spots.at(i).strengthw   = mods.locallab.spots.at(i).strengthw;
+        }
+
+        if (locallab.spots.at(i).radiusw) {
+            toEdit.locallab.spots.at(i).radiusw   = mods.locallab.spots.at(i).radiusw;
+        }
+
+        if (locallab.spots.at(i).detailw) {
+            toEdit.locallab.spots.at(i).detailw   = mods.locallab.spots.at(i).detailw;
+        }
+
+        if (locallab.spots.at(i).gradw) {
+            toEdit.locallab.spots.at(i).gradw   = mods.locallab.spots.at(i).gradw;
+        }
+
+        if (locallab.spots.at(i).tloww) {
+            toEdit.locallab.spots.at(i).tloww   = mods.locallab.spots.at(i).tloww;
+        }
+
+        if (locallab.spots.at(i).thigw) {
+            toEdit.locallab.spots.at(i).thigw   = mods.locallab.spots.at(i).thigw;
+        }
+
+        if (locallab.spots.at(i).locedgwavcurve) {
+            toEdit.locallab.spots.at(i).locedgwavcurve = mods.locallab.spots.at(i).locedgwavcurve;
+        }
+
         if (locallab.spots.at(i).sensilc) {
             toEdit.locallab.spots.at(i).sensilc   = mods.locallab.spots.at(i).sensilc;
         }
@@ -5697,6 +5732,12 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     clarisoft(v),
     strwav(v),
     angwav(v),
+    strengthw(v),
+    radiusw(v),
+    detailw(v),
+    tloww(v),
+    thigw(v),
+    gradw(v),
     sensilc(v),
     fftwlc(v),
     blurlc(v),
@@ -5712,6 +5753,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     locconwavcurve(v),
     loccompwavcurve(v),
     loccomprewavcurve(v),
+    locedgwavcurve(v),
     csthreshold(v),
     CCmasklccurve(v),
     LLmasklccurve(v),
@@ -6108,6 +6150,12 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     clarisoft = v;
     strwav = v;
     angwav = v;
+    strengthw = v;
+    radiusw = v;
+    detailw = v;
+    tloww = v;
+    thigw = v;
+    gradw = v;
     sensilc = v;
     fftwlc = v;
     blurlc = v;
@@ -6123,6 +6171,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     locconwavcurve = v;
     loccompwavcurve = v;
     loccomprewavcurve = v;
+    locedgwavcurve = v;
     csthreshold = v;
     CCmasklccurve = v;
     LLmasklccurve = v;

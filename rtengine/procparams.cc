@@ -2742,6 +2742,12 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     clarisoft(1.0),
     strwav(0.0),
     angwav(0.0),
+    strengthw(0.0),
+    radiusw(15.0),
+    detailw(10.0),
+    gradw(90.0),
+    tloww(20.0),
+    thigw(0.0),
     sensilc(30),
     fftwlc(false),
     blurlc(true),
@@ -2758,6 +2764,20 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     locconwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     loccompwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.0, 0.0, 0.35, 0.5, 0., 0.35, 0.35, 1.0, 0.0, 0.35, 0.35},
     loccomprewavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.75, 0.35, 0.35, 1., 0.75, 0.35, 0.35},
+    locedgwavcurve{(double)FCT_MinMaxCPoints, 0.0,
+    0.25,
+    0.35,
+    0.35,
+    0.50,
+    0.75,
+    0.35,
+    0.35,
+    0.90,
+    0.0,
+    0.35,
+    0.35
+},
+
     CCmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
     LLmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     HHmasklccurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
@@ -3163,6 +3183,12 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && clarisoft == other.clarisoft
         && strwav == other.strwav
         && angwav == other.angwav
+        && strengthw == other.strengthw
+        && radiusw == other.radiusw
+        && detailw == other.detailw
+        && gradw == other.gradw
+        && tloww == other.tloww
+        && thigw == other.thigw
         && sensilc == other.sensilc
         && fftwlc == other.fftwlc
         && blurlc == other.blurlc
@@ -3179,6 +3205,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && locconwavcurve == other.locconwavcurve
         && loccompwavcurve == other.loccompwavcurve
         && loccomprewavcurve == other.loccomprewavcurve
+        && locedgwavcurve == other.locedgwavcurve
         && CCmasklccurve == other.CCmasklccurve
         && LLmasklccurve == other.LLmasklccurve
         && HHmasklccurve == other.HHmasklccurve
@@ -4564,6 +4591,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).clarisoft, "Locallab", "Clarisoft_" + std::to_string(i), spot.clarisoft, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Strwav_" + std::to_string(i), spot.strwav, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).angwav, "Locallab", "Angwav_" + std::to_string(i), spot.angwav, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Strengthw_" + std::to_string(i), spot.strengthw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Radiusw_" + std::to_string(i), spot.radiusw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Detailw_" + std::to_string(i), spot.detailw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Gradw_" + std::to_string(i), spot.gradw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Tloww_" + std::to_string(i), spot.tloww, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Thigw_" + std::to_string(i), spot.thigw, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilc, "Locallab", "Sensilc_" + std::to_string(i), spot.sensilc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftwlc, "Locallab", "Fftwlc_" + std::to_string(i), spot.fftwlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurlc, "Locallab", "Blurlc_" + std::to_string(i), spot.blurlc, keyFile);
@@ -4579,6 +4612,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locconwavcurve, "Locallab", "LocconwavCurve_" + std::to_string(i), spot.locconwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loccompwavcurve, "Locallab", "LoccompwavCurve_" + std::to_string(i), spot.loccompwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loccomprewavcurve, "Locallab", "LoccomprewavCurve_" + std::to_string(i), spot.loccomprewavcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locedgwavcurve, "Locallab", "LocedgwavCurve_" + std::to_string(i), spot.locedgwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).csthreshold, "Locallab", "CSThreshold_" + std::to_string(i), spot.csthreshold.toVector(), keyFile);
 
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmasklccurve, "Locallab", "CCmasklcCurve_" + std::to_string(i), spot.CCmasklccurve, keyFile);
@@ -6120,6 +6154,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Clarisoft_" + std::to_string(i), pedited, spot.clarisoft, spotEdited.clarisoft);
                 assignFromKeyfile(keyFile, "Locallab", "Strwav_" + std::to_string(i), pedited, spot.strwav, spotEdited.strwav);
                 assignFromKeyfile(keyFile, "Locallab", "Angwav_" + std::to_string(i), pedited, spot.angwav, spotEdited.angwav);
+                assignFromKeyfile(keyFile, "Locallab", "Strengthw_" + std::to_string(i), pedited, spot.strengthw, spotEdited.strengthw);
+                assignFromKeyfile(keyFile, "Locallab", "Radiusw_" + std::to_string(i), pedited, spot.radiusw, spotEdited.radiusw);
+                assignFromKeyfile(keyFile, "Locallab", "Detailw_" + std::to_string(i), pedited, spot.detailw, spotEdited.detailw);
+                assignFromKeyfile(keyFile, "Locallab", "Tloww_" + std::to_string(i), pedited, spot.tloww, spotEdited.tloww);
+                assignFromKeyfile(keyFile, "Locallab", "Thigw_" + std::to_string(i), pedited, spot.thigw, spotEdited.thigw);
+                assignFromKeyfile(keyFile, "Locallab", "Gradw_" + std::to_string(i), pedited, spot.gradw, spotEdited.gradw);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + std::to_string(i), pedited, spot.sensilc, spotEdited.sensilc);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + std::to_string(i), pedited, spot.fftwlc, spotEdited.fftwlc);
                 assignFromKeyfile(keyFile, "Locallab", "Blurlc_" + std::to_string(i), pedited, spot.blurlc, spotEdited.blurlc);
@@ -6135,6 +6175,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "LocconwavCurve_" + std::to_string(i), pedited, spot.locconwavcurve, spotEdited.locconwavcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LoccompwavCurve_" + std::to_string(i), pedited, spot.loccompwavcurve, spotEdited.loccompwavcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LoccomprewavCurve_" + std::to_string(i), pedited, spot.loccomprewavcurve, spotEdited.loccomprewavcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LocedgwavCurve_" + std::to_string(i), pedited, spot.locedgwavcurve, spotEdited.locedgwavcurve);
 
                 assignFromKeyfile(keyFile, "Locallab", "CCmasklcCurve_" + std::to_string(i), pedited, spot.CCmasklccurve, spotEdited.CCmasklccurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmasklcCurve_" + std::to_string(i), pedited, spot.LLmasklccurve, spotEdited.LLmasklccurve);

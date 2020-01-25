@@ -1285,6 +1285,12 @@ struct LocallabParams {
         double clarisoft;
         double strwav;
         double angwav;
+        double strengthw;
+        double radiusw;
+        double detailw;
+        double gradw;
+        double tloww;
+        double thigw;
         int sensilc;
         bool fftwlc;
         bool blurlc;
@@ -1301,6 +1307,7 @@ struct LocallabParams {
         std::vector<double> locconwavcurve;
         std::vector<double> loccompwavcurve;
         std::vector<double> loccomprewavcurve;
+        std::vector<double> locedgwavcurve;
         std::vector<double> CCmasklccurve;
         std::vector<double> LLmasklccurve;
         std::vector<double> HHmasklccurve;

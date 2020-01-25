@@ -711,6 +711,12 @@ public:
         bool clarisoft;
         bool strwav;
         bool angwav;
+        bool strengthw;
+        bool radiusw;
+        bool detailw;
+        bool tloww;
+        bool thigw;
+        bool gradw;
         bool sensilc;
         bool fftwlc;
         bool blurlc;
@@ -726,6 +732,7 @@ public:
         bool locconwavcurve;
         bool loccompwavcurve;
         bool loccomprewavcurve;
+        bool locedgwavcurve;
         bool csthreshold;
         bool CCmasklccurve;
         bool LLmasklccurve;
