@@ -124,6 +124,9 @@ private:
     Gtk::Button* zoomInButton;
     Gtk::Button* zoomOutButton;
 
+    RTImage* progressImage;
+    Gtk::Label* progressLabel;
+
     MyMutex dirEFSMutex;
     ExifFilterSettings dirEFS;
     ExifFilterSettings currentEFS;
