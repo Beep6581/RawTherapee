@@ -2439,7 +2439,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     iter(2.0),
     balan(1.0),
     balanh(1.0),
-    colorde(-5.0),
+    colorde(5.0),
     transitweak(1.0),
     transitgrad(0.0),
     avoid(false),

@@ -6611,11 +6611,13 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     difb = factorx * realstrbdE;
                     float maxdifab = max(fabs(difa), fabs(difb));
 
-                    if (origshow) { //original Retinex
+                    if((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow) && lp.colorde < 0) {//show modifications whith use "b"
+                  //  (origshow && lp.colorde < 0) { //original Retinex
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
+                        transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
 
-                    } else if (expshow || vibshow || colshow || SHshow || tmshow || lcshow) {//show modifications
+                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow) && lp.colorde > 0) {//show modifications whithout use "b"
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
