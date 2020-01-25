@@ -929,7 +929,7 @@ __inline float mulsignf(float x, float y) {
     return intBitsToFloat(floatToRawIntBits(x) ^ (floatToRawIntBits(y) & (1 << 31)));
 }
 
-__inline float signf(float d) { return copysign(1, d); }
+__inline float signf(float d) { return std::copysign(1.f, d); }
 __inline float mlaf(float x, float y, float z) { return x * y + z; }
 
 __inline int xisnanf(float x) { return x != x; }
