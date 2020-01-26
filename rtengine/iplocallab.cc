@@ -7834,7 +7834,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     }
 
 //edge sharpness begin
-    if (lp.edgwena  && level_bl == 0 && level_br >= 3) { //needs the first levels to work!
+    if (lp.edgwena  && level_bl == 0 && level_br >= 3  && locedgwavCurve && locedgwavutili) { //needs the first levels to work!
         float mean[10];
         float meanN[10];
         float sigma[10];
@@ -8086,7 +8086,6 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                 edge = edgePrecalc;
                             }
 
-                            //   if (cp.edgcurv) {
                             if (fabs(wav_L[dir][k]) >= (mean[lvl] + sigma[lvl])) {  //for max
                                 float valcour = log(fabs(wav_L[dir][k]));
                                 float valc = valcour - logmax;
