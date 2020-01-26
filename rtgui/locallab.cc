@@ -1,9 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>frame
- *
- *
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  RawTherapee is free software: you can redistribute it and/or modify
@@ -3096,7 +3094,9 @@ pe(nullptr)
     edgFrame->set_label_align(0.025, 0.5);
     wavedg->set_active(false);
     edgFrame->set_label_widget(*wavedg);
-
+    if (showtooltip) {
+        wavedg->set_tooltip_text(M("TP_LOCALLAB_WAVEEDG_TOOLTIP"));
+    }
     Gtk::HSeparator* const separatoredg = Gtk::manage(new  Gtk::HSeparator());
 
  //   ToolParamBlock* const edgsBox = Gtk::manage(new ToolParamBlock());
@@ -3191,7 +3191,7 @@ pe(nullptr)
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
     blurcontBox->pack_start(*clariFrame);
     blurcontBox->pack_start(*gradwavFrame);
-//    blurcontBox->pack_start(*edgFrame);
+    blurcontBox->pack_start(*edgFrame);
     blurcontBox->pack_start(*contFrame);
     blurcontBox->pack_start(*compreFrame);
 

@@ -237,7 +237,7 @@ struct local_params {
     float angvib;
     float angwav;
     float strwav;
-    
+
     float strengthw;
     float radiusw;
     float detailw;
@@ -246,8 +246,8 @@ struct local_params {
     float thigw;
     float edgw;
     float basew;
-    
-    
+
+
     float anglog;
     float strlog;
     float softradiusexp;
@@ -442,6 +442,8 @@ struct local_params {
     bool autocompute;
     float baselog;
     bool wavgradl;
+    bool edgwena;
+    bool lip3;
 
 };
 
@@ -745,12 +747,17 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     }
 
     if (locallab.spots.at(sp).localneiMethod == "none") {
-        lp.neiwmet = 0;
+        lp.neiwmet = -1;
+        lp.lip3 = false;
     } else if (locallab.spots.at(sp).localneiMethod == "low") {
-        lp.neiwmet = 1;
+        lp.neiwmet = 0;
+        lp.lip3 = true;
     } else if (locallab.spots.at(sp).localneiMethod == "high") {
-        lp.neiwmet = 2;
+        lp.lip3 = true;
+        lp.neiwmet = 1;
     }
+
+    lp.edgwena = locallab.spots.at(sp).wavedg;
 
     lp.opacol = 0.01f * locallab.spots.at(sp).opacol;
 
@@ -1043,16 +1050,16 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.gammatm = gammasktm;
     lp.slomatm = slomasktm;
     lp.wavgradl = wavgradl;
-    
+
     lp.strengthw = ((float) locallab.spots.at(sp).strengthw);
     lp.radiusw = ((float) locallab.spots.at(sp).radiusw);
-    lp.detailw =((float) locallab.spots.at(sp).detailw);
+    lp.detailw = ((float) locallab.spots.at(sp).detailw);
     lp.gradw = ((float) locallab.spots.at(sp).gradw);
     lp.tloww = ((float) locallab.spots.at(sp).tloww);
     lp.thigw = ((float) locallab.spots.at(sp).thigw);
     lp.edgw = ((float) locallab.spots.at(sp).edgw);
     lp.basew = ((float) locallab.spots.at(sp).basew);
-    
+
     lp.blendmabl = blendmaskbl;
     lp.radmabl = radmaskbl;
     lp.chromabl = chromaskbl;
@@ -1177,7 +1184,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sharpena = locallab.spots.at(sp).expsharp && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0;
     lp.sfena = locallab.spots.at(sp).expsoft && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0;
     lp.sensv = local_sensiv;
-    lp.past =  chromaPastel; 
+    lp.past =  chromaPastel;
     lp.satur = chromaSatur;
 
     lp.cut_past = cupas;
@@ -6651,8 +6658,8 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     difb = factorx * realstrbdE;
                     float maxdifab = max(fabs(difa), fabs(difb));
 
-                    if((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow) && lp.colorde < 0) {//show modifications whith use "b"
-                  //  (origshow && lp.colorde < 0) { //original Retinex
+                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow) && lp.colorde < 0) { //show modifications whith use "b"
+                        //  (origshow && lp.colorde < 0) { //original Retinex
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
@@ -7826,6 +7833,332 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         wavcbd(*wdspot, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, 1.f, sk);
     }
 
+//edge sharpness begin
+    if (lp.edgwena  && level_bl == 0 && level_br >= 3) { //needs the first levels to work!
+        float mean[10];
+        float meanN[10];
+        float sigma[10];
+        float sigmaN[10];
+        float MaxP[10];
+        float MaxN[10];
+        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+        float edd = 3.f;
+        float eddlow = 15.f;
+        float eddlipinfl = 0.005f * lp.edgw + 0.4f;
+        float eddlipampl = 1.f + lp.basew / 50.f;
+        int W_L = wdspot->level_W(0);//provisory W_L H_L
+        int H_L = wdspot->level_H(0);
+        float *koeLi[12];
+        float maxkoeLi[12];
+
+        float *koeLibuffer = nullptr;
+
+        for (int y = 0; y < 12; y++) {
+            maxkoeLi[y] = 0.f;    //9
+        }
+
+        koeLibuffer = new float[12 * H_L * W_L]; //12
+
+        for (int i = 0; i < 12; i++) { //9
+            koeLi[i] = &koeLibuffer[i * W_L * H_L];
+        }
+
+        for (int j = 0; j < 12; j++) //9
+            for (int i = 0; i < W_L * H_L; i++) {
+                koeLi[j][i] = 0.f;
+            }
+
+        float *tmCBuffer = new float[H_L * W_L];
+        float *tmC[H_L];
+
+        for (int i = 0; i < H_L; i++) {
+            tmC[i] = &tmCBuffer[i * W_L];
+        }
+
+        float gradw = lp.gradw;
+        float tloww = lp.tloww;
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic) collapse(2)
+#endif
+
+        for (int lvl = 0; lvl < 4; lvl++) {
+            for (int dir = 1; dir < 4; dir++) {
+                int W_L = wdspot->level_W(lvl);
+                int H_L = wdspot->level_H(lvl);
+                float **wav_L = wdspot->level_coeffs(lvl);
+
+                calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi, tmC);
+                // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
+            }
+        }
+
+        delete [] tmCBuffer;
+        float aamp = 1.f + lp.thigw / 100.f;
+
+        for (int lvl = 0; lvl < 4; lvl++) {
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+
+            for (int i = 1; i < H_L - 1; i++) {
+                for (int j = 1; j < W_L - 1; j++) {
+                    //treatment of koeLi and maxkoeLi
+                    float interm = 0.f;
+
+                    if (lp.lip3) {
+                        // comparison between pixel and neighbours
+                        const auto neigh = lp.neiwmet == 1;
+                        const auto kneigh = neigh ? 28.f : 38.f;
+                        const auto somm = neigh ? 40.f : 50.f;
+
+                        for (int dir = 1; dir < 4; dir++) { //neighbours proxi
+                            koeLi[lvl * 3 + dir - 1][i * W_L + j] = (kneigh * koeLi[lvl * 3 + dir - 1][i * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j]
+                                                                    + 2.f * koeLi[lvl * 3 + dir - 1][i * W_L + j + 1] + 2.f * koeLi[lvl * 3 + dir - 1][i * W_L + j - 1] + koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j - 1]
+                                                                    + koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j + 1] + koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j - 1] + koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j + 1]) / somm;
+                        }
+                    }
+
+                    for (int dir = 1; dir < 4; dir++) {
+                        //here I evaluate combinaison of vert / diag / horiz...we are with multiplicators of the signal
+                        interm += SQR(koeLi[lvl * 3 + dir - 1][i * W_L + j]);
+                    }
+
+                    interm = sqrt(interm);
+
+                    interm *= 0.57736721f;
+                    float kampli = 1.f;
+                    float eps = 0.0001f;
+                    // I think this double ratio (alph, beta) is better than arctg
+
+                    float alph = koeLi[lvl * 3][i * W_L + j] / (koeLi[lvl * 3 + 1][i * W_L + j] + eps); //ratio between horizontal and vertical
+                    float beta = koeLi[lvl * 3 + 2][i * W_L + j] / (koeLi[lvl * 3 + 1][i * W_L + j] + eps); //ratio between diagonal and horizontal
+
+                    float alipinfl = (eddlipampl - 1.f) / (1.f - eddlipinfl);
+                    float blipinfl = eddlipampl - alipinfl;
+
+                    //alph evaluate the direction of the gradient regularity Lipschitz
+                    // if = 1 we are on an edge
+                    // if 0 we are not
+                    // we can change and use log..or Arctg but why ?? we can change if need ...
+                    //Liamp=1 for eddlipinfl
+                    //liamp > 1 for alp >eddlipinfl and alph < 1
+                    //Liamp < 1 for alp < eddlipinfl and alph > 0
+                    if (alph > 1.f) {
+                        alph = 1.f / alph;
+                    }
+
+                    if (beta > 1.f) {
+                        beta = 1.f / beta;
+                    }
+
+                    //take into account diagonal
+                    //if in same value OK
+                    //if not no edge or reduction
+                    float bet = 1.f;
+
+                    //if(cp.lip3) {//enhance algorithm
+                    if (alph > eddlipinfl && beta < 0.85f * eddlipinfl) { //0.85 arbitrary value ==> eliminate from edge if H V D too different
+                        bet = beta;
+                    }
+
+                    //}
+                    float AmpLip = 1.f;
+
+                    if (alph > eddlipinfl) {
+                        AmpLip = alipinfl * alph + blipinfl;    //If beta low reduce kampli
+                        kampli = SQR(bet) * AmpLip * aamp;
+                    } else {
+                        AmpLip = (1.f / eddlipinfl) * SQR(SQR(alph * bet));    //Strong Reduce if beta low
+                        kampli = AmpLip / aamp;
+                    }
+
+
+                    interm *= kampli;
+
+                    if (interm < lp.tloww / eddlow) {
+                        interm = 0.01f;    //eliminate too low values
+                    }
+
+                    //we can change this part of algo==> not equal but ponderate
+                    koeLi[lvl * 3][i * W_L + j] = koeLi[lvl * 3 + 1][i * W_L + j] = koeLi[lvl * 3 + 2][i * W_L + j] = interm; //new value
+                    //here KoeLi contains values where gradient is high and coef high, and eliminate low values...
+                }
+            }
+        }
+
+        static const float scales[10] = {1.f, 2.f, 4.f, 8.f, 16.f, 32.f, 64.f, 128.f, 256.f, 512.f};
+        float scaleskip[10];
+
+        for (int sc = 0; sc < 10; sc++) {
+            scaleskip[sc] = scales[sc] / sk;
+        }
+
+        float rad = ((float)lp.radiusw) / 60.f; //radius ==> not too high value to avoid artifacts
+        float value = ((float)lp.strengthw) / 8.f; //strength
+
+        if (scaleskip[1] < 1.f) {
+            float atten01234 = 0.80f;
+            value *= (atten01234 * scaleskip[1]);    //for zoom < 100% reduce strength...I choose level 1...but!!
+        }
+
+        float edge = 1.f;
+        float lim0 = 20.f; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
+        float repart = (float)lp.detailw;
+        float brepart;
+
+        if (lp.edgwmet == 0) {
+            brepart = 3.f;
+        }
+
+        if (lp.edgwmet == 2) {
+            brepart = 0.5f;    //arbitrary value to increase / decrease repart, between 1 and 0
+        }
+
+        float arepart = - (brepart - 1.f) / (lim0 / 60.f);
+
+        if (lp.edgwmet != 1) {
+            if (rad < lim0 / 60.f) {
+                repart *= (arepart * rad + brepart);    //linear repartition of repart
+            }
+        }
+
+        float al0 = 1.f + (repart) / 50.f;
+        float al10 = 1.0f; //arbitrary value ==> less = take into account high levels
+        float ak = - (al0 - al10) / 10.f; //10 = maximum levels
+        float bk = al0;
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic) collapse(2)
+#endif
+
+        for (int lvl = 0; lvl < maxlvl; lvl++) {
+            for (int dir = 1; dir < 4; dir++) {
+                int W_L = wdspot->level_W(lvl);
+                int H_L = wdspot->level_H(lvl);
+                float **wav_L = wdspot->level_coeffs(lvl);
+                float lev = float (lvl);
+
+                float koef = ak * lvl + bk; //modulate for levels : more levels high, more koef low ==> concentrated action on low levels, without or near for high levels
+                float expkoef = -pow(fabs(rad - lev), koef);   //reduce effect for high levels
+
+                if (lp.edgwmet == 2) {
+                    if (rad < lim0 / 60.f && lvl == 0) {
+                        expkoef *= abs(repart);    //reduce effect for low values of rad and level=0==> quasi only level 1 is effective
+                    }
+                }
+
+                if (lp.edgwmet == 0) {
+                    if (rad < lim0 / 60.f && lvl == 1) {
+                        expkoef /= repart;    //increase effect for low values of rad and level=1==> quasi only level 0 is effective
+                    }
+                }
+
+
+                //take into account local contrast
+                float refin = value * exp(expkoef);
+                float edgePrecalc = 1.f + refin; //estimate edge "pseudo variance"
+
+
+                if (MaxP[lvl] > 0.f) { //curve
+                    float insigma = 0.666f; //SD
+                    float logmax = log(MaxP[lvl]);  //log Max
+                    float rapX = (mean[lvl] + sigma[lvl]) / MaxP[lvl]; //rapport between sD / max
+                    float inx = log(insigma);
+                    float iny = log(rapX);
+                    float rap = inx / iny; //koef
+                    float asig = 0.166f / sigma[lvl];
+                    float bsig = 0.5f - asig * mean[lvl];
+                    float amean = 0.5f / mean[lvl];
+                    float absciss = 0.f;
+                    float kinterm;
+                    float kmul;
+                    int borderL = 1;
+
+                    for (int i = borderL; i < H_L - borderL; i++) {
+                        for (int j = borderL; j < W_L - borderL; j++) {
+                            int k = i * W_L + j;
+
+
+                            if (lvl < 4) {
+                                edge = 1.f + (edgePrecalc - 1.f) * (koeLi[lvl * 3][k]) / (1.f + 0.9f * maxkoeLi[lvl * 3 + dir - 1]);
+                            } else {
+                                edge = edgePrecalc;
+                            }
+
+                            //   if (cp.edgcurv) {
+                            if (fabs(wav_L[dir][k]) >= (mean[lvl] + sigma[lvl])) {  //for max
+                                float valcour = log(fabs(wav_L[dir][k]));
+                                float valc = valcour - logmax;
+                                float vald = valc * rap;
+                                absciss = exp(vald);
+
+                            } else if (fabs(wav_L[dir][k]) >= mean[lvl] &&  fabs(wav_L[dir][k]) < (mean[lvl] + sigma[lvl])) {
+                                absciss = asig * fabs(wav_L[dir][k]) + bsig;
+                            } else if (fabs(wav_L[dir][k]) < mean[lvl]) {
+                                absciss = amean * fabs(wav_L[dir][k]);
+                            }
+
+                            // Threshold adjuster settings==> approximative for curve
+                            //kmul about average cbrt(3--40 / 10)==>1.5 to 2.5
+                            //kmul about SD   10--60  / 35 ==> 2
+                            // kmul about low  cbrt((5.f+cp.edg_low)/5.f);==> 1.5
+                            // kmul about max ==> 9
+                            // we can change these values
+                            // result is different not best or bad than threshold slider...but similar
+                            float abssd = 4.f; //amplification reference
+                            float bbssd = 2.f; //mini ampli
+                            float maxamp = 2.5f; //maxi ampli at end
+                            float maxampd = 10.f; //maxi ampli at end
+                            float a_abssd = (maxamp - abssd) / 0.333f;
+                            float b_abssd = maxamp - a_abssd;
+                            float da_abssd = (maxampd - abssd) / 0.333f;
+                            float db_abssd = maxampd - da_abssd;
+                            float am = (abssd - bbssd) / 0.666f;
+                            float kmuld = 0.f;
+
+                            if (absciss > 0.666f && absciss < 1.f) {
+                                kmul = a_abssd * absciss + b_abssd;    //about max  ==> kinterm
+                                kmuld = da_abssd * absciss + db_abssd;
+                            } else {
+                                kmul = kmuld = absciss * am + bbssd;
+                            }
+
+                            kinterm = 1.f;
+                            float kc = kmul * (locedgwavCurve[absciss * 500.f] - 0.5f);
+                            float kcd = kmuld * (locedgwavCurve[absciss * 500.f] - 0.5f);
+
+                            if (kc >= 0.f) {
+                                float reduceeffect = 0.6f;
+                                kinterm = 1.f + reduceeffect * kmul * (locedgwavCurve[absciss * 500.f] - 0.5f);    //about 1 to 3 general and big amplification for max (under 0)
+                            } else {
+                                kinterm = 1.f - (SQR(kcd)) / 10.f;
+                            }
+
+                            if (kinterm < 0.f) {
+                                kinterm = 0.01f;
+                            }
+
+                            edge *= kinterm;
+
+                            if (edge < 1.f) {
+                                edge = 1.f;
+                            }
+
+                            wav_L[dir][k] *=  edge;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (koeLibuffer) {
+            delete [] koeLibuffer;
+        }
+
+    }
+
+//edge sharpness end
 
     if (locwavCurve && locwavutili && wavcurve) {//simple local contrast in function luminance
         float mean[10];

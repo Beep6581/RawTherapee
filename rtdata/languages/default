@@ -2659,6 +2659,7 @@ TP_LOCALLAB_WAVCON;Contrast by Level
 TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2  + 3 and more)
 TP_LOCALLAB_WASDEN_TOOLTIP;Denoise luminance for the 3 first levels (fine).\nThe right limit of the curve correspond to coarse : level 3 and beyond
 TP_LOCALLAB_WAVE;Ψ Wavelet
+TP_LOCALLAB_WAVEEDG_TOOLTIP;Requires that at least the first 4 levels are usable
 TP_LOCALLAB_WAVHIGH;Ψ Wavelet high
 TP_LOCALLAB_WAVLEV;Blur by Level
 TP_LOCALLAB_WAVLOW;Ψ Wavelet low

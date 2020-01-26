@@ -1815,6 +1815,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             for (int i = 0; i < H_L; i++) {
                 tmC[i] = &tmCBuffer[i * W_L];
             }
+            float gradw = cp.eddet;
+            float tloww = cp.eddetthr;
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic) collapse(2)
@@ -1826,7 +1828,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                     int H_L = WaveletCoeffs_L.level_H (lvl);
 
                     float ** WavCoeffs_LL = WaveletCoeffs_L.level_coeffs (lvl);
-                    calckoe (WavCoeffs_LL, cp, koeLi, lvl , dir, W_L, H_L, edd, maxkoeLi, tmC);
+                    calckoe (WavCoeffs_LL, gradw, tloww, koeLi, lvl , dir, W_L, H_L, edd, maxkoeLi, tmC);
+//                    calckoe (WavCoeffs_LL, cp, koeLi, lvl , dir, W_L, H_L, edd, maxkoeLi, tmC);
                     // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
                 }
             }
@@ -2178,12 +2181,14 @@ void ImProcFunctions::WaveletcontAllAB (LabImage * labco, float ** varhue, float
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& cp, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC)
+//void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& cp, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC)
+void ImProcFunctions::calckoe (float ** WavCoeffs_LL, float gradw, float tloww, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC)
 {
     int borderL = 2;
 
 //  printf("cpedth=%f\n",cp.eddetthr);
-    if (cp.eddetthr < 30.f) {
+ //   if (cp.eddetthr < 30.f) {
+    if (tloww < 30.f) {
         borderL = 1;
 
         // I calculate coefficients with r size matrix 3x3 r=1 ; 5x5 r=2; 7x7 r=3
@@ -2207,7 +2212,8 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
 
             }
         }
-    } else if (cp.eddetthr >= 30.f && cp.eddetthr < 50.f) {
+ //   } else if (cp.eddetthr >= 30.f && cp.eddetthr < 50.f) {
+    } else if (tloww >= 30.f && tloww < 50.f) {
         borderL = 1;
 
         for (int i = 1; i < H_L - 1; i++) { //sigma=0.85
@@ -2223,7 +2229,8 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
     }
 
 
-    else if (cp.eddetthr >= 50.f && cp.eddetthr < 75.f) {
+ //   else if (cp.eddetthr >= 50.f && cp.eddetthr < 75.f) {
+    else if (tloww >= 50.f && tloww < 75.f) {
         borderL = 1;
 
         for (int i = 1; i < H_L - 1; i++) {
@@ -2235,7 +2242,8 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
         }
     }
 
-    else if (cp.eddetthr >= 75.f) {
+//    else if (cp.eddetthr >= 75.f) {
+    else if (tloww >= 75.f) {
         borderL = 2;
 
         //if(cp.lip3 && level > 1) {
@@ -2257,7 +2265,8 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
                     // 4 9 12 9 4
                     // 2 4 5 4 2
                     // divi 159
-                    if (cp.eddetthr < 85.f) { //sigma=1.1
+          //          if (cp.eddetthr < 85.f) { //sigma=1.1
+                    if (tloww < 85.f) { //sigma=1.1
                         tmC[i][j] = (15.f * WavCoeffs_LL[dir][i * W_L + j]  + 10.f * WavCoeffs_LL[dir][ (i - 1) * W_L + j] + 10.f * WavCoeffs_LL[dir][ (i + 1) * W_L + j]
                                      + 10.f * WavCoeffs_LL[dir][i * W_L + j + 1] + 10.f * WavCoeffs_LL[dir][i * W_L + j - 1] + 7.f * WavCoeffs_LL[dir][ (i - 1) * W_L + j - 1]
                                      + 7.f * WavCoeffs_LL[dir][ (i - 1) * W_L + j + 1] + 7.f * WavCoeffs_LL[dir][ (i + 1) * W_L + j - 1] + 7.f * WavCoeffs_LL[dir][ (i + 1) * W_L + j + 1]
@@ -2305,8 +2314,10 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
 
     float thr = 40.f; //avoid artifact eg. noise...to test
     float thr2 = 1.5f * edd; //edd can be modified in option ed_detect
-    thr2 += cp.eddet / 30.f; //to test
-    float diffFactor = (cp.eddet / 100.f);
+ //   thr2 += cp.eddet / 30.f; //to test
+    thr2 += gradw / 30.f; //to test
+ //   float diffFactor = (cp.eddet / 100.f);
+    float diffFactor = (gradw / 100.f);
 
     for (int i = 0; i < H_L; i++ ) {
         for (int j = 0; j < W_L; j++) {
