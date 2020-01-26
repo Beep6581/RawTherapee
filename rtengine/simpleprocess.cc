@@ -1123,6 +1123,7 @@ private:
             LocwavCurve locconwavCurve;
             LocwavCurve loccompwavCurve;
             LocwavCurve loccomprewavCurve;
+            LocwavCurve locedgwavCurve;
             LocwavCurve locwavCurveden;
             LUTf lllocalcurve(65536, 0);
             LUTf lclocalcurve(65536, 0);
@@ -1208,6 +1209,7 @@ private:
                 bool locconwavutili = false;
                 bool loccompwavutili = false;
                 bool loccomprewavutili = false;
+                bool locedgwavutili = false;
                 bool lmasutiliblwav = false;
                 bool lmasutilicolwav = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
@@ -1248,6 +1250,7 @@ private:
                 locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve, locconwavutili);
                 loccompwavCurve.Set(params.locallab.spots.at(sp).loccompwavcurve, loccompwavutili);
                 loccomprewavCurve.Set(params.locallab.spots.at(sp).loccomprewavcurve, loccomprewavutili);
+                locedgwavCurve.Set(params.locallab.spots.at(sp).locedgwavcurve, locedgwavutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveLocal(localclutili, params.locallab.spots.at(sp).clcurve, cllocalcurve, 1);
                 CurveFactory::curveLocal(locallcutili, params.locallab.spots.at(sp).lccurve, lclocalcurve, 1);
@@ -1327,6 +1330,7 @@ private:
                         loccompwavCurve, loccompwavutili,
                         loccomprewavCurve, loccomprewavutili,
                         locwavCurveden, locwavdenutili,
+                        locedgwavCurve, locedgwavutili,
                         LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);

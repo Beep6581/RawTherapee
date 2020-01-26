@@ -1285,17 +1285,22 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gradw = locallab.spots.at(j).gradw && pSpot.gradw == otherSpot.gradw;
                 locallab.spots.at(j).tloww = locallab.spots.at(j).tloww && pSpot.tloww == otherSpot.tloww;
                 locallab.spots.at(j).thigw = locallab.spots.at(j).thigw && pSpot.thigw == otherSpot.thigw;
+                locallab.spots.at(j).edgw = locallab.spots.at(j).edgw && pSpot.edgw == otherSpot.edgw;
+                locallab.spots.at(j).basew = locallab.spots.at(j).basew && pSpot.basew == otherSpot.basew;
                 locallab.spots.at(j).locedgwavcurve = locallab.spots.at(j).locedgwavcurve && pSpot.locedgwavcurve == otherSpot.locedgwavcurve;
                 locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
                 locallab.spots.at(j).fftwlc = locallab.spots.at(j).fftwlc && pSpot.fftwlc == otherSpot.fftwlc;
                 locallab.spots.at(j).blurlc = locallab.spots.at(j).blurlc && pSpot.blurlc == otherSpot.blurlc;
                 locallab.spots.at(j).wavblur = locallab.spots.at(j).wavblur && pSpot.wavblur == otherSpot.wavblur;
+                locallab.spots.at(j).wavedg = locallab.spots.at(j).wavedg && pSpot.wavedg == otherSpot.wavedg;
                 locallab.spots.at(j).wavcont = locallab.spots.at(j).wavcont && pSpot.wavcont == otherSpot.wavcont;
                 locallab.spots.at(j).wavcomp = locallab.spots.at(j).wavcomp && pSpot.wavcomp == otherSpot.wavcomp;
                 locallab.spots.at(j).wavgradl = locallab.spots.at(j).wavgradl && pSpot.wavgradl == otherSpot.wavgradl;
                 locallab.spots.at(j).wavcompre = locallab.spots.at(j).wavcompre && pSpot.wavcompre == otherSpot.wavcompre;
                 locallab.spots.at(j).origlc = locallab.spots.at(j).origlc && pSpot.origlc == otherSpot.origlc;
                 locallab.spots.at(j).localcontMethod = locallab.spots.at(j).localcontMethod && pSpot.localcontMethod == otherSpot.localcontMethod;
+                locallab.spots.at(j).localedgMethod = locallab.spots.at(j).localedgMethod && pSpot.localedgMethod == otherSpot.localedgMethod;
+                locallab.spots.at(j).localneiMethod = locallab.spots.at(j).localneiMethod && pSpot.localneiMethod == otherSpot.localneiMethod;
                 locallab.spots.at(j).locwavcurve = locallab.spots.at(j).locwavcurve && pSpot.locwavcurve == otherSpot.locwavcurve;
                 locallab.spots.at(j).loclevwavcurve = locallab.spots.at(j).loclevwavcurve && pSpot.loclevwavcurve == otherSpot.loclevwavcurve;
                 locallab.spots.at(j).locconwavcurve = locallab.spots.at(j).locconwavcurve && pSpot.locconwavcurve == otherSpot.locconwavcurve;
@@ -4135,6 +4140,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).thigw   = mods.locallab.spots.at(i).thigw;
         }
 
+        if (locallab.spots.at(i).edgw) {
+            toEdit.locallab.spots.at(i).edgw   = mods.locallab.spots.at(i).edgw;
+        }
+
+        if (locallab.spots.at(i).basew) {
+            toEdit.locallab.spots.at(i).basew   = mods.locallab.spots.at(i).basew;
+        }
+
         if (locallab.spots.at(i).locedgwavcurve) {
             toEdit.locallab.spots.at(i).locedgwavcurve = mods.locallab.spots.at(i).locedgwavcurve;
         }
@@ -4153,6 +4166,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).wavblur) {
             toEdit.locallab.spots.at(i).wavblur = mods.locallab.spots.at(i).wavblur;
+        }
+
+        if (locallab.spots.at(i).wavedg) {
+            toEdit.locallab.spots.at(i).wavedg = mods.locallab.spots.at(i).wavedg;
         }
 
         if (locallab.spots.at(i).wavcont) {
@@ -4177,6 +4194,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).localcontMethod) {
             toEdit.locallab.spots.at(i).localcontMethod = mods.locallab.spots.at(i).localcontMethod;
+        }
+
+        if (locallab.spots.at(i).localedgMethod) {
+            toEdit.locallab.spots.at(i).localedgMethod = mods.locallab.spots.at(i).localedgMethod;
+        }
+
+        if (locallab.spots.at(i).localneiMethod) {
+            toEdit.locallab.spots.at(i).localneiMethod = mods.locallab.spots.at(i).localneiMethod;
         }
 
         if (locallab.spots.at(i).locwavcurve) {
@@ -5737,17 +5762,22 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     detailw(v),
     tloww(v),
     thigw(v),
+    edgw(v),
+    basew(v),
     gradw(v),
     sensilc(v),
     fftwlc(v),
     blurlc(v),
     wavblur(v),
+    wavedg(v),
     wavcont(v),
     wavcomp(v),
     wavgradl(v),
     wavcompre(v),
     origlc(v),
     localcontMethod(v),
+    localedgMethod(v),
+    localneiMethod(v),
     locwavcurve(v),
     loclevwavcurve(v),
     locconwavcurve(v),
@@ -6155,17 +6185,22 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     detailw = v;
     tloww = v;
     thigw = v;
+    edgw = v;
+    basew = v;
     gradw = v;
     sensilc = v;
     fftwlc = v;
     blurlc = v;
     wavblur = v;
+    wavedg = v;
     wavcont = v;
     wavcomp = v;
     wavgradl = v;
     wavcompre = v;
     origlc = v;
     localcontMethod = v;
+    localedgMethod = v;
+    localneiMethod = v;
     locwavcurve = v;
     loclevwavcurve = v;
     locconwavcurve = v;

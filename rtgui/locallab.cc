@@ -597,12 +597,14 @@ radmasklc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 1000.0, 0
 chromasklc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
 strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
 angwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
-strengthw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRW"), 0., 100.0, 0.5, 0.))),
-radiusw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUSW"), 5., 100.0, 0.5, 15.))),
-detailw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILW"), -50., 100.0, 1., 10.))),
-gradw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADW"), 0., 100.0, 0.5, 90.))),
-tloww(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TLOWW"), 0., 100.0, 1., 20.))),
-thigw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TLOWW"), -10., 100.0, 1., 0.))),
+strengthw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDVAL"), 0., 100.0, 0.5, 0.))),
+radiusw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDRAD"), 5., 100.0, 0.5, 15.))),
+detailw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGTHRESH"), -50., 100.0, 1., 10.))),
+gradw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECT"), 0., 100.0, 0.5, 90.))),
+tloww(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR"), 0., 100.0, 1., 20.))),
+thigw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR2"), -10., 100.0, 1., 0.))),
+edgw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGESENSI"), 0., 100.0, 1., 60.))),
+basew(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEAMPLI"), 0., 100.0, 1., 10.))),
 
 multiplier(
 [this]() -> std::array<Adjuster*, 6> {
@@ -712,6 +714,7 @@ wavcont(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CONTFRA")))),
 wavcomp(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPFRA")))),
 wavcompre(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPREFRA")))),
 wavgradl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GRALWFRA")))),
+wavedg(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EDGFRA")))),
 //CBDL
 enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 //encoding log
@@ -759,6 +762,8 @@ showmasksharMethod(Gtk::manage(new MyComboBoxText())),
 
 //Local contrast
 localcontMethod(Gtk::manage(new MyComboBoxText())),
+localedgMethod(Gtk::manage(new MyComboBoxText())),
+localneiMethod(Gtk::manage(new MyComboBoxText())),
 csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 6, 6, 0, false))),
 showmasklcMethod(Gtk::manage(new MyComboBoxText())),
 //CBDL
@@ -810,13 +815,15 @@ gradlogFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")))),
 retiBox(Gtk::manage(new ToolParamBlock())),
 maskretiBox(Gtk::manage(new ToolParamBlock())),
 mask7(Gtk::manage(new ToolParamBlock())),
+edgsBox(Gtk::manage(new ToolParamBlock())),
+
 labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")))),
 labgridmerg(Gtk::manage(new LabGrid(EvLocallabLabGridmergValue, M("TP_LOCALLAB_LABGRID_VALUES"), false))),
 
 mMLabels(Gtk::manage(new Gtk::Label("---"))),
 transLabels(Gtk::manage(new Gtk::Label("---"))),
 transLabels2(Gtk::manage(new Gtk::Label("---"))),
-
+labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
 // Others
 ctboxsoftmethod(Gtk::manage(new Gtk::HBox())),
 ctboxexpmethod(Gtk::manage(new Gtk::HBox())),
@@ -2901,6 +2908,7 @@ pe(nullptr)
     wavcompConn  = wavcomp->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcompChanged));
     wavcompreConn  = wavcompre->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcompreChanged));
     wavgradlConn  = wavgradl->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavgradlChanged));
+    wavedgConn  = wavedg->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavedgChanged));
     origlcConn  = origlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::origlcChanged));
     csThreshold->setAdjusterListener(this);
 
@@ -2982,6 +2990,28 @@ pe(nullptr)
 
     localcontMethodConn = localcontMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::localcontMethodChanged));
 
+    Gtk::Label* const labmedgr = Gtk::manage(new Gtk::Label(M("TP_WAVELET_MEDGREINF") + ":"));
+    Gtk::HBox* const edbox = Gtk::manage(new Gtk::HBox());
+    edbox->pack_start (*labmedgr, Gtk::PACK_SHRINK, 1);
+
+    localedgMethod->append(M("TP_WAVELET_RE1"));
+    localedgMethod->append(M("TP_WAVELET_RE2"));
+    localedgMethod->append(M("TP_WAVELET_RE3"));
+    localedgMethod->set_active(0);
+    localedgMethodConn = localedgMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::localedgMethodChanged));
+    edbox->pack_start(*localedgMethod);
+
+    Gtk::HBox* const ctboxNP = Gtk::manage(new Gtk::HBox());
+    ctboxNP->pack_start (*labmNP, Gtk::PACK_SHRINK, 1);
+
+    localneiMethod->append(M("TP_WAVELET_NPNONE"));
+    localneiMethod->append(M("TP_WAVELET_NPLOW"));
+    localneiMethod->append(M("TP_WAVELET_NPHIGH"));
+    localneiMethod->set_active(0);
+    localneiMethodConn = localneiMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::localneiMethodChanged));
+    ctboxNP->pack_start(*localneiMethod);
+
+
     lcradius->setAdjusterListener(this);
 
     lcamount->setAdjusterListener(this);
@@ -3026,6 +3056,8 @@ pe(nullptr)
     gradw->setAdjusterListener(this);
     tloww->setAdjusterListener(this);
     thigw->setAdjusterListener(this);
+    edgw->setAdjusterListener(this);
+    basew->setAdjusterListener(this);
 
     LocalcurveEditorwavedg->setCurveListener(this);
 
@@ -3062,14 +3094,26 @@ pe(nullptr)
     gradwavFrame->add(*gradwavBox);
 
     edgFrame->set_label_align(0.025, 0.5);
-    ToolParamBlock* const edgsBox = Gtk::manage(new ToolParamBlock());
+    wavedg->set_active(false);
+    edgFrame->set_label_widget(*wavedg);
+
+    Gtk::HSeparator* const separatoredg = Gtk::manage(new  Gtk::HSeparator());
+
+ //   ToolParamBlock* const edgsBox = Gtk::manage(new ToolParamBlock());
     edgsBox->pack_start(*strengthw);
     edgsBox->pack_start(*radiusw);
     edgsBox->pack_start(*detailw);
+//    edgsBox->pack_start(*localedgMethod);
+    edgsBox->pack_start(*edbox);
     edgsBox->pack_start(*LocalcurveEditorwavedg, Gtk::PACK_SHRINK, 4);
     edgsBox->pack_start(*gradw);
     edgsBox->pack_start(*tloww);
     edgsBox->pack_start(*thigw);
+    edgsBox->pack_start(*separatoredg);
+    
+    edgsBox->pack_start(*edgw);
+    edgsBox->pack_start(*basew);
+    edgsBox->pack_start(*ctboxNP);
     edgFrame->add(*edgsBox);
 
     Gtk::HSeparator* const separatorblu = Gtk::manage(new  Gtk::HSeparator());
@@ -5483,6 +5527,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).fftwlc = fftwlc->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).blurlc = blurlc->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavblur = wavblur->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).wavedg = wavedg->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcont = wavcont->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcomp = wavcomp->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcompre = wavcompre->get_active();
@@ -5502,12 +5547,30 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).gradw = gradw->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).tloww = tloww->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).thigw = thigw->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).edgw = edgw->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).basew = basew->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).locedgwavcurve = wavshapeedg->getCurve();
 
                     if (localcontMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).localcontMethod = "loc";
                     } else if (localcontMethod->get_active_row_number() == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).localcontMethod = "wav";
+                    }
+
+                    if (localedgMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).localedgMethod = "fir";
+                    } else if (localedgMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).localedgMethod = "sec";
+                    } else if (localedgMethod->get_active_row_number() == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).localedgMethod = "thr";
+                    }
+
+                    if (localneiMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).localneiMethod = "none";
+                    } else if (localneiMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).localneiMethod = "low";
+                    } else if (localneiMethod->get_active_row_number() == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).localneiMethod = "high";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).LLmasklccurve = LLmasklcshape->getCurve();
@@ -5916,6 +5979,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).fftwlc = pe->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).blurlc = pe->locallab.spots.at(pp->locallab.selspot).blurlc || !blurlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavblur = pe->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).wavedg = pe->locallab.spots.at(pp->locallab.selspot).wavedg || !wavedg->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavcont = pe->locallab.spots.at(pp->locallab.selspot).wavcont || !wavcont->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavcomp = pe->locallab.spots.at(pp->locallab.selspot).wavcomp || !wavcomp->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavgradl = pe->locallab.spots.at(pp->locallab.selspot).wavgradl || !wavgradl->get_inconsistent();
@@ -5934,7 +5998,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).gradw = pe->locallab.spots.at(pp->locallab.selspot).gradw || gradw->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).tloww = pe->locallab.spots.at(pp->locallab.selspot).tloww || tloww->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).thigw = pe->locallab.spots.at(pp->locallab.selspot).thigw || thigw->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).edgw = pe->locallab.spots.at(pp->locallab.selspot).edgw || edgw->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).basew = pe->locallab.spots.at(pp->locallab.selspot).basew || basew->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).locedgwavcurve = pe->locallab.spots.at(pp->locallab.selspot).locedgwavcurve || !wavshapeedg->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).localedgMethod = pe->locallab.spots.at(pp->locallab.selspot).localedgMethod || localedgMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).localneiMethod = pe->locallab.spots.at(pp->locallab.selspot).localneiMethod || localneiMethod->get_active_text() != M("GENERAL_UNCHANGED");
 
                         pe->locallab.spots.at(pp->locallab.selspot).CCmasklccurve = pe->locallab.spots.at(pp->locallab.selspot).CCmasklccurve || !CCmasklcshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmasklccurve = pe->locallab.spots.at(pp->locallab.selspot).LLmasklccurve || !LLmasklcshape->isUnChanged();
@@ -6346,6 +6414,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).fftwlc = pedited->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).blurlc = pedited->locallab.spots.at(pp->locallab.selspot).blurlc || !blurlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavblur = pedited->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).wavedg = pedited->locallab.spots.at(pp->locallab.selspot).wavedg || !wavedg->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavcont = pedited->locallab.spots.at(pp->locallab.selspot).wavcont || !wavcont->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavcomp = pedited->locallab.spots.at(pp->locallab.selspot).wavcomp || !wavcomp->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavgradl = pedited->locallab.spots.at(pp->locallab.selspot).wavgradl || !wavgradl->get_inconsistent();
@@ -6363,6 +6432,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).gradw = pedited->locallab.spots.at(pp->locallab.selspot).gradw || gradw->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).tloww = pedited->locallab.spots.at(pp->locallab.selspot).tloww || tloww->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).thigw = pedited->locallab.spots.at(pp->locallab.selspot).thigw || thigw->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).edgw = pedited->locallab.spots.at(pp->locallab.selspot).edgw || edgw->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).basew = pedited->locallab.spots.at(pp->locallab.selspot).basew || basew->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).locedgwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).locedgwavcurve || !wavshapeedg->isUnChanged();
 
                         pedited->locallab.spots.at(pp->locallab.selspot).CCmasklccurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmasklccurve || !CCmasklcshape->isUnChanged();
@@ -6928,8 +6999,23 @@ void Locallab::curveChanged(CurveEditor* ce)
 }
 
 
+void Locallab::localedgMethodChanged()
+{
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallablocaledgMethod, localedgMethod->get_active_text());
+        }
+    }
+}
 
-
+void Locallab::localneiMethodChanged()
+{
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallablocalneiMethod, localneiMethod->get_active_text());
+        }
+    }
+}
 
 void Locallab::localcontMethodChanged()
 {
@@ -6966,6 +7052,7 @@ void Locallab::localcontMethodChanged()
         fftwlc->show();
         blurlc->show();
         wavblur->show();
+        wavedg->show();
         origlc->hide();
         strwav->hide();
         angwav->hide();
@@ -6975,6 +7062,8 @@ void Locallab::localcontMethodChanged()
         gradw->hide();
         tloww->hide();
         thigw->hide();
+        edgw->hide();
+        basew->hide();
     } else if (localcontMethod->get_active_row_number() == 1) {
         levelwav->show();
         residcont->show();
@@ -7008,6 +7097,7 @@ void Locallab::localcontMethodChanged()
         fftwlc->hide();
         blurlc->show();
         wavblur->show();
+        wavedg->show();
         origlc->show();
         strwav->show();
         angwav->show();
@@ -7017,6 +7107,8 @@ void Locallab::localcontMethodChanged()
         gradw->show();
         tloww->show();
         thigw->show();
+        edgw->show();
+        basew->show();
     }
 
     // printf("localcontMethodChanged\n");
@@ -8681,6 +8773,35 @@ void Locallab::wavblurChanged()
     }
 }
 
+void Locallab::wavedgChanged()
+{
+
+    if (wavedg->get_active()){
+        edgsBox->show();
+    } else {
+        edgsBox->hide();
+    }
+    
+    if (multiImage) {
+        if (wavedg->get_inconsistent()) {
+            wavedg->set_inconsistent(false);
+            wavedgConn.block(true);
+            wavedg->set_active(false);
+            wavedgConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            if (wavedg->get_active()) {
+                listener->panelChanged(Evlocallabwavedg, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabwavedg, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
 void Locallab::wavcontChanged()
 {
 
@@ -9302,6 +9423,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     gradw->setDefault(defSpot->gradw);
     tloww->setDefault(defSpot->tloww);
     thigw->setDefault(defSpot->thigw);
+    edgw->setDefault(defSpot->edgw);
+    basew->setDefault(defSpot->basew);
 
     // Contrast by detail levels
     for (int i = 0; i < 6; i++) {
@@ -9556,6 +9679,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         gradw->setDefaultEditedState(Irrelevant);
         tloww->setDefaultEditedState(Irrelevant);
         thigw->setDefaultEditedState(Irrelevant);
+        edgw->setDefaultEditedState(Irrelevant);
+        basew->setDefaultEditedState(Irrelevant);
 
         // Contrast by detail levels
         for (int i = 0; i < 6; i++) {
@@ -9815,6 +9940,8 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         gradw->setDefaultEditedState(defSpotState->gradw ? Edited : UnEdited);
         tloww->setDefaultEditedState(defSpotState->tloww ? Edited : UnEdited);
         thigw->setDefaultEditedState(defSpotState->thigw ? Edited : UnEdited);
+        edgw->setDefaultEditedState(defSpotState->edgw ? Edited : UnEdited);
+        basew->setDefaultEditedState(defSpotState->basew ? Edited : UnEdited);
 
         // Contrast by detail levels
         for (int i = 0; i < 6; i++) {
@@ -11098,6 +11225,18 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == edgw) {
+            if (listener) {
+                listener->panelChanged(Evlocallabedgw, edgw->getTextValue());
+            }
+        }
+
+        if (a == basew) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbasew, basew->getTextValue());
+            }
+        }
+
         if (a == sensilc) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensilc, sensilc->getTextValue());
@@ -11607,6 +11746,8 @@ void Locallab::setBatchMode(bool batchMode)
     gradw->showEditedCB();
     tloww->showEditedCB();
     thigw->showEditedCB();
+    edgw->showEditedCB();
+    basew->showEditedCB();
 
     // Contrast by detail levels
     for (int i = 0; i < 6; i++) {
@@ -11675,6 +11816,8 @@ void Locallab::setBatchMode(bool batchMode)
 
     //Local contrast
     localcontMethod->append(M("GENERAL_UNCHANGED"));
+    localedgMethod->append(M("GENERAL_UNCHANGED"));
+    localneiMethod->append(M("GENERAL_UNCHANGED"));
 
     // In batch mode, being able to change mask visibility is useless
     showmaskcolMethod->hide();
@@ -11901,9 +12044,12 @@ void Locallab::enableListener()
     // Local Contrast
     enablecontrastConn.block(false);
     localcontMethodConn.block(false);
+    localedgMethodConn.block(false);
+    localneiMethodConn.block(false);
     fftwlcConn.block(false);
     blurlcConn.block(false);
     wavblurConn.block(false);
+    wavedgConn.block(false);
     wavcontConn.block(false);
     wavcompConn.block(false);
     wavgradlConn.block(false);
@@ -12006,9 +12152,12 @@ void Locallab::disableListener()
     // Local Contrast
     enablecontrastConn.block(true);
     localcontMethodConn.block(true);
+    localedgMethodConn.block(true);
+    localneiMethodConn.block(true);
     fftwlcConn.block(true);
     blurlcConn.block(true);
     wavblurConn.block(true);
+    wavedgConn.block(true);
     wavcontConn.block(true);
     wavcompConn.block(true);
     wavgradlConn.block(true);
@@ -12694,6 +12843,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         fftwlc->set_active(pp->locallab.spots.at(index).fftwlc);
         blurlc->set_active(pp->locallab.spots.at(index).blurlc);
         wavblur->set_active(pp->locallab.spots.at(index).wavblur);
+        wavedg->set_active(pp->locallab.spots.at(index).wavedg);
         wavcont->set_active(pp->locallab.spots.at(index).wavcont);
         wavcomp->set_active(pp->locallab.spots.at(index).wavcomp);
         wavgradl->set_active(pp->locallab.spots.at(index).wavgradl);
@@ -12706,11 +12856,36 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         gradw->setValue(pp->locallab.spots.at(index).gradw);
         tloww->setValue(pp->locallab.spots.at(index).tloww);
         thigw->setValue(pp->locallab.spots.at(index).thigw);
+        edgw->setValue(pp->locallab.spots.at(index).edgw);
+        basew->setValue(pp->locallab.spots.at(index).basew);
+
+        if (wavedg->get_active()){
+            edgsBox->show();
+        } else {
+            edgsBox->hide();
+        }
+
 
         if (pp->locallab.spots.at(index).localcontMethod == "loc") {
             localcontMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).localcontMethod == "wav") {
             localcontMethod->set_active(1);
+        }
+
+        if (pp->locallab.spots.at(index).localedgMethod == "fir") {
+            localedgMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).localedgMethod == "sec") {
+            localedgMethod->set_active(1);
+        } else if (pp->locallab.spots.at(index).localedgMethod == "thr") {
+            localedgMethod->set_active(2);
+        }
+
+        if (pp->locallab.spots.at(index).localneiMethod == "none") {
+            localneiMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).localneiMethod == "low") {
+            localneiMethod->set_active(1);
+        } else if (pp->locallab.spots.at(index).localneiMethod == "high") {
+            localneiMethod->set_active(2);
         }
 
         if (complexsoft == 2) {
@@ -13231,6 +13406,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 fftwlc->set_inconsistent(multiImage && !spotState->fftwlc);
                 blurlc->set_inconsistent(multiImage && !spotState->blurlc);
                 wavblur->set_inconsistent(multiImage && !spotState->wavblur);
+                wavedg->set_inconsistent(multiImage && !spotState->wavedg);
                 wavcont->set_inconsistent(multiImage && !spotState->wavcont);
                 wavcomp->set_inconsistent(multiImage && !spotState->wavcomp);
                 wavgradl->set_inconsistent(multiImage && !spotState->wavgradl);
@@ -13248,6 +13424,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 gradw->setEditedState(spotState->gradw ? Edited : UnEdited);
                 tloww->setEditedState(spotState->tloww ? Edited : UnEdited);
                 thigw->setEditedState(spotState->thigw ? Edited : UnEdited);
+                edgw->setEditedState(spotState->edgw ? Edited : UnEdited);
+                basew->setEditedState(spotState->basew ? Edited : UnEdited);
                 wavshapeedg->setUnChanged(!spotState->locedgwavcurve);
 
                 LLmasklcshape->setUnChanged(!spotState->LLmasklccurve);
@@ -13259,8 +13437,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromasklc->setEditedState(spotState->chromasklc ? Edited : UnEdited);
                 Lmasklcshape->setUnChanged(!spotState->Lmasklccurve);
 
-                if (!spotState->retinexMethod) {
+                if (!spotState->localcontMethod) {
                     localcontMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+                if (!spotState->localedgMethod) {
+                    localedgMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+                if (!spotState->localneiMethod) {
+                    localneiMethod->set_active_text(M("GENERAL_UNCHANGED"));
                 }
 
                 // Contrast by detail levels
@@ -13789,6 +13973,7 @@ void Locallab::updateSpecificGUIState()
         fftwlc->show();
         blurlc->show();
         wavblur->show();
+        wavedg->show();
         origlc->hide();
         strengthw->hide();
         radiusw->hide();
@@ -13796,6 +13981,8 @@ void Locallab::updateSpecificGUIState()
         gradw->hide();
         tloww->hide();
         thigw->hide();
+        edgw->hide();
+        basew->hide();
     } else if (localcontMethod->get_active_row_number() == 1) {
         levelwav->show();
         residcont->show();
@@ -13831,6 +14018,7 @@ void Locallab::updateSpecificGUIState()
         fftwlc->hide();
         blurlc->show();
         wavblur->show();
+        wavedg->show();
         origlc->show();
         strengthw->show();
         radiusw->show();
@@ -13838,6 +14026,8 @@ void Locallab::updateSpecificGUIState()
         gradw->show();
         tloww->show();
         thigw->show();
+        edgw->show();
+        basew->show();
     }
 
 // Update Sharpening GUI according to inverssha button state (to be compliant with inversshaChanged function)

@@ -2748,16 +2748,21 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gradw(90.0),
     tloww(20.0),
     thigw(0.0),
+    edgw(60.0),
+    basew(10.0),
     sensilc(30),
     fftwlc(false),
     blurlc(true),
     wavblur(false),
+    wavedg(false),
     wavcont(false),
     wavcomp(false),
     wavgradl(false),
     wavcompre(false),
     origlc(false),
     localcontMethod("loc"),
+    localedgMethod("thr"),
+    localneiMethod("low"),
     locwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     csthreshold(0, 0, 6, 6, false),
     loclevwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.0, 0.0, 0.35, 0.5, 0., 0.35, 0.35, 1.0, 0.0, 0.35, 0.35},
@@ -3189,16 +3194,21 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gradw == other.gradw
         && tloww == other.tloww
         && thigw == other.thigw
+        && edgw == other.edgw
+        && basew == other.basew
         && sensilc == other.sensilc
         && fftwlc == other.fftwlc
         && blurlc == other.blurlc
         && wavblur == other.wavblur
+        && wavedg == other.wavedg
         && wavcont == other.wavcont
         && wavcomp == other.wavcomp
         && wavgradl == other.wavgradl
         && wavcompre == other.wavcompre
         && origlc == other.origlc
         && localcontMethod == other.localcontMethod
+        && localedgMethod == other.localedgMethod
+        && localneiMethod == other.localneiMethod
         && locwavcurve == other.locwavcurve
         && csthreshold == other.csthreshold
         && loclevwavcurve == other.loclevwavcurve
@@ -4591,22 +4601,27 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).clarisoft, "Locallab", "Clarisoft_" + std::to_string(i), spot.clarisoft, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Strwav_" + std::to_string(i), spot.strwav, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).angwav, "Locallab", "Angwav_" + std::to_string(i), spot.angwav, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Strengthw_" + std::to_string(i), spot.strengthw, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Radiusw_" + std::to_string(i), spot.radiusw, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Detailw_" + std::to_string(i), spot.detailw, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Gradw_" + std::to_string(i), spot.gradw, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Tloww_" + std::to_string(i), spot.tloww, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Thigw_" + std::to_string(i), spot.thigw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strengthw, "Locallab", "Strengthw_" + std::to_string(i), spot.strengthw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radiusw, "Locallab", "Radiusw_" + std::to_string(i), spot.radiusw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detailw, "Locallab", "Detailw_" + std::to_string(i), spot.detailw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gradw, "Locallab", "Gradw_" + std::to_string(i), spot.gradw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).tloww, "Locallab", "Tloww_" + std::to_string(i), spot.tloww, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).thigw, "Locallab", "Thigw_" + std::to_string(i), spot.thigw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).edgw, "Locallab", "Edgw_" + std::to_string(i), spot.edgw, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).basew, "Locallab", "Basew_" + std::to_string(i), spot.basew, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilc, "Locallab", "Sensilc_" + std::to_string(i), spot.sensilc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftwlc, "Locallab", "Fftwlc_" + std::to_string(i), spot.fftwlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurlc, "Locallab", "Blurlc_" + std::to_string(i), spot.blurlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavblur, "Locallab", "Wavblur_" + std::to_string(i), spot.wavblur, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavedg, "Locallab", "Wavedg_" + std::to_string(i), spot.wavedg, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcont, "Locallab", "Wavcont_" + std::to_string(i), spot.wavcont, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcomp, "Locallab", "Wavcomp_" + std::to_string(i), spot.wavcomp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavgradl, "Locallab", "Wavgradl_" + std::to_string(i), spot.wavgradl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcompre, "Locallab", "Wavcompre_" + std::to_string(i), spot.wavcompre, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).origlc, "Locallab", "Origlc_" + std::to_string(i), spot.origlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localcontMethod, "Locallab", "localcontMethod_" + std::to_string(i), spot.localcontMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localedgMethod, "Locallab", "localedgMethod_" + std::to_string(i), spot.localedgMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localneiMethod, "Locallab", "localneiMethod_" + std::to_string(i), spot.localneiMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locwavcurve, "Locallab", "LocwavCurve_" + std::to_string(i), spot.locwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loclevwavcurve, "Locallab", "LoclevwavCurve_" + std::to_string(i), spot.loclevwavcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locconwavcurve, "Locallab", "LocconwavCurve_" + std::to_string(i), spot.locconwavcurve, keyFile);
@@ -6159,17 +6174,22 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Detailw_" + std::to_string(i), pedited, spot.detailw, spotEdited.detailw);
                 assignFromKeyfile(keyFile, "Locallab", "Tloww_" + std::to_string(i), pedited, spot.tloww, spotEdited.tloww);
                 assignFromKeyfile(keyFile, "Locallab", "Thigw_" + std::to_string(i), pedited, spot.thigw, spotEdited.thigw);
+                assignFromKeyfile(keyFile, "Locallab", "Edgw_" + std::to_string(i), pedited, spot.edgw, spotEdited.edgw);
+                assignFromKeyfile(keyFile, "Locallab", "Basew_" + std::to_string(i), pedited, spot.basew, spotEdited.basew);
                 assignFromKeyfile(keyFile, "Locallab", "Gradw_" + std::to_string(i), pedited, spot.gradw, spotEdited.gradw);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + std::to_string(i), pedited, spot.sensilc, spotEdited.sensilc);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + std::to_string(i), pedited, spot.fftwlc, spotEdited.fftwlc);
                 assignFromKeyfile(keyFile, "Locallab", "Blurlc_" + std::to_string(i), pedited, spot.blurlc, spotEdited.blurlc);
                 assignFromKeyfile(keyFile, "Locallab", "Wavblur_" + std::to_string(i), pedited, spot.wavblur, spotEdited.wavblur);
+                assignFromKeyfile(keyFile, "Locallab", "Wavedg_" + std::to_string(i), pedited, spot.wavedg, spotEdited.wavedg);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcont_" + std::to_string(i), pedited, spot.wavcont, spotEdited.wavcont);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcomp_" + std::to_string(i), pedited, spot.wavcomp, spotEdited.wavcomp);
                 assignFromKeyfile(keyFile, "Locallab", "Wavgradl_" + std::to_string(i), pedited, spot.wavgradl, spotEdited.wavgradl);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcompre_" + std::to_string(i), pedited, spot.wavcompre, spotEdited.wavcompre);
                 assignFromKeyfile(keyFile, "Locallab", "Origlc_" + std::to_string(i), pedited, spot.origlc, spotEdited.origlc);
                 assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + std::to_string(i), pedited, spot.localcontMethod, spotEdited.localcontMethod);
+                assignFromKeyfile(keyFile, "Locallab", "localedgMethod_" + std::to_string(i), pedited, spot.localedgMethod, spotEdited.localedgMethod);
+                assignFromKeyfile(keyFile, "Locallab", "localneiMethod_" + std::to_string(i), pedited, spot.localneiMethod, spotEdited.localneiMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurve_" + std::to_string(i), pedited, spot.locwavcurve, spotEdited.locwavcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LoclevwavCurve_" + std::to_string(i), pedited, spot.loclevwavcurve, spotEdited.loclevwavcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LocconwavCurve_" + std::to_string(i), pedited, spot.locconwavcurve, spotEdited.locconwavcurve);

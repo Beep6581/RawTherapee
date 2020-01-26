@@ -229,6 +229,7 @@ ImProcCoordinator::ImProcCoordinator() :
     locconwavutili(false),
     loccompwavutili(false),
     loccomprewavutili(false),
+    locedgwavutili(false),
     lmasutiliblwav(false),
     lmasutilicolwav(false),
     LHutili(false),
@@ -1099,6 +1100,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locconwavutili = false;
                     loccompwavutili = false;
                     loccomprewavutili = false;
+                    locedgwavutili = false;
                     lmasutiliblwav = false;
                     lmasutilicolwav = false;
                     locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
@@ -1142,6 +1144,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     loccompwavCurve.Set(params->locallab.spots.at(sp).loccompwavcurve, loccompwavutili);
                     loccomprewavCurve.Set(params->locallab.spots.at(sp).loccomprewavcurve, loccomprewavutili);
                     locwavCurveden.Set(params->locallab.spots.at(sp).locwavcurveden, locwavdenutili);
+                    locedgwavCurve.Set(params->locallab.spots.at(sp).locedgwavcurve, locedgwavutili);
                     CurveFactory::curveLocal(locallutili, params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
                     CurveFactory::curveLocal(localclutili, params->locallab.spots.at(sp).clcurve, cllocalcurve, sca);
                     CurveFactory::curveLocal(locallcutili, params->locallab.spots.at(sp).lccurve, lclocalcurve, sca);
@@ -1256,6 +1259,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       loccompwavCurve, loccompwavutili,
                                       loccomprewavCurve, loccomprewavutili,
                                       locwavCurveden, locwavdenutili,
+                                      locedgwavCurve, locedgwavutili,
                                       LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                       huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav,
                                       locallColorMask, locallColorMaskinv, locallExpMask, locallExpMaskinv, locallSHMask, locallSHMaskinv, locallvibMask, localllcMask, locallsharMask, locallcbMask, locallretiMask, locallsoftMask, localltmMask, locallblMask,
@@ -1299,6 +1303,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                       loccompwavCurve, loccompwavutili,
                                       loccomprewavCurve, loccomprewavutili,
                                       locwavCurveden, locwavdenutili,
+                                      locedgwavCurve, locedgwavutili,
                                       LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                       huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                       minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);

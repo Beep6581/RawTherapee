@@ -237,6 +237,17 @@ struct local_params {
     float angvib;
     float angwav;
     float strwav;
+    
+    float strengthw;
+    float radiusw;
+    float detailw;
+    float gradw;
+    float tloww;
+    float thigw;
+    float edgw;
+    float basew;
+    
+    
     float anglog;
     float strlog;
     float softradiusexp;
@@ -393,6 +404,8 @@ struct local_params {
     int war;
     float adjch;
     int shapmet;
+    int edgwmet;
+    int neiwmet;
     bool enaColorMask;
     bool fftColorMask;
     bool enaColorMaskinv;
@@ -723,6 +736,22 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mergecolMethod = 20;
     }
 
+    if (locallab.spots.at(sp).localedgMethod == "fir") {
+        lp.edgwmet = 0;
+    } else if (locallab.spots.at(sp).localedgMethod == "sec") {
+        lp.edgwmet = 1;
+    } else if (locallab.spots.at(sp).localedgMethod == "thr") {
+        lp.edgwmet = 2;
+    }
+
+    if (locallab.spots.at(sp).localneiMethod == "none") {
+        lp.neiwmet = 0;
+    } else if (locallab.spots.at(sp).localneiMethod == "low") {
+        lp.neiwmet = 1;
+    } else if (locallab.spots.at(sp).localneiMethod == "high") {
+        lp.neiwmet = 2;
+    }
+
     lp.opacol = 0.01f * locallab.spots.at(sp).opacol;
 
     if (locallab.spots.at(sp).shape == "ELI") {
@@ -1014,6 +1043,16 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.gammatm = gammasktm;
     lp.slomatm = slomasktm;
     lp.wavgradl = wavgradl;
+    
+    lp.strengthw = ((float) locallab.spots.at(sp).strengthw);
+    lp.radiusw = ((float) locallab.spots.at(sp).radiusw);
+    lp.detailw =((float) locallab.spots.at(sp).detailw);
+    lp.gradw = ((float) locallab.spots.at(sp).gradw);
+    lp.tloww = ((float) locallab.spots.at(sp).tloww);
+    lp.thigw = ((float) locallab.spots.at(sp).thigw);
+    lp.edgw = ((float) locallab.spots.at(sp).edgw);
+    lp.basew = ((float) locallab.spots.at(sp).basew);
+    
     lp.blendmabl = blendmaskbl;
     lp.radmabl = radmaskbl;
     lp.chromabl = chromaskbl;
@@ -4164,7 +4203,8 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             bool loccomprewavutili = false;
             bool wavcurvecompre = false;
             bool wavcurve = false;
-            wavcontrast4(lp, bufmaskblurcol->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav,  wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
+            bool locedgwavutili = false;
+            wavcontrast4(lp, bufmaskblurcol->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav,  wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, dummy, locedgwavutili, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
 
         }
 
@@ -7436,6 +7476,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                    const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon,
                                    const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp,
                                    const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili, bool wavcurvecompre,
+                                   const LocwavCurve & locedgwavCurve, bool & locedgwavutili,
                                    float sigm, float offs, int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres)
 {
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
@@ -9609,6 +9650,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
                                 const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
                                 const LocwavCurve & locwavCurveden, bool & locwavdenutili,
+                                const LocwavCurve & locedgwavCurve, bool & locedgwavutili,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                                 double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int &lastsav,
                                 int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
@@ -10029,9 +10071,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bool loccompwavutili = false;
                 bool wavcurvecomp = false;
                 bool loccomprewavutili = false;
+                bool locedgwavutili = false;
                 bool wavcurvecompre = false;
                 bool wavcurve = false;
-                wavcontrast4(lp, bufmaskblurbl->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
+                wavcontrast4(lp, bufmaskblurbl->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, dummy, locedgwavutili, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
             }
 
             int shado = params->locallab.spots.at(sp).shadmaskbl;
@@ -11996,7 +12039,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         const float compress = params->locallab.spots.at(sp).residcomp;
                         const float thres = params->locallab.spots.at(sp).threswav;
 
-                        wavcontrast4(lp, tmp1->L, tmp1->a, tmp1->b, contrast, fatres, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, sigma, offs, maxlvl, fatdet, fatanch, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres);
+                        wavcontrast4(lp, tmp1->L, tmp1->a, tmp1->b, contrast, fatres, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, fatdet, fatanch, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres);
 
                         const float satur = params->locallab.spots.at(sp).residchro;
 

@@ -1131,6 +1131,18 @@ HISTORY_MSG_891;Local - Contrast Wavelet Graduated
 HISTORY_MSG_892;Local - Encoding log Graduated Strength
 HISTORY_MSG_893;Local - Encoding log Graduated angle
 HISTORY_MSG_894;Local - Color Preview dE
+HISTORY_MSG_897;Local - Contrast Wavelet ES strength
+HISTORY_MSG_898;Local - Contrast Wavelet ES radius
+HISTORY_MSG_899;Local - Contrast Wavelet ES detail
+HISTORY_MSG_900;Local - Contrast Wavelet ES gradient
+HISTORY_MSG_901;Local - Contrast Wavelet ES threshold low
+HISTORY_MSG_902;Local - Contrast Wavelet ES threshold high
+HISTORY_MSG_903;Local - Contrast Wavelet ES local contrast
+HISTORY_MSG_904;Local - Contrast Wavelet ES first level
+HISTORY_MSG_905;Local - Contrast Wavelet Edge Sharpness
+HISTORY_MSG_906;Local - Contrast Wavelet ES sensitivity
+HISTORY_MSG_907;Local - Contrast Wavelet ES amplification
+HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2298,6 +2310,7 @@ TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Detail threshold Luminance Chroma (DCT ƒ)
 TP_LOCALLAB_DUPLSPOTNAME;Copy
+TP_LOCALLAB_EDGFRA;Edge Sharpness
 TP_LOCALLAB_ELI;Elipse
 TP_LOCALLAB_ENABLE_AFTER_MASK;Use Tone Mapping
 TP_LOCALLAB_ENABLE_MASK;Enable mask
@@ -2639,6 +2652,7 @@ TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
 TP_LOCALLAB_WAV;Levels local contrast
+TP_LOCALLAB_WAVEDG;Local contrast
 TP_LOCALLAB_WAVCOMP;Compression by Level
 TP_LOCALLAB_WAVCOMPRE;(un)Compression by Level
 TP_LOCALLAB_WAVCON;Contrast by Level

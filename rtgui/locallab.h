@@ -394,6 +394,8 @@ private:
     Adjuster* const gradw;
     Adjuster* const tloww;
     Adjuster* const thigw;
+    Adjuster* const edgw;
+    Adjuster* const basew;
     
     
     // Contrast by detail levels
@@ -519,6 +521,8 @@ private:
     sigc::connection wavcompreConn;
     Gtk::CheckButton* const wavgradl;
     sigc::connection wavgradlConn;
+    Gtk::CheckButton* const wavedg;
+    sigc::connection wavedgConn;
 
     //CBDL
     Gtk::CheckButton* const enacbMask;
@@ -598,6 +602,10 @@ private:
     //local contrast
     MyComboBoxText* const localcontMethod;
     sigc::connection localcontMethodConn;
+    MyComboBoxText* const localedgMethod;
+    sigc::connection localedgMethodConn;
+    MyComboBoxText* const localneiMethod;
+    sigc::connection localneiMethodConn;
     ThresholdAdjuster* const csThreshold;
     MyComboBoxText* const showmasklcMethod;
     sigc::connection showmasklcMethodConn;
@@ -652,11 +660,13 @@ private:
     ToolParamBlock* const retiBox;
     ToolParamBlock* const maskretiBox;
     ToolParamBlock* const mask7;
+    ToolParamBlock* const edgsBox;
     LabGrid* const labgrid;
     LabGrid* const labgridmerg;
     Gtk::Label* const mMLabels;
     Gtk::Label* const transLabels;
     Gtk::Label* const transLabels2;
+    Gtk::Label* const labmNP;
     // Others
     Gtk::HBox* const ctboxsoftmethod;
     Gtk::HBox* const ctboxexpmethod;
@@ -741,6 +751,7 @@ private:
     void wavcompChanged();
     void wavcompreChanged();
     void wavgradlChanged();
+    void wavedgChanged();
     //CBDL
     void enacbMaskChanged();
     // ComboBox event functions
@@ -782,6 +793,8 @@ private:
     
     //Local contrast
     void localcontMethodChanged();
+    void localedgMethodChanged();
+    void localneiMethodChanged();
     void showmasklcMethodChanged();
     //CBDL
     void showmaskcbMethodChanged();

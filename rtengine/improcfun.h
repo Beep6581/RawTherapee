@@ -306,6 +306,7 @@ public:
                 const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
                 const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
                 const LocwavCurve & locwavCurveden, bool & locwavdenutili,
+                const LocwavCurve & locedgwavCurve, bool & locedgwavutili,
                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                 double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
                 int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
@@ -324,6 +325,7 @@ public:
         const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon, 
         const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp, 
         const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili, bool wavcurvecompre, 
+        const LocwavCurve & locedgwavCurve, bool & locedgwavutili,
         float sigm, float offs,int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres);
         
     void wavcont(wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl, 
