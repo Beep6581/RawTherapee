@@ -7834,7 +7834,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     }
 
 //edge sharpness begin
-    if (lp.edgwena  && level_bl == 0 && level_br >= 3  && locedgwavCurve && locedgwavutili) { //needs the first levels to work!
+    if (lp.edgwena  && level_bl == 0 && level_br >= 3  && locedgwavCurve && locedgwavutili && lp.strengthw > 0) { //needs the first levels to work!
         float mean[10];
         float meanN[10];
         float sigma[10];
@@ -7906,7 +7906,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                     //treatment of koeLi and maxkoeLi
                     float interm = 0.f;
 
-                    if (lp.lip3) {
+                    if (lp.lip3) {//Sobel Canny algo improve with parameters
                         // comparison between pixel and neighbours
                         const auto neigh = lp.neiwmet == 1;
                         const auto kneigh = neigh ? 28.f : 38.f;
