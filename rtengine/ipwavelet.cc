@@ -2181,13 +2181,10 @@ void ImProcFunctions::WaveletcontAllAB (LabImage * labco, float ** varhue, float
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-//void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& cp, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC)
 void ImProcFunctions::calckoe (float ** WavCoeffs_LL, float gradw, float tloww, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC)
 {
     int borderL = 2;
 
-//  printf("cpedth=%f\n",cp.eddetthr);
- //   if (cp.eddetthr < 30.f) {
     if (tloww < 30.f) {
         borderL = 1;
 
@@ -2212,8 +2209,7 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, float gradw, float tloww, 
 
             }
         }
- //   } else if (cp.eddetthr >= 30.f && cp.eddetthr < 50.f) {
-    } else if (tloww >= 30.f && tloww < 50.f) {
+    } else if (tloww < 50.f) {
         borderL = 1;
 
         for (int i = 1; i < H_L - 1; i++) { //sigma=0.85
@@ -2229,8 +2225,7 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, float gradw, float tloww, 
     }
 
 
- //   else if (cp.eddetthr >= 50.f && cp.eddetthr < 75.f) {
-    else if (tloww >= 50.f && tloww < 75.f) {
+    else if (tloww < 75.f) {
         borderL = 1;
 
         for (int i = 1; i < H_L - 1; i++) {
@@ -2242,11 +2237,9 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, float gradw, float tloww, 
         }
     }
 
-//    else if (cp.eddetthr >= 75.f) {
-    else if (tloww >= 75.f) {
+    else  {
         borderL = 2;
 
-        //if(cp.lip3 && level > 1) {
         if (level > 1) { // do not activate 5x5 if level 0 or 1
 
             for (int i = 2; i < H_L - 2; i++) {
@@ -2265,7 +2258,6 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, float gradw, float tloww, 
                     // 4 9 12 9 4
                     // 2 4 5 4 2
                     // divi 159
-          //          if (cp.eddetthr < 85.f) { //sigma=1.1
                     if (tloww < 85.f) { //sigma=1.1
                         tmC[i][j] = (15.f * WavCoeffs_LL[dir][i * W_L + j]  + 10.f * WavCoeffs_LL[dir][ (i - 1) * W_L + j] + 10.f * WavCoeffs_LL[dir][ (i + 1) * W_L + j]
                                      + 10.f * WavCoeffs_LL[dir][i * W_L + j + 1] + 10.f * WavCoeffs_LL[dir][i * W_L + j - 1] + 7.f * WavCoeffs_LL[dir][ (i - 1) * W_L + j - 1]
@@ -2314,9 +2306,7 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, float gradw, float tloww, 
 
     float thr = 40.f; //avoid artifact eg. noise...to test
     float thr2 = 1.5f * edd; //edd can be modified in option ed_detect
- //   thr2 += cp.eddet / 30.f; //to test
     thr2 += gradw / 30.f; //to test
- //   float diffFactor = (cp.eddet / 100.f);
     float diffFactor = (gradw / 100.f);
 
     for (int i = 0; i < H_L; i++ ) {
@@ -2528,6 +2518,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
         float maxkoe = 0.f;
 
         if (!lipschitz) {
+
             koe = new float [H_L * W_L];
 
             for (int i = 0; i < W_L * H_L; i++) {
@@ -3357,7 +3348,6 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
     }
 
     if (cp.bam  && cp.diag) {
-//printf("OK Chroma\n");
         if (cp.opaW && cp.BAmet == 2) {
             int iteration = cp.ite;
             int itplus = 7 + iteration;
