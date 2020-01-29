@@ -227,6 +227,8 @@ Locallab::Locallab():
     expretitools(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPRETITOOLS")))),
     expsharp(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
 //    expcontrastpyr(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOC_CONTRASTPYR")))),
+//    expcontrastpyr2(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPRETITOOLS")))),
+    expcontrastpyr2(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
     expcontrastpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
     expcontrast(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
 //    expcontrast(Gtk::manage(new MyExpander(true,M("TP_LOCALLAB_LOC_CONTRAST")))),
@@ -3091,6 +3093,17 @@ pe(nullptr)
     gradwavBox->pack_start(*angwav);
     gradwavFrame->add(*gradwavBox);
 
+    Gtk::HBox* const LCTitleHBox2 = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const LCLabel2 = Gtk::manage(new Gtk::Label());
+    LCLabel2->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR2")) + Glib::ustring("</b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR2LAB")));
+    LCLabel2->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    LCTitleHBox2->pack_start(*LCLabel2, Gtk::PACK_EXPAND_WIDGET, 0);
+    expcontrastpyr2->setLabel(LCTitleHBox2);
+
+    setExpandAlignProperties(expcontrastpyr2, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expcontrastpyr2->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrastpyr2));
+    expcontrastpyr2->setLevel(2);
+
     edgFrame->set_label_align(0.025, 0.5);
     wavedg->set_active(false);
     edgFrame->set_label_widget(*wavedg);
@@ -3179,7 +3192,7 @@ pe(nullptr)
     Gtk::HBox* const LCTitleHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const LCLabel = Gtk::manage(new Gtk::Label());
 //    RTImage* const LCImage2 = Gtk::manage(new RTImage("wavelets.png"));
-    LCLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR")) + Glib::ustring("</b>"));
+    LCLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR")) + Glib::ustring("</b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYRLAB")));
     LCLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 //    LCTitleHBox->pack_start(*LCImage2, Gtk::PACK_SHRINK, 0);
     LCTitleHBox->pack_start(*LCLabel, Gtk::PACK_EXPAND_WIDGET, 0);
@@ -3189,19 +3202,21 @@ pe(nullptr)
     expcontrastpyr->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrastpyr));
     expcontrastpyr->setLevel(2);
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const blurcontBox2 = Gtk::manage(new ToolParamBlock());
     blurcontBox->pack_start(*clariFrame);
     blurcontBox->pack_start(*gradwavFrame);
     blurcontBox->pack_start(*edgFrame);
-    blurcontBox->pack_start(*contFrame);
-    blurcontBox->pack_start(*compreFrame);
+    blurcontBox2->pack_start(*contFrame);
+    blurcontBox2->pack_start(*compreFrame);
 
-    if (complexsoft < 2) {
-        blurcontBox->pack_start(*compFrame);
-    }
+//    if (complexsoft < 2) {
+        blurcontBox2->pack_start(*compFrame);
+//    }
 
-    blurcontBox->pack_start(*blurlevelFrame);
+    blurcontBox2->pack_start(*blurlevelFrame);
 
     expcontrastpyr->add(*blurcontBox, false);
+    expcontrastpyr2->add(*blurcontBox2, false);
 
     if (showtooltip) {
         fatdet->set_tooltip_text(M("TP_LOCALLAB_COMPFRAME_TOOLTIP"));
@@ -3235,6 +3250,7 @@ pe(nullptr)
 
 //    if (complexsoft < 2) {
     contrastBox->pack_start(*expcontrastpyr);
+    contrastBox->pack_start(*expcontrastpyr2);
 
 //    contrastBox->pack_start(*clariFrame);
 //    }
@@ -4034,6 +4050,7 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         exptonemap->set_expanded(exptonemap == expander);
         expreti->set_expanded(expreti == expander);
         expsharp->set_expanded(expsharp == expander);
+        expcontrastpyr2->set_expanded(expcontrastpyr2 == expander);
         expcontrastpyr->set_expanded(expcontrastpyr == expander);
         expcontrast->set_expanded(expcontrast == expander);
         expcbdl->set_expanded(expcbdl == expander);
@@ -4165,6 +4182,7 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expsoft->get_expanded());
     tpOpen.push_back(expblur->get_expanded());
     tpOpen.push_back(expsharp->get_expanded());
+    tpOpen.push_back(expcontrastpyr2->get_expanded());
     tpOpen.push_back(expcontrastpyr->get_expanded());
     tpOpen.push_back(expcontrast->get_expanded());
     tpOpen.push_back(expdenoi->get_expanded());
@@ -4343,7 +4361,7 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 33) {
+    if (tpOpen.size() >= 34) {
         expsettings->setExpanded(tpOpen.at(0));
         expmaskcol->set_expanded(tpOpen.at(1));
         expmaskcol1->set_expanded(tpOpen.at(2));
@@ -4373,10 +4391,11 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
         expsoft->set_expanded(tpOpen.at(26));
         expblur->set_expanded(tpOpen.at(27));
         expsharp->set_expanded(tpOpen.at(28));
-        expcontrastpyr->set_expanded(tpOpen.at(29));
-        expcontrast->set_expanded(tpOpen.at(30));
-        expdenoi->set_expanded(tpOpen.at(31));
-        explog->set_expanded(tpOpen.at(32));
+        expcontrastpyr2->set_expanded(tpOpen.at(29));
+        expcontrastpyr->set_expanded(tpOpen.at(30));
+        expcontrast->set_expanded(tpOpen.at(31));
+        expdenoi->set_expanded(tpOpen.at(32));
+        explog->set_expanded(tpOpen.at(33));
 
     }
 }

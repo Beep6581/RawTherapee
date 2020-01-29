@@ -61,6 +61,7 @@ private:
     MyExpander* const expreti;
     MyExpander* const expretitools;
     MyExpander* const expsharp;
+    MyExpander* const expcontrastpyr2;
     MyExpander* const expcontrastpyr;
     MyExpander* const expcontrast;
     MyExpander* const expcbdl;
