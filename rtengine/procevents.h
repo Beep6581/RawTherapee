@@ -934,6 +934,7 @@ enum ProcEventCode {
     Evlocallabedgw = 905,
     Evlocallabbasew = 906,
     EvlocallablocalneiMethod = 907,
+    Evlocallabwaveshow = 908,
     NUMOFEVENTS
 };
 

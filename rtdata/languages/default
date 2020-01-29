@@ -1143,6 +1143,7 @@ HISTORY_MSG_905;Local - Contrast Wavelet Edge Sharpness
 HISTORY_MSG_906;Local - Contrast Wavelet ES sensitivity
 HISTORY_MSG_907;Local - Contrast Wavelet ES amplification
 HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
+HISTORY_MSG_909;Local - Contrast Wavelet ES show
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2311,6 +2312,7 @@ TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Detail threshold Luminance Chroma (DCT ƒ)
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge Sharpness
+TP_LOCALLAB_EDGSHOW;Show all tools
 TP_LOCALLAB_ELI;Elipse
 TP_LOCALLAB_ENABLE_AFTER_MASK;Use Tone Mapping
 TP_LOCALLAB_ENABLE_MASK;Enable mask
@@ -2416,9 +2418,9 @@ TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_LOC_CONTRAST;Local contrast & Wavelet Pyramid Ψ 
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
-TP_LOCALLAB_LOC_CONTRASTPYRLAB; Clarity & Blend - Graduated - Edge Sharpness
+TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
-TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by Levels- Tone Mapping(s) - Blur
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by Levels- Tone Mapping(s)
 TP_LOCALLAB_LOG;Encoding log
 TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGFRA;Source Gray Point

@@ -524,6 +524,8 @@ private:
     sigc::connection wavgradlConn;
     Gtk::CheckButton* const wavedg;
     sigc::connection wavedgConn;
+    Gtk::CheckButton* const waveshow;
+    sigc::connection waveshowConn;
 
     //CBDL
     Gtk::CheckButton* const enacbMask;
@@ -662,6 +664,7 @@ private:
     ToolParamBlock* const maskretiBox;
     ToolParamBlock* const mask7;
     ToolParamBlock* const edgsBox;
+    ToolParamBlock* const edgsBoxshow;
     LabGrid* const labgrid;
     LabGrid* const labgridmerg;
     Gtk::Label* const mMLabels;
@@ -753,6 +756,7 @@ private:
     void wavcompreChanged();
     void wavgradlChanged();
     void wavedgChanged();
+    void waveshowChanged();
     //CBDL
     void enacbMaskChanged();
     // ComboBox event functions

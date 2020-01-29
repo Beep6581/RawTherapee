@@ -715,6 +715,8 @@ wavcomp(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPFRA")))),
 wavcompre(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPREFRA")))),
 wavgradl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GRALWFRA")))),
 wavedg(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EDGFRA")))),
+waveshow(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EDGSHOW")))),
+
 //CBDL
 enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 //encoding log
@@ -816,6 +818,7 @@ retiBox(Gtk::manage(new ToolParamBlock())),
 maskretiBox(Gtk::manage(new ToolParamBlock())),
 mask7(Gtk::manage(new ToolParamBlock())),
 edgsBox(Gtk::manage(new ToolParamBlock())),
+edgsBoxshow(Gtk::manage(new ToolParamBlock())),
 
 labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")))),
 labgridmerg(Gtk::manage(new LabGrid(EvLocallabLabGridmergValue, M("TP_LOCALLAB_LABGRID_VALUES"), false))),
@@ -2909,6 +2912,7 @@ pe(nullptr)
     wavcompreConn  = wavcompre->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavcompreChanged));
     wavgradlConn  = wavgradl->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavgradlChanged));
     wavedgConn  = wavedg->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::wavedgChanged));
+    waveshowConn  = waveshow->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::waveshowChanged));
     origlcConn  = origlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::origlcChanged));
     csThreshold->setAdjusterListener(this);
 
@@ -3111,22 +3115,27 @@ pe(nullptr)
         wavedg->set_tooltip_text(M("TP_LOCALLAB_WAVEEDG_TOOLTIP"));
     }
     Gtk::HSeparator* const separatoredg = Gtk::manage(new  Gtk::HSeparator());
+    Gtk::HSeparator* const separatoredg2 = Gtk::manage(new  Gtk::HSeparator());
+    waveshow->set_active(false);
 
- //   ToolParamBlock* const edgsBox = Gtk::manage(new ToolParamBlock());
+//    ToolParamBlock* const edgsBoxshow = Gtk::manage(new ToolParamBlock());
     edgsBox->pack_start(*strengthw);
-    edgsBox->pack_start(*radiusw);
-    edgsBox->pack_start(*detailw);
+    edgsBoxshow->pack_start(*radiusw);
+    edgsBoxshow->pack_start(*detailw);
 //    edgsBox->pack_start(*localedgMethod);
-    edgsBox->pack_start(*edbox);
+    edgsBoxshow->pack_start(*edbox);
     edgsBox->pack_start(*LocalcurveEditorwavedg, Gtk::PACK_SHRINK, 4);
     edgsBox->pack_start(*gradw);
-    edgsBox->pack_start(*tloww);
-    edgsBox->pack_start(*thigw);
-    edgsBox->pack_start(*separatoredg);
+    edgsBoxshow->pack_start(*separatoredg2);
+    edgsBoxshow->pack_start(*tloww);
+    edgsBoxshow->pack_start(*thigw);
+    edgsBoxshow->pack_start(*separatoredg);
+    edgsBox->pack_start(*waveshow);
     
-    edgsBox->pack_start(*edgw);
-    edgsBox->pack_start(*basew);
-    edgsBox->pack_start(*ctboxNP);
+    edgsBoxshow->pack_start(*edgw);
+    edgsBoxshow->pack_start(*basew);
+    edgsBoxshow->pack_start(*ctboxNP);
+    edgsBox->pack_start(*edgsBoxshow);    
     edgFrame->add(*edgsBox);
 
     Gtk::HSeparator* const separatorblu = Gtk::manage(new  Gtk::HSeparator());
@@ -3203,17 +3212,17 @@ pe(nullptr)
     expcontrastpyr->setLevel(2);
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const blurcontBox2 = Gtk::manage(new ToolParamBlock());
-    blurcontBox->pack_start(*clariFrame);
+//    blurcontBox->pack_start(*clariFrame);
     blurcontBox->pack_start(*gradwavFrame);
     blurcontBox->pack_start(*edgFrame);
     blurcontBox2->pack_start(*contFrame);
     blurcontBox2->pack_start(*compreFrame);
 
 //    if (complexsoft < 2) {
-        blurcontBox2->pack_start(*compFrame);
+     blurcontBox2->pack_start(*compFrame);
 //    }
 
-    blurcontBox2->pack_start(*blurlevelFrame);
+    blurcontBox->pack_start(*blurlevelFrame);
 
     expcontrastpyr->add(*blurcontBox, false);
     expcontrastpyr2->add(*blurcontBox2, false);
@@ -3223,6 +3232,7 @@ pe(nullptr)
     }
 
     ToolParamBlock* const contrastBox = Gtk::manage(new ToolParamBlock());
+    Gtk::HSeparator* const separatorcontr = Gtk::manage(new  Gtk::HSeparator());
 
     if (complexsoft < 2) {
         contrastBox->pack_start(*localcontMethod);
@@ -3247,6 +3257,8 @@ pe(nullptr)
     contrastBox->pack_start(*residchro);
 //    }
     contrastBox->pack_start(*sensilc);
+    contrastBox->pack_start(*separatorcontr);
+    contrastBox->pack_start(*clariFrame);
 
 //    if (complexsoft < 2) {
     contrastBox->pack_start(*expcontrastpyr);
@@ -5547,6 +5559,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).blurlc = blurlc->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavblur = wavblur->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavedg = wavedg->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).waveshow = waveshow->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcont = wavcont->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcomp = wavcomp->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).wavcompre = wavcompre->get_active();
@@ -5999,6 +6012,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).blurlc = pe->locallab.spots.at(pp->locallab.selspot).blurlc || !blurlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavblur = pe->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavedg = pe->locallab.spots.at(pp->locallab.selspot).wavedg || !wavedg->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).waveshow = pe->locallab.spots.at(pp->locallab.selspot).waveshow || !waveshow->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavcont = pe->locallab.spots.at(pp->locallab.selspot).wavcont || !wavcont->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavcomp = pe->locallab.spots.at(pp->locallab.selspot).wavcomp || !wavcomp->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).wavgradl = pe->locallab.spots.at(pp->locallab.selspot).wavgradl || !wavgradl->get_inconsistent();
@@ -6434,6 +6448,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).blurlc = pedited->locallab.spots.at(pp->locallab.selspot).blurlc || !blurlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavblur = pedited->locallab.spots.at(pp->locallab.selspot).wavblur || !wavblur->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavedg = pedited->locallab.spots.at(pp->locallab.selspot).wavedg || !wavedg->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).waveshow = pedited->locallab.spots.at(pp->locallab.selspot).waveshow || !waveshow->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavcont = pedited->locallab.spots.at(pp->locallab.selspot).wavcont || !wavcont->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavcomp = pedited->locallab.spots.at(pp->locallab.selspot).wavcomp || !wavcomp->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).wavgradl = pedited->locallab.spots.at(pp->locallab.selspot).wavgradl || !wavgradl->get_inconsistent();
@@ -7072,6 +7087,7 @@ void Locallab::localcontMethodChanged()
         blurlc->show();
         wavblur->show();
         wavedg->show();
+        waveshow->show();
         origlc->hide();
         strwav->hide();
         angwav->hide();
@@ -7117,6 +7133,7 @@ void Locallab::localcontMethodChanged()
         blurlc->show();
         wavblur->show();
         wavedg->show();
+        waveshow->show();
         origlc->show();
         strwav->show();
         angwav->show();
@@ -8816,6 +8833,35 @@ void Locallab::wavedgChanged()
                 listener->panelChanged(Evlocallabwavedg, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(Evlocallabwavedg, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+void Locallab::waveshowChanged()
+{
+
+    if (waveshow->get_active()){
+        edgsBoxshow->show();
+    } else {
+        edgsBoxshow->hide();
+    }
+   
+    if (multiImage) {
+        if (waveshow->get_inconsistent()) {
+            waveshow->set_inconsistent(false);
+            waveshowConn.block(true);
+            waveshow->set_active(false);
+            waveshowConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            if (waveshow->get_active()) {
+                listener->panelChanged(Evlocallabwaveshow, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabwaveshow, M("GENERAL_DISABLED"));
             }
         }
     }
@@ -12069,6 +12115,7 @@ void Locallab::enableListener()
     blurlcConn.block(false);
     wavblurConn.block(false);
     wavedgConn.block(false);
+    waveshowConn.block(false);
     wavcontConn.block(false);
     wavcompConn.block(false);
     wavgradlConn.block(false);
@@ -12177,6 +12224,7 @@ void Locallab::disableListener()
     blurlcConn.block(true);
     wavblurConn.block(true);
     wavedgConn.block(true);
+    waveshowConn.block(true);
     wavcontConn.block(true);
     wavcompConn.block(true);
     wavgradlConn.block(true);
@@ -12863,6 +12911,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         blurlc->set_active(pp->locallab.spots.at(index).blurlc);
         wavblur->set_active(pp->locallab.spots.at(index).wavblur);
         wavedg->set_active(pp->locallab.spots.at(index).wavedg);
+        waveshow->set_active(pp->locallab.spots.at(index).waveshow);
         wavcont->set_active(pp->locallab.spots.at(index).wavcont);
         wavcomp->set_active(pp->locallab.spots.at(index).wavcomp);
         wavgradl->set_active(pp->locallab.spots.at(index).wavgradl);
@@ -12884,6 +12933,11 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             edgsBox->hide();
         }
 
+        if (waveshow->get_active()){
+            edgsBoxshow->show();
+        } else {
+            edgsBoxshow->hide();
+        }
 
         if (pp->locallab.spots.at(index).localcontMethod == "loc") {
             localcontMethod->set_active(0);
@@ -13426,6 +13480,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 blurlc->set_inconsistent(multiImage && !spotState->blurlc);
                 wavblur->set_inconsistent(multiImage && !spotState->wavblur);
                 wavedg->set_inconsistent(multiImage && !spotState->wavedg);
+                waveshow->set_inconsistent(multiImage && !spotState->waveshow);
                 wavcont->set_inconsistent(multiImage && !spotState->wavcont);
                 wavcomp->set_inconsistent(multiImage && !spotState->wavcomp);
                 wavgradl->set_inconsistent(multiImage && !spotState->wavgradl);
@@ -13993,6 +14048,7 @@ void Locallab::updateSpecificGUIState()
         blurlc->show();
         wavblur->show();
         wavedg->show();
+        waveshow->show();
         origlc->hide();
         strengthw->hide();
         radiusw->hide();
@@ -14038,6 +14094,7 @@ void Locallab::updateSpecificGUIState()
         blurlc->show();
         wavblur->show();
         wavedg->show();
+        waveshow->show();
         origlc->show();
         strengthw->show();
         radiusw->show();

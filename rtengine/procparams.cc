@@ -2755,6 +2755,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blurlc(true),
     wavblur(false),
     wavedg(false),
+    waveshow(false),
     wavcont(false),
     wavcomp(false),
     wavgradl(false),
@@ -3201,6 +3202,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blurlc == other.blurlc
         && wavblur == other.wavblur
         && wavedg == other.wavedg
+        && waveshow == other.waveshow
         && wavcont == other.wavcont
         && wavcomp == other.wavcomp
         && wavgradl == other.wavgradl
@@ -4614,6 +4616,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurlc, "Locallab", "Blurlc_" + std::to_string(i), spot.blurlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavblur, "Locallab", "Wavblur_" + std::to_string(i), spot.wavblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavedg, "Locallab", "Wavedg_" + std::to_string(i), spot.wavedg, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).waveshow, "Locallab", "Waveshow_" + std::to_string(i), spot.waveshow, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcont, "Locallab", "Wavcont_" + std::to_string(i), spot.wavcont, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavcomp, "Locallab", "Wavcomp_" + std::to_string(i), spot.wavcomp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavgradl, "Locallab", "Wavgradl_" + std::to_string(i), spot.wavgradl, keyFile);
@@ -6182,6 +6185,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Blurlc_" + std::to_string(i), pedited, spot.blurlc, spotEdited.blurlc);
                 assignFromKeyfile(keyFile, "Locallab", "Wavblur_" + std::to_string(i), pedited, spot.wavblur, spotEdited.wavblur);
                 assignFromKeyfile(keyFile, "Locallab", "Wavedg_" + std::to_string(i), pedited, spot.wavedg, spotEdited.wavedg);
+                assignFromKeyfile(keyFile, "Locallab", "Waveshow_" + std::to_string(i), pedited, spot.waveshow, spotEdited.waveshow);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcont_" + std::to_string(i), pedited, spot.wavcont, spotEdited.wavcont);
                 assignFromKeyfile(keyFile, "Locallab", "Wavcomp_" + std::to_string(i), pedited, spot.wavcomp, spotEdited.wavcomp);
                 assignFromKeyfile(keyFile, "Locallab", "Wavgradl_" + std::to_string(i), pedited, spot.wavgradl, spotEdited.wavgradl);

@@ -1298,6 +1298,7 @@ struct LocallabParams {
         bool blurlc;
         bool wavblur;
         bool wavedg;
+        bool waveshow;
         bool wavcont;
         bool wavcomp;
         bool wavgradl;
