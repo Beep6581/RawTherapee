@@ -80,6 +80,7 @@ public:
     //  bool            bw_complementary;
     double          level0_cbdl;
     double          level123_cbdl;
+    Glib::ustring   lensfunDbDirectory; // The directory containing the lensfun database. If empty, the system defaults will be used, as described in https://lensfun.github.io/manual/latest/dbsearch.html
     int             cropsleep;
     double          reduchigh;
     double          reduclow;
@@ -90,7 +91,6 @@ public:
 //    bool            showtooltip;
 
 
-    Glib::ustring   lensfunDbDirectory; ///< The directory containing the lensfun database. If empty, the system defaults will be used (as described in http://lensfun.sourceforge.net/manual/dbsearch.html)
 
     enum class ThumbnailInspectorMode {
         JPEG,
