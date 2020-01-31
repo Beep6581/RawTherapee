@@ -252,10 +252,6 @@ if(NOT DEFINED APPDATADIR)
     endif()
 endif()
 
-if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
-    set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
-endif()
-
 if(APPLE)
     if("${CODESIGNID}")
         set(CODESIGNID "${CODESIGNID}" CACHE STRING "Codesigning Identity")
@@ -263,7 +259,11 @@ if(APPLE)
     if("${NOTARY}")
         set(NOTARY "${NOTARY}" CACHE STRING "Notarization Identity")
     endif()
-
+    if("${LOCAL_PREFIX}")
+        set(LOCAL_PREFIX "${LOCAL_PREFIX}" CACHE STRING "macos/gtk parent directory ie /usr or /opt")
+    elseif(NOT DEFINED LOCAL_PREFIX)
+        set(LOCAL_PREFIX "/usr")
+    endif()
 endif()
 
 # Enforce absolute paths for non-bundle builds:

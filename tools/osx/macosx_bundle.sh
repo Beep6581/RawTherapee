@@ -92,6 +92,9 @@ GTK_PREFIX:             ${GTK_PREFIX}
 PWD:                    ${PWD}
 __EOS__
 
+LOCAL_PREFIX="$(cmake .. -LA -N | grep "LOCAL_PREFIX" | cut -d "=" -f2)"
+EXPATLIB="$(cmake .. -LA -N | grep "pkgcfg_lib_EXPAT_expat" | cut -d "=" -f2)"
+ 
 APP="${PROJECT_NAME}.app"
 CONTENTS="${APP}/Contents"
 RESOURCES="${CONTENTS}/Resources"
@@ -99,7 +102,7 @@ MACOS="${CONTENTS}/MacOS"
 LIB="${CONTENTS}/Frameworks"
 ETC="${RESOURCES}/etc"
 EXECUTABLE="${MACOS}/rawtherapee"
-GDK_PREFIX="/usr/local/opt/gdk-pixbuf"
+GDK_PREFIX="${LOCAL_PREFIX}/local/opt/gdk-pixbuf"
 
 msg "Removing old files:"
 rm -rf "${APP}" "${PROJECT_NAME}_*.dmg" "*zip"
@@ -141,45 +144,46 @@ rm -r "${LIB}"/gdk-pixbuf-2.0
 sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 mkdir -p ${RESOURCES}/share/glib-2.0
-cp -pRL {"/usr/local","${RESOURCES}"}/share/glib-2.0/schemas
-"/usr/local/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
+cp -pRL {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/glib-2.0/schemas
+"${LOCAL_PREFIX}/local/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 msg "Copying shared files from ${GTK_PREFIX}:"
-cp -pRL {"/usr/local","${RESOURCES}"}/share/mime
+cp -pRL {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/mime
 
 # GTK3 themes
-ditto {"/usr/local","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
-ditto {"/usr/local","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
+ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
+ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
 # Adwaita icons
 iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "48x48/devices")
 for f in "${iconfolders[@]}"; do
     mkdir -p ${RESOURCES}/share/icons/Adwaita/${f}
-    cp /usr/local/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
+    cp ${LOCAL_PREFIX}/local/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
 done
-ditto {"/usr/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
-"/usr/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
+ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
+"${LOCAL_PREFIX}/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
 
 # Copy libjpeg-turbo into the app bundle
-cp /usr/local/lib/libjpeg.*.dylib "${CONTENTS}/Frameworks"
+cp ${LOCAL_PREFIX}/local/lib/libjpeg.*.dylib "${CONTENTS}/Frameworks"
 
 # Copy libexpat into the app bundle (which is keg-only)
-cp /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"
+
+if [[ -d /usr/local/Cellar/expat ]]; then cp /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else cp "${EXPATLIB}" "${CONTENTS}/Frameworks"; fi
 
 # Copy libz into the app bundle
 cp /usr/lib/libz.1.dylib "${CONTENTS}/Frameworks"
 
 # Copy libtiff into the app bundle
-cp /usr/local/lib/libtiff.5.dylib "${CONTENTS}/Frameworks"
+cp ${LOCAL_PREFIX}/local/lib/libtiff.5.dylib "${CONTENTS}/Frameworks"
 
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"
-cp /usr/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+cp ${LOCAL_PREFIX}/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
 
 # Copy liblensfun to Frameworks
-cp /usr/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks"
+cp ${LOCAL_PREFIX}/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks"
 
 # Copy libomp to Frameworks
-cp /usr/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
+cp ${LOCAL_PREFIX}/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 # Install names
 find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do

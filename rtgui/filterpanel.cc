@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filterpanel.h"
 #include "multilangmgr.h"
@@ -107,8 +107,8 @@ FilterPanel::FilterPanel () : listener (nullptr)
     scamera->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scamera->set_size_request(-1, 80);
     scamera->add(*camera);
-    cvb->pack_start (*scamera, Gtk::PACK_SHRINK, 0);
-    pack_start (*cvb, Gtk::PACK_SHRINK, 4);
+    cvb->pack_start (*scamera, Gtk::PACK_EXPAND_WIDGET, 0);
+    pack_start (*cvb, Gtk::PACK_EXPAND_WIDGET, 4);
 
     enaLens = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_LENS") + ":"));
     Gtk::VBox* lvb = Gtk::manage(new Gtk::VBox ());
@@ -119,8 +119,8 @@ FilterPanel::FilterPanel () : listener (nullptr)
     slens->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     slens->set_size_request(-1, 80);
     slens->add(*lens);
-    lvb->pack_start (*slens, Gtk::PACK_SHRINK, 0);
-    pack_start (*lvb, Gtk::PACK_SHRINK, 4);
+    lvb->pack_start (*slens, Gtk::PACK_EXPAND_WIDGET, 0);
+    pack_start (*lvb, Gtk::PACK_EXPAND_WIDGET, 4);
 
     enaFiletype = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_FILETYPE") + ":"));
     Gtk::VBox* ftvb = Gtk::manage(new Gtk::VBox ());
@@ -131,8 +131,8 @@ FilterPanel::FilterPanel () : listener (nullptr)
     sfiletype->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     sfiletype->set_size_request(-1, 80);
     sfiletype->add(*filetype);
-    ftvb->pack_start (*sfiletype, Gtk::PACK_SHRINK, 0);
-    pack_start (*ftvb, Gtk::PACK_SHRINK, 4);
+    ftvb->pack_start (*sfiletype, Gtk::PACK_EXPAND_WIDGET, 0);
+    pack_start (*ftvb, Gtk::PACK_EXPAND_WIDGET, 4);
 
     // add panel ending
     Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
