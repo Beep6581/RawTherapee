@@ -99,7 +99,7 @@ MACOS="${CONTENTS}/MacOS"
 LIB="${CONTENTS}/Frameworks"
 ETC="${RESOURCES}/etc"
 EXECUTABLE="${MACOS}/rawtherapee"
-GDK_PREFIX="${LOCAL_PREFIX}/local/opt/gdk-pixbuf"
+GDK_PREFIX="${LOCAL_PREFIX}/local/"
 
 msg "Removing old files:"
 rm -rf "${APP}" "${PROJECT_NAME}_*.dmg" "*zip"
@@ -129,16 +129,14 @@ install -d "${ETC}/gtk-3.0"
 
 # Make Frameworks folder flat
 ditto "${LIB}"/gdk-pixbuf-2.0/2*/loaders/*.so "${LIB}"
-ditto "${LIB}"/gtk-3.0/3*/immodules/*.so "${LIB}"
-# the print*.so lead to errors when running gtk-query-immodules-3.0, just seeing what the app does without, since they are not in immodules
-# and including them leads to errors and a completely empty gtk.immodules file
-# mv "${LIB}"/gtk-3.0/3*/printbackends/*.so "${LIB}"
+ditto "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}"
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
-"${GTK_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
-"${GTK_PREFIX}"/bin/gtk-query-immodules-3.0 "${LIB}"/im*.so > "${ETC}"/gtk-3.0/gtk.immodules
+"${LOCAL_PREFIX}"/local/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+"${LOCAL_PREFIX}"/local/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
 sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i "" -e "s|/opt/local/|/usr/|" "${ETC}/gtk-3.0/gtk.immodules"
 
 mkdir -p ${RESOURCES}/share/glib-2.0
 ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/glib-2.0/schemas
@@ -158,6 +156,7 @@ for f in "${iconfolders[@]}"; do
 done
 ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "${LOCAL_PREFIX}/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
+ditto "${LOCAL_PREFIX}/local/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
 
 # Copy libjpeg-turbo ("62") into the app bundle
 ditto ${LOCAL_PREFIX}/local/lib/libjpeg.62.dylib "${CONTENTS}/Frameworks/libjpeg.62.dylib"
@@ -222,6 +221,10 @@ update-mime-database -V  "${CONTENTS}/Resources/share/mime"
 msg "Registering @rpath into the executable:"
 echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${MACOS}/bin/rawtherapee-bin'" | bash -v
 echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${EXECUTABLE}-cli'" | bash -v
+for frameworklibs in ${CONTENTS}/Frameworks/* ; do
+    echo "   install_name_tool -delete_rpath /opt/local/lib '${frameworklibs}'" | bash -v
+    echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${frameworklibs}'" | bash -v
+done
 
 # Sign the app
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
