@@ -118,7 +118,7 @@ msg "Copying dependencies from ${GTK_PREFIX}:"
 CheckLink "${EXECUTABLE}"
 
 msg "Copying library modules from ${GTK_PREFIX}:"
-ditto --arch "${arch}" {"${GDK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
+ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
 ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gtk-3.0
 
 msg "Removing static libraries and cache files:"
@@ -136,7 +136,7 @@ ditto "${LIB}"/gtk-3.0/3*/immodules/*.so "${LIB}"
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
-"${GDK_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+"${GTK_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
 "${GTK_PREFIX}"/bin/gtk-query-immodules-3.0 "${LIB}"/im*.so > "${ETC}"/gtk-3.0/gtk.immodules
 sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
