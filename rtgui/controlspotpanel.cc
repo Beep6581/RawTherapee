@@ -52,6 +52,7 @@ ControlSpotPanel::ControlSpotPanel():
     shapeMethod_(Gtk::manage(new MyComboBoxText())),
     qualityMethod_(Gtk::manage(new MyComboBoxText())),
     complexMethod_(Gtk::manage(new MyComboBoxText())),
+    wavMethod_(Gtk::manage(new MyComboBoxText())),
 
     sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
     structexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
@@ -297,6 +298,30 @@ ControlSpotPanel::ControlSpotPanel():
                                  *this, &ControlSpotPanel::complexMethodChanged));
     ctboxcomplexmethod->pack_start(*complexMethod_);
 
+
+    Gtk::HBox* const ctboxwavmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labelwavmethod = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUBLOCAL") + ":"));
+    ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
+
+    if (showtooltip) {
+        ctboxwavmethod->set_tooltip_markup(M("TP_LOCALLAB_WAVMETHOD_TOOLTIP"));
+    }
+
+
+
+    wavMethod_->append(M("TP_WAVELET_DAUB2"));
+    wavMethod_->append(M("TP_WAVELET_DAUB4"));
+    wavMethod_->append(M("TP_WAVELET_DAUB6"));
+    wavMethod_->append(M("TP_WAVELET_DAUB10"));
+    wavMethod_->append(M("TP_WAVELET_DAUB14"));
+    wavMethod_->set_active(1);
+    wavMethodconn_ = wavMethod_->signal_changed().connect(
+                          sigc::mem_fun(
+                              *this, &ControlSpotPanel::wavMethodChanged));
+    ctboxwavmethod->pack_start(*wavMethod_);
+//    pack_start(*ctboxwavmethod);
+
+
     Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
     transitFrame->set_label_align(0.025, 0.5);
 
@@ -467,6 +492,7 @@ ControlSpotPanel::ControlSpotPanel():
     if (showtooltip) {
         complexMethod_->set_tooltip_markup(M("TP_LOCALLAB_COMPLEX_TOOLTIP"));
     }
+    pack_start(*ctboxwavmethod);
 
     show_all();
 
@@ -786,6 +812,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     deltae_->set_active(row[spots_.deltae]);
     shortc_->set_active(row[spots_.shortc]);
     savrest_->set_active(row[spots_.savrest]);
+    wavMethod_->set_active(row[spots_.wavMethod]);
 }
 
 void ControlSpotPanel::controlspotChanged()
@@ -980,6 +1007,29 @@ void ControlSpotPanel::qualityMethodChanged()
         listener->panelChanged(EvLocallabSpotQualityMethod, qualityMethod_->get_active_text());
     }
 }
+
+void ControlSpotPanel::wavMethodChanged()
+{
+    // printf("qualityMethodChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    row[spots_.wavMethod] = wavMethod_->get_active_row_number();
+
+    // Raise event
+    if (listener) {
+        listener->panelChanged(EvLocallabSpotwavMethod, wavMethod_->get_active_text());
+    }
+}
+
 
 void ControlSpotPanel::complexMethodChanged()
 {
@@ -1564,6 +1614,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     deltaeConn_.block(cond);
     shortcConn_.block(cond);
     savrestConn_.block(cond);
+    wavMethodconn_.block(cond);
 }
 
 void ControlSpotPanel::setParamEditable(bool cond)
@@ -1603,6 +1654,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     deltae_->set_sensitive(cond);
     shortc_->set_sensitive(cond);
     savrest_->set_sensitive(cond);
+    wavMethod_->set_sensitive(cond);
 }
 
 void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row& row)
@@ -2250,6 +2302,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->deltae = row[spots_.deltae];
             r->shortc = row[spots_.shortc];
             r->savrest = row[spots_.savrest];
+            r->wavMethod = row[spots_.wavMethod];
 
             return r;
         }
@@ -2388,6 +2441,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.deltae] = newSpot->deltae;
     row[spots_.shortc] = newSpot->shortc;
     row[spots_.savrest] = newSpot->savrest;
+    row[spots_.wavMethod] = newSpot->wavMethod;
     updateParamVisibility();
     disableParamlistener(false);
 
@@ -2445,6 +2499,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.deltae] = spot->deltae;
             row[spots_.shortc] = spot->shortc;
             row[spots_.savrest] = spot->savrest;
+            row[spots_.wavMethod] = spot->wavMethod;
 
             updateControlSpotCurve(row);
             updateParamVisibility();
@@ -2548,6 +2603,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->deltae = !deltae_->get_inconsistent();
     se->shortc = !shortc_->get_inconsistent();
     se->savrest = !savrest_->get_inconsistent();
+    se->wavMethod = wavMethod_->get_active_text() != M("GENERAL_UNCHANGED");
 
     return se;
 }
@@ -2588,6 +2644,10 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
 
     if (!se->spotMethod) {
         spotMethod_->set_active_text(M("GENERAL_UNCHANGED"));
+    }
+
+    if (!se->wavMethod) {
+        wavMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
     /*
@@ -2774,6 +2834,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
     shapeMethod_->append(M("GENERAL_UNCHANGED"));
     qualityMethod_->append(M("GENERAL_UNCHANGED"));
     complexMethod_->append(M("GENERAL_UNCHANGED"));
+    wavMethod_->append(M("GENERAL_UNCHANGED"));
 }
 
 //-----------------------------------------------------------------------------
@@ -2819,6 +2880,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(deltae);
     add(shortc);
     add(savrest);
+    add(wavMethod);
 //    add(mergeMethod);
 }
 

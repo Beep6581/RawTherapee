@@ -389,6 +389,7 @@ public:
         bool isvisible;
         bool shape;
         bool spotMethod;
+        bool wavMethod;
 //        bool mergeMethod;
         bool sensiexclu;
         bool structexclu;

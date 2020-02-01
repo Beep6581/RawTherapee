@@ -1144,6 +1144,7 @@ HISTORY_MSG_906;Local - Contrast Wavelet ES sensitivity
 HISTORY_MSG_907;Local - Contrast Wavelet ES amplification
 HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
 HISTORY_MSG_909;Local - Contrast Wavelet ES show
+HISTORY_MSG_910;Local - Wavelet Edge performance
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -3030,6 +3031,7 @@ TP_WAVELET_CURVEEDITOR_HH;HH
 TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image's hue as a function of hue.
 TP_WAVELET_DALL;All directions
 TP_WAVELET_DAUB;Edge performance
+TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB2;D2 - low
 TP_WAVELET_DAUB4;D4 - standard
 TP_WAVELET_DAUB6;D6 - standard plus

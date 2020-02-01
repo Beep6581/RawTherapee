@@ -4484,7 +4484,19 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->shape = 1;
         }
 
-        if (pp->locallab.spots.at(i).spotMethod == "norm") {
+        if (pp->locallab.spots.at(i).wavMethod == "D2") {
+            r->wavMethod = 0;
+        } else  if (pp->locallab.spots.at(i).wavMethod == "D4") {
+            r->wavMethod = 1;
+        } else  if (pp->locallab.spots.at(i).wavMethod == "D6") {
+            r->wavMethod = 2;
+        } else  if (pp->locallab.spots.at(i).wavMethod == "D10") {
+            r->wavMethod = 3;
+        } else  if (pp->locallab.spots.at(i).wavMethod == "D14") {
+            r->wavMethod = 4;
+        }
+
+        if (pp->locallab.spots.at(i).wavMethod == "norm") {
             r->spotMethod = 0;
         } else {
             r->spotMethod = 1;
@@ -4643,6 +4655,18 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->shapeMethod = 2;
             } else {
                 r->shapeMethod = 3;
+            }
+
+            if (newSpot->wavMethod == "D2") {
+                r->wavMethod = 0;
+            } else if (newSpot->wavMethod == "D4") {
+                r->wavMethod = 1;
+            } else if (newSpot->wavMethod == "D6") {
+                r->wavMethod = 2;
+            } else if (newSpot->wavMethod == "D10") {
+                r->wavMethod = 3;
+            } else if (newSpot->wavMethod == "D14") {
+                r->wavMethod = 4;
             }
 
             // Calculate spot size and center position according to preview area
@@ -4889,6 +4913,18 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->shapeMethod = 0;
             }
 
+            if (newSpot->wavMethod == "D2") {
+                r->wavMethod = 0;
+            } else if (newSpot->wavMethod == "D4") {
+                r->wavMethod = 1;
+            } else if (newSpot->wavMethod == "D6") {
+                r->wavMethod = 2;
+            } else if (newSpot->wavMethod == "D10") {
+                r->wavMethod = 3;
+            } else if (newSpot->wavMethod == "D14") {
+                r->wavMethod = 4;
+            }
+
             // Calculate spot size and center position according to preview area
             if (provider && !batchMode) {
                 provider->getImageSize(imW, imH);
@@ -5049,6 +5085,18 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "INDSL";
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "SYMSL";
+                    }
+
+                    if (r->wavMethod == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D2";
+                    } else if (r->wavMethod == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D4";
+                    } else if (r->wavMethod == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D6";
+                    } else if (r->wavMethod == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D10";
+                    } else if (r->wavMethod == 4) {
+                        pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D14";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).locX = r->locX;
@@ -5685,6 +5733,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).isvisible = pe->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
                         pe->locallab.spots.at(pp->locallab.selspot).shape = pe->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
                         pe->locallab.spots.at(pp->locallab.selspot).spotMethod = pe->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
+                        pe->locallab.spots.at(pp->locallab.selspot).wavMethod = pe->locallab.spots.at(pp->locallab.selspot).wavMethod || se->wavMethod;
 //                        pe->locallab.spots.at(pp->locallab.selspot).mergeMethod = pe->locallab.spots.at(pp->locallab.selspot).mergeMethod || se->mergeMethod;
                         pe->locallab.spots.at(pp->locallab.selspot).sensiexclu = pe->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
                         pe->locallab.spots.at(pp->locallab.selspot).structexclu = pe->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
@@ -6121,6 +6170,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).isvisible = pedited->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
                         pedited->locallab.spots.at(pp->locallab.selspot).shape = pedited->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
                         pedited->locallab.spots.at(pp->locallab.selspot).spotMethod = pedited->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
+                        pedited->locallab.spots.at(pp->locallab.selspot).wavMethod = pedited->locallab.spots.at(pp->locallab.selspot).wavMethod || se->wavMethod;
 //                        pedited->locallab.spots.at(pp->locallab.selspot).mergeMethod = pedited->locallab.spots.at(pp->locallab.selspot).mergeMethod || se->mergeMethod;
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu = pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
                         pedited->locallab.spots.at(pp->locallab.selspot).structexclu = pedited->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
@@ -13101,6 +13151,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->isvisible = spotState->isvisible;
                 se->shape = spotState->shape;
                 se->spotMethod = spotState->spotMethod;
+                se->wavMethod = spotState->wavMethod;
 //               se->mergeMethod = spotState->mergeMethod;
                 se->sensiexclu = spotState->sensiexclu;
                 se->structexclu = spotState->structexclu;

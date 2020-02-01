@@ -77,6 +77,7 @@ public:
         bool shortc;
         bool savrest;
         int complexMethod; // 0 = Simple, 1 = Moderate, 2 = all
+        int wavMethod;
         
     };
 
@@ -120,6 +121,7 @@ public:
         bool shortc;
         bool savrest;
         bool complexMethod;
+        bool wavMethod;
     };
 
     /**
@@ -279,7 +281,8 @@ private:
 //    void mergeMethodChanged();
     void qualityMethodChanged();
     void complexMethodChanged();
-    
+    void wavMethodChanged();
+
     void updateParamVisibility();
     void adjusterChanged(Adjuster* a, double newval);
     void adjusterAutoToggled(Adjuster* a, bool newval);
@@ -352,6 +355,7 @@ private:
         Gtk::TreeModelColumn<bool> shortc;
         Gtk::TreeModelColumn<bool> savrest;
         Gtk::TreeModelColumn<int> complexMethod; // 0 = Simple, 1 = mod, 2 = all
+        Gtk::TreeModelColumn<int> wavMethod;
     };
 
     class RenameDialog:
@@ -400,6 +404,8 @@ private:
     sigc::connection qualityMethodconn_;
     MyComboBoxText* const complexMethod_;
     sigc::connection complexMethodconn_;
+    MyComboBoxText* const wavMethod_;
+    sigc::connection wavMethodconn_;
 
     Adjuster* const sensiexclu_;
     Adjuster* const structexclu_;

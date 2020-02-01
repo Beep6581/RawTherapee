@@ -444,6 +444,7 @@ struct local_params {
     bool wavgradl;
     bool edgwena;
     bool lip3;
+    int daubLen;
 
 };
 
@@ -756,6 +757,20 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.lip3 = true;
         lp.neiwmet = 1;
     }
+
+
+    if(locallab.spots.at(sp).wavMethod == "D2") {
+        lp.daubLen = 4;
+    } else if(locallab.spots.at(sp).wavMethod == "D4") {
+        lp.daubLen = 6;
+    } else if(locallab.spots.at(sp).wavMethod == "D6") {
+        lp.daubLen = 8;
+    } else if(locallab.spots.at(sp).wavMethod == "D10") {
+        lp.daubLen = 12;
+    } else if(locallab.spots.at(sp).wavMethod == "D14"){
+        lp.daubLen = 16;
+    }
+
 
     lp.edgwena = locallab.spots.at(sp).wavedg;
 
@@ -7486,7 +7501,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                    const LocwavCurve & locedgwavCurve, bool & locedgwavutili,
                                    float sigm, float offs, int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres)
 {
-    wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
+    wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
     //first decomposition for compress dynamic range positive values and other process
     if (wdspot->memoryAllocationFailed) {
@@ -8243,7 +8258,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     delete wdspot;
 
     if (wavcurvecon  && (chromalev != 1.f) && levelena) { // a and b if need ) {//contrast  by levels for chroma a and b
-        wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
+        wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
         if (wdspota->memoryAllocationFailed) {
             return;
@@ -8253,7 +8268,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         wdspota->reconstruct(tmpa[0], 1.f);
         delete wdspota;
 
-        wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
+        wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
         if (wdspotb->memoryAllocationFailed) {
             return;
@@ -8268,7 +8283,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     if (wavcurvelev && radlevblur > 0.f  && blurena) {//chroma blur if need
         if (!blurlc) {
             // a
-            wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
+            wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
             if (wdspota->memoryAllocationFailed) {
                 return;
@@ -8322,7 +8337,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 
 
             //b
-            wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6);
+            wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
             if (wdspotb->memoryAllocationFailed) {
                 return;
@@ -8704,14 +8719,14 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     tmp1.b[ir][jr] = original->b[ir][jr];
                 }
 
-            int DaubLen = 6;
+          //  int DaubLen = 6;
 
             int levwavL = levred;
             int skip = 1;
 
-            wavelet_decomposition Ldecomp(tmp1.L[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
-            wavelet_decomposition adecomp(tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
-            wavelet_decomposition bdecomp(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
+            wavelet_decomposition Ldecomp(tmp1.L[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
+            wavelet_decomposition adecomp(tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
+            wavelet_decomposition bdecomp(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
 
             float madL[8][3];
             int edge = 2;
@@ -9266,14 +9281,13 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     }
 
-                int DaubLen = 6;
+             //   int DaubLen = 6;
 
                 int levwavL = levred;
                 int skip = 1;
-                wavelet_decomposition Ldecomp(bufwv.L[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
-                wavelet_decomposition adecomp(bufwv.a[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
-                wavelet_decomposition bdecomp(bufwv.b[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
-
+                wavelet_decomposition Ldecomp(bufwv.L[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, lp.daubLen);
+                wavelet_decomposition adecomp(bufwv.a[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, lp.daubLen);
+                wavelet_decomposition bdecomp(bufwv.b[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, lp.daubLen);
                 float madL[8][3];
                 int edge = 2;
 
@@ -9824,7 +9838,7 @@ void rgbtone(float & maxval, float & medval, float & minval, LUTf & lutToneCurve
     medval = minval + ((maxval - minval) * (medvalold - minvalold) / (maxvalold - minvalold));
 }
 
-void clarimerge(float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavelet_level, int sk, bool numThreads)
+void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavelet_level, int sk, bool numThreads)
 {
     if (mL != 0.f && mC == 0.f) {
         mC = 0.0001f;
@@ -9842,7 +9856,7 @@ void clarimerge(float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavele
 
     if (mL != 0.f) {
 
-        wavelet_decomposition *wdspotresid = new wavelet_decomposition(tmpresid->L[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+        wavelet_decomposition *wdspotresid = new wavelet_decomposition(tmpresid->L[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
         if (wdspotresid->memoryAllocationFailed) {
             return;
@@ -9879,7 +9893,7 @@ void clarimerge(float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavele
 
     if (mC != 0.f) {
 
-        wavelet_decomposition *wdspotresida = new wavelet_decomposition(tmpresid->a[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+        wavelet_decomposition *wdspotresida = new wavelet_decomposition(tmpresid->a[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
         if (wdspotresida->memoryAllocationFailed) {
             return;
@@ -9915,7 +9929,7 @@ void clarimerge(float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavele
 
     if (mC != 0.f) {
 
-        wavelet_decomposition *wdspotresidb = new wavelet_decomposition(tmpresid->b[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+        wavelet_decomposition *wdspotresidb = new wavelet_decomposition(tmpresid->b[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
         if (wdspotresidb->memoryAllocationFailed) {
             return;
@@ -12345,7 +12359,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bool origlc = params->locallab.spots.at(sp).origlc;
 
                         if (origlc) {//merge only with original
-                            clarimerge(mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
+                            clarimerge(lp, mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
                         }
 
                         int maxlvl = wavelet_level;
@@ -12378,7 +12392,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (satur != 0.f || radblur > 0.f) {//blur residual a and satur
 
-                            wavelet_decomposition *wdspota = new wavelet_decomposition(tmp1->a[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, 6);
+                            wavelet_decomposition *wdspota = new wavelet_decomposition(tmp1->a[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
                             if (wdspota->memoryAllocationFailed) {
                                 return;
@@ -12432,7 +12446,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             wdspota->reconstruct(tmp1->a[0], 1.f);
                             delete wdspota;
 
-                            wavelet_decomposition *wdspotb = new wavelet_decomposition(tmp1->b[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, 6);
+                            wavelet_decomposition *wdspotb = new wavelet_decomposition(tmp1->b[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
                             if (wdspotb->memoryAllocationFailed) {
                                 return;
@@ -12505,7 +12519,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
                             }
 
-                            clarimerge(mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
+                            clarimerge(lp, mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
                         }
 
                         float thr = 0.001f;
