@@ -2526,6 +2526,9 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, La
     const int GW = transformed->W;
     const int GH = transformed->H;
 
+    float darklim = 5000.f;
+    float aadark = -1.f;
+    float bbdark = darklim;
 
     const float refa = chromaref * cos(hueref);
     const float refb = chromaref * sin(hueref);
@@ -2610,11 +2613,17 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, La
                 float reducdEL = 1.f;
                 float reducdEa = 1.f;
                 float reducdEb = 1.f;
+                float reducdELs = 1.f;
+                float reducdEas = 1.f;
+                float reducdEbs = 1.f;
 
                 if (levred == 7) {
                     calcreducdE(dEL, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden, reducdEL);
                     calcreducdE(dEa, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden, reducdEa);
                     calcreducdE(dEb, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden, reducdEb);
+                    reducdELs = reducdEL;
+                    reducdEas = reducdEa;
+                    reducdEbs = reducdEb;
                     reducdEL = SQR(reducdEL);
                     reducdEa = SQR(reducdEa);
                     reducdEb = SQR(reducdEb);
@@ -2647,8 +2656,20 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, La
                         transformed->a[y][x] = CLIPC(10.f * difa);// * 10.f empirical to can visualize modifications
                         transformed->b[y][x] = CLIPC(10.f * difb);// * 10.f empirical to can visualize modifications
                     } else if (previewbl) {
-                        transformed->a[y][x] = 0.f;
-                        transformed->b[y][x] = (10.f * difb);// * 10.f empirical to can visualize modifications
+                        float difbdisp = (reducdEL +  reducdEa + reducdEb) * 10000.f * lp.colorde;
+
+                        if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
+                            float dark = transformed->L[y][x];
+                            transformed->L[y][x] = dark * aadark + bbdark;
+                        }
+                        if (lp.colorde <= 0) {
+                            transformed->a[y][x] = 0.f;
+                            transformed->b[y][x] = difbdisp;
+                        } else {
+                            transformed->a[y][x] = -difbdisp;
+                            transformed->b[y][x] = 0.f;
+                        }
+
                     }
 
 
