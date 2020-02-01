@@ -304,7 +304,7 @@ ControlSpotPanel::ControlSpotPanel():
     ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
 
     if (showtooltip) {
-        ctboxwavmethod->set_tooltip_markup(M("TP_LOCALLAB_WAVMETHOD_TOOLTIP"));
+        ctboxwavmethod->set_tooltip_markup(M("TP_WAVELET_DAUB_TOOLTIP"));
     }
 
 

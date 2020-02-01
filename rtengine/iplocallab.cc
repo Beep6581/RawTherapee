@@ -2613,17 +2613,11 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, La
                 float reducdEL = 1.f;
                 float reducdEa = 1.f;
                 float reducdEb = 1.f;
-                float reducdELs = 1.f;
-                float reducdEas = 1.f;
-                float reducdEbs = 1.f;
 
                 if (levred == 7) {
                     calcreducdE(dEL, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden, reducdEL);
                     calcreducdE(dEa, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden, reducdEa);
                     calcreducdE(dEb, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden, reducdEb);
-                    reducdELs = reducdEL;
-                    reducdEas = reducdEa;
-                    reducdEbs = reducdEb;
                     reducdEL = SQR(reducdEL);
                     reducdEa = SQR(reducdEa);
                     reducdEb = SQR(reducdEb);
