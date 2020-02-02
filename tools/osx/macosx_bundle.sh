@@ -163,7 +163,7 @@ ditto ${LOCAL_PREFIX}/local/lib/libjpeg.62.dylib "${CONTENTS}/Frameworks/libjpeg
 
 # Copy libexpat into the app bundle (which is keg-only)
 
-if [[ -d /usr/local/Cellar/expat ]]; then ditto /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else ditto "${EXPATLIB}" "${CONTENTS}/Frameworks"; fi
+if [[ -d /usr/local/Cellar/expat ]]; then ditto /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else ditto "${EXPATLIB}" "${CONTENTS}/Frameworks/libexpat.1.dylib"; fi
 
 # Copy libz into the app bundle
 ditto ${LOCAL_PREFIX}/local/lib/libz.1.dylib "${CONTENTS}/Frameworks"
@@ -176,7 +176,7 @@ mkdir -p "${RESOURCES}/share/lensfun"
 ditto ${LOCAL_PREFIX}/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
 
 # Copy liblensfun to Frameworks
-ditto ${LOCAL_PREFIX}/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks"
+ditto ${LOCAL_PREFIX}/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
 
 # Copy libomp to Frameworks
 ditto ${LOCAL_PREFIX}/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
