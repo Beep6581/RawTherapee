@@ -274,7 +274,7 @@ function CreateDmg {
     local srcDir="$(mktemp -dt $$)"
 
     msg "Preparing disk image sources at ${srcDir}:"
-    ditto -R "${APP}" "${srcDir}"
+    ditto "${APP}" "${srcDir}"
     ditto AboutThisBuild.txt "${srcDir}"
     ln -s /Applications "${srcDir}"
 
