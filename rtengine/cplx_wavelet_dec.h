@@ -135,6 +135,14 @@ wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int
                 //n=0 lopass, n=1 hipass
             }
         }
+/*    } else if(wavfilt_len == 22) {
+        for (int n = 0; n < 2; n++) {
+            for (int i = 0; i < wavfilt_len; i++) {
+                wavfilt_anal[wavfilt_len * (n) + i]  = Daub4_anal22[n][i];
+                wavfilt_synth[wavfilt_len * (n) + i] = Daub4_anal22[n][wavfilt_len - 1 - i];
+                //n=0 lopass, n=1 hipass
+            }
+        } */
     } else if(wavfilt_len == 4) {
         for (int n = 0; n < 2; n++) {
             for (int i = 0; i < wavfilt_len; i++) {
@@ -144,7 +152,7 @@ wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int
             }
         }
     }
-
+//printf("OK cplx\n");
     // after coefficient rotation, data structure is:
     // wavelet_decomp[scale][channel={lo,hi1,hi2,hi3}][pixel_array]
 

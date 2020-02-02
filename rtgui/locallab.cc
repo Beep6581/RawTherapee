@@ -4494,9 +4494,11 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->wavMethod = 3;
         } else  if (pp->locallab.spots.at(i).wavMethod == "D14") {
             r->wavMethod = 4;
+ //       } else  if (pp->locallab.spots.at(i).wavMethod == "D20") {
+ //           r->wavMethod = 5;
         }
 
-        if (pp->locallab.spots.at(i).wavMethod == "norm") {
+        if (pp->locallab.spots.at(i).spotMethod == "norm") {
             r->spotMethod = 0;
         } else {
             r->spotMethod = 1;
@@ -4667,6 +4669,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->wavMethod = 3;
             } else if (newSpot->wavMethod == "D14") {
                 r->wavMethod = 4;
+//            } else if (newSpot->wavMethod == "D20") {
+//                r->wavMethod = 5;
             }
 
             // Calculate spot size and center position according to preview area
@@ -4923,6 +4927,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->wavMethod = 3;
             } else if (newSpot->wavMethod == "D14") {
                 r->wavMethod = 4;
+//            } else if (newSpot->wavMethod == "D20") {
+//                r->wavMethod = 5;
             }
 
             // Calculate spot size and center position according to preview area
@@ -5097,6 +5103,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D10";
                     } else if (r->wavMethod == 4) {
                         pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D14";
+//                    } else if (r->wavMethod == 5) {
+//                        pp->locallab.spots.at(pp->locallab.selspot).wavMethod = "D20";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).locX = r->locX;
