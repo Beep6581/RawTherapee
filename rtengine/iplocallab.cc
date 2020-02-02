@@ -2511,7 +2511,7 @@ static void calcreducdE(float dE, float maxdE, float mindE, float maxdElim,  flo
         }
     }
 }
-void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, LabImage*originalmask, int levred, float hueref, float lumaref, float chromaref,  LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage*originalmask, int levred, float hueref, float lumaref, float chromaref,  LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk)
 {
     //warning, but I hope used it next
     // local denoise and impulse
@@ -2525,6 +2525,10 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, La
 
     const int GW = transformed->W;
     const int GH = transformed->H;
+
+    if (lp.colorde == 0) {
+        lp.colorde = -1;//to avoid black
+    }
 
     float darklim = 5000.f;
     float aadark = -1.f;
@@ -2644,11 +2648,12 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, La
                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                     transformed->a[y][x] = CLIPC((original->a[y][x] + difa) * factnoise);
                     transformed->b[y][x] = CLIPC((original->b[y][x] + difb) * factnoise) ;
+                    float amplabL = 2.f * lp.colorde;
 
                     if (blshow) {
-                        transformed->L[y][x] = CLIP(12000.f + 10.f * difL);// * 10.f empirical to can visualize modifications
-                        transformed->a[y][x] = CLIPC(10.f * difa);// * 10.f empirical to can visualize modifications
-                        transformed->b[y][x] = CLIPC(10.f * difb);// * 10.f empirical to can visualize modifications
+                        transformed->L[y][x] = CLIP(12000.f + amplabL * difL);// * 10.f empirical to can visualize modifications
+                        transformed->a[y][x] = CLIPC(amplabL * difa);// * 10.f empirical to can visualize modifications
+                        transformed->b[y][x] = CLIPC(amplabL * difb);// * 10.f empirical to can visualize modifications
                     } else if (previewbl) {
                         float difbdisp = (reducdEL +  reducdEa + reducdEb) * 10000.f * lp.colorde;
 
@@ -6200,6 +6205,17 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
     kab /= SQR(327.68f);
     kL /= SQR(327.68f);
 
+    if (lp.colorde == 0) {
+        lp.colorde = -1;//to avoid black
+    }
+
+    float ampli = 1.f + fabs(lp.colorde);
+    ampli = 2.f + 0.5f * (ampli - 2.f);
+
+    float darklim = 5000.f;
+    float aadark = -1.f;
+    float bbdark = darklim;
+
     const bool usemaskbl = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 4);
     const bool usemaskall = (usemaskbl);
     const float radius = 3.f / sk;
@@ -6277,7 +6293,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
                 const float chra = tmp1->a[y - ystart][x - xstart];
                 const float chrb = tmp1->b[y - ystart][x - xstart];
 
-                const float difL = (tmp1->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
+                float difL = (tmp1->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                 transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                 flia = flib = ((100.f + realstrchdE) / 100.f);
                 float difa = chra * flia - original->a[y][x];
@@ -6289,15 +6305,38 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
                     transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
                     transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                 }
+                    float maxdifab = max(fabs(difa), fabs(difb));
 
-                if (blshow) {
-                    transformed->L[y][x] = CLIP(12000.f + difL);
-                    transformed->a[y][x] = CLIPC(difa);
-                    transformed->b[y][x] = CLIPC(difb);
-                } else if (previewbl) {
-                    transformed->a[y][x] = 0.f;
-                    transformed->b[y][x] = (difb);
-                }
+                    if ((blshow) && lp.colorde < 0) { //show modifications whith use "b"
+                        //  (origshow && lp.colorde < 0) { //original Retinex
+                        transformed->a[y][x] = 0.f;
+                        transformed->b[y][x] = ampli * 8.f * difL * reducdE;
+                        transformed->L[y][x] = CLIP(12000.f + 0.5f * ampli * difL);
+
+                    } else if ((blshow) && lp.colorde > 0) {//show modifications whithout use "b"
+                        if (difL < 1000.f) {//if too low to be view use ab
+                            difL += 0.5f * maxdifab;
+                        }
+
+                        transformed->L[y][x] = CLIP(12000.f + 0.5f * ampli * difL);
+                        transformed->a[y][x] = CLIPC(ampli * difa);
+                        transformed->b[y][x] = CLIPC(ampli * difb);
+                    } else if (previewbl) {//show deltaE
+                        float difbdisp = reducdE * 10000.f * lp.colorde;
+
+                        if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
+                            float dark = transformed->L[y][x];
+                            transformed->L[y][x] = dark * aadark + bbdark;
+                        }
+
+                        if (lp.colorde <= 0) {
+                            transformed->a[y][x] = 0.f;
+                            transformed->b[y][x] = difbdisp;
+                        } else {
+                            transformed->a[y][x] = -difbdisp;
+                            transformed->b[y][x] = 0.f;
+                        }
+                    }
 
             }
         }
@@ -8671,7 +8710,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 }
 
-void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv,  struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
 //local denoise

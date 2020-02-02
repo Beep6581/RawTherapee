@@ -2275,7 +2275,7 @@ TP_LOCALLAB_COFR;Color & Light - Small defects
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COLORDE;Color preview selection ΔE and Intensity
-TP_LOCALLAB_COLORDE_TOOLTIP;Show preview selection ΔE in blue if negative and in green if positive.\nShow real modifications if positive, show enhanced modifications with blue and yellow if negative.\nThe intensity is function of the level.
+TP_LOCALLAB_COLORDE_TOOLTIP;Show preview selection ΔE in blue if negative and in green if positive.\nShow real modifications if positive, show enhanced modifications with blue and yellow if negative.\nThe intensity is function of the level.\nFor 'Denoise' the appearance is different.
 TP_LOCALLAB_COMPFRA;Levels Dynamic Laplacian Range Compression ƒ
 TP_LOCALLAB_COMPREFRA;Levels Dynamic Wavelet Range (un)Compression
 TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend & Soft Images' by adjusting 'Soft radius' to reduce artifacts.
