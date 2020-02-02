@@ -479,9 +479,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.3815029"
-     inkscape:cx="276"
-     inkscape:cy="173"
+     inkscape:zoom="1.2738601"
+     inkscape:cx="187.47456"
+     inkscape:cy="151.61098"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -607,12 +607,54 @@
      id="layer1"
      transform="translate(0,-205.45415)">
     <rect
+       style="fill:#2a2a2a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.16841719;enable-background:new"
+       id="rect218"
+       width="146.05"
+       height="37.092529"
+       x="-2.4167275e-07"
+       y="305.99576"
+       rx="3.96875"
+       ry="3.96875" />
+    <rect
        y="205.45415"
        x="-2.4167275e-07"
        height="91.545853"
        width="146.05"
        id="rect4747"
        style="fill:#2a2a2a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.26458338;enable-background:new" />
+    <flowRoot
+       transform="matrix(0.25131908,0,0,0.25131908,-9.0192086,272.09598)"
+       xml:space="preserve"
+       id="flowRoot3757"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.80000019px;line-height:0.01%;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#f9f9f9;fill-opacity:1;stroke:none;stroke-width:1.06666672;enable-background:new"><flowRegion
+         id="flowRegion3759"
+         style="fill:#f9f9f9;stroke-width:1.06666672"><rect
+           id="rect3761"
+           width="552.64526"
+           height="133.19028"
+           x="50.107433"
+           y="149.19244"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#f9f9f9;fill-opacity:1;stroke-width:1.13777781" /></flowRegion><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2296381px;line-height:1.25;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#f9f9f9;fill-opacity:1;stroke-width:1.06666672"
+         id="flowPara183">Each logo element has a filter effect (ring*). Additionally, the logo as a whole (all elements grouped) also has a filter effect (logo glow).</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2296381px;line-height:1.25;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#f9f9f9;fill-opacity:1;stroke-width:1.06666672"
+         id="flowPara199" /><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2296381px;line-height:1.25;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#f9f9f9;fill-opacity:1;stroke-width:1.06666672"
+         id="flowPara201">&quot;Raw&quot;: font Eras Ultra ITC, 60pt, -3px spacing between characters.</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2296381px;line-height:1.25;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#f9f9f9;fill-opacity:1;stroke-width:1.06666672"
+         id="flowPara177">&quot;Therapee&quot;: font Eras Medium ITC, 60pt, +1px spacing between characters.</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2296381px;line-height:1.25;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#f9f9f9;fill-opacity:1;stroke-width:1.06666672"
+         id="flowPara179">Version: font Eras Bold ITC, 64pt, skewed -3°.</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:3.21688437px;line-height:0%;font-family:Salter;-inkscape-font-specification:'Salter Medium';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26807371;enable-background:new"
+       x="6.052238"
+       y="336.89627"
+       id="text11593"><tspan
+         sodipodi:role="line"
+         id="tspan11595"
+         x="6.052238"
+         y="336.89627"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;letter-spacing:0.26807371px;fill:#ffcc00;fill-opacity:1;stroke-width:0.26807371">RawTherapee splash screen design version 1.2 from 2019-02-27 | www.rawtherapee.com</tspan></text>
     <g
        aria-label="GNU GPLv3"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17500019px;line-height:0%;font-family:'Eras Bold ITC';-inkscape-font-specification:'Eras Bold ITC';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458338px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;enable-background:new"
@@ -874,6 +916,132 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:81.79330444px;line-height:1.25;font-family:'Eras Ultra ITC';-inkscape-font-specification:'Eras Ultra ITC';letter-spacing:-3.06724882px;word-spacing:0px;stroke-width:1.08272994px"
          id="path667" />
     </g>
+    <rect
+       style="fill:#2a2a2a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.26458338;enable-background:new"
+       id="rect573"
+       width="146.05"
+       height="91.545853"
+       x="-206.37505"
+       y="205.45415" />
+    <text
+       id="text577"
+       y="290.34174"
+       x="-198.68759"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17500019px;line-height:0%;font-family:'Eras Bold ITC';-inkscape-font-specification:'Eras Bold ITC';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458338px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;enable-background:new"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.96875px;line-height:1.25;font-family:'Eras Medium ITC';-inkscape-font-specification:'Eras Medium ITC';stroke-width:0.26458338px"
+         y="290.34174"
+         x="-198.68759"
+         id="tspan575"
+         sodipodi:role="line">GNU GPLv3</tspan></text>
+    <g
+       id="g583"
+       transform="matrix(0.24804687,0,0,0.2480469,-223.00781,273.1232)"
+       style="fill:#ffffff;enable-background:new">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;text-align:end;letter-spacing:-1.06666672px;word-spacing:0px;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="596.36224"
+         y="49.720543"
+         id="text581"
+         transform="skewX(3)"><tspan
+           id="tspan579"
+           sodipodi:role="line"
+           x="595.29559"
+           y="49.720543"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.06666565px;line-height:110.00000238%;font-family:'Eras Bold ITC';-inkscape-font-specification:'Eras Bold ITC Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ffffff;stroke-width:1.06666672px">Development</tspan></text>
+    </g>
+    <g
+       style="fill:#ffffff;enable-background:new"
+       transform="matrix(0.24804687,0,0,0.2480469,-253.03664,273.10678)"
+       id="g589">
+      <text
+         transform="skewX(3)"
+         id="text587"
+         y="49.720543"
+         x="596.36224"
+         style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;text-align:end;letter-spacing:-1.06666672px;word-spacing:0px;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.06666565px;line-height:110.00000238%;font-family:'Eras Bold ITC';-inkscape-font-specification:'Eras Bold ITC Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ffffff;stroke-width:1.06666672px"
+           y="49.720543"
+           x="595.29559"
+           sodipodi:role="line"
+           id="tspan585">Release Candidate 1</tspan></text>
+    </g>
+    <text
+       transform="matrix(0.24127119,0,0.01264448,0.24127122,-211.25886,265.42414)"
+       id="text593"
+       y="2.2370076"
+       x="283.85016"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Eras Bold ITC';-inkscape-font-specification:'Eras Bold ITC Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4749);enable-background:new"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:80px;line-height:1.25;font-family:'Eras Bold ITC';-inkscape-font-specification:'Eras Bold ITC Bold'"
+         y="2.2370076"
+         x="283.85016"
+         id="tspan591"
+         sodipodi:role="line">5</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Eras Bold ITC';-inkscape-font-specification:'Eras Bold ITC Bold';letter-spacing:-7.09514618px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4749);enable-background:new"
+       x="283.85016"
+       y="2.2370076"
+       id="text597"
+       transform="matrix(0.24127119,0,0.01264448,0.24127122,-202.18244,267.35338)"><tspan
+         sodipodi:role="line"
+         id="tspan595"
+         x="283.85016"
+         y="2.2370076"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:49.34799576px;line-height:1.25;font-family:'Eras Bold ITC';-inkscape-font-specification:'Eras Bold ITC Bold';letter-spacing:-7.09514618px">. 9</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Eras Medium ITC';-inkscape-font-specification:'Eras Medium ITC';letter-spacing:1px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.07075834px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter155);enable-background:new"
+       x="239.99272"
+       y="-157.9659"
+       id="text601"
+       transform="matrix(0.24732122,0,0,0.24687704,-211.90902,227.50983)"><tspan
+         sodipodi:role="line"
+         id="tspan599"
+         x="239.99272"
+         y="-157.9659"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:79.99999237px;line-height:1.25;font-family:'Eras Medium ITC';-inkscape-font-specification:'Eras Medium ITC';letter-spacing:0.99999994px;fill:#000000;stroke-width:1.07075834px">Therapee</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Eras Ultra ITC';-inkscape-font-specification:'Eras Ultra ITC';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.08272994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter155);enable-background:new"
+       x="61.72514"
+       y="-157.9659"
+       id="text605"
+       transform="matrix(0.24020317,0,0,0.23782112,-213.52654,225.80336)"><tspan
+         sodipodi:role="line"
+         id="tspan603"
+         x="61.72514"
+         y="-157.9659"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:81.79330444px;line-height:1.25;font-family:'Eras Ultra ITC';-inkscape-font-specification:'Eras Ultra ITC';letter-spacing:-3.06724882px;word-spacing:0px;fill:#000000;stroke-width:1.08272994px"
+         dx="0">Raw</tspan></text>
+    <text
+       transform="matrix(0.24732122,0,0,0.24687704,-211.90902,264.55152)"
+       id="text609"
+       y="-157.9659"
+       x="239.99272"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Eras Medium ITC';-inkscape-font-specification:'Eras Medium ITC';letter-spacing:1px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.07075834px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4749);enable-background:new"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:79.99999237px;line-height:1.25;font-family:'Eras Medium ITC';-inkscape-font-specification:'Eras Medium ITC';letter-spacing:0.99999994px;stroke-width:1.07075834px"
+         y="-157.9659"
+         x="239.99272"
+         id="tspan607"
+         sodipodi:role="line">Therapee</tspan></text>
+    <text
+       transform="matrix(0.24020317,0,0,0.23782112,-213.52655,262.84505)"
+       id="text613"
+       y="-157.9659"
+       x="61.72514"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Eras Ultra ITC';-inkscape-font-specification:'Eras Ultra ITC';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.08272994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4749);enable-background:new"
+       xml:space="preserve"><tspan
+         dx="0"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:81.79330444px;line-height:1.25;font-family:'Eras Ultra ITC';-inkscape-font-specification:'Eras Ultra ITC';letter-spacing:-3.06724882px;word-spacing:0px;stroke-width:1.08272994px"
+         y="-157.9659"
+         x="61.72514"
+         id="tspan611"
+         sodipodi:role="line">Raw</tspan></text>
     <g
        style="fill:#ffffff;enable-background:new"
        transform="matrix(0.24804687,0,0,0.2480469,-127.75775,273.1232)"
