@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# GIMP has this next line regarding raising the open-number-of-files limit:
+# GIMP has this next line regarding raising the number-of-open-files limit:
 ulimit -n 7000
 
 cd "$(dirname "$0")" || exit 1
@@ -30,4 +30,4 @@ esac
 AppleLocale=`defaults read -g AppleLocale`
 export LANG=${AppleLocale%@*}.UTF-8
 
-exec "${cwd}/bin/rawtherapee-bin" "$@"
+exec "${app}/Contents/MacOS/bin/rawtherapee-bin" "$@"
