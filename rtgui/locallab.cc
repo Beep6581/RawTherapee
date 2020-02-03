@@ -751,6 +751,7 @@ softMethod(Gtk::manage(new MyComboBoxText())),
 showmasksoftMethod(Gtk::manage(new MyComboBoxText())),
 //Blur
 blMethod(Gtk::manage(new MyComboBoxText())),
+chroMethod(Gtk::manage(new MyComboBoxText())),
 medMethod(Gtk::manage(new MyComboBoxText())),
 showmaskblMethod(Gtk::manage(new MyComboBoxText())),
 csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
@@ -3593,6 +3594,14 @@ pe(nullptr)
     blMethodConn = blMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blMethodChanged));
 
 
+    chroMethod->append(M("TP_LOCALLAB_BLLO"));
+    chroMethod->append(M("TP_LOCALLAB_BLCO"));
+    chroMethod->append(M("TP_LOCALLAB_BLLC"));
+    chroMethod->set_active(0);
+
+
+    chroMethodConn = chroMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::chroMethodChanged));
+
     radius->setAdjusterListener(this);
 
     strength->setAdjusterListener(this);
@@ -3810,9 +3819,9 @@ pe(nullptr)
 
     ToolParamBlock* const blurrBox = Gtk::manage(new ToolParamBlock());
 
-    if (complexsoft < 2) {
+//    if (complexsoft < 2) {
         blurrBox->pack_start(*blMethod);
-    }
+//    }
 
     if (complexsoft < 2) {
         blurrBox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
@@ -3827,7 +3836,8 @@ pe(nullptr)
     blurrBox->pack_start(*epsbl);
     blurrBox->pack_start(*sensibn);
     blurrBox->pack_start(*blurMethod);
-    blurrBox->pack_start(*activlum);
+    blurrBox->pack_start(*chroMethod);
+//    blurrBox->pack_start(*activlum);
 //    blurrBox->pack_start(*expmaskbl);
     expblur->add(*blurrBox, false);
     expblur->setLevel(2);
@@ -5471,6 +5481,14 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).blMethod = "guid";
                     }
 
+                    if (chroMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).chroMethod = "lum";
+                    } else if (chroMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).chroMethod = "chr";
+                    } else if (chroMethod->get_active_row_number() == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).chroMethod = "all";
+                    }
+
                     if (medMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).medMethod = "none";
                     } else if (medMethod->get_active_row_number() == 1) {
@@ -5949,6 +5967,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).guidbl = pe->locallab.spots.at(pp->locallab.selspot).guidbl || guidbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).epsbl = pe->locallab.spots.at(pp->locallab.selspot).epsbl || epsbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).blMethod = pe->locallab.spots.at(pp->locallab.selspot).blMethod || blMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).chroMethod = pe->locallab.spots.at(pp->locallab.selspot).chroMethod || chroMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).blurMethod = pe->locallab.spots.at(pp->locallab.selspot).blurMethod || blurMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).medMethod = pe->locallab.spots.at(pp->locallab.selspot).medMethod || medMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).activlum = pe->locallab.spots.at(pp->locallab.selspot).activlum || !activlum->get_inconsistent();
@@ -6384,6 +6403,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).guidbl = pedited->locallab.spots.at(pp->locallab.selspot).guidbl || guidbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).epsbl = pedited->locallab.spots.at(pp->locallab.selspot).epsbl || epsbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).blMethod = pedited->locallab.spots.at(pp->locallab.selspot).blMethod || blMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pedited->locallab.spots.at(pp->locallab.selspot).chroMethod = pedited->locallab.spots.at(pp->locallab.selspot).chroMethod || chroMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).blurMethod = pedited->locallab.spots.at(pp->locallab.selspot).blurMethod || blurMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).medMethod = pedited->locallab.spots.at(pp->locallab.selspot).medMethod || medMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).activlum = pedited->locallab.spots.at(pp->locallab.selspot).activlum || !activlum->get_inconsistent();
@@ -7290,6 +7310,15 @@ void Locallab::blMethodChanged()
     if (getEnabled() && expblur->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabblMethod, blMethod->get_active_text());
+        }
+    }
+}
+
+void Locallab::chroMethodChanged()
+{
+    if (getEnabled() && expblur->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabchroMethod, chroMethod->get_active_text());
         }
     }
 }
@@ -11932,6 +11961,7 @@ void Locallab::setBatchMode(bool batchMode)
     softMethod->append(M("GENERAL_UNCHANGED"));
     // Blur & Noise
     blMethod->append(M("GENERAL_UNCHANGED"));
+    chroMethod->append(M("GENERAL_UNCHANGED"));
     blurMethod->append(M("GENERAL_UNCHANGED"));
     medMethod->append(M("GENERAL_UNCHANGED"));
     // Retinex
@@ -12137,6 +12167,7 @@ void Locallab::enableListener()
     // Blur & Noise
     enableblurConn.block(false);
     blMethodConn.block(false);
+    chroMethodConn.block(false);
     blurMethodConn.block(false);
     medMethodConn.block(false);
     activlumConn.block(false);
@@ -12246,6 +12277,7 @@ void Locallab::disableListener()
     // Blur & Noise
     enableblurConn.block(true);
     blMethodConn.block(true);
+    chroMethodConn.block(true);
     blurMethodConn.block(true);
     medMethodConn.block(true);
     activlumConn.block(true);
@@ -12754,11 +12786,19 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             blMethod->set_active(2);
         }
 
+        if (pp->locallab.spots.at(index).chroMethod == "lum") {
+            chroMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).chroMethod == "chr") {
+            chroMethod->set_active(1);
+        } else if (pp->locallab.spots.at(index).chroMethod == "all") {
+            chroMethod->set_active(2);
+        }
+/*
         if (complexsoft == 2) {
             blMethod->set_active(0);
             guidbl->setValue(0);
         }
-
+*/
 
         if (pp->locallab.spots.at(index).blurMethod == "norm") {
             blurMethod->set_active(0);
@@ -13403,6 +13443,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
                 if (!spotState->blMethod) {
                     blMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+
+                if (!spotState->chroMethod) {
+                    chroMethod->set_active_text(M("GENERAL_UNCHANGED"));
                 }
 
                 if (!spotState->blurMethod) {

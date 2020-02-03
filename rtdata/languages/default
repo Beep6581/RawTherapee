@@ -1145,6 +1145,7 @@ HISTORY_MSG_907;Local - Contrast Wavelet ES amplification
 HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
 HISTORY_MSG_909;Local - Contrast Wavelet ES show
 HISTORY_MSG_910;Local - Wavelet Edge performance
+HISTORY_MSG_911;Local - Blur Chroma Luma 
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2233,6 +2234,9 @@ TP_LOCALLAB_BLACK_EV;Black Ev
 TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLGUID;Guided Filter Luminance
 TP_LOCALLAB_BLINV;Inverse
+TP_LOCALLAB_BLCO;Chrominance only
+TP_LOCALLAB_BLLO;Luminance only
+TP_LOCALLAB_BLLC;Luminance & Chrominance
 TP_LOCALLAB_BLMED;Median
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and without enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLNORM;Normal

@@ -348,6 +348,7 @@ struct local_params {
     int softmet;
     int blurmet;
     int blmet;
+    int chromet;
     int shmeth;
     int medmet;
     int locmet;
@@ -649,6 +650,14 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.blmet = 1;
     } else if (locallab.spots.at(sp).blMethod == "guid") {
         lp.blmet = 2;
+    }
+
+    if (locallab.spots.at(sp).chroMethod == "lum") {
+        lp.chromet = 0;
+    } else if (locallab.spots.at(sp).chroMethod == "chr") {
+        lp.chromet = 1;
+    } else if (locallab.spots.at(sp).chroMethod == "all") {
+        lp.chromet = 2;
     }
 
     if (locallab.spots.at(sp).shMethod == "std") {
@@ -10667,9 +10676,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     if (lp.blurmet == 0  && lp.blmet == 0  && radius > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
                         if (fft || lp.rad > 30.f) {
-                            ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfwr, bfhr, radius, 0, 0);
-
-                            if (!lp.actsp) {
+                            if (lp.chromet == 0) {
+                                ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfwr, bfhr, radius, 0, 0);
+                            }
+                            else if (lp.chromet == 1){
+                                ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfwr, bfhr, radius, 0, 0);
+                                ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfwr, bfhr, radius, 0, 0);
+                            } else if (lp.chromet == 2){
+                                ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfwr, bfhr, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfwr, bfhr, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfwr, bfhr, radius, 0, 0);
                             }
@@ -10679,37 +10693,65 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             #pragma omp parallel
 #endif
                             {
-                                gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
-
-                                if (!lp.actsp)
-                                {
-                                    gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
-                                    gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                                if (lp.chromet == 0) {
+                               
+                                    gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
                                 }
+
+                                else if (lp.chromet == 1)
+                                    {
+                                        gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
+                                        gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                                    }
+                                else if (lp.chromet == 2)
+                                    {
+                                        gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
+                                        gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
+                                        gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                                    }
+                                    
                             }
                         }
 
                     } else if (lp.blurmet == 1  && lp.blmet == 0 && radius > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
                         if (fft || lp.rad > 30.f) {
-                            ImProcFunctions::fftw_convol_blur2(original->L, tmp1->L, GW, GH, radius, 0, 0);
+                            if (lp.chromet == 0) {
+                                ImProcFunctions::fftw_convol_blur2(original->L, tmp1->L, GW, GH, radius, 0, 0);
+                            }
 
-                            if (!lp.actsp) {
+                            else if (lp.chromet == 1){
                                 ImProcFunctions::fftw_convol_blur2(original->a, tmp1->a, GW, GH, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(original->b, tmp1->b, GW, GH, radius, 0, 0);
-                            }
+                            } 
+                            else if (lp.chromet == 2){
+                                ImProcFunctions::fftw_convol_blur2(original->L, tmp1->L, GW, GH, radius, 0, 0);
+                                ImProcFunctions::fftw_convol_blur2(original->a, tmp1->a, GW, GH, radius, 0, 0);
+                                ImProcFunctions::fftw_convol_blur2(original->b, tmp1->b, GW, GH, radius, 0, 0);
+                            } 
+                            
                         } else {
 
 #ifdef _OPENMP
                             #pragma omp parallel
 #endif
                             {
+                            if (lp.chromet == 0) {
                                 gaussianBlur(original->L, tmp1->L, GW, GH, radius);
+                            }
+                            else if (lp.chromet == 1)
 
-                                if (!lp.actsp)
                                 {
                                     gaussianBlur(original->a, tmp1->a, GW, GH, radius);
                                     gaussianBlur(original->b, tmp1->b, GW, GH, radius);
                                 }
+                            else if (lp.chromet == 2)
+
+                                {
+                                    gaussianBlur(original->L, tmp1->L, GW, GH, radius);
+                                    gaussianBlur(original->a, tmp1->a, GW, GH, radius);
+                                    gaussianBlur(original->b, tmp1->b, GW, GH, radius);
+                                }
+                                
                             }
                         }
                     }
@@ -10781,10 +10823,18 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         for (int i = 0; i < hei; ++i) {
                             tmL[i] = new float[wid];
                         }
-
-                        Median_Denoise(tmp1->L, tmp1->L, bfw, bfh, medianTypeL, lp.it, multiThread, tmL);
-
-                        if (!lp.actsp) {
+                        if (lp.chromet == 0) {
+                            Median_Denoise(tmp1->L, tmp1->L, bfw, bfh, medianTypeL, lp.it, multiThread, tmL);
+                        }
+                        
+                        else if (lp.chromet == 1)
+                        {
+                            Median_Denoise(tmp1->a, tmp1->a, bfw, bfh, medianTypeAB, lp.it, multiThread, tmL);
+                            Median_Denoise(tmp1->b, tmp1->b, bfw, bfh, medianTypeAB, lp.it, multiThread, tmL);
+                        }
+                        else if (lp.chromet == 2)
+                        {
+                            Median_Denoise(tmp1->L, tmp1->L, bfw, bfh, medianTypeL, lp.it, multiThread, tmL);
                             Median_Denoise(tmp1->a, tmp1->a, bfw, bfh, medianTypeAB, lp.it, multiThread, tmL);
                             Median_Denoise(tmp1->b, tmp1->b, bfw, bfh, medianTypeAB, lp.it, multiThread, tmL);
                         }
@@ -10804,10 +10854,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         for (int i = 0; i < hei; ++i) {
                             tmL[i] = new float[wid];
                         }
-
-                        Median_Denoise(tmp2->L, tmp1->L, GW, GH, medianTypeL, lp.it, multiThread, tmL);
-
-                        if (!lp.actsp) {
+                        if (lp.chromet == 0) {
+                            Median_Denoise(tmp2->L, tmp1->L, GW, GH, medianTypeL, lp.it, multiThread, tmL);
+                        }
+                        else if (lp.chromet == 1) {
+                            Median_Denoise(tmp2->a, tmp1->a, GW, GH, medianTypeAB, lp.it, multiThread, tmL);
+                            Median_Denoise(tmp2->b, tmp1->b, GW, GH, medianTypeAB, lp.it, multiThread, tmL);
+                        }
+                        else if (lp.chromet == 2) {
+                            Median_Denoise(tmp2->L, tmp1->L, GW, GH, medianTypeL, lp.it, multiThread, tmL);
                             Median_Denoise(tmp2->a, tmp1->a, GW, GH, medianTypeAB, lp.it, multiThread, tmL);
                             Median_Denoise(tmp2->b, tmp1->b, GW, GH, medianTypeAB, lp.it, multiThread, tmL);
                         }
@@ -10822,7 +10877,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (lp.blurmet == 0  && lp.blmet == 2) {
 
                         if (lp.guidb > 0) {
-                            lp.actsp = true;
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -10830,39 +10884,66 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int y = ystart; y < yend ; y++) {
                                 for (int x = xstart; x < xend; x++) {
                                     tmp1->L[y - ystart][x - xstart] = original->L[y][x];
+                                    tmp1->a[y - ystart][x - xstart] = original->a[y][x];
+                                    tmp1->b[y - ystart][x - xstart] = original->b[y][x];
                                     bufgb->L[y - ystart][x - xstart] = original->L[y][x];
                                 }
                             }
-
-                            array2D<float> LL(bfw, bfh);
+                            Imagefloat *tmpImage = nullptr;
+                            tmpImage = new Imagefloat(bfw, bfh);
+                            lab2rgb(*tmp1, *tmpImage, params->icm.workingProfile);
+                            array2D<float> rr(bfw, bfh);
+                            array2D<float> gg(bfw, bfh);
+                            array2D<float> bb(bfw, bfh);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
-                                    LL[y][x] = tmp1->L[y][x];
+                                    rr[y][x] = tmpImage->r(y, x);
+                                    gg[y][x] = tmpImage->g(y, x);
+                                    bb[y][x] = tmpImage->b(y, x);
+                                    
                                 }
                             }
-
                             int r = max(int(lp.guidb / sk), 1);
 
                             const float epsil = 0.001f * std::pow(2, - lp.epsb);
-                            rtengine::guidedFilterLog(10.f, LL, r, epsil, multiThread);
+                            if (lp.chromet == 0) {
+                                rtengine::guidedFilterLog(10.f, gg, r, epsil, multiThread);
+                            }
+                            else if (lp.chromet == 1) {
+                                rtengine::guidedFilterLog(10.f, rr, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(10.f, bb, r, epsil, multiThread);
+                            }
+                            else if (lp.chromet == 2) {
+                                rtengine::guidedFilterLog(10.f, gg, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(10.f, rr, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(10.f, bb, r, epsil, multiThread);
+                            }
+
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
-                                    tmp1->L[y][x] = LL[y][x];
+                                   tmpImage->r(y, x)= rr[y][x];
+                                   tmpImage->g(y, x)= gg[y][x];
+                                   tmpImage->b(y, x)= bb[y][x];
+                                   
                                 }
                             }
+
+                            rgb2lab(*tmpImage, *tmp1, params->icm.workingProfile);
+
+                            delete tmpImage;
                         }
 
                     } else if (lp.blurmet == 1  && lp.blmet == 2) {
+                        
                         if (lp.guidb > 0) {
-                            lp.actsp = true;
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -10870,33 +10951,62 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
                                     tmp1->L[y][x] = original->L[y][x];
+                                    tmp1->a[y][x] = original->a[y][x];
+                                    tmp1->b[y][x] = original->b[y][x];
                                     tmp2->L[y][x] = original->L[y][x];
                                 }
                             }
-
-                            array2D<float> LLI(GW, GH);
+                            
+                            Imagefloat *tmpImage = nullptr;
+                            tmpImage = new Imagefloat(GW, GH);
+                            lab2rgb(*tmp1, *tmpImage, params->icm.workingProfile);
+                            array2D<float> rr(GW, GH);
+                            array2D<float> gg(GW, GH);
+                            array2D<float> bb(GW, GH);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
-                                    LLI[y][x] = tmp1->L[y][x];
+                                    rr[y][x] = tmpImage->r(y, x);
+                                    gg[y][x] = tmpImage->g(y, x);
+                                    bb[y][x] = tmpImage->b(y, x);
+                                    
                                 }
                             }
-
                             int r = max(int(lp.guidb / sk), 1);
+
                             const float epsil = 0.001f * std::pow(2, - lp.epsb);
-                            rtengine::guidedFilterLog(10.f, LLI, r, epsil, multiThread);
+                            if (lp.chromet == 0) {
+                                rtengine::guidedFilterLog(10.f, gg, r, epsil, multiThread);
+                            }
+                            else if (lp.chromet == 1) {
+                                rtengine::guidedFilterLog(10.f, rr, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(10.f, bb, r, epsil, multiThread);
+                            }
+                            else if (lp.chromet == 2) {
+                                rtengine::guidedFilterLog(10.f, gg, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(10.f, rr, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(10.f, bb, r, epsil, multiThread);
+                            }
+
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
-                                    tmp1->L[y][x] = LLI[y][x];
+                                   tmpImage->r(y, x)= rr[y][x];
+                                   tmpImage->g(y, x)= gg[y][x];
+                                   tmpImage->b(y, x)= bb[y][x];
+                                   
                                 }
                             }
+
+                            rgb2lab(*tmpImage, *tmp1, params->icm.workingProfile);
+
+                            delete tmpImage;
                         }
 
                     }

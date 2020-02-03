@@ -2628,6 +2628,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     scalegr(100),
     epsbl(0),
     blMethod("guid"),
+    chroMethod("lum"),
     blurMethod("norm"),
     medMethod("33"),
     activlum(true),
@@ -3076,7 +3077,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && scalegr == other.scalegr
         && epsbl == other.epsbl
         && blMethod == other.blMethod
-        && blurMethod == other.blurMethod
+        && blMethod == other.blMethod
+        && chroMethod == other.chroMethod
         && medMethod == other.medMethod
         && activlum == other.activlum
         && CCmaskblcurve == other.CCmaskblcurve
@@ -4491,6 +4493,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).scalegr, "Locallab", "Scalegr_" + std::to_string(i), spot.scalegr, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).epsbl, "Locallab", "Epsbl_" + std::to_string(i), spot.epsbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blMethod, "Locallab", "BlMethod_" + std::to_string(i), spot.blMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chroMethod, "Locallab", "ChroMethod_" + std::to_string(i), spot.chroMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurMethod, "Locallab", "BlurMethod_" + std::to_string(i), spot.blurMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).medMethod, "Locallab", "MedMethod_" + std::to_string(i), spot.medMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).activlum, "Locallab", "activlum_" + std::to_string(i), spot.activlum, keyFile);
@@ -6050,6 +6053,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Scalegr_" + std::to_string(i), pedited, spot.scalegr, spotEdited.scalegr);
                 assignFromKeyfile(keyFile, "Locallab", "Epsbl_" + std::to_string(i), pedited, spot.epsbl, spotEdited.epsbl);
                 assignFromKeyfile(keyFile, "Locallab", "BlMethod_" + std::to_string(i), pedited, spot.blMethod, spotEdited.blMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ChroMethod_" + std::to_string(i), pedited, spot.chroMethod, spotEdited.chroMethod);
                 assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + std::to_string(i), pedited, spot.blurMethod, spotEdited.blurMethod);
                 assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + std::to_string(i), pedited, spot.medMethod, spotEdited.medMethod);
                 assignFromKeyfile(keyFile, "Locallab", "activlum_" + std::to_string(i), pedited, spot.activlum, spotEdited.activlum);

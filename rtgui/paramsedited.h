@@ -597,6 +597,7 @@ public:
         bool guidbl;
         bool epsbl;
         bool blMethod;
+        bool chroMethod;
         bool blurMethod;
         bool medMethod;
         bool activlum;

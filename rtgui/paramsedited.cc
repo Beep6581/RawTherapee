@@ -1165,6 +1165,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).strengr = locallab.spots.at(j).strengr && pSpot.strengr == otherSpot.strengr;
                 locallab.spots.at(j).epsbl = locallab.spots.at(j).epsbl && pSpot.epsbl == otherSpot.epsbl;
                 locallab.spots.at(j).blMethod = locallab.spots.at(j).blMethod && pSpot.blMethod == otherSpot.blMethod;
+                locallab.spots.at(j).chroMethod = locallab.spots.at(j).chroMethod && pSpot.chroMethod == otherSpot.chroMethod;
                 locallab.spots.at(j).blurMethod = locallab.spots.at(j).blurMethod && pSpot.blurMethod == otherSpot.blurMethod;
                 locallab.spots.at(j).medMethod = locallab.spots.at(j).medMethod && pSpot.medMethod == otherSpot.medMethod;
                 locallab.spots.at(j).activlum = locallab.spots.at(j).activlum && pSpot.activlum == otherSpot.activlum;
@@ -3675,6 +3676,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).blMethod = mods.locallab.spots.at(i).blMethod;
         }
 
+        if (locallab.spots.at(i).chroMethod) {
+            toEdit.locallab.spots.at(i).chroMethod = mods.locallab.spots.at(i).chroMethod;
+        }
+
         if (locallab.spots.at(i).blurMethod) {
             toEdit.locallab.spots.at(i).blurMethod = mods.locallab.spots.at(i).blurMethod;
         }
@@ -5654,6 +5659,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     guidbl(v),
     epsbl(v),
     blMethod(v),
+    chroMethod(v),
     blurMethod(v),
     medMethod(v),
     activlum(v),
@@ -6079,6 +6085,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     guidbl = v;
     epsbl = v;
     blMethod = v;
+    chroMethod = v;
     blurMethod = v;
     medMethod = v;
     activlum = v;

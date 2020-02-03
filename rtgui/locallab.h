@@ -585,6 +585,8 @@ private:
     //Blur and noise
     MyComboBoxText* const blMethod;
     sigc::connection blMethodConn;
+    MyComboBoxText* const chroMethod;
+    sigc::connection chroMethodConn;
     MyComboBoxText* const medMethod;
     sigc::connection medMethodConn;
     MyComboBoxText* const showmaskblMethod;
@@ -781,6 +783,7 @@ private:
     void showmaskvibMethodChanged();
     // Blur & Noise
     void blMethodChanged();
+    void chroMethodChanged();
     void medMethodChanged();
     // Soft light
     void softMethodChanged();

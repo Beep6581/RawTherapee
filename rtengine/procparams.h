@@ -1171,6 +1171,7 @@ struct LocallabParams {
         int scalegr;
         int epsbl;
         Glib::ustring blMethod;
+        Glib::ustring chroMethod;
         Glib::ustring blurMethod;
         Glib::ustring medMethod;
         bool activlum;
