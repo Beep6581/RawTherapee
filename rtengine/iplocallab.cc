@@ -10906,7 +10906,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
                                     LL[y][x] = tmp1->L[y][x];
-                                    float ll = LL[y][x];
+                                    float ll = LL[y][x] / 32768.f;
                                     guide[y][x] = xlin2log(max(ll, 0.f), 10.f);
                                     rr[y][x] = tmpImage->r(y, x);
                                     gg[y][x] = tmpImage->g(y, x);
@@ -11000,7 +11000,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
                                     LL[y][x] = tmp1->L[y][x];
-                                    float ll = LL[y][x];
+                                    float ll = LL[y][x] / 32768.f;
                                     guide[y][x] = xlin2log(max(ll, 0.f), 10.f);
                                     rr[y][x] = tmpImage->r(y, x);
                                     gg[y][x] = tmpImage->g(y, x);
