@@ -511,6 +511,7 @@ radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), MINRAD, MAXRAD, 0.1, 1.
 strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
 itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
 guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
+strbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRBL"), 0, 100, 1, 50))),
 epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
 sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
 blendmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
@@ -3617,8 +3618,10 @@ pe(nullptr)
     scalegr->setAdjusterListener(this);
 
     itera->setAdjusterListener(this);
+    guidbl->setLogScale(100, 0);
     guidbl->setAdjusterListener(this);
     epsbl->setAdjusterListener(this);
+    strbl->setAdjusterListener(this);
 
     setExpandAlignProperties(expmaskbl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskbl->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskbl));
@@ -3833,6 +3836,7 @@ pe(nullptr)
     blurrBox->pack_start(*medMethod);
     blurrBox->pack_start(*itera);
     blurrBox->pack_start(*guidbl);
+    blurrBox->pack_start(*strbl);
     blurrBox->pack_start(*epsbl);
     blurrBox->pack_start(*sensibn);
     blurrBox->pack_start(*blurMethod);
@@ -5469,6 +5473,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).itera = itera->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).guidbl = guidbl->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).epsbl = epsbl->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strbl = strbl->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).isogr = isogr->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).strengr = strengr->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).scalegr = scalegr->getIntValue();
@@ -5965,6 +5970,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pe->locallab.spots.at(pp->locallab.selspot).strengr = pe->locallab.spots.at(pp->locallab.selspot).strengr || strengr->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).scalegr = pe->locallab.spots.at(pp->locallab.selspot).scalegr || scalegr->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).guidbl = pe->locallab.spots.at(pp->locallab.selspot).guidbl || guidbl->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strbl = pe->locallab.spots.at(pp->locallab.selspot).strbl || strbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).epsbl = pe->locallab.spots.at(pp->locallab.selspot).epsbl || epsbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).blMethod = pe->locallab.spots.at(pp->locallab.selspot).blMethod || blMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).chroMethod = pe->locallab.spots.at(pp->locallab.selspot).chroMethod || chroMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -6401,6 +6407,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pedited->locallab.spots.at(pp->locallab.selspot).strengr = pedited->locallab.spots.at(pp->locallab.selspot).strengr || strengr->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).scalegr = pedited->locallab.spots.at(pp->locallab.selspot).scalegr || scalegr->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).guidbl = pedited->locallab.spots.at(pp->locallab.selspot).guidbl || guidbl->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strbl = pedited->locallab.spots.at(pp->locallab.selspot).strbl || strbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).epsbl = pedited->locallab.spots.at(pp->locallab.selspot).epsbl || epsbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).blMethod = pedited->locallab.spots.at(pp->locallab.selspot).blMethod || blMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).chroMethod = pedited->locallab.spots.at(pp->locallab.selspot).chroMethod || chroMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -7277,6 +7284,7 @@ void Locallab::blMethodChanged()
         scalegr->show();
         medMethod->hide();
         guidbl->hide();
+        strbl->hide();
         epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 1) {
@@ -7290,6 +7298,7 @@ void Locallab::blMethodChanged()
         itera->show();
         medMethod->show();
         guidbl->hide();
+        strbl->hide();
         epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 2) {
@@ -7303,6 +7312,7 @@ void Locallab::blMethodChanged()
         itera->hide();
         medMethod->hide();
         guidbl->show();
+        strbl->show();
         epsbl->show();
         activlum->hide();
     }
@@ -9485,6 +9495,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
     strengr->setDefault((double)defSpot->strengr);
     scalegr->setDefault((double)defSpot->scalegr);
     guidbl->setDefault((double)defSpot->guidbl);
+    strbl->setDefault((double)defSpot->strbl);
     epsbl->setDefault((double)defSpot->epsbl);
     blendmaskbl->setDefault((double)defSpot->blendmaskbl);
     radmaskbl->setDefault(defSpot->radmaskbl);
@@ -9741,6 +9752,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         strengr->setDefaultEditedState(Irrelevant);
         scalegr->setDefaultEditedState(Irrelevant);
         guidbl->setDefaultEditedState(Irrelevant);
+        strbl->setDefaultEditedState(Irrelevant);
         epsbl->setDefaultEditedState(Irrelevant);
         blendmaskbl->setDefaultEditedState(Irrelevant);
         radmaskbl->setDefaultEditedState(Irrelevant);
@@ -10002,6 +10014,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams * defParams, c
         strengr->setDefaultEditedState(defSpotState->strengr ? Edited : UnEdited);
         scalegr->setDefaultEditedState(defSpotState->scalegr ? Edited : UnEdited);
         guidbl->setDefaultEditedState(defSpotState->guidbl ? Edited : UnEdited);
+        strbl->setDefaultEditedState(defSpotState->strbl ? Edited : UnEdited);
         epsbl->setDefaultEditedState(defSpotState->epsbl ? Edited : UnEdited);
         blendmaskbl->setDefaultEditedState(defSpotState->blendmaskbl ? Edited : UnEdited);
         radmaskbl->setDefaultEditedState(defSpotState->radmaskbl ? Edited : UnEdited);
@@ -10854,6 +10867,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == guidbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabguidbl, guidbl->getTextValue());
+            }
+        }
+
+        if (a == strbl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrbl, strbl->getTextValue());
             }
         }
 
@@ -11810,6 +11829,7 @@ void Locallab::setBatchMode(bool batchMode)
     strengr->showEditedCB();
     scalegr->showEditedCB();
     guidbl->showEditedCB();
+    strbl->showEditedCB();
     epsbl->showEditedCB();
     blendmaskbl->showEditedCB();
     radmaskbl->showEditedCB();
@@ -12776,6 +12796,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         strengr->setValue(pp->locallab.spots.at(index).strengr);
         scalegr->setValue(pp->locallab.spots.at(index).scalegr);
         guidbl->setValue(pp->locallab.spots.at(index).guidbl);
+        strbl->setValue(pp->locallab.spots.at(index).strbl);
         epsbl->setValue(pp->locallab.spots.at(index).epsbl);
 
         if (pp->locallab.spots.at(index).blMethod == "blur") {
@@ -13439,6 +13460,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 strengr->setEditedState(spotState->strengr ? Edited : UnEdited);
                 scalegr->setEditedState(spotState->scalegr ? Edited : UnEdited);
                 guidbl->setEditedState(spotState->guidbl ? Edited : UnEdited);
+                strbl->setEditedState(spotState->strbl ? Edited : UnEdited);
                 epsbl->setEditedState(spotState->epsbl ? Edited : UnEdited);
 
                 if (!spotState->blMethod) {
@@ -14065,6 +14087,7 @@ void Locallab::updateSpecificGUIState()
         scalegr->show();
         medMethod->hide();
         guidbl->hide();
+        strbl->hide();
         epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 1) {
@@ -14078,6 +14101,7 @@ void Locallab::updateSpecificGUIState()
         itera->show();
         medMethod->show();
         guidbl->hide();
+        strbl->hide();
         epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 2) {
@@ -14091,6 +14115,7 @@ void Locallab::updateSpecificGUIState()
         itera->hide();
         medMethod->hide();
         guidbl->show();
+        strbl->show();
         epsbl->show();
         activlum->hide();
     }

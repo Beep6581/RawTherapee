@@ -303,6 +303,7 @@ struct local_params {
     double stren;
     int it;
     int guidb;
+    float strbl;
     float epsb;
     float trans;
     float feath;
@@ -1094,6 +1095,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.fftbl = fftbl;
     lp.it = itera;
     lp.guidb = guidbl;
+    lp.strbl = 0.01f * (float) locallab.spots.at(sp).strbl;
+
     lp.epsb = epsbl;
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
@@ -10893,6 +10896,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             array2D<float> rr(bfw, bfh);
                             array2D<float> gg(bfw, bfh);
                             array2D<float> bb(bfw, bfh);
+                            array2D<float> guide(bfw, bfh);
+                            
+                            
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -10900,22 +10906,28 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
                                     LL[y][x] = tmp1->L[y][x];
+                                    float ll = LL[y][x];
+                                    guide[y][x] = xlin2log(max(ll, 0.f), 10.f);
                                     rr[y][x] = tmpImage->r(y, x);
                                     gg[y][x] = tmpImage->g(y, x);
                                     bb[y][x] = tmpImage->b(y, x);
 
                                 }
                             }
+                            array2D<float> iR(bfw, bfh, rr, 0);
+                            array2D<float> iG(bfw, bfh, gg, 0);
+                            array2D<float> iB(bfw, bfh, bb, 0);
+                            array2D<float> iL(bfw, bfh, LL, 0);
 
                             int r = max(int(lp.guidb / sk), 1);
 
                             const float epsil = 0.001f * std::pow(2, - lp.epsb);
 
                             if (lp.chromet == 0) {
-                                rtengine::guidedFilterLog(10.f, LL, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, multiThread);
                             } else if (lp.chromet == 1) {
-                                rtengine::guidedFilterLog(10.f, rr, r, epsil, multiThread);
-                                rtengine::guidedFilterLog(10.f, bb, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(guide, 10.f, rr, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(guide, 10.f, bb, r, epsil, multiThread);
                             } else if (lp.chromet == 2) {
                                 rtengine::guidedFilterLog(10.f, gg, r, epsil, multiThread);
                                 rtengine::guidedFilterLog(10.f, rr, r, epsil, multiThread);
@@ -10928,6 +10940,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
+                                    rr[y][x] = intp(lp.strbl, rr[y][x] , iR[y][x]);
+                                    gg[y][x] = intp(lp.strbl, gg[y][x] , iG[y][x]);
+                                    bb[y][x] = intp(lp.strbl, bb[y][x] , iB[y][x]);
                                     tmpImage->r(y, x) = rr[y][x];
                                     tmpImage->g(y, x) = gg[y][x];
                                     tmpImage->b(y, x) = bb[y][x];
@@ -10944,6 +10959,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
+                                        LL[y][x] = intp(lp.strbl, LL[y][x] , iL[y][x]);
                                         tmp1->L[y][x] = LL[y][x];
                                     }
                                 }
@@ -10975,6 +10991,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             array2D<float> rr(GW, GH);
                             array2D<float> gg(GW, GH);
                             array2D<float> bb(GW, GH);
+                            array2D<float> guide(GW, GH);
+
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -10982,6 +11000,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
                                     LL[y][x] = tmp1->L[y][x];
+                                    float ll = LL[y][x];
+                                    guide[y][x] = xlin2log(max(ll, 0.f), 10.f);
                                     rr[y][x] = tmpImage->r(y, x);
                                     gg[y][x] = tmpImage->g(y, x);
                                     bb[y][x] = tmpImage->b(y, x);
@@ -10989,15 +11009,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
                             }
 
+                            array2D<float> iR(GW, GH, rr, 0);
+                            array2D<float> iG(GW, GH, gg, 0);
+                            array2D<float> iB(GW, GH, bb, 0);
+                            array2D<float> iL(GW, GH, LL, 0);
+
                             int r = max(int(lp.guidb / sk), 1);
 
                             const float epsil = 0.001f * std::pow(2, - lp.epsb);
 
                             if (lp.chromet == 0) {
-                                rtengine::guidedFilterLog(10.f, LL, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, multiThread);
                             } else if (lp.chromet == 1) {
-                                rtengine::guidedFilterLog(10.f, rr, r, epsil, multiThread);
-                                rtengine::guidedFilterLog(10.f, bb, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(guide, 10.f, rr, r, epsil, multiThread);
+                                rtengine::guidedFilterLog(guide, 10.f, bb, r, epsil, multiThread);
                             } else if (lp.chromet == 2) {
                                 rtengine::guidedFilterLog(10.f, gg, r, epsil, multiThread);
                                 rtengine::guidedFilterLog(10.f, rr, r, epsil, multiThread);
@@ -11010,6 +11035,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
+                                    rr[y][x] = intp(lp.strbl, rr[y][x] , iR[y][x]);
+                                    gg[y][x] = intp(lp.strbl, gg[y][x] , iG[y][x]);
+                                    bb[y][x] = intp(lp.strbl, bb[y][x] , iB[y][x]); 
                                     tmpImage->r(y, x) = rr[y][x];
                                     tmpImage->g(y, x) = gg[y][x];
                                     tmpImage->b(y, x) = bb[y][x];
@@ -11026,6 +11054,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 for (int y = 0; y < GH ; y++) {
                                     for (int x = 0; x < GW; x++) {
+                                        LL[y][x] = intp(lp.strbl, LL[y][x] , iL[y][x]);
                                         tmp1->L[y][x] = LL[y][x];
                                     }
                                 }

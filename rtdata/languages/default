@@ -1145,7 +1145,8 @@ HISTORY_MSG_907;Local - Contrast Wavelet ES amplification
 HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
 HISTORY_MSG_909;Local - Contrast Wavelet ES show
 HISTORY_MSG_910;Local - Wavelet Edge performance
-HISTORY_MSG_911;Local - Blur Chroma Luma 
+HISTORY_MSG_911;Local - Blur Chroma Luma
+HISTORY_MSG_912;Local - Blur Guide filter strength 
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2616,6 +2617,7 @@ TP_LOCALLAB_SPECIAL;Special use of RGB curves
 TP_LOCALLAB_SPOTNAME;Control Spot #
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Strength
+TP_LOCALLAB_STRBL;Strength
 TP_LOCALLAB_STREN;Compression Strength
 TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGR;Strength

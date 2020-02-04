@@ -301,6 +301,7 @@ private:
     Adjuster* const strength;
     Adjuster* const itera;
     Adjuster* const guidbl;
+    Adjuster* const strbl;
     Adjuster* const epsbl;
     Adjuster* const sensibn;
     Adjuster* const blendmaskbl;

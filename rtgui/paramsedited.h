@@ -595,6 +595,7 @@ public:
         bool strengr;
         bool scalegr;
         bool guidbl;
+        bool strbl;
         bool epsbl;
         bool blMethod;
         bool chroMethod;

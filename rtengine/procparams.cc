@@ -2623,6 +2623,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensibn(40),
     itera(1),
     guidbl(0),
+    strbl(50),
     isogr(400),
     strengr(0),
     scalegr(100),
@@ -3072,6 +3073,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensibn == other.sensibn
         && itera == other.itera
         && guidbl == other.guidbl
+        && strbl == other.strbl
         && isogr == other.isogr
         && strengr == other.strengr
         && scalegr == other.scalegr
@@ -4488,6 +4490,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensibn, "Locallab", "Sensibn_" + std::to_string(i), spot.sensibn, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).itera, "Locallab", "Iteramed_" + std::to_string(i), spot.itera, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).guidbl, "Locallab", "Guidbl_" + std::to_string(i), spot.guidbl, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strbl, "Locallab", "Strbl_" + std::to_string(i), spot.strbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).isogr, "Locallab", "Isogr_" + std::to_string(i), spot.isogr, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strengr, "Locallab", "Strengr_" + std::to_string(i), spot.strengr, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).scalegr, "Locallab", "Scalegr_" + std::to_string(i), spot.scalegr, keyFile);
@@ -6048,6 +6051,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensibn_" + std::to_string(i), pedited, spot.sensibn, spotEdited.sensibn);
                 assignFromKeyfile(keyFile, "Locallab", "Iteramed_" + std::to_string(i), pedited, spot.itera, spotEdited.itera);
                 assignFromKeyfile(keyFile, "Locallab", "Guidbl_" + std::to_string(i), pedited, spot.guidbl, spotEdited.guidbl);
+                assignFromKeyfile(keyFile, "Locallab", "Strbl_" + std::to_string(i), pedited, spot.strbl, spotEdited.strbl);
                 assignFromKeyfile(keyFile, "Locallab", "Isogr_" + std::to_string(i), pedited, spot.isogr, spotEdited.isogr);
                 assignFromKeyfile(keyFile, "Locallab", "Strengr_" + std::to_string(i), pedited, spot.strengr, spotEdited.strengr);
                 assignFromKeyfile(keyFile, "Locallab", "Scalegr_" + std::to_string(i), pedited, spot.scalegr, spotEdited.scalegr);

@@ -1166,6 +1166,7 @@ struct LocallabParams {
         int sensibn;
         int itera;
         int guidbl;
+        int strbl;
         int isogr;
         int strengr;
         int scalegr;
