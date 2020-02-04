@@ -1,6 +1,6 @@
 RAWTHERAPEE 5.8 RELEASE NOTES
 
-This is RawTherapee 5.8, released on 2020-02-02.
+This is RawTherapee 5.8, released on 2020-02-04.
 
 Start by reading the "Getting Started" article in RawPedia:
 https://rawpedia.rawtherapee.com/
