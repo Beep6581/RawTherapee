@@ -56,7 +56,12 @@ Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring& fname)
 #endif
     image->readMetadata();
     if (!image->good()) {
-        throw Exiv2::Error(Exiv2::kerErrorMessage, "exiv2: invalid image");
+#if EXIV2_TEST_VERSION(0,27,0)
+        auto error_code = Exiv2::kerErrorMessage;
+#else
+        auto error_code = 1;
+#endif
+        throw Exiv2::Error(error_code, "exiv2: invalid image");
     }
     return image;
 }
