@@ -2314,3 +2314,6 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !GENERAL_HELP;Help
+!HISTORY_MSG_TRANS_Method;Geometry - Method
+!TP_LENSGEOM_LIN;Linear
+!TP_LENSGEOM_LOG;Logarithmic
