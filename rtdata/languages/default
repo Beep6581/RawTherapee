@@ -2233,7 +2233,7 @@ TP_LOCALLAB_BASELOG;Logarithm base
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLACK_EV;Black Ev
 TP_LOCALLAB_BLENDMASKCOL;Blend
-TP_LOCALLAB_BLGUID;Guided Filter Luminance
+TP_LOCALLAB_BLGUID;Guided Filter
 TP_LOCALLAB_BLINV;Inverse
 TP_LOCALLAB_BLCO;Chrominance only
 TP_LOCALLAB_BLLO;Luminance only
@@ -2242,8 +2242,8 @@ TP_LOCALLAB_BLMED;Median
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and without enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLSYM;Symmetric
-TP_LOCALLAB_BLUFR;Smooth - Blur - Noise - Grain
-TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n*Blur the background by a RT-spot fully covering the image (high values for scope and transition) - normal or inverse.\n*Isolate the foreground by one or more excluding RT-spot with the tools you want (increse scope), you can use a mask to enhance and amplify the effects 
+TP_LOCALLAB_BLUFR;Smooth - Blur - Grain (& additional denoise)
+TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n*Blur the background by a RT-spot fully covering the image (high values for scope and transition) - normal or inverse.\n*Isolate the foreground by one or more excluding RT-spot with the tools you want (increse scope), you can use a mask to enhance and amplify the effects.\n\nThis module can be used in additional noise reduction,including "median" and "Guided filter" 
 TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLURCBDL;Blur levels 0-1-2-3-4
 TP_LOCALLAB_BLURCOL;Radius Mask Blur
@@ -2312,6 +2312,7 @@ TP_LOCALLAB_DEHAZ;Strength
 TP_LOCALLAB_DEHAZ_TOOLTIP;Negative values add haze
 TP_LOCALLAB_DELTAEC;Mask ΔE Image
 TP_LOCALLAB_DENOIS;Ψ Denoise
+TP_LOCALLAB_DENOI_TOOLTIP;This module can be used alone (at the end of process), or in complement of main denoise (at the beginning).\nScope allows to differentiate the action according to the color (deltaE).\nYou can complete the action with "median" or "Guide Filter" (Smooth Blur...)
 TP_LOCALLAB_DEPTH;Depth 
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILSH;Details

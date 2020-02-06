@@ -3939,6 +3939,9 @@ pe(nullptr)
     denoisBox->pack_start(*sensiden);
     expdenoi->add(*denoisBox, false);
     expdenoi->setLevel(2);
+    if (showtooltip) {
+        expdenoi->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
+    }
 
 //    if (complexsoft < 2) {
     panel->pack_start(*expdenoi, false, false);
