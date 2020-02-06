@@ -1,9 +1,16 @@
-RAWTHERAPEE 5.8 RELEASE NOTES
+RAWTHERAPEE 5.8-dev RELEASE NOTES
 
-This is RawTherapee 5.8, released on 2020-02-04.
+This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
 
-Start by reading the "Getting Started" article in RawPedia:
+Start by reading the "Getting Started" article on RawPedia:
 https://rawpedia.rawtherapee.com/
+
+While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
+- Development versions only had limited testing, so there may be bugs unknown to us.
+- You should report these bugs so that they get fixed for the next stable release. See
+  https://rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
+- The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable version.
+- Bugs present in the stable versions get fixed in the development versions, and make it into the next stable version when we make a new official release. That means that in some ways the development versions can be "more stable" than the latest stable release. At the same time, new features may introduce new bugs. This is a trade-off you should be aware of.
 
 
 
@@ -19,17 +26,15 @@ In order to use RawTherapee efficiently you should know that:
 - All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to a meaningful axis (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
-New features since 5.7:
-- Automatically recover detail lost to lens blur (diffraction) using the new Capture Sharpening tool, located in the "Raw" tab. It takes place right after demosaicing, and as it works in linear space it is not prone to haloing. Capture Sharpening in combination with Post-Resize Sharpening allows for detailed and crisp results.
-- CR3 support: image data is decoded so you can process your raw files, but metadata is not supported yet. If you have an ICC or DCP input profile for your CR3-producing camera, you will need to point RawTherapee to it manually (Color tab > Color Management > Input Profile > Custom).
-- Improvements of various camera models (new DCP dual-illuminant input profiles, raw crops, white levels, etc.), speedups and optimizations to various tools, better memory management, various bug fixes. See the git log for details.
+New features since 5.8:
+- TODO
 
 
 
 NEWS RELEVANT TO PACKAGE MAINTAINERS
 
-New since 5.7:
-- Optionally link against libtcmalloc.so which comes with Google's perftools, to fix issues where glibc won't give memory back to the OS. Use via the CMake options `ENABLE_TCMALLOC` and `TCMALLOC_LIB_DIR`.
+New since 5.8:
+- TODO
 
 In general:
 - To get the source code, either clone from git or use the tarball from https://rawtherapee.com/shared/source/ . Do not use the auto-generated GitHub release tarballs.
