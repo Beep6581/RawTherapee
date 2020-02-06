@@ -33,20 +33,20 @@
     </provides>
     <screenshots>
         <screenshot type="default">
-            <caption>Color correction</caption>
-            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt57_drosera_rotundifolia.png</image>
+            <caption>Main editing</caption>
+            <image width="1920" height="1080">https://rawtherapee.com/images/carousel/103_rt57_henke_art.jpg</image>
         </screenshot>
         <screenshot>
             <caption>File browser</caption>
-            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt57_file_browser.png</image>
+            <image width="1920" height="1080">https://rawtherapee.com/rt57_field_sunset.jpg</image>
         </screenshot>
         <screenshot type="default">
-            <caption>High dynamic range compression</caption>
-            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt57_field_sunset.png</image>
+            <caption>High dynamic range</caption>
+            <image width="1920" height="1080">https://rawtherapee.com/rt57_misty_morning.jpg</image>
         </screenshot>
         <screenshot type="default">
-            <caption>Developing a film negative</caption>
-            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt57_film_negative.png</image>
+            <caption>Colour calibration</caption>
+            <image width="1920" height="1080">https://rawtherapee.com/rt57_cc24_measure.jpg</image>
         </screenshot>
     </screenshots>
     <update_contact>contactus@rawtherapee.com</update_contact>
