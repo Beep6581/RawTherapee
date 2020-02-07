@@ -32,7 +32,7 @@ using namespace procparams;
 
 class ImProcCoordinator;
 
-class Crop : public DetailedCrop, public PipetteBuffer
+class Crop final : public DetailedCrop, public PipetteBuffer
 {
 
 protected:

@@ -21,7 +21,7 @@ struct camera_const_levels {
     int levels[4];
 };
 
-class CameraConst
+class CameraConst final
 {
 private:
     std::string make_model;
@@ -63,7 +63,7 @@ public:
     void update_globalGreenEquilibration(bool other);
 };
 
-class CameraConstantsStore
+class CameraConstantsStore final
 {
 private:
     std::map<std::string, CameraConst *> mCameraConstants;

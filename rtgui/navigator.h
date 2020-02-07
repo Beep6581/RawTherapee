@@ -25,7 +25,7 @@
 
 class PreviewWindow;
 
-class Navigator :
+class Navigator final :
     public Gtk::Frame,
     public PointerMotionListener
 {

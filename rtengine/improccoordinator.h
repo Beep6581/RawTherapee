@@ -54,7 +54,7 @@ class Crop;
   * but using this class' LUT and other precomputed parameters. The main preview area is displaying a non framed Crop object,
   * while detail windows are framed Crop objects.
   */
-class ImProcCoordinator : public StagedImageProcessor
+class ImProcCoordinator final : public StagedImageProcessor
 {
 
     friend class Crop;

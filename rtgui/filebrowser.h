@@ -56,7 +56,7 @@ public:
 /*
  * Class handling actions common to all thumbnails of the file browser
  */
-class FileBrowser  : public ThumbBrowserBase,
+class FileBrowser final : public ThumbBrowserBase,
     public LWButtonListener,
     public ExportPanelListener,
     public ProfileStoreListener,

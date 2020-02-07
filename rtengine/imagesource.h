@@ -142,11 +142,11 @@ public:
 
     virtual void        setProgressListener (ProgressListener* pl) {}
 
-    void        increaseRef () override
+    void        increaseRef () final
     {
         references++;
     }
-    void        decreaseRef () override
+    void        decreaseRef () final
     {
         references--;
 
@@ -174,15 +174,15 @@ public:
         return dirpyrdenoiseExpComp;
     }
     // functions inherited from the InitialImage interface
-    Glib::ustring getFileName () override
+    Glib::ustring getFileName () final
     {
         return fileName;
     }
-    cmsHPROFILE getEmbeddedProfile () override
+    cmsHPROFILE getEmbeddedProfile () final
     {
         return embProfile;
     }
-    const FramesMetaData* getMetaData () override
+    const FramesMetaData* getMetaData () final
     {
         return idata;
     }

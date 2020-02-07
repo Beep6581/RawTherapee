@@ -456,7 +456,7 @@ public:
     virtual bool   isIdentity () const = 0;
 };
 
-class DiagonalCurve : public Curve
+class DiagonalCurve final : public Curve
 {
 
 protected:
@@ -478,7 +478,7 @@ public:
     };
 };
 
-class FlatCurve : public Curve, public rtengine::NonCopyable
+class FlatCurve final : public Curve, public rtengine::NonCopyable
 {
 
 private:

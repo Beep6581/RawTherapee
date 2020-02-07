@@ -664,7 +664,7 @@ public:
 
     /* If any of the required allocation fails, "width" and "height" are set to -1, and all remaining buffer are freed
      * Can be safely used to reallocate an existing image */
-    void allocate (int W, int H) override
+    void allocate (int W, int H) final
     {
 
         if (W == width && H == height) {
@@ -752,7 +752,7 @@ public:
         }
     }
 
-    void rotate (int deg) override
+    void rotate (int deg) final
     {
 
         if (deg == 90) {
@@ -879,7 +879,7 @@ public:
         }
     }
 
-    void hflip () override
+    void hflip () final
     {
         int width2 = width / 2;
 
@@ -911,7 +911,7 @@ public:
 #endif
     }
 
-    void vflip () override
+    void vflip () final
     {
 
         int height2 = height / 2;
@@ -995,7 +995,7 @@ public:
         }
     }
 
-    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const override
+    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const final
     {
         histogram.clear();
         avg_r = avg_g = avg_b = 0.;
@@ -1334,7 +1334,7 @@ public:
      * If any of the required allocation fails, "width" and "height" are set to -1, and all remaining buffer are freed
      * Can be safely used to reallocate an existing image or to free up it's memory with "allocate (0,0);"
      */
-    void allocate (int W, int H) override
+    void allocate (int W, int H) final
     {
 
         if (W == width && H == height) {
@@ -1388,7 +1388,7 @@ public:
         memcpy (dest->data, data, 3 * width * height * sizeof(T));
     }
 
-    void rotate (int deg) override
+    void rotate (int deg) final
     {
 
         if (deg == 90) {
@@ -1522,7 +1522,7 @@ public:
         }
     }
 
-    void hflip () override
+    void hflip () final
     {
         int width2 = width / 2;
 
@@ -1558,7 +1558,7 @@ public:
         }
     }
 
-    void vflip () override
+    void vflip () final
     {
 
         AlignedBuffer<T> lBuffer(3 * width);
@@ -1625,7 +1625,7 @@ public:
         }
     }
 
-    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const override
+    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const final
     {
         histogram.clear();
         avg_r = avg_g = avg_b = 0.;
