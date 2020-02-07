@@ -124,6 +124,19 @@ ditto ${LOCAL_PREFIX}/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/lible
 # Copy libomp to Frameworks
 ditto ${LOCAL_PREFIX}/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
+# dylib install names
+find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib))' | while read -r x; do
+    msg "Modifying dylib install names: ${x}"
+    {
+        # id
+        case ${x} in *.dylib) echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'";; esac
+        # names
+        GetDependencies "${x}" | while read -r y; do
+            echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
+        done
+    } | bash -v
+done
+
 msg "Copying dependencies from ${GTK_PREFIX}:"
 CheckLink "${EXECUTABLE}"
 
@@ -189,6 +202,13 @@ ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "${LOCAL_PREFIX}/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
 ditto "${LOCAL_PREFIX}/local/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
 
+# pixbuf loaders & immodules
+msg "Build GTK3 databases:"
+"${LOCAL_PREFIX}"/local/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+"${LOCAL_PREFIX}"/local/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
+sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i "" -e "s|/opt/local/|/usr/|" "${ETC}/gtk-3.0/gtk.immodules"
+
 # Install names
 find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
     msg "Modifying install names: ${x}"
@@ -208,13 +228,6 @@ for frameworklibs in ${CONTENTS}/Frameworks/* ; do
     echo "   install_name_tool -delete_rpath /opt/local/lib '${frameworklibs}'" | bash -v
     echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${frameworklibs}'" | bash -v
 done
-
-# pixbuf loaders & immodules
-msg "Build GTK3 databases:"
-"${LOCAL_PREFIX}"/local/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
-"${LOCAL_PREFIX}"/local/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
-sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
-sed -i "" -e "s|/opt/local/|/usr/|" "${ETC}/gtk-3.0/gtk.immodules"
 
 # Mime directory
 msg "Copying shared files from ${GTK_PREFIX}:"
@@ -246,6 +259,20 @@ update-mime-database -V  "${CONTENTS}/Resources/share/mime"
 msg "Registering @rpath into the executable:"
 echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${MACOS}/bin/rawtherapee-bin'" | bash -v
 echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${EXECUTABLE}-cli'" | bash -v
+
+# Install names
+find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
+    msg "Modifying install names: ${x}"
+    {
+        # id
+        case ${x} in *.dylib) echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'";; esac
+        # names
+        GetDependencies "${x}" | while read -r y; do
+            echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
+        done
+    } | bash -v
+done
+
 
 # Sign the app
 msg "Codesigning:"
