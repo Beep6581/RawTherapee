@@ -252,6 +252,12 @@ if(NOT DEFINED APPDATADIR)
     endif()
 endif()
 
+if (NOT APPLE)
+    if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}") 
+        set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}") 
+    endif()
+endif()
+
 if(APPLE)
     if("${CODESIGNID}")
         set(CODESIGNID "${CODESIGNID}" CACHE STRING "Codesigning Identity")
