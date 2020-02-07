@@ -27,7 +27,7 @@
 class FlatCurveEditor;
 class MyFlatCurve;
 
-class FlatCurveEditorSubGroup:
+class FlatCurveEditorSubGroup final :
     public CurveEditorSubGroup,
     public rtengine::NonCopyable
 {

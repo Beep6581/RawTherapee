@@ -34,7 +34,7 @@
 
 class ImageAreaPanel;
 
-class ImageArea :
+class ImageArea final :
     public Gtk::DrawingArea,
     public CropWindowListener,
     public EditDataProvider,

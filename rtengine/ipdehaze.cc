@@ -32,6 +32,7 @@
 #include <iostream>
 #include <vector>
 
+#include "array2D.h"
 #include "color.h"
 #include "guidedfilter.h"
 #include "iccstore.h"

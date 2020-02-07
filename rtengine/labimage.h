@@ -23,7 +23,7 @@
 namespace rtengine
 {
 
-class LabImage
+class LabImage final
 {
 private:
     void allocLab(size_t w, size_t h);

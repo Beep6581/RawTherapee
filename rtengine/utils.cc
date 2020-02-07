@@ -22,7 +22,6 @@
 #include "rt_math.h"
 
 #include "utils.h"
-#include "rt_math.h"
 
 using namespace std;
 

@@ -19,6 +19,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "coord2d.h"
 #include "gamutwarning.h"
@@ -28,6 +29,12 @@
 #include "imagesource.h"
 #include <cairomm/cairomm.h>
 
+namespace Glib
+{
+
+class ustring;
+
+}
 template<typename T>
 class LUT;
 
@@ -56,6 +63,7 @@ class LocLHCurve;
 class LocHHCurve;
 class NoiseCurve;
 class OpacityCurve;
+class PipetteBuffer;
 class ToneCurve;
 class WavCurve;
 class WavOpacityCurveBY;

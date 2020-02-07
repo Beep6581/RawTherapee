@@ -22,20 +22,22 @@
 #include <string>
 #include <vector>
 
-#include <glibmm/ustring.h>
-
 #include "rt_math.h"
 #include "flatcurvetypes.h"
 #include "diagonalcurvetypes.h"
-#include "pipettebuffer.h"
-
+#include "noncopyable.h"
 #include "LUT.h"
 #include "sleef.h"
 #define CURVES_MIN_POLY_POINTS  1000
 
-#include "rt_math.h"
-
 #define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 using namespace std;
 
@@ -475,7 +477,7 @@ public:
     virtual bool   isIdentity() const = 0;
 };
 
-class DiagonalCurve : public Curve
+class DiagonalCurve final : public Curve
 {
 
 protected:
@@ -497,7 +499,7 @@ public:
     };
 };
 
-class FlatCurve : public Curve
+class FlatCurve final : public Curve
 {
 
 private:
@@ -1742,7 +1744,7 @@ private:
     float calculateToneCurveContrastValue() const;
 public:
     static void init();
-    void initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const;
+    void initApplyState(PerceptualToneCurveState & state, const Glib::ustring& workingSpace) const;
     void BatchApply(const size_t start, const size_t end, float *r, float *g, float *b, const PerceptualToneCurveState &state) const;
 };
 

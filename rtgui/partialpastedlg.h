@@ -34,7 +34,7 @@ class ProcParams;
 
 struct ParamsEdited;
 
-class PartialPasteDlg : public Gtk::Dialog
+class PartialPasteDlg final : public Gtk::Dialog
 {
 
 public:

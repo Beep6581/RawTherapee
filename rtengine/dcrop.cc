@@ -24,6 +24,7 @@
 #include "dcrop.h"
 #include "image8.h"
 #include "imagefloat.h"
+#include "improccoordinator.h"
 #include "labimage.h"
 #include "mytime.h"
 #include "procparams.h"

@@ -66,7 +66,7 @@ public:
     double centerY;
 };
 
-class MyFlatCurve : public MyCurve
+class MyFlatCurve final : public MyCurve
 {
 private:
     IdleRegister idle_register;

@@ -28,6 +28,8 @@
  * available at https://arxiv.org/abs/1505.00996
  */
 
+#include "array2D.h"
+#include "boxblur.h"
 #include "guidedfilter.h"
 #include "boxblur.h"
 #include "sleef.h"
