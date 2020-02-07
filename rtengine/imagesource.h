@@ -25,7 +25,6 @@
 
 #include "coord2d.h"
 #include "imagedata.h"
-#include "LUT.h"
 #include "rtengine.h"
 
 template<typename T>

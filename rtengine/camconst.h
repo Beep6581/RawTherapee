@@ -3,9 +3,16 @@
  */
 #pragma once
 
-#include <glibmm/ustring.h>
 #include <map>
+#include <string>
 #include <vector>
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {
@@ -62,11 +69,11 @@ private:
     std::map<std::string, CameraConst *> mCameraConstants;
 
     CameraConstantsStore();
-    bool parse_camera_constants_file(Glib::ustring filename);
+    bool parse_camera_constants_file(const Glib::ustring& filename);
 
 public:
     ~CameraConstantsStore();
-    void init(Glib::ustring baseDir, Glib::ustring userSettingsDir);
+    void init(const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir);
     static CameraConstantsStore *getInstance(void);
     CameraConst *get(const char make[], const char model[]);
 };
