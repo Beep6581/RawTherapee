@@ -61,7 +61,7 @@ void setprogressStrUI(double val, const Glib::ustring str, MyProgressBar* pProgr
     }
 }
 
-
+#if !defined(__APPLE__) // monitor profile not supported on apple
 bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, Glib::ustring &defprofname)
 {
 #ifdef WIN32
@@ -91,7 +91,7 @@ bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, G
         ReleaseDC (NULL, hDC);
     }
 
-#elif !defined(__APPLE__)
+#elif
     // taken from geeqie (image.c) and adapted
     // Originally licensed as GPL v2+, with the following copyright:
     // * Copyright (C) 2006 John Ellis
@@ -129,7 +129,7 @@ bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, G
 #endif
     return false;
 }
-
+#endif
 
 }
 
