@@ -9868,6 +9868,7 @@ void CLASS identify()
     filters = 0;
     tiff_samples = colors = 3;
     load_raw = &CLASS canon_sraw_load_raw;
+    FORC4 cblack[c] = 0; // ALB
   } else if (!strcmp(model,"PowerShot 600")) {
     height = 613;
     width  = 854;
