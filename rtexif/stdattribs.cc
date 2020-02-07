@@ -17,8 +17,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _STDATTRIBS_
-#define _STDATTRIBS_
 
 #include <cstdio>
 #include <cstring>
@@ -927,5 +925,3 @@ const TagAttrib ifdAttribs[] = {
     { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 }
-
-#endif
