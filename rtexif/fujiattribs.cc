@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FUJIATTRIBS_
-#define _FUJIATTRIBS_
 
 #include "rtexif.h"
 
@@ -312,5 +310,4 @@ const TagAttrib fujiAttribs[] = {
     { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 }
-#endif
 

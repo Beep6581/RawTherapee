@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CANONATTRIBS_
-#define _CANONATTRIBS_
 
 #include <cstdio>
 #include <cmath>
@@ -2142,5 +2140,4 @@ const TagAttrib canonAttribs[] = {
     { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 }
-#endif
 

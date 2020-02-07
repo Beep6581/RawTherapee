@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PENTAXATTRIBS_
-#define _PENTAXATTRIBS_
 
 #include <cmath>
 #include <cstdio>
@@ -2216,7 +2214,6 @@ const TagAttrib pentaxCameraInfoAttribs[] = {
 };
 
 }
-#endif
 
 
 

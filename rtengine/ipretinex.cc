@@ -59,7 +59,6 @@
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #define CLIPLOC(x) LIM(x,0.f,32767.f)
 #define CLIPC(a) LIM(a, -42000.f, 42000.f)  // limit a and b  to 130 probably enough ?
-#define CLIPMAX(x) LIM(x,0.f,500000.f)
 
 namespace
 {

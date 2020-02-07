@@ -15,8 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _SONYMINOLTAATTRIBS_
-#define _SONYMINOLTAATTRIBS_
 
 #include <cmath>
 
@@ -2499,6 +2497,4 @@ const TagAttrib sonyCameraSettingsAttribs3[] = {
  {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};*/
 
 }
-#endif
-
 

@@ -1,8 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  */
-#ifndef _PANASONICATTRIBS_
-#define _PANASONICATTRIBS_
 
 #include <string.h>
 #include "rtexif.h"
@@ -138,5 +136,3 @@ const TagAttrib panasonicRawAttribs[] = {
 };
 
 }
-#endif
-

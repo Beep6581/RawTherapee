@@ -402,7 +402,7 @@ if(WITH_PROF)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wuninitialized -Wcast-qual -Wno-deprecated-declarations -Wno-unused-result")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wuninitialized -Wcast-qual -Wno-deprecated-declarations -Wno-unused-result -Wunused-macros")
 if(OPTION_OMP)
     find_package(OpenMP)
     if(OPENMP_FOUND)

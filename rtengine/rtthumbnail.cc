@@ -511,8 +511,6 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0 || !filter)
 #define FISGREEN(filter,row,col) \
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
-#define FISBLUE(filter,row,col) \
-    ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
 
 RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
 {
