@@ -124,6 +124,9 @@ ditto ${LOCAL_PREFIX}/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/lible
 # Copy libomp to Frameworks
 ditto ${LOCAL_PREFIX}/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
+msg "Copying dependencies from ${GTK_PREFIX}:"
+CheckLink "${EXECUTABLE}"
+
 # dylib install names
 find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib))' | while read -r x; do
     msg "Modifying dylib install names: ${x}"
@@ -136,9 +139,6 @@ find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib
         done
     } | bash -v
 done
-
-msg "Copying dependencies from ${GTK_PREFIX}:"
-CheckLink "${EXECUTABLE}"
 
 # Copy libjpeg-turbo ("62") into the app bundle
 ditto ${LOCAL_PREFIX}/local/lib/libjpeg.62.dylib "${CONTENTS}/Frameworks/libjpeg.62.dylib"
@@ -273,6 +273,12 @@ find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib
     } | bash -v
 done
 
+# fix @rpath in Frameworks
+msg "Registering @rpath in Frameworks folder:"
+for frameworklibs in ${CONTENTS}/Frameworks/* ; do
+    echo "   install_name_tool -delete_rpath /opt/local/lib '${frameworklibs}'" | bash -v
+    echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${frameworklibs}'" | bash -v
+done
 
 # Sign the app
 msg "Codesigning:"
