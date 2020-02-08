@@ -68,7 +68,6 @@ if [[ -x "$(which git)" && -d "${PROJECT_SOURCE_DIR}/.git" ]]; then
 
     PROJECT_FULL_VERSION="$gitDescribe"
     PROJECT_VERSION="$gitVersionNumericBS"
-
 fi
 
 MINIMUM_SYSTEM_VERSION="$(otool -l "${CMAKE_BUILD_TYPE}"/MacOS/rawtherapee | grep -A2 'LC_VERSION_MIN_MACOSX' | awk '$1 ~ /version/ { printf $2 }')"
@@ -109,6 +108,13 @@ install -d  "${RESOURCES}" \
     "${MACOS}" \
     "${LIB}" \
     "${ETC}"
+
+echo "\n--------\n" >> Resources/AboutThisBuild.txt
+echo "Bundle system: $(sysctl -n machdep.cpu.brand_string)" >> Resources/AboutThisBuild.txt
+echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> Resources/AboutThisBuild.txt
+echo "Bundle date:   $(date -Ru) ZULU" >> Resources/AboutThisBuild.txt
+echo "Bundle epoch:  $(date +%s)" >> Resources/AboutThisBuild.txt
+echo "Bundle UUID:   $(uuidgen)" >> Resources/AboutThisBuild.txt
 
 msg "Copying release files:"
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
