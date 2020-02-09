@@ -75,8 +75,8 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
     constexpr float chmax[3] = {1.f / 8.f, 1.f / 3.f, 1.f / 3.f};
     const int width2 = 2 * width;
     constexpr float eps2 = 0.001f; //prevent divide by zero
-    const float amount = params->sharpenEdge.amount / 100.0f;
-    const float amountby3 = params->sharpenEdge.amount / 300.0f;
+    const float amount = params->sharpenEdge.amount / 100.0;
+    const float amountby3 = params->sharpenEdge.amount / 300.0;
 
     std::unique_ptr<float[]> L(new float[width * height]);
 
@@ -103,12 +103,12 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
             for (int j = 2; j < height - 2; j++) {
                 for (int i = 2, offset = j * width + i; i < width - 2; i++, offset++) {
                     // weight functions
-                    const float wH = eps2 + fabs(L[offset + 1] - L[offset - 1]);
-                    const float wV = eps2 + fabs(L[offset + width] - L[offset - width]);
+                    const float wH = eps2 + std::fabs(L[offset + 1] - L[offset - 1]);
+                    const float wV = eps2 + std::fabs(L[offset + width] - L[offset - width]);
 
-                    float s = 2.f / (2.f + fabs(wH - wV));
-                    float wD1 = eps2 + fabs(L[offset + width + 1] - L[offset - width - 1]) * s;
-                    float wD2 = eps2 + fabs(L[offset + width - 1] - L[offset - width + 1]) * s;
+                    float s = 2.f / (2.f + std::fabs(wH - wV));
+                    float wD1 = eps2 + std::fabs(L[offset + width + 1] - L[offset - width - 1]) * s;
+                    float wD2 = eps2 + std::fabs(L[offset + width - 1] - L[offset - width + 1]) * s;
                     s = wD1;
                     wD1 /= wD2;
                     wD2 /= s;
@@ -122,16 +122,16 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
 
                     // new possible values
                     if (inintervalLoRo(v, L[offset - 1], L[offset + 1])) {
-                        float f1 = fabs(L[offset - 2] - L[offset - 1]);
+                        float f1 = std::fabs(L[offset - 2] - L[offset - 1]);
                         float f2 = L[offset - 1] - v;
                         float f3 = (L[offset - 1] - L[offset - width]) * (L[offset - 1] - L[offset + width]);
-                        float f4 = std::sqrt(fabs((L[offset - 1] - L[offset - width2]) * (L[offset - 1] - L[offset + width2])));
+                        float f4 = std::sqrt(std::fabs((L[offset - 1] - L[offset - width2]) * (L[offset - 1] - L[offset + width2])));
                         const float difL = f1 * SQR(f2 * f3) * f4;
                         if (difL > 0.f) {
-                            f1 = fabs(L[offset + 2] - L[offset + 1]);
+                            f1 = std::fabs(L[offset + 2] - L[offset + 1]);
                             f2 = L[offset + 1] - v;
                             f3 = (L[offset + 1] - L[offset - width]) * (L[offset + 1] - L[offset + width]);
-                            f4 = std::sqrt(fabs((L[offset + 1] - L[offset - width2]) * (L[offset + 1] - L[offset + width2])));
+                            f4 = std::sqrt(std::fabs((L[offset + 1] - L[offset - width2]) * (L[offset + 1] - L[offset + width2])));
                             const float difR = f1 * SQR(f2 * f3) * f4;
                             if (difR > 0.f) {
                                 lumH = (L[offset - 1] * difR + L[offset + 1] * difL) / (difL + difR);
@@ -141,16 +141,16 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
                     }
 
                     if (inintervalLoRo(v, L[offset - width], L[offset + width])) {
-                        float f1 = fabs(L[offset - width2] - L[offset - width]);
+                        float f1 = std::fabs(L[offset - width2] - L[offset - width]);
                         float f2 = L[offset - width] - v;
                         float f3 = (L[offset - width] - L[offset - 1]) * (L[offset - width] - L[offset + 1]);
-                        float f4 = std::sqrt(fabs((L[offset - width] - L[offset - 2]) * (L[offset - width] - L[offset + 2])));
+                        float f4 = std::sqrt(std::fabs((L[offset - width] - L[offset - 2]) * (L[offset - width] - L[offset + 2])));
                         const float difT = f1 * SQR(f2 * f3) * f4;
                         if (difT > 0.f) {
-                            f1 = fabs(L[offset + width2] - L[offset + width]);
+                            f1 = std::fabs(L[offset + width2] - L[offset + width]);
                             f2 = L[offset + width] - v;
                             f3 = (L[offset + width] - L[offset - 1]) * (L[offset + width] - L[offset + 1]);
-                            f4 = std::sqrt(fabs((L[offset + width] - L[offset - 2]) * (L[offset + width] - L[offset + 2])));
+                            f4 = std::sqrt(std::fabs((L[offset + width] - L[offset - 2]) * (L[offset + width] - L[offset + 2])));
                             const float difB = f1 * SQR(f2 * f3) * f4;
                             if (difB > 0.f) {
                                 lumV = (L[offset - width] * difB + L[offset + width] * difT) / (difT + difB);
@@ -160,16 +160,16 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
                     }
 
                     if (inintervalLoRo(v, L[offset - 1 - width], L[offset + 1 + width])) {
-                        float f1 = fabs(L[offset - 2 - width2] - L[offset - 1 - width]);
+                        float f1 = std::fabs(L[offset - 2 - width2] - L[offset - 1 - width]);
                         float f2 = L[offset - 1 - width] - v;
                         float f3 = (L[offset - 1 - width] - L[offset - width + 1]) * (L[offset - 1 - width] - L[offset + width - 1]);
-                        float f4 = std::sqrt(fabs((L[offset - 1 - width] - L[offset - width2 + 2]) * (L[offset - 1 - width] - L[offset + width2 - 2])));
+                        float f4 = std::sqrt(std::fabs((L[offset - 1 - width] - L[offset - width2 + 2]) * (L[offset - 1 - width] - L[offset + width2 - 2])));
                         const float difLT = f1 * SQR(f2 * f3) * f4;
                         if (difLT > 0.f) {
-                            f1 = fabs(L[offset + 2 + width2] - L[offset + 1 + width]);
+                            f1 = std::fabs(L[offset + 2 + width2] - L[offset + 1 + width]);
                             f2 = L[offset + 1 + width] - v;
                             f3 = (L[offset + 1 + width] - L[offset - width + 1]) * (L[offset + 1 + width] - L[offset + width - 1]);
-                            f4 = std::sqrt(fabs((L[offset + 1 + width] - L[offset - width2 + 2]) * (L[offset + 1 + width] - L[offset + width2 - 2])));
+                            f4 = std::sqrt(std::fabs((L[offset + 1 + width] - L[offset - width2 + 2]) * (L[offset + 1 + width] - L[offset + width2 - 2])));
                             const float difRB = f1 * SQR(f2 * f3) * f4;
                             if (difRB > 0.f) {
                                 lumD1 = (L[offset - 1 - width] * difRB + L[offset + 1 + width] * difLT) / (difLT + difRB);
@@ -179,16 +179,16 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
                     }
 
                     if (inintervalLoRo(v, L[offset + 1 - width], L[offset - 1 + width])) {
-                        float f1 = fabs(L[offset - 2 + width2] - L[offset - 1 + width]);
+                        float f1 = std::fabs(L[offset - 2 + width2] - L[offset - 1 + width]);
                         float f2 = L[offset - 1 + width] - v;
                         float f3 = (L[offset - 1 + width] - L[offset - width - 1]) * (L[offset - 1 + width] - L[offset + width + 1]);
-                        float f4 = std::sqrt(fabs((L[offset - 1 + width] - L[offset - width2 - 2]) * (L[offset - 1 + width] - L[offset + width2 + 2])));
+                        float f4 = std::sqrt(std::fabs((L[offset - 1 + width] - L[offset - width2 - 2]) * (L[offset - 1 + width] - L[offset + width2 + 2])));
                         const float difLB = f1 * SQR(f2 * f3) * f4;
                         if (difLB > 0.f) {
-                            f1 = fabs(L[offset + 2 - width2] - L[offset + 1 - width]);
+                            f1 = std::fabs(L[offset + 2 - width2] - L[offset + 1 - width]);
                             f2 = L[offset + 1 - width] - v;
                             f3 = (L[offset + 1 - width] - L[offset + width + 1]) * (L[offset + 1 - width] - L[offset - width - 1]);
-                            f4 = std::sqrt(fabs((L[offset + 1 - width] - L[offset + width2 + 2]) * (L[offset + 1 - width] - L[offset - width2 - 2])));
+                            f4 = std::sqrt(std::fabs((L[offset + 1 - width] - L[offset + width2 + 2]) * (L[offset + 1 - width] - L[offset - width2 - 2])));
                             const float difRT = f1 * SQR(f2 * f3) * f4;
                             if (difRT > 0.f) {
                                 lumD2 = (L[offset + 1 - width] * difLB + L[offset - 1 + width] * difRT) / (difLB + difRT);
@@ -203,7 +203,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
 
                     if (c == 0) {
                         if (v < 92.f) {
-                            channel[j][i] = fabs(327.68f * intp(weight, (lumH * wH + lumV * wV + lumD1 * wD1 + lumD2 * wD2) / (wH + wV + wD1 + wD2), v)); // fabs because lab->L always > 0
+                            channel[j][i] = std::fabs(327.68f * intp(weight, (lumH * wH + lumV * wV + lumD1 * wD1 + lumD2 * wD2) / (wH + wV + wD1 + wD2), v)); // fabs because lab->L always > 0
                         }
                     } else {
                         channel[j][i] = 327.68f * intp(weight, (lumH * wH + lumV * wV + lumD1 * wD1 + lumD2 * wD2) / (wH + wV + wD1 + wD2), v);
