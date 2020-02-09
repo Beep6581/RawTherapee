@@ -50,10 +50,6 @@
 #endif
 
 #include "opthelper.h"
-#define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
-
-#undef CLIPD
-#define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
 namespace
 {
@@ -427,10 +423,8 @@ namespace rtengine
 {
 
 #undef ABS
-#undef DIST
 
 #define ABS(a) ((a)<0?-(a):(a))
-#define DIST(a,b) (ABS(a-b))
 
 RawImageSource::RawImageSource ()
     : ImageSource()
@@ -2917,7 +2911,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
     float X;
     float Y;
     float Z;
-#define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
+
     {
         // convert from Lab to XYZ
         float x, y, z, fx, fy, fz;
@@ -2952,9 +2946,6 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
     r = prophoto_xyz[0][0] * X + prophoto_xyz[0][1] * Y + prophoto_xyz[0][2] * Z;
     g = prophoto_xyz[1][0] * X + prophoto_xyz[1][1] * Y + prophoto_xyz[1][2] * Z;
     b = prophoto_xyz[2][0] * X + prophoto_xyz[2][1] * Y + prophoto_xyz[2][2] * Z;
-    // r = CLIP01(r);
-    // g = CLIP01(g);
-    // b = CLIP01(b);
 }
 
 // Converts raw image including ICC input profile to working space - floating point version

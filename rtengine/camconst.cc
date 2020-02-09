@@ -638,7 +638,7 @@ CameraConst::update_globalGreenEquilibration(bool other)
 }
 
 bool
-CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
+CameraConstantsStore::parse_camera_constants_file(const Glib::ustring& filename_)
 {
     // read the file into a single long string
     const char *filename = filename_.c_str();
@@ -809,7 +809,7 @@ CameraConstantsStore::~CameraConstantsStore()
     }
 }
 
-void CameraConstantsStore::init(Glib::ustring baseDir, Glib::ustring userSettingsDir)
+void CameraConstantsStore::init(const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir)
 {
     parse_camera_constants_file(Glib::build_filename(baseDir, "camconst.json"));
 

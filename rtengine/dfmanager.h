@@ -31,7 +31,7 @@ namespace rtengine
 {
 
 class RawImage;
-class dfInfo
+class dfInfo final
 {
 public:
 
@@ -74,7 +74,7 @@ protected:
     void updateRawImage();
 };
 
-class DFManager
+class DFManager final
 {
 public:
     void init(const Glib::ustring &pathname);

@@ -1,8 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  */
-#ifndef _KODAKATTRIBS_
-#define _KODAKATTRIBS_
 
 #include <string.h>
 #include "rtexif.h"
@@ -161,5 +159,4 @@ const TagAttrib kodakIfdAttribs[] = {
 };
 
 }
-#endif
 

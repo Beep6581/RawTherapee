@@ -31,15 +31,16 @@
 #include "cieimage.h"
 #include "clutstore.h"
 #include "color.h"
+#include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"
 #include "EdgePreservingDecomposition.h"
 #include "iccmatrices.h"
 #include "iccstore.h"
 #include "imagesource.h"
-#include "improccoordinator.h"
 #include "improcfun.h"
 #include "labimage.h"
+#include "pipettebuffer.h"
 #include "procparams.h"
 #include "rt_math.h"
 #include "rtengine.h"
@@ -53,9 +54,6 @@
 #ifdef _DEBUG
 #include "mytime.h"
 #endif
-
-#undef CLIPD
-#define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
 namespace {
 

@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <glib.h>
-#include <glib/gstdio.h>
 #include "curves.h"
 #include <cmath>
 #include <vector>

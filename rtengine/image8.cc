@@ -151,8 +151,6 @@ void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, P
     gm /= area;
     bm /= area;
 
-#define GCLIP( x ) Color::gamma_srgb(CLIP(x))
-
 #ifdef _OPENMP
     #pragma omp parallel
     {

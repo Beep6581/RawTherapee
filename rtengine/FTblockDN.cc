@@ -56,7 +56,6 @@
 
 #define TS 64       // Tile size
 #define offset 25   // shift between tiles
-#define fTS ((TS/2+1))  // second dimension of Fourier tiles
 #define blkrad 1    // radius of block averaging
 
 #define epsilon 0.001f/(TS*TS) //tolerance

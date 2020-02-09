@@ -12,6 +12,11 @@ include_directories(${EXTRA_INCDIR}
     ${LENSFUN_INCLUDE_DIRS}
     ${RSVG_INCLUDE_DIRS}
 )
+if(NOT WITH_SYSTEM_KLT)
+    include_directories("${CMAKE_SOURCE_DIR}/rtengine/klt")
+else()
+    include_directories(${KLT_INCLUDE_DIRS})
+endif()
 
 link_directories("${PROJECT_SOURCE_DIR}/rtexif"
     ${EXPAT_LIBRARY_DIRS}
@@ -94,6 +99,7 @@ set(RTENGINESOURCEFILES
     ipretinex.cc
     ipshadowshighlights.cc
     ipsharpen.cc
+    ipsharpenedges.cc
     ipsoftlight.cc
     iptransform.cc
     ipvibrance.cc
@@ -186,6 +192,7 @@ target_link_libraries(rtengine rtexif
     ${ZLIB_LIBRARIES}
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
+    ${KLT_LIBRARIES}
 )
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

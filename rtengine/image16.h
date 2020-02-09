@@ -29,7 +29,7 @@ namespace rtengine
 class Image8;
 class Imagefloat;
 
-class Image16 : public IImage16, public ImageIO
+class Image16 final : public IImage16, public ImageIO
 {
 
 public:

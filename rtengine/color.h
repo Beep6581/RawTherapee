@@ -30,6 +30,7 @@ namespace Glib
 {
 class ustring;
 }
+
 namespace rtengine
 {
 
