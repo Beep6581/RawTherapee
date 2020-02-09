@@ -35,7 +35,7 @@ function CheckLink {
 }
 
 function ModifyInstallNames {
-    find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib))' | while read -r x; do
+    find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
         msg "Modifying install names: ${x}"
         {
             # id
