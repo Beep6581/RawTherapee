@@ -34,6 +34,22 @@ function CheckLink {
     done
 }
 
+function ModifyInstallNames {
+    find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib))' | while read -r x; do
+        msg "Modifying install names: ${x}"
+        {
+            # id
+            if [ ${x:(-6)} == ".dylib" ]; then
+                echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'"
+            fi
+            GetDependencies "${x}" | while read -r y
+                do
+                    echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
+                done
+        } | bash -v
+    done
+}
+
 # Source check
 if [[ ! -d "${CMAKE_BUILD_TYPE}" ]]; then
     msgError "${PWD}/${CMAKE_BUILD_TYPE} folder does not exist. Please execute 'make install' first."
@@ -134,17 +150,7 @@ msg "Copying dependencies from ${GTK_PREFIX}:"
 CheckLink "${EXECUTABLE}"
 
 # dylib install names
-find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib))' | while read -r x; do
-    msg "Modifying dylib install names: ${x}"
-    {
-        # id
-        case ${x} in *.dylib) echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'";; esac
-        # names
-        GetDependencies "${x}" | while read -r y; do
-            echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
-        done
-    } | bash -v
-done
+ModifyInstallNames
 
 # Copy libjpeg-turbo ("62") into the app bundle
 ditto ${LOCAL_PREFIX}/local/lib/libjpeg.62.dylib "${CONTENTS}/Frameworks/libjpeg.62.dylib"
@@ -216,17 +222,7 @@ sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/C
 sed -i "" -e "s|/opt/local/|/usr/|" "${ETC}/gtk-3.0/gtk.immodules"
 
 # Install names
-find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
-    msg "Modifying install names: ${x}"
-    {
-        # id
-        case ${x} in *.dylib) echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'";; esac
-        # names
-        GetDependencies "${x}" | while read -r y; do
-            echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
-        done
-    } | bash -v
-done
+ModifyInstallNames
 
 # fix @rpath in Frameworks
 msg "Registering @rpath in Frameworks folder:"
@@ -266,18 +262,7 @@ msg "Registering @rpath into the executable:"
 echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${MACOS}/bin/rawtherapee-bin'" | bash -v
 echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${EXECUTABLE}-cli'" | bash -v
 
-# Install names
-find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
-    msg "Modifying install names: ${x}"
-    {
-        # id
-        case ${x} in *.dylib) echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'";; esac
-        # names
-        GetDependencies "${x}" | while read -r y; do
-            echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
-        done
-    } | bash -v
-done
+ModifyInstallNames
 
 # fix @rpath in Frameworks
 msg "Registering @rpath in Frameworks folder:"
