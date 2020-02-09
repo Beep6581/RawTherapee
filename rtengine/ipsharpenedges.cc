@@ -23,13 +23,9 @@
 #include "procparams.h"
 #include "rt_math.h"
 
-#define BENCHMARK
-#include "StopWatch.h"
-
-using namespace std;
 namespace {
 #ifdef __SSE2__
-bool inintervall(float a, float b, float c)
+bool inintervalLoRo(float a, float b, float c)
 {
     return a < std::max(b, c) && a > std::min(b, c);
 }
@@ -43,7 +39,7 @@ float selectweight(float a, float b, float low, float high)
 }
 
 #else
-bool inintervall(float a, float b, float c)
+bool inintervalLoRo(float a, float b, float c)
 {
     return (a < b && a > c) || (a < c && a > b);
 }
@@ -75,8 +71,6 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
         return;
     }
     
-BENCHFUN
-
     const int width = lab->W, height = lab->H;
     constexpr float chmax[3] = {1.f / 8.f, 1.f / 3.f, 1.f / 3.f};
     const int width2 = 2 * width;
@@ -127,7 +121,7 @@ BENCHFUN
                     const float contrast = std::min(std::sqrt(SQR(L[offset + 1] - L[offset - 1]) + SQR(L[offset + width] - L[offset - width])) * chmax[c], 1.f);
 
                     // new possible values
-                    if (inintervall(v, L[offset - 1], L[offset + 1])) {
+                    if (inintervalLoRo(v, L[offset - 1], L[offset + 1])) {
                         float f1 = fabs(L[offset - 2] - L[offset - 1]);
                         float f2 = L[offset - 1] - v;
                         float f3 = (L[offset - 1] - L[offset - width]) * (L[offset - 1] - L[offset + width]);
@@ -146,7 +140,7 @@ BENCHFUN
                         }
                     }
 
-                    if (inintervall(v, L[offset - width], L[offset + width])) {
+                    if (inintervalLoRo(v, L[offset - width], L[offset + width])) {
                         float f1 = fabs(L[offset - width2] - L[offset - width]);
                         float f2 = L[offset - width] - v;
                         float f3 = (L[offset - width] - L[offset - 1]) * (L[offset - width] - L[offset + 1]);
@@ -165,7 +159,7 @@ BENCHFUN
                         }
                     }
 
-                    if (inintervall(v, L[offset - 1 - width], L[offset + 1 + width])) {
+                    if (inintervalLoRo(v, L[offset - 1 - width], L[offset + 1 + width])) {
                         float f1 = fabs(L[offset - 2 - width2] - L[offset - 1 - width]);
                         float f2 = L[offset - 1 - width] - v;
                         float f3 = (L[offset - 1 - width] - L[offset - width + 1]) * (L[offset - 1 - width] - L[offset + width - 1]);
@@ -184,7 +178,7 @@ BENCHFUN
                         }
                     }
 
-                    if (inintervall(v, L[offset + 1 - width], L[offset - 1 + width])) {
+                    if (inintervalLoRo(v, L[offset + 1 - width], L[offset - 1 + width])) {
                         float f1 = fabs(L[offset - 2 + width2] - L[offset - 1 + width]);
                         float f2 = L[offset - 1 + width] - v;
                         float f3 = (L[offset - 1 + width] - L[offset - width - 1]) * (L[offset - 1 + width] - L[offset + width + 1]);
