@@ -5142,7 +5142,7 @@ void ImProcFunctions::EPDToneMapCIE (CieImage *ncie, float a_w, float c_, int Wi
     float *Qpr = ncie->Q_p[0];
 
     if (settings->verbose) {
-        printf ("minQ=%f maxQ=%f  Qpro=%f\n", minQ, maxQ, Qpro);
+        printf ("minQ=%f maxQ=%f  Qpro=%f\n", static_cast<double>(minQ), static_cast<double>(maxQ), static_cast<double>(Qpro));
     }
 
     if (maxQ > Qpro) {
@@ -5563,7 +5563,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
     contr = (int) 50.0f * (1.1f - ospread);
     contr = max (0, min (100, contr));
     //take gamma into account
-    double whiteclipg = (int) (CurveFactory::gamma2 (whiteclip * corr / 65536.0) * 65536.0);
+    double whiteclipg = (int) (CurveFactory::gamma2(whiteclip * static_cast<double>(corr) / 65536.0) * 65536.0);
 
     float gavg = 0.;
 
@@ -5585,7 +5585,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
         }
     }
 
-    whiteclipg = CurveFactory::igamma2 ((float) (whiteclipg / 65535.0)) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
+    whiteclipg = CurveFactory::igamma2(whiteclipg / 65535.0) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
 
     //correction with gamma
     black = (int) ((65535 * black) / whiteclipg);
@@ -5820,8 +5820,8 @@ void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst, const Glib:
 */
 void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {
-    const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
-    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
+    const double factor = ColorToningParams::LABGRID_CORR_MAX * 3.0;
+    const double scaling = ColorToningParams::LABGRID_CORR_SCALE;
     float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
     float a_base = params->colorToning.labgridALow / scaling;
     float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;
