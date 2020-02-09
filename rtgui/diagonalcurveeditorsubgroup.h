@@ -27,7 +27,7 @@
 class DiagonalCurveEditor;
 class MyDiagonalCurve;
 
-class DiagonalCurveEditorSubGroup :
+class DiagonalCurveEditorSubGroup final :
     public CurveEditorSubGroup,
     public SHCListener,
     public AdjusterListener,

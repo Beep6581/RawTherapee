@@ -18,6 +18,7 @@
  */
 
 // Code adapted from ART
+// https://bitbucket.org/agriggio/art/
 /*
  *
  *  This file is part of ART.
@@ -37,11 +38,16 @@
 */
 
 // Code adapted from libraw
-/* -*- C++ -*-
- * Copyright 2019 LibRaw LLC (info@libraw.org)
+// https://github.com/LibRaw/LibRaw/
+/*
+ * File: libraw_crxdec.cpp
+ * Copyright (C) 2018-2019 Alexey Danilchenko
+ * Copyright (C) 2019 Alex Tutubalin, LibRaw LLC
  *
- LibRaw is free software; you can redistribute it and/or modify
- it under the terms of the one of two licenses as you choose:
+   Canon CR3 file decoder
+
+LibRaw is free software; you can redistribute it and/or modify
+it under the terms of the one of two licenses as you choose:
 
 1. GNU LESSER GENERAL PUBLIC LICENSE version 2.1
    (See file LICENSE.LGPL provided in LibRaw distribution archive for details).
@@ -49,7 +55,7 @@
 2. COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
    (See file LICENSE.CDDL provided in LibRaw distribution archive for details).
 
-*/
+ */
 
 #include <algorithm>
 #include <cstdint>

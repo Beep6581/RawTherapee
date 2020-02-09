@@ -29,7 +29,7 @@ public:
     virtual void shcChanged() = 0;
 };
 
-class SHCSelector : public Gtk::DrawingArea, BackBuffer
+class SHCSelector final : public Gtk::DrawingArea, BackBuffer
 {
 
 protected:

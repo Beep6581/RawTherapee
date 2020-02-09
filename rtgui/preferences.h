@@ -29,7 +29,7 @@
 class RTWindow;
 class Splash;
 
-class Preferences :
+class Preferences final :
     public Gtk::Dialog,
     public ProfileStoreListener
 {

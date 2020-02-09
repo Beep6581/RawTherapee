@@ -21,8 +21,7 @@
 #include <memory>
 #include <cmath>
 #include <cstring>
-#include <glib.h>
-#include <glib/gstdio.h>
+#include <glibmm/ustring.h>
 
 #include "rt_math.h"
 
@@ -2186,7 +2185,7 @@ void PerceptualToneCurve::init()
     }
 }
 
-void PerceptualToneCurve::initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const
+void PerceptualToneCurve::initApplyState(PerceptualToneCurveState & state, const Glib::ustring &workingSpace) const
 {
 
     // Get the curve's contrast value, and convert to a chroma scaling
