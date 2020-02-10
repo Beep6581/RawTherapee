@@ -15,5 +15,5 @@ OpenMP support: ${OPTION_OMP}
 MMAP support: ${WITH_MYFILE_MMAP}
 Build OS: ${BUILDINFO_OS}
 Build date: ${BUILDINFO_DATE} ZULU
-Build Epoch: ${BUILDINFO_EPOCH}
+Build epoch: ${BUILDINFO_EPOCH}
 Build UUID: ${BUILDINFO_UUID}
