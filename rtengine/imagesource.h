@@ -85,7 +85,7 @@ protected:
 
 public:
     ImageSource () : references (1), redAWBMul(-1.), greenAWBMul(-1.), blueAWBMul(-1.),
-        embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
+        embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(RT_INFINITY) {}
 
     ~ImageSource            () override {}
     virtual int         load        (const Glib::ustring &fname) = 0;

@@ -68,7 +68,7 @@ double RTScalable::getDPI ()
 
 double RTScalable::getTweakedDPI ()
 {
-    return dpi * fontScale;
+    return dpi * static_cast<double>(fontScale);
 }
 
 int RTScalable::getScale ()

@@ -46,7 +46,7 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
 
     array2D<float> mask(width, height);
     array2D<float> L(width, height);
-    const float radius = float(params->sh.radius) * 10 / scale;
+    const float radius = params->sh.radius * 10 / scale;
     LUTf f(lab_mode ? 32768 : 65536);
 
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);

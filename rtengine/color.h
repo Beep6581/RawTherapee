@@ -23,17 +23,12 @@
 
 #include "rt_math.h"
 #include "LUT.h"
-#include "iccmatrices.h"
 #include "lcms2.h"
 #include "sleef.h"
 
-#define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
-
 namespace Glib
 {
-
 class ustring;
-
 }
 
 namespace rtengine
@@ -138,7 +133,7 @@ public:
     constexpr static double sRGBGammaCurve = 2.4;
 
     constexpr static double eps = 216.0 / 24389.0; //0.008856
-    constexpr static double eps_max = MAXVALF * eps; //580.40756;
+    constexpr static double eps_max = MAXVALD * eps; //580.40756;
     constexpr static double kappa = 24389.0 / 27.0; //903.29630;
     constexpr static double kappaInv = 27.0 / 24389.0;
     constexpr static double epsilonExpInv3 = 6.0 / 29.0;
@@ -150,9 +145,10 @@ public:
 
     constexpr static float D50x = 0.9642f; //0.96422;
     constexpr static float D50z = 0.8249f; //0.82521;
-    constexpr static double u0 = 4.0 * D50x / (D50x + 15 + 3 * D50z);
-    constexpr static double v0 = 9.0 / (D50x + 15 + 3 * D50z);
+    constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
+    constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
     constexpr static double epskap = 8.0;
+    constexpr static float epskapf = epskap;
 
     constexpr static float c1By116 = 1.0 / 116.0;
     constexpr static float c16By116 = 16.0 / 116.0;
@@ -212,7 +208,7 @@ public:
 
     static float rgbLuminance(float r, float g, float b, const double workingspace[3][3])
     {
-        return r * workingspace[1][0] + g * workingspace[1][1] + b * workingspace[1][2];
+        return static_cast<double>(r) * workingspace[1][0] + static_cast<double>(g) * workingspace[1][1] + static_cast<double>(b) * workingspace[1][2];
     }
 
 #ifdef __SSE2__
@@ -978,10 +974,10 @@ public:
     template <typename T, typename U>
     static inline T interpolatePolarHue_PI (T h1, T h2, U balance)
     {
-        float d = h2 - h1;
-        float f;
+        T d = h2 - h1;
+        T f;
         f = T(balance);
-        double h;
+        T h;
 
         if (h1 > h2) {
             std::swap(h1, h2);
@@ -992,7 +988,7 @@ public:
         if (d < T(0) || d < T(0.5) || d > T(1.)) { //there was an inversion here !! d > T(rtengine::RT_PI)
             h1 += T(1.);
             h = h1 + f * (h2 - h1);
-            h = std::fmod(h, 1.);
+            h = std::fmod(h, T(1.));
         } else {
             h = h1 + f * d;
         }

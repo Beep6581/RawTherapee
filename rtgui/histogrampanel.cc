@@ -518,26 +518,26 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                     // Luma
                     cc->set_source_rgb(1.0, 1.0, 1.0);
                     if (options.histogramDrawMode < 2) {
-                        cc->move_to(Lab_L * (winw - 3.*s) / 100.0 + 0.5*s, 0);
-                        cc->line_to(Lab_L * (winw - 3.*s) / 100.0 + 0.5*s, winh - 0);
+                        cc->move_to(static_cast<double>(Lab_L) * (winw - 3. * s) / 100.0 + 0.5 * s, 0);
+                        cc->line_to(static_cast<double>(Lab_L) * (winw - 3. * s) / 100.0 + 0.5 * s, winh - 0);
                     } else {
-                        cc->move_to(HistogramScaling::log (100, Lab_L) * (winw - 1.) / 100.0 + 0.5*s, 0);
-                        cc->line_to(HistogramScaling::log (100, Lab_L) * (winw - 1.) / 100.0 + 0.5*s, winh - 0);
+                        cc->move_to(HistogramScaling::log(100, Lab_L) * (winw - 1.) / 100.0 + 0.5 * s, 0);
+                        cc->line_to(HistogramScaling::log(100, Lab_L) * (winw - 1.) / 100.0 + 0.5 * s, winh - 0);
                     }
                     cc->stroke();
                 }
 
                 if (needChroma) {
                     // Chroma
-                    float chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
+                    double chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
                     //  float chromaval = sqrt(Lab_a*Lab_a + Lab_b*Lab_b);
                     cc->set_source_rgb(0.9, 0.9, 0.0);
                     if (options.histogramDrawMode < 2) {
-                        cc->move_to(chromaval * (winw - 1.) / 100.0 + 0.5*s, 0);
-                        cc->line_to(chromaval * (winw - 1.) / 100.0 + 0.5*s, winh - 0);
+                        cc->move_to(chromaval * (winw - 1.) / 100.0 + 0.5 * s, 0);
+                        cc->line_to(chromaval * (winw - 1.) / 100.0 + 0.5 * s, winh - 0);
                     } else {
-                        cc->move_to(HistogramScaling::log (100, chromaval) * (winw - 1.) / 100.0 + 0.5*s, 0);
-                        cc->line_to(HistogramScaling::log (100, chromaval) * (winw - 1.) / 100.0 + 0.5*s, winh - 0);
+                        cc->move_to(HistogramScaling::log(100, chromaval) * (winw - 1.) / 100.0 + 0.5 * s, 0);
+                        cc->line_to(HistogramScaling::log(100, chromaval) * (winw - 1.) / 100.0 + 0.5 * s, winh - 0);
                     }
                     cc->stroke();
                 }
@@ -989,7 +989,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 
     cr->set_line_width(s);
     cr->move_to (0, vsize - 1);
-    scale = scale <= 0.f ? 0.001f : scale; // avoid division by zero and negative values
+    scale = scale <= 0.0 ? 0.001 : scale; // avoid division by zero and negative values
 
     for (int i = 0; i < 256; i++) {
         double val = data[i] * (double)vsize / scale;

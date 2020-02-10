@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 
 #include "camconst.h"
@@ -25,6 +26,7 @@
 #include "dcp.h"
 #include "dfmanager.h"
 #include "ffmanager.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
 #include "imagefloat.h"
 #include "improcfun.h"
@@ -97,7 +99,7 @@ void transLineFuji (const float* const red, const float* const green, const floa
 {
 
     // Fuji SuperCCD rotation + coarse rotation
-    int start = ABS(fw - i);
+    int start = std::abs(fw - i);
     int w = fw * 2 + 1;
     int h = (imheight - fw) * 2 + 1;
     int end = min(h + fw - i, w - fw + i);
@@ -421,10 +423,6 @@ void transLineD1x (const float* const red, const float* const green, const float
 namespace rtengine
 {
 
-#undef ABS
-
-#define ABS(a) ((a)<0?-(a):(a))
-
 RawImageSource::RawImageSource ()
     : ImageSource()
     , W(0), H(0)
@@ -614,7 +612,7 @@ float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const flo
 {
     if (isMono || colors == 1) {
         for (int c = 0; c < 4; c++) {
-            scale_mul[c] = 65535.0 / (c_white[c] - c_black[c]);
+            scale_mul[c] = 65535.f / (c_white[c] - c_black[c]);
         }
     } else {
         float pre_mul[4];
@@ -630,7 +628,7 @@ float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const flo
         float maxpremul = max(pre_mul[0], pre_mul[1], pre_mul[2], pre_mul[3]);
 
         for (int c = 0; c < 4; c++) {
-            scale_mul[c] = (pre_mul[c] / maxpremul) * 65535.0 / (c_white[c] - c_black[c]);
+            scale_mul[c] = (pre_mul[c] / maxpremul) * 65535.f / (c_white[c] - c_black[c]);
         }
     }
 
@@ -669,7 +667,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
                       || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
 
         for (int i = 0; i < 4; ++i) {
-            c_white[i] = (ri->get_white(i) - cblacksom[i]) / raw.expos + cblacksom[i];
+            c_white[i] = (ri->get_white(i) - cblacksom[i]) / static_cast<float>(raw.expos) + cblacksom[i];
         }
 
         float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
@@ -678,21 +676,21 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         bm = new_scale_mul[2] / scale_mul[2] * gain;
         //fprintf(stderr, "camera gain: %f, current wb gain: %f, diff in stops %f\n", camInitialGain, gain, log2(camInitialGain) - log2(gain));
     } else {
-        // old scaling: used a fixed reference gain based on camera (as-shot) white balance
-
-        // how much we need to scale each channel to get our new white balance
-        rm = refwb_red / rm;
-        gm = refwb_green / gm;
-        bm = refwb_blue / bm;
-        // normalize so larger multiplier becomes 1.0
-        float minval = min(rm, gm, bm);
-        rm /= minval;
-        gm /= minval;
-        bm /= minval;
-        // multiply with reference gain, ie as-shot WB
-        rm *= camInitialGain;
-        gm *= camInitialGain;
-        bm *= camInitialGain;
+//        // old scaling: used a fixed reference gain based on camera (as-shot) white balance
+//
+//        // how much we need to scale each channel to get our new white balance
+//        rm = refwb_red / rm;
+//        gm = refwb_green / gm;
+//        bm = refwb_blue / bm;
+//        // normalize so larger multiplier becomes 1.0
+//        float minval = min(rm, gm, bm);
+//        rm /= minval;
+//        gm /= minval;
+//        bm /= minval;
+//        // multiply with reference gain, ie as-shot WB
+//        rm *= camInitialGain;
+//        gm *= camInitialGain;
+//        bm *= camInitialGain;
     }
 
     defGain = 0.0;
@@ -871,13 +869,13 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         for (int i = 1; i < image->getHeight() - 1; i++) {
             for (int j = 2 - (a + i + 1) % 2; j < image->getWidth() - 1; j += 2) {
                 // edge-adaptive interpolation
-                double dh = (ABS(image->r(i, j + 1) - image->r(i, j - 1)) + ABS(image->g(i, j + 1) - image->g(i, j - 1)) + ABS(image->b(i, j + 1) - image->b(i, j - 1))) / 1.0;
-                double dv = (ABS(image->r(i + 1, j) - image->r(i - 1, j)) + ABS(image->g(i + 1, j) - image->g(i - 1, j)) + ABS(image->b(i + 1, j) - image->b(i - 1, j))) / 1.0;
-                double eh = 1.0 / (1.0 + dh);
-                double ev = 1.0 / (1.0 + dv);
-                image->r(i, j) = (eh * (image->r(i, j + 1) + image->r(i, j - 1)) + ev * (image->r(i + 1, j) + image->r(i - 1, j))) / (2.0 * (eh + ev));
-                image->g(i, j) = (eh * (image->g(i, j + 1) + image->g(i, j - 1)) + ev * (image->g(i + 1, j) + image->g(i - 1, j))) / (2.0 * (eh + ev));
-                image->b(i, j) = (eh * (image->b(i, j + 1) + image->b(i, j - 1)) + ev * (image->b(i + 1, j) + image->b(i - 1, j))) / (2.0 * (eh + ev));
+                float dh = (std::fabs(image->r(i, j + 1) - image->r(i, j - 1)) + std::fabs(image->g(i, j + 1) - image->g(i, j - 1)) + std::fabs(image->b(i, j + 1) - image->b(i, j - 1)));
+                float dv = (std::fabs(image->r(i + 1, j) - image->r(i - 1, j)) + std::fabs(image->g(i + 1, j) - image->g(i - 1, j)) + std::fabs(image->b(i + 1, j) - image->b(i - 1, j)));
+                float eh = 1.f / (1.f + dh);
+                float ev = 1.f / (1.f + dv);
+                image->r(i, j) = (eh * (image->r(i, j + 1) + image->r(i, j - 1)) + ev * (image->r(i + 1, j) + image->r(i - 1, j))) / (2.f * (eh + ev));
+                image->g(i, j) = (eh * (image->g(i, j + 1) + image->g(i, j - 1)) + ev * (image->g(i + 1, j) + image->g(i - 1, j))) / (2.f * (eh + ev));
+                image->b(i, j) = (eh * (image->b(i, j + 1) + image->b(i, j - 1)) + ev * (image->b(i + 1, j) + image->b(i - 1, j))) / (2.f * (eh + ev));
             }
 
             // first pixel
@@ -1541,7 +1539,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
     }
 
-    if(prepareDenoise && dirpyrdenoiseExpComp == INFINITY) {
+    if(prepareDenoise && dirpyrdenoiseExpComp == RT_INFINITY) {
         LUTu aehist;
         int aehistcompr;
         double clip = 0;
@@ -3872,7 +3870,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 {
     if (fuji) {
         int fw = ri->get_FujiWidth();
-        start = ABS(fw - x) + border;
+        start = std::abs(fw - x) + border;
         end = min(H + W - fw - x, fw + x) - border;
     } else {
         start = border;
@@ -3913,7 +3911,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
     if (fuji) {
         for (int i = 32; i < H - 32; i++) {
             int fw = ri->get_FujiWidth();
-            int start = ABS(fw - i) + 32;
+            int start = std::abs(fw - i) + 32;
             int end = min(H + W - fw - i, fw + i) - 32;
 
             for (int j = start; j < end; j++) {

@@ -124,7 +124,7 @@ void CropWindow::initZoomSteps()
     zoomSteps.push_back(ZoomStep("  8%", 1.0/12.0, 120, true));
     char lbl[64];
     for (int s = 100; s >= 11; --s) {
-        float z = 10./float(s);
+        float z = 10.f / s;
         sprintf(lbl, "% 2d%%", int(z * 100));
         bool is_major = (s == s/10 * 10);
         zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));

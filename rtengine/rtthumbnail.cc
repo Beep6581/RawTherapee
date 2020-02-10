@@ -31,6 +31,7 @@
 #include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
 #include "image8.h"
 #include "improcfun.h"

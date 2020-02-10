@@ -103,7 +103,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * lab, double radius, int thresh)
                     // no precalculated values without SSE => calculate
                     const float HH = xatan2f(lab->b[i][j], lab->a[i][j]);
 #endif
-                    float chparam = chCurve->getVal((Color::huelab_to_huehsv2(HH))) - 0.5f; // get C=f(H)
+                    float chparam = chCurve->getVal((Color::huelab_to_huehsv2(HH))) - 0.5; // get C=f(H)
 
                     if (chparam < 0.f) {
                         chparam *= 2.f; // increased action if chparam < 0
@@ -113,25 +113,25 @@ void ImProcFunctions::PF_correct_RT(LabImage * lab, double radius, int thresh)
                 }
 
                 const float chroma = chromaChfactor * (SQR(lab->a[i][j] - tmpa[i][j]) + SQR(lab->b[i][j] - tmpb[i][j])); // modulate chroma function hue
-                chromave += chroma;
+                chromave += static_cast<double>(chroma);
                 fringe[i * width + j] = chroma;
             }
         }
     }
 
     chromave /= height * width;
-
     if (chromave > 0.0) {
         // now as chromave is calculated, we postprocess fringe to reduce the number of divisions in future
+        const float chromavef = chromave;
 #ifdef _OPENMP
         #pragma omp parallel for simd
 #endif
 
         for (int j = 0; j < width * height; j++) {
-            fringe[j] = 1.f / (fringe[j] + chromave);
+            fringe[j] = 1.f / (fringe[j] + chromavef);
         }
 
-        const float threshfactor = 1.f / (SQR(thresh / 33.f) * chromave * 5.0f + chromave);
+        const float threshfactor = 1.f / (SQR(thresh / 33.f) * chromavef * 5.0f + chromavef);
         const int halfwin = std::ceil(2 * radius) + 1;
 
 // Issue 1674:
@@ -297,7 +297,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
                     // no precalculated values without SSE => calculate
                     const float HH = xatan2f(srbb[i][j], sraa[i][j]);
 #endif
-                    float chparam = chCurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f; //get C=f(H)
+                    float chparam = chCurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5; //get C=f(H)
 
                     if (chparam < 0.f) {
                         chparam *= 2.f;    // increase action if chparam < 0
@@ -307,7 +307,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
                 }
 
                 const float chroma = chromaChfactor * (SQR(sraa[i][j] - tmaa[i][j]) + SQR(srbb[i][j] - tmbb[i][j])); //modulate chroma function hue
-                chromave += chroma;
+                chromave += static_cast<double>(chroma);
                 fringe[i * width + j] = chroma;
             }
         }
@@ -317,15 +317,16 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
 
     if (chromave > 0.0) {
         // now as chromave is calculated, we postprocess fringe to reduce the number of divisions in future
+        const float chromavef = chromave;
 #ifdef _OPENMP
         #pragma omp parallel for simd
 #endif
 
         for (int j = 0; j < width * height; j++) {
-            fringe[j] = 1.f / (fringe[j] + chromave);
+            fringe[j] = 1.f / (fringe[j] + chromavef);
         }
 
-        const float threshfactor = 1.f / (SQR(thresh / 33.f) * chromave * 5.0f + chromave);
+        const float threshfactor = 1.f / (SQR(thresh / 33.f) * chromavef * 5.0f + chromavef);
         const int halfwin = std::ceil(2 * radius) + 1;
 
 // Issue 1674:
@@ -695,7 +696,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 const float chroma = SQR(sraa[i][j] - tmaa[i][j]) + SQR(srbb[i][j] - tmbb[i][j]);
-                chrommed += chroma;
+                chrommed += static_cast<double>(chroma);
                 badpix[i * width + j] = chroma;
             }
         }
@@ -703,15 +704,16 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
         chrommed /= height * width;
 
         if (chrommed > 0.0) {
+            const float chrommedf = chrommed;
             // now as chrommed is calculated, we postprocess badpix to reduce the number of divisions in future
-            const float threshfactor = 1.f / ((thresh * chrommed) / 33.f + chrommed);
+            const float threshfactor = 1.f / ((thresh * chrommedf) / 33.f + chrommedf);
             const int halfwin = std::ceil(2 * radius) + 1;
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
             {
 #ifdef __SSE2__
-                const vfloat chrommedv = F2V(chrommed);
+                const vfloat chrommedv = F2V(chrommedf);
                 const vfloat onev = F2V(1.f);
 #endif
 #ifdef _OPENMP
@@ -726,7 +728,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                     }
 #endif
                     for (; j < width; j++) {
-                        badpix[i * width + j] = 1.f / (badpix[i * width + j] + chrommed);
+                        badpix[i * width + j] = 1.f / (badpix[i * width + j] + chrommedf);
                     }
                 }
 
@@ -1040,7 +1042,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             const float chroma = SQR(lab->a[i][j] - tmaa[i][j]) + SQR(lab->b[i][j] - tmbb[i][j]);
-            chrommed += chroma;
+            chrommed += static_cast<double>(chroma);
             badpix[i * width + j] = chroma;
         }
     }
@@ -1049,13 +1051,13 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
 
     if (chrommed > 0.0) {
     // now as chrommed is calculated, we postprocess badpix to reduce the number of divisions in future
-
+        const float chrommedf = chrommed;
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
         {
 #ifdef __SSE2__
-            const vfloat chrommedv = F2V(chrommed);
+            const vfloat chrommedv = F2V(chrommedf);
             const vfloat onev = F2V(1.f);
 #endif
 #ifdef _OPENMP
@@ -1070,12 +1072,12 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
                 }
 #endif
                 for (; j < width; j++) {
-                    badpix[i * width + j] = 1.f / (badpix[i * width + j] + chrommed);
+                    badpix[i * width + j] = 1.f / (badpix[i * width + j] + chrommedf);
                 }
             }
         }
 
-        const float threshfactor = 1.f / ((thresh * chrommed) / 33.f + chrommed);
+        const float threshfactor = 1.f / ((thresh * chrommedf) / 33.f + chrommedf);
 
         chrom *= 327.68f;
         chrom *= chrom;
