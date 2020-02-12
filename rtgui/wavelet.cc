@@ -3030,18 +3030,32 @@ void Wavelet::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back (expfinal->get_expanded ());
 }
 
-void Wavelet::updateToolState(std::vector<int> &tpOpen)
+void Wavelet::updateToolState(const std::vector<int>& tpOpen)
 {
-    if(tpOpen.size() >= 9) {
-        expsettings->set_expanded(tpOpen.at(0));
-        expcontrast->set_expanded(tpOpen.at(1));
-        expchroma->set_expanded(tpOpen.at(2));
-        exptoning->set_expanded(tpOpen.at(3));
-        expnoise->set_expanded(tpOpen.at(4));
-        expedge->set_expanded(tpOpen.at(5));
-        expgamut->set_expanded(tpOpen.at(6));
-        expresid->set_expanded(tpOpen.at(7));
-        expfinal->set_expanded(tpOpen.at(8));
+    if (tpOpen.empty()) {
+        expsettings->set_expanded(false);
+        expcontrast->set_expanded(false);
+        expchroma->set_expanded(false);
+        exptoning->set_expanded(false);
+        expnoise->set_expanded(false);
+        expedge->set_expanded(false);
+        expgamut->set_expanded(false);
+        expresid->set_expanded(false);
+        expfinal->set_expanded(false);
+
+        return;
+    }
+
+    if (tpOpen.size() >= 9) {
+        expsettings->set_expanded(tpOpen[0]);
+        expcontrast->set_expanded(tpOpen[1]);
+        expchroma->set_expanded(tpOpen[2]);
+        exptoning->set_expanded(tpOpen[3]);
+        expnoise->set_expanded(tpOpen[4]);
+        expedge->set_expanded(tpOpen[5]);
+        expgamut->set_expanded(tpOpen[6]);
+        expresid->set_expanded(tpOpen[7]);
+        expfinal->set_expanded(tpOpen[8]);
     }
 }
 

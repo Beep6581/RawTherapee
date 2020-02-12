@@ -659,10 +659,16 @@ void Retinex::writeOptions (std::vector<int> &tpOpen)
     tpOpen.push_back (expsettings->get_expanded ());
 }
 
-void Retinex::updateToolState (std::vector<int> &tpOpen)
+void Retinex::updateToolState(const std::vector<int>& tpOpen)
 {
+    if (tpOpen.empty()) {
+        expsettings->set_expanded(false);
+
+        return;
+    }
+
     if (tpOpen.size() >= 10) {
-        expsettings->set_expanded (tpOpen.at (9));
+        expsettings->set_expanded(tpOpen[9]);
     }
 }
 
