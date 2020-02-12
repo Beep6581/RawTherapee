@@ -294,7 +294,7 @@ void CropWindow::flawnOver (bool isFlawnOver)
 void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, double deltaX, double deltaY)
 {
     double delta = 0.0;
-    if (abs(deltaX) > abs(deltaY)) {
+    if (std::fabs(deltaX) > std::fabs(deltaY)) {
         delta = deltaX;
     } else {
         delta = deltaY;
@@ -303,7 +303,7 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, 
     if (direction == GDK_SCROLL_SMOOTH) {
         scrollAccum += delta;
         //Only change zoom level if we've accumulated +/- 1.0 of deltas.  This conditional handles the previous delta=0.0 case
-        if (abs(scrollAccum) < 1.0) {
+        if (std::fabs(scrollAccum) < 1.0) {
             return;
         }
     }
