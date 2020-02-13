@@ -2253,44 +2253,6 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
     return false;
 }
 
-bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
-{
-
-    FILE* f = g_fopen(fname.c_str(), "rb");
-
-    if (!f) {
-        aeHistogram.reset();
-    } else {
-        aeHistogram(65536 >> aeHistCompression);
-        const size_t histoBytes = (65536 >> aeHistCompression) * sizeof(aeHistogram[0]);
-        const size_t bytesRead = fread(&aeHistogram[0], 1, histoBytes, f);
-        fclose (f);
-        if (bytesRead != histoBytes) {
-            aeHistogram.reset();
-            return false;
-        }
-        return true;
-    }
-
-    return false;
-}
-
-bool Thumbnail::writeAEHistogram (const Glib::ustring& fname)
-{
-
-    if (aeHistogram) {
-        FILE* f = g_fopen (fname.c_str (), "wb");
-
-        if (f) {
-            fwrite (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);
-            fclose (f);
-            return true;
-        }
-    }
-
-    return false;
-}
-
 unsigned char* Thumbnail::getImage8Data()
 {
     if (thumbImg && thumbImg->getType() == rtengine::sImage8) {
