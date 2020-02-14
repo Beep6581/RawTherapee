@@ -502,11 +502,11 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                 } else if (!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX"))) {
                     // ISO at max value supported, check manufacturer specific
                     if (iso_speed == 65535 || iso_speed == 0) {
-                        rtexif::Tag* baseIsoTag = mnote->getTag("ISO");
+                        const rtexif::Tag* const baseIsoTag = mnote->getTag("ISO");
                         if (baseIsoTag) {
-                            std::string isoData = baseIsoTag->valueToString();
+                            const std::string isoData = baseIsoTag->valueToString();
                             if (isoData.size() > 1) {
-                                iso_speed = stoi(isoData);
+                                iso_speed = std::stoi(isoData);
                             }
                         }
                     }

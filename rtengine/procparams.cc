@@ -4606,8 +4606,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 Glib::ustring temp;
                 assignFromKeyfile(keyFile, "Wavelet", "LevMethod", pedited, temp, pedited->wavelet.Lmethod);
 
-                if (!temp.empty()) {
+                try {
                     wavelet.Lmethod = std::stoi(temp);
+                } catch (...) {
                 }
             } else {
                 assignFromKeyfile(keyFile, "Wavelet", "LevMethod", pedited, wavelet.Lmethod, pedited->wavelet.Lmethod);
