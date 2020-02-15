@@ -50,6 +50,22 @@ function ModifyInstallNames {
     done
 }
 
+function ModifyInstallNames {
+    find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
+        msg "Modifying install names: ${x}"
+        {
+            # id
+            if [ ${x:(-6)} == ".dylib" ] || [ f${x:(-3)} == ".so" ]; then
+                echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'"
+            fi
+            GetDependencies "${x}" | while read -r y
+                do
+                    echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
+                done
+        } | bash -v
+    done
+}
+
 # Source check
 if [[ ! -d "${CMAKE_BUILD_TYPE}" ]]; then
     msgError "${PWD}/${CMAKE_BUILD_TYPE} folder does not exist. Please execute 'make install' first."
@@ -132,9 +148,16 @@ echo "Bundle date:   $(date -Ru) ZULU" >> Resources/AboutThisBuild.txt
 echo "Bundle epoch:  $(date +%s)" >> Resources/AboutThisBuild.txt
 echo "Bundle UUID:   $(uuidgen)" >> Resources/AboutThisBuild.txt
 
+echo "\n--------\n" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
+echo "Bundle system: $(sysctl -n machdep.cpu.brand_string)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
+echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
+echo "Bundle date:   $(date -Ru) ZULU" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
+echo "Bundle epoch:  $(date +%s)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
+echo "Bundle UUID:   $(uuidgen)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
+
 msg "Copying release files:"
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
-ditto "Resources" "${RESOURCES}"
+ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"
@@ -148,6 +171,9 @@ ditto ${LOCAL_PREFIX}/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 msg "Copying dependencies from ${GTK_PREFIX}:"
 CheckLink "${EXECUTABLE}"
+
+# dylib install names
+ModifyInstallNames
 
 # dylib install names
 ModifyInstallNames
@@ -192,11 +218,6 @@ ditto "${LIB}"/gdk-pixbuf-2.0/2*/loaders/*.so "${LIB}"
 ditto "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}"
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
-
-msg "Build glib database:"
-mkdir -p ${RESOURCES}/share/glib-2.0
-ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/glib-2.0/schemas
-"${LOCAL_PREFIX}/local/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 # GTK+3 themes
 msg "Copy GTK+3 theme and icon resources:"
