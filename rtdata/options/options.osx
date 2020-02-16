@@ -9,6 +9,7 @@
 # which can be useful if you want to keep the application and all the cache data in a single place,
 # an external HD for example
 MultiUser=true
+UseSystemTheme=false
 
 [File Browser]
 # Image filename extensions to be looked for, and their corresponding search state (0/1 -> skip/include)
@@ -38,5 +39,5 @@ CustomProfileBuilder=
 #ImgDefault=Neutral
 
 [GUI]
-FontFamily=Helvetica Regular
-CPFontFamily=Helvetica Regular
+FontFamily=DroidSansMonoSlashed Regular
+CPFontFamily=DroidSansMonoSlashed Regular
