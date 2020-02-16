@@ -31,6 +31,8 @@
             <key>GTK_OVERLAY_SCROLLING</key>
             <string>0</string>
         </dict>
+        <key>ATSApplicationFontsPath</key>
+        <string>etc/fonts</string>
         <key>CFBundleDevelopmentRegion</key>
         <string>English</string>
         <key>CFBundleDisplayName</key>
