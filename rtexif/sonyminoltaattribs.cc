@@ -2114,7 +2114,7 @@ public:
 
         // Decode the value
         if (a && a != 254) { // 254 = 'Auto' for CameraSettings3, but we might say the same for CameraSettings & CameraSettings2 (?)
-            return int (expf ((double (a) / 8.f - 6.f) * logf (2.f)) * 100.f + 0.5f);
+            return std::exp((a / 8.f - 6.f) * std::log(2.f)) * 100.f + 0.5f;
         } else {
             return 0;
         }

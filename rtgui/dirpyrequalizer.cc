@@ -428,7 +428,7 @@ void DirPyrEqualizer::lumacontrastPlusPressed ()
 {
 
     for (int i = 0; i < 6; i++) {
-        float inc = 0.05 * (6 - i);
+        double inc = 0.05 * (6 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);
         adjusterChanged(multiplier[i], multiplier[i]->getValue());
     }
@@ -439,7 +439,7 @@ void DirPyrEqualizer::lumacontrastMinusPressed ()
 {
 
     for (int i = 0; i < 6; i++) {
-        float inc = -0.05 * (6 - i);
+        double inc = -0.05 * (6 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);
         adjusterChanged(multiplier[i], multiplier[i]->getValue());
     }

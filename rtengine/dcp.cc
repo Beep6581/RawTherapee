@@ -1064,9 +1064,11 @@ void DCPProfile::apply(
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
+                double temp = 0.0;
                 for (int k = 0; k < 3; ++k) {
-                    mat[i][j] += work_matrix[i][k] * xyz_cam[k][j];
+                    temp += work_matrix[i][k] * xyz_cam[k][j];
                 }
+                mat[i][j] = temp;
             }
         }
 
@@ -1092,9 +1094,11 @@ void DCPProfile::apply(
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
+                double temp = 0.0;
                 for (int k = 0; k < 3; ++k) {
-                    pro_photo[i][j] += prophoto_xyz[i][k] * xyz_cam[k][j];
+                    temp += prophoto_xyz[i][k] * xyz_cam[k][j];
                 }
+                pro_photo[i][j] = temp;
             }
         }
 
@@ -1102,9 +1106,11 @@ void DCPProfile::apply(
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
+                double temp = 0.0;
                 for (int k = 0; k < 3; ++k) {
-                    work[i][j] += work_matrix[i][k] * xyz_prophoto[k][j];
+                    temp += work_matrix[i][k] * xyz_prophoto[k][j];
                 }
+                work[i][j] = temp;
             }
         }
 
@@ -1173,27 +1179,35 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
         mWork = ICCStore::getInstance()->workingSpaceMatrix (working_space);
         memset(as_out.data->pro_photo, 0, sizeof(as_out.data->pro_photo));
 
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                double temp = 0.0;
                 for (int k = 0; k < 3; k++) {
-                    as_out.data->pro_photo[i][j] += prophoto_xyz[i][k] * mWork[k][j];
+                    temp += prophoto_xyz[i][k] * mWork[k][j];
                 }
+                as_out.data->pro_photo[i][j] = temp;
+            }
+        }
 
         mWork = ICCStore::getInstance()->workingSpaceInverseMatrix (working_space);
         memset(as_out.data->work, 0, sizeof(as_out.data->work));
 
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                double temp = 0.0;
                 for (int k = 0; k < 3; k++) {
-                    as_out.data->work[i][j] += mWork[i][k] * xyz_prophoto[k][j];
+                    temp += mWork[i][k] * xyz_prophoto[k][j];
                 }
+                as_out.data->work[i][j] = temp;
+            }
+        }
     }
 }
 
 void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int height, int tile_width, const DCPProfileApplyState& as_in) const
 {
 
-#define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
+#define FCLIP(a) ((a)>0.f?((a)<65535.5f?(a):65535.5f):0.f)
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 
     float exp_scale = as_in.data->bl_scale;
