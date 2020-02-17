@@ -254,7 +254,7 @@ ModifyInstallNames
 
 # fix @rpath in Frameworks
 msg "Registering @rpath in Frameworks folder:"
-for frameworklibs in "${CONTENTS}"/Frameworks/* ; do
+for frameworklibs in "${LIB}"/* ; do
 echo "   install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib '${frameworklibs}'" | bash -v
 echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${frameworklibs}'" | bash -v
 done
