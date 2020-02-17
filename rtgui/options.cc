@@ -2271,9 +2271,10 @@ void Options::load(bool lightweight)
     Glib::ustring dPath;
 
 #ifdef __APPLE__
+    // Build Application Support directory path for macOS.
     const gchar* homedir;
     const gchar* configdir;
-    homedir = g_getenv("HOME");
+    homedir = g_getenv("HOME"); // This returns the current container
     std::cout << "homedir=" << homedir << "\n";
     configdir = "/../../../Application Support/RawTherapee/config";
     int bufferSize = strlen(homedir) + strlen(configdir) + 1;
@@ -2327,20 +2328,17 @@ void Options::load(bool lightweight)
         rtdir = Glib::build_filename(argv0, "mysettings");
     }
 
-    // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
+    // Modify the path of the cache folder to the one provided in RT_CACHE environment variable. Build the cache folder name in macOS.
 #ifdef __APPLE__
-    const gchar* homedir;
     const gchar* cachedir;
-    homedir = g_getenv("HOME"); // This returns the current container
-    std::cout << "homedir=" << homedir << "\n";
-    configdir = "/../../../Application Support/RawTherapee/cache";
-    int bufferSize = strlen(homedir) + strlen(cachedir) + 1;
-    gchar* concatString = new gchar[ bufferSize ];
-    strcpy( concatString, homedir );
-    strcat( concatString, cachedir );
+    cachedir = "/../../../Application Support/RawTherapee/cache";
+    int bufferSize2 = strlen(homedir) + strlen(cachedir) + 1;  //reuse homedir from above.
+    gchar* concatString2 = new gchar[ bufferSize2 ];
+    strcpy( concatString2, homedir );
+    strcat( concatString2, cachedir );
     std::cout << path << "\n";
-    path = concatString;
-    delete[] concatString;
+    path = concatString2;
+    delete[] concatString2;
 #else
     path = g_getenv("RT_CACHE");
 #endif
