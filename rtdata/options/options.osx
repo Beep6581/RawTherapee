@@ -39,5 +39,6 @@ CustomProfileBuilder=
 #ImgDefault=Neutral
 
 [GUI]
+# Set the included font as default
 FontFamily=DroidSansMonoSlashed Regular
 CPFontFamily=DroidSansMonoSlashed Regular

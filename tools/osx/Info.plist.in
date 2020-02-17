@@ -12,6 +12,8 @@
             <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
             <key>GTK_IM_MODULE_FILE</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gtk.immodules</string>
+            <key>GTK_MODULES</key>
+            <string>/Applications/RawTherapee.app/Contents/Frameworks/im-quartz.so</string>
             <key>XDG_DATA_HOME</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/share</string>
             <key>GSETTINGS_SCHEMA_DIR</key>
@@ -30,6 +32,8 @@
             <string>similar</string>
             <key>GTK_OVERLAY_SCROLLING</key>
             <string>0</string>
+            <key>GDK_NATIVE_WINDOWS</key>
+            <string>1</string>
         </dict>
         <key>ATSApplicationFontsPath</key>
         <string>etc/fonts</string>
