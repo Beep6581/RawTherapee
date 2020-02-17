@@ -2278,7 +2278,7 @@ void Options::load(bool lightweight)
     homebuf[homelength-44] = '\0'; // Truncate path to just ${HOME}/Library
     std::string homeconfig{homebuf};
     std::strcat(&homeconfig[0], "/Application Support/RawTherapee/config");
-    path = homebuf.c_str();
+    path = homeconfig.c_str();
     std::cout<<"config="<<path<<std::endl;
 #else
     path = g_getenv("RT_SETTINGS");

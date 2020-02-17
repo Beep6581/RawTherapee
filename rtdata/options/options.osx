@@ -40,5 +40,5 @@ CustomProfileBuilder=
 
 [GUI]
 # Set the included font as default
-FontFamily=DroidSansMonoSlashed Regular
-CPFontFamily=DroidSansMonoSlashed Regular
+FontFamily=Droid Sans Mono Slashed Regular
+CPFontFamily=Droid Sans Mono Slashed Regular
