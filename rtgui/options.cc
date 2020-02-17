@@ -2340,7 +2340,6 @@ void Options::load(bool lightweight)
         }
     }
 
-    
     // No environment variable provided, so falling back to the multi user mode, if enabled
     else if (options.multiUser) {
 #ifdef WIN32
