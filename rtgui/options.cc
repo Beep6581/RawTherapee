@@ -2291,7 +2291,6 @@ void Options::load(bool lightweight)
         }
     } else {
 
-        
 #ifdef WIN32
         WCHAR pathW[MAX_PATH] = {0};
 
