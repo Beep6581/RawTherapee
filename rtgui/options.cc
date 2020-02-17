@@ -2282,7 +2282,7 @@ void Options::load(bool lightweight)
     strcpy( concatString, homedir );
     strcat( concatString, configdir );
     path = concatString;
-    std::cout << concatString << "\n";
+    std::cout << "config=" << path << "\n";
     delete[] concatString;
 #else
     path = g_getenv("RT_SETTINGS");
@@ -2336,8 +2336,8 @@ void Options::load(bool lightweight)
     gchar* concatString2 = new gchar[ bufferSize2 ];
     strcpy( concatString2, homedir );
     strcat( concatString2, cachedir );
-    std::cout << path << "\n";
     path = concatString2;
+    std::cout << "cache=" << path << "\n";
     delete[] concatString2;
 #else
     path = g_getenv("RT_CACHE");
