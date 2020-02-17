@@ -2274,12 +2274,14 @@ void Options::load(bool lightweight)
     const gchar* homedir;
     const gchar* configdir;
     homedir = g_getenv("HOME");
-    configdir = "Library/Application Support/RawTherapee/config";
+    std::cout << "homedir=" << homedir << "\n";
+    configdir = "/../../../Application Support/RawTherapee/config";
     int bufferSize = strlen(homedir) + strlen(configdir) + 1;
     gchar* concatString = new gchar[ bufferSize ];
     strcpy( concatString, homedir );
     strcat( concatString, configdir );
     path = concatString;
+    std::cout << concatString << "\n";
     delete[] concatString;
 #else
     path = g_getenv("RT_SETTINGS");
@@ -2326,8 +2328,23 @@ void Options::load(bool lightweight)
     }
 
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
+#ifdef __APPLE__
+    const gchar* homedir;
+    const gchar* cachedir;
+    homedir = g_getenv("HOME"); // This returns the current container
+    std::cout << "homedir=" << homedir << "\n";
+    configdir = "/../../../Application Support/RawTherapee/cache";
+    int bufferSize = strlen(homedir) + strlen(cachedir) + 1;
+    gchar* concatString = new gchar[ bufferSize ];
+    strcpy( concatString, homedir );
+    strcat( concatString, cachedir );
+    std::cout << path << "\n";
+    path = concatString;
+    delete[] concatString;
+#else
     path = g_getenv("RT_CACHE");
-
+#endif
+    
     if (path != nullptr) {
         cacheBaseDir = Glib::ustring(path);
 
