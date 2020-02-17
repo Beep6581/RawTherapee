@@ -2334,7 +2334,7 @@ void Options::load(bool lightweight)
 #endif
     if (path != nullptr) {
         cacheBaseDir = Glib::ustring(path);
-        
+
         if (!Glib::path_is_absolute(cacheBaseDir)) {
             Glib::ustring msg = Glib::ustring::compose("Cache base dir %1 is not absolute", cacheBaseDir);
             throw Error(msg);
