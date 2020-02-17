@@ -2275,11 +2275,11 @@ void Options::load(bool lightweight)
     const char* homedir = g_getenv("HOME"); // This returns the current container data dir in ~/Library
     std::string homebuf{homedir};
     int homelength = strlen(homebuf.c_str());
-    homebuf[homelength-44] = '\0'; // Truncate path to just ${HOME}/Library
+    homebuf[homelength-44] = '\0'; // Terminate string after ${HOME}/Library
     std::string homeconfig{homebuf};
     std::strcat(&homeconfig[0], "/Application Support/RawTherapee/config");
     path = homeconfig.c_str();
-    std::cout<<"config="<<path<<std::endl;
+    delete(homedir);
 #else
     path = g_getenv("RT_SETTINGS");
 #endif
@@ -2330,7 +2330,6 @@ void Options::load(bool lightweight)
     std::string homecache{homebuf};
     std::strcat(&homecache[0], "/Application Support/RawTherapee/cache");
     path = homecache.c_str();
-    std::cout<<path<<std::endl;
 #else
     path = g_getenv("RT_CACHE");
 #endif
