@@ -217,16 +217,16 @@ msg "Build GTK3 databases:"
 sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 sed -i "" -e "s|/opt/local/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}/gtk-3.0/gtk.immodules"
 
+# Install names
+ModifyInstallNames
+
 # Mime directory
 msg "Copying shared files from ${GTK_PREFIX}:"
 ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/mime
 
-# Install names
-ModifyInstallNames
-
 msg "Installing required application bundle files:"
 PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
-ditto "${PROJECT_SOURCE_DIR}/build/Resources" "${RESOURCES}"
+ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 
 # App bundle resources
@@ -260,19 +260,19 @@ echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Fra
 done
 
 # Sign the app
-msg "Codesigning:"
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
-if ! test -z "$CODESIGNID" ; then
+if ! test -z "${CODESIGNID}" ; then
+msg "Codesigning:"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/rt.entitlements" "${CONTENTS}/rt.entitlements"
 plutil -convert binary1 "${CONTENTS}/rt.entitlements"
-codesign -v -s "${CODESIGNID}" -i "com.rawtherapee.RawTherapee" -o runtime --timestamp --entitlements "${CONTENTS}/rt.entitlements" "${CONTENTS}/rt.entitlements"
-codesign -v -s "${CODESIGNID}" -i "com.rawtherapee.RawTherapee" -o runtime --timestamp --entitlements "${CONTENTS}/rt.entitlements" "${EXECUTABLE}"
-codesign -v -s "${CODESIGNID}" -i "com.rawtherapee.RawTherapee" -o runtime --timestamp --entitlements "${CONTENTS}/rt.entitlements" "${EXECUTABLE}-cli"
+codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements '${CONTENTS}/rt.entitlements' '${CONTENTS}/rt.entitlements'
+codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements '${CONTENTS}/rt.entitlements' '${EXECUTABLE}'
+codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements '${CONTENTS}/rt.entitlements' '${EXECUTABLE}-cli'
 for frameworklibs in ${CONTENTS}/Frameworks/* ; do
-codesign -v -s "${CODESIGNID}" -i "com.rawtherapee.RawTherapee" -o runtime --timestamp "${frameworklibs}"
+codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp '${frameworklibs}'
 done
-codesign --deep --preserve-metadata=identifier,entitlements,runtime --timestamp --strict -v -s "${CODESIGNID}" -i "com.rawtherapee.RawTherapee" -o runtime --entitlements "${CONTENTS}/rt.entitlements" "${APP}"
-spctl -a -vvvv "${APP}"
+codesign --deep --preserve-metadata=identifier,entitlements,runtime --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements '${CONTENTS}/rt.entitlements' '${APP}'
+spctl -a -vvvv ${APP}
 fi
 
 # Notarize the app
@@ -331,7 +331,7 @@ hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAM
 
 # Sign disk image
 if ! test -z "$CODESIGNID" ; then
-codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
+codesign --deep --force -v -s ""${CODESIGNID}"" --timestamp "${dmg_name}.dmg"
 fi
 
 # Notarize the dmg

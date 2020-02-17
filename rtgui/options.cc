@@ -2272,20 +2272,18 @@ void Options::load(bool lightweight)
 
 #ifdef __APPLE__
     // Build Application Support directory path for macOS.
-    const gchar* homedir;
-    const gchar* configdir;
-    homedir = g_getenv("HOME"); // This returns the current container data dir in ~/Library
-    configdir = "/../../../Application Support/RawTherapee/config"; // Back out of containers and into App. Support
-    int bufferSize = strlen(homedir) + strlen(configdir) + 1;
-    gchar* concatString = new gchar[ bufferSize ];
-    strcpy( concatString, homedir );
-    strcat( concatString, configdir );
-    path = concatString;
-    delete[] concatString;
+    const gchar* homedir = g_getenv("HOME"); // This returns the current container data dir in ~/Library
+    const gchar*  configdir = "/Application Support/RawTherapee/config";
+    gchar* homebuf = g_strnfill(789, 'a');
+    gsize homelength = strlen(homedir);
+    g_stpcpy(homebuf, homedir);
+    homebuf[homelength-45] = '\0';
+    configdir = "/Application Support/RawTherapee/config"; // Back out of containers and into App. Support
+    const gchar* pathconcat = g_strconcat(homebuf, configdir);
+    path = pathconcat;
 #else
     path = g_getenv("RT_SETTINGS");
 #endif
-    
     if (path != nullptr) {
         rtdir = Glib::ustring(path);
 
@@ -2294,6 +2292,8 @@ void Options::load(bool lightweight)
             throw Error(msg);
         }
     } else {
+
+        
 #ifdef WIN32
         WCHAR pathW[MAX_PATH] = {0};
 
@@ -2329,25 +2329,22 @@ void Options::load(bool lightweight)
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable. Build the cache folder name in macOS.
 #ifdef __APPLE__
     const gchar* cachedir;
-    cachedir = "/../../../Application Support/RawTherapee/cache";  // Back out of containers and into App. Support
-    int bufferSize2 = strlen(homedir) + strlen(cachedir) + 1;  //reuse homedir from above.
-    gchar* concatString2 = new gchar[ bufferSize2 ];
-    strcpy( concatString2, homedir );
-    strcat( concatString2, cachedir );
-    path = concatString2;
-    delete[] concatString2;
+    cachedir = "/Application Support/RawTherapee/cache";  // Back out of containers and into App. Support
+    const gchar* pathconcat2 = g_strconcat(homebuf, cachedir);
+    path = pathconcat2;
 #else
     path = g_getenv("RT_CACHE");
 #endif
-    
     if (path != nullptr) {
         cacheBaseDir = Glib::ustring(path);
-
+        
         if (!Glib::path_is_absolute(cacheBaseDir)) {
             Glib::ustring msg = Glib::ustring::compose("Cache base dir %1 is not absolute", cacheBaseDir);
             throw Error(msg);
         }
     }
+
+    
     // No environment variable provided, so falling back to the multi user mode, if enabled
     else if (options.multiUser) {
 #ifdef WIN32
