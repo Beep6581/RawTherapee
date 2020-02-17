@@ -30,13 +30,13 @@
             <string>similar</string>
             <key>GTK_OVERLAY_SCROLLING</key>
             <string>0</string>
-            <key>RT_SETTINGS</key>
-            <string>~/Library/Application Support/RawTherapee/config</string>
-            <key>RT_CACHE</key>
-            <string>~/Library/Application Support/RawTherapee/cache</string>
         </dict>
         <key>ATSApplicationFontsPath</key>
         <string>etc/fonts</string>
+        <key>LSMultipleInstancesProhibited</key>
+        <true/>
+        <key>LSMinimumSystemVersion</key>
+        <string>@minimum_macos_version@</string>
         <key>CFBundleDevelopmentRegion</key>
         <string>English</string>
         <key>CFBundleDisplayName</key>

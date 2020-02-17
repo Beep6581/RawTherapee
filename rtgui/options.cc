@@ -2270,8 +2270,12 @@ void Options::load(bool lightweight)
     const gchar* path;
     Glib::ustring dPath;
 
+#ifdef __APPLE__
+    path = g_getenv("HOME") + "Library/Application Support/RawTherapee/config";
+#else
     path = g_getenv("RT_SETTINGS");
-
+#endif
+    
     if (path != nullptr) {
         rtdir = Glib::ustring(path);
 

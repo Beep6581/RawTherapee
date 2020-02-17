@@ -104,6 +104,7 @@ GTK_PREFIX:             ${GTK_PREFIX}
 PWD:                    ${PWD}
 __EOS__
 
+minimum_macos_version=${MINIMUM_SYSTEM_VERSION}
 LOCAL_PREFIX="$(cmake .. -LA -N | grep "LOCAL_PREFIX" | cut -d "=" -f2)"
 EXPATLIB="$(cmake .. -LA -N | grep "pkgcfg_lib_EXPAT_expat" | cut -d "=" -f2)"
 
