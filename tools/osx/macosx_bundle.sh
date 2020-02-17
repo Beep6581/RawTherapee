@@ -254,7 +254,7 @@ ModifyInstallNames
 
 # fix @rpath in Frameworks
 msg "Registering @rpath in Frameworks folder:"
-for frameworklibs in ${CONTENTS}/Frameworks/* ; do
+for frameworklibs in "${CONTENTS}"/Frameworks/* ; do
 echo "   install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib '${frameworklibs}'" | bash -v
 echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${frameworklibs}'" | bash -v
 done
@@ -263,15 +263,15 @@ done
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
 if ! test -z "${CODESIGNID}" ; then
 msg "Codesigning:"
-install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/rt.entitlements" "${CONTENTS}/rt.entitlements"
-plutil -convert binary1 "${CONTENTS}/rt.entitlements"
-codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements '${CONTENTS}/rt.entitlements' '${CONTENTS}/rt.entitlements'
-codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements '${CONTENTS}/rt.entitlements' '${EXECUTABLE}'
-codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements '${CONTENTS}/rt.entitlements' '${EXECUTABLE}-cli'
-for frameworklibs in ${CONTENTS}/Frameworks/* ; do
-codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp '${frameworklibs}'
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements "${CONTENTS}"/rt.entitlements
+plutil -convert binary1 "${CONTENTS}"/rt.entitlements
+codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements "${CONTENTS}"/rt.entitlements "${CONTENTS}"/rt.entitlements
+codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements "${CONTENTS}"/rt.entitlements "${EXECUTABLE}"
+codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements "${CONTENTS}"/rt.entitlements "${EXECUTABLE}"-cli
+for frameworklibs in "${LIB}" ; do
+codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp "${frameworklibs}"
 done
-codesign --deep --preserve-metadata=identifier,entitlements,runtime --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements '${CONTENTS}/rt.entitlements' '${APP}'
+codesign --deep --preserve-metadata=identifier,entitlements,runtime --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements  "${CONTENTS}/rt.entitlements" "${APP}"
 spctl -a -vvvv ${APP}
 fi
 
