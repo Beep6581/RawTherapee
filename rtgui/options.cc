@@ -2275,14 +2275,12 @@ void Options::load(bool lightweight)
     const gchar* homedir;
     const gchar* configdir;
     homedir = g_getenv("HOME"); // This returns the current container data dir in ~/Library
-    std::cout << "homedir=" << homedir << "\n";
     configdir = "/../../../Application Support/RawTherapee/config"; // Back out of containers and into App. Support
     int bufferSize = strlen(homedir) + strlen(configdir) + 1;
     gchar* concatString = new gchar[ bufferSize ];
     strcpy( concatString, homedir );
     strcat( concatString, configdir );
     path = concatString;
-    std::cout << "config=" << path << "\n";
     delete[] concatString;
 #else
     path = g_getenv("RT_SETTINGS");
@@ -2337,7 +2335,6 @@ void Options::load(bool lightweight)
     strcpy( concatString2, homedir );
     strcat( concatString2, cachedir );
     path = concatString2;
-    std::cout << "cache=" << path << "\n";
     delete[] concatString2;
 #else
     path = g_getenv("RT_CACHE");
