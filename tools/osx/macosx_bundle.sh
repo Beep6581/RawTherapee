@@ -268,7 +268,7 @@ plutil -convert binary1 "${CONTENTS}"/rt.entitlements
 codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements "${CONTENTS}"/rt.entitlements "${CONTENTS}"/rt.entitlements
 codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements "${CONTENTS}"/rt.entitlements "${EXECUTABLE}"
 codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements "${CONTENTS}"/rt.entitlements "${EXECUTABLE}"-cli
-for frameworklibs in "${LIB}" ; do
+for frameworklibs in "${LIB}"/* ; do
 codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp "${frameworklibs}"
 done
 codesign --deep --preserve-metadata=identifier,entitlements,runtime --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements  "${CONTENTS}/rt.entitlements" "${APP}"
