@@ -2275,7 +2275,7 @@ void Options::load(bool lightweight)
     const char* homedir = g_getenv("HOME"); // This returns the current container data dir in ~/Library
     std::string homebuf{homedir};
     int homelength = strlen(homebuf.c_str());
-    homebuf[homelength-44] = '\0';
+    homebuf[homelength-44] = '\0'; // Truncate path to just ${HOME}/Library
     std::string homeconfig{homebuf};
     std::strcat(homeconfig, "/Application Support/RawTherapee/config");
     path = homebuf.c_str();
@@ -2328,8 +2328,8 @@ void Options::load(bool lightweight)
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable. Build the cache folder name in macOS.
 #ifdef __APPLE__
     std::string homecache{homebuf};
-    std::strcat(homecache + "/Application Support/RawTherapee/cache");
-    path = cachepath.c_str();
+    std::strcat(homecache, "/Application Support/RawTherapee/cache");
+    path = homecache.c_str();
     std::cout<<path<<std::endl;
 #else
     path = g_getenv("RT_CACHE");
