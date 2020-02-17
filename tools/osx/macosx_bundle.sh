@@ -131,7 +131,7 @@ echo "Bundle system: $(sysctl -n machdep.cpu.brand_string)" >> "${CMAKE_BUILD_TY
 echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
 echo "Bundle date:   $(date -Ru) ZULU" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
 echo "Bundle epoch:  $(date +%s)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
-echo "Bundle UUID:   $(uuidgen)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
+echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
 
 msg "Copying release files:"
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"

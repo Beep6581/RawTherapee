@@ -2279,7 +2279,6 @@ void Options::load(bool lightweight)
     std::string homeconfig{homebuf};
     std::strcat(&homeconfig[0], "/Application Support/RawTherapee/config");
     path = homeconfig.c_str();
-    delete(homedir);
 #else
     path = g_getenv("RT_SETTINGS");
 #endif
