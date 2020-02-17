@@ -2272,15 +2272,15 @@ void Options::load(bool lightweight)
 
 #ifdef __APPLE__
     // Build Application Support directory path for macOS.
-    const gchar* homedir = g_getenv("HOME"); // This returns the current container data dir in ~/Library
-    const gchar*  configdir = "/Application Support/RawTherapee/config";
-    gchar* homebuf = g_strnfill(789, 'a');
-    gsize homelength = strlen(homedir);
-    g_stpcpy(homebuf, homedir);
+    const char* homedir = g_getenv("HOME"); // This returns the current container data dir in ~/Library
+    std::string configdir = "/Application Support/RawTherapee/config";
+    std::string homebuf{homedir};
+    int homelength = strlen(homebuf.c_str());
     homebuf[homelength-45] = '\0';
-    configdir = "/Application Support/RawTherapee/config"; // Back out of containers and into App. Support
-    const gchar* pathconcat = g_strconcat(homebuf, configdir);
-    path = pathconcat;
+    configdir = "/Application Support/RawTherapee/config";
+    std::string configpath = homebuf + configdir;
+    path = configpath.c_str();
+    std::cout<<path<<std::endl;
 #else
     path = g_getenv("RT_SETTINGS");
 #endif
@@ -2328,10 +2328,11 @@ void Options::load(bool lightweight)
 
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable. Build the cache folder name in macOS.
 #ifdef __APPLE__
-    const gchar* cachedir;
+    const char* cachedir;
     cachedir = "/Application Support/RawTherapee/cache";  // Back out of containers and into App. Support
-    const gchar* pathconcat2 = g_strconcat(homebuf, cachedir);
-    path = pathconcat2;
+    std::string cachepath = homebuf + cachedir;
+    path = cachepath.c_str();
+    std::cout<<path<<std::endl;
 #else
     path = g_getenv("RT_CACHE");
 #endif
