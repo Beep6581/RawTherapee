@@ -2271,7 +2271,16 @@ void Options::load(bool lightweight)
     Glib::ustring dPath;
 
 #ifdef __APPLE__
-    path = g_getenv("HOME") + "Library/Application Support/RawTherapee/config";
+    const gchar* homedir;
+    const gchar* configdir;
+    homedir = g_getenv("HOME");
+    configdir = "Library/Application Support/RawTherapee/config";
+    int bufferSize = strlen(homedir) + strlen(configdir) + 1;
+    gchar* concatString = new gchar[ bufferSize ];
+    strcpy( concatString, homedir );
+    strcat( concatString, configdir );
+    path = concatString;
+    delete[] concatString;
 #else
     path = g_getenv("RT_SETTINGS");
 #endif
