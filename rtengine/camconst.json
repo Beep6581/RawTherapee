@@ -1221,7 +1221,7 @@ Camera constants:
 
     { // Quality A, changes for raw crop which is wrong (larger) in dcraw
         "make_model": "Canon PowerShot S120",
-        "dcraw_matrix": [ 6961,-1685,-695,-4625,12945,1836,-1114,2152,5518 ],
+        "dcraw_matrix": [ 6961, -1685, -695, -4625, 12945, 1836, -1114, 2152, 5518 ] // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 12.2
         "raw_crop": [ 120, 30, 4024, 3030 ],
         "masked_areas": [ 32, 2, 3028, 80 ],
         "ranges": { "white": 4050 }
