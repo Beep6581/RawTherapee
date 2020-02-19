@@ -113,14 +113,14 @@ endif()
 
 if(APPLE)
     if(CMAKE_CXX_COMPILER MATCHES "g\\+\\+-mp-4.[5-8]" OR CMAKE_CXX_COMPILER_ARG1 MATCHES "g\\+\\+-mp-4.[5-8]")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib -Wl,-headerpad_max_install_names -mtune=generic")
         message(STATUS "CMAKE_CXX_COMPILER is MacPorts GCC.\n   CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
     endif()
 
     # Set minimum system version
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-headerpad_max_install_names -mtune=generic")
 endif()
 
 option(USE_EXPERIMENTAL_LANG_VERSIONS "Build with -std=c++0x" OFF)
@@ -269,6 +269,9 @@ if(APPLE)
         set(LOCAL_PREFIX "${LOCAL_PREFIX}" CACHE STRING "macos/gtk parent directory ie /usr or /opt")
     elseif(NOT DEFINED LOCAL_PREFIX)
         set(LOCAL_PREFIX "/usr")
+    endif()
+    if("${FANCY_DMG}")
+        set(FANCY_DMG ON CACHE BOOL "Use the andreyvit/create-dmg script to make a fancy .dmg")
     endif()
 endif()
 

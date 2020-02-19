@@ -40,11 +40,11 @@ msg "Modifying install names: ${x}"
 {
 # id
 if [ ${x:(-6)} == ".dylib" ] || [ f${x:(-3)} == ".so" ]; then
-install_name_tool -id @rpath/$(basename ${x}) ${x}
+install_name_tool -id /Applications/"${LIB}"/$(basename ${x}) ${x}
 fi
 GetDependencies "${x}" | while read -r y
 do
-install_name_tool -change ${y} @rpath/$(basename ${y}) ${x}
+install_name_tool -change ${y} /Applications/"${LIB}"/$(basename ${y}) ${x}
 done
 } | bash -v
 done
@@ -109,6 +109,8 @@ LOCAL_PREFIX="$(cmake .. -LA -N | grep "LOCAL_PREFIX" | cut -d "=" -f2)"
 EXPATLIB="$(cmake .. -LA -N | grep "pkgcfg_lib_EXPAT_expat" | cut -d "=" -f2)"
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
 NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
+FANCY_DMG="$(cmake .. -LA -N | grep "FANCY_DMG" | cut -d "=" -f2)"
+echo ${FANCY_DMG} || echo "Building plain .dmg"
 
 APP="${PROJECT_NAME}.app"
 CONTENTS="${APP}/Contents"
@@ -251,7 +253,7 @@ ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/glib-2.0/schemas
 
 # Append an LC_RPATH
 msg "Registering @rpath into the main executable."
-install_name_tool -add_rpath ${LIB} ${EXECUTABLE}
+install_name_tool -add_rpath /Applications/"${LIB}" ${EXECUTABLE}
 
 ModifyInstallNames
 
@@ -259,7 +261,7 @@ ModifyInstallNames
 msg "Registering @rpath in Frameworks folder."
 for frameworklibs in "${LIB}"/*{dylib,so} ; do
 install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib ${frameworklibs}
-install_name_tool -add_rpath "${LIB}" ${frameworklibs}
+install_name_tool -add_rpath /Applications/"${LIB}" ${frameworklibs}
 done
 install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli
 install_name_tool -add_rpath @executable_path "${EXECUTABLE}"-cli
@@ -370,3 +372,5 @@ rm -rf "${srcDir}"
 CreateDmg
 msg "Finishing build:"
 echo "Script complete."
+#
+# TODO filter out the benign errors
