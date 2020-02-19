@@ -2291,7 +2291,6 @@ void Options::load(bool lightweight)
         }
     } else {
 
-        
 #ifdef WIN32
         WCHAR pathW[MAX_PATH] = {0};
 
@@ -2334,14 +2333,13 @@ void Options::load(bool lightweight)
 #endif
     if (path != nullptr) {
         cacheBaseDir = Glib::ustring(path);
-        
+
         if (!Glib::path_is_absolute(cacheBaseDir)) {
             Glib::ustring msg = Glib::ustring::compose("Cache base dir %1 is not absolute", cacheBaseDir);
             throw Error(msg);
         }
     }
 
-    
     // No environment variable provided, so falling back to the multi user mode, if enabled
     else if (options.multiUser) {
 #ifdef WIN32
