@@ -40,11 +40,11 @@ msg "Modifying install names: ${x}"
 {
 # id
 if [ ${x:(-6)} == ".dylib" ] || [ f${x:(-3)} == ".so" ]; then
-echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'"
+install_name_tool -id @rpath/$(basename ${x}) ${x}
 fi
 GetDependencies "${x}" | while read -r y
 do
-echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
+install_name_tool -change ${y} @rpath/$(basename ${y}) ${x}
 done
 } | bash -v
 done
@@ -107,6 +107,8 @@ __EOS__
 minimum_macos_version=${MINIMUM_SYSTEM_VERSION}
 LOCAL_PREFIX="$(cmake .. -LA -N | grep "LOCAL_PREFIX" | cut -d "=" -f2)"
 EXPATLIB="$(cmake .. -LA -N | grep "pkgcfg_lib_EXPAT_expat" | cut -d "=" -f2)"
+CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
+NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
 
 APP="${PROJECT_NAME}.app"
 CONTENTS="${APP}/Contents"
@@ -118,7 +120,7 @@ EXECUTABLE="${MACOS}/rawtherapee"
 GDK_PREFIX="${LOCAL_PREFIX}/local/"
 
 msg "Removing old files:"
-rm -rf "${APP}" "${PROJECT_NAME}_*.dmg" "*zip"
+rm -rf "${APP}" *.dmg *.zip
 
 msg "Creating bundle container:"
 install -d  "${RESOURCES}" \
@@ -133,8 +135,10 @@ echo "Bundle date:   $(date -Ru) ZULU" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutT
 echo "Bundle epoch:  $(date +%s)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
 echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
 
-msg "Copying release files:"
+msg "Copying binary executable files."
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
+
+msg "Copying Resources directory."
 ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 
 # Copy the Lensfun database into the app bundle
@@ -147,7 +151,7 @@ ditto ${LOCAL_PREFIX}/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/lible
 # Copy libomp to Frameworks
 ditto ${LOCAL_PREFIX}/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
-msg "Copying dependencies from ${GTK_PREFIX}:"
+msg "Copying dependencies from ${GTK_PREFIX}."
 CheckLink "${EXECUTABLE}"
 
 # dylib install names
@@ -238,7 +242,7 @@ s|@shortVersion@|${PROJECT_VERSION}|
 s|@arch@|${arch}|" \
 "${CONTENTS}/Info.plist"
 plutil -convert binary1 "${CONTENTS}/Info.plist"
-update-mime-database -V  "${CONTENTS}/Resources/share/mime"
+update-mime-database -V  "${RESOURCES}/share/mime"
 
 msg "Build glib database:"
 mkdir -p ${RESOURCES}/share/glib-2.0
@@ -246,37 +250,34 @@ ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/glib-2.0/schemas
 "${LOCAL_PREFIX}/local/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 # Append an LC_RPATH
-msg "Registering @rpath into the executable:"
-echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${EXECUTABLE}'" | bash -v
-echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${EXECUTABLE}-cli'" | bash -v
+msg "Registering @rpath into the main executable."
+install_name_tool -add_rpath ${LIB} ${EXECUTABLE}
 
 ModifyInstallNames
 
 # fix @rpath in Frameworks
-msg "Registering @rpath in Frameworks folder:"
-for frameworklibs in "${CONTENTS}"/Frameworks/* ; do
-echo "   install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib '${frameworklibs}'" | bash -v
-echo "   install_name_tool -add_rpath /Applications/RawTherapee.app/Contents/Frameworks '${frameworklibs}'" | bash -v
+msg "Registering @rpath in Frameworks folder."
+for frameworklibs in "${LIB}"/*{dylib,so} ; do
+install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib ${frameworklibs}
+install_name_tool -add_rpath "${LIB}" ${frameworklibs}
 done
+install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli
+install_name_tool -add_rpath @executable_path "${EXECUTABLE}"-cli
 
-# Sign the app
-CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
+# Codesign the app
 if ! test -z "${CODESIGNID}" ; then
-msg "Codesigning:"
-install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements "${CONTENTS}"/rt.entitlements
-plutil -convert binary1 "${CONTENTS}"/rt.entitlements
-codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements "${CONTENTS}"/rt.entitlements "${CONTENTS}"/rt.entitlements
-codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements "${CONTENTS}"/rt.entitlements "${EXECUTABLE}"
-codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp --entitlements "${CONTENTS}"/rt.entitlements "${EXECUTABLE}"-cli
+msg "Codesigning Application."
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements
+plutil -convert binary1 "${CMAKE_BUILD_TYPE}"/rt.entitlements
+mv "${EXECUTABLE}"-cli "${LIB}"
 for frameworklibs in "${LIB}"/* ; do
-codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --timestamp "${frameworklibs}"
+codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp "${frameworklibs}"
 done
-codesign --deep --preserve-metadata=identifier,entitlements,runtime --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements  "${CONTENTS}/rt.entitlements" "${APP}"
+codesign --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements  "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
 spctl -a -vvvv ${APP}
 fi
 
 # Notarize the app
-NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
 if ! test -z "$NOTARY" ; then
 msg "Notarizing the application:"
 ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
@@ -308,7 +309,6 @@ local srcDir="$(mktemp -dt $$)"
 
 msg "Preparing disk image sources at ${srcDir}:"
 cp -R "${APP}" "${srcDir}"
-ditto "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt "${srcDir}"
 ln -s /Applications "${srcDir}"
 
 # Web bookmarks
@@ -331,7 +331,7 @@ hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAM
 
 # Sign disk image
 if ! test -z "$CODESIGNID" ; then
-codesign --deep --force -v -s ""${CODESIGNID}"" --timestamp "${dmg_name}.dmg"
+codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
 fi
 
 # Notarize the dmg
@@ -363,7 +363,6 @@ fi
 
 # Zip disk image for redistribution
 msg "Zipping disk image for redistribution:"
-zip "${dmg_name}.zip" "${dmg_name}.dmg" "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
 rm "${dmg_name}.dmg"
 msg "Removing disk image caches:"
 rm -rf "${srcDir}"
