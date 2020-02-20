@@ -12,7 +12,7 @@
 fNormal="$(tput sgr0)"
 fBold="$(tput bold)"
 # Colors depend upon the user's terminal emulator color scheme - what is readable for you may be not readable for someone else.
-fMagenta="$(tput setaf 5)"
+fMagenta="$(tput setaf 3)"
 fRed="$(tput setaf 1)"
 
 function msg {
@@ -125,11 +125,16 @@ msg "Removing old files:"
 rm -rf "${APP}" *.dmg *.zip
 
 msg "Creating bundle container:"
-install -d "${APP}" "${RESOURCES}" "${MACOS}" "${LIB}" "${ETC}"
+cd "${CMAKE_INSTALL_PREEFIX}"
+install -d "${APP}"
+install -d "${RESOURCES}"
+install -d "${MACOS}"
+install -d "${LIB}"
+install -d "${ETC}"
 
 echo "\n--------\n" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
 echo "Bundle system: $(sysctl -n machdep.cpu.brand_string)" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
-echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> "${CMAKE_BUILD_TYPE}/${RESOURCES}/AboutThisBuild.txt"
+echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
 echo "Bundle date:   $(date -Ru) ZULU" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
 echo "Bundle epoch:  $(date +%s)" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
 echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
@@ -250,15 +255,15 @@ ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/glib-2.0/schemas
 
 # Append an LC_RPATH
 msg "Registering @rpath into the main executable."
-install_name_tool -add_rpath /Applications/"${LIB}" ${EXECUTABLE}
+install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"
 
 ModifyInstallNames
 
 # fix @rpath in Frameworks
 msg "Registering @rpath in Frameworks folder."
 for frameworklibs in "${LIB}"/*{dylib,so} ; do
-install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib ${frameworklibs}
-install_name_tool -add_rpath /Applications/"${LIB}" ${frameworklibs}
+install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib "${frameworklibs}"
+install_name_tool -add_rpath /Applications/"${LIB}" "${frameworklibs}"
 done
 install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli
 install_name_tool -add_rpath @executable_path "${EXECUTABLE}"-cli
@@ -370,5 +375,4 @@ CreateDmg
 msg "Finishing build:"
 echo "Script complete."
 #
-# TODO filter out the benign errors
-# Build a fancy dmg
+# TODO filter out the benign errors; Build a fancy dmg
