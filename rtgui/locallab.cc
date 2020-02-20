@@ -226,18 +226,17 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
     // TODO Manage it with read function in controlspotpanel.cc
     // Delete all existent spots
-    std::vector<int>* const list = expsettings->getSpotIdList();
+    const int spotNb = expsettings->getSpotNumber();
 
-    for (size_t i = 0; i < list->size(); i++) {
-        expsettings->deleteControlSpot(list->at(i));
+    for (int i = spotNb - 1; i >= 0; i--) {
+        expsettings->deleteControlSpot(i);
     }
 
     // TODO Manage it with read function in controlspotpanel.cc
     // Add existent spots based on pp
     ControlSpotPanel::SpotRow* const r = new ControlSpotPanel::SpotRow();
 
-    for (int i = 0; i < pp->locallab.nbspot && i < (int)pp->locallab.spots.size(); i++) {
-        r->id = pp->locallab.spots.at(i).id;
+    for (int i = 0; i < (int)pp->locallab.spots.size(); i++) {
         r->name = pp->locallab.spots.at(i).name;
         r->isvisible = pp->locallab.spots.at(i).isvisible;
 
@@ -293,8 +292,8 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
     }
 
     // Select active spot
-    if (pp->locallab.nbspot > 0) {
-        expsettings->setSelectedSpot(pp->locallab.spots.at(pp->locallab.selspot).id);
+    if (pp->locallab.spots.size() > 0) {
+        expsettings->setSelectedSpot(pp->locallab.selspot);
     }
 
     // Update each Locallab tools GUI
@@ -315,7 +314,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
     }
 
     // Specific case: if there is no spot, GUI isn't anymore editable (i.e. Locallab tool cannot be managed)
-    if (pp->locallab.nbspot > 0) {
+    if (pp->locallab.spots.size() > 0) {
         setParamEditable(true);
     } else {
         setParamEditable(false);
@@ -341,7 +340,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
     }
 
     const int spotPanelEvent = expsettings->getEventType();
-    int spotId;
+    int spotIndex;
     ControlSpotPanel::SpotRow* r;
     LocallabParams::LocallabSpot* newSpot;
 
@@ -356,10 +355,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
         case (ControlSpotPanel::SpotCreation): // Spot creation event
             // Spot creation (default initialization)
             newSpot = new LocallabParams::LocallabSpot();
-            spotId = expsettings->getNewId();
             r = new ControlSpotPanel::SpotRow();
-            r->id = newSpot->id = spotId;
-            r->name = newSpot->name = M("TP_LOCALLAB_SPOTNAME") + std::to_string(spotId);
+            r->name = newSpot->name = M("TP_LOCALLAB_SPOTNAME");
             r->isvisible = newSpot->isvisible;
 
             if (newSpot->shape == "ELI") {
@@ -431,12 +428,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             expsettings->addControlSpot(r);
 
             // ProcParams update
-            pp->locallab.nbspot++;
-            pp->locallab.selspot = pp->locallab.nbspot - 1;
             pp->locallab.spots.push_back(*newSpot);
+            pp->locallab.selspot = pp->locallab.spots.size() - 1;
 
             // New created spot selection
-            expsettings->setSelectedSpot(spotId);
+            expsettings->setSelectedSpot(pp->locallab.selspot);
 
             // Update Locallab tools GUI with new created spot
             disableListener();
@@ -459,7 +455,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 }
             }
 
-            if (pp->locallab.nbspot == 1) {
+            if (pp->locallab.spots.size() == 1) {
                 setParamEditable(true);
             }
 
@@ -475,17 +471,16 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
         case (ControlSpotPanel::SpotDeletion): // Spot deletion event
             // Get deleted spot index in ProcParams and update it
-            spotId = expsettings->getSelectedSpot();
+            spotIndex = expsettings->getSelectedSpot();
 
-            for (int i = 0; i < pp->locallab.nbspot && i < (int)pp->locallab.spots.size(); i++) {
-                if (pp->locallab.spots.at(i).id == spotId) {
+            for (int i = 0; i < (int)pp->locallab.spots.size(); i++) {
+                if (i == spotIndex) {
                     // ProcParams update
-                    pp->locallab.nbspot--;
                     pp->locallab.spots.erase(pp->locallab.spots.begin() + i);
-                    expsettings->deleteControlSpot(spotId);
+                    expsettings->deleteControlSpot(spotIndex);
 
                     // Select the first remaining spot before deleted one
-                    if (pp->locallab.nbspot > 0) {
+                    if (pp->locallab.spots.size() > 0) {
                         for (int j = i - 1; j >= 0; j--) { // procparams spots uses zero-based index whereas spot ids use one-based index
                             if (expsettings->setSelectedSpot(j + 1)) { // True if an existing spot has been selected on controlspotpanel
                                 pp->locallab.selspot = j;
@@ -519,7 +514,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         }
                     }
 
-                    if (pp->locallab.nbspot == 0) {
+                    if (pp->locallab.spots.size() == 0) {
                         setParamEditable(false);
                     }
 
@@ -538,17 +533,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             break;
 
         case (ControlSpotPanel::SpotSelection):  // Spot selection event
-            spotId = expsettings->getSelectedSpot();
-
-            for (int i = 0; i < pp->locallab.nbspot && i < (int)pp->locallab.spots.size(); i++) {
-                if (pp->locallab.spots.at(i).id == spotId) {
-                    pp->locallab.selspot = i;
-                    break;
-                }
-            }
+            pp->locallab.selspot = expsettings->getSelectedSpot();
 
             // Update control spots and Locallab tools GUI with selected spot
-            expsettings->setSelectedSpot(spotId);
+            expsettings->setSelectedSpot(pp->locallab.selspot);
             disableListener();
 
             for (auto tool : locallabTools) {
@@ -592,10 +580,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
         case (ControlSpotPanel::SpotDuplication): // Spot duplication event
             newSpot = nullptr;
-            spotId = expsettings->getSelectedSpot();
+            spotIndex = expsettings->getSelectedSpot();
 
-            for (int i = 0; i < pp->locallab.nbspot && i < (int)pp->locallab.spots.size(); i++) {
-                if (pp->locallab.spots.at(i).id == spotId) {
+            for (int i = 0; i < (int)pp->locallab.spots.size(); i++) {
+                if (i == spotIndex) {
                     newSpot = new LocallabParams::LocallabSpot(pp->locallab.spots.at(i));
                     break;
                 }
@@ -606,9 +594,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             }
 
             // Spot creation (initialization at currently selected spot)
-            spotId = expsettings->getNewId();
             r = new ControlSpotPanel::SpotRow();
-            r->id = newSpot->id = spotId;
             r->name = newSpot->name = newSpot->name + " - " + M("TP_LOCALLAB_DUPLSPOTNAME");
             r->isvisible = newSpot->isvisible;
 
@@ -681,12 +667,12 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             expsettings->addControlSpot(r);
 
             // ProcParams update
-            pp->locallab.nbspot++;
-            pp->locallab.selspot = pp->locallab.nbspot - 1;
             pp->locallab.spots.push_back(*newSpot);
+            pp->locallab.selspot = pp->locallab.spots.size() - 1;
+
 
             // New created spot selection
-            expsettings->setSelectedSpot(spotId);
+            expsettings->setSelectedSpot(pp->locallab.selspot);
 
             // Update Locallab tools GUI with new created spot
             disableListener();
@@ -732,7 +718,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             break;
 
         default: // Spot or locallab GUI updated
-            if (pp->locallab.nbspot > 0) {
+            if (pp->locallab.spots.size() > 0) {
                 r = expsettings->getSpot(expsettings->getSelectedSpot());
 
                 // ProcParams update

@@ -2214,7 +2214,7 @@ TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;Increase Edge stopping - or Reweighting iterate
 TP_LOCALLAB_VIBRANCE;Vibrance
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
-TP_LOCALLAB_SPOTNAME;Control Spot #
+TP_LOCALLAB_SPOTNAME;New Spot
 TP_LOCALLAB_BUTTON_ADD;Add
 TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate

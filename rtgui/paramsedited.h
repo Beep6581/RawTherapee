@@ -602,9 +602,7 @@ public:
     };
 
     bool enabled;
-    bool nbspot;
     bool selspot;
-    bool id;
     std::vector<LocallabSpotEdited> spots;
 };
 

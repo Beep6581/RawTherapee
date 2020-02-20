@@ -2336,7 +2336,6 @@ void WaveletParams::getCurves(
 
 LocallabParams::LocallabSpot::LocallabSpot() :
     // Control spot settings
-    id(1),
     name(""),
     isvisible(true),
     shape("ELI"),
@@ -2585,8 +2584,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
 {
     return
         // Control spot settings
-        id == other.id
-        && name == other.name
+        name == other.name
         && isvisible == other.isvisible
         && shape == other.shape
         && spotMethod == other.spotMethod
@@ -2855,7 +2853,6 @@ const std::vector<double> LocallabParams::DEF_LC_CURVE = {(double)FCT_MinMaxCPoi
 
 LocallabParams::LocallabParams() :
     enabled(false),
-    nbspot(0),
     selspot(0),
     spots()
 {
@@ -2865,7 +2862,6 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
 {
     return
         enabled == other.enabled
-        && nbspot == other.nbspot
         && selspot == other.selspot
         && spots == other.spots;
 }
@@ -3814,14 +3810,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Locallab
         saveToKeyfile(!pedited || pedited->locallab.enabled, "Locallab", "Enabled", locallab.enabled, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.nbspot, "Locallab", "Nbspot", locallab.nbspot, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.selspot, "Locallab", "Selspot", locallab.selspot, keyFile);
 
-        for (int i = 0; i < locallab.nbspot && i < (int)locallab.spots.size(); i++) {
-            if (!pedited || i < (int)pedited->locallab.spots.size()) {
+        for (size_t i = 0; i < locallab.spots.size(); i++) {
+            if (!pedited || i < pedited->locallab.spots.size()) {
                 const LocallabParams::LocallabSpot& spot = locallab.spots.at(i);
                 // Control spot settings
-                saveToKeyfile(!pedited || pedited->locallab.id, "Locallab", "Id_" + std::to_string(i), spot.id, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).name, "Locallab", "Name_" + std::to_string(i), spot.name, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).isvisible, "Locallab", "Isvisible_" + std::to_string(i), spot.isvisible, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shape, "Locallab", "Shape_" + std::to_string(i), spot.shape, keyFile);
@@ -5154,27 +5148,20 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Locallab")) {
             assignFromKeyfile(keyFile, "Locallab", "Enabled", pedited, locallab.enabled, pedited->locallab.enabled);
-            assignFromKeyfile(keyFile, "Locallab", "Nbspot", pedited, locallab.nbspot, pedited->locallab.nbspot);
             assignFromKeyfile(keyFile, "Locallab", "Selspot", pedited, locallab.selspot, pedited->locallab.selspot);
 
-            // Resize locallab settings if required
-            if (locallab.nbspot > (int)locallab.spots.size()) {
-                locallab.spots.resize(locallab.nbspot);
-            }
+            Glib::ustring ppName;
+            bool peName;
+            int i = 0;
 
-            // Initialize LocallabSpotEdited to false according to nbspot
-            if (pedited) {
-                pedited->locallab.spots.clear();
-                pedited->locallab.spots.resize(locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(false));
-            }
-
-            for (int i = 0; i < locallab.nbspot; i++) {
+            while (assignFromKeyfile(keyFile, "Locallab", "Name_" + std::to_string(i), pedited, ppName, peName)) {
+                // Create new LocallabSpot and LocallabParamsEdited
                 LocallabParams::LocallabSpot spot;
+                spot.name = ppName;
                 LocallabParamsEdited::LocallabSpotEdited spotEdited(false);
+                spotEdited.name = peName;
 
                 // Control spot settings
-                assignFromKeyfile(keyFile, "Locallab", "Id_" + std::to_string(i), pedited, spot.id, pedited->locallab.id);
-                assignFromKeyfile(keyFile, "Locallab", "Name_" + std::to_string(i), pedited, spot.name, spotEdited.name);
                 assignFromKeyfile(keyFile, "Locallab", "Isvisible_" + std::to_string(i), pedited, spot.isvisible, spotEdited.isvisible);
                 assignFromKeyfile(keyFile, "Locallab", "Shape_" + std::to_string(i), pedited, spot.shape, spotEdited.shape);
                 assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + std::to_string(i), pedited, spot.spotMethod, spotEdited.spotMethod);
@@ -5479,14 +5466,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + std::to_string(i), pedited, spot.bilateral, spotEdited.bilateral);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + std::to_string(i), pedited, spot.sensiden, spotEdited.sensiden);
 
-                locallab.spots.at(i) = spot;
+                // Append LocallabSpot and LocallabParamsEdited
+                locallab.spots.push_back(spot);
 
                 if (pedited) {
-                    pedited->locallab.spots.at(i) = spotEdited;
+                    pedited->locallab.spots.push_back(spotEdited);
                 }
+
+                // Update increment
+                i++;
             }
         }
-
 
         if (keyFile.has_group("PCVignette")) {
             assignFromKeyfile(keyFile, "PCVignette", "Enabled", pedited, pcvignette.enabled, pedited->pcvignette.enabled);

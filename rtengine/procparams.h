@@ -935,7 +935,6 @@ struct GradientParams {
 struct LocallabParams {
     struct LocallabSpot {
         // Control spot settings
-        int id;
         Glib::ustring name;
         bool isvisible;
         Glib::ustring shape; // ELI, RECT
@@ -1185,7 +1184,6 @@ struct LocallabParams {
         bool operator !=(const LocallabSpot& other) const;
     };
 
-    bool enabled;
     static const double LABGRIDL_CORR_MAX;
     static const double LABGRIDL_CORR_SCALE;
     static const double LABGRIDL_DIRECT_SCALE;
@@ -1195,7 +1193,8 @@ struct LocallabParams {
     static const std::vector<double> DEF_EXP_CURVE;
     static const std::vector<double> DEF_RET_CURVE;
     static const std::vector<double> DEF_LC_CURVE;
-    int nbspot;
+
+    bool enabled;
     int selspot;
     std::vector<LocallabSpot> spots;
 

@@ -948,7 +948,7 @@ void Crop::update(int todo)
      //   int maxspot = 1;
 
         if (needslocal) {
-            for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
+            for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);

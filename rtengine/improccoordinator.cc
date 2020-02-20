@@ -882,7 +882,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             float avge;
             std::vector<LocallabListener::locallabRef> locallref;
 
-            for (int sp = 0; sp < params->locallab.nbspot && sp < (int)params->locallab.spots.size(); sp++) {
+            for (size_t sp = 0; sp < params->locallab.spots.size(); sp++) {
                 // Set local curves of current spot to LUT
                 LHutili = false;
                 HHutili = false;

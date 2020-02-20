@@ -1121,7 +1121,7 @@ private:
            // int maxspot = 1;
             float** shbuffer = nullptr;
 
-            for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
+            for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
                 if (params.locallab.spots.at(sp).inverssha) {
                     shbuffer = new float*[fh];
 

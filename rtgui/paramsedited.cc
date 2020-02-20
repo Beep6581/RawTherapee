@@ -335,9 +335,7 @@ void ParamsEdited::set(bool v)
     gradient.centerY = v;
 
     locallab.enabled = v;
-    locallab.nbspot = v;
     locallab.selspot = v;
-    locallab.id = v;
 
     for (size_t i = 0; i < locallab.spots.size(); i++) {
         locallab.spots.at(i).set(v);
@@ -615,7 +613,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
 
     // Resize LocallabSpotEdited according to src[0]
     locallab.spots.clear();
-    locallab.spots.resize(p.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(true));
+    locallab.spots.resize(p.locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+
+    // Variable used to determined if Locallab spots number is equal and so spots can be combined
+    bool isSpotNumberEqual = true;
 
     for (size_t i = 1; i < src.size(); i++) {
         const ProcParams& other = src[i];
@@ -922,15 +923,14 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         gradient.centerY = gradient.centerY && p.gradient.centerY == other.gradient.centerY;
 
         locallab.enabled = locallab.enabled && p.locallab.enabled == other.locallab.enabled;
-        locallab.nbspot = locallab.nbspot && p.locallab.nbspot == other.locallab.nbspot;
+        isSpotNumberEqual = isSpotNumberEqual && p.locallab.spots.size() == other.locallab.spots.size();
         locallab.selspot = locallab.selspot && p.locallab.selspot == other.locallab.selspot;
 
-        if (locallab.nbspot) {
+        if (isSpotNumberEqual) {
             for (size_t j = 0; j < locallab.spots.size() && j < p.locallab.spots.size() && j < other.locallab.spots.size(); j++) {
                 const LocallabParams::LocallabSpot& pSpot = p.locallab.spots.at(j);
                 const LocallabParams::LocallabSpot& otherSpot = other.locallab.spots.at(j);
                 // Control spot settings
-                locallab.id = locallab.id && pSpot.id == otherSpot.id;
                 locallab.spots.at(j).name = locallab.spots.at(j).name && pSpot.name == otherSpot.name;
                 locallab.spots.at(j).isvisible = locallab.spots.at(j).isvisible && pSpot.isvisible == otherSpot.isvisible;
                 locallab.spots.at(j).shape = locallab.spots.at(j).shape && pSpot.shape == otherSpot.shape;
@@ -1179,11 +1179,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
             }
         }
 
-        if (!locallab.nbspot || !locallab.id) {
-            // locallab.id and locallab.spots are set to false because cannot be combined
-            locallab.id = false;
+        if (!isSpotNumberEqual) {
+            // All LocallabSpotEdited are set to false because cannot be combined
             locallab.spots.clear();
-            locallab.spots.resize(p.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(false));
+            locallab.spots.resize(p.locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(false));
         }
 
         pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
@@ -2573,36 +2572,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.enabled   = mods.locallab.enabled;
     }
 
-    if (locallab.nbspot || locallab.id) { // For locallab to work, id order needs to be maintained when adding or deleting spots
-        // Saving toEdit locallab temporarily
-        LocallabParams tmpLocallab = toEdit.locallab;
-
-        // Removing all spots in toEdit and recreating spots based on mods id
-        toEdit.locallab.spots.clear();
-
-        for (size_t i = 0; i < mods.locallab.spots.size(); i++) {
-            LocallabParams::LocallabSpot *newSpot = new LocallabParams::LocallabSpot();
-            newSpot->id = mods.locallab.spots.at(i).id;
-            toEdit.locallab.spots.push_back(*newSpot);
-        }
-
-        // Common spots in tmpLocallab and mods are restored in toEdit
-        for (size_t i = 0; i < toEdit.locallab.spots.size(); i++) {
-            for (size_t j = 0; j < tmpLocallab.spots.size(); j++) {
-                if (toEdit.locallab.spots.at(i).id == tmpLocallab.spots.at(j).id) {
-                    toEdit.locallab.spots.at(i) = tmpLocallab.spots.at(j);
-                }
-            }
-        }
-
-        // Updating nbspot accordingly
-        toEdit.locallab.nbspot   = mods.locallab.nbspot;
-    }
-
     if (locallab.selspot) {
         toEdit.locallab.selspot   = mods.locallab.selspot;
     }
 
+    // Resizing locallab spots vector according to pedited
+    toEdit.locallab.spots.resize(locallab.spots.size());
+
+    // Updating each locallab spot according to pedited
     for (size_t i = 0; i < toEdit.locallab.spots.size() && i < mods.locallab.spots.size() && i < locallab.spots.size(); i++) {
         // Control spot settings
         if (locallab.spots.at(i).name) {
@@ -3532,7 +3509,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensiden = mods.locallab.spots.at(i).sensiden;
         }
     }
-
 
     if (pcvignette.enabled) {
         toEdit.pcvignette.enabled = mods.pcvignette.enabled;

@@ -125,18 +125,8 @@ ControlSpotPanel::ControlSpotPanel():
             *this, &ControlSpotPanel::blockTreeviewSearch), false);
 
     auto cell = Gtk::manage(new Gtk::CellRendererText());
-    int cols_count = treeview_->append_column("ID", *cell);
+    int cols_count = treeview_->append_column(M("TP_LOCALLAB_COL_NAME"), *cell);
     auto col = treeview_->get_column(cols_count - 1);
-
-    if (col) {
-        col->set_cell_data_func(
-            *cell, sigc::mem_fun(
-                *this, &ControlSpotPanel::render_id));
-    }
-
-    cell = Gtk::manage(new Gtk::CellRendererText());
-    cols_count = treeview_->append_column(M("TP_LOCALLAB_COL_NAME"), *cell);
-    col = treeview_->get_column(cols_count - 1);
 
     if (col) {
         col->set_cell_data_func(
@@ -357,24 +347,6 @@ void ControlSpotPanel::setEditProvider(EditDataProvider* provider)
     EditSubscriber::setEditProvider(provider);
 }
 
-void ControlSpotPanel::render_id(
-    Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter)
-{
-    auto row = *iter;
-    Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
-
-    // Render cell text
-    ct->property_text() = std::to_string(row[spots_.id]);
-
-    // Render cell background color
-    if (row[spots_.mouseover]) {
-        ct->property_background_rgba() = colorMouseovertext;
-    } else {
-        ct->property_background_rgba() = colorNominal;
-    }
-
-}
-
 void ControlSpotPanel::render_name(
     Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter)
 {
@@ -425,8 +397,7 @@ void ControlSpotPanel::on_button_add()
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotCreation;
-    const int newId = getNewId();
-    listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId));
+    listener->panelChanged(EvLocallabSpotCreated, "-");
 }
 
 void ControlSpotPanel::on_button_delete()
@@ -441,8 +412,8 @@ void ControlSpotPanel::on_button_delete()
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDeletion;
-    const int delId = getSelectedSpot();
-    listener->panelChanged(EvLocallabSpotDeleted, "ID#" + std::to_string(delId));
+    SpotRow* const delSpotRow = getSpot(getSelectedSpot());
+    listener->panelChanged(EvLocallabSpotDeleted, delSpotRow->name);
 }
 
 void ControlSpotPanel::on_button_duplicate()
@@ -463,10 +434,9 @@ void ControlSpotPanel::on_button_duplicate()
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDuplication;
-    const int newId = getNewId();
-    listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId)
-                           + " (" + M("TP_LOCALLAB_EV_DUPL") + " ID#"
-                           + std::to_string(selId) + ")");
+    SpotRow* const duplSpotRow = getSpot(getSelectedSpot());
+    listener->panelChanged(EvLocallabSpotCreated, M("TP_LOCALLAB_EV_DUPL") + " "
+                           + duplSpotRow->name);
 }
 
 void ControlSpotPanel::on_button_rename()
@@ -558,12 +528,12 @@ bool ControlSpotPanel::on_button_visibility(GdkEventButton* event)
 
             // Raise event
             visibilityChanged_ = true;
-            const int id = getSelectedSpot();
+            SpotRow* const spotRow = getSpot(getSelectedSpot());
 
             if (row[spots_.isvisible]) {
-                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS") + " ID#" + std::to_string(id));
+                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS") + " (" + spotRow->name + ")");
             } else {
-                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_NVIS") + " ID#" + std::to_string(id));
+                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_NVIS") + " (" + spotRow->name + ")");
             }
 
             return true;
@@ -637,13 +607,13 @@ void ControlSpotPanel::controlspotChanged()
     // Raise event
     selSpotChanged_ = true;
     eventType = SpotSelection;
-    const int selId = getSelectedSpot();
+    SpotRow* const spotRow = getSpot(getSelectedSpot());
 
     // Image area shall be regenerated if mask preview was active when switching spot
     if (maskPrevActive) {
-        listener->panelChanged(EvLocallabSpotSelectedWithMask, "ID#" + std::to_string(selId));
+        listener->panelChanged(EvLocallabSpotSelectedWithMask, spotRow->name);
     } else {
-        listener->panelChanged(EvLocallabSpotSelected, "ID#" + std::to_string(selId));
+        listener->panelChanged(EvLocallabSpotSelected, spotRow->name);
     }
 }
 
@@ -1732,21 +1702,20 @@ int ControlSpotPanel::getEventType()
     return tmp;
 }
 
-ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
+ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
 {
-    // printf("getSpot: %d\n", id);
+    // printf("getSpot: %d\n", index);
 
     MyMutex::MyLock lock(mTreeview);
 
     SpotRow* r = new SpotRow();
 
-    const Gtk::TreeModel::Children children = treemodel_->children();
+    int i = -1;
 
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        const Gtk::TreeModel::Row row = *iter;
+    for (auto &row : treemodel_->children()) {
+        i++;
 
-        if (row[spots_.id] == id) {
-            r->id = row[spots_.id];
+        if (i == index) {
             r->name = row[spots_.name];
             r->isvisible = row[spots_.isvisible];
             r->shape = row[spots_.shape];
@@ -1778,20 +1747,11 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
     return nullptr;
 }
 
-std::vector<int>* ControlSpotPanel::getSpotIdList()
+int ControlSpotPanel::getSpotNumber()
 {
-    MyMutex::MyLock lock(mTreeview);
+    // printf("getSpotNumber\n");
 
-    std::vector<int>* r = new std::vector<int>();
-
-    const Gtk::TreeModel::Children children = treemodel_->children();
-
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        const Gtk::TreeModel::Row row = *iter;
-        r->push_back(row[spots_.id]);
-    }
-
-    return r;
+    return (int)treemodel_->children().size();
 }
 
 int ControlSpotPanel::getSelectedSpot()
@@ -1804,28 +1764,37 @@ int ControlSpotPanel::getSelectedSpot()
 
     // Check if treeview has row, otherwise return 0
     if (!s->count_selected_rows()) {
-        return 0;
+        return -1;
     }
 
-    const auto iter = s->get_selected();
-    const Gtk::TreeModel::Row row = *iter;
-    int id = row[spots_.id];
+    const auto selRow = s->get_selected();
 
-    return id;
+    // Get selected spot index
+    int index = -1;
+
+    for (auto i : treemodel_->children()) {
+        index++;
+
+        if (selRow == i) {
+            return index;
+        }
+    }
+
+    return -1;
 }
 
-bool ControlSpotPanel::setSelectedSpot(const int id)
+bool ControlSpotPanel::setSelectedSpot(const int index)
 {
-    // printf("setSelectedSpot: %d\n", id);
+    // printf("setSelectedSpot: %d\n", index);
 
     MyMutex::MyLock lock(mTreeview);
 
-    const Gtk::TreeModel::Children children = treemodel_->children();
+    int i = -1;
 
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        const Gtk::TreeModel::Row row = *iter;
+    for (auto &row : treemodel_->children()) {
+        i++;
 
-        if (row[spots_.id] == id) {
+        if (i == index) {
             disableParamlistener(true);
 
             treeview_->set_cursor(treemodel_->get_path(row));
@@ -1842,36 +1811,15 @@ bool ControlSpotPanel::setSelectedSpot(const int id)
     return false;
 }
 
-int ControlSpotPanel::getNewId()
-{
-    MyMutex::MyLock lock(mTreeview);
-
-    // Looking for maximum used id
-    int max_row_id = 0;
-    const Gtk::TreeModel::Children children = treemodel_->children();
-
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        const Gtk::TreeModel::Row row = *iter;
-        const int iter_id = row[spots_.id];
-        max_row_id = std::max(max_row_id, iter_id);
-    }
-
-    max_row_id++;
-
-    return max_row_id;
-}
-
-
 void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
 {
-    // printf("addControlSpot: %d\n", newSpot->id);
+    // printf("addControlSpot: %d\n", newSpot->name);
 
     MyMutex::MyLock lock(mTreeview);
 
     disableParamlistener(true);
-    Gtk::TreeModel::Row row = * (treemodel_->append());
+    Gtk::TreeModel::Row row = *(treemodel_->append());
     row[spots_.mouseover] = false;
-    row[spots_.id] = newSpot->id;
     row[spots_.name] = newSpot->name;
     row[spots_.isvisible] = newSpot->isvisible;
     row[spots_.curveid] = 0; // No associated curve
@@ -1904,57 +1852,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     updateControlSpotCurve(row);
 }
 
-int ControlSpotPanel::updateControlSpot(SpotRow* spot)
-{
-    // printf("updateControlSpot: %d\n", spot->id);
-
-    MyMutex::MyLock lock(mTreeview);
-
-    disableParamlistener(true);
-
-    const Gtk::TreeModel::Children children = treemodel_->children();
-
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        Gtk::TreeModel::Row row = *iter;
-
-        if (row[spots_.id] == spot->id) {
-            row[spots_.name] = spot->name;
-            row[spots_.isvisible] = spot->isvisible;
-            row[spots_.shape] = spot->shape;
-            row[spots_.spotMethod] = spot->spotMethod;
-            row[spots_.sensiexclu] = spot->sensiexclu;
-            row[spots_.structexclu] = spot->structexclu;
-            row[spots_.struc] = spot->struc;
-            row[spots_.shapeMethod] = spot->shapeMethod;
-            row[spots_.locX] = spot->locX;
-            row[spots_.locXL] = spot->locXL;
-            row[spots_.locY] = spot->locY;
-            row[spots_.locYT] = spot->locYT;
-            row[spots_.centerX] = spot->centerX;
-            row[spots_.centerY] = spot->centerY;
-            row[spots_.circrad] = spot->circrad;
-            row[spots_.qualityMethod] = spot->qualityMethod;
-            row[spots_.transit] = spot->transit;
-            row[spots_.thresh] = spot->thresh;
-            row[spots_.iter] = spot->iter;
-            row[spots_.balan] = spot->balan;
-            row[spots_.transitweak] = spot->transitweak;
-            row[spots_.transitgrad] = spot->transitgrad;
-            row[spots_.avoid] = spot->avoid;
-
-            updateControlSpotCurve(row);
-            updateParamVisibility();
-            disableParamlistener(false);
-
-            return 1;
-        }
-    }
-
-    disableParamlistener(false);
-    return 0;
-}
-
-void ControlSpotPanel::deleteControlSpot(const int id)
+void ControlSpotPanel::deleteControlSpot(const int index)
 {
     // printf("deleteControlSpot: %d\n", id);
 
@@ -1962,150 +1860,19 @@ void ControlSpotPanel::deleteControlSpot(const int id)
 
     disableParamlistener(true);
 
-    const Gtk::TreeModel::Children children = treemodel_->children();
+    int i = -1;
 
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        Gtk::TreeModel::Row row = *iter;
+    for (auto iter : treemodel_->children()) {
+        i++;
 
-        if (row[spots_.id] == id) {
+        if (i == index) {
+            Gtk::TreeModel::Row row = *iter;
             deleteControlSpotCurve(row);
-            treemodel_->erase(iter);
+            treemodel_->erase(*row);
             break;
         }
     }
 
-    disableParamlistener(false);
-}
-
-ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
-{
-    // printf("getEditedStates\n");
-
-    SpotEdited* se = new SpotEdited();
-
-    if (nbSpotChanged_) {
-        se->nbspot = true;
-        // nbSpotChanged_ = false;
-    } else {
-        se->nbspot = false;
-    }
-
-    if (selSpotChanged_) {
-        se->selspot = true;
-        // selSpotChanged_ = false;
-    } else {
-        se->selspot = false;
-    }
-
-    if (nameChanged_) {
-        se->name = true;
-        // nameChanged_ = false;
-    } else {
-        se->name = false;
-    }
-
-    if (visibilityChanged_) {
-        se->isvisible = true;
-        // visibilityChanged_ = false;
-    } else {
-        se->isvisible = false;
-    }
-
-    se->shape = shape_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->spotMethod = spotMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->sensiexclu = sensiexclu_->getEditedState();
-    se->structexclu = structexclu_->getEditedState();
-    se->struc = struc_->getEditedState();
-    se->shapeMethod = shapeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->locX = locX_->getEditedState();
-    se->locXL = locXL_->getEditedState();
-    se->locY = locY_->getEditedState();
-    se->locYT = locYT_->getEditedState();
-    se->centerX = centerX_->getEditedState();
-    se-> centerY = centerY_->getEditedState();
-    se->circrad = circrad_->getEditedState();
-    se->qualityMethod = qualityMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->transit = transit_->getEditedState();
-    se->thresh = thresh_->getEditedState();
-    se->iter = iter_->getEditedState();
-    se->balan = balan_->getEditedState();
-    se->transitweak = transitweak_->getEditedState();
-    se->transitgrad = transitgrad_->getEditedState();
-    se->avoid = !avoid_->get_inconsistent();
-
-    return se;
-}
-
-void ControlSpotPanel::setEditedStates(SpotEdited* se)
-{
-    // printf("setEditedStates\n");
-
-    // Reset treeview edited states
-    nbSpotChanged_ = false;
-    selSpotChanged_ = false;
-    nameChanged_ = false;
-    visibilityChanged_ = false;
-
-    // Disable params listeners
-    disableParamlistener(true);
-
-    // Set widgets edited states
-    if (!se->nbspot || !se->selspot) {
-        treeview_->set_sensitive(false);
-        button_add_->set_sensitive(false);
-        button_delete_->set_sensitive(false);
-        button_duplicate_->set_sensitive(false);
-        button_rename_->set_sensitive(false);
-        button_visibility_->set_sensitive(false);
-    } else {
-        treeview_->set_sensitive(true);
-        button_add_->set_sensitive(true);
-        button_delete_->set_sensitive(true);
-        button_duplicate_->set_sensitive(true);
-        button_rename_->set_sensitive(se->name);
-        button_visibility_->set_sensitive(se->isvisible);
-    }
-
-    if (!se->shape) {
-        shape_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    if (!se->spotMethod) {
-        spotMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    sensiexclu_->setEditedState(se->sensiexclu ? Edited : UnEdited);
-    structexclu_->setEditedState(se->structexclu ? Edited : UnEdited);
-    struc_->setEditedState(se->struc ? Edited : UnEdited);
-
-    if (!se->shapeMethod) {
-        shapeMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    locX_->setEditedState(se->locX ? Edited : UnEdited);
-    locXL_->setEditedState(se->locXL ? Edited : UnEdited);
-    locY_->setEditedState(se->locY ? Edited : UnEdited);
-    locYT_->setEditedState(se->locYT ? Edited : UnEdited);
-    centerX_->setEditedState(se->centerX ? Edited : UnEdited);
-    centerY_->setEditedState(se->centerY ? Edited : UnEdited);
-    circrad_->setEditedState(se->circrad ? Edited : UnEdited);
-
-    if (!se->qualityMethod) {
-        qualityMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    transit_->setEditedState(se->transit ? Edited : UnEdited);
-    thresh_->setEditedState(se->thresh ? Edited : UnEdited);
-    iter_->setEditedState(se->iter ? Edited : UnEdited);
-    balan_->setEditedState(se->balan ? Edited : UnEdited);
-    transitweak_->setEditedState(se->transitweak ? Edited : UnEdited);
-    transitgrad_->setEditedState(se->transitgrad ? Edited : UnEdited);
-    avoid_->set_inconsistent(multiImage && !se->avoid);
-
-    // Update Control Spot GUI according to widgets edited states
-    updateParamVisibility();
-
-    // Enable params listeners
     disableParamlistener(false);
 }
 
@@ -2138,35 +1905,6 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
-void ControlSpotPanel::setBatchMode(bool batchMode)
-{
-    ToolPanel::setBatchMode(batchMode);
-
-    // Set batch mode for adjusters
-    sensiexclu_->showEditedCB();
-    structexclu_->showEditedCB();
-    struc_->showEditedCB();
-    locX_->showEditedCB();
-    locXL_->showEditedCB();
-    locY_->showEditedCB();
-    locYT_->showEditedCB();
-    centerX_->showEditedCB();
-    centerY_->showEditedCB();
-    circrad_->showEditedCB();
-    transit_->showEditedCB();
-    thresh_->showEditedCB();
-    iter_->showEditedCB();
-    balan_->showEditedCB();
-    transitweak_->showEditedCB();
-    transitgrad_->showEditedCB();
-
-    // Set batch mode for comboBoxText
-    shape_->append(M("GENERAL_UNCHANGED"));
-    spotMethod_->append(M("GENERAL_UNCHANGED"));
-    shapeMethod_->append(M("GENERAL_UNCHANGED"));
-    qualityMethod_->append(M("GENERAL_UNCHANGED"));
-}
-
 //-----------------------------------------------------------------------------
 // ControlSpots
 //-----------------------------------------------------------------------------
@@ -2174,7 +1912,6 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
 ControlSpotPanel::ControlSpots::ControlSpots()
 {
     add(mouseover);
-    add(id);
     add(name);
     add(isvisible);
     add(curveid);

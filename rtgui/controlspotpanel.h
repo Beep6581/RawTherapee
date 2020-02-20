@@ -41,7 +41,6 @@ public:
      * A SpotRow structure allows exchanges from and to ControlSpotClass
      */
     struct SpotRow {
-        int id; // Control spot id
         Glib::ustring name;
         bool isvisible;
         int shape; // 0 = Ellipse, 1 = Rectangle
@@ -64,37 +63,6 @@ public:
         double balan;
         double transitweak;
         double transitgrad;
-        bool avoid;
-    };
-
-    /**
-     * A SpotEdited structure allows exchanges of spot panel widgets edited states from and to ControlSpotClass
-     */
-    struct SpotEdited {
-        bool nbspot;
-        bool selspot;
-        bool name;
-        bool isvisible;
-        bool shape;
-        bool spotMethod;
-        bool sensiexclu;
-        bool structexclu;
-        bool struc;
-        bool shapeMethod;
-        bool locX;
-        bool locXL;
-        bool locY;
-        bool locYT;
-        bool centerX;
-        bool centerY;
-        bool circrad;
-        bool qualityMethod;
-        bool transit;
-        bool thresh;
-        bool iter;
-        bool balan;
-        bool transitweak;
-        bool transitgrad;
         bool avoid;
     };
 
@@ -134,29 +102,29 @@ public:
     /**
      * Getter of params of associated spot
      *
-     * @param id The spot id to get params
+     * @param index The spot index to get params
      * @return A SpotRow structure containing params of associated spot
      */
-    SpotRow* getSpot(const int id);
+    SpotRow* getSpot(const int index);
     /**
-     * Get of spot id list
+     * Getter of spots number
      *
-     * @return A vector contening the list of spot id
+     * @return The number of spots in panel
      */
-    std::vector<int>* getSpotIdList();
+    int getSpotNumber();
     /**
-     * Getter of selected spot id
+     * Getter of selected spot index
      *
-     * @return The id of selected spot in treeview (return 0 if no selected spot)
+     * @return The index of selected spot in treeview (return -1 if no selected spot)
      */
     int getSelectedSpot();
     /**
      * Setter of selected spot
      *
-     * @param id The id of spot to be selected
-     * @return True if a spot corresponding to the id has been selected
+     * @param index The index of spot to be selected
+     * @return True if a spot corresponding to the index has been selected
      */
-    bool setSelectedSpot(const int id);
+    bool setSelectedSpot(const int index);
     /**
      * Setter for mask preview active indicator
      *
@@ -169,25 +137,11 @@ public:
 
     // Control spot creation functions
     /**
-     * Getter of available id for new spot creation
-     *
-     * @return An available id (i.e. max existing ones + 1)
-     */
-    int getNewId();
-    /**
      * Add a new spot (and its associated curve)
      *
      * @param newSpot A SpotRow structure containing new spot params
      */
     void addControlSpot(SpotRow* newSpot);
-
-    // Control spot update function
-    /**
-     * Update a spot (and its associated curve)
-     *
-     * @param spot A SpotRow structure containing spot params to update
-     */
-    int updateControlSpot(SpotRow* spot);
 
     // Control spot delete function
     /**
@@ -195,21 +149,9 @@ public:
      *
      * @param id The id of the spot to be deleted
      */
-    void deleteControlSpot(const int id);
+    void deleteControlSpot(const int index);
 
     // Panel widgets management functions
-    /**
-     * Getter of panel widgets edited states
-     *
-     * @return A SpotEdited structure containing the widgets edited states
-     */
-    SpotEdited* getEditedStates();
-    /**
-     * Setter of panel widgets edited states
-     *
-     * @param se A SpotEdited structure containing the widgets edited states to update
-     */
-    void setEditedStates(SpotEdited* se);
     /**
      * Implementation of setDefaults function of toolpanel.h
      *
@@ -225,16 +167,10 @@ public:
     void setParamEditable(bool cond);
 
     // Batch mode management
-    /**
-     * Implementation of setBatchMode function of toolpanel.h
-     *
-     * @param batchMode Condition to enable batch mode
-     */
-    void setBatchMode(bool batchMode);
+    // Note: Batch mode is deactivated for Locallab
 
 private:
     // Cell renderer
-    void render_id(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_name(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_isvisible(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
 
@@ -279,7 +215,6 @@ private:
         ControlSpots();
 
         Gtk::TreeModelColumn<bool> mouseover; // Used to manage spot enlightening when mouse over
-        Gtk::TreeModelColumn<int> id; // Control spot id
         Gtk::TreeModelColumn<Glib::ustring> name;
         Gtk::TreeModelColumn<bool> isvisible;
         Gtk::TreeModelColumn<int> curveid; // Associated curve id
