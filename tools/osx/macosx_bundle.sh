@@ -12,7 +12,7 @@
 fNormal="$(tput sgr0)"
 fBold="$(tput bold)"
 # Colors depend upon the user's terminal emulator color scheme - what is readable for you may be not readable for someone else.
-fMagenta="$(tput setaf 3)"
+fMagenta="$(tput setaf 5)"
 fRed="$(tput setaf 1)"
 
 function msg {
@@ -125,8 +125,6 @@ msg "Removing old files:"
 rm -rf "${APP}" *.dmg *.zip
 
 msg "Creating bundle container:"
-cd "${CMAKE_INSTALL_PREEFIX}"
-install -d "${APP}"
 install -d "${RESOURCES}"
 install -d "${MACOS}"
 install -d "${LIB}"
@@ -278,7 +276,7 @@ for frameworklibs in "${LIB}"/* ; do
 codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp "${frameworklibs}"
 done
 codesign --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements  "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
-spctl -a -vvvv ${APP}
+spctl -a -vvvv "${APP}"
 fi
 
 # Notarize the app
