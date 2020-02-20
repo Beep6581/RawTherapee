@@ -134,7 +134,7 @@ msg "Copying binary executable files."
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
 
 msg "Copying Resources directory."
-mv "${CMAKE_BUILD_TYPE}/Resources/share/AboutThisBuild.txt"
+mv "${CMAKE_BUILD_TYPE}/Resources/share/AboutThisBuild.txt" "${RESOURCES}"
 ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 
 echo "\n--------\n" >> "${RESOURCES}/AboutThisBuild.txt"
