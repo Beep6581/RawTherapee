@@ -130,18 +130,19 @@ install -d "${MACOS}"
 install -d "${LIB}"
 install -d "${ETC}"
 
-echo "\n--------\n" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
-echo "Bundle system: $(sysctl -n machdep.cpu.brand_string)" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
-echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
-echo "Bundle date:   $(date -Ru) ZULU" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
-echo "Bundle epoch:  $(date +%s)" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
-echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
-
 msg "Copying binary executable files."
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
 
 msg "Copying Resources directory."
+mv "${CMAKE_BUILD_TYPE}/Resources/share/AboutThisBuild.txt"
 ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
+
+echo "\n--------\n" >> "${RESOURCES}/AboutThisBuild.txt"
+echo "Bundle system: $(sysctl -n machdep.cpu.brand_string)" >> "${RESOURCES}/AboutThisBuild.txt"
+echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> "${RESOURCES}/AboutThisBuild.txt"
+echo "Bundle date:   $(date -Ru) ZULU" >> "${RESOURCES}/AboutThisBuild.txt"
+echo "Bundle epoch:  $(date +%s)" >> "${RESOURCES}/AboutThisBuild.txt"
+echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${RESOURCES}/AboutThisBuild.txt"
 
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"

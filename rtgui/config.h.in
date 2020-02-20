@@ -24,10 +24,10 @@
 #cmakedefine HAVE_UNALIGNED_MALLOC
 
 #ifdef __APPLE__
-#define DATA_SEARCH_PATH "/Applications/RawTherapee.com/Contents/Resources/share"
-#define DOC_SEARCH_PATH "/Applications/RawTherapee.com/Contents/Resources"
-#define CREDITS_SEARCH_PATH "/Applications/RawTherapee.com/Contents/Resources"
-#define LICENCE_SEARCH_PATH "/Applications/RawTherapee.com/Contents/Resources"
+#define DATA_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources/share"
+#define DOC_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources"
+#define CREDITS_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources"
+#define LICENCE_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources"
 #define LENSFUN_DB_PATH "${LENSFUNDBDIR}"
 #else
 #define DATA_SEARCH_PATH "${DATADIR}"
