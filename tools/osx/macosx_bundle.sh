@@ -110,7 +110,7 @@ EXPATLIB="$(cmake .. -LA -N | grep "pkgcfg_lib_EXPAT_expat" | cut -d "=" -f2)"
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
 NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
 FANCY_DMG="$(cmake .. -LA -N | grep "FANCY_DMG" | cut -d "=" -f2)"
-echo ${FANCY_DMG} || echo "Building plain .dmg"
+echo ${FANCY_DMG}
 
 APP="${PROJECT_NAME}.app"
 CONTENTS="${APP}/Contents"
@@ -125,17 +125,14 @@ msg "Removing old files:"
 rm -rf "${APP}" *.dmg *.zip
 
 msg "Creating bundle container:"
-install -d  "${RESOURCES}" \
-"${MACOS}" \
-"${LIB}" \
-"${ETC}"
+install -d "${APP}" "${RESOURCES}" "${MACOS}" "${LIB}" "${ETC}"
 
-echo "\n--------\n" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
-echo "Bundle system: $(sysctl -n machdep.cpu.brand_string)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
-echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
-echo "Bundle date:   $(date -Ru) ZULU" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
-echo "Bundle epoch:  $(date +%s)" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
-echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${CMAKE_BUILD_TYPE}"/Resources/AboutThisBuild.txt
+echo "\n--------\n" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
+echo "Bundle system: $(sysctl -n machdep.cpu.brand_string)" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
+echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> "${CMAKE_BUILD_TYPE}/${RESOURCES}/AboutThisBuild.txt"
+echo "Bundle date:   $(date -Ru) ZULU" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
+echo "Bundle epoch:  $(date +%s)" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
+echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${CMAKE_BUILD_TYPE}/Resources/AboutThisBuild.txt"
 
 msg "Copying binary executable files."
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
@@ -318,8 +315,8 @@ function CreateWebloc {
 defaults write "${srcDir}/$1" URL "$2"
 mv "${srcDir}/$1".{plist,webloc}
 }
-CreateWebloc 'Website' 'http://www.rawtherapee.com/'
-CreateWebloc 'Manual'  'http://rawpedia.rawtherapee.com/'
+CreateWebloc 'Website' 'https://www.rawtherapee.com/'
+CreateWebloc 'Manual'  'https://rawpedia.rawtherapee.com/'
 
 # Disk image name
 dmg_name="${PROJECT_NAME// /_}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}"
@@ -374,3 +371,4 @@ msg "Finishing build:"
 echo "Script complete."
 #
 # TODO filter out the benign errors
+# Build a fancy dmg
