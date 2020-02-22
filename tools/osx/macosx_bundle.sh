@@ -110,7 +110,9 @@ EXPATLIB="$(cmake .. -LA -N | grep "pkgcfg_lib_EXPAT_expat" | cut -d "=" -f2)"
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
 NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
 FANCY_DMG="$(cmake .. -LA -N | grep "FANCY_DMG" | cut -d "=" -f2)"
-echo ${FANCY_DMG}
+if [[ -n ${FANCY_DMG} ]] ; then
+echo "Fancy .dmg build is ON."
+fi
 
 APP="${PROJECT_NAME}.app"
 CONTENTS="${APP}/Contents"
@@ -134,13 +136,13 @@ msg "Copying binary executable files."
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
 
 msg "Copying Resources directory."
-mv "${CMAKE_BUILD_TYPE}/Resources/share/AboutThisBuild.txt" "${RESOURCES}"
+mv AboutThisBuild.txt "${RESOURCES}"
 ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 
 echo "\n--------\n" >> "${RESOURCES}/AboutThisBuild.txt"
 echo "Bundle system: $(sysctl -n machdep.cpu.brand_string)" >> "${RESOURCES}/AboutThisBuild.txt"
 echo "Bundle OS:     $(sw_vers -productName) $(sw_vers -productVersion) $(sw_vers -buildVersion) $(uname -mrs)" >> "${RESOURCES}/AboutThisBuild.txt"
-echo "Bundle date:   $(date -Ru) ZULU" >> "${RESOURCES}/AboutThisBuild.txt"
+echo "Bundle date:   $(date -Ru) UTC" >> "${RESOURCES}/AboutThisBuild.txt"
 echo "Bundle epoch:  $(date +%s)" >> "${RESOURCES}/AboutThisBuild.txt"
 echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${RESOURCES}/AboutThisBuild.txt"
 
@@ -268,7 +270,7 @@ install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABL
 install_name_tool -add_rpath @executable_path "${EXECUTABLE}"-cli
 
 # Codesign the app
-if ! test -z "${CODESIGNID}" ; then
+if [ -n "${CODESIGNID}" ] ; then
 msg "Codesigning Application."
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements
 plutil -convert binary1 "${CMAKE_BUILD_TYPE}"/rt.entitlements
@@ -281,7 +283,7 @@ spctl -a -vvvv "${APP}"
 fi
 
 # Notarize the app
-if ! test -z "$NOTARY" ; then
+if [ -n "$NOTARY" ] ; then
 msg "Notarizing the application:"
 ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
 uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee.RawTherapee" ${NOTARY} --file "${APP}.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
@@ -312,6 +314,7 @@ local srcDir="$(mktemp -dt $$)"
 
 msg "Preparing disk image sources at ${srcDir}:"
 cp -R "${APP}" "${srcDir}"
+cp "${RESOURCES}"/share/LICENSE.txt "${srcDir}"
 ln -s /Applications "${srcDir}"
 
 # Web bookmarks
@@ -319,8 +322,10 @@ function CreateWebloc {
 defaults write "${srcDir}/$1" URL "$2"
 mv "${srcDir}/$1".{plist,webloc}
 }
-CreateWebloc 'Website' 'https://www.rawtherapee.com/'
-CreateWebloc 'Manual'  'https://rawpedia.rawtherapee.com/'
+CreateWebloc       'Website' 'https://www.rawtherapee.com/'
+CreateWebloc 'Documentation' 'https://rawpedia.rawtherapee.com/'
+CreateWebloc         'Forum' 'https://discuss.pixls.us/c/software/rawtherapee'
+CreateWebloc    'Report Bug' 'https://github.com/Beep6581/RawTherapee/issues/new'
 
 # Disk image name
 dmg_name="${PROJECT_NAME// /_}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}"
@@ -330,10 +335,25 @@ dmg_name="${dmg_name}_${lower_build_type}"
 fi
 
 msg "Creating disk image:"
+if [ ! -z ${FANCY_DMG} ] ; then
+echo "Building Fancy .dmg"
+cp -R "${PROJECT_SOURCE_DATA_DIR}/rtdmg.icns" "${srcDir}/.VolumeIcon.icns"
+cp -R "${PROJECT_SOURCE_DATA_DIR}/rtdmg-bkgd.png" "${srcDir}/.background/background.png"
+SetFile -c incC "${srcDir}/.VolumeIcon.icns"
+create-dmg ${dmg_name}.dmg "${srcDir}" \
+--volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" \
+--volicon "${srcDir}/.VolumeIcon.icns" \
+--sandbox-safe \
+--no-internet-enable \
+--eula LICENSE.txt \
+--hdiutil-verbose \
+--rez /Library/Developer/CommandLineTools/usr/bin/Rez
+else
 hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
+fi
 
 # Sign disk image
-if ! test -z "$CODESIGNID" ; then
+if [ -n "$CODESIGNID" ] ; then
 codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
 fi
 
@@ -374,4 +394,4 @@ CreateDmg
 msg "Finishing build:"
 echo "Script complete."
 #
-# TODO filter out the benign errors; Build a fancy dmg
+# TODO filter out the benign errors
