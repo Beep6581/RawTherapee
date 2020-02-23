@@ -136,7 +136,7 @@ msg "Copying binary executable files."
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
 
 msg "Copying Resources directory."
-mv AboutThisBuild.txt "${RESOURCES}"
+cp AboutThisBuild.txt "${RESOURCES}"
 ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 
 echo "\n--------\n" >> "${RESOURCES}/AboutThisBuild.txt"
@@ -337,10 +337,11 @@ fi
 msg "Creating disk image:"
 if [ ! -z ${FANCY_DMG} ] ; then
 echo "Building Fancy .dmg"
+mkdir "${srcDir}/.background"
 cp -R "${PROJECT_SOURCE_DATA_DIR}/rtdmg.icns" "${srcDir}/.VolumeIcon.icns"
 cp -R "${PROJECT_SOURCE_DATA_DIR}/rtdmg-bkgd.png" "${srcDir}/.background/background.png"
 SetFile -c incC "${srcDir}/.VolumeIcon.icns"
-create-dmg ${dmg_name}.dmg "${srcDir}" \
+create-dmg "${dmg_name}.dmg" "${srcDir}" \
 --volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" \
 --volicon "${srcDir}/.VolumeIcon.icns" \
 --sandbox-safe \
