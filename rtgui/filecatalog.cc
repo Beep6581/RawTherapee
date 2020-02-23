@@ -46,8 +46,6 @@
 
 using namespace std;
 
-#define CHECKTIME 2000
-
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     filepanel(filepanel),
     selectedDirectoryId(1),

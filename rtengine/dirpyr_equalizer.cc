@@ -228,11 +228,11 @@ void fillLut(LUTf &irangefn, int level, double dirpyrThreshold, float mult, floa
     }
 
     const float offs = skinprot == 0.f ? 0.f : -1.f;
-    constexpr float noise = 2000.f;
-    const float noisehi = 1.33f * noise * dirpyrThreshold / expf(level * log(3.0)), noiselo = 0.66f * noise * dirpyrThreshold / expf(level * log(3.0));
+    constexpr double noise = 2000.0;
+    const float noisehi = 1.33 * noise * dirpyrThreshold / exp(level * log(3.0)), noiselo = 0.66 * noise * dirpyrThreshold / exp(level * log(3.0));
 
     for (int i = 0; i < 0x20000; i++) {
-        if (abs(i - 0x10000) > noisehi || multbis < 1.0) {
+        if (abs(i - 0x10000) > noisehi || multbis < 1.f) {
             irangefn[i] = multbis + offs;
         } else {
             if (abs(i - 0x10000) < noiselo) {
@@ -262,7 +262,7 @@ void idirpyr_eq_channel(const float * const * data_coarse, const float * const *
                 buffer[i][j] += irangefn[hipass + 0x10000] * hipass;
             }
         }
-    } else if (skinprot > 0.f) {
+    } else if (skinprot > 0.0) {
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -314,7 +314,7 @@ void idirpyr_eq_channelcam(const float * const * data_coarse, const float * cons
                 buffer[i][j] += irangefn[hipass + 0x10000] * hipass;
             }
         }
-    } else if (skinprot > 0.f) {
+    } else if (skinprot > 0.0) {
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif

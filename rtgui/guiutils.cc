@@ -20,7 +20,6 @@
 
 #include "guiutils.h"
 #include "options.h"
-#include "../rtengine/rt_math.h"
 #include "../rtengine/utils.h"
 #include "../rtengine/procparams.h"
 #include "rtimage.h"
@@ -824,12 +823,6 @@ void MyExpander::setEnabledTooltipText(Glib::ustring tooltipText)
 void MyExpander::set_expanded( bool expanded )
 {
     if (!expBox) {
-        return;
-    }
-
-    bool isVisible = expBox->is_visible();
-
-    if (isVisible == expanded) {
         return;
     }
 

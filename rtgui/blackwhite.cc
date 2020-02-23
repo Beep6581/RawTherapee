@@ -70,7 +70,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     // -0.1 rad < Hue < 1.6 rad
     for (int i = 0; i < 7; i++) {
-        float x = float(i) * (1.0f / 6.0);
+        float x = float(i) * (1.0f / 6.f);
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
         bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
     }
@@ -1185,10 +1185,10 @@ void BlackWhite::updateRGBLabel ()
 
         RGBLabels->set_text(
             Glib::ustring::compose(M("TP_BWMIX_RGBLABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(1), r * 100.),
-                                   Glib::ustring::format(std::fixed, std::setprecision(1), g * 100.),
-                                   Glib::ustring::format(std::fixed, std::setprecision(1), b * 100.),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), ceil(kcorrec * 100./*(r+g+b)*100.)*/)))
+                                   Glib::ustring::format(std::fixed, std::setprecision(1), r * 100.f),
+                                   Glib::ustring::format(std::fixed, std::setprecision(1), g * 100.f),
+                                   Glib::ustring::format(std::fixed, std::setprecision(1), b * 100.f),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), ceil(kcorrec * 100.f/*(r+g+b)*100.)*/)))
         );
 
         // We have to update the RGB sliders too if preset values has been chosen

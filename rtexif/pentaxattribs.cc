@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PENTAXATTRIBS_
-#define _PENTAXATTRIBS_
 
 #include <cmath>
 #include <cstdio>
@@ -696,7 +694,7 @@ public:
 };
 PAColorSpaceInterpreter paColorSpaceInterpreter;
 
-class PALensTypeInterpreter : public IntLensInterpreter< int >
+class PALensTypeInterpreter final: public IntLensInterpreter< int >
 {
 public:
     PALensTypeInterpreter ()
@@ -1395,9 +1393,9 @@ public:
     std::string toString (const Tag* t) const override
     {
         int a = t->toInt (0, BYTE);
-        float b = float (10 * int (a >> 2)) * pow (4.f, float (int (a & 0x03) - 2));
+        double b = static_cast<double>(10 * (a >> 2)) * std::pow(4.0, static_cast<double>((a & 0x03) - 2));
 
-        if (b > 1.f) {
+        if (b > 1.0) {
             char buffer[32];
             sprintf (buffer, "%.2f", b );
             return buffer;
@@ -1408,9 +1406,9 @@ public:
     double toDouble (const Tag* t, int ofs) override
     {
         int a = t->toInt (ofs, BYTE);
-        float b = float (10 * int (a >> 2)) * pow (4.f, float (int (a & 0x03) - 2));
+        double b = static_cast<double>(10 * (a >> 2)) * std::pow(4.0, static_cast<double>((a & 0x03) - 2));
 
-        if (b > 1.f) {
+        if (b > 1.0) {
             return b;
         } else {
             return 0.;
@@ -2216,7 +2214,6 @@ const TagAttrib pentaxCameraInfoAttribs[] = {
 };
 
 }
-#endif
 
 
 

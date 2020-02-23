@@ -1,6 +1,7 @@
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-compare"
+#pragma GCC diagnostic ignored "-Wunused-macros"
 #if (__GNUC__ >= 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
 #endif
@@ -94,7 +95,6 @@
 #ifdef WIN32
 #include <sys/utime.h>
 #include <winsock2.h>
-#define snprintf _snprintf
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
 typedef __int64 INT64;
@@ -158,7 +158,6 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 #define MIN(a,b) rtengine::min(a,static_cast<__typeof__(a)>(b))
 #define MAX(a,b) rtengine::max(a,static_cast<__typeof__(a)>(b))
 #define LIM(x,min,max) rtengine::LIM(x,static_cast<__typeof__(x)>(min),static_cast<__typeof__(x)>(max))
-#define ULIM(x,y,z) rtengine::median(x,static_cast<__typeof__(x)>(y),static_cast<__typeof__(x)>(z))
 #define CLIP(x) rtengine::CLIP(x)
 #define SWAP(a,b) { a=a+b; b=a-b; a=a-b; }
 
@@ -9868,6 +9867,7 @@ void CLASS identify()
     filters = 0;
     tiff_samples = colors = 3;
     load_raw = &CLASS canon_sraw_load_raw;
+    FORC4 cblack[c] = 0; // ALB
   } else if (!strcmp(model,"PowerShot 600")) {
     height = 613;
     width  = 854;
@@ -11021,7 +11021,6 @@ void CLASS nikon_14bit_load_raw()
 /*RT*/#undef MIN
 /*RT*/#undef ABS
 /*RT*/#undef LIM
-/*RT*/#undef ULIM
 /*RT*/#undef CLIP
 #ifdef __GNUC__
 #pragma GCC diagnostic pop

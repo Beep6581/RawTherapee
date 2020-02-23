@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CANONATTRIBS_
-#define _CANONATTRIBS_
 
 #include <cstdio>
 #include <cmath>
@@ -1231,7 +1229,7 @@ public:
         int a = Interpreter::toInt (t, ofs, astype);
 
         if (a > 1) {
-            int i = int (double (powf (2.f, float (a) / 32.f - 4.f)) * 50.f + 0.5f);
+            int i = static_cast<double>(powf (2.f, static_cast<float>(a) / 32.f - 4.f)) * 50.0 + 0.5;
             return i;
         } else {
             return 0;
@@ -2142,5 +2140,4 @@ const TagAttrib canonAttribs[] = {
     { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 }
-#endif
 

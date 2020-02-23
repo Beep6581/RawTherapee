@@ -74,7 +74,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     // whole hue range
     for (int i = 0; i < 7; i++) {
         float R, G, B;
-        float x = float(i) * (1.0f / 6.0);
+        float x = float(i) * (1.0f / 6.f);
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
         milestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
     }
@@ -1203,11 +1203,11 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
             // the strength applied to the current hue
             double strength, hue;
             hlColSat->getValue(strength, hue);
-            Color::hsv2rgb01(hue / 360.f, 1.f, 1.f, R, G, B);
+            Color::hsv2rgb01(hue / 360.0, 1.f, 1.f, R, G, B);
             const double gray = 0.46;
-            R = (gray * (1.0 - valX)) + R * valX;
-            G = (gray * (1.0 - valX)) + G * valX;
-            B = (gray * (1.0 - valX)) + B * valX;
+            R = (gray * (1.0 - valX)) + static_cast<double>(R) * valX;
+            G = (gray * (1.0 - valX)) + static_cast<double>(G) * valX;
+            B = (gray * (1.0 - valX)) + static_cast<double>(B) * valX;
         }
     } else if (callerId == 3) {  // Slider 2 background
         if (valY <= 0.5)
@@ -1218,17 +1218,17 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
             // the strength applied to the current hue
             double strength, hue;
             shadowsColSat->getValue(strength, hue);
-            Color::hsv2rgb01(hue / 360.f, 1.f, 1.f, R, G, B);
+            Color::hsv2rgb01(hue / 360.0, 1.f, 1.f, R, G, B);
             const double gray = 0.46;
-            R = (gray * (1.0 - valX)) + R * valX;
-            G = (gray * (1.0 - valX)) + G * valX;
-            B = (gray * (1.0 - valX)) + B * valX;
+            R = (gray * (1.0 - valX)) + static_cast<double>(R) * valX;
+            G = (gray * (1.0 - valX)) + static_cast<double>(G) * valX;
+            B = (gray * (1.0 - valX)) + static_cast<double>(B) * valX;
         }
     } else if (callerId == 4) {  // color curve vertical and horizontal crosshair
         Color::hsv2rgb01(float(valY), 1.0f, 0.5f, R, G, B);
     } else if (callerId == ID_LABREGION_HUE) {
         // TODO
-        float x = valX - 1.f/6.f;
+        float x = valX - 1.0/6.0;
         if (x < 0.f) {
             x += 1.f;
         }

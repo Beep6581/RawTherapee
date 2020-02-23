@@ -2344,7 +2344,7 @@ void ExifManager::parseCIFF (int length, TagDirectory* root)
             ev = ((short)get2 (f, INTEL)) / 32.0f;
             fseek (f, 34, SEEK_CUR);
 
-            if (shutter > 1e6) {
+            if (shutter > 1e6f) {
                 shutter = get2 (f, INTEL) / 10.0f;
             }
 
