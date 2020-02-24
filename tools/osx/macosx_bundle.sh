@@ -39,7 +39,7 @@ function ModifyInstallNames {
         msg "Modifying install names: ${x}"
         {
             # id
-            if [ ${x:(-6)} == ".dylib" ] || [ f${x:(-3)} == ".so" ]; then
+            if [[ ${x:(-6)} == ".dylib" ]] || [[ f${x:(-3)} == ".so" ]]; then
                 install_name_tool -id /Applications/"${LIB}"/$(basename ${x}) ${x}
             fi
             GetDependencies "${x}" | while read -r y
@@ -51,13 +51,13 @@ function ModifyInstallNames {
 }
 
 # Source check
-if [[ ! -d "${CMAKE_BUILD_TYPE}" ]]; then
+if [[ ! -d ${CMAKE_BUILD_TYPE} ]]; then
     msgError "${PWD}/${CMAKE_BUILD_TYPE} folder does not exist. Please execute 'make install' first."
     exit 1
 fi
 
 # Update project version
-if [[ -x "$(which git)" && -d "${PROJECT_SOURCE_DIR}/.git" ]]; then
+if [[ -x $(which git) && -d ${PROJECT_SOURCE_DIR}/.git ]]; then
     ### This section is copied from tools/generateReleaseInfo
     # Get version description.
     # Depending on whether you checked out a branch (dev) or a tag (release),
@@ -87,7 +87,7 @@ if [[ -x "$(which git)" && -d "${PROJECT_SOURCE_DIR}/.git" ]]; then
 fi
 
 MINIMUM_SYSTEM_VERSION="$(otool -l "${CMAKE_BUILD_TYPE}"/MacOS/rawtherapee | grep -A2 'LC_VERSION_MIN_MACOSX' | awk '$1 ~ /version/ { printf $2 }')"
-if [[ -z "${MINIMUM_SYSTEM_VERSION}" ]]; then
+if [[ -z ${MINIMUM_SYSTEM_VERSION} ]]; then
     MINIMUM_SYSTEM_VERSION="$(sw_vers -productVersion | cut -d. -f-2)"
 fi
 
@@ -110,7 +110,7 @@ EXPATLIB="$(cmake .. -LA -N | grep "pkgcfg_lib_EXPAT_expat" | cut -d "=" -f2)"
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
 NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
 FANCY_DMG="$(cmake .. -LA -N | grep "FANCY_DMG" | cut -d "=" -f2)"
-if [[ -n ${FANCY_DMG} ]] ; then
+if [[ -n ${FANCY_DMG} ]]; then
     echo "Fancy .dmg build is ON."
 fi
 
@@ -262,7 +262,7 @@ ModifyInstallNames
 
 # fix @rpath in Frameworks
 msg "Registering @rpath in Frameworks folder."
-for frameworklibs in "${LIB}"/*{dylib,so} ; do
+for frameworklibs in "${LIB}"/*{dylib,so}; do
     install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib "${frameworklibs}"
     install_name_tool -add_rpath /Applications/"${LIB}" "${frameworklibs}"
 done
@@ -270,12 +270,12 @@ install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABL
 install_name_tool -add_rpath @executable_path "${EXECUTABLE}"-cli
 
 # Codesign the app
-if [ -n "${CODESIGNID}" ] ; then
+if [[ -n ${CODESIGNID} ]]; then
     msg "Codesigning Application."
     install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements
     plutil -convert binary1 "${CMAKE_BUILD_TYPE}"/rt.entitlements
     mv "${EXECUTABLE}"-cli "${LIB}"
-    for frameworklibs in "${LIB}"/* ; do
+    for frameworklibs in "${LIB}"/*; do
         codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp "${frameworklibs}"
     done
     codesign --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements  "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
@@ -283,7 +283,7 @@ if [ -n "${CODESIGNID}" ] ; then
 fi
 
 # Notarize the app
-if [ -n "$NOTARY" ] ; then
+if [[ -n $NOTARY ]]; then
     msg "Notarizing the application:"
     ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
     uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee.RawTherapee" ${NOTARY} --file "${APP}.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
@@ -293,12 +293,12 @@ if [ -n "$NOTARY" ] ; then
     do
         fullstatus=`xcrun altool --notarization-info "$uuid" ${NOTARY}  2>&1`  # get the status
         status1=`echo "$fullstatus" | grep 'Status\:' | awk '{ print $2 }'`
-        if [ "$status1" = "success" ]; then
+        if [[ $status1 = "success" ]]; then
             xcrun stapler staple *app   #  staple the ticket
             xcrun stapler validate -v *app
             echo "Notarization success"
             break
-            elif [ "$status1" = "in" ]; then
+            elif [[ $status1 = "in" ]]; then
             echo "Notarization still in progress, sleeping for 15 seconds and trying again"
             sleep 15
         else
@@ -335,7 +335,7 @@ function CreateDmg {
     fi
     
     msg "Creating disk image:"
-    if [ ! -z ${FANCY_DMG} ] ; then
+    if [[ ! -z ${FANCY_DMG} ]]; then
         echo "Building Fancy .dmg"
         mkdir "${srcDir}/.background"
         cp -R "${PROJECT_SOURCE_DATA_DIR}/rtdmg.icns" "${srcDir}/.VolumeIcon.icns"
@@ -354,12 +354,12 @@ function CreateDmg {
     fi
     
     # Sign disk image
-    if [ -n "$CODESIGNID" ] ; then
+    if [[ -n $CODESIGNID ]]; then
         codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
     fi
     
     # Notarize the dmg
-    if ! test -z "$NOTARY" ; then
+    if ! test -z "$NOTARY"; then
         msg "Notarizing the dmg:"
         zip "${dmg_name}.dmg.zip" "${dmg_name}.dmg"
         uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
@@ -369,12 +369,12 @@ function CreateDmg {
         do
             fullstatus=`xcrun altool --notarization-info "$uuid" ${NOTARY} 2>&1`  # get the status
             status1=`echo "$fullstatus" | grep 'Status\:' | awk '{ print $2 }'`
-            if [ "$status1" = "success" ]; then
+            if [[ $status1 = "success" ]]; then
                 xcrun stapler staple "${dmg_name}.dmg"   #  staple the ticket
                 xcrun stapler validate -v "${dmg_name}.dmg"
                 echo "dmg Notarization success"
                 break
-                elif [ "$status1" = "in" ]; then
+                elif [[ $status1 = "in" ]]; then
                 echo "dmg Notarization still in progress, sleeping for 15 seconds and trying again"
                 sleep 15
             else
