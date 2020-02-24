@@ -213,8 +213,7 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     horiz->setValue (pp->perspective.horizontal);
     vert->setValue (pp->perspective.vertical);
-    camera_crop_factor->setValue (pp->perspective.camera_crop_factor);
-    camera_focal_length->setValue (pp->perspective.camera_focal_length);
+    setFocalLengthValue (pp, metadata);
     camera_pitch->setValue (pp->perspective.camera_pitch);
     camera_roll->setValue (pp->perspective.camera_roll);
     camera_shift_horiz->setValue (pp->perspective.camera_shift_horiz);
@@ -461,6 +460,11 @@ void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_a
     projection_yaw->setAddMode(projection_angle_add);
 }
 
+void PerspCorrection::setMetadata (const rtengine::FramesMetaData* metadata)
+{
+    this->metadata = metadata;
+}
+
 void PerspCorrection::trimValues (rtengine::procparams::ProcParams* pp)
 {
 
@@ -506,4 +510,50 @@ void PerspCorrection::setBatchMode (bool batchMode)
     auto_pitch_yaw->set_sensitive(false);
 
     method->append (M("GENERAL_UNCHANGED"));
+}
+
+void PerspCorrection::setFocalLengthValue (const ProcParams* pparams, const FramesMetaData* metadata)
+{
+    const double pp_crop_factor = pparams->perspective.camera_crop_factor;
+    const double pp_focal_length = pparams->perspective.camera_focal_length;
+    double default_crop_factor = 1.0;
+    double default_focal_length = 24.0;
+
+    // Defaults from metadata.
+    if (metadata && (pp_crop_factor <= 0 || pp_focal_length <= 0)) {
+        const double fl = metadata->getFocalLen();
+        const double fl35 = metadata->getFocalLen35mm();
+
+        if (fl <= 0) {
+            if (fl35 <= 0) {
+                // No focal length data.
+            } else {
+                // 35mm focal length available.
+                default_focal_length = fl35;
+            }
+        } else {
+            if (fl35 <= 0) {
+                // Focal length available.
+                default_focal_length = fl;
+            } else {
+                // Focal length and 35mm equivalent available.
+                default_focal_length = fl;
+                default_crop_factor = fl35 / fl;
+            }
+        }
+    }
+
+    // Change value if those from the ProcParams are invalid.
+    if (pp_crop_factor > 0) {
+        camera_crop_factor->setValue(pparams->perspective.camera_crop_factor);
+    } else {
+        camera_crop_factor->setDefault(default_crop_factor);
+        camera_crop_factor->setValue(default_crop_factor);
+    }
+    if (pp_focal_length > 0) {
+        camera_focal_length->setValue(pparams->perspective.camera_focal_length);
+    } else {
+        camera_focal_length->setDefault(default_focal_length);
+        camera_focal_length->setValue(default_focal_length);
+    }
 }

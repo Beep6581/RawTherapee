@@ -467,9 +467,10 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     double hpteta  = fabs (hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt ((-oH * oH * tan (hpalpha) * tan (hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan (hpalpha) * sqrt (16 * maxRadius * maxRadius + oH * oH * tan (hpalpha) * tan (hpalpha))) / (maxRadius * maxRadius * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
     // Camera-based.
-    const double f = params->perspective.camera_focal_length *
-        params->perspective.camera_crop_factor * (maxRadius / sqrt(18.0*18.0 +
-                    12.0*12.0));
+    const double f =
+            ((params->perspective.camera_focal_length > 0) ? params->perspective.camera_focal_length : 24.0)
+            * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : 1.0)
+            * (maxRadius / sqrt(18.0*18.0 + 12.0*12.0));
     const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
     const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
     const double p_camera_roll = params->perspective.camera_roll * rtengine::RT_PI_180;
@@ -1165,9 +1166,10 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos(hpteta);
     const double hptanpt = tan(hpteta);
     // Camera-based.
-    const double f = params->perspective.camera_focal_length *
-        params->perspective.camera_crop_factor * (maxRadius / sqrt(18.0*18.0 +
-                    12.0*12.0));
+    const double f =
+            ((params->perspective.camera_focal_length > 0) ? params->perspective.camera_focal_length : 24.0)
+            * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : 1.0)
+            * (maxRadius / sqrt(18.0*18.0 + 12.0*12.0));
     const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
     const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
     const double p_camera_roll = params->perspective.camera_roll * rtengine::RT_PI_180;

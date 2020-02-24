@@ -53,6 +53,9 @@ protected:
     Adjuster* projection_shift_vert;
     Adjuster* projection_yaw;
     LensGeomListener* lens_geom_listener;
+    const rtengine::FramesMetaData* metadata;
+
+    void setFocalLengthValue (const rtengine::procparams::ProcParams* pparams, const rtengine::FramesMetaData* metadata);
 
 public:
 
@@ -71,5 +74,6 @@ public:
     {
         lens_geom_listener = listener;
     }
+    void setMetadata (const rtengine::FramesMetaData* metadata);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };

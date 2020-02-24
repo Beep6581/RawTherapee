@@ -615,6 +615,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
 
         icm->setRawMeta (raw, (const rtengine::FramesData*)pMetaData);
         lensProf->setRawMeta (raw, pMetaData);
+        perspective->setMetadata (pMetaData);
     }
 
 
