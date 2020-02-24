@@ -2735,6 +2735,28 @@ Glib::ustring RAWParams::XTransSensor::getMethodString(Method method)
     return getMethodStrings()[toUnderlying(method)];
 }
 
+
+RAWParams::PreprocessWB::PreprocessWB() :
+    mode(Mode::AUTO),
+    red(1.0),
+    blue(1.0)
+{
+}
+
+bool RAWParams::PreprocessWB::operator ==(const PreprocessWB& other) const
+{
+    return
+        mode == other.mode
+        && red == other.red
+        && blue == other.blue;
+}
+
+bool RAWParams::PreprocessWB::operator !=(const PreprocessWB& other) const
+{
+    return !(*this == other);
+}
+
+
 RAWParams::RAWParams() :
     df_autoselect(false),
     ff_AutoSelect(false),
@@ -2773,6 +2795,7 @@ bool RAWParams::operator ==(const RAWParams& other) const
         && cared == other.cared
         && cablue == other.cablue
         && expos == other.expos
+        && preprocessWB == other.preprocessWB
         && hotPixelFilter == other.hotPixelFilter
         && deadPixelFilter == other.deadPixelFilter
         && hotdeadpix_thresh == other.hotdeadpix_thresh;
@@ -3690,6 +3713,11 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->filmNegative.redRatio, "Film Negative", "RedRatio", filmNegative.redRatio, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.greenExp, "Film Negative", "GreenExponent", filmNegative.greenExp, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.blueRatio, "Film Negative", "BlueRatio", filmNegative.blueRatio, keyFile);
+
+// Preprocess WB
+        saveToKeyfile(!pedited || pedited->raw.preprocessWB.mode, "RAW Preprocess WB", "Mode", toUnderlying(raw.preprocessWB.mode), keyFile);
+        saveToKeyfile(!pedited || pedited->raw.preprocessWB.red, "RAW Preprocess WB", "RedMult", raw.preprocessWB.red, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.preprocessWB.blue, "RAW Preprocess WB", "BlueMult", raw.preprocessWB.blue, keyFile);
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -5257,6 +5285,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Film Negative", "RedRatio", pedited, filmNegative.redRatio, pedited->filmNegative.redRatio);
             assignFromKeyfile(keyFile, "Film Negative", "GreenExponent", pedited, filmNegative.greenExp, pedited->filmNegative.greenExp);
             assignFromKeyfile(keyFile, "Film Negative", "BlueRatio", pedited, filmNegative.blueRatio, pedited->filmNegative.blueRatio);
+        }
+
+        if (keyFile.has_group("RAW Preprocess WB")) {
+            if (keyFile.has_key("RAW Preprocess WB", "Mode")) {
+                raw.preprocessWB.mode = RAWParams::PreprocessWB::Mode(keyFile.get_integer("RAW Preprocess WB", "Mode"));
+
+                if (pedited) {
+                    pedited->raw.preprocessWB.mode = true;
+                }
+            }
+            assignFromKeyfile(keyFile, "RAW Preprocess WB", "Red"  , pedited, raw.preprocessWB.red, pedited->raw.preprocessWB.red);
+            assignFromKeyfile(keyFile, "RAW Preprocess WB", "Blue" , pedited, raw.preprocessWB.blue, pedited->raw.preprocessWB.blue);
         }
 
         if (keyFile.has_group("MetaData")) {

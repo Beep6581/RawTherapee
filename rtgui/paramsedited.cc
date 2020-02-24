@@ -595,6 +595,9 @@ void ParamsEdited::set(bool v)
     filmNegative.redRatio = v;
     filmNegative.greenExp = v;
     filmNegative.blueRatio = v;
+    raw.preprocessWB.mode = v;
+    raw.preprocessWB.red = v;
+    raw.preprocessWB.blue = v;
 
     exif = v;
     iptc = v;
@@ -1169,6 +1172,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
         filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
         filmNegative.blueRatio = filmNegative.blueRatio && p.filmNegative.blueRatio == other.filmNegative.blueRatio;
+        raw.preprocessWB.mode  = raw.preprocessWB.mode  && p.raw.preprocessWB.mode  == other.raw.preprocessWB.mode;
+        raw.preprocessWB.red   = raw.preprocessWB.red   && p.raw.preprocessWB.red   == other.raw.preprocessWB.red;
+        raw.preprocessWB.blue  = raw.preprocessWB.blue  && p.raw.preprocessWB.blue  == other.raw.preprocessWB.blue;
 
 //      How the hell can we handle that???
 //      exif = exif && p.exif==other.exif
@@ -3262,6 +3268,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.filmNegative.blueRatio = mods.filmNegative.blueRatio;
     }
 
+    if (raw.preprocessWB.mode) {
+        toEdit.raw.preprocessWB.mode = mods.raw.preprocessWB.mode;
+    }
+
+    if (raw.preprocessWB.red) {
+        toEdit.raw.preprocessWB.red = mods.raw.preprocessWB.red;
+    }
+
+    if (raw.preprocessWB.blue) {
+        toEdit.raw.preprocessWB.blue = mods.raw.preprocessWB.blue;
+    }
+
     // Exif changes are added to the existing ones
     if (exif) {
         for (procparams::ExifPairs::const_iterator i = mods.exif.begin(); i != mods.exif.end(); ++i) {
@@ -3314,4 +3332,9 @@ bool FilmNegativeParamsEdited::isUnchanged() const
 bool CaptureSharpeningParamsEdited::isUnchanged() const
 {
     return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvitercheck;
+}
+
+bool RAWParamsEdited::PreprocessWBParamsEdited::isUnchanged() const
+{
+    return mode && red && blue;
 }
