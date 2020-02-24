@@ -744,7 +744,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 if (params->blackwhite.enabled && params->blackwhite.autoc && abwListener) {
                     if (settings->verbose) {
-                        printf("ImProcCoordinator / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", bwAutoR, bwAutoG, bwAutoB);
+                        printf("ImProcCoordinator / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(bwAutoR), static_cast<double>(bwAutoG), static_cast<double>(bwAutoB));
                     }
 
                     abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);
@@ -1086,7 +1086,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     double E_V = fcomp + log2(double ((fnum * fnum) / fspeed / (fiso / 100.f)));
                     E_V += params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
                     E_V += log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
-                    adap = powf(2.f, E_V - 3.f);  // cd / m2
+                    adap = pow(2.0, E_V - 3.0);  // cd / m2
                     // end calculation adaptation scene luminosity
                 }
 

@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _NIKONATTRIBS_
-#define _NIKONATTRIBS_
 
 #include <cstdio>
 #include <cstring>
@@ -70,7 +68,7 @@ public:
         int a = t->getValue()[ofs];
 
         if (a > 1) {
-            int i = int (double (powf (2.f, float (a) / 12.f - 5.f)) * 100.f + 0.5f);
+            int i = static_cast<double>(powf(2.f, float (a) / 12.f - 5.f)) * 100.0 + 0.5;
             return i;
         } else {
             return 0;
@@ -1229,5 +1227,3 @@ const TagAttrib nikon3Attribs[] = {
 };
 
 }
-#endif
-

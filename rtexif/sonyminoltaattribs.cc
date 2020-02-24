@@ -15,8 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _SONYMINOLTAATTRIBS_
-#define _SONYMINOLTAATTRIBS_
 
 #include <cmath>
 
@@ -541,7 +539,7 @@ public:
 };
 SAAntiBlurInterpreter saAntiBlurInterpreter;
 
-class SALensIDInterpreter : public IntLensInterpreter<int>
+class SALensIDInterpreter final : public IntLensInterpreter<int>
 {
 public:
     SALensIDInterpreter ()
@@ -1015,7 +1013,7 @@ public:
 };
 SALensIDInterpreter saLensIDInterpreter;
 
-class SALensID2Interpreter : public IntLensInterpreter< int >
+class SALensID2Interpreter final : public IntLensInterpreter< int >
 {
 public:
     SALensID2Interpreter ()
@@ -2116,7 +2114,7 @@ public:
 
         // Decode the value
         if (a && a != 254) { // 254 = 'Auto' for CameraSettings3, but we might say the same for CameraSettings & CameraSettings2 (?)
-            return int (expf ((double (a) / 8.f - 6.f) * logf (2.f)) * 100.f + 0.5f);
+            return std::exp((a / 8.f - 6.f) * std::log(2.f)) * 100.f + 0.5f;
         } else {
             return 0;
         }
@@ -2499,6 +2497,4 @@ const TagAttrib sonyCameraSettingsAttribs3[] = {
  {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};*/
 
 }
-#endif
-
 

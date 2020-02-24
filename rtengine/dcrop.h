@@ -18,11 +18,7 @@
  */
 #pragma once
 
-#include "improccoordinator.h"
 #include "rtengine.h"
-#include "improcfun.h"
-#include "imagesource.h"
-#include "procevents.h"
 #include "pipettebuffer.h"
 #include "../rtgui/threadutils.h"
 
@@ -30,12 +26,13 @@ namespace rtengine
 {
 
 class Image8;
+class CieImage;
 
 using namespace procparams;
 
 class ImProcCoordinator;
 
-class Crop : public DetailedCrop, public PipetteBuffer
+class Crop final : public DetailedCrop, public PipetteBuffer
 {
 
 protected:

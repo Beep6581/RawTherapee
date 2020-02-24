@@ -1005,7 +1005,7 @@ private:
         ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
 
         if (settings->verbose) {
-            printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
+            printf ("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(autor), static_cast<double>(autog), static_cast<double>(autob));
         }
 
         // if clut was used and size of clut cache == 1 we free the memory used by the clutstore (default clut cache size = 1 for 32 bit OS)
@@ -1318,10 +1318,10 @@ private:
                 adap = 2000.;
             }//if no exif data or wrong
             else {
-                float E_V = fcomp + log2((fnum * fnum) / fspeed / (fiso / 100.f));
+                double E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
                 E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-                E_V += log2(params.raw.expos);  // exposure raw white point ; log2 ==> linear to EV
-                adap = powf(2.f, E_V - 3.f);  //cd / m2
+                E_V += log2(params.raw.expos); // exposure raw white point ; log2 ==> linear to EV
+                adap = std::pow(2.0, E_V - 3.0); //cd / m2
             }
 
             LUTf CAMBrightCurveJ;

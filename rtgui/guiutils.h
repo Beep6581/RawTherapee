@@ -92,7 +92,7 @@ private:
  *     }
  *   </code>
  */
-class GThreadLock
+class GThreadLock final
 {
 public:
     GThreadLock()
@@ -110,7 +110,7 @@ public:
  *
  * Will relock on destruction.
  */
-class GThreadUnLock
+class GThreadUnLock final
 {
 public:
     GThreadUnLock()
@@ -125,7 +125,7 @@ public:
 
 #pragma GCC diagnostic pop
 
-class ConnectionBlocker
+class ConnectionBlocker final
 {
 public:
     explicit ConnectionBlocker (Gtk::Widget *associatedWidget, sigc::connection& connection) : connection (associatedWidget ? &connection : nullptr), wasBlocked(false)
@@ -152,7 +152,7 @@ private:
 /**
  * @brief Glue box to control visibility of the MyExpender's content ; also handle the frame around it
  */
-class ExpanderBox: public Gtk::EventBox
+class ExpanderBox final : public Gtk::EventBox
 {
 private:
     Gtk::Container *pC;
@@ -185,7 +185,7 @@ public:
  *
  * Warning: once you've instantiated this class with a text label or a widget label, you won't be able to revert to the other solution.
  */
-class MyExpander : public Gtk::VBox
+class MyExpander final : public Gtk::VBox
 {
 public:
     typedef sigc::signal<void> type_signal_enabled_toggled;
@@ -295,7 +295,7 @@ public:
 /**
  * @brief subclass of Gtk::ScrolledWindow in order to handle the scrollwheel
  */
-class MyScrolledWindow : public Gtk::ScrolledWindow
+class MyScrolledWindow final : public Gtk::ScrolledWindow
 {
 
     bool on_scroll_event (GdkEventScroll* event) override;
@@ -310,7 +310,7 @@ public:
 /**
  * @brief subclass of Gtk::ScrolledWindow in order to handle the large toolbars (wider than available space)
  */
-class MyScrolledToolbar : public Gtk::ScrolledWindow
+class MyScrolledToolbar final : public Gtk::ScrolledWindow
 {
 
     bool on_scroll_event (GdkEventScroll* event) override;
@@ -340,7 +340,7 @@ public:
 /**
  * @brief subclass of Gtk::ComboBoxText in order to handle the scrollwheel
  */
-class MyComboBoxText : public Gtk::ComboBoxText
+class MyComboBoxText final : public Gtk::ComboBoxText
 {
     int naturalWidth, minimumWidth;
     sigc::connection myConnection;
@@ -360,7 +360,7 @@ public:
 /**
  * @brief subclass of Gtk::SpinButton in order to handle the scrollwheel
  */
-class MySpinButton : public Gtk::SpinButton
+class MySpinButton final : public Gtk::SpinButton
 {
 
 protected:
@@ -375,7 +375,7 @@ public:
 /**
  * @brief subclass of Gtk::HScale in order to handle the scrollwheel
  */
-class MyHScale : public Gtk::HScale
+class MyHScale final : public Gtk::HScale
 {
 
     bool on_scroll_event (GdkEventScroll* event) override;
@@ -385,7 +385,7 @@ class MyHScale : public Gtk::HScale
 /**
  * @brief subclass of Gtk::FileChooserButton in order to handle the scrollwheel
  */
-class MyFileChooserButton: public Gtk::Button {
+class MyFileChooserButton final : public Gtk::Button {
 private:
     void show_chooser();
 
@@ -473,14 +473,14 @@ typedef enum RTNav {
 /**
  * @brief Handle the switch between text and image to be displayed in the HBox (to be used in a button/toolpanel)
  */
-class TextOrIcon : public Gtk::HBox
+class TextOrIcon final : public Gtk::HBox
 {
 
 public:
     TextOrIcon (const Glib::ustring &filename, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx);
 };
 
-class MyImageMenuItem : public Gtk::MenuItem
+class MyImageMenuItem final : public Gtk::MenuItem
 {
 private:
     Gtk::Grid *box;
@@ -493,7 +493,7 @@ public:
     const Gtk::Label* getLabel () const;
 };
 
-class MyProgressBar : public Gtk::ProgressBar
+class MyProgressBar final : public Gtk::ProgressBar
 {
 private:
     int w;
@@ -512,7 +512,7 @@ public:
 /**
  * @brief Define a gradient milestone
  */
-class GradientMilestone
+class GradientMilestone final
 {
 public:
     double position;

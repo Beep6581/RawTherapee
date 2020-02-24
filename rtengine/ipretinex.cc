@@ -110,8 +110,8 @@ void mean_stddv2( float **dst, float &mean, float &stddv, int W_L, int H_L, floa
 
         for (int i = 0; i < H_L; i++ )
             for (int j = 0; j < W_L; j++) {
-                sum += dst[i][j];
-                vsquared += (dst[i][j] * dst[i][j]);
+                sum += static_cast<double>(dst[i][j]);
+                vsquared += rtengine::SQR<double>(dst[i][j]);
 
                 lmax = dst[i][j] > lmax ? dst[i][j] : lmax;
                 lmin = dst[i][j] < lmin ? dst[i][j] : lmin;
@@ -128,8 +128,8 @@ void mean_stddv2( float **dst, float &mean, float &stddv, int W_L, int H_L, floa
     }
     mean = sum / (double) (W_L * H_L);
     vsquared /= (double) W_L * H_L;
-    stddv = ( vsquared - (mean * mean) );
-    stddv = (float)sqrt(stddv);
+    stddv = vsquared - rtengine::SQR<double>(mean);
+    stddv = std::sqrt(stddv);
 }
 
 }
@@ -678,9 +678,9 @@ BENCHFUN
                         float valparam;
 
                         if(useHsl || useHslLin) {
-                            valparam = shcurve->getVal(HH) - 0.5f;
+                            valparam = shcurve->getVal(HH) - 0.5;
                         } else {
-                            valparam = shcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f;
+                            valparam = shcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5;
                         }
 
                         str *= (1.f + 2.f * valparam);

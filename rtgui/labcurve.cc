@@ -203,7 +203,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
 
     for (int i = 0; i < 7; i++) {
         float R, G, B;
-        float x = float(i) * (1.0f / 6.0);
+        float x = i / 6.0;
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
         milestones.emplace_back(x, R, G, B);
     }

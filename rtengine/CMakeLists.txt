@@ -99,6 +99,7 @@ set(RTENGINESOURCEFILES
     ipretinex.cc
     ipshadowshighlights.cc
     ipsharpen.cc
+    ipsharpenedges.cc
     ipsoftlight.cc
     iptransform.cc
     ipvibrance.cc
@@ -110,6 +111,7 @@ set(RTENGINESOURCEFILES
     lj92.c
     lmmse_demosaic.cc
     loadinitial.cc
+    munselllch.cc
     myfile.cc
     panasonic_decoders.cc
     pdaflinesfilter.cc

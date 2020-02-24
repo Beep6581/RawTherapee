@@ -171,7 +171,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
                             }
 
                         for (int c = 0; c < 4; c++) {
-                            dsumthr[c] += sum[c];
+                            dsumthr[c] += static_cast<double>(sum[c]);
                         }
 
 skip_block2:
@@ -195,7 +195,7 @@ skip_block2:
             }
 
             for(int c = 0; c < 4; c++) {
-                dsum[c] -= cblack_[c] * dsum[c + 4];
+                dsum[c] -= static_cast<double>(cblack_[c]) * dsum[c + 4];
             }
 
         } else if(isXtrans()) {
@@ -241,7 +241,7 @@ skip_block2:
                             }
 
                         for (int c = 0; c < 8; c++) {
-                            dsumthr[c] += sum[c];
+                            dsumthr[c] += static_cast<double>(sum[c]);
                         }
 
 skip_block3:
@@ -365,18 +365,14 @@ skip_block:
     }
 
     for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
-        if (dmin > pre_mul_[c]) {
-            dmin = pre_mul_[c];
-        }
-
-        if (dmax < pre_mul_[c]) {
-            dmax = pre_mul_[c];
-        }
+        dmin = rtengine::min<double>(dmin, pre_mul_[c]);
+        dmax = rtengine::max<double>(dmax, pre_mul_[c]);
     }
 
     for (c = 0; c < 4; c++) {
         int sat = this->get_white(c) - cblack_[c];
-        scale_mul_[c] = (pre_mul_[c] /= dmax) * 65535.0 / sat;
+        pre_mul_[c] /= static_cast<float>(dmax);
+        scale_mul_[c] = pre_mul_[c] * 65535.f / sat;
     }
 
     if (settings->verbose) {
@@ -387,25 +383,30 @@ skip_block:
                 asn[c] = 0;
             }
 
-            if (asn[c] > dmax) {
+            if (asn[c] > static_cast<float>(dmax)) {
                 dmax = asn[c];
             }
         }
 
         for (c = 0; c < 4; c++) {
-            asn[c] /= dmax;
+            asn[c] /= static_cast<float>(dmax);
         }
 
         printf("cam_mul:[%f %f %f %f], AsShotNeutral:[%f %f %f %f]\n",
-               cam_mul[0], cam_mul[1], cam_mul[2], cam_mul[3], asn[0], asn[1], asn[2], asn[3]);
+               static_cast<double>(cam_mul[0]), static_cast<double>(cam_mul[1]),
+               static_cast<double>(cam_mul[2]), static_cast<double>(cam_mul[3]),
+               static_cast<double>(asn[0]), static_cast<double>(asn[1]), static_cast<double>(asn[2]), static_cast<double>(asn[3]));
         printf("pre_mul:[%f %f %f %f], scale_mul:[%f %f %f %f], cblack:[%f %f %f %f]\n",
-               pre_mul_[0], pre_mul_[1], pre_mul_[2], pre_mul_[3],
-               scale_mul_[0], scale_mul_[1], scale_mul_[2], scale_mul_[3],
-               cblack_[0], cblack_[1], cblack_[2], cblack_[3]);
+               static_cast<double>(pre_mul_[0]), static_cast<double>(pre_mul_[1]),
+               static_cast<double>(pre_mul_[2]), static_cast<double>(pre_mul_[3]),
+               static_cast<double>(scale_mul_[0]), static_cast<double>(scale_mul_[1]),
+               static_cast<double>(scale_mul_[2]), static_cast<double>(scale_mul_[3]),
+               static_cast<double>(cblack_[0]), static_cast<double>(cblack_[1]),
+               static_cast<double>(cblack_[2]), static_cast<double>(cblack_[3]));
         printf("rgb_cam:[ [ %f %f %f], [%f %f %f], [%f %f %f] ]%s\n",
-               rgb_cam[0][0], rgb_cam[1][0], rgb_cam[2][0],
-               rgb_cam[0][1], rgb_cam[1][1], rgb_cam[2][1],
-               rgb_cam[0][2], rgb_cam[1][2], rgb_cam[2][2],
+               static_cast<double>(rgb_cam[0][0]), static_cast<double>(rgb_cam[1][0]), static_cast<double>(rgb_cam[2][0]),
+               static_cast<double>(rgb_cam[0][1]), static_cast<double>(rgb_cam[1][1]), static_cast<double>(rgb_cam[2][1]),
+               static_cast<double>(rgb_cam[0][2]), static_cast<double>(rgb_cam[1][2]), static_cast<double>(rgb_cam[2][2]),
                (!this->isBayer()) ? " (not bayer)" : "");
 
     }

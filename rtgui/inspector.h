@@ -40,7 +40,7 @@ public:
     //~InspectorBuffer();
 };
 
-class Inspector : public Gtk::DrawingArea
+class Inspector final : public Gtk::DrawingArea
 {
 
 private:

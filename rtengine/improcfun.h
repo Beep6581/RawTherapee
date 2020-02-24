@@ -19,11 +19,17 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "coord2d.h"
 #include "gamutwarning.h"
-#include "pipettebuffer.h"
 
+namespace Glib
+{
+
+class ustring;
+
+}
 template<typename T>
 class LUT;
 
@@ -44,6 +50,7 @@ class FramesMetaData;
 class LensCorrection;
 class NoiseCurve;
 class OpacityCurve;
+class PipetteBuffer;
 class ToneCurve;
 class WavCurve;
 class WavOpacityCurveBY;

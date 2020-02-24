@@ -51,13 +51,6 @@
 
 #include "cplx_wavelet_dec.h"
 
-#define TS 64       // Tile size
-#define offset 25   // shift between tiles
-#define fTS ((TS/2+1))  // second dimension of Fourier tiles
-#define blkrad 1    // radius of block averaging
-
-#define epsilon 0.001f/(TS*TS) //tolerance
-
 namespace rtengine
 {
 
@@ -916,10 +909,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         //init for edge and denoise
                         float vari[4];
 
-                        vari[0] = 8.f * SQR((cp.lev0n / 125.0) * (1.0 + cp.lev0n / 25.0));
-                        vari[1] = 8.f * SQR((cp.lev1n / 125.0) * (1.0 + cp.lev1n / 25.0));
-                        vari[2] = 8.f * SQR((cp.lev2n / 125.0) * (1.0 + cp.lev2n / 25.0));
-                        vari[3] = 8.f * SQR((cp.lev3n / 125.0) * (1.0 + cp.lev3n / 25.0));
+                        vari[0] = 8.f * SQR((cp.lev0n / 125.f) * (1.f + cp.lev0n / 25.f));
+                        vari[1] = 8.f * SQR((cp.lev1n / 125.f) * (1.f + cp.lev1n / 25.f));
+                        vari[2] = 8.f * SQR((cp.lev2n / 125.f) * (1.f + cp.lev2n / 25.f));
+                        vari[3] = 8.f * SQR((cp.lev3n / 125.f) * (1.f + cp.lev3n / 25.f));
 
                         if ((cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f) && cp.noiseena) {
                             int edge = 1;
@@ -1135,7 +1128,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 float Chprov1 = sqrtf(SQR(a) + SQR(b));
                                 yBuffer[col] = (Chprov1 == 0.f) ? 1.f : a / Chprov1;
                                 xBuffer[col] = (Chprov1 == 0.f) ? 0.f : b / Chprov1;
-                                chprovBuffer[col] = Chprov1 / 327.68;
+                                chprovBuffer[col] = Chprov1 / 327.68f;
                             }
                         }
 
@@ -1374,7 +1367,7 @@ void ImProcFunctions::Aver(float *  RESTRICT DataList, int datalen, float &avera
 
         for (int i = 0; i < datalen; i++) {
             if (DataList[i] >= thres) {
-                averaP += DataList[i];
+                averaP += static_cast<double>(DataList[i]);
 
                 if (DataList[i] > lmax) {
                     lmax = DataList[i];
@@ -1382,7 +1375,7 @@ void ImProcFunctions::Aver(float *  RESTRICT DataList, int datalen, float &avera
 
                 countP++;
             } else if (DataList[i] < -thres) {
-                averaN += DataList[i];
+                averaN += static_cast<double>(DataList[i]);
 
                 if (DataList[i] < lmin) {
                     lmin = DataList[i];
@@ -1428,10 +1421,10 @@ void ImProcFunctions::Sigma(float *  RESTRICT DataList, int datalen, float avera
 
     for (int i = 0; i < datalen; i++) {
         if (DataList[i] >= thres) {
-            variP += SQR(DataList[i] - averagePlus);
+            variP += static_cast<double>(SQR(DataList[i] - averagePlus));
             countP++;
         } else if (DataList[i] <= -thres) {
-            variN += SQR(DataList[i] - averageNeg);
+            variN += static_cast<double>(SQR(DataList[i] - averageNeg));
             countN++;
         }
     }
@@ -1703,7 +1696,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 #endif
 
         for (int i = 0; i < W_L * H_L; i++) {
-            avedbl += WavCoeffs_L0[i];
+            avedbl += static_cast<double>(WavCoeffs_L0[i]);
         }
 
 #ifdef _OPENMP
@@ -1796,7 +1789,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
     {
-        if (contrast != 0.f  && cp.resena && max0 > 0.0) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
+        if(contrast != 0.f  && cp.resena && max0 > 0.f) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
             {
 
 #ifdef _OPENMP
@@ -2084,7 +2077,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition &WaveletCoeffs_a, 
                                             editWhatever->v(i,j) = valpar;
                                     }
                     */
-                    float valparam = float((hhCurve->getVal(Color::huelab_to_huehsv2(hueR)) - 0.5f) * 1.7f) + hueR; //get H=f(H)  1.7 optimisation !
+                    float valparam = (static_cast<float>(hhCurve->getVal(Color::huelab_to_huehsv2(hueR))) - 0.5f) * 1.7f + hueR; //get H=f(H)  1.7 optimisation !
                     float2 sincosval = xsincosf(valparam);
                     WavCoeffs_a0[i * W_L + j] = chR * sincosval.y;
                     WavCoeffs_b0[i * W_L + j] = chR * sincosval.x;
@@ -3103,9 +3096,8 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
             if (Chutili) {
                 int i_i = i / W_L;
                 int j_j = i - i_i * W_L;
-                double lr;
                 float modhue2 = varhue[i_i][j_j];
-                float valparam = float((ChCurve->getVal(lr = Color::huelab_to_huehsv2(modhue2)) - 0.5f)); //get valparam=f(H)
+                float valparam = static_cast<float>(ChCurve->getVal(Color::huelab_to_huehsv2(modhue2))) - 0.5f; //get valparam=f(H)
 
                 if (valparam > 0.f) {
                     scale2 = 1.f + 3.f * valparam;    //arbitrary value
