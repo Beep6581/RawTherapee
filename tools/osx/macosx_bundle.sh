@@ -51,13 +51,13 @@ function ModifyInstallNames {
 }
 
 # Source check
-if [[ ! -d ${CMAKE_BUILD_TYPE} ]]; then
+if [[ ! -d $CMAKE_BUILD_TYPE ]]; then
     msgError "${PWD}/${CMAKE_BUILD_TYPE} folder does not exist. Please execute 'make install' first."
     exit 1
 fi
 
 # Update project version
-if [[ -x $(which git) && -d ${PROJECT_SOURCE_DIR}/.git ]]; then
+if [[ -x $(which git) && -d $PROJECT_SOURCE_DIR/.git ]]; then
     ### This section is copied from tools/generateReleaseInfo
     # Get version description.
     # Depending on whether you checked out a branch (dev) or a tag (release),
@@ -87,7 +87,7 @@ if [[ -x $(which git) && -d ${PROJECT_SOURCE_DIR}/.git ]]; then
 fi
 
 MINIMUM_SYSTEM_VERSION="$(otool -l "${CMAKE_BUILD_TYPE}"/MacOS/rawtherapee | grep -A2 'LC_VERSION_MIN_MACOSX' | awk '$1 ~ /version/ { printf $2 }')"
-if [[ -z ${MINIMUM_SYSTEM_VERSION} ]]; then
+if [[ -z $MINIMUM_SYSTEM_VERSION ]]; then
     MINIMUM_SYSTEM_VERSION="$(sw_vers -productVersion | cut -d. -f-2)"
 fi
 
@@ -105,12 +105,29 @@ PWD:                    ${PWD}
 __EOS__
 
 minimum_macos_version=${MINIMUM_SYSTEM_VERSION}
-LOCAL_PREFIX="$(cmake .. -LA -N | grep "LOCAL_PREFIX" | cut -d "=" -f2)"
-EXPATLIB="$(cmake .. -LA -N | grep "pkgcfg_lib_EXPAT_expat" | cut -d "=" -f2)"
-CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
-NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
-FANCY_DMG="$(cmake .. -LA -N | grep "FANCY_DMG" | cut -d "=" -f2)"
-if [[ -n ${FANCY_DMG} ]]; then
+
+# Retreive cached values from cmake
+
+#In: LOCAL_PREFIX:STRING=/opt
+#Out: /opt
+LOCAL_PREFIX="$(cmake .. -L -N | grep LOCAL_PREFIX)"; LOCAL_PREFIX="${LOCAL_PREFIX#*=}"
+
+#In: pkgcfg_lib_EXPAT_expat:FILEPATH=/opt/local/lib/libexpat.dylib
+#Out: /opt/local/lib/libexpat.dylib
+EXPATLIB="$(cmake .. -LA -N | grep pkgcfg_lib_EXPAT_expat)"; pkgcfg_lib_EXPAT_expat="${pkgcfg_lib_EXPAT_expat#*=}"
+
+#In: CODESIGNID:STRING=Developer ID Application: Doctor Who (1234567890)
+#Out: Developer ID Application: Doctor Who (1234567890)
+CODESIGNID="$(cmake .. -L -N | grep CODESIGNID)"; CODESIGNID="${CODESIGNID#*=}"
+
+#In: NOTARY:STRING=--username drwho@bbc.com --password abcd-efgh-hijk-lmno
+#Out: --username drwho@bbc.com --password abcd-efgh-hijk-lmno
+NOTARY="$(cmake .. -L -N | grep NOTARY)"; NOTARY="${NOTARY#*=}"
+
+# In: FANCY_DMG:BOOL=ON
+# Out: ON
+FANCY_DMG="$(cmake .. -L -N | grep FANCY_DMG)"; FANCY_DMG="${FANCY_DMG#*=}"
+if [[ -n $FANCY_DMG ]]; then
     echo "Fancy .dmg build is ON."
 fi
 
@@ -270,7 +287,7 @@ install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABL
 install_name_tool -add_rpath @executable_path "${EXECUTABLE}"-cli
 
 # Codesign the app
-if [[ -n ${CODESIGNID} ]]; then
+if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
     install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements
     plutil -convert binary1 "${CMAKE_BUILD_TYPE}"/rt.entitlements
@@ -330,12 +347,12 @@ function CreateDmg {
     # Disk image name
     dmg_name="${PROJECT_NAME// /_}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}"
     lower_build_type="$(tr '[:upper:]' '[:lower:]' <<< "$CMAKE_BUILD_TYPE")"
-    if [[ ${lower_build_type} != release ]]; then
+    if [[ $lower_build_type != release ]]; then
         dmg_name="${dmg_name}_${lower_build_type}"
     fi
     
     msg "Creating disk image:"
-    if [[ ! -z ${FANCY_DMG} ]]; then
+    if [[ ! -z $FANCY_DMG ]]; then
         echo "Building Fancy .dmg"
         mkdir "${srcDir}/.background"
         cp -R "${PROJECT_SOURCE_DATA_DIR}/rtdmg.icns" "${srcDir}/.VolumeIcon.icns"
