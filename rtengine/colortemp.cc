@@ -2847,10 +2847,10 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     double Xwb, Zwb;
     temp2mulxyz(temp, method, Xwb, Zwb);
 
-    float adj = 1.f;
+    double adj = 1.0;
 
     if(equal < 0.9999 || equal > 1.0001 ) {
-        adj = (100.f + ( 1000.f - (1000.f * (float)equal) ) / 20.f) / 100.f;
+        adj = (100.0 + ( 1000.0 - (1000.0 * equal) ) / 20.0) / 100.0;
     }
 
 
@@ -3165,7 +3165,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             }
 
             for(int i = 0; i < 8; i++) {
-                CRIs[i] = 100 - 3.0 * DeltaEs[i];    //3.0 coef to adapt ==> same results than CRI "official"
+                CRIs[i] = 100 - 3.f * DeltaEs[i];    //3.0 coef to adapt ==> same results than CRI "official"
             }
 
             for(int i = 0; i < 8; i++) {
@@ -3185,7 +3185,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             }
 
             for(int i = 0; i < N_c; i++) {
-                CRI[i] = 100 - 3.0 * DeltaE[i];    //3.0 coef to adapt ==> same results than CRI "official"
+                CRI[i] = 100 - 3.f * DeltaE[i];    //3.0 coef to adapt ==> same results than CRI "official"
             }
 
             for(int i = 0; i < N_c; i++) {
@@ -3201,8 +3201,8 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             quadCRI /= N_c;
 
             if(settings->CRI_color != 0) {
-                printf("CRI_standard=%i CRI:1->8=%i %i %i %i %i %i %i %i  Sigma=%2.1f\n", (int) CRI_RTs, (int) CRIs[0], (int) CRIs[1], (int) CRIs[2], (int) CRIs[3], (int) CRIs[4], (int) CRIs[5], (int) CRIs[6], (int) CRIs[7], sqrt(quadCRIs));
-                printf("CRI_RT_exten=%i CRI:9->20=%i %i %i %i %i %i %i %i %i %i %i %i Sigma=%2.1f\n", (int) CRI_RT, (int) CRI[8], (int) CRI[9], (int) CRI[10], (int) CRI[11], (int) CRI[12], (int) CRI[13], (int) CRI[14], (int) CRI[15], (int) CRI[16], (int) CRI[17], (int) CRI[18], (int) CRI[19], sqrt(quadCRI));
+                printf("CRI_standard=%i CRI:1->8=%i %i %i %i %i %i %i %i  Sigma=%2.1f\n", (int) CRI_RTs, (int) CRIs[0], (int) CRIs[1], (int) CRIs[2], (int) CRIs[3], (int) CRIs[4], (int) CRIs[5], (int) CRIs[6], (int) CRIs[7], sqrt(static_cast<double>(quadCRIs)));
+                printf("CRI_RT_exten=%i CRI:9->20=%i %i %i %i %i %i %i %i %i %i %i %i Sigma=%2.1f\n", (int) CRI_RT, (int) CRI[8], (int) CRI[9], (int) CRI[10], (int) CRI[11], (int) CRI[12], (int) CRI[13], (int) CRI[14], (int) CRI[15], (int) CRI[16], (int) CRI[17], (int) CRI[18], (int) CRI[19], static_cast<double>(sqrt(quadCRI)));
             }
         }
     }

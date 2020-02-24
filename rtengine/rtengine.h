@@ -31,7 +31,6 @@
 #include "imageformat.h"
 #include "procevents.h"
 #include "rawmetadatalocation.h"
-#include "rt_math.h"
 #include "settings.h"
 
 #include "../rtgui/threadutils.h"

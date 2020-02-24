@@ -4297,7 +4297,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             if (keyFile.has_key("Shadows & Highlights", "LocalContrast") && ppVersion < 329) {
                 int lc = keyFile.get_integer("Shadows & Highlights", "LocalContrast");
-                localContrast.amount = float(lc) / 30.;
+                localContrast.amount = float(lc) / 30.f;
 
                 if (pedited) {
                     pedited->localContrast.amount = true;
@@ -4614,8 +4614,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 Glib::ustring temp;
                 assignFromKeyfile(keyFile, "Wavelet", "LevMethod", pedited, temp, pedited->wavelet.Lmethod);
 
-                if (!temp.empty()) {
+                try {
                     wavelet.Lmethod = std::stoi(temp);
+                } catch (...) {
                 }
             } else {
                 assignFromKeyfile(keyFile, "Wavelet", "LevMethod", pedited, wavelet.Lmethod, pedited->wavelet.Lmethod);

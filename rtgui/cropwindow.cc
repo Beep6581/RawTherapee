@@ -37,6 +37,7 @@
 #include "rtsurface.h"
 
 #include "../rtengine/dcrop.h"
+#include "../rtengine/imagesource.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/rt_math.h"
 
@@ -123,7 +124,7 @@ void CropWindow::initZoomSteps()
     zoomSteps.push_back(ZoomStep("  8%", 1.0/12.0, 120, true));
     char lbl[64];
     for (int s = 100; s >= 11; --s) {
-        float z = 10./float(s);
+        float z = 10.f / s;
         sprintf(lbl, "% 2d%%", int(z * 100));
         bool is_major = (s == s/10 * 10);
         zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));
@@ -294,7 +295,7 @@ void CropWindow::flawnOver (bool isFlawnOver)
 void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, double deltaX, double deltaY)
 {
     double delta = 0.0;
-    if (abs(deltaX) > abs(deltaY)) {
+    if (std::fabs(deltaX) > std::fabs(deltaY)) {
         delta = deltaX;
     } else {
         delta = deltaY;
@@ -303,7 +304,7 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, 
     if (direction == GDK_SCROLL_SMOOTH) {
         scrollAccum += delta;
         //Only change zoom level if we've accumulated +/- 1.0 of deltas.  This conditional handles the previous delta=0.0 case
-        if (abs(scrollAccum) < 1.0) {
+        if (std::fabs(scrollAccum) < 1.0) {
             return;
         }
     }

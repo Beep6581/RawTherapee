@@ -55,7 +55,6 @@ template<class T> T** allocArray (int W, int H)
     return t;
 }
 
-#define HR_SCALE 2
 StdImageSource::StdImageSource () : ImageSource(), img(nullptr), plistener(nullptr), full(false), max{}, rgbSourceModified(false)
 {
 

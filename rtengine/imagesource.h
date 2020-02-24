@@ -25,7 +25,6 @@
 
 #include "coord2d.h"
 #include "imagedata.h"
-#include "LUT.h"
 #include "rtengine.h"
 #include "colortemp.h"
 #include "array2D.h"
@@ -88,7 +87,7 @@ protected:
 
 public:
     ImageSource () : references (1), redAWBMul(-1.), greenAWBMul(-1.), blueAWBMul(-1.),
-        embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
+        embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(RT_INFINITY) {}
 
     ~ImageSource            () override {}
     virtual int         load        (const Glib::ustring &fname) = 0;
@@ -148,11 +147,11 @@ public:
 
     virtual void        setProgressListener (ProgressListener* pl) {}
 
-    void        increaseRef () override
+    void        increaseRef () final
     {
         references++;
     }
-    void        decreaseRef () override
+    void        decreaseRef () final
     {
         references--;
 
@@ -180,15 +179,15 @@ public:
         return dirpyrdenoiseExpComp;
     }
     // functions inherited from the InitialImage interface
-    Glib::ustring getFileName () override
+    Glib::ustring getFileName () final
     {
         return fileName;
     }
-    cmsHPROFILE getEmbeddedProfile () override
+    cmsHPROFILE getEmbeddedProfile () final
     {
         return embProfile;
     }
-    const FramesMetaData* getMetaData () override
+    const FramesMetaData* getMetaData () final
     {
         return idata;
     }

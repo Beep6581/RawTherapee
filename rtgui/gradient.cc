@@ -164,7 +164,7 @@ void Gradient::updateGeometry(const int centerX, const int centerY, const double
     const auto decay = feather * rtengine::norm2<double> (imW, imH) / 200.0;
     rtengine::Coord origin (imW / 2 + centerX * imW / 200, imH / 2 + centerY * imH / 200);
 
-    const auto updateLine = [&](Geometry* geometry, const float radius, const float begin, const float end)
+    const auto updateLine = [&](Geometry* geometry, const double radius, const double begin, const double end)
     {
         const auto line = static_cast<Line*>(geometry);
         line->begin = PolarCoord(radius, -degree + begin);
@@ -173,7 +173,7 @@ void Gradient::updateGeometry(const int centerX, const int centerY, const double
         line->end += origin;
     };
 
-    const auto updateLineWithDecay = [&](Geometry* geometry, const float radius, const float offSetAngle)
+    const auto updateLineWithDecay = [&](Geometry* geometry, const double radius, const double offSetAngle)
     {
         const auto line = static_cast<Line*>(geometry);
         line->begin = PolarCoord (radius, -degree + 180.) + PolarCoord (decay, -degree + offSetAngle);

@@ -761,13 +761,13 @@ bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int bord
     return false;
 }
 
-void CaptureDeconvSharpening (float** luminance, const float* const * oldLuminance, const float * const * blend, int W, int H, double sigma, double sigmaCornerOffset, int iterations, bool checkIterStop, rtengine::ProgressListener* plistener, double startVal, double endVal)
+void CaptureDeconvSharpening (float** luminance, const float* const * oldLuminance, const float * const * blend, int W, int H, float sigma, float sigmaCornerOffset, int iterations, bool checkIterStop, rtengine::ProgressListener* plistener, double startVal, double endVal)
 {
 BENCHFUN
-    const bool is9x9 = (sigma <= 1.50 && sigmaCornerOffset == 0.0);
-    const bool is7x7 = (sigma <= 1.15 && sigmaCornerOffset == 0.0);
-    const bool is5x5 = (sigma <= 0.84 && sigmaCornerOffset == 0.0);
-    const bool is3x3 = (sigma < 0.6 && sigmaCornerOffset == 0.0);
+    const bool is9x9 = (sigma <= 1.5f && sigmaCornerOffset == 0.f);
+    const bool is7x7 = (sigma <= 1.15f && sigmaCornerOffset == 0.f);
+    const bool is5x5 = (sigma <= 0.84f && sigmaCornerOffset == 0.f);
+    const bool is3x3 = (sigma < 0.6f && sigmaCornerOffset == 0.f);
     float kernel13[13][13];
     float kernel9[9][9];
     float kernel7[7][7];
@@ -906,11 +906,11 @@ BENCHFUN
                         }
                     }
                 } else {
-                    if (sigmaCornerOffset != 0.0) {
+                    if (sigmaCornerOffset != 0.f) {
                         const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - H / 2) + rtengine::SQR(j + tileSize / 2 - W / 2));
                         const float sigmaTile = static_cast<float>(sigma) + distanceFactor * distance;
                         if (sigmaTile >= 0.4f) {
-                            if (sigmaTile > 1.50) { // have to use 13x13 kernel
+                            if (sigmaTile > 1.5f) { // have to use 13x13 kernel
                                 float lkernel13[13][13];
                                 compute13x13kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel13);
                                 for (int k = 0; k < iterations; ++k) {
@@ -921,7 +921,7 @@ BENCHFUN
                                         break;
                                     }
                                 }
-                            } else if (sigmaTile > 1.15) { // have to use 9x9 kernel
+                            } else if (sigmaTile > 1.15f) { // have to use 9x9 kernel
                                 float lkernel9[9][9];
                                 compute9x9kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel9);
                                 for (int k = 0; k < iterations; ++k) {
@@ -932,7 +932,7 @@ BENCHFUN
                                         break;
                                     }
                                 }
-                            } else if (sigmaTile > 0.84) { // have to use 7x7 kernel
+                            } else if (sigmaTile > 0.84f) { // have to use 7x7 kernel
                                 float lkernel7[7][7];
                                 compute7x7kernel(static_cast<float>(sigma) + distanceFactor * distance, lkernel7);
                                 for (int k = 0; k < iterations; ++k) {
@@ -1021,7 +1021,7 @@ BENCHFUN
                                     { 0.019334, 0.119193, 0.950227 }
                                 };
 
-    float contrast = conrastThreshold / 100.f;
+    float contrast = conrastThreshold / 100.0;
 
     const float clipVal = (ri->get_white(1) - ri->get_cblack(1)) * scale_mul[1];
 

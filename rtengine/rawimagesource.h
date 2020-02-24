@@ -38,7 +38,7 @@ class DiagonalCurve;
 class RetinextransmissionCurve;
 class RetinexgaintransmissionCurve;
 
-class RawImageSource : public ImageSource
+class RawImageSource final : public ImageSource
 {
 private:
     static DiagonalCurve *phaseOneIccCurve;

@@ -89,8 +89,8 @@ void rtengine::Thumbnail::processFilmNegative(
     const float bmult = (MAX_OUT_VALUE / (bmed * 24)) ;
 
     if (settings->verbose) {
-        printf("Thumbnail channel medians: %g %g %g\n", rmed, gmed, bmed);
-        printf("Thumbnail computed multipliers: %g %g %g\n", rmult, gmult, bmult);
+        printf("Thumbnail channel medians: %g %g %g\n", static_cast<double>(rmed), static_cast<double>(gmed), static_cast<double>(bmed));
+        printf("Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
     }
 
 #ifdef __SSE2__

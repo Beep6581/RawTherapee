@@ -49,7 +49,7 @@ class PartialProfile;
 }
 class RTImage;
 
-class ProfilePanel :
+class ProfilePanel final :
     public Gtk::Grid,
     public PParamsChangeListener,
     public ProfileStoreListener,

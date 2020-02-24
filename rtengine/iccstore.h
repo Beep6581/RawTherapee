@@ -39,7 +39,7 @@ namespace procparams
 
 typedef const double(*TMatrix)[3];
 
-class ProfileContent
+class ProfileContent final
 {
 public:
     ProfileContent();
@@ -54,7 +54,7 @@ private:
     std::string data;
 };
 
-class ICCStore
+class ICCStore final
 {
 public:
     enum class ProfileType {

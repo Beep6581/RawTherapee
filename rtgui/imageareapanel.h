@@ -22,7 +22,7 @@
 
 class ImageArea;
 
-class ImageAreaPanel :
+class ImageAreaPanel final :
     public Gtk::VBox
 {
 

@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <glib.h>
-#include <glib/gstdio.h>
 #include "curves.h"
 #include <cmath>
 #include <vector>
@@ -65,23 +63,23 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 }
             }
 
-            if (x[0] != 0.0f || x[N - 1] != 1.0f)
+            if (x[0] != 0.0 || x[N - 1] != 1.0)
                 // Special (and very rare) case where all points are on the identity line but
                 // not reaching the limits
             {
                 identity = false;
             }
 
-            if(x[0] == 0.f && x[1] == 0.f)
+            if(x[0] == 0.0 && x[1] == 0.0)
                 // Avoid crash when first two points are at x = 0 (git Issue 2888)
             {
-                x[1] = 0.01f;
+                x[1] = 0.01;
             }
 
-            if(x[0] == 1.f && x[1] == 1.f)
+            if(x[0] == 1.0 && x[1] == 1.0)
                 // Avoid crash when first two points are at x = 1 (100 in gui) (git Issue 2923)
             {
-                x[0] = 0.99f;
+                x[0] = 0.99;
             }
 
             if (!identity) {
@@ -97,7 +95,7 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 }
             }
         } else if (kind == DCT_Parametric) {
-            if ((p.size() == 8 || p.size() == 9) && (p.at(4) != 0.0f || p.at(5) != 0.0f || p.at(6) != 0.0f || p.at(7) != 0.0f)) {
+            if ((p.size() == 8 || p.size() == 9) && (p.at(4) != 0.0 || p.at(5) != 0.0 || p.at(6) != 0.0 || p.at(7) != 0.0)) {
                 identity = false;
 
                 x = new double[9];
