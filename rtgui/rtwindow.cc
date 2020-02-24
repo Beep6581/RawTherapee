@@ -99,6 +99,8 @@ RTWindow::RTWindow ()
     , bpanel (nullptr)
     , splash (nullptr)
     , btn_fullscreen (nullptr)
+    , iFullscreen (nullptr)
+    , iFullscreen_exit (nullptr)
     , epanel (nullptr)
     , fpanel (nullptr)
 {
