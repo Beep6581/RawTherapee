@@ -1200,9 +1200,14 @@ struct WaveletParams {
     int bluemed;
     int greenhigh;
     int bluehigh;
+    double mergeL;
+    double mergeC;
+    double softrad;
+    double softradend;
 
     bool lipst;
     bool avoid;
+    bool showmask;
     bool tmr;
     int strength;
     int balance;
@@ -1216,6 +1221,7 @@ struct WaveletParams {
     bool expfinal;
     bool exptoning;
     bool expnoise;
+    bool expclari;
 
     int Lmethod;
     Glib::ustring CLmethod;
@@ -1224,6 +1230,7 @@ struct WaveletParams {
     Glib::ustring daubcoeffmethod;
     Glib::ustring CHmethod;
     Glib::ustring Medgreinf;
+    Glib::ustring ushamethod;
     Glib::ustring CHSLmethod;
     Glib::ustring EDmethod;
     Glib::ustring NPmethod;
@@ -1231,10 +1238,13 @@ struct WaveletParams {
     Glib::ustring TMmethod;
     Glib::ustring Dirmethod;
     Glib::ustring HSmethod;
+    double sigma;
     int rescon;
     int resconH;
     int reschro;
     double tmrs;
+    double edgs;
+    double scale;
     double gamma;
     int sup;
     double sky;
@@ -1254,6 +1264,7 @@ struct WaveletParams {
     int edgthresh;
     int thr;
     int thrH;
+    int radius;
     double skinprotect;
     Threshold<int> hueskin;
     Threshold<int> hueskin2;

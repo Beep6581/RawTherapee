@@ -52,7 +52,8 @@ public:
     void autoOpenCurve() override;
     void curveChanged(CurveEditor* ce) override;
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void setAdjusterBehavior(bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
+//    void setAdjusterBehavior(bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
+    void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool edgsadd, bool scaleadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool radiusadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
     void setBatchMode(bool batchMode) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setEditProvider(EditDataProvider *provider) override;
@@ -67,6 +68,18 @@ public:
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
 
 private:
+    rtengine::ProcEvent EvWavenaclari;
+    rtengine::ProcEvent EvWavushamet;
+    rtengine::ProcEvent EvWavmergeL;
+    rtengine::ProcEvent EvWavmergeC;
+    rtengine::ProcEvent EvWavsoftrad;
+    rtengine::ProcEvent EvWavsoftradend;
+    rtengine::ProcEvent EvWavshowmask;
+    rtengine::ProcEvent EvWavedgs;
+    rtengine::ProcEvent EvWavscale;
+    rtengine::ProcEvent EvWavradius;
+    rtengine::ProcEvent EvWavsigma;
+
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
 
     void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
@@ -84,6 +97,7 @@ private:
     void TMmethodChanged();
     void TilesmethodChanged();
     void avoidToggled();
+    void showmaskToggled ();
     void cbenabToggled();
     void contrastMinusPressed();
     void contrastPlusPressed();
@@ -99,6 +113,7 @@ private:
     void tmrToggled();
     void updatewavLabel ();
     void wavChanged(double nlevel) override;
+    void ushamethodChanged();
 
     void HSmethodUpdateUI();
     void CHmethodUpdateUI();
@@ -150,14 +165,18 @@ private:
     Gtk::CheckButton* const lipst;
     Gtk::CheckButton* const avoid;
     Gtk::CheckButton* const tmr;
+    Gtk::CheckButton* const showmask;
 
     Gtk::Button* const neutralchButton;
     Adjuster* correction[9];
     Adjuster* correctionch[9];
+    Adjuster* const sigma;
     Adjuster* const rescon;
     Adjuster* const resconH;
     Adjuster* const reschro;
     Adjuster* const tmrs;
+    Adjuster* const edgs;
+    Adjuster* const scale;
     Adjuster* const gamma;
     Adjuster* const sup;
     Adjuster* const sky;
@@ -167,6 +186,7 @@ private:
     Adjuster* const contrast;
     Adjuster* const thr;
     Adjuster* const thrH;
+    Adjuster* const radius;
     Adjuster* const skinprotect;
     Adjuster* const edgrad;
     Adjuster* const edgval;
@@ -200,6 +220,11 @@ private:
     Adjuster* const edgedetectthr2;
     Adjuster* const edgesensi;
     Adjuster* const edgeampli;
+    Adjuster* const mergeL;
+    Adjuster* const mergeC;
+    Adjuster* const softrad;
+    Adjuster* const softradend;
+
     MyComboBoxText* const Lmethod;
     sigc::connection  Lmethodconn;
     MyComboBoxText* const CHmethod;
@@ -228,13 +253,18 @@ private:
     sigc::connection  Dirmethodconn;
     MyComboBoxText* const Medgreinf;
     sigc::connection  MedgreinfConn;
+    MyComboBoxText* const ushamethod;
+    sigc::connection  ushamethodconn;
+
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
     Gtk::Frame* const chanMixerShadowsFrame;
+    Gtk::Frame* const chromaFrame;
 
     Gtk::Label* const wavLabels;
     Gtk::Label* const labmC;
     Gtk::Label* const labmNP;
+    Gtk::Label* const usharpLabel;
     MyExpander* const expchroma;
     MyExpander* const expcontrast;
     MyExpander* const expedge;
@@ -244,18 +274,20 @@ private:
     MyExpander* const expresid;
     MyExpander* const expsettings;
     MyExpander* const exptoning;
+    MyExpander* const expclari;
 
     Gtk::HBox* const neutrHBox;
+    Gtk::HBox* const usharpHBox;
 
-    sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enableFinalConn;
+    sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enableFinalConn, enableclariConn;
     sigc::connection enableNoiseConn, enableResidConn, enableToningConn;
-    sigc::connection medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn;
+    sigc::connection medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn, showmaskConn;
     sigc::connection neutralPressedConn;
     sigc::connection contrastPlusPressedConn;
     sigc::connection contrastMinusPressedConn;
     sigc::connection neutralchPressedConn;
 
-    bool lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab;
+    bool lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab, lastshowmask;
     int nextnlevel;
 
     IdleRegister idle_register;
