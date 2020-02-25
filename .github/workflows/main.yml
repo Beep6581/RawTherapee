@@ -61,7 +61,7 @@ jobs:
             -DOpenMP_CXX_FLAGS="${C_FLAGS}" \
             -DCMAKE_AR="/usr/local/opt/llvm/bin/llvm-ar" \
             -DCMAKE_RANLIB="/usr/local/opt/llvm/bin/llvm-ranlib" \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET="10.11"
+            -DCMAKE_OSX_DEPLOYMENT_TARGET="10.11" \
             ..
           make --jobs
           make install
