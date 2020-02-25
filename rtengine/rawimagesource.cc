@@ -6394,22 +6394,25 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     } ;
 
-    int histxy[siza] = {};//number of values for each pair xy
+    int histxy[siza];//number of values for each pair xy
 
-    float area[siza] = {};//multiplier for compensation differences area ==> big areas are rare near limit prophotos or more
+    float area[siza];//multiplier for compensation differences area ==> big areas are rare near limit prophotos or more
 
-    int inter[siza] = {}; //interest for photographie 1 = small (limit gamut) 2 = normal 3 = major (skin, sky, neutral)
+    int inter[siza]; //interest for photographie 1 = small (limit gamut) 2 = normal 3 = major (skin, sky, neutral)
 
-    float xxx[siza] = {};//for color references calculated ==> max in images "like histogram"
+    float xxx[siza];//for color references calculated ==> max in images "like histogram"
 
-    float yyy[siza] = {};
+    float yyy[siza];
 
-    float YYY[siza] = {};//not used directly, but necessary to keep good range
+    float YYY[siza];//not used directly, but necessary to keep good range
 
     for (int p = 0; p < siza; p++) {
         histxy[p] = 0;
         area[p] = 20.f;
         inter[p] = 1;
+        xxx[p] = 0.f;
+        yyy[p] = 0.f;
+        YYY[p] = 0.f;
     }
 
     float estimchrom = 0.f;
