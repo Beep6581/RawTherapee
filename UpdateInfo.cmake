@@ -10,10 +10,10 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
         find_program(GIT_CMD git PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
         find_program(GIT_CMD git)
         set(SHELL "/bin/bash")
-    else(WIN32) # Linux
+    else() # Linux
         find_program(GIT_CMD git)
         set(SHELL "/bin/bash")
-    endif(WIN32)
+    endif()
 
     # Fail if Git is not installed
     if(GIT_CMD STREQUAL GIT_CMD-NOTFOUND)
@@ -79,10 +79,9 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     else()
         message(STATUS "CACHE_NAME_SUFFIX is \"${CACHE_NAME_SUFFIX}\"")
     endif()
-
-else(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+else()
     include("${PROJECT_SOURCE_DIR}/ReleaseInfo.cmake")
-endif(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+endif()
 
 if(WIN32)
     if(BIT_DEPTH EQUAL 4)
@@ -97,12 +96,12 @@ if(WIN32)
         set(ARCHITECTURE_ALLOWED "x64 ia64")
         # installing in 64 bits mode for all 64 bits processors, even for itanium architecture
         set(INSTALL_MODE "x64 ia64")
-    endif(BIT_DEPTH EQUAL 4)
+    endif()
     # set part of the output archive name
     set(SYSTEM_NAME "WinVista")
 
     configure_file("${PROJECT_SOURCE_DIR}/tools/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_BINARY_DIR}/rtdata/WindowsInnoSetup.iss")
-endif(WIN32)
+endif()
 
 # build version.h from template
 configure_file("${PROJECT_SOURCE_DIR}/rtgui/version.h.in" "${CMAKE_BINARY_DIR}/rtgui/version.h")
