@@ -122,8 +122,8 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
     }
 
     if (settings->verbose) {
-        printf("Clear film values: R=%g G=%g B=%g\n", clearVals[0], clearVals[1], clearVals[2]);
-        printf("Dense film values: R=%g G=%g B=%g\n", denseVals[0], denseVals[1], denseVals[2]);
+        printf("Clear film values: R=%g G=%g B=%g\n", static_cast<double>(clearVals[0]), static_cast<double>(clearVals[1]), static_cast<double>(clearVals[2]));
+        printf("Dense film values: R=%g G=%g B=%g\n", static_cast<double>(denseVals[0]), static_cast<double>(denseVals[1]), static_cast<double>(denseVals[2]));
     }
 
     const float denseGreenRatio = clearVals[1] / denseVals[1];
@@ -141,12 +141,12 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
         if (ch == 1) {
             newExps[ch] = 1.f;  // Green is the reference channel
         } else {
-            newExps[ch] = CLAMP(logBase(clearVals[ch] / denseVals[ch], denseGreenRatio), 0.3f, 4.f);
+            newExps[ch] = rtengine::LIM(logBase(clearVals[ch] / denseVals[ch], denseGreenRatio), 0.3f, 4.f);
         }
     }
 
     if (settings->verbose) {
-        printf("New exponents:  R=%g G=%g B=%g\n", newExps[0], newExps[1], newExps[2]);
+        printf("New exponents:  R=%g G=%g B=%g\n", static_cast<double>(newExps[0]), static_cast<double>(newExps[1]), static_cast<double>(newExps[2]));
     }
 
     return true;
@@ -246,8 +246,8 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
 
     if (settings->verbose) {
         printf("Sample count: %zu, %zu, %zu\n", cvs[0].size(), cvs[1].size(), cvs[2].size());
-        printf("Medians: %g %g %g\n", medians[0], medians[1], medians[2] );
-        printf("Computed multipliers: %g %g %g\n", mults[0], mults[1], mults[2] );
+        printf("Medians: %g %g %g\n", static_cast<double>(medians[0]), static_cast<double>(medians[1]), static_cast<double>(medians[2]));
+        printf("Computed multipliers: %g %g %g\n", static_cast<double>(mults[0]), static_cast<double>(mults[1]), static_cast<double>(mults[2]));
         printf("Median calc time us: %d\n", t3.etime(t2));
     }
 

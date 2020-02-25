@@ -81,6 +81,14 @@ public:
     double          level0_cbdl;
     double          level123_cbdl;
     Glib::ustring   lensfunDbDirectory; // The directory containing the lensfun database. If empty, the system defaults will be used, as described in https://lensfun.github.io/manual/latest/dbsearch.html
+    int             itcwb_thres;
+    bool            itcwb_sort;
+    int             itcwb_greenrange;
+    int             itcwb_greendeltatemp;
+    bool            itcwb_forceextra;
+    int             itcwb_sizereference;
+    int             itcwb_delta;
+
 
     enum class ThumbnailInspectorMode {
         JPEG,

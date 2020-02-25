@@ -477,13 +477,13 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
             double pos[3];
             shcSelector->getPositions(pos[0], pos[1], pos[2]);
 
-            if     (pipetteVal >= pos[2]) {
+            if (static_cast<double>(pipetteVal) >= pos[2]) {
                 editedAdjuster = highlights;
                 paramCurve->setActiveParam(4);
-            } else if(pipetteVal >= pos[1]) {
+            } else if(static_cast<double>(pipetteVal) >= pos[1]) {
                 editedAdjuster = lights;
                 paramCurve->setActiveParam(5);
-            } else if(pipetteVal >= pos[0]) {
+            } else if(static_cast<double>(pipetteVal) >= pos[0]) {
                 editedAdjuster = darks;
                 paramCurve->setActiveParam(6);
             } else {

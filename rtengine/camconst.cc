@@ -553,7 +553,7 @@ CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float
                     float av = (avh - 1) + (float)k / 3;
                     float aperture = sqrtf(powf(2, av));
 
-                    if (fnumber > aperture * 0.97 && fnumber < aperture / 0.97) {
+                    if (fnumber > aperture * 0.97f && fnumber < aperture / 0.97f) {
                         fnumber = fn_tab[avh][k];
                         it = mApertureScaling.find(fnumber);
                         avh = 7;
@@ -579,7 +579,7 @@ CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float
             scaling = it->second;
         }
 
-        if (scaling > 1.0) {
+        if (scaling > 1.f) {
             for (int i = 0; i < 4; i++) {
                 lvl.levels[i] *= scaling;
 
