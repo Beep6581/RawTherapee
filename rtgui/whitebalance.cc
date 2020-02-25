@@ -461,6 +461,7 @@ void WhiteBalance::optChanged ()
         methconn.block(prevState);
         return;
     }
+    StudLabel->hide();
 
     if (opt != row[methodColumns.colId]) {
 
@@ -566,6 +567,8 @@ void WhiteBalance::optChanged ()
 
 void WhiteBalance::spotPressed ()
 {
+    StudLabel->hide();
+
     if (wblistener) {
         wblistener->spotWBRequested (getSize());
     }

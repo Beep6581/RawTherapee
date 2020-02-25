@@ -494,9 +494,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
           //  if (params->wb.method == "Auto" && awbListener && params->wb.enabled) {
-            if (autowb && awbListener) {
+            if (autowb && awbListener && params->wb.method ==  "autitcgreen") {
                 awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
-            }
+            } 
 
             /*
                     GammaValues g_a;
