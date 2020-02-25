@@ -60,6 +60,7 @@ ImProcCoordinator::ImProcCoordinator() :
     imgsrc(nullptr),
     lastAwbEqual(0.),
     lastAwbTempBias(0.0),
+    lastAwbauto(""),
     monitorIntent(RI_RELATIVE),
     softProof(false),
     gamutCheck(false),
@@ -232,6 +233,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
     MyMutex::MyLock processingLock(mProcessing);
 
     bool highDetailNeeded = options.prevdemo == PD_Sidecar ? true : (todo & M_HIGHQUAL);
+                //    printf("metwb=%s \n", params->wb.method.c_str());
 
     // Check if any detail crops need high detail. If not, take a fast path short cut
     if (!highDetailNeeded) {
@@ -253,6 +255,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         RAWParams rp = params->raw;
         ColorManagementParams cmp = params->icm;
         LCurveParams  lcur = params->labCurve;
+        printf("metwb2=%s \n", params->wb.method.c_str());
 
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
@@ -387,6 +390,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
 
+        //    bool autowb0 = false;
+       //     autowb0 = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
+       //     autowb0 = (params->wb.method == "autold" || params->wb.method == "autitcgreen");//in some cases autowb0 does not work ....params->wb.method still at "camera" instead of auto !!! 
+       //     printf("autowb0=%s \n", params->wb.method.c_str());
+
+
+
+       //     if (autowb0) {
+                imgsrc->getrgbloc(false, false, false, 0, 0, fh, fw, 0, 0, fh, fw);
+       //     }
+
         if ((todo & (M_RETINEX | M_INIT)) && params->retinex.enabled) {
             bool dehacontlutili = false;
             bool mapcontlutili = false;
@@ -403,6 +417,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
 
+        bool autowb = false;
+        autowb = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
+        printf("automethod=%s \n", params->wb.method.c_str());
+        
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
 
@@ -414,28 +432,51 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method);
+            float studgood = 1000.f;
 
             if (!params->wb.enabled) {
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
                 currWB = imgsrc->getWB();
-            } else if (params->wb.method == "Auto") {
-                if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias) {
+                lastAwbauto = ""; //reinitialize auto
+            } else if (autowb) {
+                if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
-                    imgsrc->getAutoWBMultipliers(rm, gm, bm);
+                    double tempitc = 5000.f;
+                    double greenitc = 1.;
+                    currWBitc = imgsrc->getWB();
+                    double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
+                    double greenref = currWBitc.getGreen();
+                    printf("tempref=%f greref=%f\n", tempref, greenref);
 
-                    if (rm != -1.) {
-                        autoWB.update(rm, gm, bm, params->wb.equal, params->wb.tempBias);
-                        lastAwbEqual = params->wb.equal;
-                        lastAwbTempBias = params->wb.tempBias;
-                    } else {
-                        lastAwbEqual = -1.;
-                        lastAwbTempBias = 0.0;
-                        autoWB.useDefaults(params->wb.equal);
+                    imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
+
+                if (params->wb.method ==  "autitcgreen") {
+                    params->wb.temperature = tempitc;
+                    params->wb.green = greenitc;
+                    currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method);
+                    currWB.getMultipliers(rm, gm, bm);
+                }
+
+                if (rm != -1.) {
+                    double bias = params->wb.tempBias;
+
+                    if (params->wb.method ==  "autitcgreen") {
+                        bias = 0.;
                     }
 
-                    //double rr,gg,bb;
-                    //autoWB.getMultipliers(rr,gg,bb);
+                    autoWB.update(rm, gm, bm, params->wb.equal, bias);
+                    lastAwbEqual = params->wb.equal;
+                    lastAwbTempBias = params->wb.tempBias;
+                    lastAwbauto = params->wb.method;
+                } else {
+                    lastAwbEqual = -1.;
+                    lastAwbTempBias = 0.0;
+                    lastAwbauto = "";
+                    autoWB.useDefaults(params->wb.equal);
+                }
+                    
+                    
                 }
 
                 currWB = autoWB;
@@ -446,8 +487,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 params->wb.green = currWB.getGreen();
             }
 
-            if (params->wb.method == "Auto" && awbListener && params->wb.enabled) {
-                awbListener->WBChanged(params->wb.temperature, params->wb.green);
+          //  if (params->wb.method == "Auto" && awbListener && params->wb.enabled) {
+            if (autowb && awbListener) {
+                awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
             }
 
             /*
@@ -1353,18 +1395,27 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
 {
 
     if (imgsrc) {
-        if (lastAwbEqual != equal || lastAwbTempBias != tempBias) {
+        if (lastAwbEqual != equal || lastAwbTempBias != tempBias || lastAwbauto != params->wb.method) {
 // Issue 2500            MyMutex::MyLock lock(minit);  // Also used in crop window
             double rm, gm, bm;
-            imgsrc->getAutoWBMultipliers(rm, gm, bm);
+            params->wb.method = "autold";//same result as before muliple Auto WB
+            
+           // imgsrc->getAutoWBMultipliers(rm, gm, bm);
+            double tempitc = 5000.;
+            double greenitc = 1.;
+            float studgood = 1000.f;
+            double tempref, greenref;
+            imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood,  0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
 
             if (rm != -1) {
                 autoWB.update(rm, gm, bm, equal, tempBias);
                 lastAwbEqual = equal;
                 lastAwbTempBias = tempBias;
+                lastAwbauto = params->wb.method;
             } else {
                 lastAwbEqual = -1.;
                 autoWB.useDefaults(equal);
+                lastAwbauto = "";
                 lastAwbTempBias = 0.0;
             }
         }

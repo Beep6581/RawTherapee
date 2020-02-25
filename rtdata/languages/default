@@ -2276,6 +2276,8 @@ TP_WAVELET_CLA;Clarity
 TP_WAVELET_USHARP;Sharp method
 TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\nWavelet : the source file is the file including wavelet threatment
 TP_WBALANCE_AUTO;Auto
+TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation\nThe lower the student value, the better the correlation\nValues below 0.002 are excellent\nValues below 0.005 are very good\nValues below 0.01 are good\nValues below 0.05 are good enough\nValues above 0.5 are poor\nVery good Student test results does not mean that the WB is good, if the illuminant is non-standard the results are erratic.
+TP_WBALANCE_STUDLABEL;Student Itcwb: %1
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy
 TP_WBALANCE_CUSTOM;Custom
@@ -2285,6 +2287,9 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "whi
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+TP_WBALANCE_AUTO_HEADER;Autos
+TP_WBALANCE_AUTOOLD;Auto RGB grey
+TP_WBALANCE_AUTOITCGREEN;Auto iterate temperature correlation
 TP_WBALANCE_FLASH_HEADER;Flash
 TP_WBALANCE_FLUO1;F1 - Daylight
 TP_WBALANCE_FLUO2;F2 - Cool White
