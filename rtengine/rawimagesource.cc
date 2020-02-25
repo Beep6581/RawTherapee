@@ -7034,7 +7034,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
 
-    printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
+    if (settings->verbose) {
+        printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
+    }
 
 
     xc(0, 0);

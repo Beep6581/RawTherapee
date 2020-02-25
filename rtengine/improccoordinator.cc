@@ -255,7 +255,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         RAWParams rp = params->raw;
         ColorManagementParams cmp = params->icm;
         LCurveParams  lcur = params->labCurve;
-        printf("metwb2=%s \n", params->wb.method.c_str());
+        if (settings->verbose) {
+            printf("metwb2=%s \n", params->wb.method.c_str());
+        }
 
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
@@ -419,7 +421,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         bool autowb = false;
         autowb = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
-        printf("automethod=%s \n", params->wb.method.c_str());
+        if (settings->verbose) {
+            printf("automethod=%s \n", params->wb.method.c_str());
+        }
         
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
@@ -447,7 +451,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
-                    printf("tempref=%f greref=%f\n", tempref, greenref);
+                    if (settings->verbose) {
+                        printf("tempref=%f greref=%f\n", tempref, greenref);
+                    }
 
                     imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
 
