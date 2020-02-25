@@ -2314,8 +2314,18 @@ void Options::load(bool lightweight)
     const gchar* path;
     Glib::ustring dPath;
 
+#ifdef __APPLE__
+    // Build Application Support directory path for macOS.
+    const char* homedir = g_getenv("HOME"); // This returns the current container data dir in ~/Library
+    std::string homebuf{homedir};
+    int homelength = strlen(homebuf.c_str());
+    homebuf[homelength-44] = '\0'; // Terminate string after ${HOME}/Library
+    std::string homeconfig{homebuf};
+    std::strcat(&homeconfig[0], "/Application Support/RawTherapee/config");
+    path = homeconfig.c_str();
+#else
     path = g_getenv("RT_SETTINGS");
-
+#endif
     if (path != nullptr) {
         rtdir = Glib::ustring(path);
 
@@ -2324,6 +2334,7 @@ void Options::load(bool lightweight)
             throw Error(msg);
         }
     } else {
+
 #ifdef WIN32
         WCHAR pathW[MAX_PATH] = {0};
 
@@ -2356,9 +2367,14 @@ void Options::load(bool lightweight)
         rtdir = Glib::build_filename(argv0, "mysettings");
     }
 
-    // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
+    // Modify the path of the cache folder to the one provided in RT_CACHE environment variable. Build the cache folder name in macOS.
+#ifdef __APPLE__
+    std::string homecache{homebuf};
+    std::strcat(&homecache[0], "/Application Support/RawTherapee/cache");
+    path = homecache.c_str();
+#else
     path = g_getenv("RT_CACHE");
-
+#endif
     if (path != nullptr) {
         cacheBaseDir = Glib::ustring(path);
 
@@ -2367,6 +2383,7 @@ void Options::load(bool lightweight)
             throw Error(msg);
         }
     }
+
     // No environment variable provided, so falling back to the multi user mode, if enabled
     else if (options.multiUser) {
 #ifdef WIN32

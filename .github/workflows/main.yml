@@ -30,7 +30,7 @@ jobs:
         CMAKE_CXX_STANDARD: 11
         PKG_CONFIG_PATH: /usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/expat/lib/pkgconfig
         RAW_THERAPEE_MAJOR: '5'
-        RAW_THERAPEE_MINOR: '7'
+        RAW_THERAPEE_MINOR: '8'
         C_FLAGS: -Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/gdk-pixbuf/include -I/usr/local/opt/libiconv/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/llvm/include
       run: |
         # GITHUB_REF is the ref that triggered the build, like refs/heads/new-feature - the next line parses that to REF: the branch name only (new-feature)
@@ -54,6 +54,7 @@ jobs:
           -DOpenMP_CXX_FLAGS="${C_FLAGS}" \
           -DCMAKE_AR="/usr/local/opt/llvm/bin/llvm-ar" \
           -DCMAKE_RANLIB="/usr/local/opt/llvm/bin/llvm-ranlib" \
+          -DCMAKE_OSX_DEPLOYMENT_TARGET="10.11"
           ..
         make --jobs
         make install
