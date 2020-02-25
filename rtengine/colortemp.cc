@@ -29,10 +29,6 @@
 #include "settings.h"
 #include "iccstore.h"
 
-#undef CLIPD
-#define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
-#define CLIPQQ(a) ((a)>0?((a)<250?(a):250):0)
-#define MAXR(a,b) ((a) > (b) ? (a) : (b))
 
 namespace rtengine
 {
