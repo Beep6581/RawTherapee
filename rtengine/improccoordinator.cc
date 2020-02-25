@@ -36,6 +36,7 @@
 #include "lcp.h"
 #include "procparams.h"
 #include "refreshmap.h"
+#include "guidedfilter.h"
 
 #include "../rtgui/options.h"
 
@@ -55,11 +56,11 @@ ImProcCoordinator::ImProcCoordinator() :
     fattal_11_dcrop_cache(nullptr),
     previmg(nullptr),
     workimg(nullptr),
-    ncie (nullptr),
-    imgsrc (nullptr),
-    lastAwbEqual (0.),
-    lastAwbTempBias (0.0),
-    monitorIntent (RI_RELATIVE),
+    ncie(nullptr),
+    imgsrc(nullptr),
+    lastAwbEqual(0.),
+    lastAwbTempBias(0.0),
+    monitorIntent(RI_RELATIVE),
     softProof(false),
     gamutCheck(false),
     sharpMask(false),
@@ -194,12 +195,12 @@ ImProcCoordinator::~ImProcCoordinator()
 
     imgsrc->decreaseRef();
 
-    if(customTransformIn) {
+    if (customTransformIn) {
         cmsDeleteTransform(customTransformIn);
         customTransformIn = nullptr;
     }
 
-    if(customTransformOut) {
+    if (customTransformOut) {
         cmsDeleteTransform(customTransformOut);
         customTransformOut = nullptr;
     }
@@ -279,9 +280,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             imgsrc->setCurrentFrame(params->raw.bayersensor.imageNum);
 
             imgsrc->preprocess(rp, params->lensProf, params->coarse);
+
             if (flatFieldAutoClipListener && rp.ff_AutoClipControl) {
                 flatFieldAutoClipListener->flatFieldAutoClipValueChanged(imgsrc->getFlatFieldAutoClipValue());
             }
+
             imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
 
             highDetailPreprocessComputed = highDetailNeeded;
@@ -327,8 +330,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     printf("Demosaic X-Trans image with using method: %s\n", rp.xtranssensor.method.c_str());
                 }
             }
-            if(imgsrc->getSensorType() == ST_BAYER) {
-                if(params->raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+
+            if (imgsrc->getSensorType() == ST_BAYER) {
+                if (params->raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
                     imgsrc->setBorder(params->raw.bayersensor.border);
                 } else {
                     imgsrc->setBorder(std::max(params->raw.bayersensor.border, 2));
@@ -336,6 +340,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
                 imgsrc->setBorder(params->raw.xtranssensor.border);
             }
+
             bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicAutoContrast : params->raw.xtranssensor.dualDemosaicAutoContrast;
             double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicContrast : params->raw.xtranssensor.dualDemosaicContrast;
             imgsrc->demosaic(rp, autoContrast, contrastThreshold, params->pdsharpening.enabled);
@@ -343,6 +348,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             if (imgsrc->getSensorType() == ST_BAYER && bayerAutoContrastListener && autoContrast) {
                 bayerAutoContrastListener->autoContrastChanged(contrastThreshold);
             } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS && xtransAutoContrastListener && autoContrast) {
+
                 xtransAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
             }
             // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
@@ -605,7 +611,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
 
-        if (todo &  (M_AUTOEXP | M_RGBCURVE)) {
+        if (todo & (M_AUTOEXP | M_RGBCURVE)) {
             if (params->icm.workingTRC == "Custom") { //exec TRC IN free
                 if (oprevi == orig_prev) {
                     oprevi = new Imagefloat(pW, pH);
@@ -617,17 +623,21 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
                     const int cw = oprevi->getWidth();
                     const int ch = oprevi->getHeight();
+
                     // put gamma TRC to 1
-                    if(customTransformIn) {
+                    if (customTransformIn) {
                         cmsDeleteTransform(customTransformIn);
                         customTransformIn = nullptr;
                     }
+
                     ipf.workingtrc(oprevi, oprevi, cw, ch, -5, params->icm.workingProfile, 2.4, 12.92310, customTransformIn, true, false, true);
+
                     //adjust TRC
-                    if(customTransformOut) {
+                    if (customTransformOut) {
                         cmsDeleteTransform(customTransformOut);
                         customTransformOut = nullptr;
                     }
+
                     ipf.workingtrc(oprevi, oprevi, cw, ch, 5, params->icm.workingProfile, params->icm.workingTRCGamma, params->icm.workingTRCSlope, customTransformOut, false, true, true);
                 }
             }
@@ -635,7 +645,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
         if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
-    //        if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
+            //        if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
 
             //complexCurve also calculated pre-curves histogram depending on crop
             CurveFactory::complexCurve(params->toneCurve.expcomp, params->toneCurve.black / 65535.0,
@@ -729,7 +739,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 DCPProfileApplyState as;
                 DCPProfile *dcpProf = imgsrc->getDCP(params->icm, as);
 
-                ipf.rgbProc (oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, params->toneCurve.saturation,
+                ipf.rgbProc(oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, params->toneCurve.saturation,
                             rCurve, gCurve, bCurve, colourToningSatLimit, colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf, as, histToneCurve);
 
                 if (params->blackwhite.enabled && params->blackwhite.autoc && abwListener) {
@@ -814,17 +824,222 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             wavcontlutili = false;
             CurveFactory::curveWavContL(wavcontlutili, params->wavelet.wavclCurve, wavclCurve, scale == 1 ? 1 : 16);
 
-
             if ((params->wavelet.enabled)) {
                 WaveletParams WaveParams = params->wavelet;
                 WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
-
                 int kall = 0;
+                LabImage *unshar = nullptr;
+                Glib::ustring provis;
+                LabImage *provradius = nullptr;
+                bool procont = WaveParams.expcontrast;
+                bool prochro = WaveParams.expchroma;
+                bool proedge = WaveParams.expedge;
+                bool profin = WaveParams.expfinal;
+                bool proton = WaveParams.exptoning;
+                bool pronois = WaveParams.expnoise; 
+
+                if(WaveParams.showmask) {
+                 //   WaveParams.showmask = false;
+                 //   WaveParams.expclari = true;
+                }
+
+                if (WaveParams.softrad > 0.f) {
+                    provradius = new LabImage(pW, pH);
+                    provradius->CopyFrom(nprevl);
+                }
+
+
+
+
+                if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                    unshar = new LabImage(pW, pH);
+                    provis = params->wavelet.CLmethod;
+                    params->wavelet.CLmethod = "all";
+                    ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
+
+                    unshar->CopyFrom(nprevl);
+
+                    params->wavelet.CLmethod = provis;
+
+                }
+
+                if (!WaveParams.expclari && WaveParams.CLmethod != "all") {
+                    params->wavelet.CLmethod = "all";
+                    params->wavelet.Backmethod = "grey";
+                }
+
+                if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                    WaveParams.expcontrast = false;
+                    WaveParams.expchroma = false;
+                    WaveParams.expedge = false;
+                    WaveParams.expfinal = false;
+                    WaveParams.exptoning = false;
+                    WaveParams.expnoise = false; 
+                }
+
                 ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
+
+                if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                    WaveParams.expcontrast = procont;
+                    WaveParams.expchroma = prochro;
+                    WaveParams.expedge = proedge;
+                    WaveParams.expfinal = profin;
+                    WaveParams.exptoning = proton;
+                    WaveParams.expnoise = pronois;
+                    
+                    if (WaveParams.softrad > 0.f) {
+                        array2D<float> ble(pW, pH);
+                        array2D<float> guid(pW, pH);
+                        Imagefloat *tmpImage = nullptr;
+                        tmpImage = new Imagefloat(pW, pH);
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int ir = 0; ir < pH; ir++)
+                            for (int jr = 0; jr < pW; jr++) {
+                                float X, Y, Z;
+                                float L = provradius->L[ir][jr];
+                                float a = provradius->a[ir][jr];
+                                float b = provradius->b[ir][jr];
+                                Color::Lab2XYZ(L, a, b, X, Y, Z);
+
+                                guid[ir][jr] = Y / 32768.f;
+                                float La = nprevl->L[ir][jr];
+                                float aa = nprevl->a[ir][jr];
+                                float ba = nprevl->b[ir][jr];
+                                Color::Lab2XYZ(La, aa, ba, X, Y, Z);
+                                tmpImage->r(ir, jr) = X;
+                                tmpImage->g(ir, jr) = Y;
+                                tmpImage->b(ir, jr) = Z;
+                                ble[ir][jr] = Y / 32768.f;
+                            }
+                        double epsilmax = 0.0001;
+                        double epsilmin = 0.00001;
+                        double aepsil = (epsilmax - epsilmin) / 90.f;
+                        double bepsil = epsilmax - 100.f * aepsil;
+                        double epsil = aepsil * WaveParams.softrad + bepsil;
+
+                        float blur = 10.f / scale * (0.0001f + 0.8f * WaveParams.softrad);
+                        // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
+                        rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
+
+
+
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int ir = 0; ir < pH; ir++)
+                            for (int jr = 0; jr < pW; jr++) {
+                                float X = tmpImage->r(ir, jr);
+                                float Y = 32768.f * ble[ir][jr];
+                                float Z = tmpImage->b(ir, jr);
+                                float L, a, b;
+                                Color::XYZ2Lab(X, Y, Z, L, a, b);
+                                nprevl->L[ir][jr] =  L;
+                            }
+                    delete tmpImage;
+
+                    }
+                    
+                }
+
+                if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                    float mL = (float)(WaveParams.mergeL / 100.f);
+                    float mC = (float)(WaveParams.mergeC / 100.f);
+                    float mL0;
+                    float mC0;
+                    float background = 0.f;
+                    int show = 0; 
+
+
+
+                    if ((WaveParams.CLmethod == "one" || WaveParams.CLmethod == "inf")  && WaveParams.Backmethod == "black") {
+                        mL0 = mC0 = 0.f;
+                        mL = - 1.5f * mL;
+                        mC = -mC;
+                        background = 12000.f;
+                        show = 0;
+                    } else if (WaveParams.CLmethod == "sup" && WaveParams.Backmethod == "resid") {
+                        mL0 = mL;
+                        mC0 = mC;
+                        background = 0.f;
+                        show = 0;
+                    } else {
+                        mL0 = mL = mC0 = mC = 0.f;
+                        background = 0.f;
+                        show = 0;
+                    }
+                float indic = 1.f;
+
+                if(WaveParams.showmask){
+                    mL0 = mC0 = -1.f;
+                    indic = -1.f;
+                    mL = fabs(mL);
+                    mC = fabs(mC);
+                    show = 1;
+                }
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int x = 0; x < pH; x++)
+                        for (int y = 0; y < pW; y++) {
+                            nprevl->L[x][y] = LIM((1.f + mL0) * (unshar->L[x][y]) + show * background - mL * indic * nprevl->L[x][y], 0.f, 32768.f);
+                            nprevl->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * indic * nprevl->a[x][y];
+                            nprevl->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * indic * nprevl->b[x][y];
+                        }
+
+                    delete unshar;
+                    unshar    = NULL;
+/*
+                    if (WaveParams.softrad > 0.f) {
+                        array2D<float> ble(pW, pH);
+                        array2D<float> guid(pW, pH);
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int ir = 0; ir < pH; ir++)
+                            for (int jr = 0; jr < pW; jr++) {
+                                ble[ir][jr] = (nprevl->L[ir][jr]  - provradius->L[ir][jr]) / 32768.f;
+                                guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
+                            }
+                        double epsilmax = 0.001;
+                        double epsilmin = 0.0001;
+                        double aepsil = (epsilmax - epsilmin) / 90.f;
+                        double bepsil = epsilmax - 100.f * aepsil;
+                        double epsil = aepsil * WaveParams.softrad + bepsil;
+
+                        float blur = 10.f / scale * (0.001f + 0.8f * WaveParams.softrad);
+                        // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
+                        rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
+
+
+
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int ir = 0; ir < pH; ir++)
+                            for (int jr = 0; jr < pW; jr++) {
+                                nprevl->L[ir][jr] =  provradius->L[ir][jr] + 32768.f * ble[ir][jr];
+                            }
+                    }
+*/
+                    if (WaveParams.softrad > 0.f) {
+                        delete provradius;
+                        provradius    = NULL;
+                    }
+
+
+                }
+               
             }
 
-        ipf.softLight(nprevl);
+            ipf.softLight(nprevl);
 
             if (params->colorappearance.enabled) {
                 // L histo  and Chroma histo for ciecam
@@ -976,6 +1191,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             hListener->histogramChanged(histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma, histLRETI);
         }
     }
+
     if (orig_prev != oprevi) {
         delete oprevi;
         oprevi = nullptr;

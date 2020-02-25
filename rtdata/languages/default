@@ -788,6 +788,17 @@ HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 HISTORY_MSG_TRANS_Method;Geometry - Method
+HISTORY_MSG_WAVCLARI;Clarity
+HISTORY_MSG_WAVUSHAMET;Clarity method
+HISTORY_MSG_WAVMERGEL;Merge L
+HISTORY_MSG_WAVMERGEC;Merge C
+HISTORY_MSG_WAVSIGMA;Sigma
+HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
+HISTORY_MSG_WAVSOFTRADEND;Soft radius final
+HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
+HISTORY_MSG_WAVEDGS;Edge stopping
+HISTORY_MSG_WAVSCALE;Scale
+HISTORY_MSG_WAVRADIUS;Radius Shadows-Highlight
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2116,10 +2127,12 @@ TP_WAVELET_CH3;Link contrast levels
 TP_WAVELET_CHCU;Curve
 TP_WAVELET_CHR;Chroma-contrast link strength
 TP_WAVELET_CHRO;Saturated/pastel threshold
+TP_WAVELET_CHROMAFRAME;Chroma
 TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
 TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 TP_WAVELET_CHSL;Sliders
 TP_WAVELET_CHTYPE;Chrominance method
+TP_WAVELET_CLARI;Sharp-mask and Clarity
 TP_WAVELET_COLORT;Opacity Red-Green
 TP_WAVELET_COMPCONT;Contrast
 TP_WAVELET_COMPGAMMA;Compression gamma
@@ -2202,6 +2215,8 @@ TP_WAVELET_MEDGREINF;First level
 TP_WAVELET_MEDI;Reduce artifacts in blue sky
 TP_WAVELET_MEDILEV;Edge detection
 TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
+TP_WAVELET_MERGEL;Merge Luma
+TP_WAVELET_MERGEC;Merge Chroma
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOIS;Denoise
 TP_WAVELET_NOISE;Denoise and Refine
@@ -2216,19 +2231,22 @@ TP_WAVELET_OPACITYWL;Final local contrast
 TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
+TP_WAVELET_RADIUS;Radius Shadows - Highlight
 TP_WAVELET_RE1;Reinforced
 TP_WAVELET_RE2;Unchanged
 TP_WAVELET_RE3;Reduced
-TP_WAVELET_RESCHRO;Chroma
+TP_WAVELET_RESCHRO;Intensity
 TP_WAVELET_RESCON;Shadows
 TP_WAVELET_RESCONH;Highlights
 TP_WAVELET_RESID;Residual Image
 TP_WAVELET_SAT;Saturated chroma
 TP_WAVELET_SETTINGS;Wavelet Settings
+TP_WAVELET_SIGMA;Sigma
 TP_WAVELET_SKIN;Skin targetting/protection
 TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 TP_WAVELET_SKY;Sky targetting/protection
 TP_WAVELET_SKY_TOOLTIP;At -100 sky-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 sky-tones are protected while all other tones are affected.
+TP_WAVELET_SOFTRAD;Soft Radius
 TP_WAVELET_STREN;Strength
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
@@ -2244,9 +2262,19 @@ TP_WAVELET_TILESIZE;Tiling method
 TP_WAVELET_TILESLIT;Little tiles
 TP_WAVELET_TILES_TOOLTIP;Processing the full image leads to better quality and is the recommended option, while using tiles is a fall-back solution for users with little RAM. Refer to RawPedia for memory requirements.
 TP_WAVELET_TMSTRENGTH;Compression strength
-TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image. When the value is different from 0, the Strength and Gamma sliders of the Tone Mapping tool in the Exposure tab will become grayed out.
+TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image.
 TP_WAVELET_TMTYPE;Compression method
+TP_WAVELET_TMEDGS;Edge stopping
+TP_WAVELET_TMSCALE;Scale
 TP_WAVELET_TON;Toning
+TP_WAVELET_USHARP;Clarity method
+TP_WAVELET_USH;None
+TP_WAVELET_USH_TOOLTIP;If you select Sharp-mask, wavelet settings will be automatically positioned :\nBackground=black, Process=below, level=3...you can change level between 1 and 4.\n\nIf you select Clarity, wavelet settings will be automatically positioned :\nBackground=residual, Process=above, level=7..you can change level between 5 and 10 and wavelet levels.
+TP_WAVELET_SHA;Sharp mask
+TP_WAVELET_SHOWMASK;Show wavelet 'mask'
+TP_WAVELET_CLA;Clarity
+TP_WAVELET_USHARP;Sharp method
+TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\nWavelet : the source file is the file including wavelet threatment
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy
