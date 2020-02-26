@@ -4167,23 +4167,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
         if (keyFile.has_group("White Balance")) {
             assignFromKeyfile(keyFile, "White Balance", "Enabled", pedited, wb.enabled, pedited->wb.enabled);
-            if (keyFile.has_key("White Balance", "Setting")) {
-//                if(ppVersion < 349) {
-                    Glib::ustring  prov = keyFile.get_string("White Balance", "Setting");
-//                    printf("Prov=%s\n", prov.c_str());
-                    if(prov == "Auto") {
-                        printf("OK Auto\n");
-                        prov = "autold";
-                        wb.method = prov;
-                        keyFile.set_string("White Balance", "Setting",wb.method );
-                        if (pedited) {
-                            pedited->wb.method = true;
-                        }
-                        assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
-                        
-                    } else {
-                         assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
-                    }
+            assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
+            if (wb.method == "Auto") {
+                wb.method = "autold";
             }
             assignFromKeyfile(keyFile, "White Balance", "Temperature", pedited, wb.temperature, pedited->wb.temperature);
             assignFromKeyfile(keyFile, "White Balance", "Green", pedited, wb.green, pedited->wb.green);
