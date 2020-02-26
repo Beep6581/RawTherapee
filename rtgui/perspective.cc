@@ -81,21 +81,21 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     camera_crop_factor = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_CROP_FACTOR"), 0.1, 30, 0.01, 1));
     camera_crop_factor->setAdjusterListener (this);
 
-    camera_shift_horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL"), -100, 100, 0.01, 0));
+    camera_shift_horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL"), -50, 50, 0.01, 0));
     camera_shift_horiz->setAdjusterListener (this);
 
-    camera_shift_vert = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL"), -100, 100, 0.01, 0));
+    camera_shift_vert = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL"), -50, 50, 0.01, 0));
     camera_shift_vert->setAdjusterListener (this);
 
     camera_roll = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_ROLL"), -45, 45, 0.01, 0));
     camera_roll->setAdjusterListener (this);
 
     camera_pitch = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_PITCH"),
-                -85, 85, 0.1, 0, ipers_cam_pitch_left, ipers_cam_pitch_right));
+                -60, 60, 0.1, 0, ipers_cam_pitch_left, ipers_cam_pitch_right));
     camera_pitch->setAdjusterListener (this);
 
     camera_yaw = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_YAW"),
-                -85, 85, 0.1, 0, ipers_cam_yaw_left, ipers_cam_yaw_right));
+                -60, 60, 0.1, 0, ipers_cam_yaw_left, ipers_cam_yaw_right));
     camera_yaw->setAdjusterListener (this);
 
     auto_pitch = Gtk::manage (new Gtk::Button ());
@@ -126,7 +126,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     projection_shift_vert = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_SHIFT_VERTICAL"), -100, 100, 0.01, 0));
     projection_shift_vert->setAdjusterListener (this);
 
-    projection_rotate = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_ROTATE"), -180, 180, 0.01, 0, ipers_rotate_left, ipers_rotate_right));
+    projection_rotate = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_ROTATE"), -45, 45, 0.01, 0, ipers_rotate_left, ipers_rotate_right));
     projection_rotate->setAdjusterListener (this);
 
     projection_scale = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_SCALE"), 0.5, 2, 0.01, 1));
@@ -138,10 +138,10 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
 
     Gtk::VBox* recovery_vbox = Gtk::manage (new Gtk::VBox());
 
-    projection_pitch = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_PITCH"), -85, 85, 0.1, 0, ipers_proj_pitch_left, ipers_proj_pitch_right));
+    projection_pitch = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_PITCH"), -60, 60, 0.1, 0, ipers_proj_pitch_left, ipers_proj_pitch_right));
     projection_pitch->setAdjusterListener (this);
 
-    projection_yaw = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_YAW"), -85, 85, 0.1, 0, ipers_proj_yaw_left, ipers_proj_yaw_right));
+    projection_yaw = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_YAW"), -60, 60, 0.1, 0, ipers_proj_yaw_left, ipers_proj_yaw_right));
     projection_yaw->setAdjusterListener (this);
 
     simple->pack_start (*horiz);
