@@ -37,7 +37,6 @@
 #include "procparams.h"
 #include "refreshmap.h"
 #include "guidedfilter.h"
-#include "../rtgui/version.h"
 
 #include "../rtgui/options.h"
 
