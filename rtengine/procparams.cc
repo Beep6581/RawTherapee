@@ -1305,6 +1305,8 @@ bool WBParams::operator !=(const WBParams& other) const
 
 const std::vector<WBEntry>& WBParams::getWbEntries()
 {
+               
+
     static const std::vector<WBEntry> wb_entries = {
         {"Camera",               WBEntry::Type::CAMERA,      M("TP_WBALANCE_CAMERA"),         0, 1.f,   1.f,   0.f},
     //    {"Auto",                 WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTO"),           0, 1.f,   1.f,   0.f},
@@ -1349,7 +1351,6 @@ const std::vector<WBEntry>& WBParams::getWbEntries()
         // Should remain the last one
         {"Custom",               WBEntry::Type::CUSTOM,      M("TP_WBALANCE_CUSTOM"),        0, 1.f,   1.f,   0.f}
     };
-
     return wb_entries;
 }
 
@@ -4164,10 +4165,26 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Vibrance", "PastSatTog", pedited, vibrance.pastsattog, pedited->vibrance.pastsattog);
             assignFromKeyfile(keyFile, "Vibrance", "SkinTonesCurve", pedited, vibrance.skintonescurve, pedited->vibrance.skintonescurve);
         }
-
         if (keyFile.has_group("White Balance")) {
             assignFromKeyfile(keyFile, "White Balance", "Enabled", pedited, wb.enabled, pedited->wb.enabled);
-            assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
+            if (keyFile.has_key("White Balance", "Setting")) {
+//                if(ppVersion < 349) {
+                    Glib::ustring  prov = keyFile.get_string("White Balance", "Setting");
+//                    printf("Prov=%s\n", prov.c_str());
+                    if(prov == "Auto") {
+                        printf("OK Auto\n");
+                        prov = "autold";
+                        wb.method = prov;
+                        keyFile.set_string("White Balance", "Setting",wb.method );
+                        if (pedited) {
+                            pedited->wb.method = true;
+                        }
+                        assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
+                        
+                    } else {
+                         assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
+                    }
+            }
             assignFromKeyfile(keyFile, "White Balance", "Temperature", pedited, wb.temperature, pedited->wb.temperature);
             assignFromKeyfile(keyFile, "White Balance", "Green", pedited, wb.green, pedited->wb.green);
             assignFromKeyfile(keyFile, "White Balance", "Equal", pedited, wb.equal, pedited->wb.equal);
