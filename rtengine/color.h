@@ -101,7 +101,6 @@ private:
 #endif
 
     static float computeXYZ2Lab(float f);
-    static float computeXYZ2LabY(float f);
 
 public:
 
@@ -185,6 +184,16 @@ public:
     static void init ();
     static void cleanup ();
 
+    static inline float computeXYZ2LabY(float f)
+    {
+        if (f < 0.f) {
+            return 327.68f * (kappa * f / MAXVALF);
+        } else if (f > 65535.f) {
+            return 327.68f * (116.f * xcbrtf(f / MAXVALF) - 16.f);
+        } else {
+            return cachefy[f];
+        }
+    }
 
     /**
     * @brief Extract luminance "sRGB" from red/green/blue values
@@ -610,6 +619,7 @@ public:
     */
     static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
     static void L2XYZ(float L, float &x, float &y, float &z);
+    static float L2Y(float L);
 
 #ifdef __SSE2__
     static void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);

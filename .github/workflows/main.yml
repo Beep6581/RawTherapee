@@ -1,5 +1,8 @@
 name: macOS build
-on: push
+on:
+  push:
+    branches-ignore:
+      - '**'
 jobs:
   build:
     runs-on: macos-latest
