@@ -2865,7 +2865,8 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                     // If we move sliders to the left, local contrast is reduced
                     // if we move sliders to the right local contrast is increased
                     // MaxP, MaxN, mean, sigma are calculated if necessary (val > 0) by evaluate2(), eval2(), aver() , sigma()
-                    if (b_r < 100.f  && cp.edg_max / b_r > 1.f) { //in case of b_r < 100 and slider move to right
+//                    if (b_r < 100.f  && cp.edg_max / b_r > 1.f) { //in case of b_r < 100 and slider move to right
+                    if (cp.edg_max / b_r > 1.f) { //in case of b_r < 100 and slider move to right
                         if (WavCoeffs_L[dir][k] > MaxPCompare * cp.edg_max / b_r) {
                             edge *= edgMaxFsup;
 
