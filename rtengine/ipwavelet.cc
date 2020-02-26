@@ -596,7 +596,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     // Calculate number of tiles. If less than omp_get_max_threads(), then limit num_threads to number of tiles
     if (options.rgbDenoiseThreadLimit > 0) {
-        maxnumberofthreadsforwavelet = rtengine::min(rtengine::max(options.rgbDenoiseThreadLimit / 2, 1), maxnumberofthreadsforwavelet);
+        maxnumberofthreadsforwavelet = rtengine::LIM(options.rgbDenoiseThreadLimit / 2, 1, maxnumberofthreadsforwavelet);
     }
 
     numthreads = rtengine::min(numtiles, omp_get_max_threads());
@@ -796,25 +796,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     ref0 = true;
                 }
 
-                //  printf("LevwavL before: %d\n",levwavL);
                 if (cp.contrast == 0.f && !cp.tonemap && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
                     while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
                         levwavL--;
                     }
                 }
 
-                //  printf("LevwavL after: %d\n",levwavL);
-                //  if(cp.noiseena){
                 if (levwavL < 4) {
                     levwavL = 4;    //to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
 
-                //  }
-                //  else {
-                //      if(levwavL < 3) levwavL=3;//to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
-                //  }
                 if (levwavL > 0) {
-                    wavelet_decomposition* Ldecomp = new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen);
+                    const std::unique_ptr<wavelet_decomposition> Ldecomp(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                     if (!Ldecomp->memoryAllocationFailed) {
 
@@ -896,8 +889,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                         Ldecomp->reconstruct(labco->data, cp.strength);
                     }
-
-                    delete Ldecomp;
                 }
 
                 //Flat curve for H=f(H) in residual image
@@ -926,14 +917,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                     //printf("Levwava after: %d\n",levwava);
                     if (levwava > 0) {
-                        wavelet_decomposition* adecomp = new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwava, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen);
+                        const std::unique_ptr<wavelet_decomposition> adecomp(new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwava, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                         if (!adecomp->memoryAllocationFailed) {
                             WaveletcontAllAB(labco, varhue, varchro, *adecomp, waOpacityCurveW, cp, true);
                             adecomp->reconstruct(labco->data + datalen, cp.strength);
                         }
-
-                        delete adecomp;
                     }
 
                     int levwavb = levwav;
@@ -947,14 +936,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                     //  printf("Levwavb after: %d\n",levwavb);
                     if (levwavb > 0) {
-                        wavelet_decomposition* bdecomp = new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavb, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen);
+                        const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavb, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                         if (!bdecomp->memoryAllocationFailed) {
                             WaveletcontAllAB(labco, varhue, varchro, *bdecomp, waOpacityCurveW, cp, false);
                             bdecomp->reconstruct(labco->data + 2 * datalen, cp.strength);
                         }
-
-                        delete bdecomp;
                     }
                 } else {// a and b
                     int levwavab = levwav;
@@ -968,8 +955,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                     //  printf("Levwavab after: %d\n",levwavab);
                     if (levwavab > 0) {
-                        wavelet_decomposition* adecomp = new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwavab, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen);
-                        wavelet_decomposition* bdecomp = new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavab, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen);
+                        const std::unique_ptr<wavelet_decomposition> adecomp(new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwavab, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
+                        const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavab, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                         if (!adecomp->memoryAllocationFailed && !bdecomp->memoryAllocationFailed) {
                             WaveletcontAllAB(labco, varhue, varchro, *adecomp, waOpacityCurveW, cp, true);
@@ -980,9 +967,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             bdecomp->reconstruct(labco->data + 2 * datalen, cp.strength);
 
                         }
-
-                        delete adecomp;
-                        delete bdecomp;
                     }
                 }
 

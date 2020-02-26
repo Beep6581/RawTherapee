@@ -187,7 +187,7 @@ public:
     static inline float computeXYZ2LabY(float f)
     {
         if (f < 0.f) {
-            return 327.68 * (kappa * f / MAXVALF);
+            return 327.68f * (kappa * f / MAXVALF);
         } else if (f > 65535.f) {
             return 327.68f * (116.f * xcbrtf(f / MAXVALF) - 16.f);
         } else {
