@@ -1,4 +1,4 @@
-include_directories(${EXTRA_INCDIR}
+include_directories("${EXTRA_INCDIR}"
     "${EXPAT_INCLUDE_DIRS}"
     "${FFTW3F_INCLUDE_DIRS}"
     "${GLIB2_INCLUDE_DIRS}"
