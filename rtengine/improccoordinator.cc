@@ -351,7 +351,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bayerAutoContrastListener->autoContrastChanged(contrastThreshold);
             } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS && xtransAutoContrastListener && autoContrast) {
 
-                xtransAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
+                xtransAutoContrastListener->autoContrastChanged(contrastThreshold);
             }
             // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
             todo |= (M_INIT | M_CSHARP);
@@ -905,14 +905,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     params->wavelet.CLmethod = provis;
 
-                }
-/*
-                if (!WaveParams.expclari && WaveParams.CLmethod != "all") {
-                    params->wavelet.CLmethod = "all";
-                    params->wavelet.Backmethod = "grey";
-                }
-*/
-                if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                     WaveParams.expcontrast = false;
                     WaveParams.expchroma = false;
                     WaveParams.expedge = false;
