@@ -4,18 +4,40 @@ endif()
 if(EXPAT_INCLUDE_DIRS)
     include_directories("${EXPAT_INCLUDE_DIRS}")
 endif()
-    include_directories("${FFTW3F_INCLUDE_DIRS}"
-    "${GLIB2_INCLUDE_DIRS}"
-    "${GLIBMM_INCLUDE_DIRS}"
-    "${GOBJECT_INCLUDE_DIRS}"
-    "${GTHREAD_INCLUDE_DIRS}"
-    "${GTKMM_INCLUDE_DIRS}"
-    "${GTK_INCLUDE_DIRS}"
-    "${IPTCDATA_INCLUDE_DIRS}"
-    "${LCMS_INCLUDE_DIRS}"
-    "${LENSFUN_INCLUDE_DIRS}"
-    "${RSVG_INCLUDE_DIRS}"
-)
+if(FFTW3F_INCLUDE_DIRS)
+    include_directories("${FFTW3F_INCLUDE_DIRS}")
+endif()
+if(GLIB2_INCLUDE_DIRS)
+    include_directories("${GLIB2_INCLUDE_DIRS}")
+endif()
+if(GLIBMM_INCLUDE_DIRS)
+    include_directories("${GLIBMM_INCLUDE_DIRS}")
+endif()
+if(GOBJECT_INCLUDE_DIRS)
+    include_directories("${GOBJECT_INCLUDE_DIRS}")
+endif()
+if(GTHREAD_INCLUDE_DIRS)
+    include_directories("${GTHREAD_INCLUDE_DIRS}")
+endif()
+if(GTKMM_INCLUDE_DIRS)
+    include_directories("${GTKMM_INCLUDE_DIRS}")
+endif()
+if(GTK_INCLUDE_DIRS)
+    include_directories("${GTK_INCLUDE_DIRS}")
+endif()
+if(IPTCDATA_INCLUDE_DIRS)
+    include_directories("${IPTCDATA_INCLUDE_DIRS}")
+endif()
+if(LCMS_INCLUDE_DIRS)
+    include_directories("${LCMS_INCLUDE_DIRS}")
+endif()
+if(LENSFUN_INCLUDE_DIRS)
+    include_directories("${LENSFUN_INCLUDE_DIRS}")
+endif() 
+if(RSVG_INCLUDE_DIRS)
+    include_directories("${RSVG_INCLUDE_DIRS}")
+endif() 
+
 if(NOT WITH_SYSTEM_KLT)
     include_directories("${CMAKE_SOURCE_DIR}/rtengine/klt")
 else()
