@@ -1,8 +1,10 @@
 if(EXTRA_INCDIR)
     include_directories("${EXTRA_INCDIR}")
 endif()
-    include_directories("${EXPAT_INCLUDE_DIRS}"
-    "${FFTW3F_INCLUDE_DIRS}"
+if(EXPAT_INCLUDE_DIRS)
+    include_directories("${EXPAT_INCLUDE_DIRS}")
+endif()
+    include_directories("${FFTW3F_INCLUDE_DIRS}"
     "${GLIB2_INCLUDE_DIRS}"
     "${GLIBMM_INCLUDE_DIRS}"
     "${GOBJECT_INCLUDE_DIRS}"
