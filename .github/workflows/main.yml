@@ -27,7 +27,7 @@ jobs:
            && date -u
            && echo "----====Pourage====----"
            && cat depslog | grep Pouring
-           && echo "Completed installation of dependencies in" $(printf \"%.1f\" $[$[$(date +%s)-$(cat stamp)]/60]) "minutes"
+           && echo "Completed installation of dependencies in" $(printf \"%.1f\" $[$[$(date +%s)-$(cat build/stamp)]/60]) "minutes"
       - name: Configure build system
         env:
           CMAKE_CXX_STANDARD: 11
