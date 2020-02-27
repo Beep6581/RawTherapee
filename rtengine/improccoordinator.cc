@@ -906,12 +906,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     params->wavelet.CLmethod = provis;
 
                 }
-
+/*
                 if (!WaveParams.expclari && WaveParams.CLmethod != "all") {
                     params->wavelet.CLmethod = "all";
                     params->wavelet.Backmethod = "grey";
                 }
-
+*/
                 if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                     WaveParams.expcontrast = false;
                     WaveParams.expchroma = false;
