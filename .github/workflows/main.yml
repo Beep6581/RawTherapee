@@ -90,4 +90,4 @@ jobs:
           path: ${{env.ARTIFACT_PATH}}
       - name: Finish build
         run: >
-          date -u && echo "Build completed in" $[$[$(date +%s)-$(cat stamp)]/60] "minutes"
+          date -u && echo "Build completed in" $[$[$(date +%s)-$(cat build/stamp)]/60] "minutes"
