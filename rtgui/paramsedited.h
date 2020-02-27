@@ -407,7 +407,6 @@ struct PerspectiveParamsEdited {
     bool camera_yaw;
     bool projection_pitch;
     bool projection_rotate;
-    bool projection_scale;
     bool projection_shift_horiz;
     bool projection_shift_vert;
     bool projection_yaw;

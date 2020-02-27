@@ -48,7 +48,6 @@ protected:
     Adjuster* camera_yaw;
     Adjuster* projection_pitch;
     Adjuster* projection_rotate;
-    Adjuster* projection_scale;
     Adjuster* projection_shift_horiz;
     Adjuster* projection_shift_vert;
     Adjuster* projection_yaw;
@@ -69,7 +68,7 @@ public:
     void adjusterChanged (Adjuster* a, double newval) override;
     void autoCorrectionPressed (Gtk::Button* b);
     void methodChanged (void);
-    void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add, bool projection_scale_add);
+    void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add);
     void setLensGeomListener (LensGeomListener* listener)
     {
         lens_geom_listener = listener;

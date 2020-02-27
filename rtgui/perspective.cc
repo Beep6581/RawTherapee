@@ -129,9 +129,6 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     projection_rotate = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_ROTATE"), -45, 45, 0.01, 0, ipers_rotate_left, ipers_rotate_right));
     projection_rotate->setAdjusterListener (this);
 
-    projection_scale = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_SCALE"), 0.5, 2, 0.01, 1));
-    projection_scale->setAdjusterListener (this);
-
     Gtk::Frame* recovery_frame = Gtk::manage (new Gtk::Frame
             (M("TP_PERSPECTIVE_RECOVERY_FRAME")));
     recovery_frame->set_label_align(0.025, 0.5);
@@ -165,7 +162,6 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     pca_vbox->pack_start (*projection_shift_horiz);
     pca_vbox->pack_start (*projection_shift_vert);
     pca_vbox->pack_start (*projection_rotate);
-    pca_vbox->pack_start (*projection_scale);
     pca_frame->add(*pca_vbox);
     camera_based->pack_start(*pca_frame);
 
@@ -181,7 +177,6 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     vert->setLogScale(2, 0);
     camera_focal_length->setLogScale(4000, 0.5);
     camera_crop_factor->setLogScale(300, 0.1);
-    projection_scale->setLogScale(4, 0.5);
 
     method->signal_changed().connect(sigc::mem_fun(*this, &PerspCorrection::methodChanged));
 
@@ -205,7 +200,6 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
         camera_yaw->setEditedState (pedited->perspective.camera_yaw ? Edited : UnEdited);
         projection_pitch->setEditedState (pedited->perspective.projection_pitch ? Edited : UnEdited);
         projection_rotate->setEditedState (pedited->perspective.projection_rotate ? Edited : UnEdited);
-        projection_scale->setEditedState (pedited->perspective.projection_scale ? Edited : UnEdited);
         projection_shift_horiz->setEditedState (pedited->perspective.projection_shift_horiz ? Edited : UnEdited);
         projection_shift_vert->setEditedState (pedited->perspective.projection_shift_vert ? Edited : UnEdited);
         projection_yaw->setEditedState (pedited->perspective.projection_yaw ? Edited : UnEdited);
@@ -221,7 +215,6 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
     camera_yaw->setValue (pp->perspective.camera_yaw);
     projection_pitch->setValue (pp->perspective.projection_pitch);
     projection_rotate->setValue (pp->perspective.projection_rotate);
-    projection_scale->setValue (pp->perspective.projection_scale);
     projection_shift_horiz->setValue (pp->perspective.projection_shift_horiz);
     projection_shift_vert->setValue (pp->perspective.projection_shift_vert);
     projection_yaw->setValue (pp->perspective.projection_yaw);
@@ -251,7 +244,6 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
     pp->perspective.camera_yaw = camera_yaw->getValue ();
     pp->perspective.projection_pitch = projection_pitch->getValue ();
     pp->perspective.projection_rotate = projection_rotate->getValue ();
-    pp->perspective.projection_scale = projection_scale->getValue ();
     pp->perspective.projection_shift_horiz = projection_shift_horiz->getValue ();
     pp->perspective.projection_shift_vert = projection_shift_vert->getValue ();
     pp->perspective.projection_yaw = projection_yaw->getValue ();
@@ -275,7 +267,6 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->perspective.camera_yaw = camera_yaw->getEditedState();
         pedited->perspective.projection_pitch = projection_pitch->getEditedState();
         pedited->perspective.projection_rotate = projection_rotate->getEditedState();
-        pedited->perspective.projection_scale = projection_scale->getEditedState();
         pedited->perspective.projection_shift_horiz = projection_shift_horiz->getEditedState();
         pedited->perspective.projection_shift_vert = projection_shift_vert->getEditedState();
         pedited->perspective.projection_yaw = projection_yaw->getEditedState();
@@ -296,7 +287,6 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
     camera_yaw->setDefault (defParams->perspective.camera_yaw);
     projection_pitch->setDefault (defParams->perspective.projection_pitch);
     projection_rotate->setDefault (defParams->perspective.projection_rotate);
-    projection_scale->setDefault (defParams->perspective.projection_scale);
     projection_shift_horiz->setDefault (defParams->perspective.projection_shift_horiz);
     projection_shift_vert->setDefault (defParams->perspective.projection_shift_vert);
     projection_yaw->setDefault (defParams->perspective.projection_yaw);
@@ -313,7 +303,6 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
         camera_yaw->setDefaultEditedState (pedited->perspective.camera_yaw ? Edited : UnEdited);
         projection_pitch->setDefaultEditedState (pedited->perspective.projection_pitch ? Edited : UnEdited);
         projection_rotate->setDefaultEditedState (pedited->perspective.projection_rotate ? Edited : UnEdited);
-        projection_scale->setDefaultEditedState (pedited->perspective.projection_scale ? Edited : UnEdited);
         projection_shift_horiz->setDefaultEditedState (pedited->perspective.projection_shift_horiz ? Edited : UnEdited);
         projection_shift_vert->setDefaultEditedState (pedited->perspective.projection_shift_vert ? Edited : UnEdited);
         projection_yaw->setDefaultEditedState (pedited->perspective.projection_yaw ? Edited : UnEdited);
@@ -329,7 +318,6 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
         camera_yaw->setDefaultEditedState (Irrelevant);
         projection_pitch->setDefaultEditedState (Irrelevant);
         projection_rotate->setDefaultEditedState (Irrelevant);
-        projection_scale->setDefaultEditedState (Irrelevant);
         projection_shift_horiz->setDefaultEditedState (Irrelevant);
         projection_shift_vert->setDefaultEditedState (Irrelevant);
         projection_yaw->setDefaultEditedState (Irrelevant);
@@ -379,9 +367,6 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
         } else if (a == projection_rotate) {
             listener->panelChanged (EvPerspProjRotate,
                     Glib::ustring::format(projection_rotate->getValue()));
-        } else if (a == projection_scale) {
-            listener->panelChanged (EvPerspProjScale,
-                    Glib::ustring::format(projection_scale->getValue()));
         } else if (a == projection_pitch || a == projection_yaw) {
             listener->panelChanged (EvPerspProjAngle,
                     Glib::ustring::compose("%1=%2\n%3=%4",
@@ -440,7 +425,7 @@ void PerspCorrection::methodChanged (void)
 
 }
 
-void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add, bool projection_scale_add)
+void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add)
 {
 
     horiz->setAddMode(badd);
@@ -454,7 +439,6 @@ void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_a
     camera_yaw->setAddMode(camera_angle_add);
     projection_pitch->setAddMode(projection_angle_add);
     projection_rotate->setAddMode(projection_rotate_add);
-    projection_scale->setAddMode(projection_scale_add);
     projection_shift_horiz->setAddMode(projection_shift_add);
     projection_shift_vert->setAddMode(projection_shift_add);
     projection_yaw->setAddMode(projection_angle_add);
@@ -479,7 +463,6 @@ void PerspCorrection::trimValues (rtengine::procparams::ProcParams* pp)
     camera_yaw->trimValue(pp->perspective.camera_yaw);
     projection_pitch->trimValue(pp->perspective.projection_pitch);
     projection_rotate->trimValue(pp->perspective.projection_rotate);
-    projection_scale->trimValue(pp->perspective.projection_scale);
     projection_shift_horiz->trimValue(pp->perspective.projection_shift_horiz);
     projection_shift_vert->trimValue(pp->perspective.projection_shift_vert);
     projection_yaw->trimValue(pp->perspective.projection_yaw);
@@ -500,7 +483,6 @@ void PerspCorrection::setBatchMode (bool batchMode)
     camera_yaw->showEditedCB ();
     projection_pitch->showEditedCB ();
     projection_rotate->showEditedCB ();
-    projection_scale->showEditedCB ();
     projection_shift_horiz->showEditedCB ();
     projection_shift_vert->showEditedCB ();
     projection_yaw->showEditedCB ();

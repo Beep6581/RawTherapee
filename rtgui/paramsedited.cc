@@ -347,7 +347,6 @@ void ParamsEdited::set(bool v)
     perspective.camera_yaw = v;
     perspective.projection_pitch = v;
     perspective.projection_rotate = v;
-    perspective.projection_scale = v;
     perspective.projection_shift_horiz = v;
     perspective.projection_shift_vert = v;
     perspective.projection_yaw = v;
@@ -945,7 +944,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         perspective.projection_pitch = perspective.projection_pitch && p.perspective.projection_pitch == other.perspective.projection_pitch;
         perspective.camera_yaw = perspective.camera_yaw && p.perspective.camera_yaw == other.perspective.camera_yaw;
         perspective.projection_rotate = perspective.projection_rotate && p.perspective.projection_rotate == other.perspective.projection_rotate;
-        perspective.projection_scale = perspective.projection_scale && p.perspective.projection_scale == other.perspective.projection_scale;
         perspective.projection_shift_horiz = perspective.projection_shift_horiz && p.perspective.projection_shift_horiz == other.perspective.projection_shift_horiz;
         perspective.projection_shift_vert = perspective.projection_shift_vert && p.perspective.projection_shift_vert == other.perspective.projection_shift_vert;
         perspective.projection_yaw = perspective.projection_yaw && p.perspective.projection_yaw == other.perspective.projection_yaw;
@@ -2389,10 +2387,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (perspective.projection_rotate) {
         toEdit.perspective.projection_rotate = dontforceSet && options.baBehav[ADDSET_PERSP_PROJ_ROTATE] ? toEdit.perspective.projection_rotate + mods.perspective.projection_rotate : mods.perspective.projection_rotate;
-    }
-
-    if (perspective.projection_scale) {
-        toEdit.perspective.projection_scale = dontforceSet && options.baBehav[ADDSET_PERSP_PROJ_SCALE] ? toEdit.perspective.projection_scale + mods.perspective.projection_scale : mods.perspective.projection_scale;
     }
 
     if (perspective.projection_shift_horiz) {

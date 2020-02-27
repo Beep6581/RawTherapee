@@ -918,7 +918,6 @@ struct PerspectiveParams {
     double  camera_yaw;
     double  projection_pitch;
     double  projection_rotate;
-    double  projection_scale;
     double  projection_shift_horiz;
     double  projection_shift_vert;
     double  projection_yaw;

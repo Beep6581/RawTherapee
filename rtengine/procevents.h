@@ -522,10 +522,9 @@ enum ProcEventCode {
     EvPerspCamShift = 496,
     EvPerspProjAngle = 497,
     EvPerspProjRotate = 498,
-    EvPerspProjScale = 499,
-    EvPerspProjShift = 500,
-    EvPerspCamAngle = 501,
-    EvPerspMethod = 502,
+    EvPerspProjShift = 499,
+    EvPerspCamAngle = 500,
+    EvPerspMethod = 501,
 
     NUMOFEVENTS
 
