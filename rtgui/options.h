@@ -21,6 +21,7 @@
 #include <set>
 #include <vector>
 #include <gtkmm/enums.h>
+#include <gtkmm-3.0/gtkmm/enums.h> /* in case not found as above
 #include "../rtengine/settings.h"
 #include <exception>
 
