@@ -196,7 +196,7 @@ void transLineD1x (const float* const red, const float* const green, const float
                 }
 
                 if(i == 2 && oddHeight) {
-                    int row = 2 * imheight;
+                    row = 2 * imheight;
 
                     for (int j = 0; j < imwidth; j++) {
                         int col = imwidth - 1 - j;
@@ -448,6 +448,7 @@ RawImageSource::RawImageSource ()
     , initialGain(0.0)
     , camInitialGain(0.0)
     , defGain(0.0)
+    , camProfile(nullptr)
     , ri(nullptr)
     , rawData(0, 0)
     , green(0, 0)
@@ -462,7 +463,6 @@ RawImageSource::RawImageSource ()
     , rawDirty(true)
     , histMatchingParams(new procparams::ColorManagementParams)
 {
-    camProfile = nullptr;
     embProfile = nullptr;
     rgbSourceModified = false;
     for(int i = 0; i < 4; ++i) {
@@ -487,9 +487,6 @@ RawImageSource::~RawImageSource ()
     for(size_t i = 0; i + 1 < numFrames; ++i) {
         delete rawDataBuffer[i];
     }
-
-    flushRGB();
-    flushRawData();
 
     if (camProfile) {
         cmsCloseProfile (camProfile);
@@ -897,9 +894,9 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         }
 
         // last row
-        int b = (a == 1 && image->getHeight() % 2) || (a == 0 && image->getHeight() % 2 == 0);
+        int offset = (a == 1 && image->getHeight() % 2) || (a == 0 && image->getHeight() % 2 == 0);
 
-        for (int j = 1 + b; j < image->getWidth() - 1; j += 2) {
+        for (int j = 1 + offset; j < image->getWidth() - 1; j += 2) {
             image->r(image->getHeight() - 1, j) = (image->r(image->getHeight() - 2, j) + image->r(image->getHeight() - 1, j + 1) + image->r(image->getHeight() - 1, j - 1)) / 3;
             image->g(image->getHeight() - 1, j) = (image->g(image->getHeight() - 2, j) + image->g(image->getHeight() - 1, j + 1) + image->g(image->getHeight() - 1, j - 1)) / 3;
             image->b(image->getHeight() - 1, j) = (image->b(image->getHeight() - 2, j) + image->b(image->getHeight() - 1, j + 1) + image->b(image->getHeight() - 1, j - 1)) / 3;
@@ -2208,7 +2205,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
                     {
                         float aa = conversionBuffer[0][i - border][j - border];
                         float bb = conversionBuffer[1][i - border][j - border];
-                        float Chprov1 = sqrt(SQR(aa) + SQR(bb)) / 327.68f;
+                        float Chprov1 = std::sqrt(SQR(aa) + SQR(bb)) / 327.68f;
                         sqrtBuffer[j - border] = Chprov1;
                         float HH = xatan2f(bb, aa);
                         atan2Buffer[j - border] = HH;
@@ -2236,7 +2233,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
 #else
                     float aa = conversionBuffer[0][i - border][j - border];
                     float bb = conversionBuffer[1][i - border][j - border];
-                    float Chprov1 = sqrt(SQR(aa) + SQR(bb)) / 327.68f;
+                    float Chprov1 = std::sqrt(SQR(aa) + SQR(bb)) / 327.68f;
                     float  HH = xatan2f(bb, aa);
                     float2 sincosval;// = xsincosf(HH);
 
@@ -2350,15 +2347,16 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
 
 }
 
-void RawImageSource::flushRawData()
+void RawImageSource::flush()
 {
+    for(size_t i = 0; i + 1 < numFrames; ++i) {
+        delete rawDataBuffer[i];
+        rawDataBuffer[i] = nullptr;
+    }
+
     if (rawData) {
         rawData(0, 0);
     }
-}
-
-void RawImageSource::flushRGB()
-{
     if (green) {
         green(0, 0);
     }
@@ -2382,7 +2380,6 @@ void RawImageSource::flushRGB()
     if (blueloc) {
         blueloc(0, 0);
     }
-
 }
 
 void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
@@ -2435,6 +2432,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
                 }
             }
         } else {
+
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -3409,8 +3407,6 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
     constexpr float trans[ColorCount][ColorCount] = { { 1, 1, 1 }, { 1.7320508, -1.7320508, 0 }, { -1, -1, 2 } };
     constexpr float itrans[ColorCount][ColorCount] = { { 1, 0.8660254, -0.5 }, { 1, -0.8660254, -0.5 }, { 1, 0, 1 } };
 
-#define FOREACHCOLOR for (int c=0; c < ColorCount; c++)
-
     float minpt = min(hlmax[0], hlmax[1], hlmax[2]); //min of the raw clip points
     //float maxpt=max(hlmax[0],hlmax[1],hlmax[2]);//max of the raw clip points
     //float medpt=hlmax[0]+hlmax[1]+hlmax[2]-minpt-maxpt;//median of the raw clip points
@@ -3421,7 +3417,9 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
     const float satthresh = 0.5;
 
     float clip[3];
-    FOREACHCOLOR clip[c] = min(maxave, hlmax[c]);
+    for (int c = 0; c < ColorCount; ++c) {
+        clip[c] = min(maxave, hlmax[c]);
+    }
 
     // Determine the maximum level (clip) of all channels
     const float clippt = clipthresh * maxval;
@@ -3438,20 +3436,20 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
         rgb[2] = bin[col];
 
         // If no channel is clipped, do nothing on pixel
-        int c;
+        int cc;
 
-        for (c = 0; c < ColorCount; c++) {
-            if (rgb[c] > clippt) {
+        for (cc = 0; cc < ColorCount; ++cc) {
+            if (rgb[cc] > clippt) {
                 break;
             }
         }
 
-        if (c == ColorCount) {
+        if (cc == ColorCount) {
             continue;
         }
 
         // Initialize cam with raw input [0] and potentially clipped input [1]
-        FOREACHCOLOR {
+        for (int c = 0; c < ColorCount; ++c) {
             lratio += min(rgb[c], clip[c]);
             cam[0][c] = rgb[c];
             cam[1][c] = min(cam[0][c], maxval);
@@ -3459,7 +3457,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
         // Calculate the lightness correction ratio (chratio)
         for (int i = 0; i < 2; i++) {
-            FOREACHCOLOR {
+            for (int c = 0; c < ColorCount; ++c) {
                 lab[i][c] = 0;
 
                 for (int j = 0; j < ColorCount; j++)
@@ -3475,7 +3473,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
             }
         }
 
-        chratio = (sqrt(sum[1] / sum[0]));
+        chratio = (std::sqrt(sum[1] / sum[0]));
 
         // Apply ratio to lightness in LCH space
         for (int c = 1; c < ColorCount; c++) {
@@ -3483,7 +3481,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
         }
 
         // Transform back from LCH to RGB
-        FOREACHCOLOR {
+        for (int c = 0; c < ColorCount; ++c) {
             cam[0][c] = 0;
 
             for (int j = 0; j < ColorCount; j++)
@@ -3491,7 +3489,9 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
                 cam[0][c] += itrans[c][j] * lab[0][j];
             }
         }
-        FOREACHCOLOR rgb[c] = cam[0][c] / ColorCount;
+        for (int c = 0; c < ColorCount; ++c) {
+            rgb[c] = cam[0][c] / ColorCount;
+        }
 
         // Copy converted pixel back
         if (rin[col] > fixpt) {
@@ -3545,7 +3545,7 @@ void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, f
             double Ho = 2 * bo - ro - go;
 
             if (r != g && g != b) {
-                double ratio = sqrt ((Co * Co + Ho * Ho) / (C * C + H * H));
+                double ratio = std::sqrt ((Co * Co + Ho * Ho) / (C * C + H * H));
                 C *= ratio;
                 H *= ratio;
             }
@@ -3759,7 +3759,7 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 #ifdef _OPENMP
     int numThreads;
     // reduce the number of threads under certain conditions to avoid overhead of too many critical regions
-    numThreads = sqrt((((H - 2 * border) * (W - 2 * border)) / 262144.f));
+    numThreads = std::sqrt((((H - 2 * border) * (W - 2 * border)) / 262144.f));
     numThreads = std::min(std::max(numThreads, 1), omp_get_max_threads());
 
     #pragma omp parallel num_threads(numThreads)
@@ -3895,12 +3895,10 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 }
 
 
-static void histoxyY(int bfhitc, int bfwitc, array2D<float> & xc, array2D<float> & yc, array2D<float> & Yc, float *xxx,  float * yyy, float * YYY,  int * histxy,  float * area,  int * inter)
+static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, float *xxx,  float * yyy, float * YYY,  int * histxy,  float * area,  int * inter)
 
 {
-    int nh = 0;
-//   int nc = 0;
-    //  int nc2 = 0;
+    int nh;
 
     for (int y = 0; y < bfhitc ; y++) {
         for (int x = 0; x < bfwitc ; x++) {
@@ -5407,7 +5405,7 @@ static void histoxyY(int bfhitc, int bfwitc, array2D<float> & xc, array2D<float>
 
 
 
-void static studentXY(array2D<float> & YYcurr, array2D<float> & reffYY,  int sizcurr, int Nc, int tt, float & student)
+void static studentXY(const array2D<float> & YYcurr, const array2D<float> & reffYY,  int sizcurr, int Nc, int tt, float & student)
 {
     //calculate Student coeff YY
     float somcurrY = 0.f;
@@ -5448,7 +5446,7 @@ void static studentXY(array2D<float> & YYcurr, array2D<float> & reffYY,  int siz
     somsquecreffY = somreff2Y - (SQR(somreffY)) / sizestureffY;
     //sum sqr differences  second
 
-    float diviY = sqrt(((somsqueccurrY + somsquecreffY) * (1.f / (float)sizestucurrY + 1.f / (float)sizestureffY)) / (sizestucurrY + sizestureffY - 2));
+    float diviY = std::sqrt(((somsqueccurrY + somsquecreffY) * (1.f / (float)sizestucurrY + 1.f / (float)sizestureffY)) / (sizestucurrY + sizestureffY - 2));
     //divisor student
     float numerY = ((float)somcurrY / (float)sizestucurrY) - ((float)somreffY / (float)sizestureffY);
     //numerator student
@@ -5567,15 +5565,15 @@ static void SdwWB(const array2D<float> &redloc, const array2D<float> &greenloc, 
             SigmaB[i] = sigmab;
 
             if (ng > 0) {
-                SigmaG[i] = sqrt(SigmaG[i] / ng);
+                SigmaG[i] = std::sqrt(SigmaG[i] / ng);
             }
 
             if (nr > 0) {
-                SigmaR[i] = sqrt(SigmaR[i] / nr);
+                SigmaR[i] = std::sqrt(SigmaR[i] / nr);
             }
 
             if (nb > 0) {
-                SigmaB[i] = sqrt(SigmaB[i] / nb);
+                SigmaB[i] = std::sqrt(SigmaB[i] / nb);
             }
 
 #ifdef _OPENMP
@@ -5830,9 +5828,9 @@ static void SobelWB(array2D<float> &redsobel, array2D<float> &greensobel, array2
 
                     //Edge strength
                     //we can add if need teta = atan2 (sumYr, sumXr)
-                    redsobel[y][x] = CLIP(sqrt(SQR(sumXr) + SQR(sumYr)));
-                    greensobel[y][x] = CLIP(sqrt(SQR(sumXg) + SQR(sumYg)));
-                    bluesobel[y][x] = CLIP(sqrt(SQR(sumXb) + SQR(sumYb)));
+                    redsobel[y][x] = CLIP(std::sqrt(SQR(sumXr) + SQR(sumYr)));
+                    greensobel[y][x] = CLIP(std::sqrt(SQR(sumXg) + SQR(sumYg)));
+                    bluesobel[y][x] = CLIP(std::sqrt(SQR(sumXb) + SQR(sumYb)));
                 }
             }
         }
@@ -5964,7 +5962,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         float snedecor;//1. actually but put in case of confiance interval
     } WbGreen;
 
-    WbGreen gree[118] = {//symetric coefficient between 0.717 and 1.40
+    constexpr WbGreen gree[118] = {//symetric coefficient between 0.717 and 1.40
         {0.400, 1.f},
         {0.500, 1.f},
         {0.550, 1.f},
@@ -6130,7 +6128,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     } WbTxyz;
     //we can change step to increase precision if need  - also in Colortemp.cc with same changes
     //I don't know how to pass this structure to Colortemp !
-    WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},
         {2201., 1.217338, 0.190697},
@@ -6325,7 +6323,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     bmm = new float [N_t];
 
     int siza = 167;//size of histogram
-    int maxval = 25;
 
     //tempref and greenref are camera wb values.
     // I used them by default to select good spectral values !!
@@ -6363,7 +6360,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         gm = new_scale_mul[1] / scale_mul[1] * gain;
         bm = new_scale_mul[2] / scale_mul[2] * gain;
         rmm[tt] = rm / gm;
-        gmm[tt] = gm / gm;
+        gmm[tt] = 1.f;
         bmm[tt] = bm / gm;
     }
 
@@ -6431,270 +6428,261 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //here we select the good spectral color inside the 113 values
     //call tempxy to calculate for 114 color references Temp and XYZ with cat02
 
-    if (separated) {
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
+    ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
 
-        //find the good spectral values
-        //calculate xy reference spectral for tempref
-        for (int j = 0; j < Nc ; j++) {
-            reff_spect_xx_camera[j][repref] = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
-            reff_spect_yy_camera[j][repref] = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
+    //find the good spectral values
+    //calculate xy reference spectral for tempref
+    for (int j = 0; j < Nc ; j++) {
+        reff_spect_xx_camera[j][repref] = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
+        reff_spect_yy_camera[j][repref] = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
+    }
+
+    int deltarepref = settings->itcwb_delta;
+
+    for (int nn = 0; nn <= 2; nn++) {
+        //three loop to refine color if temp camera is probably not very good
+        int drep = 0;
+
+        if (nn == 0) {
+            drep = -deltarepref;
         }
 
-        int deltarepref = settings->itcwb_delta;
-
-        for (int nn = 0; nn <= 2; nn++) {
-            //three loop to refine color if temp camera is probably not very good
-            int drep = 0;
-
-            if (nn == 0) {
-                drep = -deltarepref;
-            }
-
-            if (nn == 2) {
-                drep = +deltarepref;
-            }
-
-            int rep = repref + drep;
-
-            if (rep > N_t) {
-                rep = N_t;
-            }
-
-            if (rep < 0) {
-                rep = 0;
-            }
-
-            //initialize calculation of xy current for tempref
-            for (int y = 0; y < bfh ; y += 10) {
-                for (int x = 0; x < bfw ; x += 10) {
-                    int yy = y / 10;
-                    int xx = x / 10 ;
-                    float x_c = 0.f, y_c = 0.f, Y_c = 0.f;
-                    float x_x = 0.f, y_y = 0.f, z_z = 0.f;
-                    float RR =  rmm[rep] * redloc[y][x];
-                    float GG =  gmm[rep] * greenloc[y][x];
-                    float BB =  bmm[rep] * blueloc[y][x];
-                    Color::rgbxyY(RR, GG, BB, x_c, y_c, Y_c, x_x, y_y, z_z, wp);
-                    xc[yy][xx] = x_c;
-                    yc[yy][xx] = y_c;
-                    Yc[yy][xx] = Y_c;
-                }
-
-            }
-
-            //histogram xy depend of temp...but in most cases D45 ..D65..
-            //calculate for this image the mean values for each family of color, near histogram x y (number)
-            //xy vary from x 0..0.77  y 0..0.82
-            //neutral values are near x=0.34 0.33 0.315 0.37 y =0.35 0.36 0.34
-            //skin are about x 0.45  0.49 y 0.4 0.47
-            //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
-            // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
-            //big step about 0.2
-
-            histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, area, inter);
+        if (nn == 2) {
+            drep = +deltarepref;
         }
 
-        //calculate x y Y
-        int sizcurrref = siza;//choice of number of correlate colors in image
-        histcurrref(N_t, sizcurrref);
-        xx_curref(N_t, sizcurrref);
-        yy_curref(N_t, sizcurrref);
-        YY_curref(N_t, sizcurrref);
-        xx_curref_reduc(N_t, sizcurrref);
-        yy_curref_reduc(N_t, sizcurrref);
-        YY_curref_reduc(N_t, sizcurrref);
-        R_curref_reduc(N_t, sizcurrref);
-        G_curref_reduc(N_t, sizcurrref);
-        B_curref_reduc(N_t, sizcurrref);
+        int rep = repref + drep;
 
-
-        hiss Wbhis [siza];
-        int n1 = 0;
-        int n4 = 0;
-        int n15 = 0;
-        int n30 = 0;
-        int ntr = 0;
-
-        for (int nh = 0; nh < siza; nh++) {
-            Wbhis[nh].histnum =  histxy[nh];
-            Wbhis[nh].index = nh;
-            Wbhis[nh].interest = inter[nh];
+        if (rep > N_t) {
+            rep = N_t;
         }
 
-        //sort in ascending order
-        std::sort(Wbhis, Wbhis + siza, Wbhis[0]);
+        if (rep < 0) {
+            rep = 0;
+        }
 
-        for (int nh = 0; nh < siza; nh++) {
+        //initialize calculation of xy current for tempref
+        for (int y = 0; y < bfh ; y += 10) {
+            for (int x = 0; x < bfw ; x += 10) {
+                int yy = y / 10;
+                int xx = x / 10 ;
+                float x_c = 0.f, y_c = 0.f, Y_c = 0.f;
+                float x_x = 0.f, y_y = 0.f, z_z = 0.f;
+                float RR =  rmm[rep] * redloc[y][x];
+                float GG =  gmm[rep] * greenloc[y][x];
+                float BB =  bmm[rep] * blueloc[y][x];
+                Color::rgbxyY(RR, GG, BB, x_c, y_c, Y_c, x_x, y_y, z_z, wp);
+                xc[yy][xx] = x_c;
+                yc[yy][xx] = y_c;
+                Yc[yy][xx] = Y_c;
+            }
+
+        }
+
+        //histogram xy depend of temp...but in most cases D45 ..D65..
+        //calculate for this image the mean values for each family of color, near histogram x y (number)
+        //xy vary from x 0..0.77  y 0..0.82
+        //neutral values are near x=0.34 0.33 0.315 0.37 y =0.35 0.36 0.34
+        //skin are about x 0.45  0.49 y 0.4 0.47
+        //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
+        // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
+        //big step about 0.2
+
+        histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, area, inter);
+    }
+
+    //calculate x y Y
+    int sizcurrref = siza;//choice of number of correlate colors in image
+    histcurrref(N_t, sizcurrref);
+    xx_curref(N_t, sizcurrref);
+    yy_curref(N_t, sizcurrref);
+    YY_curref(N_t, sizcurrref);
+    xx_curref_reduc(N_t, sizcurrref);
+    yy_curref_reduc(N_t, sizcurrref);
+    YY_curref_reduc(N_t, sizcurrref);
+    R_curref_reduc(N_t, sizcurrref);
+    G_curref_reduc(N_t, sizcurrref);
+    B_curref_reduc(N_t, sizcurrref);
+
+
+    hiss Wbhis [siza];
+    int n1 = 0;
+    int n4 = 0;
+    int n15 = 0;
+    int n30 = 0;
+    int ntr = 0;
+
+    for (int nh = 0; nh < siza; nh++) {
+        Wbhis[nh].histnum =  histxy[nh];
+        Wbhis[nh].index = nh;
+        Wbhis[nh].interest = inter[nh];
+    }
+
+    //sort in ascending order
+    std::sort(Wbhis, Wbhis + siza, Wbhis[0]);
+
+    for (int nh = 0; nh < siza; nh++) {
 //            printf("nh=%i", Wbhis[nh].index);
+    }
+
+    //part to improve
+    for (int nh = 0; nh < siza; nh++) {
+        if (Wbhis[nh].histnum < 1) {
+            n1++;    //keep only existing color but avoid to small
         }
 
-        //part to improve
-        for (int nh = 0; nh < siza; nh++) {
-            if (Wbhis[nh].histnum < 1) {
-                n1++;    //keep only existing color but avoid to small
-            }
+        if (Wbhis[nh].histnum < 4) {
+            n4++;    //keep only existing color but avoid to small
+        }
 
-            if (Wbhis[nh].histnum < 4) {
-                n4++;    //keep only existing color but avoid to small
-            }
+        if (Wbhis[nh].histnum < 15) {
+            n15++;    //keep only existing color but avoid to small
+        }
 
-            if (Wbhis[nh].histnum < 15) {
-                n15++;    //keep only existing color but avoid to small
-            }
-
-            if (Wbhis[nh].histnum < 30) {
-                n30++;    //keep only existing color but avoid to small
-            }
-
-
+        if (Wbhis[nh].histnum < 30) {
+            n30++;    //keep only existing color but avoid to small
         }
 
 
-        ntr = n30;
-
-        if (ntr > (siza - 25)) {
-            ntr = n15;    //if to less elements 25 elements mini
-        }
-
-        if (ntr > (siza - 23)) {
-            ntr = n4;    //if to less elements 25 elements mini
-        }
-
-        if (ntr > (siza - 20)) {
-            ntr = n1;    //if to less elements 20 elements mini - normally never be used !
-        }
-
-        int sizcurr2ref = sizcurrref - ntr;
-        int sizcu30 = sizcurrref - n30;
-        int sizcu4 = sizcurrref - n4;
-
-//        printf("sizcurr2ref=%i sizcur_30=%i siecur_4=%i \n", sizcurr2ref, sizcu30, sizcu4);
-        sizcu4 = sizcu30;//arbitrary mini size if 30 result, ==> in full image 3000 pixels
-
-        if (sizcu4 > 55) {
-            sizcu4 = 55;
-        }
-
-        chrom wbchro[sizcu4];
-        double swpr  = (Txyz[repref].XX + Txyz[repref].ZZ + 1.);
-        double xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordiantes
-        double ywpr = 1. / swpr;
+    }
 
 
-        for (int i = 0; i < sizcu4; i++) { //take the max values
-            int j = i;
-            histcurrref[j][repref] = (float) Wbhis[siza - (j + 1)].histnum;
-            xx_curref[j][repref] = xxx[Wbhis[siza - (j + 1)].index] / histcurrref[j][repref];
-            yy_curref[j][repref] = yyy[Wbhis[siza - (j + 1)].index] / histcurrref[j][repref];
-            YY_curref[j][repref] = YYY[Wbhis[siza - (j + 1)].index] / histcurrref[j][repref];
+    ntr = n30;
+
+    if (ntr > (siza - 25)) {
+        ntr = n15;    //if to less elements 25 elements mini
+    }
+
+    if (ntr > (siza - 23)) {
+        ntr = n4;    //if to less elements 25 elements mini
+    }
+
+    if (ntr > (siza - 20)) {
+        ntr = n1;    //if to less elements 20 elements mini - normally never be used !
+    }
+
+    int sizcurr2ref = sizcurrref - ntr;
+    const int sizcu30 = sizcurrref - n30;
+    const int sizcu4 = rtengine::min(sizcu30, 55);
+
+
+    chrom wbchro[sizcu4];
+    double swpr  = (Txyz[repref].XX + Txyz[repref].ZZ + 1.);
+    double xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordiantes
+    double ywpr = 1. / swpr;
+
+
+    for (int i = 0; i < sizcu4; i++) { //take the max values
+        int j = i;
+        histcurrref[j][repref] = (float) Wbhis[siza - (j + 1)].histnum;
+        xx_curref[j][repref] = xxx[Wbhis[siza - (j + 1)].index] / histcurrref[j][repref];
+        yy_curref[j][repref] = yyy[Wbhis[siza - (j + 1)].index] / histcurrref[j][repref];
+        YY_curref[j][repref] = YYY[Wbhis[siza - (j + 1)].index] / histcurrref[j][repref];
 //            printf("xx=%f yy=%f\n", xx_curref[j][repref], yy_curref[j][repref]);
-        }
+    }
 
-        estimchrom = 0.f;
+    estimchrom = 0.f;
 
-        for (int nh = 0; nh < sizcu4; nh++) {
-            float chxy = sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
-            wbchro[nh].chroxy_number = chxy * sqrt(histcurrref[nh][repref]);
-            wbchro[nh].chroxy = sqrt(chxy);
-            wbchro[nh].chrox = xx_curref[nh][repref];
-            wbchro[nh].chroy = yy_curref[nh][repref];
-            wbchro[nh].Y = YY_curref[nh][repref];
-            wbchro[nh].index = nh;
-            estimchrom += chxy;
-        }
+    for (int nh = 0; nh < sizcu4; nh++) {
+        float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
+        wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
+        wbchro[nh].chroxy = std::sqrt(chxy);
+        wbchro[nh].chrox = xx_curref[nh][repref];
+        wbchro[nh].chroy = yy_curref[nh][repref];
+        wbchro[nh].Y = YY_curref[nh][repref];
+        wbchro[nh].index = nh;
+        estimchrom += chxy;
+    }
 
-        estimchrom /= sizcu4;
-        //printf("estimchrom=%f \n", estimchrom);
+    estimchrom /= sizcu4;
+    //printf("estimchrom=%f \n", estimchrom);
 
-        if (settings->itcwb_sort) { //sort in ascending with chroma values
+    if (settings->itcwb_sort) { //sort in ascending with chroma values
 
-            std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
-        }
+        std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
+    }
 
-        /*
-                for (int nh = 0; nh < sizcu4; nh++) {
-                    printf("nh=%i chroma_xy=%f chrox=%f chroy=%f\n", nh, wbchro[nh].chroxy, wbchro[nh].chrox, wbchro[nh].chroy);
-                }
-        */
-        maxval = settings->itcwb_thres;//max values of color to find correllation
-
-        if (maxval < 10) {
-            maxval = 10;
-        }
-
-        if (maxval > 55) {
-            maxval = 55;
-        }
-
-        if (sizcurr2ref > maxval) {
-            sizcurr2ref = maxval;    //keep about the biggest values,
-        }
-
-
-        for (int i = 0; i < sizcurr2ref; i++) {
-            //is condition chroxy necessary ?
-            if (((wbchro[sizcu4 - (i + 1)].chrox  > 0.1f) && (wbchro[sizcu4 - (i + 1)].chroy > 0.1f)) && wbchro[sizcu4 - (i + 1)].chroxy  > 0.0f) { //suppress value too far from reference spectral
-                w++;
-                xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
-                yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
-                YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
-                //     printf("xx_cu=%f yy_cu=%f Y=%f chro=%f\n", xx_curref_reduc[w][repref], yy_curref_reduc[w][repref], YY_curref_reduc[w][repref],sqrt(wbchro[sizcu4 - (i + 1)].chroxy));
+    /*
+            for (int nh = 0; nh < sizcu4; nh++) {
+                printf("nh=%i chroma_xy=%f chrox=%f chroy=%f\n", nh, wbchro[nh].chroxy, wbchro[nh].chrox, wbchro[nh].chroy);
             }
+    */
+    int maxval = settings->itcwb_thres;//max values of color to find correllation
+
+    if (maxval < 10) {
+        maxval = 10;
+    }
+
+    if (maxval > 55) {
+        maxval = 55;
+    }
+
+    if (sizcurr2ref > maxval) {
+        sizcurr2ref = maxval;    //keep about the biggest values,
+    }
+
+
+    for (int i = 0; i < sizcurr2ref; i++) {
+        //is condition chroxy necessary ?
+        if (((wbchro[sizcu4 - (i + 1)].chrox  > 0.1f) && (wbchro[sizcu4 - (i + 1)].chroy > 0.1f)) && wbchro[sizcu4 - (i + 1)].chroxy  > 0.0f) { //suppress value too far from reference spectral
+            w++;
+            xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
+            yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
+            YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
+            //     printf("xx_cu=%f yy_cu=%f Y=%f chro=%f\n", xx_curref_reduc[w][repref], yy_curref_reduc[w][repref], YY_curref_reduc[w][repref],std::sqrt(wbchro[sizcu4 - (i + 1)].chroxy));
         }
+    }
 
-        //calculate deltaE xx to find best values of spectrals datas
-        int maxnb = settings->itcwb_sizereference;
+    //calculate deltaE xx to find best values of spectrals datas
+    int maxnb = settings->itcwb_sizereference;
 
-        if (maxnb > 5) {
-            maxnb = 5;
-        }
+    if (maxnb > 5) {
+        maxnb = 5;
+    }
 
-        if (maxnb < 1) {
-            maxnb = 1;
-        }
+    if (maxnb < 1) {
+        maxnb = 1;
+    }
 
 
-        if (settings->itcwb_thres > 39) {
-            maxnb = 200 / settings->itcwb_thres;
-        }
+    if (settings->itcwb_thres > 39) {
+        maxnb = 200 / settings->itcwb_thres;
+    }
 
-        for (int nb = 1; nb <= maxnb; nb ++) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
-            for (int i = 0; i < w; i++) {
-                float mindeltaE = 100000.f;
-                int kN = 0;
+    for (int nb = 1; nb <= maxnb; nb ++) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
+        for (int i = 0; i < w; i++) {
+            float mindeltaE = 100000.f;
+            int kN = 0;
 
-                for (int j = 0; j < Nc ; j++) {
-                    if (good_spectral[j] == 0) {
-                        float deltaE = SQR(xx_curref_reduc[i][repref] -  reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] -  reff_spect_yy_camera[j][repref]);
+            for (int j = 0; j < Nc ; j++) {
+                if (good_spectral[j] == 0) {
+                    float deltaE = SQR(xx_curref_reduc[i][repref] -  reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] -  reff_spect_yy_camera[j][repref]);
 
-                        if (deltaE < mindeltaE) {
-                            mindeltaE = deltaE;
-                            kN = j;
-                        }
+                    if (deltaE < mindeltaE) {
+                        mindeltaE = deltaE;
+                        kN = j;
                     }
                 }
-
-                good_spectral[kN] = 1;//good spectral are spectral color that match color histogram xy
-                //printf("k=%i ", kN);
             }
+
+            good_spectral[kN] = 1;//good spectral are spectral color that match color histogram xy
+            //printf("k=%i ", kN);
         }
+    }
 
 //reconvert to RGB for "reduction"
-        for (int i = 0; i < w; i++) {
-            float X = 65535.f * xx_curref_reduc[i][repref] * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
-            float Y = 65535.f * YY_curref_reduc[i][repref];
-            float Z = 65535.f * (1.f - xx_curref_reduc[i][repref]  - yy_curref_reduc[i][repref]) * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
-            float r, g, b;
-            Color::xyz2rgb(X, Y, Z, r, g, b, wip);
-            r /= rmm[repref];
-            g /= gmm[repref];
-            b /= bmm[repref];
-            R_curref_reduc[i][repref] = r;
-            G_curref_reduc[i][repref] = g;
-            B_curref_reduc[i][repref] = b;
-
-        }
+    for (int i = 0; i < w; i++) {
+        float X = 65535.f * xx_curref_reduc[i][repref] * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
+        float Y = 65535.f * YY_curref_reduc[i][repref];
+        float Z = 65535.f * (1.f - xx_curref_reduc[i][repref]  - yy_curref_reduc[i][repref]) * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
+        float r, g, b;
+        Color::xyz2rgb(X, Y, Z, r, g, b, wip);
+        r /= rmm[repref];
+        g /= gmm[repref];
+        b /= bmm[repref];
+        R_curref_reduc[i][repref] = r;
+        G_curref_reduc[i][repref] = g;
+        B_curref_reduc[i][repref] = b;
 
     }
 
@@ -6705,8 +6693,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //Now begin real calculations
     separated = false;
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
-
-    int kk = -1;
 
     //calculate x y Y
     int sizcurr = siza;//choice of number of correlate colors in image
@@ -6720,7 +6706,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     YYcurr_reduc(N_t, sizcurr);
 
 //calculate  x y z for each pixel with multiplier rmm gmm bmm
-    kk = -1;
 
     for (int tt = 0; tt < N_t; tt++) {//N_t
         //   double swp  = (Txyz[tt].XX + Txyz[tt].ZZ + 1.);
@@ -6752,7 +6737,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         }
 
-        kk = -1;
+        int kk = -1;
 
         for (int i = 0; i < Nc ; i++) {
             if (good_spectral[i] == 1) {
@@ -6766,34 +6751,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 // reffYY[kk][tt] = reffYY_prov[i][tt];
             }
         }
-
-
-        /*
-        //cat02 not need and does not work well
-                float nnx, nny, nnz;
-
-                if(wbpar.wbcat02Method == "cam") {//code no update...
-                    for(int k=0;k < sizcurr3; k++) {
-                        float nnx = xxyycurr[2 * k][tt]*YYcurr[k][tt] / xxyycurr[2 * k + 1][tt];
-                        float nny = YYcurr[k][tt];
-                        float nnz = (1.f -xxyycurr[2 * k][tt] - xxyycurr[2 * k + 1][tt] )*YYcurr[k][tt]/xxyycurr[2 * k + 1][tt];
-                        float CAM02BB00 = 1.0f, CAM02BB01=1.0f, CAM02BB02=1.0f, CAM02BB10=1.0f, CAM02BB11=1.0f, CAM02BB12=1.0f, CAM02BB20=1.0f, CAM02BB21=1.0f, CAM02BB22=1.0f; //for CIECAT02
-                        float Xwb = Txyz[20].XX;
-                        float Ywb = 1.;
-                        float Zwb = Txyz[20].ZZ;
-                        float xn, yn, zn;
-                        ColorTemp::icieCAT02float(Xwb, Ywb, Zwb, CAM02BB00, CAM02BB01, CAM02BB02, CAM02BB10, CAM02BB11, CAM02BB12, CAM02BB20, CAM02BB21, CAM02BB22, 1.0f);
-
-                        xn = CAM02BB00 * nnx + CAM02BB01 * nny + CAM02BB02 * nnz ;
-                        yn = CAM02BB10 * nnx + CAM02BB11 * nny + CAM02BB12 * nnz ;
-                        zn = CAM02BB20 * nnx + CAM02BB21 * nny + CAM02BB22 * nnz;
-                        float som = xn + yn + zn;
-                        xxyycurr[2 * k][tt] = xn / som;
-                        xxyycurr[2 * k + 1][tt] = yn / som;
-                        YYcurr[k][tt] = yn;
-                    }
-                }
-        */
 
         float student = 0.f;
 
@@ -6846,8 +6803,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             scantempend = N_t - 1;
         }
 
-        int kkg = -1;
-
         for (int gr = Rangegreenused.begin; gr < Rangegreenused.end; gr++) {
             float minstudgr = 100000.f;
             int goodrefgr = 1;
@@ -6871,7 +6826,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 gm = new_scale_mul[1] / scale_mul[1] * gain;
                 bm = new_scale_mul[2] / scale_mul[2] * gain;
                 rmm[tt] = rm / gm;
-                gmm[tt] = gm / gm;
+                gmm[tt] = 1.f;
                 bmm[tt] = bm / gm;
             }
 
@@ -6904,8 +6859,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 }
 
-                kkg = -1;
-
                 //degrade correllation with color high chroma, but not too much...seems not good, but keep in case of??
                 if (estimchrom < 0.025f) {//very smal value of chroma for image
 
@@ -6924,6 +6877,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 }
 
+                int kkg = -1;
                 for (int i = 0; i < Nc ; i++) {
                     if (good_spectral[i] == 1) {
                         kkg++;
@@ -7083,43 +7037,6 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
 {
 //    BENCHFUN
     //auto white balance
-//   printf ("AUtoWB OK\n");
-/*
-    array2D<float> redsobel;
-    array2D<float> greensobel;
-    array2D<float> bluesobel;
-
-    redsobel(bfw, bfh);
-    greensobel(bfw, bfh);
-    bluesobel(bfw, bfh);
-*/
-    double avg_r = 0.;
-    double avg_g = 0.;
-    double avg_b = 0.;
-    int rn = 0, gn = 0, bn = 0;
-//    constexpr double clipHigh = 65500.0;
-//    constexpr double clipLow = 0; //1500.0;
-    bool edg = false;
-    bool greyn = false;
-    bool robust = false;
-    bool itc = false;
-
-    if (wbpar.method == "autorobust") {
-        //  printf("autorob\n");
-    //    RobustWB(redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm);
-
-    }
-
-    if (wbpar.method == "autedg") {
-        //  printf("autoedge\n");
- //       edg = true;
-    }
-
-    if (wbpar.method == "aut") {
-//        greyn = true;
-    }
-
-
     if (wbpar.method == "autitcgreen") {
         bool extra = false;
 
@@ -7135,134 +7052,16 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
             extra = true;
         }
 
-        //    greenref = wbpar.green;
-//       printf("gree=%f\n", greenref);
         tempitc = 5000.;
-//       greenitc = greenref;
-        itc = true;
 
-        if (itc) {
-            ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar);
-        }
+        ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar);
     }
-
-    if (wbpar.method == "autedgsdw") {
-    //    SobelWB(redsobel, greensobel, bluesobel, redloc, greenloc, blueloc, bfw, bfh);
-    //    SdwWB(redsobel, greensobel, bluesobel, bfw, bfh, avg_rm, avg_gm, avg_bm);
-
-    }
-
-    if (wbpar.method == "autedgrob") {
-    //    SobelWB(redsobel, greensobel, bluesobel, redloc, greenloc, blueloc, bfw, bfh);
-    //    RobustWB(redsobel, greensobel, bluesobel, bfw, bfh, avg_rm, avg_gm, avg_bm);
-
-    }
-
-    if (wbpar.method == "autosdw") {
-    //    SdwWB(redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm);
-
-
-        //   printf("bfw=%i bfh=%i begx=%i begy=%i xEn=%i yEn=%i cx=%i\n", bfw, bfh, begx, begy, xEn, yEn, cx);
-    }
-
-/*
-    if (edg) {
-        SobelWB(redsobel, greensobel, bluesobel, redloc, greenloc, blueloc, bfw, bfh);
-
-#ifdef _OPENMP
-        #pragma omp parallel for reduction(+:avg_r, avg_g, avg_b, rn, gn, bn)
-#endif
-
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw ; x++) {
-                if (redsobel[y][x] < clipHigh && redsobel[y][x] > clipLow) {
-                    avg_r += redsobel[y][x];
-                    rn++;
-                }
-
-                if (greensobel[y][x] < clipHigh && greensobel[y][x] > clipLow) {
-                    avg_g += greensobel[y][x];
-                    gn++;
-                }
-
-                if (bluesobel[y][x] < clipHigh && bluesobel[y][x] > clipLow) {
-                    avg_b += bluesobel[y][x];
-                    bn++;
-                }
-            }
-        }
-    }
-*/
-/*
-    if (greyn) {
-#ifdef _OPENMP
-        #pragma omp parallel for reduction(+:avg_r, avg_g, avg_b, rn, gn, bn)
-#endif
-
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw ; x++) {
-                if (redloc[y][x] < clipHigh && redloc[y][x] > clipLow) {
-                    avg_r += redloc[y][x];
-                    rn++;
-                }
-
-                if (greenloc[y][x] < clipHigh && greenloc[y][x] > clipLow) {
-                    avg_g += greenloc[y][x];
-                    gn++;
-                }
-
-                if (blueloc[y][x] < clipHigh && blueloc[y][x] > clipLow) {
-                    avg_b += blueloc[y][x];
-                    bn++;
-                }
-            }
-        }
-    }
-*/
-//   float varir = localr.equal;
-//    float varib = 1.f - (varir - 1.f);
-
-
-
-//CAT02 inverse
-
-//
-    if (greyn || edg) {
-        avg_rm = avg_r / rn;
-        avg_gm = avg_g / gn;
-        avg_bm = avg_b / bn;
-    }
-
-    /*
-        //inverse cat02
-        if (localr.wbcamMethod == "cat" || localr.wbcamMethod == "gamcat") {
-            //printf("Inverse CAT02\n");
-            float x, y, z;
-            //   cat02_to_xyzfloatraw ( x, y, z, avg_rm, avg_gm, avg_bm);
-            Color::xyz2rgbraw (x, y, z, avg_rm, avg_gm, avg_bm, wip);
-        }
-    */
-    if (edg) {
-        //  printf("Local sobel avgr = % f avgg = % f avgb = % f \n", avg_rm, avg_gm, avg_bm);
-    }
-
-    if (greyn  || robust)  {
-        // printf("Local rgb avgr = % f avgg = % f avgb = % f \n", avg_rm, avg_gm, avg_bm);
-    }
-
-/*
-    redsobel(0, 0);
-    greensobel(0, 0);
-    bluesobel(0, 0);
-*/
 }
 
 
 void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
 {
     //used by auto WB local to calculate red, green, blue in local region
-   // printf("OK RGBLOC\n");
-    // int bfh = bf_h + 3, bfw = bf_w + 3;
     int bfh = H, bfw = W;
 
     if (local) {
@@ -7270,36 +7069,6 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
         bfw = bf_w + 3;
     }
 
-    //  printf ("bfh=%i bfw=%i H=%i W=%i \n", bf_h, bf_w, H, W);
-    ColorManagementParams cmp;
-
-    //TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(cmp.working);
-    //  TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working);
-    /*
-        float toxyz[3][3] = {
-            {
-                static_cast<float> ( wprof[0][0] / Color::D50x),
-                static_cast<float> ( wprof[0][1] / Color::D50x),
-                static_cast<float> ( wprof[0][2] / Color::D50x)
-            }, {
-                static_cast<float> ( wprof[1][0]),
-                static_cast<float> ( wprof[1][1]),
-                static_cast<float> ( wprof[1][2])
-            }, {
-                static_cast<float> ( wprof[2][0] / Color::D50z),
-                static_cast<float> ( wprof[2][1] / Color::D50z),
-                static_cast<float> ( wprof[2][2] / Color::D50z)
-            }
-        };
-    */
-    /*
-        double wp[3][3] = {
-            {wprof[0][0], wprof[0][1], wprof[0][2]},
-            {wprof[1][0], wprof[1][1], wprof[1][2]},
-            {wprof[2][0], wprof[2][1], wprof[2][2]}
-        };
-    */
-//  printf("wp00=%f wp02=%f\n", wp[0][0], wp[0][2]);
     if (! greenloc) {
         greenloc(bfw, bfh);
     }
@@ -7312,8 +7081,7 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
         blueloc(bfw, bfh);
     }
 
-    float avgL = 0.f;
-    float redmm = 0.f, greenmm = 0.f, bluemm = 0.f;
+    double avgL = 0.0;
 
     //center data on normal values
     int nn = 0;
@@ -7324,20 +7092,19 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
             int loy = cy + i;
 
             if (!local) {
-                redmm = redloc[i][j] = red[i][j];
-                greenmm = greenloc[i][j] = green[i][j];
-                bluemm = blueloc[i][j] = blue[i][j];
-                float LL = (0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm);
-                avgL += LL;
+                const float redmm = redloc[i][j] = red[i][j];
+                const float greenmm = greenloc[i][j] = green[i][j];
+                const float bluemm = blueloc[i][j] = blue[i][j];
+                const float LL = (0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm);
+                avgL += static_cast<double>(LL);
                 nn++;
             } else {
-
                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                    redmm = redloc[loy - begy][lox - begx] = red[i][j];
-                    greenmm = greenloc[loy - begy][lox - begx] = green[i][j];
-                    bluemm = blueloc[loy - begy][lox - begx] = blue[i][j];
-                    float LL = (0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm);
-                    avgL += LL;
+                    const float redmm = redloc[loy - begy][lox - begx] = red[i][j];
+                    const float greenmm = greenloc[loy - begy][lox - begx] = green[i][j];
+                    const float bluemm = blueloc[loy - begy][lox - begx] = blue[i][j];
+                    const float LL = (0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm);
+                    avgL += static_cast<double>(LL);
                     nn++;
                 }
             }
@@ -7345,7 +7112,6 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
 
     avgL /= nn;
 
-    float sig = 0.f;
     float vari = 0.f;
     int mm = 0;
 
@@ -7356,10 +7122,9 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
             mm++;
         }
 
-    sig = sqrt(vari / mm);
-    float multip = 60000.f / (avgL + 2.f * sig);
+    const float sig = std::sqrt(vari / mm);
+    const float multip = 60000.f / (avgL + 2.f * sig);
 
-    //  printf("multip=%f \n", multip);
     for (int i = 0; i < bfh; i++)
         for (int j = 0; j < bfw; j++) {
             redloc[i][j] *= multip;
@@ -7368,8 +7133,6 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
         }
 
     if (gamma) {
-        //    printf("gamma loc\n");
-
         for (int i = 0; i < bfh; i++)
             for (int j = 0; j < bfw; j++) {
                 redloc[i][j] = Color::gammatab_srgb[redloc[i][j]];
@@ -7401,7 +7164,6 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
 
 }
 
-//void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw)
 {
 //    BENCHFUN
@@ -7411,30 +7173,14 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
         rm = gm = bm = 1;
         return;
     }
-/*
-    if (redAWBMul != -1.) {
-        rm = redAWBMul;
-        gm = greenAWBMul;
-        bm = blueAWBMul;
-        return;
-    }
 
-    if (!isWBProviderReady()) {
-        rm = -1.0;
-        gm = -1.0;
-        bm = -1.0;
-        return;
-    }
-*/
     double avg_r = 0;
     double avg_g = 0;
     double avg_b = 0;
     int rn = 0, gn = 0, bn = 0;
     double avg_rm, avg_gm, avg_bm;
-    //  int bfh = bf_h + 3, bfw = bf_w + 3;
     int bfh = H, bfw = W;
     if (wbpar.method == "autold") {
-          //  printf("OK auto OLD\n");
         if (fuji) {
             for (int i = 32; i < H - 32; i++) {
                 int fw = ri->get_FujiWidth();
@@ -7608,44 +7354,28 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
         }
     }
 
-    if (wbpar.method == "aut"  || wbpar.method == "autosdw" || wbpar.method == "autedgsdw" || wbpar.method == "autitcgreen" || wbpar.method == "autedgrob" || wbpar.method == "autedg" || wbpar.method == "autorobust") {
+    if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
-    //    printf("OK avant auto\n");
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
-    //    printf("OK apres auto\n");
-
     }
 
     redloc(0, 0);
     greenloc(0, 0);
     blueloc(0, 0);
 
-    if( settings->verbose ) {
+    if (settings->verbose) {
         printf ("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
     }
 
-    //    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
-    double reds = 0., greens = 0., blues = 0.;
-
-    if (wbpar.method == "aut"  || wbpar.method == "autosdw"  || wbpar.method == "autedgsdw" || wbpar.method == "autedgrob" || wbpar.method == "autedg" || wbpar.method == "autorobust") {
-        //twotimes = true;
-        reds   = avg_rm * refwb_red;
-        greens = avg_gm * refwb_green;
-        blues  = avg_bm * refwb_blue;
-    }
-
-    if (wbpar.method == "autold") {
-        reds   = avg_r / std::max(1, rn) * refwb_red;
-        greens = avg_g / std::max(1, gn) * refwb_green;
-        blues  = avg_b / std::max(1, bn) * refwb_blue;
-    }
-    
     if (wbpar.method == "autitcgreen") {
         //not used
         redAWBMul   = rm = avg_rm * refwb_red;
         greenAWBMul = gm = avg_gm * refwb_green;
         blueAWBMul  = bm  = avg_bm * refwb_blue;
     } else {
+        const double reds   = avg_r / std::max(1, rn) * refwb_red;
+        const double greens = avg_g / std::max(1, gn) * refwb_green;
+        const double blues  = avg_b / std::max(1, bn) * refwb_blue;
         redAWBMul   = rm = imatrices.rgb_cam[0][0] * reds + imatrices.rgb_cam[0][1] * greens + imatrices.rgb_cam[0][2] * blues;
         greenAWBMul = gm = imatrices.rgb_cam[1][0] * reds + imatrices.rgb_cam[1][1] * greens + imatrices.rgb_cam[1][2] * blues;
         blueAWBMul  = bm = imatrices.rgb_cam[2][0] * reds + imatrices.rgb_cam[2][1] * greens + imatrices.rgb_cam[2][2] * blues;
@@ -7653,12 +7383,6 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
 }
 
-
-
-
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 {
 //    BENCHFUN
@@ -7875,9 +7599,6 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
     blueAWBMul  = bm = imatrices.rgb_cam[2][0] * reds + imatrices.rgb_cam[2][1] * greens + imatrices.rgb_cam[2][2] * blues;
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal)
 {
 
@@ -8089,9 +7810,6 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
         return ColorTemp (rm, gm, bm, equal);
     }
 }
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& tty)
 {

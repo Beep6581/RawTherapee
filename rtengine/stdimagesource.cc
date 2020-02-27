@@ -366,7 +366,7 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     return ColorTemp (reds / rn * img_r, greens / gn * img_g, blues / bn * img_b, equal);
 }
 
-void StdImageSource::flushRGB() {
+void StdImageSource::flush() {
     img->allocate(0, 0);
 };
 

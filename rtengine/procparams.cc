@@ -1309,15 +1309,8 @@ const std::vector<WBEntry>& WBParams::getWbEntries()
 
     static const std::vector<WBEntry> wb_entries = {
         {"Camera",               WBEntry::Type::CAMERA,      M("TP_WBALANCE_CAMERA"),         0, 1.f,   1.f,   0.f},
-    //    {"Auto",                 WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTO"),           0, 1.f,   1.f,   0.f},
         {"autitcgreen",       	 WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTOITCGREEN"),   0, 1.f,    1.f,    0.f},
         {"autold",               WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTOOLD"),        0, 1.f,   1.f,   0.f},
-     //   {"aut",                  WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTODEM"),        0, 1.f,    1.f,    0.f},
-     //   {"autedg",               WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTOEDGE"),       0, 1.f,    1.f,    0.f},
-      //  {"autorobust",           WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTOROB"),        0, 1.f,    1.f,    0.f},
-      //  {"autosdw",              WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTOSDW"),        0, 1.f,    1.f,    0.f},
-      //  {"autedgsdw",            WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTOEDGESW"),     0, 1.f,    1.f,    0.f},
-      //  {"autedgrob",            WBEntry::Type::AUTO,        M("TP_WBALANCE_AUTOEDGEROB"),    0, 1.f,    1.f,    0.f},
         {"Daylight",             WBEntry::Type::DAYLIGHT,    M("TP_WBALANCE_DAYLIGHT"),    5300, 1.f,   1.f,   0.f},
         {"Cloudy",               WBEntry::Type::CLOUDY,      M("TP_WBALANCE_CLOUDY"),      6200, 1.f,   1.f,   0.f},
         {"Shade",                WBEntry::Type::SHADE,       M("TP_WBALANCE_SHADE"),       7600, 1.f,   1.f,   0.f},
