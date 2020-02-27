@@ -64,14 +64,14 @@ jobs:
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
             ..
-            echo "Configured in" $(printf \"%.1f\" $[$[$(date +%s)-$(cat bundlestamp)]/60]) "minutes"
+            echo "Configured in" $[$[$(date +%s)-$(cat bundlestamp)]/60] "minutes"
       - name: Compile RawTherapee
         run: >
           date -u && date +%s > compilestamp
           && cd build
           && export REF=${GITHUB_REF##*/}
           && make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
-          && echo "Compiled in" $(printf \"%.1f\" $[$[$(date +%s)-$(cat compilestamp)]/60]) "minutes"
+          && echo "Compiled in" $[$[$(date +%s)-$(cat compilestamp)]/60] "minutes"
       - name: Create application bundle
         run: |
           date +%s > bundlestamp && date -u && cd build
@@ -82,11 +82,11 @@ jobs:
           # https://github.com/actions/starter-workflows/issues/68
           echo "::set-env name=ARTIFACT_PATH::${GITHUB_WORKSPACE}/build/${ARTIFACT}"
           echo "::set-env name=ARTIFACT_FILE::${ARTIFACT}"
-          echo "Bundled in" $(printf "%.1f" $[$[$(date +%s)-$(cat bundlestamp)]/60]) "minutes"
+          echo "Bundled in" $[$[$(date +%s)-$(cat bundlestamp)]/60] "minutes"
       - uses: actions/upload-artifact@v1
         with:
           name: ${{env.ARTIFACT_FILE}}
           path: ${{env.ARTIFACT_PATH}}
       - name: Finish build
         run: >
-          date -u && echo "Build completed in" $(printf \"%.1f\" $[$[$(date +%s)-$(cat stamp)]/60]) "minutes"
+          date -u && echo "Build completed in" $[$[$(date +%s)-$(cat stamp)]/60] "minutes"
