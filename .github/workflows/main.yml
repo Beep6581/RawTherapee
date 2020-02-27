@@ -64,7 +64,7 @@ jobs:
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
             ..
-            echo "Configured in" $[$[$(date +%s)-$(cat configtamp)]/60] "minutes"
+            echo "Configured in" $[$[$(date +%s)-$(cat configstamp)]/60] "minutes"
       - name: Compile RawTherapee
         run: >
           date -u && date +%s > compilestamp
