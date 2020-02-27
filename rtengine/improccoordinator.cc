@@ -238,7 +238,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
     // Check if any detail crops need high detail. If not, take a fast path short cut
     if (!highDetailNeeded) {
         for (size_t i = 0; i < crops.size(); i++) {
-            if (crops[i]->get_skip() == 1) {   // skip=1 -> full resolution
+            if (crops[i]->get_skip() == 1) {   // skip=1 -> full  resolution
                 highDetailNeeded = true;
                 break;
             }
@@ -255,10 +255,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         RAWParams rp = params->raw;
         ColorManagementParams cmp = params->icm;
         LCurveParams  lcur = params->labCurve;
-        if (settings->verbose) {
-            printf("metwb2=%s \n", params->wb.method.c_str());
-        }
-
+        
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
             if (rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) && rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO)) {
@@ -424,7 +421,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (settings->verbose) {
             printf("automethod=%s \n", params->wb.method.c_str());
         }
-        
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
 
