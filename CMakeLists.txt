@@ -1,8 +1,14 @@
-cmake_minimum_required(VERSION 3.5)
+# Use of SOURCE_DIR target property begins at cmake 3.7
+if(APPLE)
+    cmake_minimum_required(VERSION 3.7)
+else()
+    cmake_minimum_required(VERSION 3.5)
+endif()
 
 # Compiler id for Apple Clang
 if(APPLE)
     cmake_policy(SET CMP0025 NEW)
+    cmake_policy(SET CMP0037 NEW)
 endif()
 
 # Must stay before the project() command:
@@ -15,6 +21,13 @@ if(${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
     # set(CMAKE_ECLIPSE_VERSION "4.6.0" CACHE STRING "Eclipse version" FORCE)
 endif()
 
+#
+#
+#
+# Call the project() command
+#
+#
+#
 project(RawTherapee)
 
 # The default target is Debug:
@@ -145,7 +158,7 @@ if(WIN32)
         CACHE STRING "Additional search paths")
 endif()
 
-if(APPLE)
+if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     if(CMAKE_CXX_COMPILER MATCHES "g\\+\\+-mp-4.[5-8]"
        OR CMAKE_CXX_COMPILER_ARG1 MATCHES "g\\+\\+-mp-4.[5-8]")
         set(CMAKE_EXE_LINKER_FLAGS
@@ -210,7 +223,7 @@ endif()
 
 if(NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
     if(APPLE)
-        set(BUNDLE_BASE_INSTALL_DIR "${CMAKE_BUILD_TYPE}/MacOS")
+        set(BUNDLE_BASE_INSTALL_DIR "${PROJECT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/MacOS")
     else()
         set(BUNDLE_BASE_INSTALL_DIR "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
     endif()
@@ -219,7 +232,7 @@ endif()
 if(BUILD_BUNDLE)
     if(APPLE)
         set(BINDIR "${BUNDLE_BASE_INSTALL_DIR}")
-        set(CMAKE_INSTALL_PREFIX ".")
+        set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/build")
     else()
         set(BINDIR .)
         set(CMAKE_INSTALL_PREFIX "${BUNDLE_BASE_INSTALL_DIR}")
@@ -233,7 +246,7 @@ endif()
 if(NOT DEFINED DATADIR)
     if(BUILD_BUNDLE)
         if(APPLE)
-            set(DATADIR "${CMAKE_BUILD_TYPE}/Resources/share")
+            set(DATADIR "${PROJECT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/Resources/share")
         else()
             set(DATADIR .)
         endif()
@@ -245,7 +258,7 @@ endif()
 if(NOT DEFINED LIBDIR)
     if(BUILD_BUNDLE)
         if(APPLE)
-            set(LIBDIR "${CMAKE_BUILD_TYPE}/Frameworks")
+            set(LIBDIR "${PROJECT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/Frameworks")
         else()
             set(LIBDIR .)
         endif()
@@ -612,12 +625,10 @@ else()
     set(PROC_BIT_DEPTH 64 bits)
 endif()
 
-# Get compiler name and version. Only CMake > 2.8.7 knows
-# CMAKE_*_COMPILER_VERSION
-if(CMAKE_VERSION VERSION_GREATER 2.8.7)
+# Get compiler name and version.
     get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
     set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
-else()
+if(NOT APPLE)
     execute_process(
         COMMAND gcc -dumpversion
         OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -633,15 +644,18 @@ set(LFLAGS
     "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}"
 )
 
-set(ABOUT_COMMAND_WITH_ARGS
-    ${CMAKE_COMMAND} -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
-    -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-    -DPROC_LABEL:STRING="${PROC_LABEL}"
-    -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
-    -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DGTKMM_VERSION:STRING=${GTKMM_VERSION} -DOPTION_OMP:STRING=${OPTION_OMP}
-    -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-    -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION})
+if(NOT APPLE)
+    set(ABOUT_COMMAND_WITH_ARGS
+        ${CMAKE_COMMAND} -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
+        -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
+        -DPROC_LABEL:STRING="${PROC_LABEL}"
+        -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
+        -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+        -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+        -DOPTION_OMP:STRING=${OPTION_OMP}
+        -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+        -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION})
+endif()
 
 if(WIN32)
     list(
@@ -654,16 +668,19 @@ if(WIN32)
         -DCMAKE_INSTALL_PREFIX:STRING="${CMAKE_INSTALL_PREFIX}"
         -DBIT_DEPTH:STRING="${CMAKE_SIZEOF_VOID_P}")
 elseif(APPLE)
-    list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Apple
-         -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS}
-         -DCOMPILER_INFO:STRING=${COMPILER_INFO})
+    set(
+         ABOUT_COMMAND_WITH_ARGS
+         cmake -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR} -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake -DSYSTEM:STRING=Apple -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS} -DCOMPILER_INFO:STRING=${COMPILER_INFO} -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX})
 else()
     list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
          -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS}
          -DCOMPILER_INFO:STRING=${COMPILER_INFO})
 endif()
-
-list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/UpdateInfo.cmake")
+if(NOT APPLE)
+    list(APPEND
+         ABOUT_COMMAND_WITH_ARGS
+             -P "${PROJECT_SOURCE_DIR}/UpdateInfo.cmake")
+endif()
 
 add_custom_target(
     UpdateInfo ALL

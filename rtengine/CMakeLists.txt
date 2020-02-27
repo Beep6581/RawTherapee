@@ -1,35 +1,35 @@
 include_directories(${EXTRA_INCDIR}
-    ${EXPAT_INCLUDE_DIRS}
-    ${FFTW3F_INCLUDE_DIRS}
-    ${GLIB2_INCLUDE_DIRS}
-    ${GLIBMM_INCLUDE_DIRS}
-    ${GOBJECT_INCLUDE_DIRS}
-    ${GTHREAD_INCLUDE_DIRS}
-    ${GTKMM_INCLUDE_DIRS}
-    ${GTK_INCLUDE_DIRS}
-    ${IPTCDATA_INCLUDE_DIRS}
-    ${LCMS_INCLUDE_DIRS}
-    ${LENSFUN_INCLUDE_DIRS}
-    ${RSVG_INCLUDE_DIRS}
+    "${EXPAT_INCLUDE_DIRS}"
+    "${FFTW3F_INCLUDE_DIRS}"
+    "${GLIB2_INCLUDE_DIRS}"
+    "${GLIBMM_INCLUDE_DIRS}"
+    "${GOBJECT_INCLUDE_DIRS}"
+    "${GTHREAD_INCLUDE_DIRS}"
+    "${GTKMM_INCLUDE_DIRS}"
+    "${GTK_INCLUDE_DIRS}"
+    "${IPTCDATA_INCLUDE_DIRS}"
+    "${LCMS_INCLUDE_DIRS}"
+    "${LENSFUN_INCLUDE_DIRS}"
+    "${RSVG_INCLUDE_DIRS}"
 )
 if(NOT WITH_SYSTEM_KLT)
     include_directories("${CMAKE_SOURCE_DIR}/rtengine/klt")
 else()
-    include_directories(${KLT_INCLUDE_DIRS})
+    include_directories("${KLT_INCLUDE_DIRS}")
 endif()
 
 link_directories("${PROJECT_SOURCE_DIR}/rtexif"
-    ${EXPAT_LIBRARY_DIRS}
-    ${EXTRA_LIBDIR}
-    ${FFTW3F_LIBRARY_DIRS}
-    ${GLIB2_LIBRARY_DIRS}
-    ${GLIBMM_LIBRARY_DIRS}
-    ${GOBJECT_LIBRARY_DIRS}
-    ${GTHREAD_LIBRARY_DIRS}
-    ${IPTCDATA_LIBRARY_DIRS}
-    ${LCMS_LIBRARY_DIRS}
-    ${LENSFUN_LIBRARY_DIRS}
-    ${RSVG_LIBRARY_DIRS}
+    "${EXPAT_LIBRARY_DIRS}"
+    "${EXTRA_LIBDIR}"
+    "${FFTW3F_LIBRARY_DIRS}"
+    "${GLIB2_LIBRARY_DIRS}"
+    "${GLIBMM_LIBRARY_DIRS}"
+    "${GOBJECT_LIBRARY_DIRS}"
+    "${GTHREAD_LIBRARY_DIRS}"
+    "${IPTCDATA_LIBRARY_DIRS}"
+    "${LCMS_LIBRARY_DIRS}"
+    "${LENSFUN_LIBRARY_DIRS}"
+    "${RSVG_LIBRARY_DIRS}"
 )
 
 set(CAMCONSTSFILE "camconst.json")
@@ -165,13 +165,13 @@ endif()
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
-add_library(rtengine STATIC ${RTENGINESOURCEFILES})
+add_library(rtengine STATIC "${RTENGINESOURCEFILES}")
 
 add_dependencies(rtengine UpdateInfo)
 
 # It may be nice to store library version too
 if(BUILD_SHARED_LIBS)
-    install(TARGETS rtengine DESTINATION ${LIBDIR})
+    install(TARGETS rtengine DESTINATION "${LIBDIR}")
 endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
