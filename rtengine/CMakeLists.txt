@@ -1,5 +1,5 @@
 if(EXTRA_INCDIR EQUAL "")
-    set(EXTRA_INCDIR " ")
+    set(EXTRA_INCDIR ".")
 endif()
 include_directories("${EXTRA_INCDIR}"
     "${EXPAT_INCLUDE_DIRS}"
