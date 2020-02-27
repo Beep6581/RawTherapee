@@ -133,6 +133,7 @@ public:
         lenses["00 32 10"] = "Olympus M.Zuiko Digital ED 12-200mm f/3.5-6.3";
         lenses["00 33 00"] = "Olympus Zuiko Digital 25mm f/2.8";
         lenses["00 34 00"] = "Olympus Zuiko Digital ED 9-18mm f/4.0-5.6";
+        lenses["00 34 10"] = "Olympus M.Zuiko Digital ED 12-45mm f/4.0 Pro";
         lenses["00 35 00"] = "Olympus Zuiko Digital 14-54mm f/2.8-3.5 II";
         lenses["01 01 00"] = "Sigma 18-50mm f/3.5-5.6 DC";
         lenses["01 01 10"] = "Sigma 30mm f/2.8 EX DN";

@@ -847,7 +847,7 @@ public:
             {195, "Canon EF 35-105mm f/4.5-5.6 USM"},
             {196, "Canon EF 75-300mm f/4-5.6 USM"},
             {197, "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens"},
-            {197, "Sigma 18-300mm f/3.5-6.3 DC Macro OS HS"},
+            {197, "Sigma 18-300mm f/3.5-6.3 DC Macro OS HSM"},
             {198, "Canon EF 50mm f/1.4 USM or Other Lens"},
             {198, "Zeiss Otus 55mm f/1.4 ZE"},
             {198, "Zeiss Otus 85mm f/1.4 ZE"},
