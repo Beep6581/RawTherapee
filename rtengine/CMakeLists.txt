@@ -1,4 +1,4 @@
-if(EXTRA_INCDIR == "")
+if(EXTRA_INCDIR EQUAL "")
     set(EXTRA_INCDIR " ")
 endif()
 include_directories("${EXTRA_INCDIR}"
