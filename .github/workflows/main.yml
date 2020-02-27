@@ -19,9 +19,10 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install dependencies
         run: >
-           date -u &&
-           date +%s > stamp &&
-           brew uninstall --ignore-dependencies libtiff
+           date -u
+           && mkdir build
+           && date +%s > build/stamp
+           && brew uninstall --ignore-dependencies libtiff
            && brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++ little-cms2 libiptcdata fftw lensfun expat pkgconfig libomp shared-mime-info | tee -a depslog
            && date -u
            && echo "----====Pourage====----"
@@ -36,12 +37,12 @@ jobs:
           C_FLAGS: >
             -arch x86_64 -mtune=generic -Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/gdk-pixbuf/include -I/usr/local/opt/libiconv/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/libtiff/include
         run: |
-          date -u && date +%s > configstamp && export C_FLAGS=$(echo -e $C_FLAGS | tr -d '\n')
           # GITHUB_REF is the ref that triggered the build, like
           # refs/heads/new-feature - the next line parses that to REF: the branch
           # name only (new-feature)
           export REF=${GITHUB_REF##*/}
-          mkdir build && cd build
+          export C_FLAGS=$(echo -e $C_FLAGS | tr -d '\n')
+          cd build && date -u && date +%s > configstamp
           cmake \
             -DCMAKE_BUILD_TYPE="Release" \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
@@ -64,17 +65,17 @@ jobs:
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
             ..
-            echo "Configured in" $[$[$(date +%s)-$(cat compilestamp)]/60] "minutes"
+            echo "Configured in" $[$[$(date +%s)-$(cat configstamp)]/60] "minutes"
       - name: Compile RawTherapee
         run: >
-          date -u && date +%s > compilestamp
+          date -u && date +%s > build/compilestamp
           && cd build
           && export REF=${GITHUB_REF##*/}
           && make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
           && echo "Compiled in" $[$[$(date +%s)-$(cat compilestamp)]/60] "minutes"
       - name: Create application bundle
         run: |
-          date +%s > bundlestamp && date -u && cd build
+          date +%s > build/bundlestamp && date -u && cd build
           export REF=${GITHUB_REF##*/} && export LOCAL_PREFIX=/usr && sudo make macosx_bundle
           export ARTIFACT=(RawTherapee*.zip)
           echo "=== artifact: ${ARTIFACT}"
