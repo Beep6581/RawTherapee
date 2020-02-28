@@ -28,7 +28,7 @@ jobs:
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
-           echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60))))) minutes"
+           echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"
            exit
       - name: Configure build system
         env:
@@ -68,7 +68,7 @@ jobs:
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
             ..
-            echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60))))) minutes"
+            echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"
             exit
       - name: Compile RawTherapee
         run: |
@@ -77,7 +77,7 @@ jobs:
           cd build
           export REF=${GITHUB_REF##*/}
           make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
-          echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60))))) minutes"
+          echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"
           exit
       - name: Create application bundle
         run: |
@@ -90,7 +90,7 @@ jobs:
           # https://github.com/actions/starter-workflows/issues/68
           echo "::set-env name=ARTIFACT_PATH::${GITHUB_WORKSPACE}/build/${ARTIFACT}"
           echo "::set-env name=ARTIFACT_FILE::${ARTIFACT}"
-          echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60))))) minutes"
+          echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"
           exit
       - uses: actions/upload-artifact@v1
         with:
@@ -99,5 +99,5 @@ jobs:
       - name: Finish build
         run: |
           zsh
-          date -u && echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60))))) minutes"
+          date -u && echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"
           exit
