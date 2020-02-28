@@ -82,7 +82,7 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     message(STATUS "    Version (unreliable):  ${GIT_NUMERIC_VERSION_BS}")
     message(STATUS "Build information:")
     message(STATUS "    Build OS:              ${BUILDINFO_OS}")
-    message(STATUS "    Build date:            ${BUILDINFO_DATE}" UTC)
+    message(STATUS "    Build date:            ${BUILDINFO_DATE} UTC")
     message(STATUS "    Epoch:                 ${BUILDINFO_EPOCH}")
     message(STATUS "    UUID:                  ${BUILDINFO_UUID}")
 
