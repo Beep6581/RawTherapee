@@ -21,13 +21,6 @@ if(${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
     # set(CMAKE_ECLIPSE_VERSION "4.6.0" CACHE STRING "Eclipse version" FORCE)
 endif()
 
-#
-#
-#
-# Call the project() command
-#
-#
-#
 project(RawTherapee)
 
 # The default target is Debug:
