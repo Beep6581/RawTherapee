@@ -376,7 +376,9 @@ if(APPLE)
             "${LOCAL_PREFIX}"
             CACHE STRING "macos/gtk parent directory ie /usr or /opt")
     else()
-        set(LOCAL_PREFIX /usr)
+        set(LOCAL_PREFIX
+            /usr
+            CACHE STRING "macos/gtk parent directory ie /usr or /opt")
     endif()
     if("${FANCY_DMG}")
         set(FANCY_DMG
