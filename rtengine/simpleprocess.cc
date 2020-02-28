@@ -276,7 +276,7 @@ private:
             currWB = ColorTemp();
         } else if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB();
-        } else if (params.wb.method == "Auto") {
+        } else if (params.wb.method == "autold") {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
             currWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
