@@ -21,14 +21,14 @@ jobs:
         run: |
            zsh
            date -u
-           && mkdir build
-           && date +%s > build/stamp
-           && brew uninstall --ignore-dependencies libtiff
-           && brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++ little-cms2 libiptcdata fftw lensfun expat pkgconfig libomp shared-mime-info | tee -a depslog
-           && date -u
-           && echo "----====Pourage====----"
-           && cat depslog | grep Pouring
-           && echo "Completed installation of dependencies in" $(printf "%0.2f" $[$[$(date +%s)-$(cat build/stamp)]/60.0]) "minutes"
+           mkdir build
+           date +%s > build/stamp
+           brew uninstall --ignore-dependencies libtiff
+           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++ little-cms2 libiptcdata fftw lensfun expat pkgconfig libomp shared-mime-info | tee -a depslog
+           date -u
+           echo "----====Pourage====----"
+           cat depslog | grep Pouring
+           echo "Completed installation of dependencies in" $(printf "%0.2f" $[$[$(date +%s)-$(cat build/stamp)]/60.0]) "minutes"
            exit
       - name: Configure build system
         env:
@@ -74,10 +74,10 @@ jobs:
         run: |
           zsh
           date -u && date +%s > build/compilestamp
-          && cd build
-          && export REF=${GITHUB_REF##*/}
-          && make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
-          && echo "Compiled in" $(printf "%0.2f" $[$[$(date +%s)-$(cat compilestamp)]/60.0]) "minutes"
+          cd build
+          export REF=${GITHUB_REF##*/}
+          make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
+          echo "Compiled in" $(printf "%0.2f" $[$[$(date +%s)-$(cat compilestamp)]/60.0]) "minutes"
           exit
       - name: Create application bundle
         run: |
