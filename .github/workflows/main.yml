@@ -19,7 +19,6 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install dependencies
         run: |
-           zsh
            date -u
            mkdir build
            date +%s > build/stamp
@@ -28,8 +27,7 @@ jobs:
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
-           echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"
-           exit
+           zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
       - name: Configure build system
         env:
           CMAKE_CXX_STANDARD: 11
@@ -39,7 +37,6 @@ jobs:
           C_FLAGS: >
             -arch x86_64 -mtune=generic -Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/gdk-pixbuf/include -I/usr/local/opt/libiconv/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/libtiff/include
         run: |
-          zsh
           # GITHUB_REF is the ref that triggered the build, like
           # refs/heads/new-feature - the next line parses that to REF: the branch
           # name only (new-feature)
@@ -68,17 +65,14 @@ jobs:
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
             ..
-            echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"
-            exit
+            zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
       - name: Compile RawTherapee
         run: |
-          zsh
           date -u && date +%s > build/compilestamp
           cd build
           export REF=${GITHUB_REF##*/}
           make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
-          echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"
-          exit
+          zsh -c 'echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"'
       - name: Create application bundle
         run: |
           zsh
@@ -90,7 +84,7 @@ jobs:
           # https://github.com/actions/starter-workflows/issues/68
           echo "::set-env name=ARTIFACT_PATH::${GITHUB_WORKSPACE}/build/${ARTIFACT}"
           echo "::set-env name=ARTIFACT_FILE::${ARTIFACT}"
-          echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"
+          zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"'
           exit
       - uses: actions/upload-artifact@v1
         with:
@@ -98,6 +92,5 @@ jobs:
           path: ${{env.ARTIFACT_PATH}}
       - name: Finish build
         run: |
-          zsh
-          date -u && echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"
-          exit
+          date -u
+          zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
