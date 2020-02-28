@@ -37,7 +37,6 @@ endif()
 if(RSVG_INCLUDE_DIRS)
     include_directories("${RSVG_INCLUDE_DIRS}")
 endif() 
-
 if(NOT WITH_SYSTEM_KLT)
     include_directories("${CMAKE_SOURCE_DIR}/rtengine/klt")
 else()
