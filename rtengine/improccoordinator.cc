@@ -1584,7 +1584,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
 
     if (params->wb.method == "Camera") {
         currWB = imgsrc->getWB();
-    } else if (params->wb.method == "Auto") {
+    } else if (params->wb.method == "autold") {
         if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias) {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
