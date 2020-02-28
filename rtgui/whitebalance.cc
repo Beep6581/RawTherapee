@@ -868,7 +868,7 @@ int WhiteBalance::_setActiveMethod(Glib::ustring &label, Gtk::TreeModel::Childre
 
         if (row[methodColumns.colLabel] == label) {
             method->set_active(iter);
-            found = method->get_active_row_number();
+            found = row[methodColumns.colId];
         }
 
         if (found != -1) {
