@@ -4553,12 +4553,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     typedef struct RangeGreen {
         int begin;
         int end;
-        int ng;
     } RangeGreen;
 
-    constexpr RangeGreen Rangestandard = {8, 70, 62};
-    constexpr RangeGreen Rangeextand = {4, 77, 73};
-    const RangeGreen Rangemax = {0, N_g, N_g};
+    constexpr RangeGreen Rangestandard = {8, 70};
+    constexpr RangeGreen Rangeextand = {4, 77};
+    const RangeGreen Rangemax = {0, N_g};
 
     RangeGreen Rangegreenused;
 
@@ -5064,8 +5063,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
         const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
 
-        const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
-                      || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
         for (int gr = Rangegreenused.begin; gr < Rangegreenused.end; ++gr) {
             float minstudgr = 100000.f;
             int goodrefgr = 1;
@@ -5185,7 +5182,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     avg_rm = 10000.f * rmm[goodref];
-    avg_gm = 10000.* gmm[goodref];
+    avg_gm = 10000.f * gmm[goodref];
     avg_bm = 10000.f * bmm[goodref];
 
     if (!extra) {
@@ -5206,7 +5203,6 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
 
         if (greenref > 0.77 && greenref < 1.3) {
             greenitc = greenref;
-            extra = false;
 
             if (settings->itcwb_forceextra) {
                 extra = true;
@@ -5221,7 +5217,6 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
         ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar);
     }
 }
-
 
 void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
 {
@@ -5304,28 +5299,6 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
                 blueloc[i][j] = Color::gammatab_srgb[blueloc[i][j]];
             }
     }
-
-    if (cat02) {//CAT02
-        /*
-            //not good threatment, I must wait merge branch cat02wb
-                for (int i = 0; i < bfh; i++)
-                    for (int j = 0; j < bfw; j++) {
-                        float X = 0.f, Y = 0.f, Z = 0.f;
-                        Color::rgbxyz(redloc[i][j], greenloc[i][j], blueloc[i][j], X, Y, Z, wp);
-                             double temp;
-                            double Xr = X / 65535.;
-                            double Yr = Y / 65535.;
-                            double Zr = Z / 65535.;
-
-                        Ciecam02::xyz_to_cat02float (redloc[i][j], greenloc[i][j], blueloc[i][j], Xr, Yr, Zr, 1);
-                            redloc[i][j] *= 65535.f;
-                            greenloc[i][j] *= 65535.f;
-                            blueloc[i][j] *= 65535.f;
-                        //to do ciecam adaptation
-                    }
-        */
-    }
-
 }
 
 void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw)

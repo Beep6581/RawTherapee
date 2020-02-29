@@ -3211,7 +3211,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
 double ColorTemp::blackbody_spect(double wavelength, double temperature)
 {
     const double wlm = wavelength * 1e-9;   /* Wavelength in meters */
-    return (3.7417715247e-16 / (wlm * rtengine::pow4(wlm))) /              //3.7417..= c1 = 2*Pi*h*c2  where h=Planck constant, c=velocity of light
+    return (3.7417715247e-16 / rtengine::pow5(wlm)) /              //3.7417..= c1 = 2*Pi*h*c2  where h=Planck constant, c=velocity of light
            (xexp(1.438786e-2 / (wlm * temperature)) - 1.0); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
 }
 
@@ -3400,7 +3400,7 @@ double ColorTemp::daylight_spect(double wavelength, double m1, double m2)
 // we can change step for temperature and increase number  for T > 7500K if necessary
 //these values Temp, x, y are references for all calculations and very precise.
 //copyright J.Desmis august  2017 and june 2018
-void ColorTemp::tempxy(bool separated, int &repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar)
+void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar)
 {
     const double* spec_colorforxcyc[] = {//color references
         JDC468_BluH10_spect, JDC468_BluD6_spect, ColorchechCyaF3_spect, JDC468_BluM5_spect, // 0 3
@@ -3595,10 +3595,8 @@ void ColorTemp::tempxy(bool separated, int &repref, float **Tx, float **Ty, floa
         Refxyz[i].Zref = 0.f;
     }
 
-    double tempw = 5000.;
-
     if (separated) {
-        tempw = Txyz[repref].Tem;
+        const double tempw = Txyz[repref].Tem;
 
         if (tempw <= INITIALBLACKBODY) {
             for (int i = 0; i < N_c; i++) {
@@ -3626,7 +3624,7 @@ void ColorTemp::tempxy(bool separated, int &repref, float **Tx, float **Ty, floa
         }
     } else {
         for (int tt = 0; tt < N_t; tt++) {
-            tempw = Txyz[tt].Tem;
+            const double tempw = Txyz[tt].Tem;
 
             if (tempw <= INITIALBLACKBODY) {
                 for (int i = 0; i < N_c; i++) {
