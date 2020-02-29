@@ -389,16 +389,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
 
-        //    bool autowb0 = false;
-       //     autowb0 = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
-       //     autowb0 = (params->wb.method == "autold" || params->wb.method == "autitcgreen");//in some cases autowb0 does not work ....params->wb.method still at "camera" instead of auto !!! 
-       //     printf("autowb0=%s \n", params->wb.method.c_str());
-
-
-
-       //     if (autowb0) {
+        if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
+            if (params->wb.method == "autitcgreen") {
                 imgsrc->getrgbloc(false, false, false, 0, 0, fh, fw, 0, 0, fh, fw);
-       //     }
+            }
+        }
 
         if ((todo & (M_RETINEX | M_INIT)) && params->retinex.enabled) {
             bool dehacontlutili = false;

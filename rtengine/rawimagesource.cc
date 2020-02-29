@@ -3664,8 +3664,8 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 
             if (ri->getSensorType() == ST_BAYER) {
                 // precalculate factors to avoid expensive per pixel calculations
-                float refwb0 =  refwb[ri->FC(i, start)];
-                float refwb1 =  refwb[ri->FC(i, start + 1)];
+                float refwb0 = refwb[ri->FC(i, start)];
+                float refwb1 = refwb[ri->FC(i, start + 1)];
                 int j;
 
                 for (j = start; j < end - 1; j += 2) {
@@ -3678,12 +3678,12 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
                 }
             } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
                 // precalculate factors to avoid expensive per pixel calculations
-                float refwb0 =  refwb[ri->XTRANSFC(i, start)];
-                float refwb1 =  refwb[ri->XTRANSFC(i, start + 1)];
-                float refwb2 =  refwb[ri->XTRANSFC(i, start + 2)];
-                float refwb3 =  refwb[ri->XTRANSFC(i, start + 3)];
-                float refwb4 =  refwb[ri->XTRANSFC(i, start + 4)];
-                float refwb5 =  refwb[ri->XTRANSFC(i, start + 5)];
+                float refwb0 = refwb[ri->XTRANSFC(i, start)];
+                float refwb1 = refwb[ri->XTRANSFC(i, start + 1)];
+                float refwb2 = refwb[ri->XTRANSFC(i, start + 2)];
+                float refwb3 = refwb[ri->XTRANSFC(i, start + 3)];
+                float refwb4 = refwb[ri->XTRANSFC(i, start + 4)];
+                float refwb5 = refwb[ri->XTRANSFC(i, start + 5)];
                 int j;
 
                 for (j = start; j < end - 5; j += 6) {
@@ -4853,7 +4853,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     hiss Wbhis[siza];
 
     for (int nh = 0; nh < siza; nh++) {
-        Wbhis[nh].histnum =  histxy[nh];
+        Wbhis[nh].histnum = histxy[nh];
         Wbhis[nh].index = nh;
     }
 
@@ -5016,7 +5016,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         for (int j = 0; j < Nc ; ++j) {
             reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
-            reff_spect_xxyy_prov[2 * j + 1][tt] =  Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
+            reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
         }
 
         int kk = -1;
@@ -5098,7 +5098,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 for (int j = 0; j < Nc ; ++j) {
                     reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
-                    reff_spect_xxyy_prov[2 * j + 1][tt] =  Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
+                    reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
                 }
 
                 //degrade correllation with color high chroma, but not too much...seems not good, but keep in case of??
@@ -5142,13 +5142,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int greengoodprov;
         int goodrefprov;
         float studprov;
-        const int goodref0 =  Tgstud[0].tempref;
+        const int goodref0 = Tgstud[0].tempref;
         const int greengood0 = Tgstud[0].greenref - 39;//39 green = 1
         const float stud0 = Tgstud[0].student;
-        const int goodref1 =  Tgstud[1].tempref;
+        const int goodref1 = Tgstud[1].tempref;
         const float stud1 = Tgstud[1].student;
         const int greengood1 = Tgstud[1].greenref - 39;
-        const int goodref2 =  Tgstud[2].tempref;
+        const int goodref2 = Tgstud[2].tempref;
         const int greengood2 = Tgstud[2].greenref - 39;
         const float stud2 = Tgstud[2].student;
 
@@ -5243,16 +5243,57 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
     //center data on normal values
     int nn = 0;
 
-    for (int i = 0; i < H; i ++)
+    if (!local) {
+#ifdef _OPENMP
+        #pragma omp parallel sections
+#endif
+        {
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            {
+                for (int i = 0; i < H; i ++) {
+                    for (int j = 0; j < W; j++) {
+                        redloc[i][j] = red[i][j];
+                    }
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            {
+                for (int i = 0; i < H; i ++) {
+                    for (int j = 0; j < W; j++) {
+                        greenloc[i][j] = green[i][j];
+                    }
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            {
+                for (int i = 0; i < H; i ++) {
+                    for (int j = 0; j < W; j++) {
+                        blueloc[i][j] = blue[i][j];
+                    }
+                }
+            }
+        }
+    }
+
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(+:avgL, nn)
+#endif
+    for (int i = 0; i < H; i ++) {
         for (int j = 0; j < W; j++) {
             int lox = cx + j;
             int loy = cy + i;
 
             if (!local) {
-                const float redmm = redloc[i][j] = red[i][j];
-                const float greenmm = greenloc[i][j] = green[i][j];
-                const float bluemm = blueloc[i][j] = blue[i][j];
-                const float LL = (0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm);
+                const float redmm = redloc[i][j];
+                const float greenmm = greenloc[i][j];
+                const float bluemm = blueloc[i][j];
+                const float LL = 0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm;
                 avgL += static_cast<double>(LL);
                 nn++;
             } else {
@@ -5260,21 +5301,24 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
                     const float redmm = redloc[loy - begy][lox - begx] = red[i][j];
                     const float greenmm = greenloc[loy - begy][lox - begx] = green[i][j];
                     const float bluemm = blueloc[loy - begy][lox - begx] = blue[i][j];
-                    const float LL = (0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm);
+                    const float LL = 0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm;
                     avgL += static_cast<double>(LL);
                     nn++;
                 }
             }
         }
-
+    }
     avgL /= nn;
 
-    float vari = 0.f;
+    double vari = 0.f;
     int mm = 0;
 
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(+:vari, mm)
+#endif
     for (int i = 0; i < bfh; i++)
         for (int j = 0; j < bfw; j++) {
-            float LL = (0.299f * redloc[i][j] + 0.587f * greenloc[i][j] + 0.114f * blueloc[i][j]);
+            float LL = 0.299f * redloc[i][j] + 0.587f * greenloc[i][j] + 0.114f * blueloc[i][j];
             vari += SQR(LL - avgL);
             mm++;
         }
@@ -5282,6 +5326,9 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
     const float sig = std::sqrt(vari / mm);
     const float multip = 60000.f / (avgL + 2.f * sig);
 
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
     for (int i = 0; i < bfh; i++)
         for (int j = 0; j < bfw; j++) {
             redloc[i][j] *= multip;
@@ -5290,6 +5337,9 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
         }
 
     if (gamma) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
         for (int i = 0; i < bfh; i++)
             for (int j = 0; j < bfw; j++) {
                 redloc[i][j] = Color::gammatab_srgb[redloc[i][j]];
