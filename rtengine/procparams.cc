@@ -1392,7 +1392,8 @@ ColorAppearanceParams::ColorAppearanceParams() :
     ybout(18),
     greenout(1.0),
     tempsc(5000),
-    greensc(1.0)
+    greensc(1.0),
+    presetcat02(false)
 {
 }
 
@@ -1437,7 +1438,8 @@ bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) cons
         && ybout == other.ybout
         && greenout == other.greenout
         && tempsc == other.tempsc
-        && greensc == other.greensc;
+        && greensc == other.greensc
+        && presetcat02 == other.presetcat02;
 }
 
 bool ColorAppearanceParams::operator !=(const ColorAppearanceParams& other) const
@@ -3233,6 +3235,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorappearance.ybout, "Color appearance", "Ybout", colorappearance.ybout, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.datacie, "Color appearance", "Datacie", colorappearance.datacie, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.tonecie, "Color appearance", "Tonecie", colorappearance.tonecie, keyFile);
+        saveToKeyfile(!pedited || pedited->colorappearance.presetcat02, "Color appearance", "Presetcat02", colorappearance.presetcat02, keyFile);
 
         const std::map<ColorAppearanceParams::TcMode, const char*> ca_mapping = {
             {ColorAppearanceParams::TcMode::LIGHT, "Lightness"},
@@ -4225,6 +4228,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color appearance", "Ybout", pedited, colorappearance.ybout, pedited->colorappearance.ybout);
             assignFromKeyfile(keyFile, "Color appearance", "Datacie", pedited, colorappearance.datacie, pedited->colorappearance.datacie);
             assignFromKeyfile(keyFile, "Color appearance", "Tonecie", pedited, colorappearance.tonecie, pedited->colorappearance.tonecie);
+            assignFromKeyfile(keyFile, "Color appearance", "Presetcat02", pedited, colorappearance.presetcat02, pedited->colorappearance.presetcat02);
 
             const std::map<std::string, ColorAppearanceParams::TcMode> tc_mapping = {
                 {"Lightness", ColorAppearanceParams::TcMode::LIGHT},

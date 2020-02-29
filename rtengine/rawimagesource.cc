@@ -43,7 +43,7 @@
 #include "rtlensfun.h"
 #include "../rtgui/options.h"
 
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 
 #ifdef _OPENMP
@@ -4405,7 +4405,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     */
  //   BENCHFUN
- //   BENCHFUN
+    BENCHFUN
 
  
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix("sRGB");

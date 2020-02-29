@@ -216,7 +216,7 @@ const ProcParams& Thumbnail::getProcParamsU ()
             double ct;
             getCamWB (ct, pparams->wb.green);
             pparams->wb.temperature = ct;
-        } else if (pparams->wb.method == "Auto") {
+        } else if (pparams->wb.method == "autold") {
             double ct;
             getAutoWB (ct, pparams->wb.green, pparams->wb.equal, pparams->wb.tempBias);
             pparams->wb.temperature = ct;
