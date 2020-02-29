@@ -4753,12 +4753,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
     constexpr int Nc = 200 + 1;//200 number of reference spectral colors, I think it is enough to retrieve good values
-    array2D<float> Tx(Nc, N_t);
-    array2D<float> Ty(Nc, N_t);
-    array2D<float> Tz(Nc, N_t);
-    array2D<float> Ta(Nc, N_t);
-    array2D<float> Tb(Nc, N_t);
-    array2D<float> TL(Nc, N_t);
+    array2D<float> Tx(N_t, Nc);
+    array2D<float> Ty(N_t, Nc);
+    array2D<float> Tz(N_t, Nc);
+    array2D<float> Ta(N_t, Nc);
+    array2D<float> Tb(N_t, Nc);
+    array2D<float> TL(N_t, Nc);
     double TX[Nc];
     double TY[Nc];
     double TZ[Nc];
@@ -4865,12 +4865,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     const int deltarepref = settings->itcwb_delta;
 
-    StopWatch Stop1("Loop 1");
     for (int nn = 0, drep = -deltarepref; nn <= 2; ++nn, drep += deltarepref) {
         //three loop to refine color if temp camera is probably not very good
         const int rep = rtengine::LIM(repref + drep, 0, N_t);
 
-        StopWatch Stop2("Loop 2");
         //initialize calculation of xy current for tempref
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -4884,7 +4882,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 Color::rgbxyY(RR, GG, BB, xc[yy][xx], yc[yy][xx], Yc[yy][xx], wp);
             }
         }
-        Stop2.stop();
         //histogram xy depend of temp...but in most cases D45 ..D65..
         //calculate for this image the mean values for each family of color, near histogram x y (number)
         //xy vary from x 0..0.77  y 0..0.82
@@ -4896,7 +4893,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);
     }
-    Stop1.stop();
 
     //calculate x y Y
     const int sizcurrref = siza;//choice of number of correlate colors in image
