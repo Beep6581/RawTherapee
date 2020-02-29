@@ -1159,6 +1159,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->colorappearance.autoybscen && acListener && params->colorappearance.enabled && !params->colorappearance.presetcat02) {
                     acListener->ybCamChanged((int) yb);    //real value Yb scene
                 }
+
+                if (params->colorappearance.enabled && params->colorappearance.presetcat02) {
+                    acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
+                }
+                
             } else {
                 // CIECAM is disabled, we free up its image buffer to save some space
                 if (ncie) {

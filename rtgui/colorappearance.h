@@ -63,6 +63,7 @@ public:
     void autoCamChanged (double ccam, double ccamout) override;
     bool autoCamComputed_ ();
     void adapCamChanged (double cadap) override;
+    void wbCamChanged(double tem, double tin) override;
     bool adapCamComputed_ ();
     void ybCamChanged (int yb) override;
     bool ybCamComputed_ ();

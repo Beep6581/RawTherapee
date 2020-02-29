@@ -1631,6 +1631,22 @@ void ColorAppearance::adapCamChanged (double cadap)
     );
 }
 
+
+void ColorAppearance::wbCamChanged (double temp, double tin)
+{
+    
+    idle_register.add(
+        [this, temp, tin]() -> bool
+        {
+            disableListener();
+            tempout->setValue(temp);
+            greenout->setValue(tin);
+            enableListener();
+            return false;
+        }
+    );
+}
+
 void ColorAppearance::ybCamChanged (int ybsc)
 {
     if(presetcat02->get_active()){
