@@ -294,6 +294,7 @@ struct ColorAppearanceParamsEdited {
     bool ybout;
     bool tempsc;
     bool greensc;
+    bool presetcat02;
 };
 
 struct DirPyrDenoiseParamsEdited {

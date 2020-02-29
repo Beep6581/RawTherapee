@@ -25,6 +25,7 @@
 #include "guiutils.h"
 #include "options.h"
 #include "rtimage.h"
+#include "eventmapper.h"
 
 #include "../rtengine/color.h"
 #include "../rtengine/procparams.h"
@@ -217,8 +218,16 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     milestones.push_back ( GradientMilestone (0., 0., 0., 0.) );
     milestones.push_back ( GradientMilestone (1., 1., 1., 1.) );
 
+    auto m = ProcEventMapper::getInstance();
+    Evcatpreset = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CAT02PRESET");
 
-    // ------------------------ Process #1: Converting to CIECAM
+    //preset button cat02
+    presetcat02 = Gtk::manage (new Gtk::CheckButton  (M ("TP_COLORAPP_PRESETCAT02")));
+    presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TIP"));
+    presetcat02conn = presetcat02->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::presetcat02pressed));
+    pack_start (*presetcat02, Gtk::PACK_SHRINK);
+
+    // ----------------------- Process #1: Converting to CIECAM
 
 
     // Process 1 frame
@@ -801,6 +810,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     tcmodeconn.block (true);
     tcmode2conn.block (true);
     tcmode3conn.block (true);
+    presetcat02conn.block (true);
     shape->setCurve (pp->colorappearance.curve);
     shape2->setCurve (pp->colorappearance.curve2);
     shape3->setCurve (pp->colorappearance.curve3);
@@ -808,7 +818,12 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     toneCurveMode2->set_active (toUnderlying(pp->colorappearance.curveMode2));
     toneCurveMode3->set_active (toUnderlying(pp->colorappearance.curveMode3));
     curveMode3Changed(); // This will set the correct sensitive state of depending Adjusters
+    presetcat02->set_active(pp->colorappearance.presetcat02);
 
+    nexttemp = pp->wb.temperature;
+    nextgreen = pp->wb.green;
+    
+    printf("temp=%f green=%f\n", nexttemp, nextgreen);
     if (pedited) {
         degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
         degreeout->setEditedState        (pedited->colorappearance.degreeout ? Edited : UnEdited);
@@ -858,6 +873,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->colorappearance.curveMode3) {
             toneCurveMode3->set_active (3);
         }
+        presetcat02->set_inconsistent(!pedited->colorappearance.presetcat02);
 
 
     }
@@ -993,6 +1009,10 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     ybout->setValue (pp->colorappearance.ybout);
     tempsc->setValue (pp->colorappearance.tempsc);
     greensc->setValue (pp->colorappearance.greensc);
+    presetcat02conn.block (true);
+    presetcat02->set_active (pp->colorappearance.presetcat02);
+    presetcat02conn.block (false);
+    lastpresetcat02 = pp->colorappearance.presetcat02;
 
     tcmode3conn.block (false);
     tcmode2conn.block (false);
@@ -1045,6 +1065,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.ybout        = ybout->getValue ();
     pp->colorappearance.tempsc        = tempsc->getValue ();
     pp->colorappearance.greensc        = greensc->getValue ();
+    pp->colorappearance.presetcat02        = presetcat02->get_active();
 
     int tcMode = toneCurveMode->get_active_row_number();
 
@@ -1114,6 +1135,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.ybout        = ybout->getEditedState ();
         pedited->colorappearance.tempsc        = tempsc->getEditedState ();
         pedited->colorappearance.greensc        = greensc->getEditedState ();
+        pedited->colorappearance.presetcat02        = presetcat02->get_inconsistent ();
 
     }
 
@@ -1309,6 +1331,130 @@ void ColorAppearance::badpix_toggled () {
 
 }
 */
+void ColorAppearance::presetcat02pressed ()
+{
+ if (presetcat02->get_active ()) {
+    disableListener();
+    jlight->resetValue (false);
+    qbright->resetValue (false);
+    chroma->resetValue (false);
+    schroma->resetValue (false);
+    mchroma->resetValue (false);
+    rstprotection->resetValue (false);
+    contrast->resetValue (false);
+    qcontrast->resetValue (false);
+    colorh->resetValue (false);
+    tempout->resetValue (false);
+    greenout->resetValue (false);
+    ybout->resetValue (false);
+    tempsc->resetValue (false);
+    greensc->resetValue (false);
+    badpixsl->resetValue (false);
+    wbmodel->set_active (0);
+    toneCurveMode->set_active (0);
+    toneCurveMode2->set_active (0);
+    toneCurveMode3->set_active (0);
+    shape->reset();
+    shape2->reset();
+    shape3->reset();
+    gamutconn.block (true);
+    gamut->set_active (true);
+    gamutconn.block (false);
+    degree->setAutoValue (true);
+    degree->resetValue (false);
+    adapscen->resetValue (false);
+    adapscen->setAutoValue (true);
+    degreeout->resetValue (false);
+    degreeout->setAutoValue (true);
+    ybscen->resetValue (false);
+    ybscen->setAutoValue (true);
+    surrsrc->set_active (0);
+    wbmodel->set_active (2);
+    tempsc->resetValue (false);
+    greensc->resetValue (false);
+    adapscen->setValue(400.);
+    ybscen->setValue(18);
+    surround->set_active (0);
+    adaplum->setValue(400.);
+    degreeout->setValue(70);
+    ybout->setValue(18);
+    tempout->setValue (nexttemp);
+    greenout->setValue (nextgreen);
+    enableListener();
+ } else {
+    disableListener();
+/*    jlight->resetValue (false);
+    qbright->resetValue (false);
+    chroma->resetValue (false);
+    schroma->resetValue (false);
+    mchroma->resetValue (false);
+    rstprotection->resetValue (false);
+    contrast->resetValue (false);
+    qcontrast->resetValue (false);
+    colorh->resetValue (false);
+    tempout->resetValue (false);
+    greenout->resetValue (false);
+    ybout->resetValue (false);
+    tempsc->resetValue (false);
+    greensc->resetValue (false);
+    badpixsl->resetValue (false);
+    wbmodel->set_active (0);
+    toneCurveMode->set_active (0);
+    toneCurveMode2->set_active (0);
+    toneCurveMode3->set_active (0);
+    shape->reset();
+    shape2->reset();
+    shape3->reset();
+    gamutconn.block (true);
+    gamut->set_active (true);
+    gamutconn.block (false);
+*/
+    degree->setAutoValue (true);
+    degree->resetValue (false);
+    adapscen->resetValue (false);
+    adapscen->setAutoValue (true);
+    degreeout->resetValue (false);
+    degreeout->setAutoValue (true);
+    ybscen->resetValue (false);
+    ybscen->setAutoValue (true);
+    surrsrc->set_active (0);
+    wbmodel->set_active (0);
+    tempsc->resetValue (false);
+    greensc->resetValue (false);
+    adapscen->resetValue (false);
+    ybscen->resetValue (false);
+    surround->set_active (0);
+    adaplum->resetValue (false);
+    degreeout->resetValue (false);
+    ybout->resetValue (false);
+    tempout->resetValue (false);
+    greenout->resetValue (false);
+    enableListener();
+     
+ }
+    if (batchMode) {
+        if (presetcat02->get_inconsistent()) {
+            presetcat02->set_inconsistent (false);
+            presetcat02conn.block (true);
+            presetcat02->set_active (false);
+            presetcat02conn.block (false);
+        } else if (lastpresetcat02) {
+            presetcat02->set_inconsistent (true);
+        }
+
+        lastpresetcat02 = presetcat02->get_active ();
+    }
+
+    if (listener) {
+        if (presetcat02->get_active ()) {
+            listener->panelChanged (Evcatpreset, M ("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (Evcatpreset, M ("GENERAL_DISABLED"));
+        }
+    }
+
+}
+
 void ColorAppearance::datacie_toggled ()
 {
 
@@ -1470,6 +1616,10 @@ void ColorAppearance::autoCamChanged (double ccam, double ccamout)
 
 void ColorAppearance::adapCamChanged (double cadap)
 {
+    if(presetcat02->get_active()){
+        return;
+    }
+    
     idle_register.add(
         [this, cadap]() -> bool
         {
@@ -1483,6 +1633,10 @@ void ColorAppearance::adapCamChanged (double cadap)
 
 void ColorAppearance::ybCamChanged (int ybsc)
 {
+    if(presetcat02->get_active()){
+        return;
+    }
+
     idle_register.add(
         [this, ybsc]() -> bool
         {

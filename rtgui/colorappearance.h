@@ -66,7 +66,7 @@ public:
     bool adapCamComputed_ ();
     void ybCamChanged (int yb) override;
     bool ybCamComputed_ ();
-
+    void presetcat02pressed ();
     void curveChanged        (CurveEditor* ce) override;
     void curveMode1Changed   ();
     bool curveMode1Changed_  ();
@@ -99,6 +99,8 @@ public:
     void writeOptions (std::vector<int> &tpOpen);
 
 private:
+    rtengine::ProcEvent Evcatpreset;
+
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
@@ -143,6 +145,9 @@ private:
     Gtk::CheckButton* tonecie;
     //  Gtk::CheckButton* sharpcie;
     Gtk::Button* neutral;
+    Gtk::CheckButton* presetcat02;
+    sigc::connection  presetcat02conn;
+
     MyComboBoxText* surrsrc;
     sigc::connection  surrsrcconn;
 
@@ -172,6 +177,9 @@ private:
     bool lastgamut;
     bool lastdatacie;
     bool lasttonecie;
+    bool lastpresetcat02;
+    double nexttemp;
+    double nextgreen;
 
     IdleRegister idle_register;
 };
