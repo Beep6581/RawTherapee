@@ -4316,7 +4316,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
         somcurr2Y += SQR(YYcurr[i][tt]);
         //sum sqr observations first group
     }
-    somreffY *= SQR(100.f);
+    somcurr2Y *= SQR(100.f);
 
     for (int i = 0; i < Nc; i++) {
         somreff2Y += SQR(reffYY[i][tt]);
@@ -4324,9 +4324,9 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
     }
     somreff2Y *= SQR(100.f);
 
-    const float somsqueccurrY = somcurr2Y - (SQR(somcurrY)) / sizcurr;
+    const float somsqueccurrY = somcurr2Y - SQR(somcurrY) / sizcurr;
     //sum sqr differences  first
-    const float somsquecreffY = somreff2Y - (SQR(somreffY)) / Nc;
+    const float somsquecreffY = somreff2Y - SQR(somreffY) / Nc;
     //sum sqr differences  second
 
     const float diviY = std::sqrt(((somsqueccurrY + somsquecreffY) * (1.f / sizcurr + 1.f / Nc)) / (sizcurr + Nc - 2));
