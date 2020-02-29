@@ -2323,7 +2323,7 @@ TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Use the pipette to pick the white balance from a neutral patch in the preview.
 TP_WBALANCE_STUDLABEL;Student Itcwb: %1
-TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation\nThe lower the student value, the better the correlation\nValues below 0.002 are excellent\nValues below 0.005 are very good\nValues below 0.01 are good\nValues below 0.05 are good enough\nValues above 0.5 are poor\nVery good Student test results does not mean that the WB is good, if the illuminant is non-standard the results are erratic.
+TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation\nThe lower the student value, the better the correlation\nValues below 0.002 are excellent\nValues below 0.005 are very good\nValues below 0.01 are good\nValues below 0.05 are good enough\nValues above 0.5 are poor\nVery good Student test results does not mean that the WB is good, if the illuminant is non-standard the results are erratic.\nStudent=1000 means the calculations were not restarted but results are probably goods, use previous results 
 TP_WBALANCE_TEMPBIAS;AWB temperature bias
 TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 TP_WBALANCE_TEMPERATURE;Temperature

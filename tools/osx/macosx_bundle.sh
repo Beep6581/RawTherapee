@@ -404,6 +404,7 @@ function CreateDmg {
     
     # Zip disk image for redistribution
     msg "Zipping disk image for redistribution:"
+    zip "${dmg_name}.zip" "${dmg_name}.dmg"
     rm "${dmg_name}.dmg"
     msg "Removing disk image caches:"
     rm -rf "${srcDir}"
