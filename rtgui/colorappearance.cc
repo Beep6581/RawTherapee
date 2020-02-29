@@ -823,7 +823,6 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     nexttemp = pp->wb.temperature;
     nextgreen = pp->wb.green;
     
-    printf("temp=%f green=%f\n", nexttemp, nextgreen);
     if (pedited) {
         degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
         degreeout->setEditedState        (pedited->colorappearance.degreeout ? Edited : UnEdited);

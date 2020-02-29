@@ -4292,54 +4292,49 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
     }
 }
 
-void static studentXY(const array2D<float> & YYcurr, const array2D<float> & reffYY,  int sizcurr, int Nc, int tt, float & student)
+float static studentXY(const array2D<float> & YYcurr, const array2D<float> & reffYY, int sizcurr, int Nc, int tt)
 {
     //calculate Student coeff YY
     float somcurrY = 0.f;
     float somreffY = 0.f;
     float somcurr2Y = 0.f;
     float somreff2Y = 0.f;
-    float somsqueccurrY = 0.f;
-    float somsquecreffY = 0.f;
-    int sizestucurrY = sizcurr;
-    int sizestureffY = Nc;
 
-    for (int i = 0; i < sizestucurrY; i++) {
-        somcurrY += 100.f * YYcurr[i][tt];
+    for (int i = 0; i < sizcurr; i++) {
+        somcurrY += YYcurr[i][tt];
         //sum observations first group
     }
+    somcurrY *= 100.f;
 
-    for (int i = 0; i < sizestureffY; i++) {
-        somreffY += 100.f * reffYY[i][tt];
+    for (int i = 0; i < Nc; i++) {
+        somreffY += reffYY[i][tt];
         //sum observations second group
-
     }
+    somreffY *= 100.f;
 
-
-    for (int i = 0; i < sizestucurrY; i++) {
-        somcurr2Y += SQR(100.f * YYcurr[i][tt]);
+    for (int i = 0; i < sizcurr; i++) {
+        somcurr2Y += SQR(YYcurr[i][tt]);
         //sum sqr observations first group
-
     }
+    somreffY *= SQR(100.f);
 
-    for (int i = 0; i < sizestureffY; i++) {
-        somreff2Y += SQR(100.f * reffYY[i][tt]);
+    for (int i = 0; i < Nc; i++) {
+        somreff2Y += SQR(reffYY[i][tt]);
         //sum sqr observations second group
-
     }
+    somreff2Y *= SQR(100.f);
 
-    somsqueccurrY = somcurr2Y - (SQR(somcurrY)) / sizestucurrY;
+    const float somsqueccurrY = somcurr2Y - (SQR(somcurrY)) / sizcurr;
     //sum sqr differences  first
-    somsquecreffY = somreff2Y - (SQR(somreffY)) / sizestureffY;
+    const float somsquecreffY = somreff2Y - (SQR(somreffY)) / Nc;
     //sum sqr differences  second
 
-    float diviY = std::sqrt(((somsqueccurrY + somsquecreffY) * (1.f / (float)sizestucurrY + 1.f / (float)sizestureffY)) / (sizestucurrY + sizestureffY - 2));
+    const float diviY = std::sqrt(((somsqueccurrY + somsquecreffY) * (1.f / sizcurr + 1.f / Nc)) / (sizcurr + Nc - 2));
     //divisor student
-    float numerY = ((float)somcurrY / (float)sizestucurrY) - ((float)somreffY / (float)sizestureffY);
+    const float numerY = somcurrY / sizcurr - somreffY / Nc;
     //numerator student
-//   printf("num=%f divY=%f \n", numerY, diviY);
 
-    student = numerY / diviY ;
+    return numerY / diviY ;
     //student coeeficient
 }
 
@@ -4404,9 +4399,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_sizereference : 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     */
- //   BENCHFUN
     BENCHFUN
-
  
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix("sRGB");
     const float wp[3][3] = {
@@ -4423,49 +4416,19 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
     };
 
-    array2D<float> xc;
-    array2D<float> yc;
-    array2D<float> Yc;
+    const int bfwitc = bfw / 10 + 1 ;// 10 arbitrary value  ; perhaps 4 or 5 or 20
+    const int bfhitc = bfh / 10 + 1;
 
-    array2D<float> histcurr;
-    array2D<float> histcurrref;
-
-    array2D<float> xxyycurr;
-    array2D<float> xxyycurr_reduc;
-    array2D<float> xx_curref;
-    array2D<float> yy_curref;
-    array2D<float> YY_curref;
-    array2D<float> xx_curref_reduc;
-    array2D<float> yy_curref_reduc;
-    array2D<float> R_curref_reduc;
-    array2D<float> G_curref_reduc;
-    array2D<float> B_curref_reduc;
-
-    array2D<float> reff_spect_xxyy;
-    array2D<float> reff_spect_xxyy_prov;
-    array2D<float> YYcurr;
-    array2D<float> YY_curref_reduc;
-    array2D<float> YYcurr_reduc;
-    //  array2D<float> reffYY;
-    // array2D<float> reffYY_prov;
-
-    array2D<float> reff_spect_yy_camera;
-    array2D<float> reff_spect_xx_camera;
-
-
-    int bfwitc = bfw / 10 + 1 ;// 10 arbitrary value  ; perhaps 4 or 5 or 20
-    int bfhitc = bfh / 10 + 1;
-
-    xc(bfwitc, bfhitc);
-    yc(bfwitc, bfhitc);
-    Yc(bfwitc, bfhitc);
+    array2D<float> xc(bfwitc, bfhitc);
+    array2D<float> yc(bfwitc, bfhitc);
+    array2D<float> Yc(bfwitc, bfhitc);
 
     typedef struct WbGreen {
         double green;
         float snedecor;//1. actually but put in case of confiance interval
     } WbGreen;
 
-    constexpr WbGreen gree[118] = {//symetric coefficient between 0.717 and 1.40
+    constexpr WbGreen gree[118] = {//symmetric coefficient between 0.717 and 1.40
         {0.400, 1.f},
         {0.500, 1.f},
         {0.550, 1.f},
@@ -4585,7 +4548,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {3.800, 1.f},
         {4.000, 1.f}
     };
-    int N_g = sizeof(gree) / sizeof(gree[0]);   //number of green
+    const int N_g = sizeof(gree) / sizeof(gree[0]);   //number of green
 
     typedef struct RangeGreen {
         int begin;
@@ -4593,36 +4556,19 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int ng;
     } RangeGreen;
 
-    RangeGreen Rangestandard;
-    Rangestandard.begin =  8;
-    Rangestandard.end =  70;
-    Rangestandard.ng =  62;
-
-    RangeGreen Rangeextand;
-    Rangeextand.begin =  4;
-    Rangeextand.end =  77;
-    Rangeextand.ng =  73;
-
-    RangeGreen Rangemax;
-    Rangemax.begin =  0;
-    Rangemax.end =  N_g;
-    Rangemax.ng =  N_g;
+    constexpr RangeGreen Rangestandard = {8, 70, 62};
+    constexpr RangeGreen Rangeextand = {4, 77, 73};
+    const RangeGreen Rangemax = {0, N_g, N_g};
 
     RangeGreen Rangegreenused;
 
     if (settings->itcwb_greenrange == 0) {
         Rangegreenused = Rangestandard;
-    }
-
-    else if (settings->itcwb_greenrange == 1) {
+    } else if (settings->itcwb_greenrange == 1) {
         Rangegreenused = Rangeextand;
     } else {
         Rangegreenused = Rangemax;
     }
-
-    // printf("rangemin=%i rangmax=%i\n",  Rangegreenused.begin, Rangegreenused.end);
-
-
 
     typedef struct WbTxyz {
         double Tem;
@@ -4785,8 +4731,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     //calculate R G B multiplier in function illuminant and temperature
     const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
-                  || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
-    for (int tt = 0; tt < N_t; tt++) {
+                     || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+    for (int tt = 0; tt < N_t; ++tt) {
         double r, g, b;
         float rm, gm, bm;
         ColorTemp WBiter = ColorTemp(Txyz[tt].Tem, greenitc, 1.f, "Custom");
@@ -4845,11 +4791,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     bool separated = true;
     int w = -1;
-    //printf("greenrefraw=%f\n", greenref);
-    reff_spect_xxyy(N_t, 2 * Nc + 2);
-    reff_spect_xxyy_prov(N_t, 2 * Nc + 2);
-    reff_spect_yy_camera(N_t, 2 * Nc + 2);
-    reff_spect_xx_camera(N_t, 2 * Nc + 2);
+
+    array2D<float> reff_spect_xxyy(N_t, 2 * Nc + 2);
+    array2D<float> reff_spect_xxyy_prov(N_t, 2 * Nc + 2);
+    array2D<float> reff_spect_yy_camera(N_t, 2 * Nc + 2);
+    array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
     //call tempxy to calculate for 114 color references Temp and XYZ with cat02
@@ -4896,19 +4842,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     //calculate x y Y
     const int sizcurrref = siza;//choice of number of correlate colors in image
-    histcurrref(N_t, sizcurrref);
-    xx_curref(N_t, sizcurrref);
-    yy_curref(N_t, sizcurrref);
-    YY_curref(N_t, sizcurrref);
-    xx_curref_reduc(N_t, sizcurrref);
-    yy_curref_reduc(N_t, sizcurrref);
-    YY_curref_reduc(N_t, sizcurrref);
-    R_curref_reduc(N_t, sizcurrref);
-    G_curref_reduc(N_t, sizcurrref);
-    B_curref_reduc(N_t, sizcurrref);
+    array2D<float> histcurrref(N_t, sizcurrref);
+    array2D<float> xx_curref(N_t, sizcurrref);
+    array2D<float> yy_curref(N_t, sizcurrref);
+    array2D<float> YY_curref(N_t, sizcurrref);
+    array2D<float> xx_curref_reduc(N_t, sizcurrref);
+    array2D<float> yy_curref_reduc(N_t, sizcurrref);
+    array2D<float> YY_curref_reduc(N_t, sizcurrref);
+    array2D<float> R_curref_reduc(N_t, sizcurrref);
+    array2D<float> G_curref_reduc(N_t, sizcurrref);
+    array2D<float> B_curref_reduc(N_t, sizcurrref);
 
-
-    hiss Wbhis [siza];
+    hiss Wbhis[siza];
 
     for (int nh = 0; nh < siza; nh++) {
         Wbhis[nh].histnum =  histxy[nh];
@@ -4995,7 +4940,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     for (int i = 0; i < sizcurr2ref; ++i) {
         //is condition chroxy necessary ?
-        if (((wbchro[sizcu4 - (i + 1)].chrox  > 0.1f) && (wbchro[sizcu4 - (i + 1)].chroy > 0.1f)) && wbchro[sizcu4 - (i + 1)].chroxy  > 0.0f) { //suppress value too far from reference spectral
+        if (((wbchro[sizcu4 - (i + 1)].chrox  > 0.1f) && (wbchro[sizcu4 - (i + 1)].chroy > 0.1f)) && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f) { //suppress value too far from reference spectral
             w++;
             xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
             yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
@@ -5045,21 +4990,20 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 //end first part
 
-
     //Now begin real calculations
     separated = false;
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
 
     //calculate x y Y
     int sizcurr = siza;//choice of number of correlate colors in image
-    histcurr(N_t, sizcurr);
-    xxyycurr(N_t, 2 * sizcurr);
-    xxyycurr_reduc(N_t, 2 * sizcurr);
+    array2D<float> histcurr(N_t, sizcurr);
+    array2D<float> xxyycurr(N_t, 2 * sizcurr);
+    array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
     float minstud = 100000.f;
     int goodref = 1;
 
-    YYcurr(N_t, sizcurr);
-    YYcurr_reduc(N_t, sizcurr);
+    array2D<float> YYcurr(N_t, sizcurr);
+    array2D<float> YYcurr_reduc(N_t, sizcurr);
 
 //calculate  x y z for each pixel with multiplier rmm gmm bmm
 
@@ -5089,17 +5033,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
         }
 
-        float student = 0.f;
-
-        studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kk, tt, student); //for xy
-
-        const float abstud = std::fabs(student);
+        const float abstud = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kk, tt));
 
         if (abstud < minstud) {  // find the minimum Student
             minstud = abstud;
             goodref = tt;
         }
-
     }
 
     if (extra) {
@@ -5184,10 +5123,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
 
-                float studentgr = 0.f;
-
-                studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt, studentgr); //for xy
-                const float abstudgr = std::fabs(studentgr);
+                const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
 
                 if (abstudgr < minstudgr) {  // find the minimum Student
                     minstudgr = abstudgr;
