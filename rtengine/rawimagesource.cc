@@ -3896,7 +3896,6 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 
 
 static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy)
-
 {
 #ifdef _OPENMP
     #pragma omp parallel
@@ -4410,18 +4409,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix("sRGB");
     //inverse matrix user select
-    double wip[3][3] = {
-        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+    const float wip[3][3] = {
+        {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
+        {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
+        {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
     };
 
     const int bfwitc = bfw / 10 + 1 ;// 10 arbitrary value  ; perhaps 4 or 5 or 20
     const int bfhitc = bfh / 10 + 1;
-
-    array2D<float> xc(bfwitc, bfhitc);
-    array2D<float> yc(bfwitc, bfhitc);
-    array2D<float> Yc(bfwitc, bfhitc);
 
     typedef struct WbGreen {
         double green;
@@ -4791,8 +4786,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     bool separated = true;
     int w = -1;
 
-    array2D<float> reff_spect_xxyy(N_t, 2 * Nc + 2);
-    array2D<float> reff_spect_xxyy_prov(N_t, 2 * Nc + 2);
     array2D<float> reff_spect_yy_camera(N_t, 2 * Nc + 2);
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
@@ -4807,6 +4800,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         reff_spect_xx_camera[j][repref] = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
         reff_spect_yy_camera[j][repref] = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
     }
+
+    array2D<float> xc(bfwitc, bfhitc);
+    array2D<float> yc(bfwitc, bfhitc);
+    array2D<float> Yc(bfwitc, bfhitc);
 
     const int deltarepref = settings->itcwb_delta;
 
@@ -4839,6 +4836,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);
     }
 
+    // free some memory
+    xc.free();
+    yc.free();
+    Yc.free();
     //calculate x y Y
     const int sizcurrref = siza;//choice of number of correlate colors in image
     array2D<float> histcurrref(N_t, sizcurrref);
@@ -4848,9 +4849,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> xx_curref_reduc(N_t, sizcurrref);
     array2D<float> yy_curref_reduc(N_t, sizcurrref);
     array2D<float> YY_curref_reduc(N_t, sizcurrref);
-    array2D<float> R_curref_reduc(N_t, sizcurrref);
-    array2D<float> G_curref_reduc(N_t, sizcurrref);
-    array2D<float> B_curref_reduc(N_t, sizcurrref);
 
     hiss Wbhis[siza];
 
@@ -4900,15 +4898,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     const int sizcu30 = sizcurrref - n30;
     const int sizcu4 = rtengine::min(sizcu30, 55);
 
-
     chrom wbchro[sizcu4];
-    const double swpr = (Txyz[repref].XX + Txyz[repref].ZZ + 1.);
-    const double xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordiantes
-    const double ywpr = 1. / swpr;
-
+    const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
+    const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordiantes
+    const float ywpr = 1.f / swpr;
 
     for (int i = 0; i < sizcu4; ++i) { //take the max values
-        histcurrref[i][repref] = (float) Wbhis[siza - (i + 1)].histnum;
+        histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
         xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
         yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
         YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
@@ -4939,7 +4935,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     for (int i = 0; i < sizcurr2ref; ++i) {
         //is condition chroxy necessary ?
-        if (((wbchro[sizcu4 - (i + 1)].chrox  > 0.1f) && (wbchro[sizcu4 - (i + 1)].chroy > 0.1f)) && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f) { //suppress value too far from reference spectral
+        if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f) { //suppress value too far from reference spectral
             w++;
             xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
             yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
@@ -4961,7 +4957,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             for (int j = 0; j < Nc ; j++) {
                 if (!good_spectral[j]) {
-                    const float deltaE = SQR(xx_curref_reduc[i][repref] -  reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] -  reff_spect_yy_camera[j][repref]);
+                    const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
 
                     if (deltaE < mindeltaE) {
                         mindeltaE = deltaE;
@@ -4974,7 +4970,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-//reconvert to RGB for "reduction"
+    // reuse some buffers
+    array2D<float>& R_curref_reduc = xx_curref_reduc;
+    array2D<float>& G_curref_reduc = yy_curref_reduc;
+    array2D<float>& B_curref_reduc = YY_curref_reduc;
+
+    //reconvert to RGB for "reduction"
     for (int i = 0; i < w; i++) {
         const float X = 65535.f * xx_curref_reduc[i][repref] * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
         const float Y = 65535.f * YY_curref_reduc[i][repref];
@@ -4992,17 +4993,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //Now begin real calculations
     separated = false;
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
-
     //calculate x y Y
     int sizcurr = siza;//choice of number of correlate colors in image
-    array2D<float> histcurr(N_t, sizcurr);
-    array2D<float> xxyycurr(N_t, 2 * sizcurr);
     array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
+    array2D<float> reff_spect_xxyy(N_t, 2 * Nc + 2);
+    array2D<float> reff_spect_xxyy_prov(N_t, 2 * Nc + 2);
+
     float minstud = 100000.f;
     int goodref = 1;
-
-    array2D<float> YYcurr(N_t, sizcurr);
-    array2D<float> YYcurr_reduc(N_t, sizcurr);
 
 //calculate  x y z for each pixel with multiplier rmm gmm bmm
 
