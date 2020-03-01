@@ -391,7 +391,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             if (params->wb.method == "autitcgreen") {
-                imgsrc->getrgbloc(false, false, false, 0, 0, fh, fw, 0, 0, fh, fw);
+                imgsrc->getrgbloc(0, 0, fh, fw, 0, 0, fh, fw);
             }
         }
 
@@ -411,8 +411,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
 
-        bool autowb = false;
-        autowb = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
+        const bool autowb = (params->wb.method == "autold" || params->wb.method == "autitcgreen");
         if (settings->verbose) {
             printf("automethod=%s \n", params->wb.method.c_str());
         }

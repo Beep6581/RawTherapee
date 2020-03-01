@@ -3407,7 +3407,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
     constexpr float trans[ColorCount][ColorCount] = { { 1, 1, 1 }, { 1.7320508, -1.7320508, 0 }, { -1, -1, 2 } };
     constexpr float itrans[ColorCount][ColorCount] = { { 1, 0.8660254, -0.5 }, { 1, -0.8660254, -0.5 }, { 1, 0, 1 } };
 
-    float minpt = min(hlmax[0], hlmax[1], hlmax[2]); //min of the raw clip points
+    float minpt = rtengine::min(hlmax[0], hlmax[1], hlmax[2]); //min of the raw clip points
     //float maxpt=max(hlmax[0],hlmax[1],hlmax[2]);//max of the raw clip points
     //float medpt=hlmax[0]+hlmax[1]+hlmax[2]-minpt-maxpt;//median of the raw clip points
     float maxave = (hlmax[0] + hlmax[1] + hlmax[2]) / 3; //ave of the raw clip points
@@ -3418,7 +3418,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
     float clip[3];
     for (int c = 0; c < ColorCount; ++c) {
-        clip[c] = min(maxave, hlmax[c]);
+        clip[c] = rtengine::min(maxave, hlmax[c]);
     }
 
     // Determine the maximum level (clip) of all channels
@@ -3473,7 +3473,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
             }
         }
 
-        chratio = (std::sqrt(sum[1] / sum[0]));
+        chratio = std::sqrt(sum[1] / sum[0]);
 
         // Apply ratio to lightness in LCH space
         for (int c = 1; c < ColorCount; c++) {
@@ -4341,7 +4341,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 {
     /*
     Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com
-    Copyright (c) Ingo Weirich 3 - 2020 (heckflosse67@gmx.de)
+    Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
     This algorithm try to find temperature correlation between 20 to 200 color between 200 spectral color and about 20 to 55 color found in the image, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
 
@@ -4416,8 +4416,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
     };
 
-    const int bfwitc = bfw / 10 + 1 ;// 10 arbitrary value  ; perhaps 4 or 5 or 20
-    const int bfhitc = bfh / 10 + 1;
+    const int bfwitc = bfw;
+    const int bfhitc = bfh;
 
     typedef struct WbGreen {
         double green;
@@ -4552,7 +4552,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     } RangeGreen;
 
     constexpr RangeGreen Rangestandard = {8, 70};
-    constexpr RangeGreen Rangeextand = {4, 77};
+    constexpr RangeGreen Rangeextended = {4, 77};
     const RangeGreen Rangemax = {0, N_g};
 
     RangeGreen Rangegreenused;
@@ -4560,7 +4560,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (settings->itcwb_greenrange == 0) {
         Rangegreenused = Rangestandard;
     } else if (settings->itcwb_greenrange == 1) {
-        Rangegreenused = Rangeextand;
+        Rangegreenused = Rangeextended;
     } else {
         Rangegreenused = Rangemax;
     }
@@ -4816,13 +4816,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-        for (int y = 0; y < bfh ; y += 10) {
-            int yy = y / 10;
-            for (int x = 0, xx = 0; x < bfw ; x += 10, ++xx) {
+        for (int y = 0; y < bfh ; ++y) {
+            for (int x = 0; x < bfw ; ++x) {
                 const float RR = rmm[rep] * redloc[y][x];
                 const float GG = gmm[rep] * greenloc[y][x];
                 const float BB = bmm[rep] * blueloc[y][x];
-                Color::rgbxyY(RR, GG, BB, xc[yy][xx], yc[yy][xx], Yc[yy][xx], wp);
+                Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);
             }
         }
         //histogram xy depend of temp...but in most cases D45 ..D65..
@@ -5217,15 +5216,12 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
     }
 }
 
-void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
+void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
 {
+    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
-    int bfh = H, bfw = W;
-
-    if (local) {
-        bfh = bf_h + 3;
-        bfw = bf_w + 3;
-    }
+    const int bfw = W / 10 + 1 ;// 10 arbitrary value  ; perhaps 4 or 5 or 20
+    const int bfh = H / 10 + 1;
 
     if (! greenloc) {
         greenloc(bfw, bfh);
@@ -5240,73 +5236,17 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
     }
 
     double avgL = 0.0;
-
     //center data on normal values
     int nn = 0;
-
-    if (!local) {
-#ifdef _OPENMP
-        #pragma omp parallel sections
-#endif
-        {
-#ifdef _OPENMP
-            #pragma omp section
-#endif
-            {
-                for (int i = 0; i < H; i ++) {
-                    for (int j = 0; j < W; j++) {
-                        redloc[i][j] = red[i][j];
-                    }
-                }
-            }
-#ifdef _OPENMP
-            #pragma omp section
-#endif
-            {
-                for (int i = 0; i < H; i ++) {
-                    for (int j = 0; j < W; j++) {
-                        greenloc[i][j] = green[i][j];
-                    }
-                }
-            }
-#ifdef _OPENMP
-            #pragma omp section
-#endif
-            {
-                for (int i = 0; i < H; i ++) {
-                    for (int j = 0; j < W; j++) {
-                        blueloc[i][j] = blue[i][j];
-                    }
-                }
-            }
-        }
-    }
 
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:avgL, nn)
 #endif
     for (int i = 0; i < H; i ++) {
         for (int j = 0; j < W; j++) {
-            int lox = cx + j;
-            int loy = cy + i;
-
-            if (!local) {
-                const float redmm = redloc[i][j];
-                const float greenmm = greenloc[i][j];
-                const float bluemm = blueloc[i][j];
-                const float LL = 0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm;
-                avgL += static_cast<double>(LL);
-                nn++;
-            } else {
-                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                    const float redmm = redloc[loy - begy][lox - begx] = red[i][j];
-                    const float greenmm = greenloc[loy - begy][lox - begx] = green[i][j];
-                    const float bluemm = blueloc[loy - begy][lox - begx] = blue[i][j];
-                    const float LL = 0.299f * redmm + 0.587f * greenmm + 0.114f * bluemm;
-                    avgL += static_cast<double>(LL);
-                    nn++;
-                }
-            }
+            const float LL = 0.299f * red[i][j] + 0.587f * green[i][j] + 0.114f * blue[i][j];
+            avgL += static_cast<double>(LL);
+            nn++;
         }
     }
     avgL /= nn;
@@ -5317,9 +5257,9 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:vari, mm)
 #endif
-    for (int i = 0; i < bfh; i++)
-        for (int j = 0; j < bfw; j++) {
-            float LL = 0.299f * redloc[i][j] + 0.587f * greenloc[i][j] + 0.114f * blueloc[i][j];
+    for (int i = 0; i < H; i++)
+        for (int j = 0; j < W; j++) {
+            const float LL = 0.299f * red[i][j] + 0.587f * green[i][j] + 0.114f * blue[i][j];
             vari += SQR(LL - avgL);
             mm++;
         }
@@ -5330,23 +5270,15 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
-    for (int i = 0; i < bfh; i++)
-        for (int j = 0; j < bfw; j++) {
-            redloc[i][j] *= multip;
-            greenloc[i][j] *= multip;
-            blueloc[i][j] *= multip;
-        }
-
-    if (gamma) {
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-        for (int i = 0; i < bfh; i++)
-            for (int j = 0; j < bfw; j++) {
-                redloc[i][j] = Color::gammatab_srgb[redloc[i][j]];
-                greenloc[i][j] = Color::gammatab_srgb[greenloc[i][j]];
-                blueloc[i][j] = Color::gammatab_srgb[blueloc[i][j]];
+    for (int i = 0; i < bfh; ++i) {
+        const int ii = i * 10;
+        if (ii < H) {
+            for (int j = 0, jj = 0; jj < W; ++j, jj += 10) {
+                redloc[i][j] = red[ii][jj] * multip;
+                greenloc[i][j] = green[ii][jj] * multip;
+                blueloc[i][j] = blue[ii][jj] * multip;
             }
+        }
     }
 }
 
@@ -5365,7 +5297,6 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     double avg_b = 0;
     int rn = 0, gn = 0, bn = 0;
     double avg_rm, avg_gm, avg_bm;
-    int bfh = H, bfw = W;
     if (wbpar.method == "autold") {
         if (fuji) {
             for (int i = 32; i < H - 32; i++) {
@@ -5542,6 +5473,8 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
+        const int bfw = W / 10 + 1 ;// 10 arbitrary value  ; perhaps 4 or 5 or 20
+        const int bfh = H / 10 + 1;
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
     }
 
