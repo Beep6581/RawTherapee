@@ -4399,7 +4399,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_sizereference : 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     */
-    BENCHFUN
+//    BENCHFUN
  
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix("sRGB");
     const float wp[3][3] = {
@@ -5218,7 +5218,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
 
 void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
 {
-    BENCHFUN
+//    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
     const int bfw = W / 10 + ((W % 10) > 0 ? 1 : 0);// 10 arbitrary value  ; perhaps 4 or 5 or 20
     const int bfh = H / 10 + ((H % 10) > 0 ? 1 : 0);
