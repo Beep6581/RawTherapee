@@ -5220,8 +5220,8 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 {
     BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
-    const int bfw = W / 10 + 1 ;// 10 arbitrary value  ; perhaps 4 or 5 or 20
-    const int bfh = H / 10 + 1;
+    const int bfw = W / 10 + ((W % 10) > 0 ? 1 : 0);// 10 arbitrary value  ; perhaps 4 or 5 or 20
+    const int bfh = H / 10 + ((H % 10) > 0 ? 1 : 0);
 
     if (! greenloc) {
         greenloc(bfw, bfh);
@@ -5473,8 +5473,8 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
-        const int bfw = W / 10 + 1 ;// 10 arbitrary value  ; perhaps 4 or 5 or 20
-        const int bfh = H / 10 + 1;
+        const int bfw = W / 10 + ((W % 10) > 0 ? 1 : 0);// 10 arbitrary value  ; perhaps 4 or 5 or 20
+        const int bfh = H / 10 + ((H % 10) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
     }
 
