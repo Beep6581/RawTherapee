@@ -4340,7 +4340,8 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar)
 {
     /*
-    copyright Jacques Desmis 6 - 2018 jdesmis@gmail.com
+    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com
+    Copyright (c) Ingo Weirich 3 - 2020 (heckflosse67@gmx.de)
 
     This algorithm try to find temperature correlation between 20 to 200 color between 200 spectral color and about 20 to 55 color found in the image, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
 
