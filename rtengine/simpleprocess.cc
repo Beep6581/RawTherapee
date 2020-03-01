@@ -801,8 +801,7 @@ private:
         // commented out because it makes the application crash when batch processing...
         // TODO: find a better place to flush rawData and rawRGB
         if (flush) {
-            imgsrc->flushRawData();
-            imgsrc->flushRGB();
+            imgsrc->flush();
         }
 
         return true;

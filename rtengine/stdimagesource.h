@@ -58,7 +58,7 @@ public:
 
     int         load        (const Glib::ustring &fname) override;
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hrp, const procparams::RAWParams &raw) override;
-    void        getrgbloc(bool local, bool gamma, bool  cat02, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w) override;
+    void        getrgbloc   (int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w) override {};
     ColorTemp   getWB       () const override
     {
         return wb;
@@ -118,7 +118,7 @@ public:
 
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override { R = G = B = 0;}
 
-    void        flushRGB          () override;
+    void        flush          () override;
     void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) override {};
 };
 

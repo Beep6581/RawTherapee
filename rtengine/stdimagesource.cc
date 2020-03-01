@@ -315,9 +315,6 @@ void StdImageSource::WBauto(double &tempref, double &greenref, array2D<float> &r
 {
 }
 
-void  StdImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
-{}
-
 void StdImageSource::getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw)
 {
     if (redAWBMul != -1.) {
@@ -366,7 +363,7 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     return ColorTemp (reds / rn * img_r, greens / gn * img_g, blues / bn * img_b, equal);
 }
 
-void StdImageSource::flushRGB() {
+void StdImageSource::flush() {
     img->allocate(0, 0);
 };
 
