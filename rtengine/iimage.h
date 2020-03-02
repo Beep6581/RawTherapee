@@ -27,7 +27,7 @@
 #include "imagedimensions.h"
 #include "LUT.h"
 #include "rt_math.h"
-
+#include "procparams.h"
 #include "../rtgui/threadutils.h"
 
 #define TR_NONE     0
@@ -108,6 +108,10 @@ public:
                                 std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue,
                                 int tran) const {}
     virtual void getAutoWBMultipliers (double &rm, double &gm, double &bm) const
+    {
+        rm = gm = bm = 1.0;
+    }
+    virtual void getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw)
     {
         rm = gm = bm = 1.0;
     }

@@ -941,6 +941,17 @@ void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, con
     z = ((xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b)) ;
 }
 
+void Color::rgbxyY(float r, float g, float b, float &x, float &y, float &Y, const float xyz_rgb[3][3])
+{
+    const float xx = xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b;
+    const float yy = xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b;
+    const float zz = xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b;
+    const float som = xx + yy + zz;
+    x = xx / som;
+    y = yy / som;
+    Y = yy / 65535.f;
+}
+
 void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3])
 {
     x = ((xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b)) ;
@@ -1714,6 +1725,13 @@ void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
     y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
 }
 
+float Color::L2Y(float L)
+{
+    const float LL = L / 327.68f;
+    const float fy = (c1By116 * LL) + c16By116; // (L+16)/116
+    return (LL > epskapf) ? 65535.f * fy * fy * fy : 65535.f * LL / kappaf;
+}
+
 void Color::L2XYZ(float L, float &x, float &y, float &z) // for black & white
 {
     float LL = L / 327.68f;
@@ -1755,19 +1773,6 @@ inline float Color::computeXYZ2Lab(float f)
         return cachef[f];
     }
 }
-
-
-inline float Color::computeXYZ2LabY(float f)
-{
-    if (f < 0.f) {
-        return 327.68 * (kappa * f / MAXVALF);
-    } else if (f > 65535.f) {
-        return 327.68f * (116.f * xcbrtf(f / MAXVALF) - 16.f);
-    } else {
-        return cachefy[f];
-    }
-}
-
 
 void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, const float wp[3][3], int width)
 {

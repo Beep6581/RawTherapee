@@ -73,9 +73,13 @@ protected:
 
     ColorTemp currWB;
     ColorTemp autoWB;
+    ColorTemp currWBloc;
+    ColorTemp autoWBloc;
+    ColorTemp currWBitc;
 
     double lastAwbEqual;
     double lastAwbTempBias;
+    Glib::ustring lastAwbauto;
 
     Glib::ustring monitorProfile;
     RenderingIntent monitorIntent;

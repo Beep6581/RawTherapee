@@ -290,10 +290,12 @@ struct ColorAppearanceParamsEdited {
     bool datacie;
     bool tonecie;
     bool tempout;
+    bool autotempout;
     bool greenout;
     bool ybout;
     bool tempsc;
     bool greensc;
+    bool presetcat02;
 };
 
 struct DirPyrDenoiseParamsEdited {
@@ -502,7 +504,9 @@ struct WaveletParamsEdited {
     bool cbenab;
     bool lipst;
     bool Medgreinf;
+    bool ushamethod;
     bool avoid;
+    bool showmask;
     bool tmr;
     bool c[9];
     bool ch[9];
@@ -519,10 +523,13 @@ struct WaveletParamsEdited {
     bool Tilesmethod;
     bool daubcoeffmethod;
     bool Dirmethod;
+    bool sigma;
     bool rescon;
     bool resconH;
     bool reschro;
     bool tmrs;
+    bool edgs;
+    bool scale;
     bool gamma;
     bool sup;
     bool sky;
@@ -542,6 +549,7 @@ struct WaveletParamsEdited {
     bool edgthresh;
     bool thr;
     bool thrH;
+    bool radius;
     bool skinprotect;
     bool hueskin;
     bool hueskin2;
@@ -568,6 +576,10 @@ struct WaveletParamsEdited {
     bool bluemed;
     bool greenhigh;
     bool bluehigh;
+    bool mergeL;
+    bool mergeC;
+    bool softrad;
+    bool softradend;
     bool expcontrast;
     bool expchroma;
     bool expedge;
@@ -575,6 +587,7 @@ struct WaveletParamsEdited {
     bool expfinal;
     bool exptoning;
     bool expnoise;
+    bool expclari;
 };
 
 struct DirPyrEqualizerParamsEdited {

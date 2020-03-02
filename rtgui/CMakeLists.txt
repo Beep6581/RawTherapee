@@ -165,13 +165,13 @@ set(NONCLISOURCEFILES
     zoompanel.cc
 )
 
-include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 if(APPLE)
     find_package(MacIntegration REQUIRED)
     # At the time of writing CMake has no module finder for gtkmacintegration so here we have it hard-coded, if installed via macports it should be in /opt/local/...
-    set(EXTRA_LIB_RTGUI ${MacIntegration_LIBRARIES})
-    set(EXTRA_INCDIR ${EXTRA_INCDIR} ${MacIntegration_INCLUDE_DIRS})
+    set(EXTRA_LIB_RTGUI "${MacIntegration_LIBRARIES}")
+    set(EXTRA_INCDIR "${EXTRA_INCDIR}" "${MacIntegration_INCLUDE_DIRS}")
 endif()
 
 if(WIN32)
@@ -237,16 +237,16 @@ else()
 endif()
 
 # Excluding libatomic needed by Clang/FreeBSD, #3636
-if(OPENMP_FOUND AND NOT APPLE AND NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "FreeBSD")
-    set(EXTRA_LIB_RTGUI ${EXTRA_LIB_RTGUI} "atomic")
+if(OPENMP_FOUND AND NOT APPLE AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+    set(EXTRA_LIB_RTGUI "${EXTRA_LIB_RTGUI}" "atomic")
 endif()
 
 # Create config.h which defines where data are stored
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 
 # Create new executables targets
-add_executable(rth ${EXTRA_SRC_NONCLI} ${NONCLISOURCEFILES})
-add_executable(rth-cli ${EXTRA_SRC_CLI} ${CLISOURCEFILES})
+add_executable(rth "${EXTRA_SRC_NONCLI}" "${NONCLISOURCEFILES}")
+add_executable(rth-cli "${EXTRA_SRC_CLI}" "${CLISOURCEFILES}")
 
 # Add dependencies to executables targets
 add_dependencies(rth UpdateInfo)
@@ -312,5 +312,5 @@ target_link_libraries(rth-cli rtengine
     )
 
 # Install executables
-install(TARGETS rth DESTINATION ${BINDIR})
-install(TARGETS rth-cli DESTINATION ${BINDIR})
+install(TARGETS rth DESTINATION "${BINDIR}")
+install(TARGETS rth-cli DESTINATION "${BINDIR}")

@@ -30,8 +30,9 @@
 #include "procparams.h"
 #include "refreshmap.h"
 #include "rt_math.h"
-
+#include "color.h"
 #include "../rtgui/editcallbacks.h"
+#include "guidedfilter.h"
 
 namespace
 {
@@ -50,7 +51,7 @@ namespace rtengine
 
 Crop::Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr),
-      cropImg (nullptr), transCrop (nullptr), cieCrop (nullptr),
+      cropImg(nullptr), transCrop(nullptr), cieCrop(nullptr),
       updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
       trafx(0), trafy(0), trafw(-1), trafh(-1),
@@ -815,6 +816,7 @@ void Crop::update(int todo)
                 parent->ipf.workingtrc(workingCrop, workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, parent->getCustomTransformOut(), false, true, true);
             }
         }
+
         double rrm, ggm, bbm;
         DCPProfileApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
@@ -824,6 +826,7 @@ void Crop::update(int todo)
                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                             parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);
+
         if (workingCrop != baseCrop) {
             delete workingCrop;
         }
@@ -880,8 +883,8 @@ void Crop::update(int todo)
             parent->ipf.MLsharpen(labnCrop);
 
             if ((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
-                parent->ipf.MLmicrocontrast (labnCrop);
-                parent->ipf.sharpening (labnCrop, params.sharpening, parent->sharpMask);
+                parent->ipf.MLmicrocontrast(labnCrop);
+                parent->ipf.sharpening(labnCrop, params.sharpening, parent->sharpMask);
             }
         }
 
@@ -971,15 +974,175 @@ void Crop::update(int todo)
             LUTf wavclCurve;
 
             params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+            LabImage *unshar = nullptr;
+            Glib::ustring provis;
+            LabImage *provradius = nullptr;
+            bool procont = WaveParams.expcontrast;
+            bool prochro = WaveParams.expchroma;
+            bool proedge = WaveParams.expedge;
+            bool profin = WaveParams.expfinal;
+            bool proton = WaveParams.exptoning;
+            bool pronois = WaveParams.expnoise; 
+
+            if(WaveParams.showmask) {
+           //     WaveParams.showmask = false;
+           //     WaveParams.expclari = true;
+            }
+
+
+            if (WaveParams.softrad > 0.f) {
+                provradius = new LabImage(labnCrop->W, labnCrop->H);
+                provradius->CopyFrom(labnCrop);
+            }
+
+
+
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+
+                unshar = new LabImage(labnCrop->W, labnCrop->H);
+                provis = params.wavelet.CLmethod;
+                params.wavelet.CLmethod = "all";
+                parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
+                unshar->CopyFrom(labnCrop);
+
+                params.wavelet.CLmethod = provis;
+
+                WaveParams.expcontrast = false;
+                WaveParams.expchroma = false;
+                WaveParams.expedge = false;
+                WaveParams.expfinal = false;
+                WaveParams.exptoning = false;
+                WaveParams.expnoise = false; 
+            }
 
             parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
+
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                WaveParams.expcontrast = procont;
+                WaveParams.expchroma = prochro;
+                WaveParams.expedge = proedge;
+                WaveParams.expfinal = profin;
+                WaveParams.exptoning = proton;
+                WaveParams.expnoise = pronois;
+                if (WaveParams.softrad > 0.f) {
+                    array2D<float> ble(labnCrop->W, labnCrop->H);
+                    array2D<float> guid(labnCrop->W, labnCrop->H);
+                    Imagefloat *tmpImage = nullptr;
+                    tmpImage = new Imagefloat(labnCrop->W, labnCrop->W);
+
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < labnCrop->H ; ir++)
+                        for (int jr = 0; jr < labnCrop->W; jr++) {
+                            float X, Y, Z;
+                            float L = provradius->L[ir][jr];
+                            float a = provradius->a[ir][jr];
+                            float b = provradius->b[ir][jr];
+                            Color::Lab2XYZ(L, a, b, X, Y, Z);
+
+                            guid[ir][jr] = Y / 32768.f;
+                            float La = labnCrop->L[ir][jr];
+                            float aa = labnCrop->a[ir][jr];
+                            float ba = labnCrop->b[ir][jr];
+                            Color::Lab2XYZ(La, aa, ba, X, Y, Z);
+                            tmpImage->r(ir, jr) = X;
+                            tmpImage->g(ir, jr) = Y;
+                            tmpImage->b(ir, jr) = Z;
+                            ble[ir][jr] = Y / 32768.f;
+                        }
+                    double epsilmax = 0.0001;
+                    double epsilmin = 0.00001;
+                    double aepsil = (epsilmax - epsilmin) / 90.f;
+                    double bepsil = epsilmax - 100.f * aepsil;
+                    double epsil = aepsil * WaveParams.softrad + bepsil;
+                    
+                    float blur = 10.f / skip * (0.0001f + 0.8f * WaveParams.softrad);
+                    rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
+
+
+
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < labnCrop->H; ir++)
+                        for (int jr = 0; jr < labnCrop->W; jr++) {
+                            float X = tmpImage->r(ir, jr);
+                            float Y = 32768.f * ble[ir][jr];
+                            float Z = tmpImage->b(ir, jr);
+                            float L, a, b;
+                            Color::XYZ2Lab(X, Y, Z, L, a, b);
+                            labnCrop->L[ir][jr] = L;
+                        }
+                    delete tmpImage;
+                }
+                
+            }
+
+
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {
+
+                float mL = (float)(WaveParams.mergeL / 100.f);
+                float mC = (float)(WaveParams.mergeC / 100.f);
+                float mL0;
+                float mC0;
+                float background = 0.f;
+                int show = 0; 
+
+                if ((WaveParams.CLmethod == "one" || WaveParams.CLmethod == "inf")  && WaveParams.Backmethod == "black") {
+                    mL0 = mC0 = 0.f;
+                    mL = -1.5f * mL;
+                    mC = -mC;
+                    background = 12000.f;
+                    show = 0;
+                } else if (WaveParams.CLmethod == "sup" && WaveParams.Backmethod == "resid") {
+                    mL0 = mL;
+                    mC0 = mC;
+                    background = 0.f;
+                    show = 0;
+                } else {
+                    mL0 = mL = mC0 = mC = 0.f;
+                    background = 0.f;
+                    show = 0;
+                }
+
+                float indic = 1.f;
+                if(WaveParams.showmask){
+                    mL0 = mC0 = -1.f;
+                    indic = -1.f;
+                    mL = fabs(mL);
+                    mC = fabs(mC);
+                    show = 1;
+                }
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int x = 0; x < labnCrop->H; x++)
+                    for (int y = 0; y < labnCrop->W; y++) {
+                        labnCrop->L[x][y] = LIM((1.f + mL0) * (unshar->L[x][y]) + show * background - mL * indic * labnCrop->L[x][y], 0.f, 32768.f);
+                        labnCrop->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * indic * labnCrop->a[x][y];
+                        labnCrop->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * indic * labnCrop->b[x][y];
+                    }
+
+                delete unshar;
+                unshar    = NULL;
+                if (WaveParams.softrad > 0.f) {
+                    delete provradius;
+                    provradius    = NULL;
+                }
+
+
+            }
+
+
         }
 
         parent->ipf.softLight(labnCrop);
 
-        //     }
-
-        //   }
         if (params.colorappearance.enabled) {
             float fnum = parent->imgsrc->getMetaData()->getFNumber();          // F number
             float fiso = parent->imgsrc->getMetaData()->getISOSpeed() ;        // ISO
