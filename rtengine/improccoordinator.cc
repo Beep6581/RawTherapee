@@ -488,6 +488,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
             } 
 
+            if (autowb && awbListener && params->wb.method ==  "autold") {
+                awbListener->WBChanged(params->wb.temperature, params->wb.green, -1.f);
+            } 
+
             /*
                     GammaValues g_a;
                     double pwr = 1.0 / params->icm.gampos;
