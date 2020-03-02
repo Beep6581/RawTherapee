@@ -676,6 +676,7 @@ struct ColorAppearanceParams {
     bool          datacie;
     bool          tonecie;
     int tempout;
+    bool          autotempout;
     int ybout;
     double greenout;
     int tempsc;

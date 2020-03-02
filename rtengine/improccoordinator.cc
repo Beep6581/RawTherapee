@@ -1157,7 +1157,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     acListener->ybCamChanged((int) yb);    //real value Yb scene
                 }
 
-                if (params->colorappearance.enabled && params->colorappearance.presetcat02) {
+                if (params->colorappearance.enabled && params->colorappearance.presetcat02  && params->colorappearance.autotempout) {
                     acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
                 }
                 

@@ -243,6 +243,7 @@ void ParamsEdited::set(bool v)
     colorappearance.curveMode2 = v;
     colorappearance.curveMode3 = v;
     colorappearance.tempout     = v;
+    colorappearance.autotempout = v;
     colorappearance.greenout     = v;
     colorappearance.ybout     = v;
     colorappearance.tempsc     = v;
@@ -834,6 +835,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.curveMode2 = colorappearance.curveMode2 && p.colorappearance.curveMode2 == other.colorappearance.curveMode2;
         colorappearance.curveMode3 = colorappearance.curveMode3 && p.colorappearance.curveMode3 == other.colorappearance.curveMode3;
         colorappearance.tempout = colorappearance.tempout && p.colorappearance.tempout == other.colorappearance.tempout;
+        colorappearance.autotempout = colorappearance.autotempout && p.colorappearance.autotempout == other.colorappearance.autotempout;
         colorappearance.greenout = colorappearance.greenout && p.colorappearance.greenout == other.colorappearance.greenout;
         colorappearance.ybout = colorappearance.ybout && p.colorappearance.ybout == other.colorappearance.ybout;
         colorappearance.tempsc = colorappearance.tempsc && p.colorappearance.tempsc == other.colorappearance.tempsc;
@@ -2014,6 +2016,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (colorappearance.tempout) {
         toEdit.colorappearance.tempout = mods.colorappearance.tempout;
+    }
+
+    if (colorappearance.autotempout) {
+        toEdit.colorappearance.autotempout = mods.colorappearance.autotempout;
     }
 
     if (colorappearance.greenout) {

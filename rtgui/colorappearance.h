@@ -101,7 +101,7 @@ public:
 
 private:
     rtengine::ProcEvent Evcatpreset;
-
+    rtengine::ProcEvent EvCATAutotempout;
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
@@ -174,6 +174,7 @@ private:
     bool lastAutoAdapscen;
     bool lastAutoDegreeout;
     bool lastAutoybscen;
+    bool lastAutotempout;
     bool lastsurr;
     bool lastgamut;
     bool lastdatacie;

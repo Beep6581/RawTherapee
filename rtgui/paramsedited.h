@@ -290,6 +290,7 @@ struct ColorAppearanceParamsEdited {
     bool datacie;
     bool tonecie;
     bool tempout;
+    bool autotempout;
     bool greenout;
     bool ybout;
     bool tempsc;
