@@ -3897,6 +3897,9 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 
 static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy)
 {
+    //calculate histogram x y in a rane of 158 colors
+    //this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
+    // of course we can chnage to be more precise
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -4423,7 +4426,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         double green;
         float snedecor;//1. actually but put in case of confiance interval
     } WbGreen;
-
+    //green (tint) values between 0.4 to 4.0
     constexpr WbGreen gree[118] = {//symmetric coefficient between 0.717 and 1.40
         {0.400, 1.f},
         {0.500, 1.f},
@@ -4572,6 +4575,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     } WbTxyz;
     //we can change step to increase precision if need  - also in Colortemp.cc with same changes
     //I don't know how to pass this structure to Colortemp !
+    // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
+    //of course we can change the step between each temp if need
     constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},
@@ -4746,6 +4751,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         rmm[tt] = rm / gm;
         gmm[tt] = 1.f;
         bmm[tt] = bm / gm;
+        //return rmm, gmm, bmm in function of temp
     }
 
     struct hiss {
@@ -4791,9 +4797,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
-    //call tempxy to calculate for 114 color references Temp and XYZ with cat02
+    //call tempxy to calculate for 200 color references Temp and XYZ with cat02
 
-    ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
+    ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
     //find the good spectral values
     //calculate xy reference spectral for tempref
@@ -4834,6 +4840,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //big step about 0.2
 
         histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);
+        //return histogram x and y for each temp and in a range of 158 colors (siza)
     }
 
     // free some memory
@@ -4865,6 +4872,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int n15 = 0;
     int n30 = 0;
     //part to improve
+    //determined the number of colors who be used after
     for (int nh = 0; nh < siza; nh++) {
         if (Wbhis[nh].histnum < 30) {
             n30++;    //keep only existing color but avoid to small
@@ -4911,7 +4919,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     float estimchrom = 0.f;
-
+    //estimate chromaticity for references
     for (int nh = 0; nh < sizcu4; ++nh) {
         const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
         wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
@@ -4943,7 +4951,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    //calculate deltaE xx to find best values of spectrals datas
+    //calculate deltaE xx to find best values of spectrals datas - limited to chroma values
     int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
 
     if (settings->itcwb_thres > 39) {
@@ -4992,6 +5000,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     //Now begin real calculations
     separated = false;
+    //recalculate histogram with good values and not estimated
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
     //calculate x y Y
     int sizcurr = siza;//choice of number of correlate colors in image
@@ -5038,7 +5047,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if (extra) {
+    if (extra) {//always used because I amde this choice, brings better results
         struct Tempgreen {
             float student;
             int tempref;
@@ -5052,15 +5061,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         for (int i = 0; i < N_g; ++i) {//init variables with
             Tgstud[i].student = 1000.f;//max value to initialize
-            Tgstud[i].tempref = 57;
-            Tgstud[i].greenref = 39;
+            Tgstud[i].tempref = 57;//5002K
+            Tgstud[i].greenref = 39;// 1.f
 
         }
 
         const int dgoodref = rtengine::min(settings->itcwb_greendeltatemp, 4);
         const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
         const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
-
         for (int gr = Rangegreenused.begin; gr < Rangegreenused.end; ++gr) {
             float minstudgr = 100000.f;
             int goodrefgr = 1;
@@ -5072,6 +5080,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 float rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
                 float gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
                 float bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
+                //recalculate Multipliers now with good range of temp and green
 
                 const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
                 float new_scale_mul[4];
@@ -5095,6 +5104,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     const float BB = bmm[tt] * B_curref_reduc[i][repref];
                     Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
                 }
+                //recalculate xy spectral now with good range of temp and green
 
                 for (int j = 0; j < Nc ; ++j) {
                     reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
@@ -5117,14 +5127,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         reff_spect_xxyy[2 * kkg + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
                     }
                 }
-
+                //now we have good spectral datas
+                //claculate student correlation
                 const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
 
                 if (abstudgr < minstudgr) {  // find the minimum Student
                     minstudgr = abstudgr;
                     goodrefgr = tt;
                 }
-
+                //found the values
                 Tgstud[gr].tempref = goodrefgr;
                 Tgstud[gr].greenref = gr;
                 Tgstud[gr].student = minstudgr;
@@ -5136,7 +5147,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         //now search the value of green the nearest of 1 with a good student value
         // I take the 3 first values
-        //I admit a symetrie in green coefiicient for rgb multiplier...probably not excatly true
+        //I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
         //perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
         int greengood;
         int greengoodprov;
@@ -5186,7 +5197,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (!extra) {
         tempitc = Txyz[goodref].Tem;
     }
-
+    //now we have temp green and student
     if (settings->verbose) {
         printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
     }
@@ -5196,10 +5207,12 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
 {
 //    BENCHFUN
     //auto white balance
+    //put green (tint) in reasonable limits for an Daylight illuminant
+    // avoid too bi or too low values
     if (wbpar.method == "autitcgreen") {
         bool extra = false;
 
-        if (greenref > 0.77 && greenref < 1.3) {
+        if (greenref > 0.77 && greenref < 1.3) {// 0/77 and 1.3 arbitraties values
             greenitc = greenref;
 
             if (settings->itcwb_forceextra) {
@@ -5266,7 +5279,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 
     const float sig = std::sqrt(vari / mm);
     const float multip = 60000.f / (avgL + 2.f * sig);
-
+    //multip to put red, blue, green in a good range
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
