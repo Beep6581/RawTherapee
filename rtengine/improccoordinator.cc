@@ -441,36 +441,36 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
-                    if (settings->verbose) {
+                    if (settings->verbose && params->wb.method ==  "autitcgreen") {
                         printf("tempref=%f greref=%f\n", tempref, greenref);
                     }
 
                     imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
 
-                if (params->wb.method ==  "autitcgreen") {
-                    params->wb.temperature = tempitc;
-                    params->wb.green = greenitc;
-                    currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method);
-                    currWB.getMultipliers(rm, gm, bm);
-                }
-
-                if (rm != -1.) {
-                    double bias = params->wb.tempBias;
-
                     if (params->wb.method ==  "autitcgreen") {
-                        bias = 0.;
+                        params->wb.temperature = tempitc;
+                        params->wb.green = greenitc;
+                        currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method);
+                        currWB.getMultipliers(rm, gm, bm);
                     }
 
-                    autoWB.update(rm, gm, bm, params->wb.equal, bias);
-                    lastAwbEqual = params->wb.equal;
-                    lastAwbTempBias = params->wb.tempBias;
-                    lastAwbauto = params->wb.method;
-                } else {
-                    lastAwbEqual = -1.;
-                    lastAwbTempBias = 0.0;
-                    lastAwbauto = "";
-                    autoWB.useDefaults(params->wb.equal);
-                }
+                    if (rm != -1.) {
+                        double bias = params->wb.tempBias;
+
+                        if (params->wb.method ==  "autitcgreen") {
+                            bias = 0.;
+                        }
+
+                        autoWB.update(rm, gm, bm, params->wb.equal, bias);
+                        lastAwbEqual = params->wb.equal;
+                        lastAwbTempBias = params->wb.tempBias;
+                        lastAwbauto = params->wb.method;
+                    } else {
+                        lastAwbEqual = -1.;
+                        lastAwbTempBias = 0.0;
+                        lastAwbauto = "";
+                        autoWB.useDefaults(params->wb.equal);
+                    }
                     
                     
                 }
@@ -483,7 +483,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 params->wb.green = currWB.getGreen();
             }
 
-          //  if (params->wb.method == "Auto" && awbListener && params->wb.enabled) {
             if (autowb && awbListener && params->wb.method ==  "autitcgreen") {
                 awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
             } 
