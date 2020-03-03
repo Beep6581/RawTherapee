@@ -1240,6 +1240,11 @@ Camera constants:
         "ranges": { "white": 4050 } // nominal 4080-4093
     },
 
+    { // Quality C, only raw crop
+        "make_model": "Canon PowerShot SX70 HS",
+        "raw_crop": [ 96, 17, 5248, 3932 ]
+    },
+
     { // Quality C
         "make_model": "Canon PowerShot SX150 IS",
         "dcraw_matrix": [ 13481, -4867, -1063, -2074, 9960, 2472, -170, 1474, 3894 ], // Adobe DNG Converter 11.1 ColorMatrix1 (there is only one matrix and illuminant, and it's for daylight)
