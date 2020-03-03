@@ -1368,8 +1368,8 @@ void ColorAppearance::presetcat02pressed ()
     gamut->set_active (true);
     gamutconn.block (false);
     degree->setAutoValue (true);
-    degree->setValue(80);
     degree->resetValue (false);
+    degree->setValue(80);
     adapscen->resetValue (false);
     adapscen->setAutoValue (true);
     degreeout->resetValue (false);
