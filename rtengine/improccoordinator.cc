@@ -1158,7 +1158,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 if (params->colorappearance.enabled && params->colorappearance.presetcat02  && params->colorappearance.autotempout) {
-                    acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
+              //      acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
+                    acListener->wbCamChanged(params->wb.temperature, 1.f);    //real temp and tint = 1.
                 }
                 
             } else {

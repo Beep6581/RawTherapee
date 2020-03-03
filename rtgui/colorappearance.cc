@@ -824,7 +824,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     presetcat02->set_active(pp->colorappearance.presetcat02);
 
     nexttemp = pp->wb.temperature;
-    nextgreen = pp->wb.green;
+    nextgreen = 1.; //pp->wb.green;
     
     if (pedited) {
         degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
@@ -1368,6 +1368,7 @@ void ColorAppearance::presetcat02pressed ()
     gamut->set_active (true);
     gamutconn.block (false);
     degree->setAutoValue (true);
+    degree->setValue(80);
     degree->resetValue (false);
     adapscen->resetValue (false);
     adapscen->setAutoValue (true);
@@ -1383,7 +1384,7 @@ void ColorAppearance::presetcat02pressed ()
     ybscen->setValue(18);
     surround->set_active (0);
     adaplum->setValue(400.);
-    degreeout->setValue(70);
+    degreeout->setValue(80);
     ybout->setValue(18);
     tempout->setValue (nexttemp);
     greenout->setValue (nextgreen);
