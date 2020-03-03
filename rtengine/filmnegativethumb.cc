@@ -199,7 +199,7 @@ void rtengine::Thumbnail::processFilmNegative(
 
 
     if (settings->verbose) {
-        printf("Thumbnail computed multipliers: %g %g %g\n", rmult, gmult, bmult);
+        printf("Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
     }
 
 

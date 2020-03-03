@@ -18,8 +18,6 @@
  */
 #pragma once
 
-#include <glibmm/ustring.h>
-
 #include <lcms2.h>
 
 #include "image16.h"
@@ -29,6 +27,13 @@
 #include "rawmetadatalocation.h"
 
 #include "../rtgui/threadutils.h"
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {
@@ -109,10 +114,6 @@ public:
     bool readEmbProfile  (const Glib::ustring& fname);
     bool writeEmbProfile (const Glib::ustring& fname);
 
-    bool readAEHistogram  (const Glib::ustring& fname);
-    bool writeAEHistogram (const Glib::ustring& fname);
-
-    bool isAeValid() { return aeValid; };
     unsigned char* getImage8Data();  // accessor to the 8bit image if it is one, which should be the case for the "Inspector" mode.
 
     // Hombre: ... let's hope that proper template can make this cleaner

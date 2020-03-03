@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PENTAXATTRIBS_
-#define _PENTAXATTRIBS_
 
 #include <cmath>
 #include <cstdio>
@@ -696,7 +694,7 @@ public:
 };
 PAColorSpaceInterpreter paColorSpaceInterpreter;
 
-class PALensTypeInterpreter : public IntLensInterpreter< int >
+class PALensTypeInterpreter final: public IntLensInterpreter< int >
 {
 public:
     PALensTypeInterpreter ()
@@ -752,7 +750,7 @@ public:
         choices.insert (p_t (256 * 3 + 44, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
         choices.insert (p_t (256 * 3 + 44, "Sigma 18-50mm f/3.5-5.6 DC"));
         choices.insert (p_t (256 * 3 + 44, "Sigma 17-35mm f/2.8-4 EX DG"));
-        choices.insert (p_t (256 * 3 + 44, "Tamron 35-90mm f/4 AF"));
+        choices.insert (p_t (256 * 3 + 44, "Tamron 35-90mm f/4-5.6 AF"));
         choices.insert (p_t (256 * 3 + 44, "Sigma AF 18-35mm f/3.5-4.5 Aspherical"));
         choices.insert (p_t (256 * 3 + 46, "Sigma or Samsung Lens (3 46)"));
         choices.insert (p_t (256 * 3 + 46, "Sigma APO 70-200mm f/2.8 EX"));
@@ -784,6 +782,7 @@ public:
         choices.insert (p_t (256 * 4 + 2, "smc PENTAX-FA 80-320mm f/4.5-5.6"));
         choices.insert (p_t (256 * 4 + 3, "smc PENTAX-FA 43mm f/1.9 Limited"));
         choices.insert (p_t (256 * 4 + 6, "smc PENTAX-FA 35-80mm f/4-5.6"));
+        choices.insert (p_t (256 * 4 + 8, "Irix 150mm f/2.8 Macro"));
         choices.insert (p_t (256 * 4 + 9, "Irix 11mm f/4 Firefly"));
         choices.insert (p_t (256 * 4 + 10, "Irix 15mm f/2.4"));
         choices.insert (p_t (256 * 4 + 12, "smc PENTAX-FA 50mm f/1.4"));
@@ -908,8 +907,9 @@ public:
         choices.insert (p_t (256 * 7 + 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
         choices.insert (p_t (256 * 7 + 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
         choices.insert (p_t (256 * 8 + 0, "Sigma 50-150mm f/2.8 II APO EX DC HSM"));
-        choices.insert (p_t (256 * 8 + 3, "Sigma AF 18-125mm f/3.5-5.6 DC"));
+        choices.insert (p_t (256 * 8 + 3, "Sigma 18-125mm f/3.8-5.6 DC HSM"));
         choices.insert (p_t (256 * 8 + 4, "Sigma 50mm f/1.4 EX DG HSM"));
+        choices.insert (p_t (256 * 8 + 6, "Sigma 4.5mm f/2.8 EX DC Fisheye"));
         choices.insert (p_t (256 * 8 + 7, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
         choices.insert (p_t (256 * 8 + 8, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
         choices.insert (p_t (256 * 8 + 11, "Sigma 10-20mm f/3.5 EX DC HSM"));
@@ -920,6 +920,7 @@ public:
         choices.insert (p_t (256 * 8 + 16, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
         choices.insert (p_t (256 * 8 + 17, "Sigma 50-500mm f/4.5-6.3 DG OS HSM"));
         choices.insert (p_t (256 * 8 + 18, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
+        choices.insert (p_t (256 * 8 + 20, "Sigma 18-50mm f/2.8-4.5 DC HSM"));
         choices.insert (p_t (256 * 8 + 21, "Sigma 17-50mm f/2.8 EX DC OS HSM"));
         choices.insert (p_t (256 * 8 + 22, "Sigma 85mm f/1.4 EX DG HSM"));
         choices.insert (p_t (256 * 8 + 23, "Sigma 70-200mm f/2.8 APO EX DG OS HSM"));
@@ -938,6 +939,8 @@ public:
         choices.insert (p_t (256 * 8 + 62, "HD PENTAX-D FA 24-70mm f/2.8 ED SDM WR"));
         choices.insert (p_t (256 * 8 + 63, "HD PENTAX-D FA 15-30mm f/2.8 ED SDM WR"));
         choices.insert (p_t (256 * 8 + 64, "HD PENTAX-D FA* 50mm f/1.4 SDM AW"));
+        choices.insert (p_t (256 * 8 + 65, "HD PENTAX-D FA 70-210mm f/4 ED SDM WR"));
+        choices.insert (p_t (256 * 8 + 196, "HD PENTAX-DA* 11-18mm f/2.8 ED DC AW"));
         choices.insert (p_t (256 * 8 + 197, "HD PENTAX-DA 55-300mm f/4.5-6.3 ED PLM WR RE"));
         choices.insert (p_t (256 * 8 + 198, "smc PENTAX-DA L 18-50mm f/4-5.6 DC WR RE"));
         choices.insert (p_t (256 * 8 + 199, "HD PENTAX-DA 18-50mm f/4-5.6 DC WR RE"));
@@ -992,6 +995,7 @@ public:
         choices.insert (p_t (256 * 22 + 3, "03 Fish-eye 3.2mm f/5.6"));
         choices.insert (p_t (256 * 22 + 4, "04 Toy Lens Wide 6.3mm f/7.1"));
         choices.insert (p_t (256 * 22 + 5, "05 Toy Lens Telephoto 18mm f/8"));
+        choices.insert (p_t (256 * 31 + 1, "GR Lens"));
     }
     std::string toString (const Tag* t) const override
     {
@@ -1391,9 +1395,9 @@ public:
     std::string toString (const Tag* t) const override
     {
         int a = t->toInt (0, BYTE);
-        float b = float (10 * int (a >> 2)) * pow (4.f, float (int (a & 0x03) - 2));
+        double b = static_cast<double>(10 * (a >> 2)) * std::pow(4.0, static_cast<double>((a & 0x03) - 2));
 
-        if (b > 1.f) {
+        if (b > 1.0) {
             char buffer[32];
             sprintf (buffer, "%.2f", b );
             return buffer;
@@ -1404,9 +1408,9 @@ public:
     double toDouble (const Tag* t, int ofs) override
     {
         int a = t->toInt (ofs, BYTE);
-        float b = float (10 * int (a >> 2)) * pow (4.f, float (int (a & 0x03) - 2));
+        double b = static_cast<double>(10 * (a >> 2)) * std::pow(4.0, static_cast<double>((a & 0x03) - 2));
 
-        if (b > 1.f) {
+        if (b > 1.0) {
             return b;
         } else {
             return 0.;
@@ -2212,7 +2216,6 @@ const TagAttrib pentaxCameraInfoAttribs[] = {
 };
 
 }
-#endif
 
 
 

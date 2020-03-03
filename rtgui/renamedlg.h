@@ -26,7 +26,7 @@
 
 class CacheImageData;
 
-class RenameDialog :
+class RenameDialog final :
     public Gtk::Dialog
 {
 

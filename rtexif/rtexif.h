@@ -163,14 +163,14 @@ public:
     // Try to get the Tag in the current directory and in subdirectories
     // if lookUpward = true, it will scan the parents TagDirectory up to the root one,
     // but w/o looking into their subdirs
-    virtual Tag*     findTag       (const char* name, bool lookUpward = false) const;
+    Tag*     findTag       (const char* name, bool lookUpward = false) const;
     // Find a all Tags with the given name by scanning the whole tag tree
     std::vector<const Tag*> findTags (const char* name);
     // Find a all Tags with the given ID by scanning the whole tag tree
     std::vector<const Tag*> findTags (int ID);
     // Try to get the Tag in the current directory and in parent directories
     // (won't look into subdirs)
-    virtual Tag*     findTagUpward (const char* name) const;
+    Tag*     findTagUpward (const char* name) const;
     bool             getXMPTagValue (const char* name, char* value) const;
 
     void        keepTag       (int ID);
@@ -191,10 +191,10 @@ public:
     virtual TagDirectory* clone    (TagDirectory* parent) const;
     void     applyChange   (const std::string &field, const Glib::ustring &value);
 
-    virtual void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
-    virtual bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
+    void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
+    bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
                                     const CacheImageData* cfs, const bool flagMode, Glib::KeyFile *keyFile = nullptr, Glib::ustring tagDirName = "") const;
-    virtual void     sort     ();
+    void     sort     ();
 };
 
 // a table of tags: id are offset from beginning and not identifiers

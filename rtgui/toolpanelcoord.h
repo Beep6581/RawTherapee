@@ -315,11 +315,11 @@ public:
 
     // imageareatoollistener interface
     void spotWBselected(int x, int y, Thumbnail* thm = nullptr) override;
-    void sharpMaskSelected(bool sharpMask) override;
+    void sharpMaskSelected(bool sharpMask) override final;
     int getSpotWBRectSize() const override;
     void cropSelectionReady() override;
     void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr) override;
-    ToolBar* getToolBar() const override;
+    ToolBar* getToolBar() const final;
     CropGUIListener* startCropEditing(Thumbnail* thm = nullptr) override;
 
     void updateTPVScrollbar (bool hide);
@@ -327,7 +327,7 @@ public:
 
     // ToolBarListener interface
     void toolSelected (ToolMode tool) override;
-    void editModeSwitchedOff () override;
+    void editModeSwitchedOff () final;
 
     void setEditProvider (EditDataProvider *provider);
 

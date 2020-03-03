@@ -428,7 +428,7 @@ ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const s
             }
         }
 
-        return bestD != INFINITY ? &(bestMatch->second) : nullptr ;
+        return bestD != RT_INFINITY ? &(bestMatch->second) : nullptr ;
     }
 }
 

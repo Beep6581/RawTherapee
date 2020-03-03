@@ -23,7 +23,7 @@
 namespace rtengine
 {
 
-class CieImage :
+class CieImage final :
     public NonCopyable
 {
 private:

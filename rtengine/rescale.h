@@ -20,8 +20,11 @@
 
 #pragma once
 
-#include "array2D.h"
 #include "rt_math.h"
+
+template<typename T>
+class array2D;
+
 
 namespace rtengine
 {

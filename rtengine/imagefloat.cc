@@ -178,10 +178,10 @@ void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* imag
         gm = dgm;
         bm = dbm;
 
-        rm = 1.0 / rm;
-        gm = 1.0 / gm;
-        bm = 1.0 / bm;
-        float mul_lum = 0.299 * rm + 0.587 * gm + 0.114 * bm;
+        rm = 1.f / rm;
+        gm = 1.f / gm;
+        bm = 1.f / bm;
+        float mul_lum = 0.299f * rm + 0.587f * gm + 0.114f * bm;
         rm /= mul_lum;
         gm /= mul_lum;
         bm /= mul_lum;
@@ -368,7 +368,7 @@ Imagefloat::to16() const
 void Imagefloat::normalizeFloat(float srcMinVal, float srcMaxVal)
 {
 
-    float scale = MAXVALD / (srcMaxVal - srcMinVal);
+    float scale = MAXVALF / (srcMaxVal - srcMinVal);
     int w = width;
     int h = height;
 

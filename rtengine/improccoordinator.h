@@ -27,7 +27,6 @@
 #include "imagesource.h"
 #include "improcfun.h"
 #include "LUT.h"
-#include "procevents.h"
 #include "rtengine.h"
 
 #include "../rtgui/threadutils.h"
@@ -55,7 +54,7 @@ class Crop;
   * but using this class' LUT and other precomputed parameters. The main preview area is displaying a non framed Crop object,
   * while detail windows are framed Crop objects.
   */
-class ImProcCoordinator : public StagedImageProcessor
+class ImProcCoordinator final : public StagedImageProcessor
 {
 
     friend class Crop;
@@ -74,9 +73,13 @@ protected:
 
     ColorTemp currWB;
     ColorTemp autoWB;
+    ColorTemp currWBloc;
+    ColorTemp autoWBloc;
+    ColorTemp currWBitc;
 
     double lastAwbEqual;
     double lastAwbTempBias;
+    Glib::ustring lastAwbauto;
 
     Glib::ustring monitorProfile;
     RenderingIntent monitorIntent;

@@ -13,3 +13,7 @@ Build flags: ${CXX_FLAGS}
 Link flags: ${LFLAGS}
 OpenMP support: ${OPTION_OMP}
 MMAP support: ${WITH_MYFILE_MMAP}
+Build OS: ${BUILDINFO_OS}
+Build date: ${BUILDINFO_DATE} UTC
+Build epoch: ${BUILDINFO_EPOCH}
+Build UUID: ${BUILDINFO_UUID}

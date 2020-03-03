@@ -30,7 +30,7 @@
  *          the bar itself, i.e. use render_background (depending on its Gtk::Style)
  *
  */
-class ColoredBar : private BackBuffer, public ColorCaller
+class ColoredBar final : private BackBuffer, public ColorCaller
 {
 
 private:
