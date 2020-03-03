@@ -3897,9 +3897,9 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 
 static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy)
 {
-    //calculate histogram x y in a rane of 158 colors
+    //calculate histogram x y in a range of 158 colors
     //this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
-    // of course we can chnage to be more precise
+    // of course we can change to be more precise
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -5047,7 +5047,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if (extra) {//always used because I amde this choice, brings better results
+    if (extra) {//always used because I made this choice, brings better results
         struct Tempgreen {
             float student;
             int tempref;
