@@ -1,7 +1,6 @@
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wunused-macros"
 #if (__GNUC__ >= 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
 #endif
@@ -63,12 +62,8 @@
    $Date: 2018/06/01 20:36:25 $
  */
 
-#define DCRAW_VERSION "9.28"
+//#define DCRAW_VERSION "9.28"
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#define _USE_MATH_DEFINES
 #include <cctype>
 #include <cerrno>
 #include <fcntl.h>
@@ -95,8 +90,12 @@
 #ifdef WIN32
 #include <sys/utime.h>
 #include <winsock2.h>
+#ifndef strcasecmp
 #define strcasecmp stricmp
+#endif
+#ifndef strncasecmp
 #define strncasecmp strnicmp
+#endif
 typedef __int64 INT64;
 typedef unsigned __int64 UINT64;
 #else
