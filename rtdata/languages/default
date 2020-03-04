@@ -1441,7 +1441,7 @@ TP_COLORAPP_HUE;Hue (h)
 TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
 TP_COLORAPP_ILLUM;Illuminant
 TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and lattitude.
-TP_COLORAPP_ILA;Incandescent A
+TP_COLORAPP_ILA;Incandescent StdA 2856K
 TP_COLORAPP_IL50;D50
 TP_COLORAPP_IL55;D55
 TP_COLORAPP_IL60;D60
@@ -1460,7 +1460,7 @@ TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's 
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 TP_COLORAPP_PRESETCAT02;Preset cat02 automatic
-TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou must change Cat02 adaptation Viewing conditions if need.\nYou can change Temperature and Tint Viewing conditions if need, and other settings if need. 
+TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02 adaptation Viewing conditions if need.\nYou can change Temperature and Tint Viewing conditions if need, and other settings if need. 
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SURROUND;Surround
