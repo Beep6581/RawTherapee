@@ -661,6 +661,7 @@ struct ColorAppearanceParams {
     double        adaplum;
     int           badpixsl;
     Glib::ustring wbmodel;
+    Glib::ustring illum;
     Glib::ustring algo;
     double        contrast;
     double        qcontrast;

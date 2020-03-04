@@ -1374,6 +1374,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     adaplum(16),
     badpixsl(0),
     wbmodel("RawT"),
+    illum("i50"),
     algo("No"),
     contrast(0.0),
     qcontrast(0.0),
@@ -1392,7 +1393,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     autotempout(true),
     ybout(18),
     greenout(1.0),
-    tempsc(5000),
+    tempsc(5003),
     greensc(1.0),
     presetcat02(false)
 {
@@ -1421,6 +1422,7 @@ bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) cons
         && adaplum == other.adaplum
         && badpixsl == other.badpixsl
         && wbmodel == other.wbmodel
+        && illum == other.illum
         && algo == other.algo
         && contrast == other.contrast
         && qcontrast == other.qcontrast
@@ -3214,6 +3216,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorappearance.adaplum, "Color appearance", "AdaptLum", colorappearance.adaplum, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.badpixsl, "Color appearance", "Badpixsl", colorappearance.badpixsl, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.wbmodel, "Color appearance", "Model", colorappearance.wbmodel, keyFile);
+        saveToKeyfile(!pedited || pedited->colorappearance.illum, "Color appearance", "Illum", colorappearance.illum, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.algo, "Color appearance", "Algorithm", colorappearance.algo, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.jlight, "Color appearance", "J-Light", colorappearance.jlight, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.qbright, "Color appearance", "Q-Bright", colorappearance.qbright, keyFile);
@@ -4208,6 +4211,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);
             assignFromKeyfile(keyFile, "Color appearance", "Badpixsl", pedited, colorappearance.badpixsl, pedited->colorappearance.badpixsl);
             assignFromKeyfile(keyFile, "Color appearance", "Model", pedited, colorappearance.wbmodel, pedited->colorappearance.wbmodel);
+            assignFromKeyfile(keyFile, "Color appearance", "Illum", pedited, colorappearance.illum, pedited->colorappearance.illum);
             assignFromKeyfile(keyFile, "Color appearance", "Algorithm", pedited, colorappearance.algo, pedited->colorappearance.algo);
             assignFromKeyfile(keyFile, "Color appearance", "J-Light", pedited, colorappearance.jlight, pedited->colorappearance.jlight);
             assignFromKeyfile(keyFile, "Color appearance", "Q-Bright", pedited, colorappearance.qbright, pedited->colorappearance.qbright);

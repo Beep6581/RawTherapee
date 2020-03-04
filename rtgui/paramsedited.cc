@@ -219,6 +219,7 @@ void ParamsEdited::set(bool v)
     colorappearance.adaplum    = v;
     colorappearance.badpixsl    = v;
     colorappearance.wbmodel    = v;
+    colorappearance.illum    = v;
     colorappearance.algo    = v;
 
     colorappearance.jlight     = v;
@@ -812,6 +813,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.adaplum = colorappearance.adaplum && p.colorappearance.adaplum == other.colorappearance.adaplum;
         colorappearance.badpixsl = colorappearance.badpixsl && p.colorappearance.badpixsl == other.colorappearance.badpixsl;
         colorappearance.wbmodel = colorappearance.wbmodel && p.colorappearance.wbmodel == other.colorappearance.wbmodel;
+        colorappearance.illum = colorappearance.illum && p.colorappearance.illum == other.colorappearance.illum;
         colorappearance.algo = colorappearance.algo && p.colorappearance.algo == other.colorappearance.algo;
         colorappearance.jlight = colorappearance.jlight && p.colorappearance.jlight == other.colorappearance.jlight;
         colorappearance.qbright = colorappearance.qbright && p.colorappearance.qbright == other.colorappearance.qbright;
@@ -2008,6 +2010,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (colorappearance.wbmodel) {
         toEdit.colorappearance.wbmodel = mods.colorappearance.wbmodel;
+    }
+
+    if (colorappearance.illum) {
+        toEdit.colorappearance.illum = mods.colorappearance.illum;
     }
 
     if (colorappearance.algo) {

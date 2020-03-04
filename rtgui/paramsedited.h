@@ -275,6 +275,7 @@ struct ColorAppearanceParamsEdited {
     bool ybscen;
     bool badpixsl;
     bool wbmodel;
+    bool illum;
     bool algo;
     bool jlight;
     bool qbright;

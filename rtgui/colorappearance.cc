@@ -221,6 +221,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     auto m = ProcEventMapper::getInstance();
     Evcatpreset = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CAT02PRESET");
     EvCATAutotempout = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_TEMPOUT");
+    EvCATillum = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ILLUM");
     //preset button cat02
     presetcat02 = Gtk::manage (new Gtk::CheckButton  (M ("TP_COLORAPP_PRESETCAT02")));
     presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TIP"));
@@ -284,6 +285,25 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     wbmodel->set_active (0);
     wbmHBox->pack_start (*wbmodel);
     p1VBox->pack_start (*wbmHBox);
+
+
+    Gtk::HBox* illumHBox = Gtk::manage (new Gtk::HBox ());
+    illumHBox->set_spacing (2);
+    illumHBox->set_tooltip_markup (M ("TP_COLORAPP_ILLUM_TOOLTIP"));
+    Gtk::Label* illumLab = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_ILLUM") + ":"));
+    illumHBox->pack_start (*illumLab, Gtk::PACK_SHRINK);
+    illum = Gtk::manage (new MyComboBoxText ());
+    illum->append (M ("TP_COLORAPP_ILA"));
+    illum->append (M ("TP_COLORAPP_IL50"));
+    illum->append (M ("TP_COLORAPP_IL55"));
+    illum->append (M ("TP_COLORAPP_IL60"));
+    illum->append (M ("TP_COLORAPP_IL65"));
+    illum->append (M ("TP_COLORAPP_IL75"));
+    illum->append (M ("TP_COLORAPP_ILFREE"));
+
+    illum->set_active (0);
+    illumHBox->pack_start (*illum);
+    p1VBox->pack_start (*illumHBox);
 
     Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
     Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
@@ -701,6 +721,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 //   surrconn = surrsource->signal_toggled().connect ( sigc::mem_fun (*this, &ColorAppearance::surrsource_toggled) );
     wbmodelconn = wbmodel->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::wbmodelChanged) );
+    illumconn = illum->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::illumChanged) );
     algoconn = algo->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::algoChanged) );
     surroundconn = surround->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::surroundChanged) );
     surrsrcconn = surrsrc->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::surrsrcChanged) );
@@ -777,6 +798,7 @@ void ColorAppearance::neutral_pressed ()
     greensc->resetValue (false);
     badpixsl->resetValue (false);
     wbmodel->set_active (0);
+    illum->set_active (1);
     toneCurveMode->set_active (0);
     toneCurveMode2->set_active (0);
     toneCurveMode3->set_active (0);
@@ -937,6 +959,30 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     wbmodelconn.block (false);
     // Have to be manually called to handle initial state update
     wbmodelChanged();
+
+    illumconn.block (true);
+
+    if (pedited && !pedited->colorappearance.illum) {
+        illum->set_active (7);
+    } else if (pp->colorappearance.illum == "iA") {
+        illum->set_active (0);
+    } else if (pp->colorappearance.illum == "i50") {
+        illum->set_active (1);
+    } else if (pp->colorappearance.illum == "i55") {
+        illum->set_active (2);
+    } else if (pp->colorappearance.illum == "i60") {
+        illum->set_active (3);
+    } else if (pp->colorappearance.illum == "i65") {
+        illum->set_active (4);
+    } else if (pp->colorappearance.illum == "i75") {
+        illum->set_active (5);
+    } else if (pp->colorappearance.illum == "ifree") {
+        illum->set_active (6);
+    }
+
+    illumconn.block (false);
+    // Have to be manually called to handle initial state update
+    illumChanged();
 
     algoconn.block (true);
 
@@ -1123,6 +1169,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.surround      = surround->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->colorappearance.surrsrc      = surrsrc->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->colorappearance.wbmodel       = wbmodel->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->colorappearance.illum       = illum->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->colorappearance.algo          = algo->get_active_text() != M ("GENERAL_UNCHANGED");
         //     pedited->colorappearance.surrsource    = !surrsource->get_inconsistent();
         pedited->colorappearance.gamut         = !gamut->get_inconsistent();
@@ -1173,7 +1220,22 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorappearance.wbmodel = "RawTCAT02";
     } else if (wbmodel->get_active_row_number() == 2) {
         pp->colorappearance.wbmodel = "free";
+    }
 
+    if (illum->get_active_row_number() == 0) {
+        pp->colorappearance.illum = "iA";
+    } else if (illum->get_active_row_number() == 1) {
+        pp->colorappearance.illum = "i50";
+    } else if (illum->get_active_row_number() == 2) {
+        pp->colorappearance.illum = "i55";
+    } else if (illum->get_active_row_number() == 3) {
+        pp->colorappearance.illum = "i60";
+    } else if (illum->get_active_row_number() == 4) {
+        pp->colorappearance.illum = "i65";
+    } else if (illum->get_active_row_number() == 5) {
+        pp->colorappearance.illum = "i75";
+    } else if (illum->get_active_row_number() == 6) {
+        pp->colorappearance.illum = "ifree";
     }
 
     if (algo->get_active_row_number() == 0) {
@@ -1358,6 +1420,7 @@ void ColorAppearance::presetcat02pressed ()
     greensc->resetValue (false);
     badpixsl->resetValue (false);
     wbmodel->set_active (0);
+    illum->set_active (1);
     toneCurveMode->set_active (0);
     toneCurveMode2->set_active (0);
     toneCurveMode3->set_active (0);
@@ -1427,6 +1490,7 @@ void ColorAppearance::presetcat02pressed ()
     ybscen->setAutoValue (true);
     surrsrc->set_active (0);
     wbmodel->set_active (0);
+    illum->set_active (1);
     tempsc->resetValue (false);
     greensc->resetValue (false);
     adapscen->resetValue (false);
@@ -1884,19 +1948,60 @@ void ColorAppearance::surroundChanged ()
 void ColorAppearance::wbmodelChanged ()
 {
     if (wbmodel->get_active_row_number() == 0 || wbmodel->get_active_row_number() == 1) {
+        illum->hide();
         tempsc->hide();
         greensc->hide();
+        tempsc->setValue (5003);
+        greensc->setValue (1);   
     }
 
     if (wbmodel->get_active_row_number() == 2) {
         tempsc->show();
         greensc->show();
+        illum->show();
     }
 
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvCATMethodWB, wbmodel->get_active_text ());
     }
 }
+
+void ColorAppearance::illumChanged ()
+{
+    if (illum->get_active_row_number() == 0) {
+            tempsc->setValue (2856);
+            tempsc->set_sensitive(false);
+            greensc->set_sensitive(false);
+    } else if (illum->get_active_row_number() == 1) {
+            tempsc->setValue (5003);
+            tempsc->set_sensitive(false);
+            greensc->set_sensitive(false);
+    } else if (illum->get_active_row_number() == 2) {
+            tempsc->setValue (5503);
+            tempsc->set_sensitive(false);
+            greensc->set_sensitive(false);
+    } else if (illum->get_active_row_number() == 3) {
+            tempsc->setValue (6000);
+            tempsc->set_sensitive(false);
+            greensc->set_sensitive(false);
+    } else if (illum->get_active_row_number() == 4) {
+            tempsc->setValue (6504);
+            tempsc->set_sensitive(false);
+            greensc->set_sensitive(false);
+    } else if (illum->get_active_row_number() == 5) {
+            tempsc->setValue (7504);
+            tempsc->set_sensitive(false);
+            greensc->set_sensitive(false);
+    } else if (illum->get_active_row_number() == 6) {
+            tempsc->set_sensitive(true);
+            greensc->set_sensitive(true);
+    }
+
+    if (listener && (multiImage || getEnabled()) ) {
+        listener->panelChanged (EvCATillum, illum->get_active_text ());
+    }
+}
+
 
 
 void ColorAppearance::algoChanged ()
@@ -2000,6 +2105,7 @@ void ColorAppearance::setBatchMode (bool batchMode)
     surround->append (M ("GENERAL_UNCHANGED"));
     surrsrc->append (M ("GENERAL_UNCHANGED"));
     wbmodel->append (M ("GENERAL_UNCHANGED"));
+    illum->append (M ("GENERAL_UNCHANGED"));
     algo->append (M ("GENERAL_UNCHANGED"));
     toneCurveMode->append (M ("GENERAL_UNCHANGED"));
     toneCurveMode2->append (M ("GENERAL_UNCHANGED"));
