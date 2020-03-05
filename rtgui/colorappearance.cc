@@ -33,7 +33,7 @@
 
 #define MINTEMP0 2000   //1200
 #define MAXTEMP0 12000  //12000
-#define CENTERTEMP0 5000
+#define CENTERTEMP0 5003
 #define MINGREEN0 0.8
 #define MAXGREEN0 1.2
 
@@ -242,7 +242,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p1VBox = Gtk::manage ( new Gtk::VBox());
     p1VBox->set_spacing (2);
 
-    degree  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   100.));
+    degree  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   90.));
 
     if (degree->delay < options.adjusterMaxDelay) {
         degree->delay = options.adjusterMaxDelay;
@@ -294,6 +294,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     illumHBox->pack_start (*illumLab, Gtk::PACK_SHRINK);
     illum = Gtk::manage (new MyComboBoxText ());
     illum->append (M ("TP_COLORAPP_ILA"));
+    illum->append (M ("TP_COLORAPP_IL41"));
     illum->append (M ("TP_COLORAPP_IL50"));
     illum->append (M ("TP_COLORAPP_IL55"));
     illum->append (M ("TP_COLORAPP_IL60"));
@@ -628,7 +629,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 //   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small.png"));
 //   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small.png"));
 
-    degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   100.));
+    degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   90.));
 
     if (degreeout->delay < options.adjusterMaxDelay) {
         degreeout->delay = options.adjusterMaxDelay;
@@ -646,7 +647,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
     greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
     ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_MEANLUMINANCE"), 5, 90, 1, 18));
-    tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP_TOOLTIP"));
+    tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP2_TOOLTIP"));
     tempout->throwOnButtonRelease();
     tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
 
@@ -798,7 +799,7 @@ void ColorAppearance::neutral_pressed ()
     greensc->resetValue (false);
     badpixsl->resetValue (false);
     wbmodel->set_active (0);
-    illum->set_active (1);
+    illum->set_active (2);
     toneCurveMode->set_active (0);
     toneCurveMode2->set_active (0);
     toneCurveMode3->set_active (0);
@@ -963,21 +964,23 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     illumconn.block (true);
 
     if (pedited && !pedited->colorappearance.illum) {
-        illum->set_active (7);
+        illum->set_active (8);
     } else if (pp->colorappearance.illum == "iA") {
         illum->set_active (0);
-    } else if (pp->colorappearance.illum == "i50") {
+    } else if (pp->colorappearance.illum == "i41") {
         illum->set_active (1);
-    } else if (pp->colorappearance.illum == "i55") {
+    } else if (pp->colorappearance.illum == "i50") {
         illum->set_active (2);
-    } else if (pp->colorappearance.illum == "i60") {
+    } else if (pp->colorappearance.illum == "i55") {
         illum->set_active (3);
-    } else if (pp->colorappearance.illum == "i65") {
+    } else if (pp->colorappearance.illum == "i60") {
         illum->set_active (4);
-    } else if (pp->colorappearance.illum == "i75") {
+    } else if (pp->colorappearance.illum == "i65") {
         illum->set_active (5);
-    } else if (pp->colorappearance.illum == "ifree") {
+    } else if (pp->colorappearance.illum == "i75") {
         illum->set_active (6);
+    } else if (pp->colorappearance.illum == "ifree") {
+        illum->set_active (7);
     }
 
     illumconn.block (false);
@@ -1225,16 +1228,18 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     if (illum->get_active_row_number() == 0) {
         pp->colorappearance.illum = "iA";
     } else if (illum->get_active_row_number() == 1) {
-        pp->colorappearance.illum = "i50";
+        pp->colorappearance.illum = "i41";
     } else if (illum->get_active_row_number() == 2) {
-        pp->colorappearance.illum = "i55";
+        pp->colorappearance.illum = "i50";
     } else if (illum->get_active_row_number() == 3) {
-        pp->colorappearance.illum = "i60";
+        pp->colorappearance.illum = "i55";
     } else if (illum->get_active_row_number() == 4) {
-        pp->colorappearance.illum = "i65";
+        pp->colorappearance.illum = "i60";
     } else if (illum->get_active_row_number() == 5) {
-        pp->colorappearance.illum = "i75";
+        pp->colorappearance.illum = "i65";
     } else if (illum->get_active_row_number() == 6) {
+        pp->colorappearance.illum = "i75";
+    } else if (illum->get_active_row_number() == 7) {
         pp->colorappearance.illum = "ifree";
     }
 
@@ -1420,7 +1425,7 @@ void ColorAppearance::presetcat02pressed ()
     greensc->resetValue (false);
     badpixsl->resetValue (false);
     wbmodel->set_active (0);
-    illum->set_active (1);
+    illum->set_active (2);
     toneCurveMode->set_active (0);
     toneCurveMode2->set_active (0);
     toneCurveMode3->set_active (0);
@@ -1432,7 +1437,7 @@ void ColorAppearance::presetcat02pressed ()
     gamutconn.block (false);
     degree->setAutoValue (true);
     degree->resetValue (false);
-    degree->setValue(80);
+    degree->setValue(90);
     adapscen->resetValue (false);
     adapscen->setAutoValue (true);
     degreeout->resetValue (false);
@@ -1447,7 +1452,7 @@ void ColorAppearance::presetcat02pressed ()
     ybscen->setValue(18);
     surround->set_active (0);
     adaplum->setValue(400.);
-    degreeout->setValue(80);
+    degreeout->setValue(90);
     ybout->setValue(18);
     tempout->setValue (nexttemp);
     greenout->setValue (nextgreen);
@@ -1490,7 +1495,7 @@ void ColorAppearance::presetcat02pressed ()
     ybscen->setAutoValue (true);
     surrsrc->set_active (0);
     wbmodel->set_active (0);
-    illum->set_active (1);
+    illum->set_active (2);
     tempsc->resetValue (false);
     greensc->resetValue (false);
     adapscen->resetValue (false);
@@ -1973,26 +1978,30 @@ void ColorAppearance::illumChanged ()
             tempsc->set_sensitive(false);
             greensc->set_sensitive(false);
     } else if (illum->get_active_row_number() == 1) {
-            tempsc->setValue (5003);
+            tempsc->setValue (4100);
             tempsc->set_sensitive(false);
             greensc->set_sensitive(false);
     } else if (illum->get_active_row_number() == 2) {
-            tempsc->setValue (5503);
+            tempsc->setValue (5003);
             tempsc->set_sensitive(false);
             greensc->set_sensitive(false);
     } else if (illum->get_active_row_number() == 3) {
-            tempsc->setValue (6000);
+            tempsc->setValue (5503);
             tempsc->set_sensitive(false);
             greensc->set_sensitive(false);
     } else if (illum->get_active_row_number() == 4) {
-            tempsc->setValue (6504);
+            tempsc->setValue (6000);
             tempsc->set_sensitive(false);
             greensc->set_sensitive(false);
     } else if (illum->get_active_row_number() == 5) {
-            tempsc->setValue (7504);
+            tempsc->setValue (6504);
             tempsc->set_sensitive(false);
             greensc->set_sensitive(false);
     } else if (illum->get_active_row_number() == 6) {
+            tempsc->setValue (7504);
+            tempsc->set_sensitive(false);
+            greensc->set_sensitive(false);
+    } else if (illum->get_active_row_number() == 7) {
             tempsc->set_sensitive(true);
             greensc->set_sensitive(true);
     }
