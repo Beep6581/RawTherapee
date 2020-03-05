@@ -3897,7 +3897,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 
 static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy)
 {
-    //calculate histogram x y in a range of 158 colors
+    //calculate histogram x y in a range of 190 colors
     //this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
     // of course we can change to be more precise
 #ifdef _OPENMP
@@ -4000,279 +4000,345 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                         nh = 32;
                     } else if (yc[y][x] < 0.32f) {
                         nh = 33;
-                    } else if (yc[y][x] < 0.34f) {
+                    } else if (yc[y][x] < 0.33f) {
                         nh = 34;
-                    } else if (yc[y][x] < 0.37f) {
+                    } else if (yc[y][x] < 0.335f) {
                         nh = 35;
-                    } else if (yc[y][x] < 0.4f) {
+                    } else if (yc[y][x] < 0.34f) {
                         nh = 36;
-                    } else if (yc[y][x] < 0.45f) {
+                    } else if (yc[y][x] < 0.35f) {
                         nh = 37;
-                    } else if (yc[y][x] < 0.5f) {
+                    } else if (yc[y][x] < 0.37f) {
                         nh = 38;
-                    } else if (yc[y][x] < 0.55f) {
+                    } else if (yc[y][x] < 0.4f) {
                         nh = 39;
-                    } else if (yc[y][x] < 0.7f) {
+                    } else if (yc[y][x] < 0.45f) {
                         nh = 40;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 41;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 42;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 43;
                     }
                 } else if (xc[y][x] < 0.335f && yc[y][x] > 0.1f) {//neutral
                     if (yc[y][x] < 0.2f) {
-                        nh = 41;
-                    } else if (yc[y][x] < 0.24f) {
-                        nh = 42;
-                    } else if (yc[y][x] < 0.29f) {
-                        nh = 43;
-                    } else if (yc[y][x] < 0.32f) {
                         nh = 44;
-                    } else if (yc[y][x] < 0.33f) {
+                    } else if (yc[y][x] < 0.24f) {
                         nh = 45;
-                    } else if (yc[y][x] < 0.34f) {
+                    } else if (yc[y][x] < 0.29f) {
                         nh = 46;
-                    } else if (yc[y][x] < 0.35f) {
+                    } else if (yc[y][x] < 0.32f) {
                         nh = 47;
-                    } else if (yc[y][x] < 0.36f) {
+                    } else if (yc[y][x] < 0.33f) {
                         nh = 48;
-                    } else if (yc[y][x] < 0.37f) {
-                        nh = 47;
-                    } else if (yc[y][x] < 0.38f) {
-                        nh = 48;
-                    } else if (yc[y][x] < 0.4f) {
+                    } else if (yc[y][x] < 0.335f) {
                         nh = 49;
-                    } else if (yc[y][x] < 0.45f) {
+                    } else if (yc[y][x] < 0.34f) {
                         nh = 50;
-                    } else if (yc[y][x] < 0.5f) {
+                    } else if (yc[y][x] < 0.345f) {
                         nh = 51;
-                    } else if (yc[y][x] < 0.55f) {
+                    } else if (yc[y][x] < 0.35f) {
                         nh = 52;
-                    } else if (yc[y][x] < 0.7f) {
+                    } else if (yc[y][x] < 0.355f) {
                         nh = 53;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 54;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 55;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 56;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 57;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 58;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 59;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 60;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 61;
+                    }
+                } else if (xc[y][x] < 0.340f && yc[y][x] > 0.1f) {//neutral
+                    if (yc[y][x] < 0.2f) {
+                        nh = 62;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 63;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 64;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 65;
+                    } else if (yc[y][x] < 0.325f) {
+                        nh = 66;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 67;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 68;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 69;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 70;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 71;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 72;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 73;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 74;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 75;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 76;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 77;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 78;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 79;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 80;
                     }
                 } else if (xc[y][x] < 0.345f && yc[y][x] > 0.1f) {//neutral  37
                     if (yc[y][x] < 0.2f) {
-                        nh = 54;
+                        nh = 81;
                     } else if (yc[y][x] < 0.24f) {
-                        nh = 55;
+                        nh = 82;
                     } else if (yc[y][x] < 0.29f) {
-                        nh = 56;
+                        nh = 83;
                     } else if (yc[y][x] < 0.32f) {
-                        nh = 57;
-                    } else if (yc[y][x] < 0.33f) {//34
-                        nh = 58;
+                        nh = 84;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 85;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 86;
                     } else if (yc[y][x] < 0.34f) {
-                        nh = 59;
-                    } else if (yc[y][x] < 0.35f) {//34
-                        nh = 60;
-                    } else if (yc[y][x] < 0.36f) {//34
-                        nh = 61;
+                        nh = 87;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 88;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 89;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 90;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 91;
                     } else if (yc[y][x] < 0.37f) {
-                        nh = 62;
+                        nh = 92;
                     } else if (yc[y][x] < 0.38f) {
-                        nh = 63;
+                        nh = 93;
                     } else if (yc[y][x] < 0.39f) {
-                        nh = 64;
+                        nh = 94;
                     } else if (yc[y][x] < 0.4f) {
-                        nh = 65;
+                        nh = 95;
                     } else if (yc[y][x] < 0.42f) {
-                        nh = 66;
+                        nh = 96;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 67;
+                        nh = 97;
                     } else if (yc[y][x] < 0.48f) {
-                        nh = 68;
+                        nh = 98;
                     } else if (yc[y][x] < 0.5f) {
-                        nh = 69;
+                        nh = 99;
                     } else if (yc[y][x] < 0.55f) {
-                        nh = 70;
+                        nh = 100;
                     } else if (yc[y][x] < 0.65f) {
-                        nh = 71;
+                        nh = 101;
                     }
                 } else if (xc[y][x] < 0.355f && yc[y][x] > 0.1f) {//neutral  37
                     if (yc[y][x] < 0.2f) {
-                        nh = 72;
+                        nh = 102;
                     } else if (yc[y][x] < 0.24f) {
-                        nh = 73;
+                        nh = 103;
                     } else if (yc[y][x] < 0.29f) {
-                        nh = 74;
+                        nh = 104;
                     } else if (yc[y][x] < 0.32f) {
-                        nh = 75;
-                    } else if (yc[y][x] < 0.33f) {//34
-                        nh = 76;
+                        nh = 105;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 106;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 107;
                     } else if (yc[y][x] < 0.34f) {
-                        nh = 77;
-                    } else if (yc[y][x] < 0.35f) {//34
-                        nh = 78;
-                    } else if (yc[y][x] < 0.36f) {//34
-                        nh = 79;
+                        nh = 108;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 109;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 110;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 111;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 112;
                     } else if (yc[y][x] < 0.37f) {
-                        nh = 80;
+                        nh = 113;
                     } else if (yc[y][x] < 0.38f) {
-                        nh = 81;
+                        nh = 114;
                     } else if (yc[y][x] < 0.39f) {
-                        nh = 82;
+                        nh = 115;
                     } else if (yc[y][x] < 0.4f) {
-                        nh = 83;
+                        nh = 116;
                     } else if (yc[y][x] < 0.42f) {
-                        nh = 84;
+                        nh = 117;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 85;
+                        nh = 118;
                     } else if (yc[y][x] < 0.48f) {
-                        nh = 86;
+                        nh = 119;
                     } else if (yc[y][x] < 0.5f) {
-                        nh = 87;
+                        nh = 120;
                     } else if (yc[y][x] < 0.55f) {
-                        nh = 88;
+                        nh = 121;
                     } else if (yc[y][x] < 0.65f) {
-                        nh = 89;
+                        nh = 122;
                     }
                 } else if (xc[y][x] < 0.365f && yc[y][x] > 0.15f) {  //0.4
                     if (yc[y][x] < 0.2f) {
-                        nh = 90;
-                    } else if (yc[y][x] < 0.24f) {
-                        nh = 91;
-                    } else if (yc[y][x] < 0.29f) {
-                        nh = 92;
-                    } else if (yc[y][x] < 0.32f) {
-                        nh = 93;
-                    } else if (yc[y][x] < 0.33f) {
-                        nh = 94;
-                    } else if (yc[y][x] < 0.34f) {
-                        nh = 95;
-                    } else if (yc[y][x] < 0.36f) {
-                        nh = 96;
-                    } else if (yc[y][x] < 0.37f) {
-                        nh = 97;
-                    } else if (yc[y][x] < 0.38f) {
-                        nh = 98;
-                    } else if (yc[y][x] < 0.39f) {
-                        nh = 99;
-                    } else if (yc[y][x] < 0.4f) {
-                        nh = 100;
-                    } else if (yc[y][x] < 0.42f) {
-                        nh = 101;
-                    } else if (yc[y][x] < 0.45f) {
-                        nh = 102;
-                    } else if (yc[y][x] < 0.5f) {
-                        nh = 103;
-                    } else if (yc[y][x] < 0.55f) {
-                        nh = 104;
-                    } else if (yc[y][x] < 0.63f) {
-                        nh = 105;
-                    }
-                } else if (xc[y][x] < 0.405f && yc[y][x] > 0.15f) {//45
-                    if (yc[y][x] < 0.2f) {
-                        nh = 106;
-                    } else if (yc[y][x] < 0.24f) {
-                        nh = 107;
-                    } else if (yc[y][x] < 0.29f) {
-                        nh = 108;
-                    } else if (yc[y][x] < 0.32f) {
-                        nh = 109;
-                    } else if (yc[y][x] < 0.34f) {
-                        nh = 110;
-                    } else if (yc[y][x] < 0.37f) {
-                        nh = 111;
-                    } else if (yc[y][x] < 0.4f) {
-                        nh = 112;
-                    } else if (yc[y][x] < 0.45f) {
-                        nh = 113;
-                    } else if (yc[y][x] < 0.5f) {
-                        nh = 114;
-                    } else if (yc[y][x] < 0.55f) {
-                        nh = 115;
-                    } else if (yc[y][x] < 0.6f) {
-                        nh = 116;
-                    }
-                } else if (xc[y][x] < 0.445f && yc[y][x] > 0.15f) {//45
-                    if (yc[y][x] < 0.2f) {
-                        nh = 117;
-                    } else if (yc[y][x] < 0.24f) {
-                        nh = 118;
-                    } else if (yc[y][x] < 0.29f) {
-                        nh = 119;
-                    } else if (yc[y][x] < 0.32f) {
-                        nh = 120;
-                    } else if (yc[y][x] < 0.34f) {
-                        nh = 121;
-                    } else if (yc[y][x] < 0.37f) {
-                        nh = 122;
-                    } else if (yc[y][x] < 0.4f) {
                         nh = 123;
-                    } else if (yc[y][x] < 0.45f) {
-                        nh = 124;
-                    } else if (yc[y][x] < 0.5f) {
-                        nh = 125;
-                    } else if (yc[y][x] < 0.55f) {
-                        nh = 126;
-                    } else if (yc[y][x] < 0.58f) {
-                        nh = 127;
-                    }
-                } else if (xc[y][x] < 0.495f && yc[y][x] > 0.15f) {
-                    if (yc[y][x] < 0.2f) {
-                        nh = 128;
                     } else if (yc[y][x] < 0.24f) {
-                        nh = 129;
+                        nh = 124;
                     } else if (yc[y][x] < 0.29f) {
-                        nh = 130;
+                        nh = 125;
                     } else if (yc[y][x] < 0.32f) {
-                        nh = 131;
+                        nh = 126;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 127;
                     } else if (yc[y][x] < 0.34f) {
-                        nh = 132;
+                        nh = 128;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 129;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 130;
                     } else if (yc[y][x] < 0.37f) {
+                        nh = 131;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 132;
+                    } else if (yc[y][x] < 0.39f) {
                         nh = 133;
                     } else if (yc[y][x] < 0.4f) {
                         nh = 134;
-                    } else if (yc[y][x] < 0.45f) {
+                    } else if (yc[y][x] < 0.42f) {
                         nh = 135;
-                    } else if (yc[y][x] < 0.5f) {
+                    } else if (yc[y][x] < 0.45f) {
                         nh = 136;
-                    } else if (yc[y][x] < 0.55f) {
+                    } else if (yc[y][x] < 0.5f) {
                         nh = 137;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 138;
+                    } else if (yc[y][x] < 0.63f) {
+                        nh = 139;
+                    }
+                } else if (xc[y][x] < 0.405f && yc[y][x] > 0.15f) {//45
+                    if (yc[y][x] < 0.2f) {
+                        nh = 140;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 141;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 142;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 143;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 144;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 145;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 146;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 147;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 148;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 149;
+                    } else if (yc[y][x] < 0.6f) {
+                        nh = 150;
+                    }
+                } else if (xc[y][x] < 0.445f && yc[y][x] > 0.15f) {//45
+                    if (yc[y][x] < 0.2f) {
+                        nh = 151;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 152;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 153;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 154;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 155;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 156;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 157;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 158;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 159;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 160;
+                    } else if (yc[y][x] < 0.58f) {
+                        nh = 161;
+                    }
+                } else if (xc[y][x] < 0.495f && yc[y][x] > 0.15f) {
+                    if (yc[y][x] < 0.2f) {
+                        nh = 162;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 163;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 164;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 165;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 166;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 167;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 168;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 169;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 170;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 171;
                     }
                 } else if (xc[y][x] < 0.545f && yc[y][x] > 0.15f) {
                     if (yc[y][x] < 0.2f) {
-                        nh = 138;
+                        nh = 172;
                     } else if (yc[y][x] < 0.24f) {
-                        nh = 139;
+                        nh = 173;
                     } else if (yc[y][x] < 0.29f) {
-                        nh = 140;
+                        nh = 174;
                     } else if (yc[y][x] < 0.32f) {
-                        nh = 141;
+                        nh = 175;
                     } else if (yc[y][x] < 0.34f) {
-                        nh = 142;
+                        nh = 176;
                     } else if (yc[y][x] < 0.37f) {
-                        nh = 143;
+                        nh = 177;
                     } else if (yc[y][x] < 0.4f) {
-                        nh = 144;
+                        nh = 178;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 145;
+                        nh = 179;
                     } else if (yc[y][x] < 0.5f) {
-                        nh = 146;
+                        nh = 180;
                     }
                 } else if (xc[y][x] < 0.595f && yc[y][x] > 0.15f) {
                     if (yc[y][x] < 0.22f) {
-                        nh = 147;
+                        nh = 181;
                     } else if (yc[y][x] < 0.25f) {
-                        nh = 148;
+                        nh = 182;
                     } else if (yc[y][x] < 0.3f) {
-                        nh = 149;
+                        nh = 183;
                     } else if (yc[y][x] < 0.35f) {
-                        nh = 150;
+                        nh = 184;
                     } else if (yc[y][x] < 0.4f) {
-                        nh = 151;
+                        nh = 185;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 152;
+                        nh = 186;
                     }
                 } else if (xc[y][x] < 0.65f && yc[y][x] > 0.12f) {
                     if (yc[y][x] < 0.25f) {
-                        nh = 153;
+                        nh = 187;
                     } else if (yc[y][x] < 0.3f) {
-                        nh = 154;
+                        nh = 188;
                     } else if (yc[y][x] < 0.35f) {
-                        nh = 155;
+                        nh = 189;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 156;
+                        nh = 190;
                     }
                 } else if (xc[y][x] < 0.75f && yc[y][x] > 0.1f) {
-                    nh = 157;
+                    nh = 191;
                 }
                 if (nh >= 0) {
                     histxythr[nh]++;
@@ -4714,7 +4780,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     float gmm[N_t];
     float bmm[N_t];
 
-    constexpr int siza = 158;//size of histogram
+    constexpr int siza = 192;//size of histogram
 
     //tempref and greenref are camera wb values.
     // I used them by default to select good spectral values !!
