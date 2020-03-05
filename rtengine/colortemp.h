@@ -367,6 +367,9 @@ public:
     static const double Colorlab_19_n69_spect[97];
     static const double Colorlab_n80_10_spect[97];
     static const double Colorlab_n80_26_spect[97];
+    static const double JDC468_greyc14_66_spect[97];
+    static const double JDC468_greym13_325_spect[97];
+    static const double JDC468_greyf26_156_spect[97];
 
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z);
     static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z);
