@@ -4764,7 +4764,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 203 + 1;//200 number of reference spectral colors, I think it is enough to retrieve good values
+    constexpr int Nc = 200 + 1;//200 number of reference spectral colors, I think it is enough to retrieve good values
     array2D<float> Tx(N_t, Nc);
     array2D<float> Ty(N_t, Nc);
     array2D<float> Tz(N_t, Nc);
@@ -5299,8 +5299,8 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 {
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
-    const int bfw = W / 10 + ((W % 10) > 0 ? 1 : 0);//10 arbitrary value  ; perhaps 4 or 5 or 20
-    const int bfh = H / 10 + ((H % 10) > 0 ? 1 : 0);
+    const int bfw = W / 9 + ((W % 9) > 0 ? 1 : 0);//10 arbitrary value  ; perhaps 4 or 5 or 20
+    const int bfh = H / 9 + ((H % 9) > 0 ? 1 : 0);
 
     if (! greenloc) {
         greenloc(bfw, bfh);
@@ -5350,9 +5350,9 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     #pragma omp parallel for
 #endif
     for (int i = 0; i < bfh; ++i) {
-        const int ii = i * 10;
+        const int ii = i * 9;
         if (ii < H) {
-            for (int j = 0, jj = 0; jj < W; ++j, jj += 10) {
+            for (int j = 0, jj = 0; j < bfw; ++j, jj += 9) {
                 redloc[i][j] = red[ii][jj] * multip;
                 greenloc[i][j] = green[ii][jj] * multip;
                 blueloc[i][j] = blue[ii][jj] * multip;
@@ -5552,8 +5552,8 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
-        const int bfw = W / 10 + ((W % 10) > 0 ? 1 : 0);// 10 arbitrary value  ; perhaps 4 or 5 or 20
-        const int bfh = H / 10 + ((H % 10) > 0 ? 1 : 0);
+        const int bfw = W / 9 + ((W % 9) > 0 ? 1 : 0);// 10 arbitrary value  ; perhaps 4 or 5 or 20
+        const int bfh = H / 9 + ((H % 9) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
     }
 

@@ -2408,6 +2408,7 @@ const double ColorTemp::Colorlab_n80_26_spect[97] = {
     -0.2047, -0.205,    -0.2069, -0.208,    -0.2099, -0.21, -0.2115, -0.21, -0.2106, -0.209,    -0.2086,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 };
+/*
 //0,1767000	0,2207000	0,3142000	0,5269000	0,7018000	0,7605000	0,7580000	0,7366000	0,7182000	0,6929000	0,6661000	0,6542000	
 //0,6420000	0,6085000	0,5752000	0,5728000	0,5723000	0,5318000	0,4982000	0,5226000	0,5670000	0,5929000	0,5977000	0,5975000	
 //0,6002000	0,6065000	0,6177000	0,6352000	0,6526000	0,6623000	0,6633000	0,6593000	0,6517000	0,6479000	0,6607000	0,6908000																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																							
@@ -2442,7 +2443,7 @@ const double ColorTemp::JDC468_greyf26_156_spect[97] = {
     0.2579, 0.26, 0.2653, 0.27, 0.2765, 0.28, 0.2941, 0.30, 0.3126, 0.32, 0.3230, 0.323, 0.3238, 0.32, 0.3189, 0.31, 0.3091, 0.302, 0.3043, 0.31, 0.3200, 0.34, 0.3579,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 };
-
+*/
 
 /*
  *      Name:   XYZtoCorColorTemp.c
@@ -3484,8 +3485,8 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         J570_NeuQ1_spect, J570_NeuS7_spect,
         J570_NeuV10_spect, J570_NeuW18_spect, J570_NeuZ14_spect, //189
         J570_NeuC18_spect, J570_NeuD17_spect, J570_NeuJ11_spect, J570_NeuL4_spect, Colorlab_n72_n2_spect,
-        Colorlab_10_n70_spect, Colorlab_n33_n70_spect, Colorlab_n8_n74_spect, Colorlab_19_n69_spect, Colorlab_n80_10_spect, Colorlab_n80_26_spect,
-        JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect
+        Colorlab_10_n70_spect, Colorlab_n33_n70_spect, Colorlab_n8_n74_spect, Colorlab_19_n69_spect, Colorlab_n80_10_spect, Colorlab_n80_26_spect
+        /*JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect*/
     };
 
 
