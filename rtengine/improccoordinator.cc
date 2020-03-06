@@ -434,7 +434,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = imgsrc->getWB();
                 lastAwbauto = ""; //reinitialize auto
             } else if (autowb) {
-                if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
+                if (params->wb.method == "autitcgreen" || lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
                     double tempitc = 5000.f;
                     double greenitc = 1.;
