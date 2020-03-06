@@ -367,6 +367,9 @@ public:
     static const double Colorlab_19_n69_spect[97];
     static const double Colorlab_n80_10_spect[97];
     static const double Colorlab_n80_26_spect[97];
+    static const double Colorlab_n80_5_9_5_9spect[97];
+//    static const double Colorlab_n57_5_6_9spect[97];
+    
     /*
     static const double JDC468_greyc14_66_spect[97];
     static const double JDC468_greym13_325_spect[97];

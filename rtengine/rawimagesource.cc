@@ -4412,19 +4412,19 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
-    This algorithm try to find temperature correlation between 20 to 203 color between 200 spectral color and about 20 to 55 color found in the image, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
+    This algorithm try to find temperature correlation between 20 to 201 color between 200 spectral color and about 20 to 55 color found in the image, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
 
     I have test many many algorithms to find the first one that work :)
     Probably (sure) there are improvement to do...
 
     I have create a table temperature with temp and white point with 100 values between 2000K and 12000K we can obviously  change these values, more...with different steps
-    I have create or recuparate and transformed 203 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
-    I think this value of 203 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
+    I have create or recuparate and transformed 201 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
+    I think this value of 201 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
     Of course we can increase this number :)
 
     1) for the current raw file we create a table for each temp of RGB multipliers
     2) then, I choose the "camera temp" to initialize calculation (why not)
-    3) for this temp, I calculated XYZ values for the 203 spectral datas
+    3) for this temp, I calculated XYZ values for the 201 spectral datas
     4) then I create for the image an "histogram", but for xyY (Cie 1931 color space)
     5) for each pixel (in fact to accelerate only 1/10 for and 1/10 for y), I determine for each couple xy, the number of occurences
     6) I sort this result in ascending order
@@ -4764,7 +4764,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 200 + 1;//200 number of reference spectral colors, I think it is enough to retrieve good values
+    constexpr int Nc = 201 + 1;//200 number of reference spectral colors, I think it is enough to retrieve good values
     array2D<float> Tx(N_t, Nc);
     array2D<float> Ty(N_t, Nc);
     array2D<float> Tz(N_t, Nc);
@@ -4863,7 +4863,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
-    //call tempxy to calculate for 203 color references Temp and XYZ with cat02
+    //call tempxy to calculate for 201 color references Temp and XYZ with cat02
 
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
@@ -4998,7 +4998,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     estimchrom /= sizcu4;
-
+    if (settings->verbose) {   
+        printf("estimchrom=%f\n", estimchrom);
+    }
     if (settings->itcwb_sort) { //sort in ascending with chroma values
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
@@ -5021,7 +5023,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
 
     if (settings->itcwb_thres > 39) {
-        maxnb = 203 / settings->itcwb_thres;
+        maxnb = 201 / settings->itcwb_thres;
     }
 
     for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
@@ -5178,13 +5180,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
 
                 //degrade correllation with color high chroma, but not too much...seems not good, but keep in case of??
-                if (estimchrom < 0.025f) {//very smal value of chroma for image
-
+                //I suppress this old behavior replace by tint += 0.02
+ /*               if (estimchrom < 0.025f) {//very smal value of chroma for image
+                    //enable strong values
                     good_spectral[0] = true;//blue
                     good_spectral[11] = true;//green
                     good_spectral[62] = true;//red
                 }
-
+*/
                 int kkg = -1;
                 for (int i = 0; i < Nc ; ++i) {
                     if (good_spectral[i]) {
@@ -5253,7 +5256,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
-
+        if (estimchrom < 0.025f) {
+            float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
+            greenitc += ac;
+        }
     }
 
     avg_rm = 10000.f * rmm[goodref];
