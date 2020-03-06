@@ -4493,14 +4493,30 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         float snedecor;//1. actually but put in case of confiance interval
     } WbGreen;
     //green (tint) values between 0.4 to 4.0
-    constexpr WbGreen gree[118] = {//symmetric coefficient between 0.717 and 1.40
+    constexpr WbGreen gree[134] = {//symmetric coefficient between 0.717 and 1.40
         {0.400, 1.f},
+        {0.420, 1.f},
+        {0.440, 1.f},
+        {0.460, 1.f},
+        {0.480, 1.f},
         {0.500, 1.f},
+        {0.520, 1.f},
+        {0.540, 1.f},
         {0.550, 1.f},
+        {0.560, 1.f},
+        {0.570, 1.f},
+        {0.580, 1.f},
+        {0.590, 1.f},
         {0.600, 1.f},
-        {0.625, 1.f},
+        {0.610, 1.f},
+        {0.620, 1.f},
+        {0.630, 1.f},
+        {0.640, 1.f},
         {0.650, 1.f},
-        {0.675, 1.f},
+        {0.660, 1.f},
+        {0.670, 1.f},
+        {0.680, 1.f},
+        {0.690, 1.f},
         {0.700, 1.f},
         {0.714, 1.f},
         {0.727, 1.f},
@@ -4533,7 +4549,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.971, 1.f},
         {0.980, 1.f},
         {0.990, 1.f},
-        {1.000, 1.f},//39
+        {1.000, 1.f},//55
         {1.010, 1.f},
         {1.020, 1.f},
         {1.030, 1.f},
@@ -4620,8 +4636,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int end;
     } RangeGreen;
 
-    constexpr RangeGreen Rangestandard = {8, 70};
-    constexpr RangeGreen Rangeextended = {4, 77};
+    constexpr RangeGreen Rangestandard = {24, 86};
+    constexpr RangeGreen Rangeextended = {15, 93};
     const RangeGreen Rangemax = {0, N_g};
 
     RangeGreen Rangegreenused;
@@ -5022,7 +5038,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //calculate deltaE xx to find best values of spectrals datas - limited to chroma values
     int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
 
-    if (settings->itcwb_thres > 39) {
+    if (settings->itcwb_thres > 55) {
         maxnb = 201 / settings->itcwb_thres;
     }
 
@@ -5130,7 +5146,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         for (int i = 0; i < N_g; ++i) {//init variables with
             Tgstud[i].student = 1000.f;//max value to initialize
             Tgstud[i].tempref = 57;//5002K
-            Tgstud[i].greenref = 39;// 1.f
+            Tgstud[i].greenref = 55;// 1.f
 
         }
 
@@ -5223,13 +5239,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int goodrefprov;
         float studprov;
         const int goodref0 = Tgstud[0].tempref;
-        const int greengood0 = Tgstud[0].greenref - 39;//39 green = 1
+        const int greengood0 = Tgstud[0].greenref - 55;//55 green = 1
         const float stud0 = Tgstud[0].student;
         const int goodref1 = Tgstud[1].tempref;
         const float stud1 = Tgstud[1].student;
-        const int greengood1 = Tgstud[1].greenref - 39;
+        const int greengood1 = Tgstud[1].greenref - 55;
         const int goodref2 = Tgstud[2].tempref;
-        const int greengood2 = Tgstud[2].greenref - 39;
+        const int greengood2 = Tgstud[2].greenref - 55;
         const float stud2 = Tgstud[2].student;
 
         if (std::fabs(greengood2) < std::fabs(greengood1)) {
@@ -5245,12 +5261,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         if (std::fabs(greengoodprov) < std::fabs(greengood0)) {
             goodref = goodrefprov;
-            greengood = greengoodprov + 39;
+            greengood = greengoodprov + 55;
             studgood = studprov;
 
         } else {
             goodref = goodref0;
-            greengood = greengood0 + 39;
+            greengood = greengood0 + 55;
             studgood = stud0;
         }
 
