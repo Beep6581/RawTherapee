@@ -5284,7 +5284,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
     if (wbpar.method == "autitcgreen") {
         bool extra = false;
 
-        if (greenref > 0.77 && greenref < 1.3) {// 0/77 and 1.3 arbitraties values
+        if (greenref > 0.5 && greenref < 1.3) {// 0/77 and 1.3 arbitraties values
             greenitc = greenref;
 
             if (settings->itcwb_forceextra) {
