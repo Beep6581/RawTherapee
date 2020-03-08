@@ -1453,7 +1453,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         [&]() -> bool
         {
             CameraConstantsStore *ccs = CameraConstantsStore::getInstance();
-            CameraConst *cc = ccs->get(ri->get_maker().c_str(), ri->get_model().c_str());
+            const CameraConst *cc = ccs->get(ri->get_maker().c_str(), ri->get_model().c_str());
             return cc && cc->get_globalGreenEquilibration();
         };
     
