@@ -301,7 +301,7 @@ CameraConst* CameraConst::parseEntry(void *cJSON_, const char *make_model)
         camera_const_levels lvl;
 
         if (!cc->get_Levels(lvl, bw, 0, 0)) {
-            const std::map<int, camera_const_levels>::const_iterator it = cc->mLevels[bw].begin();
+            const auto it = cc->mLevels[bw].cbegin();
 
             if (it != cc->mLevels[bw].end()) {
                 // insert levels with lowest iso as the default (iso 0)
@@ -481,7 +481,7 @@ bool CameraConst::get_Levels(camera_const_levels & lvl, int bw, int iso, float f
     std::map<int, camera_const_levels>::const_iterator it = mLevels[bw].find(iso);
 
     if (it == mLevels[bw].end()) {
-        std::map<int, camera_const_levels>::const_iterator best_it = mLevels[bw].begin();
+        auto best_it = mLevels[bw].cbegin();
 
         if (iso > 0) {
             for (it = mLevels[bw].begin(); it != mLevels[bw].end(); ++it) {
