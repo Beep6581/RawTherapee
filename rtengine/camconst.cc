@@ -512,14 +512,14 @@ bool CameraConst::get_Levels(camera_const_levels & lvl, int bw, int iso, float f
             // table with traditional 1/3 stop f-number rounding used by most cameras, we only
             // have in the range 0.7 - 10.0, but aperture scaling rarely happen past f/4.0
             constexpr float fn_tab[8][3] = {
-                { 0.7, 0.8, 0.9 },
-                { 1.0, 1.1, 1.2 },
-                { 1.4, 1.6, 1.8 },
-                { 2.0, 2.2, 2.5 },
-                { 2.8, 3.2, 3.5 },
-                { 4.0, 4.5, 5.0 },
-                { 5.6, 6.3, 7.1 },
-                { 8.0, 9.0, 10.0 }
+                { 0.7f, 0.8f, 0.9f },
+                { 1.f, 1.1f, 1.2f },
+                { 1.4f, 1.6f, 1.8f },
+                { 2.f, 2.2f, 2.5f },
+                { 2.8f, 3.2f, 3.5f },
+                { 4.f, 4.5f, 5.f },
+                { 5.6f, 6.3f, 7.1f },
+                { 8.f, 9.f, 10.f }
             };
 
             for (int avh = 0; avh < 8; avh++) {
@@ -537,7 +537,7 @@ bool CameraConst::get_Levels(camera_const_levels & lvl, int bw, int iso, float f
             }
         }
 
-        float scaling = 1.0;
+        float scaling = 1.f;
 
         if (scaleIt == mApertureScaling.end()) {
             for (std::map<float, float>::const_reverse_iterator entry = mApertureScaling.rbegin(); entry != mApertureScaling.rend(); ++entry) {
@@ -570,7 +570,7 @@ int CameraConst::get_BlackLevel(const int idx, const int iso_speed) const
     assert(idx >= 0 && idx <= 3);
     camera_const_levels lvl;
 
-    if (!get_Levels(lvl, 0, iso_speed, 0.0)) {
+    if (!get_Levels(lvl, 0, iso_speed, 0.f)) {
         return -1;
     }
 
@@ -626,7 +626,7 @@ bool CameraConstantsStore::parse_camera_constants_file(const Glib::ustring& file
         if (datasize == bufsize - 1) { // we need more memory
             bufsize += increment;
             void *temp = realloc(buf, bufsize); // try to realloc buffer with new size
-            if(!temp) { // realloc failed
+            if (!temp) { // realloc failed
                 temp = malloc(bufsize); // alloc now buffer
                 if (temp) { // alloc worked
                     memcpy(temp, buf, bufsize - increment); // copy old buffer content to new buffer
