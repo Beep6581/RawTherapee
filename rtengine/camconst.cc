@@ -540,7 +540,7 @@ bool CameraConst::get_Levels(camera_const_levels & lvl, int bw, int iso, float f
         float scaling = 1.f;
 
         if (scaleIt == mApertureScaling.end()) {
-            for (std::map<float, float>::const_reverse_iterator entry = mApertureScaling.rbegin(); entry != mApertureScaling.rend(); ++entry) {
+            for (auto entry = mApertureScaling.crbegin(); entry != mApertureScaling.crend(); ++entry) {
                 if (entry->first > fnumber) {
                     scaling = entry->second;
                 } else {
