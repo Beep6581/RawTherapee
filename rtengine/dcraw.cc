@@ -9077,9 +9077,6 @@ void CLASS adobe_coeff (const char *make, const char *model)
   if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
     RT_blacklevel_from_constant = ThreeValBool::T;
   }
-  if (RT_matrix_from_constant == ThreeValBool::X) {
-    RT_matrix_from_constant = ThreeValBool::T;
-  }
   // -- RT --------------------------------------------------------------------
   
   for (i=0; i < sizeof table / sizeof *table; i++)
@@ -9096,6 +9093,9 @@ void CLASS adobe_coeff (const char *make, const char *model)
   if (load_raw == &CLASS sony_arw2_load_raw) { // RT: arw2 scale fix
       black <<= 2;
       tiff_bps += 2;
+  }
+  if (RT_matrix_from_constant == ThreeValBool::X) {
+    RT_matrix_from_constant = ThreeValBool::T;
   }
   { /* Check for RawTherapee table overrides and extensions */
       int black_level, white_level;
@@ -10541,7 +10541,7 @@ dng_skip:
        * files. See #4129 */) {
     memcpy (rgb_cam, cmatrix, sizeof cmatrix);
 //    raw_color = 0;
-    RT_matrix_from_constant = ThreeValBool::F;
+    RT_matrix_from_constant = ThreeValBool::X;
   }
   if(!strncmp(make, "Panasonic", 9) && !strncmp(model, "DMC-LX100",9))
 	adobe_coeff (make, model);
