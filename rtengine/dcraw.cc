@@ -6900,7 +6900,7 @@ it under the terms of the one of two licenses as you choose:
 	break;
       case 50778:
       case 50779:
-         if( get2() == 21 )
+         if( get2() != 17 ) // 17 is Standard light A
             cm_D65 = (tag-50778);
          break;
       case 50829:			/* ActiveArea */
