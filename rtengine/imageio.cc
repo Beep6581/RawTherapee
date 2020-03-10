@@ -41,12 +41,15 @@
 #include "iccjpeg.h"
 #include "color.h"
 #include "imagedata.h"
+#include "settings.h"
 
 #include "jpeg.h"
 
 using namespace std;
 using namespace rtengine;
 using namespace rtengine::procparams;
+
+namespace rtengine { extern const Settings *settings; }
 
 namespace
 {
@@ -1355,38 +1358,50 @@ bool ImageIO::saveMetadata(const Glib::ustring &fname) const
         return true;
     }
 
+    bool has_meta = true;
     try {
         metadataInfo.load();
-        metadataInfo.saveToImage(fname);
-        // auto src = open_exiv2(metadataInfo.filename());
-        // auto dst = open_exiv2(fname);
-        // src->readMetadata();
-        // dst->setMetadata(*src);
-        // dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
-        // for (const auto& p : metadataInfo.exif()) {
-        //     try {
-        //         dst->exifData()[p.first] = p.second;
-        //     } catch (const Exiv2::AnyError& exc) {
-        //     }
-        // }
-        // for (const auto& p : metadataInfo.iptc()) {
-        //     try {
-        //         auto& v = p.second;
-        //         if (!v.empty()) {
-        //             dst->iptcData()[p.first] = v[0];
-        //             for (size_t j = 1; j < v.size(); ++j) {
-        //                 Exiv2::Iptcdatum d(Exiv2::IptcKey(p.first));
-        //                 d.setValue(v[j]);
-        //                 dst->iptcData().add(d);
-        //             }
-        //         }
-        //     } catch (const Exiv2::AnyError& exc) {
-        //     }
-        // }
-        // dst->writeMetadata();
-        return true;
     } catch (const std::exception& exc) {
-        std::cout << "EXIF ERROR: " << exc.what() << std::endl;
-        return false;
+        if (settings->verbose) {
+            std::cout << "EXIF LOAD ERROR: " << exc.what() << std::endl;
+        }
+        has_meta = false;
     }
+
+    if (has_meta) {
+        try {
+            metadataInfo.saveToImage(fname);
+            // auto src = open_exiv2(metadataInfo.filename());
+            // auto dst = open_exiv2(fname);
+            // src->readMetadata();
+            // dst->setMetadata(*src);
+            // dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
+            // for (const auto& p : metadataInfo.exif()) {
+            //     try {
+            //         dst->exifData()[p.first] = p.second;
+            //     } catch (const Exiv2::AnyError& exc) {
+            //     }
+            // }
+            // for (const auto& p : metadataInfo.iptc()) {
+            //     try {
+            //         auto& v = p.second;
+            //         if (!v.empty()) {
+            //             dst->iptcData()[p.first] = v[0];
+            //             for (size_t j = 1; j < v.size(); ++j) {
+            //                 Exiv2::Iptcdatum d(Exiv2::IptcKey(p.first));
+            //                 d.setValue(v[j]);
+            //                 dst->iptcData().add(d);
+            //             }
+            //         }
+            //     } catch (const Exiv2::AnyError& exc) {
+            //     }
+            // }
+            // dst->writeMetadata();
+        } catch (const std::exception& exc) {
+            std::cout << "EXIF ERROR: " << exc.what() << std::endl;
+            return false;
+        }
+    }
+
+    return true;
 }
