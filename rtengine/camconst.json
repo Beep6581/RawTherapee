@@ -1242,6 +1242,7 @@ Camera constants:
 
     { // Quality C, only raw crop
         "make_model": "Canon PowerShot SX70 HS",
+        "dcraw_matrix" : [18285, -8907, -1951, -1845, 10688, 1323, 364, 1101, 5139], // taken from ART
         "raw_crop": [ 96, 17, 5248, 3932 ]
     },
 
@@ -1270,6 +1271,7 @@ Camera constants:
 
     { // Quality C
         "make_model": "FUJIFILM GFX 100",
+        "dcraw_matrix" : [16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199], // taken from ART
         "raw_crop": [ 0, 2, 11664, 8734 ]
     },
 
@@ -1350,6 +1352,7 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "FUJIFILM X-T100" ],
+        "dcraw_matrix" : [11673, -4760, -1041, -3988, 12058, 2166, -771, 1417, 5568], // taken from ART
         "ranges": { "white": 16100 }
     },
 
@@ -1774,6 +1777,7 @@ Camera constants:
 
     { // Quality C, only raw crop
         "make_model": "OLYMPUS TG-6",
+        "dcraw_matrix" : [10899, -3832, -1082, -2112, 10736, 1575, -267, 1452, 5269], // taken from ART
         "raw_crop": [ 0, 0, -24, 0 ] // 24 pixels at right are garbage
     },
 
