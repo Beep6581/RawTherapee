@@ -1395,6 +1395,11 @@ Camera constants:
         "ranges": { "white": 4040 }
     },
 
+    { // Quality B, Matrix from ART
+        "make_model" : "LEICA D-LUX 7",
+        "dcraw_matrix" : [11577, -4230, -1106, -3967, 12211, 1957, -758, 1762, 5610]
+    },
+
     { // Quality B, Matrix from Adobe's dcp D65 instead of the internal in Leica's DNG
         "make_model": "LEICA Q (Typ 116)",
         "dcraw_matrix": [ 10068,-4043,-1068,-5319,14268,1044,-765,1701,6522 ], // DCP D65
@@ -1415,6 +1420,11 @@ Camera constants:
     { // Quality C, only raw crop
         "make_model": "Leica SL2",
         "raw_crop": [ 0, 0, 0, -18 ] // 18 rows at bottom are garbage
+    },
+
+    { // Quality B, Matrix from ART
+        "make_model" : "LEICA V-LUX 5",
+        "dcraw_matrix" : [9803, -4185, -992, -4066, 12578, 1628, -838, 1824, 5288]
     },
 
     { // Quality C
