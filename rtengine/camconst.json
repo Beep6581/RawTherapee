@@ -1383,6 +1383,11 @@ Camera constants:
         "raw_crop": [ 0, 5, 6252, 4176]
     },
 
+    { // Quality C, only raw crop
+        "make_model": [ "FUJIFILM X-T4" ],
+        "raw_crop": [ 0, 5, 6252, 4140]
+    },
+
     { // Quality B
         "make_model": "FUJIFILM X30",
         "dcraw_matrix": [ 12328,-5256,-1144,-4469,12927,1675,-87,1291,4351 ], // DNG_v8.7 D65
