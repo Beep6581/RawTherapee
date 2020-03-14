@@ -229,7 +229,8 @@ void Exiv2Metadata::remove_unwanted(Exiv2::Image *dst) const
     static const std::vector<std::string> keys = {
         "Exif.Image.Orientation",
         "Exif.Image2.JPEGInterchangeFormat",
-        "Exif.Image2.JPEGInterchangeFormatLength"
+        "Exif.Image2.JPEGInterchangeFormatLength",
+        "Exif.Photo.MakerNote"
     };
     for (auto &k : keys) {
         auto it = dst->exifData().findKey(Exiv2::ExifKey(k));
@@ -237,6 +238,26 @@ void Exiv2Metadata::remove_unwanted(Exiv2::Image *dst) const
             dst->exifData().erase(it);
         }
     }
+    static const std::vector<std::string> patterns = {
+        "Exif.Image.",
+        "Exif.Photo.",
+        "Exif.GPSInfo."
+    };
+    for (auto it = dst->exifData().begin(); it != dst->exifData().end(); ) {
+        bool found = false;
+        for (auto &pp : patterns) {
+            if (it->key().find(pp) == 0) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            it = dst->exifData().erase(it);
+        } else {
+            ++it;
+        }
+    }
+                
     Exiv2::ExifThumb thumb(dst->exifData());
     thumb.erase();
 }
