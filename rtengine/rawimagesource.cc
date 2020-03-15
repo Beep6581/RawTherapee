@@ -1237,13 +1237,6 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         // Auto WB gives us better demosaicing and CA auto-correct performance for strange white balance settings (such as UniWB)
         ri->get_colorsCoeff( ref_pre_mul, scale_mul, c_black, raw.preprocessWB.mode == RAWParams::PreprocessWB::Mode::AUTO);
 
-        // Apply custom compensation factors as specified in params
-        const auto ppwb = raw.preprocessWB;
-        ref_pre_mul[0] *= ppwb.red;
-        ref_pre_mul[2] *= ppwb.blue;
-        scale_mul[0] *= ppwb.red;
-        scale_mul[2] *= ppwb.blue;
-
         refwb_red = ri->get_pre_mul(0) / ref_pre_mul[0];
         refwb_green = ri->get_pre_mul(1) / ref_pre_mul[1];
         refwb_blue = ri->get_pre_mul(2) / ref_pre_mul[2];

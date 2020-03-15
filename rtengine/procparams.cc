@@ -2765,18 +2765,13 @@ Glib::ustring RAWParams::XTransSensor::getMethodString(Method method)
 
 
 RAWParams::PreprocessWB::PreprocessWB() :
-    mode(Mode::AUTO),
-    red(1.0),
-    blue(1.0)
+    mode(Mode::AUTO)
 {
 }
 
 bool RAWParams::PreprocessWB::operator ==(const PreprocessWB& other) const
 {
-    return
-        mode == other.mode
-        && red == other.red
-        && blue == other.blue;
+    return mode == other.mode;
 }
 
 bool RAWParams::PreprocessWB::operator !=(const PreprocessWB& other) const
@@ -3757,8 +3752,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Preprocess WB
         saveToKeyfile(!pedited || pedited->raw.preprocessWB.mode, "RAW Preprocess WB", "Mode", toUnderlying(raw.preprocessWB.mode), keyFile);
-        saveToKeyfile(!pedited || pedited->raw.preprocessWB.red, "RAW Preprocess WB", "RedMult", raw.preprocessWB.red, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.preprocessWB.blue, "RAW Preprocess WB", "BlueMult", raw.preprocessWB.blue, keyFile);
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -5351,8 +5344,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->raw.preprocessWB.mode = true;
                 }
             }
-            assignFromKeyfile(keyFile, "RAW Preprocess WB", "Red"  , pedited, raw.preprocessWB.red, pedited->raw.preprocessWB.red);
-            assignFromKeyfile(keyFile, "RAW Preprocess WB", "Blue" , pedited, raw.preprocessWB.blue, pedited->raw.preprocessWB.blue);
         }
 
         if (keyFile.has_group("MetaData")) {

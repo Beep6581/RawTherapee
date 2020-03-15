@@ -1008,8 +1008,6 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!raw_preprocwb->get_active ()) {
         filterPE.raw.preprocessWB.mode    = falsePE.raw.preprocessWB.mode;
-        filterPE.raw.preprocessWB.red     = falsePE.raw.preprocessWB.red;
-        filterPE.raw.preprocessWB.blue    = falsePE.raw.preprocessWB.blue;
     }
 
     if (dstPE) {

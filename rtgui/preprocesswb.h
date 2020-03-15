@@ -25,17 +25,13 @@
 
 class PreprocessWB final:
     public ToolParamBlock,
-    public AdjusterListener,
     public FoldableToolPanel
 {
 
 private:
-    const rtengine::ProcEvent evPreprocessWBMode, evPreprocessWBMults;
+    const rtengine::ProcEvent evPreprocessWBMode;
 
     MyComboBoxText* mode;
-
-    Adjuster* red;
-    Adjuster* blue;
 
 public:
 
@@ -45,7 +41,6 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setBatchMode(bool batchMode) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void adjusterChanged(Adjuster* a, double newval) override;
     void setAdjusterBehavior(bool add);
     void trimValues(rtengine::procparams::ProcParams* pp) override;
     void modeChanged();

@@ -701,8 +701,6 @@ struct RAWParamsEdited {
 
     struct PreprocessWBParamsEdited {
         bool mode;
-        bool red;
-        bool blue;
 
         bool isUnchanged() const;
     };

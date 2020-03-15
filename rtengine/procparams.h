@@ -1527,8 +1527,6 @@ struct RAWParams {
         };
 
         Mode mode;
-        double red;
-        double blue;
 
         PreprocessWB();
 
