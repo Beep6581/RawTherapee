@@ -1296,6 +1296,11 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": [ "FUJIFILM X100V" ],
+        "raw_crop": [ 0, 5, 6252, 4140 ]
+    },
+
+    { // Quality C
         "make_model": "Fujifilm X10",
         "ranges": { "white": 3788 }
     },
