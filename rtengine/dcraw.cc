@@ -9095,6 +9095,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
   if (load_raw == &CLASS sony_arw2_load_raw) { // RT: arw2 scale fix
       black <<= 2;
       tiff_bps += 2;
+  } else if (load_raw == &CLASS panasonic_load_raw) {
+      tiff_bps = RT_pana_info.bpp;
   }
   if (RT_matrix_from_constant == ThreeValBool::X) {
     RT_matrix_from_constant = ThreeValBool::T;
