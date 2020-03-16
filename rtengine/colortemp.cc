@@ -33,7 +33,7 @@
 namespace rtengine
 {
 
-static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 2° Standard Observer.
+static const double cie_colour_match_jd2[97][3] = {//350nm to 830nm   5 nm J.Desmis 2° Standard Observer.
     {0.0000000, 0.000000, 0.000000}, {0.0000000, 0.000000, 0.000000}, {0.0001299, 0.0003917, 0.0006061},
     {0.0002321, 0.000006965, 0.001086}, {0.0004149, 0.00001239, 0.001946}, {0.0007416, 0.00002202, 0.003846},
     {0.001368, 0.000039, 0.006450001}, {0.002236, 0.000064, 0.01054999}, {0.004243, 0.000120, 0.02005001},
@@ -70,7 +70,7 @@ static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desm
 };
 
 
-static const double cie_colour_match_jd10[97][3] = {//350nm to 830nm   5 nm J.Desmis 10° Standard Observer.
+static double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 10° Standard Observer.
 {0.000000000000,	0.000000000000,	0.000000000000},
 {0.000000000000,	0.000000000000,	0.000000000000},
 {0.000000122200,	0.000000013398,	0.000000535027},
@@ -168,6 +168,8 @@ static const double cie_colour_match_jd10[97][3] = {//350nm to 830nm   5 nm J.De
 {0.000002082000,	0.000000842160,	0.000000000000},
 {0.000001553140,	0.000000629700,	0.000000000000}
 };
+
+
 
 ColorTemp::ColorTemp (double t, double g, double e, const std::string &m) : temp(t), green(g), equal(e), method(m)
 {
@@ -3755,6 +3757,22 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         Refxyz[i].Xref = 0.f;
         Refxyz[i].Yref = 0.f;
         Refxyz[i].Zref = 0.f;
+    }
+
+    if (settings->verbose) {
+        if (settings->itcwb_stdobserver10 == false) {
+            printf("Use standard observer 2°\n");
+        } else {
+            printf("Use standard observer 10°\n");
+        }
+    }
+
+    if (settings->itcwb_stdobserver10 == false) {
+        for (int i = 0; i < 97; i++) {
+            cie_colour_match_jd[i][0] = cie_colour_match_jd2[i][0];
+            cie_colour_match_jd[i][1] = cie_colour_match_jd2[i][1];;
+            cie_colour_match_jd[i][2] = cie_colour_match_jd2[i][2];
+        }
     }
 
     if (separated) {

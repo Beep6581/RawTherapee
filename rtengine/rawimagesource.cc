@@ -4459,7 +4459,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     You can used it in images :flowers, landscape, portrait, skin, where illuminants are "normal" (daylight, blackbody)
     You must avoid when illuminant is non standard (fluorescent, LED...) and also, when the subject is lost in the image (some target to generate profiles).
 
-    You can change 4 parameters in option.cc
+    You can change  parameters in option.cc
     Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 55
     Itcwb_sort : false by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
@@ -4467,6 +4467,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_forceextra : false - if true force algorithm "extra" ("extra" is used when camera wbsettings are wrong) to all images
     Itcwb_sizereference : 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
+    itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
     */
 //    BENCHFUN
  
