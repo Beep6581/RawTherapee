@@ -5322,8 +5322,17 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 {
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
-    const int bfw = W / 9 + ((W % 9) > 0 ? 1 : 0);//10 arbitrary value  ; perhaps 4 or 5 or 20
-    const int bfh = H / 9 + ((H % 9) > 0 ? 1 : 0);
+    int precision = 5;
+    if (settings->itcwb_precis == 5) {
+        precision = 5;
+    } else if (settings->itcwb_precis < 5) {
+        precision = 3; 
+    } else if (settings->itcwb_precis > 5) {
+        precision = 9;
+    }
+
+    const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
+    const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
 
     if (! greenloc) {
         greenloc(bfw, bfh);
@@ -5373,9 +5382,9 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     #pragma omp parallel for
 #endif
     for (int i = 0; i < bfh; ++i) {
-        const int ii = i * 9;
+        const int ii = i * precision;
         if (ii < H) {
-            for (int j = 0, jj = 0; j < bfw; ++j, jj += 9) {
+            for (int j = 0, jj = 0; j < bfw; ++j, jj += precision) {
                 redloc[i][j] = red[ii][jj] * multip;
                 greenloc[i][j] = green[ii][jj] * multip;
                 blueloc[i][j] = blue[ii][jj] * multip;
@@ -5575,8 +5584,17 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
-        const int bfw = W / 9 + ((W % 9) > 0 ? 1 : 0);// 10 arbitrary value  ; perhaps 4 or 5 or 20
-        const int bfh = H / 9 + ((H % 9) > 0 ? 1 : 0);
+        int precision = 5;
+        if (settings->itcwb_precis == 5) {
+            precision = 5;
+        } else if (settings->itcwb_precis < 5) {
+            precision = 3; 
+        } else if (settings->itcwb_precis > 5) {
+            precision = 9;
+        }
+        
+        const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
+        const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
     }
 

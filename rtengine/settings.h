@@ -89,6 +89,7 @@ public:
     int             itcwb_sizereference;
     int             itcwb_delta;
     bool            itcwb_stdobserver10;
+    int             itcwb_precis;
 
 
     enum class ThumbnailInspectorMode {
