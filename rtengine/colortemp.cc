@@ -3391,6 +3391,7 @@ this values are often called xBar yBar zBar and are characteristics of a color /
 values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
 E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
 I have increase precision used by J.Walker  and pass to 350nm to 830nm
+And also add 10°  standard observer
 */
 
 void ColorTemp::spectrum_to_xyz_daylight(double _m1, double _m2, double &x, double &y, double &z)
@@ -3449,6 +3450,7 @@ void ColorTemp::spectrum_to_xyz_preset(const double* spec_intens, double &x, dou
     values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
     E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
     I have increased the precision used by J.Walker and pass from 350nm to 830nm
+    And also add standard observer 10°
     */
     for (i = 0, lambda = 350.; lambda < 830.1; i++, lambda += 5.) {
         double Me = get_spectral_color(lambda, spec_intens);
@@ -3623,7 +3625,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         double ZZ;
     } WbTxyz;
     //probbaly can be "passed" with rawimagesource.cc but I don't know how to do.
-    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},
         {2201., 1.217338, 0.190697},
