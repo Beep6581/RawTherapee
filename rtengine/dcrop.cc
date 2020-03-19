@@ -1028,7 +1028,7 @@ void Crop::update(int todo)
                     array2D<float> ble(labnCrop->W, labnCrop->H);
                     array2D<float> guid(labnCrop->W, labnCrop->H);
                     Imagefloat *tmpImage = nullptr;
-                    tmpImage = new Imagefloat(labnCrop->W, labnCrop->W);
+                    tmpImage = new Imagefloat(labnCrop->W, labnCrop->H);
 
 #ifdef _OPENMP
                     #pragma omp parallel for
