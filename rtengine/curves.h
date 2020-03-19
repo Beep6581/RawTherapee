@@ -295,11 +295,11 @@ public:
     }
     static inline float gamma2(float x)
     {
-        return x <= 0.00304 ? x * 12.92310 : 1.055 * expf(logf(x) / sRGBGammaCurve) - 0.055;
+        return x <= 0.00304f ? x * 12.92310f : 1.055f * expf(logf(x) / static_cast<float>(sRGBGammaCurve)) - 0.055f;
     }
     static inline float igamma2(float x)
     {
-        return x <= 0.03928 ? x / 12.92310 : expf(logf((x + 0.055) / 1.055) * sRGBGammaCurve);
+        return x <= 0.03928f ? x / 12.92310f : expf(logf((x + 0.055f) / 1.055f) * static_cast<float>(sRGBGammaCurve));
     }
     // gamma function with adjustable parameters
     static inline double gamma(double x, double gamma, double start, double slope, double mul, double add)
@@ -330,8 +330,8 @@ public:
 #endif
     static inline float hlcurve(const float exp_scale, const float comp, const float hlrange, float level)
     {
-        if (comp > 0.0) {
-            float val = level + (hlrange - 65536.0);
+        if (comp > 0.f) {
+            float val = level + (hlrange - 65536.f);
 
             if (val == 0.0f) { // to avoid division by zero
                 val = 0.000001f;
@@ -340,7 +340,7 @@ public:
             float Y = val * exp_scale / hlrange;
             Y *= comp;
 
-            if (Y <= -1.0) { // to avoid log(<=0)
+            if(Y <= -1.f) { // to avoid log(<=0)
                 Y = -.999999f;
             }
 

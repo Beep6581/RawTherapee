@@ -31,6 +31,7 @@
 #include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
 #include "image8.h"
 #include "improcfun.h"
@@ -1129,7 +1130,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         double cam_g = colorMatrix[1][0] * camwbRed + colorMatrix[1][1] * camwbGreen + colorMatrix[1][2] * camwbBlue;
         double cam_b = colorMatrix[2][0] * camwbRed + colorMatrix[2][1] * camwbGreen + colorMatrix[2][2] * camwbBlue;
         currWB = ColorTemp (cam_r, cam_g, cam_b, params.wb.equal);
-    } else if (params.wb.method == "Auto") {
+    } else if (params.wb.method == "autold") {
         currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom");
     }
 
@@ -2245,44 +2246,6 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);
-            fclose (f);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
-{
-
-    FILE* f = g_fopen(fname.c_str(), "rb");
-
-    if (!f) {
-        aeHistogram.reset();
-    } else {
-        aeHistogram(65536 >> aeHistCompression);
-        const size_t histoBytes = (65536 >> aeHistCompression) * sizeof(aeHistogram[0]);
-        const size_t bytesRead = fread(&aeHistogram[0], 1, histoBytes, f);
-        fclose (f);
-        if (bytesRead != histoBytes) {
-            aeHistogram.reset();
-            return false;
-        }
-        return true;
-    }
-
-    return false;
-}
-
-bool Thumbnail::writeAEHistogram (const Glib::ustring& fname)
-{
-
-    if (aeHistogram) {
-        FILE* f = g_fopen (fname.c_str (), "wb");
-
-        if (f) {
-            fwrite (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);
             fclose (f);
             return true;
         }

@@ -723,36 +723,48 @@ void ToolPanelCoordinator::closeImage()
 
 void ToolPanelCoordinator::closeAllTools()
 {
-
-    for (size_t i = 0; i < options.tpOpen.size(); i++)
+    for (size_t i = 0; i < options.tpOpen.size(); ++i) {
         if (i < expList.size()) {
-            expList.at(i)->set_expanded(false);
+            expList[i]->set_expanded(false);
         }
+    }
 }
 
 void ToolPanelCoordinator::openAllTools()
 {
-
-    for (size_t i = 0; i < options.tpOpen.size(); i++)
+    for (size_t i = 0; i < options.tpOpen.size(); ++i) {
         if (i < expList.size()) {
-            expList.at(i)->set_expanded(true);
+            expList[i]->set_expanded(true);
         }
+    }
 }
 
 void ToolPanelCoordinator::updateToolState()
 {
-
-    for (size_t i = 0; i < options.tpOpen.size(); i++)
-        if (i < expList.size()) {
-            expList.at(i)->set_expanded(options.tpOpen.at(i));
+    if (options.tpOpen.empty()) {
+        for (auto expander : expList) {
+            expander->set_expanded(false);
         }
 
+        wavelet->updateToolState({});
+        retinex->updateToolState({});
+
+        return;
+    }
+
+    for (size_t i = 0; i < options.tpOpen.size(); ++i) {
+        if (i < expList.size()) {
+            expList[i]->set_expanded(options.tpOpen[i]);
+        }
+    }
+
     if (options.tpOpen.size() > expList.size()) {
-        size_t sizeWavelet = options.tpOpen.size() - expList.size();
+        const size_t sizeWavelet = options.tpOpen.size() - expList.size();
+
         std::vector<int> temp;
 
-        for (size_t i = 0; i < sizeWavelet; i++) {
-            temp.push_back(options.tpOpen.at(i + expList.size()));
+        for (size_t i = 0; i < sizeWavelet; ++i) {
+            temp.push_back(options.tpOpen[i + expList.size()]);
         }
 
         locallab->updateToolState(temp);

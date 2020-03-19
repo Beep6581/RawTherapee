@@ -1221,7 +1221,7 @@ Camera constants:
 
     { // Quality A, changes for raw crop which is wrong (larger) in dcraw
         "make_model": "Canon PowerShot S120",
-        "dcraw_matrix": [ 6961,-1685,-695,-4625,12945,1836,-1114,2152,5518 ],
+        "dcraw_matrix": [ 6961, -1685, -695, -4625, 12945, 1836, -1114, 2152, 5518 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 12.2
         "raw_crop": [ 120, 30, 4024, 3030 ],
         "masked_areas": [ 32, 2, 3028, 80 ],
         "ranges": { "white": 4050 }
@@ -1238,6 +1238,12 @@ Camera constants:
         "raw_crop": [ 120, 34, 4616, 3464 ], // full raw 4768x3516, Usable 96,16,4672,3498 - Canon official 4608x3456 left 124 top 38,
         "masked_areas": [ 20, 2, 3480, 80 ],
         "ranges": { "white": 4050 } // nominal 4080-4093
+    },
+
+    { // Quality C, only raw crop
+        "make_model": "Canon PowerShot SX70 HS",
+        "dcraw_matrix" : [18285, -8907, -1951, -1845, 10688, 1323, 364, 1101, 5139], // taken from ART
+        "raw_crop": [ 96, 17, 5248, 3932 ]
     },
 
     { // Quality C
@@ -1265,6 +1271,7 @@ Camera constants:
 
     { // Quality C
         "make_model": "FUJIFILM GFX 100",
+        "dcraw_matrix" : [16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199], // taken from ART
         "raw_crop": [ 0, 2, 11664, 8734 ]
     },
 
@@ -1286,6 +1293,11 @@ Camera constants:
         "make_model": [ "FUJIFILM X100S", "FUJIFILM X100T" ],
         "dcraw_matrix": [ 10592,-4262,-1008,-3514,11355,2465,-870,2025,6386 ], // DNG_v8.7 D65
         "ranges": { "white": 16100 }
+    },
+
+    { // Quality C
+        "make_model": [ "FUJIFILM X100V" ],
+        "raw_crop": [ 0, 5, 6252, 4140 ]
     },
 
     { // Quality C
@@ -1345,6 +1357,7 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "FUJIFILM X-T100" ],
+        "dcraw_matrix" : [11673, -4760, -1041, -3988, 12058, 2166, -771, 1417, 5568], // taken from ART
         "ranges": { "white": 16100 }
     },
 
@@ -1370,8 +1383,14 @@ Camera constants:
     },
 
     { // Quality C, only raw crop
-        "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-T30" ],
+        "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-T30", "FUJIFILM X-PRO3" ],
+        "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v11, standard_v2 d65
         "raw_crop": [ 0, 5, 6252, 4176]
+    },
+
+    { // Quality C, only raw crop
+        "make_model": [ "FUJIFILM X-T4" ],
+        "raw_crop": [ 0, 5, 6252, 4140]
     },
 
     { // Quality B
@@ -1384,6 +1403,11 @@ Camera constants:
         "make_model": "FUJIFILM XQ2",
         "dcraw_matrix": [ 9252,-2704,-1064,-5893,14265,1717,-1101,2341,4349 ], // DNG_v8.8 D65
         "ranges": { "white": 4040 }
+    },
+
+    { // Quality B, Matrix from ART
+        "make_model" : "LEICA D-LUX 7",
+        "dcraw_matrix" : [11577, -4230, -1106, -3967, 12211, 1957, -758, 1762, 5610]
     },
 
     { // Quality B, Matrix from Adobe's dcp D65 instead of the internal in Leica's DNG
@@ -1406,6 +1430,11 @@ Camera constants:
     { // Quality C, only raw crop
         "make_model": "Leica SL2",
         "raw_crop": [ 0, 0, 0, -18 ] // 18 rows at bottom are garbage
+    },
+
+    { // Quality B, Matrix from ART
+        "make_model" : "LEICA V-LUX 5",
+        "dcraw_matrix" : [9803, -4185, -992, -4066, 12578, 1628, -838, 1824, 5288]
     },
 
     { // Quality C
@@ -1768,6 +1797,7 @@ Camera constants:
 
     { // Quality C, only raw crop
         "make_model": "OLYMPUS TG-6",
+        "dcraw_matrix" : [10899, -3832, -1082, -2112, 10736, 1575, -267, 1452, 5269], // taken from ART
         "raw_crop": [ 0, 0, -24, 0 ] // 24 pixels at right are garbage
     },
 

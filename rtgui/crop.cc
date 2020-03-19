@@ -1006,7 +1006,7 @@ void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H, float custom_ratio
     }
 
     if (fixr->get_active() || custom_ratio > 0) {
-        double r = custom_ratio > 0 ? custom_ratio : getRatio();
+        double r = custom_ratio > 0.f ? custom_ratio : static_cast<float>(getRatio());
         H = (int)round(W / r);
         int Hmax = min(ny + nh, maxh - ny);
 
@@ -1053,7 +1053,7 @@ void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H, float custom_ratio
     }
 
     if (fixr->get_active() || custom_ratio > 0) {
-        double r = custom_ratio > 0 ? custom_ratio : getRatio();
+        double r = custom_ratio > 0 ? custom_ratio : static_cast<float>(getRatio());
         H = (int)round(W / r);
         int Hmax = min(ny + nh, maxh - ny);
 
@@ -1101,7 +1101,7 @@ void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H, float custom_rati
     }
 
     if (fixr->get_active() || custom_ratio > 0) {
-        double r = custom_ratio > 0 ? custom_ratio : getRatio();
+        double r = custom_ratio > 0 ? custom_ratio : static_cast<float>(getRatio());
         W = (int)round(H * r);
         int Wmax = min(nx + nw, maxw - nx);
 
@@ -1148,7 +1148,7 @@ void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H, float custom_rati
     }
 
     if (fixr->get_active() || custom_ratio > 0) {
-        double r = custom_ratio > 0 ? custom_ratio : getRatio();
+        double r = custom_ratio > 0 ? custom_ratio : static_cast<float>(getRatio());
         W = (int)round(H * r);
         int Wmax = min(nx + nw, maxw - nx);
 
@@ -1205,7 +1205,7 @@ void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H, float custom_rati
     }
 
     if (fixr->get_active() || custom_ratio > 0) {
-        double r = custom_ratio > 0 ? custom_ratio : getRatio();
+        double r = custom_ratio > 0 ? custom_ratio : static_cast<float>(getRatio());
         W = (int)round(H * r);
 
         if (W > oldXR) {
@@ -1252,7 +1252,7 @@ void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H, float custom_rat
     }
 
     if (fixr->get_active() || custom_ratio > 0) {
-        double r = custom_ratio > 0 ? custom_ratio : getRatio();
+        double r = custom_ratio > 0 ? custom_ratio : static_cast<float>(getRatio());
         W = (int)round(H * r);
 
         if (W > maxw - nx) {
@@ -1298,7 +1298,7 @@ void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H, float custom_r
     }
 
     if (fixr->get_active() || custom_ratio > 0) {
-        double r = custom_ratio > 0 ? custom_ratio : getRatio();
+        double r = custom_ratio > 0 ? custom_ratio : static_cast<float>(getRatio());
         W = (int)round(H * r);
 
         if (W > oldXR) {
@@ -1342,7 +1342,7 @@ void Crop::cropBottomRightResized (int &X, int &Y, int &W, int &H, float custom_
     }
 
     if (fixr->get_active() || custom_ratio > 0) {
-        double r = custom_ratio > 0 ? custom_ratio : getRatio();
+        double r = custom_ratio > 0 ? custom_ratio : static_cast<float>(getRatio());
         W = (int)round(H * r);
 
         if (W > maxw - nx) {

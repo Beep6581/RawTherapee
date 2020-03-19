@@ -266,9 +266,9 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
                 float b = B[y][x];
 
                 if (r + g + b >= bright_lim) {
-                    rr += r;
-                    gg += g;
-                    bb += b;
+                    rr += static_cast<double>(r);
+                    gg += static_cast<double>(g);
+                    bb += static_cast<double>(b);
                     ++n;
                 }
             }

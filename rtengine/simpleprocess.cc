@@ -35,7 +35,8 @@
 #include "rawimagesource.h"
 #include "../rtgui/multilangmgr.h"
 #include "mytime.h"
-
+#include "guidedfilter.h"
+#include "color.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -67,7 +68,7 @@ public:
         pl(pl),
         flush(flush),
         // internal state
-        ii(nullptr),
+        initialImage(nullptr),
         imgsrc(nullptr),
         fw(0),
         fh(0),
@@ -96,6 +97,7 @@ public:
         hlcomprthresh(0),
         baseImg(nullptr),
         labView(nullptr),
+        ctColorCurve(),
         autili(false),
         butili(false)
     {
@@ -149,10 +151,10 @@ private:
             pl->setProgress(0.0);
         }
 
-        ii = job->initialImage;
+        initialImage = job->initialImage;
 
-        if (!ii) {
-            ii = InitialImage::load(job->fname, job->isRaw, &errorCode);
+        if (!initialImage) {
+            initialImage = InitialImage::load(job->fname, job->isRaw, &errorCode);
 
             if (errorCode) {
                 delete job;
@@ -163,11 +165,12 @@ private:
         procparams::ProcParams& params = job->pparams;
 
         // acquire image from imagesource
-        imgsrc = ii->getImageSource();
+        imgsrc = initialImage->getImageSource();
 
         tr = getCoarseBitMask(params.coarse);
-        if(imgsrc->getSensorType() == ST_BAYER) {
-            if(params.raw.bayersensor.method!= RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+
+        if (imgsrc->getSensorType() == ST_BAYER) {
+            if (params.raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
                 imgsrc->setBorder(params.raw.bayersensor.border);
             } else {
                 imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
@@ -175,6 +178,7 @@ private:
         } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
             imgsrc->setBorder(params.raw.xtranssensor.border);
         }
+
         imgsrc->getFullSize(fw, fh, tr);
 
         // check the crop params
@@ -223,6 +227,7 @@ private:
         if (pl) {
             pl->setProgress(0.20);
         }
+
         bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicAutoContrast : params.raw.xtranssensor.dualDemosaicAutoContrast;
         double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicContrast : params.raw.xtranssensor.dualDemosaicContrast;
 
@@ -235,12 +240,12 @@ private:
         if (pl) {
             pl->setProgress(0.30);
         }
-        pp = PreviewProps (0, 0, fw, fh, 1);
+
+        pp = PreviewProps(0, 0, fw, fh, 1);
 
         if (params.retinex.enabled) { //enabled Retinex
             LUTf cdcurve(65536, 0);
             LUTf mapcurve(65536, 0);
-            LUTu dummy;
             RetinextransmissionCurve dehatransmissionCurve;
             RetinexgaintransmissionCurve dehagaintransmissionCurve;
             bool dehacontlutili = false;
@@ -271,7 +276,7 @@ private:
             currWB = ColorTemp();
         } else if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB();
-        } else if (params.wb.method == "Auto") {
+        } else if (params.wb.method == "autold") {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
             currWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
@@ -397,7 +402,7 @@ private:
                             float multip = 1.f;
                             float adjustr = 1.f;
 
-                            if      (params.icm.workingProfile == "ProPhoto")   {
+                            if (params.icm.workingProfile == "ProPhoto")   {
                                 adjustr = 1.f;   //
                             } else if (params.icm.workingProfile == "Adobe RGB")  {
                                 adjustr = 1.f / 1.3f;
@@ -644,7 +649,7 @@ private:
                 float MinRMoy = 0.f;
                 float MinBMoy = 0.f;
 
-                if      (params.icm.workingProfile == "ProPhoto")   {
+                if (params.icm.workingProfile == "ProPhoto")   {
                     adjustr = 1.f;
                 } else if (params.icm.workingProfile == "Adobe RGB")  {
                     adjustr = 1.f / 1.3f;
@@ -796,8 +801,7 @@ private:
         // commented out because it makes the application crash when batch processing...
         // TODO: find a better place to flush rawData and rawRGB
         if (flush) {
-            imgsrc->flushRawData();
-            imgsrc->flushRGB();
+            imgsrc->flush();
         }
 
         return true;
@@ -904,9 +908,9 @@ private:
             const int W = baseImg->getWidth();
             const int H = baseImg->getHeight();
             LabImage labcbdl(W, H);
-            ipf.rgb2lab (*baseImg, labcbdl, params.icm.workingProfile);
+            ipf.rgb2lab(*baseImg, labcbdl, params.icm.workingProfile);
             ipf.dirpyrequalizer(&labcbdl, 1);
-            ipf.lab2rgb (labcbdl, *baseImg, params.icm.workingProfile);
+            ipf.lab2rgb(labcbdl, *baseImg, params.icm.workingProfile);
         }
 
         //gamma TRC working
@@ -916,11 +920,11 @@ private:
             if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
                 const int cw = baseImg->getWidth();
                 const int ch = baseImg->getHeight();
-                cmsHTRANSFORM dummy = nullptr;
+                cmsHTRANSFORM dummyTransForm = nullptr;
                 // put gamma TRC to 1
-                ipf.workingtrc(baseImg, baseImg, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
+                ipf.workingtrc(baseImg, baseImg, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, dummyTransForm, true, false, false);
                 //adjust TRC
-                ipf.workingtrc(baseImg, baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, dummy, false, true, false);
+                ipf.workingtrc(baseImg, baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, dummyTransForm, false, true, false);
             }
         }
 
@@ -948,7 +952,7 @@ private:
         bool opautili = false;
 
         if (params.colorToning.enabled) {
-            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.workingProfile);
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
             double wp[3][3] = {
                 {wprof[0][0], wprof[0][1], wprof[0][2]},
                 {wprof[1][0], wprof[1][1], wprof[1][2]},
@@ -995,14 +999,14 @@ private:
 
         autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
         DCPProfileApplyState as;
-        DCPProfile *dcpProf = imgsrc->getDCP (params.icm, as);
+        DCPProfile *dcpProf = imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;
 
-        ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
+        ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
 
         if (settings->verbose) {
-            printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
+            printf ("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(autor), static_cast<double>(autog), static_cast<double>(autob));
         }
 
         // if clut was used and size of clut cache == 1 we free the memory used by the clutstore (default clut cache size = 1 for 32 bit OS)
@@ -1419,14 +1423,6 @@ private:
 
         }
 
-        WaveletParams WaveParams = params.wavelet;
-        WavCurve wavCLVCurve;
-        WavOpacityCurveRG waOpacityCurveRG;
-        WavOpacityCurveBY waOpacityCurveBY;
-        WavOpacityCurveW waOpacityCurveW;
-        WavOpacityCurveWL waOpacityCurveWL;
-
-        params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
 
         // directional pyramid wavelet
@@ -1436,15 +1432,164 @@ private:
             }
         }
 
-        bool wavcontlutili = false;
+        if ((params.wavelet.enabled)) {
+            LabImage *unshar = nullptr;
+            Glib::ustring provis;
 
-        CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
+            bool wavcontlutili = false;
+            WaveletParams WaveParams = params.wavelet;
+            WavCurve wavCLVCurve;
+            WavOpacityCurveRG waOpacityCurveRG;
+            WavOpacityCurveBY waOpacityCurveBY;
+            WavOpacityCurveW waOpacityCurveW;
+            WavOpacityCurveWL waOpacityCurveWL;
+            LabImage *provradius = nullptr;
+            bool procont = WaveParams.expcontrast;
+            bool prochro = WaveParams.expchroma;
+            bool proedge = WaveParams.expedge;
+            bool profin = WaveParams.expfinal;
+            bool proton = WaveParams.exptoning;
+            bool pronois = WaveParams.expnoise; 
+            
+/*
+            if(WaveParams.showmask) {
+                WaveParams.showmask = false;
+                WaveParams.expclari = true;
+            }
+*/
+            if (WaveParams.softrad > 0.f) {
+                provradius = new LabImage(fw, fh);
+                provradius->CopyFrom(labView);
+            }
 
-        if (params.wavelet.enabled) {
+            params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+
+            CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
+
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                unshar = new LabImage(fw, fh);
+                provis = params.wavelet.CLmethod;
+                params.wavelet.CLmethod = "all";
+                ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
+                unshar->CopyFrom(labView);
+                params.wavelet.CLmethod = provis;
+
+                WaveParams.expcontrast = false;
+                WaveParams.expchroma = false;
+                WaveParams.expedge = false;
+                WaveParams.expfinal = false;
+                WaveParams.exptoning = false;
+                WaveParams.expnoise = false; 
+            }
+
             ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
-        }
 
-        wavCLVCurve.Reset();
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                WaveParams.expcontrast = procont;
+                WaveParams.expchroma = prochro;
+                WaveParams.expedge = proedge;
+                WaveParams.expfinal = profin;
+                WaveParams.exptoning = proton;
+                WaveParams.expnoise = pronois;
+                
+                if (WaveParams.softrad > 0.f) {
+                    array2D<float> ble(fw, fh);
+                    array2D<float> guid(fw, fh);
+                    Imagefloat *tmpImage = nullptr;
+                    tmpImage = new Imagefloat(fw, fh);
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < fh; ir++)
+                        for (int jr = 0; jr < fw; jr++) {
+                            float X, Y, Z;
+                            float L = provradius->L[ir][jr];
+                            float a = provradius->a[ir][jr];
+                            float b = provradius->b[ir][jr];
+                            Color::Lab2XYZ(L, a, b, X, Y, Z);
+
+                            guid[ir][jr] = Y / 32768.f;
+                            float La = labView->L[ir][jr];
+                            float aa = labView->a[ir][jr];
+                            float ba = labView->b[ir][jr];
+                            Color::Lab2XYZ(La, aa, ba, X, Y, Z);
+                            tmpImage->r(ir, jr) = X;
+                            tmpImage->g(ir, jr) = Y;
+                            tmpImage->b(ir, jr) = Z;
+                            ble[ir][jr] = Y / 32768.f;
+                        }
+                    double epsilmax = 0.0001;
+                    double epsilmin = 0.00001;
+                    double aepsil = (epsilmax - epsilmin) / 90.f;
+                    double bepsil = epsilmax - 100.f * aepsil;
+                    double epsil = aepsil * WaveParams.softrad + bepsil;
+
+                    float blur = 10.f / 1 * (0.0001f + 0.8f * WaveParams.softrad);
+                    // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
+                    rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
+
+
+
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < fh; ir++)
+                        for (int jr = 0; jr < fw; jr++) {
+                            float X = tmpImage->r(ir, jr);
+                            float Y = 32768.f * ble[ir][jr];
+                            float Z = tmpImage->b(ir, jr);
+                            float L, a, b;
+                            Color::XYZ2Lab(X, Y, Z, L, a, b);
+                            labView->L[ir][jr] = L;
+                        }
+                delete tmpImage;
+                }
+                
+            }
+
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                float mL = (float)(WaveParams.mergeL / 100.f);
+                float mC = (float)(WaveParams.mergeC / 100.f);
+                float mL0;
+                float mC0;
+
+                if ((WaveParams.CLmethod == "one" || WaveParams.CLmethod == "inf")  && WaveParams.Backmethod == "black") {
+                    mL0 = mC0 = 0.f;
+                    mL = -1.5f * mL;
+                    mC = -mC;
+                } else if (WaveParams.CLmethod == "sup" && WaveParams.Backmethod == "resid") {
+                    mL0 = mL;
+                    mC0 = mC;
+                } else {
+                    mL0 = mL = mC0 = mC = 0.f;
+                }
+
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int x = 0; x < fh; x++)
+                    for (int y = 0; y < fw; y++) {
+                        labView->L[x][y] = LIM((1.f + mL0) * (unshar->L[x][y]) - mL * labView->L[x][y], 0.f, 32768.f);
+                        labView->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * labView->a[x][y];
+                        labView->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * labView->b[x][y];
+                    }
+
+                delete unshar;
+                unshar    = NULL;
+
+                if (WaveParams.softrad > 0.f) {
+                    delete provradius;
+                    provradius    = NULL;
+                }
+
+            }
+
+            wavCLVCurve.Reset();
+        }
 
         ipf.softLight(labView, params.softlight);
 
@@ -1489,10 +1634,10 @@ private:
                 adap = 2000.;
             }//if no exif data or wrong
             else {
-                float E_V = fcomp + log2((fnum * fnum) / fspeed / (fiso / 100.f));
+                double E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
                 E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-                E_V += log2(params.raw.expos);  // exposure raw white point ; log2 ==> linear to EV
-                adap = powf(2.f, E_V - 3.f);  //cd / m2
+                E_V += log2(params.raw.expos); // exposure raw white point ; log2 ==> linear to EV
+                adap = std::pow(2.0, E_V - 3.0); //cd / m2
             }
 
             LUTf CAMBrightCurveJ;
@@ -1551,7 +1696,7 @@ private:
 
         if (labResize) { // resize lab data
             if ((labView->W != imw || labView->H != imh) &&
-                (params.resize.allowUpscaling || (labView->W >= imw && labView->H >= imh))) {
+                    (params.resize.allowUpscaling || (labView->W >= imw && labView->H >= imh))) {
                 // resize image
                 tmplab = new LabImage(imw, imh);
                 ipf.Lanczos(labView, tmplab, tmpScale);
@@ -1573,9 +1718,6 @@ private:
             }
         }
 
-        cmsHPROFILE jprof = nullptr;
-        constexpr bool customGamma = false;
-        constexpr bool useLCMS = false;
         bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili && !params.colorappearance.enabled;
 
         ///////////// Custom output gamma has been removed, the user now has to create
@@ -1584,10 +1726,10 @@ private:
         // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-        Imagefloat* readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
+        Imagefloat* readyImg = ipf.lab2rgbOut(labView, cx, cy, cw, ch, params.icm);
 
         if (settings->verbose) {
-            printf ("Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());
+            printf("Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());
         }
 
         delete labView;
@@ -1615,7 +1757,7 @@ private:
         }
 
         if (tmpScale != 1.0 && params.resize.method == "Nearest" &&
-            (params.resize.allowUpscaling || (readyImg->getWidth() >= imw && readyImg->getHeight() >= imh))) { // resize rgb data (gamma applied)
+                (params.resize.allowUpscaling || (readyImg->getWidth() >= imw && readyImg->getHeight() >= imh))) { // resize rgb data (gamma applied)
             Imagefloat* tempImage = new Imagefloat(imw, imh);
             ipf.resize(readyImg, tempImage, tmpScale);
             delete readyImg;
@@ -1626,12 +1768,12 @@ private:
             case MetaDataParams::TUNNEL:
                 // Sending back the whole first root, which won't necessarily be the selected frame number
                 // and may contain subframe depending on initial raw's hierarchy
-                readyImg->setMetadata(ii->getMetaData()->getRootExifData());
+                readyImg->setMetadata(initialImage->getMetaData()->getRootExifData());
                 break;
 
             case MetaDataParams::EDIT:
                 // ask for the correct frame number, but may contain subframe depending on initial raw's hierarchy
-                readyImg->setMetadata(ii->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
+                readyImg->setMetadata(initialImage->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
                 break;
 
             default: // case MetaDataParams::STRIP
@@ -1641,36 +1783,28 @@ private:
 
 
         // Setting the output curve to readyImg
-        if (customGamma) {
-            if (!useLCMS) {
-                // use corrected sRGB profile in order to apply a good TRC if present, otherwise use LCMS2 profile generated by lab2rgb16 w/ gamma
-                ProfileContent pc(jprof);
+        // use the selected output profile if present, otherwise use LCMS2 profile generate by lab2rgb16 w/ gamma
+
+        if (!params.icm.outputProfile.empty() && params.icm.outputProfile != ColorManagementParams::NoICMString) {
+
+            // if ICCStore::getInstance()->getProfile send back an object, then ICCStore::getInstance()->getContent will do too
+            cmsHPROFILE jprof = ICCStore::getInstance()->getProfile(params.icm.outputProfile);  //get outProfile
+
+            if (jprof == nullptr) {
+                if (settings->verbose) {
+                    printf("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.outputProfile.c_str());
+                }
+            } else {
+                if (settings->verbose) {
+                    printf("Using \"%s\" output profile\n", params.icm.outputProfile.c_str());
+                }
+
+                ProfileContent pc = ICCStore::getInstance()->getContent(params.icm.outputProfile);
                 readyImg->setOutputProfile(pc.getData().c_str(), pc.getData().size());
             }
         } else {
-            // use the selected output profile if present, otherwise use LCMS2 profile generate by lab2rgb16 w/ gamma
-
-            if (!params.icm.outputProfile.empty() && params.icm.outputProfile != ColorManagementParams::NoICMString) {
-
-                // if ICCStore::getInstance()->getProfile send back an object, then ICCStore::getInstance()->getContent will do too
-                cmsHPROFILE jprof = ICCStore::getInstance()->getProfile (params.icm.outputProfile); //get outProfile
-
-                if (jprof == nullptr) {
-                    if (settings->verbose) {
-                        printf ("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.outputProfile.c_str());
-                    }
-                } else {
-                    if (settings->verbose) {
-                        printf ("Using \"%s\" output profile\n", params.icm.outputProfile.c_str());
-                    }
-
-                    ProfileContent pc = ICCStore::getInstance()->getContent (params.icm.outputProfile);
-                    readyImg->setOutputProfile(pc.getData().c_str(), pc.getData().size());
-                }
-            } else {
-                // No ICM
-                readyImg->setOutputProfile(nullptr, 0);
-            }
+            // No ICM
+            readyImg->setOutputProfile(nullptr, 0);
         }
 
 //    t2.set();
@@ -1678,7 +1812,7 @@ private:
 //           printf("Total:- %d usec\n", t2.etime(t1));
 
         if (!job->initialImage) {
-            ii->decreaseRef();
+            initialImage->decreaseRef();
         }
 
         delete job;
@@ -1711,7 +1845,7 @@ private:
         double scale_factor = ipf.resizeScale(&params, fw, fh, imw, imh);
 
         std::unique_ptr<LabImage> tmplab(new LabImage(fw, fh));
-        ipf.rgb2lab (*baseImg, *tmplab, params.icm.workingProfile);
+        ipf.rgb2lab(*baseImg, *tmplab, params.icm.workingProfile);
 
         if (params.crop.enabled) {
             int cx = params.crop.x;
@@ -1748,7 +1882,7 @@ private:
 
         delete baseImg;
         baseImg = new Imagefloat(fw, fh);
-        ipf.lab2rgb (*tmplab, *baseImg, params.icm.workingProfile);
+        ipf.lab2rgb(*tmplab, *baseImg, params.icm.workingProfile);
     }
 
     void adjust_procparams(double scale_factor)
@@ -1842,7 +1976,7 @@ private:
 
     // internal state
     std::unique_ptr<ImProcFunctions> ipf_p;
-    InitialImage *ii;
+    InitialImage *initialImage;
     ImageSource *imgsrc;
     int fw;
     int fh;

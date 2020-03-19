@@ -356,6 +356,8 @@ public :
     virtual void autoCamChanged(double ccam, double ccamout) = 0;
     virtual void adapCamChanged(double cadap) = 0;
     virtual void ybCamChanged(int yb) = 0;
+    virtual void wbCamChanged(double tem, double tin) = 0;
+    
 };
 
 class AutoChromaListener
@@ -401,7 +403,7 @@ class AutoWBListener
 {
 public:
     virtual ~AutoWBListener() = default;
-    virtual void WBChanged(double temp, double green) = 0;
+    virtual void WBChanged(double temp, double green, float studgood) = 0;
 };
 
 class FrameCountListener

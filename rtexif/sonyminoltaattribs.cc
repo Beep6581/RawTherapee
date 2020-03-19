@@ -1126,6 +1126,7 @@ public:
         choices.insert (p_t (49458, "Tamron 17-28mm f/2.8 Di III RXD"));
         choices.insert (p_t (49459, "Tamron 35mm f/2.8 Di III OSD M1:2"));
         choices.insert (p_t (49460, "Tamron 24mm f/2.8 Di III OSD M1:2"));
+        choices.insert (p_t (49461, "Tamron 20mm f/2.8 Di III OSD M1:2"));
         choices.insert (p_t (49712, "Tokina FiRIN 20mm f/2 FE AF"));
         choices.insert (p_t (49713, "Tokina FiRIN 100mm f/2.8 FE MACRO"));
         choices.insert (p_t (50480, "Sigma 30mm f/1.4 DC DN | C"));
@@ -1152,6 +1153,7 @@ public:
         choices.insert (p_t (50514, "Sigma 45mm f/2.8 DG DN | C"));
         choices.insert (p_t (50515, "Sigma 35mm f/1.2 DG DN | A"));
         choices.insert (p_t (50516, "Sigma 14-24mm f/2.8 DG DN | A"));
+        choices.insert (p_t (50517, "Sigma 24-70mm f/2.8 DG DN | A"));
         choices.insert (p_t (50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
         choices.insert (p_t (50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
         choices.insert (p_t (50994, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"));
@@ -2114,7 +2116,7 @@ public:
 
         // Decode the value
         if (a && a != 254) { // 254 = 'Auto' for CameraSettings3, but we might say the same for CameraSettings & CameraSettings2 (?)
-            return int (expf ((double (a) / 8.f - 6.f) * logf (2.f)) * 100.f + 0.5f);
+            return std::exp((a / 8.f - 6.f) * std::log(2.f)) * 100.f + 0.5f;
         } else {
             return 0;
         }

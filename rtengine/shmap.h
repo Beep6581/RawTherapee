@@ -51,8 +51,6 @@ private:
     int W, H;
     void fillLuminanceLab( LabImage * img, float **luminance);
 
-    void fillLuminance( Imagefloat * img, float **luminance, double lumi[3] );
-    void fillLuminanceL( float ** L, float **luminance );
     void dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, const LUTf& rangefn, int level, int scale);
 
 };

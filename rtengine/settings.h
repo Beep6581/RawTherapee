@@ -7,8 +7,8 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *
  *  RawTherapee is distributed in the hope that it will be useful,
+itcw *
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
@@ -90,6 +90,15 @@ public:
     double          cbdlsensi;
 //    bool            showtooltip;
 
+    int             itcwb_thres;
+    bool            itcwb_sort;
+    int             itcwb_greenrange;
+    int             itcwb_greendeltatemp;
+    bool            itcwb_forceextra;
+    int             itcwb_sizereference;
+    int             itcwb_delta;
+    bool            itcwb_stdobserver10;
+    int             itcwb_precis;
 
 
     enum class ThumbnailInspectorMode {

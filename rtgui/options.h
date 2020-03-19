@@ -20,7 +20,15 @@
 
 #include <set>
 #include <vector>
+#if defined __has_include
+#if __has_include(<gtkmm/enums.h>)
 #include <gtkmm/enums.h>
+#else
+#include <gtkmm-3.0/gtkmm/enums.h>
+#endif
+#else
+#include <gtkmm/enums.h>
+#endif
 #include "../rtengine/settings.h"
 #include <exception>
 

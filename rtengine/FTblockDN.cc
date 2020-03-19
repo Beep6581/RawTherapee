@@ -546,7 +546,7 @@ BENCHFUN
     const bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
     // init luma noisevarL
     const float noiseluma = static_cast<float>(dnparams.luma);
-    const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? static_cast<float>(SQR(((noiseluma + 1.0) / 125.0) * (10. + (noiseluma + 1.0) / 25.0))) : static_cast<float>(SQR((noiseluma / 125.0) * (1.0 + noiseluma / 25.0)));
+    const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f)) : SQR((noiseluma / 125.f) * (1.f + noiseluma / 25.f));
     const bool denoiseLuminance = (noisevarL > 0.00001f);
 
     //printf("NL=%f \n",noisevarL);
@@ -633,20 +633,20 @@ BENCHFUN
 
     if (dnparams.luma != 0 || dnparams.chroma != 0 || dnparams.methodmed == "Lab" || dnparams.methodmed == "Lonly") {
         // gamma transform for input data
-        float gam = dnparams.gamma;
-        float gamthresh = 0.001f;
+        double gam = dnparams.gamma;
+        constexpr double gamthresh = 0.001;
 
         if (!isRAW) {//reduce gamma under 1 for Lab mode ==> TIF and JPG
-            if (gam < 1.9f) {
-                gam = 1.f - (1.9f - gam) / 3.f;    //minimum gamma 0.7
-            } else if (gam >= 1.9f && gam <= 3.f) {
-                gam = (1.4f / 1.1f) * gam - 1.41818f;
+            if (gam < 1.9) {
+                gam = 1.0 - (1.9 - gam) / 3.0;    //minimum gamma 0.7
+            } else if (gam >= 1.9 && gam <= 3.0) {
+                gam = (1.4 / 1.1) * gam - 1.41818;
             }
         }
 
 
         LUTf gamcurve(65536, LUT_CLIP_BELOW);
-        float gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
+        const double gamslope = exp(log(gamthresh) / gam) / gamthresh;
 
         if (denoiseMethodRgb) {
             Color::gammaf2lut(gamcurve, gam, gamthresh, gamslope, 65535.f, 32768.f);
@@ -655,9 +655,9 @@ BENCHFUN
         }
 
         // inverse gamma transform for output data
-        float igam = 1.f / gam;
-        float igamthresh = gamthresh * gamslope;
-        float igamslope = 1.f / gamslope;
+        const float igam = 1.0 / gam;
+        const float igamthresh = gamthresh * gamslope;
+        const float igamslope = 1.0 / gamslope;
 
         LUTf igamcurve(65536, LUT_CLIP_BELOW);
 
@@ -667,9 +667,9 @@ BENCHFUN
             Color::gammanf2lut(igamcurve, igam, 32768.f, 65535.f);
         }
 
-        const float gain = pow(2.0f, float(expcomp));
-        float params_Ldetail = min(float(dnparams.Ldetail), 99.9f); // max out to avoid div by zero when using noisevar_Ldetail as divisor
-        float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
+        const float gain = std::pow(2.0, expcomp);
+        const double params_Ldetail = std::min(dnparams.Ldetail, 99.9); // max out to avoid div by zero when using noisevar_Ldetail as divisor
+        const float noisevar_Ldetail = SQR(SQR(100. - params_Ldetail) + 50.0 * (100.0 - params_Ldetail) * TS * 0.5);
 
         array2D<float> tilemask_in(TS, TS);
         array2D<float> tilemask_out(TS, TS);
@@ -679,13 +679,13 @@ BENCHFUN
 
             for (int i = 0; i < TS; ++i) {
                 float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
-                float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
-                float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+                float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI_F * i1) / (2 * border))) : 1.f);
+                float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * i1) / (2 * border))) : 1.f);
 
                 for (int j = 0; j < TS; ++j) {
                     float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
-                    tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
-                    tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                    tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilon;
+                    tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsilon;
 
                 }
             }
@@ -881,19 +881,19 @@ BENCHFUN
                         int height = tilebottom - tiletop;
                         int width2 = (width + 1) / 2;
                         float realred, realblue;
-                        float interm_med = static_cast<float>(dnparams.chroma) / 10.0;
+                        float interm_med = dnparams.chroma / 10.0;
                         float intermred, intermblue;
 
                         if (dnparams.redchro > 0.) {
-                            intermred = (dnparams.redchro / 10.);
+                            intermred = dnparams.redchro / 10.0;
                         } else {
-                            intermred = static_cast<float>(dnparams.redchro) / 7.0;     //increase slower than linear for more sensit
+                            intermred = dnparams.redchro / 7.0;     //increase slower than linear for more sensit
                         }
 
                         if (dnparams.bluechro > 0.) {
-                            intermblue = (dnparams.bluechro / 10.);
+                            intermblue = dnparams.bluechro / 10.0;
                         } else {
-                            intermblue = static_cast<float>(dnparams.bluechro) / 7.0;     //increase slower than linear for more sensit
+                            intermblue = dnparams.bluechro / 7.0;     //increase slower than linear for more sensit
                         }
 
                         if (ponder && kall == 2) {
@@ -1094,7 +1094,7 @@ BENCHFUN
                         //binary 1 or 0 for each level, eg subsampling = 0 means no subsampling, 1 means subsample
                         //the first level only, 7 means subsample the first three levels, etc.
                         //actual implementation only works with subsampling set to 1
-                        float interm_medT = static_cast<float>(dnparams.chroma) / 10.0;
+                        float interm_medT = dnparams.chroma / 10.0;
                         bool execwavelet = true;
 
                         if (!denoiseLuminance && interm_medT < 0.05f && dnparams.median && (dnparams.methodmed == "Lab" || dnparams.methodmed == "Lonly")) {
@@ -2140,7 +2140,7 @@ float ImProcFunctions::Mad(const float * DataList, const int datalen)
     int count_ = count - histo[median - 1];
 
     // interpolate
-    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745);
+    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f);
 }
 
 float ImProcFunctions::MadRgb(const float * DataList, const int datalen)
@@ -2174,7 +2174,7 @@ float ImProcFunctions::MadRgb(const float * DataList, const int datalen)
 
     // interpolate
     delete[] histo;
-    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745);
+    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f);
 }
 
 
@@ -3074,7 +3074,7 @@ void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::DirPyrDenoisePa
     bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
 
     if (denoiseMethodRgb) {
-        gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
+        gamslope = exp(log(static_cast<double>(gamthresh)) / static_cast<double>(gam)) / static_cast<double>(gamthresh);
         Color::gammaf2lut(gamcurve, gam, gamthresh, gamslope, 65535.f, 32768.f);
     } else {
         Color::gammanf2lut(gamcurve, gam, 65535.f, 32768.f);
@@ -3355,19 +3355,19 @@ void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc,
             }
 
             float realred, realblue;
-            float interm_med = static_cast<float>(dnparams.chroma) / 10.0;
+            float interm_med = dnparams.chroma / 10.0;
             float intermred, intermblue;
 
             if (dnparams.redchro > 0.) {
-                intermred = (dnparams.redchro / 10.);
+                intermred = dnparams.redchro / 10.0;
             } else {
-                intermred = static_cast<float>(dnparams.redchro) / 7.0;     //increase slower than linear for more sensit
+                intermred = dnparams.redchro / 7.0;     //increase slower than linear for more sensit
             }
 
             if (dnparams.bluechro > 0.) {
-                intermblue = (dnparams.bluechro / 10.);
+                intermblue = dnparams.bluechro / 10.0;
             } else {
-                intermblue = static_cast<float>(dnparams.bluechro) / 7.0;     //increase slower than linear for more sensit
+                intermblue = dnparams.bluechro / 7.0;     //increase slower than linear for more sensit
             }
 
             realred = interm_med + intermred;
