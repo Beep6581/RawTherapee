@@ -627,6 +627,30 @@ public:
     }
 };
 
+class WavtmCurve
+{
+private:
+    LUTf luttmCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+public:
+    virtual ~WavtmCurve() {};
+    WavtmCurve();
+
+    void Reset();
+    //  void Set(const std::vector<double> &curvePoints, bool &opautili);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
+    {
+        return luttmCurve[index];
+    }
+
+    operator bool (void) const
+    {
+        return luttmCurve;
+    }
+};
+
+
 class WavOpacityCurveRG
 {
 private:

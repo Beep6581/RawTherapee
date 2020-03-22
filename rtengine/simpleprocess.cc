@@ -1120,6 +1120,7 @@ private:
             bool wavcontlutili = false;
             WaveletParams WaveParams = params.wavelet;
             WavCurve wavCLVCurve;
+            WavtmCurve wavtmCurve;
             WavOpacityCurveRG waOpacityCurveRG;
             WavOpacityCurveBY waOpacityCurveBY;
             WavOpacityCurveW waOpacityCurveW;
@@ -1143,7 +1144,7 @@ private:
                 provradius->CopyFrom(labView);
             }
 
-            params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+            params.wavelet.getCurves(wavCLVCurve, wavtmCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
             CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 

@@ -967,13 +967,14 @@ void Crop::update(int todo)
             }
 
             WavCurve wavCLVCurve;
+            WavtmCurve wavtmCurve;
             WavOpacityCurveRG waOpacityCurveRG;
             WavOpacityCurveBY waOpacityCurveBY;
             WavOpacityCurveW waOpacityCurveW;
             WavOpacityCurveWL waOpacityCurveWL;
             LUTf wavclCurve;
 
-            params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+            params.wavelet.getCurves(wavCLVCurve, wavtmCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
             LabImage *unshar = nullptr;
             Glib::ustring provis;
             LabImage *provradius = nullptr;

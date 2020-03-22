@@ -40,6 +40,7 @@ class OpacityCurve;
 class RetinexgaintransmissionCurve;
 class RetinextransmissionCurve;
 class WavCurve;
+class WavtmCurve;
 class WavOpacityCurveBY;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
@@ -1185,6 +1186,7 @@ private:
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
+    std::vector<double> tmcurve;
     std::vector<double> opacityCurveRG;
     std::vector<double> opacityCurveBY;
     std::vector<double> opacityCurveW;
@@ -1220,6 +1222,7 @@ struct WaveletParams {
     int c[9];
     int ch[9];
     bool expedge;
+    bool exptm;
     bool expresid;
     bool expfinal;
     bool exptoning;
@@ -1269,6 +1272,8 @@ struct WaveletParams {
     int thrH;
     int radius;
     double skinprotect;
+    double threswav;
+    double softwav;
     Threshold<int> hueskin;
     Threshold<int> hueskin2;
     Threshold<int> hllev;
@@ -1288,6 +1293,7 @@ struct WaveletParams {
 
     void getCurves(
         WavCurve& cCurve,
+        WavtmCurve& tCurve,
         WavOpacityCurveRG&
         opacityCurveLUTRG,
         WavOpacityCurveBY& opacityCurveLUTBY,

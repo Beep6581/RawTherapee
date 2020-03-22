@@ -63,6 +63,7 @@ Wavelet::Wavelet() :
     FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), true, true),
     curveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CONTEDIT"))),
     CCWcurveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CCURVE"))),
+    curveEditortm(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_TMURVE"))),
     curveEditorRES(new CurveEditorGroup(options.lastWaveletCurvesDir)),
     curveEditorGAM(new CurveEditorGroup(options.lastWaveletCurvesDir)),
     separatorNeutral(Gtk::manage(new Gtk::HSeparator())),
@@ -126,6 +127,8 @@ Wavelet::Wavelet() :
     mergeC(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEC"), -50, 100, 1, 20))),
     softrad(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
     softradend(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
+    threswav(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESWAV"), 0.9, 2., 0.01, 1.4))),
+    softwav(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFWAV"), -10.0, 1000.0, 0.5, 1.))),
     Lmethod(Gtk::manage(new MyComboBoxText())),
     CHmethod(Gtk::manage(new MyComboBoxText())),
     CHSLmethod(Gtk::manage(new MyComboBoxText())),
@@ -159,6 +162,7 @@ Wavelet::Wavelet() :
     expsettings(Gtk::manage(new MyExpander(false, M("TP_WAVELET_SETTINGS")))),
     exptoning(Gtk::manage(new MyExpander(true, M("TP_WAVELET_TON")))),
     expclari(Gtk::manage(new MyExpander(true, M("TP_WAVELET_CLARI")))),
+    exptm(Gtk::manage(new MyExpander(true, M("TP_WAVELET_TM")))),
     neutrHBox(Gtk::manage(new Gtk::HBox())),
     usharpHBox(Gtk::manage(new Gtk::HBox()))
 {
@@ -175,6 +179,10 @@ Wavelet::Wavelet() :
     EvWavscale = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSCALE");
     EvWavradius = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVRADIUS");
     EvWavsigma = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSIGMA");
+    EvWavenatm = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVTM");
+    EvWavthreswav = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_THRESWAV");
+    EvWavsoftwav = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SOFTWAV");
+    EvWavtmshape = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_TMSHAPE");
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -192,6 +200,9 @@ Wavelet::Wavelet() :
 
     expedge->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expedge));
     enableEdgeConn = expedge->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Wavelet::enableToggled), expedge));
+
+    exptm->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), exptm));
+    enabletmConn = exptm->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Wavelet::enableToggled), exptm));
 
     expgamut->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expgamut));
 
@@ -623,6 +634,31 @@ Wavelet::Wavelet() :
 
     edgBox->pack_start(*ctboxES);
 
+//TM Wavelet
+    ToolParamBlock* const tmBox = Gtk::manage(new ToolParamBlock());
+    
+    curveEditortm->setCurveListener(this);
+
+    tmshape = static_cast<FlatCurveEditor*>(curveEditortm->addCurve(CT_Flat, "", nullptr, false, false));
+
+    tmshape->setIdentityValue(0.);
+    tmshape->setResetCurve(FlatCurveType(default_params.tmcurve.at(0)), default_params.tmcurve);
+    tmshape->setTooltip(M("TP_WAVELET_CURVEEDITOR_CC_TOOLTIP"));
+
+    curveEditortm->curveListComplete();
+    curveEditortm->show();
+
+    tmBox->pack_start(*curveEditortm, Gtk::PACK_SHRINK, 4);
+    
+    
+    threswav->setAdjusterListener(this);
+    tmBox->pack_start(*threswav);
+
+    softwav->setLogScale(10, -10);
+    softwav->setAdjusterListener(this);
+    tmBox->pack_start(*softwav);
+
+
 // Gamut
     ToolParamBlock* const conBox = Gtk::manage(new ToolParamBlock());
 
@@ -939,6 +975,10 @@ Wavelet::Wavelet() :
     expedge->setLevel(2);
     pack_start(*expedge);
 
+    exptm->add(*tmBox, false);
+    exptm->setLevel(2);
+    pack_start(*exptm);
+
     expclari->add(*clariBox, false);
     expclari->setLevel(2);
     pack_start(*expclari);
@@ -959,6 +999,7 @@ Wavelet::~Wavelet()
 
     delete opaCurveEditorG;
     delete opacityCurveEditorG;
+    delete curveEditortm;
     delete CCWcurveEditorG;
     delete curveEditorRES;
     delete curveEditorGAM;
@@ -1177,6 +1218,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     Lmethod->set_active(selectedLevel == -1 ? 4 : selectedLevel);
 
     ccshape->setCurve(pp->wavelet.ccwcurve);
+    tmshape->setCurve(pp->wavelet.tmcurve);
     opacityShapeRG->setCurve(pp->wavelet.opacityCurveRG);
     opacityShapeBY->setCurve(pp->wavelet.opacityCurveBY);
     opacityShape->setCurve(pp->wavelet.opacityCurveW);
@@ -1187,6 +1229,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     expcontrast->setEnabled(pp->wavelet.expcontrast);
     expchroma->setEnabled(pp->wavelet.expchroma);
     expedge->setEnabled(pp->wavelet.expedge);
+    exptm->setEnabled(pp->wavelet.exptm);
     expresid->setEnabled(pp->wavelet.expresid);
     expfinal->setEnabled(pp->wavelet.expfinal);
     exptoning->setEnabled(pp->wavelet.exptoning);
@@ -1266,6 +1309,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     pastlev->setValue<int>(pp->wavelet.pastlev);
     satlev->setValue<int>(pp->wavelet.satlev);
     edgcont->setValue<int>(pp->wavelet.edgcont);
+    threswav->setValue(pp->wavelet.threswav);
+    softwav->setValue(pp->wavelet.softwav);
 
     greenlow->setValue(pp->wavelet.greenlow);
     bluelow->setValue(pp->wavelet.bluelow);
@@ -1363,9 +1408,11 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         set_inconsistent(multiImage && !pedited->wavelet.enabled);
         ccshape->setUnChanged(!pedited->wavelet.ccwcurve);
+        tmshape->setUnChanged(!pedited->wavelet.tmcurve);
         expcontrast->set_inconsistent(!pedited->wavelet.expcontrast);
         expchroma->set_inconsistent(!pedited->wavelet.expchroma);
         expedge->set_inconsistent(!pedited->wavelet.expedge);
+        exptm->set_inconsistent(!pedited->wavelet.exptm);
         expresid->set_inconsistent(!pedited->wavelet.expresid);
         expfinal->set_inconsistent(!pedited->wavelet.expfinal);
         expclari->set_inconsistent(!pedited->wavelet.expclari);
@@ -1437,6 +1484,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         satlev->setEditedState(pedited->wavelet.satlev ? Edited : UnEdited);
         strength->setEditedState(pedited->wavelet.strength ? Edited : UnEdited);
         edgcont->setEditedState(pedited->wavelet.edgcont ? Edited : UnEdited);
+        threswav->setEditedState(pedited->wavelet.threswav ? Edited : UnEdited);
+        softwav->setEditedState(pedited->wavelet.softwav ? Edited : UnEdited);
         level0noise->setEditedState(pedited->wavelet.level0noise ? Edited : UnEdited);
         level1noise->setEditedState(pedited->wavelet.level1noise ? Edited : UnEdited);
         level2noise->setEditedState(pedited->wavelet.level2noise ? Edited : UnEdited);
@@ -1542,6 +1591,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
 void Wavelet::setEditProvider(EditDataProvider *provider)
 {
     ccshape->setEditProvider(provider);
+    tmshape->setEditProvider(provider);
     opacityShapeRG->setEditProvider(provider);
     opacityShapeBY->setEditProvider(provider);
     opacityShape->setEditProvider(provider);
@@ -1554,6 +1604,7 @@ void Wavelet::setEditProvider(EditDataProvider *provider)
 void Wavelet::autoOpenCurve()
 {
     ccshape->openIfNonlinear();
+    tmshape->openIfNonlinear();
     //opacityShapeRG->openIfNonlinear();
     //opacityShapeBY->openIfNonlinear();
 }
@@ -1604,11 +1655,14 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.hllev          = hllev->getValue<int> ();
     pp->wavelet.bllev          = bllev->getValue<int> ();
     pp->wavelet.edgcont        = edgcont->getValue<int> ();
+    pp->wavelet.threswav        = threswav->getValue();
+    pp->wavelet.softwav        = softwav->getValue();
     pp->wavelet.level0noise    = level0noise->getValue<double> ();
     pp->wavelet.level1noise    = level1noise->getValue<double> ();
     pp->wavelet.level2noise    = level2noise->getValue<double> ();
     pp->wavelet.level3noise    = level3noise->getValue<double> ();
     pp->wavelet.ccwcurve       = ccshape->getCurve();
+    pp->wavelet.tmcurve       = tmshape->getCurve();
     pp->wavelet.opacityCurveRG = opacityShapeRG->getCurve();
     pp->wavelet.opacityCurveBY = opacityShapeBY->getCurve();
     pp->wavelet.opacityCurveW  = opacityShape->getCurve();
@@ -1633,6 +1687,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.expcontrast    = expcontrast->getEnabled();
     pp->wavelet.expchroma      = expchroma->getEnabled();
     pp->wavelet.expedge        = expedge->getEnabled();
+    pp->wavelet.exptm          = exptm->getEnabled();
     pp->wavelet.expresid       = expresid->getEnabled();
     pp->wavelet.expfinal       = expfinal->getEnabled();
     pp->wavelet.exptoning      = exptoning->getEnabled();
@@ -1707,7 +1762,10 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.skinprotect     = skinprotect->getEditedState();
         pedited->wavelet.hllev           = hllev->getEditedState();
         pedited->wavelet.ccwcurve        = !ccshape->isUnChanged();
+        pedited->wavelet.tmcurve        = !tmshape->isUnChanged();
         pedited->wavelet.edgcont         = edgcont->getEditedState();
+        pedited->wavelet.threswav         = threswav->getEditedState();
+        pedited->wavelet.softwav         = softwav->getEditedState();
         pedited->wavelet.level0noise     = level0noise->getEditedState();
         pedited->wavelet.level1noise     = level1noise->getEditedState();
         pedited->wavelet.level2noise     = level2noise->getEditedState();
@@ -1738,6 +1796,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.expcontrast     = !expcontrast->get_inconsistent();
         pedited->wavelet.expchroma       = !expchroma->get_inconsistent();
         pedited->wavelet.expedge         = !expedge->get_inconsistent();
+        pedited->wavelet.exptm           = !exptm->get_inconsistent();
         pedited->wavelet.expresid        = !expresid->get_inconsistent();
         pedited->wavelet.expfinal        = !expfinal->get_inconsistent();
         pedited->wavelet.exptoning       = !exptoning->get_inconsistent();
@@ -1879,6 +1938,8 @@ void Wavelet::curveChanged(CurveEditor* ce)
     if (listener && getEnabled()) {
         if (ce == ccshape) {
             listener->panelChanged(EvWavCCCurve, M("HISTORY_CUSTOMCURVE"));
+        } else if (ce == tmshape) {
+            listener->panelChanged(EvWavtmshape, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == opacityShapeRG) {
             listener->panelChanged(EvWavColor, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == opacityShapeBY) {
@@ -1945,6 +2006,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     pastlev->setDefault<int> (defParams->wavelet.pastlev);
     satlev->setDefault<int> (defParams->wavelet.satlev);
     edgcont->setDefault<int> (defParams->wavelet.edgcont);
+    threswav->setDefault(defParams->wavelet.threswav);
+    softwav->setDefault(defParams->wavelet.softwav);
     level0noise->setDefault<double> (defParams->wavelet.level0noise);
     level1noise->setDefault<double> (defParams->wavelet.level1noise);
     level2noise->setDefault<double> (defParams->wavelet.level2noise);
@@ -2008,6 +2071,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         pastlev->setDefaultEditedState(pedited->wavelet.pastlev ? Edited : UnEdited);
         satlev->setDefaultEditedState(pedited->wavelet.satlev ? Edited : UnEdited);
         edgcont->setDefaultEditedState(pedited->wavelet.edgcont ? Edited : UnEdited);
+        threswav->setDefaultEditedState(pedited->wavelet.threswav ? Edited : UnEdited);
+        softwav->setDefaultEditedState(pedited->wavelet.softwav ? Edited : UnEdited);
         strength->setDefaultEditedState(pedited->wavelet.strength ? Edited : UnEdited);
         balance->setDefaultEditedState(pedited->wavelet.balance ? Edited : UnEdited);
         iter->setDefaultEditedState(pedited->wavelet.iter ? Edited : UnEdited);
@@ -2057,6 +2122,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         hllev->setDefaultEditedState(Irrelevant);
         bllev->setDefaultEditedState(Irrelevant);
         edgcont->setDefaultEditedState(Irrelevant);
+        threswav->setDefaultEditedState(Irrelevant);
+        softwav->setDefaultEditedState(Irrelevant);
         level0noise->setDefaultEditedState(Irrelevant);
         level1noise->setDefaultEditedState(Irrelevant);
         level2noise->setDefaultEditedState(Irrelevant);
@@ -2550,6 +2617,7 @@ void Wavelet::setBatchMode(bool batchMode)
     opacityCurveEditorG->setBatchMode(batchMode);
     opacityCurveEditorW->setBatchMode(batchMode);
     opacityCurveEditorWL->setBatchMode(batchMode);
+    curveEditortm->setBatchMode(batchMode);
     curveEditorRES->setBatchMode(batchMode);
     curveEditorGAM->setBatchMode(batchMode);
     sigma->showEditedCB();
@@ -2587,6 +2655,8 @@ void Wavelet::setBatchMode(bool batchMode)
     pastlev->showEditedCB();
     satlev->showEditedCB();
     edgcont->showEditedCB();
+    threswav->showEditedCB();
+    softwav->showEditedCB();
     strength->showEditedCB();
     balance->showEditedCB();
     iter->showEditedCB();
@@ -2749,6 +2819,10 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavgreenlow, greenlow->getTextValue());
         } else if (a == bluelow) {
             listener->panelChanged(EvWavbluelow, bluelow->getTextValue());
+        } else if (a == threswav) {
+            listener->panelChanged(EvWavthreswav, threswav->getTextValue());
+        } else if (a == softwav) {
+            listener->panelChanged(EvWavsoftwav, softwav->getTextValue());
         }
 
         if ((a == correction[0] || a == correction[1] || a == correction[2] || a == correction[3] || a == correction[4] || a == correction[5] || a == correction[6] || a == correction[7] || a == correction[8])) {
@@ -3270,6 +3344,7 @@ void Wavelet::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         exptoning->set_expanded(exptoning == expander);
         expnoise->set_expanded(expnoise == expander);
         expedge->set_expanded(expedge == expander);
+        exptm->set_expanded(exptm == expander);
         expgamut->set_expanded(expgamut == expander);
         expresid->set_expanded(expresid == expander);
         expfinal->set_expanded(expfinal == expander);
@@ -3292,6 +3367,8 @@ void Wavelet::enableToggled(MyExpander *expander)
             event = EvWavenanoise;
         } else if (expander == expedge) {
             event = EvWavenaedge;
+        } else if (expander == exptm) {
+            event = EvWavenatm;
         } else if (expander == expresid) {
             event = EvWavenares;
         } else if (expander == expfinal) {
@@ -3354,6 +3431,7 @@ void Wavelet::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(exptoning->get_expanded());
     tpOpen.push_back(expnoise->get_expanded());
     tpOpen.push_back(expedge->get_expanded());
+    tpOpen.push_back(exptm->get_expanded());
     tpOpen.push_back(expgamut->get_expanded());
     tpOpen.push_back(expresid->get_expanded());
     tpOpen.push_back(expfinal->get_expanded());
@@ -3369,6 +3447,7 @@ void Wavelet::updateToolState(const std::vector<int>& tpOpen)
         exptoning->set_expanded(false);
         expnoise->set_expanded(false);
         expedge->set_expanded(false);
+        exptm->set_expanded(false);
         expgamut->set_expanded(false);
         expresid->set_expanded(false);
         expfinal->set_expanded(false);
@@ -3376,17 +3455,18 @@ void Wavelet::updateToolState(const std::vector<int>& tpOpen)
         return;
     }
 
-    if (tpOpen.size() >= 10) {
+    if (tpOpen.size() >= 11) {
         expsettings->set_expanded(tpOpen[0]);
         expcontrast->set_expanded(tpOpen[1]);
         expchroma->set_expanded(tpOpen[2]);
         exptoning->set_expanded(tpOpen[3]);
         expnoise->set_expanded(tpOpen[4]);
         expedge->set_expanded(tpOpen[5]);
-        expgamut->set_expanded(tpOpen[6]);
-        expresid->set_expanded(tpOpen[7]);
-        expfinal->set_expanded(tpOpen[8]);
-        expclari->set_expanded(tpOpen.at(9));
+        exptm->set_expanded(tpOpen[6]);
+        expgamut->set_expanded(tpOpen[7]);
+        expresid->set_expanded(tpOpen[8]);
+        expfinal->set_expanded(tpOpen[9]);
+        expclari->set_expanded(tpOpen[10]);
     }
 }
 

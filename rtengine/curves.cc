@@ -1209,6 +1209,41 @@ void WavCurve::Set(const std::vector<double> &curvePoints)
     }
 }
 
+WavtmCurve::WavtmCurve() {}
+
+void WavtmCurve::Reset()
+{
+    luttmCurve.reset();
+}
+
+void WavtmCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    luttmCurve(501); // raise this value if the quality suffers from this number of samples
+
+    for (int i = 0; i < 501; i++) {
+        luttmCurve[i] = pCurve.getVal(double(i) / 500.);
+    }
+}
+
+void WavtmCurve::Set(const std::vector<double> &curvePoints)
+{
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        Set(tcurve);
+    } else {
+        Reset();
+    }
+
+}
+
+
+
 
 WavOpacityCurveRG::WavOpacityCurveRG() {}
 

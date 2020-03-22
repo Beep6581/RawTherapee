@@ -79,6 +79,10 @@ private:
     rtengine::ProcEvent EvWavscale;
     rtengine::ProcEvent EvWavradius;
     rtengine::ProcEvent EvWavsigma;
+    rtengine::ProcEvent EvWavenatm;
+    rtengine::ProcEvent EvWavthreswav;
+    rtengine::ProcEvent EvWavsoftwav;
+    rtengine::ProcEvent EvWavtmshape;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
 
@@ -140,6 +144,7 @@ private:
     CurveEditorGroup* const curveEditorG;
 
     CurveEditorGroup* const CCWcurveEditorG;
+    CurveEditorGroup* const curveEditortm;
     CurveEditorGroup* const curveEditorRES;
     CurveEditorGroup* const curveEditorGAM;
     Gtk::HSeparator* const separatorNeutral;
@@ -158,6 +163,7 @@ private:
     DiagonalCurveEditor* clshape;
 
     FlatCurveEditor* ccshape;
+    FlatCurveEditor* tmshape;
     Gtk::CheckButton* const median;
     Gtk::CheckButton* const medianlev;
     Gtk::CheckButton* const linkedg;
@@ -194,6 +200,7 @@ private:
     Adjuster* const strength;
     Adjuster* const balance;
     Adjuster* const iter;
+    
     Adjuster* greenlow;
     Adjuster* bluelow;
     Adjuster* greenmed;
@@ -224,6 +231,8 @@ private:
     Adjuster* const mergeC;
     Adjuster* const softrad;
     Adjuster* const softradend;
+    Adjuster* const threswav;
+    Adjuster* const softwav;
 
     MyComboBoxText* const Lmethod;
     sigc::connection  Lmethodconn;
@@ -275,11 +284,12 @@ private:
     MyExpander* const expsettings;
     MyExpander* const exptoning;
     MyExpander* const expclari;
+    MyExpander* const exptm;
 
     Gtk::HBox* const neutrHBox;
     Gtk::HBox* const usharpHBox;
 
-    sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enableFinalConn, enableclariConn;
+    sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enabletmConn, enableFinalConn, enableclariConn;
     sigc::connection enableNoiseConn, enableResidConn, enableToningConn;
     sigc::connection medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn, showmaskConn;
     sigc::connection neutralPressedConn;

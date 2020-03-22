@@ -867,7 +867,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if ((params->wavelet.enabled)) {
                 WaveletParams WaveParams = params->wavelet;
-                WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+                WaveParams.getCurves(wavCLVCurve, wavtmCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
                 int kall = 0;
                 LabImage *unshar = nullptr;
                 Glib::ustring provis;
@@ -885,8 +885,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 if (WaveParams.softrad > 0.f) {
+                    printf("s1\n");
                     provradius = new LabImage(pW, pH);
                     provradius->CopyFrom(nprevl);
+                    printf("s2\n");
                 }
 
 
@@ -922,10 +924,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     WaveParams.expnoise = pronois;
                     
                     if (WaveParams.softrad > 0.f) {
+                                            printf("s3\n");
+
                         array2D<float> ble(pW, pH);
                         array2D<float> guid(pW, pH);
                         Imagefloat *tmpImage = nullptr;
                         tmpImage = new Imagefloat(pW, pH);
+                                            printf("s4\n");
+
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -948,6 +954,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 tmpImage->b(ir, jr) = Z;
                                 ble[ir][jr] = Y / 32768.f;
                             }
+                                            printf("s5\n");
+    
                         double epsilmax = 0.0001;
                         double epsilmin = 0.00001;
                         double aepsil = (epsilmax - epsilmin) / 90.f;
@@ -957,6 +965,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         float blur = 10.f / scale * (0.0001f + 0.8f * WaveParams.softrad);
                         // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
                         rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
+                    printf("s6\n");
 
 
 
@@ -973,7 +982,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 Color::XYZ2Lab(X, Y, Z, L, a, b);
                                 nprevl->L[ir][jr] =  L;
                             }
+                                          printf("s7\n");
+      
                     delete tmpImage;
+                    printf("s8\n");
 
                     }
                     
@@ -1063,8 +1075,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 */
                     if (WaveParams.softrad > 0.f) {
+                                            printf("s9\n");
+
                         delete provradius;
                         provradius    = NULL;
+                                            printf("s10\n");
+
                     }
 
 
