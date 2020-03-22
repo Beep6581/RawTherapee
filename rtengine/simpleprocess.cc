@@ -1152,7 +1152,7 @@ private:
                 unshar = new LabImage(fw, fh);
                 provis = params.wavelet.CLmethod;
                 params.wavelet.CLmethod = "all";
-                ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
+                ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavtmCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
                 unshar->CopyFrom(labView);
                 params.wavelet.CLmethod = provis;
 
@@ -1164,7 +1164,7 @@ private:
                 WaveParams.expnoise = false; 
             }
 
-            ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
+            ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavtmCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                 WaveParams.expcontrast = procont;
