@@ -32,6 +32,7 @@
 #include "EdgePreservingDecomposition.h"
 #include "iccstore.h"
 #include "improcfun.h"
+#include "imagefloat.h"
 #include "labimage.h"
 #include "LUT.h"
 #include "median.h"
@@ -844,6 +845,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (cp.val > 0 || ref || contr) { //edge
                             Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN);
                         }
+
+//here TM wavelet....big memory 
+
 
                         //init for edge and denoise
                         float vari[4];
@@ -3481,4 +3485,193 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
         }
     }
 }
+
+void ImProcFunctions::softproc2(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, double epsilmax, double epsilmin,  float thres, int sk, bool multiThread, int flag)
+{
+    if (flag == 0) {
+        if (rad > 0.f) {
+            array2D<float> ble(bfw, bfh);
+            array2D<float> guid(bfw, bfh);
+            Imagefloat *tmpImage = nullptr;
+            tmpImage = new Imagefloat(bfw, bfh);
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+
+                    float X, Y, Z;
+                    float L = bufcolorig->L[ir][jr];
+                    float a = bufcolorig->a[ir][jr];
+                    float b = bufcolorig->b[ir][jr];
+                    Color::Lab2XYZ(L, a, b, X, Y, Z);
+
+                    guid[ir][jr] = Y / 32768.f;
+                    float La = bufcolfin->L[ir][jr];
+                    float aa = bufcolfin->a[ir][jr];
+                    float ba = bufcolfin->b[ir][jr];
+                    Color::Lab2XYZ(La, aa, ba, X, Y, Z);
+                    tmpImage->r(ir, jr) = X;
+                    tmpImage->g(ir, jr) = Y;
+                    tmpImage->b(ir, jr) = Z;
+
+                    ble[ir][jr] = Y / 32768.f;
+                }
+
+            double aepsil = (epsilmax - epsilmin) / 90.f;
+            double bepsil = epsilmax - 100.f * aepsil;
+            double epsil = aepsil * 0.1 * rad + bepsil;
+
+            float blur = 10.f / sk * (thres + 0.8f * rad);
+            rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
+
+
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    float X = tmpImage->r(ir, jr);
+                    float Y = 32768.f * ble[ir][jr];
+                    float Z = tmpImage->b(ir, jr);
+                    float L, a, b;
+                    Color::XYZ2Lab(X, Y, Z, L, a, b);
+                    bufcolfin->L[ir][jr] =  L;
+                }
+
+            delete tmpImage;
+        }
+    } else if (flag == 1) {
+        if (rad > 0.f) {
+            array2D<float> ble(bfw, bfh);
+            array2D<float> blechro(bfw, bfh);
+            array2D<float> hue(bfw, bfh);
+            array2D<float> guid(bfw, bfh);
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+//                    hue[ir][jr] = xatan2f(bufcolfin->b[ir][jr], bufcolfin->a[ir][jr]);
+//                    float chromah = sqrt(SQR(bufcolfin->b[ir][jr]) + SQR(bufcolfin->a[ir][jr]));
+
+                    ble[ir][jr] = (bufcolfin->L[ir][jr]) / 32768.f;
+//                    blechro[ir][jr] = chromah / 32768.f;
+                    guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
+                }
+
+            double aepsil = (epsilmax - epsilmin) / 90.f;
+            double bepsil = epsilmax - 100.f * aepsil;
+            double epsil = aepsil * 0.1 * rad + bepsil;
+
+            if (rad != 0.f) {
+                float blur = rad;
+                blur = blur < 0.f ? -1.f / blur : 1.f + blur;
+                // int r1 = max(int(4 / sk * blur + 0.5), 1);
+                int r2 = max(int(25 / sk * blur + 0.5), 1);
+
+                if (rad < 0.f) {
+                    epsil = 0.0001;
+                }
+
+                rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
+//                rtengine::guidedFilter(guid, blechro, blechro, r1, 0.5 * epsil, multiThread);
+            }
+
+
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    //    float2 sincosval = xsincosf(hue[ir][jr]);
+
+                    bufcolfin->L[ir][jr] =  32768.f * ble[ir][jr];
+                    //    bufcolfin->a[ir][jr] =  32768.f * sincosval.y * blechro[ir][jr];
+                    //    bufcolfin->b[ir][jr] =  32768.f * sincosval.x * blechro[ir][jr];
+                }
+        }
+
+    }
+}
+
+
+void ImProcFunctions::Compresslevels2(float **Source, int W_L, int H_L, float compression, float detailattenuator, float thres, float mean, float maxp, float meanN, float maxN, float madL)
+{
+    //J.Desmis 12-2019
+
+    float exponent;
+
+    // printf("maxp=%f maxn=%f\n", maxp, maxn);
+    if (detailattenuator > 0.f && detailattenuator < 0.05f) {
+        float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f; //0.69315 = log(2)
+        exponent = 1.2f * xlogf(-betemp);
+        exponent /= 20.f;
+    } else if (detailattenuator >= 0.05f && detailattenuator < 0.25f) {
+        float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f;
+        exponent = 1.2f * xlogf(-betemp);
+        exponent /= (-75.f * detailattenuator + 23.75f);
+    } else if (detailattenuator >= 0.25f) {
+        float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f;
+        exponent = 1.2f * xlogf(-betemp);
+        exponent /= (-2.f * detailattenuator + 5.5f);
+    } else {
+        exponent = (compression - 1.0f) / 20.f;
+    }
+
+    exponent += 1.f;
+
+
+    float ap = (thres - 1.f) / (maxp - mean);
+    float bp = 1.f - ap * mean;
+
+    float a0 = (1.33f * thres - 1.f) / (1.f - mean);
+    float b0 = 1.f - a0 * mean;
+
+    float apn = (thres - 1.f) / (maxN - meanN);
+    float bpn = 1.f - apn * meanN;
+
+    float a0n = (1.33f * thres - 1.f) / (1.f - meanN);
+    float b0n = 1.f - a0n * meanN;
+
+
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+
+    for (int y = 0; y < H_L; y++) {
+        for (int x = 0; x < W_L; x++) {
+            float expone = 1.f;
+
+            if (Source[y][x] >= 0.f) {
+
+                if (Source[y][x] > mean) {
+                    expone = 1.f + (exponent - 1.f) * (ap * Source[y][x] + bp);
+                } else {
+                    expone = 1.f + (exponent - 1.f) * (a0 * Source[y][x] + b0);
+                }
+
+                Source[y][x] = xexpf(xlogf(Source[y][x] + 0.05f * madL) * expone);
+            } else if (Source[y][x] < 0.f) {
+                if (-Source[y][x] > mean) {
+                    expone = 1.f + (exponent - 1.f) * (apn * -Source[y][x] + bpn);
+                } else {
+                    expone = 1.f + (exponent - 1.f) * (a0n * -Source[y][x] + b0n);
+                }
+
+                Source[y][x] = -xexpf(xlogf(-Source[y][x] + 0.05f * madL) * expone);
+            }
+        }
+    }
+
+}
+
 }
