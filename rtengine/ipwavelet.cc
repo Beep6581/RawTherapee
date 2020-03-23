@@ -124,6 +124,7 @@ struct cont_params {
     bool finena;
     bool toningena;
     bool noiseena;
+    bool tmena;
     int maxilev;
     float edgsens;
     float edgampl;
@@ -204,6 +205,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.finena = params->wavelet.expfinal;
     cp.toningena = params->wavelet.exptoning;
     cp.noiseena = params->wavelet.expnoise;
+    cp.tmena = params->wavelet.exptm;
 
     if (params->wavelet.Backmethod == "black") {
         cp.backm = 0;
@@ -846,7 +848,139 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN);
                         }
 
-//here TM wavelet....big memory 
+                        //here TM wavelet
+                        if(cp.tmena ){
+                            float mean2[10];
+                            float meanN2[10];
+                            float sigma2[10];
+                            float sigmaN2[10];
+                            float MaxP2[10];
+                            float MaxN2[10];
+                            //calculate mean, amx, etc.
+                            Evaluate2(*Ldecomp, mean2, meanN2, sigma2, sigmaN2, MaxP2, MaxN2);
+                            
+                            int leve = levwavL;
+                            int dir = 3;
+                            int WW = labco->W;
+                            int HH = labco->H;
+                            float ****templevel = nullptr;
+                            templevel = new float***[dir];
+
+                            //allocate memory for 3 DIR n levels, HH, WW
+                            for (int d = 0; d < dir; d++) {
+                                templevel[d] = new float**[leve];
+
+                                for (int k = 0; k < leve; k++) {
+                                    templevel[d][k] = new float*[HH];
+
+                                    for (int i = 0; i < HH; i++) {
+                                        templevel[d][k][i] = new float[WW];
+                                    }
+                                }
+                            }
+                            
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                            //fill templevel with decomp for each level, each dir,X Y
+                            for (int dir = 1; dir < 4; dir++) {
+                                for (int level = 0; level < levwavL; ++level) {
+                                    int W_L = Ldecomp->level_W(level);
+                                    int H_L = Ldecomp->level_H(level);
+                                    float **wav_L = Ldecomp->level_coeffs(level);
+                                    madL[level][dir - 1] = Mad(wav_L[dir], W_L * H_L);//evaluate noise by level
+
+                                    for (int y = 0; y < H_L; y++) {
+                                        for (int x = 0; x < W_L; x++) {
+                                            float val  = wav_L[dir][y * W_L + x];
+                                            templevel[dir - 1][level][y][x] = val;
+                                        }
+                                    }
+                                }
+                            }
+                            
+
+                            float thres = params->wavelet.threswav;
+        
+                            bool wavcurvecomp = false;//not enable if 0.75
+
+                            if (wavtmCurve) {
+                                for (int i = 0; i < 500; i++) {
+                                    if (wavtmCurve[i] != 0.75) {
+                                        wavcurvecomp = true;
+                                    }
+                                }
+                            }
+        
+                            //for each level, dir calculate templevel with compression
+                            for (int dir = 1; dir < 4; dir++) {
+                                for (int level = 0; level < levwavL; ++level) {
+                                    int W_L = Ldecomp->level_W(level);
+                                    int H_L = Ldecomp->level_H(level);
+
+                                    if (wavtmCurve  && wavcurvecomp) {
+                                        float klev = (wavtmCurve[level * 55.5f] - 0.75f);
+
+                                        if (klev < 0.f) {
+                                            klev *= 2.6666f;//compression increase contraste
+                                        } else {
+                                            klev *= 4.f;//dilatation reduce contraste - detailattenuator
+                                        }
+
+                                        float compression = expf(-klev);
+                                        float  detailattenuator = klev;
+
+                                        if (klev < 0.0f) {
+                                            detailattenuator = 0.0f;
+                                        }
+                                        Compresslevels2(templevel[dir - 1][level], W_L, H_L, compression, detailattenuator, thres,  mean2[level], MaxP2[level], meanN2[level], MaxN2[level], madL[level][dir - 1]);
+                                    }
+                                }
+                            }
+
+                            //retrieve decomp
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                            for (int dir = 1; dir < 4; dir++) {
+                                for (int level = 0; level < levwavL ; ++level) {
+                                    int W_L = Ldecomp->level_W(level);
+                                    int H_L = Ldecomp->level_H(level);
+                                    float **wav_L = Ldecomp->level_coeffs(level);
+
+                                    for (int y = 0; y < H_L; y++) {
+                                        for (int x = 0; x < W_L; x++) {
+                                            wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
+                                        }
+                                    }
+                                }
+                            }
+
+
+                            //free memory
+                            for (int i = 0; i < dir; i++) {
+                                for (int j = 0; j < leve; j++) {
+                                    for (int l = 0; l < HH; l++) {
+                                        delete [] templevel[i][j][l];
+                                    }
+                                }
+                            }
+
+                            for (int i = 0; i < dir; i++) {
+                                for (int j = 0; j < leve; j++) {
+                                    delete [] templevel[i][j];
+                                }
+                            }
+
+                            for (int i = 0; i < dir; i++) {
+                                delete [] templevel[i];
+                            }
+
+                            delete [] templevel;
+
+                        }
+                        // end TM wavelet 
 
 
                         //init for edge and denoise
