@@ -1679,6 +1679,7 @@ struct WaveletParams {
     bool lipst;
     bool avoid;
     bool showmask;
+    bool oldsh;
     bool tmr;
     int strength;
     int balance;

@@ -79,10 +79,11 @@ Wavelet::Wavelet() :
     avoid(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_AVOID")))),
     tmr(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_BALCHRO")))),
     showmask(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_SHOWMASK")))),
+    oldsh(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_OLDSH")))),
     neutralchButton(Gtk::manage(new Gtk::Button(M("TP_WAVELET_NEUTRAL")))),
     sigma(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMA"), 0.2, 2.5, 0.01, 1.))),
-    rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), 0, 100, 1, 0))),
-    resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), 0, 100, 1, 0))),
+    rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), -100, 100, 1, 0))),
+    resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), -100, 100, 1, 0))),
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
     tmrs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSTRENGTH"), -1.0, 2.0, 0.01, 0.0))),
     edgs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMEDGS"), 0.1, 4.0, 0.01, 1.4))),
@@ -175,6 +176,7 @@ Wavelet::Wavelet() :
     EvWavscale = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSCALE");
     EvWavradius = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVRADIUS");
     EvWavsigma = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSIGMA");
+    EvWavoldsh = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVOLDSH");
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -675,6 +677,9 @@ Wavelet::Wavelet() :
 
 // Residual Image
     ToolParamBlock* const resBox = Gtk::manage(new ToolParamBlock());
+    oldsh->set_active(true);
+    oldshConn = oldsh->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::oldshToggled));
+    resBox->pack_start(*oldsh);
 
     rescon->setAdjusterListener(this);
     resBox->pack_start(*rescon, Gtk::PACK_SHRINK);
@@ -1200,6 +1205,9 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     showmaskConn.block(true);
     showmask->set_active(pp->wavelet.showmask);
     showmaskConn.block(false);
+    oldshConn.block(true);
+    oldsh->set_active(pp->wavelet.oldsh);
+    oldshConn.block(false);
     tmrConn.block(true);
     tmr->set_active(pp->wavelet.tmr);
     tmrConn.block(false);
@@ -1230,6 +1238,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     lastlipst = pp->wavelet.lipst;
     lastavoid = pp->wavelet.avoid;
     lastshowmask = pp->wavelet.showmask;
+    lastoldsh = pp->wavelet.oldsh;
     lasttmr = pp->wavelet.tmr;
     sigma->setValue(pp->wavelet.sigma);
     rescon->setValue(pp->wavelet.rescon);
@@ -1380,6 +1389,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         clshape->setUnChanged(!pedited->wavelet.wavclCurve);
         avoid->set_inconsistent(!pedited->wavelet.avoid);
         showmask->set_inconsistent(!pedited->wavelet.showmask);
+        oldsh->set_inconsistent(!pedited->wavelet.oldsh);
         tmr->set_inconsistent(!pedited->wavelet.tmr);
         edgthresh->setEditedState(pedited->wavelet.edgthresh ? Edited : UnEdited);
         rescon->setEditedState(pedited->wavelet.rescon ? Edited : UnEdited);
@@ -1564,6 +1574,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.enabled        = getEnabled();
     pp->wavelet.avoid          = avoid->get_active();
     pp->wavelet.showmask       = showmask->get_active();
+    pp->wavelet.oldsh          = oldsh->get_active();
     pp->wavelet.tmr            = tmr->get_active();
     pp->wavelet.sigma          = sigma->getValue();
     pp->wavelet.rescon         = rescon->getValue();
@@ -1654,6 +1665,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.enabled         = !get_inconsistent();
         pedited->wavelet.avoid           = !avoid->get_inconsistent();
         pedited->wavelet.showmask        = !showmask->get_inconsistent();
+        pedited->wavelet.oldsh           = !oldsh->get_inconsistent();
         pedited->wavelet.tmr             = !tmr->get_inconsistent();
         pedited->wavelet.median          = !median->get_inconsistent();
         pedited->wavelet.medianlev       = !medianlev->get_inconsistent();
@@ -3116,6 +3128,38 @@ void Wavelet::showmaskToggled()
             listener->panelChanged(EvWavshowmask, M("GENERAL_ENABLED"));
         } else {
             listener->panelChanged(EvWavshowmask, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+void Wavelet::oldshToggled()
+{
+    if (oldsh->get_active()) {
+        radius->hide();
+    } else {
+        radius->show();
+    }
+
+    if (multiImage) {
+        if (oldsh->get_inconsistent()) {
+            oldsh->set_inconsistent(false);
+            oldshConn.block(true);
+            oldsh->set_active(false);
+            oldshConn.block(false);
+        } else if (lastoldsh) {
+            oldsh->set_inconsistent(true);
+        }
+
+        lastoldsh = oldsh->get_active();
+    }
+
+    if (listener && (multiImage || getEnabled())) {
+        if (oldsh->get_inconsistent()) {
+            listener->panelChanged(EvWavoldsh, M("GENERAL_UNCHANGED"));
+        } else if (oldsh->get_active()) {
+            listener->panelChanged(EvWavoldsh, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvWavoldsh, M("GENERAL_DISABLED"));
         }
     }
 }

@@ -63,6 +63,7 @@ struct cont_params {
     float conresH;
     float radius;
     float chrores;
+    bool oldsh;
     float hueres;
     float sky;
     float b_l, t_l, b_r, t_r;
@@ -387,6 +388,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.conresH = waparams.resconH;
     cp.radius = waparams.radius;
     cp.chrores = waparams.reschro;
+    cp.oldsh = waparams.oldsh;
     //cp.hueres=waparams.reshue;
     cp.hueres = 2.f;
     cp.th = float(waparams.thr);
@@ -1690,7 +1692,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         }
     }
 
-    if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+    if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena  && !cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
         LabImage *temp = nullptr;
         temp = new LabImage(W_L, H_L);
 #ifdef _OPENMP
@@ -1720,6 +1722,53 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         delete temp;
 
     }
+
+#ifdef _OPENMP
+        #pragma omp barrier
+#endif
+
+        if((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena && cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+
+            for (int i = 0; i < W_L * H_L; i++) {
+                float LL = WavCoeffs_L0[i];
+                float LL100 = LL / 327.68f;
+                float tran = 5.f;//transition
+                //shadow
+                float alp = 3.f; //increase contrast sahdow in lowlights  between 1 and ??
+
+                if(cp.th > (100.f - tran)) {
+                    tran = 100.f - cp.th;
+                }
+
+                if(LL100 < cp.th) {
+                    float aalp = (1.f - alp) / cp.th; //no changes for LL100 = cp.th
+                    float kk = aalp * LL100 + alp;
+                    WavCoeffs_L0[i] *= (1.f + kk * cp.conres / 200.f);
+                } else if(LL100 < cp.th + tran) {
+                    float ath = -cp.conres / tran;
+                    float bth = cp.conres - ath * cp.th;
+                    WavCoeffs_L0[i] *= (1.f + (LL100 * ath + bth) / 200.f);
+                }
+
+                //highlight
+                tran = 5.f;
+
+                if(cp.thH < (tran)) {
+                    tran = cp.thH;
+                }
+
+                if(LL100 > cp.thH) {
+                    WavCoeffs_L0[i] *= (1.f + cp.conresH / 200.f);
+                } else if(LL100 > (cp.thH - tran)) {
+                    float athH = cp.conresH / tran;
+                    float bthH = cp.conresH - athH * cp.thH;
+                    WavCoeffs_L0[i] *= (1.f + (LL100 * athH + bthH) / 200.f);
+                }
+            }
+        }
 
 
 #ifdef _OPENMP
