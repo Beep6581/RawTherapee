@@ -2243,6 +2243,7 @@ WaveletParams::WaveletParams() :
     lipst(false),
     avoid(false),
     showmask(false),
+    oldsh(true),
     tmr(false),
     strength(100),
     balance(0),
@@ -2343,6 +2344,7 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && lipst == other.lipst
         && avoid == other.avoid
         && showmask == other.showmask
+        && oldsh == other.oldsh
         && tmr == other.tmr
         && strength == other.strength
         && balance == other.balance
@@ -3562,6 +3564,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.edgthresh, "Wavelet", "ThrEdg", wavelet.edgthresh, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.avoid, "Wavelet", "AvoidColorShift", wavelet.avoid, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.showmask, "Wavelet", "Showmask", wavelet.showmask, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.oldsh, "Wavelet", "Oldsh", wavelet.oldsh, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.tmr, "Wavelet", "TMr", wavelet.tmr, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.sigma, "Wavelet", "Sigma", wavelet.sigma, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.rescon, "Wavelet", "ResidualcontShadow", wavelet.rescon, keyFile);
@@ -4654,6 +4657,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "Lipst", pedited, wavelet.lipst, pedited->wavelet.lipst);
             assignFromKeyfile(keyFile, "Wavelet", "AvoidColorShift", pedited, wavelet.avoid, pedited->wavelet.avoid);
             assignFromKeyfile(keyFile, "Wavelet", "Showmask", pedited, wavelet.showmask, pedited->wavelet.showmask);
+            assignFromKeyfile(keyFile, "Wavelet", "Oldsh", pedited, wavelet.oldsh, pedited->wavelet.oldsh);
             assignFromKeyfile(keyFile, "Wavelet", "TMr", pedited, wavelet.tmr, pedited->wavelet.tmr);
 
             if (ppVersion < 331) { // wavelet.Lmethod was a string before version 331

@@ -508,6 +508,7 @@ struct WaveletParamsEdited {
     bool ushamethod;
     bool avoid;
     bool showmask;
+    bool oldsh;
     bool tmr;
     bool c[9];
     bool ch[9];

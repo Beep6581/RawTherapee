@@ -802,6 +802,7 @@ HISTORY_MSG_WAVSIGMA;Sigma
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVUSHAMET;Clarity method
+HISTORY_MSG_WAVOLDSH;Old algorithm
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2243,6 +2244,7 @@ TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
 TP_WAVELET_NPTYPE;Neighboring pixels
 TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
+TP_WAVELET_OLDSH;Old algorithm using negatives values
 TP_WAVELET_OPACITY;Opacity Blue-Yellow
 TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 TP_WAVELET_OPACITYWL;Final local contrast

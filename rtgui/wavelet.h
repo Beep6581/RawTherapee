@@ -79,6 +79,7 @@ private:
     rtengine::ProcEvent EvWavscale;
     rtengine::ProcEvent EvWavradius;
     rtengine::ProcEvent EvWavsigma;
+    rtengine::ProcEvent EvWavoldsh;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
 
@@ -98,6 +99,7 @@ private:
     void TilesmethodChanged();
     void avoidToggled();
     void showmaskToggled ();
+    void oldshToggled ();
     void cbenabToggled();
     void contrastMinusPressed();
     void contrastPlusPressed();
@@ -166,6 +168,7 @@ private:
     Gtk::CheckButton* const avoid;
     Gtk::CheckButton* const tmr;
     Gtk::CheckButton* const showmask;
+    Gtk::CheckButton* const oldsh;
 
     Gtk::Button* const neutralchButton;
     Adjuster* correction[9];
@@ -281,13 +284,13 @@ private:
 
     sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enableFinalConn, enableclariConn;
     sigc::connection enableNoiseConn, enableResidConn, enableToningConn;
-    sigc::connection medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn, showmaskConn;
+    sigc::connection medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn, showmaskConn, oldshConn;
     sigc::connection neutralPressedConn;
     sigc::connection contrastPlusPressedConn;
     sigc::connection contrastMinusPressedConn;
     sigc::connection neutralchPressedConn;
 
-    bool lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab, lastshowmask;
+    bool lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab, lastshowmask, lastoldsh;
     int nextnlevel;
 
     IdleRegister idle_register;
