@@ -3134,6 +3134,12 @@ void Wavelet::showmaskToggled()
 
 void Wavelet::oldshToggled()
 {
+    if (oldsh->get_active()) {
+        radius->hide();
+    } else {
+        radius->show();
+    }
+
     if (multiImage) {
         if (oldsh->get_inconsistent()) {
             oldsh->set_inconsistent(false);
