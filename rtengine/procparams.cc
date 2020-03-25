@@ -2274,6 +2274,7 @@ WaveletParams::WaveletParams() :
     Dirmethod("all"),
     HSmethod("with"),
     sigma(1.0),
+    offset(1.0),
     rescon(0),
     resconH(0),
     reschro(0),
@@ -2382,6 +2383,7 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && Dirmethod == other.Dirmethod
         && HSmethod == other.HSmethod
         && sigma == other.sigma
+        && offset == other.offset
         && rescon == other.rescon
         && resconH == other.resconH
         && reschro == other.reschro
@@ -3567,6 +3569,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.oldsh, "Wavelet", "Oldsh", wavelet.oldsh, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.tmr, "Wavelet", "TMr", wavelet.tmr, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.sigma, "Wavelet", "Sigma", wavelet.sigma, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.offset, "Wavelet", "Offset", wavelet.offset, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.rescon, "Wavelet", "ResidualcontShadow", wavelet.rescon, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.resconH, "Wavelet", "ResidualcontHighlight", wavelet.resconH, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.thr, "Wavelet", "ThresholdResidShadow", wavelet.thr, keyFile);
@@ -4687,6 +4690,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "HSMethod", pedited, wavelet.HSmethod, pedited->wavelet.HSmethod);
             assignFromKeyfile(keyFile, "Wavelet", "DirMethod", pedited, wavelet.Dirmethod, pedited->wavelet.Dirmethod);
             assignFromKeyfile(keyFile, "Wavelet", "Sigma", pedited, wavelet.sigma, pedited->wavelet.sigma);
+            assignFromKeyfile(keyFile, "Wavelet", "Offset", pedited, wavelet.offset, pedited->wavelet.offset);
             assignFromKeyfile(keyFile, "Wavelet", "ResidualcontShadow", pedited, wavelet.rescon, pedited->wavelet.rescon);
             assignFromKeyfile(keyFile, "Wavelet", "ResidualcontHighlight", pedited, wavelet.resconH, pedited->wavelet.resconH);
             assignFromKeyfile(keyFile, "Wavelet", "Residualchroma", pedited, wavelet.reschro, pedited->wavelet.reschro);

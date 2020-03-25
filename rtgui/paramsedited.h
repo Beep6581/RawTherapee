@@ -526,6 +526,7 @@ struct WaveletParamsEdited {
     bool daubcoeffmethod;
     bool Dirmethod;
     bool sigma;
+    bool offset;
     bool rescon;
     bool resconH;
     bool reschro;

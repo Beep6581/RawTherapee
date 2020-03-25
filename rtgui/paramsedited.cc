@@ -510,7 +510,8 @@ void ParamsEdited::set(bool v)
     wavelet.HSmethod = v;
     wavelet.Dirmethod = v;
     wavelet.sigma = v;
-    wavelet.rescon = v;
+    wavelet.sigma = v;
+    wavelet.offset = v;
     wavelet.resconH = v;
     wavelet.reschro = v;
     wavelet.tmrs = v;
@@ -1107,6 +1108,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.HSmethod = wavelet.HSmethod && p.wavelet.HSmethod == other.wavelet.HSmethod;
         wavelet.Dirmethod = wavelet.Dirmethod && p.wavelet.Dirmethod == other.wavelet.Dirmethod;
         wavelet.sigma = wavelet.sigma && p.wavelet.sigma == other.wavelet.sigma;
+        wavelet.offset = wavelet.offset && p.wavelet.offset == other.wavelet.offset;
         wavelet.rescon = wavelet.rescon && p.wavelet.rescon == other.wavelet.rescon;
         wavelet.resconH = wavelet.resconH && p.wavelet.resconH == other.wavelet.resconH;
         wavelet.reschro = wavelet.reschro && p.wavelet.reschro == other.wavelet.reschro;
@@ -3166,6 +3168,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.sigma) {
         toEdit.wavelet.sigma = mods.wavelet.sigma;
+    }
+
+    if (wavelet.offset) {
+        toEdit.wavelet.offset = mods.wavelet.offset;
     }
 
     if (wavelet.resconH) {

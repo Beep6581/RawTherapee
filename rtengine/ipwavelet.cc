@@ -1691,7 +1691,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         }
     }
 
-    if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena  && !cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+    if ((cp.conres >= 0.f || cp.conresH >= 0.f) && cp.resena  && !cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
         LabImage *temp = nullptr;
         temp = new LabImage(W_L, H_L);
 #ifdef _OPENMP
@@ -2894,13 +2894,14 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
         const float skinprot = params->wavelet.skinprotect;
         const float skinprotneg = -skinprot;
         const float factorHard = (1.f - skinprotneg / 100.f);
+        const float offs = params->wavelet.offset;
 
         //to adjust increase contrast with local contrast
 
         //for each pixel and each level
         float beta;
         float mea[9];
-        float rap =  mean[level] - 2.f * cp.sigm * sigma[level];
+        float rap =  offs * mean[level] - 2.f * cp.sigm * sigma[level];
 
         if (rap > 0.f) {
             mea[0] = rap;
@@ -2908,7 +2909,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
             mea[0] = mean[level] / 6.f;
         }
 
-        rap =  mean[level] - cp.sigm * sigma[level];
+        rap =  offs * mean[level] - cp.sigm * sigma[level];
 
         if (rap > 0.f) {
             mea[1] = rap;
@@ -2916,13 +2917,13 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
             mea[1] = mean[level] / 2.f;
         }
         
-        mea[2] = mean[level]; // 50% data
-        mea[3] = mean[level] + cp.sigm * sigma[level] / 2.f;
-        mea[4] = mean[level] + cp.sigm * sigma[level]; //66%
-        mea[5] = mean[level] + cp.sigm * 1.2f * sigma[level];
-        mea[6] = mean[level] + cp.sigm * 1.5f * sigma[level]; //
-        mea[7] = mean[level] + cp.sigm * 2.f * sigma[level]; //95%
-        mea[8] = mean[level] + cp.sigm * 2.5f * sigma[level]; //99%
+        mea[2] = offs * mean[level]; // 50% data
+        mea[3] = offs * mean[level] + cp.sigm * sigma[level] / 2.f;
+        mea[4] = offs * mean[level] + cp.sigm * sigma[level]; //66%
+        mea[5] = offs * mean[level] + cp.sigm * 1.2f * sigma[level];
+        mea[6] = offs * mean[level] + cp.sigm * 1.5f * sigma[level]; //
+        mea[7] = offs * mean[level] + cp.sigm * 2.f * sigma[level]; //95%
+        mea[8] = offs * mean[level] + cp.sigm * 2.5f * sigma[level]; //99%
 
         bool useChromAndHue = (skinprot != 0.f || cp.HSmet);
         float modchro;
