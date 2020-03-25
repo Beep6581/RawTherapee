@@ -627,26 +627,26 @@ public:
     }
 };
 
-class WavtmCurve
+class Wavblcurve
 {
 private:
-    LUTf luttmCurve;  // 0xffff range
+    LUTf lutblcurve;  // 0xffff range
     void Set(const Curve &pCurve);
 public:
-    virtual ~WavtmCurve() {};
-    WavtmCurve();
+    virtual ~Wavblcurve() {};
+    Wavblcurve();
 
     void Reset();
     //  void Set(const std::vector<double> &curvePoints, bool &opautili);
     void Set(const std::vector<double> &curvePoints);
     float operator[](float index) const
     {
-        return luttmCurve[index];
+        return lutblcurve[index];
     }
 
     operator bool (void) const
     {
-        return luttmCurve;
+        return lutblcurve;
     }
 };
 

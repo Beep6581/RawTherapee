@@ -804,8 +804,10 @@ HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_MSG_THRESWAV;Balance threshold
 HISTORY_MSG_SOFTWAV;Soft radius
+HISTORY_MSG_WAVOLDSH;Old algorithm
+HISTORY_MSG_WAVOFFSET;Offset
 HISTORY_MSG_TMSHAPE;Compression by level
-HISTORY_MSG_WAVTM;Tone mapping wavelet
+HISTORY_MSG_WAVBL;Blur levels
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2151,6 +2153,7 @@ TP_WAVELET_CHRO;Saturated/pastel threshold
 TP_WAVELET_CHROMAFRAME;Chroma
 TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
 TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
+TP_WAVELET_CHRWAV;Blur chroma
 TP_WAVELET_CHSL;Sliders
 TP_WAVELET_CHTYPE;Chrominance method
 TP_WAVELET_CLA;Clarity
@@ -2247,6 +2250,7 @@ TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
 TP_WAVELET_NPTYPE;Neighboring pixels
 TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
+TP_WAVELET_OLDSH;Old algorithm using negatives values
 TP_WAVELET_OPACITY;Opacity Blue-Yellow
 TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 TP_WAVELET_OPACITYWL;Final local contrast
@@ -2287,7 +2291,7 @@ TP_WAVELET_TILESFULL;Full image
 TP_WAVELET_TILESIZE;Tiling method
 TP_WAVELET_TILESLIT;Little tiles
 TP_WAVELET_TILES_TOOLTIP;Processing the full image leads to better quality and is the recommended option, while using tiles is a fall-back solution for users with little RAM. Refer to RawPedia for memory requirements.
-TP_WAVELET_TM;Tone mapping wavelet
+TP_WAVELET_BL;Blur levels
 TP_WAVELET_TMEDGS;Edge stopping
 TP_WAVELET_TMSCALE;Scale
 TP_WAVELET_TMSTRENGTH;Compression strength
@@ -2299,6 +2303,7 @@ TP_WAVELET_USH;None
 TP_WAVELET_USHARP;Clarity method
 TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\nWavelet : the source file is the file including wavelet threatment
 TP_WAVELET_USH_TOOLTIP;If you select Sharp-mask, wavelet settings will be automatically positioned :\nBackground=black, Process=below, level=3...you can change level between 1 and 4.\n\nIf you select Clarity, wavelet settings will be automatically positioned :\nBackground=residual, Process=above, level=7..you can change level between 5 and 10 and wavelet levels.
+TP_WAVELET_WAVOFFSET;Offset
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_AUTOITCGREEN;Auto iterate temperature correlation
 TP_WBALANCE_AUTOOLD;Auto RGB grey

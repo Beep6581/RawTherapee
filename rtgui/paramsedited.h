@@ -508,6 +508,7 @@ struct WaveletParamsEdited {
     bool ushamethod;
     bool avoid;
     bool showmask;
+    bool oldsh;
     bool tmr;
     bool c[9];
     bool ch[9];
@@ -525,6 +526,7 @@ struct WaveletParamsEdited {
     bool daubcoeffmethod;
     bool Dirmethod;
     bool sigma;
+    bool offset;
     bool rescon;
     bool resconH;
     bool reschro;
@@ -557,14 +559,14 @@ struct WaveletParamsEdited {
     bool hllev;
     bool bllev;
     bool edgcont;
-    bool threswav;
+    bool chrwav;
     bool softwav;
     bool level0noise;
     bool level1noise;
     bool level2noise;
     bool level3noise;
     bool ccwcurve;
-    bool tmcurve;
+    bool blcurve;
     bool opacityCurveBY;
     bool opacityCurveRG;
     bool opacityCurveW;
@@ -587,7 +589,7 @@ struct WaveletParamsEdited {
     bool expcontrast;
     bool expchroma;
     bool expedge;
-    bool exptm;
+    bool expbl;
     bool expresid;
     bool expfinal;
     bool exptoning;

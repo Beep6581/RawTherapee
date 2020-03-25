@@ -494,6 +494,7 @@ void ParamsEdited::set(bool v)
     wavelet.ushamethod = v;
     wavelet.avoid = v;
     wavelet.showmask = v;
+    wavelet.oldsh = v;
     wavelet.tmr = v;
     wavelet.Lmethod = v;
     wavelet.CLmethod = v;
@@ -509,7 +510,8 @@ void ParamsEdited::set(bool v)
     wavelet.HSmethod = v;
     wavelet.Dirmethod = v;
     wavelet.sigma = v;
-    wavelet.rescon = v;
+    wavelet.sigma = v;
+    wavelet.offset = v;
     wavelet.resconH = v;
     wavelet.reschro = v;
     wavelet.tmrs = v;
@@ -541,14 +543,14 @@ void ParamsEdited::set(bool v)
     wavelet.hllev = v;
     wavelet.bllev = v;
     wavelet.edgcont = v;
-    wavelet.threswav = v;
+    wavelet.chrwav = v;
     wavelet.softwav = v;
     wavelet.level0noise = v;
     wavelet.level1noise = v;
     wavelet.level2noise = v;
     wavelet.level3noise = v;
     wavelet.ccwcurve = v;
-    wavelet.tmcurve = v;
+    wavelet.blcurve = v;
     wavelet.opacityCurveRG   = v;
     wavelet.opacityCurveBY   = v;
     wavelet.opacityCurveW   = v;
@@ -568,7 +570,7 @@ void ParamsEdited::set(bool v)
     wavelet.expcontrast = v;
     wavelet.expchroma = v;
     wavelet.expedge = v;
-    wavelet.exptm = v;
+    wavelet.expbl = v;
     wavelet.expresid = v;
     wavelet.exptoning = v;
     wavelet.expnoise = v;
@@ -1094,6 +1096,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.ushamethod = wavelet.ushamethod && p.wavelet.ushamethod == other.wavelet.ushamethod;
         wavelet.avoid = wavelet.avoid && p.wavelet.avoid == other.wavelet.avoid;
         wavelet.showmask = wavelet.showmask && p.wavelet.showmask == other.wavelet.showmask;
+        wavelet.oldsh = wavelet.oldsh && p.wavelet.oldsh == other.wavelet.oldsh;
         wavelet.tmr = wavelet.tmr && p.wavelet.tmr == other.wavelet.tmr;
         wavelet.Lmethod = wavelet.Lmethod && p.wavelet.Lmethod == other.wavelet.Lmethod;
         wavelet.CLmethod = wavelet.CLmethod && p.wavelet.CLmethod == other.wavelet.CLmethod;
@@ -1109,6 +1112,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.HSmethod = wavelet.HSmethod && p.wavelet.HSmethod == other.wavelet.HSmethod;
         wavelet.Dirmethod = wavelet.Dirmethod && p.wavelet.Dirmethod == other.wavelet.Dirmethod;
         wavelet.sigma = wavelet.sigma && p.wavelet.sigma == other.wavelet.sigma;
+        wavelet.offset = wavelet.offset && p.wavelet.offset == other.wavelet.offset;
         wavelet.rescon = wavelet.rescon && p.wavelet.rescon == other.wavelet.rescon;
         wavelet.resconH = wavelet.resconH && p.wavelet.resconH == other.wavelet.resconH;
         wavelet.reschro = wavelet.reschro && p.wavelet.reschro == other.wavelet.reschro;
@@ -1140,7 +1144,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.hllev = wavelet.hllev && p.wavelet.hllev == other.wavelet.hllev;
         wavelet.bllev = wavelet.bllev && p.wavelet.bllev == other.wavelet.bllev;
         wavelet.edgcont = wavelet.edgcont && p.wavelet.edgcont == other.wavelet.edgcont;
-        wavelet.threswav = wavelet.threswav && p.wavelet.threswav == other.wavelet.threswav;
+        wavelet.chrwav = wavelet.chrwav && p.wavelet.chrwav == other.wavelet.chrwav;
         wavelet.softwav = wavelet.softwav && p.wavelet.softwav == other.wavelet.softwav;
         wavelet.level0noise = wavelet.level0noise && p.wavelet.level0noise == other.wavelet.level0noise;
         wavelet.level1noise = wavelet.level1noise && p.wavelet.level1noise == other.wavelet.level1noise;
@@ -1149,7 +1153,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.pastlev = wavelet.pastlev && p.wavelet.pastlev == other.wavelet.pastlev;
         wavelet.satlev = wavelet.satlev && p.wavelet.satlev == other.wavelet.satlev;
         wavelet.ccwcurve = wavelet.ccwcurve && p.wavelet.ccwcurve == other.wavelet.ccwcurve;
-        wavelet.tmcurve = wavelet.tmcurve && p.wavelet.tmcurve == other.wavelet.tmcurve;
+        wavelet.blcurve = wavelet.blcurve && p.wavelet.blcurve == other.wavelet.blcurve;
         wavelet.opacityCurveRG = wavelet.opacityCurveRG && p.wavelet.opacityCurveRG == other.wavelet.opacityCurveRG;
         wavelet.opacityCurveBY = wavelet.opacityCurveBY && p.wavelet.opacityCurveBY == other.wavelet.opacityCurveBY;
         wavelet.opacityCurveW = wavelet.opacityCurveW && p.wavelet.opacityCurveW == other.wavelet.opacityCurveW;
@@ -1162,7 +1166,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.expcontrast = wavelet.expcontrast && p.wavelet.expcontrast == other.wavelet.expcontrast;
         wavelet.expchroma = wavelet.expchroma && p.wavelet.expchroma == other.wavelet.expchroma;
         wavelet.expedge = wavelet.expedge && p.wavelet.expedge == other.wavelet.expedge;
-        wavelet.exptm = wavelet.exptm && p.wavelet.exptm == other.wavelet.exptm;
+        wavelet.expbl = wavelet.expbl && p.wavelet.expbl == other.wavelet.expbl;
         wavelet.expresid = wavelet.expresid && p.wavelet.expresid == other.wavelet.expresid;
         wavelet.expfinal = wavelet.expfinal && p.wavelet.expfinal == other.wavelet.expfinal;
         wavelet.exptoning = wavelet.exptoning && p.wavelet.exptoning == other.wavelet.exptoning;
@@ -2953,6 +2957,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.showmask   = mods.wavelet.showmask;
     }
 
+    if (wavelet.oldsh) {
+        toEdit.wavelet.oldsh   = mods.wavelet.oldsh;
+    }
+
     if (wavelet.tmr) {
         toEdit.wavelet.tmr = mods.wavelet.tmr;
     }
@@ -3045,8 +3053,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.edgcont = mods.wavelet.edgcont;
     }
 
-    if (wavelet.threswav) {
-        toEdit.wavelet.threswav = mods.wavelet.threswav;
+    if (wavelet.chrwav) {
+        toEdit.wavelet.chrwav = mods.wavelet.chrwav;
     }
 
     if (wavelet.softwav) {
@@ -3081,8 +3089,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.ccwcurve = mods.wavelet.ccwcurve;
     }
 
-    if (wavelet.tmcurve) {
-        toEdit.wavelet.tmcurve = mods.wavelet.tmcurve;
+    if (wavelet.blcurve) {
+        toEdit.wavelet.blcurve = mods.wavelet.blcurve;
     }
 
     if (wavelet.opacityCurveRG) {
@@ -3126,8 +3134,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.expedge = mods.wavelet.expedge;
     }
 
-    if (wavelet.exptm) {
-        toEdit.wavelet.exptm = mods.wavelet.exptm;
+    if (wavelet.expbl) {
+        toEdit.wavelet.expbl = mods.wavelet.expbl;
     }
 
     if (wavelet.expresid) {
@@ -3184,6 +3192,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.sigma) {
         toEdit.wavelet.sigma = mods.wavelet.sigma;
+    }
+
+    if (wavelet.offset) {
+        toEdit.wavelet.offset = mods.wavelet.offset;
     }
 
     if (wavelet.resconH) {
