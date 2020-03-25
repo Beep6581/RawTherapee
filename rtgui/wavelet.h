@@ -80,6 +80,7 @@ private:
     rtengine::ProcEvent EvWavradius;
     rtengine::ProcEvent EvWavsigma;
     rtengine::ProcEvent EvWavoldsh;
+    rtengine::ProcEvent EvWavoffset;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
 
@@ -174,6 +175,7 @@ private:
     Adjuster* correction[9];
     Adjuster* correctionch[9];
     Adjuster* const sigma;
+    Adjuster* const offset;
     Adjuster* const rescon;
     Adjuster* const resconH;
     Adjuster* const reschro;
