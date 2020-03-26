@@ -147,7 +147,7 @@ private:
     CurveEditorGroup* const curveEditorG;
 
     CurveEditorGroup* const CCWcurveEditorG;
-    CurveEditorGroup* const curveEditortm;
+    CurveEditorGroup* const curveEditorbl;
     CurveEditorGroup* const curveEditorRES;
     CurveEditorGroup* const curveEditorGAM;
     Gtk::HSeparator* const separatorNeutral;

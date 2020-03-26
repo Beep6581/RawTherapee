@@ -59,6 +59,7 @@ struct cont_params {
     float sigm;
     int chrom;
     int chro;
+    float chrwav;
     int contrast;
     float th;
     float thH;
@@ -209,6 +210,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.toningena = params->wavelet.exptoning;
     cp.noiseena = params->wavelet.expnoise;
     cp.blena = params->wavelet.expbl;
+    cp.chrwav = 0.01f * params->wavelet.chrwav;
 
     if (params->wavelet.Backmethod == "black") {
         cp.backm = 0;
@@ -1061,7 +1063,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         const std::unique_ptr<wavelet_decomposition> adecomp(new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwava, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                         if (!adecomp->memoryAllocationFailed) {
-                            WaveletcontAllAB(labco, varhue, varchro, *adecomp, waOpacityCurveW, cp, true);
+                            WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve, waOpacityCurveW, cp, true, skip);
                             adecomp->reconstruct(labco->data + datalen, cp.strength);
                         }
                     }
@@ -1080,7 +1082,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavb, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                         if (!bdecomp->memoryAllocationFailed) {
-                            WaveletcontAllAB(labco, varhue, varchro, *bdecomp, waOpacityCurveW, cp, false);
+                            WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip);
                             bdecomp->reconstruct(labco->data + 2 * datalen, cp.strength);
                         }
                     }
@@ -1100,8 +1102,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavab, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                         if (!adecomp->memoryAllocationFailed && !bdecomp->memoryAllocationFailed) {
-                            WaveletcontAllAB(labco, varhue, varchro, *adecomp, waOpacityCurveW, cp, true);
-                            WaveletcontAllAB(labco, varhue, varchro, *bdecomp, waOpacityCurveW, cp, false);
+                            WaveletcontAllAB(labco, varhue, varchro, *adecomp,wavblcurve,  waOpacityCurveW, cp, true, skip);
+                            WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip);
                             WaveletAandBAllAB(*adecomp, *bdecomp, cp, hhCurve, hhutili);
 
                             adecomp->reconstruct(labco->data + datalen, cp.strength);
@@ -2085,9 +2087,9 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                     for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
                         bef[co] = WavCoeffs_L[dir][co];       
                     }
-                    klev = 0.25f * (wavblcurve[lvl * 55.5f]);
+                    klev = (wavblcurve[lvl * 55.5f]);
               
-                    klev *= 50.f / skip;
+                    klev *= lvl * 50.f / skip;
                     boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
 
                     for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
@@ -2173,8 +2175,8 @@ void ImProcFunctions::WaveletAandBAllAB(const wavelet_decomposition &WaveletCoef
 
 }
 
-void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float **varchrom, const wavelet_decomposition &WaveletCoeffs_ab, const WavOpacityCurveW & waOpacityCurveW,
-                                       struct cont_params &cp, const bool useChannelA)
+void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float **varchrom, const wavelet_decomposition &WaveletCoeffs_ab, const Wavblcurve & wavblcurve, const WavOpacityCurveW & waOpacityCurveW,
+                                       struct cont_params &cp, const bool useChannelA, int skip)
 {
 
     int maxlvl = WaveletCoeffs_ab.maxlevel();
@@ -2297,6 +2299,16 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
             }
         }
 
+                            bool wavcurvecomp = false;//not enable if 0.75
+
+                            if (wavblcurve) {
+                                for (int i = 0; i < 500; i++) {
+                                    if (wavblcurve[i] != 0.) {
+                                        wavcurvecomp = true;
+                                    }
+                                }
+                            }
+
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
 #endif
@@ -2309,6 +2321,29 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 
                 float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
                 ContAllAB(labco,  maxlvl, varhue, varchrom, WavCoeffs_ab, WavCoeffs_ab0, lvl, dir, waOpacityCurveW, cp, Wlvl_ab, Hlvl_ab, useChannelA);
+
+                if(wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f) {
+                    float * bef = new float[Wlvl_ab * Hlvl_ab];
+                    float * aft = new float[Wlvl_ab * Hlvl_ab];
+                    float klev;
+                    for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
+                        bef[co] = WavCoeffs_ab[dir][co];
+                    }
+                    klev =  (wavblcurve[lvl * 55.5f]);
+              
+                    klev *= cp.chrwav * lvl * 100.f / skip;
+                    
+                    boxblur(bef, aft, klev, Wlvl_ab, Hlvl_ab, false);
+
+                    for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
+                        WavCoeffs_ab[dir][co] = aft[co];
+                    }
+
+                    delete bef;
+                    delete aft;
+                }
+
+
             }
         }
 

@@ -806,7 +806,7 @@ HISTORY_MSG_THRESWAV;Balance threshold
 HISTORY_MSG_SOFTWAV;Soft radius
 HISTORY_MSG_WAVOLDSH;Old algorithm
 HISTORY_MSG_WAVOFFSET;Offset
-HISTORY_MSG_TMSHAPE;Compression by level
+HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_WAVBL;Blur levels
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -2141,6 +2141,7 @@ TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider al
 TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
+TP_WAVELET_BLCURVE;Blur by levels
 TP_WAVELET_CBENAB;Toning and Color Balance
 TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 TP_WAVELET_CCURVE;Local contrast
@@ -2297,7 +2298,6 @@ TP_WAVELET_TMSCALE;Scale
 TP_WAVELET_TMSTRENGTH;Compression strength
 TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image.
 TP_WAVELET_TMEDGS;Edge stopping
-TP_WAVELET_TMURVE;(un)Compression by Level
 TP_WAVELET_TON;Toning
 TP_WAVELET_USH;None
 TP_WAVELET_USHARP;Clarity method

@@ -207,8 +207,8 @@ public:
     void WaveletcontAllL(LabImage * lab, float **varhue, float **varchrom, const wavelet_decomposition &WaveletCoeffs_L, const Wavblcurve & wavblcurve,
                          struct cont_params &cp, int skip, float *mean, float *sigma, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, FlatCurve* ChCurve, bool Chutili);
     void WaveletcontAllLfinal(const wavelet_decomposition &WaveletCoeffs_L, const cont_params &cp, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL);
-    void WaveletcontAllAB(LabImage * lab, float **varhue, float **varchrom, const wavelet_decomposition &WaveletCoeffs_a, const WavOpacityCurveW & waOpacityCurveW,
-                          struct cont_params &cp, const bool useChannelA);
+    void WaveletcontAllAB(LabImage * lab, float **varhue, float **varchrom, const wavelet_decomposition &WaveletCoeffs_a, const Wavblcurve & wavblcurve, const WavOpacityCurveW & waOpacityCurveW,
+                          struct cont_params &cp, const bool useChannelA, int skip);
     void WaveletAandBAllAB(const wavelet_decomposition &WaveletCoeffs_a, const wavelet_decomposition &WaveletCoeffs_b,
                            const cont_params &cp, FlatCurve* hhcurve, bool hhutili);
     void ContAllL(float **koeLi, float *maxkoeLi, bool lipschitz, int maxlvl, LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params &cp,

@@ -63,7 +63,7 @@ Wavelet::Wavelet() :
     FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), true, true),
     curveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CONTEDIT"))),
     CCWcurveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CCURVE"))),
-    curveEditortm(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_TMURVE"))),
+    curveEditorbl(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_BLCURVE"))),
     curveEditorRES(new CurveEditorGroup(options.lastWaveletCurvesDir)),
     curveEditorGAM(new CurveEditorGroup(options.lastWaveletCurvesDir)),
     separatorNeutral(Gtk::manage(new Gtk::HSeparator())),
@@ -186,7 +186,7 @@ Wavelet::Wavelet() :
     EvWavoldsh = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVOLDSH");
     EvWavoffset = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVOFFSET");
     EvWavsoftwav = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SOFTWAV");
-    EvWavblshape = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_blshape");
+    EvWavblshape = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLSHAPE");
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -643,18 +643,18 @@ Wavelet::Wavelet() :
 //Blur Wavelet
     ToolParamBlock* const blBox = Gtk::manage(new ToolParamBlock());
     
-    curveEditortm->setCurveListener(this);
+    curveEditorbl->setCurveListener(this);
 
-    blshape = static_cast<FlatCurveEditor*>(curveEditortm->addCurve(CT_Flat, "", nullptr, false, false));
+    blshape = static_cast<FlatCurveEditor*>(curveEditorbl->addCurve(CT_Flat, "", nullptr, false, false));
 
     blshape->setIdentityValue(0.);
     blshape->setResetCurve(FlatCurveType(default_params.blcurve.at(0)), default_params.blcurve);
     blshape->setTooltip(M("TP_WAVELET_CURVEEDITOR_CC_TOOLTIP"));
 
-    curveEditortm->curveListComplete();
-    curveEditortm->show();
+    curveEditorbl->curveListComplete();
+    curveEditorbl->show();
 
-    blBox->pack_start(*curveEditortm, Gtk::PACK_SHRINK, 4);
+    blBox->pack_start(*curveEditorbl, Gtk::PACK_SHRINK, 4);
     
     
     chrwav->setAdjusterListener(this);
@@ -1008,7 +1008,7 @@ Wavelet::~Wavelet()
 
     delete opaCurveEditorG;
     delete opacityCurveEditorG;
-    delete curveEditortm;
+    delete curveEditorbl;
     delete CCWcurveEditorG;
     delete curveEditorRES;
     delete curveEditorGAM;
@@ -2640,7 +2640,7 @@ void Wavelet::setBatchMode(bool batchMode)
     opacityCurveEditorG->setBatchMode(batchMode);
     opacityCurveEditorW->setBatchMode(batchMode);
     opacityCurveEditorWL->setBatchMode(batchMode);
-    curveEditortm->setBatchMode(batchMode);
+    curveEditorbl->setBatchMode(batchMode);
     curveEditorRES->setBatchMode(batchMode);
     curveEditorGAM->setBatchMode(batchMode);
     sigma->showEditedCB();
