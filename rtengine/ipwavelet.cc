@@ -65,6 +65,8 @@ struct cont_params {
     float thH;
     float conres;
     float conresH;
+    float blurres;
+    float blurcres;
     float radius;
     float chrores;
     bool oldsh;
@@ -396,6 +398,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.radius = waparams.radius;
     cp.chrores = waparams.reschro;
     cp.oldsh = waparams.oldsh;
+    cp.blurres = waparams.resblur;
+    cp.blurcres = waparams.resblurc;
     //cp.hueres=waparams.reshue;
     cp.hueres = 2.f;
     cp.th = float(waparams.thr);
@@ -1910,7 +1914,25 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             }
         }
 
+//Blur luma
+    if(cp.blurres != 0.f  && cp.resena) {
+        float rad = cp.blurres / skip;
+        float * bef = new float[W_L * H_L];
+        float * aft = new float[W_L * H_L];
 
+        for (int i = 0; i < H_L * W_L; i++) {
+            bef[i] = WavCoeffs_L0[i];       
+        }
+        boxblur(bef, aft, rad, W_L, H_L, false);
+
+        for (int i = 0; i < H_L * W_L; i++) {
+            WavCoeffs_L0[i] = aft[i];
+        }
+
+        delete bef;
+        delete aft;
+    }
+//
 #ifdef _OPENMP
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
@@ -2054,15 +2076,15 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
             // end
         }
-                            bool wavcurvecomp = false;//not enable if 0.75
+        bool wavcurvecomp = false;//not enable if 0.75
 
-                            if (wavblcurve) {
-                                for (int i = 0; i < 500; i++) {
-                                    if (wavblcurve[i] != 0.) {
-                                        wavcurvecomp = true;
-                                    }
-                                }
-                            }
+        if (wavblcurve) {
+            for (int i = 0; i < 500; i++) {
+                if (wavblcurve[i] != 0.) {
+                    wavcurvecomp = true;
+                }
+            }
+        }
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
@@ -2298,16 +2320,36 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                 }
             }
         }
+        
+//Blur chroma
+    if(cp.blurcres != 0.f  && cp.resena) {
+        float rad = cp.blurcres / skip;
+        float * bef = new float[W_L * H_L];
+        float * aft = new float[W_L * H_L];
 
-                            bool wavcurvecomp = false;//not enable if 0.75
+        for (int i = 0; i < H_L * W_L; i++) {
+            bef[i] = WavCoeffs_ab0[i];       
+        }
+        boxblur(bef, aft, rad, W_L, H_L, false);
 
-                            if (wavblcurve) {
-                                for (int i = 0; i < 500; i++) {
-                                    if (wavblcurve[i] != 0.) {
-                                        wavcurvecomp = true;
-                                    }
-                                }
-                            }
+        for (int i = 0; i < H_L * W_L; i++) {
+            WavCoeffs_ab0[i] = aft[i];
+        }
+
+        delete bef;
+        delete aft;
+    }
+
+
+    bool wavcurvecomp = false;//not enable if 0.75
+
+    if (wavblcurve) {
+        for (int i = 0; i < 500; i++) {
+            if (wavblcurve[i] != 0.) {
+                wavcurvecomp = true;
+            }
+        }
+    }
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)

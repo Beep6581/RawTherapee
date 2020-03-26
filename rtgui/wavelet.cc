@@ -87,6 +87,8 @@ Wavelet::Wavelet() :
     rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), -100, 100, 1, 0))),
     resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), -100, 100, 1, 0))),
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
+    resblur(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLUR"), 0, 100, 1, 0))),
+    resblurc(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLURC"), 0, 100, 1, 0))),
     tmrs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSTRENGTH"), -1.0, 2.0, 0.01, 0.0))),
     edgs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMEDGS"), 0.1, 4.0, 0.01, 1.4))),
     scale(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSCALE"), 0.1, 10.0, 0.01, 1.0))),
@@ -149,6 +151,7 @@ Wavelet::Wavelet() :
     chanMixerHLFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_HIGHLIGHT")))),
     chanMixerMidFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_MIDTONES")))),
     chanMixerShadowsFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_SHADOWS")))),
+    blurFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_BLURFRAME")))),
     chromaFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROMAFRAME")))),
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     labmC(Gtk::manage(new Gtk::Label(M("TP_WAVELET_CTYPE") + ":"))),
@@ -187,6 +190,8 @@ Wavelet::Wavelet() :
     EvWavoffset = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVOFFSET");
     EvWavsoftwav = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SOFTWAV");
     EvWavblshape = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLSHAPE");
+    EvWavresblur = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURWAV");
+    EvWavresblurc = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURCWAV");
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -662,7 +667,7 @@ Wavelet::Wavelet() :
 
     softwav->setLogScale(10, -10);
     softwav->setAdjusterListener(this);
-    blBox->pack_start(*softwav);
+//    blBox->pack_start(*softwav);
 
 
 // Gamut
@@ -741,6 +746,14 @@ Wavelet::Wavelet() :
     resBox->pack_start(*contrast);  //keep the possibility to reinstall
 
     reschro->setAdjusterListener(this);
+    resblur->setAdjusterListener(this);
+    resblurc->setAdjusterListener(this);
+
+    blurFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const blurBox = Gtk::manage(new ToolParamBlock());
+    blurBox->pack_start(*resblur);
+    blurBox->pack_start(*resblurc);
+    blurFrame->add(*blurBox);
 
     chromaFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const chromaBox = Gtk::manage(new ToolParamBlock());
@@ -796,6 +809,7 @@ Wavelet::Wavelet() :
     const std::vector<GradientMilestone> milestones3 = makeWholeHueRange();
 
     curveEditorRES->setCurveListener(this);
+    resBox->pack_start(*blurFrame);
     resBox->pack_start(*chromaFrame);
 
     hhshape = static_cast<FlatCurveEditor*>(curveEditorRES->addCurve(CT_Flat, M("TP_WAVELET_CURVEEDITOR_HH")));
@@ -1292,6 +1306,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     rescon->setValue(pp->wavelet.rescon);
     resconH->setValue(pp->wavelet.resconH);
     reschro->setValue(pp->wavelet.reschro);
+    resblur->setValue(pp->wavelet.resblur);
+    resblurc->setValue(pp->wavelet.resblurc);
     tmrs->setValue(pp->wavelet.tmrs);
     edgs->setValue(pp->wavelet.edgs);
     scale->setValue(pp->wavelet.scale);
@@ -1449,6 +1465,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         offset->setEditedState(pedited->wavelet.offset ? Edited : UnEdited);
         resconH->setEditedState(pedited->wavelet.resconH ? Edited : UnEdited);
         reschro->setEditedState(pedited->wavelet.reschro ? Edited : UnEdited);
+        resblur->setEditedState(pedited->wavelet.resblur ? Edited : UnEdited);
+        resblurc->setEditedState(pedited->wavelet.resblurc ? Edited : UnEdited);
         tmrs->setEditedState(pedited->wavelet.tmrs ? Edited : UnEdited);
         edgs->setEditedState(pedited->wavelet.edgs ? Edited : UnEdited);
         scale->setEditedState(pedited->wavelet.scale ? Edited : UnEdited);
@@ -1638,6 +1656,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.rescon         = rescon->getValue();
     pp->wavelet.resconH        = resconH->getValue();
     pp->wavelet.reschro        = reschro->getValue();
+    pp->wavelet.resblur        = resblur->getValue();
+    pp->wavelet.resblurc       = resblurc->getValue();
     pp->wavelet.tmrs           = tmrs->getValue();
     pp->wavelet.edgs           = edgs->getValue();
     pp->wavelet.scale          = scale->getValue();
@@ -1755,6 +1775,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.rescon          = rescon->getEditedState();
         pedited->wavelet.resconH         = resconH->getEditedState();
         pedited->wavelet.reschro         = reschro->getEditedState();
+        pedited->wavelet.resblur         = resblur->getEditedState();
+        pedited->wavelet.resblurc        = resblurc->getEditedState();
         pedited->wavelet.tmrs            = tmrs->getEditedState();
         pedited->wavelet.edgs            = edgs->getEditedState();
         pedited->wavelet.scale           = scale->getEditedState();
@@ -1997,6 +2019,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     rescon->setDefault(defParams->wavelet.rescon);
     resconH->setDefault(defParams->wavelet.resconH);
     reschro->setDefault(defParams->wavelet.reschro);
+    resblur->setDefault(defParams->wavelet.resblur);
+    resblurc->setDefault(defParams->wavelet.resblurc);
     tmrs->setDefault(defParams->wavelet.tmrs);
     edgs->setDefault(defParams->wavelet.edgs);
     scale->setDefault(defParams->wavelet.scale);
@@ -2062,6 +2086,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         rescon->setDefault(defParams->wavelet.rescon);
         resconH->setDefault(defParams->wavelet.resconH);
         reschro->setDefault(defParams->wavelet.reschro);
+        resblur->setDefault(defParams->wavelet.resblur);
+        resblurc->setDefault(defParams->wavelet.resblurc);
         tmrs->setDefault(defParams->wavelet.tmrs);
         edgs->setDefault(defParams->wavelet.edgs);
         scale->setDefault(defParams->wavelet.scale);
@@ -2116,6 +2142,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         rescon->setDefaultEditedState(Irrelevant);
         resconH->setDefaultEditedState(Irrelevant);
         reschro->setDefaultEditedState(Irrelevant);
+        resblur->setDefaultEditedState(Irrelevant);
+        resblurc->setDefaultEditedState(Irrelevant);
         tmrs->setDefaultEditedState(Irrelevant);
         edgs->setDefaultEditedState(Irrelevant);
         scale->setDefaultEditedState(Irrelevant);
@@ -2648,6 +2676,8 @@ void Wavelet::setBatchMode(bool batchMode)
     rescon->showEditedCB();
     resconH->showEditedCB();
     reschro->showEditedCB();
+    resblur->showEditedCB();
+    resblurc->showEditedCB();
     tmrs->showEditedCB();
     edgs->showEditedCB();
     scale->showEditedCB();
@@ -2736,6 +2766,10 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavresconH, resconH->getTextValue());
         } else if (a == reschro) {
             listener->panelChanged(EvWavreschro, reschro->getTextValue());
+        } else if (a == resblur) {
+            listener->panelChanged(EvWavresblur, resblur->getTextValue());
+        } else if (a == resblurc) {
+            listener->panelChanged(EvWavresblurc, resblurc->getTextValue());
         } else if (a == tmrs) {
             adjusterUpdateUI(a);
             listener->panelChanged(EvWavtmrs, tmrs->getTextValue());

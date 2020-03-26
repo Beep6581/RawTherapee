@@ -808,6 +808,8 @@ HISTORY_MSG_WAVOLDSH;Old algorithm
 HISTORY_MSG_WAVOFFSET;Offset
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_WAVBL;Blur levels
+HISTORY_MSG_BLURWAV;Blur luminance
+HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2142,6 +2144,7 @@ TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
 TP_WAVELET_BLCURVE;Blur by levels
+TP_WAVELET_BLURFRAME;Blur
 TP_WAVELET_CBENAB;Toning and Color Balance
 TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 TP_WAVELET_CCURVE;Local contrast
@@ -2262,6 +2265,8 @@ TP_WAVELET_RADIUS;Radius Shadows - Highlight
 TP_WAVELET_RE1;Reinforced
 TP_WAVELET_RE2;Unchanged
 TP_WAVELET_RE3;Reduced
+TP_WAVELET_RESBLUR;Blur Luminance
+TP_WAVELET_RESBLURC;Blur Chroma
 TP_WAVELET_RESCHRO;Intensity
 TP_WAVELET_RESCON;Shadows
 TP_WAVELET_RESCONH;Highlights
@@ -2299,6 +2304,7 @@ TP_WAVELET_TMSTRENGTH;Compression strength
 TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image.
 TP_WAVELET_TMEDGS;Edge stopping
 TP_WAVELET_TON;Toning
+TP_WAVELET_TMTYPE;Compression method
 TP_WAVELET_USH;None
 TP_WAVELET_USHARP;Clarity method
 TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\nWavelet : the source file is the file including wavelet threatment

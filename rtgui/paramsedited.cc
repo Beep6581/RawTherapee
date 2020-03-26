@@ -514,6 +514,8 @@ void ParamsEdited::set(bool v)
     wavelet.offset = v;
     wavelet.resconH = v;
     wavelet.reschro = v;
+    wavelet.resblur = v;
+    wavelet.resblurc = v;
     wavelet.tmrs = v;
     wavelet.edgs = v;
     wavelet.scale = v;
@@ -1116,6 +1118,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.rescon = wavelet.rescon && p.wavelet.rescon == other.wavelet.rescon;
         wavelet.resconH = wavelet.resconH && p.wavelet.resconH == other.wavelet.resconH;
         wavelet.reschro = wavelet.reschro && p.wavelet.reschro == other.wavelet.reschro;
+        wavelet.resblur = wavelet.resblur && p.wavelet.resblur == other.wavelet.resblur;
+        wavelet.resblurc = wavelet.resblurc && p.wavelet.resblurc == other.wavelet.resblurc;
         wavelet.tmrs = wavelet.tmrs && p.wavelet.tmrs == other.wavelet.tmrs;
         wavelet.edgs = wavelet.edgs && p.wavelet.edgs == other.wavelet.edgs;
         wavelet.scale = wavelet.scale && p.wavelet.scale == other.wavelet.scale;
@@ -3196,6 +3200,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.offset) {
         toEdit.wavelet.offset = mods.wavelet.offset;
+    }
+
+    if (wavelet.resblur) {
+        toEdit.wavelet.resblur = mods.wavelet.resblur;
+    }
+
+    if (wavelet.resblurc) {
+        toEdit.wavelet.resblurc = mods.wavelet.resblurc;
     }
 
     if (wavelet.resconH) {
