@@ -2168,6 +2168,7 @@ TP_WAVELET_COMPGAMMA;Compression gamma
 TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allows you to equilibrate the data and histogram.
 TP_WAVELET_COMPTM;Tone mapping
 TP_WAVELET_CONTEDIT;'After' contrast curve
+TP_WAVELET_CONTFRAME;Contrast - Compression
 TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Contrast
 TP_WAVELET_CONTRAST_MINUS;Contrast -
@@ -2254,7 +2255,7 @@ TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
 TP_WAVELET_NPTYPE;Neighboring pixels
 TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
-TP_WAVELET_OLDSH;Old algorithm using negatives values
+TP_WAVELET_OLDSH;Algorithm using negatives values
 TP_WAVELET_OPACITY;Opacity Blue-Yellow
 TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 TP_WAVELET_OPACITYWL;Final local contrast
@@ -2274,6 +2275,7 @@ TP_WAVELET_RESID;Residual Image
 TP_WAVELET_SAT;Saturated chroma
 TP_WAVELET_SETTINGS;Wavelet Settings
 TP_WAVELET_SHA;Sharp mask
+TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
 TP_WAVELET_SIGMA;Sigma
 TP_WAVELET_SIGMA_TOOLTIP;Sigma acts on the relative amplitude of the signal width. The higher it is, the more the effect will be maximum and the more the unsightly effects will appear.\nLow values are recommended for creating tone-mapping in conjonction with usage Shadows/Highlights below

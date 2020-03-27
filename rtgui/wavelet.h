@@ -277,6 +277,8 @@ private:
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
     Gtk::Frame* const chanMixerShadowsFrame;
+    Gtk::Frame* const shFrame;
+    Gtk::Frame* const contFrame;
     Gtk::Frame* const blurFrame;
     Gtk::Frame* const chromaFrame;
 

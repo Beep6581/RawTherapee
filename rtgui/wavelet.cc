@@ -151,6 +151,8 @@ Wavelet::Wavelet() :
     chanMixerHLFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_HIGHLIGHT")))),
     chanMixerMidFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_MIDTONES")))),
     chanMixerShadowsFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_SHADOWS")))),
+    shFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_SHFRAME")))),
+    contFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CONTFRAME")))),
     blurFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_BLURFRAME")))),
     chromaFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROMAFRAME")))),
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
@@ -726,26 +728,33 @@ Wavelet::Wavelet() :
     ToolParamBlock* const resBox = Gtk::manage(new ToolParamBlock());
     oldsh->set_active(true);
     oldshConn = oldsh->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::oldshToggled));
-    resBox->pack_start(*oldsh);
+
 
     rescon->setAdjusterListener(this);
-    resBox->pack_start(*rescon, Gtk::PACK_SHRINK);
 
-    resBox->pack_start(*thr);
     thr->setAdjusterListener(this);
 
     resconH->setAdjusterListener(this);
-    resBox->pack_start(*resconH, Gtk::PACK_SHRINK);
 
     thrH->setAdjusterListener(this);
-    resBox->pack_start(*thrH, Gtk::PACK_SHRINK);
 
     radius->setAdjusterListener(this);
-    resBox->pack_start(*radius, Gtk::PACK_SHRINK);
+    radius->hide();
+
+    shFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const shBox = Gtk::manage(new ToolParamBlock());
+    shBox->pack_start(*oldsh);
+    shBox->pack_start(*rescon, Gtk::PACK_SHRINK);
+    shBox->pack_start(*thr);
+    shBox->pack_start(*resconH, Gtk::PACK_SHRINK);
+    shBox->pack_start(*thrH, Gtk::PACK_SHRINK);
+    shBox->pack_start(*radius, Gtk::PACK_SHRINK);
+    shFrame->add(*shBox);
+    resBox->pack_start(*shFrame);
+
 
     contrast->set_tooltip_text(M("TP_WAVELET_CONTRA_TOOLTIP"));
     contrast->setAdjusterListener(this);
-    resBox->pack_start(*contrast);  //keep the possibility to reinstall
 
     reschro->setAdjusterListener(this);
     resblur->setAdjusterListener(this);
@@ -768,36 +777,42 @@ Wavelet::Wavelet() :
     Gtk::HBox* const ctboxTM = Gtk::manage(new Gtk::HBox());
     ctboxTM->pack_start(*labmTM, Gtk::PACK_SHRINK, 1);
 
-    Gtk::HSeparator* const separatorR0 = Gtk::manage(new  Gtk::HSeparator());
-    resBox->pack_start(*separatorR0, Gtk::PACK_SHRINK, 2);
+//    Gtk::HSeparator* const separatorR0 = Gtk::manage(new  Gtk::HSeparator());
+//    resBox->pack_start(*separatorR0, Gtk::PACK_SHRINK, 2);
 
     TMmethod->append(M("TP_WAVELET_COMPCONT"));
     TMmethod->append(M("TP_WAVELET_COMPTM"));
     TMmethodconn = TMmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::TMmethodChanged));
     ctboxTM->pack_start(*TMmethod);
-    resBox->pack_start(*ctboxTM);
 
     tmrs->set_tooltip_text(M("TP_WAVELET_TMSTRENGTH_TOOLTIP"));
 
-    resBox->pack_start(*tmrs);
     tmrs->setAdjusterListener(this);
 
     gamma->set_tooltip_text(M("TP_WAVELET_COMPGAMMA_TOOLTIP"));
-    resBox->pack_start(*gamma);
     gamma->setAdjusterListener(this);
 
     //edgs->set_tooltip_text(M("TP_WAVELET_TMEDGS_TOOLTIP"));
 
-    resBox->pack_start(*edgs);
     edgs->setAdjusterListener(this);
 
     //scale->set_tooltip_text(M("TP_WAVELET_TMSCALE_TOOLTIP"));
 
-    resBox->pack_start(*scale);
     scale->setAdjusterListener(this);
 
-    Gtk::HSeparator* const separatorR1 = Gtk::manage(new  Gtk::HSeparator());
-    resBox->pack_start(*separatorR1, Gtk::PACK_SHRINK, 2);
+    contFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const contBox = Gtk::manage(new ToolParamBlock());
+    contBox->pack_start(*contrast);  //keep the possibility to reinstall
+    contBox->pack_start(*ctboxTM);
+    contBox->pack_start(*tmrs);
+    contBox->pack_start(*gamma);
+    contBox->pack_start(*edgs);
+    contBox->pack_start(*scale);
+    contFrame->add(*contBox);
+    resBox->pack_start(*contFrame);
+
+//    Gtk::HSeparator* const separatorR1 = Gtk::manage(new  Gtk::HSeparator());
+//    resBox->pack_start(*separatorR1, Gtk::PACK_SHRINK, 2);
 
     hueskin2->set_tooltip_markup(M("TP_WAVELET_HUESKY_TOOLTIP"));
     hueskin2->setBgGradient(milestones);
@@ -1577,6 +1592,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         //BackmethodUpdateUI();
         CLmethodUpdateUI();
         lipstUpdateUI();
+        oldshToggled();
         //TilesmethodUpdateUI();
         //daubcoeffmethodUpdateUI();
         //DirmethodUpdateUI();
