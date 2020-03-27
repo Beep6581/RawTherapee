@@ -2276,6 +2276,7 @@ TP_WAVELET_SETTINGS;Wavelet Settings
 TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
 TP_WAVELET_SIGMA;Sigma
+TP_WAVELET_SIGMA_TOOLTIP;Sigma acts on the relative amplitude of the signal width. The higher it is, the more the effect will be maximum and the more the unsightly effects will appear.\nLow values are recommended for creating tone-mapping in conjonction with usage Shadows/Highlights below
 TP_WAVELET_SKIN;Skin targetting/protection
 TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 TP_WAVELET_SKY;Sky targetting/protection
@@ -2310,6 +2311,7 @@ TP_WAVELET_USHARP;Clarity method
 TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\nWavelet : the source file is the file including wavelet threatment
 TP_WAVELET_USH_TOOLTIP;If you select Sharp-mask, wavelet settings will be automatically positioned :\nBackground=black, Process=below, level=3...you can change level between 1 and 4.\n\nIf you select Clarity, wavelet settings will be automatically positioned :\nBackground=residual, Process=above, level=7..you can change level between 5 and 10 and wavelet levels.
 TP_WAVELET_WAVOFFSET;Offset
+TP_WAVELET_OFFSET_TOOLTIP;Offset acts on mean of signal.\nHigh values will favor action on the contrast of the highlights.\nLow values will favor action on the contrast of shadows
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_AUTOITCGREEN;Auto iterate temperature correlation
 TP_WBALANCE_AUTOOLD;Auto RGB grey

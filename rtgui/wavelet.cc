@@ -82,7 +82,7 @@ Wavelet::Wavelet() :
     showmask(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_SHOWMASK")))),
     oldsh(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_OLDSH")))),
     neutralchButton(Gtk::manage(new Gtk::Button(M("TP_WAVELET_NEUTRAL")))),
-    sigma(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMA"), 0.2, 2.5, 0.01, 1.))),
+    sigma(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMA"), 0.05, 2.5, 0.01, 1.))),
     offset(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVOFFSET"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), -100, 100, 1, 0))),
     resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), -100, 100, 1, 0))),
@@ -351,6 +351,8 @@ Wavelet::Wavelet() :
     levBox->pack_start(*sigma, Gtk::PACK_SHRINK);
     offset->setAdjusterListener(this);
     levBox->pack_start(*offset, Gtk::PACK_SHRINK);
+    sigma->set_tooltip_text(M("TP_WAVELET_SIGMA_TOOLTIP"));
+    offset->set_tooltip_text(M("TP_WAVELET_OFFSET_TOOLTIP"));
 
     levBox->pack_start(*sup);
     sup->setAdjusterListener(this);
