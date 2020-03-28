@@ -1297,6 +1297,7 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "FUJIFILM X100V" ],
+        "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v12.2 D65
         "raw_crop": [ 0, 5, 6252, 4140 ]
     },
 
