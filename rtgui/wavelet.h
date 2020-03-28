@@ -83,7 +83,7 @@ private:
     rtengine::ProcEvent EvWavchrwav;
     rtengine::ProcEvent EvWavoldsh;
     rtengine::ProcEvent EvWavoffset;
-    rtengine::ProcEvent EvWavsoftwav;
+    rtengine::ProcEvent EvWavbluwav;
     rtengine::ProcEvent EvWavblshape;
     rtengine::ProcEvent EvWavresblur;
     rtengine::ProcEvent EvWavresblurc;
@@ -189,6 +189,7 @@ private:
     Adjuster* const reschro;
     Adjuster* const resblur;
     Adjuster* const resblurc;
+    Adjuster* const bluwav;
     Adjuster* const tmrs;
     Adjuster* const edgs;
     Adjuster* const scale;
@@ -241,7 +242,6 @@ private:
     Adjuster* const softrad;
     Adjuster* const softradend;
     Adjuster* const chrwav;
-    Adjuster* const softwav;
 
     MyComboBoxText* const Lmethod;
     sigc::connection  Lmethodconn;

@@ -67,6 +67,7 @@ struct cont_params {
     float conresH;
     float blurres;
     float blurcres;
+    float bluwav;
     float radius;
     float chrores;
     bool oldsh;
@@ -399,6 +400,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.oldsh = waparams.oldsh;
     cp.blurres = waparams.resblur;
     cp.blurcres = waparams.resblurc;
+    cp.bluwav = 0.01f * waparams.bluwav;
     //cp.hueres=waparams.reshue;
     cp.hueres = 2.f;
     cp.th = float(waparams.thr);
@@ -1766,7 +1768,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
 //Blur luma
     if(cp.blurres != 0.f  && cp.resena) {
-        float rad = cp.blurres / skip;
+        float rad = 0.7f * cp.blurres / skip;
         float * bef = new float[W_L * H_L];
         float * aft = new float[W_L * H_L];
 
@@ -1951,7 +1953,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                 ContAllL(koeLi, maxkoeLi, true, maxlvl, labco,  varhue, varchrom, WavCoeffs_L, WavCoeffs_L0, lvl, dir, cp, Wlvl_L, Hlvl_L, skip, mean, sigma, MaxP, MaxN, wavCLVCcurve, waOpacityCurveW, ChCurve, Chutili);
                 //blur levels
                 float klev = 1.f;
-                if(wavblcurve && wavcurvecomp && cp.blena) {
+                if(wavblcurve && wavcurvecomp && cp.blena && cp.bluwav > 0.f) {
 
                     float * bef = new float[Wlvl_L * Hlvl_L];
                     float * aft = new float[Wlvl_L * Hlvl_L];
@@ -1961,7 +1963,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                     }
                     klev = (wavblcurve[lvl * 55.5f]);
               
-                    klev *= lvl * 50.f / skip;
+                    klev *= cp.bluwav * lvl * 15.f / skip;
                     boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
 
                     for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
@@ -2173,7 +2175,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
         
 //Blur chroma
     if(cp.blurcres != 0.f  && cp.resena) {
-        float rad = cp.blurcres / skip;
+        float rad = 0.7f * cp.blurcres / skip;
         float * bef = new float[W_L * H_L];
         float * aft = new float[W_L * H_L];
 
@@ -2204,7 +2206,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
 #endif
-
+ 
         for (int dir = 1; dir < 4; dir++) {
             for (int lvl = 0; lvl < maxlvl; lvl++) {
 
@@ -2214,7 +2216,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                 float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
                 ContAllAB(labco,  maxlvl, varhue, varchrom, WavCoeffs_ab, WavCoeffs_ab0, lvl, dir, waOpacityCurveW, cp, Wlvl_ab, Hlvl_ab, useChannelA);
 
-                if(wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f) {
+                if(wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f  && cp.bluwav > 0.f) {
                     float * bef = new float[Wlvl_ab * Hlvl_ab];
                     float * aft = new float[Wlvl_ab * Hlvl_ab];
                     float klev;
@@ -2223,7 +2225,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                     }
                     klev =  (wavblcurve[lvl * 55.5f]);
               
-                    klev *= cp.chrwav * lvl * 100.f / skip;
+                    klev *=  cp.bluwav * cp.chrwav * lvl * 25.f / skip;
                     
                     boxblur(bef, aft, klev, Wlvl_ab, Hlvl_ab, false);
 

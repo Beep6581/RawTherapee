@@ -562,7 +562,7 @@ struct WaveletParamsEdited {
     bool bllev;
     bool edgcont;
     bool chrwav;
-    bool softwav;
+    bool bluwav;
     bool level0noise;
     bool level1noise;
     bool level2noise;

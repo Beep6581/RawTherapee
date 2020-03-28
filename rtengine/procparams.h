@@ -1277,7 +1277,7 @@ struct WaveletParams {
     int radius;
     double skinprotect;
     double chrwav;
-    double softwav;
+    double bluwav;
     Threshold<int> hueskin;
     Threshold<int> hueskin2;
     Threshold<int> hllev;

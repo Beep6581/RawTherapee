@@ -546,7 +546,7 @@ void ParamsEdited::set(bool v)
     wavelet.bllev = v;
     wavelet.edgcont = v;
     wavelet.chrwav = v;
-    wavelet.softwav = v;
+    wavelet.bluwav = v;
     wavelet.level0noise = v;
     wavelet.level1noise = v;
     wavelet.level2noise = v;
@@ -1149,7 +1149,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.bllev = wavelet.bllev && p.wavelet.bllev == other.wavelet.bllev;
         wavelet.edgcont = wavelet.edgcont && p.wavelet.edgcont == other.wavelet.edgcont;
         wavelet.chrwav = wavelet.chrwav && p.wavelet.chrwav == other.wavelet.chrwav;
-        wavelet.softwav = wavelet.softwav && p.wavelet.softwav == other.wavelet.softwav;
+        wavelet.bluwav = wavelet.bluwav && p.wavelet.bluwav == other.wavelet.bluwav;
         wavelet.level0noise = wavelet.level0noise && p.wavelet.level0noise == other.wavelet.level0noise;
         wavelet.level1noise = wavelet.level1noise && p.wavelet.level1noise == other.wavelet.level1noise;
         wavelet.level2noise = wavelet.level2noise && p.wavelet.level2noise == other.wavelet.level2noise;
@@ -3061,8 +3061,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.chrwav = mods.wavelet.chrwav;
     }
 
-    if (wavelet.softwav) {
-        toEdit.wavelet.softwav = mods.wavelet.softwav;
+    if (wavelet.bluwav) {
+        toEdit.wavelet.bluwav = mods.wavelet.bluwav;
     }
 
     if (wavelet.level0noise) {

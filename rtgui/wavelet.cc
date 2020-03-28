@@ -89,6 +89,7 @@ Wavelet::Wavelet() :
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
     resblur(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLUR"), 0, 100, 1, 0))),
     resblurc(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLURC"), 0, 100, 1, 0))),
+    bluwav(Gtk::manage(new Adjuster(M("TP_WAVELET_BLUWAV"), 0.0, 100.0, 0.5, 50.))),
     tmrs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSTRENGTH"), -1.0, 2.0, 0.01, 0.0))),
     edgs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMEDGS"), 0.1, 4.0, 0.01, 1.4))),
     scale(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSCALE"), 0.1, 10.0, 0.01, 1.0))),
@@ -132,7 +133,6 @@ Wavelet::Wavelet() :
     softrad(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
     softradend(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
     chrwav(Gtk::manage(new Adjuster(M("TP_WAVELET_CHRWAV"), 0., 100., 0., 0.))),
-    softwav(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFWAV"), -10.0, 1000.0, 0.5, 1.))),
     Lmethod(Gtk::manage(new MyComboBoxText())),
     CHmethod(Gtk::manage(new MyComboBoxText())),
     CHSLmethod(Gtk::manage(new MyComboBoxText())),
@@ -190,7 +190,7 @@ Wavelet::Wavelet() :
     EvWavchrwav = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_chrwav");
     EvWavoldsh = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVOLDSH");
     EvWavoffset = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVOFFSET");
-    EvWavsoftwav = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SOFTWAV");
+    EvWavbluwav = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLUWAV");
     EvWavblshape = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLSHAPE");
     EvWavresblur = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURWAV");
     EvWavresblurc = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURCWAV");
@@ -663,15 +663,14 @@ Wavelet::Wavelet() :
     curveEditorbl->curveListComplete();
     curveEditorbl->show();
 
+    blBox->pack_start(*bluwav);
+    bluwav->setAdjusterListener(this);
     blBox->pack_start(*curveEditorbl, Gtk::PACK_SHRINK, 4);
     
     
     chrwav->setAdjusterListener(this);
     blBox->pack_start(*chrwav);
 
-    softwav->setLogScale(10, -10);
-    softwav->setAdjusterListener(this);
-//    blBox->pack_start(*softwav);
 
 
 // Gamut
@@ -1357,7 +1356,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     satlev->setValue<int>(pp->wavelet.satlev);
     edgcont->setValue<int>(pp->wavelet.edgcont);
     chrwav->setValue(pp->wavelet.chrwav);
-    softwav->setValue(pp->wavelet.softwav);
+    bluwav->setValue(pp->wavelet.bluwav);
 
     greenlow->setValue(pp->wavelet.greenlow);
     bluelow->setValue(pp->wavelet.bluelow);
@@ -1536,7 +1535,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         strength->setEditedState(pedited->wavelet.strength ? Edited : UnEdited);
         edgcont->setEditedState(pedited->wavelet.edgcont ? Edited : UnEdited);
         chrwav->setEditedState(pedited->wavelet.chrwav ? Edited : UnEdited);
-        softwav->setEditedState(pedited->wavelet.softwav ? Edited : UnEdited);
+        bluwav->setEditedState(pedited->wavelet.bluwav ? Edited : UnEdited);
         level0noise->setEditedState(pedited->wavelet.level0noise ? Edited : UnEdited);
         level1noise->setEditedState(pedited->wavelet.level1noise ? Edited : UnEdited);
         level2noise->setEditedState(pedited->wavelet.level2noise ? Edited : UnEdited);
@@ -1712,7 +1711,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.bllev          = bllev->getValue<int> ();
     pp->wavelet.edgcont        = edgcont->getValue<int> ();
     pp->wavelet.chrwav        = chrwav->getValue();
-    pp->wavelet.softwav        = softwav->getValue();
+    pp->wavelet.bluwav        = bluwav->getValue();
     pp->wavelet.level0noise    = level0noise->getValue<double> ();
     pp->wavelet.level1noise    = level1noise->getValue<double> ();
     pp->wavelet.level2noise    = level2noise->getValue<double> ();
@@ -1825,7 +1824,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.blcurve        = !blshape->isUnChanged();
         pedited->wavelet.edgcont         = edgcont->getEditedState();
         pedited->wavelet.chrwav         = chrwav->getEditedState();
-        pedited->wavelet.softwav         = softwav->getEditedState();
+        pedited->wavelet.bluwav         = bluwav->getEditedState();
         pedited->wavelet.level0noise     = level0noise->getEditedState();
         pedited->wavelet.level1noise     = level1noise->getEditedState();
         pedited->wavelet.level2noise     = level2noise->getEditedState();
@@ -2070,7 +2069,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     satlev->setDefault<int> (defParams->wavelet.satlev);
     edgcont->setDefault<int> (defParams->wavelet.edgcont);
     chrwav->setDefault(defParams->wavelet.chrwav);
-    softwav->setDefault(defParams->wavelet.softwav);
+    bluwav->setDefault(defParams->wavelet.bluwav);
     level0noise->setDefault<double> (defParams->wavelet.level0noise);
     level1noise->setDefault<double> (defParams->wavelet.level1noise);
     level2noise->setDefault<double> (defParams->wavelet.level2noise);
@@ -2138,7 +2137,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         satlev->setDefaultEditedState(pedited->wavelet.satlev ? Edited : UnEdited);
         edgcont->setDefaultEditedState(pedited->wavelet.edgcont ? Edited : UnEdited);
         chrwav->setDefaultEditedState(pedited->wavelet.chrwav ? Edited : UnEdited);
-        softwav->setDefaultEditedState(pedited->wavelet.softwav ? Edited : UnEdited);
+        bluwav->setDefaultEditedState(pedited->wavelet.bluwav ? Edited : UnEdited);
         strength->setDefaultEditedState(pedited->wavelet.strength ? Edited : UnEdited);
         balance->setDefaultEditedState(pedited->wavelet.balance ? Edited : UnEdited);
         iter->setDefaultEditedState(pedited->wavelet.iter ? Edited : UnEdited);
@@ -2192,7 +2191,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         bllev->setDefaultEditedState(Irrelevant);
         edgcont->setDefaultEditedState(Irrelevant);
         chrwav->setDefaultEditedState(Irrelevant);
-        softwav->setDefaultEditedState(Irrelevant);
+        bluwav->setDefaultEditedState(Irrelevant);
         level0noise->setDefaultEditedState(Irrelevant);
         level1noise->setDefaultEditedState(Irrelevant);
         level2noise->setDefaultEditedState(Irrelevant);
@@ -2728,7 +2727,7 @@ void Wavelet::setBatchMode(bool batchMode)
     satlev->showEditedCB();
     edgcont->showEditedCB();
     chrwav->showEditedCB();
-    softwav->showEditedCB();
+    bluwav->showEditedCB();
     strength->showEditedCB();
     balance->showEditedCB();
     iter->showEditedCB();
@@ -2899,8 +2898,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavbluelow, bluelow->getTextValue());
         } else if (a == chrwav) {
             listener->panelChanged(EvWavchrwav, chrwav->getTextValue());
-        } else if (a == softwav) {
-            listener->panelChanged(EvWavsoftwav, softwav->getTextValue());
+        } else if (a == bluwav) {
+            listener->panelChanged(EvWavbluwav, bluwav->getTextValue());
         }
 
         if ((a == correction[0] || a == correction[1] || a == correction[2] || a == correction[3] || a == correction[4] || a == correction[5] || a == correction[6] || a == correction[7] || a == correction[8])) {
