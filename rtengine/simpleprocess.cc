@@ -1439,6 +1439,7 @@ private:
             bool wavcontlutili = false;
             WaveletParams WaveParams = params.wavelet;
             WavCurve wavCLVCurve;
+            Wavblcurve wavblcurve;
             WavOpacityCurveRG waOpacityCurveRG;
             WavOpacityCurveBY waOpacityCurveBY;
             WavOpacityCurveW waOpacityCurveW;
@@ -1462,7 +1463,7 @@ private:
                 provradius->CopyFrom(labView);
             }
 
-            params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+            params.wavelet.getCurves(wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
             CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 
@@ -1470,7 +1471,7 @@ private:
                 unshar = new LabImage(fw, fh);
                 provis = params.wavelet.CLmethod;
                 params.wavelet.CLmethod = "all";
-                ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
+                ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
                 unshar->CopyFrom(labView);
                 params.wavelet.CLmethod = provis;
 
@@ -1482,7 +1483,7 @@ private:
                 WaveParams.expnoise = false; 
             }
 
-            ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
+            ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                 WaveParams.expcontrast = procont;
