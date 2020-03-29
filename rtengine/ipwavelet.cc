@@ -1951,7 +1951,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                 float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 
                 ContAllL(koeLi, maxkoeLi, true, maxlvl, labco,  varhue, varchrom, WavCoeffs_L, WavCoeffs_L0, lvl, dir, cp, Wlvl_L, Hlvl_L, skip, mean, sigma, MaxP, MaxN, wavCLVCcurve, waOpacityCurveW, ChCurve, Chutili);
-                //blur levels
+                //blur level
                 float klev = 1.f;
                 if(wavblcurve && wavcurvecomp && cp.blena && cp.bluwav > 0.f) {
 
@@ -1962,8 +1962,11 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         bef[co] = WavCoeffs_L[dir][co];       
                     }
                     klev = (wavblcurve[lvl * 55.5f]);
-              
-                    klev *= cp.bluwav * lvl * 15.f / skip;
+                    float lvr = lvl;
+                    if(lvr == 0) {
+                        lvr = 1;
+                    }
+                    klev *= cp.bluwav * lvr * 10.f / skip;
                     boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
 
                     for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
@@ -2224,8 +2227,12 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                         bef[co] = WavCoeffs_ab[dir][co];
                     }
                     klev =  (wavblcurve[lvl * 55.5f]);
+                    float lvr = lvl;
+                    if(lvr == 0) {
+                        lvr = 1;
+                    }
               
-                    klev *=  cp.bluwav * cp.chrwav * lvl * 25.f / skip;
+                    klev *=  cp.bluwav * cp.chrwav * lvr * 20.f / skip;
                     
                     boxblur(bef, aft, klev, Wlvl_ab, Hlvl_ab, false);
 
