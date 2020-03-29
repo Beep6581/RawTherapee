@@ -348,6 +348,10 @@ Wavelet::Wavelet() :
         correction[i]->setAdjusterListener(this);
         levBox->pack_start(*correction[i]);
     }
+    levBox->pack_start(*sup);
+    sup->setAdjusterListener(this);
+    Gtk::HSeparator* const separatorcont = Gtk::manage(new Gtk::HSeparator());
+    levBox->pack_start(*separatorcont);
 
     sigma->setAdjusterListener(this);
     levBox->pack_start(*sigma, Gtk::PACK_SHRINK);
@@ -356,8 +360,6 @@ Wavelet::Wavelet() :
     sigma->set_tooltip_text(M("TP_WAVELET_SIGMA_TOOLTIP"));
     offset->set_tooltip_text(M("TP_WAVELET_OFFSET_TOOLTIP"));
 
-    levBox->pack_start(*sup);
-    sup->setAdjusterListener(this);
     wavLabels->show();
     levBox->pack_start(*wavLabels);
 
