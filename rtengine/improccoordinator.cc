@@ -867,7 +867,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if ((params->wavelet.enabled)) {
                 WaveletParams WaveParams = params->wavelet;
-                WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+                WaveParams.getCurves(wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
                 int kall = 0;
                 LabImage *unshar = nullptr;
                 Glib::ustring provis;
@@ -896,7 +896,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     unshar = new LabImage(pW, pH);
                     provis = params->wavelet.CLmethod;
                     params->wavelet.CLmethod = "all";
-                    ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
+                    ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
                     unshar->CopyFrom(nprevl);
 
@@ -910,7 +910,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     WaveParams.expnoise = false; 
                 }
 
-                ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
+                ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
 
                 if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
@@ -922,10 +922,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     WaveParams.expnoise = pronois;
                     
                     if (WaveParams.softrad > 0.f) {
+
                         array2D<float> ble(pW, pH);
                         array2D<float> guid(pW, pH);
                         Imagefloat *tmpImage = nullptr;
                         tmpImage = new Imagefloat(pW, pH);
+
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -948,6 +950,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 tmpImage->b(ir, jr) = Z;
                                 ble[ir][jr] = Y / 32768.f;
                             }
+    
                         double epsilmax = 0.0001;
                         double epsilmin = 0.00001;
                         double aepsil = (epsilmax - epsilmin) / 90.f;
@@ -973,6 +976,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 Color::XYZ2Lab(X, Y, Z, L, a, b);
                                 nprevl->L[ir][jr] =  L;
                             }
+      
                     delete tmpImage;
 
                     }
@@ -1063,8 +1067,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 */
                     if (WaveParams.softrad > 0.f) {
+
                         delete provradius;
                         provradius    = NULL;
+
                     }
 
 
