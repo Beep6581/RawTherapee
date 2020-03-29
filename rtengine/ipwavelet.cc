@@ -851,7 +851,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (cp.val > 0 || ref || contr) { //edge
                             Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN);
                         }
-
+                      
                         //init for edge and denoise
                         float vari[4];
 
@@ -1234,7 +1234,7 @@ void ImProcFunctions::Aver(float * RESTRICT DataList, int datalen, float &averag
     int countP = 0, countN = 0;
     double averaP = 0.0, averaN = 0.0; // use double precision for large summations
 
-    constexpr float thres = 5.f;//different fom zero to take into account only data large enough
+    constexpr float thres = 32.7f;//different fom zero to take into account only data large enough 32.7 = 0.1 in range 0..100 very low value 
     max = 0.f;
     min = RT_INFINITY_F;
 #ifdef _OPENMP
@@ -1286,7 +1286,7 @@ void ImProcFunctions::Sigma(float *  RESTRICT DataList, int datalen, float avera
 {
     int countP = 0, countN = 0;
     double variP = 0.0, variN = 0.0; // use double precision for large summations
-    float thres = 5.f;//different fom zero to take into account only data large enough
+    float thres = 32.7f;//different fom zero to take into account only data large enough 32.7 = 0.1 in range 0..100
 
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:variP,variN,countP,countN) num_threads(wavNestedLevels) if(wavNestedLevels>1)
@@ -2578,6 +2578,10 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
 
     for (int sc = 0; sc < 10; sc++) {
         scaleskip[sc] = scales[sc] / skip;
+    }
+
+    if (settings->verbose) {
+        printf("level=%i mean=%f sigma=%f maxp=%f\n", level, mean[level], sigma[level], MaxP[level]);
     }
 
     constexpr float t_r = 40.f;
