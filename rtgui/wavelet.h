@@ -83,6 +83,7 @@ private:
     rtengine::ProcEvent EvWavchrwav;
     rtengine::ProcEvent EvWavoldsh;
     rtengine::ProcEvent EvWavoffset;
+    rtengine::ProcEvent EvWavlowthr;
     rtengine::ProcEvent EvWavbluwav;
     rtengine::ProcEvent EvWavblshape;
     rtengine::ProcEvent EvWavresblur;
@@ -184,6 +185,7 @@ private:
     Adjuster* correctionch[9];
     Adjuster* const sigma;
     Adjuster* const offset;
+    Adjuster* const lowthr;
     Adjuster* const rescon;
     Adjuster* const resconH;
     Adjuster* const reschro;

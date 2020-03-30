@@ -3002,39 +3002,66 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
         const float skinprotneg = -skinprot;
         const float factorHard = (1.f - skinprotneg / 100.f);
         const float offs = params->wavelet.offset;
+        const float lowthr = params->wavelet.lowthr;
 
         //to adjust increase contrast with local contrast
 
         //for each pixel and each level
         float beta;
-        float mea[9];
-        float rap =  offs * mean[level] - 2.f * cp.sigm * sigma[level];
+        float mea[10];
+        float rap = 0.f;
+        float sig = 1.f;
+        if(cp.sigm < 1.f) {
+            sig = cp.sigm;
+        }
 
+        if(cp.sigm <= 1.f) {
+            rap =  offs * mean[level] -  sig * sigma[level];
+        }
+        
         if (rap > 0.f) {
             mea[0] = rap;
         } else {
             mea[0] = mean[level] / 6.f;
         }
 
-        rap =  offs * mean[level] - cp.sigm * sigma[level];
+        rap = 0.f;
+        if(cp.sigm <= 1.f) {
+            rap =  offs * mean[level] - 0.5f * sig * sigma[level];
+        }
 
         if (rap > 0.f) {
             mea[1] = rap;
         } else {
-            mea[1] = mean[level] / 2.f;
+            mea[1] = mean[level] / 4.f;
+        }
+
+        rap = 0.f;
+        if(cp.sigm <= 1.f) {
+            rap =  offs * mean[level] - 0.2f * sig * sigma[level];
         }
         
-        mea[2] = offs * mean[level]; // 50% data
-        mea[3] = offs * mean[level] + cp.sigm * sigma[level] / 2.f;
-        mea[4] = offs * mean[level] + cp.sigm * sigma[level]; //66%
-        mea[5] = offs * mean[level] + cp.sigm * 1.2f * sigma[level];
-        mea[6] = offs * mean[level] + cp.sigm * 1.5f * sigma[level]; //
-        mea[7] = offs * mean[level] + cp.sigm * 2.f * sigma[level]; //95%
-        mea[8] = offs * mean[level] + cp.sigm * 2.5f * sigma[level]; //99%
+        if (rap > 0.f) {
+            mea[2] = rap;
+        } else {
+            mea[2] = mean[level] / 2.f;
+        }
+        
+        mea[3] = offs * mean[level]; // 50% data
+        mea[4] = offs * mean[level] + cp.sigm * sigma[level] / 2.f;
+        mea[5] = offs * mean[level] + cp.sigm * sigma[level]; //66%
+        mea[6] = offs * mean[level] + cp.sigm * 1.2f * sigma[level];
+        mea[7] = offs * mean[level] + cp.sigm * 1.5f * sigma[level]; //
+        mea[8] = offs * mean[level] + cp.sigm * 2.f * sigma[level]; //95%
+        mea[9] = offs * mean[level] + cp.sigm * 2.5f * sigma[level]; //99%
 
         bool useChromAndHue = (skinprot != 0.f || cp.HSmet);
         float modchro;
 
+        float red0 = 0.005f * (110.f - lowthr);
+        float red1 = 0.008f * (110.f - lowthr);
+        float red2 = 0.011f * (110.f - lowthr);
+        
         for (int i = 0; i < W_L * H_L; i++) {
             float kLlev = 1.f;
 
@@ -3046,22 +3073,24 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                 //reduction amplification: max action between mean / 2 and mean + sigma
                 // arbitrary coefficient, we can add a slider !!
                 if (WavCL < mea[0]) {
-                    beta = 0.6f;    //preserve very low contrast (sky...)
+                    beta = 0.4f * red0;//preserve very low contrast (sky...)
                 } else if (WavCL < mea[1]) {
-                    beta = 0.8f;
+                    beta = 0.5f * red1;
                 } else if (WavCL < mea[2]) {
-                    beta = 1.f;    //standard
+                    beta = 0.7f * red2;
                 } else if (WavCL < mea[3]) {
-                    beta = 1.f;
+                    beta = 1.f;    //standard
                 } else if (WavCL < mea[4]) {
-                    beta = 0.8f;    //+sigma
+                    beta = 1.f;
                 } else if (WavCL < mea[5]) {
-                    beta = 0.6f;
+                    beta = 0.8f;    //+sigma
                 } else if (WavCL < mea[6]) {
-                    beta = 0.4f;
+                    beta = 0.6f;
                 } else if (WavCL < mea[7]) {
-                    beta = 0.2f;    // + 2 sigma
+                    beta = 0.4f;
                 } else if (WavCL < mea[8]) {
+                    beta = 0.2f;    // + 2 sigma
+                } else if (WavCL < mea[9]) {
                     beta = 0.1f;
                 } else {
                     beta = 0.0f;

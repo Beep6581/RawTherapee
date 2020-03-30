@@ -1247,6 +1247,7 @@ struct WaveletParams {
     Glib::ustring HSmethod;
     double sigma;
     double offset;
+    double lowthr;
     int rescon;
     int resconH;
     int reschro;
