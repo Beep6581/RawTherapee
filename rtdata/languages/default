@@ -1222,13 +1222,15 @@ HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_MSG_THRESWAV;Balance threshold
-HISTORY_MSG_BLUWAV;Maximum blur
+HISTORY_MSG_BLUWAV;Effects
 HISTORY_MSG_WAVOLDSH;Old algorithm
 HISTORY_MSG_WAVOFFSET;Offset
+HISTORY_MSG_WAVLOWTHR;Threshold low contrast
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_WAVBL;Blur levels
 HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLURCWAV;Blur chroma
+HISTORY_MSG_EDGEFFECT;Edge Effect
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -3042,7 +3044,7 @@ TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
 TP_WAVELET_BLCURVE;Blur by levels
 TP_WAVELET_BLURFRAME;Blur
-TP_WAVELET_BLUWAV;Maximum Blur
+TP_WAVELET_BLUWAV;Effects
 TP_WAVELET_CBENAB;Toning and Color Balance
 TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 TP_WAVELET_CCURVE;Local contrast
@@ -3102,6 +3104,8 @@ TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
 TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
 TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
+TP_WAVELET_EDEFFECT;Effect
+TP_WAVELET_EDEFFECT_TOOLTIP;This slider controls how wide the range of contrast values are that receive the maximum effect from the tool.\nMaximum value (2.5) disabled the tool
 TP_WAVELET_EDGESENSI;Edge sensitivity
 TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
 TP_WAVELET_EDGTHRESH;Detail
@@ -3140,6 +3144,7 @@ TP_WAVELET_LEVZERO;Level 1
 TP_WAVELET_LINKEDG;Link with Edge Sharpness' Strength
 TP_WAVELET_LIPST;Enhanced algoritm
 TP_WAVELET_LOWLIGHT;Shadow luminance range
+TP_WAVELET_LOWTHR_TOOLTIP;Prevents amplification of fine textures and noise
 TP_WAVELET_MEDGREINF;First level
 TP_WAVELET_MEDI;Reduce artifacts in blue sky
 TP_WAVELET_MEDILEV;Edge detection
@@ -3210,6 +3215,7 @@ TP_WAVELET_USH;None
 TP_WAVELET_USHARP;Clarity method
 TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\nWavelet : the source file is the file including wavelet threatment
 TP_WAVELET_USH_TOOLTIP;If you select Sharp-mask, wavelet settings will be automatically positioned :\nBackground=black, Process=below, level=3...you can change level between 1 and 4.\n\nIf you select Clarity, wavelet settings will be automatically positioned :\nBackground=residual, Process=above, level=7..you can change level between 5 and 10 and wavelet levels.
+TP_WAVELET_WAVLOWTHR;Low contrast threshold
 TP_WAVELET_WAVOFFSET;Offset
 TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between shadows and highlights.\n High values will amplify the contrast enhancement of the highlights, while low values will amplify the contrast enhancement of the shadows. Along with a low Max. effect value will help you selecting the contrasts that will be enhanced
 TP_WBALANCE_AUTO;Auto

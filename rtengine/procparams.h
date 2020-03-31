@@ -1715,6 +1715,7 @@ struct WaveletParams {
     Glib::ustring HSmethod;
     double sigma;
     double offset;
+    double lowthr;
     int rescon;
     int resconH;
     int reschro;
@@ -1738,6 +1739,7 @@ struct WaveletParams {
     int edgeampli;
     int contrast;
     int edgrad;
+    double edgeffect;
     int edgval;
     int edgthresh;
     int thr;

@@ -522,6 +522,7 @@ void ParamsEdited::set(bool v)
     wavelet.sigma = v;
     wavelet.sigma = v;
     wavelet.offset = v;
+    wavelet.lowthr = v;
     wavelet.resconH = v;
     wavelet.reschro = v;
     wavelet.resblur = v;
@@ -544,6 +545,7 @@ void ParamsEdited::set(bool v)
     wavelet.chro = v;
     wavelet.contrast = v;
     wavelet.edgrad = v;
+    wavelet.edgeffect = v;
     wavelet.edgval = v;
     wavelet.edgthresh = v;
     wavelet.thr = v;
@@ -1577,6 +1579,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.Dirmethod = wavelet.Dirmethod && p.wavelet.Dirmethod == other.wavelet.Dirmethod;
         wavelet.sigma = wavelet.sigma && p.wavelet.sigma == other.wavelet.sigma;
         wavelet.offset = wavelet.offset && p.wavelet.offset == other.wavelet.offset;
+        wavelet.lowthr = wavelet.lowthr && p.wavelet.lowthr == other.wavelet.lowthr;
         wavelet.rescon = wavelet.rescon && p.wavelet.rescon == other.wavelet.rescon;
         wavelet.resconH = wavelet.resconH && p.wavelet.resconH == other.wavelet.resconH;
         wavelet.reschro = wavelet.reschro && p.wavelet.reschro == other.wavelet.reschro;
@@ -1600,6 +1603,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.chro = wavelet.chro && p.wavelet.chro == other.wavelet.chro;
         wavelet.contrast = wavelet.contrast && p.wavelet.contrast == other.wavelet.contrast;
         wavelet.edgrad = wavelet.edgrad && p.wavelet.edgrad == other.wavelet.edgrad;
+        wavelet.edgeffect = wavelet.edgeffect && p.wavelet.edgeffect == other.wavelet.edgeffect;
         wavelet.edgval = wavelet.edgval && p.wavelet.edgval == other.wavelet.edgval;
         wavelet.edgthresh = wavelet.edgthresh && p.wavelet.edgthresh == other.wavelet.edgthresh;
         wavelet.thr = wavelet.thr && p.wavelet.thr == other.wavelet.thr;
@@ -5341,8 +5345,16 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.offset = mods.wavelet.offset;
     }
 
+    if (wavelet.lowthr) {
+        toEdit.wavelet.lowthr = mods.wavelet.lowthr;
+    }
+
     if (wavelet.resblur) {
         toEdit.wavelet.resblur = mods.wavelet.resblur;
+    }
+
+    if (wavelet.edgeffect) {
+        toEdit.wavelet.edgeffect = mods.wavelet.edgeffect;
     }
 
     if (wavelet.resblurc) {
