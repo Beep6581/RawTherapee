@@ -551,6 +551,7 @@ struct WaveletParamsEdited {
     bool chroma;
     bool contrast;
     bool edgrad;
+    bool edgeffect;
     bool edgval;
     bool edgthresh;
     bool thr;

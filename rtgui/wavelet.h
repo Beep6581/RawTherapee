@@ -88,6 +88,7 @@ private:
     rtengine::ProcEvent EvWavblshape;
     rtengine::ProcEvent EvWavresblur;
     rtengine::ProcEvent EvWavresblurc;
+    rtengine::ProcEvent EvWavedgeffect;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
 
@@ -207,6 +208,7 @@ private:
     Adjuster* const radius;
     Adjuster* const skinprotect;
     Adjuster* const edgrad;
+    Adjuster* const edgeffect;
     Adjuster* const edgval;
     Adjuster* const edgthresh;
     Adjuster* const strength;

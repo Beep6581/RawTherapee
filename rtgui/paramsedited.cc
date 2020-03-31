@@ -535,6 +535,7 @@ void ParamsEdited::set(bool v)
     wavelet.chro = v;
     wavelet.contrast = v;
     wavelet.edgrad = v;
+    wavelet.edgeffect = v;
     wavelet.edgval = v;
     wavelet.edgthresh = v;
     wavelet.thr = v;
@@ -1140,6 +1141,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.chro = wavelet.chro && p.wavelet.chro == other.wavelet.chro;
         wavelet.contrast = wavelet.contrast && p.wavelet.contrast == other.wavelet.contrast;
         wavelet.edgrad = wavelet.edgrad && p.wavelet.edgrad == other.wavelet.edgrad;
+        wavelet.edgeffect = wavelet.edgeffect && p.wavelet.edgeffect == other.wavelet.edgeffect;
         wavelet.edgval = wavelet.edgval && p.wavelet.edgval == other.wavelet.edgval;
         wavelet.edgthresh = wavelet.edgthresh && p.wavelet.edgthresh == other.wavelet.edgthresh;
         wavelet.thr = wavelet.thr && p.wavelet.thr == other.wavelet.thr;
@@ -3210,6 +3212,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.resblur) {
         toEdit.wavelet.resblur = mods.wavelet.resblur;
+    }
+
+    if (wavelet.edgeffect) {
+        toEdit.wavelet.edgeffect = mods.wavelet.edgeffect;
     }
 
     if (wavelet.resblurc) {

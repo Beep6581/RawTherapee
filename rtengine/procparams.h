@@ -1271,6 +1271,7 @@ struct WaveletParams {
     int edgeampli;
     int contrast;
     int edgrad;
+    double edgeffect;
     int edgval;
     int edgthresh;
     int thr;

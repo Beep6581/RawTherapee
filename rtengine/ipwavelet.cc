@@ -82,6 +82,7 @@ struct cont_params {
     float b_lpast, t_lpast, b_rpast, t_rpast;
     float b_lsat, t_lsat, b_rsat, t_rsat;
     int rad;
+    float eff;
     int val;
     int til;
     int numlevH, numlevS;
@@ -392,6 +393,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.rad = waparams.edgrad;
     cp.val = waparams.edgval;
     cp.til = waparams.edgthresh;
+    cp.eff = waparams.edgeffect;
 
     cp.conres = waparams.rescon;
     cp.conresH = waparams.resconH;
@@ -2721,7 +2723,47 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
     constexpr float aedstr = (eddstrength - 1.f) / 90.f;
     constexpr float bedstr = 1.f - 10.f * aedstr;
 
+    float mea[10];
+    float beta = 1.f;
+    if(cp.eff < 2.5f) {
+        float effect = cp.eff;
+        float offs = 1.f;
+
+        calceffect(level, mean, sigma, mea, effect, offs);
+        for (int co = 0; co < H_L * W_L; co++) {
+            float WavCL = std::fabs(WavCoeffs_L[dir][co]);
+
+            if (WavCL < mea[0]) {
+                beta = 0.05f;
+            } else if (WavCL < mea[1]) {
+                beta = 0.2f;
+            } else if (WavCL < mea[2]) {
+                beta = 0.7f;
+            } else if (WavCL < mea[3]) {
+                beta = 1.f;    //standard
+            } else if (WavCL < mea[4]) {
+                beta = 1.f;
+            } else if (WavCL < mea[5]) {
+                beta = 0.8f;    //+sigma
+            } else if (WavCL < mea[6]) {
+                beta = 0.6f;
+            } else if (WavCL < mea[7]) {
+                beta = 0.4f;
+            } else if (WavCL < mea[8]) {
+                beta = 0.2f;    // + 2 sigma
+            } else if (WavCL < mea[9]) {
+                beta = 0.1f;
+            } else {
+                beta = 0.0f;
+            }
+ 
+        }
+    }
+
+
     if (cp.val > 0  && cp.edgeena) {
+        
+        
         float * koe = nullptr;
         float maxkoe = 0.f;
 
@@ -2810,7 +2852,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
             float atten01234 = 0.80f;
             value *= (atten01234 * scaleskip[1]);    //for zoom < 100% reduce strength...I choose level 1...but!!
         }
-
+        value *= beta;
         float edge = 1.f;
         float lim0 = 20.f; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
         float lev = float (level);

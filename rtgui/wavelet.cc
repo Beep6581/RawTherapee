@@ -90,7 +90,7 @@ Wavelet::Wavelet() :
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
     resblur(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLUR"), 0, 100, 1, 0))),
     resblurc(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLURC"), 0, 100, 1, 0))),
-    bluwav(Gtk::manage(new Adjuster(M("TP_WAVELET_BLUWAV"), 0.05, 2.5, 0.01, 1.))),
+    bluwav(Gtk::manage(new Adjuster(M("TP_WAVELET_BLUWAV"), 0.05, 2.5, 0.5, 50.))),
     tmrs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSTRENGTH"), -1.0, 2.0, 0.01, 0.0))),
     edgs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMEDGS"), 0.1, 4.0, 0.01, 1.4))),
     scale(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSCALE"), 0.1, 10.0, 0.01, 1.0))),
@@ -106,6 +106,7 @@ Wavelet::Wavelet() :
     radius(Gtk::manage(new Adjuster(M("TP_WAVELET_RADIUS"), 0, 100, 1, 40))),
     skinprotect(Gtk::manage(new Adjuster(M("TP_WAVELET_SKIN"), -100, 100, 1, 0.))),
     edgrad(Gtk::manage(new Adjuster(M("TP_WAVELET_EDRAD"), 0, 100, 1, 15))),
+    edgeffect(Gtk::manage(new Adjuster(M("TP_WAVELET_EDEFFECT"), 0.05, 2.5, 0.01, 1.))),
     edgval(Gtk::manage(new Adjuster(M("TP_WAVELET_EDVAL"), 0, 100, 1, 0))),
     edgthresh(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGTHRESH"), -50, 100, 1, 10))),
     strength(Gtk::manage(new Adjuster(M("TP_WAVELET_STRENGTH"), 0, 100, 1, 100))),
@@ -196,7 +197,7 @@ Wavelet::Wavelet() :
     EvWavblshape = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLSHAPE");
     EvWavresblur = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURWAV");
     EvWavresblurc = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURCWAV");
-
+    EvWavedgeffect = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_EDGEFFECT");
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
     expcontrast->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expcontrast));
@@ -546,9 +547,13 @@ Wavelet::Wavelet() :
 
 // Edge Sharpness
     ToolParamBlock* const edgBox = Gtk::manage(new ToolParamBlock());
+    edgeffect->setAdjusterListener(this);
+    edgBox->pack_start(*edgeffect);
+    edgeffect->set_tooltip_markup(M("TP_WAVELET_EDEFFECT_TOOLTIP"));
 
     edgval->setAdjusterListener(this);
     edgBox->pack_start(*edgval);
+
 
     edgrad->setAdjusterListener(this);
     edgBox->pack_start(*edgrad);
@@ -1343,6 +1348,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     chro->setValue(pp->wavelet.chro);
     contrast->setValue(pp->wavelet.contrast);
     edgrad->setValue(pp->wavelet.edgrad);
+    edgeffect->setValue(pp->wavelet.edgeffect);
     edgval->setValue(pp->wavelet.edgval);
     edgthresh->setValue(pp->wavelet.edgthresh);
     thr->setValue(pp->wavelet.thr);
@@ -1530,6 +1536,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         lipst->set_inconsistent(!pedited->wavelet.lipst);
         contrast->setEditedState(pedited->wavelet.contrast ? Edited : UnEdited);
         edgrad->setEditedState(pedited->wavelet.edgrad ? Edited : UnEdited);
+        edgeffect->setEditedState(pedited->wavelet.edgeffect ? Edited : UnEdited);
         edgval->setEditedState(pedited->wavelet.edgval ? Edited : UnEdited);
         thr->setEditedState(pedited->wavelet.thr ? Edited : UnEdited);
         thrH->setEditedState(pedited->wavelet.thrH ? Edited : UnEdited);
@@ -1702,6 +1709,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.lipst          = lipst->get_active();
     pp->wavelet.contrast       = contrast->getValue();
     pp->wavelet.edgrad         = edgrad->getValue();
+    pp->wavelet.edgeffect      = edgeffect->getValue();
     pp->wavelet.edgval         = edgval->getValue();
     pp->wavelet.edgthresh      = edgthresh->getValue();
     pp->wavelet.thr            = thr->getValue();
@@ -1823,6 +1831,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.chro            = chro->getEditedState();
         pedited->wavelet.contrast        = contrast->getEditedState();
         pedited->wavelet.edgrad          = edgrad->getEditedState();
+        pedited->wavelet.edgeffect       = edgeffect->getEditedState();
         pedited->wavelet.edgval          = edgval->getEditedState();
         pedited->wavelet.thr             = thr->getEditedState();
         pedited->wavelet.thrH            = thrH->getEditedState();
@@ -2068,6 +2077,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     chro->setDefault(defParams->wavelet.chro);
     contrast->setDefault(defParams->wavelet.contrast);
     edgrad->setDefault(defParams->wavelet.edgrad);
+    edgeffect->setDefault(defParams->wavelet.edgeffect);
     edgval->setDefault(defParams->wavelet.edgval);
     edgthresh->setDefault(defParams->wavelet.edgthresh);
     thr->setDefault(defParams->wavelet.thr);
@@ -2136,6 +2146,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         chro->setDefaultEditedState(pedited->wavelet.chro ? Edited : UnEdited);
         contrast->setDefaultEditedState(pedited->wavelet.contrast ? Edited : UnEdited);
         edgrad->setDefaultEditedState(pedited->wavelet.edgrad ? Edited : UnEdited);
+        edgeffect->setDefaultEditedState(pedited->wavelet.edgeffect ? Edited : UnEdited);
         edgval->setDefaultEditedState(pedited->wavelet.edgval ? Edited : UnEdited);
         edgthresh->setDefault(defParams->wavelet.edgthresh);
         thr->setDefaultEditedState(pedited->wavelet.thr ? Edited : UnEdited);
@@ -2193,6 +2204,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         chro->setDefaultEditedState(Irrelevant);
         contrast->setDefaultEditedState(Irrelevant);
         edgrad->setDefaultEditedState(Irrelevant);
+        edgeffect->setDefaultEditedState(Irrelevant);
         edgval->setDefaultEditedState(Irrelevant);
         edgthresh->setDefaultEditedState(Irrelevant);
         thr->setDefaultEditedState(Irrelevant);
@@ -2728,6 +2740,7 @@ void Wavelet::setBatchMode(bool batchMode)
     chro->showEditedCB();
     contrast->showEditedCB();
     edgrad->showEditedCB();
+    edgeffect->showEditedCB();
     edgval->showEditedCB();
     edgthresh->showEditedCB();
     thr->showEditedCB();
@@ -2856,6 +2869,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavedgeampli, edgeampli->getTextValue());
         } else if (a == edgrad) {
             listener->panelChanged(EvWavedgrad, edgrad->getTextValue());
+        } else if (a == edgeffect) {
+            listener->panelChanged(EvWavedgeffect, edgeffect->getTextValue());
         } else if (a == edgval) {
             listener->panelChanged(EvWavedgval, edgval->getTextValue());
         } else if (a == thres) {

@@ -811,6 +811,7 @@ HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_WAVBL;Blur levels
 HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLURCWAV;Blur chroma
+HISTORY_MSG_EDGEFFECT;Edge Effect
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2205,6 +2206,8 @@ TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
 TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
 TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
+TP_WAVELET_EDEFFECT;Effect
+TP_WAVELET_EDEFFECT_TOOLTIP;This slider controls how wide the range of contrast values are that receive the maximum effect from the tool.\nMaximum value (2.5) disabled the tool
 TP_WAVELET_EDGESENSI;Edge sensitivity
 TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
 TP_WAVELET_EDGTHRESH;Detail
