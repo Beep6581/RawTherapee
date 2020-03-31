@@ -90,7 +90,7 @@ Wavelet::Wavelet() :
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
     resblur(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLUR"), 0, 100, 1, 0))),
     resblurc(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLURC"), 0, 100, 1, 0))),
-    bluwav(Gtk::manage(new Adjuster(M("TP_WAVELET_BLUWAV"), 0.0, 100.0, 0.5, 50.))),
+    bluwav(Gtk::manage(new Adjuster(M("TP_WAVELET_BLUWAV"), 0.05, 2.5, 0.01, 1.))),
     tmrs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSTRENGTH"), -1.0, 2.0, 0.01, 0.0))),
     edgs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMEDGS"), 0.1, 4.0, 0.01, 1.4))),
     scale(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSCALE"), 0.1, 10.0, 0.01, 1.0))),

@@ -803,7 +803,7 @@ HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_MSG_THRESWAV;Balance threshold
-HISTORY_MSG_BLUWAV;Maximum blur
+HISTORY_MSG_BLUWAV;Effects
 HISTORY_MSG_WAVOLDSH;Old algorithm
 HISTORY_MSG_WAVOFFSET;Offset
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
@@ -2146,7 +2146,7 @@ TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
 TP_WAVELET_BLCURVE;Blur by levels
 TP_WAVELET_BLURFRAME;Blur
-TP_WAVELET_BLUWAV;Maximum Blur
+TP_WAVELET_BLUWAV;Effects
 TP_WAVELET_CBENAB;Toning and Color Balance
 TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 TP_WAVELET_CCURVE;Local contrast
