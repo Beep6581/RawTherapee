@@ -70,6 +70,9 @@ public:
 private:
     rtengine::ProcEvent EvWavenaclari;
     rtengine::ProcEvent EvWavushamet;
+    rtengine::ProcEvent EvWavbalchrom;
+    rtengine::ProcEvent EvWavchromfi;
+    rtengine::ProcEvent EvWavchromco;
     rtengine::ProcEvent EvWavmergeL;
     rtengine::ProcEvent EvWavmergeC;
     rtengine::ProcEvent EvWavsoftrad;
@@ -241,6 +244,9 @@ private:
     Adjuster* const edgedetectthr2;
     Adjuster* const edgesensi;
     Adjuster* const edgeampli;
+    Adjuster* const balchrom;
+    Adjuster* const chromfi;
+    Adjuster* const chromco;
     Adjuster* const mergeL;
     Adjuster* const mergeC;
     Adjuster* const softrad;
@@ -285,6 +291,7 @@ private:
     Gtk::Frame* const contFrame;
     Gtk::Frame* const blurFrame;
     Gtk::Frame* const chromaFrame;
+    Gtk::Frame* const chroFrame;
 
     Gtk::Label* const wavLabels;
     Gtk::Label* const labmC;

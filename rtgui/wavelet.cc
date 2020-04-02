@@ -130,6 +130,9 @@ Wavelet::Wavelet() :
     edgedetectthr2(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR2"), -10, 100, 1, 0))),
     edgesensi(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGESENSI"), 0, 100, 1, 60))),
     edgeampli(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEAMPLI"), 0, 100, 1, 10))),
+    balchrom(Gtk::manage(new Adjuster(M("TP_WAVELET_BALCHROM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-red-small.png"))))),
+    chromfi(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMFI"), 0, 100, 1, 0))),
+    chromco(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMCO"), 0, 100, 1, 0))),
     mergeL(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEL"), -50, 100, 1, 40))),
     mergeC(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEC"), -50, 100, 1, 20))),
     softrad(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
@@ -157,6 +160,7 @@ Wavelet::Wavelet() :
     contFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CONTFRAME")))),
     blurFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_BLURFRAME")))),
     chromaFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROMAFRAME")))),
+    chroFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROFRAME")))),
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     labmC(Gtk::manage(new Gtk::Label(M("TP_WAVELET_CTYPE") + ":"))),
     labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
@@ -179,6 +183,9 @@ Wavelet::Wavelet() :
     auto m = ProcEventMapper::getInstance();
     EvWavenaclari = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVCLARI");
     EvWavushamet = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVUSHAMET");
+    EvWavbalchrom = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVBALCHROM");
+    EvWavchromfi = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVCHROMFI");
+    EvWavchromco = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVCHROMCO");
     EvWavmergeL = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVMERGEL");
     EvWavmergeC = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVMERGEC");
     EvWavsoftrad = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSOFTRAD");
@@ -522,6 +529,22 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*level1noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level2noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level3noise, Gtk::PACK_SHRINK, 0);
+
+    balchrom->setAdjusterListener(this);
+//    noiseBox->pack_start(*balchrom, Gtk::PACK_SHRINK, 0);
+    chromfi->setAdjusterListener(this);
+//    noiseBox->pack_start(*chromfi, Gtk::PACK_SHRINK, 0);
+    chromco->setAdjusterListener(this);
+//    noiseBox->pack_start(*chromco, Gtk::PACK_SHRINK, 0);
+
+    chroFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const chroBox = Gtk::manage(new ToolParamBlock());
+    chroBox->pack_start(*balchrom);
+    chroBox->pack_start(*chromfi);
+    chroBox->pack_start(*chromco);
+    chroFrame->add(*chroBox);
+    noiseBox->pack_start(*chroFrame);
+
 
 //Clarity
     mergeL->setAdjusterListener(this);
@@ -1383,6 +1406,9 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     softrad->setValue(pp->wavelet.softrad);
     softradend->setValue(pp->wavelet.softradend);
 
+    balchrom->setValue(pp->wavelet.balchrom);
+    chromfi->setValue(pp->wavelet.chromfi);
+    chromco->setValue(pp->wavelet.chromco);
     level0noise->setValue<double>(pp->wavelet.level0noise);
     level1noise->setValue<double>(pp->wavelet.level1noise);
     level2noise->setValue<double>(pp->wavelet.level2noise);
@@ -1527,6 +1553,10 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         mergeC->setEditedState(pedited->wavelet.mergeC ? Edited : UnEdited);
         softrad->setEditedState(pedited->wavelet.softrad ? Edited : UnEdited);
         softradend->setEditedState(pedited->wavelet.softradend ? Edited : UnEdited);
+
+        balchrom->setEditedState(pedited->wavelet.balchrom ? Edited : UnEdited);
+        chromfi->setEditedState(pedited->wavelet.chromfi ? Edited : UnEdited);
+        chromco->setEditedState(pedited->wavelet.chromco ? Edited : UnEdited);
 
         median->set_inconsistent(!pedited->wavelet.median);
         medianlev->set_inconsistent(!pedited->wavelet.medianlev);
@@ -1746,6 +1776,9 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.satlev         = satlev->getValue<int> ();
     pp->wavelet.strength       = (int) strength->getValue();
     pp->wavelet.balance        = (int) balance->getValue();
+    pp->wavelet.balchrom       = balchrom->getValue();
+    pp->wavelet.chromfi        = chromfi->getValue();
+    pp->wavelet.chromco        = chromco->getValue();
 
     pp->wavelet.greenlow       = greenlow->getValue();
     pp->wavelet.bluelow        = bluelow->getValue();
@@ -1865,6 +1898,9 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.bluemed         = bluemed->getEditedState();
         pedited->wavelet.greenhigh       = greenhigh->getEditedState();
         pedited->wavelet.bluehigh        = bluehigh->getEditedState();
+        pedited->wavelet.balchrom        = balchrom->getEditedState();
+        pedited->wavelet.chromfi         = chromfi->getEditedState();
+        pedited->wavelet.chromco         = chromco->getEditedState();
         pedited->wavelet.mergeL          = mergeL->getEditedState();
         pedited->wavelet.mergeC          = mergeC->getEditedState();
         pedited->wavelet.softrad         = softrad->getEditedState();
@@ -2096,6 +2132,9 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     level1noise->setDefault<double> (defParams->wavelet.level1noise);
     level2noise->setDefault<double> (defParams->wavelet.level2noise);
     level3noise->setDefault<double> (defParams->wavelet.level3noise);
+    balchrom->setDefault(defParams->wavelet.balchrom);
+    chromfi->setDefault(defParams->wavelet.chromfi);
+    chromco->setDefault(defParams->wavelet.chromco);
 
     greenlow->setDefault(defParams->wavelet.greenlow);
     bluelow->setDefault(defParams->wavelet.bluelow);
@@ -2119,6 +2158,9 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         mergeC->setDefaultEditedState(pedited->wavelet.mergeC ? Edited : UnEdited);
         softrad->setDefaultEditedState(pedited->wavelet.softrad ? Edited : UnEdited);
         softradend->setDefaultEditedState(pedited->wavelet.softradend ? Edited : UnEdited);
+        balchrom->setDefaultEditedState(pedited->wavelet.balchrom ? Edited : UnEdited);
+        chromfi->setDefaultEditedState(pedited->wavelet.chromfi ? Edited : UnEdited);
+        chromco->setDefaultEditedState(pedited->wavelet.chromco ? Edited : UnEdited);
 
         sigma->setDefault(defParams->wavelet.sigma);
         offset->setDefault(defParams->wavelet.offset);
@@ -2912,6 +2954,12 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavgreenhigh, greenhigh->getTextValue());
         } else if (a == bluehigh) {
             listener->panelChanged(EvWavbluehigh, bluehigh->getTextValue());
+        } else if (a == balchrom) {
+            listener->panelChanged(EvWavbalchrom, balchrom->getTextValue());
+        } else if (a == chromfi) {
+            listener->panelChanged(EvWavchromfi, chromfi->getTextValue());
+        } else if (a == chromco) {
+            listener->panelChanged(EvWavchromco, chromco->getTextValue());
         } else if (a == mergeL) {
             listener->panelChanged(EvWavmergeL, mergeL->getTextValue());
         } else if (a == mergeC) {

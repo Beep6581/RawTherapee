@@ -791,6 +791,9 @@ HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 HISTORY_MSG_TRANS_Method;Geometry - Method
+HISTORY_MSG_WAVBALCHROM;Balance chroma
+HISTORY_MSG_WAVCHROMFI;Chroma fine
+HISTORY_MSG_WAVCHROMCO;Chroma coarse
 HISTORY_MSG_WAVCLARI;Clarity
 HISTORY_MSG_WAVEDGS;Edge stopping
 HISTORY_MSG_WAVMERGEC;Merge C
@@ -2142,6 +2145,7 @@ TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
 TP_WAVELET_BALCHRO;Chroma balance
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
+TP_WAVELET_BALCHROM;Chroma balance
 TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
@@ -2157,7 +2161,10 @@ TP_WAVELET_CH3;Link contrast levels
 TP_WAVELET_CHCU;Curve
 TP_WAVELET_CHR;Chroma-contrast link strength
 TP_WAVELET_CHRO;Saturated/pastel threshold
+TP_WAVELET_CHROFRAME;Denoise Chroma
 TP_WAVELET_CHROMAFRAME;Chroma
+TP_WAVELET_CHROMCO;Chroma Coarse
+TP_WAVELET_CHROMFI;Chroma Fine
 TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
 TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 TP_WAVELET_CHRWAV;Blur chroma

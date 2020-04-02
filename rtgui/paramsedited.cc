@@ -486,6 +486,9 @@ void ParamsEdited::set(bool v)
     wavelet.bluemed = v;
     wavelet.bluelow = v;
     wavelet.lipst = v;
+    wavelet.balchrom = v;
+    wavelet.chromfi = v;
+    wavelet.chromco = v;
     wavelet.mergeL = v;
     wavelet.mergeC = v;
     wavelet.softrad = v;
@@ -1093,6 +1096,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.bluelow = wavelet.bluelow && p.wavelet.bluelow == other.wavelet.bluelow;
         wavelet.lipst = wavelet.lipst && p.wavelet.lipst == other.wavelet.lipst;
         wavelet.bluehigh = wavelet.bluehigh && p.wavelet.bluehigh == other.wavelet.bluehigh;
+        wavelet.balchrom = wavelet.balchrom && p.wavelet.balchrom == other.wavelet.balchrom;
+        wavelet.chromfi = wavelet.chromfi && p.wavelet.chromfi == other.wavelet.chromfi;
+        wavelet.chromco = wavelet.chromco && p.wavelet.chromco == other.wavelet.chromco;
         wavelet.mergeL = wavelet.mergeL && p.wavelet.mergeL == other.wavelet.mergeL;
         wavelet.mergeC = wavelet.mergeC && p.wavelet.mergeC == other.wavelet.mergeC;
         wavelet.softrad = wavelet.softrad && p.wavelet.softrad == other.wavelet.softrad;
@@ -2927,6 +2933,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.bluelow) {
         toEdit.wavelet.bluelow = mods.wavelet.bluelow;
+    }
+
+    if (wavelet.balchrom) {
+        toEdit.wavelet.balchrom   = mods.wavelet.balchrom;
+    }
+
+    if (wavelet.chromfi) {
+        toEdit.wavelet.chromfi   = mods.wavelet.chromfi;
+    }
+
+    if (wavelet.chromco) {
+        toEdit.wavelet.chromco   = mods.wavelet.chromco;
     }
 
     if (wavelet.mergeL) {
