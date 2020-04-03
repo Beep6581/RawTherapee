@@ -2537,8 +2537,8 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                 WavCoeffs_ab0[i] = aft[i];
             }
 
-            delete[] bef;
-            delete[] aft;
+        delete[] bef;
+        delete[] aft;
         }
 
 
