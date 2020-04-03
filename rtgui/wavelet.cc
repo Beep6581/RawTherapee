@@ -543,7 +543,7 @@ Wavelet::Wavelet() :
     chroBox->pack_start(*chromfi);
     chroBox->pack_start(*chromco);
     chroFrame->add(*chroBox);
-    noiseBox->pack_start(*chroFrame);
+//    noiseBox->pack_start(*chroFrame);
 
 
 //Clarity

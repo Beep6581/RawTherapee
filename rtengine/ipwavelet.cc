@@ -138,6 +138,9 @@ struct cont_params {
     float edgampl;
     int neigh;
     bool lipp;
+    float balchrom;
+    float chromfi;
+    float chromco;
 };
 
 int wavNestedLevels = 1;
@@ -196,6 +199,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     if (params->wavelet.BAmethod != "none") {
         cp.bam = true;
+
         if (params->wavelet.BAmethod == "sli") {
             cp.BAmet = 1;
         } else if (params->wavelet.BAmethod == "cur") {
@@ -260,7 +264,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         DaubLen = 8;
     } else if (params->wavelet.daubcoeffmethod == "10_") {
         DaubLen = 12;
-    } else /* if (params->wavelet.daubcoeffmethod == "14_") */{
+    } else { /* if (params->wavelet.daubcoeffmethod == "14_") */
         DaubLen = 16;
     }
 
@@ -394,6 +398,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.val = waparams.edgval;
     cp.til = waparams.edgthresh;
     cp.eff = waparams.edgeffect;
+    cp.balchrom = waparams.balchrom;
+    cp.chromfi = waparams.chromfi;
+    cp.chromco = waparams.chromco;
 
     cp.conres = waparams.rescon;
     cp.conresH = waparams.resconH;
@@ -860,7 +867,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (cp.val > 0 || ref || contr) { //edge
                             Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN);
                         }
-                      
+
                         //init for edge and denoise
                         float vari[4];
 
@@ -877,7 +884,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             vari[3] = rtengine::max(0.0001f, vari[3]);
                             float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
 
-                            WaveletDenoiseAllL (*Ldecomp, noisevarlum, madL, vari, edge, 1);
+                            WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
                         }
 
                         //Flat curve for Contrast=f(H) in levels
@@ -905,6 +912,213 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         Ldecomp->reconstruct(labco->data, cp.strength);
                     }
                 }
+
+
+                /*
+                                        float variC[7];
+                                        float variCb[7];
+
+                                        float noisecfr = cp.chromfi;
+                                        float noiseccr = cp.chromco;
+
+                                        if (cp.balchrom > 0.f) {
+                                            noisecfr = cp.chromfi * ((100.f + cp.balchrom) / 10.f);
+                                            noiseccr = cp.chromco + ((100.f + cp.balchrom) / 10.f);
+                                        }
+
+                                        float noisecfb = cp.chromfi;
+                                        float noiseccb = cp.chromco;
+
+                                        if (cp.balchrom < 0.f) {
+                                            noisecfb = cp.chromfi * ((100.f - cp.balchrom) / 10.f);
+                                            noiseccb = cp.chromco * ((100.f - cp.balchrom) / 10.f);
+                                        }
+
+
+                                        if (noisecfr < 0.f) {
+                                            noisecfr = 0.0001f;
+                                        }
+
+                                        if (noiseccr < 0.f) {
+                                            noiseccr = 0.0001f;
+                                        }
+
+                                        if (noisecfb < 0.f) {
+                                            noisecfb = 0.0001f;
+                                        }
+
+                                        if (noiseccb < 0.f) {
+                                            noiseccb = 0.0001f;
+                                        }
+
+                                        int edge = 2;
+                                        variC[0] = SQR(noisecfr);
+                                        variC[1] = SQR(noisecfr);
+                                        variC[2] = SQR(noisecfr);
+
+                                        variC[3] = SQR(noisecfr);
+                                        variC[4] = SQR(noisecfr);
+                                        variC[5] = SQR(noiseccr);
+                                        variC[6] = SQR(noiseccr);
+
+                                        variCb[0] = SQR(noisecfb);
+                                        variCb[1] = SQR(noisecfb);
+                                        variCb[2] = SQR(noisecfb);
+
+                                        variCb[3] = SQR(noisecfb);
+                                        variCb[4] = SQR(noisecfb);
+                                        variCb[5] = SQR(noiseccb);
+                                        variCb[6] = SQR(noiseccb);
+
+                                        float k1 = 0.f;
+                                        float k2 = 0.f;
+                                        float k3 = 0.f;
+
+                                        if (cp.chromfi) {
+                                            k1 = 0.f;
+                                            k2 = 0.f;
+                                            k3 = 0.f;
+                                        } else if (cp.chromfi < 0.3f) {
+                                            k1 = 0.1f;
+                                            k2 = 0.0f;
+                                            k3 = 0.f;
+                                        } else if (cp.chromfi < 0.5f) {
+                                            k1 = 0.2f;
+                                            k2 = 0.1f;
+                                            k3 = 0.f;
+                                        } else if (cp.chromfi < 0.8f) {
+                                            k1 = 0.3f;
+                                            k2 = 0.25f;
+                                            k3 = 0.f;
+                                        } else if (cp.chromfi < 1.f) {
+                                            k1 = 0.4f;
+                                            k2 = 0.25f;
+                                            k3 = 0.1f;
+                                        } else if (cp.chromfi < 2.f) {
+                                            k1 = 0.5f;
+                                            k2 = 0.3f;
+                                            k3 = 0.15f;
+                                        } else if (cp.chromfi < 3.f) {
+                                            k1 = 0.6f;
+                                            k2 = 0.45f;
+                                            k3 = 0.3f;
+                                        } else if (cp.chromfi < 4.f) {
+                                            k1 = 0.7f;
+                                            k2 = 0.5f;
+                                            k3 = 0.4f;
+                                        } else if (cp.chromfi < 5.f) {
+                                            k1 = 0.8f;
+                                            k2 = 0.6f;
+                                            k3 = 0.5f;
+                                        } else if (cp.chromfi < 10.f) {
+                                            k1 = 0.85f;
+                                            k2 = 0.7f;
+                                            k3 = 0.6f;
+                                        } else if (cp.chromfi < 20.f) {
+                                            k1 = 0.9f;
+                                            k2 = 0.8f;
+                                            k3 = 0.7f;
+                                        } else if (cp.chromfi < 50.f) {
+                                            k1 = 1.f;
+                                            k2 = 1.f;
+                                            k3 = 0.9f;
+
+                                        } else {
+                                            k1 = 1.f;
+                                            k2 = 1.f;
+                                            k3 = 1.f;
+                                        }
+
+                                        float minic = 0.0001f;
+                                        variC[0] = max(minic, variC[0]);
+                                        variC[1] = max(minic, k1 * variC[1]);
+                                        variC[2] = max(minic, k2 * variC[2]);
+                                        variC[3] = max(minic, k3 * variC[3]);
+
+                                        variCb[0] = max(minic, variCb[0]);
+                                        variCb[1] = max(minic, k1 * variCb[1]);
+                                        variCb[2] = max(minic, k2 * variCb[2]);
+                                        variCb[3] = max(minic, k3 * variCb[3]);
+
+                                        float k4 = 0.f;
+                                        float k5 = 0.f;
+                                        float k6 = 0.f;
+
+                                        if (cp.chromco == 0.01f) {
+                                            k4 = 0.f;
+                                            k5 = 0.0f;
+                                        } else if (cp.chromco < 0.2f) {
+                                            k4 = 0.1f;
+                                            k5 = 0.0f;
+                                        } else if (cp.chromco < 0.5f) {
+                                            k4 = 0.15f;
+                                            k5 = 0.0f;
+                                        } else if (cp.chromco < 1.f) {
+                                            k4 = 0.15f;
+                                            k5 = 0.1f;
+                                        } else if (cp.chromco < 3.f) {
+                                            k4 = 0.3f;
+                                            k5 = 0.15f;
+                                        } else if (cp.chromco < 4.f) {
+                                            k4 = 0.6f;
+                                            k5 = 0.4f;
+                                        } else if (cp.chromco < 6.f) {
+                                            k4 = 0.8f;
+                                            k5 = 0.6f;
+                                        } else {
+                                            k4 = 1.f;
+                                            k5 = 1.f;
+                                        }
+
+                                        variC[4] = max(0.0001f, k4 * variC[4]);
+                                        variC[5] = max(0.0001f, k5 * variC[5]);
+                                        variCb[4] = max(0.0001f, k4 * variCb[4]);
+                                        variCb[5] = max(0.0001f, k5 * variCb[5]);
+
+                                        if (cp.chromco < 4.f) {
+                                            k6 = 0.f;
+                                        } else if (cp.chromco < 5.f) {
+                                            k6 = 0.4f;
+                                        } else if (cp.chromco < 6.f) {
+                                            k6 = 0.7f;
+                                        } else {
+                                            k6 = 1.f;
+                                        }
+
+                                        variC[6] = max(0.0001f, k6 * variC[6]);
+                                        variCb[6] = max(0.0001f, k6 * variCb[6]);
+                                        float nvch = 0.6f;//high value
+                                        float nvcl = 0.1f;//low value
+
+                                        if (cp.chromco > 100.f) {
+                                            nvch = 0.8f;
+                                            nvcl = 0.4f;
+                                        }
+
+                                        float seuil = 4000.f;//low
+                                        float seuil2 = 15000.f;//high
+                                        //ac and bc for transition
+                                        float ac = (nvch - nvcl) / (seuil - seuil2);
+                                        float bc = nvch - seuil * ac;
+                                        int GW = labco->W;
+                                        int GH = labco->H;
+                                        float* noisevarchrom = new float[GH * GW];
+                                        //noisevarchrom in function chroma
+                                        int GW2 = (GW + 1) / 2;
+                                        float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
+                                        for (int ir = 0; ir < GH; ir++)
+                                            for (int jr = 0; jr < GW; jr++) {
+                                                float cN = sqrt(SQR(labco->a[ir][jr]) + SQR(labco->b[ir][jr]));
+
+                                                if (cN < seuil) {
+                                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] =  nvch;
+                                                } else if (cN < seuil2) {
+                                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] = ac * cN + bc;
+                                                } else {
+                                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] =  nvcl;
+                                                }
+                                            }
+                */
 
                 //Flat curve for H=f(H) in residual image
                 FlatCurve* hhCurve = new FlatCurve(params->wavelet.hhcurve); //curve H=f(H)
@@ -971,7 +1185,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                         if (!adecomp->memoryAllocationFailed && !bdecomp->memoryAllocationFailed) {
                             Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
-                            WaveletcontAllAB(labco, varhue, varchro, *adecomp,wavblcurve,  waOpacityCurveW, cp, true, skip, meanab, sigmaab);
+                            WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve,  waOpacityCurveW, cp, true, skip, meanab, sigmaab);
                             Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
                             WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip, meanab, sigmaab);
                             WaveletAandBAllAB(*adecomp, *bdecomp, cp, hhCurve, hhutili);
@@ -982,6 +1196,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         }
                     }
                 }
+
+                //        delete[] noisevarchrom;
 
                 if (hhCurve) {
                     delete hhCurve;
@@ -1248,7 +1464,7 @@ void ImProcFunctions::Aver(float * RESTRICT DataList, int datalen, float &averag
     int countP = 0, countN = 0;
     double averaP = 0.0, averaN = 0.0; // use double precision for large summations
 
-    constexpr float thres = 32.7f;//different fom zero to take into account only data large enough 32.7 = 0.1 in range 0..100 very low value 
+    constexpr float thres = 32.7f;//different fom zero to take into account only data large enough 32.7 = 0.1 in range 0..100 very low value
     max = 0.f;
     min = RT_INFINITY_F;
 #ifdef _OPENMP
@@ -1350,51 +1566,54 @@ void ImProcFunctions::Evaluate2(const wavelet_decomposition &WaveletCoeffs_L,
 
 void ImProcFunctions::calceffect(int level, float *mean, float *sigma, float *mea, float effect, float offs)
 {
-        float rap = 0.f;
-        float sig = 1.f;
-        if(effect < 1.f) {
-            sig = effect;
-        }
+    float rap = 0.f;
+    float sig = 1.f;
 
-        if(effect <= 1.f) {
-            rap =  offs * mean[level] -  sig * sigma[level];
-        }
-        
-        if (rap > 0.f) {
-            mea[0] = rap;
-        } else {
-            mea[0] = mean[level] / 6.f;
-        }
+    if (effect < 1.f) {
+        sig = effect;
+    }
 
-        rap = 0.f;
-        if(effect <= 1.f) {
-            rap =  offs * mean[level] - 0.5f * sig * sigma[level];
-        }
+    if (effect <= 1.f) {
+        rap =  offs * mean[level] -  sig * sigma[level];
+    }
 
-        if (rap > 0.f) {
-            mea[1] = rap;
-        } else {
-            mea[1] = mean[level] / 4.f;
-        }
+    if (rap > 0.f) {
+        mea[0] = rap;
+    } else {
+        mea[0] = mean[level] / 6.f;
+    }
 
-        rap = 0.f;
-        if(effect <= 1.f) {
-            rap =  offs * mean[level] - 0.2f * sig * sigma[level];
-        }
-        
-        if (rap > 0.f) {
-            mea[2] = rap;
-        } else {
-            mea[2] = mean[level] / 2.f;
-        }
-        
-        mea[3] = offs * mean[level]; // 50% data
-        mea[4] = offs * mean[level] + effect * sigma[level] / 2.f;
-        mea[5] = offs * mean[level] + effect * sigma[level]; //66%
-        mea[6] = offs * mean[level] + effect * 1.2f * sigma[level];
-        mea[7] = offs * mean[level] + effect * 1.5f * sigma[level]; //
-        mea[8] = offs * mean[level] + effect * 2.f * sigma[level]; //95%
-        mea[9] = offs * mean[level] + effect * 2.5f * sigma[level]; //99%
+    rap = 0.f;
+
+    if (effect <= 1.f) {
+        rap =  offs * mean[level] - 0.5f * sig * sigma[level];
+    }
+
+    if (rap > 0.f) {
+        mea[1] = rap;
+    } else {
+        mea[1] = mean[level] / 4.f;
+    }
+
+    rap = 0.f;
+
+    if (effect <= 1.f) {
+        rap =  offs * mean[level] - 0.2f * sig * sigma[level];
+    }
+
+    if (rap > 0.f) {
+        mea[2] = rap;
+    } else {
+        mea[2] = mean[level] / 2.f;
+    }
+
+    mea[3] = offs * mean[level]; // 50% data
+    mea[4] = offs * mean[level] + effect * sigma[level] / 2.f;
+    mea[5] = offs * mean[level] + effect * sigma[level]; //66%
+    mea[6] = offs * mean[level] + effect * 1.2f * sigma[level];
+    mea[7] = offs * mean[level] + effect * 1.5f * sigma[level]; //
+    mea[8] = offs * mean[level] + effect * 2.f * sigma[level]; //95%
+    mea[9] = offs * mean[level] + effect * 2.5f * sigma[level]; //99%
 }
 
 void ImProcFunctions::Eval2(float ** WavCoeffs_L, int level,
@@ -1725,7 +1944,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
     {
-        if(contrast != 0.f  && cp.resena && max0 > 0.f) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
+        if (contrast != 0.f  && cp.resena && max0 > 0.f) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
             {
 
 #ifdef _OPENMP
@@ -1784,71 +2003,76 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     }
 
 #ifdef _OPENMP
-        #pragma omp barrier
+    #pragma omp barrier
 #endif
 
-        if((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena && cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+    if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena && cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
 #ifdef _OPENMP
-            #pragma omp for nowait
+        #pragma omp for nowait
 #endif
 
-            for (int i = 0; i < W_L * H_L; i++) {
-                float LL = WavCoeffs_L0[i];
-                float LL100 = LL / 327.68f;
-                float tran = 5.f;//transition
-                //shadow
-                float alp = 3.f; //increase contrast sahdow in lowlights  between 1 and ??
+        for (int i = 0; i < W_L * H_L; i++) {
+            float LL = WavCoeffs_L0[i];
+            float LL100 = LL / 327.68f;
+            float tran = 5.f;//transition
+            //shadow
+            float alp = 3.f; //increase contrast sahdow in lowlights  between 1 and ??
 
-                if(cp.th > (100.f - tran)) {
-                    tran = 100.f - cp.th;
-                }
+            if (cp.th > (100.f - tran)) {
+                tran = 100.f - cp.th;
+            }
 
-                if(LL100 < cp.th) {
-                    float aalp = (1.f - alp) / cp.th; //no changes for LL100 = cp.th
-                    float kk = aalp * LL100 + alp;
-                    WavCoeffs_L0[i] *= (1.f + kk * cp.conres / 200.f);
-                } else if(LL100 < cp.th + tran) {
-                    float ath = -cp.conres / tran;
-                    float bth = cp.conres - ath * cp.th;
-                    WavCoeffs_L0[i] *= (1.f + (LL100 * ath + bth) / 200.f);
-                }
+            if (LL100 < cp.th) {
+                float aalp = (1.f - alp) / cp.th; //no changes for LL100 = cp.th
+                float kk = aalp * LL100 + alp;
+                WavCoeffs_L0[i] *= (1.f + kk * cp.conres / 200.f);
+            } else if (LL100 < cp.th + tran) {
+                float ath = -cp.conres / tran;
+                float bth = cp.conres - ath * cp.th;
+                WavCoeffs_L0[i] *= (1.f + (LL100 * ath + bth) / 200.f);
+            }
 
-                //highlight
-                tran = 5.f;
+            //highlight
+            tran = 5.f;
 
-                if(cp.thH < (tran)) {
-                    tran = cp.thH;
-                }
+            if (cp.thH < (tran)) {
+                tran = cp.thH;
+            }
 
-                if(LL100 > cp.thH) {
-                    WavCoeffs_L0[i] *= (1.f + cp.conresH / 200.f);
-                } else if(LL100 > (cp.thH - tran)) {
-                    float athH = cp.conresH / tran;
-                    float bthH = cp.conresH - athH * cp.thH;
-                    WavCoeffs_L0[i] *= (1.f + (LL100 * athH + bthH) / 200.f);
-                }
+            if (LL100 > cp.thH) {
+                WavCoeffs_L0[i] *= (1.f + cp.conresH / 200.f);
+            } else if (LL100 > (cp.thH - tran)) {
+                float athH = cp.conresH / tran;
+                float bthH = cp.conresH - athH * cp.thH;
+                WavCoeffs_L0[i] *= (1.f + (LL100 * athH + bthH) / 200.f);
             }
         }
+    }
 
 //Blur luma
-    if(cp.blurres != 0.f  && cp.resena) {
+    if (cp.blurres != 0.f  && cp.resena) {
         float rad = 0.7f * cp.blurres / skip;
         float * bef = new float[W_L * H_L];
         float * aft = new float[W_L * H_L];
 
         for (int i = 0; i < H_L * W_L; i++) {
-            bef[i] = WavCoeffs_L0[i];       
+            bef[i] = WavCoeffs_L0[i];
         }
+
         boxblur(bef, aft, rad, W_L, H_L, false);
 
         for (int i = 0; i < H_L * W_L; i++) {
             WavCoeffs_L0[i] = aft[i];
         }
 
-        delete bef;
-        delete aft;
+        delete[] bef;
+        delete[] aft;
     }
+
 //
+    int n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n32;
+    n0 = n1 = n2 = n3 = n4 = n5 = n6 = n7 = n8 = n9 = n10 = n32 = 0;
+
 #ifdef _OPENMP
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
@@ -1992,6 +2216,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
             // end
         }
+
         bool wavcurvecomp = false;//not enable if 0.75
 
         if (wavblcurve) {
@@ -2003,7 +2228,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         }
 
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2)
+        //  #pragma omp for schedule(dynamic) collapse(2)
+        #pragma omp for reduction(+:n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n32) schedule(dynamic) collapse(2)
 #endif
 
         for (int dir = 1; dir < 4; dir++) {
@@ -2017,12 +2243,13 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                 ContAllL(koeLi, maxkoeLi, true, maxlvl, labco,  varhue, varchrom, WavCoeffs_L, WavCoeffs_L0, lvl, dir, cp, Wlvl_L, Hlvl_L, skip, mean, sigma, MaxP, MaxN, wavCLVCcurve, waOpacityCurveW, ChCurve, Chutili);
                 //blur level
                 float klev = 1.f;
-                if(wavblcurve && wavcurvecomp && cp.blena) {
+
+                if (wavblcurve && wavcurvecomp && cp.blena) {
                     float mea[10];
                     float effect = cp.bluwav;
                     float beta = 0.f;
                     float offs = 1.f;
-         
+
                     calceffect(lvl, mean, sigma, mea, effect, offs);
 
                     float * bef = new float[Wlvl_L * Hlvl_L];
@@ -2032,37 +2259,58 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         bef[co] = WavCoeffs_L[dir][co];
                         float WavCL = std::fabs(WavCoeffs_L[dir][co]);
 
-                            if (WavCL < mea[0]) {
-                                beta = 0.05f;
-                            } else if (WavCL < mea[1]) {
-                                beta = 0.2f;
-                            } else if (WavCL < mea[2]) {
-                                beta = 0.7f;
-                            } else if (WavCL < mea[3]) {
-                                beta = 1.f;    //standard
-                            } else if (WavCL < mea[4]) {
-                                beta = 1.f;
-                            } else if (WavCL < mea[5]) {
-                                beta = 0.8f;    //+sigma
-                            } else if (WavCL < mea[6]) {
-                                beta = 0.6f;
-                            } else if (WavCL < mea[7]) {
-                                beta = 0.4f;
-                            } else if (WavCL < mea[8]) {
-                                beta = 0.2f;    // + 2 sigma
-                            } else if (WavCL < mea[9]) {
-                                beta = 0.1f;
-                            } else {
-                                beta = 0.0f;
+                        if (WavCL < mea[0]) {
+                            beta = 0.05f;
+                            n0++;
+
+                            if (WavCL < 32.7) {
+                                n32++;
                             }
-                        
-                        
+                        } else if (WavCL < mea[1]) {
+                            beta = 0.2f;
+                            n1++;
+                        } else if (WavCL < mea[2]) {
+                            beta = 0.7f;
+                            n2++;
+                        } else if (WavCL < mea[3]) {
+                            beta = 1.f;    //standard
+                            n3++;
+                        } else if (WavCL < mea[4]) {
+                            beta = 1.f;
+                            n4++;
+                        } else if (WavCL < mea[5]) {
+                            beta = 0.8f;    //+sigma
+                            n5++;
+                        } else if (WavCL < mea[6]) {
+                            beta = 0.6f;
+                            n6++;
+                        } else if (WavCL < mea[7]) {
+                            beta = 0.4f;
+                            n7++;
+                        } else if (WavCL < mea[8]) {
+                            beta = 0.2f;    // + 2 sigma
+                            n8++;
+                        } else if (WavCL < mea[9]) {
+                            beta = 0.1f;
+                            n9++;
+                        } else {
+                            beta = 0.01f;
+                            n10++;
+                        }
+
+
+                    }
+
+                    if (settings->verbose) {
+                        printf("lvl=%i n0=%i n32=%i n1=%i n2=%i n3=%i n4=%i n5=%i n6=%i n7=%i n8=%i n9=%i n10=%i\n", lvl, n0, n0 - n32, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10);
                     }
                     klev = (wavblcurve[lvl * 55.5f]);
                     float lvr = lvl;
-                    if(lvr == 0) {
+
+                    if (lvr == 0) {
                         lvr = 1;
                     }
+
                     klev *= beta * lvr * 100.f / skip;
                     boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
 
@@ -2070,8 +2318,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         WavCoeffs_L[dir][co] = aft[co];
                     }
 
-                    delete bef;
-                    delete aft;
+                    delete[] bef;
+                    delete[] aft;
                 }
             }
         }
@@ -2272,41 +2520,42 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                 }
             }
         }
-        
+
 //Blur chroma
-    if(cp.blurcres != 0.f  && cp.resena) {
-        float rad = 0.7f * cp.blurcres / skip;
-        float * bef = new float[W_L * H_L];
-        float * aft = new float[W_L * H_L];
+        if (cp.blurcres != 0.f  && cp.resena) {
+            float rad = 0.7f * cp.blurcres / skip;
+            float * bef = new float[W_L * H_L];
+            float * aft = new float[W_L * H_L];
 
-        for (int i = 0; i < H_L * W_L; i++) {
-            bef[i] = WavCoeffs_ab0[i];       
+            for (int i = 0; i < H_L * W_L; i++) {
+                bef[i] = WavCoeffs_ab0[i];
+            }
+
+            boxblur(bef, aft, rad, W_L, H_L, false);
+
+            for (int i = 0; i < H_L * W_L; i++) {
+                WavCoeffs_ab0[i] = aft[i];
+            }
+
+            delete[] bef;
+            delete[] aft;
         }
-        boxblur(bef, aft, rad, W_L, H_L, false);
-
-        for (int i = 0; i < H_L * W_L; i++) {
-            WavCoeffs_ab0[i] = aft[i];
-        }
-
-        delete bef;
-        delete aft;
-    }
 
 
-    bool wavcurvecomp = false;//not enable if 0.75
+        bool wavcurvecomp = false;//not enable if 0.75
 
-    if (wavblcurve) {
-        for (int i = 0; i < 500; i++) {
-            if (wavblcurve[i] != 0.) {
-                wavcurvecomp = true;
+        if (wavblcurve) {
+            for (int i = 0; i < 500; i++) {
+                if (wavblcurve[i] != 0.) {
+                    wavcurvecomp = true;
+                }
             }
         }
-    }
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
 #endif
- 
+
         for (int dir = 1; dir < 4; dir++) {
             for (int lvl = 0; lvl < maxlvl; lvl++) {
 
@@ -2316,63 +2565,66 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                 float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
                 ContAllAB(labco,  maxlvl, varhue, varchrom, WavCoeffs_ab, WavCoeffs_ab0, lvl, dir, waOpacityCurveW, cp, Wlvl_ab, Hlvl_ab, useChannelA);
 
-                if(wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f) {
+                if (wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f) {
                     float mea[10];
                     float effect = cp.bluwav;
                     float beta = 0.f;
                     float offs = 1.f;
-         
+
                     calceffect(lvl, meanab, sigmaab, mea, effect, offs);
-                    
+
                     float * bef = new float[Wlvl_ab * Hlvl_ab];
                     float * aft = new float[Wlvl_ab * Hlvl_ab];
                     float klev;
+
                     for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
                         bef[co] = WavCoeffs_ab[dir][co];
-                            float WavCab = std::fabs(WavCoeffs_ab[dir][co]);
+                        float WavCab = std::fabs(WavCoeffs_ab[dir][co]);
 
-                            if (WavCab < mea[0]) {
-                                beta = 0.05f;
-                            } else if (WavCab < mea[1]) {
-                                beta = 0.2f;
-                            } else if (WavCab < mea[2]) {
-                                beta = 0.7f;
-                            } else if (WavCab < mea[3]) {
-                                beta = 1.f;    //standard
-                            } else if (WavCab < mea[4]) {
-                                beta = 1.f;
-                            } else if (WavCab < mea[5]) {
-                                beta = 0.8f;    //+sigma
-                            } else if (WavCab < mea[6]) {
-                                beta = 0.6f;
-                            } else if (WavCab < mea[7]) {
-                                beta = 0.4f;
-                            } else if (WavCab < mea[8]) {
-                                beta = 0.2f;    // + 2 sigma
-                            } else if (WavCab < mea[9]) {
-                                beta = 0.1f;
-                            } else {
-                                beta = 0.0f;
-                            }
-                      
-                        
+                        if (WavCab < mea[0]) {
+                            beta = 0.05f;
+                        } else if (WavCab < mea[1]) {
+                            beta = 0.2f;
+                        } else if (WavCab < mea[2]) {
+                            beta = 0.7f;
+                        } else if (WavCab < mea[3]) {
+                            beta = 1.f;    //standard
+                        } else if (WavCab < mea[4]) {
+                            beta = 1.f;
+                        } else if (WavCab < mea[5]) {
+                            beta = 0.8f;    //+sigma
+                        } else if (WavCab < mea[6]) {
+                            beta = 0.6f;
+                        } else if (WavCab < mea[7]) {
+                            beta = 0.4f;
+                        } else if (WavCab < mea[8]) {
+                            beta = 0.2f;    // + 2 sigma
+                        } else if (WavCab < mea[9]) {
+                            beta = 0.1f;
+                        } else {
+                            beta = 0.0f;
+                        }
+
+
                     }
-                    klev =  (wavblcurve[lvl * 55.5f]);
+
+                    klev = (wavblcurve[lvl * 55.5f]);
                     float lvr = lvl;
-                    if(lvr == 0) {
+
+                    if (lvr == 0) {
                         lvr = 1;
                     }
 
                     klev *=  beta * cp.chrwav * lvr * 200.f / skip;
-                    
+
                     boxblur(bef, aft, klev, Wlvl_ab, Hlvl_ab, false);
 
                     for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
                         WavCoeffs_ab[dir][co] = aft[co];
                     }
 
-                    delete bef;
-                    delete aft;
+                    delete[] bef;
+                    delete[] aft;
                 }
 
 
@@ -2725,11 +2977,13 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
 
     float mea[10];
     float beta = 1.f;
-    if(cp.eff < 2.5f) {
+
+    if (cp.eff < 2.5f) {
         float effect = cp.eff;
         float offs = 1.f;
 
         calceffect(level, mean, sigma, mea, effect, offs);
+
         for (int co = 0; co < H_L * W_L; co++) {
             float WavCL = std::fabs(WavCoeffs_L[dir][co]);
 
@@ -2756,14 +3010,14 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
             } else {
                 beta = 0.0f;
             }
- 
+
         }
     }
 
 
     if (cp.val > 0  && cp.edgeena) {
-        
-        
+
+
         float * koe = nullptr;
         float maxkoe = 0.f;
 
@@ -2852,6 +3106,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
             float atten01234 = 0.80f;
             value *= (atten01234 * scaleskip[1]);    //for zoom < 100% reduce strength...I choose level 1...but!!
         }
+
         value *= beta;
         float edge = 1.f;
         float lim0 = 20.f; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
@@ -2862,8 +3117,8 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
         if (cp.reinforce != 2) {
             const float brepart =
                 cp.reinforce == 1
-                    ? 3.f
-                    : 0.5f;
+                ? 3.f
+                : 0.5f;
             const float arepart = -(brepart - 1.f) / (lim0 / 60.f);
 
             if (rad < lim0 / 60.f) {
@@ -3186,7 +3441,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
         float red0 = 0.005f * (110.f - lowthr);
         float red1 = 0.008f * (110.f - lowthr);
         float red2 = 0.011f * (110.f - lowthr);
-        
+
         for (int i = 0; i < W_L * H_L; i++) {
             float kLlev = 1.f;
 
