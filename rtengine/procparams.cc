@@ -2323,7 +2323,7 @@ WaveletParams::WaveletParams() :
     radius(40),
     skinprotect(0.0),
     chrwav(0.),
-    bluwav(50.0),
+    bluwav(1.0),
     hueskin(-5, 25, 170, 120, false),
     hueskin2(-260, -250, -130, -140, false),
     hllev(50, 75, 100, 98, false),

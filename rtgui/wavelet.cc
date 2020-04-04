@@ -531,11 +531,8 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*level3noise, Gtk::PACK_SHRINK, 0);
 
     balchrom->setAdjusterListener(this);
-//    noiseBox->pack_start(*balchrom, Gtk::PACK_SHRINK, 0);
     chromfi->setAdjusterListener(this);
-//    noiseBox->pack_start(*chromfi, Gtk::PACK_SHRINK, 0);
     chromco->setAdjusterListener(this);
-//    noiseBox->pack_start(*chromco, Gtk::PACK_SHRINK, 0);
 
     chroFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const chroBox = Gtk::manage(new ToolParamBlock());
