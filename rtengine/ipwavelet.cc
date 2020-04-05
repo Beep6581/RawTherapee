@@ -1168,8 +1168,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 const std::unique_ptr<wavelet_decomposition> adecomp(new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwava, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!adecomp->memoryAllocationFailed) {
-                                    WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
-                                    WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
+                                    if(cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
+                                        WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
+                                        WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
+                                    }
                                     Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
                                     WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve, waOpacityCurveW, cp, true, skip, meanab, sigmaab);
                                     adecomp->reconstruct(labco->data + datalen, cp.strength);
@@ -1194,8 +1196,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavb, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!bdecomp->memoryAllocationFailed) {
-                                    WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
-                                    WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
+                                    if(cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
+                                        WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
+                                        WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
+                                    }
                                     Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
                                     WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip, meanab, sigmaab);
                                     bdecomp->reconstruct(labco->data + 2 * datalen, cp.strength);
@@ -1220,15 +1224,19 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavab, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!adecomp->memoryAllocationFailed && !bdecomp->memoryAllocationFailed) {
-                                    WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
-                                    WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
+                                    if(cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
+                                        WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
+                                        WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
+                                    }
                                     Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
                                     WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve,  waOpacityCurveW, cp, true, skip, meanab, sigmaab);
                                     WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
-                                    WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip, meanab, sigmaab);
-                                    WaveletAandBAllAB(*adecomp, *bdecomp, cp, hhCurve, hhutili);
+                                    if(cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
+                                        WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip, meanab, sigmaab);
+                                        WaveletAandBAllAB(*adecomp, *bdecomp, cp, hhCurve, hhutili);
+                                    }
 
                                     adecomp->reconstruct(labco->data + datalen, cp.strength);
                                     bdecomp->reconstruct(labco->data + 2 * datalen, cp.strength);
