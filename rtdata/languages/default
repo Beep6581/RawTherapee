@@ -791,6 +791,9 @@ HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 HISTORY_MSG_TRANS_Method;Geometry - Method
+HISTORY_MSG_WAVBALCHROM;Balance chroma
+HISTORY_MSG_WAVCHROMFI;Chroma fine
+HISTORY_MSG_WAVCHROMCO;Chroma coarse
 HISTORY_MSG_WAVCLARI;Clarity
 HISTORY_MSG_WAVEDGS;Edge stopping
 HISTORY_MSG_WAVMERGEC;Merge C
@@ -798,12 +801,12 @@ HISTORY_MSG_WAVMERGEL;Merge L
 HISTORY_MSG_WAVRADIUS;Radius Shadows-Highlight
 HISTORY_MSG_WAVSCALE;Scale
 HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
-HISTORY_MSG_WAVSIGMA;Sigma
+HISTORY_MSG_WAVSIGMA;Damper
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_MSG_THRESWAV;Balance threshold
-HISTORY_MSG_BLUWAV;Effects
+HISTORY_MSG_BLUWAV;Damper
 HISTORY_MSG_WAVOLDSH;Old algorithm
 HISTORY_MSG_WAVOFFSET;Offset
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
@@ -2142,12 +2145,13 @@ TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
 TP_WAVELET_BALCHRO;Chroma balance
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
+TP_WAVELET_BALCHROM;Chroma balance
 TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
 TP_WAVELET_BLCURVE;Blur by levels
 TP_WAVELET_BLURFRAME;Blur
-TP_WAVELET_BLUWAV;Effects
+TP_WAVELET_BLUWAV;Damper
 TP_WAVELET_CBENAB;Toning and Color Balance
 TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 TP_WAVELET_CCURVE;Local contrast
@@ -2157,7 +2161,10 @@ TP_WAVELET_CH3;Link contrast levels
 TP_WAVELET_CHCU;Curve
 TP_WAVELET_CHR;Chroma-contrast link strength
 TP_WAVELET_CHRO;Saturated/pastel threshold
+TP_WAVELET_CHROFRAME;Denoise Chroma
 TP_WAVELET_CHROMAFRAME;Chroma
+TP_WAVELET_CHROMCO;Chroma Coarse
+TP_WAVELET_CHROMFI;Chroma Fine
 TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
 TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 TP_WAVELET_CHRWAV;Blur chroma
@@ -2206,7 +2213,7 @@ TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
 TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
 TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
-TP_WAVELET_EDEFFECT;Effect
+TP_WAVELET_EDEFFECT;Damper
 TP_WAVELET_EDEFFECT_TOOLTIP;This slider controls how wide the range of contrast values are that receive the maximum effect from the tool.\nMaximum value (2.5) disabled the tool
 TP_WAVELET_EDGESENSI;Edge sensitivity
 TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
@@ -2283,8 +2290,8 @@ TP_WAVELET_SETTINGS;Wavelet Settings
 TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
-TP_WAVELET_SIGMA;Effects
-TP_WAVELET_SIGMA_TOOLTIP;This slider controls how wide the range of contrast values are that receive the maximum effect from the tool.\n The higher it is, the more contrast values will be strongly modified and the higher the risk to generate artifacts. The lower it is, the more pinpoint will the effect be applied to a certain range of contrast values
+TP_WAVELET_SIGMA;Damper
+TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n The lower it is, the more pinpoint will the effect be applied to a narrow range of contrast values.
 TP_WAVELET_SKIN;Skin targetting/protection
 TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 TP_WAVELET_SKY;Sky targetting/protection
