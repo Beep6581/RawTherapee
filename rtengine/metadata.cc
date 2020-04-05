@@ -37,6 +37,17 @@ std::unique_ptr<Exiv2Metadata::ImageCache> Exiv2Metadata::cache_(nullptr);
 
 namespace {
 
+class Error: public Exiv2::AnyError {
+public:
+    Error(const std::string &msg): msg_(msg) {}
+    const char *what() const throw() { return msg_.c_str(); }
+    int code() const throw() { return 0; }
+
+private:
+    std::string msg_;
+};
+
+
 constexpr size_t IMAGE_CACHE_SIZE = 200;
 
 Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring& fname)
@@ -206,11 +217,14 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
 {
     auto dst = open_exiv2(path);
     if (image_.get()) {
-        dst->setMetadata(*image_);
+        dst->setIptcData(image_->iptcData());
+        dst->setXmpData(image_->xmpData());
         if (merge_xmp_) {
             do_merge_xmp(dst.get());
         }
-        remove_unwanted(dst.get());
+        auto srcexif = image_->exifData();
+        remove_unwanted(srcexif);
+        dst->setExifData(srcexif);
     } else {
         dst->setExifData(exif_data_);
         dst->setIptcData(iptc_data_);
@@ -224,42 +238,29 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
 }
 
 
-void Exiv2Metadata::remove_unwanted(Exiv2::Image *dst) const
-{
-    static const std::vector<std::string> keys = {
-        "Exif.Image.Orientation",
-        "Exif.Image2.JPEGInterchangeFormat",
-        "Exif.Image2.JPEGInterchangeFormatLength",
-        "Exif.Photo.MakerNote"
-    };
-    for (auto &k : keys) {
-        auto it = dst->exifData().findKey(Exiv2::ExifKey(k));
-        if (it != dst->exifData().end()) {
-            dst->exifData().erase(it);
-        }
-    }
-    static const std::vector<std::string> patterns = {
+void Exiv2Metadata::remove_unwanted(Exiv2::ExifData &dst) const
+{                
+    Exiv2::ExifThumb thumb(dst);
+    thumb.erase();
+
+    static const std::vector<std::string> badpatterns = {
         "Exif.Image.",
-        "Exif.Photo.",
-        "Exif.GPSInfo."
+        "Exif.SubImage"
     };
-    for (auto it = dst->exifData().begin(); it != dst->exifData().end(); ) {
+    
+    for (auto it = dst.begin(); it != dst.end(); ) {
         bool found = false;
-        for (auto &pp : patterns) {
-            if (it->key().find(pp) == 0) {
+        for (auto &p : badpatterns) {
+            if (it->key().find(p) == 0) {
+                it = dst.erase(it);
                 found = true;
                 break;
             }
         }
         if (!found) {
-            it = dst->exifData().erase(it);
-        } else {
             ++it;
         }
-    }
-                
-    Exiv2::ExifThumb thumb(dst->exifData());
-    thumb.erase();
+    }    
 }
 
 
@@ -320,15 +321,6 @@ void Exiv2Metadata::saveToXmp(const Glib::ustring &path) const
         }
     }
 
-    class Error: public Exiv2::AnyError {
-    public:
-        Error(const std::string &msg): msg_(msg) {}
-        const char *what() const throw() { return msg_.c_str(); }
-        int code() const throw() { return 0; }
-
-    private:
-        std::string msg_;
-    };
     if (err) {
         throw Error("error saving XMP sidecar " + path);
     }
