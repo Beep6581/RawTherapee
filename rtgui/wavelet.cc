@@ -131,8 +131,8 @@ Wavelet::Wavelet() :
     edgesensi(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGESENSI"), 0, 100, 1, 60))),
     edgeampli(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEAMPLI"), 0, 100, 1, 10))),
     balchrom(Gtk::manage(new Adjuster(M("TP_WAVELET_BALCHROM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-red-small.png"))))),
-    chromfi(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMFI"), 0, 100, 1, 0))),
-    chromco(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMCO"), 0, 100, 1, 0))),
+    chromfi(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMFI"), 0.0, 150., 0.01, 0.))),
+    chromco(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMCO"), 0, 100., 0.01, 0.))),
     mergeL(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEL"), -50, 100, 1, 40))),
     mergeC(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEC"), -50, 100, 1, 20))),
     softrad(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
@@ -246,7 +246,7 @@ Wavelet::Wavelet() :
 
     Tilesmethod->append(M("TP_WAVELET_TILESFULL"));
     Tilesmethod->append(M("TP_WAVELET_TILESBIG"));
-    Tilesmethod->append(M("TP_WAVELET_TILESLIT"));
+//    Tilesmethod->append(M("TP_WAVELET_TILESLIT"));
     Tilesmethodconn = Tilesmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::TilesmethodChanged));
     Tilesmethod->set_tooltip_text(M("TP_WAVELET_TILES_TOOLTIP"));
     Gtk::HBox* const tilesizeHBox = Gtk::manage(new Gtk::HBox());
@@ -540,7 +540,7 @@ Wavelet::Wavelet() :
     chroBox->pack_start(*chromfi);
     chroBox->pack_start(*chromco);
     chroFrame->add(*chroBox);
-//    noiseBox->pack_start(*chroFrame);
+    noiseBox->pack_start(*chroFrame);
 
 
 //Clarity
@@ -1257,8 +1257,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         Tilesmethod->set_active(0);
     } else if (pp->wavelet.Tilesmethod == "big") {
         Tilesmethod->set_active(1);
-    } else if (pp->wavelet.Tilesmethod == "lit") {
-        Tilesmethod->set_active(2);
+//    } else if (pp->wavelet.Tilesmethod == "lit") {
+//        Tilesmethod->set_active(2);
     }
 
     //daubcoeffmethod->set_active (4);
@@ -2015,8 +2015,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.Tilesmethod = "full";
     } else if (Tilesmethod->get_active_row_number() == 1) {
         pp->wavelet.Tilesmethod = "big";
-    } else if (Tilesmethod->get_active_row_number() == 2) {
-        pp->wavelet.Tilesmethod = "lit";
+//    } else if (Tilesmethod->get_active_row_number() == 2) {
+//        pp->wavelet.Tilesmethod = "lit";
     }
 
     if (daubcoeffmethod->get_active_row_number() == 0) {
