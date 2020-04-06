@@ -838,7 +838,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 if (levwavL < 4) {
                     levwavL = 4;    //to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
-
+                bool usechrom = cp.chromfi > 0.f || cp.chromco > 0.f;
+                
                 if (levwavL > 0) {
                     const std::unique_ptr<wavelet_decomposition> Ldecomp(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
                     float madL[8][3];
@@ -970,7 +971,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             }
                                         }
                         */
-
+                        if(!usechrom) {
+                            Ldecomp->reconstruct(labco->data, cp.strength);
+                        }
 
                         float variC[7];
                         float variCb[7];
@@ -1298,8 +1301,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (hhCurve) {
                             delete hhCurve;
                         }
-
-                        Ldecomp->reconstruct(labco->data, cp.strength);
+                        
+                        if(usechrom) {
+                            Ldecomp->reconstruct(labco->data, cp.strength);
+                        }
                     }
                 }
 
