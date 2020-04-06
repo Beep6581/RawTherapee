@@ -138,6 +138,7 @@ struct cont_params {
     float edgampl;
     int neigh;
     bool lipp;
+    float ballum;
     float balchrom;
     float chromfi;
     float chromco;
@@ -401,6 +402,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.balchrom = waparams.balchrom;
     cp.chromfi = 0.1f * waparams.chromfi;
     cp.chromco = 0.1f * waparams.chromco;
+    cp.ballum = waparams.ballum;
 
     cp.conres = waparams.rescon;
     cp.conresH = waparams.resconH;
@@ -884,16 +886,62 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         vari[1] = 8.f * SQR((cp.lev1n / 125.f) * (1.f + cp.lev1n / 25.f));
                         vari[2] = 8.f * SQR((cp.lev2n / 125.f) * (1.f + cp.lev2n / 25.f));
                         vari[3] = 8.f * SQR((cp.lev3n / 125.f) * (1.f + cp.lev3n / 25.f));
+                        float kr3 = 1.f;
+                        if (cp.lev3n < 10.f) {
+                            kr3 = 0.f;
+                        } else if (cp.lev3n < 30.f) {
+                            kr3 = 0.5f;
+                        } else if (cp.lev3n < 70.f) {
+                            kr3 = 0.7f;
+                        } else {
+                            kr3 = 1.f;
+                        }
 
                         if ((cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f) && cp.noiseena) {
-                            int edge = 1;
+                            int edge = 4;
                             vari[0] = rtengine::max(0.0001f, vari[0]);
                             vari[1] = rtengine::max(0.0001f, vari[1]);
                             vari[2] = rtengine::max(0.0001f, vari[2]);
-                            vari[3] = rtengine::max(0.0001f, vari[3]);
-                            float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
+                            vari[3] = rtengine::max(0.0001f, kr3 * vari[3]);
+                       //     float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
+                            int GWL = labco->W;
+                            int GHL = labco->H;
+                            float* noisevarlum = new float[GHL * GWL];
+                            int GW2L = (GWL + 1) / 2;
 
-                            WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
+                            float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
+                            float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
+
+                            float seuillow = 3000.f;//low
+                            float seuilhigh = 18000.f;//high
+                            int i = 10 - cp.ballum;
+                            float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
+                            float bc = nvlh[i] - seuillow * ac;
+
+#ifdef _OPENMP
+                    #pragma omp parallel for
+
+#endif
+
+                    for (int ir = 0; ir < GHL; ir++)
+                        for (int jr = 0; jr < GWL; jr++) {
+                            float lN = labco->L[ir][jr];
+
+                            if (lN < seuillow) {
+                                noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvlh[i];
+                            } else if (lN < seuilhigh) {
+                                noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] = ac * lN + bc;
+                            } else {
+                                noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvll[i];
+                            }
+                        }
+                            if (cp.lev3n < 0.5f) {
+                                WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
+                            } else {
+                                WaveletDenoiseAll_BiShrinkL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
+
+                                WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
+                            }
                         }
 
                         //Flat curve for Contrast=f(H) in levels

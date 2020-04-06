@@ -130,6 +130,7 @@ Wavelet::Wavelet() :
     edgedetectthr2(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR2"), -10, 100, 1, 0))),
     edgesensi(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGESENSI"), 0, 100, 1, 60))),
     edgeampli(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEAMPLI"), 0, 100, 1, 10))),
+    ballum(Gtk::manage(new Adjuster(M("TP_WAVELET_BALLUM"), -2., 10., 0.5, 7., Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
     balchrom(Gtk::manage(new Adjuster(M("TP_WAVELET_BALCHROM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-red-small.png"))))),
     chromfi(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMFI"), 0.0, 150., 0.01, 0.))),
     chromco(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMCO"), 0, 100., 0.01, 0.))),
@@ -183,6 +184,7 @@ Wavelet::Wavelet() :
     auto m = ProcEventMapper::getInstance();
     EvWavenaclari = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVCLARI");
     EvWavushamet = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVUSHAMET");
+    EvWavballum = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVBALLUM");
     EvWavbalchrom = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVBALCHROM");
     EvWavchromfi = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVCHROMFI");
     EvWavchromco = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVCHROMCO");
@@ -524,7 +526,9 @@ Wavelet::Wavelet() :
 
     level3noise->setAdjusterListener(this);
     level3noise->setUpdatePolicy(RTUP_DYNAMIC);
+    ballum->setAdjusterListener(this);
 
+    noiseBox->pack_start(*ballum);
     noiseBox->pack_start(*level0noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level1noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level2noise, Gtk::PACK_SHRINK, 0);
@@ -1403,6 +1407,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     softrad->setValue(pp->wavelet.softrad);
     softradend->setValue(pp->wavelet.softradend);
 
+    ballum->setValue(pp->wavelet.ballum);
     balchrom->setValue(pp->wavelet.balchrom);
     chromfi->setValue(pp->wavelet.chromfi);
     chromco->setValue(pp->wavelet.chromco);
@@ -1551,6 +1556,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         softrad->setEditedState(pedited->wavelet.softrad ? Edited : UnEdited);
         softradend->setEditedState(pedited->wavelet.softradend ? Edited : UnEdited);
 
+        ballum->setEditedState(pedited->wavelet.ballum ? Edited : UnEdited);
         balchrom->setEditedState(pedited->wavelet.balchrom ? Edited : UnEdited);
         chromfi->setEditedState(pedited->wavelet.chromfi ? Edited : UnEdited);
         chromco->setEditedState(pedited->wavelet.chromco ? Edited : UnEdited);
@@ -1774,6 +1780,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.strength       = (int) strength->getValue();
     pp->wavelet.balance        = (int) balance->getValue();
     pp->wavelet.balchrom       = balchrom->getValue();
+    pp->wavelet.ballum         = ballum->getValue();
     pp->wavelet.chromfi        = chromfi->getValue();
     pp->wavelet.chromco        = chromco->getValue();
 
@@ -1895,6 +1902,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.bluemed         = bluemed->getEditedState();
         pedited->wavelet.greenhigh       = greenhigh->getEditedState();
         pedited->wavelet.bluehigh        = bluehigh->getEditedState();
+        pedited->wavelet.ballum          = ballum->getEditedState();
         pedited->wavelet.balchrom        = balchrom->getEditedState();
         pedited->wavelet.chromfi         = chromfi->getEditedState();
         pedited->wavelet.chromco         = chromco->getEditedState();
@@ -2129,6 +2137,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     level1noise->setDefault<double> (defParams->wavelet.level1noise);
     level2noise->setDefault<double> (defParams->wavelet.level2noise);
     level3noise->setDefault<double> (defParams->wavelet.level3noise);
+    ballum->setDefault(defParams->wavelet.ballum);
     balchrom->setDefault(defParams->wavelet.balchrom);
     chromfi->setDefault(defParams->wavelet.chromfi);
     chromco->setDefault(defParams->wavelet.chromco);
@@ -2155,6 +2164,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         mergeC->setDefaultEditedState(pedited->wavelet.mergeC ? Edited : UnEdited);
         softrad->setDefaultEditedState(pedited->wavelet.softrad ? Edited : UnEdited);
         softradend->setDefaultEditedState(pedited->wavelet.softradend ? Edited : UnEdited);
+        ballum->setDefaultEditedState(pedited->wavelet.ballum ? Edited : UnEdited);
         balchrom->setDefaultEditedState(pedited->wavelet.balchrom ? Edited : UnEdited);
         chromfi->setDefaultEditedState(pedited->wavelet.chromfi ? Edited : UnEdited);
         chromco->setDefaultEditedState(pedited->wavelet.chromco ? Edited : UnEdited);
@@ -2951,6 +2961,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavgreenhigh, greenhigh->getTextValue());
         } else if (a == bluehigh) {
             listener->panelChanged(EvWavbluehigh, bluehigh->getTextValue());
+        } else if (a == ballum) {
+            listener->panelChanged(EvWavballum, ballum->getTextValue());
         } else if (a == balchrom) {
             listener->panelChanged(EvWavbalchrom, balchrom->getTextValue());
         } else if (a == chromfi) {

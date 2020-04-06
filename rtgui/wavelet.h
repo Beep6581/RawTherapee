@@ -70,6 +70,7 @@ public:
 private:
     rtengine::ProcEvent EvWavenaclari;
     rtengine::ProcEvent EvWavushamet;
+    rtengine::ProcEvent EvWavballum;
     rtengine::ProcEvent EvWavbalchrom;
     rtengine::ProcEvent EvWavchromfi;
     rtengine::ProcEvent EvWavchromco;
@@ -244,6 +245,7 @@ private:
     Adjuster* const edgedetectthr2;
     Adjuster* const edgesensi;
     Adjuster* const edgeampli;
+    Adjuster* const ballum;
     Adjuster* const balchrom;
     Adjuster* const chromfi;
     Adjuster* const chromco;

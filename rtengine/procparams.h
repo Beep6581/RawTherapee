@@ -1205,6 +1205,7 @@ struct WaveletParams {
     int bluemed;
     int greenhigh;
     int bluehigh;
+    double ballum;
     double balchrom;
     double chromfi;
     double chromco;
