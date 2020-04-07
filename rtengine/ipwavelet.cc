@@ -836,9 +836,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                 bool exblurL = cp.blena && wavcurvecomp;
 
-                if(exblurL) {
-                    if(cp.mul[0] == 0.f) {
-                        cp.mul[0] = 0.01f;//to enable WaveletcontAllL if no contrast is nead
+                if (exblurL) {
+                    if (cp.mul[0] == 0.f) {
+                        cp.mul[0] = 0.01f;//to always enable WaveletcontAllL if no contrast is nead
                     }
                 }
 
@@ -858,7 +858,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     levwavL = 4;    //to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
 
-                // printf("wave L=%i\n", levwavL);
+                if (settings->verbose) {
+                    printf("Level decomp L=%i\n", levwavL);
+                }
+
                 bool usechrom = cp.chromfi > 0.f || cp.chromco > 0.f;
 
                 if (levwavL > 0) {
@@ -1240,7 +1243,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
                             }
 
-                            // printf("wavea=%i\n", levwava);
+                            if (settings->verbose) {
+                                printf("Leval decomp a=%i\n", levwava);
+                            }
 
                             if (levwava > 0) {
                                 const std::unique_ptr<wavelet_decomposition> adecomp(new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwava, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
@@ -1271,7 +1276,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
                             }
 
-                            //  printf("waveb=%i\n", levwavb);
+                            if (settings->verbose) {
+                                printf("Leval decomp b=%i\n", levwavb);
+                            }
+
 
                             if (levwavb > 0) {
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavb, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
@@ -2384,7 +2392,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                 float klev = 1.f;
 
                 if (wavblcurve && wavcurvecomp && cp.blena) {
-                    printf("Blur level L\n");
+                    // printf("Blur level L\n");
                     float mea[10];
                     float effect = cp.bluwav;
                     float beta = 0.f;
@@ -2446,13 +2454,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                     }
 
                     klev = (wavblcurve[lvl * 55.5f]);
-                    float lvr = lvl;
 
-                    if (lvr == 0) {
-                        lvr = 1;
-                    }
-
-                    klev *= beta * lvr * 100.f / skip;
+                    klev *= beta * 100.f / skip;
                     boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
 
                     for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
@@ -2707,6 +2710,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                 ContAllAB(labco,  maxlvl, varhue, varchrom, WavCoeffs_ab, WavCoeffs_ab0, lvl, dir, waOpacityCurveW, cp, Wlvl_ab, Hlvl_ab, useChannelA);
 
                 if (wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f) {
+
                     float mea[10];
                     float effect = cp.bluwav;
                     float beta = 0.f;
@@ -2750,13 +2754,8 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                     }
 
                     klev = (wavblcurve[lvl * 55.5f]);
-                    float lvr = lvl;
 
-                    if (lvr == 0) {
-                        lvr = 1;
-                    }
-
-                    klev *=  beta * cp.chrwav * lvr * 200.f / skip;
+                    klev *=  beta * cp.chrwav * 100.f / skip;
 
                     boxblur(bef, aft, klev, Wlvl_ab, Hlvl_ab, false);
 
