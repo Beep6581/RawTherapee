@@ -1363,7 +1363,7 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
             enabled == other.enabled
             && (
                 (
-                    method == "Camera" 
+                    method == "Camera"
                     && other.method == "Camera"
                 )
             || (
@@ -2327,25 +2327,25 @@ WaveletParams::WaveletParams() :
     },
     blcurve{
         static_cast<double>(FCT_MinMaxCPoints),
-        0.0, 
-        0.0, 
-        0.0, 
-        0.35, 
-        0.5, 
-        0., 
+        0.0,
+        0.0,
+        0.0,
+        0.35,
+        0.5,
+        0.,
         0.35,
         0.35,
         1.0,
         0.0,
         0.35,
         0.35
-/*      
+/*
         0.0,
-        0.35, 
-        0.35, 
-        1.0, 
-        0.0, 
-        0.35, 
+        0.35,
+        0.35,
+        1.0,
+        0.0,
+        0.35,
         0.35
 */
     },
@@ -5418,7 +5418,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         keyFile.set_string("Version", "AppVersion", RTVERSION);
         keyFile.set_integer("Version", "Version", PPVERSION);
 
-        saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
+        if (rank >= 0) {
+            saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
+        }
         saveToKeyfile(!pedited || pedited->general.colorlabel, "General", "ColorLabel", colorlabel, keyFile);
         saveToKeyfile(!pedited || pedited->general.intrash, "General", "InTrash", inTrash, keyFile);
 
@@ -5710,9 +5712,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Dehaze
         saveToKeyfile(!pedited || pedited->dehaze.enabled, "Dehaze", "Enabled", dehaze.enabled, keyFile);
-        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);
         saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Saturation", dehaze.saturation, keyFile);
 
 // Directional pyramid denoising
@@ -6834,7 +6836,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "GreenBase", filmNegative.refInput.g, keyFile);
             saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "BlueBase", filmNegative.refInput.b, keyFile);
         }
-        
+
         saveToKeyfile(!pedited || pedited->filmNegative.colorSpace, "Film Negative", "ColorSpace", toUnderlying(filmNegative.colorSpace), keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RefInput", filmNegative.refInput, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput, keyFile);
@@ -7352,7 +7354,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->colorappearance.complexmethod = true;
                 }
             }
-            
+
             if (keyFile.has_key("Color appearance", "ModelCat")) {
                 assignFromKeyfile(keyFile, "Color appearance", "ModelCat", pedited, colorappearance.modelmethod, pedited->colorappearance.modelmethod);
             } else if (colorappearance.enabled) {
@@ -7362,7 +7364,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
             assignFromKeyfile(keyFile, "Color appearance", "CatCat", pedited, colorappearance.catmethod, pedited->colorappearance.catmethod);
-            
+
             assignFromKeyfile(keyFile, "Color appearance", "Surround", pedited, colorappearance.surround, pedited->colorappearance.surround);
             assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", pedited, colorappearance.surrsrc, pedited->colorappearance.surrsrc);
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);

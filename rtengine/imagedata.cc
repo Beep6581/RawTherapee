@@ -325,6 +325,11 @@ FramesData::FramesData(const Glib::ustring &fname) :
 
         if (find_exif_tag("Exif.Image.Rating")) {
             rating = pos->toLong();
+        } else {
+            auto it = meta.xmpData().findKey(Exiv2::XmpKey("Xmp.xmp.Rating"));
+            if (it != meta.xmpData().end() && it->size()) {
+                rating = it->toLong();
+            }
         }
 
         // -----------------------
