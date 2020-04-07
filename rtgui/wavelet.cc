@@ -138,7 +138,7 @@ Wavelet::Wavelet() :
     mergeC(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEC"), -50, 100, 1, 20))),
     softrad(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
     softradend(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
-    chrwav(Gtk::manage(new Adjuster(M("TP_WAVELET_CHRWAV"), 0., 100., 0., 0.))),
+    chrwav(Gtk::manage(new Adjuster(M("TP_WAVELET_CHRWAV"), 0., 100., 0.5, 0.))),
     Lmethod(Gtk::manage(new MyComboBoxText())),
     CHmethod(Gtk::manage(new MyComboBoxText())),
     CHSLmethod(Gtk::manage(new MyComboBoxText())),

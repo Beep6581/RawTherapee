@@ -524,11 +524,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     if (params->wavelet.Tilesmethod == "big") {
         realtile = 22;
     }
-/*
-    if (params->wavelet.Tilesmethod == "lit") {
-        realtile = 12;
-    }
-*/
+
+    /*
+        if (params->wavelet.Tilesmethod == "lit") {
+            realtile = 12;
+        }
+    */
     int tilesize = 128 * realtile;
     int overlap = (int) tilesize * 0.125f;
     int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
@@ -823,7 +824,25 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     ref0 = true;
                 }
 
-                if (cp.contrast == 0.f && !cp.tonemap && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
+                bool wavcurvecomp = false;//not enable if 0.75
+
+                if (wavblcurve) {
+                    for (int i = 0; i < 500; i++) {
+                        if (wavblcurve[i] != 0.) {
+                            wavcurvecomp = true;
+                        }
+                    }
+                }
+
+                bool exblurL = cp.blena && wavcurvecomp;
+
+                if(exblurL) {
+                    if(cp.mul[0] == 0.f) {
+                        cp.mul[0] = 0.01f;//to enable WaveletcontAllL if no contrast is nead
+                    }
+                }
+
+                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.tonemap && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
                     while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
                         levwavL--;
                     }
@@ -838,8 +857,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 if (levwavL < 4) {
                     levwavL = 4;    //to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
+
+                // printf("wave L=%i\n", levwavL);
                 bool usechrom = cp.chromfi > 0.f || cp.chromco > 0.f;
-                
+
                 if (levwavL > 0) {
                     const std::unique_ptr<wavelet_decomposition> Ldecomp(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
                     float madL[8][3];
@@ -888,6 +909,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         vari[2] = 8.f * SQR((cp.lev2n / 125.f) * (1.f + cp.lev2n / 25.f));
                         vari[3] = 8.f * SQR((cp.lev3n / 125.f) * (1.f + cp.lev3n / 25.f));
                         float kr3 = 1.f;
+
                         if (cp.lev3n < 10.f) {
                             kr3 = 0.f;
                         } else if (cp.lev3n < 30.f) {
@@ -904,7 +926,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             vari[1] = rtengine::max(0.0001f, vari[1]);
                             vari[2] = rtengine::max(0.0001f, vari[2]);
                             vari[3] = rtengine::max(0.0001f, kr3 * vari[3]);
-                       //     float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
+                            //     float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
                             int GWL = labco->W;
                             int GHL = labco->H;
                             float* noisevarlum = new float[GHL * GWL];
@@ -920,22 +942,23 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             float bc = nvlh[i] - seuillow * ac;
 
 #ifdef _OPENMP
-                    #pragma omp parallel for
+                            #pragma omp parallel for
 
 #endif
 
-                    for (int ir = 0; ir < GHL; ir++)
-                        for (int jr = 0; jr < GWL; jr++) {
-                            float lN = labco->L[ir][jr];
+                            for (int ir = 0; ir < GHL; ir++)
+                                for (int jr = 0; jr < GWL; jr++) {
+                                    float lN = labco->L[ir][jr];
 
-                            if (lN < seuillow) {
-                                noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvlh[i];
-                            } else if (lN < seuilhigh) {
-                                noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] = ac * lN + bc;
-                            } else {
-                                noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvll[i];
-                            }
-                        }
+                                    if (lN < seuillow) {
+                                        noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvlh[i];
+                                    } else if (lN < seuilhigh) {
+                                        noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] = ac * lN + bc;
+                                    } else {
+                                        noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvll[i];
+                                    }
+                                }
+
                             if (cp.lev3n < 0.5f) {
                                 WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
                             } else {
@@ -965,13 +988,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         }
 
                         WaveletcontAllLfinal(*Ldecomp, cp, mean, sigma, MaxP, waOpacityCurveWL);
+
                         //Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
                         /*
                                                 Ldecomp->reconstruct(labco->data, cp.strength);
                                             }
                                         }
                         */
-                        if(!usechrom) {
+                        if (!usechrom) {
                             Ldecomp->reconstruct(labco->data, cp.strength);
                         }
 
@@ -1147,11 +1171,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                         variC[6] = max(0.0001f, k6 * variC[6]);
                         variCb[6] = max(0.0001f, k6 * variCb[6]);
-/*
-                        for (int y = 0; y < 7; y++) {
-                            printf("y=%i madL=%f varia=%f variab=%f\n", y, madL[y][1], variC[y], variCb[y]);
-                        }
-*/
+                        /*
+                                                for (int y = 0; y < 7; y++) {
+                                                    printf("y=%i madL=%f varia=%f variab=%f\n", y, madL[y][1], variC[y], variCb[y]);
+                                                }
+                        */
                         float nvch = 0.6f;//high value
                         float nvcl = 0.1f;//low value
 
@@ -1199,11 +1223,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             hhutili = true;
                         }
 
+                        bool exblurab = cp.chrwav > 0.f && exblurL;
 
                         if (!hhutili) { //always a or b
                             int levwava = levwav;
 
-                            if (cp.chrores == 0.f && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
+                            if (!exblurab && cp.chrores == 0.f  && cp.blurcres == 0.f && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
                                 while (levwava > 0 && !cp.diag && (((cp.CHmet == 2 && (cp.chro == 0.f || cp.mul[levwava - 1] == 0.f)) || (cp.CHmet != 2 && (levwava == 10 || (!cp.curv  || cp.mulC[levwava - 1] == 0.f))))) && (!cp.opaRG || levwava == 10 || (cp.opaRG && cp.mulopaRG[levwava - 1] == 0.f)) && ((levwava == 10 || (cp.CHSLmet == 1 && cp.mulC[levwava - 1] == 0.f)))) {
                                     levwava--;
                                 }
@@ -1215,14 +1240,17 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
                             }
 
+                            // printf("wavea=%i\n", levwava);
+
                             if (levwava > 0) {
                                 const std::unique_ptr<wavelet_decomposition> adecomp(new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwava, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!adecomp->memoryAllocationFailed) {
-                                    if(cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
+                                    if (cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                     }
+
                                     Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
                                     WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve, waOpacityCurveW, cp, true, skip, meanab, sigmaab);
                                     adecomp->reconstruct(labco->data + datalen, cp.strength);
@@ -1231,7 +1259,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                             int levwavb = levwav;
 
-                            if (cp.chrores == 0.f && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
+                            if (!exblurab && cp.chrores == 0.f && cp.blurcres == 0.f && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
                                 while (levwavb > 0 &&  !cp.diag && (((cp.CHmet == 2 && (cp.chro == 0.f || cp.mul[levwavb - 1] == 0.f)) || (cp.CHmet != 2 && (levwavb == 10 || (!cp.curv || cp.mulC[levwavb - 1] == 0.f))))) && (!cp.opaBY || levwavb == 10 || (cp.opaBY && cp.mulopaBY[levwavb - 1] == 0.f)) && ((levwavb == 10 || (cp.CHSLmet == 1 && cp.mulC[levwavb - 1] == 0.f)))) {
                                     levwavb--;
                                 }
@@ -1243,14 +1271,17 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
                             }
 
+                            //  printf("waveb=%i\n", levwavb);
+
                             if (levwavb > 0) {
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavb, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!bdecomp->memoryAllocationFailed) {
-                                    if(cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
+                                    if (cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     }
+
                                     Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
                                     WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip, meanab, sigmaab);
                                     bdecomp->reconstruct(labco->data + 2 * datalen, cp.strength);
@@ -1259,11 +1290,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         } else {// a and b
                             int levwavab = levwav;
 
-                            if (cp.chrores == 0.f && !hhutili && params->wavelet.CLmethod == "all") { // no processing of residual ab => we probably can reduce the number of levels
+                            if (!exblurab && cp.chrores == 0.f && cp.blurcres == 0.f && !hhutili && params->wavelet.CLmethod == "all") { // no processing of residual ab => we probably can reduce the number of levels
                                 while (levwavab > 0 && (((cp.CHmet == 2 && (cp.chro == 0.f || cp.mul[levwavab - 1] == 0.f)) || (cp.CHmet != 2 && (levwavab == 10 || (!cp.curv  || cp.mulC[levwavab - 1] == 0.f))))) && (!cp.opaRG || levwavab == 10 || (cp.opaRG && cp.mulopaRG[levwavab - 1] == 0.f)) && ((levwavab == 10 || (cp.CHSLmet == 1 && cp.mulC[levwavab - 1] == 0.f)))) {
                                     levwavab--;
                                 }
                             }
+
                             if (cp.chromfi > 0.f || cp.chromco > 0.f) {
                                 if (levwavab < 7) {
                                     levwavab = 7;
@@ -1275,16 +1307,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavab, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!adecomp->memoryAllocationFailed && !bdecomp->memoryAllocationFailed) {
-                                    if(cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
+                                    if (cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                     }
+
                                     Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
                                     WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve,  waOpacityCurveW, cp, true, skip, meanab, sigmaab);
                                     WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
-                                    if(cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
+
+                                    if (cp.noiseena && (cp.chromfi > 0.f || cp.chromfi > 0.f)) {
                                         WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip, meanab, sigmaab);
                                         WaveletAandBAllAB(*adecomp, *bdecomp, cp, hhCurve, hhutili);
                                     }
@@ -1301,8 +1335,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (hhCurve) {
                             delete hhCurve;
                         }
-                        
-                        if(usechrom) {
+
+                        if (usechrom) {
                             Ldecomp->reconstruct(labco->data, cp.strength);
                         }
                     }
@@ -2350,6 +2384,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                 float klev = 1.f;
 
                 if (wavblcurve && wavcurvecomp && cp.blena) {
+                    printf("Blur level L\n");
                     float mea[10];
                     float effect = cp.bluwav;
                     float beta = 0.f;
