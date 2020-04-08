@@ -2214,7 +2214,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
     int maxlvl = min(WaveletCoeffs_L.maxlevel(), 5);
     const float eps = 0.01f;
 
-    if (edge == 1 || edge == 3) {
+    if (edge == 1 || edge == 3 || edge == 4) {
         maxlvl = 4;    //for refine denoise edge wavelet
     }
 
@@ -2294,7 +2294,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
                                 }
                             }
 
-                            if (edge == 2) {
+                            if (edge == 2 || edge == 4) {
                                 for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                                     nvl[i] = vari[lvl] * SQR(noisevarlum[i]);
                                 }
@@ -2721,7 +2721,7 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
             }
         }
 
-        if (edge == 2) {
+        if (edge == 2 || edge == 4) {
             for (int i = 0; i < W_L * H_L; ++i) {
                 nvl[i] = vari[level] * SQR(noisevarlum[i]);
             }
