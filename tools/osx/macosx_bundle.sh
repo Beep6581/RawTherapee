@@ -263,7 +263,7 @@ sed -i "" -e "s|@version@|${PROJECT_FULL_VERSION}|
 s|@shortVersion@|${PROJECT_VERSION}|
 s|@arch@|${arch}|" \
 "${CONTENTS}/Info.plist"
-plutil -convert binary1 "${CONTENTS}/Info.plist"
+#plutil -convert xml1 "${CONTENTS}/Info.plist"
 update-mime-database -V  "${RESOURCES}/share/mime"
 
 msg "Build glib database:"
@@ -289,13 +289,12 @@ install_name_tool -add_rpath @executable_path "${EXECUTABLE}"-cli
 # Codesign the app
 if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
-    install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements
-    plutil -convert binary1 "${CMAKE_BUILD_TYPE}"/rt.entitlements
+    iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements > "${CMAKE_BUILD_TYPE}"/rt.entitlements
     mv "${EXECUTABLE}"-cli "${LIB}"
     for frameworklibs in "${LIB}"/*; do
-        codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp "${frameworklibs}"
+        codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${frameworklibs}"
     done
-    codesign --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements  "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
+    codesign --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
     spctl -a -vvvv "${APP}"
 fi
 
