@@ -791,7 +791,8 @@ HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 HISTORY_MSG_TRANS_Method;Geometry - Method
-HISTORY_MSG_WAVBALCHROM;Balance chroma
+HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
+HISTORY_MSG_WAVBALLUM;Equalizer luminance
 HISTORY_MSG_WAVCHROMFI;Chroma fine
 HISTORY_MSG_WAVCHROMCO;Chroma coarse
 HISTORY_MSG_WAVCLARI;Clarity
@@ -814,7 +815,7 @@ HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_WAVBL;Blur levels
 HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLURCWAV;Blur chroma
-HISTORY_MSG_EDGEFFECT;Edge Effect
+HISTORY_MSG_EDGEFFECT;Edge Damper
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2143,9 +2144,10 @@ TP_WAVELET_BACKGROUND;Background
 TP_WAVELET_BACUR;Curve
 TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
-TP_WAVELET_BALCHRO;Chroma balance
+TP_WAVELET_BALCHRO;Chrominance balance
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
-TP_WAVELET_BALCHROM;Chroma balance
+TP_WAVELET_BALCHROM;Denoise Equalizer  Blue-Red
+TP_WAVELET_BALLUM;Denoise Equalizer  White-Black
 TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
@@ -2161,10 +2163,10 @@ TP_WAVELET_CH3;Link contrast levels
 TP_WAVELET_CHCU;Curve
 TP_WAVELET_CHR;Chroma-contrast link strength
 TP_WAVELET_CHRO;Saturated/pastel threshold
-TP_WAVELET_CHROFRAME;Denoise Chroma
+TP_WAVELET_CHROFRAME;Denoise Chrominance
 TP_WAVELET_CHROMAFRAME;Chroma
-TP_WAVELET_CHROMCO;Chroma Coarse
-TP_WAVELET_CHROMFI;Chroma Fine
+TP_WAVELET_CHROMCO;Chrominance Coarse
+TP_WAVELET_CHROMFI;Chrominance Fine
 TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
 TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 TP_WAVELET_CHRWAV;Blur chroma
@@ -2307,7 +2309,7 @@ TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will b
 TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels.
 TP_WAVELET_THRESWAV;Balance Threshold
 TP_WAVELET_THRH;Highlights threshold
-TP_WAVELET_TILESBIG;Big tiles
+TP_WAVELET_TILESBIG;Tiles
 TP_WAVELET_TILESFULL;Full image
 TP_WAVELET_TILESIZE;Tiling method
 TP_WAVELET_TILESLIT;Little tiles
@@ -2326,7 +2328,7 @@ TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\n
 TP_WAVELET_USH_TOOLTIP;If you select Sharp-mask, wavelet settings will be automatically positioned :\nBackground=black, Process=below, level=3...you can change level between 1 and 4.\n\nIf you select Clarity, wavelet settings will be automatically positioned :\nBackground=residual, Process=above, level=7..you can change level between 5 and 10 and wavelet levels.
 TP_WAVELET_WAVLOWTHR;Low contrast threshold
 TP_WAVELET_WAVOFFSET;Offset
-TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between shadows and highlights.\n High values will amplify the contrast enhancement of the highlights, while low values will amplify the contrast enhancement of the shadows. Along with a low Max. effect value will help you selecting the contrasts that will be enhanced
+TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between shadows and highlights.\nHigh values here will amplify the contrast change of the highlights, whereas low values will amplify the contrast change of the shadows.\nAlong with a low Damper value you will able to select the contrasts that will be enhanced.
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_AUTOITCGREEN;Auto iterate temperature correlation
 TP_WBALANCE_AUTOOLD;Auto RGB grey
