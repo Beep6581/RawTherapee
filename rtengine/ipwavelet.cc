@@ -1576,10 +1576,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
             }
         }
 
-        constexpr double epsilmax = 0.001;
-        constexpr double epsilmin = 0.0001;
-        constexpr double aepsil = (epsilmax - epsilmin) / 90.f;
-        constexpr double bepsil = epsilmax - 100.f * aepsil;
+        constexpr double epsilmax = 0.002;
+        constexpr double epsilmin = 0.0005;
+        constexpr double aepsil = 0.01f * (epsilmax - epsilmin);
+        constexpr double bepsil = epsilmin;
         const double epsil = aepsil * waparams.softradend + bepsil;
 
         const float blur = 10.f / scale * (0.001f + 0.8f * waparams.softradend);
