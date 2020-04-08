@@ -1739,6 +1739,9 @@ private:
         case MetaDataParams::EDIT:
             info.setExif(params.exif);
             info.setIptc(params.iptc);
+            if (!(params.metadata.exifKeys.size() == 1 && params.metadata.exifKeys[0] == "ALL")) {
+                info.setExifKeys(&(params.metadata.exifKeys));
+            }
             readyImg->setMetadata(std::move(info));
             break;
         default: // case MetaDataParams::STRIP

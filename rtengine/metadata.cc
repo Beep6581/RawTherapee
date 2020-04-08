@@ -313,6 +313,8 @@ void Exiv2Metadata::remove_unwanted(Exiv2::ExifData &dst) const
     for (auto it = dst.begin(); it != dst.end(); ) {
         if (badtags.find(it->key()) != badtags.end()) {
             it = dst.erase(it);
+        } else if (exif_keys_ && exif_keys_->find(it->key()) == exif_keys_->end()) {
+            it = dst.erase(it);
         } else {
             bool found = false;
             for (auto &p : badpatterns) {
@@ -389,6 +391,16 @@ void Exiv2Metadata::saveToXmp(const Glib::ustring &path) const
 
     if (err) {
         throw Error("error saving XMP sidecar " + path);
+    }
+}
+
+
+void Exiv2Metadata::setExifKeys(const std::vector<std::string> *keys)
+{
+    exif_keys_.reset();
+    if (keys) {
+        exif_keys_ = std::make_shared<std::unordered_set<std::string>>();
+        exif_keys_->insert(keys->begin(), keys->end());
     }
 }
 

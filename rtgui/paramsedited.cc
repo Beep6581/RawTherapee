@@ -675,6 +675,7 @@ void ParamsEdited::set(bool v)
     dehaze.depth = v;
     dehaze.saturation = v;
     metadata.mode = v;
+    metadata.exifKeys = v;
     filmNegative.enabled = v;
     filmNegative.redRatio = v;
     filmNegative.greenExp = v;
@@ -1931,6 +1932,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
         dehaze.saturation = dehaze.saturation && p.dehaze.saturation == other.dehaze.saturation;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
+        metadata.exifKeys = metadata.exifKeys && p.metadata.exifKeys == other.metadata.exifKeys;
         filmNegative.enabled = filmNegative.enabled && p.filmNegative.enabled == other.filmNegative.enabled;
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
         filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
@@ -6567,6 +6569,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (metadata.mode) {
         toEdit.metadata.mode = mods.metadata.mode;
+    }
+
+    if (metadata.exifKeys) {
+        toEdit.metadata.exifKeys = mods.metadata.exifKeys;
     }
 
     if (filmNegative.enabled) {

@@ -21,6 +21,7 @@
 #include <memory>
 
 #include <gtkmm.h>
+#include <unordered_set>
 
 #include "toolpanel.h"
 
@@ -56,6 +57,7 @@ private:
         Gtk::TreeModelColumn<Glib::ustring> value_nopango;
         Gtk::TreeModelColumn<bool> editable;
         Gtk::TreeModelColumn<bool> edited;
+        Gtk::TreeModelColumn<bool> active;
 
         ExifColumns()
         {
@@ -66,6 +68,7 @@ private:
             add(edited);
             add(value_nopango);
             add(editable);
+            add(active);
         }
     };
     Glib::RefPtr<Gdk::Pixbuf> keepicon;
@@ -79,8 +82,16 @@ private:
     Gtk::Button* add;
     Gtk::Button* reset;
     Gtk::Button* resetAll;
+    Gtk::Button *activate_all_;
+    Gtk::Button *activate_none_;
+
+    Gtk::CellRendererToggle exif_active_renderer_;
+    Gtk::TreeView::Column exif_active_column_;
 
     const std::vector<std::pair<std::string, Glib::ustring>> editableTags;
+
+    std::unordered_set<std::string> initial_active_keys_;
+    std::unordered_set<std::string> cur_active_keys_;
 
     void addTag(const std::string &key, const Glib::ustring &label, const Glib::ustring &value, bool editable, bool edited);
     void refreshTags();
@@ -88,6 +99,12 @@ private:
     void resetPressed();
     void resetAllPressed();
     void addPressed();
+    void activateAllPressed();
+    void activateNonePressed();
+
+    void setKeyActive(Gtk::CellRenderer *renderer, const Gtk::TreeModel::iterator &it);
+    void onKeyActiveToggled(const Glib::ustring &path);
+    
 
 public:
     ExifPanel ();

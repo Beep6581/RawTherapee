@@ -51,16 +51,17 @@ ExifPanel::ExifPanel() :
     exifTree->set_rules_hint (false);
     exifTree->set_reorderable (false);
     exifTree->set_enable_search (false);
-    exifTree->get_selection()->set_mode (Gtk::SELECTION_MULTIPLE);
-    scrolledWindow->set_shadow_type (Gtk::SHADOW_NONE);
-    scrolledWindow->set_policy (Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);
+    exifTree->get_selection()->set_mode(Gtk::SELECTION_MULTIPLE);
+    scrolledWindow->set_shadow_type(Gtk::SHADOW_NONE);
+    scrolledWindow->set_policy(Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);
     scrolledWindow->property_window_placement().set_value (Gtk::CORNER_TOP_LEFT);
-    scrolledWindow->add (*exifTree);
+    scrolledWindow->add(*exifTree);
 
-    exifTreeModel = Gtk::TreeStore::create (exifColumns);
-    exifTree->set_model (exifTreeModel);
-    exifTree->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_NONE);
+    exifTreeModel = Gtk::TreeStore::create(exifColumns);
+    exifTree->set_model(exifTreeModel);
+    exifTree->set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_NONE);
     exifTree->set_show_expanders(false);
+    exifTree->set_tooltip_column(0);
 
     keepicon = RTImage::createPixbufFromFile ("tick-small.png");
     editicon = RTImage::createPixbufFromFile("add-small.png");
@@ -69,25 +70,32 @@ ExifPanel::ExifPanel() :
     Gtk::CellRendererPixbuf* render_pb = Gtk::manage (new Gtk::CellRendererPixbuf ());
     Gtk::CellRendererText *render_txt = Gtk::manage (new Gtk::CellRendererText());
     render_txt->property_ellipsize() = Pango::ELLIPSIZE_END;
-    viewcol->pack_start (*render_pb, false);
-    viewcol->pack_start (*render_txt, true);
-    viewcol->add_attribute (*render_pb, "pixbuf", exifColumns.icon);
-    viewcol->add_attribute (*render_txt, "markup", exifColumns.label);
-    viewcol->set_expand (true);
-    viewcol->set_resizable (true);
-    viewcol->set_fixed_width (35);
-    viewcol->set_min_width (35);
-    viewcol->set_sizing (Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
+    viewcol->pack_start(*render_pb, false);
+    viewcol->pack_start(*render_txt, true);
+    viewcol->add_attribute(*render_pb, "pixbuf", exifColumns.icon);
+    viewcol->add_attribute(*render_txt, "markup", exifColumns.label);
+    viewcol->set_expand(true);
+    viewcol->set_resizable(true);
+    viewcol->set_fixed_width(35);
+    viewcol->set_min_width(35);
+    viewcol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
 
     render_pb->property_ypad() = 0;
     render_txt->property_ypad() = 0;
     render_pb->property_yalign() = 0;
     render_txt->property_yalign() = 0;
 
-    exifTree->append_column (*viewcol);
+    exif_active_renderer_.property_mode() = Gtk::CELL_RENDERER_MODE_ACTIVATABLE;
+    exif_active_renderer_.signal_toggled().connect(sigc::mem_fun(this, &ExifPanel::onKeyActiveToggled));
+    exif_active_column_.pack_start(exif_active_renderer_);
+    exif_active_column_.set_cell_data_func(exif_active_renderer_, sigc::mem_fun(this, &ExifPanel::setKeyActive));
 
-    Gtk::TreeView::Column *viewcolv = Gtk::manage (new Gtk::TreeView::Column ("Value"));
-    Gtk::CellRendererText *render_txtv = Gtk::manage (new Gtk::CellRendererText());
+    exifTree->append_column(exif_active_column_);
+
+    exifTree->append_column(*viewcol);
+
+    Gtk::TreeView::Column *viewcolv = Gtk::manage(new Gtk::TreeView::Column ("Value"));
+    Gtk::CellRendererText *render_txtv = Gtk::manage(new Gtk::CellRendererText());
     render_txtv->property_ellipsize() = Pango::ELLIPSIZE_END;
     viewcolv->pack_start (*render_txtv, true);
     viewcolv->add_attribute (*render_txtv, "markup", exifColumns.value);
@@ -108,26 +116,23 @@ ExifPanel::ExifPanel() :
     buttons1->set_column_homogeneous (true);
     setExpandAlignProperties (buttons1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    add = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_ADDEDIT")
-    add->set_image (*Gtk::manage (new RTImage(editicon)));
-    add->set_tooltip_text (M ("EXIFPANEL_ADDEDITHINT"));
-    add->get_style_context()->add_class ("Right");
-    setExpandAlignProperties (add, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-    buttons1->attach_next_to (*add, Gtk::POS_RIGHT, 1, 1);
+    const auto addbtn =
+        [&](const Glib::ustring &tip, const Glib::ustring &icon1, const Glib::ustring &icon2=Glib::ustring()) -> Gtk::Button *
+        {
+            Gtk::Button *b = Gtk::manage(new Gtk::Button());
+            b->set_image(*Gtk::manage(new RTImage(icon1, icon2)));
+            b->set_tooltip_text(M(tip));
+            b->get_style_context()->add_class("Right");
+            setExpandAlignProperties(b, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+            buttons1->attach_next_to(*b, Gtk::POS_RIGHT, 1, 1);
+            return b;
+        };
 
-    reset = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_RESET")
-    reset->set_image (*Gtk::manage (new RTImage("undo.png", "redo.png")));
-    reset->set_tooltip_text (M ("EXIFPANEL_RESETHINT"));
-    reset->get_style_context()->add_class ("MiddleH");
-    setExpandAlignProperties (reset, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-    buttons1->attach_next_to (*reset, Gtk::POS_RIGHT, 1, 1);
-
-    resetAll = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_RESETALL")
-    resetAll->set_image (*Gtk::manage (new RTImage ("undo-all.png", "redo-all.png")));
-    resetAll->set_tooltip_text (M ("EXIFPANEL_RESETALLHINT"));
-    resetAll->get_style_context()->add_class ("Right");
-    setExpandAlignProperties (resetAll, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-    buttons1->attach_next_to (*resetAll, Gtk::POS_RIGHT, 1, 1);
+    activate_all_ = addbtn("EXIFPANEL_ACTIVATE_ALL_HINT", "tick.png");
+    activate_none_ = addbtn("EXIFPANEL_ACTIVATE_NONE_HINT", "box.png");
+    add = addbtn("EXIFPANEL_ADDEDIT", "add.png");
+    reset = addbtn("EXIFPANEL_RESETHINT", "undo.png", "redo.png");
+    resetAll = addbtn("EXIFPANEL_RESETALLHINT", "undo-all.png", "redo-all.png");
 
     pack_end (*buttons1, Gtk::PACK_SHRINK);
 
@@ -137,6 +142,8 @@ ExifPanel::ExifPanel() :
     reset->signal_clicked().connect ( sigc::mem_fun (*this, &ExifPanel::resetPressed) );
     resetAll->signal_clicked().connect ( sigc::mem_fun (*this, &ExifPanel::resetAllPressed) );
     add->signal_clicked().connect ( sigc::mem_fun (*this, &ExifPanel::addPressed) );
+    activate_all_->signal_clicked().connect(sigc::mem_fun(*this, &ExifPanel::activateAllPressed));
+    activate_none_->signal_clicked().connect(sigc::mem_fun(*this, &ExifPanel::activateNonePressed));
 
     show_all ();
 }
@@ -147,24 +154,56 @@ ExifPanel::~ExifPanel ()
 
 void ExifPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
-    disableListener ();
+    disableListener();
 
     *changeList = pp->exif;
-    setImageData (idata);
+    initial_active_keys_.clear();
+    initial_active_keys_.insert(pp->metadata.exifKeys.begin(), pp->metadata.exifKeys.end());
+    cur_active_keys_ = initial_active_keys_;
+    setImageData(idata);
     refreshTags();
 
-    enableListener ();
+    enableListener();
 }
 
 
 void ExifPanel::write (ProcParams* pp, ParamsEdited* pedited)
 {
     pp->exif = *changeList;
+
+    std::unordered_set<std::string> prev;
+    bool all_active = (cur_active_keys_.size() == 1 && *(cur_active_keys_.begin()) == "ALL");
+
+    if (!all_active) {
+        prev = cur_active_keys_;
+    }
+
+    pp->metadata.exifKeys.clear();
+
+    bool none_active = true;
+
+    auto root = exifTreeModel->children();
+    for (auto &entry : root->children()) {
+        Glib::ustring key = entry[exifColumns.key];
+        prev.erase(key);
+        if (entry[exifColumns.active]) {
+            pp->metadata.exifKeys.push_back(key);
+            none_active = false;
+        } else {
+            all_active = false;
+        }
+    }
+
+    if (all_active) {
+        pp->metadata.exifKeys = { "ALL" };
+    } else if (!none_active) {
+        pp->metadata.exifKeys.insert(pp->metadata.exifKeys.end(), prev.begin(), prev.end());
+    }
+    std::sort(pp->metadata.exifKeys.begin(), pp->metadata.exifKeys.end());
 }
 
 void ExifPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
-
     *defChangeList = defParams->exif;
 }
 
@@ -195,6 +234,9 @@ void ExifPanel::addTag(const std::string &key, const Glib::ustring &label, const
     row[exifColumns.label] = escapeHtmlChars(label);
     row[exifColumns.value] = escapeHtmlChars(value);
 
+    bool active = (cur_active_keys_.size() == 1 && *(cur_active_keys_.begin()) == "ALL") || cur_active_keys_.find(key) != cur_active_keys_.end();
+    row[exifColumns.active] = active;
+
     if (edited) {
         row[exifColumns.icon] = editicon;
     } else if (editable) {
@@ -223,6 +265,17 @@ void ExifPanel::refreshTags()
         ed.insert(p.first);
     }
 
+    const auto to_label =
+        [](const Exiv2::Exifdatum &tag) -> Glib::ustring
+        {
+            auto s = tag.key();
+            auto pos = s.find('.');
+            if (pos != std::string::npos) {
+                s = s.substr(pos+1);
+            }
+            return s;
+        };
+
     try {
         rtengine::Exiv2Metadata meta(fn);
         meta.load();
@@ -239,10 +292,10 @@ void ExifPanel::refreshTags()
             const auto pos = exif.findKey(Exiv2::ExifKey(p.first));
             if (pos != exif.end() && pos->size()) {
                 const bool edited = changeList->find(pos->key()) != changeList->end();
-                addTag(pos->key(), pos->tagLabel(), pos->print(&exif), true, edited);
+                addTag(pos->key(), to_label(*pos), pos->print(&exif), true, edited);
             }
         }
-        std::map<std::string, std::string> keymap;
+        std::multimap<std::string, std::string> keymap;
         for (const auto& tag : exif) {
             const bool editable = ed.find(tag.key()) != ed.end();
             if (
@@ -254,16 +307,16 @@ void ExifPanel::refreshTags()
                     || tag.size() < 256
                 )
             ) {
-                std::string lbl = tag.tagLabel();
+                std::string lbl = to_label(tag);
                 for (auto &c : lbl) {
                     c = std::tolower(c);
                 }
-                keymap[lbl] = tag.key();
+                keymap.insert(std::make_pair(lbl, tag.key()));
             }
         }
         for (auto &p : keymap) {
             auto &tag = *(exif.findKey(Exiv2::ExifKey(p.second)));
-            addTag(tag.key(), tag.tagLabel(), tag.print(&exif), false, false);
+            addTag(tag.key(), to_label(tag), tag.print(&exif), false, false);
         }
     } catch (const std::exception& exc) {
         return;
@@ -303,7 +356,7 @@ void ExifPanel::resetIt(const Gtk::TreeModel::const_iterator& iter)
     changeList->erase(key);
 }
 
-void ExifPanel::resetPressed ()
+void ExifPanel::resetPressed()
 {
 
     std::vector<Gtk::TreeModel::Path> sel = exifTree->get_selection()->get_selected_rows();
@@ -320,8 +373,9 @@ void ExifPanel::resetAllPressed ()
 {
     setImageData(idata);
     *changeList = *defChangeList;
+    cur_active_keys_ = initial_active_keys_;
     refreshTags();
-    notifyListener ();
+    notifyListener();
 }
 
 void ExifPanel::addPressed ()
@@ -391,8 +445,9 @@ void ExifPanel::addPressed ()
         auto key = editableTags[tcombo->get_active_row_number()].first;
         const auto value = ventry->get_text();
         (*changeList)[key] = value;
+        cur_active_keys_.insert(key);
         refreshTags();
-        notifyListener ();
+        notifyListener();
     }
 
     delete dialog;
@@ -404,9 +459,52 @@ void ExifPanel::addPressed ()
     delete hb2;
 }
 
-void ExifPanel::notifyListener ()
+void ExifPanel::activateAllPressed()
+{
+    disableListener();
+    auto root = exifTreeModel->children();
+    for (auto &row : root->children()) {
+        row[exifColumns.active] = true;
+    }
+    enableListener();
+    notifyListener();
+}
+
+
+void ExifPanel::activateNonePressed()
+{
+    disableListener();
+    auto root = exifTreeModel->children();
+    for (auto &row : root->children()) {
+        row[exifColumns.active] = false;
+    }
+    enableListener();
+    notifyListener();
+}
+
+
+void ExifPanel::notifyListener()
 {
     if (listener) {
-        listener->panelChanged (EvExif, M ("HISTORY_CHANGED"));
+        listener->panelChanged(EvExif, M("HISTORY_CHANGED"));
     }
 }
+
+
+void ExifPanel::onKeyActiveToggled(const Glib::ustring &path)
+{
+    auto it = exifTreeModel->get_iter(path);
+    if (it) {
+        auto row = *it;
+        row[exifColumns.active] = !row[exifColumns.active];
+        notifyListener();
+    }
+}
+
+
+void ExifPanel::setKeyActive(Gtk::CellRenderer *renderer, const Gtk::TreeModel::iterator &it)
+{
+    auto row = *it;
+    static_cast<Gtk::CellRendererToggle *>(renderer)->set_active(row[exifColumns.active]);
+}
+

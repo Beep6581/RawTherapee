@@ -23,6 +23,7 @@
 #include <glibmm.h>
 #include <exiv2/exiv2.hpp>
 #include <memory>
+#include <unordered_set>
 #include "procparams.h"
 #include "cache.h"
 
@@ -55,6 +56,8 @@ public:
     void saveToImage(const Glib::ustring& path) const;
     void saveToXmp(const Glib::ustring& path) const;
 
+    void setExifKeys(const std::vector<std::string> *keys);
+
     static Glib::ustring xmpSidecarPath(const Glib::ustring& path);
     static Exiv2::XmpData getXmpSidecar(const Glib::ustring& path);
 
@@ -75,6 +78,8 @@ private:
     Exiv2::ExifData exif_data_;
     Exiv2::IptcData iptc_data_;
     Exiv2::XmpData xmp_data_;
+
+    std::shared_ptr<std::unordered_set<std::string>> exif_keys_;
 
     typedef std::pair<std::shared_ptr<Exiv2::Image>, Glib::TimeVal> CacheVal;
     typedef Cache<Glib::ustring, CacheVal> ImageCache;

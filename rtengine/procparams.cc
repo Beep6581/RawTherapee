@@ -178,6 +178,17 @@ void getFromKeyfile(
     }
 }
 
+void getFromKeyfile(
+    const Glib::KeyFile& keyfile,
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
+    std::vector<std::string>& value
+)
+{
+    auto tmpval = keyfile.get_string_list(group_name, key);
+    value.assign(tmpval.begin(), tmpval.end());
+}
+
 template<typename T>
 bool assignFromKeyfile(
     const Glib::KeyFile& keyfile,
@@ -304,6 +315,17 @@ void putToKeyfile(
 {
     const Glib::ArrayHandle<double> list = value;
     keyfile.set_double_list(group_name, key, list);
+}
+
+void putToKeyfile(
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
+    const std::vector<std::string>& value,
+    Glib::KeyFile& keyfile
+)
+{
+    const Glib::ArrayHandle<Glib::ustring> list = value;
+    keyfile.set_string_list(group_name, key, list);
 }
 
 void putToKeyfile(
@@ -5226,13 +5248,15 @@ Glib::ustring RAWParams::getFlatFieldBlurTypeString(FlatFieldBlurType type)
 
 
 MetaDataParams::MetaDataParams():
-    mode(MetaDataParams::TUNNEL)
+    mode(MetaDataParams::TUNNEL),
+    exifKeys{"ALL"}
 {
 }
 
 bool MetaDataParams::operator==(const MetaDataParams &other) const
 {
-    return mode == other.mode;
+    return mode == other.mode
+        && exifKeys == other.exifKeys;
 }
 
 bool MetaDataParams::operator!=(const MetaDataParams &other) const
@@ -6823,6 +6847,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // MetaData
         saveToKeyfile(!pedited || pedited->metadata.mode, "MetaData", "Mode", metadata.mode, keyFile);
+        saveToKeyfile(!pedited || pedited->metadata.exifKeys, "MetaData", "ExifKeys", metadata.exifKeys, keyFile);
 
 // Film negative
         saveToKeyfile(!pedited || pedited->filmNegative.enabled, "Film Negative", "Enabled", filmNegative.enabled, keyFile);
@@ -9350,6 +9375,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             if (mode >= int(MetaDataParams::TUNNEL) && mode <= int(MetaDataParams::STRIP)) {
                 metadata.mode = static_cast<MetaDataParams::Mode>(mode);
             }
+
+            assignFromKeyfile(keyFile, "MetaData", "ExifKeys", pedited, metadata.exifKeys, pedited->metadata.exifKeys);
         }
 
         if (keyFile.has_group("Exif")) {
