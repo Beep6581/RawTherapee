@@ -39,11 +39,11 @@ ExifPanel::ExifPanel() :
         {"Exif.Photo.UserComment", "User Comment"},
         {"Exif.Image.Artist", "Artist"},
         {"Exif.Image.Copyright", "Copyright"},
-        {"Exif.Image.ImageDescription", "Image Description"}
+        {"Exif.Image.ImageDescription", "Image Description"},
+        { "Exif.Photo.LensModel", "Lens Model" }
     }
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-
     exifTree = Gtk::manage (new Gtk::TreeView());
     scrolledWindow = Gtk::manage (new Gtk::ScrolledWindow());
 
@@ -54,13 +54,13 @@ ExifPanel::ExifPanel() :
     exifTree->get_selection()->set_mode(Gtk::SELECTION_MULTIPLE);
     scrolledWindow->set_shadow_type(Gtk::SHADOW_NONE);
     scrolledWindow->set_policy(Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);
-    scrolledWindow->property_window_placement().set_value (Gtk::CORNER_TOP_LEFT);
+    scrolledWindow->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
     scrolledWindow->add(*exifTree);
 
     exifTreeModel = Gtk::TreeStore::create(exifColumns);
     exifTree->set_model(exifTreeModel);
     exifTree->set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_NONE);
-    exifTree->set_show_expanders(false);
+    //exifTree->set_show_expanders(false);
     exifTree->set_tooltip_column(0);
 
     keepicon = RTImage::createPixbufFromFile ("tick-small.png");
@@ -93,6 +93,7 @@ ExifPanel::ExifPanel() :
     exifTree->append_column(exif_active_column_);
 
     exifTree->append_column(*viewcol);
+    exifTree->set_expander_column(*viewcol);
 
     Gtk::TreeView::Column *viewcolv = Gtk::manage(new Gtk::TreeView::Column ("Value"));
     Gtk::CellRendererText *render_txtv = Gtk::manage(new Gtk::CellRendererText());
@@ -107,7 +108,7 @@ ExifPanel::ExifPanel() :
 
     render_txtv->property_ypad() = 0;
 
-    exifTree->append_column (*viewcolv);
+    exifTree->append_column(*viewcolv);
 
     pack_start (*scrolledWindow);
 
@@ -183,14 +184,26 @@ void ExifPanel::write (ProcParams* pp, ParamsEdited* pedited)
     bool none_active = true;
 
     auto root = exifTreeModel->children();
-    for (auto &entry : root->children()) {
-        Glib::ustring key = entry[exifColumns.key];
-        prev.erase(key);
-        if (entry[exifColumns.active]) {
-            pp->metadata.exifKeys.push_back(key);
-            none_active = false;
-        } else {
-            all_active = false;
+    // for (auto &entry : root->children()) {
+    //     Glib::ustring key = entry[exifColumns.key];
+    //     prev.erase(key);
+    //     if (entry[exifColumns.active]) {
+    //         pp->metadata.exifKeys.push_back(key);
+    //         none_active = false;
+    //     } else {
+    //         all_active = false;
+    //     }
+    // }
+    for (auto &group : root->children()) {
+        for (auto &entry : group.children()) {
+            std::string key = entry[exifColumns.key];
+            prev.erase(key);
+            if (entry[exifColumns.active]) {
+                pp->metadata.exifKeys.push_back(key);
+                none_active = false;
+            } else {
+                all_active = false;
+            }
         }
     }
 
@@ -209,11 +222,10 @@ void ExifPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
 
 void ExifPanel::setImageData (const FramesMetaData* id)
 {
-
     idata = id;
 }
 
-void ExifPanel::addTag(const std::string &key, const Glib::ustring &label, const Glib::ustring &value, bool editable, bool edited)
+void ExifPanel::addTag(const std::string &key, const std::pair<Glib::ustring, Glib::ustring> &label, const Glib::ustring &value, bool editable, bool edited)
 {
 
     // TODO Re-fix #5923 if necessary
@@ -221,18 +233,47 @@ void ExifPanel::addTag(const std::string &key, const Glib::ustring &label, const
     //    value = "???";
     //}
 
-    auto root = exifTreeModel->children();
+//    auto root = exifTreeModel->children();
+
+    const auto getgroup =
+        [&]() -> Gtk::TreeNodeChildren
+        {
+            auto root = exifTreeModel->children();
+
+            for (auto it = root.rbegin(), end = root.rend(); it != end; ++it) {
+                auto row = *it;
+                std::string key = row[exifColumns.key];
+                if (row[exifColumns.is_group] && key == label.first) {
+                    return it->children();
+                }
+            }
+            auto it = exifTreeModel->append(root);
+            auto row = *it;
+
+            row[exifColumns.editable] = false;
+            row[exifColumns.edited] = false;
+            row[exifColumns.key] = label.first;
+            row[exifColumns.label] = "<i>" + label.first + "</i>";
+            row[exifColumns.value_nopango] = "";
+            row[exifColumns.value] = "";
+            row[exifColumns.is_group] = true;
+
+            return it->children();
+        };
+
+    auto root = getgroup();
 
     Gtk::TreeModel::Row row = *(exifTreeModel->append(root));
     row[exifColumns.editable] = editable;
     row[exifColumns.edited] = edited;
     row[exifColumns.key] = key;
-    row[exifColumns.label] = label;
+    row[exifColumns.is_group] = false;
+    //row[exifColumns.label] = label.second;
     row[exifColumns.value_nopango] = value;
-    row[exifColumns.value] = value;
+    //row[exifColumns.value] = value;
 
-    row[exifColumns.label] = escapeHtmlChars(label);
-    row[exifColumns.value] = escapeHtmlChars(value);
+    row[exifColumns.label] = escapeHtmlChars(label.second);
+    row[exifColumns.value] = value;//escapeHtmlChars(value);
 
     bool active = (cur_active_keys_.size() == 1 && *(cur_active_keys_.begin()) == "ALL") || cur_active_keys_.find(key) != cur_active_keys_.end();
     row[exifColumns.active] = active;
@@ -266,20 +307,37 @@ void ExifPanel::refreshTags()
     }
 
     const auto to_label =
-        [](const Exiv2::Exifdatum &tag) -> Glib::ustring
+        [](const Exiv2::Exifdatum &tag) -> std::pair<Glib::ustring, Glib::ustring>
         {
             auto s = tag.key();
             auto pos = s.find('.');
             if (pos != std::string::npos) {
                 s = s.substr(pos+1);
             }
-            return s;
+            Glib::ustring g = "";
+            pos = s.find('.');
+            if (pos != std::string::npos) {
+                g = s.substr(0, pos);
+                s = s.substr(pos+1);
+            }
+            return std::make_pair(g, Glib::ustring(s));
         };
 
     try {
         rtengine::Exiv2Metadata meta(fn);
         meta.load();
         auto& exif = meta.exifData();
+
+        const auto to_value =
+            [&](Exiv2::Exifdatum &tag) -> Glib::ustring
+            {
+                if (!tag.tagLabel().empty() && tag.typeId() != Exiv2::undefined &&
+                    (tag.typeId() == Exiv2::asciiString || tag.size() < 256)) {
+                    return escapeHtmlChars(tag.print(&exif));
+                }
+                return "<i>(Not shown)</i>";
+            };
+
 
         for (const auto& p : *changeList) {
             try {
@@ -295,28 +353,16 @@ void ExifPanel::refreshTags()
                 addTag(pos->key(), to_label(*pos), pos->print(&exif), true, edited);
             }
         }
-        std::multimap<std::string, std::string> keymap;
+        std::set<std::string> keyset;
         for (const auto& tag : exif) {
             const bool editable = ed.find(tag.key()) != ed.end();
-            if (
-                !editable
-                && !tag.tagLabel().empty()
-                && tag.typeId() != Exiv2::undefined
-                && (
-                    tag.typeId() == Exiv2::asciiString
-                    || tag.size() < 256
-                )
-            ) {
-                std::string lbl = to_label(tag);
-                for (auto &c : lbl) {
-                    c = std::tolower(c);
-                }
-                keymap.insert(std::make_pair(lbl, tag.key()));
+            if (!editable) {
+                keyset.insert(tag.key());
             }
         }
-        for (auto &p : keymap) {
-            auto &tag = *(exif.findKey(Exiv2::ExifKey(p.second)));
-            addTag(tag.key(), to_label(tag), tag.print(&exif), false, false);
+        for (auto &k : keyset) {
+            auto &tag = *(exif.findKey(Exiv2::ExifKey(k)));
+            addTag(tag.key(), to_label(tag), to_value(tag), false, false);
         }
     } catch (const std::exception& exc) {
         return;
@@ -325,6 +371,8 @@ void ExifPanel::refreshTags()
     for (const auto& p : sel) {
         exifTree->get_selection()->select(p);
     }
+
+    exifTree->expand_all();
 }
 
 void ExifPanel::exifSelectionChanged ()
@@ -463,8 +511,11 @@ void ExifPanel::activateAllPressed()
 {
     disableListener();
     auto root = exifTreeModel->children();
-    for (auto &row : root->children()) {
-        row[exifColumns.active] = true;
+    for (auto &group : root->children()) {
+        group[exifColumns.active] = true;
+        for (auto &row : group.children()) {
+            row[exifColumns.active] = true;
+        }
     }
     enableListener();
     notifyListener();
@@ -475,8 +526,11 @@ void ExifPanel::activateNonePressed()
 {
     disableListener();
     auto root = exifTreeModel->children();
-    for (auto &row : root->children()) {
-        row[exifColumns.active] = false;
+    for (auto &group : root->children()) {
+        group[exifColumns.active] = false;
+        for (auto &row : group.children()) {
+            row[exifColumns.active] = false;
+        }
     }
     enableListener();
     notifyListener();
@@ -496,7 +550,13 @@ void ExifPanel::onKeyActiveToggled(const Glib::ustring &path)
     auto it = exifTreeModel->get_iter(path);
     if (it) {
         auto row = *it;
-        row[exifColumns.active] = !row[exifColumns.active];
+        bool b = !row[exifColumns.active];
+        row[exifColumns.active] = b;
+        if (row[exifColumns.is_group]) {
+            for (auto &c : row.children()) {
+                c[exifColumns.active] = b;
+            }
+        }
         notifyListener();
     }
 }
