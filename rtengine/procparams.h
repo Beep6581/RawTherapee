@@ -1719,25 +1719,6 @@ struct ColorManagementParams {
 };
 
 /**
-  * Parameters for metadata handling
-  */
-struct MetaDataParams {
-    enum Mode {
-        TUNNEL,
-        EDIT,
-        STRIP
-    };
-    Mode mode;
-    std::vector<std::string> exifKeys;
-
-    MetaDataParams();
-
-    bool operator ==(const MetaDataParams &other) const;
-    bool operator !=(const MetaDataParams &other) const;
-};
-
-
-/**
   * Minimal wrapper allowing forward declaration for representing a key/value for the exif metadata information
   */
 class ExifPairs final
@@ -1840,6 +1821,29 @@ public:
 private:
     std::map<Glib::ustring, std::vector<Glib::ustring>> pairs;
 };
+
+/**
+  * Parameters for metadata handling
+  */
+struct MetaDataParams {
+    enum Mode {
+        TUNNEL,
+        EDIT,
+        STRIP
+    };
+    Mode mode;
+    std::vector<std::string> exifKeys;
+    ExifPairs exif;
+    IPTCPairs iptc;
+
+    MetaDataParams();
+
+    bool operator ==(const MetaDataParams &other) const;
+    bool operator !=(const MetaDataParams &other) const;
+
+    static std::vector<std::string> basicExifKeys;
+};
+
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
@@ -2355,8 +2359,8 @@ public:
     int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
 
     MetaDataParams          metadata;        ///< Metadata parameters
-    ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
-    IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
+    // ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
+    // IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
 
     /**
       * The constructor only sets the hand-wired defaults.

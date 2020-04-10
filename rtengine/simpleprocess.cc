@@ -1737,9 +1737,9 @@ private:
             readyImg->setMetadata(std::move(info));
             break;
         case MetaDataParams::EDIT:
-            info.setExif(params.exif);
-            info.setIptc(params.iptc);
-            if (!(params.metadata.exifKeys.size() == 1 && params.metadata.exifKeys[0] == "ALL")) {
+            info.setExif(params.metadata.exif);
+            info.setIptc(params.metadata.iptc);
+            if (!(params.metadata.exifKeys.size() == 1 && params.metadata.exifKeys[0] == "*")) {
                 info.setExifKeys(&(params.metadata.exifKeys));
             }
             readyImg->setMetadata(std::move(info));

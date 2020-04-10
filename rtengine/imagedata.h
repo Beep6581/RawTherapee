@@ -23,6 +23,7 @@
 #include <string>
 
 #include "imageio.h"
+#include "metadata.h"
 
 namespace Glib
 {
@@ -83,6 +84,8 @@ public:
     std::string getOrientation() const override;
     Glib::ustring getFileName() const override;
     int getRating() const override;
+
+    void fillBasicTags(Exiv2::ExifData &exif) const;
 };
 
 }

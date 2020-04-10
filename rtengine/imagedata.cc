@@ -699,3 +699,36 @@ double FramesMetaData::apertureFromString(std::string s)
 
     return std::atof(s.c_str());
 }
+
+
+namespace {
+
+template<class T>
+void set_exif(Exiv2::ExifData &exif, const std::string &key, T val)
+{
+    try {
+        exif[key] = val;
+    } catch (std::exception &exc) {}
+}
+
+} // namespace
+
+void FramesData::fillBasicTags(Exiv2::ExifData &exif) const
+{
+    if (!hasExif()) {
+        return;
+    }
+    set_exif(exif, "Exif.Photo.ISOSpeedRatings", getISOSpeed());
+    set_exif(exif, "Exif.Photo.FNumber", Exiv2::DoubleValue(getFNumber()));
+    //set_exif(exif, "Exif.Photo.ExposureTime", Exiv2::DoubleValue(getShutterSpeed()));
+    set_exif(exif, "Exif.Photo.ExposureTime", shutterToString(getShutterSpeed()));
+    set_exif(exif, "Exif.Photo.FocalLength", Exiv2::DoubleValue(getFocalLen()));
+    set_exif(exif, "Exif.Photo.ExposureBiasValue", Exiv2::DoubleValue(getExpComp()));
+    set_exif(exif, "Exif.Image.Make", getMake());
+    set_exif(exif, "Exif.Image.Model", getModel());
+    set_exif(exif, "Exif.Photo.LensModel", getLens());
+    char buf[256];
+    auto t = getDateTime();
+    strftime(buf, 256, "%Y:%m:%d %H:%M:%S", &t);
+    set_exif(exif, "Exif.Photo.DateTimeOriginal", buf);
+}

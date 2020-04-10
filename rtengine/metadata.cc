@@ -26,6 +26,7 @@
 
 #include "metadata.h"
 #include "settings.h"
+#include "imagedata.h"
 #include "../rtgui/version.h"
 #include "../rtgui/pathutils.h"
 
@@ -309,6 +310,16 @@ void Exiv2Metadata::remove_unwanted(Exiv2::ExifData &dst) const
     static const std::vector<std::string> badpatterns = {
         "Exif.SubImage"
     };
+
+    if (exif_keys_ && !src_.empty()) {
+        try {
+            FramesData fd(src_);
+            fd.fillBasicTags(dst);
+        } catch (std::exception &exc) {
+            std::cout << "Error reading metadata from " << src_
+                      << std::endl;
+        }
+    }
     
     for (auto it = dst.begin(); it != dst.end(); ) {
         if (badtags.find(it->key()) != badtags.end()) {

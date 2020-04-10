@@ -141,7 +141,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (detailsPanel, dehaze);
     addfavoritePanel (advancedPanel, wavelet);
     addfavoritePanel(locallabPanel, locallab);
-    
+
     addfavoritePanel (transformPanel, crop);
     addfavoritePanel (transformPanel, resize);
     addPanel (resize->getPackBox(), prsharpening, 2);
@@ -187,7 +187,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     transformPanelSW   = Gtk::manage (new MyScrolledWindow ());
     rawPanelSW         = Gtk::manage (new MyScrolledWindow ());
     advancedPanelSW    = Gtk::manage (new MyScrolledWindow ());
-    locallabPanelSW     = Gtk::manage(new MyScrolledWindow());    
+    locallabPanelSW     = Gtk::manage(new MyScrolledWindow());
 
     // load panel endings
     for (int i = 0; i < 8; i++) {
@@ -585,8 +585,8 @@ void ToolPanelCoordinator::profileChange(
 
     // Reset IPTC values when switching procparams from the History
     if (event == rtengine::EvHistoryBrowsed) {
-        mergedParams->iptc.clear();
-        mergedParams->exif.clear();
+        mergedParams->metadata.iptc.clear();
+        mergedParams->metadata.exif.clear();
     }
 
     // And apply the partial profile nparams to mergedParams
