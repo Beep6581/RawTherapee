@@ -321,6 +321,8 @@ FramesData::FramesData(const Glib::ustring &fname) :
 
         if (find_exif_tag("Exif.Image.ExposureBiasValue")) {
             expcomp = pos->toFloat();
+        } else if (find_exif_tag("Exif.Photo.ExposureBiasValue")) {
+            expcomp = pos->toFloat();
         }
 
         if (find_exif_tag("Exif.Image.Rating")) {
