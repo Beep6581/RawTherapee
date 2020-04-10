@@ -907,10 +907,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         //init for edge and denoise
                         float vari[4];
 
-                        vari[0] = 8.f * SQR((cp.lev0n / 125.f) * (1.f + cp.lev0n / 25.f));
-                        vari[1] = 8.f * SQR((cp.lev1n / 125.f) * (1.f + cp.lev1n / 25.f));
-                        vari[2] = 8.f * SQR((cp.lev2n / 125.f) * (1.f + cp.lev2n / 25.f));
-                        vari[3] = 8.f * SQR((cp.lev3n / 125.f) * (1.f + cp.lev3n / 25.f));
+                        vari[0] = 0.8f * SQR((cp.lev0n / 125.f) * (1.f + cp.lev0n / 25.f));
+                        vari[1] = 0.8f * SQR((cp.lev1n / 125.f) * (1.f + cp.lev1n / 25.f));
+                        vari[2] = 0.8f * SQR((cp.lev2n / 125.f) * (1.f + cp.lev2n / 25.f));
+                        vari[3] = 0.8f * SQR((cp.lev3n / 125.f) * (1.f + cp.lev3n / 25.f));
                         float kr3 = 1.f;
 
                         if (cp.lev3n < 10.f) {
@@ -925,10 +925,13 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                         if ((cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f) && cp.noiseena) {
                             int edge = 4;
-                            vari[0] = rtengine::max(0.0001f, vari[0]);
-                            vari[1] = rtengine::max(0.0001f, vari[1]);
-                            vari[2] = rtengine::max(0.0001f, vari[2]);
-                            vari[3] = rtengine::max(0.0001f, kr3 * vari[3]);
+                            vari[0] = rtengine::max(0.000001f, vari[0]);
+                            vari[1] = rtengine::max(0.000001f, vari[1]);
+                            vari[2] = rtengine::max(0.000001f, vari[2]);
+                            vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
+                            if (settings->verbose) {
+                                printf("LUM var0=%f var1=%f var2=%f var3=%f\n",vari[0], vari[1], vari[2], vari[3]);
+                            }
                             //     float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
                             int GWL = labco->W;
                             int GHL = labco->H;
@@ -1023,15 +1026,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
 
                         if (noisecfr < 0.f) {
-                            noisecfr = 0.0001f;
+                            noisecfr = 0.00001f;
                         }
 
                         if (noiseccr < 0.f) {
-                            noiseccr = 0.0001f;
+                            noiseccr = 0.00001f;
                         }
 
                         if (noisecfb < 0.f) {
-                            noisecfb = 0.0001f;
+                            noisecfb = 0.00001f;
                         }
 
                         if (noiseccb < 0.f) {
@@ -1062,7 +1065,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         float k3 = 0.f;
 
                         if (cp.chromfi < 0.2f) {
-                            k1 = 0.f;
+                            k1 = 0.05f;
                             k2 = 0.f;
                             k3 = 0.f;
                         } else if (cp.chromfi < 0.3f) {
@@ -1116,7 +1119,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             k3 = 1.f;
                         }
 
-                        float minic = 0.0001f;
+                        float minic = 0.000001f;
                         variC[0] = max(minic, variC[0]);
                         variC[1] = max(minic, k1 * variC[1]);
                         variC[2] = max(minic, k2 * variC[2]);
@@ -1131,15 +1134,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         float k5 = 0.f;
                         float k6 = 0.f;
 
-                        if (cp.chromco == 0.01f) {
-                            k4 = 0.f;
-                            k5 = 0.0f;
-                        } else if (cp.chromco < 0.2f) {
+                        if (cp.chromco < 0.2f) {
                             k4 = 0.1f;
-                            k5 = 0.0f;
+                            k5 = 0.02f;
                         } else if (cp.chromco < 0.5f) {
                             k4 = 0.15f;
-                            k5 = 0.0f;
+                            k5 = 0.05f;
                         } else if (cp.chromco < 1.f) {
                             k4 = 0.15f;
                             k5 = 0.1f;
@@ -1157,10 +1157,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             k5 = 1.f;
                         }
 
-                        variC[4] = max(0.0001f, k4 * variC[4]);
-                        variC[5] = max(0.0001f, k5 * variC[5]);
-                        variCb[4] = max(0.0001f, k4 * variCb[4]);
-                        variCb[5] = max(0.0001f, k5 * variCb[5]);
+                        variC[4] = max(0.000001f, k4 * variC[4]);
+                        variC[5] = max(0.000001f, k5 * variC[5]);
+                        variCb[4] = max(0.000001f, k4 * variCb[4]);
+                        variCb[5] = max(0.000001f, k5 * variCb[5]);
 
                         if (cp.chromco < 4.f) {
                             k6 = 0.f;
@@ -1172,8 +1172,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             k6 = 1.f;
                         }
 
-                        variC[6] = max(0.0001f, k6 * variC[6]);
-                        variCb[6] = max(0.0001f, k6 * variCb[6]);
+                        variC[6] = max(0.00001f, k6 * variC[6]);
+                        variCb[6] = max(0.00001f, k6 * variCb[6]);
+                        if (settings->verbose) {
+                            printf("CHRO var0=%f va1=%f va2=%f va3=%f va4=%f val5=%f va6=%f\n", variC[0], variC[1], variC[2], variC[3],variC[4],variC[5], variC[6]);
+                        }
                         /*
                                                 for (int y = 0; y < 7; y++) {
                                                     printf("y=%i madL=%f varia=%f variab=%f\n", y, madL[y][1], variC[y], variCb[y]);
