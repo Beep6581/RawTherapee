@@ -721,11 +721,10 @@ void FramesData::fillBasicTags(Exiv2::ExifData &exif) const
         return;
     }
     set_exif(exif, "Exif.Photo.ISOSpeedRatings", getISOSpeed());
-    set_exif(exif, "Exif.Photo.FNumber", Exiv2::DoubleValue(getFNumber()));
-    //set_exif(exif, "Exif.Photo.ExposureTime", Exiv2::DoubleValue(getShutterSpeed()));
+    set_exif(exif, "Exif.Photo.FNumber", apertureToString(getFNumber()));
     set_exif(exif, "Exif.Photo.ExposureTime", shutterToString(getShutterSpeed()));
     set_exif(exif, "Exif.Photo.FocalLength", Exiv2::DoubleValue(getFocalLen()));
-    set_exif(exif, "Exif.Photo.ExposureBiasValue", Exiv2::DoubleValue(getExpComp()));
+    set_exif(exif, "Exif.Photo.ExposureBiasValue", expcompToString(getExpComp(), false));
     set_exif(exif, "Exif.Image.Make", getMake());
     set_exif(exif, "Exif.Image.Model", getModel());
     set_exif(exif, "Exif.Photo.LensModel", getLens());
