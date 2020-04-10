@@ -293,9 +293,12 @@ void ExifPanel::refreshTags()
             pos = s.find('.');
             if (pos != std::string::npos) {
                 g = s.substr(0, pos);
-                // s = s.substr(pos+1);
+                s = s.substr(pos+1);
             }
-            s = tag.tagLabel();
+            auto l = tag.tagLabel();
+            if (!l.empty()) {
+                s = l;
+            }
             return std::make_pair(g, Glib::ustring(s));
         };
 
@@ -311,7 +314,7 @@ void ExifPanel::refreshTags()
                     (tag.typeId() == Exiv2::asciiString || tag.size() < 256)) {
                     return escapeHtmlChars(tag.print(&exif));
                 }
-                return "<i>(Not shown)</i>";
+                return "<i>(" + M("EXIFPANEL_VALUE_NOT_SHOWN") + ")</i>";
             };
 
         if (const rtengine::FramesData *fd = dynamic_cast<const rtengine::FramesData *>(idata)) {
@@ -338,7 +341,24 @@ void ExifPanel::refreshTags()
             }
             addTag(p.first, lbl, value, true, edited);
         }
-        std::set<std::string> keyset;
+        struct KeyLt {
+            bool operator()(const std::string &a, const std::string &b) const
+            {
+                auto p1 = a.find_last_of('.');
+                auto p2 = b.find_last_of('.');
+                const char *sa = a.c_str();
+                const char *sb = b.c_str();
+                if (p1 != std::string::npos && p2 != std::string::npos) {
+                    bool hex_a = strncmp(sa+p1+1, "0x", 2) == 0;
+                    bool hex_b = strncmp(sb+p2+1, "0x", 2) == 0;
+                    if (hex_a != hex_b) {
+                        return !hex_a;
+                    }
+                }
+                return strcmp(sa, sb) < 0;
+            }
+        };
+        std::set<std::string, KeyLt> keyset;
         for (const auto& tag : exif) {
             const bool editable = ed.find(tag.key()) != ed.end();
             if (!editable) {
