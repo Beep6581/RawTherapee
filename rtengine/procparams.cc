@@ -5335,12 +5335,14 @@ std::vector<std::string> MetaDataParams::basicExifKeys = {
 
 
 MetaDataParams::MetaDataParams():
-    mode(MetaDataParams::TUNNEL),
-    exifKeys{"*"},
+    mode(MetaDataParams::EDIT),
+    exifKeys{},
     exif{},
     iptc{}
 {
+    exifKeys = basicExifKeys;
 }
+
 
 bool MetaDataParams::operator==(const MetaDataParams &other) const
 {
@@ -9409,7 +9411,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("MetaData")) {
-            int mode = int(MetaDataParams::TUNNEL);
+            int mode = int(MetaDataParams::EDIT);
             assignFromKeyfile(keyFile, "MetaData", "Mode", pedited, mode, pedited->metadata.mode);
 
             if (mode >= int(MetaDataParams::TUNNEL) && mode <= int(MetaDataParams::STRIP)) {

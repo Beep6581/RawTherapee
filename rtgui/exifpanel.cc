@@ -73,14 +73,6 @@ ExifPanel::ExifPanel() :
 
     exifTree->append_column(exif_active_column_);
 
-    // {
-    //     Gtk::TreeView::Column *c = Gtk::manage(new Gtk::TreeView::Column(""));
-    //     Gtk::CellRendererPixbuf *pb = Gtk::manage(new Gtk::CellRendererPixbuf());
-    //     c->pack_start(*pb, false);
-    //     c->add_attribute(*pb, "pixbuf", exifColumns.expander_icon);
-    //     exifTree->append_column(*c);
-    // }
-
     Gtk::TreeView::Column *viewcol = Gtk::manage (new Gtk::TreeView::Column ("Field Name"));
     Gtk::CellRendererPixbuf* render_pb = Gtk::manage (new Gtk::CellRendererPixbuf ());
     Gtk::CellRendererText *render_txt = Gtk::manage (new Gtk::CellRendererText());
@@ -310,7 +302,7 @@ void ExifPanel::refreshTags()
         const auto to_value =
             [&](Exiv2::Exifdatum &tag) -> Glib::ustring
             {
-                if (!tag.tagLabel().empty() && tag.typeId() != Exiv2::undefined &&
+                if (!tag.tagLabel().empty() && //tag.typeId() != Exiv2::undefined &&
                     (tag.typeId() == Exiv2::asciiString || tag.size() < 256)) {
                     return escapeHtmlChars(tag.print(&exif));
                 }
@@ -342,6 +334,13 @@ void ExifPanel::refreshTags()
             addTag(p.first, lbl, value, true, edited);
         }
         struct KeyLt {
+            KeyLt():
+                order_{
+                    {"Exif.GPSInfo", 0},
+                    {"Exif.Photo", 1},
+                    {"Exif.Image", 2}
+                }
+            {}
             bool operator()(const std::string &a, const std::string &b) const
             {
                 auto p1 = a.find_last_of('.');
@@ -355,8 +354,28 @@ void ExifPanel::refreshTags()
                         return !hex_a;
                     }
                 }
+                if (p1 != p2 || strncmp(sa, sb, p1) != 0) {
+                    std::string ga(sa, sa+p1);
+                    std::string gb(sb, sb+p2);
+                    int ia = getorder(ga);
+                    int ib = getorder(gb);
+                    if (ia != ib) {
+                        return ia < ib;
+                    }
+                }
                 return strcmp(sa, sb) < 0;
             }
+
+            int getorder(const std::string &key) const
+            {
+                auto it = order_.find(key);
+                if (it == order_.end()) {
+                    return 1000;
+                }
+                return it->second;
+            }
+
+            std::unordered_map<std::string, int> order_;
         };
         std::set<std::string, KeyLt> keyset;
         for (const auto& tag : exif) {
@@ -565,11 +584,6 @@ void ExifPanel::onKeyActiveToggled(const Glib::ustring &path)
             for (auto &c : row.children()) {
                 c[exifColumns.active] = b;
             }
-        } else if (!b) {
-            it = row.parent();
-            if (it) {
-                (*it)[exifColumns.active] = b;
-            }
         }
         notifyListener();
     }
@@ -579,7 +593,26 @@ void ExifPanel::onKeyActiveToggled(const Glib::ustring &path)
 void ExifPanel::setKeyActive(Gtk::CellRenderer *renderer, const Gtk::TreeModel::iterator &it)
 {
     auto row = *it;
-    static_cast<Gtk::CellRendererToggle *>(renderer)->set_active(row[exifColumns.active]);
+    Gtk::CellRendererToggle *toggle = static_cast<Gtk::CellRendererToggle *>(renderer);
+    if (row[exifColumns.is_group]) {
+        bool all_true = true, all_false = true;
+        for (auto &c : row.children()) {
+            if (c[exifColumns.active]) {
+                all_false = false;
+            } else {
+                all_true = false;
+            }
+        }
+        if (!all_true && !all_false) {
+            toggle->property_inconsistent() = true;
+        } else {
+            toggle->property_inconsistent() = false;
+            toggle->set_active(all_true);
+        }
+    } else {
+        toggle->property_inconsistent() = false;
+        toggle->set_active(row[exifColumns.active]);
+    }
 }
 
 
