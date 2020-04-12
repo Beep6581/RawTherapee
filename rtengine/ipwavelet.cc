@@ -2201,22 +2201,27 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
 //Blur luma
     if (cp.blurres != 0.f  && cp.resena) {
-        float rad = 0.7f * cp.blurres / skip;
-        float * bef = new float[W_L * H_L];
-        float * aft = new float[W_L * H_L];
+            int minWL = min(W_L, H_L);
+            float k = 0.5f;
+            //printf("skip=%i WL=%i HL=%i min=%i\n", skip, W_L, H_L, minWL);
+            if(minWL > 140) {//disabled if too low windows
+                float rad = k * cp.blurres / skip;
+                float * bef = new float[W_L * H_L];
+                float * aft = new float[W_L * H_L];
+    
+                for (int i = 0; i < H_L * W_L; i++) {
+                    bef[i] = WavCoeffs_L0[i];
+                }
 
-        for (int i = 0; i < H_L * W_L; i++) {
-            bef[i] = WavCoeffs_L0[i];
-        }
+                boxblur(bef, aft, rad, W_L, H_L, false);
 
-        boxblur(bef, aft, rad, W_L, H_L, false);
+                for (int i = 0; i < H_L * W_L; i++) {
+                    WavCoeffs_L0[i] = aft[i];
+                }
 
-        for (int i = 0; i < H_L * W_L; i++) {
-            WavCoeffs_L0[i] = aft[i];
-        }
-
-        delete[] bef;
-        delete[] aft;
+                delete[] bef;
+                delete[] aft;
+            }
     }
 
 //
@@ -2670,22 +2675,27 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 
 //Blur chroma
         if (cp.blurcres != 0.f  && cp.resena) {
-            float rad = 0.7f * cp.blurcres / skip;
-            float * bef = new float[W_L * H_L];
-            float * aft = new float[W_L * H_L];
+            int minWL = min(W_L, H_L);
+            float k = 0.5f;
+            //printf("skip=%i WL=%i HL=%i min=%i\n", skip, W_L, H_L, minWL);
+            if(minWL > 140) {//disabled if too low windows
+                float rad = k * cp.blurcres / skip;
+                float * bef = new float[W_L * H_L];
+                float * aft = new float[W_L * H_L];
 
-            for (int i = 0; i < H_L * W_L; i++) {
-                bef[i] = WavCoeffs_ab0[i];
+                for (int i = 0; i < H_L * W_L; i++) {
+                    bef[i] = WavCoeffs_ab0[i];
+                }
+
+                boxblur(bef, aft, rad, W_L, H_L, false);
+
+                for (int i = 0; i < H_L * W_L; i++) {
+                    WavCoeffs_ab0[i] = aft[i];
+                }
+
+                delete[] bef;
+                delete[] aft;
             }
-
-            boxblur(bef, aft, rad, W_L, H_L, false);
-
-            for (int i = 0; i < H_L * W_L; i++) {
-                WavCoeffs_ab0[i] = aft[i];
-            }
-
-            delete[] bef;
-            delete[] aft;
         }
 
 

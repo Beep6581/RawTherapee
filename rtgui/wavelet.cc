@@ -800,6 +800,8 @@ Wavelet::Wavelet() :
     blurBox->pack_start(*resblur);
     blurBox->pack_start(*resblurc);
     blurFrame->add(*blurBox);
+    resblur->set_tooltip_text(M("TP_WAVELET_RESBLUR_TOOLTIP"));
+    resblurc->set_tooltip_text(M("TP_WAVELET_RESBLUR_TOOLTIP"));
 
     chromaFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const chromaBox = Gtk::manage(new ToolParamBlock());
