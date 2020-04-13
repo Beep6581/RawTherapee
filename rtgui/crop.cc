@@ -561,6 +561,11 @@ void Crop::doresetCrop ()
     yDirty = true;
     wDirty = true;
     hDirty = true;
+    
+    // Reset ratio, ratio lock and orientation as well
+    ratio->set_active(0);
+    orientation->set_active(2);
+    fixr->set_active(true); 
 
     int X = 0;
     int Y = 0;
