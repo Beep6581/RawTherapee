@@ -475,6 +475,7 @@ void ParamsEdited::set(bool v)
     wavelet.strength = v;
     wavelet.balance = v;
     wavelet.iter = v;
+    wavelet.sigmafin = v;
     wavelet.median = v;
     wavelet.medianlev = v;
     wavelet.linkedg = v;
@@ -1085,6 +1086,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.strength = wavelet.strength && p.wavelet.strength == other.wavelet.strength;
         wavelet.balance = wavelet.balance && p.wavelet.balance == other.wavelet.balance;
         wavelet.iter = wavelet.iter && p.wavelet.iter == other.wavelet.iter;
+        wavelet.sigmafin = wavelet.sigmafin && p.wavelet.sigmafin == other.wavelet.sigmafin;
         wavelet.median = wavelet.median && p.wavelet.median == other.wavelet.median;
         wavelet.medianlev = wavelet.medianlev && p.wavelet.medianlev == other.wavelet.medianlev;
         wavelet.linkedg = wavelet.linkedg && p.wavelet.linkedg == other.wavelet.linkedg;
@@ -2891,6 +2893,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.balance) {
         toEdit.wavelet.balance = mods.wavelet.balance;
+    }
+
+    if (wavelet.sigmafin) {
+        toEdit.wavelet.sigmafin = mods.wavelet.sigmafin;
     }
 
     if (wavelet.iter) {

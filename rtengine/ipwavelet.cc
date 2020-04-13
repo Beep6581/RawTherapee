@@ -113,6 +113,7 @@ struct cont_params {
     int TMmeth;
     float tmstrength;
     float balan;
+    float sigmafin;
     int ite;
     int contmet;
     bool opaW;
@@ -191,6 +192,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.ite = params->wavelet.iter;
     cp.tonemap = params->wavelet.tmrs != 0;
     cp.bam = false;
+    cp.sigmafin = params->wavelet.sigmafin;
 
     if (params->wavelet.TMmethod == "cont") {
         cp.contmet = 1;
@@ -2955,11 +2957,11 @@ void ImProcFunctions::finalContAllL(float ** WavCoeffs_L, float * WavCoeffs_L0, 
     if (cp.diagcurv  && cp.finena && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
         float insigma = 0.666f; //SD
         float logmax = log(MaxP[level]); //log Max
-        float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+        float rapX = (mean[level] + cp.sigmafin * sigma[level]) / MaxP[level]; //rapport between sD / max
         float inx = log(insigma);
         float iny = log(rapX);
         float rap = inx / iny; //koef
-        float asig = 0.166f / sigma[level];
+        float asig = 0.166f / (sigma[level] * cp.sigmafin);
         float bsig = 0.5f - asig * mean[level];
         float amean = 0.5f / mean[level];
 
@@ -2970,7 +2972,7 @@ void ImProcFunctions::finalContAllL(float ** WavCoeffs_L, float * WavCoeffs_L0, 
         for (int i = 0; i < W_L * H_L; i++) {
             float absciss;
 
-            if (std::fabs(WavCoeffs_L[dir][i]) >= (mean[level] + sigma[level])) { //for max
+            if (std::fabs(WavCoeffs_L[dir][i]) >= (mean[level] + cp.sigmafin * sigma[level])) { //for max
                 float valcour = xlogf(std::fabs(WavCoeffs_L[dir][i]));
                 float valc = valcour - logmax;
                 float vald = valc * rap;

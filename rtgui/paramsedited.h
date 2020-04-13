@@ -499,6 +499,7 @@ struct WaveletParamsEdited {
     bool strength;
     bool balance;
     bool iter;
+    bool sigmafin;
     bool median;
     bool medianlev;
     bool linkedg;

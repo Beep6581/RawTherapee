@@ -816,6 +816,7 @@ HISTORY_MSG_WAVBL;Blur levels
 HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_EDGEFFECT;Edge Damper
+HISTORY_MSG_SIGMAFIN;Final contrast Damper
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2227,6 +2228,7 @@ TP_WAVELET_EDSL;Threshold Sliders
 TP_WAVELET_EDTYPE;Local contrast method
 TP_WAVELET_EDVAL;Strength
 TP_WAVELET_FINAL;Final Touchup
+TP_WAVELET_FINCFRAME;Final Local Contrast
 TP_WAVELET_FINEST;Finest
 TP_WAVELET_HIGHLIGHT;Highlight luminance range
 TP_WAVELET_HS1;Whole luminance range
@@ -2273,7 +2275,7 @@ TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight
 TP_WAVELET_OLDSH;Algorithm using negatives values
 TP_WAVELET_OPACITY;Opacity Blue-Yellow
 TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
-TP_WAVELET_OPACITYWL;Final local contrast
+TP_WAVELET_OPACITYWL;Local contrast
 TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
@@ -2294,6 +2296,7 @@ TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
 TP_WAVELET_SIGMA;Damper
+TP_WAVELET_SIGMAFIN;Damper
 TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n The lower it is, the more pinpoint will the effect be applied to a narrow range of contrast values.
 TP_WAVELET_SKIN;Skin targetting/protection
 TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.

@@ -112,6 +112,7 @@ Wavelet::Wavelet() :
     strength(Gtk::manage(new Adjuster(M("TP_WAVELET_STRENGTH"), 0, 100, 1, 100))),
     balance(Gtk::manage(new Adjuster(M("TP_WAVELET_BALANCE"), -30, 100, 1, 0))),
     iter(Gtk::manage(new Adjuster(M("TP_WAVELET_ITER"), -3, 3, 1, 0))),
+    sigmafin(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
     hueskin(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HUESKIN"), -314., 314., -5., 25., 170., 120., 0, false))),
     hueskin2(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HUESKY"), -314., 314., -260., -250, -130., -140., 0, false))),
     hllev(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HIGHLIGHT"), 0., 100., 50., 75., 100., 98., 0, false))),
@@ -162,6 +163,7 @@ Wavelet::Wavelet() :
     blurFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_BLURFRAME")))),
     chromaFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROMAFRAME")))),
     chroFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROFRAME")))),
+    fincFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_FINCFRAME")))),
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     labmC(Gtk::manage(new Gtk::Label(M("TP_WAVELET_CTYPE") + ":"))),
     labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
@@ -207,6 +209,8 @@ Wavelet::Wavelet() :
     EvWavresblur = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURWAV");
     EvWavresblurc = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURCWAV");
     EvWavedgeffect = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_EDGEFFECT");
+    EvWavsigmafin = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMAFIN");
+
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
     expcontrast->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expcontrast));
@@ -978,7 +982,7 @@ Wavelet::Wavelet() :
     iter->setAdjusterListener(this);
     iter->set_tooltip_text(M("TP_WAVELET_ITER_TOOLTIP"));
 
-    Gtk::HSeparator* const separatorbalend = Gtk::manage(new  Gtk::HSeparator());
+//    Gtk::HSeparator* const separatorbalend = Gtk::manage(new  Gtk::HSeparator());
 
     opacityCurveEditorWL->setCurveListener(this);
 
@@ -986,6 +990,7 @@ Wavelet::Wavelet() :
     opacityShapeWL->setIdentityValue(0.);
     opacityShapeWL->setResetCurve(FlatCurveType(default_params.opacityCurveWL.at(0)), default_params.opacityCurveWL);
     opacityShapeWL->setTooltip(M("TP_WAVELET_OPACITYWL_TOOLTIP"));
+    sigmafin->setAdjusterListener(this);
 
     // This will add the reset button at the end of the curveType buttons
     opacityCurveEditorWL->curveListComplete();
@@ -1004,6 +1009,13 @@ Wavelet::Wavelet() :
     tmr->set_tooltip_text(M("TP_WAVELET_BALCHRO_TOOLTIP"));
     tmrConn = tmr->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::tmrToggled));
 
+    fincFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const fincBox = Gtk::manage(new ToolParamBlock());
+    fincBox->pack_start(*opacityCurveEditorWL, Gtk::PACK_SHRINK, 2);
+    fincBox->pack_start(*sigmafin);
+    fincFrame->add(*fincBox);
+
+
     ToolParamBlock* const finalBox = Gtk::manage(new ToolParamBlock());
 
     finalBox->pack_start(*ctboxBA);
@@ -1014,9 +1026,10 @@ Wavelet::Wavelet() :
     finalBox->pack_start(*iter);
 
     finalBox->pack_start(*tmr);
-    finalBox->pack_start(*separatorbalend, Gtk::PACK_SHRINK, 2);
-    finalBox->pack_start(*opacityCurveEditorWL, Gtk::PACK_SHRINK, 2);
-
+//    finalBox->pack_start(*separatorbalend, Gtk::PACK_SHRINK, 2);
+//    finalBox->pack_start(*opacityCurveEditorWL, Gtk::PACK_SHRINK, 2);
+//    finalBox->pack_start(*sigmafin);
+    finalBox->pack_start(*fincFrame);
     finalBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
     finalBox->pack_start(*softradend);
 
@@ -1420,6 +1433,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     strength->setValue(pp->wavelet.strength);
     balance->setValue(pp->wavelet.balance);
     iter->setValue(pp->wavelet.iter);
+    sigmafin->setValue(pp->wavelet.sigmafin);
 
     for (int i = 0; i < 9; i++) {
         correction[i]->setValue(pp->wavelet.c[i]);
@@ -1537,6 +1551,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         thres->setEditedState(pedited->wavelet.thres ? Edited : UnEdited);
         balance->setEditedState(pedited->wavelet.balance ? Edited : UnEdited);
         iter->setEditedState(pedited->wavelet.iter ? Edited : UnEdited);
+        sigmafin->setEditedState(pedited->wavelet.sigmafin ? Edited : UnEdited);
         threshold->setEditedState(pedited->wavelet.threshold ? Edited : UnEdited);
         threshold2->setEditedState(pedited->wavelet.threshold2 ? Edited : UnEdited);
         edgedetect->setEditedState(pedited->wavelet.edgedetect ? Edited : UnEdited);
@@ -1808,6 +1823,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
 
     pp->wavelet.iter = (int) iter->getValue();
     pp->wavelet.wavclCurve = clshape->getCurve();
+    pp->wavelet.sigmafin = sigmafin->getValue();
 
     for (int i = 0; i < 9; i++) {
         pp->wavelet.c[i] = (int) correction[i]->getValue();
@@ -1914,6 +1930,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.softradend      = softradend->getEditedState();
         pedited->wavelet.balance         = balance->getEditedState();
         pedited->wavelet.iter            = iter->getEditedState();
+        pedited->wavelet.sigmafin        = sigmafin->getEditedState();
         pedited->wavelet.wavclCurve      = !clshape->isUnChanged();
         pedited->wavelet.expcontrast     = !expcontrast->get_inconsistent();
         pedited->wavelet.expchroma       = !expchroma->get_inconsistent();
@@ -2094,6 +2111,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     strength->setDefault(defParams->wavelet.strength);
     balance->setDefault(defParams->wavelet.balance);
     iter->setDefault(defParams->wavelet.iter);
+    sigmafin->setDefault(defParams->wavelet.sigmafin);
     sigma->setDefault(defParams->wavelet.sigma);
     offset->setDefault(defParams->wavelet.offset);
     lowthr->setDefault(defParams->wavelet.lowthr);
@@ -2216,6 +2234,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         strength->setDefaultEditedState(pedited->wavelet.strength ? Edited : UnEdited);
         balance->setDefaultEditedState(pedited->wavelet.balance ? Edited : UnEdited);
         iter->setDefaultEditedState(pedited->wavelet.iter ? Edited : UnEdited);
+        sigmafin->setDefaultEditedState(pedited->wavelet.sigmafin ? Edited : UnEdited);
         level0noise->setDefaultEditedState(pedited->wavelet.level0noise ? Edited : UnEdited);
         level1noise->setDefaultEditedState(pedited->wavelet.level1noise ? Edited : UnEdited);
         level2noise->setDefaultEditedState(pedited->wavelet.level2noise ? Edited : UnEdited);
@@ -2278,6 +2297,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         strength->setDefaultEditedState(Irrelevant);
         balance->setDefaultEditedState(Irrelevant);
         iter->setDefaultEditedState(Irrelevant);
+        sigmafin->setDefaultEditedState(Irrelevant);
 
         for (int i = 0; i < 9; i++) {
             correction[i]->setDefaultEditedState(Irrelevant);
@@ -2810,6 +2830,7 @@ void Wavelet::setBatchMode(bool batchMode)
     strength->showEditedCB();
     balance->showEditedCB();
     iter->showEditedCB();
+    sigmafin->showEditedCB();
     level0noise->showEditedCB();
     level1noise->showEditedCB();
     level2noise->showEditedCB();
@@ -2959,6 +2980,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavbalance, balance->getTextValue());
         } else if (a == iter) {
             listener->panelChanged(EvWaviter, iter->getTextValue());
+        } else if (a == sigmafin) {
+            listener->panelChanged(EvWavsigmafin, sigmafin->getTextValue());
         } else if (a == greenhigh) {
             listener->panelChanged(EvWavgreenhigh, greenhigh->getTextValue());
         } else if (a == bluehigh) {

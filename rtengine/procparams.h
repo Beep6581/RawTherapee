@@ -1221,6 +1221,7 @@ struct WaveletParams {
     bool tmr;
     int strength;
     int balance;
+    double sigmafin;
     int iter;
     bool expcontrast;
     bool expchroma;

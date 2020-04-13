@@ -93,6 +93,7 @@ private:
     rtengine::ProcEvent EvWavresblur;
     rtengine::ProcEvent EvWavresblurc;
     rtengine::ProcEvent EvWavedgeffect;
+    rtengine::ProcEvent EvWavsigmafin;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
 
@@ -218,6 +219,7 @@ private:
     Adjuster* const strength;
     Adjuster* const balance;
     Adjuster* const iter;
+    Adjuster* const sigmafin;
     
     Adjuster* greenlow;
     Adjuster* bluelow;
@@ -294,6 +296,7 @@ private:
     Gtk::Frame* const blurFrame;
     Gtk::Frame* const chromaFrame;
     Gtk::Frame* const chroFrame;
+    Gtk::Frame* const fincFrame;
 
     Gtk::Label* const wavLabels;
     Gtk::Label* const labmC;
