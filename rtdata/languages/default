@@ -761,6 +761,7 @@ HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
 HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
 HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
 HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
+HISTORY_MSG_ILLUM;Illuminant
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -791,6 +792,10 @@ HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 HISTORY_MSG_TRANS_Method;Geometry - Method
+HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
+HISTORY_MSG_WAVBALLUM;Equalizer luminance
+HISTORY_MSG_WAVCHROMFI;Chroma fine
+HISTORY_MSG_WAVCHROMCO;Chroma coarse
 HISTORY_MSG_WAVCLARI;Clarity
 HISTORY_MSG_WAVEDGS;Edge stopping
 HISTORY_MSG_WAVMERGEC;Merge C
@@ -798,10 +803,20 @@ HISTORY_MSG_WAVMERGEL;Merge L
 HISTORY_MSG_WAVRADIUS;Radius Shadows-Highlight
 HISTORY_MSG_WAVSCALE;Scale
 HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
-HISTORY_MSG_WAVSIGMA;Sigma
+HISTORY_MSG_WAVSIGMA;Damper
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVUSHAMET;Clarity method
+HISTORY_MSG_THRESWAV;Balance threshold
+HISTORY_MSG_BLUWAV;Damper
+HISTORY_MSG_WAVOLDSH;Old algorithm
+HISTORY_MSG_WAVOFFSET;Offset
+HISTORY_MSG_WAVLOWTHR;Threshold low contrast
+HISTORY_MSG_BLSHAPE;Blur by level
+HISTORY_MSG_WAVBL;Blur levels
+HISTORY_MSG_BLURWAV;Blur luminance
+HISTORY_MSG_BLURCWAV;Blur chroma
+HISTORY_MSG_EDGEFFECT;Edge Damper
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1439,6 +1454,16 @@ TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 TP_COLORAPP_HUE;Hue (h)
 TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
+TP_COLORAPP_ILLUM;Illuminant
+TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and lattitude.
+TP_COLORAPP_ILA;Incandescent StdA 2856K
+TP_COLORAPP_IL41;D41
+TP_COLORAPP_IL50;D50
+TP_COLORAPP_IL55;D55
+TP_COLORAPP_IL60;D60
+TP_COLORAPP_IL65;D65
+TP_COLORAPP_IL75;D75
+TP_COLORAPP_ILFREE;Free
 TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
 TP_COLORAPP_LABEL_CAM02;Image Adjustments
 TP_COLORAPP_LABEL_SCENE;Scene Conditions
@@ -1451,7 +1476,7 @@ TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's 
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 TP_COLORAPP_PRESETCAT02;Preset cat02 automatic
-TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou must change Cat02 adaptation Viewing conditions if need.\nYou can change Temperature and Tint Viewing conditions if need, and other settings if need. 
+TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02 adaptation Viewing conditions if need.\nYou can change Temperature and Tint Viewing conditions if need, and other settings if need. 
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SURROUND;Surround
@@ -1468,7 +1493,8 @@ TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
 TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
 TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 TP_COLORAPP_TCMODE_SATUR;Saturation
-TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
+TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
 TP_COLORAPP_TEMPOUT_TOOLTIP;Disable to chnage temperature and tint
 TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
@@ -2122,11 +2148,16 @@ TP_WAVELET_BACKGROUND;Background
 TP_WAVELET_BACUR;Curve
 TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
-TP_WAVELET_BALCHRO;Chroma balance
+TP_WAVELET_BALCHRO;Chrominance balance
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
+TP_WAVELET_BALCHROM;Denoise Equalizer  Blue-Red
+TP_WAVELET_BALLUM;Denoise Equalizer  White-Black
 TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
+TP_WAVELET_BLCURVE;Blur by levels
+TP_WAVELET_BLURFRAME;Blur
+TP_WAVELET_BLUWAV;Damper
 TP_WAVELET_CBENAB;Toning and Color Balance
 TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 TP_WAVELET_CCURVE;Local contrast
@@ -2136,9 +2167,13 @@ TP_WAVELET_CH3;Link contrast levels
 TP_WAVELET_CHCU;Curve
 TP_WAVELET_CHR;Chroma-contrast link strength
 TP_WAVELET_CHRO;Saturated/pastel threshold
+TP_WAVELET_CHROFRAME;Denoise Chrominance
 TP_WAVELET_CHROMAFRAME;Chroma
+TP_WAVELET_CHROMCO;Chrominance Coarse
+TP_WAVELET_CHROMFI;Chrominance Fine
 TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
 TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
+TP_WAVELET_CHRWAV;Blur chroma
 TP_WAVELET_CHSL;Sliders
 TP_WAVELET_CHTYPE;Chrominance method
 TP_WAVELET_CLA;Clarity
@@ -2149,6 +2184,7 @@ TP_WAVELET_COMPGAMMA;Compression gamma
 TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allows you to equilibrate the data and histogram.
 TP_WAVELET_COMPTM;Tone mapping
 TP_WAVELET_CONTEDIT;'After' contrast curve
+TP_WAVELET_CONTFRAME;Contrast - Compression
 TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Contrast
 TP_WAVELET_CONTRAST_MINUS;Contrast -
@@ -2183,6 +2219,8 @@ TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
 TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
 TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
 TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
+TP_WAVELET_EDEFFECT;Damper
+TP_WAVELET_EDEFFECT_TOOLTIP;This slider controls how wide the range of contrast values are that receive the maximum effect from the tool.\nMaximum value (2.5) disabled the tool
 TP_WAVELET_EDGESENSI;Edge sensitivity
 TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
 TP_WAVELET_EDGTHRESH;Detail
@@ -2221,6 +2259,7 @@ TP_WAVELET_LEVZERO;Level 1
 TP_WAVELET_LINKEDG;Link with Edge Sharpness' Strength
 TP_WAVELET_LIPST;Enhanced algoritm
 TP_WAVELET_LOWLIGHT;Shadow luminance range
+TP_WAVELET_LOWTHR_TOOLTIP;Prevents amplification of fine textures and noise
 TP_WAVELET_MEDGREINF;First level
 TP_WAVELET_MEDI;Reduce artifacts in blue sky
 TP_WAVELET_MEDILEV;Edge detection
@@ -2235,6 +2274,7 @@ TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
 TP_WAVELET_NPTYPE;Neighboring pixels
 TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
+TP_WAVELET_OLDSH;Algorithm using negatives values
 TP_WAVELET_OPACITY;Opacity Blue-Yellow
 TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 TP_WAVELET_OPACITYWL;Final local contrast
@@ -2245,6 +2285,8 @@ TP_WAVELET_RADIUS;Radius Shadows - Highlight
 TP_WAVELET_RE1;Reinforced
 TP_WAVELET_RE2;Unchanged
 TP_WAVELET_RE3;Reduced
+TP_WAVELET_RESBLUR;Blur Luminance
+TP_WAVELET_RESBLURC;Blur Chroma
 TP_WAVELET_RESCHRO;Intensity
 TP_WAVELET_RESCON;Shadows
 TP_WAVELET_RESCONH;Highlights
@@ -2252,8 +2294,10 @@ TP_WAVELET_RESID;Residual Image
 TP_WAVELET_SAT;Saturated chroma
 TP_WAVELET_SETTINGS;Wavelet Settings
 TP_WAVELET_SHA;Sharp mask
+TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
-TP_WAVELET_SIGMA;Sigma
+TP_WAVELET_SIGMA;Damper
+TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n The lower it is, the more pinpoint will the effect be applied to a narrow range of contrast values.
 TP_WAVELET_SKIN;Skin targetting/protection
 TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 TP_WAVELET_SKY;Sky targetting/protection
@@ -2267,22 +2311,28 @@ TP_WAVELET_THRESHOLD;Highlight levels
 TP_WAVELET_THRESHOLD2;Shadow levels
 TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value).
 TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels.
+TP_WAVELET_THRESWAV;Balance Threshold
 TP_WAVELET_THRH;Highlights threshold
-TP_WAVELET_TILESBIG;Big tiles
+TP_WAVELET_TILESBIG;Tiles
 TP_WAVELET_TILESFULL;Full image
 TP_WAVELET_TILESIZE;Tiling method
 TP_WAVELET_TILESLIT;Little tiles
 TP_WAVELET_TILES_TOOLTIP;Processing the full image leads to better quality and is the recommended option, while using tiles is a fall-back solution for users with little RAM. Refer to RawPedia for memory requirements.
+TP_WAVELET_BL;Blur levels
 TP_WAVELET_TMEDGS;Edge stopping
 TP_WAVELET_TMSCALE;Scale
 TP_WAVELET_TMSTRENGTH;Compression strength
 TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image.
-TP_WAVELET_TMTYPE;Compression method
+TP_WAVELET_TMEDGS;Edge stopping
 TP_WAVELET_TON;Toning
+TP_WAVELET_TMTYPE;Compression method
 TP_WAVELET_USH;None
 TP_WAVELET_USHARP;Clarity method
 TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\nWavelet : the source file is the file including wavelet threatment
 TP_WAVELET_USH_TOOLTIP;If you select Sharp-mask, wavelet settings will be automatically positioned :\nBackground=black, Process=below, level=3...you can change level between 1 and 4.\n\nIf you select Clarity, wavelet settings will be automatically positioned :\nBackground=residual, Process=above, level=7..you can change level between 5 and 10 and wavelet levels.
+TP_WAVELET_WAVLOWTHR;Low contrast threshold
+TP_WAVELET_WAVOFFSET;Offset
+TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between shadows and highlights.\nHigh values here will amplify the contrast change of the highlights, whereas low values will amplify the contrast change of the shadows.\nAlong with a low Damper value you will able to select the contrasts that will be enhanced.
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_AUTOITCGREEN;Auto iterate temperature correlation
 TP_WBALANCE_AUTOOLD;Auto RGB grey

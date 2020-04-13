@@ -1,7 +1,6 @@
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wunused-macros"
 #if (__GNUC__ >= 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
 #endif
@@ -63,12 +62,8 @@
    $Date: 2018/06/01 20:36:25 $
  */
 
-#define DCRAW_VERSION "9.28"
+//#define DCRAW_VERSION "9.28"
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#define _USE_MATH_DEFINES
 #include <cctype>
 #include <cerrno>
 #include <fcntl.h>
@@ -95,8 +90,12 @@
 #ifdef WIN32
 #include <sys/utime.h>
 #include <winsock2.h>
+#ifndef strcasecmp
 #define strcasecmp stricmp
+#endif
+#ifndef strncasecmp
 #define strncasecmp strnicmp
+#endif
 typedef __int64 INT64;
 typedef unsigned __int64 UINT64;
 #else
@@ -6899,7 +6898,7 @@ it under the terms of the one of two licenses as you choose:
 	break;
       case 50778:
       case 50779:
-         if( get2() == 21 )
+         if( get2() != 17 ) // 17 is Standard light A
             cm_D65 = (tag-50778);
          break;
       case 50829:			/* ActiveArea */
@@ -9078,9 +9077,6 @@ void CLASS adobe_coeff (const char *make, const char *model)
   if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
     RT_blacklevel_from_constant = ThreeValBool::T;
   }
-  if (RT_matrix_from_constant == ThreeValBool::X) {
-    RT_matrix_from_constant = ThreeValBool::T;
-  }
   // -- RT --------------------------------------------------------------------
   
   for (i=0; i < sizeof table / sizeof *table; i++)
@@ -9097,6 +9093,11 @@ void CLASS adobe_coeff (const char *make, const char *model)
   if (load_raw == &CLASS sony_arw2_load_raw) { // RT: arw2 scale fix
       black <<= 2;
       tiff_bps += 2;
+  } else if (load_raw == &CLASS panasonic_load_raw) {
+      tiff_bps = RT_pana_info.bpp;
+  }
+  if (RT_matrix_from_constant == ThreeValBool::X) {
+    RT_matrix_from_constant = ThreeValBool::T;
   }
   { /* Check for RawTherapee table overrides and extensions */
       int black_level, white_level;
@@ -10542,7 +10543,7 @@ dng_skip:
        * files. See #4129 */) {
     memcpy (rgb_cam, cmatrix, sizeof cmatrix);
 //    raw_color = 0;
-    RT_matrix_from_constant = ThreeValBool::F;
+    RT_matrix_from_constant = ThreeValBool::X;
   }
   if(!strncmp(make, "Panasonic", 9) && !strncmp(model, "DMC-LX100",9))
 	adobe_coeff (make, model);

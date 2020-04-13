@@ -40,6 +40,7 @@ class OpacityCurve;
 class RetinexgaintransmissionCurve;
 class RetinextransmissionCurve;
 class WavCurve;
+class Wavblcurve;
 class WavOpacityCurveBY;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
@@ -661,6 +662,7 @@ struct ColorAppearanceParams {
     double        adaplum;
     int           badpixsl;
     Glib::ustring wbmodel;
+    Glib::ustring illum;
     Glib::ustring algo;
     double        contrast;
     double        qcontrast;
@@ -1184,6 +1186,7 @@ private:
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
+    std::vector<double> blcurve;
     std::vector<double> opacityCurveRG;
     std::vector<double> opacityCurveBY;
     std::vector<double> opacityCurveW;
@@ -1202,6 +1205,10 @@ struct WaveletParams {
     int bluemed;
     int greenhigh;
     int bluehigh;
+    double ballum;
+    double balchrom;
+    double chromfi;
+    double chromco;
     double mergeL;
     double mergeC;
     double softrad;
@@ -1210,6 +1217,7 @@ struct WaveletParams {
     bool lipst;
     bool avoid;
     bool showmask;
+    bool oldsh;
     bool tmr;
     int strength;
     int balance;
@@ -1219,6 +1227,7 @@ struct WaveletParams {
     int c[9];
     int ch[9];
     bool expedge;
+    bool expbl;
     bool expresid;
     bool expfinal;
     bool exptoning;
@@ -1241,9 +1250,13 @@ struct WaveletParams {
     Glib::ustring Dirmethod;
     Glib::ustring HSmethod;
     double sigma;
+    double offset;
+    double lowthr;
     int rescon;
     int resconH;
     int reschro;
+    int resblur;
+    int resblurc;
     double tmrs;
     double edgs;
     double scale;
@@ -1262,12 +1275,15 @@ struct WaveletParams {
     int edgeampli;
     int contrast;
     int edgrad;
+    double edgeffect;
     int edgval;
     int edgthresh;
     int thr;
     int thrH;
     int radius;
     double skinprotect;
+    double chrwav;
+    double bluwav;
     Threshold<int> hueskin;
     Threshold<int> hueskin2;
     Threshold<int> hllev;
@@ -1287,6 +1303,7 @@ struct WaveletParams {
 
     void getCurves(
         WavCurve& cCurve,
+        Wavblcurve& tCurve,
         WavOpacityCurveRG&
         opacityCurveLUTRG,
         WavOpacityCurveBY& opacityCurveLUTBY,

@@ -70,6 +70,10 @@ public:
 private:
     rtengine::ProcEvent EvWavenaclari;
     rtengine::ProcEvent EvWavushamet;
+    rtengine::ProcEvent EvWavballum;
+    rtengine::ProcEvent EvWavbalchrom;
+    rtengine::ProcEvent EvWavchromfi;
+    rtengine::ProcEvent EvWavchromco;
     rtengine::ProcEvent EvWavmergeL;
     rtengine::ProcEvent EvWavmergeC;
     rtengine::ProcEvent EvWavsoftrad;
@@ -79,6 +83,16 @@ private:
     rtengine::ProcEvent EvWavscale;
     rtengine::ProcEvent EvWavradius;
     rtengine::ProcEvent EvWavsigma;
+    rtengine::ProcEvent EvWavenabl;
+    rtengine::ProcEvent EvWavchrwav;
+    rtengine::ProcEvent EvWavoldsh;
+    rtengine::ProcEvent EvWavoffset;
+    rtengine::ProcEvent EvWavlowthr;
+    rtengine::ProcEvent EvWavbluwav;
+    rtengine::ProcEvent EvWavblshape;
+    rtengine::ProcEvent EvWavresblur;
+    rtengine::ProcEvent EvWavresblurc;
+    rtengine::ProcEvent EvWavedgeffect;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
 
@@ -98,6 +112,7 @@ private:
     void TilesmethodChanged();
     void avoidToggled();
     void showmaskToggled ();
+    void oldshToggled ();
     void cbenabToggled();
     void contrastMinusPressed();
     void contrastPlusPressed();
@@ -140,6 +155,7 @@ private:
     CurveEditorGroup* const curveEditorG;
 
     CurveEditorGroup* const CCWcurveEditorG;
+    CurveEditorGroup* const curveEditorbl;
     CurveEditorGroup* const curveEditorRES;
     CurveEditorGroup* const curveEditorGAM;
     Gtk::HSeparator* const separatorNeutral;
@@ -158,6 +174,7 @@ private:
     DiagonalCurveEditor* clshape;
 
     FlatCurveEditor* ccshape;
+    FlatCurveEditor* blshape;
     Gtk::CheckButton* const median;
     Gtk::CheckButton* const medianlev;
     Gtk::CheckButton* const linkedg;
@@ -166,14 +183,20 @@ private:
     Gtk::CheckButton* const avoid;
     Gtk::CheckButton* const tmr;
     Gtk::CheckButton* const showmask;
+    Gtk::CheckButton* const oldsh;
 
     Gtk::Button* const neutralchButton;
     Adjuster* correction[9];
     Adjuster* correctionch[9];
     Adjuster* const sigma;
+    Adjuster* const offset;
+    Adjuster* const lowthr;
     Adjuster* const rescon;
     Adjuster* const resconH;
     Adjuster* const reschro;
+    Adjuster* const resblur;
+    Adjuster* const resblurc;
+    Adjuster* const bluwav;
     Adjuster* const tmrs;
     Adjuster* const edgs;
     Adjuster* const scale;
@@ -189,11 +212,13 @@ private:
     Adjuster* const radius;
     Adjuster* const skinprotect;
     Adjuster* const edgrad;
+    Adjuster* const edgeffect;
     Adjuster* const edgval;
     Adjuster* const edgthresh;
     Adjuster* const strength;
     Adjuster* const balance;
     Adjuster* const iter;
+    
     Adjuster* greenlow;
     Adjuster* bluelow;
     Adjuster* greenmed;
@@ -220,10 +245,15 @@ private:
     Adjuster* const edgedetectthr2;
     Adjuster* const edgesensi;
     Adjuster* const edgeampli;
+    Adjuster* const ballum;
+    Adjuster* const balchrom;
+    Adjuster* const chromfi;
+    Adjuster* const chromco;
     Adjuster* const mergeL;
     Adjuster* const mergeC;
     Adjuster* const softrad;
     Adjuster* const softradend;
+    Adjuster* const chrwav;
 
     MyComboBoxText* const Lmethod;
     sigc::connection  Lmethodconn;
@@ -259,7 +289,11 @@ private:
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
     Gtk::Frame* const chanMixerShadowsFrame;
+    Gtk::Frame* const shFrame;
+    Gtk::Frame* const contFrame;
+    Gtk::Frame* const blurFrame;
     Gtk::Frame* const chromaFrame;
+    Gtk::Frame* const chroFrame;
 
     Gtk::Label* const wavLabels;
     Gtk::Label* const labmC;
@@ -275,19 +309,20 @@ private:
     MyExpander* const expsettings;
     MyExpander* const exptoning;
     MyExpander* const expclari;
+    MyExpander* const expbl;
 
     Gtk::HBox* const neutrHBox;
     Gtk::HBox* const usharpHBox;
 
-    sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enableFinalConn, enableclariConn;
+    sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enabletmConn, enableFinalConn, enableclariConn;
     sigc::connection enableNoiseConn, enableResidConn, enableToningConn;
-    sigc::connection medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn, showmaskConn;
+    sigc::connection medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn, showmaskConn, oldshConn;
     sigc::connection neutralPressedConn;
     sigc::connection contrastPlusPressedConn;
     sigc::connection contrastMinusPressedConn;
     sigc::connection neutralchPressedConn;
 
-    bool lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab, lastshowmask;
+    bool lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab, lastshowmask, lastoldsh;
     int nextnlevel;
 
     IdleRegister idle_register;
