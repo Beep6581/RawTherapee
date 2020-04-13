@@ -175,6 +175,7 @@ protected:
     AutoRadiusListener *pdSharpenAutoRadiusListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
+    FilmNegListener *filmNegListener;
 
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
@@ -281,6 +282,7 @@ public:
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
     bool getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) override;
+    bool getRawSpotValues(int x, int y, int spotSize, std::array<float, 3>& rawValues) override;
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;
     bool getHighQualComputed() override;
     void setHighQualComputed() override;
@@ -387,6 +389,11 @@ public:
     void setImageTypeListener  (ImageTypeListener* itl) override
     {
         imageTypeListener = itl;
+    }
+
+    void setFilmNegListener  (FilmNegListener* fnl) override
+    {
+        filmNegListener = fnl;
     }
 
     void saveInputICCReference (const Glib::ustring& fname, bool apply_wb) override;
