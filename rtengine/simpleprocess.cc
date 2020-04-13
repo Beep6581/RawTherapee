@@ -221,7 +221,12 @@ private:
 
         // After preprocess, run film negative processing if enabled
         if ((imgsrc->getSensorType() == ST_BAYER || (imgsrc->getSensorType() == ST_FUJI_XTRANS)) && params.filmNegative.enabled) {
-            imgsrc->filmNegativeProcess (params.filmNegative);
+            std::array<float, 3> filmBaseValues = {
+                static_cast<float>(params.filmNegative.redBase),
+                static_cast<float>(params.filmNegative.greenBase),
+                static_cast<float>(params.filmNegative.blueBase)
+            };
+            imgsrc->filmNegativeProcess (params.filmNegative, filmBaseValues);
         }
 
         if (pl) {

@@ -33,13 +33,15 @@ public:
     virtual ~FilmNegProvider() = default;
 
     virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) = 0;
+    virtual bool getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues) = 0;
 };
 
 class FilmNegative final :
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel,
-    public EditSubscriber
+    public EditSubscriber,
+    public rtengine::FilmNegListener
 {
 public:
     FilmNegative();
@@ -52,6 +54,8 @@ public:
 
     void adjusterChanged(Adjuster* a, double newval) override;
     void enabledChanged() override;
+
+    void filmBaseValuesChanged(std::array<float, 3> rgb) override;
 
     void setFilmNegProvider(FilmNegProvider* provider);
 
@@ -66,11 +70,15 @@ public:
 
 private:
     void editToggled();
+    void baseSpotToggled();
 
     const rtengine::ProcEvent evFilmNegativeExponents;
     const rtengine::ProcEvent evFilmNegativeEnabled;
+    const rtengine::ProcEvent evFilmBaseValues;
 
     std::vector<rtengine::Coord> refSpotCoords;
+
+    std::array<float, 3> filmBaseValues;
 
     FilmNegProvider* fnp;
 
@@ -80,5 +88,9 @@ private:
 
     Gtk::Grid* const spotgrid;
     Gtk::ToggleButton* const spotbutton;
-    sigc::connection spotConn;
+
+    Gtk::Label* const filmBaseLabel;
+    Gtk::Label* const filmBaseValuesLabel;
+    Gtk::ToggleButton* const filmBaseSpotButton;
+
 };
