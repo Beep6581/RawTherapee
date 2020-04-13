@@ -500,6 +500,7 @@ struct WaveletParamsEdited {
     bool balance;
     bool iter;
     bool sigmafin;
+    bool sigmaton;
     bool median;
     bool medianlev;
     bool linkedg;

@@ -114,6 +114,7 @@ struct cont_params {
     float tmstrength;
     float balan;
     float sigmafin;
+    float sigmaton;
     int ite;
     int contmet;
     bool opaW;
@@ -193,6 +194,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.tonemap = params->wavelet.tmrs != 0;
     cp.bam = false;
     cp.sigmafin = params->wavelet.sigmafin;
+    cp.sigmaton = params->wavelet.sigmaton;
 
     if (params->wavelet.TMmethod == "cont") {
         cp.contmet = 1;
@@ -931,9 +933,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             vari[1] = rtengine::max(0.000001f, vari[1]);
                             vari[2] = rtengine::max(0.000001f, vari[2]);
                             vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
+
                             if (settings->verbose) {
-                                printf("LUM var0=%f var1=%f var2=%f var3=%f\n",vari[0], vari[1], vari[2], vari[3]);
+                                printf("LUM var0=%f var1=%f var2=%f var3=%f\n", vari[0], vari[1], vari[2], vari[3]);
                             }
+
                             //     float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
                             int GWL = labco->W;
                             int GHL = labco->H;
@@ -1176,9 +1180,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                         variC[6] = max(0.00001f, k6 * variC[6]);
                         variCb[6] = max(0.00001f, k6 * variCb[6]);
+
                         if (settings->verbose) {
-                            printf("CHRO var0=%f va1=%f va2=%f va3=%f va4=%f val5=%f va6=%f\n", variC[0], variC[1], variC[2], variC[3],variC[4],variC[5], variC[6]);
+                            printf("CHRO var0=%f va1=%f va2=%f va3=%f va4=%f val5=%f va6=%f\n", variC[0], variC[1], variC[2], variC[3], variC[4], variC[5], variC[6]);
                         }
+
                         /*
                                                 for (int y = 0; y < 7; y++) {
                                                     printf("y=%i madL=%f varia=%f variab=%f\n", y, madL[y][1], variC[y], variCb[y]);
@@ -2203,27 +2209,28 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
 //Blur luma
     if (cp.blurres != 0.f  && cp.resena) {
-            int minWL = min(W_L, H_L);
-            float k = 0.5f;
-            //printf("skip=%i WL=%i HL=%i min=%i\n", skip, W_L, H_L, minWL);
-            if(minWL > 140) {//disabled if too low windows
-                float rad = k * cp.blurres / skip;
-                float * bef = new float[W_L * H_L];
-                float * aft = new float[W_L * H_L];
-    
-                for (int i = 0; i < H_L * W_L; i++) {
-                    bef[i] = WavCoeffs_L0[i];
-                }
+        int minWL = min(W_L, H_L);
+        float k = 0.5f;
 
-                boxblur(bef, aft, rad, W_L, H_L, false);
+        //printf("skip=%i WL=%i HL=%i min=%i\n", skip, W_L, H_L, minWL);
+        if (minWL > 140) { //disabled if too low windows
+            float rad = k * cp.blurres / skip;
+            float * bef = new float[W_L * H_L];
+            float * aft = new float[W_L * H_L];
 
-                for (int i = 0; i < H_L * W_L; i++) {
-                    WavCoeffs_L0[i] = aft[i];
-                }
-
-                delete[] bef;
-                delete[] aft;
+            for (int i = 0; i < H_L * W_L; i++) {
+                bef[i] = WavCoeffs_L0[i];
             }
+
+            boxblur(bef, aft, rad, W_L, H_L, false);
+
+            for (int i = 0; i < H_L * W_L; i++) {
+                WavCoeffs_L0[i] = aft[i];
+            }
+
+            delete[] bef;
+            delete[] aft;
+        }
     }
 
 //
@@ -2679,8 +2686,9 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
         if (cp.blurcres != 0.f  && cp.resena) {
             int minWL = min(W_L, H_L);
             float k = 0.5f;
+
             //printf("skip=%i WL=%i HL=%i min=%i\n", skip, W_L, H_L, minWL);
-            if(minWL > 140) {//disabled if too low windows
+            if (minWL > 140) { //disabled if too low windows
                 float rad = k * cp.blurcres / skip;
                 float * bef = new float[W_L * H_L];
                 float * aft = new float[W_L * H_L];
@@ -2722,7 +2730,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                 int Hlvl_ab = WaveletCoeffs_ab.level_H(lvl);
 
                 float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
-                ContAllAB(labco,  maxlvl, varhue, varchrom, WavCoeffs_ab, WavCoeffs_ab0, lvl, dir, waOpacityCurveW, cp, Wlvl_ab, Hlvl_ab, useChannelA);
+                ContAllAB(labco,  maxlvl, varhue, varchrom, WavCoeffs_ab, WavCoeffs_ab0, lvl, dir, waOpacityCurveW, cp, Wlvl_ab, Hlvl_ab, useChannelA, meanab, sigmaab);
 
                 if (wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f) {
 
@@ -3846,7 +3854,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
 }
 
 void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, float **varchrom, float ** WavCoeffs_ab, float * WavCoeffs_ab0, int level, int dir, const WavOpacityCurveW & waOpacityCurveW, struct cont_params &cp,
-                                int W_ab, int H_ab, const bool useChannelA)
+                                int W_ab, int H_ab, const bool useChannelA, float *meanab, float *sigmaab)
 {
     float cpMul = cp.mul[level];
 
@@ -3981,15 +3989,47 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
     }
 
     if ((useOpacity && level < 9 && mulOpacity != 0.f) && cp.toningena) { //toning
+        float mea[10];
+        float effect = cp.sigmaton;
+        float betaab = 0.f;
+        float offs = 1.f;
 
-        float beta = (1024.f + 20.f * mulOpacity) / 1024.f ;
+        calceffect(level, meanab, sigmaab, mea, effect, offs);
 
-        //float beta = (1000.f * mulOpacity);
+        for (int co = 0; co < W_ab * H_ab; co++) {
+            float WavCab = std::fabs(WavCoeffs_ab[dir][co]);
+
+            if (WavCab < mea[0]) {
+                betaab = 0.05f;
+            } else if (WavCab < mea[1]) {
+                betaab = 0.2f;
+            } else if (WavCab < mea[2]) {
+                betaab = 0.7f;
+            } else if (WavCab < mea[3]) {
+                betaab = 1.f;    //standard
+            } else if (WavCab < mea[4]) {
+                betaab = 1.f;
+            } else if (WavCab < mea[5]) {
+                betaab = 0.8f;    //+sigma
+            } else if (WavCab < mea[6]) {
+                betaab = 0.6f;
+            } else if (WavCab < mea[7]) {
+                betaab = 0.4f;
+            } else if (WavCab < mea[8]) {
+                betaab = 0.2f;    // + 2 sigma
+            } else if (WavCab < mea[9]) {
+                betaab = 0.1f;
+            } else {
+                betaab = 0.0f;
+            }
+        }
+
+        float beta = (1024.f + 50.f * mulOpacity * betaab) / 1024.f ;
+
         for (int i = 0; i < W_ab * H_ab; i++) {
             WavCoeffs_ab[dir][i] *= beta;
         }
 
-        //  WavCoeffs_ab[dir][i] += beta;
     }
 
     if (waOpacityCurveW) {
