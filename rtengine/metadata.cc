@@ -52,7 +52,7 @@ private:
 
 constexpr size_t IMAGE_CACHE_SIZE = 200;
 
-Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring& fname)
+std::unique_ptr<Exiv2::Image> open_exiv2(const Glib::ustring& fname)
 {
 #ifdef EXV_UNICODE_PATH
     glong ws_size = 0;
