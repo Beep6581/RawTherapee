@@ -2426,7 +2426,7 @@ void Wavelet::CHmethodUpdateUI()
     if (!batchMode) {
         if (CHmethod->get_active_row_number() == 0) {
             CHSLmethod->show();
-            sigmacol->show();
+        //    sigmacol->show();
             pastlev->hide();
             satlev->hide();
             chroma->hide();
@@ -2446,7 +2446,7 @@ void Wavelet::CHmethodUpdateUI()
             }
         } else if (CHmethod->get_active_row_number() == 1) {
             CHSLmethod->show();
-            sigmacol->show();
+        //    sigmacol->show();
             pastlev->show();
             satlev->show();
             chroma->show();
@@ -2466,7 +2466,7 @@ void Wavelet::CHmethodUpdateUI()
             }
         } else {
             chro->show();
-            sigmacol->hide();
+         //   sigmacol->hide();
             pastlev->hide();
             satlev->hide();
             chroma->hide();

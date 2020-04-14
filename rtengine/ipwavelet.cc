@@ -2416,6 +2416,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                     float effect = cp.bluwav;
                     float offs = 1.f;
                     float * beta = new float[Wlvl_L * Hlvl_L];
+
                     for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
                         beta[co] = 1.f;
                     }
@@ -2477,7 +2478,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
                     klev = (wavblcurve[lvl * 55.5f]);
 
-                 //   klev *= beta * 100.f / skip;
+                    //   klev *= beta * 100.f / skip;
                     klev *= 100.f / skip;
                     boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
 
@@ -2746,6 +2747,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                     float effect = cp.bluwav;
                     float offs = 1.f;
                     float * beta = new float[Wlvl_ab * Hlvl_ab];
+
                     for (int co = 0; co < Wlvl_ab * Hlvl_ab; co++) {
                         beta[co] = 1.f;
                     }
@@ -3887,13 +3889,43 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
         //to adjust increase contrast with local contrast
         bool useSkinControl = (skinprot != 0.f);
 
+        float mea[10];
+        float effect = cp.sigmacol;
+        float betaab = 1.f;
+        float offs = 1.f;
+        float alphaC = 1.f;
 
-
-
-
-        float alphaC = (1024.f + 15.f * cpMul * cpChrom / 50.f) / 1024.f ;
+        calceffect(level, meanab, sigmaab, mea, effect, offs);
 
         for (int i = 0; i < W_ab * H_ab; i++) {
+            float WavCab = std::fabs(WavCoeffs_ab[dir][i]);
+
+            if (WavCab < mea[0]) {
+                betaab = 0.05f;
+            } else if (WavCab < mea[1]) {
+                betaab = 0.2f;
+            } else if (WavCab < mea[2]) {
+                betaab = 0.7f;
+            } else if (WavCab < mea[3]) {
+                betaab = 1.f;    //standard
+            } else if (WavCab < mea[4]) {
+                betaab = 1.f;
+            } else if (WavCab < mea[5]) {
+                betaab = 0.8f;    //+sigma
+            } else if (WavCab < mea[6]) {
+                betaab = 0.6f;
+            } else if (WavCab < mea[7]) {
+                betaab = 0.4f;
+            } else if (WavCab < mea[8]) {
+                betaab = 0.2f;    // + 2 sigma
+            } else if (WavCab < mea[9]) {
+                betaab = 0.1f;
+            } else {
+                betaab = 0.0f;
+            }
+
+            float scale = 1.f;
+
             if (useSkinControl) {
                 int ii = i / W_ab;
                 int jj = i - ii * W_ab;
@@ -3901,7 +3933,6 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
                 float modhue = varhue[ii][jj];
                 float modchro = varchrom[ii * 2][jj * 2];
                 // hue chroma skin with initial lab data
-                float scale = 1.f;
 
                 if (skinprot > 0.f) {
                     Color::SkinSatCbdl2(LL100, modhue, modchro, skinprot, scale, true, cp.b_l, cp.t_l, cp.t_r, cp.b_r, 0);  //0 for skin and extand
@@ -3910,8 +3941,9 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
                     scale = (scale == 1.f) ? factorHard : 1.f;
                 }
 
-                alphaC = (1024.f + 15.f * cpMul * cpChrom * scale / 50.f) / 1024.f ;
             }
+
+            alphaC = (1024.f + 15.f * cpMul * cpChrom *  betaab * scale / 50.f) / 1024.f ;
 
             WavCoeffs_ab[dir][i] *= alphaC;
         }
