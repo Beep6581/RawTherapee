@@ -117,8 +117,10 @@ private:
     void onExifTreeClick(GdkEventButton *event);
     void onExifRowExpanded(const Gtk::TreeModel::iterator &it, const Gtk::TreeModel::Path &path);
     void onExifRowCollapsed(const Gtk::TreeModel::iterator &it, const Gtk::TreeModel::Path &path);
-    void onExifRowActivated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column);
 
+    void setExifTagValue(Gtk::CellRenderer *renderer, const Gtk::TreeModel::iterator &it);
+    void onEditExifTagValue(const Glib::ustring &path, const Glib::ustring &value);
+    
 public:
     ExifPanel ();
     ~ExifPanel() override;
