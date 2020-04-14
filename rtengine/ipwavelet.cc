@@ -2414,8 +2414,11 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                     // printf("Blur level L\n");
                     float mea[10];
                     float effect = cp.bluwav;
-                    float beta = 0.f;
                     float offs = 1.f;
+                    float * beta = new float[Wlvl_L * Hlvl_L];
+                    for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
+                        beta[co] = 1.f;
+                    }
 
                     calceffect(lvl, mean, sigma, mea, effect, offs);
 
@@ -2427,41 +2430,41 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         float WavCL = std::fabs(WavCoeffs_L[dir][co]);
 
                         if (WavCL < mea[0]) {
-                            beta = 0.05f;
+                            beta[co] = 0.05f;
                             n0++;
 
                             if (WavCL < 32.7) {
                                 n32++;
                             }
                         } else if (WavCL < mea[1]) {
-                            beta = 0.2f;
+                            beta[co] = 0.2f;
                             n1++;
                         } else if (WavCL < mea[2]) {
-                            beta = 0.7f;
+                            beta[co] = 0.7f;
                             n2++;
                         } else if (WavCL < mea[3]) {
-                            beta = 1.f;    //standard
+                            beta[co] = 1.f;    //standard
                             n3++;
                         } else if (WavCL < mea[4]) {
-                            beta = 1.f;
+                            beta[co] = 1.f;
                             n4++;
                         } else if (WavCL < mea[5]) {
-                            beta = 0.8f;    //+sigma
+                            beta[co] = 0.8f;    //+sigma
                             n5++;
                         } else if (WavCL < mea[6]) {
-                            beta = 0.6f;
+                            beta[co] = 0.6f;
                             n6++;
                         } else if (WavCL < mea[7]) {
-                            beta = 0.4f;
+                            beta[co] = 0.4f;
                             n7++;
                         } else if (WavCL < mea[8]) {
-                            beta = 0.2f;    // + 2 sigma
+                            beta[co] = 0.2f;    // + 2 sigma
                             n8++;
                         } else if (WavCL < mea[9]) {
-                            beta = 0.1f;
+                            beta[co] = 0.1f;
                             n9++;
                         } else {
-                            beta = 0.01f;
+                            beta[co] = 0.01f;
                             n10++;
                         }
 
@@ -2474,15 +2477,18 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
                     klev = (wavblcurve[lvl * 55.5f]);
 
-                    klev *= beta * 100.f / skip;
+                 //   klev *= beta * 100.f / skip;
+                    klev *= 100.f / skip;
                     boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
 
                     for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
+                        aft[co] = bef[co] * (1.f - beta[co]) + aft[co] * beta[co];
                         WavCoeffs_L[dir][co] = aft[co];
                     }
 
                     delete[] bef;
                     delete[] aft;
+                    delete[] beta;
                 }
             }
         }
@@ -2738,8 +2744,11 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 
                     float mea[10];
                     float effect = cp.bluwav;
-                    float beta = 0.f;
                     float offs = 1.f;
+                    float * beta = new float[Wlvl_ab * Hlvl_ab];
+                    for (int co = 0; co < Wlvl_ab * Hlvl_ab; co++) {
+                        beta[co] = 1.f;
+                    }
 
                     calceffect(lvl, meanab, sigmaab, mea, effect, offs);
 
@@ -2752,27 +2761,27 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                         float WavCab = std::fabs(WavCoeffs_ab[dir][co]);
 
                         if (WavCab < mea[0]) {
-                            beta = 0.05f;
+                            beta[co] = 0.05f;
                         } else if (WavCab < mea[1]) {
-                            beta = 0.2f;
+                            beta[co] = 0.2f;
                         } else if (WavCab < mea[2]) {
-                            beta = 0.7f;
+                            beta[co] = 0.7f;
                         } else if (WavCab < mea[3]) {
-                            beta = 1.f;    //standard
+                            beta[co] = 1.f;    //standard
                         } else if (WavCab < mea[4]) {
-                            beta = 1.f;
+                            beta[co] = 1.f;
                         } else if (WavCab < mea[5]) {
-                            beta = 0.8f;    //+sigma
+                            beta[co] = 0.8f;    //+sigma
                         } else if (WavCab < mea[6]) {
-                            beta = 0.6f;
+                            beta[co] = 0.6f;
                         } else if (WavCab < mea[7]) {
-                            beta = 0.4f;
+                            beta[co] = 0.4f;
                         } else if (WavCab < mea[8]) {
-                            beta = 0.2f;    // + 2 sigma
+                            beta[co] = 0.2f;    // + 2 sigma
                         } else if (WavCab < mea[9]) {
-                            beta = 0.1f;
+                            beta[co] = 0.1f;
                         } else {
-                            beta = 0.0f;
+                            beta[co] = 0.0f;
                         }
 
 
@@ -2780,16 +2789,18 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 
                     klev = (wavblcurve[lvl * 55.5f]);
 
-                    klev *=  beta * cp.chrwav * 100.f / skip;
+                    klev *=  cp.chrwav * 100.f / skip;
 
                     boxblur(bef, aft, klev, Wlvl_ab, Hlvl_ab, false);
 
                     for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
+                        aft[co] = bef[co] * (1.f - beta[co]) + aft[co] * beta[co];
                         WavCoeffs_ab[dir][co] = aft[co];
                     }
 
                     delete[] bef;
                     delete[] aft;
+                    delete[] beta;
                 }
 
 
