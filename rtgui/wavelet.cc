@@ -502,6 +502,12 @@ Wavelet::Wavelet() :
     opacityShapeRG = static_cast<FlatCurveEditor*>(opaCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeRG->setIdentityValue(0.);
     opacityShapeRG->setResetCurve(FlatCurveType(default_params.opacityCurveRG.at(0)), default_params.opacityCurveRG);
+    //from green to magenta
+    std::vector<GradientMilestone> mileston = {
+        GradientMilestone(0., 0., 1., 0.),
+        GradientMilestone(1., 1., 0., 1.)
+    };
+    opacityShapeRG->setLeftBarBgGradient(mileston);
 
     opaCurveEditorG->curveListComplete();
     opaCurveEditorG->show();
@@ -513,6 +519,12 @@ Wavelet::Wavelet() :
     opacityShapeBY = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeBY->setIdentityValue(0.);
     opacityShapeBY->setResetCurve(FlatCurveType(default_params.opacityCurveBY.at(0)), default_params.opacityCurveBY);
+    //from blue to yellow
+    mileston = {
+        GradientMilestone(0., 0., 0., 1.),
+        GradientMilestone(1., 1., 1., 0.)
+    };
+    opacityShapeBY->setLeftBarBgGradient(mileston);
 
     opacityCurveEditorG->curveListComplete();
     opacityCurveEditorG->show();
