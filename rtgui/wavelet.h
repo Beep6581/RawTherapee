@@ -95,6 +95,7 @@ private:
     rtengine::ProcEvent EvWavedgeffect;
     rtengine::ProcEvent EvWavsigmafin;
     rtengine::ProcEvent EvWavsigmaton;
+    rtengine::ProcEvent EvWavsigmacol;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
 
@@ -222,6 +223,7 @@ private:
     Adjuster* const iter;
     Adjuster* const sigmafin;
     Adjuster* const sigmaton;
+    Adjuster* const sigmacol;
     
     Adjuster* greenlow;
     Adjuster* bluelow;

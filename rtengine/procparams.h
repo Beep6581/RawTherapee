@@ -1223,6 +1223,7 @@ struct WaveletParams {
     int balance;
     double sigmafin;
     double sigmaton;
+    double sigmacol;
     int iter;
     bool expcontrast;
     bool expchroma;

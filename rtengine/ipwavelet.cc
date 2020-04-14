@@ -115,6 +115,7 @@ struct cont_params {
     float balan;
     float sigmafin;
     float sigmaton;
+    float sigmacol;
     int ite;
     int contmet;
     bool opaW;
@@ -195,6 +196,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.bam = false;
     cp.sigmafin = params->wavelet.sigmafin;
     cp.sigmaton = params->wavelet.sigmaton;
+    cp.sigmacol = params->wavelet.sigmacol;
 
     if (params->wavelet.TMmethod == "cont") {
         cp.contmet = 1;
@@ -3866,6 +3868,11 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
 
         //to adjust increase contrast with local contrast
         bool useSkinControl = (skinprot != 0.f);
+
+
+
+
+
         float alphaC = (1024.f + 15.f * cpMul * cpChrom / 50.f) / 1024.f ;
 
         for (int i = 0; i < W_ab * H_ab; i++) {
@@ -3903,7 +3910,41 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
         const float factorHard = (1.f - skinprotneg / 100.f);
         bool useSkinControl = (skinprot != 0.f);
 
+
+        float mea[10];
+        float effect = cp.sigmacol;
+        float betaab = 0.f;
+        float offs = 1.f;
+
+        calceffect(level, meanab, sigmaab, mea, effect, offs);
+
         for (int i = 0; i < W_ab * H_ab; i++) {
+            float WavCab = std::fabs(WavCoeffs_ab[dir][i]);
+
+            if (WavCab < mea[0]) {
+                betaab = 0.05f;
+            } else if (WavCab < mea[1]) {
+                betaab = 0.2f;
+            } else if (WavCab < mea[2]) {
+                betaab = 0.7f;
+            } else if (WavCab < mea[3]) {
+                betaab = 1.f;    //standard
+            } else if (WavCab < mea[4]) {
+                betaab = 1.f;
+            } else if (WavCab < mea[5]) {
+                betaab = 0.8f;    //+sigma
+            } else if (WavCab < mea[6]) {
+                betaab = 0.6f;
+            } else if (WavCab < mea[7]) {
+                betaab = 0.4f;
+            } else if (WavCab < mea[8]) {
+                betaab = 0.2f;    // + 2 sigma
+            } else if (WavCab < mea[9]) {
+                betaab = 0.1f;
+            } else {
+                betaab = 0.0f;
+            }
+
             int ii = i / W_ab;
             int jj = i - ii * W_ab;
             //WL and W_ab are identical
@@ -3923,7 +3964,7 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
                 }
             }
 
-            float beta = (1024.f + 20.f * cpMulC * scale) / 1024.f ;
+            float beta = (1024.f + 20.f * cpMulC * scale * betaab) / 1024.f ;
 
             if (beta < 0.02f) {
                 beta = 0.02f;
@@ -4022,12 +4063,11 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
             } else {
                 betaab = 0.0f;
             }
-        }
 
-        float beta = (1024.f + 50.f * mulOpacity * betaab) / 1024.f ;
 
-        for (int i = 0; i < W_ab * H_ab; i++) {
-            WavCoeffs_ab[dir][i] *= beta;
+            float beta = (1024.f + 50.f * mulOpacity * betaab) / 1024.f ;
+
+            WavCoeffs_ab[dir][co] *= beta;
         }
 
     }

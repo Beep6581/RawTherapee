@@ -114,6 +114,7 @@ Wavelet::Wavelet() :
     iter(Gtk::manage(new Adjuster(M("TP_WAVELET_ITER"), -3, 3, 1, 0))),
     sigmafin(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
     sigmaton(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
+    sigmacol(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
     hueskin(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HUESKIN"), -314., 314., -5., 25., 170., 120., 0, false))),
     hueskin2(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HUESKY"), -314., 314., -260., -250, -130., -140., 0, false))),
     hllev(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HIGHLIGHT"), 0., 100., 50., 75., 100., 98., 0, false))),
@@ -212,6 +213,7 @@ Wavelet::Wavelet() :
     EvWavedgeffect = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_EDGEFFECT");
     EvWavsigmafin = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMAFIN");
     EvWavsigmaton = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMATON");
+    EvWavsigmacol = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMACOL");
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -456,8 +458,10 @@ Wavelet::Wavelet() :
     chBox->pack_start(*satlev);
 
     chro->set_tooltip_text(M("TP_WAVELET_CHR_TOOLTIP"));
-    chBox->pack_start(*chro);
     chro->setAdjusterListener(this);
+    sigmacol->setAdjusterListener(this);
+    chBox->pack_start(*chro);
+    chBox->pack_start(*sigmacol);
 
     Gtk::HBox* const buttonchBox = Gtk::manage(new Gtk::HBox(true, 10));
     neutralchPressedConn = neutralchButton->signal_pressed().connect(sigc::mem_fun(*this, &Wavelet::neutralchPressed));
@@ -1438,6 +1442,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     iter->setValue(pp->wavelet.iter);
     sigmafin->setValue(pp->wavelet.sigmafin);
     sigmaton->setValue(pp->wavelet.sigmaton);
+    sigmacol->setValue(pp->wavelet.sigmacol);
 
     for (int i = 0; i < 9; i++) {
         correction[i]->setValue(pp->wavelet.c[i]);
@@ -1557,6 +1562,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         iter->setEditedState(pedited->wavelet.iter ? Edited : UnEdited);
         sigmafin->setEditedState(pedited->wavelet.sigmafin ? Edited : UnEdited);
         sigmaton->setEditedState(pedited->wavelet.sigmaton ? Edited : UnEdited);
+        sigmacol->setEditedState(pedited->wavelet.sigmacol ? Edited : UnEdited);
         threshold->setEditedState(pedited->wavelet.threshold ? Edited : UnEdited);
         threshold2->setEditedState(pedited->wavelet.threshold2 ? Edited : UnEdited);
         edgedetect->setEditedState(pedited->wavelet.edgedetect ? Edited : UnEdited);
@@ -1830,6 +1836,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.wavclCurve = clshape->getCurve();
     pp->wavelet.sigmafin = sigmafin->getValue();
     pp->wavelet.sigmaton = sigmaton->getValue();
+    pp->wavelet.sigmacol = sigmacol->getValue();
 
     for (int i = 0; i < 9; i++) {
         pp->wavelet.c[i] = (int) correction[i]->getValue();
@@ -1938,6 +1945,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.iter            = iter->getEditedState();
         pedited->wavelet.sigmafin        = sigmafin->getEditedState();
         pedited->wavelet.sigmaton        = sigmaton->getEditedState();
+        pedited->wavelet.sigmacol        = sigmacol->getEditedState();
         pedited->wavelet.wavclCurve      = !clshape->isUnChanged();
         pedited->wavelet.expcontrast     = !expcontrast->get_inconsistent();
         pedited->wavelet.expchroma       = !expchroma->get_inconsistent();
@@ -2120,6 +2128,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     iter->setDefault(defParams->wavelet.iter);
     sigmafin->setDefault(defParams->wavelet.sigmafin);
     sigmaton->setDefault(defParams->wavelet.sigmaton);
+    sigmacol->setDefault(defParams->wavelet.sigmacol);
     sigma->setDefault(defParams->wavelet.sigma);
     offset->setDefault(defParams->wavelet.offset);
     lowthr->setDefault(defParams->wavelet.lowthr);
@@ -2244,6 +2253,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         iter->setDefaultEditedState(pedited->wavelet.iter ? Edited : UnEdited);
         sigmafin->setDefaultEditedState(pedited->wavelet.sigmafin ? Edited : UnEdited);
         sigmaton->setDefaultEditedState(pedited->wavelet.sigmaton ? Edited : UnEdited);
+        sigmacol->setDefaultEditedState(pedited->wavelet.sigmacol ? Edited : UnEdited);
         level0noise->setDefaultEditedState(pedited->wavelet.level0noise ? Edited : UnEdited);
         level1noise->setDefaultEditedState(pedited->wavelet.level1noise ? Edited : UnEdited);
         level2noise->setDefaultEditedState(pedited->wavelet.level2noise ? Edited : UnEdited);
@@ -2308,6 +2318,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         iter->setDefaultEditedState(Irrelevant);
         sigmafin->setDefaultEditedState(Irrelevant);
         sigmaton->setDefaultEditedState(Irrelevant);
+        sigmacol->setDefaultEditedState(Irrelevant);
 
         for (int i = 0; i < 9; i++) {
             correction[i]->setDefaultEditedState(Irrelevant);
@@ -2403,6 +2414,7 @@ void Wavelet::CHmethodUpdateUI()
     if (!batchMode) {
         if (CHmethod->get_active_row_number() == 0) {
             CHSLmethod->show();
+            sigmacol->show();
             pastlev->hide();
             satlev->hide();
             chroma->hide();
@@ -2422,6 +2434,7 @@ void Wavelet::CHmethodUpdateUI()
             }
         } else if (CHmethod->get_active_row_number() == 1) {
             CHSLmethod->show();
+            sigmacol->show();
             pastlev->show();
             satlev->show();
             chroma->show();
@@ -2441,6 +2454,7 @@ void Wavelet::CHmethodUpdateUI()
             }
         } else {
             chro->show();
+            sigmacol->hide();
             pastlev->hide();
             satlev->hide();
             chroma->hide();
@@ -2842,6 +2856,7 @@ void Wavelet::setBatchMode(bool batchMode)
     iter->showEditedCB();
     sigmafin->showEditedCB();
     sigmaton->showEditedCB();
+    sigmacol->showEditedCB();
     level0noise->showEditedCB();
     level1noise->showEditedCB();
     level2noise->showEditedCB();
@@ -2995,6 +3010,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavsigmafin, sigmafin->getTextValue());
         } else if (a == sigmaton) {
             listener->panelChanged(EvWavsigmaton, sigmaton->getTextValue());
+        } else if (a == sigmacol) {
+            listener->panelChanged(EvWavsigmacol, sigmacol->getTextValue());
         } else if (a == greenhigh) {
             listener->panelChanged(EvWavgreenhigh, greenhigh->getTextValue());
         } else if (a == bluehigh) {

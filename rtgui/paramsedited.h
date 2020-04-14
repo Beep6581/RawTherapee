@@ -501,6 +501,7 @@ struct WaveletParamsEdited {
     bool iter;
     bool sigmafin;
     bool sigmaton;
+    bool sigmacol;
     bool median;
     bool medianlev;
     bool linkedg;
