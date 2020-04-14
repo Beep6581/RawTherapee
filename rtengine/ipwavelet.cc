@@ -3141,7 +3141,12 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
     constexpr float bedstr = 1.f - 10.f * aedstr;
 
     float mea[10];
-    float beta = 1.f;
+    // float beta = 1.f;
+    float * beta = new float[W_L * H_L];
+
+    for (int co = 0; co < H_L * W_L; co++) {
+        beta[co] = 1.f;
+    }
 
     if (cp.eff < 2.5f) {
         float effect = cp.eff;
@@ -3153,27 +3158,27 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
             float WavCL = std::fabs(WavCoeffs_L[dir][co]);
 
             if (WavCL < mea[0]) {
-                beta = 0.05f;
+                beta[co] = 0.05f;
             } else if (WavCL < mea[1]) {
-                beta = 0.2f;
+                beta[co] = 0.2f;
             } else if (WavCL < mea[2]) {
-                beta = 0.7f;
+                beta[co] = 0.7f;
             } else if (WavCL < mea[3]) {
-                beta = 1.f;    //standard
+                beta[co] = 1.f;    //standard
             } else if (WavCL < mea[4]) {
-                beta = 1.f;
+                beta[co] = 1.f;
             } else if (WavCL < mea[5]) {
-                beta = 0.8f;    //+sigma
+                beta[co] = 0.8f;    //+sigma
             } else if (WavCL < mea[6]) {
-                beta = 0.6f;
+                beta[co] = 0.6f;
             } else if (WavCL < mea[7]) {
-                beta = 0.4f;
+                beta[co] = 0.4f;
             } else if (WavCL < mea[8]) {
-                beta = 0.2f;    // + 2 sigma
+                beta[co] = 0.2f;    // + 2 sigma
             } else if (WavCL < mea[9]) {
-                beta = 0.1f;
+                beta[co] = 0.1f;
             } else {
-                beta = 0.0f;
+                beta[co] = 0.0f;
             }
 
         }
@@ -3272,7 +3277,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
             value *= (atten01234 * scaleskip[1]);    //for zoom < 100% reduce strength...I choose level 1...but!!
         }
 
-        value *= beta;
+        // value *= beta;
         float edge = 1.f;
         float lim0 = 20.f; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
         float lev = float (level);
@@ -3432,7 +3437,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                         edge = rtengine::max(edge, 1.f);
                     }
 
-                    WavCoeffs_L[dir][k] *=  edge;
+                    WavCoeffs_L[dir][k] *= (1.f + (edge - 1.f) * beta[k]);
                 }
             }
         } else if (cp.EDmet == 1) { //threshold adjuster
@@ -3549,7 +3554,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                         }
                     }
 
-                    WavCoeffs_L[dir][k] *= edge;
+                    WavCoeffs_L[dir][k] *= (1.f + (edge - 1.f) * beta[k]);
                 }
             }
         }
@@ -3557,6 +3562,8 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
         if (!lipschitz) {
             delete [] koe;
         }
+
+        delete[] beta;
     }
 
 
