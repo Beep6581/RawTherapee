@@ -301,6 +301,7 @@ private:
     Gtk::Frame* const chromaFrame;
     Gtk::Frame* const chroFrame;
     Gtk::Frame* const fincFrame;
+    Gtk::Frame* const dirFrame;
 
     Gtk::Label* const wavLabels;
     Gtk::Label* const labmC;

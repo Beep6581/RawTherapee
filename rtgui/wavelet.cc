@@ -166,6 +166,7 @@ Wavelet::Wavelet() :
     chromaFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROMAFRAME")))),
     chroFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROFRAME")))),
     fincFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_FINCFRAME")))),
+    dirFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_DIRFRAME")))),
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     labmC(Gtk::manage(new Gtk::Label(M("TP_WAVELET_CTYPE") + ":"))),
     labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
@@ -1034,20 +1035,18 @@ Wavelet::Wavelet() :
     fincBox->pack_start(*sigmafin);
     fincFrame->add(*fincBox);
 
+    dirFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const dirBox = Gtk::manage(new ToolParamBlock());
+    dirBox->pack_start(*ctboxBA);
+    dirBox->pack_start(*balance);
+    dirBox->pack_start(*opacityCurveEditorW, Gtk::PACK_SHRINK, 2);
+    dirBox->pack_start(*iter);
+    dirBox->pack_start(*tmr);
+    dirFrame->add(*dirBox);
 
     ToolParamBlock* const finalBox = Gtk::manage(new ToolParamBlock());
+    finalBox->pack_start(*dirFrame);
 
-    finalBox->pack_start(*ctboxBA);
-    finalBox->pack_start(*balance);
-
-    finalBox->pack_start(*opacityCurveEditorW, Gtk::PACK_SHRINK, 2);
-
-    finalBox->pack_start(*iter);
-
-    finalBox->pack_start(*tmr);
-//    finalBox->pack_start(*separatorbalend, Gtk::PACK_SHRINK, 2);
-//    finalBox->pack_start(*opacityCurveEditorWL, Gtk::PACK_SHRINK, 2);
-//    finalBox->pack_start(*sigmafin);
     finalBox->pack_start(*fincFrame);
     finalBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
     finalBox->pack_start(*softradend);
@@ -2568,15 +2567,18 @@ void Wavelet::BAmethodUpdateUI()
             balance->hide();
             opacityCurveEditorW->hide();
             iter->hide();
+            tmr->hide();
 
         } else if (BAmethod->get_active_row_number() == 1) { //sli
             opacityCurveEditorW->hide();
             balance->show();
             iter->show();
+            tmr->show();
         } else if (BAmethod->get_active_row_number() == 2) { //CU
             opacityCurveEditorW->show();
             balance->hide();
             iter->show();
+            tmr->show();
         }
     }
 }
