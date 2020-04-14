@@ -329,7 +329,7 @@ void ExifPanel::refreshTags()
             p.second = k.tagLabel();
             if (pos != exif.end() && pos->size()) {
                 edited = changeList->find(pos->key()) != changeList->end();
-                value = pos->print(&exif);
+                value = escapeHtmlChars(pos->print(&exif));
             }
             addTag(p.first, lbl, value, true, edited);
         }
