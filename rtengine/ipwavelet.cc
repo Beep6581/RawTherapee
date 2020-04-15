@@ -116,6 +116,7 @@ struct cont_params {
     float sigmafin;
     float sigmaton;
     float sigmacol;
+    float sigmadir;
     int ite;
     int contmet;
     bool opaW;
@@ -197,6 +198,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.sigmafin = params->wavelet.sigmafin;
     cp.sigmaton = params->wavelet.sigmaton;
     cp.sigmacol = params->wavelet.sigmacol;
+    cp.sigmadir = params->wavelet.sigmadir;
 
     if (params->wavelet.TMmethod == "cont") {
         cp.contmet = 1;
@@ -3768,7 +3770,52 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
     }
 
     if (cp.bam && cp.finena) {
+        float effect = cp.sigmadir;
+        float offs = 1.f;
+        float mea[10];
+        float * beta = new float[W_L * H_L];
+
+        for (int co = 0; co < H_L * W_L; co++) {
+            beta[co] = 1.f;
+        }
+
+        calceffect(level, mean, sigma, mea, effect, offs);
+
+
+        for (int co = 0; co < H_L * W_L; co++) {
+            float WavCL = std::fabs(WavCoeffs_L[dir][co]);
+
+            if (WavCL < mea[0]) {
+                beta[co] = 0.05f;
+            } else if (WavCL < mea[1]) {
+                beta[co] = 0.2f;
+            } else if (WavCL < mea[2]) {
+                beta[co] = 0.7f;
+            } else if (WavCL < mea[3]) {
+                beta[co] = 1.f;    //standard
+            } else if (WavCL < mea[4]) {
+                beta[co] = 1.f;
+            } else if (WavCL < mea[5]) {
+                beta[co] = 0.8f;    //+sigma
+            } else if (WavCL < mea[6]) {
+                beta[co] = 0.6f;
+            } else if (WavCL < mea[7]) {
+                beta[co] = 0.4f;
+            } else if (WavCL < mea[8]) {
+                beta[co] = 0.2f;    // + 2 sigma
+            } else if (WavCL < mea[9]) {
+                beta[co] = 0.1f;
+            } else {
+                beta[co] = 0.01f;
+            }
+        }
+
+
         if (cp.opaW && cp.BAmet == 2) {
+
+
+
+
             int iteration = cp.ite;
             int itplus = 7 + iteration;
             int itmoins = 7 - iteration;
@@ -3804,7 +3851,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                         kba = 1.f - k2;
                     }
 
-                    WavCoeffs_L[dir][i] *= (kba);
+                    WavCoeffs_L[dir][i] *= (1.f + (kba -1.f) * beta[i]);
                 }
             }
         }
@@ -3863,11 +3910,11 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                         kba = 1.f - bal / k2;
                     }
 
-                    WavCoeffs_L[dir][i] *= (kba);
+                    WavCoeffs_L[dir][i] *= (1.f + (kba -1.f) * beta[i]);
                 }
             }
         }
-
+        delete[] beta;
     }
 
     // to see each level of wavelet ...level from 0 to 8
