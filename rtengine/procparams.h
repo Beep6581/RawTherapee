@@ -1225,6 +1225,8 @@ struct WaveletParams {
     double sigmaton;
     double sigmacol;
     double sigmadir;
+    double rangeab;
+    double protab;
     int iter;
     bool expcontrast;
     bool expchroma;
@@ -1237,7 +1239,13 @@ struct WaveletParams {
     bool exptoning;
     bool expnoise;
     bool expclari;
-
+    double labgridALow;
+    double labgridBLow;
+    double labgridAHigh;
+    double labgridBHigh;
+    static const double LABGRID_CORR_MAX;
+    static const double LABGRID_CORR_SCALE;
+    static const double LABGRIDL_DIRECT_SCALE;
     int Lmethod;
     Glib::ustring CLmethod;
     Glib::ustring Backmethod;

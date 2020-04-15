@@ -2148,6 +2148,10 @@ bool ColorManagementParams::operator !=(const ColorManagementParams& other) cons
     return !(*this == other);
 }
 
+const double WaveletParams::LABGRID_CORR_MAX = 12800.f;
+const double WaveletParams::LABGRID_CORR_SCALE = 3.276f;
+const double WaveletParams::LABGRIDL_DIRECT_SCALE = 41950.;
+
 WaveletParams::WaveletParams() :
     ccwcurve{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -2267,6 +2271,8 @@ WaveletParams::WaveletParams() :
     sigmaton(1.0),
     sigmacol(1.0),
     sigmadir(1.0),
+    rangeab(20.0),
+    protab(0.0),
     iter(0),
     expcontrast(false),
     expchroma(false),
@@ -2279,6 +2285,10 @@ WaveletParams::WaveletParams() :
     exptoning(false),
     expnoise(false),
     expclari(false),
+    labgridALow(0.0),
+    labgridBLow(0.0),
+    labgridAHigh(0.0),
+    labgridBHigh(0.0),
     Lmethod(4),
     CLmethod("all"),
     Backmethod("grey"),
@@ -2385,7 +2395,13 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && sigmaton == other.sigmaton
         && sigmacol == other.sigmacol
         && sigmadir == other.sigmadir
+        && rangeab == other.rangeab
+        && protab == other.protab
         && iter == other.iter
+        && labgridALow == other.labgridALow
+        && labgridBLow == other.labgridBLow
+        && labgridAHigh == other.labgridAHigh
+        && labgridBHigh == other.labgridBHigh
         && expcontrast == other.expcontrast
         && expchroma == other.expchroma
         && [this, &other]() -> bool
@@ -3532,6 +3548,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.sigmaton, "Wavelet", "Sigmaton", wavelet.sigmaton, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.sigmacol, "Wavelet", "Sigmacol", wavelet.sigmacol, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.sigmadir, "Wavelet", "Sigmadir", wavelet.sigmadir, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.rangeab, "Wavelet", "Rangeab", wavelet.rangeab, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.protab, "Wavelet", "Protab", wavelet.protab, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.iter, "Wavelet", "Iter", wavelet.iter, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.thres, "Wavelet", "MaxLev", wavelet.thres, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.Tilesmethod, "Wavelet", "TilesMethod", wavelet.Tilesmethod, keyFile);
@@ -3563,6 +3581,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.exptoning, "Wavelet", "Exptoning", wavelet.exptoning, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expnoise, "Wavelet", "Expnoise", wavelet.expnoise, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expclari, "Wavelet", "Expclari", wavelet.expclari, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.labgridALow, "Wavelet", "LabGridALow", wavelet.labgridALow, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.labgridBLow, "Wavelet", "LabGridBLow", wavelet.labgridBLow, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.labgridAHigh, "Wavelet", "LabGridAHigh", wavelet.labgridAHigh, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.labgridBHigh, "Wavelet", "LabGridBHigh", wavelet.labgridBHigh, keyFile);
 
         for (int i = 0; i < 9; i++) {
             std::stringstream ss;
@@ -4716,6 +4738,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "Sigmaton", pedited, wavelet.sigmaton, pedited->wavelet.sigmaton);
             assignFromKeyfile(keyFile, "Wavelet", "Sigmacol", pedited, wavelet.sigmacol, pedited->wavelet.sigmacol);
             assignFromKeyfile(keyFile, "Wavelet", "Sigmadir", pedited, wavelet.sigmadir, pedited->wavelet.sigmadir);
+            assignFromKeyfile(keyFile, "Wavelet", "Rangeab", pedited, wavelet.rangeab, pedited->wavelet.rangeab);
+            assignFromKeyfile(keyFile, "Wavelet", "Protab", pedited, wavelet.protab, pedited->wavelet.protab);
             assignFromKeyfile(keyFile, "Wavelet", "Iter", pedited, wavelet.iter, pedited->wavelet.iter);
             assignFromKeyfile(keyFile, "Wavelet", "Median", pedited, wavelet.median, pedited->wavelet.median);
             assignFromKeyfile(keyFile, "Wavelet", "Medianlev", pedited, wavelet.medianlev, pedited->wavelet.medianlev);
@@ -4740,6 +4764,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "Showmask", pedited, wavelet.showmask, pedited->wavelet.showmask);
             assignFromKeyfile(keyFile, "Wavelet", "Oldsh", pedited, wavelet.oldsh, pedited->wavelet.oldsh);
             assignFromKeyfile(keyFile, "Wavelet", "TMr", pedited, wavelet.tmr, pedited->wavelet.tmr);
+            assignFromKeyfile(keyFile, "Wavelet", "LabGridALow", pedited, wavelet.labgridALow, pedited->wavelet.labgridALow);
+            assignFromKeyfile(keyFile, "Wavelet", "LabGridBLow", pedited, wavelet.labgridBLow, pedited->wavelet.labgridBLow);
+            assignFromKeyfile(keyFile, "Wavelet", "LabGridAHigh", pedited, wavelet.labgridAHigh, pedited->wavelet.labgridAHigh);
+            assignFromKeyfile(keyFile, "Wavelet", "LabGridBHigh", pedited, wavelet.labgridBHigh, pedited->wavelet.labgridBHigh);
 
             if (ppVersion < 331) { // wavelet.Lmethod was a string before version 331
                 Glib::ustring temp;

@@ -33,6 +33,7 @@ class CurveEditorGroup;
 class DiagonalCurveEditor;
 class EditDataProvider;
 class FlatCurveEditor;
+class LabGrid;
 
 class Wavelet final :
     public ToolParamBlock,
@@ -97,8 +98,14 @@ private:
     rtengine::ProcEvent EvWavsigmaton;
     rtengine::ProcEvent EvWavsigmacol;
     rtengine::ProcEvent EvWavsigmadir;
+    rtengine::ProcEvent EvWavLabGridValue;
+    rtengine::ProcEvent EvWavrangeab;
+    rtengine::ProcEvent EvWavprotab;
+
+    LabGrid *labgrid;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
+    void setListener(ToolPanelListener *tpl) override;
 
     void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
     void BAmethodChanged();
@@ -226,7 +233,9 @@ private:
     Adjuster* const sigmaton;
     Adjuster* const sigmacol;
     Adjuster* const sigmadir;
-    
+    Adjuster* const rangeab;
+    Adjuster* const protab;
+
     Adjuster* greenlow;
     Adjuster* bluelow;
     Adjuster* greenmed;
@@ -304,6 +313,7 @@ private:
     Gtk::Frame* const chroFrame;
     Gtk::Frame* const fincFrame;
     Gtk::Frame* const dirFrame;
+    Gtk::Frame* const tonFrame;
 
     Gtk::Label* const wavLabels;
     Gtk::Label* const labmC;

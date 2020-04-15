@@ -27,6 +27,7 @@
 #include "rtimage.h"
 #include "options.h"
 #include "eventmapper.h"
+#include "labgrid.h"
 #include "../rtengine/color.h"
 
 using namespace rtengine;
@@ -116,6 +117,8 @@ Wavelet::Wavelet() :
     sigmaton(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
     sigmacol(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
     sigmadir(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
+    rangeab(Gtk::manage(new Adjuster(M("TP_WAVELET_RANGEAB"), 0., 100., 0.1, 20.))),
+    protab(Gtk::manage(new Adjuster(M("TP_WAVELET_PROTAB"), 0., 100., 0.5, 0.))),
     hueskin(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HUESKIN"), -314., 314., -5., 25., 170., 120., 0, false))),
     hueskin2(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HUESKY"), -314., 314., -260., -250, -130., -140., 0, false))),
     hllev(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HIGHLIGHT"), 0., 100., 50., 75., 100., 98., 0, false))),
@@ -168,6 +171,7 @@ Wavelet::Wavelet() :
     chroFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROFRAME")))),
     fincFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_FINCFRAME")))),
     dirFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_DIRFRAME")))),
+    tonFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_TONFRAME")))),
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     labmC(Gtk::manage(new Gtk::Label(M("TP_WAVELET_CTYPE") + ":"))),
     labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
@@ -217,6 +221,11 @@ Wavelet::Wavelet() :
     EvWavsigmaton = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMATON");
     EvWavsigmacol = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMACOL");
     EvWavsigmadir = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMADIR");
+    EvWavLabGridValue = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVLABGRID_VALUE");
+    EvWavrangeab = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_RANGEAB");
+    EvWavprotab = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_PROTAB");
+
+    labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -497,6 +506,8 @@ Wavelet::Wavelet() :
 // Toning
     ToolParamBlock* const tonBox = Gtk::manage(new ToolParamBlock());
     sigmaton->setAdjusterListener(this);
+    rangeab->setAdjusterListener(this);
+    protab->setAdjusterListener(this);
 
     opaCurveEditorG->setCurveListener(this);
 
@@ -515,6 +526,15 @@ Wavelet::Wavelet() :
     opaCurveEditorG->curveListComplete();
     opaCurveEditorG->show();
     tonBox->pack_start(*sigmaton);
+    
+    tonFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const ton2Box = Gtk::manage(new ToolParamBlock());
+    ton2Box->pack_start(*labgrid, Gtk::PACK_EXPAND_WIDGET, 2);
+    ton2Box->pack_start(*rangeab);
+    ton2Box->pack_start(*protab);
+    tonFrame->add(*ton2Box);
+//    tonBox->pack_start(*tonFrame);
+
     tonBox->pack_start(*opaCurveEditorG, Gtk::PACK_SHRINK, 2);
 
     opacityCurveEditorG->setCurveListener(this);
@@ -1157,6 +1177,13 @@ void Wavelet::neutral_pressed()
     }
 }
 
+void Wavelet::setListener(ToolPanelListener *tpl)
+{
+    ToolPanel::setListener(tpl);
+    labgrid->setListener(tpl);
+}
+
+
 void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
 {
 
@@ -1443,6 +1470,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     mergeC->setValue(pp->wavelet.mergeC);
     softrad->setValue(pp->wavelet.softrad);
     softradend->setValue(pp->wavelet.softradend);
+    labgrid->setParams(pp->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX, false);
 
     ballum->setValue(pp->wavelet.ballum);
     balchrom->setValue(pp->wavelet.balchrom);
@@ -1459,6 +1487,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     sigmaton->setValue(pp->wavelet.sigmaton);
     sigmacol->setValue(pp->wavelet.sigmacol);
     sigmadir->setValue(pp->wavelet.sigmadir);
+    rangeab->setValue(pp->wavelet.rangeab);
+    protab->setValue(pp->wavelet.protab);
 
     for (int i = 0; i < 9; i++) {
         correction[i]->setValue(pp->wavelet.c[i]);
@@ -1534,6 +1564,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->wavelet.ushamethod) {
             ushamethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
+        labgrid->setEdited(pedited->wavelet.labgridALow || pedited->wavelet.labgridBLow || pedited->wavelet.labgridAHigh || pedited->wavelet.labgridBHigh);
 
         set_inconsistent(multiImage && !pedited->wavelet.enabled);
         ccshape->setUnChanged(!pedited->wavelet.ccwcurve);
@@ -1580,6 +1611,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         sigmaton->setEditedState(pedited->wavelet.sigmaton ? Edited : UnEdited);
         sigmacol->setEditedState(pedited->wavelet.sigmacol ? Edited : UnEdited);
         sigmadir->setEditedState(pedited->wavelet.sigmadir ? Edited : UnEdited);
+        rangeab->setEditedState(pedited->wavelet.rangeab ? Edited : UnEdited);
+        protab->setEditedState(pedited->wavelet.protab ? Edited : UnEdited);
         threshold->setEditedState(pedited->wavelet.threshold ? Edited : UnEdited);
         threshold2->setEditedState(pedited->wavelet.threshold2 ? Edited : UnEdited);
         edgedetect->setEditedState(pedited->wavelet.edgedetect ? Edited : UnEdited);
@@ -1828,6 +1861,11 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.ballum         = ballum->getValue();
     pp->wavelet.chromfi        = chromfi->getValue();
     pp->wavelet.chromco        = chromco->getValue();
+    labgrid->getParams(pp->wavelet.labgridALow, pp->wavelet.labgridBLow, pp->wavelet.labgridAHigh, pp->wavelet.labgridBHigh);
+    pp->wavelet.labgridALow *= WaveletParams::LABGRID_CORR_MAX;
+    pp->wavelet.labgridAHigh *= WaveletParams::LABGRID_CORR_MAX;
+    pp->wavelet.labgridBLow *= WaveletParams::LABGRID_CORR_MAX;
+    pp->wavelet.labgridBHigh *= WaveletParams::LABGRID_CORR_MAX;
 
     pp->wavelet.greenlow       = greenlow->getValue();
     pp->wavelet.bluelow        = bluelow->getValue();
@@ -1855,6 +1893,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.sigmaton = sigmaton->getValue();
     pp->wavelet.sigmacol = sigmacol->getValue();
     pp->wavelet.sigmadir = sigmadir->getValue();
+    pp->wavelet.rangeab = rangeab->getValue();
+    pp->wavelet.protab = protab->getValue();
 
     for (int i = 0; i < 9; i++) {
         pp->wavelet.c[i] = (int) correction[i]->getValue();
@@ -1965,6 +2005,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.sigmaton        = sigmaton->getEditedState();
         pedited->wavelet.sigmacol        = sigmacol->getEditedState();
         pedited->wavelet.sigmadir        = sigmadir->getEditedState();
+        pedited->wavelet.rangeab         = rangeab->getEditedState();
+        pedited->wavelet.protab          = protab->getEditedState();
         pedited->wavelet.wavclCurve      = !clshape->isUnChanged();
         pedited->wavelet.expcontrast     = !expcontrast->get_inconsistent();
         pedited->wavelet.expchroma       = !expchroma->get_inconsistent();
@@ -1975,6 +2017,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.exptoning       = !exptoning->get_inconsistent();
         pedited->wavelet.expnoise        = !expnoise->get_inconsistent();
         pedited->wavelet.expclari        = !expclari->get_inconsistent();
+        pedited->wavelet.labgridALow = pedited->wavelet.labgridBLow = pedited->wavelet.labgridAHigh = pedited->wavelet.labgridBHigh = labgrid->getEdited();
 
         for (int i = 0; i < 9; i++) {
             pedited->wavelet.c[i]        = correction[i]->getEditedState();
@@ -2150,6 +2193,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     sigmacol->setDefault(defParams->wavelet.sigmacol);
     sigmadir->setDefault(defParams->wavelet.sigmadir);
     sigma->setDefault(defParams->wavelet.sigma);
+    rangeab->setDefault(defParams->wavelet.rangeab);
+    protab->setDefault(defParams->wavelet.protab);
     offset->setDefault(defParams->wavelet.offset);
     lowthr->setDefault(defParams->wavelet.lowthr);
     rescon->setDefault(defParams->wavelet.rescon);
@@ -2198,6 +2243,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     balchrom->setDefault(defParams->wavelet.balchrom);
     chromfi->setDefault(defParams->wavelet.chromfi);
     chromco->setDefault(defParams->wavelet.chromco);
+    labgrid->setDefault(defParams->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, defParams->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, defParams->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, defParams->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX);
 
     greenlow->setDefault(defParams->wavelet.greenlow);
     bluelow->setDefault(defParams->wavelet.bluelow);
@@ -2225,6 +2271,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         balchrom->setDefaultEditedState(pedited->wavelet.balchrom ? Edited : UnEdited);
         chromfi->setDefaultEditedState(pedited->wavelet.chromfi ? Edited : UnEdited);
         chromco->setDefaultEditedState(pedited->wavelet.chromco ? Edited : UnEdited);
+        labgrid->setEdited((pedited->wavelet.labgridALow || pedited->wavelet.labgridBLow || pedited->wavelet.labgridAHigh || pedited->wavelet.labgridBHigh) ? Edited : UnEdited);
 
         sigma->setDefault(defParams->wavelet.sigma);
         offset->setDefault(defParams->wavelet.offset);
@@ -2275,6 +2322,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         sigmaton->setDefaultEditedState(pedited->wavelet.sigmaton ? Edited : UnEdited);
         sigmacol->setDefaultEditedState(pedited->wavelet.sigmacol ? Edited : UnEdited);
         sigmadir->setDefaultEditedState(pedited->wavelet.sigmadir ? Edited : UnEdited);
+        rangeab->setDefaultEditedState(pedited->wavelet.rangeab ? Edited : UnEdited);
+        protab->setDefaultEditedState(pedited->wavelet.protab ? Edited : UnEdited);
         level0noise->setDefaultEditedState(pedited->wavelet.level0noise ? Edited : UnEdited);
         level1noise->setDefaultEditedState(pedited->wavelet.level1noise ? Edited : UnEdited);
         level2noise->setDefaultEditedState(pedited->wavelet.level2noise ? Edited : UnEdited);
@@ -2341,6 +2390,9 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         sigmaton->setDefaultEditedState(Irrelevant);
         sigmacol->setDefaultEditedState(Irrelevant);
         sigmadir->setDefaultEditedState(Irrelevant);
+        rangeab->setDefaultEditedState(Irrelevant);
+        protab->setDefaultEditedState(Irrelevant);
+        labgrid->setEdited(Edited);
 
         for (int i = 0; i < 9; i++) {
             correction[i]->setDefaultEditedState(Irrelevant);
@@ -2883,6 +2935,8 @@ void Wavelet::setBatchMode(bool batchMode)
     sigmaton->showEditedCB();
     sigmacol->showEditedCB();
     sigmadir->showEditedCB();
+    rangeab->showEditedCB();
+    protab->showEditedCB();
     level0noise->showEditedCB();
     level1noise->showEditedCB();
     level2noise->showEditedCB();
@@ -3036,6 +3090,10 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavsigmafin, sigmafin->getTextValue());
         } else if (a == sigmaton) {
             listener->panelChanged(EvWavsigmaton, sigmaton->getTextValue());
+        } else if (a == rangeab) {
+            listener->panelChanged(EvWavrangeab, rangeab->getTextValue());
+        } else if (a == protab) {
+            listener->panelChanged(EvWavprotab, protab->getTextValue());
         } else if (a == sigmacol) {
             listener->panelChanged(EvWavsigmacol, sigmacol->getTextValue());
         } else if (a == sigmadir) {

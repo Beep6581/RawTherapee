@@ -146,6 +146,19 @@ struct cont_params {
     float balchrom;
     float chromfi;
     float chromco;
+    float factor;
+    float scaling;
+    float scaledirect;
+    float a_scale;
+    float a_base;
+    float b_scale;
+    float b_base;
+    float a_high;
+    float a_low;
+    float b_high;
+    float b_low;
+    float rangeab;
+    float protab;
 };
 
 int wavNestedLevels = 1;
@@ -317,6 +330,20 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     for (int m = 0; m < maxmul; m++) {
         cp.mulC[m] = waparams.ch[m];
     }
+
+    cp.factor = WaveletParams::LABGRID_CORR_MAX * 3.276f;
+    cp.scaling = WaveletParams::LABGRID_CORR_SCALE;
+    cp.scaledirect = WaveletParams::LABGRIDL_DIRECT_SCALE;
+    cp.a_scale = (params->wavelet.labgridAHigh - params->wavelet.labgridALow) / cp.factor / cp.scaling;
+    cp.a_base = params->wavelet.labgridALow / cp.scaling;
+    cp.b_scale = (params->wavelet.labgridBHigh - params->wavelet.labgridBLow) / cp.factor / cp.scaling;
+    cp.b_base = params->wavelet.labgridBLow / cp.scaling;
+    cp.a_high = 3.276f * params->wavelet.labgridAHigh;
+    cp.a_low = 3.276f * params->wavelet.labgridALow;
+    cp.b_high = 3.276f * params->wavelet.labgridBHigh;
+    cp.b_low = 3.276f * params->wavelet.labgridBLow;
+    cp.rangeab = params->wavelet.rangeab;
+    cp.protab = params->wavelet.protab;
 
     if (waOpacityCurveRG) {
         cp.opaRG = true;
@@ -3851,7 +3878,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                         kba = 1.f - k2;
                     }
 
-                    WavCoeffs_L[dir][i] *= (1.f + (kba -1.f) * beta[i]);
+                    WavCoeffs_L[dir][i] *= (1.f + (kba - 1.f) * beta[i]);
                 }
             }
         }
@@ -3910,10 +3937,11 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                         kba = 1.f - bal / k2;
                     }
 
-                    WavCoeffs_L[dir][i] *= (1.f + (kba -1.f) * beta[i]);
+                    WavCoeffs_L[dir][i] *= (1.f + (kba - 1.f) * beta[i]);
                 }
             }
         }
+
         delete[] beta;
     }
 
@@ -4131,6 +4159,25 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
         float effect = cp.sigmaton;
         float betaab = 0.f;
         float offs = 1.f;
+        float protec = 0.01f * cp.protab;
+      //  printf("rangeab=%f \n", 0.01f * cp.rangeab);
+      //  printf("protab=%f \n", 0.01f * cp.protab);
+        float aref1 = cp.a_high;
+        float bref1 = cp.b_high;
+        float aref2 = cp.a_low;
+        float bref2 = cp.b_low;
+     //   printf("a1=%f b1=%f a2=%f b2=%f\n", aref1, bref1, aref2, bref2);
+
+        float arefplus1 = aref1 * (1.f + 0.1f * cp.rangeab);
+        float arefmoins1 = aref1 * (1.f - 0.1f * cp.rangeab);
+        float brefplus1 = bref1 * (1.f + 0.1f * cp.rangeab);
+        float brefmoins1 = bref1 * (1.f - 0.1f * cp.rangeab);
+     //   printf("a1+=%f a1-=%f b+=%f b-=%f\n", arefplus1, arefmoins1, brefplus1, brefmoins1);
+
+        float arefplus2 = aref2 * (1.f + 0.1f * cp.rangeab);
+        float arefmoins2 = aref2 * (1.f - 0.1f * cp.rangeab);
+        float brefplus2 = bref2 * (1.f + 0.1f * cp.rangeab);
+        float brefmoins2 = bref2 * (1.f - 0.1f * cp.rangeab);
 
         calceffect(level, meanab, sigmaab, mea, effect, offs);
 
@@ -4161,8 +4208,30 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
                 betaab = 0.0f;
             }
 
+            float kreduc1 = 1.f;
+            float kreduc2 = 1.f;
+            int ii = co / W_ab;
+            int jj = co - ii * W_ab;
+            cp.protab = 0.f;// always disabled provisory...
+            if (cp.protab > 0.f) {
 
-            float beta = (1024.f + 50.f * mulOpacity * betaab) / 1024.f ;
+                if ((labco->a[ii * 2][jj * 2] > arefmoins1) && (labco->a[ii * 2][jj * 2] < arefplus1)
+                        && (labco->b[ii * 2][jj * 2] > brefmoins1) && (labco->b[ii * 2][jj * 2] < brefplus1)) {
+                    kreduc1 = protec;
+                 //   printf("p ");
+                }
+
+                if ((labco->a[ii * 2][jj * 2] > arefmoins2) && (labco->a[ii * 2][jj * 2] < arefplus2)
+                        && (labco->b[ii * 2][jj * 2] > brefmoins2) && (labco->b[ii * 2][jj * 2] < brefplus2)) {
+                    kreduc2 = protec;
+                  //  printf("P ");
+                }
+
+
+                // printf("pa1=%f pa2=%f\n", kreduc1, kredu2);
+            }
+
+            float beta = (1024.f + 50.f * mulOpacity * betaab * kreduc1 * kreduc2) / 1024.f ;
 
             WavCoeffs_ab[dir][co] *= beta;
         }
