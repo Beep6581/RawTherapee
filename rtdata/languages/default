@@ -2337,6 +2337,7 @@ TP_WAVELET_TMSTRENGTH;Compression strength
 TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image.
 TP_WAVELET_TMEDGS;Edge stopping
 TP_WAVELET_TON;Toning
+TP_WAVELET_TONFRAME;Excluded Colors
 TP_WAVELET_TMTYPE;Compression method
 TP_WAVELET_USH;None
 TP_WAVELET_USHARP;Clarity method

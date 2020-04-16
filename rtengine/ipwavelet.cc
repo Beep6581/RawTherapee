@@ -918,6 +918,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 float ** WavCoeffs_L = Ldecomp->level_coeffs(lvl);
 
                                 madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+
+                                if (settings->verbose) {
+                                    printf("sqrt madL=%f lvl=%i dir=%i\n", sqrt(madL[lvl][dir - 1]), lvl, dir - 1);
+                                }
                             }
                         }
 
@@ -4159,25 +4163,22 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
         float effect = cp.sigmaton;
         float betaab = 0.f;
         float offs = 1.f;
-        float protec = 0.01f * cp.protab;
-      //  printf("rangeab=%f \n", 0.01f * cp.rangeab);
-      //  printf("protab=%f \n", 0.01f * cp.protab);
+        float protec = 0.01f * (100.f - cp.protab);
         float aref1 = cp.a_high;
         float bref1 = cp.b_high;
         float aref2 = cp.a_low;
         float bref2 = cp.b_low;
-     //   printf("a1=%f b1=%f a2=%f b2=%f\n", aref1, bref1, aref2, bref2);
 
-        float arefplus1 = aref1 * (1.f + 0.1f * cp.rangeab);
-        float arefmoins1 = aref1 * (1.f - 0.1f * cp.rangeab);
-        float brefplus1 = bref1 * (1.f + 0.1f * cp.rangeab);
-        float brefmoins1 = bref1 * (1.f - 0.1f * cp.rangeab);
-     //   printf("a1+=%f a1-=%f b+=%f b-=%f\n", arefplus1, arefmoins1, brefplus1, brefmoins1);
+        float kk = 100.f;
+        float arefplus1 = aref1  + cp.rangeab * kk;
+        float arefmoins1 = aref1 - cp.rangeab * kk;
+        float brefplus1 = bref1 + cp.rangeab * kk;
+        float brefmoins1 = bref1 - cp.rangeab * kk;
 
-        float arefplus2 = aref2 * (1.f + 0.1f * cp.rangeab);
-        float arefmoins2 = aref2 * (1.f - 0.1f * cp.rangeab);
-        float brefplus2 = bref2 * (1.f + 0.1f * cp.rangeab);
-        float brefmoins2 = bref2 * (1.f - 0.1f * cp.rangeab);
+        float arefplus2 = aref2  + cp.rangeab * kk;
+        float arefmoins2 = aref2 - cp.rangeab * kk;
+        float brefplus2 = bref2 + cp.rangeab * kk;
+        float brefmoins2 = bref2 - cp.rangeab * kk;
 
         calceffect(level, meanab, sigmaab, mea, effect, offs);
 
@@ -4212,24 +4213,34 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
             float kreduc2 = 1.f;
             int ii = co / W_ab;
             int jj = co - ii * W_ab;
+
             cp.protab = 0.f;// always disabled provisory...
             if (cp.protab > 0.f) {
-
-                if ((labco->a[ii * 2][jj * 2] > arefmoins1) && (labco->a[ii * 2][jj * 2] < arefplus1)
-                        && (labco->b[ii * 2][jj * 2] > brefmoins1) && (labco->b[ii * 2][jj * 2] < brefplus1)) {
-                    kreduc1 = protec;
-                 //   printf("p ");
+                if (useChannelA) {
+                    if ((labco->a[ii * 2][jj * 2] > arefmoins1) && (labco->a[ii * 2][jj * 2] < arefplus1)) {
+                        kreduc1 = protec;
+                    }
+                } else {
+                    if ((labco->b[ii * 2][jj * 2] > brefmoins1) && (labco->b[ii * 2][jj * 2] < brefplus1)) {
+                        kreduc1 = protec;
+                    }
                 }
 
-                if ((labco->a[ii * 2][jj * 2] > arefmoins2) && (labco->a[ii * 2][jj * 2] < arefplus2)
-                        && (labco->b[ii * 2][jj * 2] > brefmoins2) && (labco->b[ii * 2][jj * 2] < brefplus2)) {
-                    kreduc2 = protec;
-                  //  printf("P ");
+                if (useChannelA) {
+                    if ((labco->a[ii * 2][jj * 2] > arefmoins2) && (labco->a[ii * 2][jj * 2] < arefplus2)) {
+                        kreduc2 = protec;
+                    }
+                } else {
+                    if ((labco->b[ii * 2][jj * 2] > brefmoins2) && (labco->b[ii * 2][jj * 2] < brefplus2)) {
+                        kreduc2 = protec;
+                    }
                 }
 
-
-                // printf("pa1=%f pa2=%f\n", kreduc1, kredu2);
             }
+
+
+            // printf("pa1=%f pa2=%f\n", kreduc1, kredu2);
+
 
             float beta = (1024.f + 50.f * mulOpacity * betaab * kreduc1 * kreduc2) / 1024.f ;
 
