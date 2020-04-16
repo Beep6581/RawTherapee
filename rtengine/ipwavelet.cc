@@ -4214,25 +4214,43 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
             int ii = co / W_ab;
             int jj = co - ii * W_ab;
 
-            cp.protab = 0.f;// always disabled provisory...
+            //    cp.protab = 0.f;// always disabled provisory...
             if (cp.protab > 0.f) {
                 if (useChannelA) {
                     if ((labco->a[ii * 2][jj * 2] > arefmoins1) && (labco->a[ii * 2][jj * 2] < arefplus1)) {
-                        kreduc1 = protec;
+                        kreduc1 = 0.5f * protec;
+
+                        if ((labco->a[ii * 2][jj * 2] > 0.8f * arefmoins1) && (labco->a[ii * 2][jj * 2] < 0.8f * arefplus1)) {
+                            kreduc1 = protec;
+                        }
                     }
+
                 } else {
                     if ((labco->b[ii * 2][jj * 2] > brefmoins1) && (labco->b[ii * 2][jj * 2] < brefplus1)) {
-                        kreduc1 = protec;
+                        kreduc1 = 0.5f * protec;
+
+                        if ((labco->b[ii * 2][jj * 2] > 0.8f * brefmoins1) && (labco->b[ii * 2][jj * 2] < 0.8f * brefplus1)) {
+                            kreduc1 = protec;
+                        }
                     }
                 }
 
                 if (useChannelA) {
                     if ((labco->a[ii * 2][jj * 2] > arefmoins2) && (labco->a[ii * 2][jj * 2] < arefplus2)) {
-                        kreduc2 = protec;
+                        kreduc2 = 0.5f * protec;
+
+                        if ((labco->a[ii * 2][jj * 2] > 0.8f * arefmoins2) && (labco->a[ii * 2][jj * 2] < 0.8f * arefplus2)) {
+                            kreduc2 = protec;
+                        }
+
                     }
                 } else {
                     if ((labco->b[ii * 2][jj * 2] > brefmoins2) && (labco->b[ii * 2][jj * 2] < brefplus2)) {
-                        kreduc2 = protec;
+                        kreduc2 = 0.5f * protec;
+
+                        if ((labco->b[ii * 2][jj * 2] > brefmoins2) && (labco->b[ii * 2][jj * 2] < brefplus2)) {
+                            kreduc2 = protec;
+                        }
                     }
                 }
 

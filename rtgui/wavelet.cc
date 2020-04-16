@@ -533,7 +533,7 @@ Wavelet::Wavelet() :
     ton2Box->pack_start(*rangeab);
     ton2Box->pack_start(*protab);
     tonFrame->add(*ton2Box);
-//    tonBox->pack_start(*tonFrame);
+    tonBox->pack_start(*tonFrame);
 
     tonBox->pack_start(*opaCurveEditorG, Gtk::PACK_SHRINK, 2);
 
