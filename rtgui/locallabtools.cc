@@ -3173,7 +3173,7 @@ void LocallabExposure::updateExposureGUI3()
         expMethod->hide();
 
         // Manage specific case where expMethod is different from 0
-        if (expMethod > 0) {
+        if (expMethod->get_active_row_number() > 0) {
             expMethodConn.block(true);
             expMethod->set_active(0);
             expMethodConn.block(false);
