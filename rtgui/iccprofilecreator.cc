@@ -15,27 +15,22 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <iostream>
+#include <iomanip>
+
 #include <sigc++/slot.h>
 #include "iccprofilecreator.h"
+#include "../rtengine/iccstore.h"
 #include "multilangmgr.h"
 #include "cachemanager.h"
-#include "addsetids.h"
 #include "../rtengine/color.h"
+#include "options.h"
+#include "pathutils.h"
 #include "rtimage.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
-extern Options options;
-
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
+#include "rtwindow.h"
 
 const char* sTRCPreset[] = {"BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9", "Lab_g3.0s9.03296"}; //gamma free
 
@@ -674,8 +669,6 @@ void ICCProfileCreator::savePressed()
     //necessary for V2 profile
 
     if (!v2except) {
-        std::string is_RTv4 = "";
-
         //used partially for v4, and in case of if we want to back to old manner for v2
         if (primariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
             sNewProfile = options.rtSettings.ACESp0;
@@ -687,11 +680,9 @@ void ICCProfileCreator::savePressed()
             sNewProfile = options.rtSettings.adobe;
             sPrimariesPreset = "Medium";
         } else if (primariesPreset == "ProPhoto"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)) {
-            is_RTv4 = options.rtSettings.prophoto.substr(0, 4);
-
-            if (is_RTv4 == "RTv4") {
+            if (options.rtSettings.prophoto.substr(0, 4) == "RTv4") {
                 options.rtSettings.prophoto = "RTv2_Large";
-            };
+            }
 
             sNewProfile = options.rtSettings.prophoto;
 
@@ -703,32 +694,26 @@ void ICCProfileCreator::savePressed()
             sNewProfile = options.rtSettings.srgb;
             sPrimariesPreset = "sRGB";
         } else if (primariesPreset == "Widegamut"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
-            is_RTv4 = options.rtSettings.widegamut.substr(0, 4);
-
-            if (is_RTv4 == "RTv4") {
+            if (options.rtSettings.widegamut.substr(0, 4) == "RTv4") {
                 options.rtSettings.widegamut = "RTv2_Wide";
-            };
+            }
 
             sNewProfile = options.rtSettings.widegamut;
 
             sPrimariesPreset = "Wide";
         } else if (primariesPreset == "BestRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
-            is_RTv4 = options.rtSettings.best.substr(0, 4);
-
-            if (is_RTv4 == "RTv4") {
+            if (options.rtSettings.best.substr(0, 4) == "RTv4") {
                 options.rtSettings.best = "RTv2_Best";
-            };
+            }
 
             sNewProfile = options.rtSettings.best;
 
             sPrimariesPreset = "Best";
         } else if (primariesPreset == "BetaRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
             sNewProfile = options.rtSettings.beta;
-            is_RTv4 = options.rtSettings.beta.substr(0, 4);
-
-            if (is_RTv4 == "RTv4") {
+            if (options.rtSettings.beta.substr(0, 4) == "RTv4") {
                 options.rtSettings.widegamut = "RTv2_Beta";
-            };
+            }
 
             sPrimariesPreset = "Beta";
         } else if (primariesPreset == "BruceRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {

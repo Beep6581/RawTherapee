@@ -14,10 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _COORDINATEADJUSTER_
-#define _COORDINATEADJUSTER_
+#pragma once
 
 #include <gtkmm.h>
 
@@ -70,7 +69,7 @@ public:
  *
  * The position of the Axis in the vector will be used in the communication between the Adjuster and the Provider to identify the Axis
  */
-class CoordinateAdjuster : public Gtk::FlowBox
+class CoordinateAdjuster final : public Gtk::FlowBox
 {
 
 public:
@@ -160,6 +159,3 @@ public:
     void stopNumericalAdjustment();
 
 };
-
-
-#endif

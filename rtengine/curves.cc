@@ -14,18 +14,14 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <vector>
 #include <algorithm>
 #include <memory>
 #include <cmath>
 #include <cstring>
-#include <glib.h>
-#include <glib/gstdio.h>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+#include <glibmm/ustring.h>
 
 #include "rt_math.h"
 
@@ -520,6 +516,26 @@ void CurveFactory::curveexLocal(bool & localexutili, const std::vector<double>& 
 
 }
 
+void CurveFactory::curvemaskLocal(bool & localmaskutili, const std::vector<double>& curvePoints, LUTf & LocalmaskCurve, int skip)
+{
+    bool needed = false;
+    std::unique_ptr<DiagonalCurve> dCurve;
+
+//    if (localexutili && !curvePoints.empty() && curvePoints[0] != 0) {
+    if (!curvePoints.empty() && curvePoints[0] != 0) {
+        dCurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
+
+        if (dCurve && !dCurve->isIdentity()) {
+            needed = true;
+            localmaskutili = true;
+        }
+    }
+
+    fillCurveArray(dCurve.get(), LocalmaskCurve, skip, needed);
+
+}
+
+
 
 void CurveFactory::localLCurve(double br, double contr,  /*const std::vector<double>& curvePoints,*/
                                LUTu & histogram, LUTf & outCurve,
@@ -772,16 +788,16 @@ void CurveFactory::complexsgnCurve(bool & autili,  bool & butili, bool & ccutili
 
 }
 
-void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, double hlcomprthresh,
-                                double shcompr, double br, double contr,
-                                const std::vector<double>& curvePoints,
-                                const std::vector<double>& curvePoints2,
-                                LUTu & histogram,
-                                LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
-                                LUTu & outBeforeCCurveHistogram,
-                                ToneCurve & customToneCurve1,
-                                ToneCurve & customToneCurve2,
-                                int skip)
+void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
+        double shcompr, double br, double contr,
+        const std::vector<double>& curvePoints,
+        const std::vector<double>& curvePoints2,
+        const LUTu & histogram,
+        LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
+        LUTu & outBeforeCCurveHistogram,
+        ToneCurve & customToneCurve1,
+        ToneCurve & customToneCurve2,
+        int skip)
 {
 
     // the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,
@@ -904,15 +920,15 @@ void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, doub
     }
     // gamma correction
 
-    float val = Color::gammatab_srgb1[0];
+    float val0 = Color::gammatab_srgb1[0];
 
     // apply brightness curve
     if (brightcurve) {
-        val = brightcurve->getVal(val);    // TODO: getVal(double) is very slow! Optimize with a LUTf
+        val0 = brightcurve->getVal(val0);    // TODO: getVal(double) is very slow! Optimize with a LUTf
     }
 
     // store result in a temporary array
-    dcurve[0] = LIM01<float>(val);
+    dcurve[0] = LIM01<float>(val0);
 
     for (int i = 1; i < 0x10000; i++) {
 
@@ -1636,6 +1652,142 @@ void LocretigainCurverab::Set(const std::vector<double> &curvePoints)
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
+    } else {
+        Reset();
+    }
+}
+LocHHmaskblCurve::LocHHmaskblCurve() : sum(0.f) {};
+
+void LocHHmaskblCurve::Reset()
+{
+    lutLocHHmaskblCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskblCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskblCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskblCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskblCurve[i] < 0.02f) {
+            lutLocHHmaskblCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskblCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+void LocHHmaskblCurve::Set(const std::vector<double> &curvePoints, bool & lhmasblutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmasblutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocLLmaskblCurve::LocLLmaskblCurve() : sum(0.f) {};
+
+void LocLLmaskblCurve::Reset()
+{
+    lutLocLLmaskblCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskblCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskblCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskblCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskblCurve[i] < 0.02f) {
+            lutLocLLmaskblCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskblCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmaskblCurve::Set(const std::vector<double> &curvePoints,  bool & llmasblutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmasblutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocCCmaskblCurve::LocCCmaskblCurve() : sum(0.f) {};
+
+void LocCCmaskblCurve::Reset()
+{
+    lutLocCCmaskblCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmaskblCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskblCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskblCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskblCurve[i] < 0.02f) {
+            lutLocCCmaskblCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskblCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmaskblCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasblutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmasblutili = true;
+        Set(ttcurve);
     } else {
         Reset();
     }
@@ -2629,7 +2781,50 @@ void LocwavCurve::Set(const Curve &pCurve)
 
     //lutLocCurve.dump("wav");
 }
-void LocwavCurve::Set(const std::vector<double> &curvePoints)
+void LocwavCurve::Set(const std::vector<double> &curvePoints, bool & lcwavutili)
+{
+
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        lcwavutili = true;
+        Set(tcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocretitransCurve::LocretitransCurve() : sum(0.f) {};
+
+void LocretitransCurve::Reset()
+{
+    lutLocretitransCurve.reset();
+    sum = 0.f;
+}
+
+void LocretitransCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocretitransCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocretitransCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocretitransCurve[i] < 0.02f) {
+            lutLocretitransCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocretitransCurve[i];
+    }
+
+    //lutLocCurve.dump("wav");
+}
+void LocretitransCurve::Set(const std::vector<double> &curvePoints)
 {
 
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
@@ -2640,7 +2835,6 @@ void LocwavCurve::Set(const std::vector<double> &curvePoints)
         Reset();
     }
 }
-
 
 
 LocretigainCurve::LocretigainCurve() : sum(0.f) {};
@@ -3184,10 +3378,10 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
                 Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
 #endif
                 L1 = Lr * 327.68f;
-                float a, b, X, Y, Z;
+                float La, Lb, X, Y, Z;
                 // converting back to rgb
-                Color::Lch2Lab(c1, h1, a, b);
-                Color::Lab2XYZ(L1, a, b, X, Y, Z);
+                Color::Lch2Lab(c1, h1, La, Lb);
+                Color::Lab2XYZ(L1, La, Lb, X, Y, Z);
                 lut1[i] = X;
                 lut2[i] = Y;
                 lut3[i] = Z;
@@ -3498,12 +3692,12 @@ float PerceptualToneCurve::calculateToneCurveContrastValue() const
     {
         // look at midtone slope
         const float xd = 0.07;
-        const float tx[] = { 0.30, 0.35, 0.40, 0.45 }; // we only look in the midtone range
+        const float tx0[] = { 0.30, 0.35, 0.40, 0.45 }; // we only look in the midtone range
 
-        for (size_t i = 0; i < sizeof(tx) / sizeof(tx[0]); i++) {
-            float x0 = tx[i] - xd;
+        for (size_t i = 0; i < sizeof(tx0) / sizeof(tx0[0]); i++) {
+            float x0 = tx0[i] - xd;
             float y0 = CurveFactory::gamma2(lutToneCurve[CurveFactory::igamma2(x0) * 65535.f] / 65535.f) - k * x0;
-            float x1 = tx[i] + xd;
+            float x1 = tx0[i] + xd;
             float y1 = CurveFactory::gamma2(lutToneCurve[CurveFactory::igamma2(x1) * 65535.f] / 65535.f) - k * x1;
             float slope = 1.0 + (y1 - y0) / (x1 - x0);
 
@@ -3670,15 +3864,15 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 saturated_scale_factor = 1.f;
             } else if (C < hilim) {
                 // S-curve transition between low and high limit
-                float x = (C - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+                float cx = (C - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
 
-                if (x < 0.5f) {
-                    x = 2.f * SQR(x);
+                if (cx < 0.5f) {
+                    cx = 2.f * SQR(cx);
                 } else {
-                    x = 1.f - 2.f * SQR(1 - x);
+                    cx = 1.f - 2.f * SQR(1.f - cx);
                 }
 
-                saturated_scale_factor = (1.f - x) + saturated_scale_factor * x;
+                saturated_scale_factor = (1.f - cx) + saturated_scale_factor * cx;
             } else {
                 // do nothing, high saturation color, keep scale factor
             }
@@ -3698,15 +3892,15 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 // do nothing, keep scale factor
             } else if (nL < hilim) {
                 // S-curve transition
-                float x = (nL - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+                float cx = (nL - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
 
-                if (x < 0.5f) {
-                    x = 2.f * SQR(x);
+                if (cx < 0.5f) {
+                    cx = 2.f * SQR(cx);
                 } else {
-                    x = 1.f - 2.f * SQR(1 - x);
+                    cx = 1.f - 2.f * SQR(1 - cx);
                 }
 
-                dark_scale_factor = dark_scale_factor * (1.0f - x) + x;
+                dark_scale_factor = dark_scale_factor * (1.0f - cx) + cx;
             } else {
                 dark_scale_factor = 1.f;
             }
@@ -3724,15 +3918,15 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 // do nothing, keep scale factor
             } else if (J < hilim) {
                 // S-curve transition
-                float x = (J - lolim) / (hilim - lolim);
+                float cx = (J - lolim) / (hilim - lolim);
 
-                if (x < 0.5f) {
-                    x = 2.f * SQR(x);
+                if (cx < 0.5f) {
+                    cx = 2.f * SQR(cx);
                 } else {
-                    x = 1.f - 2.f * SQR(1 - x);
+                    cx = 1.f - 2.f * SQR(1 - cx);
                 }
 
-                dark_scale_factor = dark_scale_factor * (1.f - x) + x;
+                dark_scale_factor = dark_scale_factor * (1.f - cx) + cx;
             } else {
                 dark_scale_factor = 1.f;
             }
@@ -3800,15 +3994,15 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 keep = 1.f;
             } else if (sat_scale < hilim) {
                 // S-curve transition
-                float x = (sat_scale - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+                float cx = (sat_scale - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
 
-                if (x < 0.5f) {
-                    x = 2.f * SQR(x);
+                if (cx < 0.5f) {
+                    cx = 2.f * SQR(cx);
                 } else {
-                    x = 1.f - 2.f * SQR(1 - x);
+                    cx = 1.f - 2.f * SQR(1 - cx);
                 }
 
-                keep = (1.f - x) + keep * x;
+                keep = (1.f - cx) + keep * cx;
             } else {
                 // do nothing, very high increase, keep minimum amount
             }
@@ -3909,7 +4103,7 @@ void PerceptualToneCurve::init()
     }
 }
 
-void PerceptualToneCurve::initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const
+void PerceptualToneCurve::initApplyState(PerceptualToneCurveState & state, const Glib::ustring &workingSpace) const
 {
 
     // Get the curve's contrast value, and convert to a chroma scaling

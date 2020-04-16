@@ -15,16 +15,21 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "improcfun.h"
 
+#include "array2D.h"
+#include "color.h"
+#include "curves.h"
 #include "gauss.h"
 #include "guidedfilter.h"
+#include "iccstore.h"
+#include "labimage.h"
 #include "opthelper.h"
 #include "procparams.h"
-#include "sleef.c"
+#include "sleef.h"
 
 namespace rtengine {
 //modifications to pass parameters needs by locallab, to avoid 2 functions - no change in process - J.Desmis march 2019
@@ -105,10 +110,10 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab, bool ena, int labmode, in
                     #pragma omp parallel for if (multiThread)
 #endif
                     for (int l = 0; l < 32768; ++l) {
-                        auto base = pow_F(l / 32768.f, gamma);
+                        auto val = pow_F(l / 32768.f, gamma);
                         // get a bit more contrast in the shadows
-                        base = sh_contrast.getVal(base);
-                        f[l] = base * 32768.f;
+                        val = sh_contrast.getVal(val);
+                        f[l] = val * 32768.f;
                     }
                 } else {
 #ifdef _OPENMP
@@ -118,10 +123,10 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab, bool ena, int labmode, in
                         float l, a, b;
                         float R = c, G = c, B = c;
                         rgb2lab(R, G, B, l, a, b);
-                        auto base = pow_F(l / 32768.f, gamma);
+                        auto val = pow_F(l / 32768.f, gamma);
                         // get a bit more contrast in the shadows
-                        base = sh_contrast.getVal(base);
-                        l = base * 32768.f;
+                        val = sh_contrast.getVal(val);
+                        l = val * 32768.f;
                         lab2rgb(l, a, b, R, G, B);
                         f[c] = G;
                     }
@@ -132,8 +137,8 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab, bool ena, int labmode, in
                     #pragma omp parallel for if (multiThread)
 #endif
                     for (int l = 0; l < 32768; ++l) {
-                        auto base = pow_F(l / 32768.f, gamma);
-                        f[l] = base * 32768.f;
+                        auto val = pow_F(l / 32768.f, gamma);
+                        f[l] = val * 32768.f;
                     }
                 } else {
 #ifdef _OPENMP
@@ -143,8 +148,8 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab, bool ena, int labmode, in
                         float l, a, b;
                         float R = c, G = c, B = c;
                         rgb2lab(R, G, B, l, a, b);
-                        auto base = pow_F(l / 32768.f, gamma);
-                        l = base * 32768.f;
+                        auto val = pow_F(l / 32768.f, gamma);
+                        l = val * 32768.f;
                         lab2rgb(l, a, b, R, G, B);
                         f[c] = G;
                     }

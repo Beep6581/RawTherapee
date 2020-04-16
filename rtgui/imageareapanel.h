@@ -14,15 +14,16 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMAGEAREAPANEL_
-#define _IMAGEAREAPANEL_
+#pragma once
 
 #include "imagearea.h"
 
 class ImageArea;
-class ImageAreaPanel : public Gtk::VBox
+
+class ImageAreaPanel final :
+    public Gtk::VBox
 {
 
 protected:
@@ -42,5 +43,3 @@ public:
     void setBeforeAfterViews (ImageAreaPanel* bef, ImageAreaPanel* aft);
     void syncBeforeAfterViews();
 };
-
-#endif

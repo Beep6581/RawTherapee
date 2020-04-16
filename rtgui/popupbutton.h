@@ -14,17 +14,19 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
-#ifndef _POPUPBUTTON_
-#define _POPUPBUTTON_
+#pragma once
 
 #include <gtkmm/button.h>
+
 #include "popupcommon.h"
 
-class PopUpButton : public Gtk::Button, public PopUpCommon
+class PopUpButton final :
+    public Gtk::Button,
+    public PopUpCommon
 {
 
 public:
@@ -40,5 +42,3 @@ private:
     bool nextOnClicked;
 
 };
-
-#endif

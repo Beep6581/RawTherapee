@@ -20,7 +20,7 @@
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
 
@@ -287,8 +287,6 @@ void boxblur_resamp(const float* const* src, float** dst, float** temp, int H, i
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue)
 {
@@ -970,8 +968,8 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
                 for (int c = 0; c < 3; ++c) {
                     lab[i2][c] = 0;
 
-                    for (int j = 0; j < 3; ++j) {
-                        lab[i2][c] += trans[c][j] * cam[i2][j];
+                    for (int j2 = 0; j2 < 3; ++j2) {
+                        lab[i2][c] += trans[c][j2] * cam[i2][j2];
                     }
                 }
 
@@ -996,8 +994,8 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             for (int c = 0; c < 3; ++c) {
                 cam[0][c] = 0.f;
 
-                for (int j = 0; j < 3; ++j) {
-                    cam[0][c] += itrans[c][j] * lab[0][j];
+                for (int j2 = 0; j2 < 3; ++j2) {
+                    cam[0][c] += itrans[c][j2] * lab[0][j2];
                 }
             }
 
@@ -1081,12 +1079,11 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             //now correct clipped channels
             if (pixel[0] > max_f[0] && pixel[1] > max_f[1] && pixel[2] > max_f[2]) {
                 //all channels clipped
-                const float Y = 0.299f * clipfix[0] + 0.587f * clipfix[1] + 0.114f * clipfix[2];
 
-                const float factor = whitept / Y;
-                red[i + miny][j + minx]   = clipfix[0] * factor;
-                green[i + miny][j + minx] = clipfix[1] * factor;
-                blue[i + miny][j + minx]  = clipfix[2] * factor;
+                const float mult = whitept / (0.299f * clipfix[0] + 0.587f * clipfix[1] + 0.114f * clipfix[2]);
+                red[i + miny][j + minx]   = clipfix[0] * mult;
+                green[i + miny][j + minx] = clipfix[1] * mult;
+                blue[i + miny][j + minx]  = clipfix[2] * mult;
             } else {//some channels clipped
                 const float notclipped[3] = {
                     pixel[0] <= max_f[0] ? 1.f : 0.f,
@@ -1113,11 +1110,11 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             Y = 0.299f * red[i + miny][j + minx] + 0.587f * green[i + miny][j + minx] + 0.114f * blue[i + miny][j + minx];
 
             if (Y > whitept) {
-                const float factor = whitept / Y;
+                const float mult = whitept / Y;
 
-                red[i + miny][j + minx]   *= factor;
-                green[i + miny][j + minx] *= factor;
-                blue[i + miny][j + minx]  *= factor;
+                red[i + miny][j + minx]   *= mult;
+                green[i + miny][j + minx] *= mult;
+                blue[i + miny][j + minx]  *= mult;
             }
         }
     }

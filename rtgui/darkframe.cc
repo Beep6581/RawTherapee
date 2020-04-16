@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <sstream>
 
@@ -25,6 +25,7 @@
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/rawimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

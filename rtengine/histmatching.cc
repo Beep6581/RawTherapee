@@ -15,26 +15,25 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "rawimagesource.h"
-#include "rtthumbnail.h"
-#include "curves.h"
-#include "color.h"
-#include "rt_math.h"
-#include "iccstore.h"
-#include "procparams.h"
-#include "../rtgui/mydiagonalcurve.h"
-#include "improcfun.h"
-//#define BENCHMARK
-#include "StopWatch.h"
 #include <iostream>
 
+#include "color.h"
+#include "curves.h"
+#include "improcfun.h"
+#include "procparams.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
+#include "rtthumbnail.h"
+#include "settings.h"
 
-namespace rtengine {
+//#define BENCHMARK
+#include "StopWatch.h"
 
-extern const Settings *settings;
+namespace rtengine
+{
 
 namespace {
 
@@ -329,8 +328,8 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
         int tw = target->getWidth(), th = target->getHeight();
         float thumb_ratio = float(std::max(sw, sh)) / float(std::min(sw, sh));
         float target_ratio = float(std::max(tw, th)) / float(std::min(tw, th));
-        int cx = 0, cy = 0;
         if (std::abs(thumb_ratio - target_ratio) > 0.01) {
+            int cx = 0, cy = 0;
             if (thumb_ratio > target_ratio) {
                 // crop the height
                 int ch = th - (tw * float(sh) / float(sw));

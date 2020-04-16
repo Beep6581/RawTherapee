@@ -14,14 +14,17 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _DYNAMICPROFILE_H_
-#define _DYNAMICPROFILE_H_
+#pragma once
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <vector>
-#include "../rtgui/options.h"
+
+namespace rtengine
+{
+    class FramesMetaData;
+}
 
 class DynamicProfileRule
 {
@@ -76,5 +79,3 @@ public:
     const std::vector<DynamicProfileRule> &getRules();
     void setRules (const std::vector<DynamicProfileRule> &r);
 };
-
-#endif // _DYNAMICPROFILE_H_

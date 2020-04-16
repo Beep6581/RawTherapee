@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "xtransprocess.h"
 
@@ -225,7 +225,7 @@ void XTransProcess::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void XTransProcess::adjusterAutoToggled(Adjuster* a, bool newval)
+void XTransProcess::adjusterAutoToggled(Adjuster* a)
 {
     if (multiImage) {
         if (dualDemosaicContrast->getAutoInconsistent()) {

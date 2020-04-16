@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "dirbrowser.h"
 
@@ -63,7 +63,7 @@ std::vector<Glib::ustring> listSubDirs (const Glib::RefPtr<Gio::File>& dir, bool
                 subDirs.push_back (file->get_name ());
             } catch (const Glib::Exception& exception) {
 
-                if (options.rtSettings.verbose) {
+                if (rtengine::settings->verbose) {
                     std::cerr << exception.what().c_str() << std::endl;
                 }
 
@@ -72,7 +72,7 @@ std::vector<Glib::ustring> listSubDirs (const Glib::RefPtr<Gio::File>& dir, bool
 
     } catch (const Glib::Exception& exception) {
 
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             std::cerr << "Failed to list subdirectories of \"" << dir->get_parse_name() << "\": " << exception.what () << std::endl;
         }
 
@@ -293,35 +293,31 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
     auto dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
     auto subDirs = listSubDirs (dir, options.fbShowHidden);
 
-    if (subDirs.empty()) {
-        dirtree->collapse_row(path);
-    } else {
-        Gtk::TreeNodeChildren children = iter->children();
-        std::list<Gtk::TreeIter> forErase(children.begin(), children.end());
+    Gtk::TreeNodeChildren children = iter->children();
+    std::list<Gtk::TreeIter> forErase(children.begin(), children.end());
 
-        std::sort (subDirs.begin (), subDirs.end (), [] (const Glib::ustring& firstDir, const Glib::ustring& secondDir)
-        {
-            switch (options.dirBrowserSortType) {
-            default:
-            case Gtk::SORT_ASCENDING:
-                return firstDir < secondDir;
-            case Gtk::SORT_DESCENDING:
-                return firstDir > secondDir;
-            }
-        });
-
-        for (auto it = subDirs.begin(), end = subDirs.end(); it != end; ++it) {
-            addDir(iter, *it);
+    std::sort (subDirs.begin (), subDirs.end (), [] (const Glib::ustring& firstDir, const Glib::ustring& secondDir)
+    {
+        switch (options.dirBrowserSortType) {
+        default:
+        case Gtk::SORT_ASCENDING:
+            return firstDir < secondDir;
+        case Gtk::SORT_DESCENDING:
+            return firstDir > secondDir;
         }
+    });
 
-        for (auto it = forErase.begin(), end = forErase.end(); it != end; ++it) {
-            dirTreeModel->erase(*it);
-        }
-
-        dirTreeModel->set_sort_column(prevSortColumn, prevSortType);
-
-        expandSuccess = true;
+    for (auto it = subDirs.begin(), end = subDirs.end(); it != end; ++it) {
+        addDir(iter, *it);
     }
+
+    for (auto it = forErase.begin(), end = forErase.end(); it != end; ++it) {
+        dirTreeModel->erase(*it);
+    }
+
+    dirTreeModel->set_sort_column(prevSortColumn, prevSortType);
+
+    expandSuccess = true;
 
     Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory ();
     iter->set_value (dtColumns.monitor, monitor);
@@ -383,8 +379,10 @@ void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewC
 
     Glib::ustring dname = dirTreeModel->get_iter (path)->get_value (dtColumns.dirname);
 
-    if (Glib::file_test (dname, Glib::FILE_TEST_IS_DIR))
+    if (Glib::file_test (dname, Glib::FILE_TEST_IS_DIR)) {
         dirSelectionSignal (dname, Glib::ustring());
+        dirtree->expand_row(path, false);
+    }
 }
 
 Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)

@@ -14,19 +14,20 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IIMAGE_
-#define _IIMAGE_
+#pragma once
 
-#include <glibmm.h>
 #include <vector>
-#include "rt_math.h"
+
+#include <lcms2.h>
+
 #include "alignedbuffer.h"
+#include "coord2d.h"
 #include "imagedimensions.h"
 #include "LUT.h"
-#include "coord2d.h"
-#include "color.h"
+#include "rt_math.h"
+
 #include "../rtgui/threadutils.h"
 
 #define TR_NONE     0
@@ -38,6 +39,13 @@
 #define TR_ROT      3
 
 #define CHECK_BOUNDS 0
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {
@@ -57,6 +65,7 @@ extern const char sImage16[];
 extern const char sImagefloat[];
 
 int getCoarseBitMask(const procparams::CoarseTransformParams& coarse);
+const LUTf& getigammatab();
 
 enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 
@@ -655,7 +664,7 @@ public:
 
     /* If any of the required allocation fails, "width" and "height" are set to -1, and all remaining buffer are freed
      * Can be safely used to reallocate an existing image */
-    void allocate (int W, int H) override
+    void allocate (int W, int H) final
     {
 
         if (W == width && H == height) {
@@ -743,7 +752,7 @@ public:
         }
     }
 
-    void rotate (int deg) override
+    void rotate (int deg) final
     {
 
         if (deg == 90) {
@@ -870,7 +879,7 @@ public:
         }
     }
 
-    void hflip () override
+    void hflip () final
     {
         int width2 = width / 2;
 
@@ -902,7 +911,7 @@ public:
 #endif
     }
 
-    void vflip () override
+    void vflip () final
     {
 
         int height2 = height / 2;
@@ -955,34 +964,52 @@ public:
 
         histogram(65536 >> histcompr);
         histogram.clear();
+        const LUTf& igammatab = getigammatab();
 
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < width; j++) {
-                float r_, g_, b_;
-                convertTo<T, float>(r(i, j), r_);
-                convertTo<T, float>(g(i, j), g_);
-                convertTo<T, float>(b(i, j), b_);
-                histogram[(int)Color::igamma_srgb (r_) >> histcompr]++;
-                histogram[(int)Color::igamma_srgb (g_) >> histcompr]++;
-                histogram[(int)Color::igamma_srgb (b_) >> histcompr]++;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            LUTu histThr(histogram.getSize());
+            histThr.clear();
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16) nowait
+#endif
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i, j), r_);
+                    convertTo<T, float>(g(i, j), g_);
+                    convertTo<T, float>(b(i, j), b_);
+                    histThr[static_cast<int>(igammatab[r_]) >> histcompr]++;
+                    histThr[static_cast<int>(igammatab[g_]) >> histcompr]++;
+                    histThr[static_cast<int>(igammatab[b_]) >> histcompr]++;
+                }
             }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                histogram += histThr;
+            }
+        }
     }
 
-    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const override
+    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const final
     {
         histogram.clear();
         avg_r = avg_g = avg_b = 0.;
         n = 0;
-
+        const LUTf& igammatab = getigammatab();
         for (unsigned int i = 0; i < (unsigned int)(height); i++)
             for (unsigned int j = 0; j < (unsigned int)(width); j++) {
                 float r_, g_, b_;
                 convertTo<T, float>(r(i, j), r_);
                 convertTo<T, float>(g(i, j), g_);
                 convertTo<T, float>(b(i, j), b_);
-                int rtemp = Color::igamma_srgb (r_);
-                int gtemp = Color::igamma_srgb (g_);
-                int btemp = Color::igamma_srgb (b_);
+                int rtemp = igammatab[r_];
+                int gtemp = igammatab[g_];
+                int btemp = igammatab[b_];
 
                 histogram[rtemp >> compression]++;
                 histogram[gtemp >> compression] += 2;
@@ -1009,6 +1036,9 @@ public:
         int n = 0;
         //int p = 6;
 
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:avg_r,avg_g,avg_b,n) schedule(dynamic,16)
+#endif
         for (unsigned int i = 0; i < (unsigned int)(height); i++)
             for (unsigned int j = 0; j < (unsigned int)(width); j++) {
                 float r_, g_, b_;
@@ -1304,7 +1334,7 @@ public:
      * If any of the required allocation fails, "width" and "height" are set to -1, and all remaining buffer are freed
      * Can be safely used to reallocate an existing image or to free up it's memory with "allocate (0,0);"
      */
-    void allocate (int W, int H) override
+    void allocate (int W, int H) final
     {
 
         if (W == width && H == height) {
@@ -1358,7 +1388,7 @@ public:
         memcpy (dest->data, data, 3 * width * height * sizeof(T));
     }
 
-    void rotate (int deg) override
+    void rotate (int deg) final
     {
 
         if (deg == 90) {
@@ -1492,7 +1522,7 @@ public:
         }
     }
 
-    void hflip () override
+    void hflip () final
     {
         int width2 = width / 2;
 
@@ -1528,7 +1558,7 @@ public:
         }
     }
 
-    void vflip () override
+    void vflip () final
     {
 
         AlignedBuffer<T> lBuffer(3 * width);
@@ -1564,24 +1594,43 @@ public:
 
         histogram(65536 >> histcompr);
         histogram.clear();
+        const LUTf& igammatab = getigammatab();
 
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < width; j++) {
-                float r_, g_, b_;
-                convertTo<T, float>(r(i, j), r_);
-                convertTo<T, float>(g(i, j), g_);
-                convertTo<T, float>(b(i, j), b_);
-                histogram[(int)Color::igamma_srgb (r_) >> histcompr]++;
-                histogram[(int)Color::igamma_srgb (g_) >> histcompr]++;
-                histogram[(int)Color::igamma_srgb (b_) >> histcompr]++;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            LUTu histThr(histogram.getSize());
+            histThr.clear();
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16) nowait
+#endif
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i, j), r_);
+                    convertTo<T, float>(g(i, j), g_);
+                    convertTo<T, float>(b(i, j), b_);
+                    histThr[static_cast<int>(igammatab[r_]) >> histcompr]++;
+                    histThr[static_cast<int>(igammatab[g_]) >> histcompr]++;
+                    histThr[static_cast<int>(igammatab[b_]) >> histcompr]++;
+                }
             }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                histogram += histThr;
+            }
+        }
     }
 
-    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const override
+    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const final
     {
         histogram.clear();
         avg_r = avg_g = avg_b = 0.;
         n = 0;
+        const LUTf& igammatab = getigammatab();
 
         for (unsigned int i = 0; i < (unsigned int)(height); i++)
             for (unsigned int j = 0; j < (unsigned int)(width); j++) {
@@ -1589,9 +1638,9 @@ public:
                 convertTo<T, float>(r(i, j), r_);
                 convertTo<T, float>(g(i, j), g_);
                 convertTo<T, float>(b(i, j), b_);
-                int rtemp = Color::igamma_srgb (r_);
-                int gtemp = Color::igamma_srgb (g_);
-                int btemp = Color::igamma_srgb (b_);
+                int rtemp = igammatab[r_];
+                int gtemp = igammatab[g_];
+                int btemp = igammatab[b_];
 
                 histogram[rtemp >> compression]++;
                 histogram[gtemp >> compression] += 2;
@@ -1618,6 +1667,9 @@ public:
         int n = 0;
         //int p = 6;
 
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:avg_r,avg_g,avg_b,n) schedule(dynamic,16)
+#endif
         for (unsigned int i = 0; i < (unsigned int)(height); i++)
             for (unsigned int j = 0; j < (unsigned int)(width); j++) {
                 float r_, g_, b_;
@@ -1808,5 +1860,3 @@ public:
 };
 
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _RT_JPEG_H
-#define _RT_JPEG_H
+#pragma once
 
 #include <csetjmp>
 
@@ -28,7 +27,4 @@ typedef struct {
 
 #ifdef __cplusplus
 }
-#endif
-
-
 #endif

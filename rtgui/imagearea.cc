@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "imagearea.h"
 #include <ctime>
@@ -25,11 +25,11 @@
 #include "../rtengine/refreshmap.h"
 #include "../rtengine/procparams.h"
 #include "options.h"
+#include "rtscalable.h"
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), fullImageWidth(0), fullImageHeight(0)
 {
 
-    infotext = "";
     cropgl = nullptr;
     pmlistener = nullptr;
     pmhlistener = nullptr;
@@ -148,7 +148,7 @@ void ImageArea::on_style_updated ()
 void ImageArea::setInfoText (Glib::ustring text)
 {
 
-    infotext = text;
+    infotext = std::move(text);
 
     Glib::RefPtr<Pango::Context> context = get_pango_context () ;
     Pango::FontDescription fontd(get_style_context()->get_font());
@@ -160,7 +160,7 @@ void ImageArea::setInfoText (Glib::ustring text)
 
     // create text layout
     Glib::RefPtr<Pango::Layout> ilayout = create_pango_layout("");
-    ilayout->set_markup(text);
+    ilayout->set_markup(infotext);
 
     // get size of the text block
     int iw, ih;

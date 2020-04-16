@@ -28,8 +28,11 @@
  * available at https://arxiv.org/abs/1505.00996
  */
 
+#include "array2D.h"
+#include "boxblur.h"
 #include "guidedfilter.h"
 #include "boxblur.h"
+#include "sleef.h"
 #include "rescale.h"
 #include "imagefloat.h"
 
@@ -139,25 +142,31 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     const auto f_subsample =
         [=](array2D<float> &d, const array2D<float> &s) -> void
         {
-            rescaleBilinear(s, d, multithread);
+            if (d.width() == s.width() && d.height() == s.height()) {
+#ifdef _OPENMP
+#               pragma omp parallel for if (multithread)
+#endif
+                for (int y = 0; y < s.height(); ++y) {
+                    for (int x = 0; x < s.width(); ++x) {
+                        d[y][x] = s[y][x];
+                    }
+                }
+            } else {
+                rescaleBilinear(s, d, multithread);
+            }
         };
 
-    const auto f_upsample = f_subsample;
+    // const auto f_upsample = f_subsample;
     
     const size_t w = W / subsampling;
     const size_t h = H / subsampling;
 
-    AlignedBuffer<float> blur_buf(w * h);
     const auto f_mean =
-        [&](array2D<float> &d, array2D<float> &s, int rad) -> void
+        [multithread](array2D<float> &d, array2D<float> &s, int rad) -> void
         {
             rad = LIM(rad, 0, (min(s.width(), s.height()) - 1) / 2 - 1);
-            float **src = s;
-            float **dst = d;
-#ifdef _OPENMP
-            #pragma omp parallel if (multithread)
-#endif
-            boxblur<float, float>(src, dst, blur_buf.data, rad, rad, s.width(), s.height());
+           // boxblur(s, d, rad, s.width(), s.height(), multithread);
+            boxblur(static_cast<float**>(s), static_cast<float**>(d), rad, s.width(), s.height(), multithread);
         };
 
     array2D<float> I1(w, h);
@@ -207,9 +216,6 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     apply(SUBMUL, b, a, meanI, meanp);
     DEBUG_DUMP(b);
 
-    meanI.free(); // frees w * h * 4 byte
-    meanp.free(); // frees w * h * 4 byte
-
     array2D<float> &meana = a;
     f_mean(meana, a, r1);
     DEBUG_DUMP(meana);
@@ -218,18 +224,57 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     f_mean(meanb, b, r1);
     DEBUG_DUMP(meanb);
 
-    blur_buf.resize(0); // frees w * h * 4 byte
+    // speedup by heckflosse67
+    const int Ws = meana.width();
+    const int Hs = meana.height();
+    const int Wd = q.width();
+    const int Hd = q.height();
+    const float col_scale = float(Ws) / float(Wd);
+    const float row_scale = float(Hs) / float(Hd);
 
-    array2D<float> meanA(W, H);
-    f_upsample(meanA, meana);
-    DEBUG_DUMP(meanA);
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < Hd; ++y) {
+        float ymrs = y * row_scale; 
+        for (int x = 0; x < Wd; ++x) {
+            q[y][x] = getBilinearValue(meana, x * col_scale, ymrs) * I[y][x] + getBilinearValue(meanb, x * col_scale, ymrs);
+        }
+    }
+}
 
-    array2D<float> &meanB = q;
-    f_upsample(meanB, meanb);
-    DEBUG_DUMP(meanB);
 
-    apply(ADDMUL, q, meanA, I, meanB);
-    DEBUG_DUMP(q);
+void guidedFilterLog(const array2D<float> &guide, float base, array2D<float> &chan, int r, float eps, bool multithread, int subsampling)
+{
+#ifdef _OPENMP
+#    pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < chan.height(); ++y) {
+        for (int x = 0; x < chan.width(); ++x) {
+            chan[y][x] = xlin2log(max(chan[y][x], 0.f), base);
+        }
+    }
+
+    guidedFilter(guide, chan, chan, r, eps, multithread, subsampling);
+
+#ifdef _OPENMP
+#    pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < chan.height(); ++y) {
+        for (int x = 0; x < chan.width(); ++x) {
+            chan[y][x] = xlog2lin(max(chan[y][x], 0.f), base);
+        }
+    }
+}
+
+
+void guidedFilterLog(float base, array2D<float> &chan, int r, float eps, bool multithread, int subsampling)
+{
+    guidedFilterLog(chan, base, chan, r, eps, multithread, subsampling);
 }
 
 } // namespace rtengine
+
+
+
+

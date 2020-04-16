@@ -14,12 +14,14 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "previewwindow.h"
 #include "guiutils.h"
 #include "imagearea.h"
 #include "cursormanager.h"
+#include "options.h"
+#include "rtscalable.h"
 
 #include "../rtengine/procparams.h"
 
@@ -88,7 +90,7 @@ void PreviewWindow::updatePreviewImage ()
             cc->fill();
 
             if (previewHandler->getCropParams().enabled) {
-                rtengine::CropParams cparams = previewHandler->getCropParams();
+                rtengine::procparams::CropParams cparams = previewHandler->getCropParams();
                 switch (options.cropGuides) {
                 case Options::CROP_GUIDE_NONE:
                     cparams.guide = "None";
@@ -228,7 +230,7 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
     if (x>imgX || y>imgY || w < imgW || h < imgH) {
         bool inside =     event->x > x - 6 && event->x < x + w - 1 + 6 && event->y > y - 6 && event->y < y + h - 1 + 6;
 
-        CursorShape newType = cursor_type;
+        CursorShape newType;
 
         if (isMoving) {
             mainCropWin->remoteMove ((event->x - press_x) / zoom, (event->y - press_y) / zoom);

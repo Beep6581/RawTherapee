@@ -1,0 +1,2314 @@
+#01 2019-10-05 Matjaž Jeran
+
+ABOUT_TAB_BUILD;Verzija
+ABOUT_TAB_CREDITS;Zasluge
+ABOUT_TAB_LICENSE;Licenca
+ABOUT_TAB_RELEASENOTES;Opombe ob izdaji
+ABOUT_TAB_SPLASH;Uvodni zaslon
+ADJUSTER_RESET_TO_DEFAULT;<b>Klik</b> - nastavi na privzeto vrednost.\n<b>Ctrl</b>+<b>klik</b> - nastavi na začetno vrednost.
+BATCH_PROCESSING;Paketna obdelava
+CURVEEDITOR_AXIS_IN;I:
+CURVEEDITOR_AXIS_LEFT_TAN;LT:
+CURVEEDITOR_AXIS_OUT;O:
+CURVEEDITOR_AXIS_RIGHT_TAN;RT:
+CURVEEDITOR_CATMULLROM;Fleksibilno
+CURVEEDITOR_CURVE;Krivulja
+CURVEEDITOR_CURVES;Krivulje
+CURVEEDITOR_CUSTOM;Standard
+CURVEEDITOR_DARKS;Temine
+CURVEEDITOR_EDITPOINT_HINT;Omogoči urejanje vhodno/izhodnih vrednosti v vozlišču.\n\nDesni klik v vozlišču za njgovo izbiro.\nDesni klik v prazno za izbris izbire vozlišča.
+CURVEEDITOR_HIGHLIGHTS;Bleščave
+CURVEEDITOR_LIGHTS;Osvetljenosti
+CURVEEDITOR_LINEAR;Linearno
+CURVEEDITOR_LOADDLGLABEL;naloži krivuljo ...
+CURVEEDITOR_MINMAXCPOINTS;Ekvalizator
+CURVEEDITOR_NURBS;Kontrolna kletka
+CURVEEDITOR_PARAMETRIC;Parametrična
+CURVEEDITOR_SAVEDLGLABEL;Shrani krivuljo...
+CURVEEDITOR_SHADOWS;Sence
+CURVEEDITOR_TOOLTIPCOPY;Kopiraj trenutno krivuljo na odložišče.
+CURVEEDITOR_TOOLTIPLINEAR;Poravnaj krivuljo v daljico..
+CURVEEDITOR_TOOLTIPLOAD;Naloži krivuljo iz datoteke.
+CURVEEDITOR_TOOLTIPPASTE;Prilepi krivuljo iz odlagališča.
+CURVEEDITOR_TOOLTIPSAVE;Shrani tenutno krivuljo.
+CURVEEDITOR_TYPE;Tip:
+DIRBROWSER_FOLDERS;Mape
+DONT_SHOW_AGAIN;Ne kaži več tega sporočila.
+DYNPROFILEEDITOR_DELETE;Briši
+DYNPROFILEEDITOR_EDIT;Uredi
+DYNPROFILEEDITOR_EDIT_RULE;Uredi pravilo dinamičnega profila
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;Iskanje je neobčutljivo na velike/male črke.\nUporabite "re:" prefiks za\nregularni izraz.
+DYNPROFILEEDITOR_IMGTYPE_ANY;Katerikoli
+DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+DYNPROFILEEDITOR_IMGTYPE_PS;Pomik pikslov
+DYNPROFILEEDITOR_IMGTYPE_STD;Standardni
+DYNPROFILEEDITOR_MOVE_DOWN;Pomakni dol
+DYNPROFILEEDITOR_MOVE_UP;Pomakni gor
+DYNPROFILEEDITOR_NEW;Novo
+DYNPROFILEEDITOR_NEW_RULE;Novo pravilo dinamičnega profila
+DYNPROFILEEDITOR_PROFILE;Profilo obdelovanja
+EDITWINDOW_TITLE;Uredi sliko
+EDIT_OBJECT_TOOLTIP;Prikaže gradnik v predoglednem oknu in vam omogoča prilagoditev tega orodja.
+EDIT_PIPETTE_TOOLTIP;Če želite krivulji dodati prilagoditveno točko, pridržite tipko Ctrl, medtem ko levo kliknete želeno mesto v predogledu slike.\nČe želite prilagoditi točko, pridržite tipko Ctrl, medtem ko levo kliknete ustrezno območje v predogledu, nato pa jo pustite Ctrl (razen če želite natančen nadzor) in medtem ko držite levi gumb miške, miško premikate navzgor ali navzdol, da to točko v krivulji premaknete navzgor ali navzdol.
+EXIFFILTER_APERTURE;Zaslonka
+EXIFFILTER_CAMERA;Fotoaparat
+EXIFFILTER_EXPOSURECOMPENSATION;Prilagajanje osvetlitve (EV)
+EXIFFILTER_FILETYPE;Tip datoteke
+EXIFFILTER_FOCALLEN;Goriščna razdalja
+EXIFFILTER_IMAGETYPE;Tip slike
+EXIFFILTER_ISO;ISO
+EXIFFILTER_LENS;Objektiv
+EXIFFILTER_METADATAFILTER;Omogoči filtriranje metapodatkov
+EXIFFILTER_SHUTTER;Čas
+EXIFPANEL_ADDEDIT;Dodaj/Uredi
+EXIFPANEL_ADDEDITHINT;Dodaj novo značko ali uredi značko.
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;Vnesi vrednost
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Izberi značko
+EXIFPANEL_ADDTAGDLG_TITLE;Dodaj/Uredi značko
+EXIFPANEL_KEEP;Ohrani
+EXIFPANEL_KEEPHINT;Ohrani izbrane značke ob pisanju izhodne datoteke.
+EXIFPANEL_REMOVE;Odstrani
+EXIFPANEL_REMOVEHINT;Odstrani izbrane značke ob pisanju izhodne datoteke.
+EXIFPANEL_RESET;Ponastavi
+EXIFPANEL_RESETALL;Ponastavi vse
+EXIFPANEL_RESETALLHINT;Ponastavi vse značke na njihove izvirne vrednosti.
+EXIFPANEL_RESETHINT;Ponastavi izbrane značke na njihove izvirne vrednosti.
+EXIFPANEL_SHOWALL;Prikaži vse
+EXIFPANEL_SUBDIRECTORY;Podmapa
+EXPORT_BYPASS;Koraki obdelave za obvoz
+EXPORT_BYPASS_ALL;Izberi / Odizberi vse
+EXPORT_BYPASS_DEFRINGE;Izpusti odstranjevanje napak robov
+EXPORT_BYPASS_DIRPYRDENOISE;Izpusti zmanjšanje šuma
+EXPORT_BYPASS_DIRPYREQUALIZER;xxIzpusti kontrast by Detail Levels
+EXPORT_BYPASS_EQUALIZER;Izpusti Podrobnosti valovčkov
+EXPORT_BYPASS_RAW_CA;Izpusti [surovo] Popravek kromatske aberacije
+EXPORT_BYPASS_RAW_CCSTEPS;Izpusti [surovo] Zatiranje napačnih barv
+EXPORT_BYPASS_RAW_DCB_ENHANCE;Izpusti [surovo] DCB koraki izboljšav
+EXPORT_BYPASS_RAW_DCB_ITERATIONS;Izpusti [surovo] DCB iteracije
+EXPORT_BYPASS_RAW_DF;Izpusti [surovo] Dark-frame
+EXPORT_BYPASS_RAW_FF;Izpusti [surovo] Flat-field
+EXPORT_BYPASS_RAW_GREENTHRESH;Izpusti [surovo] Uravnoteženje zelene
+EXPORT_BYPASS_RAW_LINENOISE;Izpusti [surovo] Filtriranje šuma na liniji
+EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Izpusti [surovo] LMMSE Korake izboljšav
+EXPORT_BYPASS_SHARPENEDGE;Izpusti ostrenje robov
+EXPORT_BYPASS_SHARPENING;Izpusti ostrenje
+EXPORT_BYPASS_SHARPENMICRO;Izpusti mikrokontrast
+EXPORT_FASTEXPORTOPTIONS;<b>Nastavitve hitrega izvoza</b>
+EXPORT_INSTRUCTIONS;Nastavite hitrega izvoza nudijo možnost izogiba zahtevnih nastavitev gleda časa in virov za obdelavo slik namesto hitrih nastavitev v čakalnih vrstah za obdelavo. Ta način priporočam za hitro izdelavo slik manjše natančnosti kadar se mudi in je izhod zgolj drugačne velikosti od izvirnika brez siceršnjih sprememb vsebine.
+EXPORT_MAXHEIGHT;Maksimalna višina:
+EXPORT_MAXWIDTH;Maksimalna širina:
+EXPORT_PIPELINE;Vrstni red obdelav
+EXPORT_PUTTOQUEUEFAST;  Vstavi v čakalno vrsto za hiter izvoz
+EXPORT_RAW_DMETHOD;Demosaic method
+EXPORT_USE_FAST_PIPELINE;Namenska (polna obdelava na sliki spremenjene velikosti)
+EXPORT_USE_FAST_PIPELINE_TIP;Uporabite namenski tok obdelav za hitri izvoz za primer, kjer je hitrost pomembnejša od kakovosti. Sprememba velikosti slike se izvede čimprej namesto na koncu kot pri običajnem toku obdelav. Delovanje je bistveno hitrejše a bodite pripravljeni na pojav artefaktov in splošno znužanje kakovosti izdelanih slik.
+EXPORT_USE_NORMAL_PIPELINE;Standardno (preskoči nekatere korake, spremeni velikost na koncu)
+EXTPROGTARGET_1;surovo
+EXTPROGTARGET_2;čakalna vrsta-obdelano
+FILEBROWSER_APPLYPROFILE;Izvedi
+FILEBROWSER_APPLYPROFILE_PARTIAL;Delno - izvedi
+FILEBROWSER_AUTODARKFRAME;Avto dark-frame
+FILEBROWSER_AUTOFLATFIELD;Avto flat-field
+FILEBROWSER_BROWSEPATHBUTTONHINT;Klik, da odprem določeno pot, naložim mapo in uporabim ključne besede iskanja.
+FILEBROWSER_BROWSEPATHHINT;Vnesite pot kamor nameravate.\n\nBližnjice:\n<b>Ctrl-o</b> osredotočenje na polje iskanja.\n<b>Enter</b> / <b>Ctrl-Enter</b> da bi brskali tam\n<b>Esc</b> za brisanje sprememb.\n<b>Shift-Esc</b> prekinitev osredotočenosti.\n\nBližnjice poti:\n<b>~</b>	- uporabnikova domača mapa.\n<b>!</b>	- uporabnikova mapa s slikami
+FILEBROWSER_CACHE;Predpomnilnik
+FILEBROWSER_CACHECLEARFROMFULL;Počistite vse vključno s predpomnjenimi profili
+FILEBROWSER_CACHECLEARFROMPARTIAL;Počistite vse razen predpomnjenih profilov
+FILEBROWSER_CLEARPROFILE;Očisti
+FILEBROWSER_COLORLABEL_TOOLTIP;Barvna oznaka.\n\nUporabi roletni menu ali funkcionalne tipke:\n<b>Shift-Ctrl-0</b> Brez barve\n<b>Shift-Ctrl-1</b> Rdeča\n<b>Shift-Ctrl-2</b> Rumena\n<b>Shift-Ctrl-3</b> Zelena\n<b>Shift-Ctrl-4</b> Modra\n<b>Shift-Ctrl-5</b> Škrlatna
+FILEBROWSER_COPYPROFILE;Kopiraj
+FILEBROWSER_CURRENT_NAME;Trenutno ime:
+FILEBROWSER_DARKFRAME;Dark-frame
+FILEBROWSER_DELETEDIALOG_ALL;Ali ste prepričani, da želite <b>trajno</b> izbrisati vse datoteke <b>%1</b> v smetnjaku?
+FILEBROWSER_DELETEDIALOG_HEADER;Potrditev izbrisa datoteke:
+FILEBROWSER_DELETEDIALOG_SELECTED;Ali ste prepričani, da želite <b>trajno</b> izbrisati izbrane datoteke <b>%1</b>?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Ali ste prepričani, da želite <b>trajno</b> izbrisati izbrane datoteke <b>%1</b>, <b>vključno z</b> obdelano različico iz čakalne vrste?
+FILEBROWSER_DELETEDLGLABEL;Potrditev brisanja datoteke
+FILEBROWSER_DELETEDLGMSG;Ali ste prepričani, da želite brisati izbrane <b>%1</b> datoteke?
+FILEBROWSER_DELETEDLGMSGINCLPROC;Ali ste prepričani, da želite brisati izbrane <b>%1</b> datoteke <b>vključno z</b> verzijo v čakalni vrsti za obdelavo?
+FILEBROWSER_EMPTYTRASH;Izprazni smetnjak
+FILEBROWSER_EMPTYTRASHHINT;Nepreklicno briši datoteke v smetnjaku.
+FILEBROWSER_EXTPROGMENU;Odpri z
+FILEBROWSER_FLATFIELD;Flat-field
+FILEBROWSER_MOVETODARKFDIR;Prestavi v mapo za dark-frame
+FILEBROWSER_MOVETOFLATFIELDDIR;Premakni se v mapo za flat-field
+FILEBROWSER_NEW_NAME;Novo ime:
+FILEBROWSER_OPENDEFAULTVIEWER;Privzeti pregledovalnik v oknu (obdeluje čakalne vrste)
+FILEBROWSER_PARTIALPASTEPROFILE;Delno - prilepi
+FILEBROWSER_PASTEPROFILE;Prilepi
+FILEBROWSER_POPUPCANCELJOB;Prekliči ukaz
+FILEBROWSER_POPUPCOLORLABEL;Barvna oznaka
+FILEBROWSER_POPUPCOLORLABEL0;Label: Brez
+FILEBROWSER_POPUPCOLORLABEL1;Label: Rdeča
+FILEBROWSER_POPUPCOLORLABEL2;Label: Rumena
+FILEBROWSER_POPUPCOLORLABEL3;Label: Zelena
+FILEBROWSER_POPUPCOLORLABEL4;Label: Modra
+FILEBROWSER_POPUPCOLORLABEL5;Label: Škrlatna
+FILEBROWSER_POPUPCOPYTO;Kopiraj na...
+FILEBROWSER_POPUPFILEOPERATIONS;Delo z datotekami
+FILEBROWSER_POPUPMOVEEND;Prestavi na konec čakalne vrste
+FILEBROWSER_POPUPMOVEHEAD;Prestavi na začetek čakalne vrste
+FILEBROWSER_POPUPMOVETO;Prestavi na...
+FILEBROWSER_POPUPOPEN;Odpri
+FILEBROWSER_POPUPOPENINEDITOR;Odpri v urejevalniku
+FILEBROWSER_POPUPPROCESS;Postavi v čakalno vrsto
+FILEBROWSER_POPUPPROCESSFAST;Postavi v čakalno vrsto (Hiter izvoz)
+FILEBROWSER_POPUPPROFILEOPERATIONS;Obdelujem profile
+FILEBROWSER_POPUPRANK;Rangiraj
+FILEBROWSER_POPUPRANK0;Unrank
+FILEBROWSER_POPUPRANK1;Rang 1 *
+FILEBROWSER_POPUPRANK2;Rang 2 **
+FILEBROWSER_POPUPRANK3;Rang 3 ***
+FILEBROWSER_POPUPRANK4;Rang 4 ****
+FILEBROWSER_POPUPRANK5;Rang 5 *****
+FILEBROWSER_POPUPREMOVE;Briši
+FILEBROWSER_POPUPREMOVEINCLPROC;Briši vključno z izhodom iz čakalne vrste
+FILEBROWSER_POPUPRENAME;Preimenuj
+FILEBROWSER_POPUPSELECTALL;Izberi vse
+FILEBROWSER_POPUPTRASH;Prestavi v smetnjak
+FILEBROWSER_POPUPUNRANK;Odstrani rang
+FILEBROWSER_POPUPUNTRASH;Odstrani iz smetnjaka
+FILEBROWSER_QUERYBUTTONHINT;Očisti poizvedbo iskanja
+FILEBROWSER_QUERYHINT;Vnesi imena iskanih datotek. Dovolj je že del imena. Loči iskalne termine z vejicami, npr.\n<i>1001,1004,1199</i>\n\nIzloči termine iskanje s predpono <i>!=</i>\nnpr.\n<i>!=1001,1004,1199</i>\n\nBližnjice:\n<b>Ctrl-f</b> - fokusiraj rubriko iskanja,\n<b>Enter</b> - išči,\n<b>Esc</b> - očisti rubriko iskanja,\n<b>Shift-Esc</b> - sprosti fokus na rubriki iskanja.
+FILEBROWSER_QUERYLABEL; Išči:
+FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nBližnjica: <b>Shift-1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nBližnjica: <b>Shift-2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nBližnjica: <b>Shift-3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nBližnjica: <b>Shift-4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nBližnjica: <b>Shift-5</b>
+FILEBROWSER_RENAMEDLGLABEL;Preimenuj datoteko
+FILEBROWSER_RESETDEFAULTPROFILE;Nastavi na privzeto vrednost
+FILEBROWSER_SELECTDARKFRAME;Izberi dark-frame...
+FILEBROWSER_SELECTFLATFIELD;Izberite flat-field...
+FILEBROWSER_SHOWCOLORLABEL1HINT;Prikaži slike označene z rdečo.\nBližnjica: <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Prikaži slike označene z rumeno.\nBližnjica: <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Prikaži slike označene z zeleno.\nBližnjica: <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Prikaži slike označene z modro.\nBližnjica: <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Prikaži slike označene s škrlatno.\nBližnjica: <b>Alt-5</b>
+FILEBROWSER_SHOWDIRHINT;Odstrani vse filtre.\nBližnjica: <b>d</b>
+FILEBROWSER_SHOWEDITEDHINT;Prikaži spremenjene slike.\nBližnjica: <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Prikaži nespremenjene slike.\nBližnjica: <b>6</b>
+FILEBROWSER_SHOWEXIFINFO;Prikaži Exif informacije.\n\nBližnjice:\n<b>i</b> - Način zavihkov več urejevalnikov,\n<b>Alt-i</b> - Način enega zavihka urejevalnika.
+FILEBROWSER_SHOWNOTTRASHHINT;Prikaži samo nezbrisane slike.
+FILEBROWSER_SHOWORIGINALHINT;Prikaži samo izvirne slike.\n\nKadar obstaja več slik z enakim imenom a različnimi podaljški imena, smatram za izvirnik tisto, katere podaljšek je najvišje v seznamu podaljškov v nastavitvah > File Browser > Parsed Extensions.
+FILEBROWSER_SHOWRANK1HINT;Prikaži slike označene z 1 zvezdico.\nBližnjica: <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Prikaži slike označene z 2 zvezdicama.\nBližnjica: <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Prikaži slike označene z 3 zvezdicami.\nBližnjica: <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Prikaži slike označene z 4 zvezdicami.\nBližnjica: <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Prikaži slike označene z 5 zvezdicami.\nBližnjica: <b>5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Pokaži shranjene slike.\nBližnjica: <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Pokaži neshranjene slike.\nBližnjica: <b>Alt-6</b>
+FILEBROWSER_SHOWTRASHHINT;Pokaži vsebino smetnjaka.\nBližnjica: <b>Ctrl-t</b>
+FILEBROWSER_SHOWUNCOLORHINT;Pokaži slike brez barvne oznake.\nShortcut: <b>Alt-0</b>
+FILEBROWSER_SHOWUNRANKHINT;Prikaži nerangirane slike.\nShortcut: <b>0</b>
+FILEBROWSER_THUMBSIZE;Velikost predogledne sličice
+FILEBROWSER_UNRANK_TOOLTIP;Odstrani rang.\nShortcut: <b>Shift-0</b>
+FILEBROWSER_ZOOMINHINT;Povečaj velikost predogledne sličice.\n\nBližnjice:\n<b>+</b> - Način z več zavihki urejevalnika,\n<b>Alt</b>-<b>+</b> - Način z enim zavihkom in urejevalnikom.
+FILEBROWSER_ZOOMOUTHINT;Pomanjšaj velikost predogledne sličice.\n\nBližnjice:\n<b>-</b> - Način z več zavihki urejevalnika,\n<b>Alt</b>-<b>-</b> - Način z enim zavihkom in urejevalnikom.
+FILECHOOSER_FILTER_ANY;Vse datoteke
+FILECHOOSER_FILTER_COLPROF;Barvni profili (*.icc)
+FILECHOOSER_FILTER_CURVE;Profili krivulj
+FILECHOOSER_FILTER_LCP;Profili popravkov lečij
+FILECHOOSER_FILTER_PP;Profili obdelovanja
+FILECHOOSER_FILTER_SAME;Enak format kot trenutna slika
+FILECHOOSER_FILTER_TIFF;Datoteke TIFF
+GENERAL_ABOUT;O programu
+GENERAL_AFTER;Po
+GENERAL_APPLY;Uveljavi
+GENERAL_ASIMAGE;Kot slika
+GENERAL_AUTO;Avtomatsko
+GENERAL_BEFORE;Pred
+GENERAL_CANCEL;Prekliči
+GENERAL_CLOSE;Zapri
+GENERAL_CURRENT;Trenutno
+GENERAL_DISABLE;Onemogoči
+GENERAL_DISABLED;Onemogočeno
+GENERAL_ENABLE;Omogoči
+GENERAL_ENABLED;Omogočeno
+GENERAL_FILE;Datoteka
+GENERAL_LANDSCAPE;Ležeči format
+GENERAL_NA;n/a
+GENERAL_NO;Ne
+GENERAL_NONE;Nič
+GENERAL_OK;OK
+GENERAL_OPEN;Odpri
+GENERAL_PORTRAIT;Pokončni format
+GENERAL_RESET;Reset
+GENERAL_SAVE;Shrani
+GENERAL_SAVE_AS;Shrani kot...
+GENERAL_SLIDER;Drsnik
+GENERAL_UNCHANGED;(Nespremenjeno)
+GENERAL_WARNING;Opozorilo
+GIMP_PLUGIN_INFO;Dobrodošli v RawTherapee vtičniku za GIMP!\nKo boste končali z urejanjem enostavno zaprite glavno okno in slika se bo avtomatično uvozila v GIMP.
+HISTOGRAM_TOOLTIP_B;Prikaži/Skrij histogram za modro.
+HISTOGRAM_TOOLTIP_BAR;Prikaži/Skrij stolpce RGB indikatorjev.
+HISTOGRAM_TOOLTIP_CHRO;Prikaži/Skrij histogram barvitosti.
+HISTOGRAM_TOOLTIP_G;Prikaži/Skrij histogram za zeleno.
+HISTOGRAM_TOOLTIP_L;Prikaži/Skrij histogram CIELab svetlosti.
+HISTOGRAM_TOOLTIP_MODE;Preklopi med linearno, log-linearno in log-log merilom histograma.
+HISTOGRAM_TOOLTIP_R;Prikaži/Skrij histogram za rdečo.
+HISTOGRAM_TOOLTIP_RAW;Prikaži/Skrij surovi histogram.
+HISTORY_CHANGED;Spremenjeno
+HISTORY_CUSTOMCURVE;Prilagojena krivulja
+HISTORY_FROMCLIPBOARD;Iz odložišča
+HISTORY_LABEL;Zgodovina
+HISTORY_MSG_1;Slika naložena
+HISTORY_MSG_2;PP3 naložena
+HISTORY_MSG_3;PP3 spremenjena
+HISTORY_MSG_4;Brskanje po zgodovini
+HISTORY_MSG_5;Ekspozicija - Osvetljenost
+HISTORY_MSG_6;Ekspozicija - Kontrast
+HISTORY_MSG_7;Ekspozicija - Črnina
+HISTORY_MSG_8;Ekspozicija - Prilagoditev
+HISTORY_MSG_9;Ekspozicija - Stiskanje bleščav
+HISTORY_MSG_10;Ekspozicija - Stiskanje senc
+HISTORY_MSG_11;Ekspozicija - Krivulja tonov 1
+HISTORY_MSG_12;Ekspozicija - Avtomatski nivoji
+HISTORY_MSG_13;Ekspozicija - Klip
+HISTORY_MSG_14;L*a*b* - Osvetljenost
+HISTORY_MSG_15;L*a*b* - Kontrast
+HISTORY_MSG_16;-
+HISTORY_MSG_17;-
+HISTORY_MSG_18;-
+HISTORY_MSG_19;L*a*b* - krivulja L*
+HISTORY_MSG_20;Ostrenje
+HISTORY_MSG_21;USM - Radij
+HISTORY_MSG_22;USM - Količina
+HISTORY_MSG_23;USM - Prag
+HISTORY_MSG_24;USM - Naostri samo robove
+HISTORY_MSG_25;USM - Radij detekcije roba
+HISTORY_MSG_26;USM - Toleranca roba
+HISTORY_MSG_27;USM - Kontrola haloja
+HISTORY_MSG_28;USM - Kontrolna velikost haloja
+HISTORY_MSG_29;Methoda - ostrenja
+HISTORY_MSG_30;RLD - Radiij
+HISTORY_MSG_31;RLD - Količina
+HISTORY_MSG_32;RLD - Blaženje
+HISTORY_MSG_33;RLD - Iteracije
+HISTORY_MSG_34;Popravki lečja - Popačenje
+HISTORY_MSG_35;Popravki lečja -  Vinjetiranje
+HISTORY_MSG_36;Popravki lečja - - CA
+HISTORY_MSG_37;Ekspozicija - Avtomatski nivoji
+HISTORY_MSG_38;Ravnotežje beline - Metoda
+HISTORY_MSG_39;WB - Temperatura
+HISTORY_MSG_40;WB - Odtenek
+HISTORY_MSG_41;Ekspozicija - način krivulje odtenkov 1
+HISTORY_MSG_42;Ekspozicija - krivulja odtenkov 2
+HISTORY_MSG_43;Ekspozicija - način krivulje odtenkov 2
+HISTORY_MSG_44;Lum. radij odstranjevanja šuma
+HISTORY_MSG_45;Lum. toleranca roba odstranjevanja šuma
+HISTORY_MSG_46;Odstranjevanje barvnega šuma
+HISTORY_MSG_47;Zmešaj ICC bleščave z matriko
+HISTORY_MSG_48;DCP - Krivulja tonov
+HISTORY_MSG_49;DCP osvetljava
+HISTORY_MSG_50;Sence/bleščave
+HISTORY_MSG_51;S/H - Bleščave
+HISTORY_MSG_52;S/H - Sence
+HISTORY_MSG_53;S/H - Tonska širina bleščav
+HISTORY_MSG_54;S/H - Tonska širina senc
+HISTORY_MSG_55;S/H - Lokalni kontrast
+HISTORY_MSG_56;S/H - Radij
+HISTORY_MSG_57;Groba rotacija
+HISTORY_MSG_58;Horizontalni preobrat
+HISTORY_MSG_59;Vertikalni preobrat
+HISTORY_MSG_60;Rotacija
+HISTORY_MSG_61;Avtomatsko polnenje
+HISTORY_MSG_62;Popravki popačenja
+HISTORY_MSG_63;Izbran posnetek stanja
+HISTORY_MSG_64;Izrez
+HISTORY_MSG_65;CA popravki
+HISTORY_MSG_66;Ekspozicija - Rekonstrukcija bleščav
+HISTORY_MSG_67;Ekspozicija - HLR količina
+HISTORY_MSG_68;Ekspozicija - HLR metoda
+HISTORY_MSG_69;Delovni barvni prostor
+HISTORY_MSG_70;Izhodni barvni prostor
+HISTORY_MSG_71;Vhodni barvni prostor
+HISTORY_MSG_72;VC - Količina
+HISTORY_MSG_73;Mešalnik kanalov
+HISTORY_MSG_74;Sprememba velikosti - Merilo
+HISTORY_MSG_75;Spremeba velikosti - Metoda
+HISTORY_MSG_76;Exif metapodatki
+HISTORY_MSG_77;IPTC metapodatki
+HISTORY_MSG_78;-
+HISTORY_MSG_79;Sprememba velikosti - Širina
+HISTORY_MSG_80;Sprememba velikosti - Višina
+HISTORY_MSG_81;Spremeni velikost
+HISTORY_MSG_82;Profil spremenjen
+HISTORY_MSG_83;S/H - maska ostrenja
+HISTORY_MSG_84;Popravek perspektive
+HISTORY_MSG_85;Popravek objektiva - datoteka LCP
+HISTORY_MSG_86;RGB krivulje - Način svetilnosti
+HISTORY_MSG_87;Impulzno zmanjšanje šuma
+HISTORY_MSG_88;Prag impulznega zmanjšanja šuma
+HISTORY_MSG_89;Zmanjšanje šuma
+HISTORY_MSG_90;Zmanjšanje šuma - Svetlost
+HISTORY_MSG_91;Zmanjšanje šuma - glavna barvitost
+HISTORY_MSG_92;Zmanjšanje šuma - Gama
+HISTORY_MSG_93;CbDL - Vrednost
+HISTORY_MSG_94;Kontrast po nivojih podrobnosti
+HISTORY_MSG_95;L*a*b* - Barvitost
+HISTORY_MSG_96;L*a*b* - a* krivulja
+HISTORY_MSG_97;L*a*b* - b* krivulja
+HISTORY_MSG_98;Metoda odstranjevanja mozaičnosti
+HISTORY_MSG_99;Filtriranje vročih pikslov
+HISTORY_MSG_100;Ekspozicija - Nasičenje
+HISTORY_MSG_101;HSV - Odtenek
+HISTORY_MSG_102;HSV - Nasičenost
+HISTORY_MSG_103;HSV - Vrednost
+HISTORY_MSG_104;HSV Ekvalizator
+HISTORY_MSG_105;Odstranjevanje napak robov
+HISTORY_MSG_106;Odstranjevanje napak robov - Radij
+HISTORY_MSG_107;Odstranjevanje napak robov - Prag
+HISTORY_MSG_108;Ekspozicija - prag HLC
+HISTORY_MSG_109;Sprememba velikosti - Velikostni okvir
+HISTORY_MSG_110;Sprememba velikosti - Uporabi na
+HISTORY_MSG_111;L*a*b* - Izogibanje barvnega premika
+HISTORY_MSG_112;--neuporabljeno--
+HISTORY_MSG_113;L*a*b* - Zaščita rdeče kože
+HISTORY_MSG_114;DCB iteracije
+HISTORY_MSG_115;Zatiranje napačne barve
+HISTORY_MSG_116;DCB izboljšave
+HISTORY_MSG_117;Surovi CA popravek - Rdeča
+HISTORY_MSG_118;Surovi CA popravek - Modra
+HISTORY_MSG_119;Filtriranje šuma na črti
+HISTORY_MSG_120;Uravnoteženje zelene
+HISTORY_MSG_121;Surovi CA popravek - Avtomatski
+HISTORY_MSG_122;Dark-frame - Avtomatski izbor
+HISTORY_MSG_123;Dark-frame - Datoteka
+HISTORY_MSG_124;Popravek točke beline
+HISTORY_MSG_126;Flat-field - Datoteka
+HISTORY_MSG_127;Flat-field - Avto-selekcija
+HISTORY_MSG_128;Flat-field - Radij zameglevanja
+HISTORY_MSG_129;Flat-field - Tip zameglevanja
+HISTORY_MSG_130;Avtomatski popravek popačenja
+HISTORY_MSG_131;Zmanjšanje šuma - Luma
+HISTORY_MSG_132;Zmanjšanje šuma - Barvitost
+HISTORY_MSG_133;Gama izhoda
+HISTORY_MSG_134;Svobodni gama
+HISTORY_MSG_135;Svobodni gama
+HISTORY_MSG_136;Strmina proste game
+HISTORY_MSG_137;Nivo črnine - Zelena 1
+HISTORY_MSG_138;Nivo črnine - Rdeča
+HISTORY_MSG_139;Nivo črnine - Modra
+HISTORY_MSG_140;Nivo črnine - Zelena 2
+HISTORY_MSG_141;Nivo črnine - Poveži zelene
+HISTORY_MSG_142;ES - Iteracije
+HISTORY_MSG_143;ES - Količina
+HISTORY_MSG_144;Mikrokontrast - Količina
+HISTORY_MSG_145;Mikrokontrast - Enotnost
+HISTORY_MSG_146;Ostrenje robov
+HISTORY_MSG_147;ES - Samo svetlost
+HISTORY_MSG_148;Mikrokontrast
+HISTORY_MSG_149;Mikrokontrast - matrika 3×3
+HISTORY_MSG_150;Zmanjševanje šuma in artefaktov po odstr. mozaičnosti
+HISTORY_MSG_151;Vibranca
+HISTORY_MSG_152;Vib - Pastelni toni
+HISTORY_MSG_153;Vib - Nasičeni toni
+HISTORY_MSG_154;Vib - Zavaruj tone kože
+HISTORY_MSG_155;Vib - Izogibaj se pomiku barv
+HISTORY_MSG_156;Vib - Poveži pastelne/nasičene
+HISTORY_MSG_157;Vib - Prag pastelnih/nasičenih
+HISTORY_MSG_158;TM - Moč
+HISTORY_MSG_159;TM - Zaustavljanje roba
+HISTORY_MSG_160;TM - Merilo
+HISTORY_MSG_161;TM - Ponovno uteževanje iteracij
+HISTORY_MSG_162;Preslikava tonov
+HISTORY_MSG_163;RGB Krivulje - Rdeča
+HISTORY_MSG_164;RGB Krivulje - Zelena
+HISTORY_MSG_165;RGB Krivulje - Modra
+HISTORY_MSG_166;Ekspozicija - Ponastavitev
+HISTORY_MSG_167;Metoda odstranjevanja mozaičnosti
+HISTORY_MSG_168;L*a*b* - CC krivulja
+HISTORY_MSG_169;L*a*b* - CH krivulja
+HISTORY_MSG_170;Vibrance - HH krivulja
+HISTORY_MSG_171;L*a*b* - LC krivulja
+HISTORY_MSG_172;L*a*b* - Omeji LC
+HISTORY_MSG_173;NR - Obnova podrobnosti
+HISTORY_MSG_174;CIECAM02
+HISTORY_MSG_175;CAM02 - CAT02 adaptacija
+HISTORY_MSG_176;CAM02 - Pogled okolice
+HISTORY_MSG_177;CAM02 - Svetlost scene
+HISTORY_MSG_178;CAM02 - Ogled svetlosti
+HISTORY_MSG_179;CAM02 - Model bele točke
+HISTORY_MSG_180;CAM02 - Lightness (J)
+HISTORY_MSG_181;CAM02 - Barvitost (C)
+HISTORY_MSG_182;CAM02 - Avtomatski CAT02
+HISTORY_MSG_183;CAM02 - Kontrast (J)
+HISTORY_MSG_184;CAM02 - Obkroži sceno
+HISTORY_MSG_185;CAM02 - Kontrola barvnega obsega
+HISTORY_MSG_186;CAM02 - Algoritem
+HISTORY_MSG_187;CAM02 - Zaščita rdeče/kožne
+HISTORY_MSG_188;CAM02 - Svetlost (Q)
+HISTORY_MSG_189;CAM02 - Kontrast (Q)
+HISTORY_MSG_190;CAM02 - Nasičenost (S)
+HISTORY_MSG_191;CAM02 - Polnost barv (M)
+HISTORY_MSG_192;CAM02 - Odtenek (h)
+HISTORY_MSG_193;CAM02 - Krivulja tona 1
+HISTORY_MSG_194;CAM02 - Krivulja tona 2
+HISTORY_MSG_195;CAM02 - Krivulja tona 1
+HISTORY_MSG_196;CAM02 - Krivulja tona 2
+HISTORY_MSG_197;CAM02 - Barvna krivulja
+HISTORY_MSG_198;CAM02 - Barvna krivulja
+HISTORY_MSG_199;CAM02 - Izhodni histogrami
+HISTORY_MSG_200;CAM02 - Preslikava tonov
+HISTORY_MSG_201;NR - Barvitost - R&amp;G
+HISTORY_MSG_202;NR - Barvitost - B&amp;Y
+HISTORY_MSG_203;NR - Barvni prostor
+HISTORY_MSG_204;LMMSE koraki izboljšav
+HISTORY_MSG_205;CAM02 - Filtriranje vročih/slabih pikslov
+HISTORY_MSG_206;CAT02 - Avtomatska svetilnost scene
+HISTORY_MSG_207;Odstranjevanje napak robov - Krivulja odtenkov
+HISTORY_MSG_208;WB - B/R ekvalizator
+HISTORY_MSG_210;GF - Kot
+HISTORY_MSG_211;Postopno Filtriranje
+HISTORY_MSG_212;VF - Moč
+HISTORY_MSG_213;Filter vinjete
+HISTORY_MSG_214;Črno-belo
+HISTORY_MSG_215;B&amp;W - CM - Rdeče
+HISTORY_MSG_216;B&amp;W - CM - Zeleno
+HISTORY_MSG_217;B&amp;W - CM - Modro
+HISTORY_MSG_218;B&amp;W - Gama - Rdeče
+HISTORY_MSG_219;B&amp;W - Gama - Zeleno
+HISTORY_MSG_220;B&amp;W - Gama - Modro
+HISTORY_MSG_221;B&amp;W - barvni filter
+HISTORY_MSG_222;B&amp;W - Prednastavitve
+HISTORY_MSG_223;B&amp;W - CM - Oranžno
+HISTORY_MSG_224;B&amp;W - CM - Rumeno
+HISTORY_MSG_225;B&amp;W - CM - Cian
+HISTORY_MSG_226;B&amp;W - CM - Magenta
+HISTORY_MSG_227;B&amp;W - CM - Vijolična
+HISTORY_MSG_228;B&amp;W - Ekvalizator svetlosti
+HISTORY_MSG_229;B&amp;W - Ekvalizator svetlosti
+HISTORY_MSG_230;B&amp;W - Način
+HISTORY_MSG_231;B&amp;W - Krivulja 'pred'
+HISTORY_MSG_232;B&amp;W - Tip krivulje 'pred'
+HISTORY_MSG_233;B&amp;W - Krivulja 'po'
+HISTORY_MSG_234;B&amp;W - Tip krivulje 'po'
+HISTORY_MSG_235;B&amp;W - CM - Avto
+HISTORY_MSG_236;--neuporabljeno--
+HISTORY_MSG_237;B&amp;W - CM
+HISTORY_MSG_238;GF - Pero
+HISTORY_MSG_239;GF - Moč
+HISTORY_MSG_240;GF - Center
+HISTORY_MSG_241;VF - Pero
+HISTORY_MSG_242;VF - Okroglost
+HISTORY_MSG_243;VC - Radij
+HISTORY_MSG_244;VC - Moč
+HISTORY_MSG_245;VC - Center
+HISTORY_MSG_246;L*a*b* - CL krivulja
+HISTORY_MSG_247;L*a*b* - LH krivulja
+HISTORY_MSG_248;L*a*b* - HH krivulja
+HISTORY_MSG_249;CbDL - Prag
+HISTORY_MSG_250;NR - Izboljšano
+HISTORY_MSG_251;B&amp;W - Algoritem
+HISTORY_MSG_252;CbDL - Skin tar/prot
+HISTORY_MSG_253;CbDL - Reduciraj artefakte
+HISTORY_MSG_254;CbDL - Odtenek kože
+HISTORY_MSG_255;NR - Filter mediane
+HISTORY_MSG_256;NR - Mediana - Tip
+HISTORY_MSG_257;Toniranje barve
+HISTORY_MSG_258;CT - Barvna krivulja
+HISTORY_MSG_259;CT - Krivulja neprosojnosti
+HISTORY_MSG_260;CT - a*[b*] neprosojnost
+HISTORY_MSG_261;CT - Metoda
+HISTORY_MSG_262;CT - b* neprosojnost
+HISTORY_MSG_263;CT - Sence - Rdeča
+HISTORY_MSG_264;CT - Sence - Zelena
+HISTORY_MSG_265;CT - Sence - Modra
+HISTORY_MSG_266;CT - srednje - Rdeča
+HISTORY_MSG_267;CT - Srednje - Zelena
+HISTORY_MSG_268;CT - Srednje - Modra
+HISTORY_MSG_269;CT - Svetle - Rdeča
+HISTORY_MSG_270;CT - Svetle - Zelena
+HISTORY_MSG_271;CT - Svetle - Modra
+HISTORY_MSG_272;CT - Uravnoteži
+HISTORY_MSG_273;CT - Uravnoteženost barv SMH
+HISTORY_MSG_274;CT - Nasičenost senc
+HISTORY_MSG_275;CT - Nasičenost svetlih delov
+HISTORY_MSG_276;CT - Neprosojnost
+HISTORY_MSG_277;--neuporabljeno--
+HISTORY_MSG_278;CT - Ohrani svetlost
+HISTORY_MSG_279;CT - Sence
+HISTORY_MSG_280;CT - Bleščave
+HISTORY_MSG_281;CT - Moč nasičenosti
+HISTORY_MSG_282;CT - Prag nasičenosti
+HISTORY_MSG_283;CT - Moč
+HISTORY_MSG_284;CT - Avtomatsko varovanje nasičenosti
+HISTORY_MSG_285;NR - Mediana - Metoda
+HISTORY_MSG_286;NR - Mediana - Tip
+HISTORY_MSG_287;NR - Mediana - Iteracije
+HISTORY_MSG_288;Flat-Field - Kontrola obrezave
+HISTORY_MSG_289;Flat-Field - Kontrola obrezave - Avto
+HISTORY_MSG_290;Nivo črnine - Rdeča
+HISTORY_MSG_291;Nivo črnine - Zelena
+HISTORY_MSG_292;Nivo črnine - Modra
+HISTORY_MSG_293;Simulacija filma
+HISTORY_MSG_294;Simulacija filma - Moč
+HISTORY_MSG_295;Simulacija filma - Film
+HISTORY_MSG_296;NR - Krivulja svetlosti
+HISTORY_MSG_297;NR - Način
+HISTORY_MSG_298;Filter mrtvih pikslov
+HISTORY_MSG_299;NR - Krivulja svetlosti
+HISTORY_MSG_300;-
+HISTORY_MSG_301;NR - Kontrola lume
+HISTORY_MSG_302;NR - Metoda barvitosti
+HISTORY_MSG_303;NR - Metoda barvitosti
+HISTORY_MSG_304;W - Nivoji kontrastov
+HISTORY_MSG_305;Nivoji valovčkov
+HISTORY_MSG_306;W - Obdelava
+HISTORY_MSG_307;W - Obdelava
+HISTORY_MSG_308;W - Smer obdelave
+HISTORY_MSG_309;W - ES - Podrobnost
+HISTORY_MSG_310;W - Residual - Nebo tar/prot
+HISTORY_MSG_311;W - Nivoji valovčkov
+HISTORY_MSG_312;W - Residual - Prag senc
+HISTORY_MSG_313;W - Barvitost - Sat/past
+HISTORY_MSG_314;W - Barvni obseg - Reduciraj artefakte
+HISTORY_MSG_315;W - Residual - Kontrast
+HISTORY_MSG_316;W - Barvni obseg - Koža tar/prot
+HISTORY_MSG_317;W - Barvni obseg - Koža hue
+HISTORY_MSG_318;W - Kontrast - Nivoji bleščav
+HISTORY_MSG_319;W - Kontrast - Obseg bleščav
+HISTORY_MSG_320;W - Kontrast - Obseg senc
+HISTORY_MSG_321;W - Kontrast - Nivoji senc
+HISTORY_MSG_322;W - Barvni obseg - Izogibanje barvnega pomika
+HISTORY_MSG_323;W - ES - Lokalni kontrast
+HISTORY_MSG_324;W - Barvitost - Pastel
+HISTORY_MSG_325;W - Barvitost - Nasičenje
+HISTORY_MSG_326;W - Barvitost - Metoda
+HISTORY_MSG_327;W - Kontrast - Uporabi za
+HISTORY_MSG_328;W - Barvitost - Moč povezave
+HISTORY_MSG_329;W - Toniranje - Neprosojnost RG
+HISTORY_MSG_330;W - Toniranje - Neprosojnost BY
+HISTORY_MSG_331;W - Nivoji kontrastov - Ekstra
+HISTORY_MSG_332;W - Metoda prekrivanja
+HISTORY_MSG_333;W - Residual - Sence
+HISTORY_MSG_334;W - Residual - Barvitost
+HISTORY_MSG_335;W - Residual - Bleščave
+HISTORY_MSG_336;W - Residual - Prag bleščav
+HISTORY_MSG_337;W - Residual - Odtenek neba
+HISTORY_MSG_338;W - ES - Radij
+HISTORY_MSG_339;W - ES - Moč
+HISTORY_MSG_340;W - Moč
+HISTORY_MSG_341;W - Izvedba robov
+HISTORY_MSG_342;W - ES - Prvi nivo
+HISTORY_MSG_343;W - Nivoji barvitosti
+HISTORY_MSG_344;W - Metoda barvitost sl/cur
+HISTORY_MSG_345;W - ES - Lokalni kontrast
+HISTORY_MSG_346;W - ES - Metoda lokalnega kontrasta
+HISTORY_MSG_347;W - Odstranjevanje šuma - Nivo 1
+HISTORY_MSG_348;W - Odstranjevanje šuma - Nivo 2
+HISTORY_MSG_349;W - Odstranjevanje šuma - Nivo 3
+HISTORY_MSG_350;W - ES - Detekcija roba
+HISTORY_MSG_351;W - Residual - HH krivulja
+HISTORY_MSG_352;W - Ozadje
+HISTORY_MSG_353;W - ES - Občutljivost gradienta
+HISTORY_MSG_354;W - ES - Izboljšan
+HISTORY_MSG_355;W - ES - Nizki prag
+HISTORY_MSG_356;W - ES - Visoki prag
+HISTORY_MSG_357;W - Odstrani šum - Povezava z ES
+HISTORY_MSG_358;W - Barvni obseg - CH
+HISTORY_MSG_359;Vroč/Mrtev - Prag
+HISTORY_MSG_360;TM - Gama
+HISTORY_MSG_361;W - Končno - uravnoteženje barvitosti
+HISTORY_MSG_362;W - Residual - Metoda stiskanja
+HISTORY_MSG_363;W - Residual - Moč stiskanja
+HISTORY_MSG_364;W - Končno - Uravnoteženost kontrasta
+HISTORY_MSG_365;W - Končno - Delta uravnoteženje
+HISTORY_MSG_366;W - Residual - Stiskanje game
+HISTORY_MSG_367;W - Končno - Krivulja kontrastov 'Po'
+HISTORY_MSG_368;W - Končno - Uravnoteženje kontrastov
+HISTORY_MSG_369;W - Končno - Metoda uravnoteženja
+HISTORY_MSG_370;W - Končno - Krivulja lokalnega kontrasta
+HISTORY_MSG_371;Post-Resize Ostrenje
+HISTORY_MSG_372;PRS USM - Radij
+HISTORY_MSG_373;PRS USM - Količina
+HISTORY_MSG_374;PRS USM - Prag
+HISTORY_MSG_375;PRS USM - Naostri samo robove
+HISTORY_MSG_376;PRS USM - Radij detekcije roba
+HISTORY_MSG_377;PRS USM - Toleranca roba
+HISTORY_MSG_378;PRS USM - Kontrola haloja
+HISTORY_MSG_379;PRS USM - Količina kontrole haloja
+HISTORY_MSG_380;PRS - Metoda
+HISTORY_MSG_381;PRS RLD - Radij
+HISTORY_MSG_382;PRS RLD - Količina
+HISTORY_MSG_383;PRS RLD - Dušenje
+HISTORY_MSG_384;PRS RLD - Iteracij
+HISTORY_MSG_385;W - Residual - Uravnoteženost barv
+HISTORY_MSG_386;W - Residual - CB močne zelene
+HISTORY_MSG_387;W - Residual - CB močne modre
+HISTORY_MSG_388;W - Residual - CB srednje zelene
+HISTORY_MSG_389;W - Residual - CB srednje modre
+HISTORY_MSG_390;W - Residual - CB šibke zelene
+HISTORY_MSG_391;W - Residual - CB šibke modre
+HISTORY_MSG_392;W - Residual - Uravnoteženost barv
+HISTORY_MSG_393;DCP - Iskalna tabela
+HISTORY_MSG_394;DCP - Osnovna ekspozicija
+HISTORY_MSG_395;DCP - Osnovna tabela
+HISTORY_MSG_396;W - pod-orodje kontrasta
+HISTORY_MSG_397;W - Pod-orodje barvitosti
+HISTORY_MSG_398;W - ES sub-tool
+HISTORY_MSG_399;W - Residual sub-tool
+HISTORY_MSG_400;W - Končno sub-tool
+HISTORY_MSG_401;W - Pod-orodje toniranja
+HISTORY_MSG_402;W - Pod-orodje odstranjevanja šuma
+HISTORY_MSG_403;W - ES - Občutljivost na robove
+HISTORY_MSG_404;W - ES - Ojačevanje osnove
+HISTORY_MSG_405;W - Odstranjevanje šuma - Nivo 4
+HISTORY_MSG_406;W - ES - Sosednji piksli
+HISTORY_MSG_407;Retinex - Metoda
+HISTORY_MSG_408;Retinex - Radij
+HISTORY_MSG_409;Retinex - Kontrast
+HISTORY_MSG_410;Retinex - Odmik
+HISTORY_MSG_411;Retinex - Moč
+HISTORY_MSG_412;Retinex - Gaussov gradient
+HISTORY_MSG_413;Retinex - Kontrast
+HISTORY_MSG_414;Retinex - Histogram - Lab
+HISTORY_MSG_415;Retinex - Prenos
+HISTORY_MSG_416;Retinex
+HISTORY_MSG_417;Retinex - Mediana prenosa
+HISTORY_MSG_418;Retinex - Prag
+HISTORY_MSG_419;Retinex - Barvni prostor
+HISTORY_MSG_420;Retinex - Histogram - HSL
+HISTORY_MSG_421;Retinex - Gama
+HISTORY_MSG_422;Retinex - Gama
+HISTORY_MSG_423;Retinex - Gama strmina
+HISTORY_MSG_424;Retinex - HL prag
+HISTORY_MSG_425;Retinex - Log base
+HISTORY_MSG_426;Retinex - Ekvalizator odtenkov
+HISTORY_MSG_427;Namen izrisovanja izhoda
+HISTORY_MSG_428;Namen izrisovanja zaslona
+HISTORY_MSG_429;Retinex - Iteracij
+HISTORY_MSG_430;Retinex - Gradient prenosa
+HISTORY_MSG_431;Retinex - Moč gradienta
+HISTORY_MSG_432;Retinex - M - Bleščave
+HISTORY_MSG_433;Retinex - M - Bleščave TW
+HISTORY_MSG_434;Retinex - M - Sence
+HISTORY_MSG_435;Retinex - M - Sence TW
+HISTORY_MSG_436;Retinex - M - Radij
+HISTORY_MSG_437;Retinex - M - Metoda
+HISTORY_MSG_438;Retinex - M - Ekvalizator
+HISTORY_MSG_439;Retinex - Obdelava
+HISTORY_MSG_440;CbDL - Metoda
+HISTORY_MSG_441;Retinex - Prenos povečanja
+HISTORY_MSG_442;Retinex - Merilo
+HISTORY_MSG_443;Prilagoditev črne točke izhoda
+HISTORY_MSG_444;WB - Začasna pristranost
+HISTORY_MSG_445;Raw sub-image
+HISTORY_MSG_449;PS - prilagoditev ISO
+HISTORY_MSG_452;PS - Prikaži gibanje
+HISTORY_MSG_453;PS - Prikaži samo masko
+HISTORY_MSG_457;PS - Preveri redečo/modro
+HISTORY_MSG_462;PS - Preveri zeleno
+HISTORY_MSG_464;PS - Zamegli masko gibanja
+HISTORY_MSG_465;PS - Zamegli radij
+HISTORY_MSG_468;PS - Zapolni luknje
+HISTORY_MSG_469;PS - Mediana
+HISTORY_MSG_471;PS - Popravek gibanja
+HISTORY_MSG_472;PS - Gladki prehodi
+HISTORY_MSG_473;PS - Uporabi LMMSE
+HISTORY_MSG_474;PS - Izenači
+HISTORY_MSG_475;PS - Izenači kanal
+HISTORY_MSG_476;CAM02 - Začasno ven
+HISTORY_MSG_477;CAM02 - Zeleno ven
+HISTORY_MSG_478;CAM02 - Yb ven
+HISTORY_MSG_479;CAM02 - CAT02 prilagoditev ven
+HISTORY_MSG_480;CAM02 - Avtomatska CAT02 ven
+HISTORY_MSG_481;CAM02 - Začasna scena
+HISTORY_MSG_482;CAM02 - Zelena scena
+HISTORY_MSG_483;CAM02 - Yb scena
+HISTORY_MSG_484;CAM02 - Avto Yb scena
+HISTORY_MSG_485;Popravek objektiva
+HISTORY_MSG_486;Popravek objektiva - Fotoaparat
+HISTORY_MSG_487;Popravek objektiva - Objektiv
+HISTORY_MSG_488;Zmanjšanje dinamičnega obsega
+HISTORY_MSG_489;DRC - Podrobnost
+HISTORY_MSG_490;DRC - Količina
+HISTORY_MSG_491;Ravnotežje beline
+HISTORY_MSG_492;RGB krivulje
+HISTORY_MSG_493;L*a*b* prilagoditve
+HISTORY_MSG_494;Ujemite ostrenje
+HISTORY_MSG_CLAMPOOG;Izrežite barve izven obsega
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Popravek barv
+HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Popravek barv
+HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Kanal
+HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - maska regije C
+HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H maska
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Svetlost
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L maska
+HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - Seznam
+HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - zamegljevanje regijske maske
+HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - odmik regije
+HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - moč regije
+HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Nasičenost
+HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - prikaz maske regije
+HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - strmina regije
+HISTORY_MSG_DEHAZE_DEPTH;Odstranjevanje zamegljenosti - Globina
+HISTORY_MSG_DEHAZE_ENABLED;Odstranjevanje zamegljenosti
+HISTORY_MSG_DEHAZE_LUMINANCE;Odstranjevanje zamegljenosti - samo svetlost
+HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Odstranjevanje zamegljenosti - Prikaži globino mape
+HISTORY_MSG_DEHAZE_STRENGTH;Odstranjevanje zamegljenosti - Moč
+HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dualno odstranjevanje mozaičnosti - Avtomatski prag
+HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dualno odstranjevanje mozaičnosti - Prag kontrasta
+HISTORY_MSG_FILMNEGATIVE_ENABLED;Filmski negativ
+HISTORY_MSG_FILMNEGATIVE_VALUES;Film negativne vrednosti
+HISTORY_MSG_HISTMATCHING;Avto-usklajena krivulja tonov
+HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 osvetljevalnik D
+HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Tip
+HISTORY_MSG_ICM_WORKING_GAMMA;Delovanje - Gama
+HISTORY_MSG_ICM_WORKING_SLOPE;Delovanje - Strmina
+HISTORY_MSG_ICM_WORKING_TRC_METHOD;Delovanje - Metoda TRC
+HISTORY_MSG_LOCALCONTRAST_AMOUNT;Lokalni kontrast - Količina
+HISTORY_MSG_LOCALCONTRAST_DARKNESS;Lokalni kontrast - Temina
+HISTORY_MSG_LOCALCONTRAST_ENABLED;Lokalni kontrast
+HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Lokalni kontrast - Svetlost
+HISTORY_MSG_LOCALCONTRAST_RADIUS;Lokalni kontrast - Radij
+HISTORY_MSG_METADATA_MODE;Način kopiranja metapodatkov
+HISTORY_MSG_MICROCONTRAST_CONTRAST;Mikrokontrast - Prag kontrasta
+HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Avtomatski prag
+HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Avtomatski radij
+HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Prag kontrasta
+HISTORY_MSG_PDSHARPEN_GAMMA;CS - Gama
+HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iteracije
+HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radij
+HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Povečanje polmera vogala
+HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - metoda odstranjevanje mozaičnosti za gibanje
+HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Smer linijskega filtra šuma
+HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF linijski filter
+HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Prag kontrasta
+HISTORY_MSG_RAWCACORR_AUTOIT;Surovi CA popravek - Iteracije
+HISTORY_MSG_RAWCACORR_COLORSHIFT;Surovi CA popravek - Izogibanje pomika barv
+HISTORY_MSG_RAW_BORDER;Surova meja
+HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Dovoli povečevanje
+HISTORY_MSG_SHARPENING_BLUR;Ostrenje - Zamegli radij
+HISTORY_MSG_SHARPENING_CONTRAST;Ostrenje - Prag kontrasta
+HISTORY_MSG_SHARPENING_GAMMA;Ostrenje - Gama
+HISTORY_MSG_SH_COLORSPACE;S/H - Barvni prostor
+HISTORY_MSG_SOFTLIGHT_ENABLED;Mehka svetloba
+HISTORY_MSG_SOFTLIGHT_STRENGTH;Mehka svetloba - Moč
+HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Sidro
+HISTORY_NEWSNAPSHOT;Dodaj
+HISTORY_NEWSNAPSHOT_TOOLTIP;Bližnjica: <b>Alt-s</b>
+HISTORY_SNAPSHOT;Posnetek
+HISTORY_SNAPSHOTS;Posnetek
+ICCPROFCREATOR_COPYRIGHT;Copyright:
+ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Ponastavi na privzeti copyright, dodeljen "RawTherapee, CC0"
+ICCPROFCREATOR_CUSTOM;Po meri
+ICCPROFCREATOR_DESCRIPTION;Opis:
+ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Dodaj vrednosti game and strmine k opisu
+ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Pusti prazno in nastavi privzeti opis.
+ICCPROFCREATOR_GAMMA;Gama
+ICCPROFCREATOR_ICCVERSION;ICC verzija:
+ICCPROFCREATOR_ILL;Illuminant:
+ICCPROFCREATOR_ILL_41;D41
+ICCPROFCREATOR_ILL_50;D50
+ICCPROFCREATOR_ILL_55;D55
+ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_65;D65
+ICCPROFCREATOR_ILL_80;D80
+ICCPROFCREATOR_ILL_DEF;Privzeto
+ICCPROFCREATOR_ILL_INC;StdA 2856K
+ICCPROFCREATOR_ILL_TOOLTIP;Nastaviš lahko samo svetlobe iz profilov ICC v4.
+ICCPROFCREATOR_PRIMARIES;Primaries:
+ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+ICCPROFCREATOR_PRIM_BEST;BestRGB
+ICCPROFCREATOR_PRIM_BETA;BetaRGB
+ICCPROFCREATOR_PRIM_BLUX;Blue X
+ICCPROFCREATOR_PRIM_BLUY;Blue Y
+ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_GREX;Green X
+ICCPROFCREATOR_PRIM_GREY;Green Y
+ICCPROFCREATOR_PRIM_PROPH;Prophoto
+ICCPROFCREATOR_PRIM_REC2020;Rec2020
+ICCPROFCREATOR_PRIM_REDX;Red X
+ICCPROFCREATOR_PRIM_REDY;Red Y
+ICCPROFCREATOR_PRIM_SRGB;sRGB
+ICCPROFCREATOR_PRIM_TOOLTIP;Primarne prilagojene vrednosti lahko nastavite samo za profile ICC v4.
+ICCPROFCREATOR_PRIM_WIDEG;Široki barvni prostor
+ICCPROFCREATOR_PROF_V2;ICC v2
+ICCPROFCREATOR_PROF_V4;ICC v4
+ICCPROFCREATOR_SAVEDIALOG_TITLE;Shrani ICC profil kot...
+ICCPROFCREATOR_SLOPE;Strmina
+ICCPROFCREATOR_TRC_PRESET;Krivulja odzivnosti tonov:
+IPTCPANEL_CATEGORY;Kategorija
+IPTCPANEL_CATEGORYHINT;Določa temo slike po mnenju punudnika.
+IPTCPANEL_CITY;Mesto
+IPTCPANEL_CITYHINT;Vnesi ime mesta na tej sliki.
+IPTCPANEL_COPYHINT;Kopiraj nastavitve IPTC na odložišče.
+IPTCPANEL_COPYRIGHT;Obvestilo copyrighta
+IPTCPANEL_COPYRIGHTHINT;Vnesi določilo trenutnega nosilca Copyrighta te slike kot npr.  ©2019 Janez Novak.
+IPTCPANEL_COUNTRY;Država
+IPTCPANEL_COUNTRYHINT;Vnesi ime države na tej sliki.
+IPTCPANEL_CREATOR;Avtor
+IPTCPANEL_CREATORHINT;Vnesi ime avtorja te slike.
+IPTCPANEL_CREATORJOBTITLE;Uradni naziv avtorja
+IPTCPANEL_CREATORJOBTITLEHINT;Vnesi službeni naziv avtorja te slike, ki je zabeležen v polju avtorja.
+IPTCPANEL_CREDIT;Zasluge
+IPTCPANEL_CREDITHINT;Vnesi osebo zaslužno za objavo te slike.
+IPTCPANEL_DATECREATED;Datum nastanka
+IPTCPANEL_DATECREATEDHINT;Vnesi datum, ko je bila slika posneta.
+IPTCPANEL_DESCRIPTION;Opis
+IPTCPANEL_DESCRIPTIONHINT;Vnesi naslov, ki opisuje kdo, kaj in zakaj to dogaja na tej sliki, kar vključuje imena oseb in njihove vloge pri tem, kar se dogaja na sliki.
+IPTCPANEL_DESCRIPTIONWRITER;Zapisnikar opisa
+IPTCPANEL_DESCRIPTIONWRITERHINT;Vnesi ime osebe, ki je napisala, uredila ali popravila opis slike.
+IPTCPANEL_EMBEDDED;Vdelano
+IPTCPANEL_EMBEDDEDHINT;Nastavi nazaj na podatke IPTC, ki so vdelani v datoteki slike.
+IPTCPANEL_HEADLINE;Naslov
+IPTCPANEL_HEADLINEHINT;Vnesi kratek objavljiv opis vsebine te slike.
+IPTCPANEL_INSTRUCTIONS;Navodila
+IPTCPANEL_INSTRUCTIONSHINT;Vnesi informacije o morebitnem embargu ali drugih omejitvah, ki niso omenjene v polju Copyright.
+IPTCPANEL_KEYWORDS;Ključne besede
+IPTCPANEL_KEYWORDSHINT;Vstavi poljubno število terminov ali fraz, ki opisujejo vsebino slike.
+IPTCPANEL_PASTEHINT;Prilepi nastavitve IPTC iz odložišča.
+IPTCPANEL_PROVINCE;Provinca ali država
+IPTCPANEL_PROVINCEHINT;Vnesi ime province ali države v povezavi s to sliko.
+IPTCPANEL_RESET;Ponastavi
+IPTCPANEL_RESETHINT;Ponastavi na privzeti profil
+IPTCPANEL_SOURCE;Vir
+IPTCPANEL_SOURCEHINT;Vnesi ali uredi ime osebe ali skupine, ki je imela vlogo pri dobavi slike kot npr. oseba od katere si dobil sliko.
+IPTCPANEL_SUPPCATEGORIES;Dodatki kategorije
+IPTCPANEL_SUPPCATEGORIESHINT;Podrobneje določa vsebino slike.
+IPTCPANEL_TITLE;Naslov
+IPTCPANEL_TITLEHINT;Vnesi kratko človeku prijazno ime slike, lahko je tudi ime datoteke.
+IPTCPANEL_TRANSREFERENCE;ID delovnega mesta
+IPTCPANEL_TRANSREFERENCEHINT;Vnesite številko ali identifikator za delovnega toka ali omogočanje sledenja.
+MAIN_BUTTON_FULLSCREEN;Celotni zaslon
+MAIN_BUTTON_ICCPROFCREATOR;Ustvarjalec ICC profila
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigacija do naslednje slike odprte v urejevalniku.\nBližnjica: <b>Shift-F4</b>\n\nNavigacija do naslednje slike glede na trenutno izbrano predogledno sličico v brskalniku datotek:\nBližnjica: <b>F4</b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Navigacija do prejšnje slike odprte v urejevalniku.\nBližnjica: <b>Shift-F3</b>\n\nNavigacija do prejšnje slike glede na trenutno izbrano predogledno sličico v brskalniku datotek:\nBližnjica: <b>F3</b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Sinhroniziraj pregledovalnik datotek z urejevalnikom, tako da se vidi predogledna sličica trenutno odprte slike in deaktivira aktivne filtre.\nBližnjica: <b>x</b>\n\nKot zgoraj, a brez deaktivranja filtrov:\nBližnjica: <b>y</b>\n(Zavedajte se predogledna sličica odprte slike ne bo pokazana, če je sfiltrirana).
+MAIN_BUTTON_PREFERENCES;Preference
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Postavi trenutno sliko v čakalno vrsto za obdelavo.\nBližnjica: <b>Ctrl+b</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Shrani trenutno sliko.\nBližnjica: <b>Ctrl+s</b>\nShrani trenutni profil (.pp3).\nBližnjica: <b>Ctrl+Shift+s</b>
+MAIN_BUTTON_SENDTOEDITOR;Uredi sliko v zunanjem urejevalniku
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Uredi sliko v zunanjem urejevalniku.\nBližnjica: <b>Ctrl+e</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Prikaži/skrij stranske panele.\nBližnjica: <b>m</b>
+MAIN_BUTTON_UNFULLSCREEN;Izhod iz celotnega zaslona
+MAIN_FRAME_EDITOR;Urejevalnik
+MAIN_FRAME_EDITOR_TOOLTIP;Urejevalnik.\nBližnjica: <b>Ctrl-F4</b>
+MAIN_FRAME_FILEBROWSER;Prikazovalnik datotek
+MAIN_FRAME_FILEBROWSER_TOOLTIP;Prikazovalnik datotek.\nBližnjica: <b>Ctrl-F2</b>
+MAIN_FRAME_PLACES;Lokacije slik
+MAIN_FRAME_PLACES_ADD;Dodaj
+MAIN_FRAME_PLACES_DEL;Odstrani
+MAIN_FRAME_QUEUE;Čakalna vrsta
+MAIN_FRAME_QUEUE_TOOLTIP;Čakalna vrsta obdelav.\nBližnjica: <b>Ctrl-F3</b>
+MAIN_FRAME_RECENT;Zadnje uporabljene mape
+MAIN_MSG_ALREADYEXISTS;Datoteka že obstaja.
+MAIN_MSG_CANNOTLOAD;Ne morem naložiti slike
+MAIN_MSG_CANNOTSAVE;Napaka pri shranjevanju datoteke
+MAIN_MSG_CANNOTSTARTEDITOR;Ne morem zagnati urejevalnika.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Prosim nastavi ustrezno pot v preferencah.
+MAIN_MSG_EMPTYFILENAME;Datoteka ni določena!
+MAIN_MSG_IMAGEUNPROCESSED;Ta ukaz zahteva, da so vse slike najprej obdelane v čakalni vrsti.
+MAIN_MSG_NAVIGATOR;Navigator
+MAIN_MSG_OPERATIONCANCELLED;Operacija preklicana
+MAIN_MSG_PATHDOESNTEXIST;Pot\n\n<b>%1</b>\n\nne obstaja. Prosim postavi pravilno pot v preferencah.
+MAIN_MSG_QOVERWRITE;Ali jo želiš prepisati?
+MAIN_MSG_SETPATHFIRST;Najprej moraš nastaviti pot v preferencah za uporabo te funkcije!
+MAIN_MSG_TOOMANYOPENEDITORS;Preveč odprtih urejevalnikov.\nZa nadaljevanje dela prosim zapri urejevalnik.
+MAIN_MSG_WRITEFAILED;Izpad pri pisanju\n<b>"%1"</b>\n\nPreveri, da mapa obstaja in da imaš pravico pisanja v njej.
+MAIN_TAB_ADVANCED;Napredno
+MAIN_TAB_ADVANCED_TOOLTIP;Bližnjica: <b>Alt-w</b>
+MAIN_TAB_COLOR;Barva
+MAIN_TAB_COLOR_TOOLTIP;Bližnjica: <b>Alt-c</b>
+MAIN_TAB_DETAIL;Podrobnost
+MAIN_TAB_DETAIL_TOOLTIP;Bližnjica: <b>Alt-d</b>
+MAIN_TAB_DEVELOP; Paketno urejanje
+MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPORT; Hitri izvoz
+MAIN_TAB_EXPOSURE;Ekspozicija
+MAIN_TAB_EXPOSURE_TOOLTIP;Bližnjica: <b>Alt-e</b>
+MAIN_TAB_FAVORITES;Priljubljene
+MAIN_TAB_FAVORITES_TOOLTIP;Bližnjica: <b>Alt-u</b>
+MAIN_TAB_FILTER; Filter
+MAIN_TAB_INSPECT; Pregled
+MAIN_TAB_IPTC;IPTC
+MAIN_TAB_METADATA;Metapodatki
+MAIN_TAB_METADATA_TOOLTIP;Bližnjica: <b>Alt-m</b>
+MAIN_TAB_RAW;Surove
+MAIN_TAB_RAW_TOOLTIP;Bližnjica: <b>Alt-r</b>
+MAIN_TAB_TRANSFORM;Transformiraj
+MAIN_TAB_TRANSFORM_TOOLTIP;Bližnjica: <b>Alt-t</b>
+MAIN_TOOLTIP_BACKCOLOR0;Barva ozadja predpregleda: <b>theme-based</b>\nBližnjica: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR1;Barva ozadja predpregleda: <b>črna</b>\nBližnjica: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;Barva ozadja predpregleda: <b>bela</b>\nBližnjica: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR3;Barva ozadja predpregleda: <b>srednje siva</b>\nBližnjica: <b>9</b>
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Zakleni</b> / <b>Odkleni</b> the <b>Pred</b> pogled\n\n<b>Zakleni</b>: ohranjaj pogled <b>Pred</b> nespremenjen.\nUporabno za oceno skupnega učinka več orodij.\nPoleg tega je mogoče opraviti primerjave s katerim koli stanjem v zgodovini.\n\n<b>Odkleni</b>: <b>Pred</b> prikaz bo sledil pogledu <b>Po</b> z enim korakom zamude, prikazuje sliko pred učinkom zadnje uporabljenega orodja.
+MAIN_TOOLTIP_HIDEHP;Prikaži/skrij levo ploščo (vključno z zgodovino).\nBližnjica: <b>l</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Obrezana oznaka osvetlitve.\nBližnjica: <b>&lt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Obrezana oznaka senc.\nBližnjica: <b>&gt;</b>
+MAIN_TOOLTIP_PREVIEWB;Predogled <b>modrega kanala</b>.\nBližnjica: <b>b</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Predogled <b>maske ostrenja</b>.\nBližnjica: <b>Shift-f</b> \n\nBolj natančne pri slikah z majhno globinsko ostrino, nizkim šumom in višjo stopnjo povečave.\nZa povečavo 10-30% za izboljšanje natančnosti odkrivanja šumnih slik.
+MAIN_TOOLTIP_PREVIEWG;Predogled <b>zelenega kanala</b>.\nBližnjica: <b>g</b>
+MAIN_TOOLTIP_PREVIEWL;Predogled <b>osvetljenosti</b>.\nBližnjica: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
+MAIN_TOOLTIP_PREVIEWR;Predogled <b>rdečega kanala</b>.\nBližnjica: <b>r</b>
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Predogled <b>maske ostrinskega kontrasta</b>.\nBližnjica: <b>p</b>\n\nDeluje samo, kadar je omogočeno ostrenje in zoom >= 100%.
+MAIN_TOOLTIP_QINFO;Hitre informacije o sliki.\nBližnjica: <b>i</b>
+MAIN_TOOLTIP_SHOWHIDELP1;Prikaži/skrij levi panel.\nBližnjica: <b>l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Prikaži/skrij desni panel.\nBližnjica: <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Prikaži/skrij vrhnji panel.\nBližnjica: <b>Shift-l</b>
+MAIN_TOOLTIP_THRESHOLD;Prag
+MAIN_TOOLTIP_TOGGLE;Preklopi pogled <b>Pred</b>/<b>Po</b>.\nBližnjica: <b>Shift-b</b>
+MONITOR_PROFILE_SYSTEM;Sistemska privzeta vrednost
+NAVIGATOR_B;B:
+NAVIGATOR_G;G:
+NAVIGATOR_H;H:
+NAVIGATOR_LAB_A;a*:
+NAVIGATOR_LAB_B;b*:
+NAVIGATOR_LAB_L;L*:
+NAVIGATOR_NA; --
+NAVIGATOR_R;R:
+NAVIGATOR_S;S:
+NAVIGATOR_V;V:
+NAVIGATOR_XY_FULL;Širina: %1, Višina: %2
+NAVIGATOR_XY_NA;x: --, y: --
+OPTIONS_BUNDLED_MISSING;Že pripravljenih profilov "<b>%1</b>" ne morem najti!\n\nVaša namestitev je morda poškodovana.\n\nUporabljene bodo privzete programske vrednosti.
+OPTIONS_DEFIMG_MISSING;Privzetega profila za <b>ne-surove fotografije</b> ne morem najti ali ni nastavljen.\n\nProsim preverite vašo mapo profilov, morda manjka ali je poškodovan.\n\n"<b>%1</b>" bo uporabljena kot nadomestek.
+OPTIONS_DEFRAW_MISSING;Privzetega profila za <b>surove fotografije</b> ne morem najti ali ni nastavljen.\n\nProsim preverite vašo mapo profilov, morda manjka ali je poškodovan.\n\n"<b>%1</b>" bo uporabljena kot nadomestek.
+PARTIALPASTE_ADVANCEDGROUP;Napredne nastavitve
+PARTIALPASTE_BASICGROUP;Osnovne nastavitve
+PARTIALPASTE_CACORRECTION;Popravek barvne aberacije
+PARTIALPASTE_CHANNELMIXER;Mešalnik kanalov
+PARTIALPASTE_CHANNELMIXERBW;Črno-belo
+PARTIALPASTE_COARSETRANS;Groba rotacija/preklop
+PARTIALPASTE_COLORAPP;CIECAM02
+PARTIALPASTE_COLORGROUP;Nastavitev barv
+PARTIALPASTE_COLORTONING;Toniranje barv
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Avto-polnjenje
+PARTIALPASTE_COMPOSITIONGROUP;Nastavitev kompozicije
+PARTIALPASTE_CROP;Obreži
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Avtomatska izbira dark-frame
+PARTIALPASTE_DARKFRAMEFILE;Datoteke dark-frame
+PARTIALPASTE_DEFRINGE;Odstranjevanje barvnih napak robov
+PARTIALPASTE_DEHAZE;Odstranjevanje motnosti
+PARTIALPASTE_DETAILGROUP;Nastavitve podrobnosti
+PARTIALPASTE_DIALOGLABEL;Profil obdelovanja delnega lepljenja
+PARTIALPASTE_DIRPYRDENOISE;Zmanjšanje šumov
+PARTIALPASTE_DIRPYREQUALIZER;Kontrast po nivojih podrobnosti
+PARTIALPASTE_DISTORTION;Popravljanje popačenosti
+PARTIALPASTE_EPD;Preslikava odtenkov
+PARTIALPASTE_EQUALIZER;Nivoji valovčkov
+PARTIALPASTE_EVERYTHING;Vse
+PARTIALPASTE_EXIFCHANGES;Exif
+PARTIALPASTE_EXPOSURE;Ekspozicija
+PARTIALPASTE_FILMNEGATIVE;Filmski negativ
+PARTIALPASTE_FILMSIMULATION;Simulacija filma
+PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field avtomatski izbor 
+PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field radij zamegljenosti
+PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field vrsta zameglitve
+PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field nadzor obrezave
+PARTIALPASTE_FLATFIELDFILE;Datoteka flat-field
+PARTIALPASTE_GRADIENT;Postopni filter
+PARTIALPASTE_HSVEQUALIZER;HSV ekvalizator
+PARTIALPASTE_ICMSETTINGS;Nastavitve upravljanja barv
+PARTIALPASTE_IMPULSEDENOISE;Impuzno zmanjšanje šuma
+PARTIALPASTE_IPTCINFO;IPTC
+PARTIALPASTE_LABCURVE;L*a*b* prilagoditve
+PARTIALPASTE_LENSGROUP;Nastavitve objektiva
+PARTIALPASTE_LENSPROFILE;Popravki objektiva iz njegovega profila
+PARTIALPASTE_LOCALCONTRAST;Lokalni kontrast
+PARTIALPASTE_METADATA;Način metapodatkov
+PARTIALPASTE_METAGROUP;Nastavitve metapodatkov
+PARTIALPASTE_PCVIGNETTE;Filter vinjetiranja
+PARTIALPASTE_PERSPECTIVE;Perspektiva
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;Filter mrtvih pikslov
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Uravnoteženje zelene
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;Filter vročih pikslov
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Filter šuma na črti
+PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;Filter linij PDAF
+PARTIALPASTE_PRSHARPENING;Ostrenje po spremembi velikosti
+PARTIALPASTE_RAWCACORR_AUTO;CA avtomatski popravek
+PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA izogibaj se pomiku barve
+PARTIALPASTE_RAWCACORR_CAREDBLUE;CA rdeča & modra
+PARTIALPASTE_RAWEXPOS_BLACK;Nivoji črne
+PARTIALPASTE_RAWEXPOS_LINEAR;Popravek bele točke
+PARTIALPASTE_RAWGROUP;Nastavitve za surove
+PARTIALPASTE_RAW_BORDER;Surova meja
+PARTIALPASTE_RAW_DCBENHANCE;DCB izboljšava
+PARTIALPASTE_RAW_DCBITERATIONS;DCB iteracije
+PARTIALPASTE_RAW_DMETHOD;Metoda odstranjevanja mozaičnosti
+PARTIALPASTE_RAW_FALSECOLOR;Zatiranje napačne barve
+PARTIALPASTE_RAW_IMAGENUM;Sub-image
+PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE koraki izboljšave
+PARTIALPASTE_RAW_PIXELSHIFT;Pomik pikslov
+PARTIALPASTE_RESIZE;Sprememba velikosti
+PARTIALPASTE_RETINEX;Retinex
+PARTIALPASTE_RGBCURVES;Krivulje RGB
+PARTIALPASTE_ROTATION;Rotacija
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Sence/bleščave
+PARTIALPASTE_SHARPENEDGE;Robovi
+PARTIALPASTE_SHARPENING;Ostrenje (USM/RL)
+PARTIALPASTE_SHARPENMICRO;Mikrokontrast
+PARTIALPASTE_SOFTLIGHT;Mehka svetloba
+PARTIALPASTE_TM_FATTAL;Stiskanje dinamičnega obsega
+PARTIALPASTE_VIBRANCE;Vibrance
+PARTIALPASTE_VIGNETTING;Popravi vinjetiranja
+PARTIALPASTE_WHITEBALANCE;Uravnoteženje beline
+PREFERENCES_ADD;Dodaj
+PREFERENCES_APPEARANCE;Izgled
+PREFERENCES_APPEARANCE_COLORPICKERFONT;Pisava izbire barv
+PREFERENCES_APPEARANCE_CROPMASKCOLOR;Barve maske obrezovanja
+PREFERENCES_APPEARANCE_MAINFONT;Glavna pisava
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Glavna barva navigacije
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;Psevdo način HiDPI
+PREFERENCES_APPEARANCE_THEME;Tema
+PREFERENCES_APPLNEXTSTARTUP;potreben ponovni zagon
+PREFERENCES_AUTOMONPROFILE;Uporabi profil glavnega monitorja iz operacijskega sistema
+PREFERENCES_AUTOSAVE_TP_OPEN;Ob ihodu shrani orodje zloženo/razširjeno
+PREFERENCES_BATCH_PROCESSING;Paketna obdelava
+PREFERENCES_BEHADDALL;Vse na 'Dodaj'
+PREFERENCES_BEHADDALLHINT;Nastavi vse pramaetre na način dodajanja.\nPrilagoditve prametrov v kontrolni plošči paketa bodo <b>spremembe</b> glede na shranjene vrednosti.
+PREFERENCES_BEHAVIOR;Obnašanje
+PREFERENCES_BEHSETALL;Vse na 'Nastavi'
+PREFERENCES_BEHSETALLHINT;Postavi vse parametre v način <b>Nastavi</b>.\nPrilagoditve parametrov v kontrolni plošči paketnega orodja bo <b>absolutno</b>, prikazane bodo dejanske vrednosti.
+PREFERENCES_CACHECLEAR;Počisti
+PREFERENCES_CACHECLEAR_ALL;Počisti vse datoteke v vmesnem pomnilniku:
+PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Očisti vse datoteke iz vmesnega pomnilnika razen profilov obdelav:
+PREFERENCES_CACHECLEAR_ONLYPROFILES;Očisti datoteke profilov obdelav iz vmesnega ponilnika:
+PREFERENCES_CACHECLEAR_SAFETY;Očiščene samo datoteke v vmesnem pomnilniku. Profili obdelav, ki sodijo k slikam, so nedotaknjeni.
+PREFERENCES_CACHEMAXENTRIES;Največje število datotek v vmesnem pomnilniku
+PREFERENCES_CACHEOPTS;Nastavitve predpomnilnika
+PREFERENCES_CACHETHUMBHEIGHT;Največja višina predogledne slikice
+PREFERENCES_CHUNKSIZES;Ploskev na nit
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE odstranjevanje mozaičnosti
+PREFERENCES_CHUNKSIZE_RAW_CA;Surovi CA popravki
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD odstranjevanje mozaičnosti
+PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans odstranjevanje mozaičnosti
+PREFERENCES_CHUNKSIZE_RGB;RGB obdelava
+PREFERENCES_CLIPPINGIND;Indikator obrezave
+PREFERENCES_CLUTSCACHE;HaldCLUT predpomnilnik
+PREFERENCES_CLUTSCACHE_LABEL;Maksimalno število predpomnjenih CLUTsev
+PREFERENCES_CLUTSDIR;HaldCLUT mapa
+PREFERENCES_CMMBPC;Prilagoditev črne točke
+PREFERENCES_CROP;Obrezovanje
+PREFERENCES_CROP_AUTO_FIT;Avtomatically prilagodi obrezavi
+PREFERENCES_CROP_GUIDES;Prikaz vodil, kadar ne urejamo obrezave
+PREFERENCES_CROP_GUIDES_FRAME;Okvir
+PREFERENCES_CROP_GUIDES_FULL;Izvirnik
+PREFERENCES_CROP_GUIDES_NONE;Noben
+PREFERENCES_CURVEBBOXPOS;Pozicija gumbov za kopiranje in lepljenje krivulj
+PREFERENCES_CURVEBBOXPOS_ABOVE;Nad
+PREFERENCES_CURVEBBOXPOS_BELOW;Pod
+PREFERENCES_CURVEBBOXPOS_LEFT;Levo
+PREFERENCES_CURVEBBOXPOS_RIGHT;Desno
+PREFERENCES_CUSTPROFBUILD;Orodje za izdelavo profila obdelav po meri
+PREFERENCES_CUSTPROFBUILDHINT;Datoteka s programom (ali skriptom), ki se izvede kadar je treba idelati profil obdelave za sliko.\n\nPot za komunikacijsko datoteko (*.ini imenovana kudi "ključna datoteka") je dodana kot parameter ob klicu te datoteke. Vsebuje različne parametre za skripte in dele slik Exif, tako da omogoča generiranje profila obdelave glede na pravila.\n\n<b>WARNING:</b> Če pot vsebuje presledke, je vaša naloga, da jo omejite z dvojnimi apostrofi.
+PREFERENCES_CUSTPROFBUILDKEYFORMAT;Format ključnih besed
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Ime
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;ID značke
+PREFERENCES_CUSTPROFBUILDPATH;Pot izvajanja
+PREFERENCES_DARKFRAMEFOUND;Najdeno
+PREFERENCES_DARKFRAMESHOTS;posnetkov
+PREFERENCES_DARKFRAMETEMPLATES;Šablone
+PREFERENCES_DATEFORMAT;Format datuma
+PREFERENCES_DATEFORMATHINT;Možna je raba naslednjih formatnih določil:\n<b>%y</b>	- leto\n<b>%m</b>	- mesec\n<b>%d</b>	- dan\n\nNa primer standard ISO 8601 določa datum takole:\n<b>%y-%m-%d</b>
+PREFERENCES_DIRDARKFRAMES;Mapa dark-frame
+PREFERENCES_DIRECTORIES;Mape
+PREFERENCES_DIRHOME;Domača mapa
+PREFERENCES_DIRLAST;Zadnje obiskana mapa
+PREFERENCES_DIROTHER;Ostalo
+PREFERENCES_DIRSELECTDLG;Ob začetki izberi mapo slik...
+PREFERENCES_DIRSOFTWARE;Mapa namestitve
+PREFERENCES_EDITORCMDLINE;Ukazna vrstica po meri
+PREFERENCES_EDITORLAYOUT;Oblika urejevalnika
+PREFERENCES_EXTERNALEDITOR;Zunanji urejevalnik
+PREFERENCES_FBROWSEROPTS;Pregledovalnik datotek/ Nastavitve predoglednih sličic
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Kompaktne orodne vrstice v pregledovalniku datotek
+PREFERENCES_FLATFIELDFOUND;Najdeno
+PREFERENCES_FLATFIELDSDIR;Flat-field mapa
+PREFERENCES_FLATFIELDSHOTS;posnetki
+PREFERENCES_FLATFIELDTEMPLATES;šablone
+PREFERENCES_FORIMAGE;Za nesurove slike
+PREFERENCES_FORRAW;Za surove slike
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Enaka višina predogledne sličice za pregled filmov in pregledovalnik datotek
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Različni višini zahtevata več časa za obdelavo ob preklopu iz urejevalnika slike v pregledovalnik datotek.
+PREFERENCES_GIMPPATH;mapa, kje je nameščen GIMP
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram v levem panoju
+PREFERENCES_HISTOGRAM_TOOLTIP;Če je omogočen, za izdelavo histograma slike v navigacijskem panoju uporabim delovni profil, sicer pa popravljen profil game.
+PREFERENCES_HLTHRESHOLD;Prag za prilepljene bleščave
+PREFERENCES_ICCDIR;Mapa, kjer so barvni profili
+PREFERENCES_IMPROCPARAMS;Privzeti profil obdelave
+PREFERENCES_INSPECT_LABEL;Preglej
+PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Največje število shranjenih slik v vmesnem pomnilniku
+PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Nastavi največje število slik v vmesnem pomnilniku v pregledovalniku datotek; sistemi z malo RAMa (2GB) naj imajo to postavljeno na 1 ali 2.
+PREFERENCES_INTENT_ABSOLUTE;Absolutno kolorimetrično
+PREFERENCES_INTENT_PERCEPTUAL;Perceptual
+PREFERENCES_INTENT_RELATIVE;Relativno kolorimetrično
+PREFERENCES_INTENT_SATURATION;Nasičenje
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Prikaži predogledno sličico JPEG, če je surova slika še neobdelana
+PREFERENCES_LANG;Jezik
+PREFERENCES_LANGAUTODETECT;Uporabi jezik sistema
+PREFERENCES_MAXRECENTFOLDERS;Največje število zadnje obiskanih map
+PREFERENCES_MENUGROUPEXTPROGS;Skupinski "Odpri z"
+PREFERENCES_MENUGROUPFILEOPERATIONS;Skupinske "Operacija z datotekami"
+PREFERENCES_MENUGROUPLABEL;Skupinska "Oznaka barve"
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Skupinske "Operacije profilov obdelav"
+PREFERENCES_MENUGROUPRANK;Skupinsko "Rangiranje"
+PREFERENCES_MENUOPTIONS;Kontekstne nastavitve menuja
+PREFERENCES_MONINTENT;Privzeta namera upodabljanja
+PREFERENCES_MONITOR;Monitor
+PREFERENCES_MONPROFILE;Privzeti barvni profil
+PREFERENCES_MONPROFILE_WARNOSX;Podprt je samo sRGB zaradi omejitev MacOS.
+PREFERENCES_MULTITAB;Način večih zavihkov urejevalnika
+PREFERENCES_MULTITABDUALMON;Več zavihkov urejevalnika v svojem oknu
+PREFERENCES_NAVIGATIONFRAME;Navigacija
+PREFERENCES_OVERLAY_FILENAMES;Ime datotek čez predogledne sličice v pregledovalniku datotek
+PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Ime datotek čez predogledne sličice v urejevalniku slik
+PREFERENCES_OVERWRITEOUTPUTFILE;Prepiši obstoječe izhodne datoteke
+PREFERENCES_PANFACTORLABEL;Povečanje hitrosti zamikanja
+PREFERENCES_PARSEDEXT;Razpoznani podaljški datotek
+PREFERENCES_PARSEDEXTADD;Dodaj podaljšek
+PREFERENCES_PARSEDEXTADDHINT;Dodaj vnesen podaljšek v seznam.
+PREFERENCES_PARSEDEXTDELHINT;Odstrani vnesen podaljšek s seznama.
+PREFERENCES_PARSEDEXTDOWNHINT;Premakni vnesen podaljšek po seznamu navzdol.
+PREFERENCES_PARSEDEXTUPHINT;Premakni vnesen podaljšek po seznamu navzgor.
+PREFERENCES_PERFORMANCE_MEASURE;Mere
+PREFERENCES_PERFORMANCE_MEASURE_HINT;Beleži obdelovalne čase na konzoli
+PREFERENCES_PERFORMANCE_THREADS;Niti
+PREFERENCES_PERFORMANCE_THREADS_LABEL;Največje število niti za odstranjevanje šuma in nivoje valovčkov (0 = Avtomatika)
+PREFERENCES_PREVDEMO;Predlogled metode odstranjevamja mozaičnosti
+PREFERENCES_PREVDEMO_FAST;Hitro
+PREFERENCES_PREVDEMO_LABEL;Metoda odstranjevanja mozaičnosti za predogled <100% zoom:
+PREFERENCES_PREVDEMO_SIDECAR;Kot v PP3
+PREFERENCES_PRINTER;Tiskalnik (Poskusni odtis)
+PREFERENCES_PROFILEHANDLING;Obdelava profila
+PREFERENCES_PROFILELOADPR;Prednost nalaganja profila v obdelavi
+PREFERENCES_PROFILEPRCACHE;Profil v predpomnilniku
+PREFERENCES_PROFILEPRFILE;Profil poleg vhodne datoteke
+PREFERENCES_PROFILESAVEBOTH;Shrani profil obdelave dvojno tako v vmesnem pomnilniku kot zraven vhodne datoteke
+PREFERENCES_PROFILESAVECACHE;Shrani profil obdelave v vmesnem pomnilniku
+PREFERENCES_PROFILESAVEINPUT;Shrani profil obdelave zraven vhodne datoteke
+PREFERENCES_PROFILESAVELOCATION;Lokacija shranjevanja profila obdelave
+PREFERENCES_PROFILE_NONE;Noben
+PREFERENCES_PROPERTY;Lastnost
+PREFERENCES_PRTINTENT;Namera upodabljanja
+PREFERENCES_PRTPROFILE;Barvni profil
+PREFERENCES_PSPATH;Mapa nameščenega programa Adobe Photoshop
+PREFERENCES_REMEMBERZOOMPAN;Zapomni si zoom % in odmik od roba
+PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Zapomni si zoom % in odmik od trenutne slike ob odpiranju nove slike.\n\nTa nastavitev deluje samo v posamičnem urejevalniku in kadar je metoda odstranjevanja mozaičnosti <100% zoom" in nastavitev "Kot v PP3".
+PREFERENCES_SAVE_TP_OPEN_NOW;Shrani stanje orodja v skrčenem ali razširjenem stanju zdaj
+PREFERENCES_SELECTLANG;Izbira jezika
+PREFERENCES_SERIALIZE_TIFF_READ;Nastavitve branja TIFF
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Sekvenčno branje datotek TIFF
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Omogočanje te opcije kadar delamo z mapami, ki vsebujejo nestisnjene datoteke TIFF, lahko izboljšajo generiranje predoglednih sličic.
+PREFERENCES_SET;Nastavi
+PREFERENCES_SHOWBASICEXIF;Prikaži osnovne Exif informacije
+PREFERENCES_SHOWDATETIME;Prikaži datum in čas
+PREFERENCES_SHOWEXPOSURECOMPENSATION;Dodaj prilagoditev ekspozicije
+PREFERENCES_SHOWFILMSTRIPTOOLBAR;Prikaži orodno vrstico filmskega izseka
+PREFERENCES_SHTHRESHOLD;Prag za obrezane sence
+PREFERENCES_SINGLETAB;Način enega zavihka urejevalnika
+PREFERENCES_SINGLETABVERTAB;Način enega zavihka urejevalnika, Navpični zavihki
+PREFERENCES_SND_HELP;Vnesi polno pot za nastavitev zvoka ali pusti prazno za brez zvoka.\nZa sistemske zvoke na sistemu Windows uporabi "SystemDefault", "SystemAsterisk" itd. na Linuxu pa "complete", "window-attention" itd.
+PREFERENCES_SND_LNGEDITPROCDONE;Obdelava urejevalnika končana
+PREFERENCES_SND_QUEUEDONE;Obdelava v čakalni vrsti končana
+PREFERENCES_SND_THRESHOLDSECS;Po sekundah
+PREFERENCES_STARTUPIMDIR;Mapa s slikami ob začetku
+PREFERENCES_TAB_BROWSER;Brskalnik datotek
+PREFERENCES_TAB_COLORMGR;Upravljanje z barvami
+PREFERENCES_TAB_DYNAMICPROFILE;Pravila dinamičnih profilov
+PREFERENCES_TAB_GENERAL;Splošno
+PREFERENCES_TAB_IMPROC;Obdelava slik
+PREFERENCES_TAB_PERFORMANCE;Performanse
+PREFERENCES_TAB_SOUND;Zvoki
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Predoglev vdelane JPEG
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Slika za prikaz
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Nevtralno surovo upodabljanje
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Vgrajen JPEG, če je polne velikosti, sicer nevtralno surovo
+PREFERENCES_TP_LABEL;Pano z orodji:
+PREFERENCES_TP_VSCROLLBAR;Skrij navpični drsnik
+PREFERENCES_USEBUNDLEDPROFILES;Uporabi skupne profile
+PREFERENCES_WORKFLOW;Razporeditev
+PROFILEPANEL_COPYPPASTE;Parametri za kopiranje
+PROFILEPANEL_GLOBALPROFILES;Skupni profili
+PROFILEPANEL_LABEL;Profili za obdelovanje
+PROFILEPANEL_LOADDLGLABEL;Naloži parametre obdelovanja...
+PROFILEPANEL_LOADPPASTE;Parametri za nalaganje
+PROFILEPANEL_MODE_TIP;Vnosni način profila za obdelovanje.\n\nPritisnjen gumb: delni profili bodo spremenjeni v polne profile; manjkajoče vrednosti bodo zamenjale fiksne privzete vrednosti.\n\nSproščen gumb: profili bodo uporabljeni kakršni so, zamenjajo se samo vnesene vrednosti.
+PROFILEPANEL_MYPROFILES;Moji profili
+PROFILEPANEL_PASTEPPASTE;Parameteri za lepljenje
+PROFILEPANEL_PCUSTOM;Po meri
+PROFILEPANEL_PDYNAMIC;Dinamični
+PROFILEPANEL_PFILE;Iz datoteke
+PROFILEPANEL_PINTERNAL;Nevtralno
+PROFILEPANEL_PLASTSAVED;Zadnje shranjene
+PROFILEPANEL_SAVEDLGLABEL;Shrani parametre obdelave...
+PROFILEPANEL_SAVEPPASTE;Parametri za shranjevanje
+PROFILEPANEL_TOOLTIPCOPY;Kopiraj trenutni profil obdelave na odložišče.\n<b>Ctrl-klik</b> za izbiro parametrov za kopiranje.
+PROFILEPANEL_TOOLTIPLOAD;Naloži profil iz datoteke.\n<b>Ctrl-klik</b> za izbiro parametrov za nalaganje.
+PROFILEPANEL_TOOLTIPPASTE;Prilepi profil iz odložišča.\n<b>Ctrl-klik</b> za izbiro parametrov za leplenje.
+PROFILEPANEL_TOOLTIPSAVE;Shrani trenutni profil.\n<b>Ctrl-klik</b> za izbiro parametrov za shranjevanje.
+PROGRESSBAR_DECODING;Dekodiram...
+PROGRESSBAR_GREENEQUIL;Uravnoteženje zelene...
+PROGRESSBAR_HLREC;Rekonstrukcija bleščav...
+PROGRESSBAR_HOTDEADPIXELFILTER;Filter vročih/mrtvih pikslov...
+PROGRESSBAR_LINEDENOISE;Filter linijskega šuma...
+PROGRESSBAR_LOADING;Nalagam sliko...
+PROGRESSBAR_LOADINGTHUMBS;Nalagam predogledne sličice...
+PROGRESSBAR_LOADJPEG;Nalagam datoteko JPEG...
+PROGRESSBAR_LOADPNG;Nalagam datoteko PNG...
+PROGRESSBAR_LOADTIFF;Nalagam datoteko TIFF...
+PROGRESSBAR_NOIMAGES;Ne najdem nobene slike
+PROGRESSBAR_PROCESSING;Obdelujem sliko...
+PROGRESSBAR_PROCESSING_PROFILESAVED;Profil obdelave shranjen
+PROGRESSBAR_RAWCACORR;Popravek surove CA...
+PROGRESSBAR_READY;Pripravljen
+PROGRESSBAR_SAVEJPEG;Shranjujem datoteko JPEG...
+PROGRESSBAR_SAVEPNG;Shranjujem datoteko PNG...
+PROGRESSBAR_SAVETIFF;Shranjujem datoteko TIFF...
+PROGRESSBAR_SNAPSHOT_ADDED;Posnetek dodan
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil obdelave je shranjen v pregledovalniku
+QINFO_FRAMECOUNT;%2 okvirov
+QINFO_HDR;HDR / %2 okvirov
+QINFO_ISO;ISO
+QINFO_NOEXIF;Podatki Exif niso na voljo.
+QINFO_PIXELSHIFT;Pomik pikslov / %2 okvirjev
+QUEUE_AUTOSTART;Avto-start
+QUEUE_AUTOSTART_TOOLTIP;Avtomatično začni obdelavo, ko pride nov posel.
+QUEUE_DESTFILENAME;Pot in ime datoteke
+QUEUE_FORMAT_TITLE;Format datoteke
+QUEUE_LOCATION_FOLDER;Shrani v mapo
+QUEUE_LOCATION_TEMPLATE;Uporabi šablono
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Določite izhodno lokacijo glede na lokacijo izvirne fotografije, rang, status smeti ali položaj v čakalni vrsti.\n\nZa primer poti uporabite naslednje:\n<b>/home/tom/photos/2010-10-31/photo1.raw</b>\npomen nizov sledi: :\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>photo1</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> bo zamenjana z oceno fotografije. Če slika ni ocenjena, se uporabi '<i>0</i>'. Če je slika v smeteh uporabimo '<i>x</i>'.\n\n<b>%s1</b>, ..., <b>%s9</b> bo zamenjano za začetni položaj slike v čakalni vrsti, ko se ta začne. Število opisuje polnilo, npr. <b>%s3</b> se spremeni v '<i>001</i>'.\n\nČe želite izhodno sliko shraniti poleg izvirne slike, napišite::\n<b>%p1/%f</b>\n\nČe želite izhodno sliko shraniti v mapo z imenom '<i>converted</i>' ki se nahaja v mapi izvorne fotografije, napišite:\n<b>%p1/converted/%f</b>\n\nČe želite izhodno sliko shraniti v\n'<i>/home/tom/photos/converted/2010-10-31</i>', napišite:\n<b>%p2/converted/%d1/%f</b>
+QUEUE_LOCATION_TITLE;Lokacija izhoda
+QUEUE_STARTSTOP_TOOLTIP;Začni ali končaj obdelavo slik v čakalni vrsti.\n\nBližnjica: <b>Ctrl</b>+<b>s</b>
+SAMPLEFORMAT_0;Neznan format podatkov
+SAMPLEFORMAT_1;8-bit brez predznaka
+SAMPLEFORMAT_2;16-bit brez predznaka
+SAMPLEFORMAT_4;24-bit LogLuv
+SAMPLEFORMAT_8;32-bit LogLuv
+SAMPLEFORMAT_16;16-bit plavajoča vejica
+SAMPLEFORMAT_32;24-bit plavajoča vejica
+SAMPLEFORMAT_64;32-bit plavajoča vejica
+SAVEDLG_AUTOSUFFIX;Avtomatično dodaj tip, če datoteka že obstaja
+SAVEDLG_FILEFORMAT;Format datoteke
+SAVEDLG_FILEFORMAT_FLOAT; plavajoča vejica
+SAVEDLG_FORCEFORMATOPTS;Zahtevaj opcije shranjevanja
+SAVEDLG_JPEGQUAL;JPEG kakovost
+SAVEDLG_PUTTOQUEUE;Postavi v čakalno vrsto za obdelavo
+SAVEDLG_PUTTOQUEUEHEAD;Postavi na začetek čakalne vrste za obdelavo
+SAVEDLG_PUTTOQUEUETAIL;Postavi na konec čakalne vrste za obdelavo
+SAVEDLG_SAVEIMMEDIATELY;Takoj shrani
+SAVEDLG_SAVESPP;Shrani parametre obdelave skupaj s sliko
+SAVEDLG_SUBSAMP;Podvzorčenje
+SAVEDLG_SUBSAMP_1;Najboljše stiskanje
+SAVEDLG_SUBSAMP_2;Uravnoteženo
+SAVEDLG_SUBSAMP_3;Najboljša kakovost
+SAVEDLG_SUBSAMP_TOOLTIP;Najbolj stisnjeno:\nJ:a:b 4:2:0\nh/v 2/2\nBarvitost razpolovljena vodoravno in navpično.\n\nUravnoteženo:\nJ:a:b 4:2:2\nh/v 2/1\nBarvitost razpolovljena vodoravno.\n\nNajbolj kakovostno:\nJ:a:b 4:4:4\nh/v 1/1\nBrez podvzorčenja barvitosti.
+SAVEDLG_TIFFUNCOMPRESSED;Nestisnjen TIFF
+SAVEDLG_WARNFILENAME;Datoteka bo poimenovana
+SHCSELECTOR_TOOLTIP;Desni klik za ponastavitev pozicije 3 drsnikov.
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Osvetli piksle z barvo izven barvnega prostora glede na:\n- profil tiskalnika, če je nastavljen in je omogočen poskusni odtis,\n- izhodni profil, če tiskalnikov profil ni določen in je poskusni odtis omogočen,\n- profil zaslona, če je poskusni odtis onemogočen.
+SOFTPROOF_TOOLTIP;Poskusni odtis simulira izgled slike:\n- ko je natisnjen, če je nastavljen profil tiskalnika v Preference > Upravljanje z barvami,\n- kadar ogledujemo sliko na zaslonu, ki uporablja trenutni profil zaslona, če profil tiskalnika ni določen.
+THRESHOLDSELECTOR_B;Spodaj
+THRESHOLDSELECTOR_BL;Spodaj-levo
+THRESHOLDSELECTOR_BR;Spodaj-desno
+THRESHOLDSELECTOR_HINT;Držite tipko <b>Shift</b> za premik posameznih kontrolnih točk.
+THRESHOLDSELECTOR_T;Zgoraj
+THRESHOLDSELECTOR_TL;Zgoraj-levo
+THRESHOLDSELECTOR_TR;Zgoraj-desno
+TOOLBAR_TOOLTIP_COLORPICKER;Izbirnik barv, ki ga je moč zakleniti\n\nKadar je orodje aktivno:\n- Dodajte izbiro: <b>levi-klik</b>.\n- Povlecite izbiro: <b>levi-klik in poteg</b>.\n- Briši izbiro: <b>desni-klik</b>.\n- Briši vse izbire: <b>Ctrl</b>+<b>Shift</b>+<b>desni-klik</b>.\n- Povratek na ročno orodje: <b>desni-klik</b> zunaj kateregakoli izbirnika.
+TOOLBAR_TOOLTIP_CROP;<b>Crop</b> izbira.\nBližnjica: <b>c</b>\nPremakni obrezavo s <b>Shift</b>+<b>potegom miške</b>.
+TOOLBAR_TOOLTIP_HAND;Ročno orodje.\nBližnjica: <b>h</b>
+TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Ravnanje</b> / <b>fino vrtenje</b>.\nBližnjica: <b>s</b>\n\nOznačite navpičnico ali vodoravnico z risanjem vodilne črte čez predogled slike. Kot vodilne črte bo prikazan zraven vodilne črte. Središče vrtenja je geometrijsko središče slike.
+TOOLBAR_TOOLTIP_WB;Uravnotežena belina točke.\nBližnjica: <b>w</b>
+TP_BWMIX_ALGO;Algoritem OYCPM
+TP_BWMIX_ALGO_LI;Linearno
+TP_BWMIX_ALGO_SP;Posebni učinki
+TP_BWMIX_ALGO_TOOLTIP;Linearno: bo povzročil normalni <b>linearni</b> odziv.\nPosebni učinki: bodo povzročili posebne učinke z mešanjem kanalov na <b>ne-linearen način</b>.
+TP_BWMIX_AUTOCH;Avto
+TP_BWMIX_CC_ENABLED;Prilagodi komplementarno barvo
+TP_BWMIX_CC_TOOLTIP;Dovoli avtomatično prilagajanje komplementarnih barv v načinu ROYGCBPM.
+TP_BWMIX_CHANNEL;Ekvalizator svetlosti
+TP_BWMIX_CURVEEDITOR1;Krivulja 'pred'
+TP_BWMIX_CURVEEDITOR2;Krivulja 'po'
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Krivulja tonov po predelavi v črno-belo ob koncu postopka.
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Krivulja tonov tik prek predelavo v črno-belo.\nLahko je odvisna od barvnih komponent.
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Svetlost odvisna od odtenka L=f(H).\nPazite na skrajne vrednosti, ker lahko generirajo artefakte.
+TP_BWMIX_FILTER;Barvni Filter
+TP_BWMIX_FILTER_BLUE;Modra
+TP_BWMIX_FILTER_BLUEGREEN;Modro-Zelena
+TP_BWMIX_FILTER_GREEN;Zelena
+TP_BWMIX_FILTER_GREENYELLOW;Zeleno-Rumena
+TP_BWMIX_FILTER_NONE;Nobena
+TP_BWMIX_FILTER_PURPLE;Vijolična
+TP_BWMIX_FILTER_RED;Rdeča
+TP_BWMIX_FILTER_REDYELLOW;Rdeče-Rumena
+TP_BWMIX_FILTER_TOOLTIP;Barvni filter simulira slike posnete z barvnim filtrom pred objektivom. Barvni filtri zmanjšajo prenos določenega dela barv in zato vplivajo na svetlost. Npr. rdeči filtri zatemnijo modro nebo.
+TP_BWMIX_FILTER_YELLOW;Rumena
+TP_BWMIX_GAMMA;Popravek game
+TP_BWMIX_GAM_TOOLTIP;Popravi gamo za vsak RGB kanal.
+TP_BWMIX_LABEL;Črno-belo
+TP_BWMIX_MET;Metoda
+TP_BWMIX_MET_CHANMIX;Mešalnik kanalov
+TP_BWMIX_MET_DESAT;Zmanjšanje nasičenosti
+TP_BWMIX_MET_LUMEQUAL;Ekvalizator svetlosti
+TP_BWMIX_MIXC;Mešalnik kanalov
+TP_BWMIX_NEUTRAL;Ponastavi
+TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
+TP_BWMIX_RGBLABEL_HINT;Končni faktorji RGB, ki skrbijo za vse možnosti mešalnika.\n"Skupaj" prikaže vsoto RGB vrednosti:\n- vedno 100% v relativnem načinu\n- višje (svetlejše) ali nižje (temnejše) od 100% v absolutnem načinu.
+TP_BWMIX_RGB_TOOLTIP;Zmešajte RGB kanale. Uporabite prednastavitve za vodenje.\nBodite pozorni na negativne vrednosti, ki lahko povzročijo artefakte ali napačno delovanje.
+TP_BWMIX_SETTING;Prednastavitve
+TP_BWMIX_SETTING_TOOLTIP;Različne prednastvitve (film, pokrajina, itd.) ali ročne nastavitve mešalnika kanalov.
+TP_BWMIX_SET_HIGHCONTAST;Visok kontrast
+TP_BWMIX_SET_HIGHSENSIT;Visoka občutljivost
+TP_BWMIX_SET_HYPERPANCHRO;Hiper pankromatsko
+TP_BWMIX_SET_INFRARED;Infrardeče
+TP_BWMIX_SET_LANDSCAPE;Pokrajina
+TP_BWMIX_SET_LOWSENSIT;Nizka občutljivost
+TP_BWMIX_SET_LUMINANCE;Svetlost
+TP_BWMIX_SET_NORMCONTAST;Normalen kontrast
+TP_BWMIX_SET_ORTHOCHRO;Ortokromatsko
+TP_BWMIX_SET_PANCHRO;Pankromatsko
+TP_BWMIX_SET_PORTRAIT;Portret
+TP_BWMIX_SET_RGBABS;Absolutno RGB
+TP_BWMIX_SET_RGBREL;Relativno RGB
+TP_BWMIX_SET_ROYGCBPMABS;Absolutno ROYGCBPM
+TP_BWMIX_SET_ROYGCBPMREL;Relativno ROYGCBPM
+TP_BWMIX_TCMODE_FILMLIKE;Kot čno-beli film
+TP_BWMIX_TCMODE_SATANDVALBLENDING;Črno-belo nasičenje in mešanje vrednosti
+TP_BWMIX_TCMODE_STANDARD;Standardno črno-belo
+TP_BWMIX_TCMODE_WEIGHTEDSTD;Uteženo standardno črno-belo
+TP_BWMIX_VAL;L
+TP_CACORRECTION_BLUE;Modro
+TP_CACORRECTION_LABEL;Popravek kromatske aberacije
+TP_CACORRECTION_RED;Rdeče
+TP_CBDL_AFT;Črno-belo 'po'
+TP_CBDL_BEF;Črno-belo 'pred'
+TP_CBDL_METHOD;Lokacija obdelave
+TP_CBDL_METHOD_TOOLTIP;Izberi ali naj bo orodje nivojev kontrasta po transformaciji v črno-belo, ki deluje v prostorum L*a*b* , ali pred transformacijo, ki deluje v prostoru RGB.
+TP_CHMIXER_BLUE;Modri kanali
+TP_CHMIXER_GREEN;Zeleni kanal
+TP_CHMIXER_LABEL;Mešalnik kanalov
+TP_CHMIXER_RED;Rdeči kanal
+TP_COARSETRAF_TOOLTIP_HFLIP;Vodoravno preobrni.
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Zavrti levo.\n\nBližnjica:\n<b>[</b> - Način večih zavihkov,\n<b>Alt-[</b> - Način enega zavihka.
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Zavrti desno.\n\nBližnjica:\n<b>]</b> - Način večih zavihkov,\n<b>Alt-]</b> - Način enega zavihka.
+TP_COARSETRAF_TOOLTIP_VFLIP;Preobrni navpično.
+TP_COLORAPP_ABSOLUTELUMINANCE;Absolutna svetlost
+TP_COLORAPP_ALGO;Algoritem
+TP_COLORAPP_ALGO_ALL;Vse
+TP_COLORAPP_ALGO_JC;Svetlost + Barvitost (JC)
+TP_COLORAPP_ALGO_JS;Svetlost + Nasičenost (JS)
+TP_COLORAPP_ALGO_QM;Bleščina + Polnost barv (QM)
+TP_COLORAPP_ALGO_TOOLTIP;Dovoljuje izbiro podmnožice parametrov ali vseh.
+TP_COLORAPP_BADPIXSL;Filter vročih/mrtvih pikslov
+TP_COLORAPP_BADPIXSL_TOOLTIP;Zatiranje vročih/slabih (živobarvno prikazanih) pikslov.\n0 = Brez učinka\n1 = Mediana\n2 = po Gaussu.\nSicer prilagodi sliko tako da se izogiba zelo temnih senc.\n\nTi artefakti so zaradi omejitev CIECAM02.
+TP_COLORAPP_BRIGHT;Svetlost (Q)
+TP_COLORAPP_BRIGHT_TOOLTIP;Svetlost v CIECAM02 upošteva tudi belino in se razlikuje od svetlosti v L*a*b* .
+TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Kadar jo nastavite ročno, priporočam vrednosti nad 65.
+TP_COLORAPP_CHROMA;Barvitost (C)
+TP_COLORAPP_CHROMA_M;Polnost barv (M)
+TP_COLORAPP_CHROMA_M_TOOLTIP;Polnost barv v CIECAM02 se razlikuje od polnosti v L*a*b* in RGB.
+TP_COLORAPP_CHROMA_S;Nasičenost (S)
+TP_COLORAPP_CHROMA_S_TOOLTIP;Nasičenost v CIECAM02 se razlikuje od nasičenosti v L*a*b* in RGB.
+TP_COLORAPP_CHROMA_TOOLTIP;Barvitost v CIECAM02 se razlikuje od barvitosti v L*a*b* in RGB.
+TP_COLORAPP_CIECAT_DEGREE;CAT02 prilagoditev
+TP_COLORAPP_CONTRAST;Kontrast (J)
+TP_COLORAPP_CONTRAST_Q;Kontrast (Q)
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Razlikujte med L*a*b* in RGB kontrastom.
+TP_COLORAPP_CONTRAST_TOOLTIP;Razlikujte med L*a*b* in RGB kontrastom.
+TP_COLORAPP_CURVEEDITOR1;Krivulja tonov 1
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Prkaže histogram L* (L*a*b*) pred CIECAM02.\nČe je aktivno "Prikaži CIECAM02 izhodne histograme v krivuljah", prikaže histograme J ali Q po CIECAM02.\n\nJ in Q nista prikazana v glavnem panoju histogramov.\n\nKončni izhod se nanaša na glavni pano histogramov.
+TP_COLORAPP_CURVEEDITOR2;Krivulja tonov 2
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Enaka uporaba kot pri krivulji tonov druge ekspozicije.
+TP_COLORAPP_CURVEEDITOR3;Krivulja barv
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Prilagodi barvitost, nasičenje ali polnost barv.\n\nPrikaže histogram barvitosti (L*a*b*) pred CIECAM02.\nČe je aktivirano "Prikaži CIECAM02 izhodne histograme v krivuljah", prikaže histograme C, s ali M po CIECAM02.\n\nC, s in M niso prikazani v glavnem panoju histogramov.\nKončni izhod se nanaša na glavni pano histogramov.
+TP_COLORAPP_DATACIE;CIECAM02 izhodni histogrami v krivuljah
+TP_COLORAPP_DATACIE_TOOLTIP;Kadar je aktivirano so histogrami, CIECAM02 krivulje prikazujejo približne vrednosti oz. intervale  z J ali Q, in C, s ali M po prilagoditvah CIECAM02.\nTa izbira ne vpliva na glavni pano histogramov.\n\nKadar je deaktiviran, histogrami v CIECAM02 krivuljah kažejo vrednosti L*a*b* pred prilagoditvami CIECAM02.
+TP_COLORAPP_FREE;Prosta temp+zelena + CAT02 + [output]
+TP_COLORAPP_GAMUT;Lontrola barvega obsega (L*a*b*)
+TP_COLORAPP_GAMUT_TOOLTIP;Dovoli kontrolo barvnega obsega v L*a*b* načinu.
+TP_COLORAPP_HUE;Odtenek (h)
+TP_COLORAPP_HUE_TOOLTIP;Odtenek (h) - kot med 0° in 360°.
+TP_COLORAPP_LABEL;CIE Prikaz barv Model 2002
+TP_COLORAPP_LABEL_CAM02;Prilagoditve slike
+TP_COLORAPP_LABEL_SCENE;Scenski pogoji
+TP_COLORAPP_LABEL_VIEWING;Pogoji gledanja
+TP_COLORAPP_LIGHT;Svetlost (J)
+TP_COLORAPP_LIGHT_TOOLTIP;Svetlost v CIECAM02 se razlikuje od svetlosti v L*a*b* in RGB.
+TP_COLORAPP_MEANLUMINANCE;Povprečna svetlost (Yb%)
+TP_COLORAPP_MODEL;WP Model
+TP_COLORAPP_MODEL_TOOLTIP;Model bele točke.\n\n<b>WB [RT] + [output]</b>: za sceno se uporabi RT-jevo ravnotežje beline, CIECAM02 je nastavljen na D50, nastavitev beline izhodne naprave je nastavljena v Pogojih gledanja.\n\n<b>WB [RT+CAT02] + [output]</b>: RT-jevo ravnotežje beline uporablja CAT02, ravnotežje beline izhodne naprave pa je nastavljeno v Pogojih gledanja.\n\n<b>Prosta temp+zelena + CAT02 + [output]:</b> temp in zeleno določi uporabnik, ravnotežje beline izhodne naprave pa je nastavljeno v Pogojih gledanja.
+TP_COLORAPP_NEUTRAL;Ponastavi
+TP_COLORAPP_NEUTRAL_TIP;Ponastavi vse potrditvena polja in krivulje na njihove privzete vrednosti
+TP_COLORAPP_RSTPRO;Varovanje rdečih in kožnih tonov
+TP_COLORAPP_RSTPRO_TOOLTIP;Varovanje rdečih in kožnih tonov ima vpliv tako na drsnike kot na krivulje.
+TP_COLORAPP_SURROUND;Obkroži
+TP_COLORAPP_SURROUND_AVER;Povprečno
+TP_COLORAPP_SURROUND_DARK;Temno
+TP_COLORAPP_SURROUND_DIM;Zatemnjeno
+TP_COLORAPP_SURROUND_EXDARK;Izjemno črno (Cutsheet)
+TP_COLORAPP_SURROUND_TOOLTIP;Spremembe tonov in barv so odvisne od pogojev gledanja na izhodno enoto.\n\n<b>Povprečje</b>: Povprečno svetlobno okolje (standard). Slika se ne bo spremenila.\n\n<b>Zatemnjeno</b>: Zatemnjeno okolje (TV). Slika bo postala malo temnejša.\n\n<b>Temno</b>: temno okolje (projektor). Slika bo postala bolj temna.\n\n<b>Izredno temno</b>: Izredno temno okolje (Cutsheet). Slika bo postala zelo temna.
+TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
+TP_COLORAPP_TCMODE_CHROMA;Barvitost
+TP_COLORAPP_TCMODE_COLORF;Polnost barv
+TP_COLORAPP_TCMODE_LABEL1;Krivulja način 1
+TP_COLORAPP_TCMODE_LABEL2;Krivulja način 2
+TP_COLORAPP_TCMODE_LABEL3;Krivulja barvitosti
+TP_COLORAPP_TCMODE_LIGHTNESS;Svetlost
+TP_COLORAPP_TCMODE_SATUR;Nasičenost
+TP_COLORAPP_TEMP_TOOLTIP;Za izbrano svetilo vedno postavi Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+TP_COLORAPP_TONECIE;Preslikava barvnih tonov s CIECAM02
+TP_COLORAPP_TONECIE_TOOLTIP;Če je ta opcija neaktivna, je preslikava barvnih tonov v prostoru L*a*b* .\nČe je aktivirana, je prenos barvnih tonov z uporabo CIECAM02.\nOrodje za prenos barvnih tonov mora biti aktivno, da ima učinek.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolutna svetlost okolice gledanja\n(običajno 16 cd/m²).
+TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
+TP_COLORAPP_WBRT;WB [RT] + [output]
+TP_COLORTONING_AB;o C/L
+TP_COLORTONING_AUTOSAT;Avtomatično
+TP_COLORTONING_BALANCE;Uravnoteženo
+TP_COLORTONING_BY;o C/L
+TP_COLORTONING_CHROMAC;Neprosojnost
+TP_COLORTONING_COLOR;Barva
+TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Neprosojnost barvitosti kot funkcija svetlosti oC=f(L)
+TP_COLORTONING_HIGHLIGHT;Bleščave
+TP_COLORTONING_HUE;Odtenki
+TP_COLORTONING_LAB;L*a*b* mešanje
+TP_COLORTONING_LABEL;Toniranje barv
+TP_COLORTONING_LABGRID;L*a*b* mreža popravkov barv
+TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
+TP_COLORTONING_LABREGIONS;Regije popravkov barv
+TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+TP_COLORTONING_LABREGION_CHANNEL;Kanal
+TP_COLORTONING_LABREGION_CHANNEL_ALL;Vse
+TP_COLORTONING_LABREGION_CHANNEL_B;Modra
+TP_COLORTONING_LABREGION_CHANNEL_G;Zelena
+TP_COLORTONING_LABREGION_CHANNEL_R;Rdeča
+TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
+TP_COLORTONING_LABREGION_HUEMASK;H
+TP_COLORTONING_LABREGION_LIGHTNESS;Svetlost
+TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
+TP_COLORTONING_LABREGION_LIST_TITLE;Popravek
+TP_COLORTONING_LABREGION_MASK;Maska
+TP_COLORTONING_LABREGION_MASKBLUR;Maska zamegljenosti
+TP_COLORTONING_LABREGION_OFFSET;Odmik
+TP_COLORTONING_LABREGION_POWER;Moč
+TP_COLORTONING_LABREGION_SATURATION;Nasičenje
+TP_COLORTONING_LABREGION_SHOWMASK;Prikaži masko
+TP_COLORTONING_LABREGION_SLOPE;Strmina
+TP_COLORTONING_LUMA;Svetlost
+TP_COLORTONING_LUMAMODE;Ohrani svetlost
+TP_COLORTONING_LUMAMODE_TOOLTIP;Če je aktivno, se ob spremembi barve (rdeča, zelena, cian, modra, itd.) ohrani tudi svetlost vsakega piksla.
+TP_COLORTONING_METHOD;Metoda
+TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* mešanje", "RGB drsniki" in "RGB krivulje" uporabljajo interpolirno mešanje barv.\n"Uravnoteženje barv (Sence/Srednji toni/Bleščave)" and "Nasičenje 2 barv" uporabljajo neposredne barve.\n\nČrno-belo orodje lahko uporabimo pri katerikoli metodi barvega toniranja.
+TP_COLORTONING_MIDTONES;Srednji toni
+TP_COLORTONING_NEUTRAL;Ponastavi drsnike
+TP_COLORTONING_NEUTRAL_TIP;Ponastavi vse vrednosti (Sence, Srednji toni, Bleščave) na prizeto vrednost.
+TP_COLORTONING_OPACITY;Neprosojnost
+TP_COLORTONING_RGBCURVES;RGB - Krivulje
+TP_COLORTONING_RGBSLIDERS;RGB - Drsniki
+TP_COLORTONING_SA;Zavarovanje nasičenosti
+TP_COLORTONING_SATURATEDOPACITY;Moč
+TP_COLORTONING_SATURATIONTHRESHOLD;Prag
+TP_COLORTONING_SHADOWS;Sence
+TP_COLORTONING_SPLITCO;Sence/Srednje vrednosti/Bleščave
+TP_COLORTONING_SPLITCOCO;Uravnoteženje barv Sence/Srednje vrednosti/Bleščave
+TP_COLORTONING_SPLITLR;Nasičenje 2 barv
+TP_COLORTONING_STR;Moč
+TP_COLORTONING_STRENGTH;Moč
+TP_COLORTONING_TWO2;Posebna barvitost '2 colors'
+TP_COLORTONING_TWOALL;Posebna barvitost
+TP_COLORTONING_TWOBY;Posebna a* in b*
+TP_COLORTONING_TWOCOLOR_TOOLTIP;Standardna barvitost:\nLinearni odziv, a* = b*.\n\nPosebna barvitost:\nLinearni odziv, a* = b*, toda neomejen - poskusi pod diagonalo.\n\nPosebna a* in b*:\nLinearni neomejeni odziv s posebnima krivuljama za a* in b*. Namenjeno posebnim učinkom.\n\nPosebna barvitost 2 barv:\nBolj predvidljivo.
+TP_COLORTONING_TWOSTD;Standardna barvitost
+TP_CROP_FIXRATIO;Zakleni razmerje
+TP_CROP_GTDIAGONALS;Pravilo diagonal
+TP_CROP_GTEPASSPORT;Biometrični potni list
+TP_CROP_GTFRAME;Okvir
+TP_CROP_GTGRID;Mreža
+TP_CROP_GTHARMMEANS;Harmonična povprečja
+TP_CROP_GTNONE;Noben
+TP_CROP_GTRULETHIRDS;Pravilo tretjin
+TP_CROP_GTTRIANGLE1;Zlati trikotniki 1
+TP_CROP_GTTRIANGLE2;Zlati trikotniki 2
+TP_CROP_GUIDETYPE;Vodilo tipa:
+TP_CROP_H;Višina
+TP_CROP_LABEL;Obreži
+TP_CROP_PPI;PPI
+TP_CROP_RESETCROP;Ponastavi
+TP_CROP_SELECTCROP;Izberi
+TP_CROP_W;Širina
+TP_CROP_X;Levo
+TP_CROP_Y;Vrh
+TP_DARKFRAME_AUTOSELECT;Avtomatičen izbor
+TP_DARKFRAME_LABEL;Dark-frame
+TP_DEFRINGE_LABEL;Odstrani artefakte
+TP_DEFRINGE_RADIUS;Radij
+TP_DEFRINGE_THRESHOLD;Prag
+TP_DEHAZE_DEPTH;Globina
+TP_DEHAZE_LABEL;Odstranjevanje zamegljenosti
+TP_DEHAZE_LUMINANCE;Samo svetlost
+TP_DEHAZE_SHOW_DEPTH_MAP;Prikaži karto globin
+TP_DEHAZE_STRENGTH;Moč
+TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Avto multi-cone
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Avtomatično globalno
+TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Krominanca - modro-rumeno
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Krivulja krominance
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Povečaj (pomnoži) vrednosti vseh krominanc drsnikov.\nTa krivulja omogoča prilagajanje moči zmanjševanje barvnega šuma kot funkcijo kromatičnosti, na primer za povečanje aktivnosti v področjih z nizko nasičenostjo in zmanjšanje na področjih visoke nasičenosti.
+TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Krominanca
+TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Ročno
+TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Krominanca - Matična
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Metoda
+TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;Ročno\nDeluje na vsej sliki.\nNastavitve odstranjevanja šuma upravljate ročno.\n\nAvtomatično globalno\nDeluje na vsej sliki.\nUporabljeno je 9 con za izračun parametrov globalnega zmanjšanja barvnega šuma.\n\nPreogled\nDeluje na celotni sliki.\nDel slike, ki je viden v predlogledu je uporabljen za izračun parametrov za odstranjevanje šuma.
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;Manual\nDeluje na vsej sliki.\nastavitve odstranjevanja šuma upravljate ročno.\n\nAvtomatično globalno\nDeluje na vsej sliki.\nUporabljeno je 9 con za izračun parametrov globalnega zmanjšanja barvnega šuma.\n\nAvtomatično več-consko\nNi predogleda - deluje samo ob shranjevanju, toda z uporabo "Predogledne" metode tako, da je center slike center predogleda, velikost slike pa velikost predogleda tako, da dobite vtis o predvidenih učinkih.\nSlika je razdeljena na krpe (od 10 do 70 odvisno od velikosti slike) in vsaka krpa ima svoje nastavitve odpravljanja barvnega šuma.\n\nPredogled\nDeluje na celotni sliki.\nDel slike, ki je viden v predlogledu je uporabljen za izračun parametrov za odstranjevanje šuma.
+TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Multi-cone predogleda
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Predogled
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Prikaže preostale nivoje šuma na delu slike v predogledu po valovčku.\n\n>300 Z veliko šuma\n100-300 Šum\n50-100 Malo šuma\n<50 Zelo malo šuma\n\nVedite, da se vrednosti razlikujejo med RGB in L*a*b* . Vrednosti v RGB so manj natančne, ker RGB način v celoti ne loči svetlosti in barvitosti.
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;Velikost predogleda=%1, Center: Px=%2  Py=%3
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Šum predogleda: Povprečje=%1  Visoko=%2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Šum predogleda: Povprečje= -   Visoko= -
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Velikost krpe=%1, Center: Tx=%2  Ty=%3
+TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Krominanca - Rdeča-Zelena
+TP_DIRPYRDENOISE_LABEL;Odpravljanje šuma
+TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Upravljanje svetlosti
+TP_DIRPYRDENOISE_LUMINANCE_CURVE;Krivulja svetlosti
+TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Podrobnost obnove
+TP_DIRPYRDENOISE_LUMINANCE_FRAME;Svetlost
+TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Svetlost
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;Barvni prostor
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Za surove slike je moč uporabiti ali RGB ali L*a*b* .\n\nZa ne-surove slike bo ne glede na izbiro uporabljena metoda L*a*b* .
+TP_DIRPYRDENOISE_MAIN_GAMMA;Gama
+TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Gama ima vpliv na moč zmanjšanja šuma glede nabora tonov. Manjše vrednosti ciljajo na sence, večje vrednosti pa bodo raztegnile vpliv na svetlejše tone.
+TP_DIRPYRDENOISE_MAIN_MODE;Način
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Agresivno
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Konservativno
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;"Konservativno" ohranja nizke frekvence vzorcev barvitosti, medtem ko jih "agresivne" izbrišejo.
+TP_DIRPYRDENOISE_MEDIAN_METHOD;Metode mediane
+TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Samo barvitost
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Filter mediane
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Samo svetlost
+TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
+TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;Pri uporabi "Samo svetlost" in metodi "L*a*b*", se bo filtriranje po mediani izvedlo čisto po koraku valovčkov v zaporedju zmanjšanja šuma.\nOb uporabi načina "RGB" se bo izvedlo na samem koncu zaporedja postopkov za zmanjšanje šuma.
+TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Weighted L* (malo) + a*b* (normalno)
+TP_DIRPYRDENOISE_MEDIAN_PASSES;Iteracij mediane
+TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Uporaba trikratnega filtra mediane v oknu 3×3 pogosto naredi boljši rezultat od ene iteracije filtra mediane na oknu velikosti 7×7.
+TP_DIRPYRDENOISE_MEDIAN_TYPE;Tip mediane
+TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Uporabi filter mediane na željeni velikosti okna. Večje okno zahteva več časa obdelave.\n\n3×3 mehko: obdela 5 pikslov v oknu 3×3.\n3×3: obdela 9 pikslov v oknu 3×3.\n5×5 mehko: obdela 13 pikslov v oknu 5×5.\n5×5: obdela 25 pikslov v oknu 5×5.\n7×7: obdela 49 pikslov v oknu 7×7.\n9×9: obdela 81 pikslov v oknu 9×9.\n\nVčasih je moč dobiti boljšo kakovost z uporabo večkratnih filtrov na manjšem oknu kot enkratnemu filtru na večjem oknu.
+TP_DIRPYRDENOISE_TYPE_3X3;3×3
+TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 mehko
+TP_DIRPYRDENOISE_TYPE_5X5;5×5
+TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 mehko
+TP_DIRPYRDENOISE_TYPE_7X7;7×7
+TP_DIRPYRDENOISE_TYPE_9X9;9×9
+TP_DIRPYREQUALIZER_ALGO;Barvni Obseg Kože
+TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fino: bližje barvi kože, minimiziranje učinka na drugih barvah\nVeliko: izogibanje artefaktom.
+TP_DIRPYREQUALIZER_ARTIF;Zmanjšanje artefaktov
+TP_DIRPYREQUALIZER_HUESKIN;Odtenek kože
+TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;Ta piramida je za gornji del, kjer algoritem deluje maksimalno učinkovito.\nNa spodnjem delu so cone pretvorbe.\nČe želite premakniti področje bistveno na levo ali na desno oz. če se pojavljajo arifakti: je <b>ravnotežje beline napačno</b>. Lahko rahlo zmanjšate cono, da preprečite vplive na ostali del slike.
+TP_DIRPYREQUALIZER_LABEL;Kontrast glede nivojev podrobnosti
+TP_DIRPYREQUALIZER_LUMACOARSEST;Najbolj grobo
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast -
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast +
+TP_DIRPYREQUALIZER_LUMAFINEST;Najbolj fino
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Nevtralno
+TP_DIRPYREQUALIZER_SKIN;Ciljna zaščita kože
+TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Pri -100 so ciljani toni kože.\nPri 0 so vsi toni obravnavani enako.\nPri +100 so zaščiteni toni kože, vsi ostali pa so spremenjeni.
+TP_DIRPYREQUALIZER_THRESHOLD;Prag
+TP_DIRPYREQUALIZER_TOOLTIP;Poskusi zmanjšati artefakte pri spremembi barve kože (odtenek, barvitost, luma) in preostankom slike.
+TP_DISTORTION_AMOUNT;Količina
+TP_DISTORTION_AUTO_TIP;Avtomatsko popravi popačitve objektiva pri surovih slikah s primerjavo z vgrajeno sliko JPEG, če obstaja in so popravki objektiva izvedeni v fotoaparatu.
+TP_DISTORTION_LABEL;Popravek popačenja
+TP_EPD_EDGESTOPPING;Zaustavljanje roba
+TP_EPD_GAMMA;Gama
+TP_EPD_LABEL;Preslikava tonov
+TP_EPD_REWEIGHTINGITERATES;Ponovno tehtanje ponovitev
+TP_EPD_SCALE;Merilo
+TP_EPD_STRENGTH;Moč
+TP_EXPOSURE_AUTOLEVELS;Avto nivoji
+TP_EXPOSURE_AUTOLEVELS_TIP;Preklaplja izvajanje avto nivojev z vrednostmi izračunani iz analize slike.\nOmogoča rekonstrukcijo bleščav, če je potrebna.
+TP_EXPOSURE_BLACKLEVEL;Črna
+TP_EXPOSURE_BRIGHTNESS;Svetlost
+TP_EXPOSURE_CLAMPOOG;Posnetek barv izven obsega
+TP_EXPOSURE_CLIP;Posnetek %
+TP_EXPOSURE_CLIP_TIP;Delež pikslov, ki naj bodo posneti v operaciji avto nivoji.
+TP_EXPOSURE_COMPRHIGHLIGHTS;Stiskanje bleščav
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Prag stiskanja bleščav
+TP_EXPOSURE_COMPRSHADOWS;Stiskanje senc
+TP_EXPOSURE_CONTRAST;Kontrast
+TP_EXPOSURE_CURVEEDITOR1;Krivulja tonov 1
+TP_EXPOSURE_CURVEEDITOR2;Krivulja tonov 2
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Prosim preberite članek v Rawpediji "Exposure > Tone Curves" kako dosežete najboljše rezultate z uporabo krivulj dveh tonov.
+TP_EXPOSURE_EXPCOMP;Prilagoditev ekspozicije
+TP_EXPOSURE_HISTMATCHING;Avtomatsko pridobljena krivulja tonov 
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Avtomatsko prilagodi drsnike in krivulje (razen prilagoditve ekspozicije) da ustreza videzu vgrajene slike JPEG.
+TP_EXPOSURE_LABEL;Ekspozicija
+TP_EXPOSURE_SATURATION;Nasičenje
+TP_EXPOSURE_TCMODE_FILMLIKE;Kot na filmu
+TP_EXPOSURE_TCMODE_LABEL1;Krivulja način 1
+TP_EXPOSURE_TCMODE_LABEL2;Krivulja način 2
+TP_EXPOSURE_TCMODE_LUMINANCE;Svetlost
+TP_EXPOSURE_TCMODE_PERCEPTUAL;Glede na zaznavo
+TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Nasičenje im mešanje vrednosti
+TP_EXPOSURE_TCMODE_STANDARD;Standardno
+TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Uteženo standardno
+TP_EXPOS_BLACKPOINT_LABEL;Surove črne točke
+TP_EXPOS_WHITEPOINT_LABEL;Surove bele točke
+TP_FILMNEGATIVE_BLUE;Kvocient modre
+TP_FILMNEGATIVE_GREEN;Referenčni eksponent (kontrast)
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Izračunajte eksponente tako, da na sliki izberete dve nevtralni referenčni točki; ena bela (svetlo siva) in ena črna (temno siva). Vrstni red ni pomemben. Eksponenti bodo izračunani takoj po izbiri drugega mesta.
+TP_FILMNEGATIVE_LABEL;Filmski negativ
+TP_FILMNEGATIVE_PICK;Poberite črne in bele točke
+TP_FILMNEGATIVE_RED;Kvocient rdeče
+TP_FILMSIMULATION_LABEL;Simulacija filma
+TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee je nastavljen, da išče slike Hald CLUT, ki so uporabljene za orodje simulacije filma, v mapi, kje potrebujejo preveč časa za nalaganje.\nPojdite v Preference > Obdelava slik > Simulacija filma\n da si ogledate katera mapa je v uporabi. Nastaviti morate RawTherapee tako, da bodisi kaže v mapo, ki vsebuje samo slike Hald CLUT in nič drugega, ali v prazno mapo, če ne želite uporabiti orodja za simulacijo filma.\n\nZa več informacij preberite članek Film Simulation v Rawpediji.\n\nAli želite prekiniti skeniranje?
+TP_FILMSIMULATION_STRENGTH;Moč
+TP_FILMSIMULATION_ZEROCLUTSFOUND;Nastavi mapo za HaldCLUT v preferencah
+TP_FLATFIELD_AUTOSELECT;Avtomatska selekcija
+TP_FLATFIELD_BLURRADIUS;Radij zameglevanja
+TP_FLATFIELD_BLURTYPE;Tip zameglevanja
+TP_FLATFIELD_BT_AREA;Površina
+TP_FLATFIELD_BT_HORIZONTAL;Vodoravno
+TP_FLATFIELD_BT_VERTHORIZ;Navpično + Vodoravno
+TP_FLATFIELD_BT_VERTICAL;Navpično
+TP_FLATFIELD_CLIPCONTROL;Kontrola posnetka
+TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Kontrola posnetka se izogiba bleščav z uporabo poravnilnika. Če obstaja že nekaj posnetih poravnanih bleščav, lahko ta kontrola vodi k barvemu pridihu.
+TP_FLATFIELD_LABEL;Flat-field
+TP_GENERAL_11SCALE_TOOLTIP;Učinki tega so vidni in natančno prikazani samo v predogledu merila 1:1.
+TP_GRADIENT_CENTER;Center
+TP_GRADIENT_CENTER_X;Center X
+TP_GRADIENT_CENTER_X_TOOLTIP;Pomakni gradient na levo (negativne vrednosti) ali desno (pozitivne vrednosti).
+TP_GRADIENT_CENTER_Y;Center Y
+TP_GRADIENT_CENTER_Y_TOOLTIP;Pomakni gradient navzgor (negativne vrednosti) ali dol (pozitivne vrednosti).
+TP_GRADIENT_DEGREE;Kot
+TP_GRADIENT_DEGREE_TOOLTIP;Kot vrtenja v stopinjah.
+TP_GRADIENT_FEATHER;Pero
+TP_GRADIENT_FEATHER_TOOLTIP;Širina gradienta v odstotkih diagonale slike.
+TP_GRADIENT_LABEL;Postopni filter
+TP_GRADIENT_STRENGTH;Moč
+TP_GRADIENT_STRENGTH_TOOLTIP;Moč filtra v stopnjah.
+TP_HLREC_BLEND;Zmešaj
+TP_HLREC_CIELAB;Mešaj v CIELab
+TP_HLREC_COLOR;Razmnoževanje barve
+TP_HLREC_ENA_TOOLTIP;Je lahko aktivirano z avto nivoji.
+TP_HLREC_LABEL;Restavriranje bleščav
+TP_HLREC_LUMINANCE;Restavriranje svetlosti
+TP_HLREC_METHOD;Metoda:
+TP_HSVEQUALIZER_CHANNEL;Kanal
+TP_HSVEQUALIZER_HUE;H
+TP_HSVEQUALIZER_LABEL;Ekvalizator HSV
+TP_HSVEQUALIZER_SAT;S
+TP_HSVEQUALIZER_VAL;V
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Osnovna ekspozicija
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Uporabi vgrajeno osnovno tabelo odmikov DCP. Nastavitev je na voljo samo, če obstaja DCP.
+TP_ICM_APPLYHUESATMAP;Osnovna tabela
+TP_ICM_APPLYHUESATMAP_TOOLTIP;Uporabi vgrajeno osnovno tabelo DCP (HueSatMap). Nastavitev je na voljo samo če obstaja DCP.
+TP_ICM_APPLYLOOKTABLE;Look table
+TP_ICM_APPLYLOOKTABLE_TOOLTIP;Uporabi vgrajeno osnovno tabelo vpogledov DCP. Nastavitev je na voljo samo če obstaja DCP.
+TP_ICM_BPC;Prilagoditev črne točke
+TP_ICM_DCPILLUMINANT;Osvetljevalnik
+TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolirano
+TP_ICM_DCPILLUMINANT_TOOLTIP;Izberi katero vgrajeno DCP svetilo uporabiti. Privzeto je "interpolirano", ki je mešanica dveh glede na belino. Nastavitev je na voljo, samo če izbran dvojno osvetlitveni CDP s podporo za interpolacijo.
+TP_ICM_INPUTCAMERA;Standardni fotoaparat
+TP_ICM_INPUTCAMERAICC;Avtomatično usklajen profil s fotoaparatom
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Uporabi RawTherapee-jev specifičen DCP za ta fotoaparat ali vhodni ICC profil. Ti profili so bolj natančni kot enostavni matrični profili, a niso na voljo za vse fotoaparate. Ti profili so shranjeni v mapah /iccprofiles/input in /dcpprofiles in jih razpoznamo iz natančnega imena modela fotoaparata.
+TP_ICM_INPUTCAMERA_TOOLTIP;Uporabi enostavno matriko iz dcraw, izboljšano verzijo RawTherapee (katerikoli je na voljo za ta model fotoaparata) ali profil vgrajen v DNG.
+TP_ICM_INPUTCUSTOM;Po meri
+TP_ICM_INPUTCUSTOM_TOOLTIP;Izberi vaš lastni barvni profil DCP/ICC za fotoaparat.
+TP_ICM_INPUTDLGLABEL;Izberi vhodni DCP/ICC Profil...
+TP_ICM_INPUTEMBEDDED;Uporabi vgrajenega, če je možno
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Uporabi profil vgrajen v ne-surove slike.
+TP_ICM_INPUTNONE;Ni profila
+TP_ICM_INPUTNONE_TOOLTIP;Ne uporabi nobenega profila.\nUporabi samo v posebnih primerih.
+TP_ICM_INPUTPROFILE;Vhodni profil
+TP_ICM_LABEL;Upravljanje barv
+TP_ICM_NOICM;No ICM: sRGB output
+TP_ICM_OUTPUTPROFILE;Izhodni profil
+TP_ICM_PROFILEINTENT;Namera upodabljanja
+TP_ICM_SAVEREFERENCE;Shrani referenčno sliko
+TP_ICM_SAVEREFERENCE_APPLYWB;Uporabi uravnoteženje beline
+TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Na splošno uporabi uravnoteženje beline kadar shranjujete slike za tvorbo ICC profilov, ne porabljajte pa uravnoteženje beline za tvorbo DCP profilov.
+TP_ICM_SAVEREFERENCE_TOOLTIP;Shrani linearno sliko TIFF pred uporabo vhodnega profila. Rezultat lahko uporabiš za kalibracijo in tvorbo profila fotoaparata.
+TP_ICM_TONECURVE;Krivulja tonov
+TP_ICM_TONECURVE_TOOLTIP;Uporabi vgrajeno krivuljo tonov DCP. Nastavitev je na voljo samo, če ima izbran DCP tudi krivuljo tonov.
+TP_ICM_WORKINGPROFILE;Delovni profil
+TP_ICM_WORKING_TRC;Krivulja tonskih odzivov:
+TP_ICM_WORKING_TRC_CUSTOM;Po meri
+TP_ICM_WORKING_TRC_GAMMA;Gama
+TP_ICM_WORKING_TRC_NONE;Nič
+TP_ICM_WORKING_TRC_SLOPE;Strmina
+TP_ICM_WORKING_TRC_TOOLTIP;Samo za vgrajene profile.
+TP_IMPULSEDENOISE_LABEL;Impulzno zmanjšanje šuma
+TP_IMPULSEDENOISE_THRESH;Prag
+TP_LABCURVE_AVOIDCOLORSHIFT;Izogibaj se barvnega pomika
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Prilagodi barve barvnemu prostoru delovnega barvnega prostora in uporabi Munsellov popravek.
+TP_LABCURVE_BRIGHTNESS;Svetlost
+TP_LABCURVE_CHROMATICITY;Kromatičnost
+TP_LABCURVE_CHROMA_TOOLTIP;Za uporabo črno-belega toniranja nastavi kromatičnost na -100.
+TP_LABCURVE_CONTRAST;Kontrast
+TP_LABCURVE_CURVEEDITOR;Krivulja osvetljenosti
+TP_LABCURVE_CURVEEDITOR_A_RANGE1;Nasičena zelena
+TP_LABCURVE_CURVEEDITOR_A_RANGE2;Pastelno zelena 
+TP_LABCURVE_CURVEEDITOR_A_RANGE3;Pastelno rdeča
+TP_LABCURVE_CURVEEDITOR_A_RANGE4;Nasičeno rdeča
+TP_LABCURVE_CURVEEDITOR_B_RANGE1;Nasičeno modra
+TP_LABCURVE_CURVEEDITOR_B_RANGE2;Pastelno modra
+TP_LABCURVE_CURVEEDITOR_B_RANGE3;Pastelno rumena
+TP_LABCURVE_CURVEEDITOR_B_RANGE4;Nasičeno rumena
+TP_LABCURVE_CURVEEDITOR_CC;CC
+TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Nevtralna
+TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dolgočasna
+TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastelna
+TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Nasičena
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Kromatičnost glede na kromatičnost C=f(C)
+TP_LABCURVE_CURVEEDITOR_CH;CH
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Kromatičnost glede na odtenek C=f(H)
+TP_LABCURVE_CURVEEDITOR_CL;CL
+TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Kromatičnost glede na svetlost C=f(L)
+TP_LABCURVE_CURVEEDITOR_HH;HH
+TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Odtenek glede na odtenek H=f(H)
+TP_LABCURVE_CURVEEDITOR_LC;LC
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Svetlost glede na kromatičnost L=f(C)
+TP_LABCURVE_CURVEEDITOR_LH;LH
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Svetlost glede na odtenek L=f(H)
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Svetlost glede na svetlost L=f(L)
+TP_LABCURVE_LABEL;Prilagoditve L*a*b*
+TP_LABCURVE_LCREDSK;Omeji LC na rdečo in kožne barve
+TP_LABCURVE_LCREDSK_TIP;Če je aktivna, krivulja LC vpliva samo na rdečo in kožne barve.\nČe je onemogočen, se nanaša na vse tone.
+TP_LABCURVE_RSTPROTECTION;Zaščita rdeče in kožnih barv
+TP_LABCURVE_RSTPRO_TOOLTIP;Deluje na drsniku kromatičnost in krivulji CC.
+TP_LENSGEOM_AUTOCROP;Avtomatska obrezava
+TP_LENSGEOM_FILL;Avtomatsko popolnitev
+TP_LENSGEOM_LABEL;Objektiv / geometrija
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;Avtomatično izbrano
+TP_LENSPROFILE_CORRECTION_LCPFILE;datoteka LCP
+TP_LENSPROFILE_CORRECTION_MANUAL;Ročno izbrano
+TP_LENSPROFILE_LABEL;Popravek objektiva s profilom
+TP_LENSPROFILE_LENS_WARNING;Opozorilo: faktor obrezave za objektiv je večje od faktorja obrezave za fotoaparat, rezultat utegne biti napačen.
+TP_LENSPROFILE_MODE_HEADER;Profil objektiva
+TP_LENSPROFILE_USE_CA;Kromatska aberacija
+TP_LENSPROFILE_USE_GEOMETRIC;Geometrično popačenje
+TP_LENSPROFILE_USE_HEADER;Popravi
+TP_LENSPROFILE_USE_VIGNETTING;Vinjetiranje
+TP_LOCALCONTRAST_AMOUNT;Količina
+TP_LOCALCONTRAST_DARKNESS;Nivo temine
+TP_LOCALCONTRAST_LABEL;Lokalni kontrast
+TP_LOCALCONTRAST_LIGHTNESS;Nivo svetlosti
+TP_LOCALCONTRAST_RADIUS;Radij
+TP_METADATA_EDIT;Izvedi spremembe
+TP_METADATA_MODE;Način kopiranja metapodatkov
+TP_METADATA_STRIP;Odstrani vse metapodatke
+TP_METADATA_TUNNEL;Kopiraj nespremenjeno
+TP_NEUTRAL;Ponastavi
+TP_NEUTRAL_TIP;Ponastavi drsnike ekspozicije v nevtralno stanje.\nUporablja enake parametre kot pri Avtomatskih nivojih, ne glede na to ali so uporabljeni ali ne..
+TP_PCVIGNETTE_FEATHER;Pero
+TP_PCVIGNETTE_FEATHER_TOOLTIP;Perje:\n0 = samo vogali,\n50 = na polovici do centra,\n100 = v centru.
+TP_PCVIGNETTE_LABEL;Filter vinjetiranja
+TP_PCVIGNETTE_ROUNDNESS;Okroglina
+TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Okroglina:\n0 = pravokotnik,\n50 = včrtana elipsa,\n100 = krog.
+TP_PCVIGNETTE_STRENGTH;Moč
+TP_PCVIGNETTE_STRENGTH_TOOLTIP;Moč filtra v stopnjah (uporabljeno v vogalih).
+TP_PDSHARPENING_LABEL;Ujemite ostrenje
+TP_PERSPECTIVE_HORIZONTAL;Vodoravno
+TP_PERSPECTIVE_LABEL;Perspektiva
+TP_PERSPECTIVE_VERTICAL;Navpično
+TP_PFCURVE_CURVEEDITOR_CH;Ostanek
+TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Kontrolira moč ostranjevanja artefaktov.\nVisoko = več,\nNizko = manj.
+TP_PREPROCESS_DEADPIXFILT;Filter mrtvih pikslov
+TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Poskuša odstraniti mrtve piksle.
+TP_PREPROCESS_GREENEQUIL;Uravnoteženje zelene
+TP_PREPROCESS_HOTPIXFILT;Filter vročih pikslov
+TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Poskuša odstraniti vroče piksle.
+TP_PREPROCESS_LABEL;Predobdelava
+TP_PREPROCESS_LINEDENOISE;Filter linijskega šuma
+TP_PREPROCESS_LINEDENOISE_DIRECTION;Smer
+TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Obe
+TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Vodoravno
+TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Voporavno samo na vrsticah PDAF
+TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Navpično
+TP_PREPROCESS_NO_FOUND;Noben ni najden
+TP_PREPROCESS_PDAFLINESFILTER;Linijski filter PDAF
+TP_PRSHARPENING_LABEL;Ostrenje po spremembi velikosti
+TP_PRSHARPENING_TOOLTIP;Naostri sliko po spremembi velikosti. Deluje samo z metodo "Lanczos". Nemogoče je izvesti predogled tega postopka. Glej Rawpedijo za navodila za uporabo.
+TP_RAWCACORR_AUTO;Avtomatski popravki
+TP_RAWCACORR_AUTOIT;Iteracije
+TP_RAWCACORR_AUTOIT_TOOLTIP;Ta nastavitev je na voljo, če je omogočen "Avto-popravek"\nAvto-popravek je konzervativen, kar pomeni, da pogosto ne popravi vse kromatske aberacije.\nZa popravek preostale kromatske aberacije lahko uporabiš do pet iteracij avtomatske kromatske aberacije.\nVsaka iteracija bo zmanjšala preostalo kromatsko aberacijo glede na prejšnjo na račun dodatnega časa za obdelavo.
+TP_RAWCACORR_AVOIDCOLORSHIFT;Izogibaj se pomiku barve
+TP_RAWCACORR_CABLUE;Modra
+TP_RAWCACORR_CARED;Rdeča
+TP_RAWCACORR_LABEL;Popravek kromatske aberacije
+TP_RAWEXPOS_BLACK_0;Zelena 1 (vodilna)
+TP_RAWEXPOS_BLACK_1;Rdeča
+TP_RAWEXPOS_BLACK_2;Modra
+TP_RAWEXPOS_BLACK_3;Zelena 2
+TP_RAWEXPOS_BLACK_BLUE;Modra
+TP_RAWEXPOS_BLACK_GREEN;Zelena
+TP_RAWEXPOS_BLACK_RED;Rdeča
+TP_RAWEXPOS_LINEAR;Popravek bele točke
+TP_RAWEXPOS_RGB;Rdeča, Zelena, Modra
+TP_RAWEXPOS_TWOGREEN;Poveži zelene
+TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
+TP_RAW_2PASS;1-pass+fast
+TP_RAW_3PASSBEST;3-pass (Markesteijn)
+TP_RAW_4PASS;3-prehodi+hitri
+TP_RAW_AHD;AHD
+TP_RAW_AMAZE;AMaZE
+TP_RAW_AMAZEVNG4;AMaZE+VNG4
+TP_RAW_BORDER;Meja
+TP_RAW_DCB;DCB
+TP_RAW_DCBENHANCE;DCB izboljšava
+TP_RAW_DCBITERATIONS;Število iteracij DCB
+TP_RAW_DCBVNG4;DCB+VNG4
+TP_RAW_DMETHOD;Metoda
+TP_RAW_DMETHOD_PROGRESSBAR;%1 odstranjevanje mozaičnosti...
+TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Izboljšava odstranejvanja mozaičnosti...
+TP_RAW_DMETHOD_TOOLTIP;Opomba: IGV in LMMSE sta namenjeni slikam z visokim ISO za pomoč pri odstranjevanju šuma ne da bi povzročali vzorce v obliki labirintov posterizacije ali izpranega videza.\nPomik pikslov je samo za datoteke Pentax/Sony Pixel Shift. Pri drugih datotekah je namesto tega uporabljen AMaZE.
+TP_RAW_DUALDEMOSAICAUTOCONTRAST;Avtomatični prag
+TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;Če je ta opcija vključena (priporočljivo), RawTherapee izračuna optimalno vrednost glede na gladke dele slike.\nČe ni gladkega dela slike ali pa če je slika preveč šumna, bo vrednost postavljena na 0.\nČe želiš postaviti vrednost ročno, najprej izključi opcijo (primerna vrednost je odvisna od slike).
+TP_RAW_DUALDEMOSAICCONTRAST;Prag kontrasta
+TP_RAW_EAHD;EAHD
+TP_RAW_FALSECOLOR;Število korakov zatiranja napačnih barv
+TP_RAW_FAST;Hitro
+TP_RAW_HD;Prag
+TP_RAW_HD_TOOLTIP;Nizke vrednosti bodo bolj agresivno določale vroče/mrtve piksle in lažne točke bodo pridelale artefakte. Če opazite pojav artefaktov, ko ste omogočili filter vročih/mrtvih pikslov, postopno povečajte vrednost praga, dokler artefakti ne izginejo.
+TP_RAW_HPHD;HPHD
+TP_RAW_IGV;IGV
+TP_RAW_IMAGENUM;Po-slika
+TP_RAW_IMAGENUM_SN;SN način
+TP_RAW_IMAGENUM_TOOLTIP;Nekatere surove slike vsebujejo več podslik (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nKadar uporabljate katerokoli metodo razen pomika pikslov, to določa katera podslika bo uporabljena.\n\nKadar uporabiš pomik pikslov na surovi sliki, so uporabljene vse podslike in to določa, katera podslika naj bo uporabljena za gibajoče dele.
+TP_RAW_LABEL;Odstranjevanje mozaičnosti
+TP_RAW_LMMSE;LMMSE
+TP_RAW_LMMSEITERATIONS;LMMSE koraki izboljševanja
+TP_RAW_LMMSE_TOOLTIP;Dodaj gamo (korak 1), mediano (koraki 2-4) in izboljševanje (koraka 5-6) za zmanjševanje artefaktov in izboljšanje razmerja signal šum.
+TP_RAW_MONO;Mono
+TP_RAW_NONE;None (Prikaži vzorec senzorja)
+TP_RAW_PIXELSHIFT;Pomik pikslov
+TP_RAW_PIXELSHIFTBLUR;Zamegli maska gibanja
+TP_RAW_PIXELSHIFTDMETHOD;Metoda Odstranjevanja mozaičnosti
+TP_RAW_PIXELSHIFTEPERISO;Občutljivost
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Privzeta vrednost 0 bi morala delovati za osnovni ISO.\nVišje vrednosti povečajo občutljivost za detekcijo gibanja.\nSpreminjajte počasi in opazujte masko gibanja.\nPovečajte občutljivost za podosvetljene slike ali slike z visokim ISO.
+TP_RAW_PIXELSHIFTEQUALBRIGHT;Izenači svetlost okvirjev
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Izenači po kanalih
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Omogočeno: Izenači kanale RGB neodvisno.\nOnemogočeno: Uporabi enak faktor izenačevanja za vse kanale.
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Izenači svetlost okvirjev svetlosti izbranega okvirja.\nČe obstajajo preosvetljeni deli okvirjev, izberite najsvetlejšega, da se izognete barvnemu tonu magente pri preosvetljenih delih ali da omogočite popravke gibanja.
+TP_RAW_PIXELSHIFTGREEN;Preveri zeleni kanal za gibanje
+TP_RAW_PIXELSHIFTHOLEFILL;Zapolni luknje v maski gibanja
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Zapolni luknje v maski gibanja
+TP_RAW_PIXELSHIFTMEDIAN;Uporabi mediano za gibajoče se dele
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Uporabi mediano za vse okvirje namesto izbranega okvirja za dele z gibanjem.\nDaje efekt gibanja na počasi gibajočin (prekrivajočih se) predmetih.
+TP_RAW_PIXELSHIFTMM_AUTO;Avtomatično
+TP_RAW_PIXELSHIFTMM_CUSTOM;Po meri
+TP_RAW_PIXELSHIFTMM_OFF;Izklopljeno
+TP_RAW_PIXELSHIFTMOTIONMETHOD;Popravek gibanja
+TP_RAW_PIXELSHIFTNONGREENCROSS;Preveri rdeč/moder kanal za gibanje
+TP_RAW_PIXELSHIFTSHOWMOTION;Prikaži masko gibanja
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Prikaži samo masko gibanja
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Prikaže masko gibanja brez slike.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Prekrij sliko z zeleno masko, ki prikazuje področja z gibanjem.
+TP_RAW_PIXELSHIFTSIGMA;Radij zameglevanja
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Privzet radij 1.0 običajno ustreza osnovnem ISO.\nVrednost povečajte za visok ISO, 5.0 je dobra začetna vrednost.\nOpazujte masko gibanja, ko spreminjate vrednost.
+TP_RAW_PIXELSHIFTSMOOTH;Gladki prehodi
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Gladki prehodi med področji z gibanjem in področji brez.\nPostavite na 1, da dobite rezultat AMaZE/LMMSE za izbran okvir (odvisno ali je izbran "Uporabi LMMSE") ali mediana za vse štiri okvire, če je izbran "Uporabi mediano".
+TP_RAW_RCD;RCD
+TP_RAW_RCDVNG4;RCD+VNG4
+TP_RAW_SENSOR_BAYER_LABEL;Senzor z matriko Bayer
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-prehodi daje boljše rezultate (priporočljivo za nizek ISO).\n1-prehod je komaj različen od 3-prehodov za visoke ISO slike in je hitrejši.\n+fast daje manj artefaktov v gladkih predelih
+TP_RAW_SENSOR_XTRANS_LABEL;Senzor z matriko X-Trans
+TP_RAW_VNG4;VNG4
+TP_RAW_XTRANS;X-Trans
+TP_RAW_XTRANSFAST;Fast X-Trans
+TP_RESIZE_ALLOW_UPSCALING;Dovoli povečavo
+TP_RESIZE_APPLIESTO;Se nanaša na:
+TP_RESIZE_CROPPEDAREA;Izrezano področje
+TP_RESIZE_FITBOX;Bounding Box
+TP_RESIZE_FULLIMAGE;Celotna slika
+TP_RESIZE_H;Višina:
+TP_RESIZE_HEIGHT;Višina
+TP_RESIZE_LABEL;Spremeni velikost
+TP_RESIZE_LANCZOS;Lanczos
+TP_RESIZE_METHOD;Metoda:
+TP_RESIZE_NEAREST;Najbližji
+TP_RESIZE_SCALE;Merilo
+TP_RESIZE_SPECIFY;Opiši:
+TP_RESIZE_W;Širina:
+TP_RESIZE_WIDTH;Širina
+TP_RETINEX_CONTEDIT_HSL;HSL histogram
+TP_RETINEX_CONTEDIT_LAB;L*a*b* histogram
+TP_RETINEX_CONTEDIT_LH;Odtenek
+TP_RETINEX_CONTEDIT_MAP;Izenačevalnik
+TP_RETINEX_CURVEEDITOR_CD;L=f(L)
+TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Svetlost glede na svetlost L=f(L)\nPopravi surove podatke, da zmanjšaš odboje in artefakte.
+TP_RETINEX_CURVEEDITOR_LH;Moč=f(H)
+TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Moč glede na odtenek Moč=f(H)\nTa krivulja deluje tudi na barvitosti kadar uporabljamo metodo Retinex na bleščavah.
+TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
+TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;To krivuljo lahko uporabimo samo ali pa z Gaussovo masko ali masko valovčkov.\nPazite na artefakte!
+TP_RETINEX_EQUAL;Izenačevalnik
+TP_RETINEX_FREEGAMMA;Prosta gama
+TP_RETINEX_GAIN;Ojačenje
+TP_RETINEX_GAINOFFS;Ojačenje in odmik (svetlost)
+TP_RETINEX_GAINTRANSMISSION;Prenos ojačenja
+TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Ojačaj ali oslabi prenosno funkcijo da dosežete željeno svetlost.\nOs x je prenos.\nOs y je ojačenje.
+TP_RETINEX_GAMMA;Gama
+TP_RETINEX_GAMMA_FREE;Prost
+TP_RETINEX_GAMMA_HIGH;Visok
+TP_RETINEX_GAMMA_LOW;Nizek
+TP_RETINEX_GAMMA_MID;Srednji
+TP_RETINEX_GAMMA_NONE;Nič
+TP_RETINEX_GAMMA_TOOLTIP;Obnovi tone z uporabo game pred ali po Retinexu. Krivulje so drugačne od Retinexovih ali drugih (Lab, Ekspozicija, itd.).
+TP_RETINEX_GRAD;Gradient prenosa
+TP_RETINEX_GRADS;Moč gradienta
+TP_RETINEX_GRADS_TOOLTIP;Če je drsnik na 0, so vse iteracije identične.\nČe je > 0 moč pojema pri vsaki iteraciji in obratno.
+TP_RETINEX_GRAD_TOOLTIP;Če je drsnik na 0, so vse iteracije identične.\nČe je > 0 Varianca in Prag pojemata pri vsaki iteraciji in obratno.
+TP_RETINEX_HIGH;Visoko
+TP_RETINEX_HIGHLIG;Bleščava
+TP_RETINEX_HIGHLIGHT;Prag bleščave
+TP_RETINEX_HIGHLIGHT_TOOLTIP;Poveča aktivnosti visokega algoritma.\nMorda bo zahtevala prilagoditev "Sosednjih pikslov" in povečanje "Popravka bele točke" v orodju v zavihku Surove -> Orodju Surova Bela Točka.
+TP_RETINEX_HSLSPACE_LIN;HSL-Linearno
+TP_RETINEX_HSLSPACE_LOG;HSL-Logaritmično
+TP_RETINEX_ITER;Iteracije (Preslikava tonov)
+TP_RETINEX_ITERF;Preslikava tonov
+TP_RETINEX_ITER_TOOLTIP;Simuliraj operacijo preslikave tonov.\nVisoke vrednosti povečujejo čas obdelave.
+TP_RETINEX_LABEL;Retinex
+TP_RETINEX_LABEL_MASK;Maska
+TP_RETINEX_LABSPACE;L*a*b*
+TP_RETINEX_LOW;Nizko
+TP_RETINEX_MAP;Metoda
+TP_RETINEX_MAP_GAUS;Gaussova maska
+TP_RETINEX_MAP_MAPP;Maska ostrenja (delni valovčki)
+TP_RETINEX_MAP_MAPT;Maska ostrenja (popolni valovčki)
+TP_RETINEX_MAP_METHOD_TOOLTIP;Uporabi masko, ki ga je generirala gornja Gaussova funkcija (Radin, Metoda) za zmanjševanja odbojev in artefaktov.\n\nSamo krivulja: uporabi diagonalni kontrast na maski.\nPazite na artefakte!\n\nGaussova maska: tvori in uporabi Gaussovo zameglitev izvorne maske.\nHitro.\n\nMaska ostrenja: tvori in uporabi valovčke na izvorni maski.\nPočasno.
+TP_RETINEX_MAP_NONE;Nič
+TP_RETINEX_MEDIAN;Fiter mediane prenosa
+TP_RETINEX_METHOD;Metoda
+TP_RETINEX_METHOD_TOOLTIP;Low = Ojačaj šibko svetlobo.\nEnakomerno = Izenači.\nVisoko = Ojačaj močno svetlobo.\nBleščave = Odstrani magento iz bleščav.
+TP_RETINEX_MLABEL;Obnovi brez meglic Min=%1 Max=%2
+TP_RETINEX_MLABEL_TOOLTIP;Mora biti blizu min=0 max=32768\nObnovljena slika brez mešanja.
+TP_RETINEX_NEIGHBOR;Radij
+TP_RETINEX_NEUTRAL;Ponastavi
+TP_RETINEX_NEUTRAL_TIP;Ponastavi vse drsnike in klrivulje na njihove privzete vrednosti.
+TP_RETINEX_OFFSET;Odmik (svetlost)
+TP_RETINEX_SCALES;Gaussov gradient
+TP_RETINEX_SCALES_TOOLTIP;Če je drsnik na 0, so vse iteracije identične.\nČe je > 0 merilo in radij pojemata pri vsaki iteraciji in obratno.
+TP_RETINEX_SETTINGS;Nastavitve
+TP_RETINEX_SKAL;Merilo
+TP_RETINEX_SLOPE;Prosta strmina game
+TP_RETINEX_STRENGTH;Moč
+TP_RETINEX_THRESHOLD;Prag
+TP_RETINEX_THRESHOLD_TOOLTIP;Omejuje vhod/izhod.\nVhod = izvorna slika,\nIzhod = slika po Gaussu.
+TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Povprečje=%3 Sigma=%4
+TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
+TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma.\nTm=Min TM=Max of transmission map.
+TP_RETINEX_TRANF;Prenos
+TP_RETINEX_TRANSMISSION;Prenosna funkcija
+TP_RETINEX_TRANSMISSION_TOOLTIP;Prenos glede na prenos.\nAbscisa: prenos negativnih vrednosti (min), povprečja, in pozitivnih vrednosti (max).\nOrdinata: ojačenje ali slabljenje.
+TP_RETINEX_UNIFORM;Enakomerno
+TP_RETINEX_VARIANCE;Kontrast
+TP_RETINEX_VARIANCE_TOOLTIP;Nizka varianca povečuje lokalni kontrast in nasičenje, toda lahko tvori artefakte.
+TP_RETINEX_VIEW;Obdelava
+TP_RETINEX_VIEW_MASK;Maska
+TP_RETINEX_VIEW_METHOD_TOOLTIP;Standardno - Normalen prikaz.\nMaska -  Prikazuje masko.\nNeostra maska - Prikaže sliko z neostro masko z velikim radijem.\nPrenos - Avto/Fiksno - Prikaže prenosno funkcijo pred kakršnimkoli posegom na kontrastu ali svetlosti.\n\nPozor: maska ni realistična, ampak je ojačana, da se bolje vidi.
+TP_RETINEX_VIEW_NONE;Standardno
+TP_RETINEX_VIEW_TRAN;Prenos - Avto
+TP_RETINEX_VIEW_TRAN2;Prenos - Fiksno
+TP_RETINEX_VIEW_UNSHARP;Neostra maska
+TP_RGBCURVES_BLUE;B
+TP_RGBCURVES_CHANNEL;Kanal
+TP_RGBCURVES_GREEN;G
+TP_RGBCURVES_LABEL;RGB krivulje
+TP_RGBCURVES_LUMAMODE;Način svetilnosti
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Način svetilnosti</b> dovoljuje spreminjanje prispevka kanalov R, G in B na svetlost slike, ne da bi spreminjali barve slike.
+TP_RGBCURVES_RED;R
+TP_ROTATE_DEGREE;Stopnja
+TP_ROTATE_LABEL;Zavrti
+TP_ROTATE_SELECTLINE;Izberi ravno črto
+TP_SAVEDIALOG_OK_TIP;Bližnjica: <b>Ctrl-Enter</b>
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Bleščave
+TP_SHADOWSHLIGHTS_HLTONALW;Tonska širina bleščav
+TP_SHADOWSHLIGHTS_LABEL;Sence/bleščave
+TP_SHADOWSHLIGHTS_RADIUS;Radij
+TP_SHADOWSHLIGHTS_SHADOWS;Sence
+TP_SHADOWSHLIGHTS_SHTONALW;Tonska širina senc
+TP_SHARPENEDGE_AMOUNT;Količina
+TP_SHARPENEDGE_LABEL;Robovi
+TP_SHARPENEDGE_PASSES;Iteracij
+TP_SHARPENEDGE_THREE;Samo svetlost
+TP_SHARPENING_AMOUNT;Količina
+TP_SHARPENING_BLUR;Radij zamegljevanja
+TP_SHARPENING_CONTRAST;Prag kontrasta
+TP_SHARPENING_EDRADIUS;Radij
+TP_SHARPENING_EDTOLERANCE;Toleranca robov
+TP_SHARPENING_GAMMA;Gama
+TP_SHARPENING_HALOCONTROL;Kontrola odbojev
+TP_SHARPENING_HCAMOUNT;Količina
+TP_SHARPENING_LABEL;Ostrenje
+TP_SHARPENING_METHOD;Metoda
+TP_SHARPENING_ONLYEDGES;Naostri samo robove
+TP_SHARPENING_RADIUS;Radij
+TP_SHARPENING_RADIUS_BOOST;Povečanje polmera vogala
+TP_SHARPENING_RLD;RL Dekonvolucija
+TP_SHARPENING_RLD_AMOUNT;Količina
+TP_SHARPENING_RLD_DAMPING;Blaženje
+TP_SHARPENING_RLD_ITERATIONS;Iteracij
+TP_SHARPENING_THRESHOLD;Prag
+TP_SHARPENING_USM;Neostra maska
+TP_SHARPENMICRO_AMOUNT;Količina
+TP_SHARPENMICRO_CONTRAST;Prag kontrasta
+TP_SHARPENMICRO_LABEL;Mikrokontrast
+TP_SHARPENMICRO_MATRIX;3×3 matrika namesto 5×5
+TP_SHARPENMICRO_UNIFORMITY;Enakomernost
+TP_SOFTLIGHT_LABEL;Mehka svetloba
+TP_SOFTLIGHT_STRENGTH;Moč
+TP_TM_FATTAL_AMOUNT;Količina
+TP_TM_FATTAL_ANCHOR;Sidro
+TP_TM_FATTAL_LABEL;Kompresija dinamičnega obsega
+TP_TM_FATTAL_THRESHOLD;Podrobnost
+TP_VIBRANCE_AVOIDCOLORSHIFT;Izogibaj se pomiku barve
+TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Kožni toni
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;rdeča/rožnata
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;rdeča
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;rdeča/rumena
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;rumena
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Odtenek glede na odtenek H=f(H)
+TP_VIBRANCE_LABEL;Živost
+TP_VIBRANCE_PASTELS;Pastelni toni
+TP_VIBRANCE_PASTSATTOG;Poveži pastelne in nasičene tone
+TP_VIBRANCE_PROTECTSKINS;Zaščiti kožne tone
+TP_VIBRANCE_PSTHRESHOLD;Prag pastelnih/nasičenih tonov
+TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Prag nasičenja
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;Navpična os predstavlja pestelne tone spodaj in nasičene tone na vrhu.\nVodoravna os predstavlja obseg nasičenja.
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Utež prenosa pastelno/nasičeno
+TP_VIBRANCE_SATURATED;Nasičeni toni
+TP_VIGNETTING_AMOUNT;Količina
+TP_VIGNETTING_CENTER;Center
+TP_VIGNETTING_CENTER_X;Center X
+TP_VIGNETTING_CENTER_Y;Center Y
+TP_VIGNETTING_LABEL;Popravek vinjetiranja
+TP_VIGNETTING_RADIUS;Radij
+TP_VIGNETTING_STRENGTH;Moč
+TP_WAVELET_1;Nivo 1
+TP_WAVELET_2;Nivo 2
+TP_WAVELET_3;Nivo 3
+TP_WAVELET_4;Nivo 4
+TP_WAVELET_5;Nivo 5
+TP_WAVELET_6;Nivo 6
+TP_WAVELET_7;Nivo 7
+TP_WAVELET_8;Nivo 8
+TP_WAVELET_9;Nivo 9
+TP_WAVELET_APPLYTO;Uporabi na
+TP_WAVELET_AVOID;Izogibaj se pomiku barv
+TP_WAVELET_B0;Črna
+TP_WAVELET_B1;Siva
+TP_WAVELET_B2;Preostanek
+TP_WAVELET_BACKGROUND;Ozadje
+TP_WAVELET_BACUR;Krivulja
+TP_WAVELET_BALANCE;Ravnotežje kontrasta d/v-h
+TP_WAVELET_BALANCE_TOOLTIP;Spremeni ravnotežje med smermi valovčkov: navpično-vodoravno in diagonalno.\nČe so omogočeni kontrast, barvitost ali preostali prenos tonov, je učinek ojačan.
+TP_WAVELET_BALCHRO;Ravnotežje barvitosti
+TP_WAVELET_BALCHRO_TOOLTIP;Če je omogočen potem krivulja ravnotežja kontrasta ali drsnik tudi spreminja ravnotežje barvitosti.
+TP_WAVELET_BANONE;Nič
+TP_WAVELET_BASLI;Drsnik
+TP_WAVELET_BATYPE;Metoda ravnotežja kontrasta
+TP_WAVELET_CBENAB;Ravnotežje tonov in barve
+TP_WAVELET_CB_TOOLTIP;Za močne vrednosti barvno toniranje izdelka, če ga kombinirate ali ne s stopnjami razkroja 'toniranje'\nZa nizke vrednosti lahko spremenite ravnovesje beline v ozadju (nebo, ...), ne da bi spremenili stanje sprednje ravnine, na splošno bolj kontrastno
+TP_WAVELET_CCURVE;Lokalni kontrast
+TP_WAVELET_CH1;Obseg vse barvitosti
+TP_WAVELET_CH2;Nasičena/pastelna
+TP_WAVELET_CH3;Nivoji povezav kontrastov
+TP_WAVELET_CHCU;Krivulja
+TP_WAVELET_CHR;Moč povezave barvitosti in kontrasta
+TP_WAVELET_CHRO;Prag nasičenja/pastelnosti
+TP_WAVELET_CHRO_TOOLTIP;Nastavi nivo valovčkov, ki določa prag med nasičenimi in pastelnimi barvami.\n1-x: nasičene\nx-9: pastelne\n\nČe vrednost presega štvilo nivojev valovčkov, ki jih uporabljate, vrednost zanemarimo.
+TP_WAVELET_CHR_TOOLTIP;Prilagodi barvitost kot funkcijo "nivojev kontrasta" in "moč povezave barvitost-kontrast"
+TP_WAVELET_CHSL;Drsniki
+TP_WAVELET_CHTYPE;Metoda krominance
+TP_WAVELET_COLORT;Neprosojnost rdeče-zelene
+TP_WAVELET_COMPCONT;Kontrast
+TP_WAVELET_COMPGAMMA;Stiskanje game
+TP_WAVELET_COMPGAMMA_TOOLTIP;Prilagoditev game preostanka slike dovoljuje uravnoteženje podatkov in histograma.
+TP_WAVELET_COMPTM;Prenosna funkcija tonov
+TP_WAVELET_CONTEDIT;Krivulja kontrasta "Po"
+TP_WAVELET_CONTR;Barvni obseg
+TP_WAVELET_CONTRA;Kontrast
+TP_WAVELET_CONTRAST_MINUS;Kontrast -
+TP_WAVELET_CONTRAST_PLUS;Kontrast +
+TP_WAVELET_CONTRA_TOOLTIP;Spremeni kontrast preostanka slike.
+TP_WAVELET_CTYPE;Kontrola krominance
+TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Spremeni lokalni kontrast kot funkcijo izvirnega lokalnega kontrasta (abscisa).\nSpodnje vrednosti na abscisi predstavljajo majhne izvirne lokalne kontraste (vrednosti med 100 in 300).\n66% na abscisi predstavlja standardno deviacijo lokalnih kontrastov (vrednosti med 300 in 800)\n100% na abscisi pa predstavlja maksimalne lokalne kontraste (vrednosti med 3000 in 8000).
+TP_WAVELET_CURVEEDITOR_CH;Kontrast nivoji=f(Odtenek)
+TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Spremeni kontrast vsake stopnje kot funkcijo odtenka.\nPazite, da ne boste prepisali sprememb, izvedenih s krmilnimi odtenki podorodja Gamut.\nKrivulja bo imela učinek le, če so drsniki na ravni valovnih kontrastov brez ničle.
+TP_WAVELET_CURVEEDITOR_CL;L
+TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Uporabi končno krivuljo svetilnosti kontrasta na koncu obdelave z valovčki.
+TP_WAVELET_CURVEEDITOR_HH;HH
+TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Spremeni odtenek preostale slike kot funkcijo odtenka.
+TP_WAVELET_DALL;Vse smeri
+TP_WAVELET_DAUB;Performance robov
+TP_WAVELET_DAUB2;D2 - nizko
+TP_WAVELET_DAUB4;D4 - standard
+TP_WAVELET_DAUB6;D6 - standard plus
+TP_WAVELET_DAUB10;D10 - srednje
+TP_WAVELET_DAUB14;D14 - visoko
+TP_WAVELET_DAUB_TOOLTIP;Spremeni Daubechiesove koeficiente:\nD4 = Standardno,\nD14 = Pogosto najboljše, 10% bolj časovno zahetvno.\n\nVpliva na razpoznavanje robov kot tudi splošno kakovost prvih nivojev. Kljub temu splošna kakovost ni strogo odvisna od tega koeficienta in se lahko spremeni v odvisnosti od slik in uporabe.
+TP_WAVELET_DONE;Navpično
+TP_WAVELET_DTHR;Diagonalno
+TP_WAVELET_DTWO;Vodoravno
+TP_WAVELET_EDCU;Krivulja
+TP_WAVELET_EDGCONT;Lokalni kontrast
+TP_WAVELET_EDGCONT_TOOLTIP;Prilagoditev točk na levi zmanjšuje kontrast in na desni ga povečuje.\nSpodaj-levo, zgoraj-levo, zgoraj-desno in spodaj-desno predstavljajo lokalni kontrast za nizke vrednosti, povprečje, povprečje+stdev in maximum.
+TP_WAVELET_EDGE;Ostrina roba
+TP_WAVELET_EDGEAMPLI;Osnovno ojačenje
+TP_WAVELET_EDGEDETECT;Gradient občutljivosti
+TP_WAVELET_EDGEDETECTTHR;Spodnji prag (šum)
+TP_WAVELET_EDGEDETECTTHR2;Zgornji prag (občutljivost)
+TP_WAVELET_EDGEDETECTTHR_TOOLTIP;Ta prilagojevalnik omogoča ciljno detekcijo robov za izogibanje ostrine robov na finih podrobnostih kot npr. šum na nebu.
+TP_WAVELET_EDGEDETECT_TOOLTIP;Pomik drsnika na desno poveča občutljivost za robove. To vpliva na lokalni kontrast, nastavitve robov in šum.
+TP_WAVELET_EDGESENSI;Rob občutljivosti
+TP_WAVELET_EDGREINF_TOOLTIP;Ojači ali zmanjšaj vpliv prvega nivoja, nasprotni vpliv drugega nivoja, preostalo pusti nespremenjeno.
+TP_WAVELET_EDGTHRESH;Podrobnost
+TP_WAVELET_EDGTHRESH_TOOLTIP;Spremeni ponovne delitve med prvim nivojem in ostalimi. Višji kot je prag, več aktivnosti je osredotočeno na prve nivoje.Bodite previdni z negativnimi vrednostmi, ki povečaujejo aktivnosti visokih nivojev in lahko povzročajo artefakte.
+TP_WAVELET_EDRAD;Radij
+TP_WAVELET_EDRAD_TOOLTIP;Ta prilagoditev radija je bistveno drugačna kot pri drugih orodij ostrenja. Vrednost radija se primerja prek kompleksne funkcije z drugimi nivoji. Tako ima tudi vrednost 0 vpliv.
+TP_WAVELET_EDSL;Prag drsnikov
+TP_WAVELET_EDTYPE;Metoda Lokalnega kontrasta
+TP_WAVELET_EDVAL;Moč
+TP_WAVELET_FINAL;Končni poseg
+TP_WAVELET_FINEST;Najbolj fino
+TP_WAVELET_HIGHLIGHT;Obseg svetlosti bleščav
+TP_WAVELET_HS1;Celotni obseg svetlosti
+TP_WAVELET_HS2;Sence/bleščave
+TP_WAVELET_HUESKIN;Kožni odtenek
+TP_WAVELET_HUESKIN_TOOLTIP;Spodnje točke določajo začetek cone sprememb, zgornje točke pa konec, kjer so spremembe najmočnejše.\n\nČe morate področje bistveno premakniti ali pa se pojavljajo artefakti, potem <b>je ravnotežje beline napačno</b>.
+TP_WAVELET_HUESKY;Odtenek neba
+TP_WAVELET_HUESKY_TOOLTIP;Spodnje točke določajo začetek cone sprememb, zgornje točke pa konec, kjer so spremembe najmočnejše.\n\nČe morate področje bistveno premakniti ali pa se pojavljajo artefakti, potem <b>je ravnotežje beline napačno</b>.
+TP_WAVELET_ITER;Nivoji ravnotežja Delta
+TP_WAVELET_ITER_TOOLTIP;Levo: povečajne spodnje nivoje in zmanjšajte visoke nivoje,\nDesno: zmanjšajte nizke nivoje in povečajte visoke nivoje.
+TP_WAVELET_LABEL;Nivoji valovčkov
+TP_WAVELET_LARGEST;Najbolj grobo
+TP_WAVELET_LEVCH;Barvitost
+TP_WAVELET_LEVDIR_ALL;Vsi nivoji v vseh smereh
+TP_WAVELET_LEVDIR_INF;Pod ali enako nivoju
+TP_WAVELET_LEVDIR_ONE;En nivo
+TP_WAVELET_LEVDIR_SUP;Nad nivojem
+TP_WAVELET_LEVELS;Nivoji valovčkov
+TP_WAVELET_LEVELS_TOOLTIP;Izberi število nivojev podrobnosti slike, ki naj se razdeli. Več nivojev zahteva več RAMa in več časa obdelovanja.
+TP_WAVELET_LEVF;Kontrast
+TP_WAVELET_LEVLABEL;Predogled največ možnih nivojev = %1
+TP_WAVELET_LEVONE;Nivo 2
+TP_WAVELET_LEVTHRE;Nivo 4
+TP_WAVELET_LEVTWO;Nivo 3
+TP_WAVELET_LEVZERO;Nivo 1
+TP_WAVELET_LINKEDG;Povežo z močjo ostrine robov
+TP_WAVELET_LIPST;Izboljšan algoritem
+TP_WAVELET_LOWLIGHT;Obseg svetlosti senc
+TP_WAVELET_MEDGREINF;Prvi nivo
+TP_WAVELET_MEDI;Odstrani artefakte na modrem nebu
+TP_WAVELET_MEDILEV;Detekcija roba
+TP_WAVELET_MEDILEV_TOOLTIP;Kadar omogočite detekcijo robov, priporočamo:\n- onemogočanje nizkih nivojev kontrasta za izogibanje artefaktom,\n- uporabo visokih vrednosti gradienta občutljivosti.\n\nMoč lahko nastavljate z izboljšavo od 'Odstranjevanja šuma' do 'Olepševanja'.
+TP_WAVELET_NEUTRAL;Nevtralno
+TP_WAVELET_NOIS;Odstrani šum
+TP_WAVELET_NOISE;Odstrani šum in izpopolni
+TP_WAVELET_NPHIGH;Visoko
+TP_WAVELET_NPLOW;Nizko
+TP_WAVELET_NPNONE;Nič
+TP_WAVELET_NPTYPE;Sosednji piksli
+TP_WAVELET_NPTYPE_TOOLTIP;Ta algoritem uporablja bližino piksla in osem njegovih sosedov. Če je majhna razlika, so robovi ojačeni.
+TP_WAVELET_OPACITY;Neprosojnost modra-rumena
+TP_WAVELET_OPACITYW;Krivulja ravnotežja kontrasta d/v-h
+TP_WAVELET_OPACITYWL;Končni lokalni kontrast
+TP_WAVELET_OPACITYWL_TOOLTIP;Spremeni končni lokalni kontrast ob koncu obdelave z valovčki\n\nLeva stran predstavlja najmanjši lokalni kontrast, ki se povečuje in doseže največji kontrast na desni strani.
+TP_WAVELET_PASTEL;Pastelna barvitost
+TP_WAVELET_PROC;Obdelaj
+TP_WAVELET_RE1;Ojačeno
+TP_WAVELET_RE2;Nespremenjeno
+TP_WAVELET_RE3;Oslabljeno
+TP_WAVELET_RESCHRO;Barvitost
+TP_WAVELET_RESCON;Sence
+TP_WAVELET_RESCONH;Bleščave
+TP_WAVELET_RESID;Preostanek slike
+TP_WAVELET_SAT;Nasičena barvitost
+TP_WAVELET_SETTINGS;Nastavitev valovčkov
+TP_WAVELET_SKIN;Ciljna zaščita kože
+TP_WAVELET_SKIN_TOOLTIP;Pri -100 so odtenki kože ciljani.\nPri 0 so vsi toni obravnavani enako.\nPri +100 so kožni toni zaščiteni, vsi ostali pa spremenjeni.
+TP_WAVELET_SKY;Ciljna zaščita neba
+TP_WAVELET_SKY_TOOLTIP;Pri -100 so odtenki neba ciljani.\nPri 0 so vsi toni obravnavani enako.\nPri +100 so toni neba zaščiteni, vsi ostali pa spremenjeni.
+TP_WAVELET_STREN;Moč
+TP_WAVELET_STRENGTH;Moč
+TP_WAVELET_SUPE;Ekstra
+TP_WAVELET_THR;Prag senc
+TP_WAVELET_THRESHOLD;Nivoji bleščav
+TP_WAVELET_THRESHOLD2;Nivoji bleščav
+TP_WAVELET_THRESHOLD2_TOOLTIP;Sprememba svetlosti v sencah bo samo na nivojih od 9 do 9 minus vrednost. Ostali nivoji bodo obdelani. Najvišji možni nivo je omejen z nivojem bleščav (9 minus nivo bleščav).
+TP_WAVELET_THRESHOLD_TOOLTIP;Vpliv obsega lumninance bo samo na nivojih nad izbrano vrednostjo. Vsi ostali nivoji bodo obdelani. Izbrana vrednost omejuje najvišji možni nivo v sencah.
+TP_WAVELET_THRH;Prag bleščav
+TP_WAVELET_TILESBIG;Velike krpe
+TP_WAVELET_TILESFULL;Celotna slika
+TP_WAVELET_TILESIZE;Metoda pokrivanja
+TP_WAVELET_TILESLIT;Majhne krpe
+TP_WAVELET_TILES_TOOLTIP;Obdelava celotne slike zagotavlja boljšo kakovost in jo priporočamo, medtem ko je uporaba krp rezervna možnost za uporabnike z malo RAMa. Poglejte v RawPedio za potrebe po pomnilniku.
+TP_WAVELET_TMSTRENGTH;Compression strength
+TP_WAVELET_TMSTRENGTH_TOOLTIP;Upravlja z močjo tonske preslikave ali stiskanja kontrasta preostanka slike. Kadar je vrednost različna od 0, potem sta drsnika za moč in gamo posivela in onemogočena.
+TP_WAVELET_TMTYPE;Metode stiskanja
+TP_WAVELET_TON;Toniranje
+TP_WBALANCE_AUTO;Avto
+TP_WBALANCE_CAMERA;Camera
+TP_WBALANCE_CLOUDY;Oblačno
+TP_WBALANCE_CUSTOM;Po meri
+TP_WBALANCE_DAYLIGHT;Dnevna svetloba (sončno)
+TP_WBALANCE_EQBLUERED;Izenačevalnik modro/rdeče
+TP_WBALANCE_EQBLUERED_TOOLTIP;Dovoljuje drugačno obnašanje od običajnega "uravnoteževanja beline" z urejanjem ravnotežja med rdečo in modro.\nTo je uporabno, kadar so pogoji snemanja:\na) daleč od običajnih pogojev osvetlitve (npr. pod vodo)\nb) so daleč od pogojev, kjer so bile izvedene nastavitve,\nc) ali, kjer so matrike ali ICC profili neprimerni.
+TP_WBALANCE_FLASH55;Leica
+TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
+TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+TP_WBALANCE_FLASH_HEADER;Bliskavica
+TP_WBALANCE_FLUO1;F1 - Dnevna svetloba
+TP_WBALANCE_FLUO2;F2 - Hladna bela
+TP_WBALANCE_FLUO3;F3 - Bela
+TP_WBALANCE_FLUO4;F4 - Topla bela
+TP_WBALANCE_FLUO5;F5 - Dnevna svetloba
+TP_WBALANCE_FLUO6;F6 - Svetla bela
+TP_WBALANCE_FLUO7;F7 - D65 Simulator dnevne svetlobe
+TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
+TP_WBALANCE_FLUO9;F9 - De luxe hladna bela
+TP_WBALANCE_FLUO10;F10 - Philips TL85
+TP_WBALANCE_FLUO11;F11 - Philips TL84
+TP_WBALANCE_FLUO12;F12 - Philips TL83
+TP_WBALANCE_FLUO_HEADER;Fluorescent
+TP_WBALANCE_GREEN;Odtenek
+TP_WBALANCE_GTI;GTI
+TP_WBALANCE_HMI;HMI
+TP_WBALANCE_JUDGEIII;JudgeIII
+TP_WBALANCE_LABEL;Uravnoteženje beline
+TP_WBALANCE_LAMP_HEADER;Žarnica
+TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
+TP_WBALANCE_LED_HEADER;LED
+TP_WBALANCE_LED_LSI;LSI Lumelex 2040
+TP_WBALANCE_METHOD;Metoda
+TP_WBALANCE_PICKER;Poberi
+TP_WBALANCE_SHADE;Senca
+TP_WBALANCE_SIZE;Velikost:
+TP_WBALANCE_SOLUX35;Solux 3500K
+TP_WBALANCE_SOLUX41;Solux 4100K
+TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
+TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
+TP_WBALANCE_SPOTWB;Uporabi pipeto za pridobivanje ravnotežne beline iz nevtralnega dela slike v predogledu.
+TP_WBALANCE_TEMPBIAS;AWB pristranost temperature
+TP_WBALANCE_TEMPBIAS_TOOLTIP;Dovoljuje spremenjen izračun "avtomatičnega ravnotežja beline"\nz spremembo proti toplejšemu ali hladnejšemu spektru. \nPristranost je izražena z odstotkom od izračunane temperature\ntako da je rezultat izražen z "izračunanaTemp + izračunanaTemp * pristranost".
+TP_WBALANCE_TEMPERATURE;Temperatura
+TP_WBALANCE_TUNGSTEN;Tungsten
+TP_WBALANCE_WATER1;Podvodna 1
+TP_WBALANCE_WATER2;Podvodna 2
+TP_WBALANCE_WATER_HEADER;Pod vodo
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;Odpri (novo) okno s podrobnostmi
+ZOOMPANEL_ZOOM100;Zoom do 100%\nBližnjica: <b>z</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Prilagodi izrez zaslonu\nBližnjica: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Prilagodi celotno sliko zaslonu\nBližnjica: <b>Alt</b>-<b>f</b>
+ZOOMPANEL_ZOOMIN;Zoom In\nBližnjica: <b>+</b>
+ZOOMPANEL_ZOOMOUT;Zoom Out\nBližnjica: <b>-</b>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!GENERAL_HELP;Help
+!HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
+!HISTORY_MSG_TRANS_Method;Geometry - Method
+!TP_LENSGEOM_LIN;Linear
+!TP_LENSGEOM_LOG;Logarithmic
+!TP_SHARPENING_ITERCHECK;Auto limit iterations

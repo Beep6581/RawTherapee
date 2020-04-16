@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "exifpanel.h"
 
@@ -632,7 +632,7 @@ Glib::ustring ExifPanel::getSelection (bool onlyeditable)
 
     Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (rows[0]);
 
-    Glib::ustring ret = "";
+    Glib::ustring ret;
     bool first = true;
     bool editable = false;
 

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <sigc++/slot.h>
 #include "preferences.h"
@@ -24,8 +24,11 @@
 #include "addsetids.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
+#include "../rtengine/iccstore.h"
+#include "../rtengine/procparams.h"
 #include <sstream>
 #include "rtimage.h"
+#include "rtwindow.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -49,13 +52,13 @@ void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::stri
 }
 }
 
-extern Options options;
 extern Glib::ustring argv0;
 Glib::RefPtr<Gtk::CssProvider> themecss;
 Glib::RefPtr<Gtk::CssProvider> fontcss;
 
 Preferences::Preferences(RTWindow *rtwindow)
     : Gtk::Dialog(M("MAIN_BUTTON_PREFERENCES"), *rtwindow, true)
+    , regex(Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS))
     , splash(nullptr)
     , rprofiles(nullptr)
     , iprofiles(nullptr)
@@ -63,7 +66,6 @@ Preferences::Preferences(RTWindow *rtwindow)
     , newFont(false)
     , newCPFont(false)
 {
-    regex = Glib::Regex::create(THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
 
     moptions.copyFrom(&options);
 
@@ -126,7 +128,7 @@ Preferences::~Preferences()
     get_size(options.preferencesWidth, options.preferencesHeight);
 }
 
-int Preferences::getThemeRowNumber(Glib::ustring& longThemeFName)
+int Preferences::getThemeRowNumber (const Glib::ustring& longThemeFName)
 {
 
     if (regex->match(longThemeFName + ".css", matchInfo)) {
@@ -929,16 +931,32 @@ Gtk::Widget* Preferences::getGeneralPanel()
     workflowGrid->attach_next_to(*curveBBoxPosC, *editorLayout, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*curveBBoxPosRestartL, *lNextStart, Gtk::POS_BOTTOM, 1, 1);
 
+    Gtk::Label* complexityL = Gtk::manage(new Gtk::Label(M("PREFERENCES_COMPLEXITYLOC") + ":"));
+    setExpandAlignProperties(complexityL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    complexitylocal = Gtk::manage(new Gtk::ComboBoxText());
+    setExpandAlignProperties(complexitylocal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    complexitylocal->append(M("PREFERENCES_COMPLEXITY_EXP"));
+    complexitylocal->append(M("PREFERENCES_COMPLEXITY_CONF"));
+    complexitylocal->append(M("PREFERENCES_COMPLEXITY_NORM"));
+    complexitylocal->set_active(2);
+    Gtk::Label* complexitylocalRestartL = Gtk::manage(new Gtk::Label(Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")"));
+    setExpandAlignProperties(complexitylocalRestartL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    workflowGrid->attach_next_to(*complexityL, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*complexitylocal, *curveBBoxPosC, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*complexitylocalRestartL, *curveBBoxPosRestartL, Gtk::POS_BOTTOM, 1, 1);
+
+
+
     ckbHistogramPositionLeft = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_HISTOGRAMPOSITIONLEFT")));
     setExpandAlignProperties(ckbHistogramPositionLeft, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    workflowGrid->attach_next_to(*ckbHistogramPositionLeft, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*ckbHistogramPositionLeft, *complexityL, Gtk::POS_BOTTOM, 1, 1);
 
     ckbFileBrowserToolbarSingleRow = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")));
     setExpandAlignProperties(ckbFileBrowserToolbarSingleRow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     ckbShowFilmStripToolBar = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_SHOWFILMSTRIPTOOLBAR")));
     setExpandAlignProperties(ckbShowFilmStripToolBar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     workflowGrid->attach_next_to(*ckbFileBrowserToolbarSingleRow, *ckbHistogramPositionLeft, Gtk::POS_BOTTOM, 1, 1);
-    workflowGrid->attach_next_to(*ckbShowFilmStripToolBar, *curveBBoxPosC, Gtk::POS_BOTTOM, 2, 1);
+    workflowGrid->attach_next_to(*ckbShowFilmStripToolBar, *complexitylocal, Gtk::POS_BOTTOM, 2, 1);
 
     Gtk::Label* hb4label = Gtk::manage(new Gtk::Label(M("PREFERENCES_TP_LABEL")));
     setExpandAlignProperties(hb4label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
@@ -1792,6 +1810,7 @@ void Preferences::storePreferences()
     moptions.mainNBVertical = editorMode == 1;
 
     moptions.curvebboxpos = curveBBoxPosC->get_active_row_number();
+    moptions.complexity = complexitylocal->get_active_row_number();
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
@@ -2005,6 +2024,8 @@ void Preferences::fillPreferences()
     }
 
     curveBBoxPosC->set_active(moptions.curvebboxpos);
+    complexitylocal->set_active(moptions.complexity); 
+
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition == 1);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
     ckbShowFilmStripToolBar->set_active(moptions.showFilmStripToolBar);

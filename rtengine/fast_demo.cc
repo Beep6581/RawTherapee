@@ -18,18 +18,24 @@
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
 
 #include <cmath>
 #include "rawimagesource.h"
 #include "../rtgui/multilangmgr.h"
-#include "procparams.h"
 #include "opthelper.h"
 
 using namespace std;
 using namespace rtengine;
+
+namespace
+{
+unsigned fc(const unsigned int cfa[2][2], int r, int c) {
+    return cfa[r & 1][c & 1];
+}
+}
 
 #define TS 224
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,6 +73,7 @@ void RawImageSource::fast_demosaic()
     }
 
 
+    const unsigned int cfarray[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     const int bord = 5;
 
     float clip_pt = 4 * 65535 * initialGain;
@@ -117,12 +124,12 @@ void RawImageSource::fast_demosaic()
 
                         for (int i1 = imin; i1 < imax; i1++)
                             for (int j1 = jmin; j1 < j + 2; j1++) {
-                                int c = FC(i1, j1);
+                                int c = fc(cfarray, i1, j1);
                                 sum[c] += rawData[i1][j1];
                                 sum[c + 3]++;
                             }
 
-                        int c = FC(i, j);
+                        int c = fc(cfarray, i, j);
 
                         if (c == 1) {
                             red[i][j] = sum[0] / sum[3];
@@ -150,12 +157,12 @@ void RawImageSource::fast_demosaic()
 
                         for (int i1 = imin; i1 < imax; i1++)
                             for (int j1 = j - 1; j1 < jmax; j1++) {
-                                int c = FC(i1, j1);
+                                int c = fc(cfarray, i1, j1);
                                 sum[c] += rawData[i1][j1];
                                 sum[c + 3]++;
                             }
 
-                        int c = FC(i, j);
+                        int c = fc(cfarray, i, j);
 
                         if (c == 1) {
                             red[i][j] = sum[0] / sum[3];
@@ -193,12 +200,12 @@ void RawImageSource::fast_demosaic()
 
                         for (int i1 = max(0, i - 1); i1 < i + 2; i1++)
                             for (int j1 = j - 1; j1 < j + 2; j1++) {
-                                int c = FC(i1, j1);
+                                int c = fc(cfarray, i1, j1);
                                 sum[c] += rawData[i1][j1];
                                 sum[c + 3]++;
                             }
 
-                        int c = FC(i, j);
+                        int c = fc(cfarray, i, j);
 
                         if (c == 1) {
                             red[i][j] = sum[0] / sum[3];
@@ -224,12 +231,12 @@ void RawImageSource::fast_demosaic()
 
                         for (int i1 = i - 1; i1 < min(i + 2, H); i1++)
                             for (int j1 = j - 1; j1 < j + 2; j1++) {
-                                int c = FC(i1, j1);
+                                int c = fc(cfarray, i1, j1);
                                 sum[c] += rawData[i1][j1];
                                 sum[c + 3]++;
                             }
 
-                        int c = FC(i, j);
+                        int c = fc(cfarray, i, j);
 
                         if (c == 1) {
                             red[i][j] = sum[0] / sum[3];
@@ -282,7 +289,7 @@ void RawImageSource::fast_demosaic()
                 vmask selmask;
                 vmask andmask = _mm_set_epi32( 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff );
 
-                if(FC(top, left) == 1) {
+                if(fc(cfarray, top, left) == 1) {
                     selmask = _mm_set_epi32( 0, 0xffffffff, 0, 0xffffffff );
                 } else {
                     selmask = _mm_set_epi32( 0xffffffff, 0, 0xffffffff, 0 );
@@ -312,7 +319,7 @@ void RawImageSource::fast_demosaic()
 
                     for (; j < right; j++, cc++) {
 
-                        if (FC(i, j) == 1) {
+                        if (fc(cfarray, i, j) == 1) {
                             greentile[rr * TS + cc] = rawData[i][j];
 
                         } else {
@@ -333,7 +340,7 @@ void RawImageSource::fast_demosaic()
 #else
 
                     for (int j = left, cc = 0; j < right; j++, cc++) {
-                        if (FC(i, j) == 1) {
+                        if (fc(cfarray, i, j) == 1) {
                             greentile[rr * TS + cc] = rawData[i][j];
                         } else {
                             //compute directional weights using image gradients
@@ -359,7 +366,7 @@ void RawImageSource::fast_demosaic()
 #endif
 
                 for (int i = top + 1, rr = 1; i < bottom - 1; i++, rr++) {
-                    if (FC(i, left + (FC(i, 2) & 1) + 1) == 0)
+                    if (fc(cfarray, i, left + (fc(cfarray, i, 2) & 1) + 1) == 0)
 #ifdef __SSE2__
                         for (int j = left + 1, cc = 1; j < right - 1; j += 4, cc += 4) {
                             //interpolate B/R colors at R/B sites
@@ -369,7 +376,7 @@ void RawImageSource::fast_demosaic()
 
 #else
 
-                        for (int cc = (FC(i, 2) & 1) + 1, j = left + cc; j < right - 1; j += 2, cc += 2) {
+                        for (int cc = (fc(cfarray, i, 2) & 1) + 1, j = left + cc; j < right - 1; j += 2, cc += 2) {
                             //interpolate B/R colors at R/B sites
                             bluetile[rr * TS + cc] = greentile[rr * TS + cc] - 0.25f * ((greentile[(rr - 1) * TS + (cc - 1)] + greentile[(rr - 1) * TS + (cc + 1)] + greentile[(rr + 1) * TS + cc + 1] + greentile[(rr + 1) * TS + cc - 1]) -
                                                      min(clip_pt, rawData[i - 1][j - 1] + rawData[i - 1][j + 1] + rawData[i + 1][j + 1] + rawData[i + 1][j - 1]));
@@ -386,7 +393,7 @@ void RawImageSource::fast_demosaic()
 
 #else
 
-                        for (int cc = (FC(i, 2) & 1) + 1, j = left + cc; j < right - 1; j += 2, cc += 2) {
+                        for (int cc = (fc(cfarray, i, 2) & 1) + 1, j = left + cc; j < right - 1; j += 2, cc += 2) {
                             //interpolate B/R colors at R/B sites
                             redtile[rr * TS + cc] = greentile[rr * TS + cc] - 0.25f * ((greentile[(rr - 1) * TS + cc - 1] + greentile[(rr - 1) * TS + cc + 1] + greentile[(rr + 1) * TS + cc + 1] + greentile[(rr + 1) * TS + cc - 1]) -
                                                     min(clip_pt, rawData[i - 1][j - 1] + rawData[i - 1][j + 1] + rawData[i + 1][j + 1] + rawData[i + 1][j - 1]));
@@ -405,7 +412,7 @@ void RawImageSource::fast_demosaic()
                 for (int i = top + 2, rr = 2; i < bottom - 2; i++, rr++) {
 #ifdef __SSE2__
 
-                    for (int cc = 2 + (FC(i, 2) & 1), j = left + cc; j < right - 2; j += 4, cc += 4) {
+                    for (int cc = 2 + (fc(cfarray, i, 2) & 1), j = left + cc; j < right - 2; j += 4, cc += 4) {
                         // no need to take care about the borders of the tile. There's enough free space.
                         //interpolate R and B colors at G sites
                         greenv = LVFU(greentile[rr * TS + cc]);
@@ -429,7 +436,7 @@ void RawImageSource::fast_demosaic()
 
 #else
 
-                    for (int cc = 2 + (FC(i, 2) & 1), j = left + cc; j < right - 2; j += 2, cc += 2) {
+                    for (int cc = 2 + (fc(cfarray, i, 2) & 1), j = left + cc; j < right - 2; j += 2, cc += 2) {
                         //interpolate R and B colors at G sites
                         redtile[rr * TS + cc] = greentile[rr * TS + cc] - 0.25f * ((greentile[(rr - 1) * TS + cc] - redtile[(rr - 1) * TS + cc]) + (greentile[(rr + 1) * TS + cc] - redtile[(rr + 1) * TS + cc]) +
                                                 (greentile[rr * TS + cc - 1] - redtile[rr * TS + cc - 1]) + (greentile[rr * TS + cc + 1] - redtile[rr * TS + cc + 1]));
@@ -445,23 +452,23 @@ void RawImageSource::fast_demosaic()
 #ifdef __SSE2__
 
                     for (j = left + 2, cc = 2; j < right - 5; j += 4, cc += 4) {
-                        _mm_storeu_ps(&red[i][j], LVFU(redtile[rr * TS + cc]));
-                        _mm_storeu_ps(&green[i][j], LVFU(greentile[rr * TS + cc]));
-                        _mm_storeu_ps(&blue[i][j], LVFU(bluetile[rr * TS + cc]));
+                        _mm_storeu_ps(&red[i][j], vmaxf(LVFU(redtile[rr * TS + cc]), ZEROV));
+                        _mm_storeu_ps(&green[i][j], vmaxf(LVFU(greentile[rr * TS + cc]), ZEROV));
+                        _mm_storeu_ps(&blue[i][j], vmaxf(LVFU(bluetile[rr * TS + cc]), ZEROV));
                     }
 
                     for (; j < right - 2; j++, cc++) {
-                        red[i][j] = redtile[rr * TS + cc];
-                        green[i][j] = greentile[rr * TS + cc];
-                        blue[i][j] = bluetile[rr * TS + cc];
+                        red[i][j] = std::max(0.f, redtile[rr * TS + cc]);
+                        green[i][j] = std::max(0.f, greentile[rr * TS + cc]);
+                        blue[i][j] = std::max(0.f, bluetile[rr * TS + cc]);
                     }
 
 #else
 
                     for (int j = left + 2, cc = 2; j < right - 2; j++, cc++) {
-                        red[i][j] = redtile[rr * TS + cc];
-                        green[i][j] = greentile[rr * TS + cc];
-                        blue[i][j] = bluetile[rr * TS + cc];
+                        red[i][j] = std::max(0.f, redtile[rr * TS + cc]);
+                        green[i][j] = std::max(0.f, greentile[rr * TS + cc]);
+                        blue[i][j] = std::max(0.f, bluetile[rr * TS + cc]);
                     }
 
 #endif

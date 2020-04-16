@@ -14,16 +14,21 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 
 #include "colorappearance.h"
 
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "guiutils.h"
+#include "options.h"
+#include "rtimage.h"
 
 #include "../rtengine/color.h"
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 
 #define MINTEMP0 2000   //1200
 #define MAXTEMP0 12000  //12000
@@ -1560,7 +1565,7 @@ void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void ColorAppearance::adjusterAutoToggled(Adjuster* a, bool newval)
+void ColorAppearance::adjusterAutoToggled(Adjuster* a)
 {
     if (multiImage) {
         if (degree->getAutoInconsistent()) {

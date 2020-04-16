@@ -14,10 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _ICCMATRICES_
-#define _ICCMATRICES_
+#pragma once
 
 // Bradford transform between illuminants
 constexpr double d65_d50[3][3] =  {
@@ -296,4 +295,3 @@ constexpr double d50_best[3][3] = {
     {-0.253000840399762,  0.0215532098817316,1.22569552576991}
 };
  */
-#endif

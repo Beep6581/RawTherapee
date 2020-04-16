@@ -14,10 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THREADUTILS_
-#define _THREADUTILS_
+#pragma once
 
 // Uncomment this if you want to bypass the CMakeList options and force the values, but do not commit!
 //#undef TRACE_MYRWMUTEX
@@ -307,5 +306,3 @@ inline MyWriterLock::~MyWriterLock ()
 #define MYREADERLOCK_RELEASE(ln) ln.release();
 #define MYWRITERLOCK_RELEASE(ln) ln.release();
 #endif
-
-#endif /* _THREADUTILS_ */

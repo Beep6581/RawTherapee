@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef __GNUC__
@@ -33,6 +33,7 @@
 #include <locale.h>
 #include "../rtengine/procparams.h"
 #include "../rtengine/profilestore.h"
+#include "../rtengine/rtengine.h"
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
@@ -54,8 +55,6 @@
 
 // Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
 #define ECLIPSE_ARGS 0
-
-extern Options options;
 
 // stores path to data files
 Glib::ustring argv0;
@@ -256,7 +255,7 @@ int processLineParams ( int argc, char **argv )
 {
     rtengine::procparams::PartialProfile *rawParams = nullptr, *imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
-    Glib::ustring outputPath = "";
+    Glib::ustring outputPath;
     std::vector<rtengine::procparams::PartialProfile*> processingParams;
     bool outputDirectory = false;
     bool leaveUntouched = false;
@@ -271,7 +270,7 @@ int processLineParams ( int argc, char **argv )
     int subsampling = 3;
     int bits = -1;
     bool isFloat = false;
-    std::string outputType = "";
+    std::string outputType;
     unsigned errors = 0;
 
     for ( int iArg = 1; iArg < argc; iArg++) {

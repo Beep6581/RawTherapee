@@ -14,12 +14,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THRESHOLDADJUSTER_H_
-#define _THRESHOLDADJUSTER_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "editedstate.h"
 #include "guiutils.h"
 #include "thresholdselector.h"
@@ -160,5 +160,3 @@ public:
     // this set_tooltip_text method is to set_tooltip_markup, and text can contain markups
     void set_tooltip_text(const Glib::ustring& text);
 };
-
-#endif

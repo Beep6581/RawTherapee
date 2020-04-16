@@ -14,13 +14,20 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CIECAM02_
-#define _CIECAM02_
+#pragma once
+
 #include <cmath>
-#include "LUT.h"
+#include <cstdint>
+
 #include "opthelper.h"
+
+template<typename T>
+class LUT;
+
+using LUTu = LUT<uint32_t>;
+using LUTf = LUT<float>;
 
 namespace rtengine
 {
@@ -77,7 +84,7 @@ public:
      * Forward transform from XYZ to CIECAM02 JCh.
      */
     static void initcam1float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
-                               float &cz, float &aw, float &wh, float &pfl, float &fl, float &c);
+                               float &cz, float &aw, float &wh, float &pfl, float &fl, float c);
 
     static void initcam2float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                                float &cz, float &aw, float &fl);
@@ -106,4 +113,3 @@ public:
 
 };
 }
-#endif

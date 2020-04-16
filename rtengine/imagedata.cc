@@ -14,18 +14,25 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <functional>
+
 #include <strings.h>
-#include <glib/gstdio.h>
+
 #include <tiff.h>
 
+#include <glib/gstdio.h>
+
+#include <glibmm/convert.h>
+
 #include "imagedata.h"
-#include "iptcpairs.h"
 #include "imagesource.h"
-#include "rt_math.h"
+#include "iptcpairs.h"
 #include "procparams.h"
+#include "rt_math.h"
+#include "utils.h"
+#include "../rtexif/rtexif.h"
 
 #pragma GCC diagnostic warning "-Wextra"
 #define PRINT_HDR_PS_DETECTION 0
@@ -265,7 +272,6 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
         tag = exif->getTag("SubjectDistance");
 
         if (tag) {
-            int num, denom;
             tag->toRational(num, denom);
         } else {
             // Second try, XMP data
@@ -533,9 +539,8 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                         if (flt->toDouble() > 0) {
                             focal_len = flt->toDouble();
                         }
-                    } else if ((flt = mnote->getTagP("FocalLength"))) {
-                        rtexif::Tag* flt = mnote->getTag("FocalLength");
-                        focal_len = flt->toDouble();
+                    } else if ((flt = mnote->getTagP ("FocalLength"))) {
+                        focal_len = mnote->getTag("FocalLength")->toDouble ();
                     }
 
                     if (mnote->getTag("FocalLengthIn35mmFilm")) {

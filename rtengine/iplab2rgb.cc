@@ -14,16 +14,17 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "rtengine.h"
+#include "image8.h"
+#include "imagefloat.h"
+#include "labimage.h"
 #include "improcfun.h"
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "iccstore.h"
 #include "iccmatrices.h"
-#include "../rtgui/options.h"
 #include "settings.h"
-#include "curves.h"
 #include "alignedbuffer.h"
 #include "color.h"
 #include "procparams.h"
@@ -33,20 +34,12 @@ namespace rtengine
 
 extern void filmlike_clip(float *r, float *g, float *b);
 
-extern const Settings* settings;
-
 namespace {
 
 inline void copyAndClampLine(const float *src, unsigned char *dst, const int W)
 {
-    for (int j = 0, iy = 0; j < W; ++j) {
-        float r = src[iy] * MAXVALF;
-        float g = src[iy+1] * MAXVALF;
-        float b = src[iy+2] * MAXVALF;
-        dst[iy] = uint16ToUint8Rounded(CLIP(r));
-        dst[iy+1] = uint16ToUint8Rounded(CLIP(g));
-        dst[iy+2] = uint16ToUint8Rounded(CLIP(b));
-        iy += 3;
+    for (int j = 0; j < W * 3; ++j) {
+        dst[j] = uint16ToUint8Rounded(CLIP(src[j] * MAXVALF));
     }
 }
 
@@ -91,8 +84,8 @@ void ImProcFunctions::lab2monitorRgb(LabImage* lab, Image8* image)
 {
     if (monitorTransform) {
 
-        int W = lab->W;
-        int H = lab->H;
+        const int W = lab->W;
+        const int H = lab->H;
         unsigned char * data = image->data;
 
         // cmsDoTransform is relatively expensive
@@ -101,18 +94,19 @@ void ImProcFunctions::lab2monitorRgb(LabImage* lab, Image8* image)
 #endif
         {
             AlignedBuffer<float> pBuf(3 * lab->W);
-            AlignedBuffer<float> mBuf(3 * lab->W);
 
+            AlignedBuffer<float> mBuf;
             AlignedBuffer<float> gwBuf1;
             AlignedBuffer<float> gwBuf2;
 
             if (gamutWarning) {
                 gwBuf1.resize(3 * lab->W);
                 gwBuf2.resize(3 * lab->W);
+                mBuf.resize(3 * lab->W);
             }
 
             float *buffer = pBuf.data;
-            float *outbuffer = mBuf.data;
+            float *outbuffer = gamutWarning ? mBuf.data : pBuf.data; // make in place transformations when gamutWarning is not needed
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -133,7 +127,7 @@ void ImProcFunctions::lab2monitorRgb(LabImage* lab, Image8* image)
                     buffer[iy++] = rb[j] / 327.68f;
                 }
 
-                cmsDoTransform (monitorTransform, buffer, outbuffer, W);
+                cmsDoTransform(monitorTransform, buffer, outbuffer, W);
                 copyAndClampLine(outbuffer, data + ix, W);
 
                 if (gamutWarning) {
@@ -356,24 +350,19 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
-    double dx = Color::D50x;
-    double dz = Color::D50z;
-    {
-        dx = dz = 1.0;
-    }
     const float toxyz[3][3] = {
         {
-            static_cast<float>(wprof[0][0] / (dx * (normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
-            static_cast<float>(wprof[0][1] / (dx * (normalizeIn ? 65535.0 : 1.0))),
-            static_cast<float>(wprof[0][2] / (dx * (normalizeIn ? 65535.0 : 1.0)))
+            static_cast<float>(wprof[0][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
+            static_cast<float>(wprof[0][1] / ((normalizeIn ? 65535.0 : 1.0))),
+            static_cast<float>(wprof[0][2] / ((normalizeIn ? 65535.0 : 1.0)))
         }, {
             static_cast<float>(wprof[1][0] / (normalizeIn ? 65535.0 : 1.0)),
             static_cast<float>(wprof[1][1] / (normalizeIn ? 65535.0 : 1.0)),
             static_cast<float>(wprof[1][2] / (normalizeIn ? 65535.0 : 1.0))
         }, {
-            static_cast<float>(wprof[2][0] / (dz * (normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50z
-            static_cast<float>(wprof[2][1] / (dz * (normalizeIn ? 65535.0 : 1.0))),
-            static_cast<float>(wprof[2][2] / (dz * (normalizeIn ? 65535.0 : 1.0)))
+            static_cast<float>(wprof[2][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50z
+            static_cast<float>(wprof[2][1] / ((normalizeIn ? 65535.0 : 1.0))),
+            static_cast<float>(wprof[2][2] / ((normalizeIn ? 65535.0 : 1.0)))
         }
     };
 
@@ -381,7 +370,6 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     if (transform) {
         hTransform = transform;
     } else {
-
         double pwr = 1.0 / gampos;
         double ts = slpos;
         int five = mul;

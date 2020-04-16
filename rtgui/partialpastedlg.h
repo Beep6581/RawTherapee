@@ -14,13 +14,23 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PARTIALPASTEDLG_
-#define _PARTIALPASTEDLG_
+#pragma once
 
 #include <gtkmm.h>
-#include "../rtengine/rtengine.h"
+
+namespace rtengine
+{
+namespace procparams
+{
+
+class ProcParams;
+
+
+}
+
+}
 
 struct ParamsEdited;
 
@@ -96,7 +106,7 @@ private:
 };
 
 /* ==== PartialPasteDlg ==== */
-class PartialPasteDlg:
+class PartialPasteDlg final:
     public Gtk::Dialog,
     public PartialSpotWidgetListener
 {
@@ -208,6 +218,7 @@ public:
     Gtk::CheckButton* ff_ClipControl;
 
     Gtk::CheckButton* filmNegative;
+    Gtk::CheckButton* captureSharpening;
 
     sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, advancedConn;
     sigc::connection locallabConn;
@@ -220,6 +231,7 @@ public:
     sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn, ff_ClipControlConn;
     sigc::connection raw_caredblueConn, raw_ca_autocorrectConn, raw_ca_avoid_colourshiftconn, raw_hotpix_filtConn, raw_deadpix_filtConn, raw_pdaf_lines_filterConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_methodConn, raw_borderConn, raw_imagenumConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_pixelshiftConn, raw_dcb_enhanceConn, raw_exposConn, raw_blackConn;
     sigc::connection filmNegativeConn;
+    sigc::connection captureSharpeningConn;
 
 public:
     PartialPasteDlg (const Glib::ustring &title, Gtk::Window* parent);
@@ -240,6 +252,3 @@ public:
     void updateSpotWidget(const rtengine::procparams::ProcParams* pp);
     void partialSpotUpdated(const UpdateStatus status);
 };
-
-#endif
-

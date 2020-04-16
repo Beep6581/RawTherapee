@@ -14,28 +14,24 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
 #include <array>
 #include <ctime>
 #include <string>
+#include <memory>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include <lcms2.h>
 
 #include "iimage.h"
 #include "imageformat.h"
-#include "LUT.h"
 #include "procevents.h"
 #include "rawmetadatalocation.h"
-#include "rt_math.h"
 #include "settings.h"
-#include "utils.h"
-
-#include "../rtexif/rtexif.h"
 
 #include "../rtgui/threadutils.h"
 
@@ -46,7 +42,18 @@
  *
  */
 
+template<typename T>
+class LUT;
+
+using LUTu = LUT<uint32_t>;
+
 class EditDataProvider;
+namespace rtexif
+{
+
+class TagDirectory;
+
+}
 
 namespace rtengine
 {
@@ -376,8 +383,21 @@ public:
         double chromar;
     };
 
+    struct locallabRetiMinMax {
+        double cdma;
+        double cdmin;
+        double mini;
+        double maxi;
+        double Tmean;
+        double Tsigma;
+        double Tmin;
+        double Tmax;
+    };
+
     virtual ~LocallabListener() = default;
     virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
+    virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
+    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float targetg) = 0;
 };
 
 class AutoColorTonListener
@@ -427,6 +447,13 @@ class AutoContrastListener
 public :
     virtual ~AutoContrastListener() = default;
     virtual void autoContrastChanged (double autoContrast) = 0;
+};
+
+class AutoRadiusListener
+{
+public :
+    virtual ~AutoRadiusListener() = default;
+    virtual void autoRadiusChanged (double autoRadius) = 0;
 };
 
 class WaveletListener
@@ -513,7 +540,7 @@ public:
 
     virtual void        updateUnLock() = 0;
 
-    virtual void        setLocallabMaskVisibility(int locallColorMask, int locallExpMask, int locallSHMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask) = 0;
+    virtual void        setLocallabMaskVisibility(int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask) = 0;
 
     /** Creates and returns a Crop instance that acts as a window on the image
       * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber
@@ -539,6 +566,8 @@ public:
     virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
     virtual void        setBayerAutoContrastListener (AutoContrastListener* l) = 0;
     virtual void        setXtransAutoContrastListener (AutoContrastListener* l) = 0;
+    virtual void        setpdSharpenAutoContrastListener (AutoContrastListener* l) = 0;
+    virtual void        setpdSharpenAutoRadiusListener (AutoRadiusListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
@@ -552,7 +581,7 @@ public:
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;
     virtual void        setSoftProofing         (bool softProof, bool gamutCheck) = 0;
     virtual void        getSoftProofing         (bool &softProof, bool &gamutCheck) = 0;
-    virtual void        setSharpMask            (bool sharpMask) = 0;
+    virtual ProcEvent   setSharpMask            (bool sharpMask) = 0;
 
     virtual ~StagedImageProcessor () {}
 
@@ -570,7 +599,7 @@ public:
   * @param baseDir base directory of RT's installation dir
   * @param userSettingsDir RT's base directory in the user's settings dir
   * @param loadAll if false, don't load the various dependencies (profiles, HALDClut files, ...), they'll be loaded from disk each time they'll be used (launching time improvement) */
-int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll = true);
+int init (const Settings* s, const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir, bool loadAll = true);
 
 /** Cleanup the RT engine (static variables) */
 void cleanup ();

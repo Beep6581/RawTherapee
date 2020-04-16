@@ -14,10 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _POINTERMOTIONLISTENER_
-#define _POINTERMOTIONLISTENER_
+#pragma once
 
 class PointerMotionListener
 {
@@ -26,7 +25,7 @@ protected:
     sigc::signal<void> sig_cycle_hsv;
 
 public:
-    virtual ~PointerMotionListener() {}
+    virtual ~PointerMotionListener() = default;
     virtual void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) = 0;
     virtual void getRGBText (int r, int g, int b, Glib::ustring &sR, Glib::ustring &sG, Glib::ustring &sB, bool isRaw = false) { sR = "--"; sG = "--"; sB = "--"; }
     virtual void getHSVText (float h, float s, float v, Glib::ustring &sH, Glib::ustring &sS, Glib::ustring &sV) { sH = "--"; sS = "--"; sV = "--"; }
@@ -41,5 +40,3 @@ public:
         return sig_cycle_hsv;
     }
 };
-
-#endif

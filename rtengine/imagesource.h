@@ -14,27 +14,36 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
 #include <array>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
-#include "colortemp.h"
 #include "coord2d.h"
-#include "dcp.h"
-#include "image16.h"
-#include "image8.h"
 #include "imagedata.h"
-#include "imagefloat.h"
-#include "LUT.h"
 #include "rtengine.h"
+
+template<typename T>
+class LUT;
+
+using LUTf = LUT<float>;
+
+template<typename T, const size_t num>
+class multi_array2D;
 
 namespace rtengine
 {
+
+class ColorTemp;
+class DCPProfile;
+class DCPProfileApplyState;
+class Imagefloat;
+class RetinexgaintransmissionCurve;
+class RetinextransmissionCurve;
 
 namespace procparams
 {
@@ -46,8 +55,8 @@ struct LensProfParams;
 struct RAWParams;
 struct RetinexParams;
 struct ToneCurveParams;
-
-}
+struct CaptureSharpeningParams;
+};
 
 class ImageMatrices
 {
@@ -82,8 +91,8 @@ public:
     virtual int         load        (const Glib::ustring &fname) = 0;
     virtual void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) {};
     virtual void        filmNegativeProcess (const procparams::FilmNegativeParams &params) {};
-    virtual bool        getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams& currentParams, std::array<float, 3>& newExps) { return false; };
-    virtual void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold) {};
+    virtual bool        getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const procparams::FilmNegativeParams& currentParams, std::array<float, 3>& newExps) { return false; };
+    virtual void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache = false) {};
     virtual void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
     virtual void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) {};
     virtual void        retinexPrepareBuffers      (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
@@ -101,13 +110,13 @@ public:
 
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
-    virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hlp, const RAWParams &raw) = 0;
+    virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hlp, const procparams::RAWParams &raw) = 0;
     virtual eSensorType getSensorType () const = 0;
     virtual bool        isMono () const = 0;
     // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
     virtual bool        isWBProviderReady () = 0;
 
-    virtual void        convertColorSpace    (Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb) = 0; // DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
+    virtual void        convertColorSpace    (Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) = 0; // DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
     virtual void        getAutoWBMultipliers (double &rm, double &gm, double &bm) = 0;
     virtual ColorTemp   getWB       () const = 0;
     virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) = 0;
@@ -126,18 +135,18 @@ public:
 
     virtual ImageMatrices* getImageMatrices () = 0;
     virtual bool           isRAW () const = 0;
-    virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfile::ApplyState &as)
+    virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfileApplyState &as)
     {
         return nullptr;
     };
 
     virtual void        setProgressListener (ProgressListener* pl) {}
 
-    void        increaseRef () override
+    void        increaseRef () final
     {
         references++;
     }
-    void        decreaseRef () override
+    void        decreaseRef () final
     {
         references--;
 
@@ -165,15 +174,15 @@ public:
         return dirpyrdenoiseExpComp;
     }
     // functions inherited from the InitialImage interface
-    Glib::ustring getFileName () override
+    Glib::ustring getFileName () final
     {
         return fileName;
     }
-    cmsHPROFILE getEmbeddedProfile () override
+    cmsHPROFILE getEmbeddedProfile () final
     {
         return embProfile;
     }
-    const FramesMetaData* getMetaData () override
+    const FramesMetaData* getMetaData () final
     {
         return idata;
     }
@@ -182,6 +191,7 @@ public:
         return this;
     }
     virtual void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) = 0;
+    virtual void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) = 0;
 };
 
 }

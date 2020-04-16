@@ -14,21 +14,25 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PROFILECHANGELISTENER_
-#define _PROFILECHANGELISTENER_
+#pragma once
 
-#include <glibmm/ustring.h>
+namespace Glib
+{
 
-#include "../rtengine/rtengine.h"
+class ustring;
+
+}
 
 namespace rtengine
 {
+class ProcEvent;
 
 namespace procparams
 {
 
+class ProcParams;
 class PartialProfile;
 
 }
@@ -48,6 +52,3 @@ public:
     ) = 0;
     virtual void setDefaults(const rtengine::procparams::ProcParams* defparams) = 0;
 };
-
-#endif
-

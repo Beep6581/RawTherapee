@@ -14,11 +14,29 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "bqentryupdater.h"
-#include <gtkmm.h>
+
 #include "guiutils.h"
+#include "options.h"
+#include "thumbnail.h"
+#include "../rtengine/utils.h"
+
+namespace
+{
+
+void thumbInterp(const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
+{
+
+    if (options.thumbInterp == 0) {
+        rtengine::nearestInterp (src, sw, sh, dst, dw, dh);
+    } else if (options.thumbInterp == 1) {
+        rtengine::bilinearInterp (src, sw, sh, dst, dw, dh);
+    }
+}
+
+}
 
 BatchQueueEntryUpdater batchQueueEntryUpdater;
 
@@ -27,7 +45,7 @@ BatchQueueEntryUpdater::BatchQueueEntryUpdater ()
 {
 }
 
-void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams, Thumbnail* thumbnail)
+void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::procparams::ProcParams* pparams, Thumbnail* thumbnail)
 {
     if (!oimg && (!pparams || !thumbnail)) {
         //printf("WARNING! !oimg && (!pparams || !thumbnail)\n");
@@ -100,13 +118,12 @@ void BatchQueueEntryUpdater::processThread ()
             break;
         }
 
-        rtengine::IImage8* img = nullptr;
         bool newBuffer = false;
 
         if (current.thumbnail && current.pparams) {
             // the thumbnail and the pparams are provided, it means that we have to build the original preview image
             double tmpscale;
-            img = current.thumbnail->processThumbImage (*current.pparams, current.oh, tmpscale);
+            rtengine::IImage8* img = current.thumbnail->processThumbImage (*current.pparams, current.oh, tmpscale);
 
             //current.thumbnail->decreaseRef (); // WARNING: decreasing refcount (and maybe deleting) thumbnail, with or without processed image
             if (img) {

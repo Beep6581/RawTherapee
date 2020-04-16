@@ -22,13 +22,10 @@
 #define _CONTROLSPOTPANEL_H_
 
 #include "../rtengine/coord.h"
-#include "adjuster.h"
 #include "editcallbacks.h"
-#include "guiutils.h"
 #include "threadutils.h"
 #include "toolpanel.h"
-#include <gtkmm.h>
-#include <string>
+#include "adjuster.h"
 
 class ControlSpotPanel:
     public ToolParamBlock,
@@ -47,7 +44,6 @@ public:
         int spotMethod; // 0 = Normal, 1 = Excluding
         int sensiexclu;
         int structexclu;
-        double struc;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         int locX;
         int locXL;
@@ -57,13 +53,26 @@ public:
         int centerY;
         int circrad;
         int qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
-        int transit;
+        double transit;
+        double transitweak;
+        double transitgrad;
+        double feather;
+        double struc;
         double thresh;
         double iter;
         double balan;
-        double transitweak;
-        double transitgrad;
+        double balanh;
+        double colorde;
         bool avoid;
+        bool recurs;
+        bool laplac;
+        bool deltae;
+        int scopemask;
+        bool shortc;
+        int lumask;
+        bool savrest;
+        int complexMethod; // 0 = Simple, 1 = Moderate, 2 = all
+        int wavMethod; // 0 = D2, 1 = D4, 2 = D6, 3 = D10, 4 = D14
     };
 
     /**
@@ -190,9 +199,19 @@ private:
     void spotMethodChanged();
     void shapeMethodChanged();
     void qualityMethodChanged();
+    void complexMethodChanged();
+    void wavMethodChanged();
+
     void updateParamVisibility();
+
     void adjusterChanged(Adjuster* a, double newval);
+
     void avoidChanged();
+    void recursChanged();
+    void laplacChanged();
+    void deltaeChanged();
+    void shortcChanged();
+    void savrestChanged();
 
     void disableParamlistener(bool cond);
 
@@ -222,7 +241,6 @@ private:
         Gtk::TreeModelColumn<int> spotMethod; // 0 = Normal, 1 = Excluding
         Gtk::TreeModelColumn<int> sensiexclu;
         Gtk::TreeModelColumn<int> structexclu;
-        Gtk::TreeModelColumn<double> struc;
         Gtk::TreeModelColumn<int> shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         Gtk::TreeModelColumn<int> locX;
         Gtk::TreeModelColumn<int> locXL;
@@ -232,13 +250,26 @@ private:
         Gtk::TreeModelColumn<int> centerY;
         Gtk::TreeModelColumn<int> circrad;
         Gtk::TreeModelColumn<int> qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
-        Gtk::TreeModelColumn<int> transit;
+        Gtk::TreeModelColumn<double> transit;
+        Gtk::TreeModelColumn<double> transitweak;
+        Gtk::TreeModelColumn<double> transitgrad;
+        Gtk::TreeModelColumn<double> feather;
+        Gtk::TreeModelColumn<double> struc;
         Gtk::TreeModelColumn<double> thresh;
         Gtk::TreeModelColumn<double> iter;
         Gtk::TreeModelColumn<double> balan;
-        Gtk::TreeModelColumn<double> transitweak;
-        Gtk::TreeModelColumn<double> transitgrad;
+        Gtk::TreeModelColumn<double> balanh;
+        Gtk::TreeModelColumn<double> colorde;
         Gtk::TreeModelColumn<bool> avoid;
+        Gtk::TreeModelColumn<bool> recurs;
+        Gtk::TreeModelColumn<bool> laplac;
+        Gtk::TreeModelColumn<bool> deltae;
+        Gtk::TreeModelColumn<int> scopemask;
+        Gtk::TreeModelColumn<bool> shortc;
+        Gtk::TreeModelColumn<int> lumask;
+        Gtk::TreeModelColumn<bool> savrest;
+        Gtk::TreeModelColumn<int> complexMethod; // 0 = Simple, 1 = mod, 2 = all
+        Gtk::TreeModelColumn<int> wavMethod; // 0 = D2, 1 = D4, 2 = D6, 3 = D10, 4 = D14
     };
 
     class RenameDialog:
@@ -285,10 +316,13 @@ private:
     sigc::connection shapeMethodconn_;
     MyComboBoxText* const qualityMethod_;
     sigc::connection qualityMethodconn_;
+    MyComboBoxText* const complexMethod_;
+    sigc::connection complexMethodconn_;
+    MyComboBoxText* const wavMethod_;
+    sigc::connection wavMethodconn_;
 
     Adjuster* const sensiexclu_;
     Adjuster* const structexclu_;
-    Adjuster* const struc_;
     Adjuster* const locX_;
     Adjuster* const locXL_;
     Adjuster* const locY_;
@@ -297,14 +331,30 @@ private:
     Adjuster* const centerY_;
     Adjuster* const circrad_;
     Adjuster* const transit_;
+    Adjuster* const transitweak_;
+    Adjuster* const transitgrad_;
+    Adjuster* const feather_;
+    Adjuster* const struc_;
     Adjuster* const thresh_;
     Adjuster* const iter_;
     Adjuster* const balan_;
-    Adjuster* const transitweak_;
-    Adjuster* const transitgrad_;
+    Adjuster* const balanh_;
+    Adjuster* const colorde_;
+    Adjuster* const scopemask_;
+    Adjuster* const lumask_;
 
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;
+    Gtk::CheckButton* const recurs_;
+    sigc::connection recursConn_;
+    Gtk::CheckButton* const laplac_;
+    sigc::connection laplacConn_;
+    Gtk::CheckButton* const deltae_;
+    sigc::connection deltaeConn_;
+    Gtk::CheckButton* const shortc_;
+    sigc::connection shortcConn_;
+    Gtk::CheckButton* const savrest_;
+    sigc::connection savrestConn_;
 
     // Internal variables
     int lastObject_;

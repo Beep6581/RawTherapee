@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 #include <iomanip>
@@ -69,17 +69,18 @@ void EdgePreservingDecompositionUI::read(const ProcParams *pp, const ParamsEdite
 
     setEnabled(pp->epd.enabled);
     strength->set_sensitive (true);
-
-    if(pp->wavelet.enabled) {
-        if(pp->wavelet.tmrs == 0) {
+    gamma->set_sensitive (true);
+/*
+    if(pp->wavelet.enabled) { 
+        if(pp->wavelet.tmrs == 0 || pp->wavelet.TMmethod == "cont") {
             strength->set_sensitive (true);
             gamma->set_sensitive (true);
-        } else {
+        } else if(pp->wavelet.tmrs != 0 && pp->wavelet.TMmethod == "tm") {
             strength->set_sensitive (false);
             gamma->set_sensitive (false);
         }
     }
-
+*/
     strength->setValue(pp->epd.strength);
     gamma->setValue(pp->epd.gamma);
     edgeStopping->setValue(pp->epd.edgeStopping);
@@ -98,17 +99,18 @@ void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
     pp->epd.reweightingIterates = reweightingIterates->getValue();
     pp->epd.enabled = getEnabled();
     strength->set_sensitive (true);
-
-    if(pp->wavelet.enabled) {
-        if(pp->wavelet.tmrs == 0) {
+    gamma->set_sensitive (true);
+/*
+    if(pp->wavelet.enabled) { 
+        if(pp->wavelet.tmrs == 0 || pp->wavelet.TMmethod == "cont") {
             strength->set_sensitive (true);
             gamma->set_sensitive (true);
-        } else {
+        } else if(pp->wavelet.tmrs != 0 && pp->wavelet.TMmethod == "tm") {
             strength->set_sensitive (false);
             gamma->set_sensitive (false);
         }
     }
-
+*/
     if(pedited) {
         pedited->epd.strength = strength->getEditedState();
         pedited->epd.gamma = gamma->getEditedState();

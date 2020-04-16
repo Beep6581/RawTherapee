@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "bayerprocess.h"
 
@@ -23,6 +23,7 @@
 #include "options.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -671,7 +672,7 @@ void BayerProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
     }
 }
 
-void BayerProcess::adjusterAutoToggled(Adjuster* a, bool newval)
+void BayerProcess::adjusterAutoToggled(Adjuster* a)
 {
     if (multiImage) {
         if (dualDemosaicContrast->getAutoInconsistent()) {
@@ -729,7 +730,7 @@ void BayerProcess::FrameCountChanged(int n, int frameNum)
 
             imageNumber->remove_all();
             imageNumber->append("1");
-            for (int i = 2; i <= std::min(n, 4); ++i) {
+            for (int i = 2; i <= std::min(n, 6); ++i) {
                 std::ostringstream entry;
                 entry << i;
                 imageNumber->append(entry.str());

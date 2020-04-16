@@ -14,21 +14,31 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __TOOLPANEL__
-#define __TOOLPANEL__
+#pragma once
 
 #include <gtkmm.h>
-#include <glibmm.h>
-#include "../rtengine/rtengine.h"
-#include "editbuffer.h"
+
+#include <glibmm/ustring.h>
+
 #include "guiutils.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"
 
-class ToolPanel;
-class FoldableToolPanel;
+#include "../rtengine/noncopyable.h"
+#include "../rtengine/rtengine.h"
+
+namespace rtengine
+{
+    class ProcEvent;
+
+namespace procparams
+{
+
+class ProcParams;
+}
+}
 
 class ToolPanelListener
 {
@@ -38,20 +48,23 @@ public:
 };
 
 /// @brief This class control the space around the group of tools inside a tab, as well as the space separating each tool. */
-class ToolVBox : public Gtk::VBox
+class ToolVBox :
+    public Gtk::VBox
 {
 public:
     ToolVBox();
 };
 
 /// @brief This class control the space around a tool's block of parameter. */
-class ToolParamBlock : public Gtk::VBox
+class ToolParamBlock :
+    public Gtk::VBox
 {
 public:
     ToolParamBlock();
 };
 
-class ToolPanel
+class ToolPanel :
+    public rtengine::NonCopyable
 {
 
 protected:
@@ -130,12 +143,13 @@ public:
         this->batchMode = batchMode;
     }
 
-    virtual Glib::ustring getToolName () {
+    Glib::ustring getToolName () {
         return toolName;
     }
 };
 
-class FoldableToolPanel : public ToolPanel
+class FoldableToolPanel :
+    public ToolPanel
 {
 
 protected:
@@ -150,11 +164,11 @@ public:
 
     FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, bool useEnabled = false);
 
-    MyExpander* getExpander() override
+    MyExpander* getExpander() final
     {
         return exp;
     }
-    void setExpanded (bool expanded) override
+    void setExpanded (bool expanded) final
     {
         if (exp) {
             exp->set_expanded( expanded );
@@ -172,7 +186,7 @@ public:
             exp->show();
         }
     }
-    bool getExpanded () override
+    bool getExpanded () final
     {
         if (exp) {
             return exp->get_expanded();
@@ -180,11 +194,11 @@ public:
 
         return false;
     }
-    void setParent (Gtk::Box* parent) override
+    void setParent (Gtk::Box* parent) final
     {
         parentContainer = parent;
     }
-    Gtk::Box* getParent () override
+    Gtk::Box* getParent () final
     {
         return parentContainer;
     }
@@ -217,5 +231,3 @@ public:
         return exp->signal_enabled_toggled();
     }
 };
-
-#endif

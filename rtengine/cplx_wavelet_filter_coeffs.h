@@ -12,12 +12,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  2012 Emil Martinec <ejmartin@uchicago.edu>
  *  2014 Jacques Desmis <jdesmis@gmail.com>
  */
-
+#pragma once
 
 namespace rtengine
 {
@@ -49,6 +49,13 @@ const float Daub4_anal16[2][16] ALIGNED16 = {//Daub 14
     { -0.0002501134f,  -0.0012739524f, -0.0003037575f, 0.008874895f, 0.01171997f , -0.026891225f, -0.057001725f, 0.05042335f, 0.158417505f, -0.10175691f, -0.33218624f, 0.515574245f, -0.28039564f, 0.055049715f, 0.f, 0.f}
 };
 
-// if necessary ?? we can add D20 !!
+const float Daub4_anal22[2][22] ALIGNED16 = {//Daub 20
+    {0.f, 0.f, 0.01885858f, 0.13306109f, 0.37278535f, 0.48681406f, 0.19881887f, -0.1766681f, -0.13855494f, 0.09006372f, 0.0658015f, -0.05048328f, -0.02082962f,
+    0.0234849f, 0.002550218f, -0.0075895f,  0.0009866627f, 0.001408843f, -0.000484973f, -0.0000823545f, 0.0000661271f, -0.00000939f},
+    {0.00000939f, -0.0000661271f, 0.0000823545f, 0.000484973f, -0.001408843f,  -0.0009866627f, 0.0075895f, -0.002550218f, -0.0234849f,
+    0.02082962f, 0.05048328f, -0.0658015f, -0.09006372f, 0.13855494f, 0.1766681f, -0.19881887f, -0.48681406f, -0.37278535f, -0.13306109f, -0.01885858f, 0.f, 0.f}
+};
+
+// if necessary ?? we can add D20 !! 
 }
 

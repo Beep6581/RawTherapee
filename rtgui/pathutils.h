@@ -14,21 +14,11 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __PATH_UTILS_
-#define __PATH_UTILS_
-
-#include <gtkmm.h>
-#include <cairomm/cairomm.h>
-#include "../rtengine/rtengine.h"
-#include "../rtengine/coord.h"
-#include "rtimage.h"
-#include <sstream>
-#include <iostream>
+#pragma once
+#include <glibmm/ustring.h>
 
 // Removed from guiutils because used by rawtherapee-cli
 Glib::ustring removeExtension (const Glib::ustring& filename);
 Glib::ustring getExtension (const Glib::ustring& filename);
-
-#endif

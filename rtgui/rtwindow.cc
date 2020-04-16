@@ -14,17 +14,25 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <gtkmm.h>
 #include "rtwindow.h"
-#include "options.h"
+#include "cachemanager.h"
 #include "preferences.h"
 #include "iccprofilecreator.h"
 #include "cursormanager.h"
+#include "editwindow.h"
 #include "rtimage.h"
+#include "thumbnail.h"
 #include "whitebalance.h"
+#include "../rtengine/settings.h"
+#include "batchqueuepanel.h"
+#include "batchqueueentry.h"
+#include "editorpanel.h"
+#include "filepanel.h"
+#include "filmsimulation.h"
 
 float fontScale = 1.f;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
@@ -36,14 +44,14 @@ extern unsigned char initialGdkScale;
 static gboolean
 osx_should_quit_cb (GtkosxApplication *app, gpointer data)
 {
-    RTWindow *rtWin = (RTWindow *)data;
+    RTWindow * const rtWin = static_cast<RTWindow*>(data);
     return rtWin->on_delete_event (0);
 }
 
 static void
 osx_will_quit_cb (GtkosxApplication *app, gpointer data)
 {
-    RTWindow *rtWin = (RTWindow *)data;
+    RTWindow *rtWin = static_cast<RTWindow*>(data);
     rtWin->on_delete_event (0);
     gtk_main_quit ();
 }
@@ -67,7 +75,7 @@ bool RTWindow::osxFileOpenEvent (Glib::ustring path)
 static gboolean
 osx_open_file_cb (GtkosxApplication *app, gchar *path_, gpointer data)
 {
-    RTWindow *rtWin = (RTWindow *)data;
+    RTWindow *rtWin = static_cast<RTWindow*>(data);
 
     if (!argv1.empty()) {
         // skip handling if we have a file argument or else we get double open of same file
@@ -95,6 +103,9 @@ RTWindow::RTWindow ()
     , fpanel (nullptr)
 {
 
+    if (options.is_new_version()) {
+        RTImage::cleanup(true);
+    }
     cacheMgr->init ();
     ProfilePanel::init (this);
 
@@ -165,16 +176,16 @@ RTWindow::RTWindow ()
             #endif
             //GTK318
             if (options.pseudoHiDPISupport) {
-            	fontScale = options.fontSize / (float)RTScalable::baseFontSize;
+                fontScale = options.fontSize / (float)RTScalable::baseFontSize;
             }
-            if (options.rtSettings.verbose) {
+            if (rtengine::settings->verbose) {
                 printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
             }
         } else {
             Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
             Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
-            int pt;
             if (pfd.get_set_fields() & Pango::FONT_MASK_SIZE) {
+                int pt;
                 int fontSize = pfd.get_size();
                 bool isPix = pfd.get_size_is_absolute();
                 int resolution = (int)style->get_screen()->get_resolution();
@@ -193,18 +204,18 @@ RTWindow::RTWindow ()
                     pt = fontSize / Pango::SCALE;
                 }
                 if (options.pseudoHiDPISupport) {
-                	fontScale = (float)pt / (float)RTScalable::baseFontSize;
+                    fontScale = (float)pt / (float)RTScalable::baseFontSize;
                 }
                 if ((int)initialGdkScale > 1 || pt != RTScalable::baseFontSize) {
                     css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
-                    if (options.rtSettings.verbose) {
+                    if (rtengine::settings->verbose) {
                         printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, fontScale);
                     }
                 }
             }
         }
         if (!css.empty()) {
-            if (options.rtSettings.verbose) {
+            if (rtengine::settings->verbose) {
                 printf("CSS:\n%s\n\n", css.c_str());
             }
             try {
@@ -220,13 +231,6 @@ RTWindow::RTWindow ()
             }
         }
     }
-
-#ifndef NDEBUG
-    else if (!screen) {
-        printf ("ERROR: Can't get default screen!\n");
-    }
-
-#endif
 
     // ------- end loading theme files
 
@@ -254,8 +258,6 @@ RTWindow::RTWindow ()
 #if defined(__APPLE__)
     {
         osxApp  = (GtkosxApplication *)g_object_new (GTKOSX_TYPE_APPLICATION, NULL);
-        gboolean falseval = FALSE;
-        gboolean trueval = TRUE;
         RTWindow *rtWin = this;
         g_signal_connect (osxApp, "NSApplicationBlockTermination", G_CALLBACK (osx_should_quit_cb), rtWin);
         g_signal_connect (osxApp, "NSApplicationWillTerminate",  G_CALLBACK (osx_will_quit_cb), rtWin);
@@ -381,8 +383,13 @@ RTWindow::RTWindow ()
         iccProfileCreator->set_tooltip_markup (M ("MAIN_BUTTON_ICCPROFCREATOR"));
         iccProfileCreator->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showICCProfileCreator) );
 
-        //Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));   // unused... but fail to be linked anyway !?
-        //Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
+        Gtk::Button* helpBtn = Gtk::manage (new Gtk::Button ());
+        setExpandAlignProperties (helpBtn, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        helpBtn->set_relief(Gtk::RELIEF_NONE);
+        helpBtn->set_image (*Gtk::manage (new RTImage ("questionmark.png")));
+        helpBtn->set_tooltip_markup (M ("GENERAL_HELP"));
+        helpBtn->signal_clicked().connect (sigc::mem_fun (*this, &RTWindow::showRawPedia));
+
         Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (preferences, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         preferences->set_relief(Gtk::RELIEF_NONE);
@@ -390,7 +397,6 @@ RTWindow::RTWindow ()
         preferences->set_tooltip_markup (M ("MAIN_BUTTON_PREFERENCES"));
         preferences->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showPreferences) );
 
-        //btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
         btn_fullscreen = Gtk::manage ( new Gtk::Button());
         setExpandAlignProperties (btn_fullscreen, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         btn_fullscreen->set_relief(Gtk::RELIEF_NONE);
@@ -412,6 +418,7 @@ RTWindow::RTWindow ()
             actionGrid->set_orientation (Gtk::ORIENTATION_VERTICAL);
             actionGrid->attach_next_to (prProgBar, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*iccProfileCreator, Gtk::POS_BOTTOM, 1, 1);
+            actionGrid->attach_next_to (*helpBtn, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*preferences, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*btn_fullscreen, Gtk::POS_BOTTOM, 1, 1);
             mainNB->set_action_widget (actionGrid, Gtk::PACK_END);
@@ -420,6 +427,7 @@ RTWindow::RTWindow ()
             actionGrid->set_orientation (Gtk::ORIENTATION_HORIZONTAL);
             actionGrid->attach_next_to (prProgBar, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*iccProfileCreator, Gtk::POS_RIGHT, 1, 1);
+            actionGrid->attach_next_to (*helpBtn, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*preferences, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*btn_fullscreen, Gtk::POS_RIGHT, 1, 1);
             mainNB->set_action_widget (actionGrid, Gtk::PACK_END);
@@ -455,10 +463,9 @@ RTWindow::~RTWindow()
     g_object_unref (osxApp);
 #endif
 
-    if (fpanel) {
-        delete fpanel;
-    }
-
+    delete fpanel;
+    delete iFullscreen;
+    delete iFullscreen_exit;
     RTImage::cleanup();
 }
 
@@ -477,16 +484,8 @@ void RTWindow::on_realize ()
     mainWindowCursorManager.init (get_window());
 
     // Display release notes only if new major version.
-    // Pattern matches "5.1" from "5.1-23-g12345678"
-    const std::string vs[] = {versionString, options.version};
-    std::vector<std::string> vMajor;
-
-    for (const auto& v : vs) {
-        vMajor.emplace_back(v, 0, v.find_first_not_of("0123456789."));
-    }
-
     bool waitForSplash = false;
-    if (vMajor.size() == 2 && vMajor[0] != vMajor[1]) {
+    if (options.is_new_version()) {
         // Update the version parameter with the right value
         options.version = versionString;
 
@@ -659,8 +658,8 @@ void RTWindow::remEditorPanel (EditorPanel* ep)
 
             set_title_decorated ("");
         } else {
-            EditorPanel* ep = static_cast<EditorPanel*> (mainNB->get_nth_page (mainNB->get_current_page()));
-            set_title_decorated (ep->getFileName());
+            const EditorPanel* lep = static_cast<EditorPanel*> (mainNB->get_nth_page (mainNB->get_current_page()));
+            set_title_decorated (lep->getFileName());
         }
 
         // TODO: ask what to do: close & apply, close & apply selection, close & revert, cancel
@@ -920,6 +919,12 @@ void RTWindow::writeToolExpandedStatus (std::vector<int> &tpOpen)
 }
 
 
+void RTWindow::showRawPedia()
+{
+    GError* gerror = nullptr;
+    gtk_show_uri(nullptr, "https://rawpedia.rawtherapee.com/", GDK_CURRENT_TIME, &gerror);
+}
+
 void RTWindow::showICCProfileCreator ()
 {
     ICCProfileCreator *iccpc = new ICCProfileCreator (this);
@@ -1173,4 +1178,9 @@ void RTWindow::createSetmEditor()
     epanel->tbTopPanel_1_visible (true); //show the toggle Top Panel button
     mainNB->append_page (*epanel, *editorLabelGrid);
 
+}
+
+bool RTWindow::isSingleTabMode() const
+{
+    return !options.tabbedUI && ! (options.multiDisplayMode > 0);
 }

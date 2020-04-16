@@ -14,13 +14,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _MYTIME_
-#define _MYTIME_
+#pragma once
 
 #ifdef WIN32
-#include <windows.h>
+#include <profileapi.h>
 #elif defined __APPLE__
 #include <sys/time.h>
 #else
@@ -58,11 +57,11 @@ public:
         t.tv_sec = tv.tv_sec;
         t.tv_nsec = tv.tv_usec * 1000;
 #else
-        clock_gettime (CLOCK_REALTIME, &t);
+        clock_gettime(CLOCK_REALTIME, &t);
 #endif
     }
 
-    int etime (MyTime a)
+    int etime (const MyTime &a) const
     {
 #ifndef WIN32
         return (t.tv_sec - a.t.tv_sec) * 1000000 + (t.tv_nsec - a.t.tv_nsec) / 1000;
@@ -71,6 +70,3 @@ public:
 #endif
     }
 };
-
-
-#endif

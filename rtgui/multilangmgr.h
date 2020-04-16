@@ -14,10 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _MULTILANGMGR_
-#define _MULTILANGMGR_
+#pragma once
 
 #include <map>
 #include <string>
@@ -45,5 +44,3 @@ inline Glib::ustring M (const std::string& key)
 {
     return langMgr.getStr (key);
 }
-
-#endif

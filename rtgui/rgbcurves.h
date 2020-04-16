@@ -14,19 +14,24 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _RGBCURVES_H_
-#define _RGBCURVES_H_
+#pragma once
 
 #include <gtkmm.h>
-#include "adjuster.h"
-#include "toolpanel.h"
-#include "curveeditor.h"
-#include "curveeditorgroup.h"
-#include "colorprovider.h"
 
-class RGBCurves : public ToolParamBlock, public FoldableToolPanel, public CurveListener, public ColorProvider
+#include "colorprovider.h"
+#include "curvelistener.h"
+#include "toolpanel.h"
+
+class CurveEditorGroup;
+class DiagonalCurveEditor;
+
+class RGBCurves final :
+    public ToolParamBlock,
+    public FoldableToolPanel,
+    public CurveListener,
+    public ColorProvider
 {
 
 protected:
@@ -66,5 +71,3 @@ public:
     void lumamodeChanged  ();
     void enabledChanged() override;
 };
-
-#endif

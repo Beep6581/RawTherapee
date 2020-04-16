@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "filecatalog.h"
 
@@ -25,21 +25,25 @@
 #include <glib/gstdio.h>
 
 #include "../rtengine/rt_math.h"
+#include "../rtengine/procparams.h"
 
 #include "guiutils.h"
 #include "options.h"
 #include "rtimage.h"
 #include "cachemanager.h"
 #include "multilangmgr.h"
+#include "coarsepanel.h"
 #include "filepanel.h"
 #include "renamedlg.h"
 #include "thumbimageupdater.h"
 #include "batchqueue.h"
+#include "batchqueueentry.h"
 #include "placesbrowser.h"
+#include "pathutils.h"
+#include "thumbnail.h"
+#include "toolbar.h"
 
 using namespace std;
-
-#define CHECKTIME 2000
 
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     filepanel(filepanel),
@@ -49,6 +53,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     fslistener(nullptr),
     iatlistener(nullptr),
     hbToolBar1STB(nullptr),
+    progressImage(nullptr),
+    progressLabel(nullptr),
     hasValidCurrentEFS(false),
     filterPanel(nullptr),
     exportPanel(nullptr),
@@ -457,8 +463,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         hScrollPos[i] = 0;
         vScrollPos[i] = 0;
     }
-
-    selectedDirectory = "";
 }
 
 FileCatalog::~FileCatalog()
@@ -604,7 +608,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList()
 
                 names.push_back(Glib::build_filename(selectedDirectory, fname));
             } catch (Glib::Exception& exception) {
-                if (options.rtSettings.verbose) {
+                if (rtengine::settings->verbose) {
                     std::cerr << exception.what() << std::endl;
                 }
             }
@@ -612,7 +616,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList()
 
     } catch (Glib::Exception& exception) {
 
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             std::cerr << "Failed to list directory \"" << selectedDirectory << "\": " << exception.what() << std::endl;
         }
 
@@ -701,34 +705,37 @@ void FileCatalog::_refreshProgressBar ()
     // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
     if (!inTabMode && (!previewsToLoad || std::floor(100.f * previewsLoaded / previewsToLoad) != std::floor(100.f * (previewsLoaded - 1) / previewsToLoad))) {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
-        Gtk::Grid* grid = Gtk::manage(new Gtk::Grid());
-        Gtk::Label *label = nullptr;
 
+        if (!progressImage || !progressLabel) {
+            // create tab label once
+            Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
+            Gtk::Grid* grid = Gtk::manage(new Gtk::Grid());
+            progressImage = Gtk::manage(new RTImage("folder-closed.png"));
+            progressLabel = Gtk::manage(new Gtk::Label(M("MAIN_FRAME_FILEBROWSER")));
+            grid->attach_next_to(*progressImage, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*progressLabel, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+            grid->set_tooltip_markup(M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
+            grid->show_all();
+            if (options.mainNBVertical) {
+                progressLabel->set_angle(90);
+            }
+            if (nb) {
+                nb->set_tab_label(*filepanel, *grid);
+            }
+        }
         if (!previewsToLoad) {
-            grid->attach_next_to(*Gtk::manage(new RTImage("folder-closed.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+            progressImage->changeImage("folder-closed.png");
             int filteredCount = min(fileBrowser->getNumFiltered(), previewsLoaded);
-
-            label = Gtk::manage(new Gtk::Label(M("MAIN_FRAME_FILEBROWSER") +
-                                               (filteredCount != previewsLoaded ? " [" + Glib::ustring::format(filteredCount) + "/" : " (")
-                                               + Glib::ustring::format(previewsLoaded) +
-                                               (filteredCount != previewsLoaded ? "]" : ")")));
+            progressLabel->set_text(M("MAIN_FRAME_FILEBROWSER") +
+                                    (filteredCount != previewsLoaded ? " [" + Glib::ustring::format(filteredCount) + "/" : " (")
+                                    + Glib::ustring::format(previewsLoaded) +
+                                    (filteredCount != previewsLoaded ? "]" : ")"));
         } else {
-            grid->attach_next_to(*Gtk::manage(new RTImage("magnifier.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
-            label = Gtk::manage(new Gtk::Label(M("MAIN_FRAME_FILEBROWSER") + " [" + Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad * 100 ) + "%]" ));
+            progressImage->changeImage("magnifier.png");
+            progressLabel->set_text(M("MAIN_FRAME_FILEBROWSER") + " ["
+                                    + Glib::ustring::format(previewsLoaded) + "/"
+                                    + Glib::ustring::format(previewsToLoad) + "]" );
             filepanel->loadingThumbs("", (double)previewsLoaded / previewsToLoad);
-        }
-
-        if (options.mainNBVertical) {
-            label->set_angle(90);
-        }
-
-        grid->attach_next_to(*label, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
-        grid->set_tooltip_markup(M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
-        grid->show_all();
-
-        if (nb) {
-            nb->set_tab_label(*filepanel, *grid);
         }
     }
 }
@@ -804,28 +811,28 @@ void FileCatalog::previewsFinishedUI ()
 
     {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        redrawAll ();
+        redrawAll();
         previewsToLoad = 0;
 
         if (filterPanel) {
-            filterPanel->set_sensitive (true);
+            filterPanel->set_sensitive(true);
 
-            if ( !hasValidCurrentEFS ) {
-                MyMutex::MyLock lock(dirEFSMutex);
+            if (!hasValidCurrentEFS) {
+                MyMutex::MyLock myLock(dirEFSMutex);
                 currentEFS = dirEFS;
-                filterPanel->setFilter ( dirEFS, true );
+                filterPanel->setFilter(dirEFS, true);
             } else {
-                filterPanel->setFilter ( currentEFS, false );
+                filterPanel->setFilter(currentEFS, false);
             }
         }
 
         if (exportPanel) {
-            exportPanel->set_sensitive (true);
+            exportPanel->set_sensitive(true);
         }
 
         // restart anything that might have been loaded low quality
         fileBrowser->refreshQuickThumbImages();
-        fileBrowser->applyFilter (getFilter());  // refresh total image count
+        fileBrowser->applyFilter(getFilter());  // refresh total image count
         _refreshProgressBar();
     }
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"), 0);
@@ -1220,9 +1227,8 @@ void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bo
 
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params, fastmode && options.fastexport_use_fast_pipeline);
 
-            int pw;
-            int ph = BatchQueue::calcMaxThumbnailHeight();
-            th->getThumbnailSize (pw, ph);
+            const int ph = BatchQueue::calcMaxThumbnailHeight();
+            const int pw = th->getThumbnailWidth(ph);
 
             // processThumbImage is the processing intensive part, but adding to queue must be ordered
             //#pragma omp ordered
@@ -1603,7 +1609,6 @@ BrowserFilter FileCatalog::getFilter ()
                                       anyRankFilterActive || anyCLabelFilterActive || anyEditedFilterActive;
     }
 
-    filter.multiselect = false;
 
     /*
      * Step 2
@@ -1619,7 +1624,6 @@ BrowserFilter FileCatalog::getFilter ()
             (anyEditedFilterActive && anyRecentlySavedFilterActive) ||
             (anySupplementaryActive && (anyRankFilterActive || anyCLabelFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive))) {
 
-        filter.multiselect = true;
         filter.showRanked[0] = anyRankFilterActive ? bUnRanked->get_active () : true;
         filter.showCLabeled[0] = anyCLabelFilterActive ? bUnCLabeled->get_active () : true;
 
@@ -1656,14 +1660,28 @@ BrowserFilter FileCatalog::getFilter ()
     //TODO could use date:<value>;iso:<value>  etc
     // default will be filename
 
-    /* // this is for safe execution if getFilter is called before Query object is instantiated
-    Glib::ustring tempQuery;
-    tempQuery="";
-    if (Query) tempQuery = Query->get_text();
-    */
-    filter.queryString = Query->get_text(); // full query string from Query Entry
-    filter.queryFileName = Query->get_text(); // for now Query is only by file name
+    Glib::ustring decodedQueryFileName = Query->get_text(); // for now Query is only by file name
 
+    // Determine the match mode - check if the first 2 characters are equal to "!="
+    if (decodedQueryFileName.find("!=") == 0) {
+        decodedQueryFileName = decodedQueryFileName.substr(2);
+        filter.matchEqual = false;
+    } else {
+        filter.matchEqual = true;
+    }
+
+    // Consider that queryFileName consist of comma separated values (FilterString)
+    // Evaluate if ANY of these FilterString are contained in the filename
+    // This will construct OR filter within the queryFileName
+    filter.vFilterStrings.clear();
+    const std::vector<Glib::ustring> filterStrings = Glib::Regex::split_simple(",", decodedQueryFileName.uppercase());
+    for (const auto& entry : filterStrings) {
+        // ignore empty filterStrings. Otherwise filter will always return true if
+        // e.g. queryFileName ends on "," and will stop being a filter
+        if (!entry.empty()) {
+            filter.vFilterStrings.push_back(entry);
+        }
+    }
     return filter;
 }
 

@@ -14,16 +14,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __PROCEVENT__
-#define __PROCEVENT__
+#pragma once
 
 namespace rtengine
 {
-
-
-
 
 // Aligned so the first entry starts on line 30
 enum ProcEventCode {
@@ -520,8 +516,8 @@ enum ProcEventCode {
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
     EvLEnabled = 492,
-//    EvPixelShiftOneGreen = 493,   can be reused
-    EvLocallabSpotCreated = 494,
+    EvPdShrEnabled = 493,
+    EvPdShrMaskToggled = 494,
     EvLocallabSpotDeleted = 495,
     EvLocallabSpotSelected = 496,
     EvLocallabSpotName = 497,
@@ -726,7 +722,7 @@ enum ProcEventCode {
     Evlocallabequiltm = 696,
     Evlocallabfftwlc = 697,
     Evlocallabfftwreti = 698,
-//    EvlocallabshowmasksoftMethod = 699,
+    // EvlocallabshowmasksoftMethod = 699,
     Evlocallabshadex = 700,
     EvlocallabexpMethod = 701,
     Evlocallablaplacexp = 702,
@@ -741,14 +737,207 @@ enum ProcEventCode {
     Evlocallabchromasktm = 711,
     Evlocallabgammasktm = 712,
     Evlocallabslomasktm = 713,
-//    EvlocallabshowmasktmMethod = 714,
+    // EvlocallabshowmasktmMethod = 714,
     EvlocallablocalcontMethod = 715,
     EvlocallabwavCurve = 716,
     Evlocallablevelwav = 717,
-    Evlocallabresidcont = 718,   
+    Evlocallabresidcont = 718,
+    EvlocallabCCmaskblshape = 719,
+    EvlocallabLLmaskblshape = 720,
+    EvlocallabHHmaskblshape = 721,
+    EvLocallabEnablMask = 722,
+    // EvlocallabshowmaskblMethod = 723,
+    Evlocallabblendmaskbl = 724,
+    Evlocallabradmaskbl = 725,
+    Evlocallabchromaskbl = 726,
+    Evlocallabgammaskbl = 727,
+    Evlocallabslomaskbl = 728,
+    EvlocallabblMethod = 729,
+    EvlocallabmedMethod = 730,
+    Evlocallabitera = 731,
+    Evlocallabguidbl = 732,
+    Evlocallabepsbl = 733,
+    // EvlocallabshowmaskcolMethodinv = 734,
+    // EvlocallabshowmaskexpMethodinv = 735,
+    // EvlocallabshowmaskSHMethodinv = 736,
+    Evlocallabclarilres = 737,
+    Evlocallabclarisoft = 738,
+    Evlocallabclaricres = 739,
+    Evlocallabresidchro = 740,
+    Evlocallabgamm = 741,
+    Evlocallabfatamount = 742,
+    Evlocallabfatdetail = 743,
+    Evlocallabfatanchor = 744,
+    Evlocallabfatlevel = 745,
+    EvLocallabSpotCreated = 746,
+    EvlocallabexnoiseMethod = 747,
+    Evlocallabdepth = 748,
+    Evlocallabloglin = 749,
+    Evlocallablumonly = 750,
+    Evlocallaboffs = 751,
+    EvlocallabCTtransCurve = 752,
+    Evlocallabcliptm = 753,
+    EvLocallabEnatmMaskaft = 754,
+    EvLocallabEnaExpMaskaft = 755,
+    Evlocallablapmasktm = 756,
+    Evlocallablapmaskreti = 757,
+    Evlocallablapmaskexp = 758,
+    Evlocallablapmaskcol = 759,
+    EvlocallablapmaskSH = 760,
+    Evlocallablapmaskcb = 761,
+    Evlocallablapmaskbl = 762,
+    Evlocallablaplac = 763,
+    Evlocallabdetailthr = 764,
+    Evlocallabfftwbl = 765,
+    Evlocallabisogr = 766,
+    Evlocallabstrengr = 767,
+    Evlocallabscalegr = 768,
+    EvlocallabLmaskshape = 769,
+    EvlocallabLmaskexpshape = 770,
+    EvlocallabLmaskSHshape = 771,
+    EvlocallabLmasktmshape = 772,
+    EvlocallabLmaskretishape = 773,
+    EvlocallabLmaskcbshape = 774,
+    EvlocallabLmaskblshape = 775,
+    EvlocallabLLmaskblshapewav = 776,
+    Evlocallabshadmaskbl = 777,
+    EvlocallabLLmaskcolshapewav = 778,
+    Evlocallabshadmaskcol = 779,
+    EvlocallabcsThreshold = 780,
+    EvlocallabcsThresholdblur = 781,
+    EvlocallabcsThresholdcol = 782,
+    Evlocallabdeltae = 783,
+    EvLocallabSpotscopemask = 784,
+    EvlocallabshMethod = 785,
+    EvlocallabEqualizersh = 786,
+    EvlocallabdetailSH = 787,
+    EvlocallabfatamountSH = 788,
+    EvlocallabfatanchorSH = 789,
+    Evlocallabshortc = 790,
+    EvLocallabSpotlumask = 791,
+    EvlocallabgamSH = 792,
+    EvlocallabsloSH = 793,
+    Evlocallabsavrest = 794,
+    Evlocallabrecurs = 795,
+    EvLocallabmergecolMethod = 796,
+    Evlocallabopacol = 797,
+    Evlocallabrgbshape = 798,
+    EvLocallabtoneMethod = 799,
+    EvLocallabspecial = 800,
+    Evlocallabconthrcol = 801,
+    EvLocallabmerMethod = 802,
+    Evlocallabstrumaskcol = 803,
+    Evlocallabstrumaskbl = 804,
+    EvLocallabtoolcol = 805,
+    Evlocallabtoolbl = 806,
+    EvlocallabHHhmaskshape = 807,
+    EvlocallabCCmaskvibshape = 808,
+    EvlocallabLLmaskvibshape = 809,
+    EvlocallabHHmaskvibshape = 810,
+    // EvlocallabshowmaskvibMethod = 811,
+    EvLocallabEnavibMask = 812,
+    Evlocallabblendmaskvi = 813,
+    Evlocallabradmaskvib = 814,
+    Evlocallabchromaskvib = 815,
+    Evlocallabgammaskvib = 816,
+    Evlocallabslomaskvib = 817,
+    Evlocallablapmaskvib = 818,
+    EvlocallabLmaskvibshape = 819,
+    EvLocallabLabGridmergValue = 820,
+    Evlocallabmercol = 821,
+    Evlocallabmerlucol = 822,
+    Evlocallabstrmaskexp = 823,
+    Evlocallabangmaskexp = 824,
+    Evlocallabstrexp = 825,
+    Evlocallabangexp = 826,
+    EvlocallabstrSH = 827,
+    EvlocallabangSH = 828,
+    Evlocallabstrcol = 829,
+    Evlocallabangcol = 830,
+    Evlocallabstrcolab = 831,
+    EvLocallabSpotfeather = 832,
+    Evlocallabstrcolh = 833,
+    Evlocallabstrvib = 834,
+    Evlocallabangvib = 835,
+    Evlocallabstrvibab = 836,
+    Evlocallabstrvibh = 837,
+    EvLocallabSpotcomplexMethod = 838,
+    Evlocallabclshape = 839,
+    Evlocallablcshape = 840,
+    Evlocallabblurcol = 841,
+    Evlocallabcontcol = 842,
+    EvLocallabfftColorMask = 843,
+    EvLocenalog = 844,
+    EvLocallabAuto = 845,
+    EvlocallabsourceGray = 846,
+    EvlocallabsourceGrayAuto = 847,
+    EvlocallabAutogray = 848,
+    EvlocallabblackEv = 849,
+    EvlocallabwhiteEv = 850,
+    EvlocallabtargetGray = 851,
+    Evlocallabdetail = 852,
+    Evlocallabsensilog = 853,
+    Evlocallabfullimage = 854,
+    Evlocallabbaselog = 855,
+    Evlocallabresidblur = 856,
+    Evlocallabblurlc = 857,
+    Evlocallablevelblur = 858,
+    EvlocallabwavCurvelev = 859,
+    EvlocallabwavCurvecon = 860,
+    Evlocallabsigma = 861,
+    Evlocallaboriglc = 862,
+    Evlocallabfatdet = 863,
+    Evlocallabfatanch = 864,
+    EvlocallabwavCurvecomp = 865,
+    Evlocallabfatres = 866,
+    EvLocallabSpotbalanh = 867,
+    EvlocallabwavCurveden = 868,
+    EvlocallabHHmasklcshape = 869,
+    EvlocallabCCmasklcshape = 870,
+    EvlocallabLLmasklcshape = 871,
+    EvLocallabEnalcMask = 872,
+    // EvlocallabshowmasklcMethod = 873,
+    Evlocallabblendmasklc = 874,
+    Evlocallabradmasklc = 875,
+    Evlocallabchromasklc = 876,
+    EvlocallabLmasklcshape = 877,
+    Evlocallabchromalev = 878,
+    Evlocallabchromablu = 879,
+    Evlocallaboffset = 880,
+    Evlocallabwavblur = 881,
+    Evlocallabwavcont = 882,
+    Evlocallabwavcomp = 883,
+    Evlocallabwavcompre = 884,
+    EvlocallabwavCurvecompre = 885,
+    Evlocallabresidcomp = 886,
+    Evlocallabthreswav = 887,
+    Evlocallabstrwav = 888,
+    Evlocallabangwav = 889,
+    Evlocallabwavgradl = 890,
+    Evlocallabstrlog = 891,
+    Evlocallabanglog = 892,
+    EvLocallabSpotcolorde = 893,
+    // EvlocallabshowmasksharMethod = 894,
+    Evlocallabshowreset = 895,
+    Evlocallabstrengthw = 896,
+    Evlocallabradiusw = 897,
+    Evlocallabdetailw = 898,
+    Evlocallabgradw = 899,
+    Evlocallabtloww = 900,
+    Evlocallabthigw = 901,
+    EvlocallabwavCurveedg = 902,
+    EvlocallablocaledgMethod = 903,
+    Evlocallabwavedg = 904,
+    Evlocallabedgw = 905,
+    Evlocallabbasew = 906,
+    EvlocallablocalneiMethod = 907,
+    Evlocallabwaveshow = 908,
+    EvLocallabSpotwavMethod = 909,
+    EvlocallabchroMethod = 910,
+    Evlocallabstrbl = 911,
+
     NUMOFEVENTS
 };
-
 
 class ProcEvent
 {
@@ -756,38 +945,39 @@ public:
     ProcEvent(): code_(0) {}
     ProcEvent(ProcEventCode code): code_(code) {}
     explicit ProcEvent(int code): code_(code) {}
-    operator int() const { return code_; }
+    operator int() const
+    {
+        return code_;
+    }
 
 private:
     int code_;
 };
 
 
-inline bool operator==(ProcEvent a, ProcEvent b)
+inline bool operator ==(ProcEvent a, ProcEvent b)
 {
     return int(a) == int(b);
 }
-inline bool operator==(ProcEvent a, ProcEventCode b)
+inline bool operator ==(ProcEvent a, ProcEventCode b)
 {
     return int(a) == int(b);
 }
-inline bool operator==(ProcEventCode a, ProcEvent b)
+inline bool operator ==(ProcEventCode a, ProcEvent b)
 {
     return int(a) == int(b);
 }
-inline bool operator!=(ProcEvent a, ProcEvent b)
+inline bool operator !=(ProcEvent a, ProcEvent b)
 {
     return int(a) != int(b);
 }
-inline bool operator!=(ProcEvent a, ProcEventCode b)
+inline bool operator !=(ProcEvent a, ProcEventCode b)
 {
     return int(a) != int(b);
 }
-inline bool operator!=(ProcEventCode a, ProcEvent b)
+inline bool operator !=(ProcEventCode a, ProcEvent b)
 {
     return int(a) != int(b);
 }
 
 }
-#endif
-

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "placesbrowser.h"
 
@@ -230,15 +230,15 @@ void PlacesBrowser::refreshPlacesList ()
     }
 
     for (size_t i = 0; i < options.favoriteDirs.size(); i++) {
-        Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (options.favoriteDirs[i]);
+        Glib::RefPtr<Gio::File> fav = Gio::File::create_for_path (options.favoriteDirs[i]);
 
-        if (hfile && hfile->query_exists()) {
+        if (fav && fav->query_exists()) {
             try {
-                if (auto info = hfile->query_info ()) {
+                if (auto info = fav->query_info ()) {
                     Gtk::TreeModel::Row newrow = *(placesModel->append());
                     newrow[placesColumns.label] = info->get_display_name ();
                     newrow[placesColumns.icon]  = info->get_icon ();
-                    newrow[placesColumns.root]  = hfile->get_parse_name ();
+                    newrow[placesColumns.root]  = fav->get_parse_name ();
                     newrow[placesColumns.type]  = 5;
                     newrow[placesColumns.rowSeparator] = false;
                 }

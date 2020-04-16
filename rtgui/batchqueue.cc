@@ -14,9 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <glib/gstdio.h>
 #include <cstring>
 #include <functional>
@@ -28,12 +28,15 @@
 #include <sstream>
 #include <string>
 
+#include "cachemanager.h"
 #include "thumbnail.h"
 #include "batchqueue.h"
+#include "batchqueueentry.h"
 #include "multilangmgr.h"
 #include "filecatalog.h"
 #include "batchqueuebuttonset.h"
 #include "guiutils.h"
+#include "pathutils.h"
 #include "rtimage.h"
 #include <sys/time.h>
 
@@ -144,7 +147,7 @@ int BatchQueue::getThumbnailHeight ()
     return std::max(std::min(options.thumbSizeQueue, 200), 10);
 }
 
-void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry)
+void BatchQueue::rightClicked ()
 {
     pmenu.popup (3, this->eventTime);
 }
@@ -341,9 +344,8 @@ bool BatchQueue::loadBatchQueue ()
 
             auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams, fast);
 
-            auto prevh = getMaxThumbnailHeight ();
-            auto prevw = prevh;
-            thumb->getThumbnailSize (prevw, prevh, &pparams);
+            const auto prevh = getMaxThumbnailHeight ();
+            const auto prevw = thumb->getThumbnailWidth(prevh, &pparams);
 
             auto entry = new BatchQueueEntry (job, pparams, source, prevw, prevh, thumb, options.overwriteOutputFile);
             thumb->decreaseRef ();  // Removing the refCount acquired by cacheMgr->getEntry
@@ -811,7 +813,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
             break;
         }
 
-        Glib::ustring tok = "";
+        Glib::ustring tok;
 
         while ((i < origFileName.size()) && !(origFileName[i] == '\\' || origFileName[i] == '/')) {
             tok = tok + origFileName[i++];
@@ -857,7 +859,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
     // constructing full output path
 //    printf ("path=|%s|\n", options.savePath.c_str());
 
-    Glib::ustring path = "";
+    Glib::ustring path;
 
     if (options.saveUsePathTemplate) {
         unsigned int ix = 0;

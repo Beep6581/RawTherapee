@@ -14,16 +14,19 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CHMIXER_H_
-#define _CHMIXER_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class ChMixer : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class ChMixer final:
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -46,5 +49,3 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void enabledChanged() override;
 };
-
-#endif

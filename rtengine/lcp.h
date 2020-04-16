@@ -14,26 +14,32 @@
 *  GNU General Public License for more details.
 *
 *  You should have received a copy of the GNU General Public License
-*  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #pragma once
 
 #include <array>
-#include <map>
 #include <memory>
 #include <string>
 #include <sstream>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <expat.h>
 
 #include "cache.h"
-#include "imagefloat.h"
-#include "opthelper.h"
 
 namespace rtengine
 {
+
+namespace procparams
+{
+
+class ProcParams;
+
+struct CoarseTransformParams;
+
+}
 
 enum class LCPCorrectionMode {
     VIGNETTE,
@@ -165,8 +171,8 @@ public:
     virtual void correctDistortion(double &x, double &y, int cx, int cy, double scale) const = 0;
     virtual bool isCACorrectionAvailable() const = 0;
     virtual void correctCA(double &x, double &y, int cx, int cy, int channel) const = 0;
-    virtual void processVignetteLine(int width, int y, float *line) const = 0;
-    virtual void processVignetteLine3Channels(int width, int y, float *line) const = 0;
+    virtual void processVignette(int width, int height, float** rawData) const = 0;
+    virtual void processVignette3Channels(int width, int height, float** rawData) const = 0;
 };
 
 
@@ -185,7 +191,7 @@ public:
         bool useCADistP,
         int fullWidth,
         int fullHeight,
-        const CoarseTransformParams& coarse,
+        const procparams::CoarseTransformParams& coarse,
         int rawRotationDeg
     );
 
@@ -193,8 +199,8 @@ public:
     void correctDistortion(double &x, double &y, int cx, int cy, double scale) const override;  // MUST be the first stage
     bool isCACorrectionAvailable() const override;
     void correctCA(double& x, double& y, int cx, int cy, int channel) const override;
-    void processVignetteLine(int width, int y, float* line) const override;
-    void processVignetteLine3Channels(int width, int y, float* line) const override;
+    void processVignette(int width, int height, float** rawData) const override;
+    void processVignette3Channels(int width, int height, float** rawData) const override;
 
 private:
     bool enableCA;  // is the mapper capable if CA correction?
@@ -203,6 +209,9 @@ private:
     LCPModelCommon mc;
     LCPModelCommon chrom[3];  // in order RedGreen/Green/BlueGreen
     bool isFisheye;
+
+    void processVignetteLine(int width, int y, float* line) const;
+    void processVignetteLine3Channels(int width, int y, float* line) const;
 };
 
 }

@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "editorpanel.h"
 
@@ -23,15 +23,27 @@
 
 #include "../rtengine/imagesource.h"
 #include "../rtengine/iccstore.h"
+#include "batchqueue.h"
+#include "batchqueueentry.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "rtwindow.h"
+#include "filepanel.h"
 #include "guiutils.h"
 #include "popupbutton.h"
 #include "options.h"
+#include "navigator.h"
+#include "previewwindow.h"
 #include "progressconnector.h"
 #include "procparamchangers.h"
 #include "placesbrowser.h"
+#include "pathutils.h"
+#include "thumbnail.h"
+#include "toolpanelcoord.h"
+
+#ifdef WIN32
+#include "windows.h"
+#endif
 
 using namespace rtengine::procparams;
 
@@ -49,7 +61,7 @@ void setprogressStrUI(double val, const Glib::ustring str, MyProgressBar* pProgr
     }
 }
 
-
+#if !defined(__APPLE__) // monitor profile not supported on apple
 bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, Glib::ustring &defprofname)
 {
 #ifdef WIN32
@@ -79,7 +91,7 @@ bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, G
         ReleaseDC (NULL, hDC);
     }
 
-#elif !defined(__APPLE__)
+#else
     // taken from geeqie (image.c) and adapted
     // Originally licensed as GPL v2+, with the following copyright:
     // * Copyright (C) 2006 John Ellis
@@ -117,7 +129,7 @@ bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, G
 #endif
     return false;
 }
-
+#endif
 
 }
 
@@ -889,41 +901,17 @@ EditorPanel::~EditorPanel ()
     delete vboxright;
 
     //delete saveAsDialog;
-    if (catalogPane) {
-        delete catalogPane;
-    }
-
-    if (iTopPanel_1_Show) {
-        delete iTopPanel_1_Show;
-    }
-
-    if (iTopPanel_1_Hide) {
-        delete iTopPanel_1_Hide;
-    }
-
-    if (iHistoryShow) {
-        delete iHistoryShow;
-    }
-
-    if (iHistoryHide) {
-        delete iHistoryHide;
-    }
-
-    if (iBeforeLockON) {
-        delete iBeforeLockON;
-    }
-
-    if (iBeforeLockOFF) {
-        delete iBeforeLockOFF;
-    }
-
-    if (iRightPanel_1_Show) {
-        delete iRightPanel_1_Show;
-    }
-
-    if (iRightPanel_1_Hide) {
-        delete iRightPanel_1_Hide;
-    }
+    delete catalogPane;
+    delete iTopPanel_1_Show;
+    delete iTopPanel_1_Hide;
+    delete iHistoryShow;
+    delete iHistoryHide;
+    delete iBeforeLockON;
+    delete iBeforeLockOFF;
+    delete iRightPanel_1_Show;
+    delete iRightPanel_1_Hide;
+    delete iShowHideSidePanels_exit;
+    delete iShowHideSidePanels;
 }
 
 void EditorPanel::leftPaneButtonReleased (GdkEventButton *event)
@@ -1090,7 +1078,7 @@ void EditorPanel::close ()
         if (iareapanel) {
             iareapanel->imageArea->setPreviewHandler (nullptr);
             iareapanel->imageArea->setImProcCoordinator (nullptr);
-            iareapanel->imageArea->unsubscribe();
+            tpc->editModeSwitchedOff();
         }
 
         rtengine::StagedImageProcessor::destroy (ipc);
@@ -1130,7 +1118,7 @@ Glib::ustring EditorPanel::getShortName ()
     }
 }
 
-Glib::ustring EditorPanel::getFileName ()
+Glib::ustring EditorPanel::getFileName () const
 {
     if (openThm) {
         return openThm->getFileName ();
@@ -1377,7 +1365,7 @@ void EditorPanel::info_toggled ()
         infoString = M ("QINFO_NOEXIF");
     }
 
-    iareapanel->imageArea->setInfoText (infoString);
+    iareapanel->imageArea->setInfoText (std::move(infoString));
     iareapanel->imageArea->infoEnabled (info->get_active ());
 }
 
@@ -2040,9 +2028,9 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
     if (img) {
         // get file name base
-        Glib::ustring shortname = removeExtension (Glib::path_get_basename (fname));
-        Glib::ustring dirname = Glib::get_tmp_dir ();
-        Glib::ustring fname = Glib::build_filename (dirname, shortname);
+        const Glib::ustring shortname = removeExtension (Glib::path_get_basename (fname));
+        const Glib::ustring dirname = Glib::get_tmp_dir ();
+        const Glib::ustring lfname = Glib::build_filename (dirname, shortname);
 
         SaveFormat sf;
         sf.format = "tif";
@@ -2051,13 +2039,13 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
         sf.tiffUncompressed = true;
         sf.saveParams = true;
 
-        Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
+        Glib::ustring fileName = Glib::ustring::compose ("%1.%2", lfname, sf.format);
 
         // TODO: Just list all file with a suitable name instead of brute force...
         int tries = 1;
 
         while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries < 1000) {
-            fileName = Glib::ustring::compose ("%1-%2.%3", fname, tries, sf.format);
+            fileName = Glib::ustring::compose ("%1-%2.%3", lfname, tries, sf.format);
             tries++;
         }
 
@@ -2085,6 +2073,7 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
 {
     img->free ();
     int errore = pc->returnValue();
+    setProgressState(false);
     delete pc;
 
     if (!errore) {

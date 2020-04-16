@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "partialpastedlg.h"
 
@@ -304,8 +304,10 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw_ca_autocorrect  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_AUTO")));
     raw_caredblue       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CAREDBLUE")));
     raw_ca_avoid_colourshift = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT")));
-    //---
+    //...
     filmNegative        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FILMNEGATIVE")) );
+    //---
+    captureSharpening   = Gtk::manage (new Gtk::CheckButton (M("TP_PDSHARPENING_LABEL")) );
 
     Gtk::VBox* vboxes[9];
     Gtk::HSeparator* hseps[9];
@@ -421,7 +423,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*ff_ClipControl, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*captureSharpening, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
@@ -578,6 +580,8 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw_ca_avoid_colourshiftconn = raw_ca_avoid_colourshift->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     //---
     filmNegativeConn        = filmNegative->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    //---
+    captureSharpeningConn   = captureSharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
 
     add_button (M("GENERAL_OK"), Gtk::RESPONSE_OK);
     add_button (M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
@@ -653,6 +657,7 @@ void PartialPasteDlg::rawToggled ()
     ConnectionBlocker raw_caredblueBlocker(raw_caredblueConn);
     ConnectionBlocker raw_ca_avoid_colourshiftBlocker(raw_ca_avoid_colourshiftconn);
     ConnectionBlocker filmNegativeBlocker(filmNegativeConn);
+    ConnectionBlocker captureSharpeningBlocker(captureSharpeningConn);
 
     raw->set_inconsistent (false);
 
@@ -682,6 +687,7 @@ void PartialPasteDlg::rawToggled ()
     raw_caredblue->set_active (raw->get_active ());
     raw_ca_avoid_colourshift->set_active (raw->get_active ());
     filmNegative->set_active (raw->get_active());
+    captureSharpening->set_active (raw->get_active());
 }
 
 void PartialPasteDlg::basicToggled ()
@@ -1173,6 +1179,17 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.filmNegative.blueRatio   = falsePE.filmNegative.blueRatio;
     }
 
+    if (!captureSharpening->get_active ()) {
+        filterPE.pdsharpening.enabled   = falsePE.pdsharpening.enabled;
+        filterPE.pdsharpening.contrast   = falsePE.pdsharpening.contrast;
+        filterPE.pdsharpening.autoContrast   = falsePE.pdsharpening.autoContrast;
+        filterPE.pdsharpening.autoRadius   = falsePE.pdsharpening.autoRadius;
+        filterPE.pdsharpening.deconvradius   = falsePE.pdsharpening.deconvradius;
+        filterPE.pdsharpening.deconvradiusOffset   = falsePE.pdsharpening.deconvradiusOffset;
+        filterPE.pdsharpening.deconviter   = falsePE.pdsharpening.deconviter;
+        filterPE.pdsharpening.deconvitercheck   = falsePE.pdsharpening.deconvitercheck;
+    }
+
     // Locallab shall be kept in last position
     if (!locallab->get_active () && !locallab->get_inconsistent()) {
         filterPE.locallab = falsePE.locallab;
@@ -1218,7 +1235,6 @@ void PartialPasteDlg::updateSpotWidget(const rtengine::procparams::ProcParams* p
     } else {
         spots->set_visible(false); // Hide widget if there is no locallab spot
     }
-
 }
 
 void PartialPasteDlg::partialSpotUpdated(const UpdateStatus status)
@@ -1236,4 +1252,3 @@ void PartialPasteDlg::partialSpotUpdated(const UpdateStatus status)
             locallab->set_inconsistent(true);
     }
 }
-

@@ -14,26 +14,29 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FILEBROWSER_
-#define _FILEBROWSER_
+#pragma once
+
+#include <map>
 
 #include <gtkmm.h>
-#include <map>
-#include "thumbbrowserbase.h"
-#include "exiffiltersettings.h"
-#include "filebrowserentry.h"
+
 #include "browserfilter.h"
-#include "pparamschangelistener.h"
-#include "partialpastedlg.h"
 #include "exportpanel.h"
 #include "extprog.h"
-#include "profilestorecombobox.h"
+#include "filebrowserentry.h"
+#include "lwbutton.h"
+#include "partialpastedlg.h"
+#include "pparamschangelistener.h"
+#include "../rtengine/profilestore.h"
+#include "thumbbrowserbase.h"
 
-class ProfileStoreLabel;
+#include "../rtengine/noncopyable.h"
+
 class FileBrowser;
 class FileBrowserEntry;
+class ProfileStoreLabel;
 
 class FileBrowserListener
 {
@@ -53,10 +56,11 @@ public:
 /*
  * Class handling actions common to all thumbnails of the file browser
  */
-class FileBrowser  : public ThumbBrowserBase,
+class FileBrowser final : public ThumbBrowserBase,
     public LWButtonListener,
     public ExportPanelListener,
-    public ProfileStoreListener
+    public ProfileStoreListener,
+    public rtengine::NonCopyable
 {
 private:
     typedef sigc::signal<void> type_trash_changed;
@@ -168,8 +172,8 @@ public:
 
     void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
     void redrawNeeded  (LWButton* button) override;
-    bool checkFilter (ThumbBrowserEntryBase* entry) override;
-    void rightClicked (ThumbBrowserEntryBase* entry) override;
+    bool checkFilter (ThumbBrowserEntryBase* entry) const override;
+    void rightClicked () override;
     void doubleClicked (ThumbBrowserEntryBase* entry) override;
     bool keyPressed (GdkEventKey* event) override;
 
@@ -208,5 +212,3 @@ public:
 
     type_trash_changed trash_changed();
 };
-
-#endif

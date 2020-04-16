@@ -14,24 +14,37 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __IMAGEDATA_H__
-#define __IMAGEDATA_H__
+#pragma once
 
 #include <cstdio>
 #include <memory>
-#include "rawimage.h"
 #include <string>
-#include <glibmm.h>
-#include "../rtexif/rtexif.h"
+#include <vector>
+
+
 #include <libiptcdata/iptc-data.h>
-#include "rtengine.h"
+
+#include "imageio.h"
+
+namespace Glib
+{
+
+class ustring;
+
+}
+
+namespace rtexif
+{
+
+class TagDirectory;
+}
 
 namespace rtengine
 {
 
-class FrameData
+class FrameData final
 {
 
 protected:
@@ -88,7 +101,7 @@ public:
     int getRating () const;
 };
 
-class FramesData : public FramesMetaData {
+class FramesData final : public FramesMetaData {
 private:
     // frame's root IFD, can be a file root IFD or a SUB-IFD
     std::vector<std::unique_ptr<FrameData>> frames;
@@ -98,7 +111,7 @@ private:
     unsigned int dcrawFrameCount;
 
 public:
-    FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false);
+    explicit FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false);
     ~FramesData () override;
 
     void setDCRawFrameCount (unsigned int frameCount);
@@ -133,4 +146,3 @@ public:
 
 
 }
-#endif

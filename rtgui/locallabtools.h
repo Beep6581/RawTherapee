@@ -25,6 +25,8 @@
 #include "curveeditor.h"
 #include "labgrid.h"
 #include "thresholdadjuster.h"
+#include "toolpanel.h"
+#include "adjuster.h"
 
 /* ==== LocallabToolListener ==== */
 class LocallabTool;
@@ -47,15 +49,7 @@ class LocallabTool:
     public AdjusterListener
 {
 protected:
-    // Enumeration to manage mask type
-    enum maskType {
-        MaskNone = 0,
-        MaskNormal = 1,
-        MaskWithTrMap = 2
-    };
-
     // LocallabTool parameters
-    const maskType useMask;
     bool isLocActivated;
     Glib::ustring spotName;
     LocallabToolListener* locToolListener;
@@ -63,28 +57,13 @@ protected:
     // LocallabTool generic widgets
     MyExpander* exp;
 
-    // Mask widgets
-    MyExpander* maskExp;
-    Gtk::CheckButton* enaMask;
-    Gtk::CheckButton* enaMaskTrMap;
-    MyComboBoxText* showMaskMethod;
-    CurveEditorGroup* maskCurveEditorG;
-    FlatCurveEditor* CCMaskShape;
-    FlatCurveEditor* LLMaskShape;
-    FlatCurveEditor* HHMaskShape;
-    Adjuster* blendMask;
-    Adjuster* radMask;
-    Adjuster* chroMask;
-    Adjuster* gamMask;
-    Adjuster* sloMask;
-    sigc::connection enaExpConn, enaMaskConn, enaMaskTrMapConn, showMaskMethodConn;
+    sigc::connection enaExpConn;
 
-private:
     IdleRegister idle_register;
 
 public:
     // Locallab tool constructor/destructor
-    LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, maskType usemask = MaskNone);
+    LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false);
     virtual ~LocallabTool();
 
     // Getter for Locallab tool expander
@@ -128,18 +107,19 @@ public:
     bool isLocallabToolAdded();
 
     // Mask background management function
-    void refChanged(const double huer, const double lumar, const double chromar);
+    void refChanged(const double huer, const double lumar, const double chromar); // Make it virtual
 
     // Mask preview functions
-    void resetMaskView();
-    virtual void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask) {};
+    virtual void resetMaskView() {};
+    virtual void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) {};
 
-    /* To be completed
-    Notes:
-     - parent class functions shall be called when using mask
-     - callerId #1 and #2 are reserved for mask curve color management
+    /* Notes:
+     - callerId #1: Mask CC shape (bottom bar) + Color CC/LC shape (left bar)
+     - callerId #2: Mask HH shape (main curve and bottom bar)
+     - callerId #3: Color LH/HH shape (main curve)
+     - callerId #4: Color CC/LC shape (bottom bar)
     */
-    virtual void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
     // To be implemented
     virtual void disableListener();
@@ -148,13 +128,11 @@ public:
     virtual void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) {};
     virtual void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) {};
     virtual void adjusterChanged(Adjuster* a, double newval) {};  // At least when using mask
-    virtual void curveChanged(CurveEditor* ce) {}; // At least when using mask
+    virtual void curveChanged(CurveEditor* ce) {}; // At least when using curve
 
 protected:
     // To be implemented
-    virtual void enaMaskChanged() {}; // Only necessary when using mask
-    virtual void enaMaskTrMapChanged() {}; // Only necessary when using mask with transmission map
-    virtual void showMaskMethodChanged() {}; // Only necessary when using mask
+    virtual void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) {}; // Only necessary when using mask
 
 private:
     // Remove button event function
@@ -170,7 +148,8 @@ private:
 /* ==== LocallabColor ==== */
 class LocallabColor:
     public Gtk::VBox,
-    public LocallabTool
+    public LocallabTool,
+    public ThresholdAdjusterListener
 {
 private:
     // Color & Light specific widgets
@@ -186,16 +165,66 @@ private:
     Adjuster* const structcol;
     Adjuster* const blurcolde;
     Adjuster* const softradiuscol;
+    Gtk::CheckButton* const invers;
+    MyExpander* const expgradcol;
+    Adjuster* const strcol;
+    Adjuster* const strcolab;
+    Adjuster* const strcolh;
+    Adjuster* const angcol;
     Gtk::Label* const labqualcurv;
     MyComboBoxText* const qualitycurveMethod;
     CurveEditorGroup* const llCurveEditorG;
-    DiagonalCurveEditor* llshape;
-    DiagonalCurveEditor* ccshape;
+    DiagonalCurveEditor* const llshape;
+    DiagonalCurveEditor* const ccshape;
+    CurveEditorGroup* const clCurveEditorG;
+    DiagonalCurveEditor* const clshape;
+    DiagonalCurveEditor* const lcshape;
     CurveEditorGroup* const HCurveEditorG;
-    FlatCurveEditor* LHshape;
-    FlatCurveEditor* HHshape;
-    Gtk::CheckButton* const invers;
-    sigc::connection curvactivConn, gridMethodConn, qualitycurveMethodConn, inversConn;
+    FlatCurveEditor* const LHshape;
+    CurveEditorGroup* const H2CurveEditorG;
+    FlatCurveEditor* const HHshape;
+    CurveEditorGroup* const rgbCurveEditorG;
+    MyComboBoxText* const toneMethod;
+    DiagonalCurveEditor* const rgbshape;
+    Gtk::CheckButton* const special;
+    MyExpander* const expmaskcol1;
+    MyComboBoxText* const merMethod;
+    ToolParamBlock* const mask7;
+    MyComboBoxText* const mergecolMethod;
+    Adjuster* const mercol;
+    Adjuster* const opacol;
+    Adjuster* const conthrcol;
+    Gtk::Frame* const gridmerFrame;
+    LabGrid* const labgridmerg;
+    Adjuster* const merlucol;
+    MyComboBoxText* const showmaskcolMethod;
+    MyComboBoxText* const showmaskcolMethodinv;
+    Gtk::CheckButton* const enaColorMask;
+    CurveEditorGroup* const maskCurveEditorG;
+    FlatCurveEditor* const CCmaskshape;
+    FlatCurveEditor* const LLmaskshape;
+    FlatCurveEditor* const HHmaskshape;
+    Adjuster* const strumaskcol;
+    Gtk::CheckButton* const toolcol;
+    Gtk::CheckButton* const fftColorMask;
+    Adjuster* const contcol;
+    Adjuster* const blurcol;
+    Adjuster* const blendmaskcol;
+    Adjuster* const radmaskcol;
+    Adjuster* const lapmaskcol;
+    Adjuster* const chromaskcol;
+    Adjuster* const gammaskcol;
+    Adjuster* const slomaskcol;
+    Adjuster* const shadmaskcol;
+    CurveEditorGroup* const maskHCurveEditorG;
+    FlatCurveEditor* const HHhmaskshape;
+    CurveEditorGroup* const mask2CurveEditorG;
+    DiagonalCurveEditor* const Lmaskshape;
+    CurveEditorGroup* const mask2CurveEditorGwav;
+    FlatCurveEditor* const LLmaskcolshapewav;
+    ThresholdAdjuster* const csThresholdcol;
+
+    sigc::connection curvactivConn, gridMethodConn, inversConn, qualitycurveMethodConn, toneMethodConn, specialConn, merMethodConn, mergecolMethodConn, showmaskcolMethodConn, showmaskcolMethodConninv, enaColorMaskConn, toolcolConn, fftColorMaskConn;
 
 public:
     LocallabColor();
@@ -203,9 +232,8 @@ public:
 
     void setListener(ToolPanelListener* tpl);
 
-    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
-
-    void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -213,20 +241,35 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void adjusterChanged(Adjuster* a, double newval);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
     void curveChanged(CurveEditor* ce);
 
 private:
     void enabledChanged();
 
-    void enaMaskChanged();
-    void showMaskMethodChanged();
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
 
     void curvactivChanged();
+    void gridMethodChanged();
     void inversChanged();
     void qualitycurveMethodChanged();
-    void gridMethodChanged();
+    void toneMethodChanged();
+    void specialChanged();
+    void merMethodChanged();
+    void mergecolMethodChanged();
+    void showmaskcolMethodChanged();
+    void showmaskcolMethodChangedinv();
+    void enaColorMaskChanged();
+    void toolcolChanged();
+    void fftColorMaskChanged();
 
-    void updateColorGUI();
+    void updateColorGUI1();
+    void updateColorGUI2();
+    void updateColorGUI3();
 };
 
 /* ==== LocallabExposure ==== */
@@ -235,33 +278,67 @@ class LocallabExposure:
     public LocallabTool
 {
 private:
+    // Exposure specific widgets
     MyComboBoxText* const expMethod;
     Gtk::Frame* const pdeFrame;
     Adjuster* const laplacexp;
     Adjuster* const linear;
     Adjuster* const balanexp;
-    Adjuster* const expcomp;
-    Adjuster* const hlcompr;
-    Adjuster* const hlcomprthresh;
-    Adjuster* const black;
-    Adjuster* const shadex;
-    Adjuster* const shcompr;
-    Adjuster* const expchroma;
-    Adjuster* const warm;
+    Adjuster* const gamm;
+    Gtk::HBox* const ctboxexpmethod;
+    MyComboBoxText* const exnoiseMethod;
+    Gtk::Frame* const fatFrame;
+    Adjuster* const fatamount;
+    Adjuster* const fatdetail;
+    Adjuster* const fatlevel;
+    Adjuster* const fatanchor;
     Adjuster* const sensiex;
     Adjuster* const structexp;
     Adjuster* const blurexpde;
-    Adjuster* const softradiusexp;
+    MyExpander* const exptoolexp;
+    Adjuster* const expcomp;
+    Adjuster* const black;
+    Adjuster* const hlcompr;
+    Adjuster* const hlcomprthresh;
+    Adjuster* const shadex;
+    Adjuster* const shcompr;
+    Adjuster* const expchroma;
     CurveEditorGroup* const curveEditorG;
     DiagonalCurveEditor* shapeexpos;
+    MyExpander* const expgradexp;
+    Adjuster* const strexp;
+    Adjuster* const angexp;
+    Adjuster* const softradiusexp;
     Gtk::CheckButton* const inversex;
-    sigc::connection expMethodConn, inversexConn;
+    MyExpander* const expmaskexp;
+    MyComboBoxText* const showmaskexpMethod;
+    MyComboBoxText* const showmaskexpMethodinv;
+    Gtk::CheckButton* const enaExpMask;
+    Gtk::CheckButton* const enaExpMaskaft;
+    CurveEditorGroup* const maskexpCurveEditorG;
+    FlatCurveEditor* const CCmaskexpshape;
+    FlatCurveEditor* const LLmaskexpshape;
+    FlatCurveEditor* const HHmaskexpshape;
+    Adjuster* const blendmaskexp;
+    Adjuster* const radmaskexp;
+    Adjuster* const lapmaskexp;
+    Adjuster* const chromaskexp;
+    Adjuster* const gammaskexp;
+    Adjuster* const slomaskexp;
+    Gtk::Frame* const gradFramemask;
+    Adjuster* const strmaskexp;
+    Adjuster* const angmaskexp;
+    CurveEditorGroup* const mask2expCurveEditorG;
+    DiagonalCurveEditor* const Lmaskexpshape;
+
+    sigc::connection expMethodConn, exnoiseMethodConn, inversexConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
 
 public:
     LocallabExposure();
     ~LocallabExposure();
 
-    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -274,11 +351,15 @@ public:
 private:
     void enabledChanged();
 
-    void enaMaskChanged();
-    void showMaskMethodChanged();
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
 
     void expMethodChanged();
+    void exnoiseMethodChanged();
     void inversexChanged();
+    void showmaskexpMethodChanged();
+    void showmaskexpMethodChangedinv();
+    void enaExpMaskChanged();
+    void enaExpMaskaftChanged();
 
     void updateExposureGUI1();
     void updateExposureGUI2();
@@ -291,6 +372,10 @@ class LocallabShadow:
     public LocallabTool
 {
 private:
+    // Shadow highlight specific widgets
+    MyComboBoxText* const shMethod;
+    const std::array<Adjuster*, 5> multipliersh;
+    Adjuster* const detailSH;
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;
     Adjuster* const shadows;
@@ -298,13 +383,41 @@ private:
     Adjuster* const sh_radius;
     Adjuster* const sensihs;
     Adjuster* const blurSHde;
+    Gtk::Frame* const gamFrame;
+    Adjuster* const gamSH;
+    Adjuster* const sloSH;
+    MyExpander* const expgradsh;
+    Adjuster* const strSH;
+    Adjuster* const angSH;
     Gtk::CheckButton* const inverssh;
-    sigc::connection inversshConn;
+    MyExpander* const expmasksh;
+    MyComboBoxText* const showmaskSHMethod;
+    MyComboBoxText* const showmaskSHMethodinv;
+    Gtk::CheckButton* const enaSHMask;
+    CurveEditorGroup* const maskSHCurveEditorG;
+    FlatCurveEditor* const CCmaskSHshape;
+    FlatCurveEditor* const LLmaskSHshape;
+    FlatCurveEditor* const HHmaskSHshape;
+    Adjuster* const blendmaskSH;
+    Adjuster* const radmaskSH;
+    Adjuster* const lapmaskSH;
+    Adjuster* const chromaskSH;
+    Adjuster* const gammaskSH;
+    Adjuster* const slomaskSH;
+    CurveEditorGroup* const mask2SHCurveEditorG;
+    DiagonalCurveEditor* const LmaskSHshape;
+    Gtk::Frame* const fatSHFrame;
+    Adjuster* const fatamountSH;
+    Adjuster* const fatanchorSH;
+
+    sigc::connection shMethodConn, inversshConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
+    ~LocallabShadow();
 
-    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -317,12 +430,16 @@ public:
 private:
     void enabledChanged();
 
-    void enaMaskChanged();
-    void showMaskMethodChanged();
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
 
+    void shMethodChanged();
     void inversshChanged();
+    void showmaskSHMethodChanged();
+    void showmaskSHMethodChangedinv();
+    void enaSHMaskChanged();
 
-    void updateShadowGUI();
+    void updateShadowGUI1();
+    void updateShadowGUI2();
 };
 
 /* ==== LocallabVibrance ==== */
@@ -333,20 +450,46 @@ class LocallabVibrance:
     public ThresholdCurveProvider
 {
 private:
+    // Vibrance specific widgets
     Adjuster* const saturated;
     Adjuster* const pastels;
+    Adjuster* const warm;
     ThresholdAdjuster* const psThreshold;
     Gtk::CheckButton* const protectSkins;
     Gtk::CheckButton* const avoidColorShift;
     Gtk::CheckButton* const pastSatTog;
     Adjuster* const sensiv;
     CurveEditorGroup* const curveEditorGG;
-    DiagonalCurveEditor* skinTonesCurve;
-    sigc::connection pskinsConn, ashiftConn, pastsattogConn;
+    DiagonalCurveEditor* const skinTonesCurve;
+    MyExpander* const expgradvib;
+    Adjuster* const strvib;
+    Adjuster* const strvibab;
+    Adjuster* const strvibh;
+    Adjuster* const angvib;
+    MyExpander* const expmaskvib;
+    MyComboBoxText* const showmaskvibMethod;
+    Gtk::CheckButton* const enavibMask;
+    CurveEditorGroup* const maskvibCurveEditorG;
+    FlatCurveEditor* const CCmaskvibshape;
+    FlatCurveEditor* const LLmaskvibshape;
+    FlatCurveEditor* const HHmaskvibshape;
+    Adjuster* const blendmaskvib;
+    Adjuster* const radmaskvib;
+    Adjuster* const lapmaskvib;
+    Adjuster* const chromaskvib;
+    Adjuster* const gammaskvib;
+    Adjuster* const slomaskvib;
+    CurveEditorGroup* const mask2vibCurveEditorG;
+    DiagonalCurveEditor* const Lmaskvibshape;
+
+    sigc::connection pskinsConn, ashiftConn, pastsattogConn, showmaskvibMethodConn, enavibMaskConn;
 
 public:
     LocallabVibrance();
     ~LocallabVibrance();
+
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -354,20 +497,24 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void adjusterChanged(Adjuster* a, double newval);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) {};
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {};
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {};
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) {};
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) {}; // Not used
     std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
     void curveChanged(CurveEditor* ce);
 
 private:
     void enabledChanged();
 
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+
     void protectskins_toggled();
     void avoidcolorshift_toggled();
     void pastsattog_toggled();
+    void showmaskvibMethodChanged();
+    void enavibMaskChanged();
 
     void updateVibranceGUI();
 };
@@ -378,18 +525,21 @@ class LocallabSoft:
     public LocallabTool
 {
 private:
+    // Soft light specific widgets
     MyComboBoxText* const softMethod;
     Gtk::HBox* const ctboxsoftmethod;
     MyComboBoxText* const showmasksoftMethod;
     Adjuster* const streng;
     Adjuster* const laplace;
     Adjuster* const sensisf;
+
     sigc::connection softMethodConn, showmasksoftMethodConn;
 
 public:
     LocallabSoft();
 
-    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -397,8 +547,6 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void adjusterChanged(Adjuster* a, double newval);
-
-    void resetMaskView();
 
 private:
     void enabledChanged();
@@ -412,18 +560,59 @@ private:
 /* ==== LocallabBlur ==== */
 class LocallabBlur:
     public Gtk::VBox,
-    public LocallabTool
+    public LocallabTool,
+    public ThresholdAdjusterListener
 {
 private:
+    // Blur & Noise specific widgets
+    MyComboBoxText* const blMethod;
+    Gtk::CheckButton* const fftwbl;
     Adjuster* const radius;
     Adjuster* const strength;
+    Gtk::Frame* const grainFrame;
+    Adjuster* const isogr;
+    Adjuster* const strengr;
+    Adjuster* const scalegr;
+    MyComboBoxText* const medMethod;
+    Adjuster* const itera;
+    Adjuster* const guidbl;
+    Adjuster* const strbl;
+    Adjuster* const epsbl;
     Adjuster* const sensibn;
     MyComboBoxText* const blurMethod;
+    MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
-    sigc::connection blurMethodConn, activlumConn;
+    MyExpander* const expmaskbl;
+    MyComboBoxText* const showmaskblMethod;
+    Gtk::CheckButton* const enablMask;
+    CurveEditorGroup* const maskblCurveEditorG;
+    FlatCurveEditor* const CCmaskblshape;
+    FlatCurveEditor* const LLmaskblshape;
+    FlatCurveEditor* const HHmaskblshape;
+    Adjuster* const strumaskbl;
+    Gtk::CheckButton* const toolbl;
+    Adjuster* const blendmaskbl;
+    Gtk::Frame* const toolblFrame;
+    Adjuster* const radmaskbl;
+    Adjuster* const lapmaskbl;
+    Adjuster* const chromaskbl;
+    Adjuster* const gammaskbl;
+    Adjuster* const slomaskbl;
+    Adjuster* const shadmaskbl;
+    CurveEditorGroup* const mask2blCurveEditorG;
+    DiagonalCurveEditor* const Lmaskblshape;
+    CurveEditorGroup* const mask2blCurveEditorGwav;
+    FlatCurveEditor* const LLmaskblshapewav;
+    ThresholdAdjuster* const csThresholdblur;
+
+    sigc::connection blMethodConn, fftwblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, enablMaskConn, toolblConn;
 
 public:
     LocallabBlur();
+    ~LocallabBlur();
+
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -431,12 +620,29 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void adjusterChanged(Adjuster* a, double newval);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
+    void curveChanged(CurveEditor* ce);
 
 private:
     void enabledChanged();
 
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+
+    void blMethodChanged();
+    void fftwblChanged();
+    void medMethodChanged();
     void blurMethodChanged();
+    void chroMethodChanged();
     void activlumChanged();
+    void showmaskblMethodChanged();
+    void enablMaskChanged();
+    void toolblChanged();
+
+    void updateBlurGUI();
 };
 
 /* ==== LocallabTone ==== */
@@ -445,6 +651,7 @@ class LocallabTone:
     public LocallabTool
 {
 private:
+    // Tone Mapping specific widgets
     Adjuster* const amount;
     Adjuster* const stren;
     Gtk::CheckButton* const equiltm;
@@ -455,12 +662,31 @@ private:
     Adjuster* const rewei;
     Adjuster* const softradiustm;
     Adjuster* const sensitm;
-    sigc::connection equiltmConn;
+    MyExpander* const expmasktm;
+    MyComboBoxText* const showmasktmMethod;
+    Gtk::CheckButton* const enatmMask;
+    Gtk::CheckButton* const enatmMaskaft;
+    CurveEditorGroup* const masktmCurveEditorG;
+    FlatCurveEditor* const CCmasktmshape;
+    FlatCurveEditor* const LLmasktmshape;
+    FlatCurveEditor* const HHmasktmshape;
+    Adjuster* const blendmasktm;
+    Adjuster* const lapmasktm;
+    Adjuster* const radmasktm;
+    Adjuster* const chromasktm;
+    Adjuster* const gammasktm;
+    Adjuster* const slomasktm;
+    CurveEditorGroup* const mask2tmCurveEditorG;
+    DiagonalCurveEditor* const Lmasktmshape;
+
+    sigc::connection equiltmConn, showmasktmMethodConn, enatmMaskConn, enatmMaskaftConn;
 
 public:
     LocallabTone();
+    ~LocallabTone();
 
-    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -473,10 +699,12 @@ public:
 private:
     void enabledChanged();
 
-    void enaMaskChanged();
-    void showMaskMethodChanged();
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
 
     void equiltmChanged();
+    void showmasktmMethodChanged();
+    void enatmMaskChanged();
+    void enatmMaskaftChanged();
 };
 
 /* ==== LocallabRetinex ==== */
@@ -485,30 +713,67 @@ class LocallabRetinex:
     public LocallabTool
 {
 private:
+    // Retinex specific widgets
+    Gtk::Frame* const dehaFrame;
+    Adjuster* const dehaz;
+    Adjuster* const depth;
+    Gtk::CheckButton* const lumonly;
+    Gtk::Frame* const retiFrame;
+    Adjuster* const str;
+    Gtk::CheckButton* const loglin;
+    Adjuster* const sensih;
+    Gtk::Frame* const retitoolFrame;
+    ToolParamBlock* const retiBox;
     MyComboBoxText* const retinexMethod;
     Gtk::CheckButton* const fftwreti;
     Gtk::CheckButton* const equilret;
-    Adjuster* const str;
-    Adjuster* const chrrt;
     Adjuster* const neigh;
     Adjuster* const vart;
     Adjuster* const scalereti;
     Adjuster* const limd;
+    Adjuster* const offs;
+    MyExpander* const expretitools;
+    Adjuster* const chrrt;
     Adjuster* const darkness;
     Adjuster* const lightnessreti;
-    Adjuster* const dehaz;
+    Adjuster* const cliptm;
     Adjuster* const softradiusret;
-    Adjuster* const sensih;
+    CurveEditorGroup* const LocalcurveEditortransT;
+    FlatCurveEditor* const cTtransshape;
+    Gtk::Label* const mMLabels;
+    Gtk::Label* const transLabels;
+    Gtk::Label* const transLabels2;
     CurveEditorGroup* const LocalcurveEditorgainT;
-    FlatCurveEditor* cTgainshape;
+    FlatCurveEditor* const cTgainshape;
+    MyExpander* const expmaskreti;
+    ToolParamBlock* const maskretiBox;
+    MyComboBoxText* const showmaskretiMethod;
+    Gtk::CheckButton* const enaretiMask;
+    Gtk::CheckButton* const enaretiMasktmap;
+    CurveEditorGroup* const maskretiCurveEditorG;
+    FlatCurveEditor* const CCmaskretishape;
+    FlatCurveEditor* const LLmaskretishape;
+    FlatCurveEditor* const HHmaskretishape;
+    Adjuster* const blendmaskreti;
+    Adjuster* const radmaskreti;
+    Adjuster* const lapmaskreti;
+    Adjuster* const chromaskreti;
+    Adjuster* const gammaskreti;
+    Adjuster* const slomaskreti;
+    CurveEditorGroup* const mask2retiCurveEditorG;
+    DiagonalCurveEditor* const Lmaskretishape;
     Gtk::CheckButton* const inversret;
-    sigc::connection retinexMethodConn, fftwretiConn, equilretConn, inversretConn;
+
+    sigc::connection lumonlyConn, loglinConn, retinexMethodConn, fftwretiConn, equilretConn, showmaskretiMethodConn, enaretiMaskConn, enaretiMasktmapConn, inversretConn;
 
 public:
     LocallabRetinex();
     ~LocallabRetinex();
 
-    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+    void updateMinMax(const double cdma, const double cdmin, const double mini, const double maxi, const double Tmean, const double Tsigma, const double Tmin, const double Tmax);
+
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -521,17 +786,21 @@ public:
 private:
     void enabledChanged();
 
-    void enaMaskChanged();
-    void enaMaskTrMapChanged();
-    void showMaskMethodChanged();
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
 
+    void lumonlyChanged();
+    void loglinChanged();
     void retinexMethodChanged();
     void fftwretiChanged();
     void equilretChanged();
+    void showmaskretiMethodChanged();
+    void enaretiMaskChanged();
+    void enaretiMasktmapChanged();
     void inversretChanged();
 
-    void updateRetinexGUI();
+    void updateRetinexGUI1();
     void updateRetinexGUI2();
+    void updateRetinexGUI3();
 };
 
 /* ==== LocallabSharp ==== */
@@ -548,10 +817,16 @@ private:
     Adjuster* const sharblur;
     Adjuster* const sensisha;
     Gtk::CheckButton* const inverssha;
-    sigc::connection inversshaConn;
+    Gtk::Frame* const sharFrame;
+    MyComboBoxText* const showmasksharMethod;
+
+    sigc::connection inversshaConn, showmasksharMethodConn;
 
 public:
     LocallabSharp();
+
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -564,12 +839,14 @@ private:
     void enabledChanged();
 
     void inversshaChanged();
+    void showmasksharMethodChanged();
 };
 
 /* ==== LocallabContrast ==== */
 class LocallabContrast:
     public Gtk::VBox,
-    public LocallabTool
+    public LocallabTool,
+    public ThresholdAdjusterListener
 {
 private:
     MyComboBoxText* const localcontMethod;
@@ -578,16 +855,91 @@ private:
     Adjuster* const lcdarkness;
     Adjuster* const lclightness;
     CurveEditorGroup* const LocalcurveEditorwav;
-    FlatCurveEditor* wavshape;
+    FlatCurveEditor* const wavshape;
     Adjuster* const levelwav;
+    ThresholdAdjuster* const csThreshold;
     Adjuster* const residcont;
+    Adjuster* const residchro;
     Adjuster* const sensilc;
+    Gtk::Frame* const clariFrame;
+    Adjuster* const clarilres;
+    Adjuster* const claricres;
+    Adjuster* const clarisoft;
+    Gtk::CheckButton* const origlc;
+    MyExpander* const expcontrastpyr;
+    Gtk::Frame* const gradwavFrame;
+    Gtk::CheckButton* const wavgradl;
+    Adjuster* const strwav;
+    Adjuster* const angwav;
+    Gtk::Frame* const edgFrame;
+    Gtk::CheckButton* const wavedg;
+    ToolParamBlock* const edgsBox;
+    Adjuster* const strengthw;
+    CurveEditorGroup* const LocalcurveEditorwavedg;
+    FlatCurveEditor* const wavshapeedg;
+    Adjuster* const gradw;
+    Gtk::CheckButton* const waveshow;
+    ToolParamBlock* const edgsBoxshow;
+    Adjuster* const radiusw;
+    Adjuster* const detailw;
+    MyComboBoxText* const localedgMethod;
+    Adjuster* const tloww;
+    Adjuster* const thigw;
+    Adjuster* const edgw;
+    Adjuster* const basew;
+    Gtk::Label* const labmNP;
+    MyComboBoxText* const localneiMethod;
+    Gtk::Frame* const blurlevelFrame;
+    Gtk::CheckButton* const wavblur;
+    Adjuster* const levelblur;
+    Adjuster* const chromablu;
+    CurveEditorGroup* const LocalcurveEditorwavlev;
+    FlatCurveEditor* const wavshapelev;
+    Adjuster* const residblur;
+    Gtk::CheckButton* const blurlc;
+    MyExpander* const expcontrastpyr2;
+    Gtk::Frame* const contFrame;
+    Gtk::CheckButton* const wavcont;
+    Adjuster* const sigma;
+    Adjuster* const offset;
+    Adjuster* const chromalev;
+    CurveEditorGroup* const LocalcurveEditorwavcon;
+    FlatCurveEditor* const wavshapecon;
+    Gtk::Frame* const compreFrame;
+    Gtk::CheckButton* const wavcompre;
+    CurveEditorGroup* const LocalcurveEditorwavcompre;
+    FlatCurveEditor* const wavshapecompre;
+    Adjuster* const threswav;
+    Adjuster* const residcomp;
+    Gtk::Frame* const compFrame;
+    Gtk::CheckButton* const wavcomp;
+    Adjuster* const fatdet;
+    Adjuster* const fatanch;
+    CurveEditorGroup* const LocalcurveEditorwavcomp;
+    FlatCurveEditor* const wavshapecomp;
+    Adjuster* const fatres;
     Gtk::CheckButton* const fftwlc;
-    sigc::connection localcontMethodConn, fftwlcConn;
+    MyExpander* const expmasklc;
+    MyComboBoxText* const showmasklcMethod;
+    Gtk::CheckButton* const enalcMask;
+    CurveEditorGroup* const masklcCurveEditorG;
+    FlatCurveEditor* const CCmasklcshape;
+    FlatCurveEditor* const LLmasklcshape;
+    FlatCurveEditor* const HHmasklcshape;
+    Adjuster* const blendmasklc;
+    Adjuster* const radmasklc;
+    Adjuster* const chromasklc;
+    CurveEditorGroup* const mask2lcCurveEditorG;
+    DiagonalCurveEditor* const Lmasklcshape;
+
+    sigc::connection localcontMethodConn, origlcConn, wavgradlConn, wavedgConn, localedgMethodConn, waveshowConn, localneiMethodConn, wavblurConn, blurlcConn, wavcontConn, wavcompreConn, wavcompConn, fftwlcConn, showmasklcMethodConn, enalcMaskConn;
 
 public:
     LocallabContrast();
     ~LocallabContrast();
+
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -595,15 +947,38 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void adjusterChanged(Adjuster* a, double newval);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
     void curveChanged(CurveEditor* ce);
 
 private:
     void enabledChanged();
 
-    void localcontMethodChanged();
-    void fftwlcChanged();
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
 
-    void updateContrastGUI();
+    void localcontMethodChanged();
+    void origlcChanged();
+    void wavgradlChanged();
+    void wavedgChanged();
+    void localedgMethodChanged();
+    void waveshowChanged();
+    void localneiMethodChanged();
+    void wavblurChanged();
+    void blurlcChanged();
+    void wavcontChanged();
+    void wavcompreChanged();
+    void wavcompChanged();
+    void fftwlcChanged();
+    void showmasklcMethodChanged();
+    void enalcMaskChanged();
+
+    void updateContrastGUI1();
+    void updateContrastGUI2();
+    void updateContrastGUI3();
+    void updateContrastGUI4();
 };
 
 /* ==== LocallabCBDL ==== */
@@ -612,24 +987,45 @@ class LocallabCBDL:
     public LocallabTool
 {
 private:
-    Adjuster* multiplier[6];
+    const std::array<Adjuster*, 6> multiplier;
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const blurcbdl;
+    Gtk::Frame* const residFrame;
     Adjuster* const clarityml;
     Adjuster* const contresid;
     Adjuster* const softradiuscb;
     Adjuster* const sensicb;
+    MyExpander* const expmaskcb;
+    MyComboBoxText* const showmaskcbMethod;
+    Gtk::CheckButton* const enacbMask;
+    CurveEditorGroup* const maskcbCurveEditorG;
+    FlatCurveEditor* const CCmaskcbshape;
+    FlatCurveEditor* const LLmaskcbshape;
+    FlatCurveEditor* const HHmaskcbshape;
+    Adjuster* const blendmaskcb;
+    Adjuster* const radmaskcb;
+    Adjuster* const lapmaskcb;
+    Adjuster* const chromaskcb;
+    Adjuster* const gammaskcb;
+    Adjuster* const slomaskcb;
+    CurveEditorGroup* const mask2cbCurveEditorG;
+    DiagonalCurveEditor* const Lmaskcbshape;
+
+    sigc::connection showmaskcbMethodConn, enacbMaskConn;
 
     Gtk::Button* const lumacontrastMinusButton;
     Gtk::Button* const lumaneutralButton;
     Gtk::Button* const lumacontrastPlusButton;
+
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
 
 public:
     LocallabCBDL();
+    ~LocallabCBDL();
 
-    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+    void resetMaskView();
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -642,8 +1038,10 @@ public:
 private:
     void enabledChanged();
 
-    void enaMaskChanged();
-    void showMaskMethodChanged();
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+
+    void showmaskcbMethodChanged();
+    void enacbMaskChanged();
 
     void lumacontrastMinusPressed();
     void lumaneutralPressed();
@@ -656,6 +1054,8 @@ class LocallabDenoise:
     public LocallabTool
 {
 private:
+    CurveEditorGroup* const LocalcurveEditorwavden;
+    FlatCurveEditor* const wavshapeden;
     Adjuster* const noiselumf0;
     Adjuster* const noiselumf;
     Adjuster* const noiselumf2;
@@ -665,20 +1065,69 @@ private:
     Adjuster* const noisechrof;
     Adjuster* const noisechroc;
     Adjuster* const noisechrodetail;
+    Adjuster* const detailthr;
     Adjuster* const adjblur;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
 
 public:
     LocallabDenoise();
+    ~LocallabDenoise();
 
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void adjusterChanged(Adjuster* a, double newval);
+    void curveChanged(CurveEditor* ce);
 
 private:
     void enabledChanged();
+};
+
+/* ==== LocallabLog ==== */
+class LocallabLog:
+    public Gtk::VBox,
+    public LocallabTool
+{
+private:
+    Gtk::Frame* const logPFrame;
+    Gtk::ToggleButton* const autocompute;
+    Adjuster* const blackEv;
+    Adjuster* const whiteEv;
+    Gtk::CheckButton* const fullimage;
+    Gtk::Frame* const logFrame;
+    Gtk::CheckButton* const Autogray;
+    Adjuster* const sourceGray;
+    Adjuster* const targetGray;
+    Adjuster* const detail;
+    Adjuster* const baselog;
+    Adjuster* const sensilog;
+    Gtk::Frame* const gradlogFrame;
+    Adjuster* const strlog;
+    Adjuster* const anglog;
+
+    sigc::connection autoconn, fullimageConn, AutograyConn;
+
+public:
+    LocallabLog();
+
+    void disableListener();
+    void enableListener();
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void adjusterChanged(Adjuster* a, double newval);
+
+    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float targetg);
+
+private:
+    void enabledChanged();
+
+    void autocomputeToggled();
+    void fullimageChanged();
+    void AutograyChanged();
+
+    void updateLogGUI();
 };
 
 #endif

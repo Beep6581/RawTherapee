@@ -14,10 +14,11 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <fftw3.h>
 #include "../rtgui/profilestorecombobox.h"
+#include "color.h"
 #include "rtengine.h"
 #include "iccstore.h"
 #include "dcp.h"
@@ -42,7 +43,7 @@ const Settings* settings;
 MyMutex* lcmsMutex = nullptr;
 MyMutex *fftwMutex = nullptr;
 
-int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll)
+int init (const Settings* s, const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir, bool loadAll)
 {
     settings = s;
     ProcParams::init();

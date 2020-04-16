@@ -23,14 +23,18 @@
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
 
 #include "gauss.h"
 #include "improcfun.h"
-#include "sleef.c"
-#include "../rtgui/myflatcurve.h"
+#include "cieimage.h"
+#include "color.h"
+#include "curves.h"
+#include "labimage.h"
+#include "sleef.h"
+#include "curves.h"
 #include "rt_math.h"
 #include "opthelper.h"
 #include "median.h"

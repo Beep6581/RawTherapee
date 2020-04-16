@@ -15,14 +15,19 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
 
-#include "array2D.h"
+#include "rt_math.h"
 
-namespace rtengine {
+template<typename T>
+class array2D;
+
+
+namespace rtengine
+{
 
 inline float getBilinearValue(const array2D<float> &src, float x, float y)
 {
@@ -94,6 +99,5 @@ inline void rescaleNearest(const array2D<float> &src, array2D<float> &dst, bool 
         }
     }
 }
-
 
 } // namespace rtengine

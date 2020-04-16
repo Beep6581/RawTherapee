@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IPTCPAIRS_
-#define _IPTCPAIRS_
-
+#pragma once
 
 struct IptcPair {
     IptcTag tag;
@@ -44,6 +42,3 @@ const IptcPair strTags[] = {
     {IPTC_TAG_ORIG_TRANS_REF, 32, "TransReference"},
     {IPTC_TAG_DATE_CREATED, 8, "DateCreated"}
 };
-
-#endif
-

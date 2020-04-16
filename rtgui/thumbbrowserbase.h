@@ -14,25 +14,30 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _THUMBNAILBROWSERBASE_
-#define _THUMBNAILBROWSERBASE_
+#pragma once
+
+#include <set>
 
 #include <gtkmm.h>
-#include "thumbbrowserentrybase.h"
-#include <set>
-#include "options.h"
+
 #include "guiutils.h"
-#include "inspector.h"
+#include "options.h"
 
 /*
  * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space
  */
-class ThumbBrowserBase  :  public Gtk::Grid
+
+class Inspector;
+class ThumbBrowserEntryBase;
+
+class ThumbBrowserBase :
+    public Gtk::Grid
 {
 
-    class Internal : public Gtk::DrawingArea
+    class Internal :
+        public Gtk::DrawingArea
     {
         //Cairo::RefPtr<Cairo::Context> cc;
         int ofsX, ofsY;
@@ -55,10 +60,10 @@ class ThumbBrowserBase  :  public Gtk::Grid
         bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
 
         Gtk::SizeRequestMode get_request_mode_vfunc () const override;
-        void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const override;
-        void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
-        void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
-        void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
+        void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const final;
+        void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const final;
+        void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const final;
+        void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const final;
 
         bool on_button_press_event (GdkEventButton* event) override;
         bool on_button_release_event (GdkEventButton* event) override;
@@ -175,12 +180,13 @@ protected:
 
     int previewHeight;
     int numOfCols;
+    int lastRowHeight;
 
     Arrangement arrangement;
 
     std::set<Glib::ustring> editedFiles;
 
-    void arrangeFiles (bool checkfilter = true);
+    void arrangeFiles (ThumbBrowserEntryBase* entry = nullptr);
     void zoomChanged (bool zoomIn);
 
 public:
@@ -202,7 +208,7 @@ public:
         return fd;
     }
     void on_style_updated () override;
-    void redraw (bool checkfilter = true);   // arrange files and draw area
+    void redraw (ThumbBrowserEntryBase* entry = nullptr);   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshQuickThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshEditedState (const std::set<Glib::ustring>& efiles);
@@ -215,11 +221,11 @@ public:
     void setArrangement (Arrangement a);
     void enableTabMode(bool enable);  // set both thumb sizes and arrangements
 
-    virtual bool checkFilter (ThumbBrowserEntryBase* entry)
+    virtual bool checkFilter (ThumbBrowserEntryBase* entry) const
     {
         return true;
     }
-    virtual void rightClicked (ThumbBrowserEntryBase* entry) {}
+    virtual void rightClicked () = 0;
     virtual void doubleClicked (ThumbBrowserEntryBase* entry) {}
     virtual bool keyPressed (GdkEventKey* event)
     {
@@ -252,5 +258,3 @@ public:
     }
 
 };
-
-#endif

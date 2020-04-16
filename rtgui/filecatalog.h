@@ -14,37 +14,41 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FILECATALOG_
-#define _FILECATALOG_
+#pragma once
 
-#include "filebrowser.h"
-#include "exiffiltersettings.h"
-#include <giomm.h>
-#include "fileselectionlistener.h"
 #include <set>
-#include "fileselectionchangelistener.h"
-#include "coarsepanel.h"
-#include "toolbar.h"
-#include "filterpanel.h"
+
+#include <giomm.h>
+
+#include "exiffiltersettings.h"
 #include "exportpanel.h"
+#include "filebrowser.h"
+#include "fileselectionchangelistener.h"
+#include "fileselectionlistener.h"
+#include "filterpanel.h"
 #include "previewloader.h"
-#include "multilangmgr.h"
 #include "threadutils.h"
 
+#include "../rtengine/noncopyable.h"
+
 class FilePanel;
+class CoarsePanel;
+class ToolBar;
+
 /*
  * Class:
  *   - handling the list of file (add/remove them)
  *   - handling the thumbnail toolbar,
  *   - monitoring the directory (for any change)
  */
-class FileCatalog : public Gtk::VBox,
+class FileCatalog final : public Gtk::VBox,
     public PreviewLoaderListener,
     public FilterPanelListener,
     public FileBrowserListener,
-    public ExportPanelListener
+    public ExportPanelListener,
+    public rtengine::NonCopyable
 {
 public:
     typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
@@ -119,6 +123,9 @@ private:
 
     Gtk::Button* zoomInButton;
     Gtk::Button* zoomOutButton;
+
+    RTImage* progressImage;
+    Gtk::Label* progressLabel;
 
     MyMutex dirEFSMutex;
     ExifFilterSettings dirEFS;
@@ -287,5 +294,3 @@ inline void FileCatalog::setDirSelector (const FileCatalog::DirSelectionSlot& se
 {
     this->selectDir = selectDir;
 }
-
-#endif

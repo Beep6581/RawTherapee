@@ -15,14 +15,15 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "rtimage.h"
 
+#include <cassert>
 #include <iostream>
 
-#include "options.h"
+#include "../rtengine/settings.h"
 
 namespace
 {
@@ -37,12 +38,8 @@ int RTImage::scaleBack = 0;
 
 RTImage::RTImage () {}
 
-RTImage::RTImage (RTImage &other)
+RTImage::RTImage (RTImage &other) : surface(other.surface), pixbuf(other.pixbuf)
 {
-    dpiBack = other.dpiBack;
-    scaleBack = other.scaleBack;
-    pixbuf = other.pixbuf;
-    surface = other.surface;
     if (pixbuf) {
         set(pixbuf);
     } else if (surface) {
@@ -173,7 +170,7 @@ void RTImage::init()
     scaleBack = RTScalable::getScale();
 }
 
-void RTImage::cleanup()
+void RTImage::cleanup(bool all)
 {
     for (auto& entry : pixbufCache) {
         entry.second.reset();
@@ -181,7 +178,7 @@ void RTImage::cleanup()
     for (auto& entry : surfaceCache) {
         entry.second.clear();
     }
-    RTScalable::cleanup();
+    RTScalable::cleanup(all);
 }
 
 void RTImage::updateImages()
@@ -218,7 +215,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::u
         }
         */
     } catch (const Glib::Exception& exception) {
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             std::cerr << "Failed to load image \"" << fileName << "\": " << exception.what() << std::endl;
         }
     }

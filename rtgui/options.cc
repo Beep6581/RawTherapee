@@ -14,18 +14,23 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "options.h"
 #include <cstdio>
 #include <glib/gstdio.h>
+#include <glibmm/keyfile.h>
+#include <iostream>
 #include <sstream>
 #include "multilangmgr.h"
 #include "addsetids.h"
 #include "guiutils.h"
+#include "pathutils.h"
 #include "version.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/rtengine.h"
+#include "../rtengine/utils.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -224,7 +229,7 @@ Glib::ustring Options::getPreferredProfilePath()
   *
   *@param profName  path + filename of the procparam to look for. A filename without path can be provided for backward compatibility.
   *                 In this case, this parameter will be updated with the new format.
-  *@return Send back the absolute path of the given filename or "Neutral" if "Neutral" has been set to profName. Implementor will have
+  *@return Send back the absolute path of the given filename or "Neutral" if "Neutral" has been set to profName. Implementer will have
   *        to test for this particular value. If the absolute path is invalid (e.g. the file doesn't exist), it will return an empty string.
   */
 Glib::ustring Options::findProfilePath(Glib::ustring &profName)
@@ -446,6 +451,7 @@ void Options::setDefaults()
     histogramHeight = 200;
     histogramDrawMode = 0;
     curvebboxpos = 1;
+    complexity = 2;
     prevdemo = PD_Sidecar;
 
     rgbDenoiseThreadLimit = 0;
@@ -1295,7 +1301,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
-                	pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
+                    pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
                 }
 
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {
@@ -1419,6 +1425,7 @@ void Options::readFromFile(Glib::ustring fname)
                     navHSVUnit = (NavigatorUnit)keyFile.get_integer("GUI", "NavigatorHSVUnit");
                 }
 
+
                 if (keyFile.has_key("GUI", "ShowFilmStripToolBar")) {
                     showFilmStripToolBar = keyFile.get_boolean("GUI", "ShowFilmStripToolBar");
                 }
@@ -1442,6 +1449,11 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "CurveBBoxPosition")) {
                     curvebboxpos = keyFile.get_integer("GUI", "CurveBBoxPosition");
                 }
+                
+                if (keyFile.has_key("GUI", "Complexity")) {
+                    complexity = keyFile.get_integer("GUI", "Complexity");
+                }
+                
             }
 
             if (keyFile.has_group("Crop Settings")) {
@@ -1638,6 +1650,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("Color Management", "Previewselection")) {//Intensity of preview selection deltaE
                     rtSettings.previewselection = keyFile.get_integer("Color Management", "Previewselection");
                 }
+
 
                 if (keyFile.has_key("Color Management", "Cbdlsensi")) {//sensibility to crash for cbdl
                     rtSettings.cbdlsensi = keyFile.get_double("Color Management", "Cbdlsensi");
@@ -2183,6 +2196,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "HistogramWorking", rtSettings.HistogramWorking);
         keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
         keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
+        keyFile.set_integer("GUI", "Complexity", complexity);
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
@@ -2550,6 +2564,18 @@ bool Options::is_parse_extention(Glib::ustring fname)
 bool Options::has_retained_extention(const Glib::ustring& fname)
 {
     return parsedExtensionsSet.find(getExtension(fname).lowercase()) != parsedExtensionsSet.end();
+}
+
+// Pattern matches "5.1" from "5.1-23-g12345678", when comparing option.version to RTVERSION
+bool Options::is_new_version() {
+    const std::string vs[] = {versionString, version};
+    std::vector<std::string> vMajor;
+
+    for (const auto& v : vs) {
+        vMajor.emplace_back(v, 0, v.find_first_not_of("0123456789."));
+    }
+
+    return vMajor.size() == 2 && vMajor[0] != vMajor[1];
 }
 
 /*

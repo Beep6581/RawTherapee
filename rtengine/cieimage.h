@@ -14,18 +14,16 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CIEIMAGE_H_
-#define _CIEIMAGE_H_
+#pragma once
 
-#include "image16.h"
 #include "noncopyable.h"
 
 namespace rtengine
 {
 
-class CieImage :
+class CieImage final :
     public NonCopyable
 {
 private:
@@ -39,7 +37,6 @@ public:
     float** M_p;
     float** C_p;
     float** sh_p;
-//  float** ch_p;
     float** h_p;
 
     CieImage (int w, int h);
@@ -50,4 +47,3 @@ public:
 };
 
 }
-#endif

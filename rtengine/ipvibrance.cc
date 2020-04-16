@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "rt_math.h"
@@ -23,16 +23,11 @@
 #include "rtengine.h"
 #include "improcfun.h"
 #include "iccstore.h"
-#include "mytime.h"
-#include "../rtgui/thresholdselector.h"
+#include "labimage.h"
 #include "curves.h"
 #include "color.h"
 #include "procparams.h"
 #include "StopWatch.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 
 using namespace std;
 
@@ -149,6 +144,7 @@ void ImProcFunctions::vibrance (LabImage* lab, const procparams::VibranceParams 
     if (skinCurveIsSet) {
         fillCurveArrayVib (dcurve, skin_curve);
         skin_curve /= ask;
+//        skin_curve *= 2.f;
     }
 
     if (dcurve) {

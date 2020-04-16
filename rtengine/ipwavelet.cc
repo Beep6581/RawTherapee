@@ -16,7 +16,7 @@
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // *  2014 Jacques Desmis <jdesmis@gmail.com>
 // *  2014 Ingo Weyrich <heckflosse@i-weyrich.de>
 
@@ -28,19 +28,21 @@
 
 #include "../rtgui/threadutils.h"
 
-#include "rtengine.h"
-#include "improcfun.h"
-#include "LUT.h"
 #include "array2D.h"
-#include "boxblur.h"
-#include "rt_math.h"
-#include "mytime.h"
-#include "sleef.c"
-#include "opthelper.h"
-#include "median.h"
+#include "color.h"
+#include "curves.h"
 #include "EdgePreservingDecomposition.h"
 #include "iccstore.h"
+#include "improcfun.h"
+#include "labimage.h"
+#include "LUT.h"
+#include "median.h"
+#include "opthelper.h"
 #include "procparams.h"
+#include "rt_math.h"
+#include "rtengine.h"
+#include "sleef.h"
+#include "../rtgui/options.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -48,18 +50,8 @@
 
 #include "cplx_wavelet_dec.h"
 
-#define TS 64       // Tile size
-#define offset 25   // shift between tiles
-#define fTS ((TS/2+1))  // second dimension of Fourier tiles
-#define blkrad 1    // radius of block averaging
-
-#define epsilon 0.001f/(TS*TS) //tolerance
-
-
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 struct cont_params {
     float mul[10];
@@ -918,6 +910,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
 
                             WaveletDenoiseAllL (*Ldecomp, noisevarlum, madL, vari, edge, 1);
+                           
                         }
 
                         //Flat curve for Contrast=f(H) in levels
@@ -1195,7 +1188,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 b = 327.68f * Chprov * sincosv.x; //aply Munsell
                             } else {//general case
                                 L = labco->L[i1][j1];
-                                const float Lin = labco->L[i1][j1];
+                                const float Lin = std::max(0.f, L);
 
                                 if (wavclCurve  && cp.finena) {
                                     labco->L[i1][j1] = (0.5f * Lin + 1.5f * wavclCurve[Lin]) / 2.f;   //apply contrast curve
@@ -1432,15 +1425,15 @@ void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compress
     float exponent;
 
     if (DetailBoost > 0.f && DetailBoost < 0.05f ) {
-        float betemp = expf (- (2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
+        float betemp = expf (- (2.f - DetailBoost + 0.693147f)) - 1.f; //0.693147 = log(2)
         exponent = 1.2f * xlogf( -betemp);
         exponent /= 20.f;
     } else if (DetailBoost >= 0.05f && DetailBoost < 0.25f ) {
-        float betemp = expf (- (2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
+        float betemp = expf (- (2.f - DetailBoost + 0.693147f)) - 1.f;
         exponent = 1.2f * xlogf( -betemp);
         exponent /= (-75.f * DetailBoost + 23.75f);
     } else if (DetailBoost >= 0.25f) {
-        float betemp = expf (- (2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
+        float betemp = expf (- (2.f - DetailBoost + 0.693147f)) - 1.f;
         exponent = 1.2f * xlogf( -betemp);
         exponent /= (-2.f * DetailBoost + 5.5f);
     } else {
@@ -1448,6 +1441,7 @@ void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compress
     }
 
     exponent += 1.f;
+    const float eps = 0.0001f;
 
     // now calculate Source = pow(Source, exponent)
 #ifdef __SSE2__
@@ -1456,17 +1450,19 @@ void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compress
 #endif
     {
         vfloat exponentv = F2V(exponent);
+        __m128 epsv = _mm_set1_ps( eps );
+        
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for (int i = 0; i < n - 3; i += 4) {
-            STVFU(Source[i], xexpf(xlogf(LVFU(Source[i])) * exponentv));
+            STVFU(Source[i], xexpf(xlogf(LVFU(Source[i]) + epsv) * exponentv));
         }
     }
 
     for (int i = n - (n % 4); i < n; i++) {
-        Source[i] = xexpf(xlogf(Source[i]) * exponent);
+        Source[i] = xexpf(xlogf(Source[i] + eps) * exponent);
     }
 
 #else
@@ -1812,6 +1808,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             for (int i = 0; i < H_L; i++) {
                 tmC[i] = &tmCBuffer[i * W_L];
             }
+            float gradw = cp.eddet;
+            float tloww = cp.eddetthr;
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic) collapse(2)
@@ -1823,7 +1821,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                     int H_L = WaveletCoeffs_L.level_H (lvl);
 
                     float ** WavCoeffs_LL = WaveletCoeffs_L.level_coeffs (lvl);
-                    calckoe (WavCoeffs_LL, cp, koeLi, lvl , dir, W_L, H_L, edd, maxkoeLi, tmC);
+                    calckoe (WavCoeffs_LL, gradw, tloww, koeLi, lvl , dir, W_L, H_L, edd, maxkoeLi, tmC);
+//                    calckoe (WavCoeffs_LL, cp, koeLi, lvl , dir, W_L, H_L, edd, maxkoeLi, tmC);
                     // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
                 }
             }
@@ -2175,12 +2174,11 @@ void ImProcFunctions::WaveletcontAllAB (LabImage * labco, float ** varhue, float
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& cp, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC)
+void ImProcFunctions::calckoe (float ** WavCoeffs_LL, float gradw, float tloww, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC)
 {
     int borderL = 2;
 
-//  printf("cpedth=%f\n",cp.eddetthr);
-    if (cp.eddetthr < 30.f) {
+    if (tloww < 30.f) {
         borderL = 1;
 
         // I calculate coefficients with r size matrix 3x3 r=1 ; 5x5 r=2; 7x7 r=3
@@ -2204,7 +2202,7 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
 
             }
         }
-    } else if (cp.eddetthr >= 30.f && cp.eddetthr < 50.f) {
+    } else if (tloww < 50.f) {
         borderL = 1;
 
         for (int i = 1; i < H_L - 1; i++) { //sigma=0.85
@@ -2220,7 +2218,7 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
     }
 
 
-    else if (cp.eddetthr >= 50.f && cp.eddetthr < 75.f) {
+    else if (tloww < 75.f) {
         borderL = 1;
 
         for (int i = 1; i < H_L - 1; i++) {
@@ -2232,10 +2230,9 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
         }
     }
 
-    else if (cp.eddetthr >= 75.f) {
+    else  {
         borderL = 2;
 
-        //if(cp.lip3 && level > 1) {
         if (level > 1) { // do not activate 5x5 if level 0 or 1
 
             for (int i = 2; i < H_L - 2; i++) {
@@ -2254,7 +2251,7 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
                     // 4 9 12 9 4
                     // 2 4 5 4 2
                     // divi 159
-                    if (cp.eddetthr < 85.f) { //sigma=1.1
+                    if (tloww < 85.f) { //sigma=1.1
                         tmC[i][j] = (15.f * WavCoeffs_LL[dir][i * W_L + j]  + 10.f * WavCoeffs_LL[dir][ (i - 1) * W_L + j] + 10.f * WavCoeffs_LL[dir][ (i + 1) * W_L + j]
                                      + 10.f * WavCoeffs_LL[dir][i * W_L + j + 1] + 10.f * WavCoeffs_LL[dir][i * W_L + j - 1] + 7.f * WavCoeffs_LL[dir][ (i - 1) * W_L + j - 1]
                                      + 7.f * WavCoeffs_LL[dir][ (i - 1) * W_L + j + 1] + 7.f * WavCoeffs_LL[dir][ (i + 1) * W_L + j - 1] + 7.f * WavCoeffs_LL[dir][ (i + 1) * W_L + j + 1]
@@ -2302,8 +2299,8 @@ void ImProcFunctions::calckoe (float ** WavCoeffs_LL, const struct cont_params& 
 
     float thr = 40.f; //avoid artifact eg. noise...to test
     float thr2 = 1.5f * edd; //edd can be modified in option ed_detect
-    thr2 += cp.eddet / 30.f; //to test
-    float diffFactor = (cp.eddet / 100.f);
+    thr2 += gradw / 30.f; //to test
+    float diffFactor = (gradw / 100.f);
 
     for (int i = 0; i < H_L; i++ ) {
         for (int j = 0; j < W_L; j++) {
@@ -2514,6 +2511,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
         float maxkoe = 0.f;
 
         if (!lipschitz) {
+
             koe = new float [H_L * W_L];
 
             for (int i = 0; i < W_L * H_L; i++) {
@@ -3343,7 +3341,6 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
     }
 
     if (cp.bam  && cp.diag) {
-//printf("OK Chroma\n");
         if (cp.opaW && cp.BAmet == 2) {
             int iteration = cp.ite;
             int itplus = 7 + iteration;

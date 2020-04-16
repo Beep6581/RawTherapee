@@ -14,16 +14,14 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 //
 // A class representing a 16 bit rgb image with separate planes and 16 byte aligned data
 //
-#ifndef _IMAGEFLOAT_
-#define _IMAGEFLOAT_
+#pragma once
 
 #include "imageio.h"
-#include "rtengine.h"
 
 namespace rtengine
 {
@@ -31,11 +29,12 @@ using namespace procparams;
 
 class Image8;
 class Image16;
+class LabImage;
 
 /*
  * Image type used by most tools; expected range: [0.0 ; 65535.0]
  */
-class Imagefloat : public IImagefloat, public ImageIO
+class Imagefloat final : public IImagefloat, public ImageIO
 {
 
 public:
@@ -62,7 +61,7 @@ public:
     }
 
     void getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) const override;
-    void setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples) override;
+    void setScanline (int row, const unsigned char* buffer, int bps, unsigned int numSamples) override;
 
     // functions inherited from IImagefloat:
     MyMutex& getMutex () override
@@ -227,4 +226,3 @@ public:
 };
 
 }
-#endif

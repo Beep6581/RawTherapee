@@ -15,19 +15,18 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 
 #include "color.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"
-#include "rawimage.h"
 #include "iccmatrices.h"
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
-#include "procparams.h"
 //#define BENCHMARK
 #include "StopWatch.h"
 
@@ -401,11 +400,11 @@ void RawImageSource::eahd_demosaic ()
                 int vc = homv[imx][j];
 
                 if (hc > vc) {
-                    green[i - 1][j] = gh[(i - 1) % 4][j];
+                    green[i - 1][j] = std::max(0.f, gh[(i - 1) % 4][j]);
                 } else if (hc < vc) {
-                    green[i - 1][j] = gv[(i - 1) % 4][j];
+                    green[i - 1][j] = std::max(0.f, gv[(i - 1) % 4][j]);
                 } else {
-                    green[i - 1][j] = (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2;
+                    green[i - 1][j] = std::max(0.f, (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2);
                 }
             }
         }
@@ -422,11 +421,11 @@ void RawImageSource::eahd_demosaic ()
             int vc = homv[(i - 1) % 3][j];
 
             if (hc > vc) {
-                green[i - 1][j] = gh[(i - 1) % 4][j];
+                green[i - 1][j] = std::max(0.f, gh[(i - 1) % 4][j]);
             } else if (hc < vc) {
-                green[i - 1][j] = gv[(i - 1) % 4][j];
+                green[i - 1][j] = std::max(0.f, gv[(i - 1) % 4][j]);
             } else {
-                green[i - 1][j] = (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2;
+                green[i - 1][j] = std::max(0.f, (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2);
             }
         }
 

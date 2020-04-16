@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "histogrampanel.h"
 #include "multilangmgr.h"
@@ -24,14 +24,9 @@
 #include <cmath>
 #include "../rtengine/LUT.h"
 #include "rtimage.h"
-#include "../rtengine/improccoordinator.h"
 #include "../rtengine/color.h"
-#include "../rtengine/opthelper.h"
-#include "../rtengine/iccstore.h"
 
 using namespace rtengine;
-
-extern Options options;
 
 
 //
@@ -142,7 +137,7 @@ HistogramPanel::HistogramPanel ()
     showGreen->set_image (showGreen->get_active() ? *greenImage : *greenImage_g);
     showBlue->set_image  (showBlue->get_active()  ? *blueImage  : *blueImage_g);
     showValue->set_image (showValue->get_active() ? *valueImage : *valueImage_g);
-    showChro->set_image  (showChro->get_active()   ? *chroImage : *chroImage_g);
+    showChro->set_image  (showChro->get_active()  ? *chroImage  : *chroImage_g);
     showRAW->set_image   (showRAW->get_active()   ? *rawImage   : *rawImage_g);
     if (options.histogramDrawMode == 0)
         showMode->set_image(*mode0Image);
@@ -151,6 +146,8 @@ HistogramPanel::HistogramPanel ()
     else
         showMode->set_image(*mode2Image);
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
+    
+    raw_toggled(); // Make sure the luma/chroma toggles are enabled or disabled
 
     setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showGreen, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -464,7 +461,6 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
 
     if (surface)  {
         Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
-        Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
         cc->set_source_rgba (0., 0., 0., 0.);
         cc->set_operator (Cairo::OPERATOR_CLEAR);
@@ -503,7 +499,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
 
             if (needBlue) {
                 // Blue
-                cc->set_source_rgb(0.0, 0.0, 1.0);
+                cc->set_source_rgb(0.0, 0.4, 1.0);
                 if (options.histogramDrawMode < 2) {
                     cc->move_to(b * (winw - 1.) / 255.0 + 0.5*s, 0);
                     cc->line_to(b * (winw - 1.) / 255.0 + 0.5*s, winh - 0);
@@ -616,7 +612,6 @@ void HistogramRGBArea::on_realize ()
 {
 
     Gtk::DrawingArea::on_realize();
-    Glib::RefPtr<Gdk::Window> window = get_window();
     add_events(Gdk::BUTTON_PRESS_MASK);
 }
 
@@ -964,7 +959,7 @@ void HistogramArea::updateBackBuffer ()
 
         if (needBlue) {
             drawCurve(cr, bhchanged, realhistheight, w, h);
-            cr->set_source_rgb (0.0, 0.0, 1.0);
+            cr->set_source_rgb (0.0, 0.4, 1.0);
             cr->stroke ();
             drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
@@ -984,12 +979,11 @@ void HistogramArea::on_realize ()
 {
 
     Gtk::DrawingArea::on_realize();
-    Glib::RefPtr<Gdk::Window> window = get_window();
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
-                              LUTu & data, double scale, int hsize, int vsize)
+                              const LUTu & data, double scale, int hsize, int vsize)
 {
     double s = RTScalable::getScale();
 
@@ -1019,7 +1013,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 }
 
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
-                              LUTu & data, double scale, int hsize, int & ui, int & oi)
+                              const LUTu & data, double scale, int hsize, int & ui, int & oi)
 {
     int s = 8 * RTScalable::getScale();
 
@@ -1036,8 +1030,6 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
 
 bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-
-    Glib::RefPtr<Gdk::Window> window = get_window();
 
     if (get_width() != oldwidth || get_height() != oldheight || isDirty ()) {
         updateBackBuffer ();

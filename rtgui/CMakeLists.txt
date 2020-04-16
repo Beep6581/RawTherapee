@@ -80,7 +80,6 @@ set(NONCLISOURCEFILES
     hsvequalizer.cc
     iccprofilecreator.cc
     icmpanel.cc
-    ilabel.cc
     imagearea.cc
     imageareapanel.cc
     impulsedenoise.cc
@@ -110,6 +109,7 @@ set(NONCLISOURCEFILES
     partialpastedlg.cc
     pathutils.cc
     pcvignette.cc
+    pdsharpening.cc
     perspective.cc
     placesbrowser.cc
     popupbutton.cc
@@ -289,6 +289,7 @@ target_link_libraries(rth rtengine
     ${ZLIB_LIBRARIES}
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
+    ${TCMALLOC_LIBRARIES}
     )
 
 target_link_libraries(rth-cli rtengine
@@ -310,6 +311,7 @@ target_link_libraries(rth-cli rtengine
     ${ZLIB_LIBRARIES}
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
+    ${TCMALLOC_LIBRARIES}
     )
 
 # Install executables

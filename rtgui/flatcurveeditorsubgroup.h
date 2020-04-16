@@ -14,17 +14,22 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _FLATCURVEEDITORSUBGROUP_
-#define _FLATCURVEEDITORSUBGROUP_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "curveeditorgroup.h"
 
-class FlatCurveEditor;
+#include "../rtengine/noncopyable.h"
 
-class FlatCurveEditorSubGroup: public CurveEditorSubGroup
+class FlatCurveEditor;
+class MyFlatCurve;
+
+class FlatCurveEditorSubGroup final :
+    public CurveEditorSubGroup,
+    public rtengine::NonCopyable
 {
 
     friend class FlatCurveEditor;
@@ -77,5 +82,3 @@ protected:
     void editPointToggled(Gtk::ToggleButton *button);
     void editToggled (Gtk::ToggleButton *button);
 };
-
-#endif

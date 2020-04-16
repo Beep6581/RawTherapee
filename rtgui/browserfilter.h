@@ -14,17 +14,16 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _BROWSERFILTER_
-#define _BROWSERFILTER_
+#pragma once
+
+#include <vector>
 
 #include "exiffiltersettings.h"
-#include <glibmm.h>
 
 class BrowserFilter
 {
-
 public:
     bool showRanked[6];
     bool showCLabeled[6];
@@ -33,15 +32,11 @@ public:
     bool showOriginal;
     bool showEdited[2];
     bool showRecentlySaved[2];
-    bool multiselect;
-
-    Glib::ustring queryString;
-    Glib::ustring queryFileName;
 
     bool exifFilterEnabled;
+    bool matchEqual;
     ExifFilterSettings exifFilter;
+    std::vector<std::string> vFilterStrings;
 
     BrowserFilter ();
 };
-
-#endif

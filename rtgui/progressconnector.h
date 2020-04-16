@@ -14,19 +14,21 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PROGRESSCONNECTOR_
-#define _PROGRESSCONNECTOR_
+#pragma once
+
+#include <gtkmm.h>
 
 #include <sigc++/sigc++.h>
-#include <gtkmm.h>
-#include "../rtengine/rtengine.h"
+
 #include "guiutils.h"
+#include "multilangmgr.h"
+#include "../rtengine/rtengine.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
-class PLDBridge :
+class PLDBridge final :
     public rtengine::ProgressListener
 {
 public:
@@ -77,9 +79,9 @@ class ProgressConnector
     static int emitEndSignalUI (void* data)
     {
 
-        sigc::signal0<bool>* opEnd = (sigc::signal0<bool>*) data;
-        int r = opEnd->emit ();
-        delete opEnd;
+        const sigc::signal0<bool>* lopEnd = reinterpret_cast<sigc::signal0<bool>*>(data);
+        const int r = lopEnd->emit ();
+        delete lopEnd;
 
         return r;
     }
@@ -109,4 +111,3 @@ public:
         return retval;
     }
 };
-#endif

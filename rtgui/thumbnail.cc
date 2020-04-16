@@ -13,27 +13,35 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#ifdef WIN32
+#include <windows.h>
+#endif
+
+#include "cachemanager.h"
 #include "multilangmgr.h"
 #include "thumbnail.h"
 #include <sstream>
 #include <iomanip>
-#include "options.h"
-#include "../rtengine/mytime.h"
 #include <cstdio>
 #include <cstdlib>
-#include <glibmm.h>
+#include "../rtengine/colortemp.h"
 #include "../rtengine/imagedata.h"
 #include "../rtengine/procparams.h"
+#include "../rtengine/rtthumbnail.h"
 #include <glib/gstdio.h>
 
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/profilestore.h"
+#include "../rtengine/settings.h"
+#include "../rtexif/rtexif.h"
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
-#include "profilestorecombobox.h"
 #include "md5helper.h"
+#include "pathutils.h"
+#include "paramsedited.h"
 #include "procparamchangers.h"
 
 using namespace rtengine::procparams;
@@ -233,8 +241,6 @@ const ProcParams& Thumbnail::getProcParamsU ()
 rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool force, bool flaggingMode)
 {
 
-    static int index = 0; // Will act as unique identifier during the session
-
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = nullptr;
 
@@ -286,6 +292,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
         }
 
+        static int index = 0; // Will act as unique identifier during the session
         Glib::ustring tmpFileName( Glib::build_filename(options.cacheBaseDir, Glib::ustring::compose("CPB_temp_%1.txt", index++)) );
 
         const rtexif::TagDirectory* exifDir = nullptr;
@@ -301,7 +308,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
 
-        if (options.rtSettings.verbose) {
+        if (rtengine::settings->verbose) {
             printf("Custom profile builder's command line: %s\n", Glib::ustring(cmdLine).c_str());
         }
 
@@ -335,34 +342,31 @@ void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt)
  * the Preferences).
  *
  * The result is a complete ProcParams with default values merged with the values
- * from the default Raw or Image ProcParams, then with the values from the loaded
- * ProcParams (sidecar or cache file).
- */
+ * from the loaded ProcParams (sidecar or cache file).
+*/
 void Thumbnail::loadProcParams ()
 {
     MyMutex::MyLock lock(mutex);
 
     pparamsValid = false;
     pparams->setDefaults();
-    const PartialProfile *defaultPP = ProfileStore::getInstance()->getDefaultPartialProfile(getType() == FT_Raw);
-    defaultPP->applyTo(pparams.get());
 
     if (options.paramsLoadLocation == PLL_Input) {
         // try to load it from params file next to the image file
-        int ppres = pparams->load (fname + paramFileExtension);
+        const int ppres = pparams->load(fname + paramFileExtension);
         pparamsValid = !ppres && pparams->ppVersion >= 220;
 
         // if no success, try to load the cached version of the procparams
         if (!pparamsValid) {
-            pparamsValid = !pparams->load (getCacheFileName ("profiles", paramFileExtension));
+            pparamsValid = !pparams->load(getCacheFileName("profiles", paramFileExtension));
         }
     } else {
         // try to load it from cache
-        pparamsValid = !pparams->load (getCacheFileName ("profiles", paramFileExtension));
+        pparamsValid = !pparams->load(getCacheFileName("profiles", paramFileExtension));
 
         // if no success, try to load it from params file next to the image file
         if (!pparamsValid) {
-            int ppres = pparams->load (fname + paramFileExtension);
+            const int ppres = pparams->load(fname + paramFileExtension);
             pparamsValid = !ppres && pparams->ppVersion >= 220;
         }
     }
@@ -476,6 +480,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams->filmSimulation != pp.filmSimulation
         || pparams->softlight != pp.softlight
         || pparams->dehaze != pp.dehaze
+        || pparams->filmNegative != pp.filmNegative
         || whoChangedIt == FILEBROWSER
         || whoChangedIt == BATCHEDITOR;
 
@@ -584,10 +589,8 @@ void Thumbnail::decreaseRef ()
     cachemgr->closeThumbnail (this);
 }
 
-void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::ProcParams *pparams)
+int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcParams *pparams) const
 {
-    MyMutex::MyLock lock(mutex);
-
     int tw_ = tw;
     int th_ = th;
     float imgRatio_ = imgRatio;
@@ -607,20 +610,17 @@ void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::Pr
 
         if (thisCoarse != ppCoarse) {
             // different orientation -> swapping width & height
-            int tmp = th_;
-            th_ = tw_;
-            tw_ = tmp;
-
+            std::swap(th_, tw_);
             if (imgRatio_ >= 0.0001f) {
                 imgRatio_ = 1.f / imgRatio_;
             }
         }
     }
 
-    if (imgRatio_ > 0.) {
-        w = (int)(imgRatio_ * (float)h);
+    if (imgRatio_ > 0.f) {
+        return imgRatio_ * h;
     } else {
-        w = tw_ * h / th_;
+        return tw_ * h / th_;
     }
 }
 
@@ -1021,9 +1021,7 @@ int Thumbnail::getRank  () const
 
 void Thumbnail::setRank  (int rank)
 {
-    if (pparams->rank != rank) {
-        pparams->rank = rank;
-    }
+    pparams->rank = rank;
     pparamsValid = true;
 }
 
@@ -1153,4 +1151,49 @@ bool Thumbnail::imageLoad(bool loading)
     }
 
     return false;
+}
+
+void Thumbnail::getCamWB(double& temp, double& green) const
+{
+    if (tpp) {
+        tpp->getCamWB  (temp, green);
+    } else {
+        temp = green = -1.0;
+    }
+}
+
+void Thumbnail::getSpotWB(int x, int y, int rect, double& temp, double& green)
+{
+    if (tpp) {
+        tpp->getSpotWB (getProcParams(), x, y, rect, temp, green);
+    } else {
+        temp = green = -1.0;
+    }
+}
+
+void Thumbnail::applyAutoExp (rtengine::procparams::ProcParams& pparams)
+{
+    if (tpp) {
+        tpp->applyAutoExp (pparams);
+    }
+}
+
+const CacheImageData* Thumbnail::getCacheImageData()
+{
+    return &cfs;
+}
+
+std::string Thumbnail::getMD5() const
+{
+    return cfs.md5;
+}
+
+bool Thumbnail::isQuick() const
+{
+    return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL;
+}
+
+bool Thumbnail::isPParamsValid() const
+{
+    return pparamsValid;
 }

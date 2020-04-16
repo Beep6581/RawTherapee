@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "dynamicprofilepanel.h"
@@ -22,6 +22,7 @@
 #include "../rtengine/profilestore.h"
 #include "../rtengine/rtengine.h"
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/settings.h"
 #include <sstream>
 #include <iomanip>
 
@@ -615,7 +616,7 @@ void DynamicProfilePanel::save()
 
     if (!ProfileStore::getInstance()->storeRules()) {
         printf ("Error in saving dynamic profile rules\n");
-    } else if (options.rtSettings.verbose) {
+    } else if (rtengine::settings->verbose) {
         printf ("Saved %d dynamic profile rules\n", int (rules.size()));
     }
 }

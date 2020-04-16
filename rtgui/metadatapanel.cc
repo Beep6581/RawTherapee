@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "metadatapanel.h"
@@ -26,9 +26,8 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 
-MetaDataPanel::MetaDataPanel()
+MetaDataPanel::MetaDataPanel() : EvMetaDataMode(ProcEventMapper::getInstance()->newEvent(M_VOID, "HISTORY_MSG_METADATA_MODE"))
 {
-    EvMetaDataMode = ProcEventMapper::getInstance()->newEvent(M_VOID, "HISTORY_MSG_METADATA_MODE");
 
     Gtk::HBox *box = Gtk::manage(new Gtk::HBox());
     box->pack_start(*Gtk::manage(new Gtk::Label(M("TP_METADATA_MODE") + ": ")), Gtk::PACK_SHRINK, 4);

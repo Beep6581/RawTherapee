@@ -14,26 +14,20 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 
+#include "LUT.h"
 #include "rtengine.h"
 #include "rtthumbnail.h"
 #include "opthelper.h"
+#include "sleef.h"
 #include "rt_algo.h"
-#include "rtengine.h"
 #include "settings.h"
 #include "procparams.h"
 #define BENCHMARK
 #include "StopWatch.h"
-
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
 
 void rtengine::Thumbnail::processFilmNegative(
     const procparams::ProcParams &params,

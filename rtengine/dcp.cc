@@ -14,29 +14,29 @@
 *  GNU General Public License for more details.
 *
 *  You should have received a copy of the GNU General Public License
-*  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <iostream>
 #include <cstdio>
 #include <cstring>
 #include <functional>
+#include <glib/gstdio.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
 
 #include "dcp.h"
 
 #include "cJSON.h"
+#include "color.h"
 #include "iccmatrices.h"
 #include "iccstore.h"
-#include "improcfun.h"
+#include "imagefloat.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
+#include "utils.h"
+#include "../rtexif/rtexif.h"
+#include "../rtgui/options.h"
 
 using namespace rtengine;
 using namespace rtexif;
@@ -334,8 +334,6 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
     // Search for line pair coordinate is between.
     double last_dt = 0.0;
-    double last_dv = 0.0;
-    double last_du = 0.0;
 
     for (uint32_t index = 1; index <= 30; ++index) {
         // Convert slope to delta-u and delta-v, with length 1.
@@ -371,23 +369,11 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
             // Interpolate the temperature.
             res = 1.0e6 / (temp_table[index - 1].r * f + temp_table[index].r * (1.0 - f));
-
-            // Find delta from black body point to test coordinate.
-            uu = u - (temp_table [index - 1].u * f + temp_table [index].u * (1.0 - f));
-            vv = v - (temp_table [index - 1].v * f + temp_table [index].v * (1.0 - f));
-            // Interpolate vectors along slope.
-            du = du * (1.0 - f) + last_du * f;
-            dv = dv * (1.0 - f) + last_dv * f;
-            len = sqrt (du * du + dv * dv);
-            du /= len;
-            dv /= len;
             break;
         }
 
         // Try next line pair.
         last_dt = dt;
-        last_du = du;
-        last_dv = dv;
     }
 
     return res;
@@ -446,7 +432,7 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
 
 }
 
-struct DCPProfile::ApplyState::Data {
+struct DCPProfileApplyState::Data {
     float pro_photo[3][3];
     float work[3][3];
     bool already_pro_photo;
@@ -455,14 +441,12 @@ struct DCPProfile::ApplyState::Data {
     float bl_scale;
 };
 
-DCPProfile::ApplyState::ApplyState() :
+DCPProfileApplyState::DCPProfileApplyState() :
     data(new Data{})
 {
 }
 
-DCPProfile::ApplyState::~ApplyState()
-{
-}
+DCPProfileApplyState::~DCPProfileApplyState() = default;
 
 DCPProfile::DCPProfile(const Glib::ustring& filename) :
     has_color_matrix_1(false),
@@ -1162,7 +1146,7 @@ void DCPProfile::apply(
     }
 }
 
-void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, ApplyState& as_out)
+void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, DCPProfileApplyState& as_out)
 {
     as_out.data->use_tone_curve = use_tone_curve;
     as_out.data->apply_look_table = apply_look_table;
@@ -1206,7 +1190,7 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
     }
 }
 
-void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int height, int tile_width, const ApplyState& as_in) const
+void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int height, int tile_width, const DCPProfileApplyState& as_in) const
 {
 
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
@@ -1882,7 +1866,7 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
     if (res->isValid()) {
         // Add profile
         profile_cache[key] = res;
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf("DCP profile '%s' loaded from disk\n", filename.c_str());
         }
         return res;

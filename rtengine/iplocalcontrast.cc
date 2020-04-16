@@ -19,25 +19,20 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include "array2D.h"
 #include "gauss.h"
+#include "labimage.h"
 #include "improcfun.h"
 #include "procparams.h"
+#include "settings.h"
 
 namespace rtengine
 {
-    extern const Settings* settings;
-    
-    LocallabParams          locallab;        ///< Local lab parameters
 
-void ImProcFunctions::localContrast(LabImage *lab, float **destination, const LocalContrastParams &localContrastParams, bool fftwlc, double scale)
+void ImProcFunctions::localContrast(LabImage *lab, float **destination, const rtengine::procparams::LocalContrastParams &localContrastParams, bool fftwlc, double scale)
 {
     if (!localContrastParams.enabled) {
         return;
@@ -70,7 +65,7 @@ void ImProcFunctions::localContrast(LabImage *lab, float **destination, const Lo
         } else {//sigma *= sigma
             kr = sigma;
         }
-     //   printf("kr=%f \n", kr);
+        //OPENMP disabled
         ImProcFunctions::fftw_convol_blur2(lab->L, buf, width, height, kr * sigma, 0, 0);
     }
 #ifdef _OPENMP

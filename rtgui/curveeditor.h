@@ -14,21 +14,22 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CURVEEDITOR_
-#define _CURVEEDITOR_
+#pragma once
 
-#include "popuptogglebutton.h"
-#include "../rtengine/LUT.h"
-#include "coloredbar.h"
 #include "editcallbacks.h"
-#include "mydiagonalcurve.h"
-#include "myflatcurve.h"
+#include "guiutils.h"
+
+#include "../rtengine/diagonalcurvetypes.h"
+#include "../rtengine/flatcurvetypes.h"
+#include "../rtengine/LUT.h"
+#include "../rtengine/noncopyable.h"
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
-
+class ColorProvider;
+class PopUpToggleButton;
 
 /*
  *********************** Curve Editor ***********************
@@ -38,7 +39,7 @@ class CurveEditorSubGroup;
 /** @brief This class is an interface between RT and the curve editor group
  * It handles the methods related to a specific curve. It is created by CurveEditorGroup::addCurve
  */
-class CurveEditor : public EditSubscriber
+class CurveEditor : public EditSubscriber, public rtengine::NonCopyable
 {
 
     friend class CurveEditorGroup;
@@ -143,7 +144,7 @@ public:
  */
 
 
-class DiagonalCurveEditor : public CurveEditor
+class DiagonalCurveEditor final : public CurveEditor
 {
 
     friend class DiagonalCurveEditorSubGroup;
@@ -179,9 +180,8 @@ public:
  */
 
 
-class FlatCurveEditor : public CurveEditor
+class FlatCurveEditor final : public CurveEditor
 {
-
     friend class FlatCurveEditorSubGroup;
 
 protected:
@@ -206,5 +206,3 @@ public:
     // set the reset curve for a given curve type. This is optional; all curve type have a default reset curve
     void setResetCurve(FlatCurveType cType, const std::vector<double> &resetCurve);
 };
-
-#endif

@@ -14,12 +14,14 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "batchqueuebuttonset.h"
 
+#include "lwbutton.h"
 #include "multilangmgr.h"
 #include "rtimage.h"
+#include "rtsurface.h"
 
 bool BatchQueueButtonSet::iconsLoaded = false;
 

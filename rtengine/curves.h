@@ -14,31 +14,30 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __CURVES_H__
-#define __CURVES_H__
+#pragma once
 
 #include <map>
 #include <string>
 #include <vector>
 
-#include <glibmm.h>
-
 #include "rt_math.h"
-#include "../rtgui/mycurve.h"
-#include "../rtgui/myflatcurve.h"
-#include "../rtgui/mydiagonalcurve.h"
-#include "color.h"
-#include "pipettebuffer.h"
-
+#include "flatcurvetypes.h"
+#include "diagonalcurvetypes.h"
+#include "noncopyable.h"
 #include "LUT.h"
-
+#include "sleef.h"
 #define CURVES_MIN_POLY_POINTS  1000
 
-#include "rt_math.h"
-
 #define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 using namespace std;
 
@@ -356,8 +355,7 @@ public:
 public:
     static void complexCurve(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
                              const std::vector<double>& curvePoints, const std::vector<double>& curvePoints2,
-                             LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
-
+                             const LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
                              int skip = 1);
 
     static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double cont, double lumare,
@@ -381,6 +379,7 @@ public:
     static void curveCCLocal(bool & localcutili, const std::vector<double>& curvePoints, LUTf & LocalCCurve, int skip);
     static void curveskLocal(bool & localskutili, const std::vector<double>& curvePoints, LUTf & LocalskCurve, int skip);
     static void curveexLocal(bool & localexutili, const std::vector<double>& curvePoints, LUTf & LocalexCurve, int skip);
+    static void curvemaskLocal(bool & localmaskutili, const std::vector<double>& curvePoints, LUTf & LocalmaskCurve, int skip);
 
     static void complexsgnCurve(bool & autili,  bool & butili, bool & ccutili, bool & clcutili, const std::vector<double>& acurvePoints,
                                 const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
@@ -478,7 +477,7 @@ public:
     virtual bool   isIdentity() const = 0;
 };
 
-class DiagonalCurve : public Curve
+class DiagonalCurve final : public Curve
 {
 
 protected:
@@ -500,7 +499,7 @@ public:
     };
 };
 
-class FlatCurve : public Curve
+class FlatCurve final : public Curve
 {
 
 private:
@@ -648,6 +647,92 @@ public:
         return lutLocLHCurve;
     }
 };
+
+class LocHHmaskblCurve
+{
+private:
+    LUTf lutLocHHmaskblCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocHHmaskblCurve() {};
+    LocHHmaskblCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints, bool & lhmasblutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocHHmaskblCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocHHmaskblCurve;
+    }
+};
+
+class LocCCmaskblCurve
+{
+private:
+    LUTf lutLocCCmaskblCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocCCmaskblCurve() {};
+    LocCCmaskblCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints,  bool & lcmasblutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocCCmaskblCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocCCmaskblCurve;
+    }
+};
+
+class LocLLmaskblCurve
+{
+private:
+    LUTf lutLocLLmaskblCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocLLmaskblCurve() {};
+    LocLLmaskblCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints, bool & llmasblutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocLLmaskblCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocLLmaskblCurve;
+    }
+};
+
+
 
 class LocHHmasktmCurve
 {
@@ -1229,6 +1314,34 @@ public:
     }
 };
 
+class LocretitransCurve
+{
+private:
+    LUTf lutLocretitransCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocretitransCurve() {};
+    LocretitransCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocretitransCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocretitransCurve;
+    }
+};
+
 
 class LocwavCurve
 {
@@ -1242,7 +1355,7 @@ public:
     virtual ~LocwavCurve() {};
     LocwavCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints, bool &lcwavutili);
     float getSum() const
     {
         return sum;
@@ -1584,12 +1697,6 @@ public:
             float *r, float *g, float *b) const;
 };
 
-class SatAndValueBlendingToneCurve : public ToneCurve
-{
-public:
-    void Apply(float& r, float& g, float& b) const;
-};
-
 class WeightedStdToneCurve : public ToneCurve
 {
 private:
@@ -1637,7 +1744,7 @@ private:
     float calculateToneCurveContrastValue() const;
 public:
     static void init();
-    void initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const;
+    void initApplyState(PerceptualToneCurveState & state, const Glib::ustring& workingSpace) const;
     void BatchApply(const size_t start, const size_t end, float *r, float *g, float *b, const PerceptualToneCurveState &state) const;
 };
 
@@ -1649,6 +1756,7 @@ inline void StandardToneCurve::Apply(float& r, float& g, float& b) const
 
     curves::setLutVal(lutToneCurve, r, g, b);
 }
+
 
 inline void StandardToneCurve::BatchApply(
     const size_t start, const size_t end,
@@ -1969,47 +2077,6 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
 #endif
 }
 
-// Tone curve modifying the value channel only, preserving hue and saturation
-// values in 0xffff space
-inline void SatAndValueBlendingToneCurve::Apply(float& ir, float& ig, float& ib) const
-{
-
-    assert(lutToneCurve);
-
-    float r = CLIP(ir);
-    float g = CLIP(ig);
-    float b = CLIP(ib);
-
-    const float lum = (r + g + b) / 3.f;
-    const float newLum = lutToneCurve[lum];
-
-    if (newLum == lum) {
-        return;
-    }
-
-    float h, s, v;
-    Color::rgb2hsvtc(r, g, b, h, s, v);
-
-    float dV;
-
-    if (newLum > lum) {
-        // Linearly targeting Value = 1 and Saturation = 0
-        const float coef = (newLum - lum) / (65535.f - lum);
-        dV = (1.f - v) * coef;
-        s *= 1.f - coef;
-    } else {
-        // Linearly targeting Value = 0
-        const float coef = (newLum - lum) / lum ;
-        dV = v * coef;
-    }
-
-    Color::hsv2rgbdcp(h, s, v + dV, r, g, b);
-
-    setUnlessOOG(ir, ig, ib, r, g, b);
-}
-
 }
 
 #undef CLIPI
-
-#endif

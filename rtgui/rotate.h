@@ -14,17 +14,20 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _ROTATE_H_
-#define _ROTATE_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "toolpanel.h"
-#include "lensgeomlistener.h"
 
-class Rotate : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class LensGeomListener;
+class Rotate final :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -52,5 +55,3 @@ public:
         rlistener = l;
     }
 };
-
-#endif

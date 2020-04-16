@@ -14,18 +14,20 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
 #ifdef GUIVERSION
 
-#include "rtsurface.h"
-#include "editbuffer.h"
+#include <cairomm/cairomm.h>
+#include <glibmm/ustring.h>
+
 #include "editcoordsys.h"
 #include "../rtengine/coord.h"
 
 class ObjectMOBuffer;
+class RTSurface;
 
 /** @file
  *
@@ -53,7 +55,7 @@ class ObjectMOBuffer;
  *    - drag1
  *    - button1Released
  *
- * Actually, only curves does use this class, and everything is handled for curve implementor (as much as possible).
+ * Actually, only curves does use this class, and everything is handled for curve implementer (as much as possible).
  * See the curve's class documentation to see how to implement the curve's pipette feature.
  *
  * ### Event handling
@@ -284,7 +286,7 @@ public:
     rtengine::Coord end;
 
     Line ();
-    Line (rtengine::Coord& begin, rtengine::Coord& end);
+    Line (const rtengine::Coord& begin, const rtengine::Coord& end);
     Line (int beginX, int beginY, int endX, int endY);
 
     void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
@@ -554,7 +556,7 @@ inline Circle::Circle (int centerX, int centerY, int radius, bool filled,
                 radiusInImageSpace) {
 }
 
-inline Line::Line (rtengine::Coord& begin, rtengine::Coord& end) :
+inline Line::Line (const rtengine::Coord& begin, const rtengine::Coord& end) :
         begin (begin), end (end) {
 }
 

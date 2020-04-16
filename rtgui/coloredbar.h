@@ -14,10 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _COLOREDBAR_
-#define _COLOREDBAR_
+#pragma once
 
 #include "colorprovider.h"
 #include "guiutils.h"
@@ -31,7 +30,7 @@
  *          the bar itself, i.e. use render_background (depending on its Gtk::Style)
  *
  */
-class ColoredBar : private BackBuffer, public ColorCaller
+class ColoredBar final : private BackBuffer, public ColorCaller
 {
 
 private:
@@ -62,5 +61,3 @@ public:
         BackBuffer::setDirty(isDirty);
     }
 };
-
-#endif

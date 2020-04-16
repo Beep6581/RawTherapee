@@ -22,6 +22,8 @@
 #ifndef _LOCALLAB_H_
 #define _LOCALLAB_H_
 
+#pragma once
+
 #include "controlspotpanel.h"
 #include "locallabtools.h"
 
@@ -112,11 +114,18 @@ private:
     LocallabContrast* const expcontrast;
     LocallabCBDL* const expcbdl;
     LocallabDenoise* const expdenoi;
+    LocallabLog* const explog;
 
     std::vector<LocallabTool*> locallabTools;
 
     // Locallab tools mask background management data
+    std::vector<locallabRetiMinMax> retiMinMax;
+
+    // Locallab tools mask background management data
     std::vector<locallabRef> maskBackRef;
+
+    // Other widgets
+    Gtk::Button* const resetshowButton;
 
 public:
     Locallab();
@@ -127,22 +136,38 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void setListener(ToolPanelListener* tpl);
 
+    // Locallab Retinex tool min/man management function
+    void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot);
+
+    // Locallab Log Encoding autocompute function
+    void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float targetg);
+
     // Locallab tools mask background management function
     void refChanged(const std::vector<locallabRef> &ref, int selspot);
 
     // Mask visibility management functions
     struct llMaskVisibility {
         int colorMask;
+        int colorMaskinv;
         int expMask;
+        int expMaskinv;
         int SHMask;
-        int cbMask;
-        int retiMask;
+        int SHMaskinv;
+        int vibMask;
         int softMask;
+        int blMask;
         int tmMask;
+        int retiMask;
+        int sharMask;
+        int lcMask;
+        int cbMask;
     };
 
     void resetMaskVisibility();
     llMaskVisibility getMaskVisibility() const;
+
+    // Other widgets event functions
+    void resetshowPressed();
 
     // EditProvider management function
     void setEditProvider(EditDataProvider* provider);

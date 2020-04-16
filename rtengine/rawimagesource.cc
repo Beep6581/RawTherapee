@@ -14,36 +14,41 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 #include <iostream>
 
-#include "rtengine.h"
-#include "rawimagesource.h"
-#include "rawimagesource_i.h"
-#include "jaggedarray.h"
-#include "median.h"
-#include "rawimage.h"
-#include "mytime.h"
-#include "iccstore.h"
+#include "camconst.h"
+#include "color.h"
 #include "curves.h"
+#include "dcp.h"
 #include "dfmanager.h"
 #include "ffmanager.h"
-#include "dcp.h"
-#include "rt_math.h"
+#include "iccstore.h"
+#include "imagefloat.h"
 #include "improcfun.h"
-#include "rtlensfun.h"
+#include "jaggedarray.h"
+#include "median.h"
+#include "mytime.h"
 #include "pdaflinesfilter.h"
-#include "camconst.h"
 #include "procparams.h"
+#include "rawimage.h"
+#include "rawimagesource_i.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
+#include "rtengine.h"
+#include "rtlensfun.h"
+#include "../rtgui/options.h"
+
+//#define BENCHMARK
+#include "StopWatch.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
 #include "opthelper.h"
-#define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
-#undef CLIPD
-#define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
 namespace
 {
@@ -416,12 +421,9 @@ void transLineD1x (const float* const red, const float* const green, const float
 namespace rtengine
 {
 
-extern const Settings* settings;
 #undef ABS
-#undef DIST
 
 #define ABS(a) ((a)<0?-(a):(a))
-#define DIST(a,b) (ABS(a-b))
 
 RawImageSource::RawImageSource()
     : ImageSource()
@@ -429,6 +431,7 @@ RawImageSource::RawImageSource()
     , plistener(nullptr)
     , scale_mul{}
     , c_black{}
+    , c_white{}
     , cblacksom{}
     , ref_pre_mul{}
     , refwb_red(0.0)
@@ -452,6 +455,9 @@ RawImageSource::RawImageSource()
     , green(0, 0)
     , red(0, 0)
     , blue(0, 0)
+    , greenCache(nullptr)
+    , redCache(nullptr)
+    , blueCache(nullptr)
     , rawDirty(true)
     , histMatchingParams(new procparams::ColorManagementParams)
 {
@@ -470,6 +476,9 @@ RawImageSource::~RawImageSource()
 {
 
     delete idata;
+    delete redCache;
+    delete greenCache;
+    delete blueCache;
 
     for (size_t i = 0; i < numFrames; ++i) {
         delete riFrames[i];
@@ -489,6 +498,26 @@ RawImageSource::~RawImageSource()
     if (embProfile) {
         cmsCloseProfile(embProfile);
     }
+}
+
+unsigned RawImageSource::FC(int row, int col) const
+{
+    return ri->FC(row, col);
+}
+
+eSensorType RawImageSource::getSensorType () const
+{
+    return ri != nullptr ? ri->getSensorType() : ST_NONE;
+}
+
+bool RawImageSource::isMono() const
+{
+    return ri->get_colors() == 1;
+}
+
+int RawImageSource::getRotateDegree() const
+{
+    return ri->get_rotateDegree();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -904,7 +933,7 @@ void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* imag
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileApplyState &as)
 {
     if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
         return nullptr;
@@ -1001,11 +1030,43 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     if (errCode) {
         return errCode;
     }
-    numFrames = firstFrameOnly ? 1 : ri->getFrameCount();
+    numFrames = firstFrameOnly ? (numFrames < 7 ? 1 : ri->getFrameCount()) : ri->getFrameCount();
 
     errCode = 0;
 
-    if (numFrames > 1) {
+    if(numFrames >= 7) {
+        // special case to avoid crash when loading Hasselblad H6D-100cMS pixelshift files
+        // limit to 6 frames and skip first frame, as first frame is not bayer
+        if (firstFrameOnly) {
+            numFrames = 1;
+        } else {
+            numFrames = 6;
+        }
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            int errCodeThr = 0;
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+            for(unsigned int i = 0; i < numFrames; ++i) {
+                if(i == 0) {
+                    riFrames[i] = ri;
+                    errCodeThr = riFrames[i]->loadRaw (true, i + 1, true, plistener, 0.8);
+                } else {
+                    riFrames[i] = new RawImage(fname);
+                    errCodeThr = riFrames[i]->loadRaw (true, i + 1);
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                errCode = errCodeThr ? errCodeThr : errCode;
+            }
+        }
+    } else if(numFrames > 1) {
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -1328,7 +1389,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
         std::unique_ptr<LensCorrection> pmap;
 
         if (lensProf.useLensfun()) {
-            pmap = LFDatabase::findModifier(lensProf, idata, W, H, coarse, -1);
+            pmap = LFDatabase::getInstance()->findModifier(lensProf, idata, W, H, coarse, -1);
         } else {
             const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile(lensProf.lcpFile);
 
@@ -1343,32 +1404,13 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
                 if (numFrames == 4) {
                     for (int i = 0; i < 4; ++i) {
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int y = 0; y < H; y++) {
-                            map.processVignetteLine(W, y, (*rawDataFrames[i])[y]);
-                        }
+                        map.processVignette(W, H, *rawDataFrames[i]);
                     }
                 } else {
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = 0; y < H; y++) {
-                        map.processVignetteLine(W, y, rawData[y]);
-                    }
+                    map.processVignette(W, H, rawData);
                 }
             } else if (ri->get_colors() == 3) {
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int y = 0; y < H; y++) {
-                    map.processVignetteLine3Channels(W, y, rawData[y]);
-                }
+                map.processVignette3Channels(W, H, rawData);
             }
         }
     }
@@ -1531,7 +1573,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold)
+void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache)
 {
     MyTime t1, t2;
     t1.set();
@@ -1602,7 +1644,49 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
 
     rgbSourceModified = false;
 
-
+    if (cache) {
+        if (!redCache) {
+            redCache = new array2D<float>(W, H);
+            greenCache = new array2D<float>(W, H);
+            blueCache = new array2D<float>(W, H);
+        }
+#ifdef _OPENMP
+        #pragma omp parallel sections
+#endif
+        {
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*redCache)[i][j] = red[i][j];
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*greenCache)[i][j] = green[i][j];
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*blueCache)[i][j] = blue[i][j];
+                }
+            }
+        }
+    } else {
+        delete redCache;
+        redCache = nullptr;
+        delete greenCache;
+        greenCache = nullptr;
+        delete blueCache;
+        blueCache = nullptr;
+    }
     if (settings->verbose) {
         if (getSensorType() == ST_BAYER) {
             printf("Demosaicing Bayer data: %s - %d usec\n", raw.bayersensor.method.c_str(), t2.etime(t1));
@@ -1879,7 +1963,7 @@ void RawImageSource::retinexPrepareCurves(const RetinexParams &retinexParams, LU
     }
 
     CurveFactory::mapcurve(mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
-
+    mapcurve *= 0.5f;
     retinexParams.getCurves(retinextransmissionCurve, retinexgaintransmissionCurve);
 }
 
@@ -2313,321 +2397,15 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 
 }
 
-
-void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4])
-{
-//    BENCHFUN
-    float *cfablur = (float (*)) malloc(H * W * sizeof * cfablur);
-    int BS = raw.ff_BlurRadius;
-    BS += BS & 1;
-
-    //function call to cfabloxblur
-    if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::V)) {
-        cfaboxblur(riFlatFile, cfablur, 2 * BS, 0);
-    } else if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::H)) {
-        cfaboxblur(riFlatFile, cfablur, 0, 2 * BS);
-    } else if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::VH)) {
-        //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-        cfaboxblur(riFlatFile, cfablur, BS, BS);    //first do area blur to correct vignette
-    } else { //(raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::area_ff))
-        cfaboxblur(riFlatFile, cfablur, BS, BS);
-    }
-
-    if(ri->getSensorType() == ST_BAYER || ri->get_colors() == 1) {
-        float refcolor[2][2];
-
-        //find centre average values by channel
-        for (int m = 0; m < 2; m++)
-            for (int n = 0; n < 2; n++) {
-                int row = 2 * (H >> 2) + m;
-                int col = 2 * (W >> 2) + n;
-                int c  = ri->get_colors() != 1 ? FC(row, col) : 0;
-                int c4 = ri->get_colors() != 1 ? (( c == 1 && !(row & 1) ) ? 3 : c) : 0;
-                refcolor[m][n] = max(0.0f, cfablur[row * W + col] - black[c4]);
-            }
-
-        float limitFactor = 1.f;
-
-        if (raw.ff_AutoClipControl) {
-            for (int m = 0; m < 2; m++)
-                for (int n = 0; n < 2; n++) {
-                    float maxval = 0.f;
-                    int c  = ri->get_colors() != 1 ? FC(m, n) : 0;
-                    int c4 = ri->get_colors() != 1 ? (( c == 1 && !(m & 1) ) ? 3 : c) : 0;
-#ifdef _OPENMP
-                    #pragma omp parallel
-#endif
-                    {
-                        float maxvalthr = 0.f;
-#ifdef _OPENMP
-                        #pragma omp for
-#endif
-
-                        for (int row = 0; row < H - m; row += 2) {
-                            for (int col = 0; col < W - n; col += 2) {
-                                float tempval = (rawData[row + m][col + n] - black[c4]) * (refcolor[m][n] / max(1e-5f, cfablur[(row + m) * W + col + n] - black[c4]));
-
-                                if (tempval > maxvalthr) {
-                                    maxvalthr = tempval;
-                                }
-                            }
-                        }
-
-#ifdef _OPENMP
-                        #pragma omp critical
-#endif
-                        {
-
-                            if (maxvalthr > maxval) {
-                                maxval = maxvalthr;
-                            }
-
-                        }
-                    }
-
-                    // now we have the max value for the channel
-                    // if it clips, calculate factor to avoid clipping
-                    if (maxval + black[c4] >= ri->get_white(c4)) {
-                        limitFactor = min(limitFactor, ri->get_white(c4) / (maxval + black[c4]));
-                    }
-                }
-
-            flatFieldAutoClipValue = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
-        } else {
-            limitFactor = max((float)(100 - raw.ff_clipControl) / 100.f, 0.01f);
-        }
-
-        for (int m = 0; m < 2; m++)
-            for (int n = 0; n < 2; n++) {
-                refcolor[m][n] *= limitFactor;
-            }
-
-        unsigned int c[2][2] {};
-        unsigned int c4[2][2] {};
-        if(ri->get_colors() != 1) {
-            for (int i = 0; i < 2; ++i) {
-                for(int j = 0; j < 2; ++j) {
-                    c[i][j] = FC(i, j);
-                }
-            }
-            c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
-            c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
-            c4[1][0] = c[1][0];
-            c4[1][1] = c[1][1];
-        }
-
-        constexpr float minValue = 1.f; // if the pixel value in the flat field is less or equal this value, no correction will be applied.
-
-#ifdef __SSE2__
-        vfloat refcolorv[2] = {_mm_set_ps(refcolor[0][1], refcolor[0][0], refcolor[0][1], refcolor[0][0]),
-                               _mm_set_ps(refcolor[1][1], refcolor[1][0], refcolor[1][1], refcolor[1][0])
-                              };
-        vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
-                            _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
-                           };
-
-        vfloat onev = F2V(1.f);
-        vfloat minValuev = F2V(minValue);
-#endif
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-        for (int row = 0; row < H; row ++) {
-            int col = 0;
-#ifdef __SSE2__
-            vfloat rowBlackv = blackv[row & 1];
-            vfloat rowRefcolorv = refcolorv[row & 1];
-
-            for (; col < W - 3; col += 4) {
-                vfloat blurv = LVFU(cfablur[(row) * W + col]) - rowBlackv;
-                vfloat vignettecorrv = rowRefcolorv / blurv;
-                vignettecorrv = vself(vmaskf_le(blurv, minValuev), onev, vignettecorrv);
-                vfloat valv = LVFU(rawData[row][col]);
-                valv -= rowBlackv;
-                STVFU(rawData[row][col], valv * vignettecorrv + rowBlackv);
-            }
-
-#endif
-
-            for (; col < W; col ++) {
-                float blur = cfablur[(row) * W + col] - black[c4[row & 1][col & 1]];
-                float vignettecorr = blur <= minValue ? 1.f : refcolor[row & 1][col & 1] / blur;
-                rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * vignettecorr + black[c4[row & 1][col & 1]];
-            }
-        }
-    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-        float refcolor[3] = {0.f};
-        int cCount[3] = {0};
-
-        //find center ave values by channel
-        for (int m = -3; m < 3; m++)
-            for (int n = -3; n < 3; n++) {
-                int row = 2 * (H >> 2) + m;
-                int col = 2 * (W >> 2) + n;
-                int c  = riFlatFile->XTRANSFC(row, col);
-                refcolor[c] += max(0.0f, cfablur[row * W + col] - black[c]);
-                cCount[c] ++;
-            }
-
-        for (int c = 0; c < 3; c++) {
-            refcolor[c] = refcolor[c] / cCount[c];
-        }
-
-        float limitFactor = 1.f;
-
-        if (raw.ff_AutoClipControl) {
-            // determine maximum calculated value to avoid clipping
-            float maxval = 0.f;
-            // xtrans files have only one black level actually, so we can simplify the code a bit
-#ifdef _OPENMP
-            #pragma omp parallel
-#endif
-            {
-                float maxvalthr = 0.f;
-#ifdef _OPENMP
-                #pragma omp for schedule(dynamic,16) nowait
-#endif
-
-                for (int row = 0; row < H; row++) {
-                    for (int col = 0; col < W; col++) {
-                        float tempval = (rawData[row][col] - black[0]) * (refcolor[ri->XTRANSFC(row, col)] / max(1e-5f, cfablur[(row) * W + col] - black[0]));
-
-                        if (tempval > maxvalthr) {
-                            maxvalthr = tempval;
-                        }
-                    }
-                }
-
-#ifdef _OPENMP
-                #pragma omp critical
-#endif
-                {
-                    if (maxvalthr > maxval) {
-                        maxval = maxvalthr;
-                    }
-                }
-            }
-
-            // there's only one white level for xtrans
-            if (maxval + black[0] > ri->get_white(0)) {
-                limitFactor = ri->get_white(0) / (maxval + black[0]);
-                flatFieldAutoClipValue = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
-            }
-        } else {
-            limitFactor = max((float)(100 - raw.ff_clipControl) / 100.f, 0.01f);
-        }
-
-
-        for (int c = 0; c < 3; c++) {
-            refcolor[c] *= limitFactor;
-        }
-
-        constexpr float minValue = 1.f; // if the pixel value in the flat field is less or equal this value, no correction will be applied.
-
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-
-        for (int row = 0; row < H; row++) {
-            for (int col = 0; col < W; col++) {
-                int c  = ri->XTRANSFC(row, col);
-                float blur = cfablur[(row) * W + col] - black[c];
-                float vignettecorr = blur <= minValue ? 1.f : refcolor[c] / blur;
-                rawData[row][col] = (rawData[row][col] - black[c]) * vignettecorr + black[c];
-            }
-        }
-    }
-
-    if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::VH)) {
-        float *cfablur1 = (float (*)) malloc(H * W * sizeof * cfablur1);
-        float *cfablur2 = (float (*)) malloc(H * W * sizeof * cfablur2);
-        //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-        cfaboxblur(riFlatFile, cfablur1, 0, 2 * BS);  //now do horizontal blur
-        cfaboxblur(riFlatFile, cfablur2, 2 * BS, 0);  //now do vertical blur
-
-        if(ri->getSensorType() == ST_BAYER || ri->get_colors() == 1) {
-            unsigned int c[2][2] {};
-            unsigned int c4[2][2] {};
-            if(ri->get_colors() != 1) {
-                for (int i = 0; i < 2; ++i) {
-                    for(int j = 0; j < 2; ++j) {
-                        c[i][j] = FC(i, j);
-                    }
-                }
-                c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
-                c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
-                c4[1][0] = c[1][0];
-                c4[1][1] = c[1][1];
-            }
-
-#ifdef __SSE2__
-            vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
-                                _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
-                               };
-
-            vfloat epsv = F2V(1e-5f);
-#endif
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-            for (int row = 0; row < H; row ++) {
-                int col = 0;
-#ifdef __SSE2__
-                vfloat rowBlackv = blackv[row & 1];
-
-                for (; col < W - 3; col += 4) {
-                    vfloat linecorrv = SQRV(vmaxf(LVFU(cfablur[row * W + col]) - rowBlackv, epsv)) /
-                                       (vmaxf(LVFU(cfablur1[row * W + col]) - rowBlackv, epsv) * vmaxf(LVFU(cfablur2[row * W + col]) - rowBlackv, epsv));
-                    vfloat valv = LVFU(rawData[row][col]);
-                    valv -= rowBlackv;
-                    STVFU(rawData[row][col], valv * linecorrv + rowBlackv);
-                }
-
-#endif
-
-                for (; col < W; col ++) {
-                    float linecorr = SQR(max(1e-5f, cfablur[row * W + col] - black[c4[row & 1][col & 1]])) /
-                                     (max(1e-5f, cfablur1[row * W + col] - black[c4[row & 1][col & 1]]) * max(1e-5f, cfablur2[row * W + col] - black[c4[row & 1][col & 1]])) ;
-                    rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * linecorr + black[c4[row & 1][col & 1]];
-                }
-            }
-        } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-#ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-
-            for (int row = 0; row < H; row++) {
-                for (int col = 0; col < W; col++) {
-                    int c  = ri->XTRANSFC(row, col);
-                    float hlinecorr = (max(1e-5f, cfablur[(row) * W + col] - black[c]) / max(1e-5f, cfablur1[(row) * W + col] - black[c]));
-                    float vlinecorr = (max(1e-5f, cfablur[(row) * W + col] - black[c]) / max(1e-5f, cfablur2[(row) * W + col] - black[c]));
-                    rawData[row][col] = ((rawData[row][col] - black[c]) * hlinecorr * vlinecorr + black[c]);
-                }
-            }
-
-        }
-
-        free(cfablur1);
-        free(cfablur2);
-    }
-
-    free(cfablur);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 /* Copy original pixel data and
  * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData)
 {
-    // TODO: Change type of black[] to float to avoid conversions
-    unsigned short black[4] = {
-        (unsigned short)ri->get_cblack(0), (unsigned short)ri->get_cblack(1),
-        (unsigned short)ri->get_cblack(2), (unsigned short)ri->get_cblack(3)
-    };
+    const float black[4] = {
+                     static_cast<float>(ri->get_cblack(0)), static_cast<float>(ri->get_cblack(1)),
+                     static_cast<float>(ri->get_cblack(2)), static_cast<float>(ri->get_cblack(3))
+                     };
 
     if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) {
         if (!rawData) {
@@ -2635,11 +2413,22 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
         }
 
         if (riDark && W == riDark->get_width() && H == riDark->get_height()) { // This works also for xtrans-sensors, because black[0] to black[4] are equal for these
+            StopWatch Stop1("darkframe subtraction");
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
             for (int row = 0; row < H; row++) {
-                for (int col = 0; col < W; col++) {
-                    int c  = FC(row, col);
-                    int c4 = (c == 1 && !(row & 1)) ? 3 : c;
-                    rawData[row][col] = max(src->data[row][col] + black[c4] - riDark->data[row][col], 0.0f);
+                const int c0 = FC(row, 0);
+                const float black0 = black[(c0 == 1 && !(row & 1) ) ? 3 : c0];
+                const int c1 = FC(row, 1);
+                const float black1 = black[(c1 == 1 && !(row & 1) ) ? 3 : c1];
+                int col;
+                for (col = 0; col < W - 1; col += 2) {
+                    rawData[row][col] = max(src->data[row][col] + black0 - riDark->data[row][col], 0.0f);
+                    rawData[row][col + 1] = max(src->data[row][col + 1] + black1 - riDark->data[row][col + 1], 0.0f);
+                }
+                if (col < W) {
+                    rawData[row][col] = max(src->data[row][col] + black0 - riDark->data[row][col], 0.0f);
                 }
             }
         } else {
@@ -2709,253 +2498,6 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
     }
 }
 
-void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW)
-{
-
-    if (boxW < 0 || boxH < 0 || (boxW == 0 && boxH == 0)) { // nothing to blur or negative values
-        memcpy(cfablur, riFlatFile->data[0], W * H * sizeof(float));
-        return;
-    }
-
-    float *tmpBuffer = nullptr;
-    float *cfatmp = nullptr;
-    float *srcVertical = nullptr;
-
-
-    if (boxH > 0 && boxW > 0) {
-        // we need a temporary buffer if we have to blur both directions
-        tmpBuffer = (float (*)) calloc(H * W, sizeof * tmpBuffer);
-    }
-
-    if (boxH == 0) {
-        // if boxH == 0 we can skip the vertical blur and process the horizontal blur from riFlatFile to cfablur without using a temporary buffer
-        cfatmp = cfablur;
-    } else {
-        cfatmp = tmpBuffer;
-    }
-
-    if (boxW == 0) {
-        // if boxW == 0 we can skip the horizontal blur and process the vertical blur from riFlatFile to cfablur without using a temporary buffer
-        srcVertical = riFlatFile->data[0];
-    } else {
-        srcVertical = cfatmp;
-    }
-
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-
-        if (boxW > 0) {
-            //box blur cfa image; box size = BS
-            //horizontal blur
-#ifdef _OPENMP
-            #pragma omp for
-#endif
-
-            for (int row = 0; row < H; row++) {
-                int len = boxW / 2 + 1;
-                cfatmp[row * W + 0] = riFlatFile->data[row][0] / len;
-                cfatmp[row * W + 1] = riFlatFile->data[row][1] / len;
-
-                for (int j = 2; j <= boxW; j += 2) {
-                    cfatmp[row * W + 0] += riFlatFile->data[row][j] / len;
-                    cfatmp[row * W + 1] += riFlatFile->data[row][j + 1] / len;
-                }
-
-                for (int col = 2; col <= boxW; col += 2) {
-                    cfatmp[row * W + col] = (cfatmp[row * W + col - 2] * len + riFlatFile->data[row][boxW + col]) / (len + 1);
-                    cfatmp[row * W + col + 1] = (cfatmp[row * W + col - 1] * len + riFlatFile->data[row][boxW + col + 1]) / (len + 1);
-                    len ++;
-                }
-
-                for (int col = boxW + 2; col < W - boxW; col++) {
-                    cfatmp[row * W + col] = cfatmp[row * W + col - 2] + (riFlatFile->data[row][boxW + col] - cfatmp[row * W + col - boxW - 2]) / len;
-                }
-
-                for (int col = W - boxW; col < W; col += 2) {
-                    cfatmp[row * W + col] = (cfatmp[row * W + col - 2] * len - cfatmp[row * W + col - boxW - 2]) / (len - 1);
-
-                    if (col + 1 < W) {
-                        cfatmp[row * W + col + 1] = (cfatmp[row * W + col - 1] * len - cfatmp[row * W + col - boxW - 1]) / (len - 1);
-                    }
-
-                    len --;
-                }
-            }
-        }
-
-        if (boxH > 0) {
-            //vertical blur
-#ifdef __SSE2__
-            vfloat  leninitv = F2V(boxH / 2 + 1);
-            vfloat  onev = F2V(1.0f);
-            vfloat  temp1v, temp2v, temp3v, temp4v, lenv, lenp1v, lenm1v;
-            int row;
-#ifdef _OPENMP
-            #pragma omp for nowait
-#endif
-
-            for (int col = 0; col < W - 7; col += 8) {
-                lenv = leninitv;
-                temp1v = LVFU(srcVertical[0 * W + col]) / lenv;
-                temp2v = LVFU(srcVertical[1 * W + col]) / lenv;
-                temp3v = LVFU(srcVertical[0 * W + col + 4]) / lenv;
-                temp4v = LVFU(srcVertical[1 * W + col + 4]) / lenv;
-
-                for (int i = 2; i < boxH + 2; i += 2) {
-                    temp1v += LVFU(srcVertical[i * W + col]) / lenv;
-                    temp2v += LVFU(srcVertical[(i + 1) * W + col]) / lenv;
-                    temp3v += LVFU(srcVertical[i * W + col + 4]) / lenv;
-                    temp4v += LVFU(srcVertical[(i + 1) * W + col + 4]) / lenv;
-                }
-
-                STVFU(cfablur[0 * W + col], temp1v);
-                STVFU(cfablur[1 * W + col], temp2v);
-                STVFU(cfablur[0 * W + col + 4], temp3v);
-                STVFU(cfablur[1 * W + col + 4], temp4v);
-
-                for (row = 2; row < boxH + 2; row += 2) {
-                    lenp1v = lenv + onev;
-                    temp1v = (temp1v * lenv + LVFU(srcVertical[(row + boxH) * W + col])) / lenp1v;
-                    temp2v = (temp2v * lenv + LVFU(srcVertical[(row + boxH + 1) * W + col])) / lenp1v;
-                    temp3v = (temp3v * lenv + LVFU(srcVertical[(row + boxH) * W + col + 4])) / lenp1v;
-                    temp4v = (temp4v * lenv + LVFU(srcVertical[(row + boxH + 1) * W + col + 4])) / lenp1v;
-                    STVFU(cfablur[row * W + col], temp1v);
-                    STVFU(cfablur[(row + 1)*W + col], temp2v);
-                    STVFU(cfablur[row * W + col + 4], temp3v);
-                    STVFU(cfablur[(row + 1)*W + col + 4], temp4v);
-                    lenv = lenp1v;
-                }
-
-                for (; row < H - boxH - 1; row += 2) {
-                    temp1v = temp1v + (LVFU(srcVertical[(row + boxH) * W + col]) - LVFU(srcVertical[(row - boxH - 2) * W + col])) / lenv;
-                    temp2v = temp2v + (LVFU(srcVertical[(row + 1 + boxH) * W + col]) - LVFU(srcVertical[(row + 1 - boxH - 2) * W + col])) / lenv;
-                    temp3v = temp3v + (LVFU(srcVertical[(row + boxH) * W + col + 4]) - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenv;
-                    temp4v = temp4v + (LVFU(srcVertical[(row + 1 + boxH) * W + col + 4]) - LVFU(srcVertical[(row + 1 - boxH - 2) * W + col + 4])) / lenv;
-                    STVFU(cfablur[row * W + col], temp1v);
-                    STVFU(cfablur[(row + 1)*W + col], temp2v);
-                    STVFU(cfablur[row * W + col + 4], temp3v);
-                    STVFU(cfablur[(row + 1)*W + col + 4], temp4v);
-                }
-
-                for (; row < H - boxH; row++) {
-                    temp1v = temp1v + (LVFU(srcVertical[(row + boxH) * W + col]) - LVFU(srcVertical[(row - boxH - 2) * W + col])) / lenv;
-                    temp3v = temp3v + (LVFU(srcVertical[(row + boxH) * W + col + 4]) - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenv;
-                    STVFU(cfablur[row * W + col], temp1v);
-                    STVFU(cfablur[row * W + col + 4], temp3v);
-                    vfloat swapv = temp1v;
-                    temp1v = temp2v;
-                    temp2v = swapv;
-                    swapv = temp3v;
-                    temp3v = temp4v;
-                    temp4v = swapv;
-                }
-
-                for (; row < H - 1; row += 2) {
-                    lenm1v = lenv - onev;
-                    temp1v = (temp1v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col])) / lenm1v;
-                    temp2v = (temp2v * lenv - LVFU(srcVertical[(row - boxH - 1) * W + col])) / lenm1v;
-                    temp3v = (temp3v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenm1v;
-                    temp4v = (temp4v * lenv - LVFU(srcVertical[(row - boxH - 1) * W + col + 4])) / lenm1v;
-                    STVFU(cfablur[row * W + col], temp1v);
-                    STVFU(cfablur[(row + 1)*W + col], temp2v);
-                    STVFU(cfablur[row * W + col + 4], temp3v);
-                    STVFU(cfablur[(row + 1)*W + col + 4], temp4v);
-                    lenv = lenm1v;
-                }
-
-                for (; row < H; row++) {
-                    lenm1v = lenv - onev;
-                    temp1v = (temp1v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col])) / lenm1v;
-                    temp3v = (temp3v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenm1v;
-                    STVFU(cfablur[(row)*W + col], temp1v);
-                    STVFU(cfablur[(row)*W + col + 4], temp3v);
-                }
-
-            }
-
-#ifdef _OPENMP
-            #pragma omp single
-#endif
-
-            for (int col = W - (W % 8); col < W; col++) {
-                int len = boxH / 2 + 1;
-                cfablur[0 * W + col] = srcVertical[0 * W + col] / len;
-                cfablur[1 * W + col] = srcVertical[1 * W + col] / len;
-
-                for (int i = 2; i < boxH + 2; i += 2) {
-                    cfablur[0 * W + col] += srcVertical[i * W + col] / len;
-                    cfablur[1 * W + col] += srcVertical[(i + 1) * W + col] / len;
-                }
-
-                for (int row = 2; row < boxH + 2; row += 2) {
-                    cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len + srcVertical[(row + boxH) * W + col]) / (len + 1);
-                    cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len + srcVertical[(row + boxH + 1) * W + col]) / (len + 1);
-                    len ++;
-                }
-
-                for (int row = boxH + 2; row < H - boxH; row++) {
-                    cfablur[row * W + col] = cfablur[(row - 2) * W + col] + (srcVertical[(row + boxH) * W + col] - srcVertical[(row - boxH - 2) * W + col]) / len;
-                }
-
-                for (int row = H - boxH; row < H; row += 2) {
-                    cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len - srcVertical[(row - boxH - 2) * W + col]) / (len - 1);
-
-                    if (row + 1 < H) {
-                        cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len - srcVertical[(row - boxH - 1) * W + col]) / (len - 1);
-                    }
-
-                    len --;
-                }
-            }
-
-#else
-#ifdef _OPENMP
-            #pragma omp for
-#endif
-
-            for (int col = 0; col < W; col++) {
-                int len = boxH / 2 + 1;
-                cfablur[0 * W + col] = srcVertical[0 * W + col] / len;
-                cfablur[1 * W + col] = srcVertical[1 * W + col] / len;
-
-                for (int i = 2; i < boxH + 2; i += 2) {
-                    cfablur[0 * W + col] += srcVertical[i * W + col] / len;
-                    cfablur[1 * W + col] += srcVertical[(i + 1) * W + col] / len;
-                }
-
-                for (int row = 2; row < boxH + 2; row += 2) {
-                    cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len + srcVertical[(row + boxH) * W + col]) / (len + 1);
-                    cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len + srcVertical[(row + boxH + 1) * W + col]) / (len + 1);
-                    len ++;
-                }
-
-                for (int row = boxH + 2; row < H - boxH; row++) {
-                    cfablur[row * W + col] = cfablur[(row - 2) * W + col] + (srcVertical[(row + boxH) * W + col] - srcVertical[(row - boxH - 2) * W + col]) / len;
-                }
-
-                for (int row = H - boxH; row < H; row += 2) {
-                    cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len - srcVertical[(row - boxH - 2) * W + col]) / (len - 1);
-
-                    if (row + 1 < H) {
-                        cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len - srcVertical[(row - boxH - 1) * W + col]) / (len - 1);
-                    }
-
-                    len --;
-                }
-            }
-
-#endif
-        }
-    }
-
-    if (tmpBuffer) {
-        free(tmpBuffer);
-    }
-}
-
-
 // Scale original pixels into the range 0 65535 using black offsets and multipliers
 void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData)
 {
@@ -3016,12 +2558,10 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float val = rawData[row][col];
-                    int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
-                    int c4 = (c == 1 && !(row & 1)) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
-                    val -= cblacksom[c4];
-                    val *= scale_mul[c4];
-                    rawData[row][col] = (val);
+                    const int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
+                    const int c4 = ( c == 1 && !(row & 1) ) ? 3 : c;    // four  colors,  0=R, 1=G1, 2=B, 3=G2
+                    const float val = max(0.f, rawData[row][col] - cblacksom[c4]) * scale_mul[c4];
+                    rawData[row][col] = val;
                     tmpchmax[c] = max(tmpchmax[c], val);
                 }
             }
@@ -3048,10 +2588,8 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float val = rawData[row][col];
-                    val -= cblacksom[0];
-                    val *= scale_mul[0];
-                    rawData[row][col] = (val);
+                    const float val = max(0.f, rawData[row][col] - cblacksom[0]) * scale_mul[0];
+                    rawData[row][col] = val;
                     tmpchmax = max(tmpchmax, val);
                 }
             }
@@ -3077,12 +2615,9 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float val = rawData[row][col];
-                    int c = ri->XTRANSFC(row, col);
-                    val -= cblacksom[c];
-                    val *= scale_mul[c];
-
-                    rawData[row][col] = (val);
+                    const int c = ri->XTRANSFC(row, col);
+                    const float val = max(0.f, rawData[row][col] - cblacksom[c]) * scale_mul[c];
+                    rawData[row][col] = val;
                     tmpchmax[c] = max(tmpchmax[c], val);
                 }
             }
@@ -3111,10 +2646,8 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
             {
                 for (int col = winx; col < winx + winw; col++) {
                     for (int c = 0; c < 3; c++) {                 // three colors,  0=R, 1=G,  2=B
-                        float val = rawData[row][3 * col + c];
-                        val -= cblacksom[c];
-                        val *= scale_mul[c];
-                        rawData[row][3 * col + c] = (val);
+                        const float val = max(0.f, rawData[row][3 * col + c] - cblacksom[c]) * scale_mul[c];
+                        rawData[row][3 * col + c] = val;
                         tmpchmax[c] = max(tmpchmax[c], val);
                     }
                 }
@@ -3388,7 +2921,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
     float X;
     float Y;
     float Z;
-#define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
+
     {
         // convert from Lab to XYZ
         float x, y, z, fx, fy, fz;
@@ -3423,9 +2956,6 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
     r = prophoto_xyz[0][0] * X + prophoto_xyz[0][1] * Y + prophoto_xyz[0][2] * Z;
     g = prophoto_xyz[1][0] * X + prophoto_xyz[1][1] * Y + prophoto_xyz[1][2] * Z;
     b = prophoto_xyz[2][0] * X + prophoto_xyz[2][1] * Y + prophoto_xyz[2][2] * Z;
-    // r = CLIP01(r);
-    // g = CLIP01(g);
-    // b = CLIP01(b);
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
@@ -4939,9 +4469,7 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         ynew = H - 1 - ynew;
     } else if (rotate == 270) {
         std::swap(xnew, ynew);
-        ynew = H - 1 - ynew;
         xnew = W - 1 - xnew;
-        ynew = H - 1 - ynew;
     }
 
     xnew = LIM(xnew, 0, W - 1);

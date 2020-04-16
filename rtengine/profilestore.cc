@@ -14,8 +14,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+
 #include "profilestore.h"
 
 #include "dynamicprofile.h"
@@ -156,7 +160,7 @@ void ProfileStore::_parseProfiles ()
     if (findEntryFromFullPathU (options.defProfRaw) == nullptr) {
         options.setDefProfRawMissing (true);
 
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("WARNING: Default profile \"%s\" for raw images not found!\n", options.defProfRaw.c_str());
         }
     }
@@ -164,7 +168,7 @@ void ProfileStore::_parseProfiles ()
     if (findEntryFromFullPathU (options.defProfImg) == nullptr) {
         options.setDefProfImgMissing (true);
 
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("WARNING: Default profile \"%s\" for standard images not found!\n", options.defProfImg.c_str());
         }
     }
@@ -216,7 +220,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
 
                 if (lastdot != Glib::ustring::npos && lastdot == currDir.length() - 4 && currDir.substr (lastdot).casefold() == paramFileExtension) {
                     // file found
-                    if ( options.rtSettings.verbose ) {
+                    if (settings->verbose) {
                         printf ("Processing file %s...", fname.c_str());
                     }
 
@@ -229,7 +233,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
                     if (!res && pProf->pparams->ppVersion >= 220) {
                         fileFound = true;
 
-                        if ( options.rtSettings.verbose ) {
+                        if (settings->verbose) {
                             printf ("OK\n");
                         }
 
@@ -240,7 +244,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
                         // map the partial profile
                         partProfiles[filePSE] = pProf;
                         //partProfiles.insert( std::pair<ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*> (filePSE, pProf) );
-                    } else if ( options.rtSettings.verbose ) {
+                    } else if (settings->verbose) {
                         printf ("failed!\n");
                     }
                 }
@@ -261,12 +265,12 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
     return fileFound;
 }
 
-int ProfileStore::findFolderId (const Glib::ustring &path)
+int ProfileStore::findFolderId (const Glib::ustring &path) const
 {
     // initialization must have been done when calling this
-    for (std::vector<Glib::ustring>::iterator i = folders.begin(); i != folders.end(); ++i) {
-        if (*i == path) {
-            return i - folders.begin();
+    for (size_t i = 0; i < folders.size(); ++i) {
+        if (folders[i] == path) {
+            return i;
         }
     }
 
@@ -454,7 +458,7 @@ const PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw)
     return pProf;
 }
 
-const Glib::ustring ProfileStore::getPathFromId (int folderId)
+const Glib::ustring ProfileStore::getPathFromId (int folderId) const
 {
     // initialization must have been done when calling this
     return folders.at (folderId);
@@ -518,7 +522,7 @@ PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
 
     for (auto rule : dynamicRules) {
         if (rule.matches (im)) {
-            if (options.rtSettings.verbose) {
+            if (settings->verbose) {
                 printf ("found matching profile %s\n", rule.profilepath.c_str());
             }
 
@@ -535,7 +539,7 @@ PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
     return ret;
 }
 
-ProfileStoreEntry::ProfileStoreEntry() : label (""), type (PSET_FOLDER), parentFolderId (0), folderId (0) {}
+ProfileStoreEntry::ProfileStoreEntry() : type (PSET_FOLDER), parentFolderId (0), folderId (0) {}
 
 ProfileStoreEntry::ProfileStoreEntry (Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder) : label (label), type (type), parentFolderId (parentFolder), folderId (folder) {}
 

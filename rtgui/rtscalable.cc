@@ -14,22 +14,23 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "rtscalable.h"
 #include <glib/gstdio.h>
 #include <regex>
-#include <glibmm.h>
+#include <gtkmm.h>
 #include <iostream>
 #include <librsvg/rsvg.h>
+
+#include "../rtengine/rt_math.h"
 #include "options.h"
 
 double RTScalable::dpi = 0.;
 int RTScalable::scale = 0;
 
 extern Glib::ustring argv0;
-extern Options options;
 extern unsigned char initialGdkScale;
 extern float fontScale;
 Gtk::TextDirection RTScalable::direction = Gtk::TextDirection::TEXT_DIR_NONE;
@@ -37,9 +38,9 @@ Gtk::TextDirection RTScalable::direction = Gtk::TextDirection::TEXT_DIR_NONE;
 void RTScalable::setDPInScale (const double newDPI, const int newScale)
 {
     if (!options.pseudoHiDPISupport) {
-    	scale = 1;
-    	dpi = baseDPI;
-    	return;
+        scale = 1;
+        dpi = baseDPI;
+        return;
     }
 
     if (scale != newScale || (scale == 1 && dpi != newDPI)) {
@@ -101,7 +102,7 @@ void RTScalable::deleteDir(const Glib::ustring& path)
             error |= g_remove (Glib::build_filename (path, *entry).c_str());
         }
 
-        if (error != 0 && options.rtSettings.verbose) {
+        if (error != 0 && rtengine::settings->verbose) {
             std::cerr << "Failed to delete all entries in '" << path << "': " << g_strerror(errno) << std::endl;
         }
 
@@ -119,7 +120,7 @@ void RTScalable::deleteDir(const Glib::ustring& path)
     }
 }
 
-void RTScalable::cleanup()
+void RTScalable::cleanup(bool all)
 {
     Glib::ustring imagesCacheFolder = Glib::build_filename (options.cacheBaseDir, "svg2png");
     Glib::ustring sDPI = Glib::ustring::compose("%1", (int)getTweakedDPI());
@@ -134,7 +135,7 @@ void RTScalable::cleanup()
                 continue;
             }
 
-            if (fileName != sDPI) {
+            if (all || fileName != sDPI) {
                 deleteDir(filePath);
             }
         }
@@ -220,7 +221,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadImage(const Glib::ustring &fn
     GError **error = nullptr;
     RsvgHandle *handle = rsvg_handle_new_from_data((unsigned const char*)updatedSVG.c_str(), updatedSVG.length(), error);
 
-    if (handle == nullptr) {
+    if (error && !handle) {
         std::cerr << "ERROR: Can't use the provided data for \"" << fname << "\" to create a RsvgHandle:" << std::endl
                   << Glib::ustring((*error)->message) << std::endl;
         Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, 10, 10);

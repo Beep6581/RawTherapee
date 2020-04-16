@@ -14,17 +14,21 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _RAWCACORRECTION_H_
-#define _RAWCACORRECTION_H_
+#pragma once
 
 #include <gtkmm.h>
+
 #include "adjuster.h"
 #include "checkbox.h"
 #include "toolpanel.h"
 
-class RAWCACorr : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel
+class RAWCACorr final:
+    public ToolParamBlock,
+    public AdjusterListener,
+    public CheckBoxListener,
+    public FoldableToolPanel
 {
 
 protected:
@@ -52,5 +56,3 @@ public:
     void adjusterChanged     (Adjuster* a, double newval) override;
     void checkBoxToggled     (CheckBox* c, CheckValue newval) override;
 };
-
-#endif

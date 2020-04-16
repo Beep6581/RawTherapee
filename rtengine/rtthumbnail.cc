@@ -14,33 +14,38 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <clocale>
+
+#include <lcms2.h>
+
+#include <glib/gstdio.h>
+
+#include <glibmm/ustring.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/keyfile.h>
+
+#include "cieimage.h"
+#include "color.h"
+#include "colortemp.h"
+#include "curves.h"
+#include "dcp.h"
+#include "iccstore.h"
+#include "image8.h"
+#include "improcfun.h"
+#include "jpeg.h"
+#include "labimage.h"
+#include "median.h"
+#include "procparams.h"
+#include "rawimage.h"
+#include "rawimagesource.h"
 #include "rtengine.h"
 #include "rtthumbnail.h"
-#include "../rtgui/options.h"
-#include "image8.h"
-#include <lcms2.h>
-#include "curves.h"
-#include <glibmm.h>
-#include "improcfun.h"
-#include "colortemp.h"
-#include "mytime.h"
-#include "utils.h"
-#include "iccstore.h"
-#include "iccmatrices.h"
-#include "rawimagesource.h"
-#include "stdimagesource.h"
-#include <glib/gstdio.h>
-#include "rawimage.h"
-#include "jpeg.h"
-#include "../rtgui/ppversion.h"
-#include "improccoordinator.h"
 #include "settings.h"
-#include "procparams.h"
-#include <locale.h>
+#include "stdimagesource.h"
 #include "StopWatch.h"
-#include "median.h"
+#include "utils.h"
 
 namespace
 {
@@ -183,12 +188,8 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], 
 
 }
 
-extern Options options;
-
 namespace rtengine
 {
-
-extern const Settings *settings;
 
 using namespace procparams;
 
@@ -329,7 +330,7 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.inputProfile = "(camera)";
-    neutral.icm.workingProfile = options.rtSettings.srgb;
+    neutral.icm.workingProfile = settings->srgb;
 
     src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
     double thresholdDummy = 0.f;
@@ -428,7 +429,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     // did we succeed?
     if ( err ) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             std::cout << "Could not extract thumb from " << fname.c_str() << std::endl;
         }
         delete tpp;
@@ -510,8 +511,6 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0 || !filter)
 #define FISGREEN(filter,row,col) \
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
-#define FISBLUE(filter,row,col) \
-    ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
 
 RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
 {
@@ -547,6 +546,17 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         return nullptr;
     }
 
+    if (ri->getFrameCount() == 7) {
+        // special case for Hasselblad H6D-100cMS pixelshift files
+        // first frame is not bayer, load second frame
+        int r = ri->loadRaw (1, 1, 0);
+
+        if ( r ) {
+            delete ri;
+            sensorType = ST_NONE;
+            return nullptr;
+        }
+    }
     sensorType = ri->getSensorType();
 
     int width = ri->get_width();
@@ -1225,22 +1235,22 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ImProcFunctions ipf (&params, forHistogramMatching); // enable multithreading when forHistogramMatching is true
     ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
-    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(options.rtSettings.monitorIntent), false, false);
+    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(settings->monitorIntent), false, false);
 
     LUTu hist16 (65536);
 
     ipf.firstAnalysis (baseImg, params, hist16);
 
     ipf.dehaze(baseImg, params.dehaze);
-    ipf.ToneMapFattal02(baseImg);
+    ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
     
     // perform transform
-    if (ipf.needsTransform()) {
+    int origFW;
+    int origFH;
+    double tscale = 0.0;
+    getDimensions (origFW, origFH, tscale);
+    if (ipf.needsTransform(origFW * tscale + 0.5, origFH * tscale + 0.5, 0, metadata)) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
-        int origFW;
-        int origFH;
-        double tscale = 0.0;
-        getDimensions (origFW, origFH, tscale);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, metadata, 0, true); // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;
@@ -1352,7 +1362,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = nullptr;
-    DCPProfile::ApplyState as;
+    DCPProfileApplyState as;
 
     if (isRaw) {
         cmsHPROFILE dummy;
@@ -1481,19 +1491,22 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     }
 
     myscale = 1.0 / myscale;
-    /*    // apply crop
-        if (params.crop.enabled) {
-            int ix = 0;
-            for (int i=0; i<fh; i++)
-                for (int j=0; j<fw; j++)
-                    if (i<params.crop.y/myscale || i>(params.crop.y+params.crop.h)/myscale || j<params.crop.x/myscale || j>(params.crop.x+params.crop.w)/myscale) {
-                        readyImg->data[ix++] /= 3;
-                        readyImg->data[ix++] /= 3;
-                        readyImg->data[ix++] /= 3;
-                    }
-                    else
-                        ix += 3;
-        }*/
+    // apply crop
+    if (params.crop.enabled) {
+        int ix = 0;
+        for (int i = 0; i < fh; ++i) {
+            for (int j = 0; j < fw; ++j) {
+                if (i < params.crop.y * myscale || i > (params.crop.y + params.crop.h) * myscale || j < params.crop.x * myscale || j > (params.crop.x + params.crop.w) * myscale) {
+                    readyImg->data[ix++] /= 3;
+                    readyImg->data[ix++] /= 3;
+                    readyImg->data[ix++] /= 3;
+                } else {
+                    ix += 3;
+                }
+            }
+        }
+    }
+
 
     return readyImg;
 }
@@ -2113,11 +2126,11 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
 
         return true;
     } catch (Glib::Error &err) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::readData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::readData / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
     }
@@ -2164,11 +2177,11 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         keyData = keyFile.to_data ();
 
     } catch (Glib::Error& err) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::writeData / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
         }
     }
@@ -2180,7 +2193,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
     FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (!f) {
-        if (options.rtSettings.verbose) {
+        if (settings->verbose) {
             printf ("Thumbnail::writeData / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
 

@@ -14,10 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _MEXIF3_
-#define _MEXIF3_
+#pragma once
 
 #include <cmath>
 #include <cstdint>
@@ -30,11 +29,15 @@
 #include <string>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rawmetadatalocation.h"
 
+namespace Glib
+{
+    class KeyFile;
+}
 namespace rtengine
 {
 
@@ -116,11 +119,12 @@ protected:
     const TagAttrib*  attribs;      // descriptor table to decode the tags
     ByteOrder         order;        // byte order
     TagDirectory*     parent;       // parent directory (NULL if root)
+    bool              parseJPEG;
     static Glib::ustring getDumpKey (int tagID, const Glib::ustring &tagName);
 
 public:
     TagDirectory ();
-    TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored = true);
+    TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored = true, bool parseJpeg = true);
     TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border);
     virtual ~TagDirectory ();
 
@@ -131,6 +135,10 @@ public:
     TagDirectory*    getParent     ()
     {
         return parent;
+    }
+    inline bool getParseJpeg() const
+    {
+        return parseJPEG;
     }
     TagDirectory*    getRoot       ();
     inline int       getCount      () const
@@ -155,14 +163,14 @@ public:
     // Try to get the Tag in the current directory and in subdirectories
     // if lookUpward = true, it will scan the parents TagDirectory up to the root one,
     // but w/o looking into their subdirs
-    virtual Tag*     findTag       (const char* name, bool lookUpward = false) const;
+    Tag*     findTag       (const char* name, bool lookUpward = false) const;
     // Find a all Tags with the given name by scanning the whole tag tree
     std::vector<const Tag*> findTags (const char* name);
     // Find a all Tags with the given ID by scanning the whole tag tree
     std::vector<const Tag*> findTags (int ID);
     // Try to get the Tag in the current directory and in parent directories
     // (won't look into subdirs)
-    virtual Tag*     findTagUpward (const char* name) const;
+    Tag*     findTagUpward (const char* name) const;
     bool             getXMPTagValue (const char* name, char* value) const;
 
     void        keepTag       (int ID);
@@ -180,17 +188,17 @@ public:
 
     virtual int      calculateSize ();
     virtual int      write         (int start, unsigned char* buffer);
-    virtual TagDirectory* clone    (TagDirectory* parent);
+    virtual TagDirectory* clone    (TagDirectory* parent) const;
     void     applyChange   (const std::string &field, const Glib::ustring &value);
 
-    virtual void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
-    virtual bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
+    void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
+    bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
                                     const CacheImageData* cfs, const bool flagMode, Glib::KeyFile *keyFile = nullptr, Glib::ustring tagDirName = "") const;
-    virtual void     sort     ();
+    void     sort     ();
 };
 
 // a table of tags: id are offset from beginning and not identifiers
-class TagDirectoryTable: public TagDirectory
+class TagDirectoryTable: public TagDirectory, public rtengine::NonCopyable
 {
 protected:
     unsigned char *values; // Tags values are saved internally here
@@ -204,7 +212,7 @@ public:
     ~TagDirectoryTable() override;
     int calculateSize () override;
     int write (int start, unsigned char* buffer) override;
-    TagDirectory* clone (TagDirectory* parent) override;
+    TagDirectory* clone (TagDirectory* parent) const override;
 };
 
 // a class representing a single tag
@@ -310,7 +318,7 @@ public:
     // functions for writing
     int  calculateSize ();
     int  write         (int offs, int dataOffs, unsigned char* buffer);
-    Tag* clone         (TagDirectory* parent);
+    Tag* clone         (TagDirectory* parent) const;
 
     // to control if the tag shall be written
     bool getKeep ()
@@ -343,7 +351,7 @@ class ExifManager
 
     Tag* saveCIFFMNTag (TagDirectory* root, int len, const char* name);
     void parseCIFF (int length, TagDirectory* root);
-    void parse (bool isRaw, bool skipIgnored = true);
+    void parse (bool isRaw, bool skipIgnored = true, bool parseJpeg = true);
 
 public:
     FILE* f;
@@ -405,7 +413,6 @@ public:
     // Get the value as a double
     virtual double toDouble (const Tag* t, int ofs = 0)
     {
-        double ud, dd;
 
         switch (t->getType()) {
             case SBYTE:
@@ -428,10 +435,11 @@ public:
                 return (double) ((int)sget4 (t->getValue() + ofs, t->getOrder()));
 
             case SRATIONAL:
-            case RATIONAL:
-                ud = (int)sget4 (t->getValue() + ofs, t->getOrder());
-                dd = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
-                return dd == 0. ? 0. : (double)ud / (double)dd;
+            case RATIONAL: {
+                const double dividend = (int)sget4 (t->getValue() + ofs, t->getOrder());
+                const double divisor = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
+                return divisor == 0. ? 0. : dividend / divisor;
+            }
 
             case FLOAT:
                 return double (sget4 (t->getValue() + ofs, t->getOrder()));
@@ -686,5 +694,5 @@ extern const TagAttrib kodakIfdAttribs[];
 void parseKodakIfdTextualInfo (Tag *textualInfo, Tag* exif);
 extern const TagAttrib panasonicAttribs[];
 extern const TagAttrib panasonicRawAttribs[];
+
 }
-#endif

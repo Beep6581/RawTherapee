@@ -15,27 +15,33 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
 
-#include "rawimagesource.h"
 #include <vector>
 
-namespace rtengine {
+#include "noncopyable.h"
+#include "rawimagesource.h"
 
-class PDAFLinesFilter {
+namespace rtengine
+{
+
+class RawImage;
+
+class PDAFLinesFilter: public rtengine::NonCopyable
+{
 public:
     explicit PDAFLinesFilter(RawImage *ri);
     ~PDAFLinesFilter();
     
-    int mark(array2D<float> &rawData, PixelsMap &bpMap);
+    int mark(const array2D<float> &rawData, PixelsMap &bpMap);
     RawImageSource::GreenEqulibrateThreshold &greenEqThreshold();
     std::unique_ptr<RawImageSource::CFALineDenoiseRowBlender> lineDenoiseRowBlender();
 
 private:
-    int markLine(array2D<float> &rawData, PixelsMap &bpMap, int y);
+    int markLine(const array2D<float>& rawData, PixelsMap &bpMap, int y);
 
     RawImage *ri_;
     int W_;

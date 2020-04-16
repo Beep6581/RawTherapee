@@ -14,8 +14,12 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <giomm/file.h>
+#include <glibmm/miscutils.h>
+
 #include "ffmanager.h"
 #include "../rtgui/options.h"
 #include "rawimage.h"
@@ -25,8 +29,6 @@
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 // *********************** class ffInfo **************************************
 
@@ -48,6 +50,11 @@ inline ffInfo& ffInfo::operator =(const ffInfo &o)
     }
 
     return *this;
+}
+
+ffInfo::~ffInfo()
+{
+    delete ri;
 }
 
 bool ffInfo::operator <(const ffInfo &e2) const
@@ -277,8 +284,8 @@ void FFManager::init(const Glib::ustring& pathname)
             } else {
                 printf( "%s: MEAN of \n    ", i.key().c_str());
 
-                for( std::list<Glib::ustring>::iterator iter = i.pathNames.begin(); iter != i.pathNames.end(); ++iter  ) {
-                    printf( "%s, ", iter->c_str() );
+                for(std::list<Glib::ustring>::iterator path = i.pathNames.begin(); path != i.pathNames.end(); ++path) {
+                    printf("%s, ", path->c_str());
                 }
 
                 printf("\n");

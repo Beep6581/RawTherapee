@@ -14,22 +14,27 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMPROCCOORDINATOR_H_
-#define _IMPROCCOORDINATOR_H_
+#pragma once
 
 #include <memory>
 
-#include "rtengine.h"
-#include "improcfun.h"
-#include "image8.h"
-#include "image16.h"
-#include "imagesource.h"
-#include "procevents.h"
+#include "array2D.h"
+#include "colortemp.h"
+#include "curves.h"
 #include "dcrop.h"
+#include "imagesource.h"
+#include "improcfun.h"
 #include "LUT.h"
+#include "rtengine.h"
+
 #include "../rtgui/threadutils.h"
+
+namespace Glib
+{
+class Thread;
+}
 
 namespace rtengine
 {
@@ -49,7 +54,7 @@ class Crop;
   * but using this class' LUT and other precomputed parameters. The main preview area is displaying a non framed Crop object,
   * while detail windows are framed Crop objects.
   */
-class ImProcCoordinator : public StagedImageProcessor
+class ImProcCoordinator final : public StagedImageProcessor
 {
 
     friend class Crop;
@@ -77,7 +82,7 @@ protected:
     bool softProof;
     bool gamutCheck;
     bool sharpMask;
-
+    bool sharpMaskChanged;
     int scale;
     bool highDetailPreprocessComputed;
     bool highDetailRawComputed;
@@ -161,6 +166,8 @@ protected:
     FlatFieldAutoClipListener *flatFieldAutoClipListener;
     AutoContrastListener *bayerAutoContrastListener;
     AutoContrastListener *xtransAutoContrastListener;
+    AutoContrastListener *pdSharpenAutoContrastListener;
+    AutoRadiusListener *pdSharpenAutoRadiusListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
     AutoColorTonListener* actListener;
@@ -179,7 +186,6 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
-    void progress(Glib::ustring str, int pr);
     void reallocAll();
     void updateLRGBHistograms();
     void setScale(int prevscale);
@@ -222,52 +228,103 @@ protected:
     
     //locallab
     LocallabListener* locallListener;
-    LabImage *reserv;       
+    LabImage *reserv;
+    LabImage *lastorigimp;
     int coordX, coordY, localX, localY;
     LUTf lllocalcurve;
+    LUTf cllocalcurve;
+    LUTf lclocalcurve;
     LUTf cclocalcurve;
+    LUTf rgblocalcurve;
     LUTf exlocalcurve;
     LUTf hltonecurveloc;
     LUTf shtonecurveloc;
     LUTf tonecurveloc;
     LUTf lightCurveloc;
+    LUTf lmasklocalcurve;
+    LUTf lmaskexplocalcurve;
+    LUTf lmaskSHlocalcurve;
+    LUTf lmaskviblocalcurve;
+    LUTf lmasktmlocalcurve;
+    LUTf lmaskretilocalcurve;
+    LUTf lmaskcblocalcurve;
+    LUTf lmaskbllocalcurve;
+    LUTf lmasklclocalcurve;
 //    LUTu lhist16loc;
     LocretigainCurve locRETgainCurve;
+    LocretitransCurve locRETtransCurve;
     LocretigainCurverab locRETgainCurverab;
     LocLHCurve loclhCurve;
     LocHHCurve lochhCurve;
     LocCCmaskCurve locccmasCurve;
     LocLLmaskCurve locllmasCurve;
     LocHHmaskCurve lochhmasCurve;
-    LocCCmaskexpCurve locccmasexpCurve;
-    LocLLmaskexpCurve locllmasexpCurve;
-    LocHHmaskexpCurve lochhmasexpCurve;
-    LocCCmaskSHCurve locccmasSHCurve;
-    LocLLmaskSHCurve locllmasSHCurve;
-    LocHHmaskSHCurve lochhmasSHCurve;
-    LocCCmaskcbCurve locccmascbCurve;
-    LocLLmaskcbCurve locllmascbCurve;
-    LocHHmaskcbCurve lochhmascbCurve;
-    LocCCmaskretiCurve locccmasretiCurve;
-    LocLLmaskretiCurve locllmasretiCurve;
-    LocHHmaskretiCurve lochhmasretiCurve;
-    LocCCmasktmCurve locccmastmCurve;
-    LocLLmasktmCurve locllmastmCurve;
-    LocHHmasktmCurve lochhmastmCurve;
+    LocHHmaskCurve lochhhmasCurve;
+    LocCCmaskCurve locccmasexpCurve;
+    LocLLmaskCurve locllmasexpCurve;
+    LocHHmaskCurve lochhmasexpCurve;
+    LocCCmaskCurve locccmasSHCurve;
+    LocLLmaskCurve locllmasSHCurve;
+    LocHHmaskCurve lochhmasSHCurve;
+    LocCCmaskCurve locccmasvibCurve;
+    LocLLmaskCurve locllmasvibCurve;
+    LocHHmaskCurve lochhmasvibCurve;
+    LocCCmaskCurve locccmaslcCurve;
+    LocLLmaskCurve locllmaslcCurve;
+    LocHHmaskCurve lochhmaslcCurve;
+    LocCCmaskCurve locccmascbCurve;
+    LocLLmaskCurve locllmascbCurve;
+    LocHHmaskCurve lochhmascbCurve;
+    LocCCmaskCurve locccmasretiCurve;
+    LocLLmaskCurve locllmasretiCurve;
+    LocHHmaskCurve lochhmasretiCurve;
+    LocCCmaskCurve locccmastmCurve;
+    LocLLmaskCurve locllmastmCurve;
+    LocHHmaskCurve lochhmastmCurve;
+    LocCCmaskCurve locccmasblCurve;
+    LocLLmaskCurve locllmasblCurve;
+    LocHHmaskCurve lochhmasblCurve;
     LocwavCurve locwavCurve;
+    LocwavCurve loclmasCurveblwav;
+    LocwavCurve loclmasCurvecolwav;
+    LocwavCurve loclevwavCurve;
+    LocwavCurve locconwavCurve;
+    LocwavCurve loccompwavCurve;
+    LocwavCurve loccomprewavCurve;
+    LocwavCurve locwavCurveden;
+    LocwavCurve locedgwavCurve;
 
     bool locallutili;
+    bool localclutili;
+    bool locallcutili;
     bool localcutili;
+    bool localrgbutili;
     bool localexutili;
     bool llmasutili;
     bool lhmasutili;
+    bool lhhmasutili;
     bool lcmasutili;
+    bool localmaskutili;
+    bool localmaskexputili;
+    bool localmaskSHutili;
+    bool localmaskvibutili;
+    bool localmasktmutili;
+    bool localmaskretiutili;
+    bool localmaskcbutili;
+    bool localmaskblutili;
+    bool localmasklcutili;
     bool lcmasexputili;
     bool lhmasexputili;
     bool llmasexputili;
     bool lcmasSHutili;
     bool lhmasSHutili;
     bool llmasSHutili;
+    bool lcmasvibutili;
+    bool lhmasvibutili;
+    bool llmasvibutili;
+    bool lcmaslcutili;
+    bool lhmaslcutili;
+    bool llmaslcutili;
     bool lcmascbutili;
     bool lhmascbutili;
     bool llmascbutili;
@@ -277,8 +334,21 @@ protected:
     bool lcmastmutili;
     bool lhmastmutili;
     bool llmastmutili;
+    bool lcmasblutili;
+    bool lhmasblutili;
+    bool llmasblutili;
+    bool locwavutili;
+    bool locwavdenutili;
+    bool loclevwavutili;
+    bool locconwavutili;
+    bool loccompwavutili;
+    bool loccomprewavutili;
+    bool locedgwavutili;
+    bool lmasutiliblwav;
+    bool lmasutilicolwav;
     bool LHutili;
     bool HHutili;
+    LUTu lastsavrests;
     LUTf huerefs;
     LUTf huerefblurs;
     LUTf chromarefblurs;
@@ -288,16 +358,24 @@ protected:
     LUTf sobelrefs;
     LUTf avgs;
     double huer, huerblu, chromarblu, lumarblu, chromar, lumar, sobeler;
+    int lastsav;
     float avg;
     bool lastspotdup;
     int locallColorMask;
+    int locallColorMaskinv;
     int locallExpMask;
+    int locallExpMaskinv;
     int locallSHMask;
+    int locallSHMaskinv;
+    int locallvibMask;
+    int localllcMask;
     int locallcbMask;
     int locallretiMask;
     int locallsoftMask;
     int localltmMask;
-    
+    int locallblMask;
+    int locallsharMask;
+
 public:
 
     ImProcCoordinator ();
@@ -356,7 +434,7 @@ public:
     void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const override;
     void setSoftProofing   (bool softProof, bool gamutCheck) override;
     void getSoftProofing   (bool &softProof, bool &gamutCheck) override;
-    void setSharpMask      (bool sharpMask) override;
+    ProcEvent setSharpMask (bool sharpMask) override;
     bool updateTryLock () override
     {
         return updaterThreadStart.trylock();
@@ -366,15 +444,22 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility (int locallColorMask, int locallExpMask, int locallSHMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask) override
+    void setLocallabMaskVisibility (int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask) override
     {
         this->locallColorMask = locallColorMask;
+        this->locallColorMaskinv = locallColorMaskinv;
         this->locallExpMask = locallExpMask;
+        this->locallExpMaskinv = locallExpMaskinv;
         this->locallSHMask = locallSHMask;
-        this->locallcbMask = locallcbMask;
-        this->locallretiMask = locallretiMask;
+        this->locallSHMaskinv = locallSHMaskinv;
+        this->locallvibMask = locallvibMask;
         this->locallsoftMask = locallsoftMask;
+        this->locallblMask = locallblMask;
         this->localltmMask = localltmMask;
+        this->locallretiMask = locallretiMask;
+        this->locallsharMask = locallsharMask;
+        this->localllcMask = localllcMask;
+        this->locallcbMask = locallcbMask;
     }
 
     void setProgressListener (ProgressListener* pl) override
@@ -457,6 +542,16 @@ public:
         xtransAutoContrastListener = acl;
     }
 
+    void setpdSharpenAutoRadiusListener  (AutoRadiusListener* acl) override
+    {
+        pdSharpenAutoRadiusListener = acl;
+    }
+
+    void setpdSharpenAutoContrastListener  (AutoContrastListener* acl) override
+    {
+        pdSharpenAutoContrastListener = acl;
+    }
+
     void setImageTypeListener  (ImageTypeListener* itl) override
     {
         imageTypeListener = itl;
@@ -490,5 +585,5 @@ public:
     } denoiseInfoStore;
 
 };
+
 }
-#endif

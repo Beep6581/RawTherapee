@@ -2,6 +2,9 @@
  *  This file is part of RawTherapee.
  */
 #include "camconst.h"
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/ustring.h>
 #include "settings.h"
 #include "rt_math.h"
 #include <cstdio>
@@ -16,8 +19,6 @@
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 CameraConst::CameraConst() : pdafOffset(0)
 {
@@ -252,7 +253,7 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
         }
 
         if (i % 4 != 0) {
-            fprintf(stderr, "\"masked_areas\" array length must be divisable by 4\n");
+            fprintf(stderr, "\"masked_areas\" array length must be divisible by 4\n");
             goto parse_error;
         }
     }
@@ -637,7 +638,7 @@ CameraConst::update_globalGreenEquilibration(bool other)
 }
 
 bool
-CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
+CameraConstantsStore::parse_camera_constants_file(const Glib::ustring& filename_)
 {
     // read the file into a single long string
     const char *filename = filename_.c_str();
@@ -808,7 +809,7 @@ CameraConstantsStore::~CameraConstantsStore()
     }
 }
 
-void CameraConstantsStore::init(Glib::ustring baseDir, Glib::ustring userSettingsDir)
+void CameraConstantsStore::init(const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir)
 {
     parse_camera_constants_file(Glib::build_filename(baseDir, "camconst.json"));
 

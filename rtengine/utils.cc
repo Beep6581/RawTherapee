@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 #include <cstring>
@@ -22,7 +22,6 @@
 #include "rt_math.h"
 
 #include "utils.h"
-#include "rt_math.h"
 
 using namespace std;
 

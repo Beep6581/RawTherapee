@@ -14,18 +14,21 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PREVIEWWINDOW_
-#define _PREVIEWWINDOW_
+#pragma once
 
 #include <gtkmm.h>
-#include "previewhandler.h"
-#include "cropwindow.h"
-#include "guiutils.h"
-#include "cursormanager.h"
 
-class PreviewWindow : public Gtk::DrawingArea, public PreviewListener, public CropWindowListener
+#include "cropwindow.h"
+#include "cursormanager.h"
+#include "guiutils.h"
+#include "previewhandler.h"
+
+class PreviewWindow :
+    public Gtk::DrawingArea,
+    public PreviewListener,
+    public CropWindowListener
 {
 
 private:
@@ -71,5 +74,3 @@ public:
     void cropZoomChanged(CropWindow* w) override;
     void initialImageArrived() override;
 };
-
-#endif

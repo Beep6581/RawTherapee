@@ -14,19 +14,19 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PREVIEWHANDLER_
-#define _PREVIEWHANDLER_
+#pragma once
 
 #include <list>
 #include <memory>
 
 #include <gtkmm.h>
 
-#include "threadutils.h"
 #include "guiutils.h"
+#include "threadutils.h"
 
+#include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
 
 class PreviewListener
@@ -44,7 +44,7 @@ struct PreviewHandlerIdleHelper {
     int pending;
 };
 
-class PreviewHandler : public rtengine::PreviewImageListener
+class PreviewHandler final : public rtengine::PreviewImageListener, public rtengine::NonCopyable
 {
 private:
     friend int setImageUI   (void* data);
@@ -85,5 +85,3 @@ public:
     Glib::RefPtr<Gdk::Pixbuf>           getRoughImage (int desiredW, int desiredH, double& zoom);
     rtengine::procparams::CropParams    getCropParams ();
 };
-
-#endif

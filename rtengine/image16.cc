@@ -14,13 +14,15 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <cstdio>
+
+#include "colortemp.h"
 #include "image16.h"
 #include "imagefloat.h"
 #include "image8.h"
-#include <cstdio>
-#include "rtengine.h"
+#include "rt_math.h"
 
 namespace
 {
@@ -74,7 +76,7 @@ void Image16::getScanline(int row, unsigned char* buffer, int bps, bool isFloat)
     }
 }
 
-void Image16::setScanline(int row, unsigned char* buffer, int bps, unsigned int numSamples)
+void Image16::setScanline(int row, const unsigned char* buffer, int bps, unsigned int numSamples)
 {
 
     if (data == nullptr) {
@@ -101,7 +103,7 @@ void Image16::setScanline(int row, unsigned char* buffer, int bps, unsigned int 
         }
 
         case (IIOSF_UNSIGNED_SHORT): {
-            unsigned short* sbuffer = (unsigned short*) buffer;
+            const unsigned short* sbuffer = (const unsigned short*) buffer;
             int ix = 0;
 
             for (int i = 0; i < width; ++i) {
@@ -184,8 +186,6 @@ void Image16::getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, P
     rm /= area;
     gm /= area;
     bm /= area;
-
-#define GCLIP( x ) Color::gamma_srgb(CLIP(x))
 
 #ifdef _OPENMP
     #pragma omp parallel

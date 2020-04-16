@@ -1,11 +1,18 @@
 /*
  *  This file is part of RawTherapee.
  */
-#ifndef __CAMCONST__
-#define __CAMCONST__
+#pragma once
 
-#include <glibmm.h>
 #include <map>
+#include <string>
+#include <vector>
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {
@@ -14,7 +21,7 @@ struct camera_const_levels {
     int levels[4];
 };
 
-class CameraConst
+class CameraConst final
 {
 private:
     std::string make_model;
@@ -56,21 +63,19 @@ public:
     void update_globalGreenEquilibration(bool other);
 };
 
-class CameraConstantsStore
+class CameraConstantsStore final
 {
 private:
     std::map<std::string, CameraConst *> mCameraConstants;
 
     CameraConstantsStore();
-    bool parse_camera_constants_file(Glib::ustring filename);
+    bool parse_camera_constants_file(const Glib::ustring& filename);
 
 public:
     ~CameraConstantsStore();
-    void init(Glib::ustring baseDir, Glib::ustring userSettingsDir);
+    void init(const Glib::ustring& baseDir, const Glib::ustring& userSettingsDir);
     static CameraConstantsStore *getInstance(void);
     CameraConst *get(const char make[], const char model[]);
 };
 
 }
-
-#endif

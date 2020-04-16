@@ -14,28 +14,25 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
-#include "improccoordinator.h"
 #include "rtengine.h"
-#include "improcfun.h"
-#include "image8.h"
-#include "image16.h"
-#include "imagesource.h"
-#include "procevents.h"
 #include "pipettebuffer.h"
 #include "../rtgui/threadutils.h"
 
 namespace rtengine
 {
 
+class Image8;
+class CieImage;
+
 using namespace procparams;
 
 class ImProcCoordinator;
 
-class Crop : public DetailedCrop, public PipetteBuffer
+class Crop final : public DetailedCrop, public PipetteBuffer
 {
 
 protected:
@@ -44,6 +41,7 @@ protected:
     LabImage*    laboCrop;   // "one chunk" allocation
     LabImage*    labnCrop;   // "one chunk" allocation
     LabImage*    reservCrop;   // "one chunk" allocation
+    LabImage*    lastorigCrop;   // "one chunk" allocation
     Image8*      cropImg;    // "one chunk" allocation ; displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not
     float *      shbuf_real;  // "one chunk" allocation
 

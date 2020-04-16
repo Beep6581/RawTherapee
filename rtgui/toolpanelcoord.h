@@ -14,78 +14,82 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __TOOLPANELCCORD__
-#define __TOOLPANELCCORD__
+#pragma once
 
-#include "../rtengine/rtengine.h"
-#include "toolpanel.h"
 #include <vector>
-#include "pparamschangelistener.h"
-#include "profilechangelistener.h"
-#include "imageareatoollistener.h"
+
 #include <gtkmm.h>
-#include "whitebalance.h"
-#include "coarsepanel.h"
-#include "tonecurve.h"
-#include "vibrance.h"
-#include "colorappearance.h"
-#include "shadowshighlights.h"
-#include "impulsedenoise.h"
-#include "defringe.h"
-#include "dirpyrdenoise.h"
-#include "epd.h"
-#include "sharpening.h"
-#include "labcurve.h"
-#include "metadatapanel.h"
-#include "crop.h"
-#include "icmpanel.h"
-#include "resize.h"
-#include "chmixer.h"
-#include "blackwhite.h"
-#include "cacorrection.h"
-#include "lensprofile.h"
-#include "distortion.h"
-#include "perspective.h"
-#include "rotate.h"
-#include "vignetting.h"
-#include "retinex.h"
-#include "gradient.h"
-#include "locallab.h"
-#include "pcvignette.h"
-#include "toolbar.h"
-#include "lensgeom.h"
-#include "lensgeomlistener.h"
-#include "wavelet.h"
-#include "dirpyrequalizer.h"
-#include "hsvequalizer.h"
-#include "preprocess.h"
+
 #include "bayerpreprocess.h"
 #include "bayerprocess.h"
-#include "xtransprocess.h"
+#include "bayerrawexposure.h"
+#include "blackwhite.h"
+#include "cacorrection.h"
+#include "chmixer.h"
+#include "coarsepanel.h"
+#include "colorappearance.h"
+#include "colortoning.h"
+#include "crop.h"
 #include "darkframe.h"
+#include "defringe.h"
+#include "dehaze.h"
+#include "dirpyrdenoise.h"
+#include "dirpyrequalizer.h"
+#include "distortion.h"
+#include "epd.h"
+#include "fattaltonemap.h"
+#include "filmnegative.h"
+#include "filmsimulation.h"
 #include "flatfield.h"
-#include "sensorbayer.h"
-#include "sensorxtrans.h"
+#include "gradient.h"
+#include "guiutils.h"
+#include "hsvequalizer.h"
+#include "icmpanel.h"
+#include "imageareatoollistener.h"
+#include "impulsedenoise.h"
+#include "labcurve.h"
+#include "lensgeom.h"
+#include "lensgeomlistener.h"
+#include "lensprofile.h"
+#include "localcontrast.h"
+#include "locallab.h"
+#include "pcvignette.h"
+#include "pdsharpening.h"
+#include "perspective.h"
+#include "pparamschangelistener.h"
+#include "preprocess.h"
+#include "profilechangelistener.h"
+#include "prsharpening.h"
 #include "rawcacorrection.h"
 #include "rawexposure.h"
-#include "bayerrawexposure.h"
-#include "xtransrawexposure.h"
-#include "sharpenmicro.h"
-#include "sharpenedge.h"
+#include "resize.h"
+#include "retinex.h"
 #include "rgbcurves.h"
-#include "colortoning.h"
-#include "filmsimulation.h"
-#include "prsharpening.h"
-#include "fattaltonemap.h"
-#include "localcontrast.h"
+#include "rotate.h"
+#include "sensorbayer.h"
+#include "sensorxtrans.h"
+#include "shadowshighlights.h"
+#include "sharpenedge.h"
+#include "sharpening.h"
+#include "sharpenmicro.h"
 #include "softlight.h"
-#include "dehaze.h"
-#include "guiutils.h"
-#include "filmnegative.h"
+#include "tonecurve.h"
+#include "toolbar.h"
+#include "toolpanel.h"
+#include "vibrance.h"
+#include "vignetting.h"
+#include "wavelet.h"
+#include "whitebalance.h"
+#include "xtransprocess.h"
+#include "xtransrawexposure.h"
+
+#include "../rtengine/noncopyable.h"
+#include "../rtengine/rtengine.h"
 
 class ImageEditorCoordinator;
+class MetaDataPanel;
 
 class ToolPanelCoordinator :
     public ToolPanelListener,
@@ -100,7 +104,8 @@ class ToolPanelCoordinator :
     public ICMPanelListener,
     public ImageAreaToolListener,
     public rtengine::ImageTypeListener,
-    public FilmNegProvider
+    public FilmNegProvider,
+    public rtengine::NonCopyable
 {
 protected:
     WhiteBalance* whitebalance;
@@ -157,7 +162,7 @@ protected:
     FattalToneMapping *fattal;
     MetaDataPanel* metadata;
     FilmNegative* filmNegative;
-
+    PdSharpening* pdSharpening;
     std::vector<PParamsChangeListener*> paramcListeners;
 
     rtengine::StagedImageProcessor* ipc;
@@ -248,7 +253,6 @@ public:
 
     void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false) override;
 
-//    void autoContrastChanged (double autoContrast);
     // profilechangelistener interface
     void profileChange(
         const rtengine::procparams::PartialProfile* nparams,
@@ -319,11 +323,11 @@ public:
 
     // imageareatoollistener interface
     void spotWBselected(int x, int y, Thumbnail* thm = nullptr) override;
-    void sharpMaskSelected(bool sharpMask) override;
+    void sharpMaskSelected(bool sharpMask) override final;
     int getSpotWBRectSize() const override;
     void cropSelectionReady() override;
     void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr) override;
-    ToolBar* getToolBar() const override;
+    ToolBar* getToolBar() const final;
     CropGUIListener* startCropEditing(Thumbnail* thm = nullptr) override;
 
     void updateTPVScrollbar(bool hide);
@@ -331,12 +335,10 @@ public:
 
     // ToolBarListener interface
     void toolSelected (ToolMode tool) override;
-    void editModeSwitchedOff () override;
+    void editModeSwitchedOff () final;
 
     void setEditProvider(EditDataProvider *provider);
 
 private:
     IdleRegister idle_register;
 };
-
-#endif

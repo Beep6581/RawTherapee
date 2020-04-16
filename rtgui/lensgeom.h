@@ -14,19 +14,22 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _LENSGEOM_H_
-#define _LENSGEOM_H_
+#pragma once
 
 #include <gtkmm.h>
-#include "toolpanel.h"
-#include "lensgeomlistener.h"
 
-class LensGeometry : public ToolParamBlock, public FoldableToolPanel
+#include "lensgeomlistener.h"
+#include "toolpanel.h"
+
+class LensGeometry final :
+    public ToolParamBlock,
+    public FoldableToolPanel
 {
 
 protected:
+    MyComboBoxText*     method;
     Gtk::Button*        autoCrop;
     LensGeomListener*   rlistener;
     Gtk::CheckButton*   fill;
@@ -34,6 +37,7 @@ protected:
     sigc::connection    fillConn;
     ToolParamBlock*     packBox;
 
+    rtengine::ProcEvent EvTransMethod;
 public:
 
     LensGeometry ();
@@ -48,6 +52,7 @@ public:
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setBatchMode   (bool batchMode) override;
 
+    void methodChanged();
     void fillPressed            ();
     void autoCropPressed        ();
     void setLensGeomListener    (LensGeomListener* l)
@@ -58,5 +63,3 @@ public:
 private:
     IdleRegister idle_register;
 };
-
-#endif

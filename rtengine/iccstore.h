@@ -14,19 +14,18 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include <lcms2.h>
-
-#include "color.h"
 
 namespace rtengine
 {
@@ -40,7 +39,7 @@ namespace procparams
 
 typedef const double(*TMatrix)[3];
 
-class ProfileContent
+class ProfileContent final
 {
 public:
     ProfileContent();
@@ -55,7 +54,7 @@ private:
     std::string data;
 };
 
-class ICCStore
+class ICCStore final
 {
 public:
     enum class ProfileType {

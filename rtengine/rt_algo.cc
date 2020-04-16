@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <algorithm>
@@ -31,7 +31,7 @@
 #include "opthelper.h"
 #include "rt_algo.h"
 #include "rt_math.h"
-#include "sleef.c"
+#include "sleef.h"
 
 namespace {
 float calcBlendFactor(float val, float threshold) {
@@ -52,7 +52,7 @@ vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
 }
 #endif
 
-float tileAverage(float **data, size_t tileY, size_t tileX, size_t tilesize) {
+float tileAverage(const float * const *data, size_t tileY, size_t tileX, size_t tilesize) {
 
     float avg = 0.f;
 #ifdef __SSE2__
@@ -75,7 +75,7 @@ float tileAverage(float **data, size_t tileY, size_t tileX, size_t tilesize) {
     return avg / rtengine::SQR(tilesize);
 }
 
-float tileVariance(float **data, size_t tileY, size_t tileX, size_t tilesize, float avg) {
+float tileVariance(const float * const *data, size_t tileY, size_t tileX, size_t tilesize, float avg) {
 
     float var = 0.f;
 #ifdef __SSE2__
@@ -99,7 +99,7 @@ float tileVariance(float **data, size_t tileY, size_t tileX, size_t tilesize, fl
     return var / (rtengine::SQR(tilesize) * avg);
 }
 
-float calcContrastThreshold(float** luminance, int tileY, int tileX, int tilesize) {
+float calcContrastThreshold(const float* const * luminance, int tileY, int tileX, int tilesize) {
 
     constexpr float scale = 0.0625f / 327.68f;
     std::vector<std::vector<float>> blend(tilesize - 4, std::vector<float>(tilesize - 4));
@@ -156,7 +156,7 @@ float calcContrastThreshold(float** luminance, int tileY, int tileX, int tilesiz
         }
     }
 
-    return c / 100.f;
+    return (c + 1) / 100.f;
 }
 }
 
@@ -299,7 +299,7 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     maxOut = rtengine::LIM(maxOut, minVal, maxVal);
 }
 
-void buildBlendMask(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast) {
+void buildBlendMask(const float* const * luminance, float **blend, int W, int H, float &contrastThreshold, bool autoContrast, float ** clipMask) {
 
     if (autoContrast) {
         constexpr float minLuminance = 2000.f;
@@ -352,7 +352,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                     contrastThreshold = calcContrastThreshold(luminance, minY, minX, tilesize);
                     break;
                 } else {
-                    // in second pass we allow a variance of 4
+                    // in second pass we allow a variance of 8
                     // we additionally scan the tiles +-skip pixels around the best tile from pass 2
                     // Means we scan (2 * skip + 1)^2 tiles in this step to get a better hit rate
                     // fortunately the scan is quite fast, so we use only one core and don't parallelize
@@ -394,7 +394,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                         }
                     }
 
-                    contrastThreshold = minvar <= 4.f ? calcContrastThreshold(luminance, topLeftYStart + minI, topLeftXStart + minJ, tilesize) : 0.f;
+                    contrastThreshold = minvar <= 8.f ? calcContrastThreshold(luminance, topLeftYStart + minI, topLeftXStart + minJ, tilesize) : 0.f;
                 }
             }
         }
@@ -403,7 +403,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
     if(contrastThreshold == 0.f) {
         for(int j = 0; j < H; ++j) {
             for(int i = 0; i < W; ++i) {
-                blend[j][i] = amount;
+                blend[j][i] = 1.f;
             }
         }
     } else {
@@ -415,7 +415,6 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
 #ifdef __SSE2__
             const vfloat contrastThresholdv = F2V(contrastThreshold);
             const vfloat scalev = F2V(scale);
-            const vfloat amountv = F2V(amount);
 #endif
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -424,11 +423,20 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
             for(int j = 2; j < H - 2; ++j) {
                 int i = 2;
 #ifdef __SSE2__
-                for(; i < W - 5; i += 4) {
-                    vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
-                                              SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+                if (clipMask) {
+                    for(; i < W - 5; i += 4) {
+                        vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                                  SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
 
-                    STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                        STVFU(blend[j][i], LVFU(clipMask[j][i]) * calcBlendFactor(contrastv, contrastThresholdv));
+                    }
+                } else {
+                    for(; i < W - 5; i += 4) {
+                        vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                                  SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+
+                        STVFU(blend[j][i], calcBlendFactor(contrastv, contrastThresholdv));
+                    }
                 }
 #endif
                 for(; i < W - 2; ++i) {
@@ -436,7 +444,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                     float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
                                            rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
 
-                    blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+                    blend[j][i] = (clipMask ? clipMask[j][i] : 1.f) * calcBlendFactor(contrast, contrastThreshold);
                 }
             }
 
@@ -464,8 +472,18 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                 }
             }
 
+#ifdef __SSE2__
+            // flush denormals to zero for gaussian blur to avoid performance penalty if there are a lot of zero values in the mask
+            const auto oldMode = _MM_GET_FLUSH_ZERO_MODE();
+            _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+#endif
+
             // blur blend mask to smooth transitions
             gaussianBlur(blend, blend, W, H, 2.0);
+
+#ifdef __SSE2__
+            _MM_SET_FLUSH_ZERO_MODE(oldMode);
+#endif
         }
     }
 }
