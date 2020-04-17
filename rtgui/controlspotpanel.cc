@@ -554,10 +554,16 @@ void ControlSpotPanel::on_button_delete()
     }
 
     // Raise event
+    const int selIndex = getSelectedSpot();
+
+    if (selIndex == -1) { // No selected spot to remove
+        return;
+    }
+
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDeletion;
-    SpotRow* const delSpotRow = getSpot(getSelectedSpot());
+    SpotRow* const delSpotRow = getSpot(selIndex);
     listener->panelChanged(EvLocallabSpotDeleted, delSpotRow->name);
 }
 
@@ -570,16 +576,16 @@ void ControlSpotPanel::on_button_duplicate()
     }
 
     // Raise event
-    const int selId = getSelectedSpot();
+    const int selIndex = getSelectedSpot();
 
-    if (selId == 0) { // No selected spot to duplicate
+    if (selIndex == -1) { // No selected spot to duplicate
         return;
     }
 
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDuplication;
-    SpotRow* const duplSpotRow = getSpot(getSelectedSpot());
+    SpotRow* const duplSpotRow = getSpot(selIndex);
     listener->panelChanged(EvLocallabSpotCreated, M("TP_LOCALLAB_EV_DUPL") + " "
                            + duplSpotRow->name);
 }

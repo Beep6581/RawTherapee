@@ -197,6 +197,7 @@ Locallab::Locallab():
     addTool(toolpanel, expcontrast);
     addTool(toolpanel, expcbdl);
     addTool(toolpanel, expdenoi);
+    addTool(toolpanel, explog);
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator
