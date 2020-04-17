@@ -135,6 +135,11 @@ ControlSpotPanel::ControlSpotPanel():
         sigc::mem_fun(
             *this, &ControlSpotPanel::blockTreeviewSearch), false);
 
+    // Avoid situation where no spot is selected (Ctrl+click on treeview)
+    treeview_->signal_button_press_event().connect(
+        sigc::mem_fun(
+            *this, &ControlSpotPanel::onSpotSelectionEvent), false);
+
     auto cell = Gtk::manage(new Gtk::CellRendererText());
     int cols_count = treeview_->append_column(M("TP_LOCALLAB_COL_NAME"), *cell);
     auto col = treeview_->get_column(cols_count - 1);
@@ -709,6 +714,17 @@ bool ControlSpotPanel::blockTreeviewSearch(GdkEventKey* event)
     return false;
 }
 
+bool ControlSpotPanel::onSpotSelectionEvent(GdkEventButton* event)
+{
+    if (event->state & Gdk::CONTROL_MASK) { // Ctrl
+        // No action is performed to avoid a situation where no spot is selected
+        return true;
+    }
+
+    // Otherwise selection action is transfered to treeview widget
+    return false;
+}
+
 void ControlSpotPanel::load_ControlSpot_param()
 {
     // printf("load_ControlSpot_param\n");
@@ -768,9 +784,15 @@ void ControlSpotPanel::controlspotChanged()
     }
 
     // Raise event
+    const int selIndex = getSelectedSpot();
+
+    if (selIndex == -1) { // No selected spot
+        return;
+    }
+
     selSpotChanged_ = true;
     eventType = SpotSelection;
-    SpotRow* const spotRow = getSpot(getSelectedSpot());
+    SpotRow* const spotRow = getSpot(selIndex);
 
     // Image area shall be regenerated if mask preview was active when switching spot
     if (maskPrevActive) {

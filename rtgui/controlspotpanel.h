@@ -190,6 +190,7 @@ private:
     bool on_button_visibility(GdkEventButton* event);
 
     bool blockTreeviewSearch(GdkEventKey* event);
+    bool onSpotSelectionEvent(GdkEventButton* event);
 
     void load_ControlSpot_param();
 
