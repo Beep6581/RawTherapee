@@ -594,6 +594,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->defGain = max (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
     tpp->defGain *= std::pow(2, ri->getBaselineExposure());
 
+    tpp->scaleGain = scale_mul[0] / pre_mul[0]; // used to reconstruct scale_mul from filmnegativethumb.cc
+
     tpp->gammaCorrected = true;
 
     unsigned filter = ri->get_filters();
@@ -1042,6 +1044,7 @@ Thumbnail::Thumbnail () :
     scaleForSave (8192),
     gammaCorrected (false),
     colorMatrix{},
+    scaleGain (1.0),
     isRaw (true)
 {
 }
@@ -1179,7 +1182,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
 
     if (isRaw && params.filmNegative.enabled) {
-        processFilmNegative(params, baseImg, rwidth, rheight, rmi, gmi, bmi);
+        processFilmNegative(params, baseImg, rwidth, rheight);
     }
 
     if (params.coarse.rotate) {
@@ -2123,6 +2126,10 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
                         colorMatrix[i][j] = cm[ix++];
                     }
             }
+            
+            if (keyFile.has_key ("LiveThumbData", "ScaleGain")) {
+                scaleGain           = keyFile.get_double ("LiveThumbData", "ScaleGain");
+            }
         }
 
         return true;
@@ -2174,6 +2181,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         keyFile.set_boolean ("LiveThumbData", "GammaCorrected", gammaCorrected);
         Glib::ArrayHandle<double> cm ((double*)colorMatrix, 9, Glib::OWNERSHIP_NONE);
         keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
+        keyFile.set_double  ("LiveThumbData", "ScaleGain", scaleGain);
 
         keyData = keyFile.to_data ();
 

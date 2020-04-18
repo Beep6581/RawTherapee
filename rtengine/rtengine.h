@@ -449,6 +449,13 @@ public:
 
 };
 
+class FilmNegListener
+{
+public:
+    virtual ~FilmNegListener() = default;
+    virtual void filmBaseValuesChanged(std::array<float, 3> rgb) = 0;
+};
+
 /** This class represents a detailed part of the image (looking through a kind of window).
   * It can be created and destroyed with the appropriate members of StagedImageProcessor.
   * Several crops can be assigned to the same image.   */
@@ -536,6 +543,8 @@ public:
     virtual void        getCamWB    (double& temp, double& green) = 0;
     virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) = 0;
     virtual bool        getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) = 0;
+    virtual bool        getRawSpotValues  (int x, int y, int spotSize, std::array<float, 3>& rawValues) = 0;
+
     virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) = 0;
 
     virtual void        saveInputICCReference (const Glib::ustring& fname, bool apply_wb) = 0;
@@ -561,6 +570,7 @@ public:
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
     virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;
     virtual void        setLocallabListener     (LocallabListener* l) = 0;
+    virtual void        setFilmNegListener      (FilmNegListener* l) = 0;
 
     virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;

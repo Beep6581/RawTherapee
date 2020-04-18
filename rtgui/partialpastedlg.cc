@@ -1008,6 +1008,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.filmNegative.redRatio   = falsePE.filmNegative.redRatio;
         filterPE.filmNegative.greenExp  = falsePE.filmNegative.greenExp;
         filterPE.filmNegative.blueRatio   = falsePE.filmNegative.blueRatio;
+        filterPE.filmNegative.baseValues   = falsePE.filmNegative.baseValues;
     }
 
     if (!captureSharpening->get_active ()) {
