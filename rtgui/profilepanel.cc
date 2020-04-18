@@ -652,6 +652,10 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
 
             if (!fillMode->get_active()) {
                 *custom->pedited = pe;
+            } else {
+                // Setting LocallabSpotEdited number coherent with spots number in custom->pparams
+                custom->pedited->locallab.spots.clear();
+                custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
             }
         }
     } else {
