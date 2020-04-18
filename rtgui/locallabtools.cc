@@ -1797,6 +1797,11 @@ void LocallabColor::inversChanged()
 {
     updateColorGUI1(); // Update GUI according to invers button state
 
+    // This event is called to transmit potentially resetted mask state
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (invers->get_active()) {
@@ -1960,7 +1965,11 @@ void LocallabColor::updateColorGUI1()
         clCurveEditorG->hide();
         HCurveEditorG->hide();
         expmaskcol1->hide();
-        showmaskcolMethod->hide(); // TODO Manage cases where avoid is activated with mask on
+        showmaskcolMethod->hide();
+        // Reset hidden mask combobox
+        showmaskcolMethodConn.block(true);
+        showmaskcolMethod->set_active(0);
+        showmaskcolMethodConn.block(false);
         showmaskcolMethodinv->show();
         contcol->hide();
         blurcol->hide();
@@ -1974,8 +1983,12 @@ void LocallabColor::updateColorGUI1()
         clCurveEditorG->show();
         HCurveEditorG->show();
         expmaskcol1->show();
-        showmaskcolMethodinv->hide();
         showmaskcolMethod->show();
+        showmaskcolMethodinv->hide();
+        // Reset hidden mask combobox
+        showmaskcolMethodConninv.block(true);
+        showmaskcolMethodinv->set_active(0);
+        showmaskcolMethodConninv.block(false);
         contcol->show();
         blurcol->show();
     }
@@ -3049,6 +3062,11 @@ void LocallabExposure::inversexChanged()
     // Update exposure GUI according to inversex button state
     updateExposureGUI3();
 
+    // This event is called to transmit potentially resetted mask state
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (inversex->get_active()) {
@@ -3188,7 +3206,11 @@ void LocallabExposure::updateExposureGUI3()
         shadex->hide();
         softradiusexp->hide();
         expgradexp->hide();
-        showmaskexpMethod->hide(); // TODO Manage cases where avoid is activated with mask on
+        showmaskexpMethod->hide();
+        // Reset hidden mask combobox
+        showmaskexpMethodConn.block(true);
+        showmaskexpMethod->set_active(0);
+        showmaskexpMethodConn.block(false);
         showmaskexpMethodinv->show();
     } else {
         expMethod->show();
@@ -3198,8 +3220,12 @@ void LocallabExposure::updateExposureGUI3()
         shadex->show();
         softradiusexp->show();
         expgradexp->show();
-        showmaskexpMethodinv->show();
-        showmaskexpMethod->hide();
+        showmaskexpMethodinv->hide();
+        // Reset hidden mask combobox
+        showmaskexpMethodConninv.block(true);
+        showmaskexpMethodinv->set_active(0);
+        showmaskexpMethodConninv.block(false);
+        showmaskexpMethod->show();
     }
 }
 
@@ -3957,6 +3983,11 @@ void LocallabShadow::inversshChanged()
     // Update shadow highlight GUI according to inverssh button state
     updateShadowGUI1();
 
+    // This event is called to transmit potentially resetted mask state
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (inverssh->get_active()) {
@@ -4024,12 +4055,20 @@ void LocallabShadow::updateShadowGUI1()
     // Update shadow highlight GUI according to inverssh button state
     if (inverssh->get_active()) {
         expgradsh->hide();
-        showmaskSHMethod->hide(); // TODO Manage cases where avoid is activated with mask on
+        showmaskSHMethod->hide();
+        // Reset hidden mask combobox
+        showmaskSHMethodConn.block(true);
+        showmaskSHMethod->set_active(0);
+        showmaskSHMethodConn.block(false);
         showmaskSHMethodinv->show();
     } else {
         expgradsh->show();
         showmaskSHMethod->show();
         showmaskSHMethodinv->hide();
+        // Reset hidden mask combobox
+        showmaskSHMethodConninv.block(true);
+        showmaskSHMethodinv->set_active(0);
+        showmaskSHMethodConninv.block(false);
     }
 }
 
@@ -5042,6 +5081,11 @@ void LocallabSoft::softMethodChanged()
     // Update soft light GUI according to softMethod combobox
     updateSoftGUI();
 
+    // This event is called to transmit potentially resetted mask state
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabsoftMethod,
@@ -5066,11 +5110,15 @@ void LocallabSoft::updateSoftGUI()
 {
     // Update soft light GUI according to softMethod combobox
     if (softMethod->get_active_row_number() == 0) {
-        laplace->hide(); // TODO Manage case where mask is on when soft method is changed
         ctboxsoftmethod->hide();
+        // Reset hidden mask combobox
+        showmasksoftMethodConn.block(true);
+        showmasksoftMethod->set_active(0);
+        showmasksoftMethodConn.block(false);
+        laplace->hide();
     } else {
-        laplace->show();
         ctboxsoftmethod->show();
+        laplace->show();
     }
 }
 

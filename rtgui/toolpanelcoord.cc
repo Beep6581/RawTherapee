@@ -514,7 +514,13 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
     /*
      * Manage Locallab mask visibility:
      * - Mask preview is updated when choosing a mask preview method
+     * - Mask preview is also updated when modifying (to avoid hidding a potentially visible mask combobox):
+     *   - Color&Light invers
+     *   - Exposure inversex
+     *   - Shadow Highlight inverssh
+     *   - Soft Light softMethod
      * - Mask preview is stopped when creating, deleting or selecting a spot
+     * - Mask preview is also stopped when removing a spot or resetting all mask visibility
      */
     if (event == rtengine::EvlocallabshowmaskMethod) {
         const Locallab::llMaskVisibility maskStruc = locallab->getMaskVisibility();
@@ -523,7 +529,8 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
                 maskStruc.blMask, maskStruc.tmMask, maskStruc.retiMask, maskStruc.sharMask,
                 maskStruc.lcMask, maskStruc.cbMask);
     } else if (event == rtengine::EvLocallabSpotCreated || event == rtengine::EvLocallabSpotSelectedWithMask ||
-            event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset) {
+            event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset ||
+            event == rtengine::EvlocallabToolRemovedWithRefresh || event == rtengine::EvlocallabToolRemovedWithoutRefresh) {
         locallab->resetMaskVisibility();
         ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
