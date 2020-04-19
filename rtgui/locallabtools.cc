@@ -30,6 +30,9 @@
 #define MINRAD 1.5
 #define MAXRAD 10000
 #define CENTERRAD 100
+#define MINCHRO 0.
+#define MAXCHRO 150.
+#define MAXCHROCC 100.
 
 using namespace rtengine;
 using namespace procparams;
@@ -5126,7 +5129,7 @@ void LocallabSoft::updateSoftGUI()
 LocallabBlur::LocallabBlur():
     LocallabTool(this, M("TP_LOCALLAB_BLUR_TOOLNAME"), M("TP_LOCALLAB_BLUFR"), true),
 
-    // Blur & Noise specific widgets
+    // Blur, Noise & Denoise specific widgets
     blMethod(Gtk::manage(new MyComboBoxText())),
     fftwbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTWBLUR")))),
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), MINRAD, MAXRAD, 0.1, 1.5, nullptr, nullptr, &blurSlider2radius, &blurRadius2Slider))),
@@ -5144,6 +5147,21 @@ LocallabBlur::LocallabBlur():
     blurMethod(Gtk::manage(new MyComboBoxText())),
     chroMethod(Gtk::manage(new MyComboBoxText())),
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
+    LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
+    wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
+    noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
+    noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
+    noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
+    noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
+    noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0., 100., 0.01, 0.))),
+    noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
+    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
+    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
+    noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0., 100., 0.01, 0.))),
+    detailthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILTHR"), 0, 100, 1, 0))),
+    adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-red-small.png"))))),
+    bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
+    sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 20))),
     expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
     showmaskblMethod(Gtk::manage(new MyComboBoxText())),
     enablMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -5172,10 +5190,8 @@ LocallabBlur::LocallabBlur():
     const bool showtooltip = options.showtooltip;
     const int complexsoft = options.complexity;
 
-    // Parameter Blur & Noise specific widgets
-    if (showtooltip) {
-        exp->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
-    }
+    // Parameter Blur, Noise & Denoise specific widgets
+
 
     blMethod->append(M("TP_LOCALLAB_BLUR"));
     blMethod->append(M("TP_LOCALLAB_BLMED"));
@@ -5241,6 +5257,51 @@ LocallabBlur::LocallabBlur():
     chroMethodConn = chroMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::chroMethodChanged));
 
     activlumConn = activlum->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::activlumChanged));
+
+    LocalcurveEditorwavden->setCurveListener(this);
+
+    wavshapeden->setIdentityValue(0.);
+    wavshapeden->setResetCurve(FlatCurveType(defSpot.locwavcurveden.at(0)), defSpot.locwavcurveden);
+
+    if (showtooltip) {
+        wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
+    }
+
+    LocalcurveEditorwavden->curveListComplete();
+
+    noiselumf0->setAdjusterListener(this);
+
+    noiselumf->setAdjusterListener(this);
+
+    noiselumf2->setAdjusterListener(this);
+
+    if (showtooltip) {
+        noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
+    }
+
+    noiselumc->setAdjusterListener(this);
+
+    noiselumdetail->setAdjusterListener(this);
+
+    noiselequal->setAdjusterListener(this);
+
+    noisechrof->setAdjusterListener(this);
+
+    if (showtooltip) {
+        noisechroc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
+    }
+
+    noisechroc->setAdjusterListener(this);
+
+    noisechrodetail->setAdjusterListener(this);
+
+    detailthr->setAdjusterListener(this);
+
+    adjblur->setAdjusterListener(this);
+
+    bilateral->setAdjusterListener(this);
+
+    sensiden->setAdjusterListener(this);
 
     setExpandAlignProperties(expmaskbl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -5350,30 +5411,70 @@ LocallabBlur::LocallabBlur():
 
     csThresholdblur->setAdjusterListener(this);
 
-    // Add Blur & Noise specific widgets to GUI
-    pack_start(*blMethod);
+    // Add Blur, Noise & Denoise specific widgets to GUI
+    MyExpander* const expblnoise = Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_BLNOI_EXP")));
+    setExpandAlignProperties(expblnoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    if (complexsoft < 2) {
-        pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
+    if (showtooltip) {
+        expblnoise->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
     }
 
-    pack_start(*radius);
-    pack_start(*strength);
+    expblnoise->set_expanded(false);
+    ToolParamBlock* const blnoisebox = Gtk::manage(new ToolParamBlock());
+    blnoisebox->pack_start(*blMethod);
+
+    if (complexsoft < 2) {
+        blnoisebox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
+    }
+
+    blnoisebox->pack_start(*radius);
+    blnoisebox->pack_start(*strength);
     ToolParamBlock* const grainBox = Gtk::manage(new ToolParamBlock());
     grainBox->pack_start(*isogr);
     grainBox->pack_start(*strengr);
     grainBox->pack_start(*scalegr);
     grainFrame->add(*grainBox);
-    pack_start(*grainFrame);
-    pack_start(*medMethod);
-    pack_start(*itera);
-    pack_start(*guidbl);
-    pack_start(*strbl);
-    pack_start(*epsbl);
-    pack_start(*sensibn);
-    pack_start(*blurMethod);
-    pack_start(*chroMethod);
-    // pack_start(*activlum);
+    blnoisebox->pack_start(*grainFrame);
+    blnoisebox->pack_start(*medMethod);
+    blnoisebox->pack_start(*itera);
+    blnoisebox->pack_start(*guidbl);
+    blnoisebox->pack_start(*strbl);
+    blnoisebox->pack_start(*epsbl);
+    blnoisebox->pack_start(*sensibn);
+    blnoisebox->pack_start(*blurMethod);
+    blnoisebox->pack_start(*chroMethod);
+    // blnoisebox->pack_start(*activlum);
+    expblnoise->add(*blnoisebox, false);
+    pack_start(*expblnoise);
+    MyExpander* const expdenoise = Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")));
+    setExpandAlignProperties(expdenoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    if (showtooltip) {
+        expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
+    }
+
+    expdenoise->set_expanded(false);
+    ToolParamBlock* const denoisebox = Gtk::manage(new ToolParamBlock());
+    Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
+    ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
+    wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    // wavBox->pack_start(*noiselumf0);
+    // wavBox->pack_start(*noiselumf);
+    // wavBox->pack_start(*noiselumf2);
+    // wavBox->pack_start(*noiselumc);
+    wavBox->pack_start(*noiselumdetail);
+    wavBox->pack_start(*noiselequal);
+    wavBox->pack_start(*noisechrof);
+    wavBox->pack_start(*noisechroc);
+    wavBox->pack_start(*noisechrodetail);
+    wavBox->pack_start(*detailthr);
+    wavBox->pack_start(*adjblur);
+    wavFrame->add(*wavBox);
+    denoisebox->pack_start(*wavFrame);
+    denoisebox->pack_start(*bilateral);
+    denoisebox->pack_start(*sensiden);
+    expdenoise->add(*denoisebox, false);
+    pack_start(*expdenoise);
     ToolParamBlock* const maskblBox = Gtk::manage(new ToolParamBlock());
     maskblBox->pack_start(*showmaskblMethod, Gtk::PACK_SHRINK, 4);
     maskblBox->pack_start(*enablMask, Gtk::PACK_SHRINK, 0);
@@ -5420,6 +5521,7 @@ LocallabBlur::~LocallabBlur()
     delete maskblCurveEditorG;
     delete mask2blCurveEditorG;
     delete mask2blCurveEditorGwav;
+    delete LocalcurveEditorwavden;
 }
 
 void LocallabBlur::resetMaskView()
@@ -5537,6 +5639,20 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         }
 
         activlum->set_active(pp->locallab.spots.at(index).activlum);
+        wavshapeden->setCurve(pp->locallab.spots.at(index).locwavcurveden);
+        noiselumf0->setValue(pp->locallab.spots.at(index).noiselumf0);
+        noiselumf->setValue(pp->locallab.spots.at(index).noiselumf);
+        noiselumf2->setValue(pp->locallab.spots.at(index).noiselumf2);
+        noiselumc->setValue(pp->locallab.spots.at(index).noiselumc);
+        noiselumdetail->setValue(pp->locallab.spots.at(index).noiselumdetail);
+        noiselequal->setValue((double)pp->locallab.spots.at(index).noiselequal);
+        noisechrof->setValue(pp->locallab.spots.at(index).noisechrof);
+        noisechroc->setValue(pp->locallab.spots.at(index).noisechroc);
+        noisechrodetail->setValue(pp->locallab.spots.at(index).noisechrodetail);
+        detailthr->setValue((double)pp->locallab.spots.at(index).detailthr);
+        adjblur->setValue((double)pp->locallab.spots.at(index).adjblur);
+        bilateral->setValue((double)pp->locallab.spots.at(index).bilateral);
+        sensiden->setValue((double)pp->locallab.spots.at(index).sensiden);
         enablMask->set_active(pp->locallab.spots.at(index).enablMask);
         CCmaskblshape->setCurve(pp->locallab.spots.at(index).CCmaskblcurve);
         LLmaskblshape->setCurve(pp->locallab.spots.at(index).LLmaskblcurve);
@@ -5646,6 +5762,20 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         }
 
         pp->locallab.spots.at(index).activlum = activlum->get_active();
+        pp->locallab.spots.at(index).locwavcurveden = wavshapeden->getCurve();
+        pp->locallab.spots.at(index).noiselumf0 = noiselumf0->getValue();
+        pp->locallab.spots.at(index).noiselumf = noiselumf->getValue();
+        pp->locallab.spots.at(index).noiselumf2 = noiselumf2->getValue();
+        pp->locallab.spots.at(index).noiselumc = noiselumc->getValue();
+        pp->locallab.spots.at(index).noiselumdetail = noiselumdetail->getValue();
+        pp->locallab.spots.at(index).noiselequal = noiselequal->getIntValue();
+        pp->locallab.spots.at(index).noisechrof = noisechrof->getValue();
+        pp->locallab.spots.at(index).noisechroc = noisechroc->getValue();
+        pp->locallab.spots.at(index).noisechrodetail = noisechrodetail->getValue();
+        pp->locallab.spots.at(index).detailthr = detailthr->getIntValue();
+        pp->locallab.spots.at(index).adjblur = adjblur->getIntValue();
+        pp->locallab.spots.at(index).bilateral = bilateral->getIntValue();
+        pp->locallab.spots.at(index).sensiden = sensiden->getIntValue();
         pp->locallab.spots.at(index).enablMask = enablMask->get_active();
         pp->locallab.spots.at(index).LLmaskblcurve = LLmaskblshape->getCurve();
         pp->locallab.spots.at(index).CCmaskblcurve = CCmaskblshape->getCurve();
@@ -5685,6 +5815,19 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         strbl->setDefault((double)defSpot.strbl);
         epsbl->setDefault((double)defSpot.epsbl);
         sensibn->setDefault((double)defSpot.sensibn);
+        noiselumf0->setDefault(defSpot.noiselumf0);
+        noiselumf->setDefault(defSpot.noiselumf);
+        noiselumf2->setDefault(defSpot.noiselumf2);
+        noiselumc->setDefault(defSpot.noiselumc);
+        noiselumdetail->setDefault(defSpot.noiselumdetail);
+        noiselequal->setDefault((double)defSpot.noiselequal);
+        noisechrof->setDefault(defSpot.noisechrof);
+        noisechroc->setDefault(defSpot.noisechroc);
+        noisechrodetail->setDefault(defSpot.noisechrodetail);
+        detailthr->setDefault((double)defSpot.detailthr);
+        adjblur->setDefault((double)defSpot.adjblur);
+        bilateral->setDefault((double)defSpot.bilateral);
+        sensiden->setDefault((double)defSpot.sensiden);
         strumaskbl->setDefault(defSpot.strumaskbl);
         blendmaskbl->setDefault((double)defSpot.blendmaskbl);
         radmaskbl->setDefault(defSpot.radmaskbl);
@@ -5772,6 +5915,97 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == noiselumf0) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumf0,
+                                       noiselumf0->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == noiselumf) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumf,
+                                       noiselumf->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == noiselumf2) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumf2,
+                                       noiselumf2->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == noiselumc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumc,
+                                       noiselumc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == noiselumdetail) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumdetail,
+                                       noiselumdetail->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == noiselequal) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselequal,
+                                       noiselequal->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == noisechrof) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoisechrof,
+                                       noisechrof->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == noisechroc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoisechroc,
+                                       noisechroc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == noisechrodetail) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoisechrodetail,
+                                       noisechrodetail->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == detailthr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdetailthr,
+                                       detailthr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == adjblur) {
+            if (listener) {
+                listener->panelChanged(Evlocallabadjblur,
+                                       adjblur->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == bilateral) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbilateral,
+                                       bilateral->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sensiden) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensiden,
+                                       sensiden->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == strumaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrumaskbl,
@@ -5843,6 +6077,13 @@ void LocallabBlur::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int ne
 void LocallabBlur::curveChanged(CurveEditor* ce)
 {
     if (isLocActivated && exp->getEnabled()) {
+        if (ce == wavshapeden) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurveden,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (ce == CCmaskblshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskblshape,

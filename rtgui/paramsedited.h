@@ -607,6 +607,20 @@ public:
         bool blurMethod;
         bool medMethod;
         bool activlum;
+        bool noiselumf;
+        bool noiselumf0;
+        bool noiselumf2;
+        bool noiselumc;
+        bool noiselumdetail;
+        bool noiselequal;
+        bool noisechrof;
+        bool noisechroc;
+        bool noisechrodetail;
+        bool adjblur;
+        bool bilateral;
+        bool sensiden;
+        bool detailthr;
+        bool locwavcurveden;
         bool CCmaskblcurve;
         bool LLmaskblcurve;
         bool HHmaskblcurve;
@@ -782,23 +796,6 @@ public:
         bool slomaskcb;
         bool lapmaskcb;
         bool Lmaskcbcurve;
-        // Denoise
-        bool visidenoi;
-        bool expdenoi;
-        bool noiselumf;
-        bool noiselumf0;
-        bool noiselumf2;
-        bool noiselumc;
-        bool noiselumdetail;
-        bool noiselequal;
-        bool noisechrof;
-        bool noisechroc;
-        bool noisechrodetail;
-        bool adjblur;
-        bool bilateral;
-        bool sensiden;
-        bool detailthr;
-        bool locwavcurveden;
         // Log encoding
         bool visilog;
         bool explog;

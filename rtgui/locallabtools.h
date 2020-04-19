@@ -582,6 +582,21 @@ private:
     MyComboBoxText* const blurMethod;
     MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
+    CurveEditorGroup* const LocalcurveEditorwavden;
+    FlatCurveEditor* const wavshapeden;
+    Adjuster* const noiselumf0;
+    Adjuster* const noiselumf;
+    Adjuster* const noiselumf2;
+    Adjuster* const noiselumc;
+    Adjuster* const noiselumdetail;
+    Adjuster* const noiselequal;
+    Adjuster* const noisechrof;
+    Adjuster* const noisechroc;
+    Adjuster* const noisechrodetail;
+    Adjuster* const detailthr;
+    Adjuster* const adjblur;
+    Adjuster* const bilateral;
+    Adjuster* const sensiden;
     MyExpander* const expmaskbl;
     MyComboBoxText* const showmaskblMethod;
     Gtk::CheckButton* const enablMask;
@@ -1046,42 +1061,6 @@ private:
     void lumacontrastMinusPressed();
     void lumaneutralPressed();
     void lumacontrastPlusPressed();
-};
-
-/* ==== LocallabDenoise ==== */
-class LocallabDenoise:
-    public Gtk::VBox,
-    public LocallabTool
-{
-private:
-    CurveEditorGroup* const LocalcurveEditorwavden;
-    FlatCurveEditor* const wavshapeden;
-    Adjuster* const noiselumf0;
-    Adjuster* const noiselumf;
-    Adjuster* const noiselumf2;
-    Adjuster* const noiselumc;
-    Adjuster* const noiselumdetail;
-    Adjuster* const noiselequal;
-    Adjuster* const noisechrof;
-    Adjuster* const noisechroc;
-    Adjuster* const noisechrodetail;
-    Adjuster* const detailthr;
-    Adjuster* const adjblur;
-    Adjuster* const bilateral;
-    Adjuster* const sensiden;
-
-public:
-    LocallabDenoise();
-    ~LocallabDenoise();
-
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void curveChanged(CurveEditor* ce);
-
-private:
-    void enabledChanged();
 };
 
 /* ==== LocallabLog ==== */

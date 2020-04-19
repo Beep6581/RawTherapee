@@ -602,7 +602,7 @@ enum ProcEventCode {
     Evlocallabchromacbdl = 576,
     EvlocallabThresho = 577,
     Evlocallabsensicb = 578,
-    EvLocenadenoi = 579,
+    // EvLocenadenoi = 579,
     Evlocallabnoiselumf = 580,
     Evlocallabnoiselumc = 581,
     Evlocallabnoiselumdetail = 582,

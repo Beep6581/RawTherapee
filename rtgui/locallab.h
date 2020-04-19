@@ -113,7 +113,6 @@ private:
     LocallabSharp* const expsharp;
     LocallabContrast* const expcontrast;
     LocallabCBDL* const expcbdl;
-    LocallabDenoise* const expdenoi;
     LocallabLog* const explog;
 
     std::vector<LocallabTool*> locallabTools;

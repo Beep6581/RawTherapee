@@ -1178,6 +1178,20 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).blurMethod = locallab.spots.at(j).blurMethod && pSpot.blurMethod == otherSpot.blurMethod;
                 locallab.spots.at(j).medMethod = locallab.spots.at(j).medMethod && pSpot.medMethod == otherSpot.medMethod;
                 locallab.spots.at(j).activlum = locallab.spots.at(j).activlum && pSpot.activlum == otherSpot.activlum;
+                locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
+                locallab.spots.at(j).noiselumf0 = locallab.spots.at(j).noiselumf0 && pSpot.noiselumf0 == otherSpot.noiselumf0;
+                locallab.spots.at(j).noiselumf2 = locallab.spots.at(j).noiselumf2 && pSpot.noiselumf2 == otherSpot.noiselumf2;
+                locallab.spots.at(j).noiselumc = locallab.spots.at(j).noiselumc && pSpot.noiselumc == otherSpot.noiselumc;
+                locallab.spots.at(j).noiselumdetail = locallab.spots.at(j).noiselumdetail && pSpot.noiselumdetail == otherSpot.noiselumdetail;
+                locallab.spots.at(j).noiselequal = locallab.spots.at(j).noiselequal && pSpot.noiselequal == otherSpot.noiselequal;
+                locallab.spots.at(j).noisechrof = locallab.spots.at(j).noisechrof && pSpot.noisechrof == otherSpot.noisechrof;
+                locallab.spots.at(j).noisechroc = locallab.spots.at(j).noisechroc && pSpot.noisechroc == otherSpot.noisechroc;
+                locallab.spots.at(j).noisechrodetail = locallab.spots.at(j).noisechrodetail && pSpot.noisechrodetail == otherSpot.noisechrodetail;
+                locallab.spots.at(j).adjblur = locallab.spots.at(j).adjblur && pSpot.adjblur == otherSpot.adjblur;
+                locallab.spots.at(j).bilateral = locallab.spots.at(j).bilateral && pSpot.bilateral == otherSpot.bilateral;
+                locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
+                locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
+                locallab.spots.at(j).locwavcurveden = locallab.spots.at(j).locwavcurveden && pSpot.locwavcurveden == otherSpot.locwavcurveden;
                 locallab.spots.at(j).CCmaskblcurve = locallab.spots.at(j).CCmaskblcurve && pSpot.CCmaskblcurve == otherSpot.CCmaskblcurve;
                 locallab.spots.at(j).LLmaskblcurve = locallab.spots.at(j).LLmaskblcurve && pSpot.LLmaskblcurve == otherSpot.LLmaskblcurve;
                 locallab.spots.at(j).HHmaskblcurve = locallab.spots.at(j).HHmaskblcurve && pSpot.HHmaskblcurve == otherSpot.HHmaskblcurve;
@@ -1357,23 +1371,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).slomaskcb = locallab.spots.at(j).slomaskcb && pSpot.slomaskcb == otherSpot.slomaskcb;
                 locallab.spots.at(j).lapmaskcb = locallab.spots.at(j).lapmaskcb && pSpot.lapmaskcb == otherSpot.lapmaskcb;
                 locallab.spots.at(j).Lmaskcbcurve = locallab.spots.at(j).Lmaskcbcurve && pSpot.Lmaskcbcurve == otherSpot.Lmaskcbcurve;
-                // Denoise
-                locallab.spots.at(j).visidenoi = locallab.spots.at(j).visidenoi && pSpot.visidenoi == otherSpot.visidenoi;
-                locallab.spots.at(j).expdenoi = locallab.spots.at(j).expdenoi && pSpot.expdenoi == otherSpot.expdenoi;
-                locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
-                locallab.spots.at(j).noiselumf0 = locallab.spots.at(j).noiselumf0 && pSpot.noiselumf0 == otherSpot.noiselumf0;
-                locallab.spots.at(j).noiselumf2 = locallab.spots.at(j).noiselumf2 && pSpot.noiselumf2 == otherSpot.noiselumf2;
-                locallab.spots.at(j).noiselumc = locallab.spots.at(j).noiselumc && pSpot.noiselumc == otherSpot.noiselumc;
-                locallab.spots.at(j).noiselumdetail = locallab.spots.at(j).noiselumdetail && pSpot.noiselumdetail == otherSpot.noiselumdetail;
-                locallab.spots.at(j).noiselequal = locallab.spots.at(j).noiselequal && pSpot.noiselequal == otherSpot.noiselequal;
-                locallab.spots.at(j).noisechrof = locallab.spots.at(j).noisechrof && pSpot.noisechrof == otherSpot.noisechrof;
-                locallab.spots.at(j).noisechroc = locallab.spots.at(j).noisechroc && pSpot.noisechroc == otherSpot.noisechroc;
-                locallab.spots.at(j).noisechrodetail = locallab.spots.at(j).noisechrodetail && pSpot.noisechrodetail == otherSpot.noisechrodetail;
-                locallab.spots.at(j).adjblur = locallab.spots.at(j).adjblur && pSpot.adjblur == otherSpot.adjblur;
-                locallab.spots.at(j).bilateral = locallab.spots.at(j).bilateral && pSpot.bilateral == otherSpot.bilateral;
-                locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
-                locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
-                locallab.spots.at(j).locwavcurveden = locallab.spots.at(j).locwavcurveden && pSpot.locwavcurveden == otherSpot.locwavcurveden;
                 // Log encoding
                 locallab.spots.at(j).visilog = locallab.spots.at(j).visilog && pSpot.visilog == otherSpot.visilog;
                 locallab.spots.at(j).explog = locallab.spots.at(j).explog && pSpot.explog == otherSpot.explog;
@@ -3705,6 +3702,62 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).activlum = mods.locallab.spots.at(i).activlum;
         }
 
+        if (locallab.spots.at(i).noiselumf) {
+            toEdit.locallab.spots.at(i).noiselumf = mods.locallab.spots.at(i).noiselumf;
+        }
+
+        if (locallab.spots.at(i).noiselumf0) {
+            toEdit.locallab.spots.at(i).noiselumf0 = mods.locallab.spots.at(i).noiselumf0;
+        }
+
+        if (locallab.spots.at(i).noiselumf2) {
+            toEdit.locallab.spots.at(i).noiselumf2 = mods.locallab.spots.at(i).noiselumf2;
+        }
+
+        if (locallab.spots.at(i).noiselumc) {
+            toEdit.locallab.spots.at(i).noiselumc = mods.locallab.spots.at(i).noiselumc;
+        }
+
+        if (locallab.spots.at(i).noiselumdetail) {
+            toEdit.locallab.spots.at(i).noiselumdetail = mods.locallab.spots.at(i).noiselumdetail;
+        }
+
+        if (locallab.spots.at(i).noiselequal) {
+            toEdit.locallab.spots.at(i).noiselequal = mods.locallab.spots.at(i).noiselequal;
+        }
+
+        if (locallab.spots.at(i).noisechrof) {
+            toEdit.locallab.spots.at(i).noisechrof = mods.locallab.spots.at(i).noisechrof;
+        }
+
+        if (locallab.spots.at(i).noisechroc) {
+            toEdit.locallab.spots.at(i).noisechroc = mods.locallab.spots.at(i).noisechroc;
+        }
+
+        if (locallab.spots.at(i).noisechrodetail) {
+            toEdit.locallab.spots.at(i).noisechrodetail = mods.locallab.spots.at(i).noisechrodetail;
+        }
+
+        if (locallab.spots.at(i).adjblur) {
+            toEdit.locallab.spots.at(i).adjblur = mods.locallab.spots.at(i).adjblur;
+        }
+
+        if (locallab.spots.at(i).bilateral) {
+            toEdit.locallab.spots.at(i).bilateral = mods.locallab.spots.at(i).bilateral;
+        }
+
+        if (locallab.spots.at(i).sensiden) {
+            toEdit.locallab.spots.at(i).sensiden = mods.locallab.spots.at(i).sensiden;
+        }
+
+        if (locallab.spots.at(i).detailthr) {
+            toEdit.locallab.spots.at(i).detailthr = mods.locallab.spots.at(i).detailthr;
+        }
+
+        if (locallab.spots.at(i).locwavcurveden) {
+            toEdit.locallab.spots.at(i).locwavcurveden = mods.locallab.spots.at(i).locwavcurveden;
+        }
+
         if (locallab.spots.at(i).CCmaskblcurve) {
             toEdit.locallab.spots.at(i).CCmaskblcurve = mods.locallab.spots.at(i).CCmaskblcurve;
         }
@@ -4390,71 +4443,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).Lmaskcbcurve) {
             toEdit.locallab.spots.at(i).Lmaskcbcurve = mods.locallab.spots.at(i).Lmaskcbcurve;
-        }
-
-        // Denoise
-        if (locallab.spots.at(i).visidenoi) {
-            toEdit.locallab.spots.at(i).visidenoi = mods.locallab.spots.at(i).visidenoi;
-        }
-
-        if (locallab.spots.at(i).expdenoi) {
-            toEdit.locallab.spots.at(i).expdenoi = mods.locallab.spots.at(i).expdenoi;
-        }
-
-        if (locallab.spots.at(i).noiselumf) {
-            toEdit.locallab.spots.at(i).noiselumf = mods.locallab.spots.at(i).noiselumf;
-        }
-
-        if (locallab.spots.at(i).noiselumf0) {
-            toEdit.locallab.spots.at(i).noiselumf0 = mods.locallab.spots.at(i).noiselumf0;
-        }
-
-        if (locallab.spots.at(i).noiselumf2) {
-            toEdit.locallab.spots.at(i).noiselumf2 = mods.locallab.spots.at(i).noiselumf2;
-        }
-
-        if (locallab.spots.at(i).noiselumc) {
-            toEdit.locallab.spots.at(i).noiselumc = mods.locallab.spots.at(i).noiselumc;
-        }
-
-        if (locallab.spots.at(i).noiselumdetail) {
-            toEdit.locallab.spots.at(i).noiselumdetail = mods.locallab.spots.at(i).noiselumdetail;
-        }
-
-        if (locallab.spots.at(i).noiselequal) {
-            toEdit.locallab.spots.at(i).noiselequal = mods.locallab.spots.at(i).noiselequal;
-        }
-
-        if (locallab.spots.at(i).noisechrof) {
-            toEdit.locallab.spots.at(i).noisechrof = mods.locallab.spots.at(i).noisechrof;
-        }
-
-        if (locallab.spots.at(i).noisechroc) {
-            toEdit.locallab.spots.at(i).noisechroc = mods.locallab.spots.at(i).noisechroc;
-        }
-
-        if (locallab.spots.at(i).noisechrodetail) {
-            toEdit.locallab.spots.at(i).noisechrodetail = mods.locallab.spots.at(i).noisechrodetail;
-        }
-
-        if (locallab.spots.at(i).adjblur) {
-            toEdit.locallab.spots.at(i).adjblur = mods.locallab.spots.at(i).adjblur;
-        }
-
-        if (locallab.spots.at(i).bilateral) {
-            toEdit.locallab.spots.at(i).bilateral = mods.locallab.spots.at(i).bilateral;
-        }
-
-        if (locallab.spots.at(i).sensiden) {
-            toEdit.locallab.spots.at(i).sensiden = mods.locallab.spots.at(i).sensiden;
-        }
-
-        if (locallab.spots.at(i).detailthr) {
-            toEdit.locallab.spots.at(i).detailthr = mods.locallab.spots.at(i).detailthr;
-        }
-
-        if (locallab.spots.at(i).locwavcurveden) {
-            toEdit.locallab.spots.at(i).locwavcurveden = mods.locallab.spots.at(i).locwavcurveden;
         }
 
         // Log encoding
@@ -5703,6 +5691,20 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blurMethod(v),
     medMethod(v),
     activlum(v),
+    noiselumf(v),
+    noiselumf0(v),
+    noiselumf2(v),
+    noiselumc(v),
+    noiselumdetail(v),
+    noiselequal(v),
+    noisechrof(v),
+    noisechroc(v),
+    noisechrodetail(v),
+    adjblur(v),
+    bilateral(v),
+    sensiden(v),
+    detailthr(v),
+    locwavcurveden(v),
     CCmaskblcurve(v),
     LLmaskblcurve(v),
     HHmaskblcurve(v),
@@ -5878,23 +5880,6 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     slomaskcb(v),
     lapmaskcb(v),
     Lmaskcbcurve(v),
-    // Denoise
-    visidenoi(v),
-    expdenoi(v),
-    noiselumf(v),
-    noiselumf0(v),
-    noiselumf2(v),
-    noiselumc(v),
-    noiselumdetail(v),
-    noiselequal(v),
-    noisechrof(v),
-    noisechroc(v),
-    noisechrodetail(v),
-    adjblur(v),
-    bilateral(v),
-    sensiden(v),
-    detailthr(v),
-    locwavcurveden(v),
     // Log encoding
     visilog(v),
     explog(v),
@@ -6141,6 +6126,20 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     blurMethod = v;
     medMethod = v;
     activlum = v;
+    noiselumf = v;
+    noiselumf0 = v;
+    noiselumf2 = v;
+    noiselumc = v;
+    noiselumdetail = v;
+    noiselequal = v;
+    noisechrof = v;
+    noisechroc = v;
+    noisechrodetail = v;
+    adjblur = v;
+    bilateral = v;
+    sensiden = v;
+    detailthr = v;
+    locwavcurveden = v;
     CCmaskblcurve = v;
     LLmaskblcurve = v;
     HHmaskblcurve = v;
@@ -6320,23 +6319,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     slomaskcb = v;
     lapmaskcb = v;
     Lmaskcbcurve = v;
-    // Denoise
-    visidenoi = v;
-    expdenoi = v;
-    noiselumf = v;
-    noiselumf0 = v;
-    noiselumf2 = v;
-    noiselumc = v;
-    noiselumdetail = v;
-    noiselequal = v;
-    noisechrof = v;
-    noisechroc = v;
-    noisechrodetail = v;
-    adjblur = v;
-    bilateral = v;
-    sensiden = v;
-    detailthr = v;
-    locwavcurveden = v;
     // Log encoding
     visilog = v;
     explog = v;

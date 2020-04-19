@@ -160,7 +160,6 @@ Locallab::Locallab():
     expsharp(Gtk::manage(new LocallabSharp())),
     expcontrast(Gtk::manage(new LocallabContrast())),
     expcbdl(Gtk::manage(new LocallabCBDL())),
-    expdenoi(Gtk::manage(new LocallabDenoise())),
     explog(Gtk::manage(new LocallabLog())),
 
     // Other widgets
@@ -196,7 +195,6 @@ Locallab::Locallab():
     addTool(toolpanel, expsharp);
     addTool(toolpanel, expcontrast);
     addTool(toolpanel, expcbdl);
-    addTool(toolpanel, expdenoi);
     addTool(toolpanel, explog);
     panel->pack_start(*toolpanel, false, false);
 

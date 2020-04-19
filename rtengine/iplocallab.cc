@@ -794,7 +794,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.shapmet = 1;
     }
 
-    lp.denoiena = locallab.spots.at(sp).expdenoi;
+    lp.denoiena = locallab.spots.at(sp).expblur;
 
     bool wavcurveden = false;
     float local_noiself = 0.f;

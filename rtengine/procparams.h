@@ -1179,6 +1179,20 @@ struct LocallabParams {
         Glib::ustring blurMethod; // norm, inv
         Glib::ustring medMethod; // none, 33, 55, 77, 99
         bool activlum;
+        double noiselumf;
+        double noiselumf0;
+        double noiselumf2;
+        double noiselumc;
+        double noiselumdetail;
+        int noiselequal;
+        double noisechrof;
+        double noisechroc;
+        double noisechrodetail;
+        int adjblur;
+        int bilateral;
+        int sensiden;
+        int detailthr;
+        std::vector<double> locwavcurveden;
         std::vector<double> CCmaskblcurve;
         std::vector<double> LLmaskblcurve;
         std::vector<double> HHmaskblcurve;
@@ -1354,23 +1368,6 @@ struct LocallabParams {
         double slomaskcb;
         double lapmaskcb;
         std::vector<double> Lmaskcbcurve;
-        // Denoise
-        bool visidenoi;
-        bool expdenoi;
-        double noiselumf;
-        double noiselumf0;
-        double noiselumf2;
-        double noiselumc;
-        double noiselumdetail;
-        int noiselequal;
-        double noisechrof;
-        double noisechroc;
-        double noisechrodetail;
-        int adjblur;
-        int bilateral;
-        int sensiden;
-        int detailthr;
-        std::vector<double> locwavcurveden;
         // Log encoding
         bool visilog;
         bool explog;

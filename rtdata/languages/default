@@ -2269,7 +2269,6 @@ TP_LOCALLAB_CURVENSOB2;Combined HueChroma + Contrast threshold (experimental)
 TP_LOCALLAB_DARKRETI;Darkness
 TP_LOCALLAB_LIGHTRETI;Lightness
 TP_LOCALLAB_THRESRETI;Threshold
-TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_DEHAZ;Dehaze
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE lead to very different results and needs differents settings that Standard\nMay be usefull for low exposure.\nPDE reduce artifacts and noise. 
 TP_LOCALLAB_FFTW;Use Fast Fourier Transform
@@ -2426,7 +2425,7 @@ TP_LOCALLAB_VIBRANCE;Vibrance
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
 TP_LOCALLAB_SPOTNAME;New Spot
-TP_LOCALLAB_BLUFR;Smooth - Blur - Grain (& additional denoise)
+TP_LOCALLAB_BLUFR;Smooth - Blur - Grain - Denoise
 TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n*Blur the background by a RT-spot fully covering the image (high values for scope and transition) - normal or inverse.\n*Isolate the foreground by one or more excluding RT-spot with the tools you want (increse scope), you can use a mask to enhance and amplify the effects.\n\nThis module can be used in additional noise reduction,including "median" and "Guided filter" 
 TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLURCBDL;Blur levels 0-1-2-3-4
@@ -2850,13 +2849,12 @@ TP_LOCALLAB_EXP_TOOLNAME;Locallab Exposure
 TP_LOCALLAB_SH_TOOLNAME;Locallab Shadows Highlight
 TP_LOCALLAB_VIB_TOOLNAME;Locallab Vibrance
 TP_LOCALLAB_SOFT_TOOLNAME;Locallab Soft Light
-TP_LOCALLAB_BLUR_TOOLNAME;Locallab Blur & Noise
+TP_LOCALLAB_BLUR_TOOLNAME;Locallab Blur, Noise & Denoise
 TP_LOCALLAB_TONE_TOOLNAME;Locallab Tone Mapping
 TP_LOCALLAB_RET_TOOLNAME;Locallab Retinex
 TP_LOCALLAB_SHARP_TOOLNAME;Locallab Sharpening
 TP_LOCALLAB_LC_TOOLNAME;Locallab Local Constrast
 TP_LOCALLAB_CBDL_TOOLNAME;Locallab CBDL
-TP_LOCALLAB_DEN_TOOLNAME;Locallab Denoise
 TP_LOCALLAB_LOG_TOOLNAME;Locallab Encoding log
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
@@ -2877,6 +2875,8 @@ TP_LOCALLAB_WAVMASK;Ψ Mask Levels local contrast
 TP_LOCALLAB_WAVMED;Ψ Wavelet normal
 TP_LOCALLAB_WEDIANHI;Median Hi
 TP_LOCALLAB_WHITE_EV;White Ev
+TP_LOCALLAB_BLNOI_EXP;Blur & Noise
+TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right
