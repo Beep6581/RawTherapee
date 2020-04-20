@@ -632,7 +632,7 @@ void ExifPanel::onEditExifTagValue(const Glib::ustring &path, const Glib::ustrin
     auto row = *it;
     std::string key = row[exifColumns.key];
 
-    changeList[key] = value;
+    (*changeList)[key] = value;
     if (!all_keys_active()) {
         cur_active_keys_.insert(key);
     }

@@ -76,7 +76,8 @@ std::unique_ptr<Exiv2::Image> open_exiv2(const Glib::ustring& fname)
 #endif
         throw Exiv2::Error(error_code, "exiv2: invalid image");
     }
-    return image;
+    std::unique_ptr<Exiv2::Image> ret(image.release());
+    return ret;
 }
 
 } // namespace
