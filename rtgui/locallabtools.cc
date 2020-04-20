@@ -2148,6 +2148,10 @@ LocallabExposure::LocallabExposure():
         expMethod->append(M("TP_LOCALLAB_PDE"));
     }
 
+    if (complexsoft == 0) {
+        expMethod->append(M("TP_LOCALLAB_PDE2"));
+    }
+
     expMethod->set_active(0);
     expMethodConn = expMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabExposure::expMethodChanged));
 
@@ -2381,7 +2385,7 @@ LocallabExposure::LocallabExposure():
     pdeBox->pack_start(*ctboxexpmethod);
     pdeFrame->add(*pdeBox);
 
-    if (complexsoft < 1) {
+    if (complexsoft < 2) {
         pack_start(*pdeFrame);
     }
 
@@ -2389,13 +2393,17 @@ LocallabExposure::LocallabExposure():
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
 
-    if (complexsoft < 2) {
+    if (complexsoft < 1) {
         fatBox->pack_start(*fatlevel);
     }
 
     fatBox->pack_start(*fatanchor);
     fatFrame->add(*fatBox);
-    pack_start(*fatFrame);
+
+    if (complexsoft < 2) {
+        pack_start(*fatFrame);
+    }
+
     pack_start(*sensiex);
     pack_start(*structexp);
 
@@ -2580,13 +2588,12 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         if (complexsoft < 2) {
             structexp->setValue(pp->locallab.spots.at(index).structexp);
             blurexpde->setValue(pp->locallab.spots.at(index).blurexpde);
-            expcomp->setValue(pp->locallab.spots.at(index).expcomp);
         } else {
             structexp->setValue(0.);
             blurexpde->setValue(5.);
-            expcomp->setValue(0.);
         }
 
+        expcomp->setValue(pp->locallab.spots.at(index).expcomp);
         black->setValue(pp->locallab.spots.at(index).black);
 
         if (complexsoft < 2) {

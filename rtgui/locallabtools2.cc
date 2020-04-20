@@ -3778,7 +3778,6 @@ void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
 
 void LocallabCBDL::setDefaultExpanderVisibility()
 {
-    printf("Test: %d\n", expmaskcb->is_visible());
     expmaskcb->set_expanded(false);
 }
 
