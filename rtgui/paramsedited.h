@@ -729,6 +729,7 @@ public:
         bool residcomp;
         bool sigma;
         bool offset;
+        bool sigmadr;
         bool threswav;
         bool chromalev;
         bool chromablu;

@@ -1329,6 +1329,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).residcomp = locallab.spots.at(j).residcomp && pSpot.residcomp == otherSpot.residcomp;
                 locallab.spots.at(j).sigma = locallab.spots.at(j).sigma && pSpot.sigma == otherSpot.sigma;
                 locallab.spots.at(j).offset = locallab.spots.at(j).offset && pSpot.offset == otherSpot.offset;
+                locallab.spots.at(j).sigmadr = locallab.spots.at(j).sigmadr && pSpot.sigmadr == otherSpot.sigmadr;
                 locallab.spots.at(j).threswav = locallab.spots.at(j).threswav && pSpot.threswav == otherSpot.threswav;
                 locallab.spots.at(j).chromalev = locallab.spots.at(j).chromalev && pSpot.chromalev == otherSpot.chromalev;
                 locallab.spots.at(j).chromablu = locallab.spots.at(j).chromablu && pSpot.chromablu == otherSpot.chromablu;
@@ -4238,6 +4239,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).offset   = mods.locallab.spots.at(i).offset;
         }
 
+        if (locallab.spots.at(i).sigmadr) {
+            toEdit.locallab.spots.at(i).sigmadr   = mods.locallab.spots.at(i).sigmadr;
+        }
+
         if (locallab.spots.at(i).threswav) {
             toEdit.locallab.spots.at(i).threswav   = mods.locallab.spots.at(i).threswav;
         }
@@ -5988,6 +5993,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     residcomp(v),
     sigma(v),
     offset(v),
+    sigmadr(v),
     threswav(v),
     chromalev(v),
     chromablu(v),
@@ -6423,6 +6429,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     residcomp = v;
     sigma = v;
     offset = v;
+    sigmadr = v;
     threswav = v;
     chromalev = v;
     chromablu = v;

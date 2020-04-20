@@ -936,6 +936,7 @@ private:
     Gtk::CheckButton* const wavcompre;
     CurveEditorGroup* const LocalcurveEditorwavcompre;
     FlatCurveEditor* const wavshapecompre;
+    Adjuster* const sigmadr;
     Adjuster* const threswav;
     Adjuster* const residcomp;
     Gtk::Frame* const compFrame;

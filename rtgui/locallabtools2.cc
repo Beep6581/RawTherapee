@@ -2057,6 +2057,7 @@ LocallabContrast::LocallabContrast():
     wavcompre(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPREFRA")))),
     LocalcurveEditorwavcompre(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCOMPRE"))),
     wavshapecompre(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcompre->addCurve(CT_Flat, "", nullptr, false, false))),
+    sigmadr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     threswav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESWAV"), 0.9, 2., 0.01, 1.4))),
     residcomp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCOMP"), -1., 1., 0.01, 0.))),
     compFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPFRA")))),
@@ -2264,6 +2265,7 @@ LocallabContrast::LocallabContrast():
 
     LocalcurveEditorwavcompre->curveListComplete();
 
+    sigmadr->setAdjusterListener(this);
     threswav->setAdjusterListener(this);
 
     residcomp->setAdjusterListener(this);
@@ -2454,6 +2456,7 @@ LocallabContrast::LocallabContrast():
     compreBox->set_spacing(2);
     compreFrame->set_label_widget(*wavcompre);
     compreBox->pack_start(*LocalcurveEditorwavcompre, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    compreBox->pack_start(*sigmadr);
     compreBox->pack_start(*threswav);
     compreBox->pack_start(*residcomp);
     compreFrame->add(*compreBox);
@@ -2468,7 +2471,7 @@ LocallabContrast::LocallabContrast():
     compBox->pack_start(*separatorcomp);
     compBox->pack_start(*fatres);
     compFrame->add(*compBox);
-    blurcontBox2->pack_start(*compFrame);
+//    blurcontBox2->pack_start(*compFrame);
     expcontrastpyr2->add(*blurcontBox2, false);
     pack_start(*expcontrastpyr2);
 
@@ -2646,6 +2649,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         wavshapecon->setCurve(pp->locallab.spots.at(index).locconwavcurve);
         wavcompre->set_active(pp->locallab.spots.at(index).wavcompre);
         wavshapecompre->setCurve(pp->locallab.spots.at(index).loccomprewavcurve);
+        sigmadr->setValue(pp->locallab.spots.at(index).sigmadr);
         threswav->setValue(pp->locallab.spots.at(index).threswav);
         residcomp->setValue(pp->locallab.spots.at(index).residcomp);
         wavcomp->set_active(pp->locallab.spots.at(index).wavcomp);
@@ -2761,6 +2765,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         pp->locallab.spots.at(index).locconwavcurve = wavshapecon->getCurve();
         pp->locallab.spots.at(index).wavcompre = wavcompre->get_active();
         pp->locallab.spots.at(index).loccomprewavcurve = wavshapecompre->getCurve();
+        pp->locallab.spots.at(index).sigmadr = sigmadr->getValue();
         pp->locallab.spots.at(index).threswav = threswav->getValue();
         pp->locallab.spots.at(index).residcomp = residcomp->getValue();
         pp->locallab.spots.at(index).wavcomp = wavcomp->get_active();
@@ -2818,6 +2823,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         sigma->setDefault(defSpot.sigma);
         offset->setDefault(defSpot.offset);
         chromalev->setDefault(defSpot.chromalev);
+        sigmadr->setDefault(defSpot.sigmadr);
         threswav->setDefault(defSpot.threswav);
         residcomp->setDefault(defSpot.residcomp);
         fatdet->setDefault(defSpot.fatdet);
@@ -3022,6 +3028,14 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
                                        chromalev->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
+
+        if (a == sigmadr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmadr,
+                                       sigmadr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
 
         if (a == threswav) {
             if (listener) {
@@ -3359,6 +3373,7 @@ void LocallabContrast::wavcompreChanged()
 void LocallabContrast::wavcompChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
+        wavcomp->set_active(false);//always disabled
         if (listener) {
             if (wavcomp->get_active()) {
                 listener->panelChanged(Evlocallabwavcomp,
@@ -3450,6 +3465,7 @@ void LocallabContrast::updateContrastGUI1()
         chromalev->hide();
         LocalcurveEditorwavcon->hide();
         LocalcurveEditorwavcompre->hide();
+        sigmadr->hide();
         threswav->hide();
         residcomp->hide();
         fatdet->hide();
@@ -3488,6 +3504,7 @@ void LocallabContrast::updateContrastGUI1()
         chromalev->show();
         LocalcurveEditorwavcon->show();
         LocalcurveEditorwavcompre->show();
+        sigmadr->show();
         threswav->show();
         residcomp->show();
         fatdet->show();
