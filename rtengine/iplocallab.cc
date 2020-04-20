@@ -8522,6 +8522,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
     //residual between input and denoised L channel
     array2D<float> Ldetail(GW, GH, ARRAY2D_CLEAR_DATA);
     array2D<float> totwt(GW, GH, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
+    array2D<float> prov(GW, GH, ARRAY2D_CLEAR_DATA);
 
     for (int i = 0; i < numThreads; ++i) {
         LbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
@@ -8564,6 +8565,8 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
                 for (int j = 0; j < GW; ++j) {
                     datarow[j] = ((*Lin)[rr][j] - tmp1[rr][j]);
+                    prov[rr][j] = fabs(tmp1[rr][j]);
+
                 }
 
                 for (int j = -blkrad * offset1; j < 0; ++j) {
@@ -8665,7 +8668,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
     if (detail_thresh > 0) {
         mask(GW, GH);
         float thr = log2lin(float(detail_thresh) / 200.f, 100.f);
-        buildBlendMask(tmp1, mask, GW, GH, thr);
+        buildBlendMask(prov, mask, GW, GH, thr);
         float r = 20.f / scalea;
 
         if (r > 0) {
@@ -8676,7 +8679,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
         array2D<float> m2(GW, GH);
         const float alfa = 0.856f;
         const float beta = 1.f + std::sqrt(log2lin(thr, 100.f));
-        buildGradientsMask(GW, GH, tmp1, m2, params_Ldetail / 100.f, 7, 3, alfa, beta, multiThread);
+        buildGradientsMask(GW, GH, prov, m2, params_Ldetail / 100.f, 7, 3, alfa, beta, multiThread);
 
         for (int i = 0; i < GH; ++i) {
             for (int j = 0; j < GW; ++j) {
@@ -8822,20 +8825,20 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 if (aut == 0) {
                     if (levred == 7) {
                         edge = 2;
-                        vari[0] = 8.f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
-                        vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[2] = 8.f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
+                        vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
+                        vari[1] = 0.8f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                        vari[2] = 0.8f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
 
-                        vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[4] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[5] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[6] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[4] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[5] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[6] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
                     } else if (levred == 4) {
                         edge = 3;
-                        vari[0] = 8.f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
-                        vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[2] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
+                        vari[1] = 0.8f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                        vari[2] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
 
                     }
                 } else if (aut == 1  || aut == 2) {
@@ -8885,15 +8888,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         kr5 = 1.f;
                     }
 
-                    vari[0] = max(0.0001f, vari[0]);
-                    vari[1] = max(0.0001f, vari[1]);
-                    vari[2] = max(0.0001f, vari[2]);
-                    vari[3] = max(0.0001f, kr3 * vari[3]);
+                    vari[0] = max(0.000001f, vari[0]);
+                    vari[1] = max(0.000001f, vari[1]);
+                    vari[2] = max(0.000001f, vari[2]);
+                    vari[3] = max(0.000001f, kr3 * vari[3]);
 
                     if (levred == 7) {
-                        vari[4] = max(0.0001f, kr4 * vari[4]);
-                        vari[5] = max(0.0001f, kr5 * vari[5]);
-                        vari[6] = max(0.0001f, kr5 * vari[6]);
+                        vari[4] = max(0.000001f, kr4 * vari[4]);
+                        vari[5] = max(0.000001f, kr5 * vari[5]);
+                        vari[6] = max(0.000001f, kr5 * vari[6]);
                     }
 
 
@@ -8965,19 +8968,19 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
             if (noisecfr < 0.f) {
-                noisecfr = 0.0001f;
+                noisecfr = 0.00001f;
             }
 
             if (noiseccr < 0.f) {
-                noiseccr = 0.0001f;
+                noiseccr = 0.00001f;
             }
 
             if (noisecfb < 0.f) {
-                noisecfb = 0.0001f;
+                noisecfb = 0.00001f;
             }
 
             if (noiseccb < 0.f) {
-                noiseccb = 0.0001f;
+                noiseccb = 0.00001f;
             }
 
             if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
@@ -9052,7 +9055,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
 
                 {
-                    float minic = 0.0001f;
+                    float minic = 0.000001f;
 
                     if (noiscfactiv) {
                         minic = 0.1f;//only for artifact shape detection
@@ -9064,7 +9067,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     if (aut == 0 || aut == 1) {
                         if ((lp.noisecf < 0.2f && aut == 0) || (maxcfine < 0.2f && aut == 1)) {
-                            k1 = 0.f;
+                            k1 = 0.05f;
                             k2 = 0.f;
                             k3 = 0.f;
                         } else if ((lp.noisecf < 0.3f && aut == 0) || (maxcfine < 0.3f && aut == 1)) {
@@ -9099,15 +9102,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             k1 = 0.8f;
                             k2 = 0.6f;
                             k3 = 0.5f;
-                        } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
+                        } else if ((lp.noisecf < 6.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
                             k1 = 0.85f;
                             k2 = 0.7f;
                             k3 = 0.6f;
-                        } else if ((lp.noisecf < 20.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
+                        } else if ((lp.noisecf < 8.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
                             k1 = 0.9f;
                             k2 = 0.8f;
                             k3 = 0.7f;
-                        } else if ((lp.noisecf < 50.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
+                        } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
                             k1 = 1.f;
                             k2 = 1.f;
                             k3 = 0.9f;
@@ -9139,15 +9142,12 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         float k5 = 0.f;
                         float k6 = 0.f;
 
-                        if ((lp.noisecc == 0.01f && aut == 0) || (maxccoarse == 0.1f && aut == 1)) {
-                            k4 = 0.f;
-                            k5 = 0.0f;
-                        } else if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
+                        if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
                             k4 = 0.1f;
-                            k5 = 0.0f;
+                            k5 = 0.02f;
                         } else if ((lp.noisecc < 0.5f && aut == 0) || (maxccoarse < 0.5f && aut == 1)) {
                             k4 = 0.15f;
-                            k5 = 0.0f;
+                            k5 = 0.05f;
                         } else if ((lp.noisecc < 1.f && aut == 0) || (maxccoarse < 1.f && aut == 1)) {
                             k4 = 0.15f;
                             k5 = 0.1f;
@@ -9165,10 +9165,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             k5 = 1.f;
                         }
 
-                        variC[4] = max(0.0001f, k4 * variC[4]);
-                        variC[5] = max(0.0001f, k5 * variC[5]);
-                        variCb[4] = max(0.0001f, k4 * variCb[4]);
-                        variCb[5] = max(0.0001f, k5 * variCb[5]);
+                        variC[4] = max(0.000001f, k4 * variC[4]);
+                        variC[5] = max(0.000001f, k5 * variC[5]);
+                        variCb[4] = max(0.000001f, k4 * variCb[4]);
+                        variCb[5] = max(0.000001f, k5 * variCb[5]);
 
                         if ((lp.noisecc < 4.f  && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
                             k6 = 0.f;
@@ -9180,8 +9180,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             k6 = 1.f;
                         }
 
-                        variC[6] = max(0.0001f, k6 * variC[6]);
-                        variCb[6] = max(0.0001f, k6 * variCb[6]);
+                        variC[6] = max(0.00001f, k6 * variC[6]);
+                        variCb[6] = max(0.00001f, k6 * variCb[6]);
 
                     }
 
@@ -9382,20 +9382,20 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     if (aut == 0) {
                         if (levred == 7) {
                             edge = 2;
-                            vari[0] = 8.f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
-                            vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                            vari[2] = 8.f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
+                            vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
+                            vari[1] = 0.8f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                            vari[2] = 0.8f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
 
-                            vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[4] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[5] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[6] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[4] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[5] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[6] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
                         } else if (levred == 4) {
                             edge = 3;
-                            vari[0] = 8.f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
-                            vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                            vari[2] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
+                            vari[1] = 0.8f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                            vari[2] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
 
                         }
                     } else if (aut == 1 || aut == 2) {
@@ -9449,15 +9449,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         }
 
-                        vari[0] = max(0.0001f, vari[0]);
-                        vari[1] = max(0.0001f, vari[1]);
-                        vari[2] = max(0.0001f, vari[2]);
-                        vari[3] = max(0.0001f, kr3 * vari[3]);
+                        vari[0] = max(0.000001f, vari[0]);
+                        vari[1] = max(0.000001f, vari[1]);
+                        vari[2] = max(0.000001f, vari[2]);
+                        vari[3] = max(0.000001f, kr3 * vari[3]);
 
                         if (levred == 7) {
-                            vari[4] = max(0.0001f, kr4 * vari[4]);
-                            vari[5] = max(0.0001f, kr5 * vari[5]);
-                            vari[6] = max(0.0001f, kr5 * vari[6]);
+                            vari[4] = max(0.000001f, kr4 * vari[4]);
+                            vari[5] = max(0.000001f, kr5 * vari[5]);
+                            vari[6] = max(0.000001f, kr5 * vari[6]);
                         }
 
                         //    float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
@@ -9526,19 +9526,19 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
                 if (noisecfr < 0.f) {
-                    noisecfr = 0.0001f;
+                    noisecfr = 0.00001f;
                 }
 
                 if (noiseccr < 0.f) {
-                    noiseccr = 0.0001f;
+                    noiseccr = 0.00001f;
                 }
 
                 if (noisecfb < 0.f) {
-                    noisecfb = 0.0001f;
+                    noisecfb = 0.00001f;
                 }
 
                 if (noiseccb < 0.f) {
-                    noiseccb = 0.0001f;
+                    noiseccb = 0.00001f;
                 }
 
 
@@ -9619,7 +9619,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     //      if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f  || noiscfactiv || maxcfine >= 0.1f || maxccoarse > 0.1f)) {
                     {
-                        float minic = 0.0001f;
+                        float minic = 0.000001f;
 
                         if (noiscfactiv) {
                             minic = 0.1f;//only for artifact shape detection
@@ -9631,7 +9631,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         if (aut == 0 || aut == 1) {
                             if ((lp.noisecf < 0.2f && aut == 0) || (maxcfine < 0.2f && aut == 1)) {
-                                k1 = 0.f;
+                                k1 = 0.05f;
                                 k2 = 0.f;
                                 k3 = 0.f;
                             } else if ((lp.noisecf < 0.3f && aut == 0) || (maxcfine < 0.3f && aut == 1)) {
@@ -9666,15 +9666,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 k1 = 0.8f;
                                 k2 = 0.6f;
                                 k3 = 0.5f;
-                            } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
+                            } else if ((lp.noisecf < 6.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
                                 k1 = 0.85f;
                                 k2 = 0.7f;
                                 k3 = 0.6f;
-                            } else if ((lp.noisecf < 20.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
+                            } else if ((lp.noisecf < 8.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
                                 k1 = 0.9f;
                                 k2 = 0.8f;
                                 k3 = 0.7f;
-                            } else if ((lp.noisecf < 50.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
+                            } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
                                 k1 = 1.f;
                                 k2 = 1.f;
                                 k3 = 0.9f;
@@ -9705,15 +9705,12 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             float k5 = 0.f;
                             float k6 = 0.f;
 
-                            if ((lp.noisecc == 0.01f && aut == 0) || (maxccoarse == 0.1f && aut == 1)) {
-                                k4 = 0.f;
-                                k5 = 0.0f;
-                            } else if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
+                            if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
                                 k4 = 0.1f;
-                                k5 = 0.0f;
+                                k5 = 0.02f;
                             } else if ((lp.noisecc < 0.5f && aut == 0) || (maxccoarse < 0.5f && aut == 1)) {
                                 k4 = 0.15f;
-                                k5 = 0.0f;
+                                k5 = 0.05f;
                             } else if ((lp.noisecc < 1.f && aut == 0) || (maxccoarse < 1.f && aut == 1)) {
                                 k4 = 0.15f;
                                 k5 = 0.1f;
@@ -9732,10 +9729,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
 
 
-                            variC[4] = max(0.0001f, k4 * variC[4]);
-                            variC[5] = max(0.0001f, k5 * variC[5]);
-                            variCb[4] = max(0.0001f, k4 * variCb[4]);
-                            variCb[5] = max(0.0001f, k5 * variCb[5]);
+                            variC[4] = max(0.000001f, k4 * variC[4]);
+                            variC[5] = max(0.000001f, k5 * variC[5]);
+                            variCb[4] = max(0.000001f, k4 * variCb[4]);
+                            variCb[5] = max(0.000001f, k5 * variCb[5]);
 
                             if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
                                 k6 = 0.f;
@@ -9747,8 +9744,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 k6 = 1.f;
                             }
 
-                            variC[6] = max(0.0001f, k6 * variC[6]);
-                            variCb[6] = max(0.0001f, k6 * variCb[6]);
+                            variC[6] = max(0.00001f, k6 * variC[6]);
+                            variCb[6] = max(0.00001f, k6 * variCb[6]);
                         }
 
                         float* noisevarchrom = new float[bfh * bfw];
@@ -9756,7 +9753,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         float nvch = 0.6f;//high value
                         float nvcl = 0.1f;//low value
 
-                        if ((lp.noisecf > 100.f && aut == 0) || (maxcfine > 100.f && (aut == 1 || aut == 2))) {
+                        if ((lp.noisecf > 30.f && aut == 0) || (maxcfine > 100.f && (aut == 1 || aut == 2))) {
                             nvch = 0.8f;
                             nvcl = 0.4f;
                         }
