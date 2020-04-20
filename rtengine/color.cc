@@ -16,6 +16,7 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <glibmm/ustring.h>
 
 #include "rtengine.h"
 #include "color.h"
@@ -119,7 +120,7 @@ void MunsellDebugInfo::reinitValues()
 #endif
 
 
-void Color::init()
+void Color::init ()
 {
 
     /*******************************************/
@@ -167,7 +168,7 @@ void Color::init()
                 cachef[i] = 327.68 * ((kappa * i / MAXVALF + 16.0) / 116.0);
             }
 
-            for (; i < maxindex; i++)
+            for(; i < maxindex; i++)
             {
                 cachef[i] = 327.68 * std::cbrt((double)i / MAXVALF);
             }
@@ -184,7 +185,7 @@ void Color::init()
                 cachefy[i] = 327.68 * (kappa * i / MAXVALF);
             }
 
-            for (; i < maxindex; i++)
+            for(; i < maxindex; i++)
             {
                 cachefy[i] = 327.68 * (116.0 * std::cbrt((double)i / MAXVALF) - 16.0);
             }
@@ -198,7 +199,7 @@ void Color::init()
                 gammatab_srgb[i] = gammatab_srgb1[i] = gamma2(i / 65535.0);
             }
             gammatab_srgb *= 65535.f;
-            gamma2curve.share(gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);  // shares the buffer with gammatab_srgb but has different clip flags
+            gamma2curve.share(gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE); // shares the buffer with gammatab_srgb but has different clip flags
         }
 #ifdef _OPENMP
         #pragma omp section
@@ -212,18 +213,18 @@ void Color::init()
             gammatab_srgb327 *= 32767.f;
             //  gamma2curve.share(gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE); // shares the buffer with gammatab_srgb but has different clip flags
         }
-
 #ifdef _OPENMP
         #pragma omp section
 #endif
         {
             for (int i = 0; i < maxindex; i++)
             {
-                igammatab_srgb[i] = igammatab_srgb1[i] = igamma2(i / 65535.0);
+                igammatab_srgb[i] = igammatab_srgb1[i] = igamma2 (i / 65535.0);
             }
 
             igammatab_srgb *= 65535.f;
         }
+
 #ifdef _OPENMP
         #pragma omp section
 #endif
@@ -232,7 +233,7 @@ void Color::init()
 
             for (int i = 0; i < maxindex; i++)
             {
-                double val = pow(i / 65535.0, rsRGBGamma);
+                double val = pow (i / 65535.0, rsRGBGamma);
                 gammatab[i] = 65535.0 * val;
                 gammatabThumb[i] = (unsigned char)(255.0 * val);
             }
@@ -246,24 +247,24 @@ void Color::init()
         // but noting to do with real gamma !!!: it's only for data Lab # data RGB
         // finally I opted for gamma55 and with options we can change
 
-        switch (settings->denoiselabgamma) {
+        switch(settings->denoiselabgamma) {
             case 0:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseGammaTab[i] = 65535.0 * gamma26_11(i / 65535.0);
+                    denoiseGammaTab[i] = 65535.0 * gamma26_11 (i / 65535.0);
                 }
 
                 break;
 
             case 1:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseGammaTab[i] = 65535.0 * gamma4(i / 65535.0);
+                    denoiseGammaTab[i] = 65535.0 * gamma4 (i / 65535.0);
                 }
 
                 break;
 
             default:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseGammaTab[i] = 65535.0 * gamma55(i / 65535.0);
+                    denoiseGammaTab[i] = 65535.0 * gamma55 (i / 65535.0);
                 }
 
                 break;
@@ -277,24 +278,24 @@ void Color::init()
         // but noting to do with real gamma !!!: it's only for data Lab # data RGB
         // finally I opted for gamma55 and with options we can change
 
-        switch (settings->denoiselabgamma) {
+        switch(settings->denoiselabgamma) {
             case 0:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseIGammaTab[i] = 65535.0 * igamma26_11(i / 65535.0);
+                    denoiseIGammaTab[i] = 65535.0 * igamma26_11 (i / 65535.0);
                 }
 
                 break;
 
             case 1:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseIGammaTab[i] = 65535.0 * igamma4(i / 65535.0);
+                    denoiseIGammaTab[i] = 65535.0 * igamma4 (i / 65535.0);
                 }
 
                 break;
 
             default:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseIGammaTab[i] = 65535.0 * igamma55(i / 65535.0);
+                    denoiseIGammaTab[i] = 65535.0 * igamma55 (i / 65535.0);
                 }
 
                 break;
@@ -315,12 +316,13 @@ void Color::init()
         for (int i = 0; i < maxindex; i++) {
             igammatab_bt709[i] = 65535.0 * igamma709(i / 65535.0);
         }
+
 #ifdef _OPENMP
         #pragma omp section
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            gammatab_13_2[i] = 65535.0 * gamma13_2(i / 65535.0);
+            gammatab_13_2[i] = 65535.0 * gamma13_2 (i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -328,7 +330,7 @@ void Color::init()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            igammatab_13_2[i] = 65535.0 * igamma13_2(i / 65535.0);
+            igammatab_13_2[i] = 65535.0 * igamma13_2 (i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -336,7 +338,7 @@ void Color::init()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            gammatab_115_2[i] = 65535.0 * gamma115_2(i / 65535.0);
+            gammatab_115_2[i] = 65535.0 * gamma115_2 (i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -344,7 +346,7 @@ void Color::init()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            igammatab_115_2[i] = 65535.0 * igamma115_2(i / 65535.0);
+            igammatab_115_2[i] = 65535.0 * igamma115_2 (i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -352,7 +354,7 @@ void Color::init()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            gammatab_145_3[i] = 65535.0 * gamma145_3(i / 65535.0);
+            gammatab_145_3[i] = 65535.0 * gamma145_3 (i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -360,7 +362,7 @@ void Color::init()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            igammatab_145_3[i] = 65535.0 * igamma145_3(i / 65535.0);
+            igammatab_145_3[i] = 65535.0 * igamma145_3 (i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -376,7 +378,7 @@ void Color::init()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            igammatab_24_17[i] = 65535.0 * igamma24_17(i / 65535.0);
+            igammatab_24_17[i] = 65535.0 * igamma24_17 (i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -391,22 +393,20 @@ void Color::init()
     }
 }
 
-void Color::cleanup()
+void Color::cleanup ()
 {
     if (linearGammaTRC) {
         cmsFreeToneCurve(linearGammaTRC);
     }
 }
 
-void Color::rgb2lab01(const Glib::ustring &profile, const Glib::ustring &profileW, float r, float g, float b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace)
-{
-    // do not use this function in a loop. It really eats processing time caused by Glib::ustring comparisons
+void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profileW, float r, float g, float b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace)
+{ // do not use this function in a loop. It really eats processing time caused by Glib::ustring comparisons
 
     Glib::ustring profileCalc = "sRGB"; //default
 
     if (workingSpace) {//display working profile
         profileCalc = profileW;
-
         if (profileW == "sRGB") { //apply sRGB inverse gamma
 
             if (r > 0.04045f) {
@@ -517,9 +517,9 @@ void Color::rgb2lab01(const Glib::ustring &profile, const Glib::ustring &profile
     const TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix(profileCalc);
 
     const float xyz_rgb[3][3] = { {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
-        {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
-        {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
-    };
+                                  {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+                                  {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+                                };
 
     const float var_X = (xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b) / Color::D50x;
     const float var_Y = (xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b);
@@ -538,16 +538,16 @@ void Color::rgb2lab01(const Glib::ustring &profile, const Glib::ustring &profile
 void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l)
 {
 
-    double var_R = double (r) / 65535.0;
-    double var_G = double (g) / 65535.0;
-    double var_B = double (b) / 65535.0;
+    double var_R = double(r) / 65535.0;
+    double var_G = double(g) / 65535.0;
+    double var_B = double(b) / 65535.0;
 
     double m = min(var_R, var_G, var_B);
     double M = max(var_R, var_G, var_B);
     double C = M - m;
 
     double l_ = (M + m) / 2.;
-    l = float (l_);
+    l = float(l_);
 
     if (C < 0.00001 && C > -0.00001) { // no fabs, slow!
         h = 0.f;
@@ -556,26 +556,26 @@ void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l)
         double h_;
 
         if (l_ <= 0.5) {
-            s = float ((M - m) / (M + m));
+            s = float( (M - m) / (M + m) );
         } else {
-            s = float ((M - m) / (2.0 - M - m));
+            s = float( (M - m) / (2.0 - M - m) );
         }
 
-        if (var_R == M) {
-            h_ = (var_G - var_B) / C;
-        } else if (var_G == M) {
+        if      ( var_R == M ) {
+            h_ =      (var_G - var_B) / C;
+        } else if ( var_G == M ) {
             h_ = 2. + (var_B - var_R) / C;
         } else {
             h_ = 4. + (var_R - var_G) / C;
         }
 
-        h = float (h_ / 6.0);
+        h = float(h_ / 6.0);
 
-        if (h < 0.f) {
+        if ( h < 0.f ) {
             h += 1.f;
         }
 
-        if (h > 1.f) {
+        if ( h > 1.f ) {
             h -= 1.f;
         }
     }
@@ -610,11 +610,11 @@ double Color::hue2rgb(double p, double q, double t)
 {
     if (t < 0.) {
         t += 6.;
-    } else if (t > 6.) {
+    } else if( t > 6.) {
         t -= 6.;
     }
 
-    if (t < 1.) {
+    if      (t < 1.) {
         return p + (q - p) * t;
     } else if (t < 3.) {
         return q;
@@ -629,11 +629,11 @@ float Color::hue2rgbfloat(float p, float q, float t)
 {
     if (t < 0.f) {
         t += 6.f;
-    } else if (t > 6.f) {
+    } else if( t > 6.f) {
         t -= 6.f;
     }
 
-    if (t < 1.f) {
+    if      (t < 1.f) {
         return p + (q - p) * t;
     } else if (t < 3.f) {
         return q;
@@ -661,16 +661,16 @@ vfloat Color::hue2rgb(vfloat p, vfloat q, vfloat t)
 }
 #endif
 
-void Color::hsl2rgb(float h, float s, float l, float &r, float &g, float &b)
+void Color::hsl2rgb (float h, float s, float l, float &r, float &g, float &b)
 {
 
     if (s == 0) {
         r = g = b = 65535.0f * l;    //  achromatic
     } else {
         double m2;
-        double h_ = double (h);
-        double s_ = double (s);
-        double l_ = double (l);
+        double h_ = double(h);
+        double s_ = double(s);
+        double l_ = double(l);
 
         if (l <= 0.5f) {
             m2 = l_ * (1.0 + s_);
@@ -680,14 +680,14 @@ void Color::hsl2rgb(float h, float s, float l, float &r, float &g, float &b)
 
         double m1 = 2.0 * l_ - m2;
 
-        r = float (65535.0 * hue2rgb(m1, m2, h_ * 6.0 + 2.0));
-        g = float (65535.0 * hue2rgb(m1, m2, h_ * 6.0));
-        b = float (65535.0 * hue2rgb(m1, m2, h_ * 6.0 - 2.0));
+        r = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0 + 2.0));
+        g = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0));
+        b = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0 - 2.0));
     }
 }
 
 #ifdef __SSE2__
-void Color::hsl2rgb(vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &b)
+void Color::hsl2rgb (vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &b)
 {
 
     vfloat m2 = s * l;
@@ -699,9 +699,9 @@ void Color::hsl2rgb(vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &
     vfloat m1 = l + l - m2;
 
     h *= F2V(6.f);
-    r = c65535v * hue2rgb(m1, m2, h + twov);
-    g = c65535v * hue2rgb(m1, m2, h);
-    b = c65535v * hue2rgb(m1, m2, h - twov);
+    r = c65535v * hue2rgb (m1, m2, h + twov);
+    g = c65535v * hue2rgb (m1, m2, h);
+    b = c65535v * hue2rgb (m1, m2, h - twov);
 
     vmask selectsMask = vmaskf_eq(ZEROV, s);
     vfloat lc65535v = c65535v * l;
@@ -711,16 +711,16 @@ void Color::hsl2rgb(vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &
 }
 #endif
 
-void Color::hsl2rgb01(float h, float s, float l, float &r, float &g, float &b)
+void Color::hsl2rgb01 (float h, float s, float l, float &r, float &g, float &b)
 {
 
     if (s == 0) {
         r = g = b = l;    //  achromatic
     } else {
         double m2;
-        double h_ = double (h);
-        double s_ = double (s);
-        double l_ = double (l);
+        double h_ = double(h);
+        double s_ = double(s);
+        double l_ = double(l);
 
         if (l <= 0.5f) {
             m2 = l_ * (1.0 + s_);
@@ -730,9 +730,9 @@ void Color::hsl2rgb01(float h, float s, float l, float &r, float &g, float &b)
 
         double m1 = 2.0 * l_ - m2;
 
-        r = float (hue2rgb(m1, m2, h_ * 6.0 + 2.0));
-        g = float (hue2rgb(m1, m2, h_ * 6.0));
-        b = float (hue2rgb(m1, m2, h_ * 6.0 - 2.0));
+        r = float(hue2rgb (m1, m2, h_ * 6.0 + 2.0));
+        g = float(hue2rgb (m1, m2, h_ * 6.0));
+        b = float(hue2rgb (m1, m2, h_ * 6.0 - 2.0));
     }
 }
 
@@ -804,20 +804,20 @@ void Color::rgb2hsv01(float r, float g, float b, float &h, float &s, float &v)
     }
 }
 
-void Color::hsv2rgb(float h, float s, float v, float &r, float &g, float &b)
+void Color::hsv2rgb (float h, float s, float v, float &r, float &g, float &b)
 {
 
     float h1 = h * 6.f; // sector 0 to 5
     int i = (int)h1;  // floor() is very slow, and h1 is always >0
     float f = h1 - i; // fractional part of h
 
-    float p = v * (1.f - s);
-    float q = v * (1.f - s * f);
-    float t = v * (1.f - s * (1.f - f));
+    float p = v * ( 1.f - s );
+    float q = v * ( 1.f - s * f );
+    float t = v * ( 1.f - s * ( 1.f - f ) );
 
     float r1, g1, b1;
 
-    if (i == 1)    {
+    if      (i == 1)    {
         r1 = q;
         g1 = v;
         b1 = p;
@@ -850,17 +850,17 @@ void Color::hsv2rgb(float h, float s, float v, float &r, float &g, float &b)
 
 // Function copied for speed concerns
 // Not exactly the same as above ; this one return a result in the [0.0 ; 1.0] range
-void Color::hsv2rgb01(float h, float s, float v, float &r, float &g, float &b)
+void Color::hsv2rgb01 (float h, float s, float v, float &r, float &g, float &b)
 {
     float h1 = h * 6; // sector 0 to 5
-    int i = int (h1);
+    int i = int(h1);
     float f = h1 - i; // fractional part of h
 
-    float p = v * (1 - s);
-    float q = v * (1 - s * f);
-    float t = v * (1 - s * (1 - f));
+    float p = v * ( 1 - s );
+    float q = v * ( 1 - s * f );
+    float t = v * ( 1 - s * ( 1 - f ) );
 
-    if (i == 1)    {
+    if      (i == 1)    {
         r = q;
         g = v;
         b = p;
@@ -887,16 +887,16 @@ void Color::hsv2rgb01(float h, float s, float v, float &r, float &g, float &b)
     }
 }
 
-void Color::hsv2rgb(float h, float s, float v, int &r, int &g, int &b)
+void Color::hsv2rgb (float h, float s, float v, int &r, int &g, int &b)
 {
 
     float h1 = h * 6; // sector 0 to 5
-    int i = floor(h1);
+    int i = floor( h1 );
     float f = h1 - i; // fractional part of h
 
-    float p = v * (1 - s);
-    float q = v * (1 - s * f);
-    float t = v * (1 - s * (1 - f));
+    float p = v * ( 1 - s );
+    float q = v * ( 1 - s * f );
+    float t = v * ( 1 - s * ( 1 - f ) );
 
     float r1, g1, b1;
 
@@ -920,20 +920,20 @@ void Color::hsv2rgb(float h, float s, float v, int &r, int &g, int &b)
         r1 = t;
         g1 = p;
         b1 = v;
-    } else { /*if (i == 5)*/
+    } else /*if (i == 5)*/ {
         r1 = v;
         g1 = p;
         b1 = q;
     }
 
-    r = (int)(r1 * 65535);
-    g = (int)(g1 * 65535);
-    b = (int)(b1 * 65535);
+    r = (int)( r1 * 65535);
+    g = (int)( g1 * 65535);
+    b = (int)( b1 * 65535);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void Color::xyz2srgb(float x, float y, float z, float &r, float &g, float &b)
+void Color::xyz2srgb (float x, float y, float z, float &r, float &g, float &b)
 {
 
     //Transform to output color.  Standard sRGB is D65, but internal representation is D50
@@ -956,27 +956,38 @@ void Color::xyz2srgb(float x, float y, float z, float &r, float &g, float &b)
     b = ((sRGB_xyz[2][0] * x + sRGB_xyz[2][1] * y + sRGB_xyz[2][2] * z)) ;
 
 }
-void Color::xyz2Prophoto(float x, float y, float z, float &r, float &g, float &b)
+void Color::xyz2Prophoto (float x, float y, float z, float &r, float &g, float &b)
 {
     r = ((prophoto_xyz[0][0] * x + prophoto_xyz[0][1] * y + prophoto_xyz[0][2] * z)) ;
     g = ((prophoto_xyz[1][0] * x + prophoto_xyz[1][1] * y + prophoto_xyz[1][2] * z)) ;
     b = ((prophoto_xyz[2][0] * x + prophoto_xyz[2][1] * y + prophoto_xyz[2][2] * z)) ;
 }
-void Color::Prophotoxyz(float r, float g, float b, float &x, float &y, float &z)
+void Color::Prophotoxyz (float r, float g, float b, float &x, float &y, float &z)
 {
     x = ((xyz_prophoto[0][0] * r + xyz_prophoto[0][1] * g + xyz_prophoto[0][2] * b)) ;
     y = ((xyz_prophoto[1][0] * r + xyz_prophoto[1][1] * g + xyz_prophoto[1][2] * b)) ;
     z = ((xyz_prophoto[2][0] * r + xyz_prophoto[2][1] * g + xyz_prophoto[2][2] * b)) ;
 }
 
-void Color::rgbxyz(float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3])
+void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3])
 {
     x = ((xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b)) ;
     y = ((xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b)) ;
     z = ((xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b)) ;
 }
 
-void Color::rgbxyz(float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3])
+void Color::rgbxyY(float r, float g, float b, float &x, float &y, float &Y, const float xyz_rgb[3][3])
+{
+    const float xx = xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b;
+    const float yy = xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b;
+    const float zz = xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b;
+    const float som = xx + yy + zz;
+    x = xx / som;
+    y = yy / som;
+    Y = yy / 65535.f;
+}
+
+void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3])
 {
     x = ((xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b)) ;
     y = ((xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b)) ;
@@ -984,7 +995,7 @@ void Color::rgbxyz(float r, float g, float b, float &x, float &y, float &z, cons
 }
 
 #ifdef __SSE2__
-void Color::rgbxyz(vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3])
+void Color::rgbxyz (vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3])
 {
     x = ((xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b)) ;
     y = ((xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b)) ;
@@ -992,7 +1003,7 @@ void Color::rgbxyz(vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z
 }
 #endif
 
-void Color::xyz2rgb(float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3])
+void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3])
 {
     //Transform to output color.  Standard sRGB is D65, but internal representation is D50
     //Note that it is only at this point that we should have need of clipping color data
@@ -1014,7 +1025,7 @@ void Color::xyz2rgb(float x, float y, float z, float &r, float &g, float &b, con
     b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
 }
 
-void Color::xyz2r(float x, float y, float z, float &r, const double rgb_xyz[3][3])  // for black & white we need only r channel
+void Color::xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][3]) // for black & white we need only r channel
 {
     //Transform to output color.  Standard sRGB is D65, but internal representation is D50
     //Note that it is only at this point that we should have need of clipping color data
@@ -1023,7 +1034,7 @@ void Color::xyz2r(float x, float y, float z, float &r, const double rgb_xyz[3][3
 }
 
 // same for float
-void Color::xyz2rgb(float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3])
+void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3])
 {
     r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
     g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
@@ -1031,7 +1042,7 @@ void Color::xyz2rgb(float x, float y, float z, float &r, float &g, float &b, con
 }
 
 #ifdef __SSE2__
-void Color::xyz2rgb(vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3])
+void Color::xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3])
 {
     r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
     g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
@@ -1040,10 +1051,10 @@ void Color::xyz2rgb(vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &
 #endif // __SSE2__
 
 #ifdef __SSE2__
-void Color::trcGammaBW(float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
+void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
     // correct gamma for black and white image : pseudo TRC curve of ICC profile
-    vfloat rgbv = _mm_set_ps(0.f, r, r, r);  // input channel is always r
+    vfloat rgbv = _mm_set_ps(0.f, r, r, r); // input channel is always r
     vfloat gammabwv = _mm_set_ps(0.f, gammabwb, gammabwg, gammabwr);
     vfloat c65535v = F2V(65535.f);
     rgbv /= c65535v;
@@ -1056,7 +1067,7 @@ void Color::trcGammaBW(float &r, float &g, float &b, float gammabwr, float gamma
     g = temp[1];
     b = temp[2];
 }
-void Color::trcGammaBWRow(float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb)
+void Color::trcGammaBWRow (float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb)
 {
     // correct gamma for black and white image : pseudo TRC curve of ICC profile
     vfloat c65535v = F2V(65535.f);
@@ -1064,9 +1075,8 @@ void Color::trcGammaBWRow(float *r, float *g, float *b, int width, float gammabw
     vfloat gammabwgv = F2V(gammabwg);
     vfloat gammabwbv = F2V(gammabwb);
     int i = 0;
-
-    for (; i < width - 3; i += 4) {
-        vfloat inv = _mm_loadu_ps(&r[i]);  // input channel is always r
+    for(; i < width - 3; i += 4 ) {
+        vfloat inv = _mm_loadu_ps(&r[i]); // input channel is always r
         inv /= c65535v;
         inv = vmaxf(inv, ZEROV);
         vfloat rv = pow_F(inv, gammabwrv);
@@ -1079,24 +1089,23 @@ void Color::trcGammaBWRow(float *r, float *g, float *b, int width, float gammabw
         _mm_storeu_ps(&g[i], gv);
         _mm_storeu_ps(&b[i], bv);
     }
-
-    for (; i < width; i++) {
+    for(; i < width; i++) {
         trcGammaBW(r[i], g[i], b[i], gammabwr, gammabwg, gammabwb);
     }
 }
 
 #else
-void Color::trcGammaBW(float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
+void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
     // correct gamma for black and white image : pseudo TRC curve of ICC profile
     float in = r; // input channel is always r
     in /= 65535.0f;
     in = max(in, 0.f);
-    b = pow_F(in, gammabwb);
+    b = pow_F (in, gammabwb);
     b *= 65535.0f;
-    r = pow_F(in, gammabwr);
+    r = pow_F (in, gammabwr);
     r *= 65535.0f;
-    g = pow_F(in, gammabwg);
+    g = pow_F (in, gammabwg);
     g *= 65535.0f;
 }
 #endif
@@ -1106,72 +1115,72 @@ void Color::trcGammaBW(float &r, float &g, float &b, float gammabwr, float gamma
  * @param setting BlackWhite::setting
  * @param setting BlackWhite::filter
  */
-void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::ustring &filter,  const Glib::ustring &algo, float &filcor, float &mixerRed, float &mixerGreen,
-                                    float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
-                                    bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm)
+void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter,  const Glib::ustring &algo, float &filcor, float &mixerRed, float &mixerGreen,
+                                     float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
+                                     bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm)
 {
     float somm;
     float som = mixerRed + mixerGreen + mixerBlue;
 
-    if (som >= 0.f && som < 1.f) {
+    if(som >= 0.f && som < 1.f) {
         som = 1.f;
     }
 
-    if (som < 0.f && som > -1.f) {
+    if(som < 0.f && som > -1.f) {
         som = -1.f;
     }
 
 
     // rM = mixerRed, gM = mixerGreen, bM = mixerBlue !
     //presets
-    if (setting == "RGB-Abs" || setting == "ROYGCBPM-Abs") {
+    if     (setting == "RGB-Abs" || setting == "ROYGCBPM-Abs") {
         kcorec = som / 100.f;
     }
 
     if (!autoc) {
         //if     (setting=="RGB-Abs" || setting=="ROYGCBPM-Abs")  {} //Keep the RGB mixer values as is!
         //else if(setting=="RGB-Rel" || setting=="ROYGCBPM-Rel")  {} //Keep the RGB mixer values as is!
-        if (setting == "NormalContrast")    {
+        if     (setting == "NormalContrast")    {
             mixerRed = 43.f ;
             mixerGreen = 33.f;
             mixerBlue = 30.f;
-        } else if (setting == "Panchromatic")      {
+        } else if(setting == "Panchromatic")      {
             mixerRed = 33.3f;
             mixerGreen = 33.3f;
             mixerBlue = 33.3f;
-        } else if (setting == "HyperPanchromatic") {
+        } else if(setting == "HyperPanchromatic") {
             mixerRed = 41.f ;
             mixerGreen = 25.f;
             mixerBlue = 34.f;
-        } else if (setting == "LowSensitivity")    {
+        } else if(setting == "LowSensitivity")    {
             mixerRed = 27.f ;
             mixerGreen = 27.f;
             mixerBlue = 46.f;
-        } else if (setting == "HighSensitivity")   {
+        } else if(setting == "HighSensitivity")   {
             mixerRed = 30.f ;
             mixerGreen = 28.f;
             mixerBlue = 42.f;
-        } else if (setting == "Orthochromatic")    {
+        } else if(setting == "Orthochromatic")    {
             mixerRed = 0.f  ;
             mixerGreen = 42.f;
             mixerBlue = 58.f;
-        } else if (setting == "HighContrast")      {
+        } else if(setting == "HighContrast")      {
             mixerRed = 40.f ;
             mixerGreen = 34.f;
             mixerBlue = 60.f;
-        } else if (setting == "Luminance")         {
+        } else if(setting == "Luminance")         {
             mixerRed = 30.f ;
             mixerGreen = 59.f;
             mixerBlue = 11.f;
-        } else if (setting == "Landscape")         {
+        } else if(setting == "Landscape")         {
             mixerRed = 66.f ;
             mixerGreen = 24.f;
             mixerBlue = 10.f;
-        } else if (setting == "Portrait")          {
+        } else if(setting == "Portrait")          {
             mixerRed = 54.f ;
             mixerGreen = 44.f;
             mixerBlue = 12.f;
-        } else if (setting == "InfraRed")          {
+        } else if(setting == "InfraRed")          {
             mixerRed = -40.f;
             mixerGreen = 200.f;
             mixerBlue = -17.f;
@@ -1184,11 +1193,11 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
 
     somm = mixerRed + mixerGreen + mixerBlue;
 
-    if (somm >= 0.f && somm < 1.f) {
+    if(somm >= 0.f && somm < 1.f) {
         somm = 1.f;
     }
 
-    if (somm < 0.f && somm > -1.f) {
+    if(somm < 0.f && somm > -1.f) {
         somm = -1.f;
     }
 
@@ -1197,7 +1206,7 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
     mixerBlue = mixerBlue / somm;
     float koymcp = 0.f;
 
-    if (setting == "ROYGCBPM-Abs" || setting == "ROYGCBPM-Rel") {
+    if(setting == "ROYGCBPM-Abs" || setting == "ROYGCBPM-Rel") {
         float obM = 0.f;
         float ogM = 0.f;
         float orM = 0.f;
@@ -1221,15 +1230,15 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
 
         float fcompl = 1.f;
 
-        if (complement && algo == "SP") {
+        if(complement && algo == "SP") {
             fcompl = 3.f;    //special
-        } else if (complement && algo == "LI") {
+        } else if(complement && algo == "LI") {
             fcompl = 1.5f;    //linear
         }
 
         // ponderate filters: report to R=G=B=33
         // I ponder RGB channel, not only orange or yellow or cyan, etc...it's my choice !
-        if (mixerOrange != 33) {
+        if(mixerOrange != 33) {
             if (algo == "SP") { //special
                 if (mixerOrange >= 33) {
                     orM = fcompl * (mixerOrange * 0.67f - 22.11f) / 100.f;
@@ -1247,7 +1256,7 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
                 ogM = fcompl * (0.5f * mixerOrange - 16.5f) / 100.f;
             }
 
-            if (complement) {
+            if(complement) {
                 obM = (-0.492f * mixerOrange + 16.236f) / 100.f;
             }
 
@@ -1259,16 +1268,16 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
 
         }
 
-        if (mixerYellow != 33) {
+        if(mixerYellow != 33) {
             if (algo == "SP") {
                 yrM = fcompl * (-0.134f * mixerYellow + 4.422f) / 100.f;    //22.4
             } else if (algo == "LI") {
                 yrM = fcompl * (0.5f * mixerYellow - 16.5f) / 100.f;    //22.4
             }
 
-            ygM = fcompl * (0.5f  * mixerYellow - 16.5f) / 100.f;
+            ygM = fcompl * (0.5f  * mixerYellow - 16.5f ) / 100.f;
 
-            if (complement) {
+            if(complement) {
                 ybM = (-0.492f * mixerYellow + 16.236f) / 100.f;
             }
 
@@ -1278,25 +1287,25 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
             koymcp += (yrM + ygM + ybM);
         }
 
-        if (mixerMagenta != 33) {
+        if(mixerMagenta != 33) {
             if (algo == "SP") {
-                if (mixerMagenta >= 33) {
-                    mrM = fcompl * (0.67f * mixerMagenta - 22.11f) / 100.f;
+                if(mixerMagenta >= 33) {
+                    mrM = fcompl * ( 0.67f * mixerMagenta - 22.11f) / 100.f;
                 } else {
                     mrM = fcompl * (-0.3f * mixerMagenta + 9.9f) / 100.f;
                 }
 
-                if (mixerMagenta >= 33) {
+                if(mixerMagenta >= 33) {
                     mbM = fcompl * (-0.164f * mixerMagenta + 5.412f) / 100.f;
                 } else {
-                    mbM = fcompl * (0.4f * mixerMagenta - 13.2f) / 100.f;
+                    mbM = fcompl * ( 0.4f * mixerMagenta - 13.2f) / 100.f;
                 }
             } else if (algo == "LI") {
                 mrM = fcompl * (mixerMagenta - 33.f) / 100.f;
                 mbM = fcompl * (0.5f * mixerMagenta - 16.5f) / 100.f;
             }
 
-            if (complement) {
+            if(complement) {
                 mgM = (-0.492f * mixerMagenta + 16.236f) / 100.f;
             }
 
@@ -1306,7 +1315,7 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
             koymcp += (mrM + mgM + mbM);
         }
 
-        if (mixerPurple != 33) {
+        if(mixerPurple != 33) {
             if (algo == "SP") {
                 prM = fcompl * (-0.134f * mixerPurple + 4.422f) / 100.f;
             } else if (algo == "LI") {
@@ -1315,7 +1324,7 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
 
             pbM = fcompl * (0.5f * mixerPurple - 16.5f) / 100.f;
 
-            if (complement) {
+            if(complement) {
                 pgM = (-0.492f * mixerPurple + 16.236f) / 100.f;
             }
 
@@ -1325,7 +1334,7 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
             koymcp += (prM + pgM + pbM);
         }
 
-        if (mixerCyan != 33) {
+        if(mixerCyan != 33) {
             if (algo == "SP") {
                 cgM = fcompl * (-0.134f * mixerCyan + 4.422f) / 100.f;
             } else if (algo == "LI") {
@@ -1334,7 +1343,7 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
 
             cbM = fcompl * (0.5f * mixerCyan - 16.5f) / 100.f;
 
-            if (complement) {
+            if(complement) {
                 crM = (-0.492f * mixerCyan + 16.236f) / 100.f;
             }
 
@@ -1345,7 +1354,7 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
         }
     }
 
-    if (setting == "ROYGCBPM-Abs") {
+    if(setting == "ROYGCBPM-Abs") {
         kcorec = koymcp + som / 100.f;
     }
 
@@ -1356,47 +1365,47 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
     filblue = 1.f;
     filcor = 1.f;
 
-    if (filter == "None")        {
+    if          (filter == "None")        {
         filred = 1.f;
         filgreen = 1.f;
         filblue = 1.f;
         filcor = 1.f;
-    } else if (filter == "Red")         {
+    } else if     (filter == "Red")         {
         filred = 1.f;
         filgreen = 0.05f;
         filblue = 0.f;
         filcor = 1.08f;
-    } else if (filter == "Orange")      {
+    } else if     (filter == "Orange")      {
         filred = 1.f;
         filgreen = 0.6f;
         filblue = 0.f;
         filcor = 1.35f;
-    } else if (filter == "Yellow")      {
+    } else if     (filter == "Yellow")      {
         filred = 1.f;
         filgreen = 1.f;
         filblue = 0.05f;
         filcor = 1.23f;
-    } else if (filter == "YellowGreen") {
+    } else if     (filter == "YellowGreen") {
         filred = 0.6f;
         filgreen = 1.f;
         filblue = 0.3f;
         filcor = 1.32f;
-    } else if (filter == "Green")       {
+    } else if     (filter == "Green")       {
         filred = 0.2f;
         filgreen = 1.f;
         filblue = 0.3f;
         filcor = 1.41f;
-    } else if (filter == "Cyan")        {
+    } else if     (filter == "Cyan")        {
         filred = 0.05f;
         filgreen = 1.f;
         filblue = 1.f;
         filcor = 1.23f;
-    } else if (filter == "Blue")        {
+    } else if     (filter == "Blue")        {
         filred = 0.f;
         filgreen = 0.05f;
         filblue = 1.f;
         filcor = 1.20f;
-    } else if (filter == "Purple")      {
+    } else if     (filter == "Purple")      {
         filred = 1.f;
         filgreen = 0.05f;
         filblue = 1.f;
@@ -1407,7 +1416,7 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
     mixerGreen = mixerGreen * filgreen;
     mixerBlue  = mixerBlue  * filblue;
 
-    if (mixerRed + mixerGreen + mixerBlue == 0) {
+    if(mixerRed + mixerGreen + mixerBlue == 0) {
         mixerRed += 1.f;
     }
 
@@ -1415,25 +1424,25 @@ void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::us
     mixerGreen = filcor * mixerGreen / (mixerRed + mixerGreen + mixerBlue);
     mixerBlue  = filcor * mixerBlue  / (mixerRed + mixerGreen + mixerBlue);
 
-    if (filter != "None") {
+    if(filter != "None") {
         som = mixerRed + mixerGreen + mixerBlue;
 
-        if (som >= 0.f && som < 1.f) {
+        if(som >= 0.f && som < 1.f) {
             som = 1.f;
         }
 
-        if (som < 0.f && som > -1.f) {
+        if(som < 0.f && som > -1.f) {
             som = -1.f;
         }
 
-        if (setting == "RGB-Abs" || setting == "ROYGCBPM-Abs") {
+        if(setting == "RGB-Abs" || setting == "ROYGCBPM-Abs") {
             kcorec = kcorec * som;
         }
     }
 
 }
 
-void Color::interpolateRGBColor(const float balance, const float r1, const float g1, const float b1, const float r2, const float g2, const float b2, int toDo, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
+void Color::interpolateRGBColor (const float balance, const float r1, const float g1, const float b1, const float r2, const float g2, const float b2, int toDo, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
 {
     float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z;
     float L1, L2, a_1, b_1, a_2, b_2, a, b;
@@ -1480,7 +1489,7 @@ void Color::interpolateRGBColor(const float balance, const float r1, const float
     if (toDo & CHANNEL_LIGHTNESS)     {
         L1 = L1 + (L2 - L1) * balance;    //do not allow negative L
 
-        if (L1 < 0.f) {
+        if(L1 < 0.f) {
             L1 = 0.f;
         }
     }
@@ -1488,17 +1497,17 @@ void Color::interpolateRGBColor(const float balance, const float r1, const float
     if (toDo & CHANNEL_CHROMATICITY)  {
         c1 = c1 + (c2 - c1) * balance;    //limit C to reasonable value
 
-        if (c1 < 0.f) {
+        if(c1 < 0.f) {
             c1 = 0.f;
         }
 
-        if (c1 > 180.f) {
+        if(c1 > 180.f) {
             c1 = 180.f;
         }
     }
 
     if (toDo & CHANNEL_HUE) {
-        h1 = interpolatePolarHue_PI<float, float> (h1, h2, balance);
+        h1 = interpolatePolarHue_PI<float, float>(h1, h2, balance);
     }
 
     // here I have put gamut control with gamutlchonly  on final process
@@ -1522,10 +1531,10 @@ void Color::interpolateRGBColor(const float balance, const float r1, const float
 }
 
 
-void Color::interpolateRGBColor(float realL, float iplow, float iphigh, int algm, const float balance, int twoc, int metchrom,
-                                float chromat, float luma, const float r1, const float g1, const float b1,
-                                const float xl, const float yl, const float zl, const float x2, const float y2, const float z2,
-                                const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
+void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int algm, const float balance, int twoc, int metchrom,
+                                 float chromat, float luma, const float r1, const float g1, const float b1,
+                                 const float xl, const float yl, const float zl, const float x2, const float y2, const float z2,
+                                 const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
 {
     float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z, XL, YL, ZL;
     float L1 = 0.f, L2, LL, a_1 = 0.f, b_1 = 0.f, a_2 = 0.f, b_2 = 0.f, a_L, b_L;
@@ -1533,19 +1542,19 @@ void Color::interpolateRGBColor(float realL, float iplow, float iphigh, int algm
     // converting color 1 to Lab  (image)
     Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);
 
-    if (algm == 1) { //use H interpolate
+    if(algm == 1) {//use H interpolate
         Color::XYZ2Lab(X1, Y1, Z1, L1, a_1, b_1);
         //Color::Lab2Lch(a_1, b_1, c_1, h_1) ;
     }
 
     // converting color l lab(low) first color
-    if (twoc == 0) { // 2 colours
+    if(twoc == 0) { // 2 colours
         //Color::rgbxyz(rl, gl, bl, XL, YL, ZL, xyz_rgb);
         XL = xl;
         YL = yl;
         ZL = zl;
 
-        if (algm <= 1) { //use H interpolate
+        if(algm <= 1) {//use H interpolate
             Color::XYZ2Lab(XL, YL, ZL, LL, a_L, b_L);
         }
     }
@@ -1555,7 +1564,7 @@ void Color::interpolateRGBColor(float realL, float iplow, float iphigh, int algm
     Y2 = y2;
     Z2 = z2;
 
-    if (algm == 1) {
+    if(algm == 1 ) {
         Color::XYZ2Lab(X2, Y2, Z2, L2, a_2, b_2);
         //Color::Lab2Lch(a_2, b_2, c_2, h_2) ;
     }
@@ -1571,17 +1580,17 @@ void Color::interpolateRGBColor(float realL, float iplow, float iphigh, int algm
     float calby;
     calby = luma;
 
-    if (twoc == 0) { // 2 colours
+    if(twoc == 0) { // 2 colours
         calan = chromat;
 
         //calculate new balance chroma
-        if (realL > iplow && realL <= med) {
+        if      (realL > iplow && realL <= med) {
             cal = realL * calan / (iplow - med) - med * calan / (iplow - med);
         } else if (realL <= iplow) {
             cal = realL * calan / iplow;
         }
 
-        if (realL > medH && realL <= iphigh) {
+        if      (realL > medH && realL <= iphigh) {
             calH = realL * calan / (iphigh - medH) - medH * calan / (iphigh - medH);
         } else if (realL > iphigh) {
             calH = realL * calan;    //*(iphigh-1.f) - calan*(iphigh-1.f);//it is better without transition in highlight
@@ -1590,22 +1599,22 @@ void Color::interpolateRGBColor(float realL, float iplow, float iphigh, int algm
 
     float aaH, bbH;
 
-    if (algm <= 1) {
-        if (twoc == 0  && metchrom == 3) { // 2 colours  only with special "ab"
-            if (algm == 1) {
+    if(algm <= 1) {
+        if(twoc == 0  && metchrom == 3) { // 2 colours  only with special "ab"
+            if(algm == 1) {
                 aaH = a_1 + (a_2 - a_1) * calH;
                 bbH = b_1 + (b_2 - b_1) * calH; //pass to line after
                 a_1 = aaH + (a_L - aaH) * cal * balance;
                 b_1 = bbH + (b_L - bbH) * cal * balance;
             }
-        } else if (twoc == 1) {
-            if (metchrom == 0) {
+        } else if(twoc == 1) {
+            if(metchrom == 0) {
                 a_1 = a_1 + (a_2 - a_1) * balance;
                 b_1 = b_1 + (b_2 - b_1) * balance;
-            } else if (metchrom == 1) {
+            } else if(metchrom == 1) {
                 a_1 = a_1 + (a_2 - a_1) * calan * balance;
                 b_1 = b_1 + (b_2 - b_1) * calan * balance;
-            } else if (metchrom == 2) {
+            } else if(metchrom == 2) {
                 a_1 = a_1 + (a_2 - a_1) * calan * balance;
                 b_1 = b_1 + (b_2 - b_1) * calby * balance;
             }
@@ -1614,10 +1623,10 @@ void Color::interpolateRGBColor(float realL, float iplow, float iphigh, int algm
 
     Color::Lab2XYZ(L1, a_1, b_1, X, Y, Z);
 
-    Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);  // ro go bo in gamut
+    Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);// ro go bo in gamut
 }
 
-void Color::calcGamma(double pwr, double ts, int mode, GammaValues &gamma)
+void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
 {
     //from Dcraw (D.Coffin)
     int i;
@@ -1663,7 +1672,7 @@ void Color::calcGamma(double pwr, double ts, int mode, GammaValues &gamma)
         return;
     }
 }
-void Color::gammaf2lut(LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
+void Color::gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
 {
 #ifdef __SSE2__
     // SSE2 version is more than 6 times faster than scalar version
@@ -1679,20 +1688,20 @@ void Color::gammaf2lut(LUTf &gammacurve, float gamma, float start, float slope, 
     int border2 = border1 + 4;
     int i = 0;
 
-    for (; i < border1; i += 4) {
+    for(; i < border1; i += 4) {
         vfloat resultv = iv * slopev;
         STVFU(gammacurve[i], resultv);
         iv += fourv;
     }
 
-    for (; i < border2; i += 4) {
+    for(; i < border2; i += 4) {
         vfloat result0v = iv * slopev;
         vfloat result1v = xexpf((xlogf(iv) - divisorv) * gammav) * factorv;
         STVFU(gammacurve[i], vself(vmaskf_le(iv, comparev), result0v, result1v));
         iv += fourv;
     }
 
-    for (; i < 65536; i += 4) {
+    for(; i < 65536; i += 4) {
         vfloat resultv = xexpfNoCheck((xlogfNoCheck(iv) - divisorv) * gammav) * factorv;
         STVFU(gammacurve[i], resultv);
         iv += fourv;
@@ -1707,7 +1716,7 @@ void Color::gammaf2lut(LUTf &gammacurve, float gamma, float start, float slope, 
 #endif
 }
 
-void Color::gammanf2lut(LUTf &gammacurve, float gamma, float divisor, float factor)            //standard gamma without slope...
+void Color::gammanf2lut (LUTf &gammacurve, float gamma, float divisor, float factor)           //standard gamma without slope...
 {
 #ifdef __SSE2__
     // SSE2 version is more than 6 times faster than scalar version
@@ -1723,7 +1732,7 @@ void Color::gammanf2lut(LUTf &gammacurve, float gamma, float divisor, float fact
     iv += fourv;
 
     // inside the loop we can use xlogfNoCheck and xexpfNoCheck because we know about the input values
-    for (int i = 4; i < 65536; i += 4) {
+    for(int i = 4; i < 65536; i += 4) {
         resultv = xexpfNoCheck((xlogfNoCheck(iv) - divisorv) * gammav) * factorv;
         STVFU(gammacurve[i], resultv);
         iv += fourv;
@@ -1751,7 +1760,14 @@ void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
     y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
 }
 
-void Color::L2XYZ(float L, float &x, float &y, float &z)  // for black & white
+float Color::L2Y(float L)
+{
+    const float LL = L / 327.68f;
+    const float fy = (c1By116 * LL) + c16By116; // (L+16)/116
+    return (LL > epskapf) ? 65535.f * fy * fy * fy : 65535.f * LL / kappaf;
+}
+
+void Color::L2XYZ(float L, float &x, float &y, float &z) // for black & white
 {
     float LL = L / 327.68f;
     float fy = (c1By116 * LL) + c16By116; // (L+16)/116
@@ -1793,19 +1809,6 @@ inline float Color::computeXYZ2Lab(float f)
     }
 }
 
-
-inline float Color::computeXYZ2LabY(float f)
-{
-    if (f < 0.f) {
-        return 327.68 * (kappa * f / MAXVALF);
-    } else if (f > 65535.f) {
-        return 327.68f * (116.f * xcbrtf(f / MAXVALF) - 16.f);
-    } else {
-        return cachefy[f];
-    }
-}
-
-
 void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, const float wp[3][3], int width)
 {
 
@@ -1818,8 +1821,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
     int i = 0;
     
 #ifdef __SSE2__
-
-    for (; i < width - 3; i += 4) {
+    for(;i < width - 3; i+=4) {
         const vfloat rv = LVFU(R[i]);
         const vfloat gv = LVFU(G[i]);
         const vfloat bv = LVFU(B[i]);
@@ -1829,7 +1831,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
 
         if (_mm_movemask_ps((vfloat)vorm(vmaskf_gt(vmaxf(xv, vmaxf(yv, zv)), maxvalfv), vmaskf_lt(vminf(xv, vminf(yv, zv)), minvalfv)))) {
             // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
-            for (int k = 0; k < 4; ++k) {
+            for(int k = 0; k < 4; ++k) {
                 float x = xv[k];
                 float y = yv[k];
                 float z = zv[k];
@@ -1838,8 +1840,8 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
                 float fz = computeXYZ2Lab(z);
 
                 L[i + k] = computeXYZ2LabY(y);
-                a[i + k] = (500.f * (fx - fy));
-                b[i + k] = (200.f * (fy - fz));
+                a[i + k] = (500.f * (fx - fy) );
+                b[i + k] = (200.f * (fy - fz) );
             }
         } else {
             const vfloat fx = cachef[xv];
@@ -1851,10 +1853,8 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
             STVFU(b[i], c200v * (fy - fz));
         }
     }
-
 #endif
-
-    for (; i < width; ++i) {
+    for(;i < width; ++i) {
         const float rv = R[i];
         const float gv = G[i];
         const float bv = B[i];
@@ -1970,8 +1970,8 @@ void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b)
     fz = computeXYZ2Lab(z);
 
     L = computeXYZ2LabY(y);
-    a = (500.0f * (fx - fy));
-    b = (200.0f * (fy - fz));
+    a = (500.0f * (fx - fy) );
+    b = (200.0f * (fy - fz) );
 }
 
 void Color::Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v)
@@ -2006,8 +2006,8 @@ void Color::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, c
     float fz = computeXYZ2Lab(Z);
 
     L = computeXYZ2LabY(Y);
-    a = (500.0 * (fx - fy));
-    b = (200.0 * (fy - fz));
+    a = (500.0 * (fx - fy) );
+    b = (200.0 * (fy - fz) );
 }
 
 void Color::Lab2Lch(float a, float b, float &c, float &h)
@@ -2058,6 +2058,7 @@ void Color::Lch2Luv(float c, float h, float &u, float &v)
     v = c * sincosval.y;
 }
 
+
 /*
  * Gamut mapping algorithm
  * Copyright (c) 2010-2011  Emil Martinec <ejmartin@uchicago.edu>
@@ -2092,7 +2093,7 @@ void Color::gamutmap(float &X, float &Y, float &Z, const double p[3][3])
             int c1 = (c + 1) % 3;
             int c2 = (c + 2) % 3;
 
-            lam[c][m] = (- (p[0][c1] * p[1][c] * ((-12 + 3 * u0 + 20 * v0) * Y + 4 * m * 65535 * v0 * p[2][c2])) +
+            lam[c][m] = (-(p[0][c1] * p[1][c] * ((-12 + 3 * u0 + 20 * v0) * Y + 4 * m * 65535 * v0 * p[2][c2])) +
                          p[0][c] * p[1][c1] * ((-12 + 3 * u0 + 20 * v0) * Y + 4 * m * 65535 * v0 * p[2][c2]) -
                          4 * v0 * p[0][c1] * (Y - m * 65535 * p[1][c2]) * p[2][c] + 4 * v0 * p[0][c] * (Y - m * 65535 * p[1][c2]) * p[2][c1] -
                          (4 * m * 65535 * v0 * p[0][c2] - 9 * u0 * Y) * (p[1][c1] * p[2][c] - p[1][c] * p[2][c1]));
@@ -2115,7 +2116,7 @@ void Color::gamutmap(float &X, float &Y, float &Z, const double p[3][3])
     Z = (12 - 3 * u - 20 * v) * Y / (4 * v);
 }
 
-void Color::skinred(double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s)
+void Color::skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s)
 {
     float factorskin, factorsat, factor, factorskinext, interm;
     float scale = 100.0f / 100.1f; //reduction in normal zone
@@ -2125,42 +2126,42 @@ void Color::skinred(double J, double h, double sres, double Sp, float dred, floa
     bool doskin = false;
 
     //rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
-    if ((float)h > 8.6f  && (float)h <= 74.f) {
+    if     ((float)h > 8.6f  && (float)h <= 74.f ) {
         HH = (1.15f / 65.4f) * (float)h - 0.0012f;     //H > 0.15   H<1.3
         doskin = true;
-    } else if ((float)h > 0.f   && (float)h <= 8.6f) {
-        HH = (0.19f / 8.6f) * (float)h - 0.04f;        //H>-0.04 H < 0.15
+    } else if((float)h > 0.f   && (float)h <= 8.6f ) {
+        HH = (0.19f / 8.6f ) * (float)h - 0.04f;       //H>-0.04 H < 0.15
         doskin = true;
-    } else if ((float)h > 355.f && (float)h <= 360.f) {
-        HH = (0.11f / 5.0f) * (float)h - 7.96f;        //H>-0.15 <-0.04
+    } else if((float)h > 355.f && (float)h <= 360.f) {
+        HH = (0.11f / 5.0f ) * (float)h - 7.96f;       //H>-0.15 <-0.04
         doskin = true;
-    } else if ((float)h > 74.f  && (float)h < 95.f) {
+    } else if((float)h > 74.f  && (float)h < 95.f  ) {
         HH = (0.30f / 21.0f) * (float)h + 0.24285f;    //H>1.3  H<1.6
         doskin = true;
     }
 
-    if (doskin) {
+    if(doskin) {
         float chromapro = sres / Sp;
 
-        if (sk == 1) { //in C mode to adapt dred to J
-            if (J < 16.0) {
+        if(sk == 1) { //in C mode to adapt dred to J
+            if     (J < 16.0) {
                 dred = 40.0f;
-            } else if (J < 22.0) {
+            } else if(J < 22.0) {
                 dred = 2.5f * (float)J;
-            } else if (J < 60.0) {
+            } else if(J < 60.0) {
                 dred = 55.0f;
-            } else if (J < 70.0) {
+            } else if(J < 70.0) {
                 dred = -1.5f * (float)J + 145.0f;
             } else {
                 dred = 40.0f;
             }
         }
 
-        if (chromapro > 0.0) {
-            Color::scalered(rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);      //Scale factor
+        if(chromapro > 0.0) {
+            Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);    //Scale factor
         }
 
-        if (chromapro > 1.0) {
+        if(chromapro > 1.0) {
             interm = (chromapro - 1.0f) * 100.0f;
             factorskin = 1.0f + (interm * scale) / 100.0f;
             factorskinext = 1.0f + (interm * scaleext) / 100.0f;
@@ -2171,56 +2172,56 @@ void Color::skinred(double J, double h, double sres, double Sp, float dred, floa
 
         factorsat = chromapro;
         factor = factorsat;
-        Color::transitred(HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);     //transition
+        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);   //transition
         s *= factor;
     } else {
         s = ko * sres;
     }
 
 }
-void Color::skinredfloat(float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)
+void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)
 {
     float HH;
     bool doskin = false;
 
     //rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
-    if ((float)h > 8.6f  && (float)h <= 74.f) {
+    if     ((float)h > 8.6f  && (float)h <= 74.f ) {
         HH = (1.15f / 65.4f) * (float)h - 0.0012f;     //H > 0.15   H<1.3
         doskin = true;
-    } else if ((float)h > 0.f   && (float)h <= 8.6f) {
-        HH = (0.19f / 8.6f) * (float)h - 0.04f;        //H>-0.04 H < 0.15
+    } else if((float)h > 0.f   && (float)h <= 8.6f ) {
+        HH = (0.19f / 8.6f ) * (float)h - 0.04f;       //H>-0.04 H < 0.15
         doskin = true;
-    } else if ((float)h > 355.f && (float)h <= 360.f) {
-        HH = (0.11f / 5.0f) * (float)h - 7.96f;        //H>-0.15 <-0.04
+    } else if((float)h > 355.f && (float)h <= 360.f) {
+        HH = (0.11f / 5.0f ) * (float)h - 7.96f;       //H>-0.15 <-0.04
         doskin = true;
-    } else if ((float)h > 74.f  && (float)h < 95.f) {
+    } else if((float)h > 74.f  && (float)h < 95.f  ) {
         HH = (0.30f / 21.0f) * (float)h + 0.24285f;    //H>1.3  H<1.6
         doskin = true;
     }
 
-    if (doskin) {
+    if(doskin) {
         float factorskin, factorsat, factor, factorskinext;
         float deltaHH = 0.3f; //HH value transition : I have choice 0.3 radians
         float chromapro = sres / Sp;
 
-        if (sk == 1) { //in C mode to adapt dred to J
-            if (J < 16.f) {
+        if(sk == 1) { //in C mode to adapt dred to J
+            if     (J < 16.f) {
                 dred = 40.f;
-            } else if (J < 22.f) {
+            } else if(J < 22.f) {
                 dred = 2.5f * J;
-            } else if (J < 60.f) {
+            } else if(J < 60.f) {
                 dred = 55.f;
-            } else if (J < 70.f) {
+            } else if(J < 70.f) {
                 dred = 145.f - 1.5f * J;
             } else {
                 dred = 40.f;
             }
         }
 
-        if (chromapro > 1.0) {
+        if(chromapro > 1.0) {
             float scale = 0.999000999f;  // 100.0f/100.1f; reduction in normal zone
             float scaleext = 1.0f; //reduction in transition zone
-            Color::scalered(rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);  //Scale factor
+            Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//Scale factor
             float interm = (chromapro - 1.0f);
             factorskin = 1.0f + (interm * scale);
             factorskinext = 1.0f + (interm * scaleext);
@@ -2231,7 +2232,7 @@ void Color::skinredfloat(float J, float h, float sres, float Sp, float dred, flo
 
         factorsat = chromapro;
         factor = factorsat;
-        Color::transitred(HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);     //transition
+        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);   //transition
         s *= factor;
     } else {
         s = ko * sres;
@@ -2244,19 +2245,19 @@ void Color::skinredfloat(float J, float h, float sres, float Sp, float dred, flo
 
 
 
-void Color::scalered(const float rstprotection, const float param, const float limit, const float HH, const float deltaHH, float &scale, float &scaleext)
+void Color::scalered ( const float rstprotection, const float param, const float limit, const float HH, const float deltaHH, float &scale, float &scaleext)
 {
-    if (rstprotection < 99.9999f) {
-        if (param > limit) {
+    if(rstprotection < 99.9999f) {
+        if(param > limit) {
             scale = rstprotection / 100.1f;
         }
 
-        if ((HH < (1.3f + deltaHH) && HH >= 1.3f))
+        if((HH < (1.3f + deltaHH) && HH >= 1.3f))
             // scaleext=HH*(1.0f-scale)/deltaHH + 1.0f - (1.3f+deltaHH)*(1.0f-scale)/deltaHH;    //transition for Hue (red - yellow)
             // optimized formula
         {
             scaleext = (HH * (1.0f - scale) + deltaHH - (1.3f + deltaHH) * (1.0f - scale)) / deltaHH;    //transition for Hue (red - yellow)
-        } else if ((HH < 0.15f && HH > (0.15f - deltaHH)))
+        } else if((HH < 0.15f && HH > (0.15f - deltaHH)))
             // scaleext=HH*(scale-1.0f)/deltaHH + 1.0f - (0.15f-deltaHH)*(scale-1.0f)/deltaHH;   //transition for hue (red purple)
             // optimized formula
         {
@@ -2265,15 +2266,15 @@ void Color::scalered(const float rstprotection, const float param, const float l
     }
 }
 
-void Color::transitred(const float HH, float const Chprov1, const float dred, const float factorskin, const float protect_red, const float factorskinext, const float deltaHH, const float factorsat, float &factor)
+void Color::transitred (const float HH, float const Chprov1, const float dred, const float factorskin, const float protect_red, const float factorskinext, const float deltaHH, const float factorsat, float &factor)
 {
-    if (HH >= 0.15f && HH < 1.3f) {
+    if(HH >= 0.15f && HH < 1.3f) {
         if (Chprov1 < dred) {
             factor = factorskin;
-        } else if (Chprov1 < (dred + protect_red)) {
+        } else if(Chprov1 < (dred + protect_red)) {
             factor = ((factorsat - factorskin) * Chprov1 + factorsat * protect_red - (dred + protect_red) * (factorsat - factorskin)) / protect_red;
         }
-    } else if (HH > (0.15f - deltaHH) && HH < (1.3f + deltaHH)) {   // test if chroma is in the extended range
+    } else if ( HH > (0.15f - deltaHH) && HH < (1.3f + deltaHH) ) { // test if chroma is in the extended range
         if (Chprov1 < dred) {
             factor = factorskinext;    // C=dred=55 => real max of skin tones
         } else if (Chprov1 < (dred + protect_red)) {// transition
@@ -2309,7 +2310,7 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
     float correctionHue = 0.0, correctionHueLum = 0.0;
     bool correctL;
 
-    if (CC >= 6.0 && CC < 140) {         //if C > 140 we say C=140 (only in Prophoto ...with very large saturation)
+    if(CC >= 6.0 && CC < 140) {          //if C > 140 we say C=140 (only in Prophoto ...with very large saturation)
         static const float huelimit[8] = { -2.48, -0.55, 0.44, 1.52, 1.87, 3.09, -0.27, 0.44}; //limits hue of blue-purple, red-yellow, green-yellow, red-purple
 
         if (Chprov1 > 140.f) {
@@ -2320,16 +2321,16 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
             Chprov1 = 6.f;
         }
 
-        for (int zo = 1; zo <= 4; zo++) {
-            if (HH > huelimit[2 * zo - 2] && HH < huelimit[2 * zo - 1]) {
+        for(int zo = 1; zo <= 4; zo++) {
+            if(HH > huelimit[2 * zo - 2] && HH < huelimit[2 * zo - 1]) {
                 //zone=zo;
                 contin1 = contin2 = false;
                 correctL = false;
-                MunsellLch(Lprov1, HH, Chprov1, CC, correctionHue, zo, correctionHueLum, correctL);        //munsell chroma correction
+                MunsellLch (Lprov1, HH, Chprov1, CC, correctionHue, zo, correctionHueLum, correctL);       //munsell chroma correction
 #ifdef _DEBUG
                 float absCorrectionHue = fabs(correctionHue);
 
-                if (correctionHue != 0.0) {
+                if(correctionHue != 0.0) {
                     int idx = zo - 1;
                     #pragma omp critical (maxdhue)
                     {
@@ -2337,18 +2338,18 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
                     }
                 }
 
-                if (absCorrectionHue > 0.45)
+                if(absCorrectionHue > 0.45)
                     #pragma omp atomic
                     munsDbgInfo->depass++;        //verify if no bug in calculation
 
 #endif
                 correctionHuechroma = correctionHue;  //preserve
 
-                if (lumaMuns) {
+                if(lumaMuns) {
                     float correctlumprov = 0.f;
                     float correctlumprov2 = 0.f;
 
-                    if (correctL) {
+                    if(correctL) {
                         //for Munsell luminance correction
                         correctlumprov = correctionHueLum;
                         contin1 = true;
@@ -2358,11 +2359,11 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
                     correctionHueLum = 0.0;
                     correctionHue = 0.0;
 
-                    if (fabs(Lprov1 - Loldd) > 6.0) {
+                    if(fabs(Lprov1 - Loldd) > 6.0) {
                         // correction if delta L significative..Munsell luminance
-                        MunsellLch(Loldd, HH, Chprov1, Chprov1, correctionHue, zo, correctionHueLum, correctL);
+                        MunsellLch (Loldd, HH, Chprov1, Chprov1, correctionHue, zo, correctionHueLum, correctL);
 
-                        if (correctL) {
+                        if(correctL) {
                             correctlumprov2 = correctionHueLum;
                             contin2 = true;
                             correctL = false;
@@ -2370,14 +2371,14 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
 
                         correctionHueLum = 0.0;
 
-                        if (contin1 && contin2) {
+                        if(contin1 && contin2) {
                             correctlum = correctlumprov2 - correctlumprov;
                         }
 
 #ifdef _DEBUG
                         float absCorrectLum = fabs(correctlum);
 
-                        if (correctlum != 0.0) {
+                        if(correctlum != 0.0) {
                             int idx = zo - 1;
                             #pragma omp critical (maxdhuelum)
                             {
@@ -2385,7 +2386,7 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
                             }
                         }
 
-                        if (absCorrectLum > 0.35)
+                        if(absCorrectLum > 0.35)
                             #pragma omp atomic
                             munsDbgInfo->depassLum++;    //verify if no bug in calculation
 
@@ -2399,15 +2400,15 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
 
 #ifdef _DEBUG
 
-    if (correctlum < -0.35f) {
+    if     (correctlum < -0.35f) {
         correctlum = -0.35f;
-    } else if (correctlum >  0.35f) {
+    } else if(correctlum >  0.35f) {
         correctlum = 0.35f;
     }
 
-    if (correctionHuechroma < -0.45f) {
+    if     (correctionHuechroma < -0.45f) {
         correctionHuechroma = -0.45f;
-    } else if (correctionHuechroma > 0.45f) {
+    } else if(correctionHuechroma > 0.45f) {
         correctionHuechroma = 0.45f;
     }
 
@@ -2472,9 +2473,9 @@ void Color::AllMunsellLch(float Lprov1, float HH, float Chprov1, float CC, float
  * bool neg and moreRGB : only in DEBUG mode to calculate iterations for negatives values and > 65535
  */
 #ifdef _DEBUG
-void Color::gamutLchonly(float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
+void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
 #else
-void Color::gamutLchonly(float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
+void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
 {
     const float ClipLevel = 65535.0f;
@@ -2492,7 +2493,7 @@ void Color::gamutLchonly(float HH, float &Lprov1, float &Chprov1, float &R, floa
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (c1By116 * Lprov1) + c16By116;
+        float fy = (c1By116 * Lprov1 ) + c16By116;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
@@ -2514,32 +2515,32 @@ void Color::gamutLchonly(float HH, float &Lprov1, float &Chprov1, float &R, floa
             }
 
             //gamut for L with ultra blue : we can improve the algorithm ... thinner, and other color ???
-            if (HH < -0.9f && HH > -1.55f) {  //ultra blue
-                if (Chprov1 > 160.f) if (Lprov1 < 5.f) {
+            if(HH < -0.9f && HH > -1.55f ) {//ultra blue
+                if(Chprov1 > 160.f) if (Lprov1 < 5.f) {
                         Lprov1 = 5.f;    //very very very very high chroma
                     }
 
-                if (Chprov1 > 140.f) if (Lprov1 < 3.5f) {
+                if(Chprov1 > 140.f) if (Lprov1 < 3.5f) {
                         Lprov1 = 3.5f;
                     }
 
-                if (Chprov1 > 120.f) if (Lprov1 < 2.f) {
+                if(Chprov1 > 120.f) if (Lprov1 < 2.f) {
                         Lprov1 = 2.f;
                     }
 
-                if (Chprov1 > 105.f) if (Lprov1 < 1.f) {
+                if(Chprov1 > 105.f) if (Lprov1 < 1.f) {
                         Lprov1 = 1.f;
                     }
 
-                if (Chprov1 > 90.f) if (Lprov1 < 0.7f) {
+                if(Chprov1 > 90.f) if (Lprov1 < 0.7f) {
                         Lprov1 = 0.7f;
                     }
 
-                if (Chprov1 > 50.f) if (Lprov1 < 0.5f) {
+                if(Chprov1 > 50.f) if (Lprov1 < 0.5f) {
                         Lprov1 = 0.5f;
                     }
 
-                if (Chprov1 > 20.f) if (Lprov1 < 0.4f) {
+                if(Chprov1 > 20.f) if (Lprov1 < 0.4f) {
                         Lprov1 = 0.4f;
                     }
             }
@@ -2593,9 +2594,9 @@ void Color::gamutLchonly(float HH, float &Lprov1, float &Chprov1, float &R, floa
  * bool neg and moreRGB : only in DEBUG mode to calculate iterations for negatives values and > 65535
  */
 #ifdef _DEBUG
-void Color::gamutLchonly(float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
+void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
 #else
-void Color::gamutLchonly(float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
+void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
 {
     constexpr float ClipLevel = 65535.0f;
@@ -2612,7 +2613,7 @@ void Color::gamutLchonly(float HH, float2 sincosval, float &Lprov1, float &Chpro
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (c1By116 * Lprov1) + c16By116;
+        float fy = (c1By116 * Lprov1 ) + c16By116;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
@@ -2639,32 +2640,32 @@ void Color::gamutLchonly(float HH, float2 sincosval, float &Lprov1, float &Chpro
             }
 
             //gamut for L with ultra blue : we can improve the algorithm ... thinner, and other color ???
-            if (HH < -0.9f && HH > -1.55f) {  //ultra blue
-                if (Chprov1 > 160.f) if (Lprov1 < 5.f) {
+            if(HH < -0.9f && HH > -1.55f ) {//ultra blue
+                if(Chprov1 > 160.f) if (Lprov1 < 5.f) {
                         Lprov1 = 5.f;    //very very very very high chroma
                     }
 
-                if (Chprov1 > 140.f) if (Lprov1 < 3.5f) {
+                if(Chprov1 > 140.f) if (Lprov1 < 3.5f) {
                         Lprov1 = 3.5f;
                     }
 
-                if (Chprov1 > 120.f) if (Lprov1 < 2.f) {
+                if(Chprov1 > 120.f) if (Lprov1 < 2.f) {
                         Lprov1 = 2.f;
                     }
 
-                if (Chprov1 > 105.f) if (Lprov1 < 1.f) {
+                if(Chprov1 > 105.f) if (Lprov1 < 1.f) {
                         Lprov1 = 1.f;
                     }
 
-                if (Chprov1 > 90.f) if (Lprov1 < 0.7f) {
+                if(Chprov1 > 90.f) if (Lprov1 < 0.7f) {
                         Lprov1 = 0.7f;
                     }
 
-                if (Chprov1 > 50.f) if (Lprov1 < 0.5f) {
+                if(Chprov1 > 50.f) if (Lprov1 < 0.5f) {
                         Lprov1 = 0.5f;
                     }
 
-                if (Chprov1 > 20.f) if (Lprov1 < 0.4f) {
+                if(Chprov1 > 20.f) if (Lprov1 < 0.4f) {
                         Lprov1 = 0.4f;
                     }
             }
@@ -2805,9 +2806,9 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
 
 
 #ifdef _DEBUG
-void Color::gamutLchonly(float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
+void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
 #else
-void Color::gamutLchonly(float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
+void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
 {
     const float ClipLevel = 65535.0f;
@@ -2824,7 +2825,7 @@ void Color::gamutLchonly(float2 sincosval, float &Lprov1, float &Chprov1, const 
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (c1By116 * Lprov1) + c16By116;
+        float fy = (c1By116 * Lprov1 ) + c16By116;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
@@ -2927,7 +2928,7 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
         _mm_storeu_ps(&CCBuffer[k], vsqrtf(SQRV(av) + SQRV(bv)) / c327d68v);
     }
 
-    for (; k < N; k++) {
+    for(; k < N; k++) {
         HHBuffer[k] = xatan2f(labb[k], laba[k]);
         CCBuffer[k] = sqrt(SQR(laba[k]) + SQR(labb[k])) / 327.68f;
     }
@@ -2947,14 +2948,14 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
         float Coldd = Chprov1;
         float2 sincosval;
 
-        if (gamut) {
+        if(gamut) {
 #ifdef _DEBUG
             bool neg, more_rgb;
 #endif
             // According to mathematical laws we can get the sin and cos of HH by simple operations
             float R, G, B;
 
-            if (Chprov1 == 0.f) {
+            if(Chprov1 == 0.f) {
                 sincosval.y = 1.f;
                 sincosval.x = 0.f;
             } else {
@@ -2971,11 +2972,11 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
 
 #ifdef _DEBUG
 
-            if (neg) {
+            if(neg) {
                 negat++;
             }
 
-            if (more_rgb) {
+            if(more_rgb) {
                 moreRGB++;
             }
 
@@ -2986,7 +2987,7 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
         correctionHuechroma = 0.f;
         correctlum = 0.f;
 
-        if (corMunsell)
+        if(corMunsell)
 #ifdef _DEBUG
             AllMunsellLch(lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum, MunsDebugInfo);
 
@@ -2994,9 +2995,9 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
             AllMunsellLch(lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum);
 #endif
 
-        if (correctlum == 0.f && correctionHuechroma == 0.f) {
-            if (!gamut) {
-                if (Coldd == 0.f) {
+        if(correctlum == 0.f && correctionHuechroma == 0.f) {
+            if(!gamut) {
+                if(Coldd == 0.f) {
                     sincosval.y = 1.f;
                     sincosval.x = 0.f;
                 } else {
@@ -3023,7 +3024,7 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
 
         if (MunsDebugInfo) {
             printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0],    MunsDebugInfo->maxdhue[1],    MunsDebugInfo->maxdhue[2],    MunsDebugInfo->maxdhue[3],    MunsDebugInfo->depass);
-            printf("   Munsell luminance  : MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhuelum[0], MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
+            printf("   Munsell luminance  : MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhuelum[0] , MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
         } else {
             printf("   Munsell correction wasn't requested\n");
         }
@@ -3038,1384 +3039,6 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
 }
 
 /*
- * MunsellLch correction
- * Copyright (c) 2012  Jacques Desmis <jdesmis@gmail.com>
- *
- * Find the right LUT and calculate the correction
- */
-void Color::MunsellLch(float lum, float hue, float chrom, float memChprov, float &correction, int zone, float &lbe, bool &correctL)
-{
-
-    int x = int (memChprov);
-    int y = int (chrom);
-
-    //begin PB correction + sky
-    if (zone == 1) {
-        if (lum > 5.0) {
-            if (lum < 15.0) {
-                if ((hue >= (_15PB10[x] - 0.035)) && (hue < (_15PB10[x] + 0.052) && x <= 45)) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _15PB10[y] - _15PB10[x] ;
-                    lbe = _15PB10[y];
-                    correctL = true;
-                } else if ((hue >= (_3PB10[x] - 0.052))  && (hue < (_45PB10[x] + _3PB10[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _3PB10[y] - _3PB10[x];
-                    lbe = _3PB10[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB10[x] + _3PB10[x]) / 2.0)  && (hue < (_45PB10[x] + 0.052)) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _45PB10[y] - _45PB10[x] ;
-                    lbe = _45PB10[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB10[x] - 0.052)  && (hue < (_6PB10[x] + _75PB10[x]) / 2.0))) {
-                    correction =  _6PB10[y] - _6PB10[x] ;
-                    lbe = _6PB10[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB10[x] + _75PB10[x]) / 2.0)  && (hue < (_9PB10[x] + _75PB10[x]) / 2.0)) {
-                    correction =  _75PB10[y] - _75PB10[x] ;
-                    lbe = _75PB10[y];
-                    correctL = true;
-                } else if ((hue >= (_9PB10[x] + _75PB10[x]) / 2.0)  && (hue < (_9PB10[x] + _10PB10[x]) / 2.0)) {
-                    correction =  _9PB10[y] - _9PB10[x] ;
-                    lbe = _9PB10[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB10[x] + _9PB10[x]) / 2.0)  && (hue < (_1P10[x] + _10PB10[x]) / 2.0)) {
-                    correction =  _10PB10[y] - _10PB10[x] ;
-                    lbe = _10PB10[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB10[x] + _1P10[x]) / 2.0)  && (hue < (_1P10[x] + _4P10[x]) / 2.0)) {
-                    correction =  _1P10[y] - _1P10[x];
-                    lbe = _1P10[y];
-                    correctL = true;
-                } else if ((hue >= (_1P10[x] + _4P10[x]) / 2.0)  && (hue < (0.035 + _4P10[x]) / 2.0)) {
-                    correction =  _4P10[y] - _4P10[x] ;
-                    lbe = _4P10[y];
-                    correctL = true;
-                }
-            } else if (lum < 25.0) {
-                if ((hue >= (_15PB20[x] - 0.035)) && (hue < (_15PB20[x] + _3PB20[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _15PB20[y] - _15PB20[x] ;
-                    lbe = _15PB20[y];
-                    correctL = true;
-                } else if ((hue >= (_15PB20[x] + _3PB20[x]) / 2.0)  && (hue < (_45PB20[x] + _3PB20[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _3PB20[y] - _3PB20[x] ;
-                    lbe = _3PB20[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB20[x] + _3PB20[x]) / 2.0)  && (hue < (_45PB20[x] + 0.052)) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _45PB20[y] - _45PB20[x] ;
-                    lbe = _45PB20[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB20[x] + 0.052))  && (hue < (_6PB20[x] + _75PB20[x]) / 2.0)) {
-                    correction =  _6PB20[y] - _6PB20[x];
-                    lbe = _6PB20[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB20[x] + _75PB20[x]) / 2.0)  && (hue < (_9PB20[x] + _75PB20[x]) / 2.0)) {
-                    correction =  _75PB20[y] - _75PB20[x] ;
-                    lbe = _75PB20[y];
-                    correctL = true;
-                } else if ((hue >= (_9PB20[x] + _75PB20[x]) / 2.0)  && (hue < (_9PB20[x] + _10PB20[x]) / 2.0)) {
-                    correction =  _9PB20[y] - _9PB20[x] ;
-                    lbe = _9PB20[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB20[x] + _9PB20[x]) / 2.0)  && (hue < (_1P20[x] + _10PB20[x]) / 2.0)) {
-                    correction =  _10PB20[y] - _10PB20[x] ;
-                    lbe = _10PB20[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB20[x] + _1P20[x]) / 2.0)  && (hue < (_1P20[x] + _4P20[x]) / 2.0)) {
-                    correction =  _1P20[y] - _1P20[x] ;
-                    lbe = _1P20[y];
-                    correctL = true;
-                } else if ((hue >= (_1P20[x] + _4P20[x]) / 2.0)  && (hue < (0.035 + _4P20[x]) / 2.0)) {
-                    correction =  _4P20[y] - _4P20[x] ;
-                    lbe = _4P20[y];
-                    correctL = true;
-                }
-            } else if (lum < 35.0) {
-                if ((hue >= (_15PB30[x] - 0.035)) && (hue < (_15PB30[x] + _3PB30[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _15PB30[y] - _15PB30[x] ;
-                    lbe = _15PB30[y];
-                    correctL = true;
-                } else if ((hue >= (_15PB30[x] + _3PB30[x]) / 2.0)  && (hue < (_45PB30[x] + _3PB30[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _3PB30[y] - _3PB30[x] ;
-                    lbe = _3PB30[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB30[x] + _3PB30[x]) / 2.0)  && (hue < (_45PB30[x] + 0.052)) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _45PB30[y] - _45PB30[x] ;
-                    lbe = _45PB30[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB30[x] + 0.052))  && (hue < (_6PB30[x] + _75PB30[x]) / 2.0)) {
-                    correction =  _6PB30[y] - _6PB30[x] ;
-                    lbe = _6PB30[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB30[x] + _75PB30[x]) / 2.0)  && (hue < (_9PB30[x] + _75PB30[x]) / 2.0)) {
-                    correction =  _75PB30[y] - _75PB30[x] ;
-                    lbe = _75PB30[y] ;
-                    correctL = true;
-                } else if ((hue >= (_9PB30[x] + _75PB30[x]) / 2.0)  && (hue < (_9PB30[x] + _10PB30[x]) / 2.0)) {
-                    correction =  _9PB30[y] - _9PB30[x] ;
-                    lbe = _9PB30[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB30[x] + _9PB30[x]) / 2.0)  && (hue < (_1P30[x] + _10PB30[x]) / 2.0)) {
-                    correction =  _10PB30[y] - _10PB30[x] ;
-                    lbe = _10PB30[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB30[x] + _1P30[x]) / 2.0)  && (hue < (_1P30[x] + _4P30[x]) / 2.0)) {
-                    correction =  _1P30[y] - _1P30[x] ;
-                    lbe = _1P30[y];
-                    correctL = true;
-                } else if ((hue >= (_1P30[x] + _4P30[x]) / 2.0)  && (hue < (0.035 + _4P30[x]) / 2.0)) {
-                    correction =  _4P30[y] - _4P30[x] ;
-                    lbe = _4P30[y];
-                    correctL = true;
-                }
-            } else if (lum < 45.0) {
-                if ((hue <= (_05PB40[x] + _15PB40[x]) / 2.0) && (hue > (_05PB40[x] + _10B40[x]) / 2.0) && x < 75) {
-                    if (y > 75) {
-                        y = 75;
-                    }
-
-                    correction =  _05PB40[y] - _05PB40[x] ;
-                    lbe = _05PB40[y];
-                    correctL = true;
-                } else if ((hue <= (_05PB40[x] + _10B40[x]) / 2.0) && (hue > (_10B40[x] + _9B40[x]) / 2.0) && x < 70) {
-                    if (y > 70) {
-                        y = 70;
-                    }
-
-                    correction =  _10B40[y] - _10B40[x] ;
-                    lbe = _10B40[y];
-                    correctL = true;
-                } else if ((hue <= (_10B40[x] + _9B40[x]) / 2.0) && (hue > (_9B40[x] + _7B40[x]) / 2.0) && x < 70) {
-                    if (y > 70) {
-                        y = 70;
-                    }
-
-                    correction =  _9B40[y] - _9B40[x] ;
-                    lbe = _9B40[y];
-                    correctL = true;
-                } else if ((hue <= (_9B40[x] + _7B40[x]) / 2.0) && (hue > (_5B40[x] + _7B40[x]) / 2.0) && x < 70) {
-                    if (y > 70) {
-                        y = 70;
-                    }
-
-                    correction =  _7B40[y] - _7B40[x] ;
-                    lbe = _7B40[y];
-                    correctL = true;
-                } else if ((hue <= (_5B40[x] + _7B40[x]) / 2.0)  && (hue > (_5B40[x] - 0.035)) && x < 70) {
-                    if (y > 70) {
-                        y = 70;    //
-                    }
-
-                    correction =  _5B40[y] - _5B40[x] ;
-                    lbe =  _5B40[y];
-                    correctL = true;
-                }
-
-                else if ((hue >= (_15PB40[x] - 0.035)) && (hue < (_15PB40[x] + _3PB40[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _15PB40[y] - _15PB40[x] ;
-                    lbe = _15PB40[y];
-                    correctL = true;
-                } else if ((hue >= (_15PB40[x] + _3PB40[x]) / 2.0)  && (hue < (_45PB40[x] + _3PB40[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _3PB40[y] - _3PB40[x] ;
-                    lbe = _3PB40[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB40[x] + _3PB40[x]) / 2.0)  && (hue < (_45PB40[x] + 0.052)) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _45PB40[y] - _45PB40[x] ;
-                    lbe = _45PB40[y] ;
-                    correctL = true;
-                } else if ((hue >= (_45PB40[x] + 0.052))  && (hue < (_6PB40[x] + _75PB40[x]) / 2.0)) {
-                    correction =  _6PB40[y] - _6PB40[x] ;
-                    lbe = _6PB40[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB40[x] + _75PB40[x]) / 2.0)  && (hue < (_9PB40[x] + _75PB40[x]) / 2.0)) {
-                    correction =  _75PB40[y] - _75PB40[x] ;
-                    lbe = _75PB40[y];
-                    correctL = true;
-                } else if ((hue >= (_9PB40[x] + _75PB40[x]) / 2.0)  && (hue < (_9PB40[x] + _10PB40[x]) / 2.0)) {
-                    correction =  _9PB40[y] - _9PB40[x] ;
-                    lbe = _9PB40[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB40[x] + _9PB40[x]) / 2.0)  && (hue < (_1P40[x] + _10PB40[x]) / 2.0)) {
-                    correction =  _10PB40[y] - _10PB40[x] ;
-                    lbe = _10PB40[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB40[x] + _1P40[x]) / 2.0)  && (hue < (_1P40[x] + _4P40[x]) / 2.0)) {
-                    correction =  _1P40[y] - _1P40[x] ;
-                    lbe = _1P40[y];
-                    correctL = true;
-                } else if ((hue >= (_1P40[x] + _4P40[x]) / 2.0)  && (hue < (0.035 + _4P40[x]) / 2.0)) {
-                    correction =  _4P40[y] - _4P40[x] ;
-                    lbe = _4P40[y];
-                    correctL = true;
-                }
-            } else if (lum < 55.0) {
-                if ((hue <= (_05PB50[x] + _15PB50[x]) / 2.0) && (hue > (_05PB50[x] + _10B50[x]) / 2.0) && x < 79) {
-                    if (y > 79) {
-                        y = 79;
-                    }
-
-                    correction =  _05PB50[y] - _05PB50[x] ;
-                    lbe = _05PB50[y];
-                    correctL = true;
-                } else if ((hue <= (_05PB50[x] + _10B50[x]) / 2.0) && (hue > (_10B50[x] + _9B50[x]) / 2.0) && x < 79) {
-                    if (y > 79) {
-                        y = 79;
-                    }
-
-                    correction =  _10B50[y] - _10B50[x] ;
-                    lbe = _10B50[y];
-                    correctL = true;
-                } else if ((hue <= (_10B50[x] + _9B50[x]) / 2.0) && (hue > (_9B50[x] + _7B50[x]) / 2.0) && x < 79) {
-                    if (y > 79) {
-                        y = 79;
-                    }
-
-                    correction =  _9B50[y] - _9B50[x] ;
-                    lbe = _9B50[y];
-                    correctL = true;
-                } else if ((hue <= (_9B50[x] + _7B50[x]) / 2.0) && (hue > (_5B50[x] + _7B50[x]) / 2.0) && x < 79) {
-                    if (y > 79) {
-                        y = 79;
-                    }
-
-                    correction =  _7B50[y] - _7B50[x] ;
-                    lbe = _7B50[y];
-                    correctL = true;
-                } else if ((hue <= (_5B50[x] + _7B50[x]) / 2.0)  && (hue > (_5B50[x] - 0.035)) && x < 79) {
-                    if (y > 79) {
-                        y = 79;    //
-                    }
-
-                    correction =  _5B50[y] - _5B50[x] ;
-                    lbe = _5B50[y];
-                    correctL = true;
-                }
-
-                else if ((hue >= (_15PB50[x] - 0.035)) && (hue < (_15PB50[x] + _3PB50[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _15PB50[y] - _15PB50[x] ;
-                    lbe = _15PB50[y];
-                    correctL = true;
-                } else if ((hue >= (_15PB50[x] + _3PB50[x]) / 2.0)  && (hue < (_45PB50[x] + _3PB50[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _3PB50[y] - _3PB50[x] ;
-                    lbe = _3PB50[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB50[x] + _3PB50[x]) / 2.0)  && (hue < (_6PB50[x] + _45PB50[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _45PB50[y] - _45PB50[x] ;
-                    lbe = _45PB50[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB50[x] + _45PB50[x]) / 2.0)  && (hue < (_6PB50[x] + _75PB50[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _6PB50[y] - _6PB50[x] ;
-                    lbe = _6PB50[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB50[x] + _75PB50[x]) / 2.0)  && (hue < (_9PB50[x] + _75PB50[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _75PB50[y] - _75PB50[x] ;
-                    lbe = _75PB50[y];
-                    correctL = true;
-                } else if ((hue >= (_9PB50[x] + _75PB50[x]) / 2.0)  && (hue < (_9PB50[x] + _10PB50[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _9PB50[y] - _9PB50[x] ;
-                    lbe = _9PB50[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB50[x] + _9PB50[x]) / 2.0)  && (hue < (_1P50[x] + _10PB50[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10PB50[y] - _10PB50[x] ;
-                    lbe = _10PB50[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB50[x] + _1P50[x]) / 2.0)  && (hue < (_1P50[x] + _4P50[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _1P50[y] - _1P50[x] ;
-                    lbe = _1P50[y];
-                    correctL = true;
-                } else if ((hue >= (_1P50[x] + _4P50[x]) / 2.0)  && (hue < (0.035 + _4P50[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _4P50[y] - _4P50[x] ;
-                    lbe = _4P50[y];
-                    correctL = true;
-                }
-            } else if (lum < 65.0) {
-                if ((hue <= (_05PB60[x] + _15PB60[x]) / 2.0) && (hue > (_05PB60[x] + _10B60[x]) / 2.0) && x < 79) {
-                    if (y > 79) {
-                        y = 79;
-                    }
-
-                    correction =  _05PB60[y] - _05PB60[x] ;
-                    lbe = _05PB60[y];
-                    correctL = true;
-                } else if ((hue <= (_05PB60[x] + _10B60[x]) / 2.0) && (hue > (_10B60[x] + _9B60[x]) / 2.0) && x < 79) {
-                    if (y > 79) {
-                        y = 79;
-                    }
-
-                    correction =  _10B60[y] - _10B60[x] ;
-                    lbe = _10B60[y];
-                    correctL = true;
-                } else if ((hue <= (_10B60[x] + _9B60[x]) / 2.0) && (hue > (_9B60[x] + _7B60[x]) / 2.0) && x < 79) {
-                    if (y > 79) {
-                        y = 79;
-                    }
-
-                    correction =  _9B60[y] - _9B60[x] ;
-                    lbe = _9B60[y];
-                    correctL = true;
-                } else if ((hue <= (_9B60[x] + _7B60[x]) / 2.0) && (hue > (_5B60[x] + _7B60[x]) / 2.0) && x < 79) {
-                    if (y > 79) {
-                        y = 79;
-                    }
-
-                    correction =  _7B60[y] - _7B60[x] ;
-                    lbe = _7B60[y];
-                    correctL = true;
-                } else if ((hue <= (_5B60[x] + _7B60[x]) / 2.0)  && (hue > (_5B60[x] - 0.035)) && x < 79) {
-                    if (y > 79) {
-                        y = 79;    //
-                    }
-
-                    correction =  _5B60[y] - _5B60[x] ;
-                    lbe = _5B60[y];
-                    correctL = true;
-                }
-
-                else if ((hue >= (_15PB60[x] - 0.035)) && (hue < (_15PB60[x] + _3PB60[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _15PB60[y] - _15PB60[x] ;
-                    lbe = _15PB60[y];
-                    correctL = true;
-                } else if ((hue >= (_15PB60[x] + _3PB60[x]) / 2.0)  && (hue < (_45PB60[x] + _3PB60[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _3PB60[y] - _3PB60[x] ;
-                    lbe = _3PB60[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB60[x] + _3PB60[x]) / 2.0)  && (hue < (_6PB60[x] + _45PB60[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _45PB60[y] - _45PB60[x] ;
-                    lbe = _45PB60[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB60[x] + _45PB60[x]) / 2.0)  && (hue < (_6PB60[x] + _75PB60[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _6PB60[y] - _6PB60[x] ;
-                    lbe = _6PB60[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB60[x] + _75PB60[x]) / 2.0)  && (hue < (_9PB60[x] + _75PB60[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _75PB60[y] - _75PB60[x] ;
-                    lbe = _75PB60[y];
-                    correctL = true;
-                } else if ((hue >= (_9PB60[x] + _75PB60[x]) / 2.0)  && (hue < (_9PB60[x] + _10PB60[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _9PB60[y] - _9PB60[x] ;
-                    lbe = _9PB60[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB60[x] + _9PB60[x]) / 2.0)  && (hue < (_1P60[x] + _10PB60[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10PB60[y] - _10PB60[x] ;
-                    lbe = _10PB60[y];
-                    correctL = true;
-                } else if ((hue >= (_10PB60[x] + _1P60[x]) / 2.0)  && (hue < (_1P60[x] + _4P60[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _1P60[y] - _1P60[x] ;
-                    lbe = _1P60[y];
-                    correctL = true;
-                } else if ((hue >= (_1P60[x] + _4P60[x]) / 2.0)  && (hue < (0.035 + _4P60[x]) / 2.0) && x <= 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _4P60[y] - _4P60[x] ;
-                    lbe = _4P60[y];
-                    correctL = true;
-                }
-            } else if (lum < 75.0) {
-                if ((hue <= (_05PB70[x] + _15PB70[x]) / 2.0) && (hue > (_05PB70[x] + _10B70[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _05PB70[y] - _05PB70[x] ;
-                    lbe = _05PB70[y];
-                    correctL = true;
-                } else if ((hue <= (_05PB70[x] + _10B70[x]) / 2.0) && (hue > (_10B70[x] + _9B70[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _10B70[y] - _10B70[x] ;
-                    lbe = _10B70[y];
-                    correctL = true;
-                } else if ((hue <= (_10B70[x] + _9B70[x]) / 2.0) && (hue > (_9B70[x] + _7B70[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _9B70[y] - _9B70[x] ;
-                    lbe = _9B70[y];
-                    correctL = true;
-                } else if ((hue <= (_9B70[x] + _7B70[x]) / 2.0) && (hue > (_5B70[x] + _7B70[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _7B70[y] - _7B70[x] ;
-                    lbe = _7B70[y];
-                    correctL = true;
-                } else if ((hue <= (_5B70[x] + _7B70[x]) / 2.0)  && (hue > (_5B70[x] - 0.035)) && x < 50) {
-                    if (y > 49) {
-                        y = 49;    //
-                    }
-
-                    correction =  _5B70[y] - _5B70[x] ;
-                    lbe =  _5B70[y];
-                    correctL = true;
-                }
-
-                else if ((hue >= (_15PB70[x] - 0.035)) && (hue < (_15PB70[x] + _3PB70[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _15PB70[y] - _15PB70[x] ;
-                    lbe = _15PB70[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB70[x] + _3PB70[x]) / 2.0)  && (hue < (_6PB70[x] + _45PB70[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _45PB70[y] - _45PB70[x] ;
-                    lbe = _45PB70[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB70[x] + _45PB70[x]) / 2.0)  && (hue < (_6PB70[x] + _75PB70[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _6PB70[y] - _6PB70[x] ;
-                    lbe = _6PB70[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB70[x] + _75PB70[x]) / 2.0)  && (hue < (_9PB70[x] + _75PB70[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _75PB70[y] - _75PB70[x] ;
-                    lbe = _75PB70[y];
-                    correctL = true;
-                } else if ((hue >= (_9PB70[x] + _75PB70[x]) / 2.0)  && (hue < (_9PB70[x] + 0.035)) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _9PB70[y] - _9PB70[x] ;
-                    lbe = _9PB70[y];
-                    correctL = true;
-                }
-            } else if (lum < 85.0) {
-                if ((hue <= (_05PB80[x] + _15PB80[x]) / 2.0) && (hue > (_05PB80[x] + _10B80[x]) / 2.0) && x < 40) {
-                    if (y > 39) {
-                        y = 39;
-                    }
-
-                    correction =  _05PB80[y] - _05PB80[x] ;
-                    lbe = _05PB80[y] ;
-                    correctL = true;
-                } else if ((hue <= (_05PB80[x] + _10B80[x]) / 2.0) && (hue > (_10B80[x] + _9B80[x]) / 2.0) && x < 40) {
-                    if (y > 39) {
-                        y = 39;
-                    }
-
-                    correction =  _10B80[y] - _10B80[x] ;
-                    lbe = _10B80[y];
-                    correctL = true;
-                } else if ((hue <= (_10B80[x] + _9B80[x]) / 2.0) && (hue > (_9B80[x] + _7B80[x]) / 2.0) && x < 40) {
-                    if (y > 39) {
-                        y = 39;
-                    }
-
-                    correction =  _9B80[y] - _9B80[x] ;
-                    lbe = _9B80[y];
-                    correctL = true;
-                } else if ((hue <= (_9B80[x] + _7B80[x]) / 2.0) && (hue > (_5B80[x] + _7B80[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _7B80[y] - _7B80[x] ;
-                    lbe = _7B80[y];
-                    correctL = true;
-                } else if ((hue <= (_5B80[x] + _7B80[x]) / 2.0)  && (hue > (_5B80[x] - 0.035)) && x < 50) {
-                    if (y > 49) {
-                        y = 49;    //
-                    }
-
-                    correction =  _5B80[y] - _5B80[x] ;
-                    lbe = _5B80[y];
-                    correctL = true;
-                }
-
-                else if ((hue >= (_15PB80[x] - 0.035)) && (hue < (_15PB80[x] + _3PB80[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _15PB80[y] - _15PB80[x] ;
-                    lbe = _15PB80[y];
-                    correctL = true;
-                } else if ((hue >= (_45PB80[x] + _3PB80[x]) / 2.0)  && (hue < (_6PB80[x] + _45PB80[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _45PB80[y] - _45PB80[x] ;
-                    lbe = _45PB80[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB80[x] + _45PB80[x]) / 2.0)  && (hue < (_6PB80[x] + _75PB80[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _6PB80[y] - _6PB80[x] ;
-                    lbe = _6PB80[y];
-                    correctL = true;
-                } else if ((hue >= (_6PB80[x] + _75PB80[x]) / 2.0)  && (hue < (_9PB80[x] + _75PB80[x]) / 2.0) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _75PB80[y] - _75PB80[x] ;
-                    lbe = _75PB80[y];
-                    correctL = true;
-                } else if ((hue >= (_9PB80[x] + _75PB80[x]) / 2.0)  && (hue < (_9PB80[x] + 0.035)) && x < 50) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _9PB80[y] - _9PB80[x] ;
-                    lbe = _9PB80[y];
-                    correctL = true;
-                }
-            }
-        }
-    }
-    // end PB correction
-
-    //red yellow correction
-    else if (zone == 2) {
-        if (lum > 15.0) {
-            if (lum < 25.0) {
-                if ((hue <= (_10YR20[x] + 0.035)) && (hue > (_10YR20[x] + _85YR20[x]) / 2.0) && x <= 45) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _10YR20[y] - _10YR20[x] ;
-                    lbe = _10YR20[y];
-                    correctL = true;
-                } else if ((hue <= (_85YR20[x] + _10YR20[x]) / 2.0)  && (hue > (_85YR20[x] + 0.035) && x <= 45)) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _85YR20[y] - _85YR20[x] ;
-                    lbe = _85YR20[y];
-                    correctL = true;
-                }
-            } else if (lum < 35.0) {
-                if ((hue <= (_10YR30[x] + 0.035)) && (hue > (_10YR30[x] + _85YR30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10YR30[y] - _10YR30[x] ;
-                    lbe = _10YR30[y];
-                    correctL = true;
-                } else if ((hue <= (_10YR30[x] + _85YR30[x]) / 2.0) && (hue > (_85YR30[x] + _7YR30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _85YR30[y] - _85YR30[x] ;
-                    lbe = _85YR30[y];
-                    correctL = true;
-                } else if ((hue <= (_85YR30[x] + _7YR30[x]) / 2.0)  && (hue > (_7YR30[x] + _55YR30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _7YR30[y] - _7YR30[x] ;
-                    lbe = _7YR30[y];
-                    correctL = true;
-                } else if ((hue <= (_7YR30[x] + _55YR30[x]) / 2.0)  && (hue > (_55YR30[x] + _4YR30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _55YR30[y] - _55YR30[x] ;
-                    lbe = _55YR30[y];
-                    correctL = true;
-                } else if ((hue <= (_55YR30[x] + _4YR30[x]) / 2.0)  && (hue > (_4YR30[x] + _25YR30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _4YR30[y] - _4YR30[x] ;
-                    lbe = _4YR30[y];
-                    correctL = true;
-                } else if ((hue <= (_4YR30[x] + _25YR30[x]) / 2.0)  && (hue > (_25YR30[x] + _10R30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _25YR30[y] - _25YR30[x] ;
-                    lbe = _25YR30[y];
-                    correctL = true;
-                } else if ((hue <= (_25YR30[x] + _10R30[x]) / 2.0)  && (hue > (_10R30[x] + _9R30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10R30[y] - _10R30[x] ;
-                    lbe = _10R30[y];
-                    correctL = true;
-                } else if ((hue <= (_10R30[x] + _9R30[x]) / 2.0)  && (hue > (_9R30[x] + _7R30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _9R30[y] - _9R30[x] ;
-                    lbe = _9R30[y];
-                    correctL = true;
-                } else if ((hue <= (_9R30[x] + _7R30[x]) / 2.0)  && (hue > (_7R30[x] - 0.035)) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _7R30[y] - _7R30[x] ;
-                    lbe = _7R30[y] ;
-                    correctL = true;
-                }
-            } else if (lum < 45.0) {
-                if ((hue <= (_10YR40[x] + 0.035)) && (hue > (_10YR40[x] + _85YR40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10YR40[y] - _10YR40[x] ;
-                    lbe = _10YR40[y];
-                    correctL = true;
-                } else if ((hue <= (_10YR40[x] + _85YR40[x]) / 2.0) && (hue > (_85YR40[x] + _7YR40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _85YR40[y] - _85YR40[x] ;
-                    lbe = _85YR40[y];
-                    correctL = true;
-                } else if ((hue <= (_85YR40[x] + _7YR40[x]) / 2.0)  && (hue > (_7YR40[x] + _55YR40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _7YR40[y] - _7YR40[x] ;
-                    lbe = _7YR40[y];
-                    correctL = true;
-                } else if ((hue <= (_7YR40[x] + _55YR40[x]) / 2.0)  && (hue > (_55YR40[x] + _4YR40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _55YR40[y] - _55YR40[x] ;
-                    lbe = _55YR40[y];
-                    correctL = true;
-                } else if ((hue <= (_55YR40[x] + _4YR40[x]) / 2.0)  && (hue > (_4YR40[x] + _25YR40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _4YR40[y] - _4YR40[x] ;
-                    lbe = _4YR40[y];
-                    correctL = true;
-                } else if ((hue <= (_4YR40[x] + _25YR40[x]) / 2.0)  && (hue > (_25YR40[x] + _10R40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _25YR40[y] - _25YR40[x] ;
-                    lbe = _25YR40[y] ;
-                    correctL = true;
-                } else if ((hue <= (_25YR40[x] + _10R40[x]) / 2.0)  && (hue > (_10R40[x] + _9R40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10R40[y] - _10R40[x] ;
-                    lbe = _10R40[y];
-                    correctL = true;
-                } else if ((hue <= (_10R40[x] + _9R40[x]) / 2.0)  && (hue > (_9R40[x] + _7R40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _9R40[y] - _9R40[x] ;
-                    lbe = _9R40[y];
-                    correctL = true;
-                } else if ((hue <= (_9R40[x] + _7R40[x]) / 2.0)  && (hue > (_7R40[x] - 0.035)) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _7R40[y] - _7R40[x] ;
-                    lbe = _7R40[y];
-                    correctL = true;
-                }
-            } else if (lum < 55.0) {
-                if ((hue <= (_10YR50[x] + 0.035)) && (hue > (_10YR50[x] + _85YR50[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10YR50[y] - _10YR50[x] ;
-                    lbe = _10YR50[y];
-                    correctL = true;
-                } else if ((hue <= (_10YR50[x] + _85YR50[x]) / 2.0) && (hue > (_85YR50[x] + _7YR50[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _85YR50[y] - _85YR50[x] ;
-                    lbe = _85YR50[y];
-                    correctL = true;
-                } else if ((hue <= (_85YR50[x] + _7YR50[x]) / 2.0)  && (hue > (_7YR50[x] + _55YR50[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _7YR50[y] - _7YR50[x] ;
-                    lbe = _7YR50[y];
-                    correctL = true;
-                } else if ((hue <= (_7YR50[x] + _55YR50[x]) / 2.0)  && (hue > (_55YR50[x] + _4YR50[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _55YR50[y] - _55YR50[x] ;
-                    lbe = _55YR50[y];
-                    correctL = true;
-                } else if ((hue <= (_55YR50[x] + _4YR50[x]) / 2.0)  && (hue > (_4YR50[x] + _25YR50[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _4YR50[y] - _4YR50[x] ;
-                    lbe = _4YR50[y];
-                    correctL = true;
-                } else if ((hue <= (_4YR50[x] + _25YR50[x]) / 2.0)  && (hue > (_25YR50[x] + _10R50[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _25YR50[y] - _25YR50[x] ;
-                    lbe = _25YR50[y];
-                    correctL = true;
-                } else if ((hue <= (_25YR50[x] + _10R50[x]) / 2.0)  && (hue > (_10R50[x] + _9R50[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10R50[y] - _10R50[x] ;
-                    lbe = _10R50[y];
-                    correctL = true;
-                } else if ((hue <= (_10R50[x] + _9R50[x]) / 2.0)  && (hue > (_9R50[x] + _7R50[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _9R50[y] - _9R50[x] ;
-                    lbe = _9R50[y];
-                    correctL = true;
-                } else if ((hue <= (_9R50[x] + _7R50[x]) / 2.0)  && (hue > (_7R50[x] - 0.035)) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _7R50[y] - _7R50[x] ;
-                    lbe = _7R50[y];
-                    correctL = true;
-                }
-            } else if (lum < 65.0) {
-                if ((hue <= (_10YR60[x] + 0.035)) && (hue > (_10YR60[x] + _85YR60[x]) / 2.0)) {
-                    ;
-                    correction =  _10YR60[y] - _10YR60[x] ;
-                    lbe = _10YR60[y];
-                    correctL = true;
-                } else if ((hue <= (_10YR60[x] + _85YR60[x]) / 2.0) && (hue > (_85YR60[x] + _7YR60[x]) / 2.0)) {
-                    ;
-                    correction =  _85YR60[y] - _85YR60[x] ;
-                    lbe = _85YR60[y];
-                    correctL = true;
-                } else if ((hue <= (_85YR60[x] + _7YR60[x]) / 2.0)  && (hue > (_7YR60[x] + _55YR60[x]) / 2.0)) {
-                    correction =  _7YR60[y] - _7YR60[x] ;
-                    lbe = _7YR60[y];
-                    correctL = true;
-                } else if ((hue <= (_7YR60[x] + _55YR60[x]) / 2.0)  && (hue > (_55YR60[x] + _4YR60[x]) / 2.0)) {
-                    correction =  _55YR60[y] - _55YR60[x] ;
-                    lbe = _55YR60[y];
-                    correctL = true;
-                } else if ((hue <= (_55YR60[x] + _4YR60[x]) / 2.0)  && (hue > (_4YR60[x] + _25YR60[x]) / 2.0)) {
-                    correction =  _4YR60[y] - _4YR60[x] ;
-                    lbe = _4YR60[y];
-                    correctL = true;
-                } else if ((hue <= (_4YR60[x] + _25YR60[x]) / 2.0)  && (hue > (_25YR60[x] + _10R60[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _25YR60[y] - _25YR60[x] ;
-                    lbe = _25YR60[y];
-                    correctL = true;
-                } else if ((hue <= (_25YR60[x] + _10R60[x]) / 2.0)  && (hue > (_10R60[x] + _9R60[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10R60[y] - _10R60[x] ;
-                    lbe = _10R60[y];
-                    correctL = true;
-                } else if ((hue <= (_10R60[x] + _9R60[x]) / 2.0)  && (hue > (_9R60[x] + _7R60[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _9R60[y] - _9R60[x] ;
-                    lbe = _9R60[y];
-                    correctL = true;
-                } else if ((hue <= (_9R60[x] + _7R60[x]) / 2.0)  && (hue > (_7R60[x] - 0.035)) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _7R60[y] - _7R60[x] ;
-                    lbe = _7R60[y];
-                    correctL = true;
-                }
-            } else if (lum < 75.0) {
-                if ((hue <= (_10YR70[x] + 0.035)) && (hue > (_10YR70[x] + _85YR70[x]) / 2.0)) {
-                    correction =  _10YR70[y] - _10YR70[x] ;
-                    lbe = _10YR70[y];
-                    correctL = true;
-                } else if ((hue <= (_10YR70[x] + _85YR70[x]) / 2.0) && (hue > (_85YR70[x] + _7YR70[x]) / 2.0)) {
-                    correction =  _85YR70[y] - _85YR70[x] ;
-                    lbe = _85YR70[y];
-                    correctL = true;
-                }
-
-                if ((hue <= (_85YR70[x] + _7YR70[x]) / 2.0)  && (hue > (_7YR70[x] + _55YR70[x]) / 2.0)) {
-                    correction =  _7YR70[y] - _7YR70[x] ;
-                    lbe = _7YR70[y];
-                    correctL = true;
-                } else if ((hue <= (_7YR70[x] + _55YR70[x]) / 2.0)  && (hue > (_55YR70[x] + _4YR70[x]) / 2.0)) {
-                    correction =  _55YR70[y] - _55YR70[x] ;
-                    lbe = _55YR70[y];
-                    correctL = true;
-                } else if ((hue <= (_55YR70[x] + _4YR70[x]) / 2.0)  && (hue > (_4YR70[x] + _25YR70[x]) / 2.0)) {
-                    correction =  _4YR70[y] - _4YR70[x] ;
-                    lbe = _4YR70[y];
-                    correctL = true;
-                } else if ((hue <= (_4YR70[x] + _25YR70[x]) / 2.0)  && (hue > (_25YR70[x] + _10R70[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _25YR70[y] - _25YR70[x] ;
-                    lbe = _25YR70[y];
-                    correctL = true;
-                } else if ((hue <= (_25YR70[x] + _10R70[x]) / 2.0)  && (hue > (_10R70[x] + _9R70[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10R70[y] - _10R70[x] ;
-                    lbe = _10R70[y];
-                    correctL = true;
-                } else if ((hue <= (_10R70[x] + _9R70[x]) / 2.0)  && (hue > (_9R70[x] + _7R70[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _9R70[y] - _9R70[x] ;
-                    lbe = _9R70[y] ;
-                    correctL = true;
-                } else if ((hue <= (_9R70[x] + _7R70[x]) / 2.0)  && (hue > (_7R70[x] - 0.035)) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _7R70[y] - _7R70[x] ;
-                    lbe = _7R70[y];
-                    correctL = true;
-                }
-            } else if (lum < 85.0) {
-                if ((hue <= (_10YR80[x] + 0.035)) && (hue > (_10YR80[x] + _85YR80[x]) / 2.0)) {
-                    correction =  _10YR80[y] - _10YR80[x] ;
-                    lbe = _10YR80[y];
-                    correctL = true;
-                } else if ((hue <= (_10YR80[x] + _85YR80[x]) / 2.0) && (hue > (_85YR80[x] + _7YR80[x]) / 2.0)) {
-                    correction =  _85YR80[y] - _85YR80[x] ;
-                    lbe = _85YR80[y];
-                } else if ((hue <= (_85YR80[x] + _7YR80[x]) / 2.0)  && (hue > (_7YR80[x] + _55YR80[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _7YR80[y] - _7YR80[x] ;
-                    lbe = _7YR80[y];
-                    correctL = true;
-                } else if ((hue <= (_7YR80[x] + _55YR80[x]) / 2.0)  && (hue > (_55YR80[x] + _4YR80[x]) / 2.0) && x < 45) {
-                    correction =  _55YR80[y] - _55YR80[x] ;
-                    lbe = _55YR80[y];
-                    correctL = true;
-                } else if ((hue <= (_55YR80[x] + _4YR80[x]) / 2.0)  && (hue > (_4YR80[x] - 0.035) && x < 45)) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _4YR80[y] - _4YR80[x] ;
-                    lbe = _4YR80[y] ;
-                    correctL = true;
-                }
-            } else if (lum < 95.0) {
-                if ((hue <= (_10YR90[x] + 0.035)) && (hue > (_10YR90[x] - 0.035) && x < 85)) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10YR90[y] - _10YR90[x] ;
-                    lbe = _10YR90[y];
-                    correctL = true;
-                } else if (hue <= (_85YR90[x] + 0.035)  && hue > (_85YR90[x] - 0.035) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _85YR90[y] - _85YR90[x] ;
-                    lbe = _85YR90[y];
-                    correctL = true;
-                } else if ((hue <= (_55YR90[x] + 0.035)  && (hue > (_55YR90[x] - 0.035) && x < 45))) {
-                    if (y > 49) {
-                        y = 49;
-                    }
-
-                    correction =  _55YR90[y] - _55YR90[x] ;
-                    lbe = _55YR90[y];
-                    correctL = true;
-                }
-            }
-        }
-    }
-    //end red yellow
-
-    //Green yellow correction
-    else if (zone == 3) {
-        if (lum >= 25.0) {
-            if (lum < 35.0) {
-                if ((hue <= (_7G30[x] + 0.035)) && (hue > (_7G30[x] + _5G30[x]) / 2.0)) {
-                    correction =  _7G30[y] - _7G30[x] ;
-                    lbe = _7G30[y];
-                    correctL = true;
-                } else if ((hue <= (_7G30[x] + _5G30[x]) / 2.0) && (hue > (_5G30[x] + _25G30[x]) / 2.0)) {
-                    correction =  _5G30[y] - _5G30[x] ;
-                    lbe = _5G30[y];
-                    correctL = true;
-                } else if ((hue <= (_25G30[x] + _5G30[x]) / 2.0)  && (hue > (_25G30[x] + _1G30[x]) / 2.0)) {
-                    correction =  _25G30[y] - _25G30[x] ;
-                    lbe = _25G30[y];
-                    correctL = true;
-                } else if ((hue <= (_1G30[x] + _25G30[x]) / 2.0)  && (hue > (_1G30[x] + _10GY30[x]) / 2.0)) {
-                    correction =  _1G30[y] - _1G30[x] ;
-                    lbe = _1G30[y];
-                    correctL = true;
-                } else if ((hue <= (_1G30[x] + _10GY30[x]) / 2.0)  && (hue > (_10GY30[x] + _75GY30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10GY30[y] - _10GY30[x] ;
-                    lbe =  _10GY30[y];
-                    correctL = true;
-                } else if ((hue <= (_10GY30[x] + _75GY30[x]) / 2.0)  && (hue > (_75GY30[x] + _5GY30[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _75GY30[y] - _75GY30[x] ;
-                    lbe = _75GY30[y];
-                    correctL = true;
-                } else if ((hue <= (_5GY30[x] + _75GY30[x]) / 2.0)  && (hue > (_5GY30[x] - 0.035)) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _5GY30[y] - _5GY30[x] ;
-                    lbe = _5GY30[y] ;
-                    correctL = true;
-                }
-            } else if (lum < 45.0) {
-                if ((hue <= (_7G40[x] + 0.035)) && (hue > (_7G40[x] + _5G40[x]) / 2.0)) {
-                    correction =  _7G40[y] - _7G40[x] ;
-                    lbe = _7G40[y];
-                    correctL = true;
-                } else if ((hue <= (_7G40[x] + _5G40[x]) / 2.0) && (hue > (_5G40[x] + _25G40[x]) / 2.0)) {
-                    correction =  _5G40[y] - _5G40[x] ;
-                    lbe = _5G40[y];
-                    correctL = true;
-                } else if ((hue <= (_25G40[x] + _5G40[x]) / 2.0)  && (hue > (_25G40[x] + _1G40[x]) / 2.0)) {
-                    correction =  _25G40[y] - _25G40[x] ;
-                    lbe = _25G40[y];
-                    correctL = true;
-                } else if ((hue <= (_1G40[x] + _25G40[x]) / 2.0)  && (hue > (_1G40[x] + _10GY40[x]) / 2.0)) {
-                    correction =  _1G40[y] - _1G40[x] ;
-                    lbe = _1G40[y];
-                    correctL = true;
-                } else if ((hue <= (_1G40[x] + _10GY40[x]) / 2.0)  && (hue > (_10GY40[x] + _75GY40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _10GY40[y] - _10GY40[x] ;
-                    lbe = _10GY40[y];
-                    correctL = true;
-                } else if ((hue <= (_10GY40[x] + _75GY40[x]) / 2.0)  && (hue > (_75GY40[x] + _5GY40[x]) / 2.0) && x < 85) {
-                    if (y > 89) {
-                        y = 89;
-                    }
-
-                    correction =  _75GY40[y] - _75GY40[x] ;
-                    lbe = _75GY40[y];
-                    correctL = true;
-                } else if ((hue <= (_5GY40[x] + _75GY40[x]) / 2.0)  && (hue > (_5GY40[x] - 0.035)) && x < 85) {
-                    if (y > 89) {
-                        y = 89;    //
-                    }
-
-                    correction =  _5GY40[y] - _5GY40[x] ;
-                    lbe = _5GY40[y];
-                    correctL = true;
-                }
-            } else if (lum < 55.0) {
-                if ((hue <= (_7G50[x] + 0.035)) && (hue > (_7G50[x] + _5G50[x]) / 2.0)) {
-                    correction =  _7G50[y] - _7G50[x] ;
-                    lbe = _7G50[y];
-                    correctL = true;
-                } else if ((hue <= (_7G50[x] + _5G50[x]) / 2.0) && (hue > (_5G50[x] + _25G50[x]) / 2.0)) {
-                    correction =  _5G50[y] - _5G50[x] ;
-                    lbe = _5G50[y];
-                    correctL = true;
-                } else if ((hue <= (_25G50[x] + _5G50[x]) / 2.0)  && (hue > (_25G50[x] + _1G50[x]) / 2.0)) {
-                    correction =  _25G50[y] - _25G50[x] ;
-                    lbe = _25G50[y];
-                    correctL = true;
-                } else if ((hue <= (_1G50[x] + _25G50[x]) / 2.0)  && (hue > (_1G50[x] + _10GY50[x]) / 2.0)) {
-                    correction =  _1G50[y] - _1G50[x] ;
-                    lbe = _1G50[y];
-                    correctL = true;
-                } else if ((hue <= (_1G50[x] + _10GY50[x]) / 2.0)  && (hue > (_10GY50[x] + _75GY50[x]) / 2.0)) {
-                    correction =  _10GY50[y] - _10GY50[x] ;
-                    lbe = _10GY50[y];
-                    correctL = true;
-                } else if ((hue <= (_10GY50[x] + _75GY50[x]) / 2.0)  && (hue > (_75GY50[x] + _5GY50[x]) / 2.0)) {
-                    correction =  _75GY50[y] - _75GY50[x] ;
-                    lbe = _75GY50[y];
-                    correctL = true;
-                } else if ((hue <= (_5GY50[x] + _75GY50[x]) / 2.0)  && (hue > (_5GY50[x] - 0.035))) {
-                    correction =  _5GY50[y] - _5GY50[x] ;
-                    lbe = _5GY50[y];
-                    correctL = true;
-                }
-            } else if (lum < 65.0) {
-                if ((hue <= (_7G60[x] + 0.035)) && (hue > (_7G60[x] + _5G60[x]) / 2.0)) {
-                    correction =  _7G60[y] - _7G60[x] ;
-                    lbe = _7G60[y];
-                    correctL = true;
-                } else if ((hue <= (_7G60[x] + _5G60[x]) / 2.0) && (hue > (_5G60[x] + _25G60[x]) / 2.0)) {
-                    correction =  _5G60[y] - _5G60[x] ;
-                    lbe = _5G60[y];
-                    correctL = true;
-                } else if ((hue <= (_25G60[x] + _5G60[x]) / 2.0)  && (hue > (_25G60[x] + _1G60[x]) / 2.0)) {
-                    correction =  _25G60[y] - _25G60[x] ;
-                    lbe = _25G60[y];
-                    correctL = true;
-                } else if ((hue <= (_1G60[x] + _25G60[x]) / 2.0)  && (hue > (_1G60[x] + _10GY60[x]) / 2.0)) {
-                    correction =  _1G60[y] - _1G60[x] ;
-                    lbe = _1G60[y];
-                    correctL = true;
-                } else if ((hue <= (_1G60[x] + _10GY60[x]) / 2.0)  && (hue > (_10GY60[x] + _75GY60[x]) / 2.0)) {
-                    correction =  _10GY60[y] - _10GY60[x] ;
-                    lbe = _10GY60[y];
-                    correctL = true;
-                } else if ((hue <= (_10GY60[x] + _75GY60[x]) / 2.0)  && (hue > (_75GY60[x] + _5GY60[x]) / 2.0)) {
-                    correction =  _75GY60[y] - _75GY60[x] ;
-                    lbe = _75GY60[y] ;
-                    correctL = true;
-                } else if ((hue <= (_5GY60[x] + _75GY60[x]) / 2.0)  && (hue > (_5GY60[x] - 0.035))) {
-                    correction =  _5GY60[y] - _5GY60[x] ;
-                    lbe = _5GY60[y];
-                    correctL = true;
-                }
-            } else if (lum < 75.0) {
-                if ((hue <= (_7G70[x] + 0.035)) && (hue > (_7G70[x] + _5G70[x]) / 2.0)) {
-                    correction =  _7G70[y] - _7G70[x] ;
-                    lbe = _7G70[y];
-                    correctL = true;
-                } else if ((hue <= (_7G70[x] + _5G70[x]) / 2.0) && (hue > (_5G70[x] + _25G70[x]) / 2.0)) {
-                    correction =  _5G70[y] - _5G70[x] ;
-                    lbe = _5G70[y];
-                    correctL = true;
-                } else if ((hue <= (_25G70[x] + _5G70[x]) / 2.0)  && (hue > (_25G70[x] + _1G70[x]) / 2.0)) {
-                    correction =  _25G70[y] - _25G70[x] ;
-                    lbe = _25G70[y];
-                    correctL = true;
-                } else if ((hue <= (_1G70[x] + _25G70[x]) / 2.0)  && (hue > (_1G70[x] + _10GY70[x]) / 2.0)) {
-                    correction =  _1G70[y] - _1G70[x] ;
-                    lbe = _1G70[y] ;
-                    correctL = true;
-                } else if ((hue <= (_1G70[x] + _10GY70[x]) / 2.0)  && (hue > (_10GY70[x] + _75GY70[x]) / 2.0)) {
-                    correction =  _10GY70[y] - _10GY70[x] ;
-                    lbe = _10GY70[y];
-                    correctL = true;
-                } else if ((hue <= (_10GY70[x] + _75GY70[x]) / 2.0)  && (hue > (_75GY70[x] + _5GY70[x]) / 2.0)) {
-                    correction =  _75GY70[y] - _75GY70[x] ;
-                    lbe = _75GY70[y];
-                    correctL = true;
-                } else if ((hue <= (_5GY70[x] + _75GY70[x]) / 2.0)  && (hue > (_5GY70[x] - 0.035))) {
-                    correction =  _5GY70[y] - _5GY70[x] ;
-                    lbe =  _5GY70[y];
-                    correctL = true;
-                }
-            } else if (lum < 85.0) {
-                if ((hue <= (_7G80[x] + 0.035)) && (hue > (_7G80[x] + _5G80[x]) / 2.0)) {
-                    correction =  _7G80[y] - _7G80[x] ;
-                    lbe = _7G80[y];
-                    correctL = true;
-                } else if ((hue <= (_7G80[x] + _5G80[x]) / 2.0) && (hue > (_5G80[x] + _25G80[x]) / 2.0)) {
-                    correction =  _5G80[y] - _5G80[x] ;
-                    lbe = _5G80[y];
-                    correctL = true;
-                } else if ((hue <= (_25G80[x] + _5G80[x]) / 2.0)  && (hue > (_25G80[x] + _1G80[x]) / 2.0)) {
-                    correction =  _25G80[y] - _25G80[x] ;
-                    lbe = _25G80[y];
-                    correctL = true;
-                } else if ((hue <= (_1G80[x] + _25G80[x]) / 2.0)  && (hue > (_1G80[x] + _10GY80[x]) / 2.0)) {
-                    correction =  _1G80[y] - _1G80[x] ;
-                    lbe = _1G80[y];
-                    correctL = true;
-                } else if ((hue <= (_1G80[x] + _10GY80[x]) / 2.0)  && (hue > (_10GY80[x] + _75GY80[x]) / 2.0)) {
-                    correction =  _10GY80[y] - _10GY80[x] ;
-                    lbe = _10GY80[y];
-                    correctL = true;
-                } else if ((hue <= (_10GY80[x] + _75GY80[x]) / 2.0)  && (hue > (_75GY80[x] + _5GY80[x]) / 2.0)) {
-                    correction =  _75GY80[y] - _75GY80[x] ;
-                    lbe = _75GY80[y];
-                    correctL = true;
-                } else if ((hue <= (_5GY80[x] + _75GY80[x]) / 2.0)  && (hue > (_5GY80[x] - 0.035))) {
-                    correction =  _5GY80[y] - _5GY80[x] ;
-                    lbe = _5GY80[y];
-                    correctL = true;
-                }
-            }
-        }
-    }
-    //end green yellow
-
-    //Red purple correction : only for L < 30
-    else if (zone == 4) {
-        if (lum > 5.0) {
-            if (lum < 15.0) {
-                if ((hue <= (_5R10[x] + 0.035)) && (hue > (_5R10[x] - 0.043)) && x < 45) {
-                    if (y > 44) {
-                        y = 44;
-                    }
-
-                    correction =  _5R10[y] - _5R10[x] ;
-                    lbe = _5R10[y];
-                    correctL = true;
-                } else if ((hue <= (_25R10[x] + 0.043)) && (hue > (_25R10[x] + _10RP10[x]) / 2.0) && x < 45) {
-                    if (y > 44) {
-                        y = 44;
-                    }
-
-                    correction =  _25R10[y] - _25R10[x] ;
-                    lbe = _25R10[y];
-                    correctL = true;
-                } else if ((hue <= (_25R10[x] + _10RP10[x]) / 2.0) && (hue > (_10RP10[x] - 0.035)) && x < 45) {
-                    if (y > 44) {
-                        y = 44;
-                    }
-
-                    correction =  _10RP10[y] - _10RP10[x] ;
-                    lbe = _10RP10[y];
-                    correctL = true;
-                }
-            } else if (lum < 25.0) {
-                if ((hue <= (_5R20[x] + 0.035)) && (hue > (_5R20[x] + _25R20[x]) / 2.0) && x < 70) {
-                    if (y > 70) {
-                        y = 70;
-                    }
-
-                    correction =  _5R20[y] - _5R20[x] ;
-                    lbe = _5R20[y];
-                    correctL = true;
-                } else if ((hue <= (_5R20[x] + _25R20[x]) / 2.0) && (hue > (_10RP20[x] + _25R20[x]) / 2.0) && x < 70) {
-                    if (y > 70) {
-                        y = 70;
-                    }
-
-                    correction =  _25R20[y] - _25R20[x] ;
-                    lbe = _25R20[y];
-                    correctL = true;
-                } else if ((hue <= (_10RP20[x] + _25R20[x]) / 2.0)  && (hue > (_10RP20[x] - 0.035)) && x < 70) {
-                    if (y > 70) {
-                        y = 70;
-                    }
-
-                    correction =  _10RP20[y] - _10RP20[x] ;
-                    lbe = _10RP20[y];
-                    correctL = true;
-                }
-            } else if (lum < 35.0) {
-                if ((hue <= (_5R30[x] + 0.035)) && (hue > (_5R30[x] + _25R30[x]) / 2.0) && x < 85) {
-                    if (y > 85) {
-                        y = 85;
-                    }
-
-                    correction =  _5R30[y] - _5R30[x] ;
-                    lbe = _5R30[y];
-                    correctL = true;
-                } else if ((hue <= (_5R30[x] + _25R30[x]) / 2.0) && (hue > (_10RP30[x] + _25R30[x]) / 2.0) && x < 85) {
-                    if (y > 85) {
-                        y = 85;
-                    }
-
-                    correction =  _25R30[y] - _25R30[x] ;
-                    lbe = _25R30[y];
-                    correctL = true;
-                } else if ((hue <= (_10RP30[x] + _25R30[x]) / 2.0)  && (hue > (_10RP30[x] - 0.035)) && x < 85) {
-                    if (y > 85) {
-                        y = 85;
-                    }
-
-                    correction =  _10RP30[y] - _10RP30[x] ;
-                    lbe = _10RP30[y];
-                    correctL = true;
-                }
-            }
-        }
-    }
-
-    //end red purple
-}
-
-
-/*
  * SkinSat
  * Copyright (c)2011  Jacques Desmis <jdesmis@gmail.com>
  *
@@ -4424,7 +3047,7 @@ void Color::MunsellLch(float lum, float hue, float chrom, float memChprov, float
  * pay attention to white balance, and do not change hue and saturation, upstream of the modification
  *
  */
-void Color::SkinSat(float lum, float hue, float chrom, float &satreduc)
+void Color::SkinSat (float lum, float hue, float chrom, float &satreduc)
 {
 
     // to be adapted...by tests
@@ -4436,10 +3059,10 @@ void Color::SkinSat(float lum, float hue, float chrom, float &satreduc)
     constexpr float H9 = 0.05f, H8 = 0.25f, H7 = 0.1f, H4 = 0.02f, H3 = 0.02f, H2 = 0.1f, H1 = 0.1f, H10 = -0.2f, H11 = -0.2f; //H10 and H11 are curious...H11=-0.8 ??
 
     if (lum >= 85.f) {
-        if ((hue > (0.78f - H9) && hue < (1.18f + H9)) && (chrom > 8.f && chrom < (14.f + C9))) {
+        if((hue > (0.78f - H9) && hue < (1.18f + H9)) && (chrom > 8.f && chrom < (14.f + C9))) {
             satreduc = reduction;
         } else if (lum >= 92.f) {
-            if ((hue > 0.8f && hue < 1.65f) && (chrom > 7.f && chrom < (15.f))) {
+            if((hue > 0.8f && hue < 1.65f) && (chrom > 7.f && chrom < (15.f))) {
                 satreduc = extendedreduction;
             } else if ((hue > -0.1f && hue < 1.65f) && (chrom > 7.f && chrom < (18.f))) {
                 satreduc = extendedreduction2;
@@ -4450,51 +3073,51 @@ void Color::SkinSat(float lum, float hue, float chrom, float &satreduc)
             satreduc = extendedreduction2;
         }
     } else if (lum >= 70.f) {
-        if ((hue > 0.4f && hue < (1.04f + H8)) && (chrom > 8.f && chrom < (35.f + C8))) {
+        if((hue > 0.4f && hue < (1.04f + H8)) && (chrom > 8.f && chrom < (35.f + C8))) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9) )) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9) )) {
             satreduc = extendedreduction2;
         }
     } else if (lum >= 52.f) {
-        if ((hue > 0.3f && hue < (1.27f + H7)) && (chrom > 11.f && chrom < (35.f + C7))) {
+        if((hue > 0.3f && hue < (1.27f + H7)) && (chrom > 11.f && chrom < (35.f + C7))) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9) )) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9) )) {
             satreduc = extendedreduction2;
         }
     } else if (lum >= 35.f) {
-        if ((hue > 0.3f && hue < (1.25f + H4)) && (chrom > 13.f && chrom < (37.f + C4))) {
+        if((hue > 0.3f && hue < (1.25f + H4)) && (chrom > 13.f && chrom < (37.f + C4))) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9) )) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9) )) {
             satreduc = extendedreduction2;
         }
     } else if (lum >= 20.f) {
-        if ((hue > 0.3f && hue < (1.2f + H3)) && (chrom > 7.f && chrom < (35.f + C3))) {
+        if((hue > 0.3f && hue < (1.2f + H3)) && (chrom > 7.f && chrom < (35.f + C3) )) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9) )) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9) )) {
             satreduc = extendedreduction2;
         }
     } else if (lum > 10.f) {
-        if ((hue > (0.f + H10) && hue < (0.95f + H2)) && (chrom > 8.f && chrom < (23.f + C2))) {
+        if((hue > (0.f + H10) && hue < (0.95f + H2)) && (chrom > 8.f && chrom < (23.f + C2))) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f + C1))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f + C1) )) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f + C1))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f + C1) )) {
             satreduc = extendedreduction2;
         }
     } else {
-        if ((hue > (0.02f + H10) && hue < (0.9f + H1)) && (chrom > 8.f && chrom < (23.f + C1))) {
+        if((hue > (0.02f + H10) && hue < (0.9f + H1)) && (chrom > 8.f && chrom < (23.f + C1))) {
             satreduc = reduction;    // no data : extrapolate
-        } else if ((hue > (0.02f + H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f + C1))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f + C1) )) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f + C1))) {
+        } else if ((hue > (0.02f + H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f + C1) )) {
             satreduc = extendedreduction2;
         }
 
@@ -4515,7 +3138,7 @@ void Color::SkinSat(float lum, float hue, float chrom, float &satreduc)
  * errors due to a different illuminant "Daylight" than "C" are low, about 10%. For example, a theoretical correction of 0.1 radian will be made with a real correction of 0.09 or 0.11 depending on the color illuminant D50
  * errors due to the use of a very different illuminant "C", for example illuminant "A" (tungsten) are higher, about 20%. Theoretical correction of 0.52 radians will be made with a real correction of 0.42
  */
-void Color::initMunsell()
+void Color::initMunsell ()
 {
 #ifdef _DEBUG
     MyTime t1e, t2e;
@@ -5181,7 +3804,7 @@ void Color::initMunsell()
 
     //printf("60 %1.2f  %1.2f %1.2f\n",_6PB40[44],_6PB40[84],_6PB40[139]);
 
-    _6PB50(maxInd2);  //limits  -1.3   -1.11
+    _6PB50(maxInd2);//limits  -1.3   -1.11
     _6PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5194,7 +3817,7 @@ void Color::initMunsell()
 
     //printf("60 %1.2f  %1.2f \n",_6PB50[44],_6PB50[89]);
 
-    _6PB60(maxInd2);  //limits  -1.3   -1.11
+    _6PB60(maxInd2);//limits  -1.3   -1.11
     _6PB60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5229,7 +3852,7 @@ void Color::initMunsell()
 
 
     //_75PB : notation Munsell for maximum deviation blue purple
-    _75PB10(maxInd);  //limits hue -1.23  -0.71  _75PBx   x=Luminance  eg_75PB10 for L >5 and L<=15
+    _75PB10(maxInd);//limits hue -1.23  -0.71  _75PBx   x=Luminance  eg_75PB10 for L >5 and L<=15
     _75PB10.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -5244,7 +3867,7 @@ void Color::initMunsell()
 
     //printf("75 %1.2f  %1.2f %1.2f\n",_75PB10[44],_75PB10[84],_75PB10[139]);
 
-    _75PB20(maxInd);  //limits -1.24  -0.79  for L>15 <=25
+    _75PB20(maxInd);//limits -1.24  -0.79  for L>15 <=25
     _75PB20.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5259,7 +3882,7 @@ void Color::initMunsell()
 
     //printf("75 %1.2f  %1.2f %1.2f\n",_75PB20[44],_75PB20[84],_75PB20[139]);
 
-    _75PB30(maxInd);  //limits -1.25  -0.85
+    _75PB30(maxInd);//limits -1.25  -0.85
     _75PB30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5274,7 +3897,7 @@ void Color::initMunsell()
 
     //printf("75 %1.2f  %1.2f %1.2f\n",_75PB30[44],_75PB30[84],_75PB30[139]);
 
-    _75PB40(maxInd);  //limits  -1.27  -0.92
+    _75PB40(maxInd);//limits  -1.27  -0.92
     _75PB40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5289,7 +3912,7 @@ void Color::initMunsell()
 
     //printf("75 %1.2f  %1.2f %1.2f\n",_75PB40[44],_75PB40[84],_75PB40[139]);
 
-    _75PB50(maxInd2);  //limits  -1.3   -1.11
+    _75PB50(maxInd2);//limits  -1.3   -1.11
     _75PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {

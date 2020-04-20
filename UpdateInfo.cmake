@@ -1,5 +1,9 @@
 # cmakefile executed within a makefile target
 
+if(APPLE)
+    set(PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
+endif()
+
 # If we find ReleaseInfo.cmake we use the info from there and don't need Git to be installed
 find_file(REL_INFO_FILE ReleaseInfo.cmake PATHS "${PROJECT_SOURCE_DIR}" NO_DEFAULT_PATH)
 if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
@@ -10,10 +14,10 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
         find_program(GIT_CMD git PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
         find_program(GIT_CMD git)
         set(SHELL "/bin/bash")
-    else(WIN32) # Linux
+    else() # Linux
         find_program(GIT_CMD git)
         set(SHELL "/bin/bash")
-    endif(WIN32)
+    endif()
 
     # Fail if Git is not installed
     if(GIT_CMD STREQUAL GIT_CMD-NOTFOUND)
@@ -64,14 +68,23 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
         set(GIT_NUMERIC_VERSION_BS "${GIT_NUMERIC_VERSION_BS}.${GIT_COMMITS_SINCE_TAG}")
     endif()
 
+    execute_process(COMMAND uname -mrs OUTPUT_VARIABLE BUILDINFO_OS OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND date -Ru OUTPUT_VARIABLE BUILDINFO_DATE OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND date +%s OUTPUT_VARIABLE BUILDINFO_EPOCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND uuidgen COMMAND tr "A-Z" "a-z" OUTPUT_VARIABLE BUILDINFO_UUID OUTPUT_STRIP_TRAILING_WHITESPACE)
     message(STATUS "Git checkout information:")
-    message(STATUS "	Commit description:	${GIT_DESCRIBE}")
-    message(STATUS "	Branch:			${GIT_BRANCH}")
-    message(STATUS "	Commit:			${GIT_COMMIT}")
-    message(STATUS "	Commit date:		${GIT_COMMIT_DATE}")
-    message(STATUS "	Commits since tag:	${GIT_COMMITS_SINCE_TAG}")
-    message(STATUS "	Commits since branch:	${GIT_COMMITS_SINCE_BRANCH}")
-    message(STATUS "	Version (unreliable):	${GIT_NUMERIC_VERSION_BS}")
+    message(STATUS "    Commit description:    ${GIT_DESCRIBE}")
+    message(STATUS "    Branch:                ${GIT_BRANCH}")
+    message(STATUS "    Commit:                ${GIT_COMMIT}")
+    message(STATUS "    Commit date:           ${GIT_COMMIT_DATE}")
+    message(STATUS "    Commits since tag:     ${GIT_COMMITS_SINCE_TAG}")
+    message(STATUS "    Commits since branch:  ${GIT_COMMITS_SINCE_BRANCH}")
+    message(STATUS "    Version (unreliable):  ${GIT_NUMERIC_VERSION_BS}")
+    message(STATUS "Build information:")
+    message(STATUS "    Build OS:              ${BUILDINFO_OS}")
+    message(STATUS "    Build date:            ${BUILDINFO_DATE} UTC")
+    message(STATUS "    Epoch:                 ${BUILDINFO_EPOCH}")
+    message(STATUS "    UUID:                  ${BUILDINFO_UUID}")
 
     if(NOT DEFINED CACHE_NAME_SUFFIX)
         set(CACHE_NAME_SUFFIX "${GIT_DESCRIBE}")
@@ -79,10 +92,9 @@ if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     else()
         message(STATUS "CACHE_NAME_SUFFIX is \"${CACHE_NAME_SUFFIX}\"")
     endif()
-
-else(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+else()
     include("${PROJECT_SOURCE_DIR}/ReleaseInfo.cmake")
-endif(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+endif()
 
 if(WIN32)
     if(BIT_DEPTH EQUAL 4)
@@ -97,12 +109,12 @@ if(WIN32)
         set(ARCHITECTURE_ALLOWED "x64 ia64")
         # installing in 64 bits mode for all 64 bits processors, even for itanium architecture
         set(INSTALL_MODE "x64 ia64")
-    endif(BIT_DEPTH EQUAL 4)
+    endif()
     # set part of the output archive name
     set(SYSTEM_NAME "WinVista")
 
     configure_file("${PROJECT_SOURCE_DIR}/tools/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_BINARY_DIR}/rtdata/WindowsInnoSetup.iss")
-endif(WIN32)
+endif()
 
 # build version.h from template
 configure_file("${PROJECT_SOURCE_DIR}/rtgui/version.h.in" "${CMAKE_BINARY_DIR}/rtgui/version.h")

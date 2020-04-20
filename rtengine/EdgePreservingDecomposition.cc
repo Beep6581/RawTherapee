@@ -55,7 +55,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 #endif
 
     for(int ii = 0; ii < n; ii++) {
-        rs += r[ii] * s[ii];
+        rs += static_cast<double>(r[ii]) * static_cast<double>(s[ii]);
     }
 
     //Search direction d.
@@ -84,15 +84,15 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 #endif
 
         for(int ii = 0; ii < n; ii++) {
-            ab += d[ii] * ax[ii];
+            ab += static_cast<double>(d[ii]) * static_cast<double>(ax[ii]);
         }
 
-        if(ab == 0.0f) {
+        if(ab == 0.0) {
             break;    //So unlikely. It means perfectly converged or singular, stop either way.
         }
 
         ab = rs / ab;
-
+        float abf = ab;
         //Update x and r with this step size.
         double rms = 0.0; // use double precision for large summations
 #ifdef _OPENMP
@@ -100,15 +100,15 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 #endif
 
         for(int ii = 0; ii < n; ii++) {
-            x[ii] += ab * d[ii];
-            r[ii] -= ab * ax[ii]; //"Fast recursive formula", use explicit r = b - Ax occasionally?
-            rms += r[ii] * r[ii];
+            x[ii] += abf * d[ii];
+            r[ii] -= abf * ax[ii]; //"Fast recursive formula", use explicit r = b - Ax occasionally?
+            rms += rtengine::SQR<double>(r[ii]);
         }
 
         rms = sqrtf(rms / n);
 
         //Quit? This probably isn't the best stopping condition, but ok.
-        if(rms < RMSResidual) {
+        if(rms < static_cast<double>(RMSResidual)) {
             break;
         }
 
@@ -129,20 +129,20 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 #endif
 
             for(int ii = 0; ii < n; ii++) {
-                rs += r[ii] * s[ii];
+                rs += static_cast<double>(r[ii]) * static_cast<double>(s[ii]);
             }
 
         }
 
         ab = rs / ab;
-
+        abf = ab;
         //Update search direction p.
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
 
         for(int ii = 0; ii < n; ii++) {
-            d[ii] = s[ii] + ab * d[ii];
+            d[ii] = s[ii] + abf * d[ii];
         }
 
 

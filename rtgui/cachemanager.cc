@@ -39,7 +39,7 @@ namespace
 {
 
 constexpr int cacheDirMode = 0777;
-constexpr const char* cacheDirs[] = { "profiles", "images", "aehistograms", "embprofiles", "data"};
+constexpr const char* cacheDirs[] = { "profiles", "images", "embprofiles", "data" };
 
 }
 
@@ -59,9 +59,7 @@ void CacheManager::init ()
     auto error = g_mkdir_with_parents (baseDir.c_str(), cacheDirMode);
 
     for (const auto& cacheDir : cacheDirs) {
-        if (strncmp(cacheDir, "aehistograms", 12)) {  // don't create aehistograms folder.
-            error |= g_mkdir_with_parents (Glib::build_filename (baseDir, cacheDir).c_str(), cacheDirMode);
-        }
+        error |= g_mkdir_with_parents (Glib::build_filename (baseDir, cacheDir).c_str(), cacheDirMode);
     }
 
     if (error != 0 && rtengine::settings->verbose) {
@@ -193,7 +191,6 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
 
     auto error = g_rename (getCacheFileName ("profiles", oldfilename, paramFileExtension, oldmd5).c_str (), getCacheFileName ("profiles", newfilename, paramFileExtension, newmd5).c_str ());
     error |= g_rename (getCacheFileName ("images", oldfilename, ".rtti", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".rtti", newmd5).c_str ());
-    error |= g_rename (getCacheFileName ("aehistograms", oldfilename, "", oldmd5).c_str (), getCacheFileName ("aehistograms", newfilename, "", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("embprofiles", oldfilename, ".icc", oldmd5).c_str (), getCacheFileName ("embprofiles", newfilename, ".icc", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("data", oldfilename, ".txt", oldmd5).c_str (), getCacheFileName ("data", newfilename, ".txt", newmd5).c_str ());
 
@@ -248,7 +245,6 @@ void CacheManager::clearImages () const
 
     deleteDir ("data");
     deleteDir ("images");
-    deleteDir ("aehistograms");
     deleteDir ("embprofiles");
 }
 
@@ -287,7 +283,6 @@ void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& m
     }
 
     auto error = g_remove (getCacheFileName ("images", fname, ".rtti", md5).c_str ());
-    error |= g_remove (getCacheFileName ("aehistograms", fname, "", md5).c_str ());
     error |= g_remove (getCacheFileName ("embprofiles", fname, ".icc", md5).c_str ());
 
     if (purgeData) {

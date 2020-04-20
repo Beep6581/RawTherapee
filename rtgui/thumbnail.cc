@@ -217,7 +217,7 @@ const ProcParams& Thumbnail::getProcParamsU ()
             double ct;
             getCamWB (ct, pparams->wb.green);
             pparams->wb.temperature = ct;
-        } else if (pparams->wb.method == "Auto") {
+        } else if (pparams->wb.method == "autold") {
             double ct;
             getAutoWB (ct, pparams->wb.green, pparams->wb.equal, pparams->wb.tempBias);
             pparams->wb.temperature = ct;
@@ -889,11 +889,6 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     }
 
     if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
-        if(!tpp->isAeValid()) {
-            // load aehistogram
-            tpp->readAEHistogram (getCacheFileName ("aehistograms", ""));
-        }
-
         // load embedded profile
         tpp->readEmbProfile (getCacheFileName ("embprofiles", ".icc"));
 
@@ -939,10 +934,6 @@ void Thumbnail::_saveThumbnail ()
     // save thumbnail image
     tpp->writeImage (getCacheFileName ("images", ""));
 
-    if(!tpp->isAeValid()) {
-        // save aehistogram
-        tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
-    }
     // save embedded profile
     tpp->writeEmbProfile (getCacheFileName ("embprofiles", ".icc"));
 

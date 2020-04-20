@@ -845,7 +845,7 @@ public:
             {195, "Canon EF 35-105mm f/4.5-5.6 USM"},
             {196, "Canon EF 75-300mm f/4-5.6 USM"},
             {197, "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens"},
-            {197, "Sigma 18-300mm f/3.5-6.3 DC Macro OS HS"},
+            {197, "Sigma 18-300mm f/3.5-6.3 DC Macro OS HSM"},
             {198, "Canon EF 50mm f/1.4 USM or Other Lens"},
             {198, "Zeiss Otus 55mm f/1.4 ZE"},
             {198, "Zeiss Otus 85mm f/1.4 ZE"},
@@ -1229,7 +1229,7 @@ public:
         int a = Interpreter::toInt (t, ofs, astype);
 
         if (a > 1) {
-            int i = int (double (powf (2.f, float (a) / 32.f - 4.f)) * 50.f + 0.5f);
+            int i = static_cast<double>(powf (2.f, static_cast<float>(a) / 32.f - 4.f)) * 50.0 + 0.5;
             return i;
         } else {
             return 0;

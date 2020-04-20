@@ -826,12 +826,6 @@ void MyExpander::set_expanded( bool expanded )
         return;
     }
 
-    bool isVisible = expBox->is_visible();
-
-    if (isVisible == expanded) {
-        return;
-    }
-
     if (!useEnabled) {
         if (expanded ) {
             statusImage->set(openedImage->get_surface());

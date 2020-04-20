@@ -75,8 +75,9 @@ class Thumbnail
     int scaleForSave;
     bool gammaCorrected;
     double colorMatrix[3][3];
+    double scaleGain;
 
-    void processFilmNegative(const procparams::ProcParams& params, const Imagefloat* baseImg, int rwidth, int rheight, float &rmi, float &gmi, float &bmi);
+    void processFilmNegative(const procparams::ProcParams& params, const Imagefloat* baseImg, int rwidth, int rheight);
 
 public:
 
@@ -113,10 +114,6 @@ public:
     bool readEmbProfile  (const Glib::ustring& fname);
     bool writeEmbProfile (const Glib::ustring& fname);
 
-    bool readAEHistogram  (const Glib::ustring& fname);
-    bool writeAEHistogram (const Glib::ustring& fname);
-
-    bool isAeValid() { return aeValid; };
     unsigned char* getImage8Data();  // accessor to the 8bit image if it is one, which should be the case for the "Inspector" mode.
 
     // Hombre: ... let's hope that proper template can make this cleaner

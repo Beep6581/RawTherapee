@@ -172,7 +172,7 @@ private:
 
         const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance()->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
 
-        for (const auto profile : profiles) {
+        for (const auto& profile : profiles) {
             profileBox.append (profile);
         }
 

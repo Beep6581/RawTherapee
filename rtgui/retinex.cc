@@ -278,7 +278,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
     for (int i = 0; i < 7; i++) {
         float R, G, B;
-        float x = float (i) * (1.0f / 6.0);
+        float x = i / 6.0;
         Color::hsv2rgb01 (x, 0.5f, 0.5f, R, G, B);
         milestones.push_back ( GradientMilestone (double (x), double (R), double (G), double (B)) );
     }
@@ -659,10 +659,16 @@ void Retinex::writeOptions (std::vector<int> &tpOpen)
     tpOpen.push_back (expsettings->get_expanded ());
 }
 
-void Retinex::updateToolState (std::vector<int> &tpOpen)
+void Retinex::updateToolState(const std::vector<int>& tpOpen)
 {
+    if (tpOpen.empty()) {
+        expsettings->set_expanded(false);
+
+        return;
+    }
+
     if (tpOpen.size() >= 10) {
-        expsettings->set_expanded (tpOpen.at (9));
+        expsettings->set_expanded(tpOpen[9]);
     }
 }
 

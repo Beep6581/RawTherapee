@@ -135,7 +135,7 @@ void highlightToneCurve(const LUTf &hltonecurve, float *rtemp, float *gtemp, flo
                     float b = btemp[ti * tileSize + tj + k];
                     float tonefactor = ((r < MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve(exp_scale, comp, hlrange, r)) +
                                         (g < MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve(exp_scale, comp, hlrange, g)) +
-                                        (b < MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve(exp_scale, comp, hlrange, b))) / 3.0;
+                                        (b < MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve(exp_scale, comp, hlrange, b))) / 3.f;
 
                     // note: tonefactor includes exposure scaling, that is here exposure slider and highlight compression takes place
                     rtemp[ti * tileSize + tj + k] = r * tonefactor;
@@ -163,7 +163,7 @@ void highlightToneCurve(const LUTf &hltonecurve, float *rtemp, float *gtemp, flo
             //float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
             float tonefactor = ((r < MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve(exp_scale, comp, hlrange, r)) +
                                 (g < MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve(exp_scale, comp, hlrange, g)) +
-                                (b < MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve(exp_scale, comp, hlrange, b))) / 3.0;
+                                (b < MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve(exp_scale, comp, hlrange, b))) / 3.f;
 
             // note: tonefactor includes exposure scaling, that is here exposure slider and highlight compression takes place
             rtemp[ti * tileSize + tj] = r * tonefactor;
@@ -532,8 +532,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         int width = lab->W, height = lab->H;
         float minQ = 10000.f;
         float maxQ = -1000.f;
-        float Yw;
-        Yw = 1.0;
+        double Yw = 1.0;
         double Xw, Zw;
         float f = 0.f, nc = 0.f, la, c = 0.f, xw, yw, zw, f2 = 1.f, c2 = 1.f, nc2 = 1.f, yb2;
         float fl, n, nbb, ncb, aw; //d
@@ -610,13 +609,13 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             algepd = true;
         }
 
-        xwd = 100.f * Xwout;
-        zwd = 100.f * Zwout;
-        ywd = 100.f / params->colorappearance.greenout;//approximation to simplify
+        xwd = 100.0 * Xwout;
+        zwd = 100.0 * Zwout;
+        ywd = 100.0 / params->colorappearance.greenout;//approximation to simplify
 
-        xws = 100.f * Xwsc;
-        zws = 100.f * Zwsc;
-        yws = 100.f / params->colorappearance.greensc;//approximation to simplify
+        xws = 100.0 * Xwsc;
+        zws = 100.0 * Zwsc;
+        yws = 100.0 / params->colorappearance.greensc;//approximation to simplify
 
 
         /*
@@ -714,20 +713,20 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         if (alg == 3 || alg == 1) {
             schr = params->colorappearance.schroma;
 
-            if (schr > 0.0) {
-                schr = schr / 2.0f;    //divide sensibility for saturation
+            if (schr > 0.f) {
+                schr = schr / 2.f;    //divide sensibility for saturation
             }
 
             if (alg == 3) {
-                if (schr == -100.0f) {
+                if (schr == -100.f) {
                     schr = -99.f;
                 }
 
-                if (schr == 100.0f) {
+                if (schr == 100.f) {
                     schr = 98.f;
                 }
             } else {
-                if (schr == -100.0f) {
+                if (schr == -100.f) {
                     schr = -99.8f;
                 }
             }
@@ -803,7 +802,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 #endif
 
 
-                for (int i = 0; i < height; i++)
+                for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) { //rough correspondence between L and J
                         float currL = lab->L[i][j] / 327.68f;
                         float koef; //rough correspondence between L and J
@@ -864,10 +863,11 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             //hist16Qthr[ (int) (sqrtf ((koef * (lab->L[i][j])) * 32768.f))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                         }
 
-                        sum += koef * lab->L[i][j]; //evaluate mean J to calculate Yb
+                        sum += static_cast<double>(koef) * static_cast<double>(lab->L[i][j]); //evaluate mean J to calculate Yb
                         //sumQ += whestim * sqrt ((koef * (lab->L[i][j])) / 32768.f);
                         //can be used in case of...
                     }
+                }
 
 #ifdef _OPENMP
                 #pragma omp critical
@@ -884,7 +884,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                 }
 
                 if (std::isnan(mean)) {
-                    mean = (sum / ((height) * width)) / 327.68f; //for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
+                    mean = (sum / ((height) * width)) / 327.68; //for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
                 }
             }
 #ifdef _OPENMP
@@ -931,9 +931,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
 
         const int gamu = (params->colorappearance.gamut) ? 1 : 0;
-        xw = 100.0f * Xw;
-        yw = 100.0f * Yw;
-        zw = 100.0f * Zw;
+        xw = 100.0 * Xw;
+        yw = 100.0 * Yw;
+        zw = 100.0 * Zw;
         float xw1 = 0.f, yw1 = 0.f, zw1 = 0.f, xw2 = 0.f, yw2 = 0.f, zw2 = 0.f;
 
         // settings of WB: scene and viewing
@@ -2006,8 +2006,8 @@ void ImProcFunctions::moyeqt(Imagefloat* working, float &moyS, float &eqty)
 {
     BENCHFUN
 
-    int tHh = working->getHeight();
-    int tWw = working->getWidth();
+    const int height = working->getHeight();
+    const int width = working->getWidth();
     double moy = 0.0;
     double sqrs = 0.0;
 
@@ -2015,17 +2015,17 @@ void ImProcFunctions::moyeqt(Imagefloat* working, float &moyS, float &eqty)
     #pragma omp parallel for reduction(+:moy,sqrs) schedule(dynamic,16)
 #endif
 
-    for (int i = 0; i < tHh; i++) {
-        for (int j = 0; j < tWw; j++) {
-            float s = Color::rgb2s(CLIP(working->r(i, j)), CLIP(working->g(i, j)), CLIP(working->b(i, j)));
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            const double s = Color::rgb2s(CLIP(working->r (i, j)), CLIP(working->g (i, j)), CLIP(working->b (i, j)));
             moy += s;
             sqrs += SQR(s);
         }
     }
 
-    moy /= (tHh * tWw);
-    sqrs /= (tHh * tWw);
-    eqty = sqrt(sqrs - SQR(moy));
+    moy /= (height * width);
+    sqrs /= (height * width);
+    eqty = std::sqrt(std::max(sqrs - SQR(moy), 0.0));
     moyS = moy;
 }
 
@@ -2123,17 +2123,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     float toxyz[3][3] = {
         {
-            static_cast<float>(wprof[0][0] / Color::D50x),
-            static_cast<float>(wprof[0][1] / Color::D50x),
-            static_cast<float>(wprof[0][2] / Color::D50x)
+            static_cast<float>(wprof[0][0] / static_cast<double>(Color::D50x)),
+            static_cast<float>(wprof[0][1] / static_cast<double>(Color::D50x)),
+            static_cast<float>(wprof[0][2] / static_cast<double>(Color::D50x))
         }, {
             static_cast<float>(wprof[1][0]),
             static_cast<float>(wprof[1][1]),
             static_cast<float>(wprof[1][2])
         }, {
-            static_cast<float>(wprof[2][0] / Color::D50z),
-            static_cast<float>(wprof[2][1] / Color::D50z),
-            static_cast<float>(wprof[2][2] / Color::D50z)
+            static_cast<float>(wprof[2][0] / static_cast<double>(Color::D50z)),
+            static_cast<float>(wprof[2][1] / static_cast<double>(Color::D50z)),
+            static_cast<float>(wprof[2][2] / static_cast<double>(Color::D50z))
         }
     };
     float maxFactorToxyz = max(toxyz[1][0], toxyz[1][1], toxyz[1][2]);
@@ -2255,8 +2255,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     const float exp_scale = pow(2.0, expcomp);
     const float comp = (max(0.0, expcomp) + 1.0) * hlcompr / 100.0;
-    const float shoulder = ((65536.0 / max(1.0f, exp_scale)) * (hlcomprthresh / 200.0)) + 0.1;
-    const float hlrange = 65536.0 - shoulder;
+    const float shoulder = ((65536.f / max(1.0f, exp_scale)) * (hlcomprthresh / 200.f)) + 0.1f;
+    const float hlrange = 65536.f - shoulder;
     const bool isProPhoto = (params->icm.workingProfile == "ProPhoto");
     // extracting data from 'params' to avoid cache flush (to be confirmed)
     ToneCurveMode curveMode = params->toneCurve.curveMode;
@@ -2318,43 +2318,43 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
     */
 
-    float RedLow = params->colorToning.redlow / 100.f;
-    float GreenLow = params->colorToning.greenlow / 100.f;
-    float BlueLow = params->colorToning.bluelow / 100.f;
-    float RedMed = params->colorToning.redmed / 100.f;
-    float GreenMed = params->colorToning.greenmed / 100.f;
-    float BlueMed = params->colorToning.bluemed / 100.f;
-    float RedHigh = params->colorToning.redhigh / 100.f;
-    float GreenHigh = params->colorToning.greenhigh / 100.f;
-    float BlueHigh = params->colorToning.bluehigh / 100.f;
-    float SatLow = float (params->colorToning.shadowsColSat.getBottom()) / 100.f;
-    float SatHigh = float (params->colorToning.hlColSat.getBottom()) / 100.f;
+    float RedLow = params->colorToning.redlow / 100.0;
+    float GreenLow = params->colorToning.greenlow / 100.0;
+    float BlueLow = params->colorToning.bluelow / 100.0;
+    float RedMed = params->colorToning.redmed / 100.0;
+    float GreenMed = params->colorToning.greenmed / 100.0;
+    float BlueMed = params->colorToning.bluemed / 100.0;
+    float RedHigh = params->colorToning.redhigh / 100.0;
+    float GreenHigh = params->colorToning.greenhigh / 100.0;
+    float BlueHigh = params->colorToning.bluehigh / 100.0;
+    float SatLow = params->colorToning.shadowsColSat.getBottom() / 100.f;
+    float SatHigh = params->colorToning.hlColSat.getBottom() / 100.f;
 
-    float Balan = float (params->colorToning.balance);
+    float Balan = params->colorToning.balance;
 
-    float chMixRR = float (params->chmixer.red[0])/10.f;
-    float chMixRG = float (params->chmixer.red[1])/10.f;
-    float chMixRB = float (params->chmixer.red[2])/10.f;
-    float chMixGR = float (params->chmixer.green[0])/10.f;
-    float chMixGG = float (params->chmixer.green[1])/10.f;
-    float chMixGB = float (params->chmixer.green[2])/10.f;
-    float chMixBR = float (params->chmixer.blue[0])/10.f;
-    float chMixBG = float (params->chmixer.blue[1])/10.f;
-    float chMixBB = float (params->chmixer.blue[2])/10.f;
+    float chMixRR = params->chmixer.red[0] / 10.f;
+    float chMixRG = params->chmixer.red[1] / 10.f;
+    float chMixRB = params->chmixer.red[2] / 10.f;
+    float chMixGR = params->chmixer.green[0] / 10.f;
+    float chMixGG = params->chmixer.green[1] / 10.f;
+    float chMixGB = params->chmixer.green[2] / 10.f;
+    float chMixBR = params->chmixer.blue[0] / 10.f;
+    float chMixBG = params->chmixer.blue[1] / 10.f;
+    float chMixBB = params->chmixer.blue[2] / 10.f;
 
     bool blackwhite = params->blackwhite.enabled;
     bool complem = params->blackwhite.enabledcc;
-    float bwr = float (params->blackwhite.mixerRed);
-    float bwg = float (params->blackwhite.mixerGreen);
-    float bwb = float (params->blackwhite.mixerBlue);
-    float bwrgam = float (params->blackwhite.gammaRed);
-    float bwggam = float (params->blackwhite.gammaGreen);
-    float bwbgam = float (params->blackwhite.gammaBlue);
-    float mixerOrange = float (params->blackwhite.mixerOrange);
-    float mixerYellow = float (params->blackwhite.mixerYellow);
-    float mixerCyan = float (params->blackwhite.mixerCyan);
-    float mixerMagenta = float (params->blackwhite.mixerMagenta);
-    float mixerPurple = float (params->blackwhite.mixerPurple);
+    float bwr = params->blackwhite.mixerRed;
+    float bwg = params->blackwhite.mixerGreen;
+    float bwb = params->blackwhite.mixerBlue;
+    float bwrgam = params->blackwhite.gammaRed;
+    float bwggam = params->blackwhite.gammaGreen;
+    float bwbgam = params->blackwhite.gammaBlue;
+    float mixerOrange = params->blackwhite.mixerOrange;
+    float mixerYellow = params->blackwhite.mixerYellow;
+    float mixerCyan = params->blackwhite.mixerCyan;
+    float mixerMagenta = params->blackwhite.mixerMagenta;
+    float mixerPurple = params->blackwhite.mixerPurple;
     int algm = 0;
 
     if (params->blackwhite.method == "Desaturation") {
@@ -2741,7 +2741,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                             //HSV equalizer
                             if (hCurveEnabled) {
-                                h = (hCurve->getVal(double (h)) - 0.5) * 2.f + h;
+                                h = (hCurve->getVal(h) - 0.5) * 2.0 + static_cast<double>(h);
 
                                 if (h > 1.0f) {
                                     h -= 1.0f;
@@ -2772,7 +2772,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 }
 
                                 //shift value
-                                float valparam = vCurve->getVal((double)h) - 0.5f;
+                                float valparam = vCurve->getVal(h) - 0.5;
                                 valparam *= (1.f - SQR(SQR(1.f - min(s, 1.0f))));
 
                                 if (valparam > 0.00001f) {
@@ -3085,7 +3085,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 if (bwlCurveEnabled) {
                                     L /= 32768.f;
                                     double hr = Color::huelab_to_huehsv2(HH);
-                                    float valparam = float ((bwlCurve->getVal(hr) - 0.5f) * 2.0f);  //get l_r=f(H)
+                                    float valparam = (bwlCurve->getVal(hr) - 0.5) * 2.0; //get l_r=f(H)
                                     float kcc = (CC / 70.f); //take Chroma into account...70 "middle" of chromaticity (arbitrary and simple), one can imagine other algorithme
                                     //reduct action for low chroma and increase action for high chroma
                                     valparam *= kcc;
@@ -3341,9 +3341,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 for (int i = 0; i < tH; i++) {
                     for (int j = 0; j < tW; j++) {
-                        nr += tmpImage->r(i, j);
-                        ng += tmpImage->g(i, j);
-                        nb += tmpImage->b(i, j);
+                        nr += static_cast<double>(tmpImage->r(i, j));
+                        ng += static_cast<double>(tmpImage->g(i, j));
+                        nb += static_cast<double>(tmpImage->b(i, j));
                     }
                 }
 
@@ -3685,7 +3685,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         delete vCurve;
     }
 
- //   shadowsHighlights(lab);
+  //  shadowsHighlights(lab);
     shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
 
     if (params->localContrast.enabled) {
@@ -4422,8 +4422,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     float factnoise = 1.f;
 
     if (params->dirpyrDenoise.enabled) {
-        factnoise = (1.f + params->dirpyrDenoise.chroma / 500.f); //levels=5
-//      if(yyyy) factnoise=(1.f+params->dirpyrDenoise.chroma/100.f);//levels=7
+        factnoise = 1.0 + params->dirpyrDenoise.chroma / 500.0; //levels=5
     }
 
     const float scaleConst = 100.0f / 100.1f;
@@ -4601,10 +4600,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     float l_r;//Luminance Lab in 0..1
                     l_r = Lprov1 / 100.f;
                     {
-                        //double hr = 0.5 * ((HH / rtengine::RT_PI) + 1.);
+                        float valparam = lhCurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5; //get l_r=f(H)
                         //float valparam = float ((lhCurve->getVal (hr - 0.5f)*2));//get l_r=f(H)
 
-                        float valparam = float ((lhCurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));   //get l_r=f(H)
                         float valparamneg;
                         valparamneg = valparam;
                         float kcc = (CC / amountchroma); //take Chroma into account...40 "middle low" of chromaticity (arbitrary and simple), one can imagine other algorithme
@@ -4637,9 +4635,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                         float fx = (0.002f * aprov1) + fy;
                         float fz = fy - (0.005f * bprov1);
 
-                        float x_ = 65535.0f * Color::f2xyz(fx) * Color::D50x;
-                        float z_ = 65535.0f * Color::f2xyz(fz) * Color::D50z;
-                        float y_ = (Lprov1 > Color::epskap) ? 65535.0 * fy * fy * fy : 65535.0 * Lprov1 / Color::kappa;
+                        float x_ = 65535.f * Color::f2xyz (fx) * Color::D50x;
+                        float z_ = 65535.f * Color::f2xyz (fz) * Color::D50z;
+                        float y_ = Lprov1 > Color::epskapf ? 65535.f * fy * fy * fy : 65535.f * Lprov1 / Color::kappaf;
                         float R, G, B;
                         Color::xyz2rgb(x_, y_, z_, R, G, B, wip);
 
@@ -4667,9 +4665,8 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
 //          calculate C=f(H)
                 if (chutili) {
                     double hr = Color::huelab_to_huehsv2(HH);
-                    //double hr = 0.5 * ((HH / rtengine::RT_PI) + 1.);
+                    float chparam = (chCurve->getVal(hr) - 0.5) * 2.0; //get C=f(H)
 
-                    float chparam = float ((chCurve->getVal(hr) - 0.5f) * 2.0f);  //get C=f(H)
                     float chromaChfactor = 1.0f + chparam;
                     atmp *= chromaChfactor;//apply C=f(H)
                     btmp *= chromaChfactor;
@@ -4677,7 +4674,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
 
                 if (hhutili) {  // H=f(H)
                     //hue Lab in -PI +PI
-                    float valparam = float ((hhCurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f) * 1.7f) + HH;   //get H=f(H)  1.7 optimisation !
+                    float valparam = (hhCurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5) * 1.7 + static_cast<double>(HH); //get H=f(H)  1.7 optimisation !
                     HH = valparam;
                     sincosval = xsincosf(HH);
                 }
@@ -4755,11 +4752,11 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
 
                         deltaHH = protect_redhcur; //transition hue
 
-                        if (chromaCfactor > 0.0) {
+                        if (chromaCfactor > 0.f) {
                             Color::scalered(rstprotection, chromaCfactor, 0.0, HH, deltaHH, scale, scaleext);      //1.0
                         }
 
-                        if (chromaCfactor > 1.0) {
+                        if (chromaCfactor > 1.f) {
                             float interm = (chromaCfactor - 1.0f) * 100.0f;
                             factorskin = 1.0f + (interm * scale) / 100.0f;
                             factorskinext = 1.0f + (interm * scaleext) / 100.0f;
@@ -4816,11 +4813,11 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
 
                         deltaHH = protect_redhcur; //transition hue
 
-                        if (chromaCfactor > 0.0) {
+                        if (chromaCfactor > 0.f) {
                             Color::scalered(rstprotection, chromaCfactor, 0.0, HH, deltaHH, scale, scaleext);      //1.0
                         }
 
-                        if (chromaCfactor > 1.0) {
+                        if (chromaCfactor > 1.f) {
                             float interm = (chromaCfactor - 1.0f) * 100.0f;
                             factorskin = 1.0f + (interm * scale) / 100.0f;
                             factorskinext = 1.0f + (interm * scaleext) / 100.0f;
@@ -5103,7 +5100,7 @@ void ImProcFunctions::impulsedenoise(LabImage* lab)
     if (params->impulseDenoise.enabled && lab->W >= 8 && lab->H >= 8)
 
     {
-        impulse_nr(lab, (float)params->impulseDenoise.thresh / 20.0);
+        impulse_nr(lab, params->impulseDenoise.thresh / 20.0);
     }
 }
 
@@ -5113,7 +5110,7 @@ void ImProcFunctions::impulsedenoisecam(CieImage* ncie, float **buffers[3])
     if (params->impulseDenoise.enabled && ncie->W >= 8 && ncie->H >= 8)
 
     {
-        impulse_nrcam(ncie, (float)params->impulseDenoise.thresh / 20.0, buffers);
+        impulse_nrcam(ncie, params->impulseDenoise.thresh / 20.0, buffers);
     }
 }
 
@@ -5183,11 +5180,11 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
     float sca = params->epd.scale;
     float gamm = params->epd.gamma;
     float rew = params->epd.reweightingIterates;
-    float Qpro = (4.0 / c_)  * (a_w + 4.0) ;    //estimate Q max if J=100.0
+    float Qpro = (4.f / c_)  * (a_w + 4.f) ; //estimate Q max if J=100.0
     float *Qpr = ncie->Q_p[0];
 
     if (settings->verbose) {
-        printf("minQ=%f maxQ=%f  Qpro=%f\n", minQ, maxQ, Qpro);
+        printf ("minQ=%f maxQ=%f  Qpro=%f\n", static_cast<double>(minQ), static_cast<double>(maxQ), static_cast<double>(Qpro));
     }
 
     if (maxQ > Qpro) {
@@ -5214,7 +5211,7 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
 
     //Auto select number of iterates. Note that p->EdgeStopping = 0 makes a Gaussian blur.
     if (Iterates == 0) {
-        Iterates = (unsigned int)(edgest * 15.0);
+        Iterates = edgest * 15.f;
     }
 
     //Jacques Desmis : always Iterates=5 for compatibility images between preview and output
@@ -5531,7 +5528,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
             octile[count] += histogram[j];
 
             if (octile[count] > sum / 8.f || (count == 7 && octile[count] > sum / 16.f)) {
-                octile[count] = xlog (1. + j) / log (2.f);
+                octile[count] = xlog(1. + j) / log(2.0);
                 count++;// = min(count+1,7);
             }
         }
@@ -5544,7 +5541,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
             octile[count] += histogram[j];
 
             if (octile[count] > sum / 8.f || (count == 7 && octile[count] > sum / 16.f)) {
-                octile[count] = xlog (1. + j) / log (2.f);
+                octile[count] = xlog(1. + j) / log(2.0);
                 count++;// = min(count+1,7);
             }
         }
@@ -5619,7 +5616,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
     }
 
     //compute clipped white point
-    unsigned int clippable = (int)(sum * clip / 100.f);
+    unsigned int clippable = (int) (static_cast<double>(sum) * clip / 100.0 );
     clipped = 0;
     int whiteclip = (imax) - 1;
 
@@ -5678,8 +5675,8 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
     hlcomprthresh = 0;
     //this is a series approximation of the actual formula for comp,
     //which is a transcendental equation
-    float comp = (gain * ((float)whiteclip) / scale - 1.f) * 2.3f; // 2.3 instead of 2 to increase slightly comp
-    hlcompr = (int)(100.*comp / (max(0.0, expcomp) + 1.0));
+    double comp = (gain * whiteclip / scale - 1.f) * 2.3f; // 2.3 instead of 2 to increase slightly comp
+    hlcompr = 100.0 * comp / (max(0.0, expcomp) + 1.0);
     hlcompr = max(0, min(100, hlcompr));
 
     //now find brightness if gain didn't bring ave to midgray using
@@ -5687,9 +5684,9 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
     float midtmp = gain * sqrt(median * ave) / scale;
 
     if (midtmp < 0.1f) {
-        bright = (midgray - midtmp) * 15.0 / (midtmp);
+        bright = (midgray - midtmp) * 15.f / (midtmp);
     } else {
-        bright = (midgray - midtmp) * 15.0 / (0.10833 - 0.0833 * midtmp);
+        bright = (midgray - midtmp) * 15.f / (0.10833f - 0.0833f * midtmp);
     }
 
     bright = 0.25 */*(median/ave)*(hidev/lodev)*/max(0, bright);
@@ -5698,7 +5695,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
     contr = (int) 50.0f * (1.1f - ospread);
     contr = max(0, min(100, contr));
     //take gamma into account
-    double whiteclipg = (int)(CurveFactory::gamma2(whiteclip * corr / 65536.0) * 65536.0);
+    double whiteclipg = (int) (CurveFactory::gamma2(whiteclip * static_cast<double>(corr) / 65536.0) * 65536.0);
 
     float gavg = 0.;
 
@@ -5720,7 +5717,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
         }
     }
 
-    whiteclipg = CurveFactory::igamma2((float)(whiteclipg / 65535.0)) * 65535.0;   //need to inverse gamma transform to get correct exposure compensation parameter
+    whiteclipg = CurveFactory::igamma2(whiteclipg / 65535.0) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
 
     //correction with gamma
     black = (int)((65535 * black) / whiteclipg);
@@ -5955,8 +5952,8 @@ void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::
 */
 void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {
-    const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
-    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
+    const double factor = ColorToningParams::LABGRID_CORR_MAX * 3.0;
+    const double scaling = ColorToningParams::LABGRID_CORR_SCALE;
     float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
     float a_base = params->colorToning.labgridALow / scaling;
     float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;

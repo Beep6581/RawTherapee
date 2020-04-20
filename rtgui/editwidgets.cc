@@ -126,13 +126,13 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
         if (filled && state != INSENSITIVE) {
             cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
 
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
                 cr->fill();
             }
-        } else if (innerLineWidth > 0.) {
+        } else if (innerLineWidth > 0.f) {
             cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
 
             if (state == INSENSITIVE) {
@@ -176,7 +176,7 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short 
         cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*rtengine::RT_PI);
 
         if (filled) {
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
@@ -224,7 +224,7 @@ void Line::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *
 
 void Line::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
-    if ((flags & F_VISIBLE) && innerLineWidth > 0.) {
+    if ((flags & F_VISIBLE) && innerLineWidth > 0.f) {
         if (state != INSENSITIVE) {
             RGBColor color;
 
@@ -383,13 +383,13 @@ void Polyline::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
                 }
             }
 
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
                 cr->fill();
             }
-        } else if (innerLineWidth > 0.) {
+        } else if (innerLineWidth > 0.f) {
             rtengine::Coord currPos;
 
             for (unsigned int i = 0; i < points.size(); ++i) {
@@ -459,7 +459,7 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
         }
 
         if (filled) {
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
@@ -576,13 +576,13 @@ void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
         if (filled && state != INSENSITIVE) {
             cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
 
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
                 cr->fill();
             }
-        } else if (innerLineWidth > 0.) {
+        } else if (innerLineWidth > 0.f) {
             cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
 
             if (state == INSENSITIVE) {
@@ -634,7 +634,7 @@ void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
         cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
 
         if (filled) {
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
