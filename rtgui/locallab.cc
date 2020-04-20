@@ -1115,6 +1115,9 @@ void Locallab::openAllTools()
 {
     for (auto tool : locallabTools) {
         tool->setExpanded(true);
+
+        // Set default visibility for tool sub-expanders
+        tool->setDefaultExpanderVisibility();
     }
 }
 

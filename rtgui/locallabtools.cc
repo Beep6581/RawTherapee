@@ -340,6 +340,7 @@ LocallabColor::LocallabColor():
     strcolab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -6., 6., 0.05, 0.))),
     strcolh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRHUE"), -6., 6., 0.05, 0.))),
     angcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    expcurvcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPCURV")))),
     labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
     qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
     llCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LUM"))),
@@ -366,6 +367,7 @@ LocallabColor::LocallabColor():
     gridmerFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRIDMERG")))),
     labgridmerg(Gtk::manage(new LabGrid(EvLocallabLabGridmergValue, M("TP_LOCALLAB_LABGRID_VALUES"), false))),
     merlucol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERLUCOL"), 0.0, 100.0, 0.5, 32., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    expmaskcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
     showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
     enaColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -470,6 +472,8 @@ LocallabColor::LocallabColor():
     if (showtooltip) {
         angcol->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     }
+
+    setExpandAlignProperties(expcurvcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
@@ -628,6 +632,12 @@ LocallabColor::LocallabColor():
     }
 
     merlucol->setAdjusterListener(this);
+
+    setExpandAlignProperties(expmaskcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    if (showtooltip) {
+        expmaskcol->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+    }
 
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -791,8 +801,6 @@ LocallabColor::LocallabColor():
     }
 
     pack_start(*invers);
-    MyExpander* const expcurvcol = Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPCURV")));
-    setExpandAlignProperties(expcurvcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     ToolParamBlock* const gradcolBox = Gtk::manage(new ToolParamBlock());
     gradcolBox->pack_start(*strcol);
 
@@ -852,13 +860,6 @@ LocallabColor::LocallabColor():
 
     if (complexsoft < 2) {
         pack_start(*expmaskcol1, false, false);
-    }
-
-    MyExpander* const expmaskcol = Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")));
-    setExpandAlignProperties(expmaskcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-
-    if (showtooltip) {
-        expmaskcol->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
 
     Gtk::Frame* const mergecolFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")));
@@ -969,6 +970,14 @@ void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask,
 {
     colorMask = showmaskcolMethod->get_active_row_number();
     colorMaskinv = showmaskcolMethodinv->get_active_row_number();
+}
+
+void LocallabColor::setDefaultExpanderVisibility()
+{
+    expgradcol->set_expanded(false);
+    expcurvcol->set_expanded(false);
+    expmaskcol1->set_expanded(false);
+    expmaskcol->set_expanded(false);
 }
 
 void LocallabColor::disableListener()
@@ -2479,6 +2488,13 @@ void LocallabExposure::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
     expMaskinv = showmaskexpMethodinv->get_active_row_number();
 }
 
+void LocallabExposure::setDefaultExpanderVisibility()
+{
+    exptoolexp->set_expanded(false);
+    expgradexp->set_expanded(false);
+    expmaskexp->set_expanded(false);
+}
+
 void LocallabExposure::disableListener()
 {
     LocallabTool::disableListener();
@@ -3542,6 +3558,12 @@ void LocallabShadow::getMaskView(int &colorMask, int &colorMaskinv, int &expMask
     shMaskinv = showmaskSHMethodinv->get_active_row_number();
 }
 
+void LocallabShadow::setDefaultExpanderVisibility()
+{
+    expgradsh->set_expanded(false);
+    expmasksh->set_expanded(false);
+}
+
 void LocallabShadow::disableListener()
 {
     LocallabTool::disableListener();
@@ -4378,6 +4400,12 @@ void LocallabVibrance::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
     vibMask = showmaskvibMethod->get_active_row_number();
 }
 
+void LocallabVibrance::setDefaultExpanderVisibility()
+{
+    expgradvib->set_expanded(false);
+    expmaskvib->set_expanded(false);
+}
+
 void LocallabVibrance::disableListener()
 {
     LocallabTool::disableListener();
@@ -5130,6 +5158,7 @@ LocallabBlur::LocallabBlur():
     LocallabTool(this, M("TP_LOCALLAB_BLUR_TOOLNAME"), M("TP_LOCALLAB_BLUFR"), true),
 
     // Blur, Noise & Denoise specific widgets
+    expblnoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_BLNOI_EXP")))),
     blMethod(Gtk::manage(new MyComboBoxText())),
     fftwbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTWBLUR")))),
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), MINRAD, MAXRAD, 0.1, 1.5, nullptr, nullptr, &blurSlider2radius, &blurRadius2Slider))),
@@ -5147,6 +5176,7 @@ LocallabBlur::LocallabBlur():
     blurMethod(Gtk::manage(new MyComboBoxText())),
     chroMethod(Gtk::manage(new MyComboBoxText())),
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
+    expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5191,7 +5221,11 @@ LocallabBlur::LocallabBlur():
     const int complexsoft = options.complexity;
 
     // Parameter Blur, Noise & Denoise specific widgets
+    setExpandAlignProperties(expblnoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    if (showtooltip) {
+        expblnoise->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
+    }
 
     blMethod->append(M("TP_LOCALLAB_BLUR"));
     blMethod->append(M("TP_LOCALLAB_BLMED"));
@@ -5257,6 +5291,12 @@ LocallabBlur::LocallabBlur():
     chroMethodConn = chroMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::chroMethodChanged));
 
     activlumConn = activlum->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::activlumChanged));
+
+    setExpandAlignProperties(expdenoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    if (showtooltip) {
+        expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
+    }
 
     LocalcurveEditorwavden->setCurveListener(this);
 
@@ -5412,14 +5452,6 @@ LocallabBlur::LocallabBlur():
     csThresholdblur->setAdjusterListener(this);
 
     // Add Blur, Noise & Denoise specific widgets to GUI
-    MyExpander* const expblnoise = Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_BLNOI_EXP")));
-    setExpandAlignProperties(expblnoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-
-    if (showtooltip) {
-        expblnoise->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
-    }
-
-    expblnoise->set_expanded(false);
     ToolParamBlock* const blnoisebox = Gtk::manage(new ToolParamBlock());
     blnoisebox->pack_start(*blMethod);
 
@@ -5446,14 +5478,6 @@ LocallabBlur::LocallabBlur():
     // blnoisebox->pack_start(*activlum);
     expblnoise->add(*blnoisebox, false);
     pack_start(*expblnoise);
-    MyExpander* const expdenoise = Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")));
-    setExpandAlignProperties(expdenoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-
-    if (showtooltip) {
-        expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
-    }
-
-    expdenoise->set_expanded(false);
     ToolParamBlock* const denoisebox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
@@ -5478,9 +5502,9 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const maskblBox = Gtk::manage(new ToolParamBlock());
     maskblBox->pack_start(*showmaskblMethod, Gtk::PACK_SHRINK, 4);
     maskblBox->pack_start(*enablMask, Gtk::PACK_SHRINK, 0);
+    maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
     if (complexsoft < 2) {
-        maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         maskblBox->pack_start(*strumaskbl, Gtk::PACK_SHRINK, 0);
         maskblBox->pack_start(*toolbl, Gtk::PACK_SHRINK, 0);
     }
@@ -5534,6 +5558,13 @@ void LocallabBlur::resetMaskView()
 void LocallabBlur::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
 {
     blMask = showmaskblMethod->get_active_row_number();
+}
+
+void LocallabBlur::setDefaultExpanderVisibility()
+{
+    expblnoise->set_expanded(false);
+    expdenoise->set_expanded(false);
+    expmaskbl->set_expanded(false);
 }
 
 void LocallabBlur::disableListener()

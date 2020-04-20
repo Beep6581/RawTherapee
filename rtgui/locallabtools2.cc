@@ -337,6 +337,11 @@ void LocallabTone::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
     tmMask = showmasktmMethod->get_active_row_number();
 }
 
+void LocallabTone::setDefaultExpanderVisibility()
+{
+    expmasktm->set_expanded(false);
+}
+
 void LocallabTone::disableListener()
 {
     LocallabTool::disableListener();
@@ -1101,6 +1106,12 @@ void LocallabRetinex::resetMaskView()
 void LocallabRetinex::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
 {
     retiMask = showmaskretiMethod->get_active_row_number();
+}
+
+void LocallabRetinex::setDefaultExpanderVisibility()
+{
+    expretitools->set_expanded(false);
+    expmaskreti->set_expanded(false);
 }
 
 void LocallabRetinex::disableListener()
@@ -2501,6 +2512,13 @@ void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
     lcMask = showmasklcMethod->get_active_row_number();
 }
 
+void LocallabContrast::setDefaultExpanderVisibility()
+{
+    expcontrastpyr->set_expanded(false);
+    expcontrastpyr2->set_expanded(false);
+    expmasklc->set_expanded(false);
+}
+
 void LocallabContrast::disableListener()
 {
     LocallabTool::disableListener();
@@ -3756,6 +3774,12 @@ void LocallabCBDL::resetMaskView()
 void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
 {
     cbMask = showmaskcbMethod->get_active_row_number();
+}
+
+void LocallabCBDL::setDefaultExpanderVisibility()
+{
+    printf("Test: %d\n", expmaskcb->is_visible());
+    expmaskcb->set_expanded(false);
 }
 
 void LocallabCBDL::disableListener()

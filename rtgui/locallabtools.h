@@ -107,7 +107,7 @@ public:
     bool isLocallabToolAdded();
 
     // Mask background management function
-    void refChanged(const double huer, const double lumar, const double chromar); // Make it virtual
+    void refChanged(const double huer, const double lumar, const double chromar);
 
     // Mask preview functions
     virtual void resetMaskView() {};
@@ -122,13 +122,14 @@ public:
     void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
     // To be implemented
+    virtual void setDefaultExpanderVisibility() {};
     virtual void disableListener();
     virtual void enableListener();
     virtual void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) {};
     virtual void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) {};
     virtual void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) {};
-    virtual void adjusterChanged(Adjuster* a, double newval) {};  // At least when using mask
-    virtual void curveChanged(CurveEditor* ce) {}; // At least when using curve
+    virtual void adjusterChanged(Adjuster* a, double newval) {};
+    virtual void curveChanged(CurveEditor* ce) {};
 
 protected:
     // To be implemented
@@ -171,6 +172,7 @@ private:
     Adjuster* const strcolab;
     Adjuster* const strcolh;
     Adjuster* const angcol;
+    MyExpander* const expcurvcol;
     Gtk::Label* const labqualcurv;
     MyComboBoxText* const qualitycurveMethod;
     CurveEditorGroup* const llCurveEditorG;
@@ -197,6 +199,7 @@ private:
     Gtk::Frame* const gridmerFrame;
     LabGrid* const labgridmerg;
     Adjuster* const merlucol;
+    MyExpander* const expmaskcol;
     MyComboBoxText* const showmaskcolMethod;
     MyComboBoxText* const showmaskcolMethodinv;
     Gtk::CheckButton* const enaColorMask;
@@ -233,8 +236,9 @@ public:
     void setListener(ToolPanelListener* tpl);
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void setDefaultExpanderVisibility();
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -338,8 +342,9 @@ public:
     ~LocallabExposure();
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void setDefaultExpanderVisibility();
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -417,8 +422,9 @@ public:
     ~LocallabShadow();
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void setDefaultExpanderVisibility();
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -489,8 +495,9 @@ public:
     ~LocallabVibrance();
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void setDefaultExpanderVisibility();
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -539,7 +546,7 @@ public:
     LocallabSoft();
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
     void disableListener();
     void enableListener();
@@ -565,6 +572,7 @@ class LocallabBlur:
 {
 private:
     // Blur & Noise specific widgets
+    MyExpander* const expblnoise;
     MyComboBoxText* const blMethod;
     Gtk::CheckButton* const fftwbl;
     Adjuster* const radius;
@@ -582,6 +590,7 @@ private:
     MyComboBoxText* const blurMethod;
     MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
+    MyExpander* const expdenoise;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
     Adjuster* const noiselumf0;
@@ -627,8 +636,9 @@ public:
     ~LocallabBlur();
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void setDefaultExpanderVisibility();
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -701,8 +711,9 @@ public:
     ~LocallabTone();
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void setDefaultExpanderVisibility();
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -788,8 +799,9 @@ public:
     void updateMinMax(const double cdma, const double cdmin, const double mini, const double maxi, const double Tmean, const double Tsigma, const double Tmin, const double Tmax);
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void setDefaultExpanderVisibility();
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -841,7 +853,7 @@ public:
     LocallabSharp();
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
     void disableListener();
     void enableListener();
@@ -954,8 +966,9 @@ public:
     ~LocallabContrast();
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void setDefaultExpanderVisibility();
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -1040,8 +1053,9 @@ public:
     ~LocallabCBDL();
 
     void resetMaskView();
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask);
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void setDefaultExpanderVisibility();
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
