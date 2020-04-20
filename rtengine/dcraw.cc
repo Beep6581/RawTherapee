@@ -9121,6 +9121,9 @@ void CLASS adobe_coeff (const char *make, const char *model)
   if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
     RT_blacklevel_from_constant = ThreeValBool::T;
   }
+  if (RT_matrix_from_constant == ThreeValBool::X) {
+    RT_matrix_from_constant = ThreeValBool::T;
+  }
   // -- RT --------------------------------------------------------------------
 
   for (i=0; i < sizeof table / sizeof *table; i++)
@@ -9139,9 +9142,6 @@ void CLASS adobe_coeff (const char *make, const char *model)
       tiff_bps += 2;
   } else if (load_raw == &CLASS panasonic_load_raw) {
       tiff_bps = RT_pana_info.bpp;
-  }
-  if (RT_matrix_from_constant == ThreeValBool::X) {
-    RT_matrix_from_constant = ThreeValBool::T;
   }
   { /* Check for RawTherapee table overrides and extensions */
       int black_level, white_level;
@@ -10590,7 +10590,7 @@ dng_skip:
        * files. See #4129 */) {
     memcpy (rgb_cam, cmatrix, sizeof cmatrix);
 //    raw_color = 0;
-    RT_matrix_from_constant = ThreeValBool::X;
+    RT_matrix_from_constant = ThreeValBool::F;
   }
   if(!strncmp(make, "Panasonic", 9) && !strncmp(model, "DMC-LX100",9))
 	adobe_coeff (make, model);
