@@ -447,6 +447,7 @@ struct local_params {
     bool edgwena;
     bool lip3;
     int daubLen;
+    float sigmadr;
 
 };
 
@@ -814,10 +815,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     if (wavcurveden) {
         if (lp.denoiena) {
-            local_noiself0 = 150.f * locwavCurveden[0];
-            local_noiself = 150.f * locwavCurveden[166];
-            local_noiself2 = 150.f * locwavCurveden[323];
-            local_noiselc = 100.f * locwavCurveden[500];
+            local_noiself0 = 250.f * locwavCurveden[0];
+            local_noiself = 250.f * locwavCurveden[166];
+            local_noiself2 = 250.f * locwavCurveden[323];
+            local_noiselc = 200.f * locwavCurveden[500];
         }
     }
 
@@ -1235,6 +1236,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senshs = local_sensihs;
     lp.ftwlc = fftwlc;
     lp.ftwreti = fftwreti;
+    lp.sigmadr = locallab.spots.at(sp).sigmadr;
 
 }
 
@@ -7436,13 +7438,21 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
 }
 
 
-void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl,
+void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl,
                               const LocwavCurve & loclevwavCurve, bool & loclevwavutili,
                               const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
                               const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
                               float radlevblur, int process, FattalToneMappingParams &fatParams, float chromablu, float thres)
 {
     float madL[10][3];
+    int W_L = wdspot.level_W(0);
+    int H_L = wdspot.level_H(0);
+
+    float * beta = nullptr;
+
+    if (process == 3) {
+        beta = new float[W_L * H_L];
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -7514,6 +7524,44 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
                 int H_L = wdspot.level_H(level);
+                float effect = lp.sigmadr;
+                float offs = 1.f;
+                float mea[10];
+
+                for (int co = 0; co < H_L * W_L; co++) {
+                    beta[co] = 1.f;
+                }
+                calceffect(level, mean, sigma, mea, effect, offs);
+                float **WavL = wdspot.level_coeffs(level);
+
+                for (int co = 0; co < H_L * W_L; co++) {
+                    float WavCL = std::fabs(WavL[dir][co]);
+
+                    if (WavCL < mea[0]) {
+                        beta[co] = 0.05f;
+                    } else if (WavCL < mea[1]) {
+                        beta[co] = 0.2f;
+                    } else if (WavCL < mea[2]) {
+                        beta[co] = 0.7f;
+                    } else if (WavCL < mea[3]) {
+                        beta[co] = 1.f;    //standard
+                    } else if (WavCL < mea[4]) {
+                        beta[co] = 1.f;
+                    } else if (WavCL < mea[5]) {
+                        beta[co] = 0.8f;    //+sigma
+                    } else if (WavCL < mea[6]) {
+                        beta[co] = 0.65f;
+                    } else if (WavCL < mea[7]) {
+                        beta[co] = 0.5f;
+                    } else if (WavCL < mea[8]) {
+                        beta[co] = 0.4f;    // + 2 sigma
+                    } else if (WavCL < mea[9]) {
+                        beta[co] = 0.25f;
+                    } else {
+                        beta[co] = 0.1f;
+                    }
+                }
+
 
                 if (loccomprewavCurve && loccomprewavutili) {
                     float klev = (loccomprewavCurve[level * 55.5f] - 0.75f);
@@ -7554,10 +7602,20 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
 
             for (int y = 0; y < H_L; y++) {
                 for (int x = 0; x < W_L; x++) {
-                    wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
+                //    wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
+                    int j = y * W_L + x;
+                    if (process == 3) {
+                        wav_L[dir][j] = wav_L[dir][j] * (1.f - beta[j]) + beta[j] * templevel[dir - 1][level][y][x];
+                    } else {
+                        wav_L[dir][j] = templevel[dir - 1][level][y][x];
+                    }
                 }
             }
         }
+    }
+
+    if (process == 3) {
+        delete[] beta;
     }
 
 }
@@ -7875,15 +7933,15 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         }
 
         if (wavcurvelev && radlevblur > 0.f && blurena) {
-            wavcont(*wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, 1.f, 0.f);
+            wavcont(lp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, 1.f, 0.f);
         }
 
         if (wavcurvecomp && comprena) {
-            wavcont(*wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 2, fatParams, 1.f, 0.f);
+            wavcont(lp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 2, fatParams, 1.f, 0.f);
         }
 
         if (wavcurvecompre && compreena) {
-            wavcont(*wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 3, fatParams, 1.f, thres);
+            wavcont(lp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 3, fatParams, 1.f, thres);
         }
 
         //free memory templevel
@@ -8379,7 +8437,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             }
 
             if (wavcurvelev && radlevblur > 0.f) {
-                wavcont(*wdspota, templevela, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
+                wavcont(lp, *wdspota, templevela, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
             }
 
             wdspota->reconstruct(tmpa[0], 1.f);
@@ -8434,7 +8492,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             }
 
             if (wavcurvelev && radlevblur > 0.f) {
-                wavcont(*wdspotb, templevelb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
+                wavcont(lp, *wdspotb, templevelb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
             }
 
             wdspotb->reconstruct(tmpb[0], 1.f);
