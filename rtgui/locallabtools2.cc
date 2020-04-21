@@ -2040,6 +2040,7 @@ LocallabContrast::LocallabContrast():
     blurlevelFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURLEVELFRA")))),
     wavblur(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLURLEVELFRA")))),
     levelblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELBLUR"), 0., 100., 0.5, 0.))),
+    sigmabl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     chromablu(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMABLU"), 0.01, 5., 0.01, 1.))),
     LocalcurveEditorwavlev(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVLEV"))),
     wavshapelev(static_cast<FlatCurveEditor*>(LocalcurveEditorwavlev->addCurve(CT_Flat, "", nullptr, false, false))),
@@ -2211,6 +2212,7 @@ LocallabContrast::LocallabContrast():
     wavblurConn = wavblur->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavblurChanged));
 
     levelblur->setAdjusterListener(this);
+    sigmabl->setAdjusterListener(this);
 
     chromablu->setAdjusterListener(this);
 
@@ -2432,6 +2434,7 @@ LocallabContrast::LocallabContrast():
     Gtk::VBox* const blurlevcontBox = Gtk::manage(new Gtk::VBox());
     blurlevcontBox->set_spacing(2);
     blurlevcontBox->pack_start(*levelblur);
+    blurlevcontBox->pack_start(*sigmabl);
     blurlevcontBox->pack_start(*chromablu);
     blurlevcontBox->pack_start(*LocalcurveEditorwavlev, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     Gtk::HSeparator* const separatorblu = Gtk::manage(new  Gtk::HSeparator());
@@ -2638,6 +2641,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
 
         wavblur->set_active(pp->locallab.spots.at(index).wavblur);
         levelblur->setValue(pp->locallab.spots.at(index).levelblur);
+        sigmabl->setValue(pp->locallab.spots.at(index).sigmabl);
         chromablu->setValue(pp->locallab.spots.at(index).chromablu);
         wavshapelev->setCurve(pp->locallab.spots.at(index).loclevwavcurve);
         residblur->setValue(pp->locallab.spots.at(index).residblur);
@@ -2754,6 +2758,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
         pp->locallab.spots.at(index).wavblur = wavblur->get_active();
         pp->locallab.spots.at(index).levelblur = levelblur->getValue();
+        pp->locallab.spots.at(index).sigmabl = sigmabl->getValue();
         pp->locallab.spots.at(index).chromablu = chromablu->getValue();
         pp->locallab.spots.at(index).loclevwavcurve = wavshapelev->getCurve();
         pp->locallab.spots.at(index).residblur = residblur->getValue();
@@ -2818,6 +2823,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         edgw->setDefault(defSpot.edgw);
         basew->setDefault(defSpot.basew);
         levelblur->setDefault(defSpot.levelblur);
+        sigmabl->setDefault(defSpot.sigmabl);
         chromablu->setDefault(defSpot.chromablu);
         residblur->setDefault(defSpot.residblur);
         sigma->setDefault(defSpot.sigma);
@@ -2991,6 +2997,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablevelblur,
                                        levelblur->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sigmabl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmabl,
+                                       sigmabl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3457,6 +3470,7 @@ void LocallabContrast::updateContrastGUI1()
         edgw->hide();
         basew->hide();
         levelblur->hide();
+        sigmabl->hide();
         chromablu->hide();
         LocalcurveEditorwavlev->hide();
         residblur->hide();
@@ -3496,6 +3510,7 @@ void LocallabContrast::updateContrastGUI1()
         edgw->show();
         basew->show();
         levelblur->show();
+        sigmabl->show();
         chromablu->show();
         LocalcurveEditorwavlev->show();
         residblur->show();
@@ -3748,7 +3763,7 @@ LocallabCBDL::LocallabCBDL():
     pack_start(*separator, Gtk::PACK_SHRINK, 2);
     pack_start(*chromacbdl);
     pack_start(*threshold);
-    pack_start(*blurcbdl);
+   // pack_start(*blurcbdl);
     ToolParamBlock* const residBox = Gtk::manage(new ToolParamBlock());
     residBox->pack_start(*clarityml);
     residBox->pack_start(*contresid);

@@ -725,6 +725,7 @@ public:
         bool residcont;
         bool residblur;
         bool levelblur;
+        bool sigmabl;
         bool residchro;
         bool residcomp;
         bool sigma;

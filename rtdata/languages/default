@@ -1151,6 +1151,7 @@ HISTORY_MSG_910;Local - Wavelet Edge performance
 HISTORY_MSG_911;Local - Blur Chroma Luma
 HISTORY_MSG_912;Local - Blur Guide filter strength
 HISTORY_MSG_913;Local - Contrast Wavelet Sigma DR
+HISTORY_MSG_914;Local - Blur Wavelet Sigma BL
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction

@@ -919,6 +919,7 @@ private:
     Gtk::Frame* const blurlevelFrame;
     Gtk::CheckButton* const wavblur;
     Adjuster* const levelblur;
+    Adjuster* const sigmabl;
     Adjuster* const chromablu;
     CurveEditorGroup* const LocalcurveEditorwavlev;
     FlatCurveEditor* const wavshapelev;

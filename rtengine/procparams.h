@@ -1298,6 +1298,7 @@ struct LocallabParams {
         double residcont;
         double residblur;
         double levelblur;
+        double sigmabl;
         double residchro;
         double residcomp;
         double sigma;
