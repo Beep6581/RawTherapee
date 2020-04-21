@@ -449,6 +449,7 @@ struct local_params {
     int daubLen;
     float sigmadr;
     float sigmabl;
+    float sigmaed;
 
 };
 
@@ -1239,6 +1240,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.ftwreti = fftwreti;
     lp.sigmadr = locallab.spots.at(sp).sigmadr;
     lp.sigmabl = locallab.spots.at(sp).sigmabl;
+    lp.sigmaed = locallab.spots.at(sp).sigmaed;
 
 }
 
@@ -8050,6 +8052,8 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         int H_L = wdspot->level_H(0);
         float *koeLi[12];
         float maxkoeLi[12];
+        float * beta = nullptr;
+        beta = new float[W_L * H_L];
 
         float *koeLibuffer = nullptr;
 
@@ -8087,6 +8091,42 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 int W_L = wdspot->level_W(lvl);
                 int H_L = wdspot->level_H(lvl);
                 float **wav_L = wdspot->level_coeffs(lvl);
+                float effect = lp.sigmaed;
+                float offs = 1.f;
+                float mea[10];
+                for (int co = 0; co < H_L * W_L; co++) {
+                    beta[co] = 1.f;
+                }
+                calceffect(lvl, mean, sigma, mea, effect, offs);
+
+                for (int co = 0; co < H_L * W_L; co++) {
+                    float WavCL = std::fabs(wav_L[dir][co]);
+
+                    if (WavCL < mea[0]) {
+                        beta[co] = 0.05f;
+                    } else if (WavCL < mea[1]) {
+                        beta[co] = 0.2f;
+                    } else if (WavCL < mea[2]) {
+                        beta[co] = 0.7f;
+                    } else if (WavCL < mea[3]) {
+                        beta[co] = 1.f;    //standard
+                    } else if (WavCL < mea[4]) {
+                        beta[co] = 1.f;
+                    } else if (WavCL < mea[5]) {
+                        beta[co] = 0.8f;    //+sigma
+                    } else if (WavCL < mea[6]) {
+                        beta[co] = 0.5f;
+                    } else if (WavCL < mea[7]) {
+                        beta[co] = 0.3f;
+                    } else if (WavCL < mea[8]) {
+                        beta[co] = 0.2f;    // + 2 sigma
+                    } else if (WavCL < mea[9]) {
+                        beta[co] = 0.1f;
+                    } else {
+                        beta[co] = 0.05f;
+                    }
+                }
+               // printf("Chromablu=%f \n", chromablu);
 
                 calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi, tmC);
                 // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
@@ -8344,7 +8384,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                 edge = 1.f;
                             }
 
-                            wav_L[dir][k] *=  edge;
+                            wav_L[dir][k] *=  (1.f + (edge - 1.f) * beta[k]);
                         }
                     }
                 }
@@ -8355,6 +8395,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             delete [] koeLibuffer;
         }
 
+        delete[] beta; 
     }
 
 //edge sharpness end
