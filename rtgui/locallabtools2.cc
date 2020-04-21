@@ -3551,7 +3551,7 @@ void LocallabContrast::updateContrastGUI2()
     if (wavedg->get_active()) {
         edgsBox->show();
     } else {
-        edgsBox->hide();
+        edgsBox->show();//always show
     }
 }
 
