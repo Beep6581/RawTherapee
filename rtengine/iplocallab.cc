@@ -448,6 +448,7 @@ struct local_params {
     bool lip3;
     int daubLen;
     float sigmadr;
+    float sigmabl;
 
 };
 
@@ -1237,6 +1238,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.ftwlc = fftwlc;
     lp.ftwreti = fftwreti;
     lp.sigmadr = locallab.spots.at(sp).sigmadr;
+    lp.sigmabl = locallab.spots.at(sp).sigmabl;
 
 }
 
@@ -7449,9 +7451,14 @@ void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wd
     int H_L = wdspot.level_H(0);
 
     float * beta = nullptr;
+    float * betabl = nullptr;
 
     if (process == 3) {
         beta = new float[W_L * H_L];
+    }
+
+    if (process == 1) {
+        betabl = new float[W_L * H_L];
     }
 
 #ifdef _OPENMP
@@ -7475,11 +7482,56 @@ void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wd
     }
 
     if (process == 1) { //blur
+        float mean[10];
+        float meanN[10];
+        float sigma[10];
+        float sigmaN[10];
+        float MaxP[10];
+        float MaxN[10];
+        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+    
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
                 int H_L = wdspot.level_H(level);
+                float effect = lp.sigmabl;
+                float offs = 1.f;
+                float mea[10];
 
+                for (int co = 0; co < H_L * W_L; co++) {
+                    betabl[co] = 1.f;
+                }
+                calceffect(level, mean, sigma, mea, effect, offs);
+                float **WavL = wdspot.level_coeffs(level);
+
+                for (int co = 0; co < H_L * W_L; co++) {
+                    float WavCL = std::fabs(WavL[dir][co]);
+
+                    if (WavCL < mea[0]) {
+                        betabl[co] = 0.05f;
+                    } else if (WavCL < mea[1]) {
+                        betabl[co] = 0.2f;
+                    } else if (WavCL < mea[2]) {
+                        betabl[co] = 0.7f;
+                    } else if (WavCL < mea[3]) {
+                        betabl[co] = 1.f;    //standard
+                    } else if (WavCL < mea[4]) {
+                        betabl[co] = 1.f;
+                    } else if (WavCL < mea[5]) {
+                        betabl[co] = 0.8f;    //+sigma
+                    } else if (WavCL < mea[6]) {
+                        betabl[co] = 0.5f;
+                    } else if (WavCL < mea[7]) {
+                        betabl[co] = 0.3f;
+                    } else if (WavCL < mea[8]) {
+                        betabl[co] = 0.2f;    // + 2 sigma
+                    } else if (WavCL < mea[9]) {
+                        betabl[co] = 0.1f;
+                    } else {
+                        betabl[co] = 0.05f;
+                    }
+                }
+               // printf("Chromablu=%f \n", chromablu);
                 if (loclevwavCurve && loclevwavutili) {
 
                     float klev = 0.25f * (loclevwavCurve[level * 55.5f]);
@@ -7602,10 +7654,11 @@ void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wd
 
             for (int y = 0; y < H_L; y++) {
                 for (int x = 0; x < W_L; x++) {
-                //    wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
                     int j = y * W_L + x;
                     if (process == 3) {
                         wav_L[dir][j] = wav_L[dir][j] * (1.f - beta[j]) + beta[j] * templevel[dir - 1][level][y][x];
+                    } else if (process == 1) {
+                        wav_L[dir][j] = wav_L[dir][j] * (1.f - betabl[j]) + betabl[j] * templevel[dir - 1][level][y][x];
                     } else {
                         wav_L[dir][j] = templevel[dir - 1][level][y][x];
                     }
@@ -7616,6 +7669,10 @@ void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wd
 
     if (process == 3) {
         delete[] beta;
+    }
+
+    if (process == 1) {
+        delete[] betabl;
     }
 
 }
