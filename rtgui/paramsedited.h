@@ -743,6 +743,7 @@ public:
         bool strwav;
         bool angwav;
         bool strengthw;
+        bool sigmaed;
         bool radiusw;
         bool detailw;
         bool gradw;

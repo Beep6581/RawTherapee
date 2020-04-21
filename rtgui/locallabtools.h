@@ -902,6 +902,7 @@ private:
     Gtk::CheckButton* const wavedg;
     ToolParamBlock* const edgsBox;
     Adjuster* const strengthw;
+    Adjuster* const sigmaed;
     CurveEditorGroup* const LocalcurveEditorwavedg;
     FlatCurveEditor* const wavshapeedg;
     Adjuster* const gradw;

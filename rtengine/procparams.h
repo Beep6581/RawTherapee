@@ -1316,6 +1316,7 @@ struct LocallabParams {
         double strwav;
         double angwav;
         double strengthw;
+        double sigmaed;
         double radiusw;
         double detailw;
         double gradw;

@@ -2840,6 +2840,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     strwav(0.0),
     angwav(0.0),
     strengthw(0.0),
+    sigmaed(1.0),
     radiusw(15.0),
     detailw(10.0),
     gradw(90.0),
@@ -3284,6 +3285,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strwav == other.strwav
         && angwav == other.angwav
         && strengthw == other.strengthw
+        && sigmaed == other.sigmaed
         && radiusw == other.radiusw
         && detailw == other.detailw
         && gradw == other.gradw
@@ -4724,6 +4726,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strwav, "Locallab", "Strwav_" + std::to_string(i), spot.strwav, keyFile);
                     saveToKeyfile(!pedited || pedited->locallab.spots.at(i).angwav, "Locallab", "Angwav_" + std::to_string(i), spot.angwav, keyFile);
                     saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strengthw, "Locallab", "Strengthw_" + std::to_string(i), spot.strengthw, keyFile);
+                    saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sigmaed, "Locallab", "Sigmaed_" + std::to_string(i), spot.sigmaed, keyFile);
                     saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radiusw, "Locallab", "Radiusw_" + std::to_string(i), spot.radiusw, keyFile);
                     saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detailw, "Locallab", "Detailw_" + std::to_string(i), spot.detailw, keyFile);
                     saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gradw, "Locallab", "Gradw_" + std::to_string(i), spot.gradw, keyFile);
@@ -6369,6 +6372,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Strwav_" + std::to_string(i), pedited, spot.strwav, spotEdited.strwav);
                 assignFromKeyfile(keyFile, "Locallab", "Angwav_" + std::to_string(i), pedited, spot.angwav, spotEdited.angwav);
                 assignFromKeyfile(keyFile, "Locallab", "Strengthw_" + std::to_string(i), pedited, spot.strengthw, spotEdited.strengthw);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmaed_" + std::to_string(i), pedited, spot.sigmaed, spotEdited.sigmaed);
                 assignFromKeyfile(keyFile, "Locallab", "Radiusw_" + std::to_string(i), pedited, spot.radiusw, spotEdited.radiusw);
                 assignFromKeyfile(keyFile, "Locallab", "Detailw_" + std::to_string(i), pedited, spot.detailw, spotEdited.detailw);
                 assignFromKeyfile(keyFile, "Locallab", "Gradw_" + std::to_string(i), pedited, spot.gradw, spotEdited.gradw);

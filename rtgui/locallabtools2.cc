@@ -2023,6 +2023,7 @@ LocallabContrast::LocallabContrast():
     wavedg(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EDGFRA")))),
     edgsBox(Gtk::manage(new ToolParamBlock())),
     strengthw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDVAL"), 0., 100.0, 0.5, 0.))),
+    sigmaed(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     LocalcurveEditorwavedg(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVEDG"))),
     wavshapeedg(static_cast<FlatCurveEditor*>(LocalcurveEditorwavedg->addCurve(CT_Flat, "", nullptr, false, false))),
     gradw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECT"), 0., 100.0, 0.5, 90.))),
@@ -2171,6 +2172,7 @@ LocallabContrast::LocallabContrast():
     wavedgConn = wavedg->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavedgChanged));
 
     strengthw->setAdjusterListener(this);
+    sigmaed->setAdjusterListener(this);
 
     LocalcurveEditorwavedg->setCurveListener(this);
 
@@ -2405,6 +2407,7 @@ LocallabContrast::LocallabContrast():
     blurcontBox->pack_start(*gradwavFrame);
     edgFrame->set_label_widget(*wavedg);
     edgsBox->pack_start(*strengthw);
+    edgsBox->pack_start(*sigmaed);
     edgsBox->pack_start(*LocalcurveEditorwavedg, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     edgsBox->pack_start(*gradw);
     edgsBox->pack_start(*waveshow);
@@ -2612,6 +2615,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         angwav->setValue(pp->locallab.spots.at(index).angwav);
         wavedg->set_active(pp->locallab.spots.at(index).wavedg);
         strengthw->setValue(pp->locallab.spots.at(index).strengthw);
+        sigmaed->setValue(pp->locallab.spots.at(index).sigmaed);
         wavshapeedg->setCurve(pp->locallab.spots.at(index).locedgwavcurve);
         gradw->setValue(pp->locallab.spots.at(index).gradw);
         waveshow->set_active(pp->locallab.spots.at(index).waveshow);
@@ -2729,6 +2733,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         pp->locallab.spots.at(index).angwav = angwav->getValue();
         pp->locallab.spots.at(index).wavedg = wavedg->get_active();
         pp->locallab.spots.at(index).strengthw = strengthw->getValue();
+        pp->locallab.spots.at(index).sigmaed = sigmaed->getValue();
         pp->locallab.spots.at(index).locedgwavcurve = wavshapeedg->getCurve();
         pp->locallab.spots.at(index).gradw = gradw->getValue();
         pp->locallab.spots.at(index).waveshow = waveshow->get_active();
@@ -2815,6 +2820,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         strwav->setDefault(defSpot.strwav);
         angwav->setDefault(defSpot.angwav);
         strengthw->setDefault(defSpot.strengthw);
+        sigmaed->setDefault(defSpot.sigmaed);
         gradw->setDefault(defSpot.gradw);
         radiusw->setDefault(defSpot.radiusw);
         detailw->setDefault(defSpot.detailw);
@@ -2941,6 +2947,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabstrengthw,
                                        strengthw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sigmaed) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmaed,
+                                       sigmaed->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3461,6 +3474,7 @@ void LocallabContrast::updateContrastGUI1()
         strwav->hide();
         angwav->hide();
         strengthw->hide();
+        sigmaed->hide();
         LocalcurveEditorwavedg->hide();
         gradw->hide();
         radiusw->hide();
@@ -3501,6 +3515,7 @@ void LocallabContrast::updateContrastGUI1()
         strwav->show();
         angwav->show();
         strengthw->show();
+        sigmaed->show();
         LocalcurveEditorwavedg->show();
         gradw->show();
         radiusw->show();
