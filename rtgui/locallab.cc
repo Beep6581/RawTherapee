@@ -293,15 +293,8 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         }
 
         r->transit = pp->locallab.spots.at(i).transit;
-
-        if (complexsoft < 2) {
-            r->transitweak = pp->locallab.spots.at(i).transitweak;
-            r->transitgrad = pp->locallab.spots.at(i).transitgrad;
-        } else {
-            r->transitweak = 1.;
-            r->transitgrad = 0.;
-        }
-
+        r->transitweak = pp->locallab.spots.at(i).transitweak;
+        r->transitgrad = pp->locallab.spots.at(i).transitgrad;
         r->feather = pp->locallab.spots.at(i).feather;
         r->struc = pp->locallab.spots.at(i).struc;
         r->thresh = pp->locallab.spots.at(i).thresh;

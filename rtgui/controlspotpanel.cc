@@ -65,7 +65,7 @@ ControlSpotPanel::ControlSpotPanel():
     centerY_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITVALUE"), 2., 100., 0.1, 60.))),
-    transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 15.0, 0.1, 1.0))),
+    transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 25.0, 0.1, 1.0))),
     transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
     feather_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1.0, 12.0, 0.1, 4.0))),
@@ -311,15 +311,8 @@ ControlSpotPanel::ControlSpotPanel():
     feather_->setAdjusterListener(this);
     scopemask_->setAdjusterListener(this);
     transitBox->pack_start(*transit_);
-
-    if (complexsoft < 2) {
-        transitBox->pack_start(*transitweak_);
-    }
-
-    if (complexsoft < 2) {
-        transitBox->pack_start(*transitgrad_);
-    }
-
+    transitBox->pack_start(*transitweak_);
+    transitBox->pack_start(*transitgrad_);
     transitBox->pack_start(*feather_);
     transitFrame->add(*transitBox);
     pack_start(*transitFrame);
