@@ -323,7 +323,7 @@ void MyDiagonalCurve::draw (int handle)
     // draw the grid lines:
     cr->set_line_width (1.0 * s);
     c = style->get_border_color(state);
-    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+    cr->set_source_rgba (c.get_red(), c.get_green(), c.get_blue(), 0.3);
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
 
     for (int i = 0; i <= 10; i++) {
