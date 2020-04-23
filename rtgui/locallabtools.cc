@@ -2143,15 +2143,7 @@ LocallabExposure::LocallabExposure():
     }
 
     expMethod->append(M("TP_LOCALLAB_STD"));
-
-    if (complexsoft == 1) {
-        expMethod->append(M("TP_LOCALLAB_PDE"));
-    }
-
-    if (complexsoft == 0) {
-        expMethod->append(M("TP_LOCALLAB_PDE2"));
-    }
-
+    expMethod->append(M("TP_LOCALLAB_PDE"));
     expMethod->set_active(0);
     expMethodConn = expMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabExposure::expMethodChanged));
 
@@ -2370,10 +2362,7 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG->curveListComplete();
 
     // Add Color & Light specific widgets to GUI
-    if (complexsoft < 2) {
-        pack_start(*expMethod);
-    }
-
+    pack_start(*expMethod);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
     pdeBox->pack_start(*linear);
@@ -2384,45 +2373,25 @@ LocallabExposure::LocallabExposure():
     ctboxexpmethod->pack_start(*exnoiseMethod);
     pdeBox->pack_start(*ctboxexpmethod);
     pdeFrame->add(*pdeBox);
-
-    if (complexsoft < 2) {
-        pack_start(*pdeFrame);
-    }
-
+    pack_start(*pdeFrame);
     ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
-
-    if (complexsoft < 1) {
-        fatBox->pack_start(*fatlevel);
-    }
-
+    fatBox->pack_start(*fatlevel);
     fatBox->pack_start(*fatanchor);
     fatFrame->add(*fatBox);
-
-    if (complexsoft < 2) {
-        pack_start(*fatFrame);
-    }
-
+    pack_start(*fatFrame);
     pack_start(*sensiex);
     pack_start(*structexp);
-
-    if (complexsoft < 2) {
-        pack_start(*blurexpde);
-    }
-
+    pack_start(*blurexpde);
     ToolParamBlock* const toolBox = Gtk::manage(new ToolParamBlock());
     toolBox->pack_start(*expcomp);
     toolBox->pack_start(*black);
-
-    if (complexsoft < 2) {
-        toolBox->pack_start(*hlcompr);
-        toolBox->pack_start(*hlcomprthresh);
-        toolBox->pack_start(*shadex);
-        toolBox->pack_start(*shcompr);
-        toolBox->pack_start(*expchroma);
-    }
-
+    toolBox->pack_start(*hlcompr);
+    toolBox->pack_start(*hlcomprthresh);
+    toolBox->pack_start(*shadex);
+    toolBox->pack_start(*shcompr);
+    toolBox->pack_start(*expchroma);
     toolBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exptoolexp->add(*toolBox, false);
     pack_start(*exptoolexp);
@@ -2431,12 +2400,8 @@ LocallabExposure::LocallabExposure():
     gradBox->pack_start(*angexp);
     expgradexp->add(*gradBox, false);
     pack_start(*expgradexp);
-
-    if (complexsoft < 2) {
-        pack_start(*softradiusexp);
-        pack_start(*inversex);
-    }
-
+    pack_start(*softradiusexp);
+    pack_start(*inversex);
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*showmaskexpMethodinv, Gtk::PACK_SHRINK, 4);
@@ -2545,22 +2510,13 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         exp->set_visible(pp->locallab.spots.at(index).visiexpose);
         exp->setEnabled(pp->locallab.spots.at(index).expexpose);
 
-        if (complexsoft < 2) {
-            if (pp->locallab.spots.at(index).expMethod == "std") {
-                expMethod->set_active(0);
-            } else if (pp->locallab.spots.at(index).expMethod == "pde") {
-                expMethod->set_active(1);
-            }
-        } else {
+        if (pp->locallab.spots.at(index).expMethod == "std") {
             expMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).expMethod == "pde") {
+            expMethod->set_active(1);
         }
 
-        if (complexsoft == 0) {
-            laplacexp->setValue(pp->locallab.spots.at(index).laplacexp);
-        } else {
-            laplacexp->setValue(0.);
-        }
-
+        laplacexp->setValue(pp->locallab.spots.at(index).laplacexp);
         linear->setValue(pp->locallab.spots.at(index).linear);
         balanexp->setValue(pp->locallab.spots.at(index).balanexp);
         gamm->setValue(pp->locallab.spots.at(index).gamm);
@@ -2575,53 +2531,23 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
 
         fatamount->setValue(pp->locallab.spots.at(index).fatamount);
         fatdetail->setValue(pp->locallab.spots.at(index).fatdetail);
-
-        if (complexsoft == 0) {
-            fatlevel->setValue(pp->locallab.spots.at(index).fatlevel);
-        } else {
-            fatlevel->setValue(1.);
-        }
-
+        fatlevel->setValue(pp->locallab.spots.at(index).fatlevel);
         fatanchor->setValue(pp->locallab.spots.at(index).fatanchor);
         sensiex->setValue(pp->locallab.spots.at(index).sensiex);
-
-        if (complexsoft < 2) {
-            structexp->setValue(pp->locallab.spots.at(index).structexp);
-            blurexpde->setValue(pp->locallab.spots.at(index).blurexpde);
-        } else {
-            structexp->setValue(0.);
-            blurexpde->setValue(5.);
-        }
-
+        structexp->setValue(pp->locallab.spots.at(index).structexp);
+        blurexpde->setValue(pp->locallab.spots.at(index).blurexpde);
         expcomp->setValue(pp->locallab.spots.at(index).expcomp);
         black->setValue(pp->locallab.spots.at(index).black);
-
-        if (complexsoft < 2) {
-            hlcompr->setValue(pp->locallab.spots.at(index).hlcompr);
-            hlcomprthresh->setValue(pp->locallab.spots.at(index).hlcomprthresh);
-            shadex->setValue(pp->locallab.spots.at(index).shadex);
-            shcompr->setValue(pp->locallab.spots.at(index).shcompr);
-            expchroma->setValue(pp->locallab.spots.at(index).expchroma);
-        } else {
-            hlcompr->setValue(0.);
-            hlcomprthresh->setValue(0.);
-            shadex->setValue(0.);
-            shcompr->setValue(0.);
-            expchroma->setValue(0.);
-        }
-
+        hlcompr->setValue(pp->locallab.spots.at(index).hlcompr);
+        hlcomprthresh->setValue(pp->locallab.spots.at(index).hlcomprthresh);
+        shadex->setValue(pp->locallab.spots.at(index).shadex);
+        shcompr->setValue(pp->locallab.spots.at(index).shcompr);
+        expchroma->setValue(pp->locallab.spots.at(index).expchroma);
         shapeexpos->setCurve(pp->locallab.spots.at(index).excurve);
         strexp->setValue(pp->locallab.spots.at(index).strexp);
         angexp->setValue(pp->locallab.spots.at(index).angexp);
-
-        if (complexsoft < 2) {
-            softradiusexp->setValue(pp->locallab.spots.at(index).softradiusexp);
-            inversex->set_active(pp->locallab.spots.at(index).inversex);
-        } else {
-            softradiusexp->setValue(0.);
-            inversex->set_active(false);
-        }
-
+        softradiusexp->setValue(pp->locallab.spots.at(index).softradiusexp);
+        inversex->set_active(pp->locallab.spots.at(index).inversex);
         enaExpMask->set_active(pp->locallab.spots.at(index).enaExpMask);
         enaExpMaskaft->set_active(pp->locallab.spots.at(index).enaExpMaskaft);
         CCmaskexpshape->setCurve(pp->locallab.spots.at(index).CCmaskexpcurve);
@@ -3184,28 +3110,12 @@ void LocallabExposure::updateExposureGUI2()
 {
     // Update exposure GUI according to expMethod value
     if (expMethod->get_active_row_number() == 0) {
-        pdeFrame->set_sensitive(false);
-        laplacexp->set_sensitive(false);
-        linear->set_sensitive(false);
-        balanexp->set_sensitive(false);
-        gamm->set_sensitive(false);
-        fatFrame->set_sensitive(false);
-        fatamount->set_sensitive(false);
-        fatdetail->set_sensitive(false);
-        fatlevel->set_sensitive(false);
-        fatanchor->set_sensitive(false);
+        pdeFrame->hide();
+        fatFrame->hide();
         softradiusexp->set_sensitive(true);
     } else if (expMethod->get_active_row_number() == 1) {
-        pdeFrame->set_sensitive(true);
-        laplacexp->set_sensitive(true);
-        linear->set_sensitive(true);
-        balanexp->set_sensitive(true);
-        gamm->set_sensitive(true);
-        fatFrame->set_sensitive(true);
-        fatamount->set_sensitive(true);
-        fatdetail->set_sensitive(true);
-        fatlevel->set_sensitive(true);
-        fatanchor->set_sensitive(true);
+        pdeFrame->show();
+        fatFrame->show();
         softradiusexp->set_sensitive(false);
     }
 }
@@ -3226,8 +3136,6 @@ void LocallabExposure::updateExposureGUI3()
             updateExposureGUI2();
         }
 
-        pdeFrame->hide();
-        fatFrame->hide();
         structexp->hide();
         shadex->hide();
         softradiusexp->hide();
@@ -3240,8 +3148,6 @@ void LocallabExposure::updateExposureGUI3()
         showmaskexpMethodinv->show();
     } else {
         expMethod->show();
-        pdeFrame->show();
-        fatFrame->show();
         structexp->show();
         shadex->show();
         softradiusexp->show();

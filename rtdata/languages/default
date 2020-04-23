@@ -2562,8 +2562,7 @@ TP_LOCALLAB_OFFSETWAV;Offset
 TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_ORIGLC;Merge only with original image
 TP_LOCALLAB_PASTELS2;Vibrance
-TP_LOCALLAB_PDE;Dynamic Range compression + Standard ƒ
-TP_LOCALLAB_PDE2;ΔØ Laplacian PDE - Dynamic Range compression + Standard
+TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Dynamic Range compression + Standard
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure.\n
 TP_LOCALLAB_PREVIEWSEL;Preview selection ΔE
