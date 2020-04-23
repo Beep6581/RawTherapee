@@ -834,10 +834,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     sourceg[sp] = params->locallab.spots.at(sp).sourceGray;
                     Autogr[sp] = params->locallab.spots.at(sp).Autogray;
                     targetg[sp] = params->locallab.spots.at(sp).targetGray;
-                    locx[sp] = params->locallab.spots.at(sp).locX / 2000.0;
-                    locy[sp] = params->locallab.spots.at(sp).locY / 2000.0;
-                    locxL[sp] = params->locallab.spots.at(sp).locXL / 2000.0;
-                    locyT[sp] = params->locallab.spots.at(sp).locYT / 2000.0;
+                    locx[sp] = params->locallab.spots.at(sp).loc.at(0) / 2000.0;
+                    locy[sp] = params->locallab.spots.at(sp).loc.at(2) / 2000.0;
+                    locxL[sp] = params->locallab.spots.at(sp).loc.at(1) / 2000.0;
+                    locyT[sp] = params->locallab.spots.at(sp).loc.at(3) / 2000.0;
                     centx[sp] = params->locallab.spots.at(sp).centerX / 2000.0 + 0.5;
                     centy[sp] = params->locallab.spots.at(sp).centerY / 2000.0 + 0.5;
 

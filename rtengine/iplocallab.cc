@@ -553,10 +553,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         thre = 2.f;
     }
 
-    double local_x = locallab.spots.at(sp).locX / 2000.0;
-    double local_y = locallab.spots.at(sp).locY / 2000.0;
-    double local_xL = locallab.spots.at(sp).locXL / 2000.0;
-    double local_yT = locallab.spots.at(sp).locYT / 2000.0;
+    double local_x = locallab.spots.at(sp).loc.at(0) / 2000.0;
+    double local_y = locallab.spots.at(sp).loc.at(2) / 2000.0;
+    double local_xL = locallab.spots.at(sp).loc.at(1) / 2000.0;
+    double local_yT = locallab.spots.at(sp).loc.at(3) / 2000.0;
     double local_center_x = locallab.spots.at(sp).centerX / 2000.0 + 0.5;
     double local_center_y = locallab.spots.at(sp).centerY / 2000.0 + 0.5;
     double local_center_xbuf = 0.0; // Provision

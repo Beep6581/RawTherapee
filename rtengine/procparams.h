@@ -970,10 +970,7 @@ struct LocallabParams {
         int structexclu;
         double struc;
         Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
-        int locX;
-        int locXL;
-        int locY;
-        int locYT;
+        std::vector<int> loc; // For ellipse/rectangle: {locX, locXL, locY, locYT}
         int centerX;
         int centerY;
         int circrad;

@@ -136,6 +136,16 @@ void getFromKeyfile(
     const Glib::KeyFile& keyfile,
     const Glib::ustring& group_name,
     const Glib::ustring& key,
+    std::vector<int>& value
+)
+{
+    value = keyfile.get_integer_list(group_name, key);
+}
+
+void getFromKeyfile(
+    const Glib::KeyFile& keyfile,
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
     std::vector<double>& value
 )
 {
@@ -2494,10 +2504,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structexclu(0),
     struc(4.0),
     shapeMethod("IND"),
-    locX(150),
-    locXL(150),
-    locY(150),
-    locYT(150),
+    loc{150, 150, 150, 150},
     centerX(0),
     centerY(0),
     circrad(18),
@@ -2930,10 +2937,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && structexclu == other.structexclu
         && struc == other.struc
         && shapeMethod == other.shapeMethod
-        && locX == other.locX
-        && locXL == other.locXL
-        && locY == other.locY
-        && locYT == other.locYT
+        && loc == other.loc
         && centerX == other.centerX
         && centerY == other.centerY
         && circrad == other.circrad
@@ -4369,10 +4373,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structexclu, "Locallab", "StructExclu_" + std::to_string(i), spot.structexclu, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).struc, "Locallab", "Struc_" + std::to_string(i), spot.struc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shapeMethod, "Locallab", "ShapeMethod_" + std::to_string(i), spot.shapeMethod, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locX, "Locallab", "LocX_" + std::to_string(i), spot.locX, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locXL, "Locallab", "LocXL_" + std::to_string(i), spot.locXL, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locY, "Locallab", "LocY_" + std::to_string(i), spot.locY, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locYT, "Locallab", "LocYT_" + std::to_string(i), spot.locYT, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loc, "Locallab", "Loc_" + std::to_string(i), spot.loc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).centerX, "Locallab", "CenterX_" + std::to_string(i), spot.centerX, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).centerY, "Locallab", "CenterY_" + std::to_string(i), spot.centerY, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).circrad, "Locallab", "Circrad_" + std::to_string(i), spot.circrad, keyFile);
@@ -5952,10 +5953,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "StructExclu_" + std::to_string(i), pedited, spot.structexclu, spotEdited.structexclu);
                 assignFromKeyfile(keyFile, "Locallab", "Struc_" + std::to_string(i), pedited, spot.struc, spotEdited.struc);
                 assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + std::to_string(i), pedited, spot.shapeMethod, spotEdited.shapeMethod);
-                assignFromKeyfile(keyFile, "Locallab", "LocX_" + std::to_string(i), pedited, spot.locX, spotEdited.locX);
-                assignFromKeyfile(keyFile, "Locallab", "LocXL_" + std::to_string(i), pedited, spot.locXL, spotEdited.locXL);
-                assignFromKeyfile(keyFile, "Locallab", "LocY_" + std::to_string(i), pedited, spot.locY, spotEdited.locY);
-                assignFromKeyfile(keyFile, "Locallab", "LocYT_" + std::to_string(i), pedited, spot.locYT, spotEdited.locYT);
+                assignFromKeyfile(keyFile, "Locallab", "Loc_" + std::to_string(i), pedited, spot.loc, spotEdited.loc);
                 assignFromKeyfile(keyFile, "Locallab", "CenterX_" + std::to_string(i), pedited, spot.centerX, spotEdited.centerX);
                 assignFromKeyfile(keyFile, "Locallab", "CenterY_" + std::to_string(i), pedited, spot.centerY, spotEdited.centerY);
                 assignFromKeyfile(keyFile, "Locallab", "Circrad_" + std::to_string(i), pedited, spot.circrad, spotEdited.circrad);

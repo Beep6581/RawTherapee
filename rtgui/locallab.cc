@@ -278,10 +278,10 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->shapeMethod = 0;
         }
 
-        r->locX = pp->locallab.spots.at(i).locX;
-        r->locXL = pp->locallab.spots.at(i).locXL;
-        r->locY = pp->locallab.spots.at(i).locY;
-        r->locYT = pp->locallab.spots.at(i).locYT;
+        r->locX = pp->locallab.spots.at(i).loc.at(0);
+        r->locXL = pp->locallab.spots.at(i).loc.at(1);
+        r->locY = pp->locallab.spots.at(i).loc.at(2);
+        r->locYT = pp->locallab.spots.at(i).loc.at(3);
         r->centerX = pp->locallab.spots.at(i).centerX;
         r->centerY = pp->locallab.spots.at(i).centerY;
         r->circrad = pp->locallab.spots.at(i).circrad;
@@ -438,17 +438,17 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
                     newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
                     // Ellipse/rectangle size computation
-                    newSpot->locX = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locX);
-                    newSpot->locXL = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locXL);
-                    newSpot->locY = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locY);
-                    newSpot->locYT = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locYT);
+                    newSpot->loc.at(0) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(0));
+                    newSpot->loc.at(1) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(1));
+                    newSpot->loc.at(2) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(2));
+                    newSpot->loc.at(3) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(3));
                 }
             }
 
-            r->locX = newSpot->locX;
-            r->locXL = newSpot->locXL;
-            r->locY = newSpot->locY;
-            r->locYT = newSpot->locYT;
+            r->locX = newSpot->loc.at(0);
+            r->locXL = newSpot->loc.at(1);
+            r->locY = newSpot->loc.at(2);
+            r->locYT = newSpot->loc.at(3);
             r->centerX = newSpot->centerX;
             r->centerY = newSpot->centerY;
 
@@ -722,17 +722,17 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
                     newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
                     // Ellipse/rectangle size computation
-                    newSpot->locX = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locX);
-                    newSpot->locXL = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locXL);
-                    newSpot->locY = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locY);
-                    newSpot->locYT = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locYT);
+                    newSpot->loc.at(0) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(0));
+                    newSpot->loc.at(1) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(1));
+                    newSpot->loc.at(2) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(2));
+                    newSpot->loc.at(3) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(3));
                 }
             }
 
-            r->locX = newSpot->locX;
-            r->locXL = newSpot->locXL;
-            r->locY = newSpot->locY;
-            r->locYT = newSpot->locYT;
+            r->locX = newSpot->loc.at(0);
+            r->locXL = newSpot->loc.at(1);
+            r->locY = newSpot->loc.at(2);
+            r->locYT = newSpot->loc.at(3);
             r->centerX = newSpot->centerX;
             r->centerY = newSpot->centerY;
 
@@ -871,10 +871,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "SYMSL";
                     }
 
-                    pp->locallab.spots.at(pp->locallab.selspot).locX = r->locX;
-                    pp->locallab.spots.at(pp->locallab.selspot).locXL = r->locXL;
-                    pp->locallab.spots.at(pp->locallab.selspot).locY = r->locY;
-                    pp->locallab.spots.at(pp->locallab.selspot).locYT = r->locYT;
+                    pp->locallab.spots.at(pp->locallab.selspot).loc.at(0) = r->locX;
+                    pp->locallab.spots.at(pp->locallab.selspot).loc.at(1) = r->locXL;
+                    pp->locallab.spots.at(pp->locallab.selspot).loc.at(2) = r->locY;
+                    pp->locallab.spots.at(pp->locallab.selspot).loc.at(3) = r->locYT;
                     pp->locallab.spots.at(pp->locallab.selspot).centerX = r->centerX;
                     pp->locallab.spots.at(pp->locallab.selspot).centerY = r->centerY;
                     pp->locallab.spots.at(pp->locallab.selspot).circrad = r->circrad;

@@ -993,10 +993,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).structexclu = locallab.spots.at(j).structexclu && pSpot.structexclu == otherSpot.structexclu;
                 locallab.spots.at(j).struc = locallab.spots.at(j).struc && pSpot.struc == otherSpot.struc;
                 locallab.spots.at(j).shapeMethod = locallab.spots.at(j).shapeMethod && pSpot.shapeMethod == otherSpot.shapeMethod;
-                locallab.spots.at(j).locX = locallab.spots.at(j).locX && pSpot.locX == otherSpot.locX;
-                locallab.spots.at(j).locXL = locallab.spots.at(j).locXL && pSpot.locXL == otherSpot.locXL;
-                locallab.spots.at(j).locY = locallab.spots.at(j).locY && pSpot.locY == otherSpot.locY;
-                locallab.spots.at(j).locYT = locallab.spots.at(j).locYT && pSpot.locYT == otherSpot.locYT;
+                locallab.spots.at(j).loc = locallab.spots.at(j).loc && pSpot.loc == otherSpot.loc;
                 locallab.spots.at(j).centerX = locallab.spots.at(j).centerX && pSpot.centerX == otherSpot.centerX;
                 locallab.spots.at(j).centerY = locallab.spots.at(j).centerY && pSpot.centerY == otherSpot.centerY;
                 locallab.spots.at(j).circrad = locallab.spots.at(j).circrad && pSpot.circrad == otherSpot.circrad;
@@ -2941,20 +2938,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).shapeMethod = mods.locallab.spots.at(i).shapeMethod;
         }
 
-        if (locallab.spots.at(i).locX) {
-            toEdit.locallab.spots.at(i).locX = mods.locallab.spots.at(i).locX;
-        }
-
-        if (locallab.spots.at(i).locXL) {
-            toEdit.locallab.spots.at(i).locXL = mods.locallab.spots.at(i).locXL;
-        }
-
-        if (locallab.spots.at(i).locY) {
-            toEdit.locallab.spots.at(i).locY = mods.locallab.spots.at(i).locY;
-        }
-
-        if (locallab.spots.at(i).locYT) {
-            toEdit.locallab.spots.at(i).locYT = mods.locallab.spots.at(i).locYT;
+        if (locallab.spots.at(i).loc) {
+            toEdit.locallab.spots.at(i).loc = mods.locallab.spots.at(i).loc;
         }
 
         if (locallab.spots.at(i).centerX) {
@@ -5671,10 +5656,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     structexclu(v),
     struc(v),
     shapeMethod(v),
-    locX(v),
-    locXL(v),
-    locY(v),
-    locYT(v),
+    loc(v),
     centerX(v),
     centerY(v),
     circrad(v),
@@ -6105,10 +6087,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     structexclu = v;
     struc = v;
     shapeMethod = v;
-    locX = v;
-    locXL = v;
-    locY = v;
-    locYT = v;
+    loc = v;
     centerX = v;
     centerY = v;
     circrad = v;

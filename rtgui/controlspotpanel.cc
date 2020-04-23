@@ -2321,10 +2321,10 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         // Set default values for adjuster widgets
         sensiexclu_->setDefault((double)defSpot.sensiexclu);
         structexclu_->setDefault((double)defSpot.structexclu);
-        locX_->setDefault((double)defSpot.locX);
-        locXL_->setDefault((double)defSpot.locXL);
-        locY_->setDefault((double)defSpot.locY);
-        locYT_->setDefault((double)defSpot.locYT);
+        locX_->setDefault((double)defSpot.loc.at(0));
+        locXL_->setDefault((double)defSpot.loc.at(1));
+        locY_->setDefault((double)defSpot.loc.at(2));
+        locYT_->setDefault((double)defSpot.loc.at(3));
         centerX_->setDefault((double)defSpot.centerX);
         centerY_->setDefault((double)defSpot.centerY);
         circrad_->setDefault((double)defSpot.circrad);

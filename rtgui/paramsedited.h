@@ -397,10 +397,7 @@ public:
         bool structexclu;
         bool struc;
         bool shapeMethod;
-        bool locX;
-        bool locXL;
-        bool locY;
-        bool locYT;
+        bool loc;
         bool centerX;
         bool centerY;
         bool circrad;
