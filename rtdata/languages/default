@@ -2476,7 +2476,7 @@ TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
-TP_LOCALLAB_LOC_CONTRAST;Local contrast & Wavelet Pyramid Ψ 
+TP_LOCALLAB_LOC_CONTRAST;Local contrast & Wavelet Pyramid Ψ Big defects
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
@@ -2724,7 +2724,7 @@ TP_LOCALLAB_BLUR_TOOLNAME;Locallab Blur, Noise & Denoise
 TP_LOCALLAB_TONE_TOOLNAME;Locallab Tone Mapping
 TP_LOCALLAB_RET_TOOLNAME;Locallab Retinex
 TP_LOCALLAB_SHARP_TOOLNAME;Locallab Sharpening
-TP_LOCALLAB_LC_TOOLNAME;Locallab Local Constrast
+TP_LOCALLAB_LC_TOOLNAME;Locallab Local Constrast & Wavelet
 TP_LOCALLAB_CBDL_TOOLNAME;Locallab CBDL
 TP_LOCALLAB_LOG_TOOLNAME;Locallab Encoding log
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
