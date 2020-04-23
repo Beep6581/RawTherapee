@@ -3167,7 +3167,7 @@ LocallabShadow::LocallabShadow():
 
     // Shadow highlight specific widgets
     shMethod(Gtk::manage(new MyComboBoxText())),
-    multipliersh([this]() -> std::array<Adjuster *, 5>
+    multipliersh([]() -> std::array<Adjuster *, 5>
     {
     std::array<Adjuster*, 5> res = {};
 

@@ -1009,7 +1009,6 @@ private:
     void updateContrastGUI1();
     void updateContrastGUI2();
     void updateContrastGUI3();
-    void updateContrastGUI4();
 };
 
 /* ==== LocallabCBDL ==== */

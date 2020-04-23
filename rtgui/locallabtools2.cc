@@ -2172,6 +2172,7 @@ LocallabContrast::LocallabContrast():
     wavedgConn = wavedg->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavedgChanged));
 
     strengthw->setAdjusterListener(this);
+
     sigmaed->setAdjusterListener(this);
 
     LocalcurveEditorwavedg->setCurveListener(this);
@@ -2214,6 +2215,7 @@ LocallabContrast::LocallabContrast():
     wavblurConn = wavblur->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavblurChanged));
 
     levelblur->setAdjusterListener(this);
+
     sigmabl->setAdjusterListener(this);
 
     chromablu->setAdjusterListener(this);
@@ -2270,6 +2272,7 @@ LocallabContrast::LocallabContrast():
     LocalcurveEditorwavcompre->curveListComplete();
 
     sigmadr->setAdjusterListener(this);
+
     threswav->setAdjusterListener(this);
 
     residcomp->setAdjusterListener(this);
@@ -2477,7 +2480,7 @@ LocallabContrast::LocallabContrast():
     compBox->pack_start(*separatorcomp);
     compBox->pack_start(*fatres);
     compFrame->add(*compBox);
-//    blurcontBox2->pack_start(*compFrame);
+    // blurcontBox2->pack_start(*compFrame);
     expcontrastpyr2->add(*blurcontBox2, false);
     pack_start(*expcontrastpyr2);
 
@@ -2688,14 +2691,11 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
     // Update Local contrast GUI according to localcontMethod combobox value
     updateContrastGUI1();
 
-    // Update Local contrast GUI according to wavedg button state
+    // Update Local contrast GUI according to waveshow button state
     updateContrastGUI2();
 
-    // Update Local contrast GUI according to waveshow button state
-    updateContrastGUI3();
-
     // Update Local contrast GUI according to fftwlc button state
-    updateContrastGUI4();
+    updateContrastGUI3();
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
@@ -3282,9 +3282,6 @@ void LocallabContrast::wavgradlChanged()
 
 void LocallabContrast::wavedgChanged()
 {
-    // Update Local contrast GUI according to wavedg button state
-    updateContrastGUI2();
-
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (wavedg->get_active()) {
@@ -3311,7 +3308,7 @@ void LocallabContrast::localedgMethodChanged()
 void LocallabContrast::waveshowChanged()
 {
     // Update Local contrast GUI according to waveshow button state
-    updateContrastGUI3();
+    updateContrastGUI2();
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -3399,7 +3396,6 @@ void LocallabContrast::wavcompreChanged()
 void LocallabContrast::wavcompChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
-        wavcomp->set_active(false);//always disabled
         if (listener) {
             if (wavcomp->get_active()) {
                 listener->panelChanged(Evlocallabwavcomp,
@@ -3415,7 +3411,7 @@ void LocallabContrast::wavcompChanged()
 void LocallabContrast::fftwlcChanged()
 {
     // Update Local contrast GUI according to fftwlc button state
-    updateContrastGUI4();
+    updateContrastGUI3();
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -3547,16 +3543,6 @@ void LocallabContrast::updateContrastGUI1()
 
 void LocallabContrast::updateContrastGUI2()
 {
-    // Update Local contrast GUI according to wavedg button state
-    if (wavedg->get_active()) {
-        edgsBox->show();
-    } else {
-        edgsBox->show();//always show
-    }
-}
-
-void LocallabContrast::updateContrastGUI3()
-{
     // Update Local contrast GUI according to waveshow button state
     if (waveshow->get_active()) {
         edgsBoxshow->show();
@@ -3565,7 +3551,7 @@ void LocallabContrast::updateContrastGUI3()
     }
 }
 
-void LocallabContrast::updateContrastGUI4()
+void LocallabContrast::updateContrastGUI3()
 {
     // Update Local contrast GUI according to fftwlc button state
     const double temp = lcradius->getValue();
@@ -3584,8 +3570,7 @@ LocallabCBDL::LocallabCBDL():
     LocallabTool(this, M("TP_LOCALLAB_CBDL_TOOLNAME"), M("TP_LOCALLAB_CBDL"), true),
 
     // CBDL specific widgets
-    multiplier(
-        [this]() -> std::array<Adjuster *, 6>
+    multiplier([]() -> std::array<Adjuster *, 6>
     {
     std::array<Adjuster*, 6> res = {};
 
@@ -3603,8 +3588,7 @@ LocallabCBDL::LocallabCBDL():
 
     return res;
     }
-    ()
-    ),
+    ()),
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
     blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0., 100., 0.1, 0.))),
