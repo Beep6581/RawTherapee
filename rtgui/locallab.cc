@@ -555,8 +555,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                     // Select the first remaining spot before deleted one
                     if (pp->locallab.spots.size() > 0) {
-                        for (int j = i - 1; j >= 0; j--) { // procparams spots uses zero-based index whereas spot ids use one-based index
-                            if (expsettings->setSelectedSpot(j + 1)) { // True if an existing spot has been selected on controlspotpanel
+                        for (int j = i - 1; j >= 0; j--) {
+                            if (expsettings->setSelectedSpot(j)) { // True if an existing spot has been selected on controlspotpanel
                                 pp->locallab.selspot = j;
 
                                 break;
