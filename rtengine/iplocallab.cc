@@ -4291,7 +4291,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
 
                     const float val_HH = float ((0.5f - lochhhmasCurve[500.f * hh]));
                     const float hhro = 1.5f * val_HH;
-                    float newhr;
+                    float newhr = 0.f;
 
                     if (hhro != 0) {
                         newhr = huemah + hhro;//we add radians and other dim between 0 1.. always radians but addition "false"
