@@ -233,7 +233,7 @@ public:
     LocallabColor();
     ~LocallabColor();
 
-    void setListener(ToolPanelListener* tpl);
+    void setListener(ToolPanelListener* tpl) override;
 
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;

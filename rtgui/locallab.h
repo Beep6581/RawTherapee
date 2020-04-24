@@ -130,19 +130,19 @@ public:
     Locallab();
 
     // FoldableToolPanel management functions
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setListener(ToolPanelListener* tpl) override;
 
     // Locallab Retinex tool min/man management function
-    void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot);
+    void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
 
     // Locallab Log Encoding autocompute function
-    void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float targetg);
+    void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float targetg) override;
 
     // Locallab tools mask background management function
-    void refChanged(const std::vector<locallabRef> &ref, int selspot);
+    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;
 
     // Mask visibility management functions
     struct llMaskVisibility {
@@ -169,15 +169,15 @@ public:
     void resetshowPressed();
 
     // EditProvider management function
-    void setEditProvider(EditDataProvider* provider);
+    void setEditProvider(EditDataProvider* provider) override;
     void subscribe();
     void unsubscribe();
 
     // FoldableToolPanel event function
-    void enabledChanged();
+    void enabledChanged() override;
 
     // Curve management function
-    void autoOpenCurve();
+    void autoOpenCurve() override;
 
     // Locallab tools expanders management functions
     void foldAllButOne(LocallabTool* except);
@@ -193,11 +193,11 @@ private:
     void setParamEditable(bool cond);
 
     // LocallabToolListener function
-    void resetOtherMaskView(LocallabTool* current);
-    void toolRemoved(LocallabTool* current);
+    void resetOtherMaskView(LocallabTool* current) override;
+    void toolRemoved(LocallabTool* current) override;
 
     // LocallabToolListListener function
-    void locallabToolToAdd(const Glib::ustring &toolname);
+    void locallabToolToAdd(const Glib::ustring &toolname) override;
 };
 
 #endif
