@@ -133,7 +133,7 @@ public:
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setListener(ToolPanelListener* tpl);
+    void setListener(ToolPanelListener* tpl) override;
 
     // Locallab Retinex tool min/man management function
     void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot);
