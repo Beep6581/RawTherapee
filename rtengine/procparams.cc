@@ -400,13 +400,13 @@ bool ToneCurveParams::operator !=(const ToneCurveParams& other) const
 RetinexParams::RetinexParams() :
     enabled(false),
     cdcurve{
-    DCT_Linear
+        DCT_Linear
 },
     cdHcurve{
-    DCT_Linear
+        DCT_Linear
 },
     lhcurve{
-    DCT_Linear
+        DCT_Linear
 },
     transmissionCurve{
     FCT_MinMaxCPoints,
@@ -443,7 +443,7 @@ RetinexParams::RetinexParams() :
     0.00
 },
     mapcurve{
-    DCT_Linear
+        DCT_Linear
 },
     str(20),
     scal(3),
