@@ -233,29 +233,29 @@ public:
     LocallabColor();
     ~LocallabColor();
 
-    void setListener(ToolPanelListener* tpl);
+    void setListener(ToolPanelListener* tpl) override;
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void setDefaultExpanderVisibility();
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}; // Not used
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
-    void curveChanged(CurveEditor* ce);
+    void setDefaultExpanderVisibility() override;
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
+    void curveChanged(CurveEditor* ce) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void curvactivChanged();
     void gridMethodChanged();
@@ -341,22 +341,22 @@ public:
     LocallabExposure();
     ~LocallabExposure();
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void setDefaultExpanderVisibility();
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void curveChanged(CurveEditor* ce);
+    void setDefaultExpanderVisibility() override;
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void curveChanged(CurveEditor* ce) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void expMethodChanged();
     void exnoiseMethodChanged();
@@ -421,22 +421,22 @@ public:
     LocallabShadow();
     ~LocallabShadow();
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void setDefaultExpanderVisibility();
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void curveChanged(CurveEditor* ce);
+    void setDefaultExpanderVisibility() override;
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void curveChanged(CurveEditor* ce) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void shMethodChanged();
     void inversshChanged();
@@ -494,28 +494,28 @@ public:
     LocallabVibrance();
     ~LocallabVibrance();
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void setDefaultExpanderVisibility();
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}; // Not used
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) {}; // Not used
-    std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
-    void curveChanged(CurveEditor* ce);
+    void setDefaultExpanderVisibility() override;
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override;
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override {}; // Not used
+    std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const override;
+    void curveChanged(CurveEditor* ce) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void protectskins_toggled();
     void avoidcolorshift_toggled();
@@ -545,18 +545,18 @@ private:
 public:
     LocallabSoft();
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
     void softMethodChanged();
     void showmasksoftMethodChanged();
@@ -635,27 +635,27 @@ public:
     LocallabBlur();
     ~LocallabBlur();
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void setDefaultExpanderVisibility();
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}; // Not used
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
-    void curveChanged(CurveEditor* ce);
+    void setDefaultExpanderVisibility() override;
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
+    void curveChanged(CurveEditor* ce) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void blMethodChanged();
     void fftwblChanged();
@@ -710,22 +710,22 @@ public:
     LocallabTone();
     ~LocallabTone();
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void setDefaultExpanderVisibility();
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void curveChanged(CurveEditor* ce);
+    void setDefaultExpanderVisibility() override;
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void curveChanged(CurveEditor* ce) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void equiltmChanged();
     void showmasktmMethodChanged();
@@ -798,22 +798,22 @@ public:
 
     void updateMinMax(const double cdma, const double cdmin, const double mini, const double maxi, const double Tmean, const double Tsigma, const double Tmin, const double Tmax);
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void setDefaultExpanderVisibility();
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void curveChanged(CurveEditor* ce);
+    void setDefaultExpanderVisibility() override;
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void curveChanged(CurveEditor* ce) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void lumonlyChanged();
     void loglinChanged();
@@ -852,18 +852,18 @@ private:
 public:
     LocallabSharp();
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
     void inversshaChanged();
     void showmasksharMethodChanged();
@@ -968,27 +968,27 @@ public:
     LocallabContrast();
     ~LocallabContrast();
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void setDefaultExpanderVisibility();
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) {}; // Not used
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}; // Not used
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
-    void curveChanged(CurveEditor* ce);
+    void setDefaultExpanderVisibility() override;
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
+    void curveChanged(CurveEditor* ce) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void localcontMethodChanged();
     void origlcChanged();
@@ -1054,22 +1054,22 @@ public:
     LocallabCBDL();
     ~LocallabCBDL();
 
-    void resetMaskView();
+    void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
-    void setDefaultExpanderVisibility();
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
-    void curveChanged(CurveEditor* ce);
+    void setDefaultExpanderVisibility() override;
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void curveChanged(CurveEditor* ce) override;
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer);
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void showmaskcbMethodChanged();
     void enacbMaskChanged();
