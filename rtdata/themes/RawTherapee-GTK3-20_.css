@@ -565,7 +565,7 @@ button.text-button.toggle:hover:checked {
 .drawingarea {
     border-radius: 0;
     background-color: #2A2A2A;
-    border: 0.0833333333333333em solid #1D1D1D;
+    border: 0.0833333333333333em solid #888888;
 }
 .drawingarea:disabled {
     background-color: #444;
