@@ -247,7 +247,12 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
     toolPanelNotebook->append_page (*advancedPanelSW,   *toiW);
-    toolPanelNotebook->append_page(*locallabPanelSW,   *toiL);    
+
+    // Locallab notebook is hidden in batch mode
+    if (!batch) {
+        toolPanelNotebook->append_page(*locallabPanelSW,   *toiL);
+    }
+
     toolPanelNotebook->append_page (*transformPanelSW, *toiT);
     toolPanelNotebook->append_page (*rawPanelSW,       *toiR);
     toolPanelNotebook->append_page (*metadata,    *toiM);
@@ -506,12 +511,28 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
         resize->write(params);
     }
 
-    // Manage Locallab mask visibility
-    if (event == rtengine::EvlocallabshowmaskcolMethod || event == rtengine::EvlocallabshowmaskcolMethodinv ||event == rtengine::EvlocallabshowmaskexpMethod ||event == rtengine::EvlocallabshowmaskexpMethodinv 
-        || event == rtengine::EvlocallabshowmaskSHMethod || event == rtengine::EvlocallabshowmaskSHMethodinv || event == rtengine::EvlocallabshowmaskvibMethod || event == rtengine::EvlocallabshowmasksoftMethod 
-        || event == rtengine::EvlocallabshowmaskcbMethod || event == rtengine::EvlocallabshowmasklcMethod || event == rtengine::EvlocallabshowmasksharMethod || event == rtengine::EvlocallabshowmaskretiMethod || event == rtengine::EvlocallabshowmasktmMethod || event == rtengine::EvlocallabshowmaskblMethod) {
-        Locallab::llMaskVisibility* maskStruc = locallab->getMaskVisibility();
-        ipc->setLocallabMaskVisibility(maskStruc->colorMask, maskStruc->colorMaskinv, maskStruc->expMask, maskStruc->expMaskinv, maskStruc->SHMask,  maskStruc->SHMaskinv, maskStruc->vibMask, maskStruc->lcMask, maskStruc->sharMask, maskStruc->cbMask, maskStruc->retiMask, maskStruc->softMask, maskStruc->tmMask, maskStruc->blMask);
+    /*
+     * Manage Locallab mask visibility:
+     * - Mask preview is updated when choosing a mask preview method
+     * - Mask preview is also updated when modifying (to avoid hidding a potentially visible mask combobox):
+     *   - Color&Light invers
+     *   - Exposure inversex
+     *   - Shadow Highlight inverssh
+     *   - Soft Light softMethod
+     * - Mask preview is stopped when creating, deleting or selecting a spot
+     * - Mask preview is also stopped when removing a spot or resetting all mask visibility
+     */
+    if (event == rtengine::EvlocallabshowmaskMethod) {
+        const Locallab::llMaskVisibility maskStruc = locallab->getMaskVisibility();
+        ipc->setLocallabMaskVisibility(maskStruc.colorMask, maskStruc.colorMaskinv, maskStruc.expMask, maskStruc.expMaskinv,
+                maskStruc.SHMask, maskStruc.SHMaskinv, maskStruc.vibMask, maskStruc.softMask,
+                maskStruc.blMask, maskStruc.tmMask, maskStruc.retiMask, maskStruc.sharMask,
+                maskStruc.lcMask, maskStruc.cbMask);
+    } else if (event == rtengine::EvLocallabSpotCreated || event == rtengine::EvLocallabSpotSelectedWithMask ||
+            event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset ||
+            event == rtengine::EvlocallabToolRemovedWithRefresh || event == rtengine::EvlocallabToolRemovedWithoutRefresh) {
+        locallab->resetMaskVisibility();
+        ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing
@@ -616,11 +637,9 @@ void ToolPanelCoordinator::profileChange(
         gradient->updateGeometry(params->gradient.centerX, params->gradient.centerY, params->gradient.feather, params->gradient.degree, fw, fh);
     }
 
-    // Reset Locallab mask visibility when a picture is loaded
-    if (event == rtengine::EvPhotoLoaded) {
-        locallab->resetMaskVisibility();
-        ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    }
+    // Reset Locallab mask visibility
+    locallab->resetMaskVisibility();
+    ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     // start the IPC processing
     if (filterRawRefresh) {
@@ -768,13 +787,8 @@ void ToolPanelCoordinator::updateToolState()
             temp.push_back(options.tpOpen[i + expList.size()]);
         }
 
-        locallab->updateToolState(temp);
-        locallab->setExpanded(true);
-
         wavelet->updateToolState(temp);
         retinex->updateToolState(temp);
-
-
     }
 }
 
@@ -803,7 +817,6 @@ void ToolPanelCoordinator::writeToolExpandedStatus(std::vector<int> &tpOpen)
         tpOpen.push_back(expList.at(i)->get_expanded());
     }
 
-    locallab->writeOptions(tpOpen);
     wavelet->writeOptions(tpOpen);
     retinex->writeOptions(tpOpen);
 

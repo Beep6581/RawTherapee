@@ -22,14 +22,10 @@
 #define _CONTROLSPOTPANEL_H_
 
 #include "../rtengine/coord.h"
-#include "adjuster.h"
 #include "editcallbacks.h"
-#include "guiutils.h"
 #include "threadutils.h"
 #include "toolpanel.h"
-#include <gtkmm.h>
-#include <string>
-#include "thresholdadjuster.h"
+#include "adjuster.h"
 
 class ControlSpotPanel:
     public ToolParamBlock,
@@ -42,14 +38,12 @@ public:
      * A SpotRow structure allows exchanges from and to ControlSpotClass
      */
     struct SpotRow {
-        int id; // Control spot id
         Glib::ustring name;
         bool isvisible;
         int shape; // 0 = Ellipse, 1 = Rectangle
         int spotMethod; // 0 = Normal, 1 = Excluding
         int sensiexclu;
         int structexclu;
-        double struc;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         int locX;
         int locXL;
@@ -59,69 +53,26 @@ public:
         int centerY;
         int circrad;
         int qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
-        int transit;
+        double transit;
+        double transitweak;
+        double transitgrad;
         double feather;
+        double struc;
         double thresh;
         double iter;
         double balan;
         double balanh;
         double colorde;
-        double transitweak;
-        double transitgrad;
-        int scopemask;
-        int lumask;
         bool avoid;
         bool recurs;
         bool laplac;
         bool deltae;
+        int scopemask;
         bool shortc;
+        int lumask;
         bool savrest;
         int complexMethod; // 0 = Simple, 1 = Moderate, 2 = all
-        int wavMethod;
-        
-    };
-
-    /**
-     * A SpotEdited structure allows exchanges of spot panel widgets edited states from and to ControlSpotClass
-     */
-    struct SpotEdited {
-        bool nbspot;
-        bool selspot;
-        bool name;
-        bool isvisible;
-        bool shape;
-        bool spotMethod;
-        bool sensiexclu;
-        bool structexclu;
-        bool struc;
-        bool shapeMethod;
-        bool locX;
-        bool locXL;
-        bool locY;
-        bool locYT;
-        bool centerX;
-        bool centerY;
-        bool circrad;
-        bool qualityMethod;
-        bool transit;
-        bool feather;
-        bool thresh;
-        bool iter;
-        bool balan;
-        bool balanh;
-        bool colorde;
-        bool transitweak;
-        bool transitgrad;
-        bool scopemask;
-        bool lumask;
-        bool avoid;
-        bool recurs;
-        bool laplac;
-        bool deltae;
-        bool shortc;
-        bool savrest;
-        bool complexMethod;
-        bool wavMethod;
+        int wavMethod; // 0 = D2, 1 = D4, 2 = D6, 3 = D10, 4 = D14
     };
 
     /**
@@ -160,37 +111,40 @@ public:
     /**
      * Getter of params of associated spot
      *
-     * @param id The spot id to get params
+     * @param index The spot index to get params
      * @return A SpotRow structure containing params of associated spot
      */
-    SpotRow* getSpot(const int id);
+    SpotRow* getSpot(const int index);
     /**
-     * Get of spot id list
+     * Getter of spots number
      *
-     * @return A vector contening the list of spot id
+     * @return The number of spots in panel
      */
-    std::vector<int>* getSpotIdList();
+    int getSpotNumber();
     /**
-     * Getter of selected spot id
+     * Getter of selected spot index
      *
-     * @return The id of selected spot in treeview (return 0 if no selected spot)
+     * @return The index of selected spot in treeview (return -1 if no selected spot)
      */
     int getSelectedSpot();
     /**
      * Setter of selected spot
      *
-     * @param id The id of spot to be selected
-     * @return True if a spot corresponding to the id has been selected
+     * @param index The index of spot to be selected
+     * @return True if a spot corresponding to the index has been selected
      */
-    bool setSelectedSpot(const int id);
+    bool setSelectedSpot(const int index);
+    /**
+     * Setter for mask preview active indicator
+     *
+     * @param ind True is mask preview is active
+     */
+    void setMaskPrevActive(bool ind)
+    {
+        maskPrevActive = ind;
+    }
 
     // Control spot creation functions
-    /**
-     * Getter of available id for new spot creation
-     *
-     * @return An available id (i.e. max existing ones + 1)
-     */
-    int getNewId();
     /**
      * Add a new spot (and its associated curve)
      *
@@ -198,50 +152,22 @@ public:
      */
     void addControlSpot(SpotRow* newSpot);
 
-    // Control spot update function
-    /**
-     * Update a spot (and its associated curve)
-     *
-     * @param spot A SpotRow structure containing spot params to update
-     */
-    int updateControlSpot(SpotRow* spot);
-
     // Control spot delete function
     /**
      * Delete a spot (and its associated curve)
      *
      * @param id The id of the spot to be deleted
      */
-    void deleteControlSpot(const int id);
+    void deleteControlSpot(const int index);
 
     // Panel widgets management functions
-    /**
-     * Getter of panel widgets edited states
-     *
-     * @return A SpotEdited structure containing the widgets edited states
-     */
-    SpotEdited* getEditedStates();
-    /**
-     * Setter of panel widgets edited states
-     *
-     * @param se A SpotEdited structure containing the widgets edited states to update
-     */
-    void setEditedStates(SpotEdited* se);
     /**
      * Implementation of setDefaults function of toolpanel.h
      *
      * @param defParams ProcParams containing default values to set to the adjusters
-     * @param pedited   ParamsEdited containing default state values to set to the adjusters
-     * @param id Spot id to consider to update adjusters default values and default state values
+     * @param pedited ParamsEdited containing default state values to set to the adjusters (not used because batch mode is deactivated for Locallab)
      */
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr, int id = 0);
-    /**
-     * Variant of setDefaults function which only update adjuster default states
-     *
-     * @param pedited ParamsEdited containing default states to set to the adjusters
-     * @param id Spot id to consider to update adjusters default states
-     */
-    // void updateDefaultsStates(const ParamsEdited* pedited, int id = 0);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     /**
      * Enable or disable the interactions with panel widgets
      *
@@ -250,16 +176,10 @@ public:
     void setParamEditable(bool cond);
 
     // Batch mode management
-    /**
-     * Implementation of setBatchMode function of toolpanel.h
-     *
-     * @param batchMode Condition to enable batch mode
-     */
-    void setBatchMode(bool batchMode);
+    // Note: Batch mode is deactivated for Locallab
 
 private:
     // Cell renderer
-    void render_id(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_name(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_isvisible(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
 
@@ -270,6 +190,7 @@ private:
     bool on_button_visibility(GdkEventButton* event);
 
     bool blockTreeviewSearch(GdkEventKey* event);
+    bool onSpotSelectionEvent(GdkEventButton* event);
 
     void load_ControlSpot_param();
 
@@ -278,19 +199,14 @@ private:
     void shapeChanged();
     void spotMethodChanged();
     void shapeMethodChanged();
-//    void mergeMethodChanged();
     void qualityMethodChanged();
     void complexMethodChanged();
     void wavMethodChanged();
 
     void updateParamVisibility();
+
     void adjusterChanged(Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
-    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
+
     void avoidChanged();
     void recursChanged();
     void laplacChanged();
@@ -319,7 +235,6 @@ private:
         ControlSpots();
 
         Gtk::TreeModelColumn<bool> mouseover; // Used to manage spot enlightening when mouse over
-        Gtk::TreeModelColumn<int> id; // Control spot id
         Gtk::TreeModelColumn<Glib::ustring> name;
         Gtk::TreeModelColumn<bool> isvisible;
         Gtk::TreeModelColumn<int> curveid; // Associated curve id
@@ -327,7 +242,6 @@ private:
         Gtk::TreeModelColumn<int> spotMethod; // 0 = Normal, 1 = Excluding
         Gtk::TreeModelColumn<int> sensiexclu;
         Gtk::TreeModelColumn<int> structexclu;
-        Gtk::TreeModelColumn<double> struc;
         Gtk::TreeModelColumn<int> shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         Gtk::TreeModelColumn<int> locX;
         Gtk::TreeModelColumn<int> locXL;
@@ -337,25 +251,26 @@ private:
         Gtk::TreeModelColumn<int> centerY;
         Gtk::TreeModelColumn<int> circrad;
         Gtk::TreeModelColumn<int> qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
-        Gtk::TreeModelColumn<int> transit;
-        Gtk::TreeModelColumn<int> feather;
+        Gtk::TreeModelColumn<double> transit;
+        Gtk::TreeModelColumn<double> transitweak;
+        Gtk::TreeModelColumn<double> transitgrad;
+        Gtk::TreeModelColumn<double> feather;
+        Gtk::TreeModelColumn<double> struc;
         Gtk::TreeModelColumn<double> thresh;
         Gtk::TreeModelColumn<double> iter;
         Gtk::TreeModelColumn<double> balan;
         Gtk::TreeModelColumn<double> balanh;
         Gtk::TreeModelColumn<double> colorde;
-        Gtk::TreeModelColumn<double> transitweak;
-        Gtk::TreeModelColumn<double> transitgrad;
-        Gtk::TreeModelColumn<int> scopemask;
-        Gtk::TreeModelColumn<int> lumask;
         Gtk::TreeModelColumn<bool> avoid;
         Gtk::TreeModelColumn<bool> recurs;
         Gtk::TreeModelColumn<bool> laplac;
         Gtk::TreeModelColumn<bool> deltae;
+        Gtk::TreeModelColumn<int> scopemask;
         Gtk::TreeModelColumn<bool> shortc;
+        Gtk::TreeModelColumn<int> lumask;
         Gtk::TreeModelColumn<bool> savrest;
         Gtk::TreeModelColumn<int> complexMethod; // 0 = Simple, 1 = mod, 2 = all
-        Gtk::TreeModelColumn<int> wavMethod;
+        Gtk::TreeModelColumn<int> wavMethod; // 0 = D2, 1 = D4, 2 = D6, 3 = D10, 4 = D14
     };
 
     class RenameDialog:
@@ -409,7 +324,6 @@ private:
 
     Adjuster* const sensiexclu_;
     Adjuster* const structexclu_;
-    Adjuster* const struc_;
     Adjuster* const locX_;
     Adjuster* const locXL_;
     Adjuster* const locY_;
@@ -418,14 +332,15 @@ private:
     Adjuster* const centerY_;
     Adjuster* const circrad_;
     Adjuster* const transit_;
+    Adjuster* const transitweak_;
+    Adjuster* const transitgrad_;
     Adjuster* const feather_;
+    Adjuster* const struc_;
     Adjuster* const thresh_;
     Adjuster* const iter_;
     Adjuster* const balan_;
     Adjuster* const balanh_;
     Adjuster* const colorde_;
-    Adjuster* const transitweak_;
-    Adjuster* const transitgrad_;
     Adjuster* const scopemask_;
     Adjuster* const lumask_;
 
@@ -451,6 +366,7 @@ private:
     bool visibilityChanged_;
     int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event, 4 = Spot duplication event
     Gtk::Frame* const excluFrame;
+    bool maskPrevActive;
 
     // Row background color
     Gdk::RGBA colorMouseover, colorNominal, colorMouseovertext;

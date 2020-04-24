@@ -393,15 +393,11 @@ public:
         bool shape;
         bool spotMethod;
         bool wavMethod;
-//        bool mergeMethod;
         bool sensiexclu;
         bool structexclu;
         bool struc;
         bool shapeMethod;
-        bool locX;
-        bool locXL;
-        bool locY;
-        bool locYT;
+        bool loc;
         bool centerX;
         bool centerY;
         bool circrad;
@@ -425,6 +421,7 @@ public:
         bool scopemask;
         bool lumask;
         // Color & Light
+        bool visicolor;
         bool expcolor;
         bool curvactiv;
         bool lightness;
@@ -486,6 +483,7 @@ public:
         bool LLmaskcolcurvewav;
         bool csthresholdcol;
         // Exposure
+        bool visiexpose;
         bool expexpose;
         bool expcomp;
         bool hlcompr;
@@ -527,9 +525,10 @@ public:
         bool fatanchor;
         bool fatlevel;
         // Shadow highlight
+        bool visishadhigh;
+        bool expshadhigh;
         bool shMethod;
         bool multsh[6];
-        bool expshadhigh;
         bool highlights;
         bool h_tonalwidth;
         bool shadows;
@@ -557,6 +556,7 @@ public:
         bool gamSH;
         bool sloSH;
         // Vibrance
+        bool visivibrance;
         bool expvibrance;
         bool saturated;
         bool pastels;
@@ -583,28 +583,44 @@ public:
         bool angvib;
         bool Lmaskvibcurve;
         // Soft Light
+        bool visisoft;
         bool expsoft;
         bool streng;
         bool sensisf;
         bool laplace;
         bool softMethod;
         // Blur & Noise
+        bool visiblur;
         bool expblur;
         bool radius;
         bool strength;
         bool sensibn;
         bool itera;
+        bool guidbl;
+        bool strbl;
         bool isogr;
         bool strengr;
         bool scalegr;
-        bool guidbl;
-        bool strbl;
         bool epsbl;
         bool blMethod;
         bool chroMethod;
         bool blurMethod;
         bool medMethod;
         bool activlum;
+        bool noiselumf;
+        bool noiselumf0;
+        bool noiselumf2;
+        bool noiselumc;
+        bool noiselumdetail;
+        bool noiselequal;
+        bool noisechrof;
+        bool noisechroc;
+        bool noisechrodetail;
+        bool adjblur;
+        bool bilateral;
+        bool sensiden;
+        bool detailthr;
+        bool locwavcurveden;
         bool CCmaskblcurve;
         bool LLmaskblcurve;
         bool HHmaskblcurve;
@@ -623,6 +639,7 @@ public:
         bool LLmaskblcurvewav;
         bool csthresholdblur;
         // Tone Mapping
+        bool visitonemap;
         bool exptonemap;
         bool stren;
         bool gamma;
@@ -647,6 +664,7 @@ public:
         bool lapmasktm;
         bool Lmasktmcurve;
         // Retinex
+        bool visireti;
         bool expreti;
         bool retinexMethod;
         bool str;
@@ -683,6 +701,7 @@ public:
         bool fftwreti;
         bool Lmaskreticurve;
         // Sharpening
+        bool visisharp;
         bool expsharp;
         bool sharcontrast;
         bool sharradius;
@@ -693,6 +712,7 @@ public:
         bool sensisha;
         bool inverssha;
         // Local Contrast
+        bool visicontrast;
         bool expcontrast;
         bool lcradius;
         bool lcamount;
@@ -702,10 +722,12 @@ public:
         bool residcont;
         bool residblur;
         bool levelblur;
+        bool sigmabl;
         bool residchro;
         bool residcomp;
         bool sigma;
         bool offset;
+        bool sigmadr;
         bool threswav;
         bool chromalev;
         bool chromablu;
@@ -718,13 +740,14 @@ public:
         bool strwav;
         bool angwav;
         bool strengthw;
+        bool sigmaed;
         bool radiusw;
         bool detailw;
+        bool gradw;
         bool tloww;
         bool thigw;
         bool edgw;
         bool basew;
-        bool gradw;
         bool sensilc;
         bool fftwlc;
         bool blurlc;
@@ -740,12 +763,12 @@ public:
         bool localedgMethod;
         bool localneiMethod;
         bool locwavcurve;
+        bool csthreshold;
         bool loclevwavcurve;
         bool locconwavcurve;
         bool loccompwavcurve;
         bool loccomprewavcurve;
         bool locedgwavcurve;
-        bool csthreshold;
         bool CCmasklccurve;
         bool LLmasklccurve;
         bool HHmasklccurve;
@@ -755,6 +778,7 @@ public:
         bool chromasklc;
         bool Lmasklccurve;
         // Contrast by detail levels
+        bool visicbdl;
         bool expcbdl;
         bool mult[6];
         bool chromacbdl;
@@ -763,42 +787,24 @@ public:
         bool clarityml;
         bool contresid;
         bool blurcbdl;
+        bool softradiuscb;
+        bool enacbMask;
+        bool CCmaskcbcurve;
+        bool LLmaskcbcurve;
+        bool HHmaskcbcurve;
         bool blendmaskcb;
         bool radmaskcb;
         bool chromaskcb;
         bool gammaskcb;
         bool slomaskcb;
         bool lapmaskcb;
-        bool softradiuscb;
-        bool enacbMask;
-        bool CCmaskcbcurve;
-        bool LLmaskcbcurve;
-        bool HHmaskcbcurve;
         bool Lmaskcbcurve;
-
-        // Denoise
-        bool expdenoi;
-        bool noiselumf;
-        bool noiselumf0;
-        bool noiselumf2;
-        bool noiselumc;
-        bool noiselumdetail;
-        bool noiselequal;
-        bool noisechrof;
-        bool noisechroc;
-        bool noisechrodetail;
-        bool adjblur;
-        bool bilateral;
-        bool sensiden;
-        bool detailthr;
-        bool locwavcurveden;
-
-        //log encoding
+        // Log encoding
+        bool visilog;
         bool explog;
         bool autocompute;
         bool sourceGray;
         bool targetGray;
-     //   bool autogray;
         bool Autogray;
         bool fullimage;
         bool blackEv;
@@ -815,9 +821,7 @@ public:
     };
 
     bool enabled;
-    bool nbspot;
     bool selspot;
-    bool id;
     std::vector<LocallabSpotEdited> spots;
 };
 

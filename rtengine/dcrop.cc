@@ -996,7 +996,7 @@ void Crop::update(int todo)
      //   int maxspot = 1;
 
         if (needslocal) {
-            for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
+            for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
@@ -1142,9 +1142,6 @@ void Crop::update(int todo)
                             huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                             parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                             minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-                    if (parent->locallListener) {
-                        parent->locallListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-                    }
                 } else {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, lastorigCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, 
                             lllocalcurve2,locallutili, 

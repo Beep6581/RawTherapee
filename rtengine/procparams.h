@@ -961,21 +961,16 @@ struct GradientParams {
 struct LocallabParams {
     struct LocallabSpot {
         // Control spot settings
-        int id;
         Glib::ustring name;
         bool isvisible;
         Glib::ustring shape; // ELI, RECT
         Glib::ustring spotMethod; // norm, exc
-        Glib::ustring wavMethod;
-//        Glib::ustring mergeMethod; // none, short, orig
+        Glib::ustring wavMethod; // D2, D4, D6, D10, D14
         int sensiexclu;
         int structexclu;
         double struc;
         Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
-        int locX;
-        int locXL;
-        int locY;
-        int locYT;
+        std::vector<int> loc; // For ellipse/rectangle: {locX, locXL, locY, locYT}
         int centerX;
         int centerY;
         int circrad;
@@ -999,6 +994,7 @@ struct LocallabParams {
         int scopemask;
         int lumask;
         // Color & Light
+        bool visicolor;
         bool expcolor;
         bool curvactiv;
         int lightness;
@@ -1030,11 +1026,11 @@ struct LocallabParams {
         int shadmaskcol;
         double strumaskcol;
         double lapmaskcol;
-        Glib::ustring qualitycurveMethod;
-        Glib::ustring gridMethod;
-        Glib::ustring merMethod;
-        Glib::ustring toneMethod;
-        Glib::ustring mergecolMethod;
+        Glib::ustring qualitycurveMethod; // none, std
+        Glib::ustring gridMethod; // one, two
+        Glib::ustring merMethod; // mone, mtwo, mthr, mfou, mfiv
+        Glib::ustring toneMethod; // one, two, thr, fou
+        Glib::ustring mergecolMethod; // one, two, thr, fou, fiv, six, sev, sev0, sev1, sev2, hei, nin, ten, ele, twe, thi, for, hue, sat, col, lum
         std::vector<double> llcurve;
         std::vector<double> lccurve;
         std::vector<double> cccurve;
@@ -1060,8 +1056,8 @@ struct LocallabParams {
         std::vector<double> LLmaskcolcurvewav;
         Threshold<int> csthresholdcol;
         // Exposure
+        bool visiexpose;
         bool expexpose;
-        //   int expcomp;
         double expcomp;
         int hlcompr;
         int hlcomprthresh;
@@ -1091,8 +1087,8 @@ struct LocallabParams {
         double angmaskexp;
         double softradiusexp;
         std::vector<double> Lmaskexpcurve;
-        Glib::ustring expMethod;
-        Glib::ustring exnoiseMethod;
+        Glib::ustring expMethod; // std, pde
+        Glib::ustring exnoiseMethod; // none, med, medhi
         double laplacexp;
         double balanexp;
         double linear;
@@ -1102,9 +1098,10 @@ struct LocallabParams {
         double fatanchor;
         double fatlevel;
         // Shadow highlight
-        Glib::ustring shMethod;
-        int multsh[5];
+        bool visishadhigh;
         bool expshadhigh;
+        Glib::ustring shMethod; // std, tone
+        int multsh[5];
         int highlights;
         int h_tonalwidth;
         int shadows;
@@ -1132,6 +1129,7 @@ struct LocallabParams {
         double gamSH;
         double sloSH;
         // Vibrance
+        bool visivibrance;
         bool expvibrance;
         int saturated;
         int pastels;
@@ -1158,12 +1156,14 @@ struct LocallabParams {
         double angvib;
         std::vector<double> Lmaskvibcurve;
         // Soft Light
+        bool visisoft;
         bool expsoft;
         int streng;
         int sensisf;
         double laplace;
-        Glib::ustring softMethod;
+        Glib::ustring softMethod; // soft, reti
         // Blur & Noise
+        bool visiblur;
         bool expblur;
         double radius;
         int strength;
@@ -1175,11 +1175,25 @@ struct LocallabParams {
         int strengr;
         int scalegr;
         int epsbl;
-        Glib::ustring blMethod;
-        Glib::ustring chroMethod;
-        Glib::ustring blurMethod;
-        Glib::ustring medMethod;
+        Glib::ustring blMethod; // blur, med, guid
+        Glib::ustring chroMethod; // lum, chr, all
+        Glib::ustring blurMethod; // norm, inv
+        Glib::ustring medMethod; // none, 33, 55, 77, 99
         bool activlum;
+        double noiselumf;
+        double noiselumf0;
+        double noiselumf2;
+        double noiselumc;
+        double noiselumdetail;
+        int noiselequal;
+        double noisechrof;
+        double noisechroc;
+        double noisechrodetail;
+        int adjblur;
+        int bilateral;
+        int sensiden;
+        int detailthr;
+        std::vector<double> locwavcurveden;
         std::vector<double> CCmaskblcurve;
         std::vector<double> LLmaskblcurve;
         std::vector<double> HHmaskblcurve;
@@ -1198,6 +1212,7 @@ struct LocallabParams {
         std::vector<double> LLmaskblcurvewav;
         Threshold<int> csthresholdblur;
         // Tone Mapping
+        bool visitonemap;
         bool exptonemap;
         double stren;
         double gamma;
@@ -1222,8 +1237,9 @@ struct LocallabParams {
         double lapmasktm;
         std::vector<double> Lmasktmcurve;
         // Retinex
+        bool visireti;
         bool expreti;
-        Glib::ustring retinexMethod;
+        Glib::ustring retinexMethod; // low, uni, high
         double str;
         double chrrt;
         double neigh;
@@ -1258,6 +1274,7 @@ struct LocallabParams {
         bool fftwreti;
         std::vector<double> Lmaskreticurve;
         // Sharpening
+        bool visisharp;
         bool expsharp;
         int sharcontrast;
         double sharradius;
@@ -1268,6 +1285,7 @@ struct LocallabParams {
         int sensisha;
         bool inverssha;
         // Local Contrast
+        bool visicontrast;
         bool expcontrast;
         int lcradius;
         double lcamount;
@@ -1277,10 +1295,12 @@ struct LocallabParams {
         double residcont;
         double residblur;
         double levelblur;
+        double sigmabl;
         double residchro;
         double residcomp;
         double sigma;
         double offset;
+        double sigmadr;
         double threswav;
         double chromalev;
         double chromablu;
@@ -1293,6 +1313,7 @@ struct LocallabParams {
         double strwav;
         double angwav;
         double strengthw;
+        double sigmaed;
         double radiusw;
         double detailw;
         double gradw;
@@ -1311,9 +1332,9 @@ struct LocallabParams {
         bool wavgradl;
         bool wavcompre;
         bool origlc;
-        Glib::ustring localcontMethod;
-        Glib::ustring localedgMethod;
-        Glib::ustring localneiMethod;
+        Glib::ustring localcontMethod; // loc, wav
+        Glib::ustring localedgMethod; // fir, sec, thr
+        Glib::ustring localneiMethod; // none, low, high
         std::vector<double> locwavcurve;
         Threshold<int> csthreshold;
         std::vector<double> loclevwavcurve;
@@ -1329,8 +1350,8 @@ struct LocallabParams {
         double radmasklc;
         double chromasklc;
         std::vector<double> Lmasklccurve;
-
         // Contrast by detail levels
+        bool visicbdl;
         bool expcbdl;
         double mult[6];
         double chromacbdl;
@@ -1351,26 +1372,10 @@ struct LocallabParams {
         double slomaskcb;
         double lapmaskcb;
         std::vector<double> Lmaskcbcurve;
-        // Denoise
-        bool expdenoi;
-        double noiselumf;
-        double noiselumf0;
-        double noiselumf2;
-        double noiselumc;
-        double noiselumdetail;
-        int noiselequal;
-        double noisechrof;
-        double noisechroc;
-        double noisechrodetail;
-        int adjblur;
-        int bilateral;
-        int sensiden;
-        int detailthr;
-        std::vector<double> locwavcurveden;
-        //log encoding
+        // Log encoding
+        bool visilog;
         bool explog;
         bool autocompute;
-//        bool autogray;
         double sourceGray;
         double targetGray;
         bool Autogray;
@@ -1383,18 +1388,17 @@ struct LocallabParams {
         double strlog;
         double anglog;
 
-
         LocallabSpot();
 
         bool operator ==(const LocallabSpot& other) const;
         bool operator !=(const LocallabSpot& other) const;
     };
 
-    bool enabled;
     static const double LABGRIDL_CORR_MAX;
     static const double LABGRIDL_CORR_SCALE;
     static const double LABGRIDL_DIRECT_SCALE;
-    int nbspot;
+
+    bool enabled;
     int selspot;
     std::vector<LocallabSpot> spots;
 

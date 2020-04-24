@@ -447,6 +447,9 @@ struct local_params {
     bool edgwena;
     bool lip3;
     int daubLen;
+    float sigmadr;
+    float sigmabl;
+    float sigmaed;
 
 };
 
@@ -550,10 +553,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         thre = 2.f;
     }
 
-    double local_x = locallab.spots.at(sp).locX / 2000.0;
-    double local_y = locallab.spots.at(sp).locY / 2000.0;
-    double local_xL = locallab.spots.at(sp).locXL / 2000.0;
-    double local_yT = locallab.spots.at(sp).locYT / 2000.0;
+    double local_x = locallab.spots.at(sp).loc.at(0) / 2000.0;
+    double local_y = locallab.spots.at(sp).loc.at(2) / 2000.0;
+    double local_xL = locallab.spots.at(sp).loc.at(1) / 2000.0;
+    double local_yT = locallab.spots.at(sp).loc.at(3) / 2000.0;
     double local_center_x = locallab.spots.at(sp).centerX / 2000.0 + 0.5;
     double local_center_y = locallab.spots.at(sp).centerY / 2000.0 + 0.5;
     double local_center_xbuf = 0.0; // Provision
@@ -794,7 +797,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.shapmet = 1;
     }
 
-    lp.denoiena = locallab.spots.at(sp).expdenoi;
+    lp.denoiena = locallab.spots.at(sp).expblur;
 
     bool wavcurveden = false;
     float local_noiself = 0.f;
@@ -814,10 +817,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     if (wavcurveden) {
         if (lp.denoiena) {
-            local_noiself0 = 150.f * locwavCurveden[0];
-            local_noiself = 150.f * locwavCurveden[166];
-            local_noiself2 = 150.f * locwavCurveden[323];
-            local_noiselc = 100.f * locwavCurveden[500];
+            local_noiself0 = 250.f * locwavCurveden[0];
+            local_noiself = 250.f * locwavCurveden[166];
+            local_noiself2 = 250.f * locwavCurveden[323];
+            local_noiselc = 200.f * locwavCurveden[500];
         }
     }
 
@@ -863,7 +866,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensicb = locallab.spots.at(sp).sensicb;
     float local_clarityml = (float) locallab.spots.at(sp).clarityml;
     float local_contresid = (float) locallab.spots.at(sp).contresid;
-    int local_blurcbdl = (float) locallab.spots.at(sp).blurcbdl;
+    int local_blurcbdl = 0; //(float) locallab.spots.at(sp).blurcbdl;
     int local_contrast = locallab.spots.at(sp).contrast;
     float local_lightness = (float) locallab.spots.at(sp).lightness;
     float labgridALowloc = locallab.spots.at(sp).labgridALow;
@@ -1235,6 +1238,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senshs = local_sensihs;
     lp.ftwlc = fftwlc;
     lp.ftwreti = fftwreti;
+    lp.sigmadr = locallab.spots.at(sp).sigmadr;
+    lp.sigmabl = locallab.spots.at(sp).sigmabl;
+    lp.sigmaed = locallab.spots.at(sp).sigmaed;
 
 }
 
@@ -7436,13 +7442,26 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
 }
 
 
-void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl,
+void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl,
                               const LocwavCurve & loclevwavCurve, bool & loclevwavutili,
                               const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
                               const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
                               float radlevblur, int process, FattalToneMappingParams &fatParams, float chromablu, float thres)
 {
     float madL[10][3];
+    int W_L = wdspot.level_W(0);
+    int H_L = wdspot.level_H(0);
+
+    float * beta = nullptr;
+    float * betabl = nullptr;
+
+    if (process == 3) {
+        beta = new float[W_L * H_L];
+    }
+
+    if (process == 1) {
+        betabl = new float[W_L * H_L];
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -7465,11 +7484,56 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
     }
 
     if (process == 1) { //blur
+        float mean[10];
+        float meanN[10];
+        float sigma[10];
+        float sigmaN[10];
+        float MaxP[10];
+        float MaxN[10];
+        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+    
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
                 int H_L = wdspot.level_H(level);
+                float effect = lp.sigmabl;
+                float offs = 1.f;
+                float mea[10];
 
+                for (int co = 0; co < H_L * W_L; co++) {
+                    betabl[co] = 1.f;
+                }
+                calceffect(level, mean, sigma, mea, effect, offs);
+                float **WavL = wdspot.level_coeffs(level);
+
+                for (int co = 0; co < H_L * W_L; co++) {
+                    float WavCL = std::fabs(WavL[dir][co]);
+
+                    if (WavCL < mea[0]) {
+                        betabl[co] = 0.05f;
+                    } else if (WavCL < mea[1]) {
+                        betabl[co] = 0.2f;
+                    } else if (WavCL < mea[2]) {
+                        betabl[co] = 0.7f;
+                    } else if (WavCL < mea[3]) {
+                        betabl[co] = 1.f;    //standard
+                    } else if (WavCL < mea[4]) {
+                        betabl[co] = 1.f;
+                    } else if (WavCL < mea[5]) {
+                        betabl[co] = 0.8f;    //+sigma
+                    } else if (WavCL < mea[6]) {
+                        betabl[co] = 0.5f;
+                    } else if (WavCL < mea[7]) {
+                        betabl[co] = 0.3f;
+                    } else if (WavCL < mea[8]) {
+                        betabl[co] = 0.2f;    // + 2 sigma
+                    } else if (WavCL < mea[9]) {
+                        betabl[co] = 0.1f;
+                    } else {
+                        betabl[co] = 0.05f;
+                    }
+                }
+               // printf("Chromablu=%f \n", chromablu);
                 if (loclevwavCurve && loclevwavutili) {
 
                     float klev = 0.25f * (loclevwavCurve[level * 55.5f]);
@@ -7514,6 +7578,44 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
                 int H_L = wdspot.level_H(level);
+                float effect = lp.sigmadr;
+                float offs = 1.f;
+                float mea[10];
+
+                for (int co = 0; co < H_L * W_L; co++) {
+                    beta[co] = 1.f;
+                }
+                calceffect(level, mean, sigma, mea, effect, offs);
+                float **WavL = wdspot.level_coeffs(level);
+
+                for (int co = 0; co < H_L * W_L; co++) {
+                    float WavCL = std::fabs(WavL[dir][co]);
+
+                    if (WavCL < mea[0]) {
+                        beta[co] = 0.05f;
+                    } else if (WavCL < mea[1]) {
+                        beta[co] = 0.2f;
+                    } else if (WavCL < mea[2]) {
+                        beta[co] = 0.7f;
+                    } else if (WavCL < mea[3]) {
+                        beta[co] = 1.f;    //standard
+                    } else if (WavCL < mea[4]) {
+                        beta[co] = 1.f;
+                    } else if (WavCL < mea[5]) {
+                        beta[co] = 0.8f;    //+sigma
+                    } else if (WavCL < mea[6]) {
+                        beta[co] = 0.65f;
+                    } else if (WavCL < mea[7]) {
+                        beta[co] = 0.5f;
+                    } else if (WavCL < mea[8]) {
+                        beta[co] = 0.4f;    // + 2 sigma
+                    } else if (WavCL < mea[9]) {
+                        beta[co] = 0.25f;
+                    } else {
+                        beta[co] = 0.1f;
+                    }
+                }
+
 
                 if (loccomprewavCurve && loccomprewavutili) {
                     float klev = (loccomprewavCurve[level * 55.5f] - 0.75f);
@@ -7554,10 +7656,25 @@ void ImProcFunctions::wavcont(wavelet_decomposition &wdspot, float ****templevel
 
             for (int y = 0; y < H_L; y++) {
                 for (int x = 0; x < W_L; x++) {
-                    wav_L[dir][y * W_L + x] = templevel[dir - 1][level][y][x];
+                    int j = y * W_L + x;
+                    if (process == 3) {
+                        wav_L[dir][j] = wav_L[dir][j] * (1.f - beta[j]) + beta[j] * templevel[dir - 1][level][y][x];
+                    } else if (process == 1) {
+                        wav_L[dir][j] = wav_L[dir][j] * (1.f - betabl[j]) + betabl[j] * templevel[dir - 1][level][y][x];
+                    } else {
+                        wav_L[dir][j] = templevel[dir - 1][level][y][x];
+                    }
                 }
             }
         }
+    }
+
+    if (process == 3) {
+        delete[] beta;
+    }
+
+    if (process == 1) {
+        delete[] betabl;
     }
 
 }
@@ -7875,15 +7992,15 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         }
 
         if (wavcurvelev && radlevblur > 0.f && blurena) {
-            wavcont(*wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, 1.f, 0.f);
+            wavcont(lp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, 1.f, 0.f);
         }
 
         if (wavcurvecomp && comprena) {
-            wavcont(*wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 2, fatParams, 1.f, 0.f);
+            wavcont(lp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 2, fatParams, 1.f, 0.f);
         }
 
         if (wavcurvecompre && compreena) {
-            wavcont(*wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 3, fatParams, 1.f, thres);
+            wavcont(lp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 3, fatParams, 1.f, thres);
         }
 
         //free memory templevel
@@ -7935,6 +8052,8 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         int H_L = wdspot->level_H(0);
         float *koeLi[12];
         float maxkoeLi[12];
+        float * beta = nullptr;
+        beta = new float[W_L * H_L];
 
         float *koeLibuffer = nullptr;
 
@@ -7972,6 +8091,42 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 int W_L = wdspot->level_W(lvl);
                 int H_L = wdspot->level_H(lvl);
                 float **wav_L = wdspot->level_coeffs(lvl);
+                float effect = lp.sigmaed;
+                float offs = 1.f;
+                float mea[10];
+                for (int co = 0; co < H_L * W_L; co++) {
+                    beta[co] = 1.f;
+                }
+                calceffect(lvl, mean, sigma, mea, effect, offs);
+
+                for (int co = 0; co < H_L * W_L; co++) {
+                    float WavCL = std::fabs(wav_L[dir][co]);
+
+                    if (WavCL < mea[0]) {
+                        beta[co] = 0.05f;
+                    } else if (WavCL < mea[1]) {
+                        beta[co] = 0.2f;
+                    } else if (WavCL < mea[2]) {
+                        beta[co] = 0.7f;
+                    } else if (WavCL < mea[3]) {
+                        beta[co] = 1.f;    //standard
+                    } else if (WavCL < mea[4]) {
+                        beta[co] = 1.f;
+                    } else if (WavCL < mea[5]) {
+                        beta[co] = 0.8f;    //+sigma
+                    } else if (WavCL < mea[6]) {
+                        beta[co] = 0.5f;
+                    } else if (WavCL < mea[7]) {
+                        beta[co] = 0.3f;
+                    } else if (WavCL < mea[8]) {
+                        beta[co] = 0.2f;    // + 2 sigma
+                    } else if (WavCL < mea[9]) {
+                        beta[co] = 0.1f;
+                    } else {
+                        beta[co] = 0.05f;
+                    }
+                }
+               // printf("Chromablu=%f \n", chromablu);
 
                 calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi, tmC);
                 // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
@@ -8229,7 +8384,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                 edge = 1.f;
                             }
 
-                            wav_L[dir][k] *=  edge;
+                            wav_L[dir][k] *=  (1.f + (edge - 1.f) * beta[k]);
                         }
                     }
                 }
@@ -8240,6 +8395,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             delete [] koeLibuffer;
         }
 
+        delete[] beta; 
     }
 
 //edge sharpness end
@@ -8379,7 +8535,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             }
 
             if (wavcurvelev && radlevblur > 0.f) {
-                wavcont(*wdspota, templevela, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
+                wavcont(lp, *wdspota, templevela, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
             }
 
             wdspota->reconstruct(tmpa[0], 1.f);
@@ -8434,7 +8590,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             }
 
             if (wavcurvelev && radlevblur > 0.f) {
-                wavcont(*wdspotb, templevelb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
+                wavcont(lp, *wdspotb, templevelb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
             }
 
             wdspotb->reconstruct(tmpb[0], 1.f);
@@ -8522,6 +8678,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
     //residual between input and denoised L channel
     array2D<float> Ldetail(GW, GH, ARRAY2D_CLEAR_DATA);
     array2D<float> totwt(GW, GH, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
+    array2D<float> prov(GW, GH, ARRAY2D_CLEAR_DATA);
 
     for (int i = 0; i < numThreads; ++i) {
         LbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
@@ -8564,6 +8721,8 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
                 for (int j = 0; j < GW; ++j) {
                     datarow[j] = ((*Lin)[rr][j] - tmp1[rr][j]);
+                    prov[rr][j] = fabs(tmp1[rr][j]);
+
                 }
 
                 for (int j = -blkrad * offset1; j < 0; ++j) {
@@ -8665,7 +8824,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
     if (detail_thresh > 0) {
         mask(GW, GH);
         float thr = log2lin(float(detail_thresh) / 200.f, 100.f);
-        buildBlendMask(tmp1, mask, GW, GH, thr);
+        buildBlendMask(prov, mask, GW, GH, thr);
         float r = 20.f / scalea;
 
         if (r > 0) {
@@ -8676,7 +8835,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
         array2D<float> m2(GW, GH);
         const float alfa = 0.856f;
         const float beta = 1.f + std::sqrt(log2lin(thr, 100.f));
-        buildGradientsMask(GW, GH, tmp1, m2, params_Ldetail / 100.f, 7, 3, alfa, beta, multiThread);
+        buildGradientsMask(GW, GH, prov, m2, params_Ldetail / 100.f, 7, 3, alfa, beta, multiThread);
 
         for (int i = 0; i < GH; ++i) {
             for (int j = 0; j < GW; ++j) {
@@ -8822,20 +8981,20 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 if (aut == 0) {
                     if (levred == 7) {
                         edge = 2;
-                        vari[0] = 8.f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
-                        vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[2] = 8.f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
+                        vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
+                        vari[1] = 0.8f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                        vari[2] = 0.8f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
 
-                        vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[4] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[5] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[6] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[4] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[5] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[6] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
                     } else if (levred == 4) {
                         edge = 3;
-                        vari[0] = 8.f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
-                        vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[2] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
+                        vari[1] = 0.8f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                        vari[2] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
 
                     }
                 } else if (aut == 1  || aut == 2) {
@@ -8885,15 +9044,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         kr5 = 1.f;
                     }
 
-                    vari[0] = max(0.0001f, vari[0]);
-                    vari[1] = max(0.0001f, vari[1]);
-                    vari[2] = max(0.0001f, vari[2]);
-                    vari[3] = max(0.0001f, kr3 * vari[3]);
+                    vari[0] = max(0.000001f, vari[0]);
+                    vari[1] = max(0.000001f, vari[1]);
+                    vari[2] = max(0.000001f, vari[2]);
+                    vari[3] = max(0.000001f, kr3 * vari[3]);
 
                     if (levred == 7) {
-                        vari[4] = max(0.0001f, kr4 * vari[4]);
-                        vari[5] = max(0.0001f, kr5 * vari[5]);
-                        vari[6] = max(0.0001f, kr5 * vari[6]);
+                        vari[4] = max(0.000001f, kr4 * vari[4]);
+                        vari[5] = max(0.000001f, kr5 * vari[5]);
+                        vari[6] = max(0.000001f, kr5 * vari[6]);
                     }
 
 
@@ -8965,19 +9124,19 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
             if (noisecfr < 0.f) {
-                noisecfr = 0.0001f;
+                noisecfr = 0.00001f;
             }
 
             if (noiseccr < 0.f) {
-                noiseccr = 0.0001f;
+                noiseccr = 0.00001f;
             }
 
             if (noisecfb < 0.f) {
-                noisecfb = 0.0001f;
+                noisecfb = 0.00001f;
             }
 
             if (noiseccb < 0.f) {
-                noiseccb = 0.0001f;
+                noiseccb = 0.00001f;
             }
 
             if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
@@ -9052,7 +9211,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
 
                 {
-                    float minic = 0.0001f;
+                    float minic = 0.000001f;
 
                     if (noiscfactiv) {
                         minic = 0.1f;//only for artifact shape detection
@@ -9064,7 +9223,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     if (aut == 0 || aut == 1) {
                         if ((lp.noisecf < 0.2f && aut == 0) || (maxcfine < 0.2f && aut == 1)) {
-                            k1 = 0.f;
+                            k1 = 0.05f;
                             k2 = 0.f;
                             k3 = 0.f;
                         } else if ((lp.noisecf < 0.3f && aut == 0) || (maxcfine < 0.3f && aut == 1)) {
@@ -9099,15 +9258,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             k1 = 0.8f;
                             k2 = 0.6f;
                             k3 = 0.5f;
-                        } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
+                        } else if ((lp.noisecf < 6.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
                             k1 = 0.85f;
                             k2 = 0.7f;
                             k3 = 0.6f;
-                        } else if ((lp.noisecf < 20.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
+                        } else if ((lp.noisecf < 8.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
                             k1 = 0.9f;
                             k2 = 0.8f;
                             k3 = 0.7f;
-                        } else if ((lp.noisecf < 50.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
+                        } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
                             k1 = 1.f;
                             k2 = 1.f;
                             k3 = 0.9f;
@@ -9139,15 +9298,12 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         float k5 = 0.f;
                         float k6 = 0.f;
 
-                        if ((lp.noisecc == 0.01f && aut == 0) || (maxccoarse == 0.1f && aut == 1)) {
-                            k4 = 0.f;
-                            k5 = 0.0f;
-                        } else if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
+                        if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
                             k4 = 0.1f;
-                            k5 = 0.0f;
+                            k5 = 0.02f;
                         } else if ((lp.noisecc < 0.5f && aut == 0) || (maxccoarse < 0.5f && aut == 1)) {
                             k4 = 0.15f;
-                            k5 = 0.0f;
+                            k5 = 0.05f;
                         } else if ((lp.noisecc < 1.f && aut == 0) || (maxccoarse < 1.f && aut == 1)) {
                             k4 = 0.15f;
                             k5 = 0.1f;
@@ -9165,10 +9321,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             k5 = 1.f;
                         }
 
-                        variC[4] = max(0.0001f, k4 * variC[4]);
-                        variC[5] = max(0.0001f, k5 * variC[5]);
-                        variCb[4] = max(0.0001f, k4 * variCb[4]);
-                        variCb[5] = max(0.0001f, k5 * variCb[5]);
+                        variC[4] = max(0.000001f, k4 * variC[4]);
+                        variC[5] = max(0.000001f, k5 * variC[5]);
+                        variCb[4] = max(0.000001f, k4 * variCb[4]);
+                        variCb[5] = max(0.000001f, k5 * variCb[5]);
 
                         if ((lp.noisecc < 4.f  && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
                             k6 = 0.f;
@@ -9180,8 +9336,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             k6 = 1.f;
                         }
 
-                        variC[6] = max(0.0001f, k6 * variC[6]);
-                        variCb[6] = max(0.0001f, k6 * variCb[6]);
+                        variC[6] = max(0.00001f, k6 * variC[6]);
+                        variCb[6] = max(0.00001f, k6 * variCb[6]);
 
                     }
 
@@ -9382,20 +9538,20 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     if (aut == 0) {
                         if (levred == 7) {
                             edge = 2;
-                            vari[0] = 8.f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
-                            vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                            vari[2] = 8.f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
+                            vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
+                            vari[1] = 0.8f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                            vari[2] = 0.8f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
 
-                            vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[4] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[5] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[6] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[4] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[5] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[6] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
                         } else if (levred == 4) {
                             edge = 3;
-                            vari[0] = 8.f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
-                            vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                            vari[2] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
+                            vari[1] = 0.8f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                            vari[2] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
 
                         }
                     } else if (aut == 1 || aut == 2) {
@@ -9449,15 +9605,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         }
 
-                        vari[0] = max(0.0001f, vari[0]);
-                        vari[1] = max(0.0001f, vari[1]);
-                        vari[2] = max(0.0001f, vari[2]);
-                        vari[3] = max(0.0001f, kr3 * vari[3]);
+                        vari[0] = max(0.000001f, vari[0]);
+                        vari[1] = max(0.000001f, vari[1]);
+                        vari[2] = max(0.000001f, vari[2]);
+                        vari[3] = max(0.000001f, kr3 * vari[3]);
 
                         if (levred == 7) {
-                            vari[4] = max(0.0001f, kr4 * vari[4]);
-                            vari[5] = max(0.0001f, kr5 * vari[5]);
-                            vari[6] = max(0.0001f, kr5 * vari[6]);
+                            vari[4] = max(0.000001f, kr4 * vari[4]);
+                            vari[5] = max(0.000001f, kr5 * vari[5]);
+                            vari[6] = max(0.000001f, kr5 * vari[6]);
                         }
 
                         //    float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
@@ -9526,19 +9682,19 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
                 if (noisecfr < 0.f) {
-                    noisecfr = 0.0001f;
+                    noisecfr = 0.00001f;
                 }
 
                 if (noiseccr < 0.f) {
-                    noiseccr = 0.0001f;
+                    noiseccr = 0.00001f;
                 }
 
                 if (noisecfb < 0.f) {
-                    noisecfb = 0.0001f;
+                    noisecfb = 0.00001f;
                 }
 
                 if (noiseccb < 0.f) {
-                    noiseccb = 0.0001f;
+                    noiseccb = 0.00001f;
                 }
 
 
@@ -9619,7 +9775,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     //      if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f  || noiscfactiv || maxcfine >= 0.1f || maxccoarse > 0.1f)) {
                     {
-                        float minic = 0.0001f;
+                        float minic = 0.000001f;
 
                         if (noiscfactiv) {
                             minic = 0.1f;//only for artifact shape detection
@@ -9631,7 +9787,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         if (aut == 0 || aut == 1) {
                             if ((lp.noisecf < 0.2f && aut == 0) || (maxcfine < 0.2f && aut == 1)) {
-                                k1 = 0.f;
+                                k1 = 0.05f;
                                 k2 = 0.f;
                                 k3 = 0.f;
                             } else if ((lp.noisecf < 0.3f && aut == 0) || (maxcfine < 0.3f && aut == 1)) {
@@ -9666,15 +9822,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 k1 = 0.8f;
                                 k2 = 0.6f;
                                 k3 = 0.5f;
-                            } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
+                            } else if ((lp.noisecf < 6.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
                                 k1 = 0.85f;
                                 k2 = 0.7f;
                                 k3 = 0.6f;
-                            } else if ((lp.noisecf < 20.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
+                            } else if ((lp.noisecf < 8.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
                                 k1 = 0.9f;
                                 k2 = 0.8f;
                                 k3 = 0.7f;
-                            } else if ((lp.noisecf < 50.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
+                            } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
                                 k1 = 1.f;
                                 k2 = 1.f;
                                 k3 = 0.9f;
@@ -9705,15 +9861,12 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             float k5 = 0.f;
                             float k6 = 0.f;
 
-                            if ((lp.noisecc == 0.01f && aut == 0) || (maxccoarse == 0.1f && aut == 1)) {
-                                k4 = 0.f;
-                                k5 = 0.0f;
-                            } else if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
+                            if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
                                 k4 = 0.1f;
-                                k5 = 0.0f;
+                                k5 = 0.02f;
                             } else if ((lp.noisecc < 0.5f && aut == 0) || (maxccoarse < 0.5f && aut == 1)) {
                                 k4 = 0.15f;
-                                k5 = 0.0f;
+                                k5 = 0.05f;
                             } else if ((lp.noisecc < 1.f && aut == 0) || (maxccoarse < 1.f && aut == 1)) {
                                 k4 = 0.15f;
                                 k5 = 0.1f;
@@ -9732,10 +9885,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
 
 
-                            variC[4] = max(0.0001f, k4 * variC[4]);
-                            variC[5] = max(0.0001f, k5 * variC[5]);
-                            variCb[4] = max(0.0001f, k4 * variCb[4]);
-                            variCb[5] = max(0.0001f, k5 * variCb[5]);
+                            variC[4] = max(0.000001f, k4 * variC[4]);
+                            variC[5] = max(0.000001f, k5 * variC[5]);
+                            variCb[4] = max(0.000001f, k4 * variCb[4]);
+                            variCb[5] = max(0.000001f, k5 * variCb[5]);
 
                             if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
                                 k6 = 0.f;
@@ -9747,8 +9900,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 k6 = 1.f;
                             }
 
-                            variC[6] = max(0.0001f, k6 * variC[6]);
-                            variCb[6] = max(0.0001f, k6 * variCb[6]);
+                            variC[6] = max(0.00001f, k6 * variC[6]);
+                            variCb[6] = max(0.00001f, k6 * variCb[6]);
                         }
 
                         float* noisevarchrom = new float[bfh * bfw];
@@ -9756,7 +9909,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         float nvch = 0.6f;//high value
                         float nvcl = 0.1f;//low value
 
-                        if ((lp.noisecf > 100.f && aut == 0) || (maxcfine > 100.f && (aut == 1 || aut == 2))) {
+                        if ((lp.noisecf > 30.f && aut == 0) || (maxcfine > 100.f && (aut == 1 || aut == 2))) {
                             nvch = 0.8f;
                             nvcl = 0.4f;
                         }

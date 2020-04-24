@@ -154,7 +154,6 @@ void BatchToolPanelCoordinator::initSession ()
             distortion->setAdjusterBehavior (false);
             perspective->setAdjusterBehavior (false);
             gradient->setAdjusterBehavior (false, false, false, false);
-            // locallab->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
             sharpening->setAdjusterBehavior (false, false, false, false, false, false, false);
@@ -200,7 +199,6 @@ void BatchToolPanelCoordinator::initSession ()
             distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
             perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
             gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
-            // locallab->setAdjusterBehavior (options.baBehav[ADDSET_LOCALLAB_DEGREE], options.baBehav[ADDSET_LOCALLAB_LOCY], options.baBehav[ADDSET_LOCALLAB_LOCX], options.baBehav[ADDSET_LOCALLAB_LOCYT], options.baBehav[ADDSET_LOCALLAB_LOCXL], options.baBehav[ADDSET_LOCALLAB_CENTER], options.baBehav[ADDSET_LOCALLAB_LIGHTNESS], options.baBehav[ADDSET_LOCALLAB_CONTRAST], options.baBehav[ADDSET_LOCALLAB_CHROMA], options.baBehav[ADDSET_LOCALLAB_SENSI], options.baBehav[ADDSET_LOCALLAB_RADIUS], options.baBehav[ADDSET_LOCALLAB_STRENGTH], options.baBehav[ADDSET_LOCALLAB_TRANSIT]);
             pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);
             cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
             sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_CONTRAST], options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);

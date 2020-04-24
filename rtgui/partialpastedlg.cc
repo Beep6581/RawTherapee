@@ -24,6 +24,167 @@
 
 #include "../rtengine/procparams.h"
 
+using namespace rtengine::procparams;
+
+/* ==== PartialSpotWidget ==== */
+PartialSpotWidget::PartialSpotWidget():
+    // Widget GUI elements
+    treeview(Gtk::manage(new Gtk::TreeView())),
+    treemodel(Gtk::ListStore::create(spotRow)),
+
+    // Widget listener
+    selListener(nullptr)
+{
+    // Configure tree view
+    treeview->set_model(treemodel);
+    treeview->set_enable_search(false);
+    treeview->set_headers_visible(false);
+
+    // Add tree view columns
+    auto cell1 = Gtk::manage(new Gtk::CellRendererToggle());
+    cell1->signal_toggled().connect(
+            sigc::mem_fun(
+                *this, &PartialSpotWidget::keepToggled));
+    int cols_count = treeview->append_column("", *cell1);
+    auto col = treeview->get_column(cols_count - 1);
+
+    if (col) {
+        col->set_cell_data_func(
+            *cell1, sigc::mem_fun(
+                *this, &PartialSpotWidget::render_keep));
+    }
+
+    auto cell2 = Gtk::manage(new Gtk::CellRendererText());
+    cols_count = treeview->append_column("", *cell2);
+    col = treeview->get_column(cols_count - 1);
+
+    if (col) {
+        col->set_cell_data_func(
+            *cell2, sigc::mem_fun(
+                *this, &PartialSpotWidget::render_spotname));
+    }
+
+    // Create and configure scrolled window
+    Gtk::ScrolledWindow* const scrolledwindows = Gtk::manage(new Gtk::ScrolledWindow());
+    scrolledwindows->add(*treeview);
+    scrolledwindows->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    scrolledwindows->set_min_content_height(100);
+
+    // Add widgets to VBox
+    pack_start(*scrolledwindows);
+    show_all();
+}
+
+void PartialSpotWidget::updateSpotWidget(const rtengine::procparams::ProcParams* pp, const bool defValue)
+{
+    treeviewconn.block(true);
+
+    // Clear tree model
+    treemodel->clear();
+
+    // Add tree model element according to pp
+    Gtk::TreeRow newspot;
+
+    for (size_t i = 0; i < pp->locallab.spots.size(); i++) {
+        newspot = *(treemodel->append());
+        newspot[spotRow.keep] = defValue;
+        newspot[spotRow.spotname] = pp->locallab.spots.at(i).name;
+    }
+
+    treeviewconn.block(false);
+}
+
+void PartialSpotWidget::enableAll()
+{
+    treeviewconn.block(true);
+
+    for (auto &spot : treemodel->children()) {
+        spot[spotRow.keep] = true;
+    }
+
+    treeviewconn.block(false);
+}
+
+void PartialSpotWidget::disableAll()
+{
+    treeviewconn.block(true);
+
+    for (auto &spot : treemodel->children()) {
+        spot[spotRow.keep] = false;
+    }
+
+    treeviewconn.block(false);
+}
+
+std::vector<bool> PartialSpotWidget::getSelectionStatus()
+{
+    std::vector<bool> keepVect;
+
+    for (auto &spot : treemodel->children()) {
+        keepVect.push_back(spot[spotRow.keep]);
+    }
+
+    return keepVect;
+}
+
+void PartialSpotWidget::render_keep(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter)
+{
+    const auto spot = *iter;
+    Gtk::CellRendererToggle* const ct = static_cast<Gtk::CellRendererToggle*>(cell);
+
+    // Render cell toggle
+    ct->property_active() = spot[spotRow.keep];
+}
+
+void PartialSpotWidget::render_spotname(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter)
+{
+    const auto spot = *iter;
+    Gtk::CellRendererText* const ct = static_cast<Gtk::CellRendererText*>(cell);
+
+    // Render cell toggle
+    ct->property_text() = spot[spotRow.spotname];
+}
+
+void PartialSpotWidget::keepToggled(const Glib::ustring &path)
+{
+    PartialSpotWidgetListener::UpdateStatus status;
+
+    // Get clicked row
+    const auto selRow = *(treemodel->get_iter(path));
+
+    // Update treeview according to selected row
+    selRow[spotRow.keep] = !selRow[spotRow.keep];
+
+    // Count total number of spot
+    const int totalnb = (int)treemodel->children().size();
+
+    // Count number of toggled elements
+    int togglednb = 0;
+
+    for (auto &spot : treemodel->children()) {
+        if (spot[spotRow.keep]) {
+            togglednb++;
+        }
+    }
+
+    // Compute status
+    if (togglednb == 0) { // No spot toggled
+        status = PartialSpotWidgetListener::UpdateStatus::NoSelection;
+    } else {
+        if (togglednb == totalnb) { // All spot toggled
+            status = PartialSpotWidgetListener::UpdateStatus::AllSelection;
+        } else { // Partial number of spots toggled
+            status = PartialSpotWidgetListener::UpdateStatus::PartialSelection;
+        }
+    }
+
+    // Propagate event to listener
+    if (selListener) {
+        selListener->partialSpotUpdated(status);
+    }
+}
+
+/* ==== PartialPasteDlg ==== */
 PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* parent)
     : Gtk::Dialog (title, *parent, true)
 {
@@ -108,6 +269,10 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     exifch      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXIFCHANGES")));
     iptc        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IPTCINFO")));
 
+    // Locallab:
+    spots = Gtk::manage(new PartialSpotWidget());
+    spots->setPartialSpotWidgetListener(this);
+
     // Raw Settings:
     raw_method          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DMETHOD")));
     raw_imagenum        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_IMAGENUM")));
@@ -143,6 +308,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     filmNegative        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FILMNEGATIVE")) );
     //---
     captureSharpening   = Gtk::manage (new Gtk::CheckButton (M("TP_PDSHARPENING_LABEL")) );
+
     Gtk::VBox* vboxes[9];
     Gtk::HSeparator* hseps[9];
 
@@ -219,6 +385,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
 
     //LOCALLAB
     vboxes[6]->pack_start(*locallab, Gtk::PACK_SHRINK, 2);
+    vboxes[6]->pack_start(*spots, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*hseps[6], Gtk::PACK_SHRINK, 2);
 
     //META
@@ -668,6 +835,12 @@ void PartialPasteDlg::metaToggled ()
 void PartialPasteDlg::locallabToggled()
 {
     locallab->set_inconsistent (false);
+
+    if (locallab->get_active()) {
+        spots->enableAll();
+    } else {
+        spots->disableAll();
+    }
 }
 
 
@@ -679,9 +852,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 {
 
     ParamsEdited falsePE;  // falsePE is a workaround to set a group of ParamsEdited to false
-    falsePE.locallab.spots.resize(srcPP->locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(false));
+    falsePE.locallab.spots.resize(srcPP->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(false));
     ParamsEdited filterPE(true); // Contains the initial information about the loaded values
-    filterPE.locallab.spots.resize(srcPP->locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(true));
+    filterPE.locallab.spots.resize(srcPP->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
 
     if (srcPE) {
         filterPE = *srcPE;
@@ -999,10 +1172,6 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.raw.ff_AutoClipControl = falsePE.raw.ff_AutoClipControl;
     }
 
-    if (!locallab->get_active ()) {
-        filterPE.locallab = falsePE.locallab;
-    }
-
     if (!filmNegative->get_active ()) {
         filterPE.filmNegative.enabled   = falsePE.filmNegative.enabled;
         filterPE.filmNegative.redRatio   = falsePE.filmNegative.redRatio;
@@ -1022,11 +1191,65 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.pdsharpening.deconvitercheck   = falsePE.pdsharpening.deconvitercheck;
     }
 
-    if (dstPE) {
-        *dstPE = filterPE;
-    }
+    // Locallab shall be kept in last position
+    if (!locallab->get_active () && !locallab->get_inconsistent()) {
+        filterPE.locallab = falsePE.locallab;
 
-    // Apply the filter!
-    filterPE.combine(*dstPP, *srcPP, true);
+        if (dstPE) {
+            *dstPE = filterPE;
+        }
+
+        // Apply the filter!
+        filterPE.combine(*dstPP, *srcPP, true);
+    } else { // Update PE and PP according to chosen spot
+        // Get chosen spots
+        std::vector<bool> chosenSpots = spots->getSelectionStatus();
+
+        // Create temporary PP and PE based on scrPP and scrPE
+        rtengine::procparams::ProcParams tmpPP = rtengine::procparams::ProcParams(*srcPP);
+        ParamsEdited tmpPE = ParamsEdited(filterPE);
+
+        // Update tmpPP and tmpPE according to chosen spots
+        for (int i = ((int)chosenSpots.size() - 1); i >= 0; i--) {
+            if (!chosenSpots.at(i)) {
+                tmpPP.locallab.spots.erase(tmpPP.locallab.spots.begin() + i);
+                tmpPE.locallab.spots.erase(tmpPE.locallab.spots.begin() + i);
+            }
+        }
+
+        if (dstPE) {
+            *dstPE = tmpPE;
+        }
+
+        // Apply the filter!
+        tmpPE.combine(*dstPP, tmpPP, true);
+    }
 }
 
+void PartialPasteDlg::updateSpotWidget(const rtengine::procparams::ProcParams* pp)
+{
+    locallab->set_inconsistent(false);
+
+    if (pp->locallab.spots.size() > 0) {
+        spots->set_visible(true);
+        spots->updateSpotWidget(pp, locallab->get_active());
+    } else {
+        spots->set_visible(false); // Hide widget if there is no locallab spot
+    }
+}
+
+void PartialPasteDlg::partialSpotUpdated(const UpdateStatus status)
+{
+    switch (status) {
+        case (AllSelection):
+            locallab->set_active(true);
+            break;
+
+        case (NoSelection):
+            locallab->set_active(false);
+            break;
+
+        case (PartialSelection):
+            locallab->set_inconsistent(true);
+    }
+}

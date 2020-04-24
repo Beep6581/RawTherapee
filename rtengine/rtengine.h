@@ -379,10 +379,27 @@ public:
 class LocallabListener
 {
 public:
+    struct locallabRef {
+        double huer;
+        double lumar;
+        double chromar;
+    };
+
+    struct locallabRetiMinMax {
+        double cdma;
+        double cdmin;
+        double mini;
+        double maxi;
+        double Tmean;
+        double Tsigma;
+        double Tmin;
+        double Tmax;
+    };
+
     virtual ~LocallabListener() = default;
-    virtual void refChanged (double huer, double lumar, double chromar) = 0;
-    virtual void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) = 0;
-    virtual void logencodChanged (float blackev, float whiteev, float sourceg, float targetg) = 0;
+    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
+    virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
+    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float targetg) = 0;
 };
 
 class AutoColorTonListener
@@ -532,7 +549,7 @@ public:
 
     virtual void        updateUnLock() = 0;
 
-    virtual void        setLocallabMaskVisibility(int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallvibMask, int locallSHMask, int locallSHMaskinv, int localllcMask, int locallsharMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask, int locallblMask) = 0;
+    virtual void        setLocallabMaskVisibility(int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask) = 0;
 
     /** Creates and returns a Crop instance that acts as a window on the image
       * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber

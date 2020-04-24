@@ -34,7 +34,81 @@ class ProcParams;
 
 struct ParamsEdited;
 
-class PartialPasteDlg final : public Gtk::Dialog
+/* ==== PartialSpotWidgetListener ==== */
+class PartialSpotWidget;
+class PartialSpotWidgetListener
+{
+public:
+    enum UpdateStatus {
+        AllSelection = 1,
+        NoSelection = 2,
+        PartialSelection = 3
+    };
+
+public:
+    PartialSpotWidgetListener() {};
+    virtual ~PartialSpotWidgetListener() {};
+
+    virtual void partialSpotUpdated(const UpdateStatus status) = 0;
+};
+
+/* ==== PartialSpotWidget ==== */
+class PartialSpotWidget:
+    public Gtk::VBox
+{
+private:
+    // Tree model to manage spot selection widget
+    class SpotRow:
+        public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        Gtk::TreeModelColumn<bool> keep;
+        Gtk::TreeModelColumn<Glib::ustring> spotname;
+
+        SpotRow()
+        {
+            add(keep);
+            add(spotname);
+        }
+    };
+
+    // Spot selection widgets
+    Gtk::TreeView* const treeview;
+    sigc::connection treeviewconn;
+    SpotRow spotRow;
+    Glib::RefPtr<Gtk::ListStore> treemodel;
+
+    // Spot selection listener
+    PartialSpotWidgetListener* selListener;
+
+public:
+    PartialSpotWidget();
+
+    // Setter for spot selection listener
+    void setPartialSpotWidgetListener(PartialSpotWidgetListener* pswl)
+    {
+        selListener = pswl;
+    }
+
+    // Spot selection widget management functions
+    void updateSpotWidget(const rtengine::procparams::ProcParams* pp, const bool defValue);
+    void enableAll();
+    void disableAll();
+    std::vector<bool> getSelectionStatus();
+
+private:
+    // GUI aspect management functions
+    void render_keep(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+    void render_spotname(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+
+    // Event management function
+    void keepToggled(const Glib::ustring &path);
+};
+
+/* ==== PartialPasteDlg ==== */
+class PartialPasteDlg final:
+    public Gtk::Dialog,
+    public PartialSpotWidgetListener
 {
 
 public:
@@ -112,6 +186,8 @@ public:
     Gtk::CheckButton* exifch;
     Gtk::CheckButton* iptc;
 
+    // options in locallab:
+    PartialSpotWidget* spots;
 
     // options in raw:
     Gtk::CheckButton* raw_expos;
@@ -172,4 +248,7 @@ public:
     void rawToggled ();
     void advancedToggled ();
     void locallabToggled ();
+
+    void updateSpotWidget(const rtengine::procparams::ProcParams* pp);
+    void partialSpotUpdated(const UpdateStatus status);
 };

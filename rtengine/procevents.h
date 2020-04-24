@@ -602,7 +602,7 @@ enum ProcEventCode {
     Evlocallabchromacbdl = 576,
     EvlocallabThresho = 577,
     Evlocallabsensicb = 578,
-    EvLocenadenoi = 579,
+    // EvLocenadenoi = 579,
     Evlocallabnoiselumf = 580,
     Evlocallabnoiselumc = 581,
     Evlocallabnoiselumdetail = 582,
@@ -627,8 +627,8 @@ enum ProcEventCode {
     Evlocallabsensisf = 601,
     Evlocallabsharblur = 602,
     EvLocenalabregion = 603,
-    EvlocallabshowmaskcolMethod = 604,
-    EvlocallabshowmaskexpMethod = 605,
+    EvlocallabshowmaskMethod = 604,
+    EvLocallabSpotSelectedWithMask = 605,
     EvlocallabCCmaskshape = 606,
     EvlocallabLLmaskshape = 607,
     EvlocallabCCmaskexpshape = 608,
@@ -658,7 +658,7 @@ enum ProcEventCode {
     Evlocallabsensihs = 632,
     Evlocallabradmaskcol = 633,
     Evlocallabradmaskexp = 634,
-    EvlocallabshowmaskSHMethod = 635,
+    EvlocallabToolAdded = 635,
     EvlocallabCCmaskSHshape = 636,
     EvlocallabLLmaskSHshape = 637,
     EvlocallabHHmaskSHshape = 638,
@@ -696,7 +696,7 @@ enum ProcEventCode {
     EvlocallabLLmaskcbshape = 670,
     EvlocallabHHmaskcbshape = 671,
     EvLocallabEnacbMask = 672,
-    EvlocallabshowmaskcbMethod = 673,
+    EvlocallabToolRemovedWithoutRefresh = 673,
     Evlocallabsoftradiustm = 674,
     EvLocallabSpotTransitgrad = 675,
     Evlocallabamount = 676,
@@ -710,7 +710,7 @@ enum ProcEventCode {
     Evlocallabchromaskreti = 684,
     Evlocallabgammaskreti = 685,
     Evlocallabslomaskreti = 686,
-    EvlocallabshowmaskretiMethod = 687,
+    EvlocallabToolRemovedWithRefresh = 687,
     EvLocallabEnaretiMasktmap = 688,
     Evlocallabscalereti = 689,
     Evlocallabdarkness = 690,
@@ -722,7 +722,7 @@ enum ProcEventCode {
     Evlocallabequiltm = 696,
     Evlocallabfftwlc = 697,
     Evlocallabfftwreti = 698,
-    EvlocallabshowmasksoftMethod = 699,
+    // EvlocallabshowmasksoftMethod = 699,
     Evlocallabshadex = 700,
     EvlocallabexpMethod = 701,
     Evlocallablaplacexp = 702,
@@ -737,7 +737,7 @@ enum ProcEventCode {
     Evlocallabchromasktm = 711,
     Evlocallabgammasktm = 712,
     Evlocallabslomasktm = 713,
-    EvlocallabshowmasktmMethod = 714,
+    // EvlocallabshowmasktmMethod = 714,
     EvlocallablocalcontMethod = 715,
     EvlocallabwavCurve = 716,
     Evlocallablevelwav = 717,
@@ -746,7 +746,7 @@ enum ProcEventCode {
     EvlocallabLLmaskblshape = 720,
     EvlocallabHHmaskblshape = 721,
     EvLocallabEnablMask = 722,
-    EvlocallabshowmaskblMethod = 723,
+    // EvlocallabshowmaskblMethod = 723,
     Evlocallabblendmaskbl = 724,
     Evlocallabradmaskbl = 725,
     Evlocallabchromaskbl = 726,
@@ -757,9 +757,9 @@ enum ProcEventCode {
     Evlocallabitera = 731,
     Evlocallabguidbl = 732,
     Evlocallabepsbl = 733,
-    EvlocallabshowmaskcolMethodinv = 734,
-    EvlocallabshowmaskexpMethodinv = 735,
-    EvlocallabshowmaskSHMethodinv = 736,
+    // EvlocallabshowmaskcolMethodinv = 734,
+    // EvlocallabshowmaskexpMethodinv = 735,
+    // EvlocallabshowmaskSHMethodinv = 736,
     Evlocallabclarilres = 737,
     Evlocallabclarisoft = 738,
     Evlocallabclaricres = 739,
@@ -819,7 +819,6 @@ enum ProcEventCode {
     EvlocallabsloSH = 793,
     Evlocallabsavrest = 794,
     Evlocallabrecurs = 795,
-//    EvLocallabSpotmergeMethod = 796,
     EvLocallabmergecolMethod = 796,
     Evlocallabopacol = 797,
     Evlocallabrgbshape = 798,
@@ -835,7 +834,7 @@ enum ProcEventCode {
     EvlocallabCCmaskvibshape = 808,
     EvlocallabLLmaskvibshape = 809,
     EvlocallabHHmaskvibshape = 810,
-    EvlocallabshowmaskvibMethod = 811,
+    // EvlocallabshowmaskvibMethod = 811,
     EvLocallabEnavibMask = 812,
     Evlocallabblendmaskvi = 813,
     Evlocallabradmaskvib = 814,
@@ -872,9 +871,7 @@ enum ProcEventCode {
     EvLocallabAuto = 845,
     EvlocallabsourceGray = 846,
     EvlocallabsourceGrayAuto = 847,
-//    EvlocallabAutoGrayOn = 848,
-//    EvlocallabAutoGrayOff = 849,
-    EvlocallabAutogray = 848, 
+    EvlocallabAutogray = 848,
     EvlocallabblackEv = 849,
     EvlocallabwhiteEv = 850,
     EvlocallabtargetGray = 851,
@@ -899,7 +896,7 @@ enum ProcEventCode {
     EvlocallabCCmasklcshape = 870,
     EvlocallabLLmasklcshape = 871,
     EvLocallabEnalcMask = 872,
-    EvlocallabshowmasklcMethod = 873,
+    // EvlocallabshowmasklcMethod = 873,
     Evlocallabblendmasklc = 874,
     Evlocallabradmasklc = 875,
     Evlocallabchromasklc = 876,
@@ -920,7 +917,7 @@ enum ProcEventCode {
     Evlocallabstrlog = 891,
     Evlocallabanglog = 892,
     EvLocallabSpotcolorde = 893,
-    EvlocallabshowmasksharMethod = 894,
+    // EvlocallabshowmasksharMethod = 894,
     Evlocallabshowreset = 895,
     Evlocallabstrengthw = 896,
     Evlocallabradiusw = 897,
@@ -938,6 +935,9 @@ enum ProcEventCode {
     EvLocallabSpotwavMethod = 909,
     EvlocallabchroMethod = 910,
     Evlocallabstrbl = 911,
+    Evlocallabsigmadr = 912,
+    Evlocallabsigmabl = 913,
+    Evlocallabsigmaed = 914,
 
     NUMOFEVENTS
 };
@@ -948,18 +948,39 @@ public:
     ProcEvent(): code_(0) {}
     ProcEvent(ProcEventCode code): code_(code) {}
     explicit ProcEvent(int code): code_(code) {}
-    operator int() const { return code_; }
+    operator int() const
+    {
+        return code_;
+    }
 
 private:
     int code_;
 };
 
 
-inline bool operator ==(ProcEvent a, ProcEvent b) { return int(a) == int(b); }
-inline bool operator ==(ProcEvent a, ProcEventCode b) { return int(a) == int(b); }
-inline bool operator ==(ProcEventCode a, ProcEvent b) { return int(a) == int(b); }
-inline bool operator !=(ProcEvent a, ProcEvent b) { return int(a) != int(b); }
-inline bool operator !=(ProcEvent a, ProcEventCode b) { return int(a) != int(b); }
-inline bool operator !=(ProcEventCode a, ProcEvent b) { return int(a) != int(b); }
+inline bool operator ==(ProcEvent a, ProcEvent b)
+{
+    return int(a) == int(b);
+}
+inline bool operator ==(ProcEvent a, ProcEventCode b)
+{
+    return int(a) == int(b);
+}
+inline bool operator ==(ProcEventCode a, ProcEvent b)
+{
+    return int(a) == int(b);
+}
+inline bool operator !=(ProcEvent a, ProcEvent b)
+{
+    return int(a) != int(b);
+}
+inline bool operator !=(ProcEvent a, ProcEventCode b)
+{
+    return int(a) != int(b);
+}
+inline bool operator !=(ProcEventCode a, ProcEvent b)
+{
+    return int(a) != int(b);
+}
 
 }

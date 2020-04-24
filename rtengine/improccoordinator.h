@@ -451,22 +451,22 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility (int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv,  int locallvibMask, int localllcMask, int locallsharMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask, int locallblMask) override
+    void setLocallabMaskVisibility (int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask) override
     {
         this->locallColorMask = locallColorMask;
         this->locallColorMaskinv = locallColorMaskinv;
         this->locallExpMask = locallExpMask;
         this->locallExpMaskinv = locallExpMaskinv;
         this->locallSHMask = locallSHMask;
-        this->locallvibMask = locallvibMask;
         this->locallSHMaskinv = locallSHMaskinv;
-        this->localllcMask = localllcMask;
-        this->locallsharMask = locallsharMask;
-        this->locallcbMask = locallcbMask;
-        this->locallretiMask = locallretiMask;
+        this->locallvibMask = locallvibMask;
         this->locallsoftMask = locallsoftMask;
-        this->localltmMask = localltmMask;
         this->locallblMask = locallblMask;
+        this->localltmMask = localltmMask;
+        this->locallretiMask = locallretiMask;
+        this->locallsharMask = locallsharMask;
+        this->localllcMask = localllcMask;
+        this->locallcbMask = locallcbMask;
     }
 
     void setProgressListener (ProgressListener* pl) override

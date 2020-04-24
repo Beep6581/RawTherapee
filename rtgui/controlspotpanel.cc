@@ -20,13 +20,14 @@
 
 #include "../rtengine/rt_math.h"
 #include "controlspotpanel.h"
-#include "multilangmgr.h"
-#include <iomanip>
 #include "editwidgets.h"
 #include "options.h"
+#include "../rtengine/procparams.h"
 #include "rtimage.h"
 
 using namespace rtengine;
+using namespace procparams;
+
 extern Options options;
 
 //-----------------------------------------------------------------------------
@@ -56,8 +57,6 @@ ControlSpotPanel::ControlSpotPanel():
 
     sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
     structexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
-
-    struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1.0, 12.0, 0.1, 4.0))),
     locX_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH"), 2, 3000, 1, 150))),
     locXL_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH_L"), 2, 3000, 1, 150))),
     locY_(Gtk::manage(new Adjuster(M("TP_LOCAL_HEIGHT"), 2, 3000, 1, 150))),
@@ -66,14 +65,15 @@ ControlSpotPanel::ControlSpotPanel():
     centerY_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITVALUE"), 2., 100., 0.1, 60.))),
+    transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 25.0, 0.1, 1.0))),
+    transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
     feather_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
+    struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1.0, 12.0, 0.1, 4.0))),
     thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 10.0, 0.1, 2.0))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
-    balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")),Gtk::manage(new RTImage("circle-red-green-small.png"))))),
-    colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small.png")),Gtk::manage(new RTImage("circle-gray-green-small.png"))))),
-    transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 15.0, 0.1, 1.0))),
-    transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
+    balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")),  Gtk::manage(new RTImage("circle-white-small.png"))))),
+    balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
+    colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-green-small.png"))))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
     lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), 0, 30, 1, 10))),
 
@@ -90,10 +90,11 @@ ControlSpotPanel::ControlSpotPanel():
     nameChanged_(false),
     visibilityChanged_(false),
     eventType(None),
-    excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF"))))
+    excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF")))),
+    maskPrevActive(false)
 {
-    bool showtooltip = options.showtooltip;
-    int complexsoft = options.complexity;
+    const bool showtooltip = options.showtooltip;
+    const int complexsoft = options.complexity;
 
     Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
     buttonaddconn_ = button_add_->signal_clicked().connect(
@@ -134,19 +135,14 @@ ControlSpotPanel::ControlSpotPanel():
         sigc::mem_fun(
             *this, &ControlSpotPanel::blockTreeviewSearch), false);
 
+    // Avoid situation where no spot is selected (Ctrl+click on treeview)
+    treeview_->signal_button_press_event().connect(
+        sigc::mem_fun(
+            *this, &ControlSpotPanel::onSpotSelectionEvent), false);
+
     auto cell = Gtk::manage(new Gtk::CellRendererText());
-    int cols_count = treeview_->append_column("ID", *cell);
+    int cols_count = treeview_->append_column(M("TP_LOCALLAB_COL_NAME"), *cell);
     auto col = treeview_->get_column(cols_count - 1);
-
-    if (col) {
-        col->set_cell_data_func(
-            *cell, sigc::mem_fun(
-                *this, &ControlSpotPanel::render_id));
-    }
-
-    cell = Gtk::manage(new Gtk::CellRendererText());
-    cols_count = treeview_->append_column(M("TP_LOCALLAB_COL_NAME"), *cell);
-    col = treeview_->get_column(cols_count - 1);
 
     if (col) {
         col->set_cell_data_func(
@@ -280,49 +276,6 @@ ControlSpotPanel::ControlSpotPanel():
         pack_start(*ctboxqualitymethod);
     }
 
-
-    Gtk::HBox* const ctboxcomplexmethod = Gtk::manage(new Gtk::HBox());
-    Gtk::Label* const labelcomplexmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_COMPLEX_METHOD") + ":"));
-    ctboxcomplexmethod->pack_start(*labelcomplexmethod, Gtk::PACK_SHRINK, 4);
-
-    if (showtooltip) {
-        ctboxcomplexmethod->set_tooltip_markup(M("TP_LOCALLAB_COMPLEXMETHOD_TOOLTIP"));
-    }
-
-    complexMethod_->append(M("TP_LOCALLAB_SIM"));
-    complexMethod_->append(M("TP_LOCALLAB_MED"));
-    complexMethod_->append(M("TP_LOCALLAB_ALL"));
-    complexMethod_->set_active(1);
-    complexMethodconn_ = complexMethod_->signal_changed().connect(
-                             sigc::mem_fun(
-                                 *this, &ControlSpotPanel::complexMethodChanged));
-    ctboxcomplexmethod->pack_start(*complexMethod_);
-
-
-    Gtk::HBox* const ctboxwavmethod = Gtk::manage(new Gtk::HBox());
-    Gtk::Label* const labelwavmethod = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUBLOCAL") + ":"));
-    ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
-
-    if (showtooltip) {
-        ctboxwavmethod->set_tooltip_markup(M("TP_WAVELET_DAUB_TOOLTIP"));
-    }
-
-
-
-    wavMethod_->append(M("TP_WAVELET_DAUB2"));
-    wavMethod_->append(M("TP_WAVELET_DAUB4"));
-    wavMethod_->append(M("TP_WAVELET_DAUB6"));
-    wavMethod_->append(M("TP_WAVELET_DAUB10"));
-    wavMethod_->append(M("TP_WAVELET_DAUB14"));
-//    wavMethod_->append(M("TP_WAVELET_DAUB20"));
-    wavMethod_->set_active(1);
-    wavMethodconn_ = wavMethod_->signal_changed().connect(
-                          sigc::mem_fun(
-                              *this, &ControlSpotPanel::wavMethodChanged));
-    ctboxwavmethod->pack_start(*wavMethod_);
-//    pack_start(*ctboxwavmethod);
-
-
     Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
     transitFrame->set_label_align(0.025, 0.5);
 
@@ -352,32 +305,14 @@ ControlSpotPanel::ControlSpotPanel():
         scopemask_->set_tooltip_text(M("TP_LOCALLAB_SCOPEMASK_TOOLTIP"));
     }
 
-//    if(showtooltip) lumask_->set_tooltip_text(M("TP_LOCALLAB_LUMASK_TOOLTIP"));
-    if (showtooltip) {
-        shortc_->set_tooltip_text(M("TP_LOCALLAB_SHORTCMASK_TOOLTIP"));
-    }
-
-    if (showtooltip) {
-        savrest_->set_tooltip_text(M("TP_LOCALLAB_SAVREST_TOOLTIP"));
-    }
-
     transit_->setAdjusterListener(this);
-    feather_->setAdjusterListener(this);
     transitweak_->setAdjusterListener(this);
     transitgrad_->setAdjusterListener(this);
+    feather_->setAdjusterListener(this);
     scopemask_->setAdjusterListener(this);
-    lumask_->setAdjusterListener(this);
-
     transitBox->pack_start(*transit_);
-
-    if (complexsoft < 2) {
-        transitBox->pack_start(*transitweak_);
-    }
-
-    if (complexsoft < 2) {
-        transitBox->pack_start(*transitgrad_);
-    }
-
+    transitBox->pack_start(*transitweak_);
+    transitBox->pack_start(*transitgrad_);
     transitBox->pack_start(*feather_);
     transitFrame->add(*transitBox);
     pack_start(*transitFrame);
@@ -390,8 +325,18 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
-    thresh_->setAdjusterListener(this);
     struc_->setAdjusterListener(this);
+    thresh_->setAdjusterListener(this);
+    iter_->setAdjusterListener(this);
+    balan_->setAdjusterListener(this);
+    balanh_->setAdjusterListener(this);
+    colorde_->setAdjusterListener(this);
+
+    if (showtooltip) {
+        balan_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
+        balanh_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
+        colorde_->set_tooltip_text(M("TP_LOCALLAB_COLORDE_TOOLTIP"));
+    }
 
     if (complexsoft < 2) {
         artifBox->pack_start(*struc_);
@@ -402,53 +347,24 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     artifBox->pack_start(*iter_);
-
-//    if (complexsoft < 2) {
-        artifBox->pack_start(*balan_);
-        artifBox->pack_start(*balanh_);
-        artifBox->pack_start(*colorde_);
-//    }
-
-    iter_->setAdjusterListener(this);
-    balan_->setAdjusterListener(this);
-    balanh_->setAdjusterListener(this);
-    colorde_->setAdjusterListener(this);
+    artifBox->pack_start(*balan_);
+    artifBox->pack_start(*balanh_);
+    artifBox->pack_start(*colorde_);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
     
-    if (showtooltip) {
-        balan_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
-        balanh_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
-        colorde_->set_tooltip_text(M("TP_LOCALLAB_COLORDE_TOOLTIP"));
-    }
-    
-    /*
-        Gtk::HBox* const ctboxmergemethod = Gtk::manage(new Gtk::HBox());
-        Gtk::Label* const labelmergemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MERGETYPE") + ":"));
-        ctboxmergemethod->pack_start(*labelmergemethod, Gtk::PACK_SHRINK, 4);
-        if(showtooltip) ctboxmergemethod->set_tooltip_markup(M("TP_LOCALLAB_MERGETYPE_TOOLTIP"));
-        mergeMethod_->append(M("TP_LOCALLAB_MERGENONE"));
-        mergeMethod_->append(M("TP_LOCALLAB_MERGEONE"));
-        mergeMethod_->append(M("TP_LOCALLAB_MERGETWO"));
-        mergeMethod_->append(M("TP_LOCALLAB_MERGETHR"));
-        mergeMethod_->append(M("TP_LOCALLAB_MERGEFOU"));
-        mergeMethod_->append(M("TP_LOCALLAB_MERGEFIV"));
-        mergeMethod_->set_active(0);
-        mergeMethodconn_ = mergeMethod_->signal_changed().connect(
-                              sigc::mem_fun(
-                                  *this, &ControlSpotPanel::mergeMethodChanged));
-    //    ctboxmergemethod->pack_start(*mergeMethod_);
-    */
     avoidConn_  = avoid_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
     pack_start(*avoid_);
+
     recursConn_  = recurs_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::recursChanged));
-    pack_start(*recurs_);
 
     if (showtooltip) {
         recurs_->set_tooltip_text(M("TP_LOCALLAB_RECURS_TOOLTIP"));
     }
+
+    pack_start(*recurs_);
 
     Gtk::Frame* const maskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MASFRAME")));
     maskFrame->set_label_align(0.025, 0.5);
@@ -458,41 +374,81 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     ToolParamBlock* const maskBox = Gtk::manage(new ToolParamBlock());
-
-    if (complexsoft < 1) {
-        maskBox->pack_start(*laplac_);
-    }
-
     laplacConn_  = laplac_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::laplacChanged));
     deltaeConn_  = deltae_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::deltaeChanged));
     shortcConn_  = shortc_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::shortcChanged));
+
+    if (showtooltip) {
+        shortc_->set_tooltip_text(M("TP_LOCALLAB_SHORTCMASK_TOOLTIP"));
+    }
+
+    lumask_->setAdjusterListener(this);
     savrestConn_  = savrest_->signal_toggled().connect(
                         sigc::mem_fun(*this, &ControlSpotPanel::savrestChanged));
+
+    if (showtooltip) {
+        savrest_->set_tooltip_text(M("TP_LOCALLAB_SAVREST_TOOLTIP"));
+    }
+
+    if (complexsoft < 1) {
+        maskBox->pack_start(*laplac_);
+    }
+
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
-//    maskBox->pack_start(*shortc_);
-//    Gtk::HSeparator *separator = Gtk::manage(new  Gtk::HSeparator());
-//    maskBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
-
-//    maskBox->pack_start(*ctboxmergemethod);
-
-//    Gtk::HSeparator *separator1 = Gtk::manage(new  Gtk::HSeparator());
-//   maskBox->pack_start(*separator1, Gtk::PACK_SHRINK, 2);
-
+    // maskBox->pack_start(*shortc_);
     maskBox->pack_start(*lumask_);
-//    maskBox->pack_start(*savrest_);
+    // maskBox->pack_start(*savrest_);
     maskFrame->add(*maskBox);
     pack_start(*maskFrame);
+
     Gtk::HSeparator *separatormet = Gtk::manage(new  Gtk::HSeparator());
     pack_start(*separatormet, Gtk::PACK_SHRINK, 2);
 
-//    pack_start(*ctboxcomplexmethod);
+    Gtk::HBox* const ctboxcomplexmethod = Gtk::manage(new Gtk::HBox());
+
+    if (showtooltip) {
+        ctboxcomplexmethod->set_tooltip_markup(M("TP_LOCALLAB_COMPLEXMETHOD_TOOLTIP"));
+    }
+
+    Gtk::Label* const labelcomplexmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_COMPLEX_METHOD") + ":"));
+    ctboxcomplexmethod->pack_start(*labelcomplexmethod, Gtk::PACK_SHRINK, 4);
+
     if (showtooltip) {
         complexMethod_->set_tooltip_markup(M("TP_LOCALLAB_COMPLEX_TOOLTIP"));
     }
+
+    complexMethod_->append(M("TP_LOCALLAB_SIM"));
+    complexMethod_->append(M("TP_LOCALLAB_MED"));
+    complexMethod_->append(M("TP_LOCALLAB_ALL"));
+    complexMethod_->set_active(1);
+    complexMethodconn_ = complexMethod_->signal_changed().connect(
+                             sigc::mem_fun(
+                                 *this, &ControlSpotPanel::complexMethodChanged));
+    ctboxcomplexmethod->pack_start(*complexMethod_);
+    // pack_start(*ctboxcomplexmethod);
+
+    Gtk::HBox* const ctboxwavmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labelwavmethod = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUBLOCAL") + ":"));
+    ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
+
+    if (showtooltip) {
+        ctboxwavmethod->set_tooltip_markup(M("TP_WAVELET_DAUB_TOOLTIP"));
+    }
+
+    wavMethod_->append(M("TP_WAVELET_DAUB2"));
+    wavMethod_->append(M("TP_WAVELET_DAUB4"));
+    wavMethod_->append(M("TP_WAVELET_DAUB6"));
+    wavMethod_->append(M("TP_WAVELET_DAUB10"));
+    wavMethod_->append(M("TP_WAVELET_DAUB14"));
+    wavMethod_->set_active(1);
+    wavMethodconn_ = wavMethod_->signal_changed().connect(
+                          sigc::mem_fun(
+                              *this, &ControlSpotPanel::wavMethodChanged));
+    ctboxwavmethod->pack_start(*wavMethod_);
     pack_start(*ctboxwavmethod);
 
     show_all();
@@ -532,24 +488,6 @@ ControlSpotPanel::~ControlSpotPanel()
 void ControlSpotPanel::setEditProvider(EditDataProvider* provider)
 {
     EditSubscriber::setEditProvider(provider);
-}
-
-void ControlSpotPanel::render_id(
-    Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter)
-{
-    auto row = *iter;
-    Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
-
-    // Render cell text
-    ct->property_text() = std::to_string(row[spots_.id]);
-
-    // Render cell background color
-    if (row[spots_.mouseover]) {
-        ct->property_background_rgba() = colorMouseovertext;
-    } else {
-        ct->property_background_rgba() = colorNominal;
-    }
-
 }
 
 void ControlSpotPanel::render_name(
@@ -602,8 +540,7 @@ void ControlSpotPanel::on_button_add()
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotCreation;
-    const int newId = getNewId();
-    listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId));
+    listener->panelChanged(EvLocallabSpotCreated, "-");
 }
 
 void ControlSpotPanel::on_button_delete()
@@ -615,11 +552,17 @@ void ControlSpotPanel::on_button_delete()
     }
 
     // Raise event
+    const int selIndex = getSelectedSpot();
+
+    if (selIndex == -1) { // No selected spot to remove
+        return;
+    }
+
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDeletion;
-    const int delId = getSelectedSpot();
-    listener->panelChanged(EvLocallabSpotDeleted, "ID#" + std::to_string(delId));
+    SpotRow* const delSpotRow = getSpot(selIndex);
+    listener->panelChanged(EvLocallabSpotDeleted, delSpotRow->name);
 }
 
 void ControlSpotPanel::on_button_duplicate()
@@ -631,19 +574,18 @@ void ControlSpotPanel::on_button_duplicate()
     }
 
     // Raise event
-    const int selId = getSelectedSpot();
+    const int selIndex = getSelectedSpot();
 
-    if (selId == 0) { // No selected spot to duplicate
+    if (selIndex == -1) { // No selected spot to duplicate
         return;
     }
 
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDuplication;
-    const int newId = getNewId();
-    listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId)
-                           + " (" + M("TP_LOCALLAB_EV_DUPL") + " ID#"
-                           + std::to_string(selId) + ")");
+    SpotRow* const duplSpotRow = getSpot(selIndex);
+    listener->panelChanged(EvLocallabSpotCreated, M("TP_LOCALLAB_EV_DUPL") + " "
+                           + duplSpotRow->name);
 }
 
 void ControlSpotPanel::on_button_rename()
@@ -735,12 +677,12 @@ bool ControlSpotPanel::on_button_visibility(GdkEventButton* event)
 
             // Raise event
             visibilityChanged_ = true;
-            const int id = getSelectedSpot();
+            SpotRow* const spotRow = getSpot(getSelectedSpot());
 
             if (row[spots_.isvisible]) {
-                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS") + " ID#" + std::to_string(id));
+                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS") + " (" + spotRow->name + ")");
             } else {
-                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_NVIS") + " ID#" + std::to_string(id));
+                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_NVIS") + " (" + spotRow->name + ")");
             }
 
             return true;
@@ -765,6 +707,17 @@ bool ControlSpotPanel::blockTreeviewSearch(GdkEventKey* event)
     return false;
 }
 
+bool ControlSpotPanel::onSpotSelectionEvent(GdkEventButton* event)
+{
+    if (event->state & Gdk::CONTROL_MASK) { // Ctrl
+        // No action is performed to avoid a situation where no spot is selected
+        return true;
+    }
+
+    // Otherwise selection action is transfered to treeview widget
+    return false;
+}
+
 void ControlSpotPanel::load_ControlSpot_param()
 {
     // printf("load_ControlSpot_param\n");
@@ -782,10 +735,8 @@ void ControlSpotPanel::load_ControlSpot_param()
     // Load param in selected control spot
     shape_->set_active(row[spots_.shape]);
     spotMethod_->set_active(row[spots_.spotMethod]);
-//    mergeMethod_->set_active(row[spots_.mergeMethod]);
     sensiexclu_->setValue((double)row[spots_.sensiexclu]);
     structexclu_->setValue((double)row[spots_.structexclu]);
-    struc_->setValue((double)row[spots_.struc]);
     shapeMethod_->set_active(row[spots_.shapeMethod]);
     locX_->setValue((double)row[spots_.locX]);
     locXL_->setValue((double)row[spots_.locXL]);
@@ -795,24 +746,25 @@ void ControlSpotPanel::load_ControlSpot_param()
     centerY_->setValue((double)row[spots_.centerY]);
     circrad_->setValue((double)row[spots_.circrad]);
     qualityMethod_->set_active(row[spots_.qualityMethod]);
-    complexMethod_->set_active(row[spots_.complexMethod]);
     transit_->setValue((double)row[spots_.transit]);
+    transitweak_->setValue((double)row[spots_.transitweak]);
+    transitgrad_->setValue((double)row[spots_.transitgrad]);
     feather_->setValue((double)row[spots_.feather]);
+    struc_->setValue((double)row[spots_.struc]);
     thresh_->setValue((double)row[spots_.thresh]);
     iter_->setValue((double)row[spots_.iter]);
     balan_->setValue((double)row[spots_.balan]);
     balanh_->setValue((double)row[spots_.balanh]);
     colorde_->setValue((double)row[spots_.colorde]);
-    transitweak_->setValue((double)row[spots_.transitweak]);
-    transitgrad_->setValue((double)row[spots_.transitgrad]);
-    scopemask_->setValue((double)row[spots_.scopemask]);
-    lumask_->setValue((double)row[spots_.lumask]);
     avoid_->set_active(row[spots_.avoid]);
     recurs_->set_active(row[spots_.recurs]);
     laplac_->set_active(row[spots_.laplac]);
     deltae_->set_active(row[spots_.deltae]);
+    scopemask_->setValue((double)row[spots_.scopemask]);
     shortc_->set_active(row[spots_.shortc]);
+    lumask_->setValue((double)row[spots_.lumask]);
     savrest_->set_active(row[spots_.savrest]);
+    complexMethod_->set_active(row[spots_.complexMethod]);
     wavMethod_->set_active(row[spots_.wavMethod]);
 }
 
@@ -825,10 +777,22 @@ void ControlSpotPanel::controlspotChanged()
     }
 
     // Raise event
+    const int selIndex = getSelectedSpot();
+
+    if (selIndex == -1) { // No selected spot
+        return;
+    }
+
     selSpotChanged_ = true;
     eventType = SpotSelection;
-    const int selId = getSelectedSpot();
-    listener->panelChanged(EvLocallabSpotSelected, "ID#" + std::to_string(selId));
+    SpotRow* const spotRow = getSpot(selIndex);
+
+    // Image area shall be regenerated if mask preview was active when switching spot
+    if (maskPrevActive) {
+        listener->panelChanged(EvLocallabSpotSelectedWithMask, spotRow->name);
+    } else {
+        listener->panelChanged(EvLocallabSpotSelected, spotRow->name);
+    }
 }
 
 void ControlSpotPanel::shapeChanged()
@@ -884,28 +848,6 @@ void ControlSpotPanel::spotMethodChanged()
         listener->panelChanged(EvLocallabSpotSpotMethod, spotMethod_->get_active_text());
     }
 }
-/*
-void ControlSpotPanel::mergeMethodChanged()
-{
-    // printf("mergeMethodChanged\n");
-
-    // Get selected control spot
-    const auto s = treeview_->get_selection();
-
-    if (!s->count_selected_rows()) {
-        return;
-    }
-
-    const auto iter = s->get_selected();
-    Gtk::TreeModel::Row row = *iter;
-
-    row[spots_.mergeMethod] = mergeMethod_->get_active_row_number();
-    // Raise event
-    if (listener) {
-        listener->panelChanged(EvLocallabSpotmergeMethod, mergeMethod_->get_active_text());
-    }
-}
-*/
 
 void ControlSpotPanel::shapeMethodChanged()
 {
@@ -1009,29 +951,6 @@ void ControlSpotPanel::qualityMethodChanged()
     }
 }
 
-void ControlSpotPanel::wavMethodChanged()
-{
-    // printf("qualityMethodChanged\n");
-
-    // Get selected control spot
-    const auto s = treeview_->get_selection();
-
-    if (!s->count_selected_rows()) {
-        return;
-    }
-
-    const auto iter = s->get_selected();
-    Gtk::TreeModel::Row row = *iter;
-
-    row[spots_.wavMethod] = wavMethod_->get_active_row_number();
-
-    // Raise event
-    if (listener) {
-        listener->panelChanged(EvLocallabSpotwavMethod, wavMethod_->get_active_text());
-    }
-}
-
-
 void ControlSpotPanel::complexMethodChanged()
 {
     // printf("qualityMethodChanged\n");
@@ -1055,12 +974,34 @@ void ControlSpotPanel::complexMethodChanged()
     } else if (complexMethod_->get_active_row_number() == 1) { // mod
         // excluFrame->show();
     } else if (complexMethod_->get_active_row_number() == 2) { // all
-        //  excluFrame->show();
+        // excluFrame->show();
     }
 
     // Raise event
     if (listener) {
         listener->panelChanged(EvLocallabSpotcomplexMethod, complexMethod_->get_active_text());
+    }
+}
+
+void ControlSpotPanel::wavMethodChanged()
+{
+    // printf("qualityMethodChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    row[spots_.wavMethod] = wavMethod_->get_active_row_number();
+
+    // Raise event
+    if (listener) {
+        listener->panelChanged(EvLocallabSpotwavMethod, wavMethod_->get_active_text());
     }
 }
 
@@ -1123,25 +1064,6 @@ void ControlSpotPanel::updateParamVisibility()
     }
 }
 
-void ControlSpotPanel::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
-{
-}
-void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
-{
-}
-void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
-{
-}
-void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
-{
-}
-void ControlSpotPanel::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
-{
-}
-
 void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
 {
     // printf("adjusterChanged\n");
@@ -1171,14 +1093,6 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
 
         if (listener) {
             listener->panelChanged(Evlocallabstructexlu, structexclu_->getTextValue());
-        }
-    }
-
-    if (a == struc_) {
-        row[spots_.struc] = struc_->getValue();
-
-        if (listener) {
-            listener->panelChanged(EvLocallabSpotStruc, struc_->getTextValue());
         }
     }
 
@@ -1279,11 +1193,35 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (a == transitweak_) {
+        row[spots_.transitweak] = transitweak_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotTransitweak, transitweak_->getTextValue());
+        }
+    }
+
+    if (a == transitgrad_) {
+        row[spots_.transitgrad] = transitgrad_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotTransitgrad, transitgrad_->getTextValue());
+        }
+    }
+
     if (a == feather_) {
         row[spots_.feather] = feather_->getValue();
 
         if (listener) {
             listener->panelChanged(EvLocallabSpotfeather, feather_->getTextValue());
+        }
+    }
+
+    if (a == struc_) {
+        row[spots_.struc] = struc_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotStruc, struc_->getTextValue());
         }
     }
 
@@ -1327,22 +1265,6 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
-    if (a == transitweak_) {
-        row[spots_.transitweak] = transitweak_->getValue();
-
-        if (listener) {
-            listener->panelChanged(EvLocallabSpotTransitweak, transitweak_->getTextValue());
-        }
-    }
-
-    if (a == transitgrad_) {
-        row[spots_.transitgrad] = transitgrad_->getValue();
-
-        if (listener) {
-            listener->panelChanged(EvLocallabSpotTransitgrad, transitgrad_->getTextValue());
-        }
-    }
-
     if (a == scopemask_) {
         row[spots_.scopemask] = scopemask_->getIntValue();
 
@@ -1358,7 +1280,6 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvLocallabSpotlumask, lumask_->getTextValue());
         }
     }
-
 }
 
 void ControlSpotPanel::avoidChanged()
@@ -1374,16 +1295,6 @@ void ControlSpotPanel::avoidChanged()
 
     const auto iter = s->get_selected();
     Gtk::TreeModel::Row row = *iter;
-
-    if (multiImage) {
-        if (avoid_->get_inconsistent()) {
-            avoid_->set_inconsistent(false);
-            avoidConn_.block(true);
-            avoid_->set_active(false);
-            avoidConn_.block(false);
-        }
-    }
-
     row[spots_.avoid] = avoid_->get_active();
 
     // Raise event
@@ -1409,16 +1320,6 @@ void ControlSpotPanel::recursChanged()
 
     const auto iter = s->get_selected();
     Gtk::TreeModel::Row row = *iter;
-
-    if (multiImage) {
-        if (recurs_->get_inconsistent()) {
-            recurs_->set_inconsistent(false);
-            recursConn_.block(true);
-            recurs_->set_active(false);
-            recursConn_.block(false);
-        }
-    }
-
     row[spots_.recurs] = recurs_->get_active();
 
     // Raise event
@@ -1445,16 +1346,6 @@ void ControlSpotPanel::laplacChanged()
 
     const auto iter = s->get_selected();
     Gtk::TreeModel::Row row = *iter;
-
-    if (multiImage) {
-        if (laplac_->get_inconsistent()) {
-            laplac_->set_inconsistent(false);
-            laplacConn_.block(true);
-            laplac_->set_active(false);
-            laplacConn_.block(false);
-        }
-    }
-
     row[spots_.laplac] = laplac_->get_active();
 
     // Raise event
@@ -1481,16 +1372,6 @@ void ControlSpotPanel::deltaeChanged()
 
     const auto iter = s->get_selected();
     Gtk::TreeModel::Row row = *iter;
-
-    if (multiImage) {
-        if (deltae_->get_inconsistent()) {
-            deltae_->set_inconsistent(false);
-            deltaeConn_.block(true);
-            deltae_->set_active(false);
-            deltaeConn_.block(false);
-        }
-    }
-
     row[spots_.deltae] = deltae_->get_active();
 
     // Raise event
@@ -1515,16 +1396,6 @@ void ControlSpotPanel::shortcChanged()
 
     const auto iter = s->get_selected();
     Gtk::TreeModel::Row row = *iter;
-
-    if (multiImage) {
-        if (shortc_->get_inconsistent()) {
-            shortc_->set_inconsistent(false);
-            shortcConn_.block(true);
-            shortc_->set_active(false);
-            shortcConn_.block(false);
-        }
-    }
-
     row[spots_.shortc] = shortc_->get_active();
 
     // Raise event
@@ -1549,16 +1420,6 @@ void ControlSpotPanel::savrestChanged()
 
     const auto iter = s->get_selected();
     Gtk::TreeModel::Row row = *iter;
-
-    if (multiImage) {
-        if (savrest_->get_inconsistent()) {
-            savrest_->set_inconsistent(false);
-            savrestConn_.block(true);
-            savrest_->set_active(false);
-            savrestConn_.block(false);
-        }
-    }
-
     row[spots_.savrest] = savrest_->get_active();
 
     // Raise event
@@ -1584,10 +1445,8 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     buttonvisibilityconn_.block(cond);
     shapeconn_.block(cond);
     spotMethodconn_.block(cond);
-//    mergeMethodconn_.block(cond);
     sensiexclu_->block(cond);
     structexclu_->block(cond);
-    struc_->block(cond);
     shapeMethodconn_.block(cond);
     locX_->block(cond);
     locXL_->block(cond);
@@ -1597,24 +1456,25 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     centerY_->block(cond);
     circrad_->block(cond);
     qualityMethodconn_.block(cond);
-    complexMethodconn_.block(cond);
     transit_->block(cond);
+    transitweak_->block(cond);
+    transitgrad_->block(cond);
     feather_->block(cond);
+    struc_->block(cond);
     thresh_->block(cond);
     iter_->block(cond);
     balan_->block(cond);
     balanh_->block(cond);
     colorde_->block(cond);
-    transitweak_->block(cond);
-    transitgrad_->block(cond);
-    scopemask_->block(cond);
-    lumask_->block(cond);
     avoidConn_.block(cond);
     recursConn_.block(cond);
     laplacConn_.block(cond);
     deltaeConn_.block(cond);
+    scopemask_->block(cond);
     shortcConn_.block(cond);
+    lumask_->block(cond);
     savrestConn_.block(cond);
+    complexMethodconn_.block(cond);
     wavMethodconn_.block(cond);
 }
 
@@ -1624,10 +1484,8 @@ void ControlSpotPanel::setParamEditable(bool cond)
 
     shape_->set_sensitive(cond);
     spotMethod_->set_sensitive(cond);
-//    mergeMethod_->set_sensitive(cond);
     sensiexclu_->set_sensitive(cond);
     structexclu_->set_sensitive(cond);
-    struc_->set_sensitive(cond);
     shapeMethod_->set_sensitive(cond);
     locX_->set_sensitive(cond);
     locXL_->set_sensitive(cond);
@@ -1637,24 +1495,25 @@ void ControlSpotPanel::setParamEditable(bool cond)
     centerY_->set_sensitive(cond);
     circrad_->set_sensitive(cond);
     qualityMethod_->set_sensitive(cond);
-    complexMethod_->set_sensitive(cond);
     transit_->set_sensitive(cond);
+    transitweak_->set_sensitive(cond);
+    transitgrad_->set_sensitive(cond);
     feather_->set_sensitive(cond);
+    struc_->set_sensitive(cond);
     thresh_->set_sensitive(cond);
     iter_->set_sensitive(cond);
     balan_->set_sensitive(cond);
     balanh_->set_sensitive(cond);
     colorde_->set_sensitive(cond);
-    transitweak_->set_sensitive(cond);
-    transitgrad_->set_sensitive(cond);
-    scopemask_->set_sensitive(cond);
-    lumask_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
     recurs_->set_sensitive(cond);
     laplac_->set_sensitive(cond);
     deltae_->set_sensitive(cond);
+    scopemask_->set_sensitive(cond);
     shortc_->set_sensitive(cond);
+    lumask_->set_sensitive(cond);
     savrest_->set_sensitive(cond);
+    complexMethod_->set_sensitive(cond);
     wavMethod_->set_sensitive(cond);
 }
 
@@ -2253,21 +2112,20 @@ int ControlSpotPanel::getEventType()
     return tmp;
 }
 
-ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
+ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
 {
-    // printf("getSpot: %d\n", id);
+    // printf("getSpot: %d\n", index);
 
     MyMutex::MyLock lock(mTreeview);
 
     SpotRow* r = new SpotRow();
 
-    const Gtk::TreeModel::Children children = treemodel_->children();
+    int i = -1;
 
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        const Gtk::TreeModel::Row row = *iter;
+    for (auto &row : treemodel_->children()) {
+        i++;
 
-        if (row[spots_.id] == id) {
-            r->id = row[spots_.id];
+        if (i == index) {
             r->name = row[spots_.name];
             r->isvisible = row[spots_.isvisible];
             r->shape = row[spots_.shape];
@@ -2312,20 +2170,11 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
     return nullptr;
 }
 
-std::vector<int>* ControlSpotPanel::getSpotIdList()
+int ControlSpotPanel::getSpotNumber()
 {
-    MyMutex::MyLock lock(mTreeview);
+    // printf("getSpotNumber\n");
 
-    std::vector<int>* r = new std::vector<int>();
-
-    const Gtk::TreeModel::Children children = treemodel_->children();
-
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        const Gtk::TreeModel::Row row = *iter;
-        r->push_back(row[spots_.id]);
-    }
-
-    return r;
+    return (int)treemodel_->children().size();
 }
 
 int ControlSpotPanel::getSelectedSpot()
@@ -2338,28 +2187,37 @@ int ControlSpotPanel::getSelectedSpot()
 
     // Check if treeview has row, otherwise return 0
     if (!s->count_selected_rows()) {
-        return 0;
+        return -1;
     }
 
-    const auto iter = s->get_selected();
-    const Gtk::TreeModel::Row row = *iter;
-    int id = row[spots_.id];
+    const auto selRow = s->get_selected();
 
-    return id;
+    // Get selected spot index
+    int index = -1;
+
+    for (auto i : treemodel_->children()) {
+        index++;
+
+        if (selRow == i) {
+            return index;
+        }
+    }
+
+    return -1;
 }
 
-bool ControlSpotPanel::setSelectedSpot(const int id)
+bool ControlSpotPanel::setSelectedSpot(const int index)
 {
-    // printf("setSelectedSpot: %d\n", id);
+    // printf("setSelectedSpot: %d\n", index);
 
     MyMutex::MyLock lock(mTreeview);
 
-    const Gtk::TreeModel::Children children = treemodel_->children();
+    int i = -1;
 
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        const Gtk::TreeModel::Row row = *iter;
+    for (auto &row : treemodel_->children()) {
+        i++;
 
-        if (row[spots_.id] == id) {
+        if (i == index) {
             disableParamlistener(true);
 
             treeview_->set_cursor(treemodel_->get_path(row));
@@ -2376,45 +2234,22 @@ bool ControlSpotPanel::setSelectedSpot(const int id)
     return false;
 }
 
-int ControlSpotPanel::getNewId()
-{
-    MyMutex::MyLock lock(mTreeview);
-
-    // Looking for maximum used id
-    int max_row_id = 0;
-    const Gtk::TreeModel::Children children = treemodel_->children();
-
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        const Gtk::TreeModel::Row row = *iter;
-        const int iter_id = row[spots_.id];
-        max_row_id = std::max(max_row_id, iter_id);
-    }
-
-    max_row_id++;
-
-    return max_row_id;
-}
-
-
 void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
 {
-    // printf("addControlSpot: %d\n", newSpot->id);
+    // printf("addControlSpot: %d\n", newSpot->name);
 
     MyMutex::MyLock lock(mTreeview);
 
     disableParamlistener(true);
-    Gtk::TreeModel::Row row = * (treemodel_->append());
+    Gtk::TreeModel::Row row = *(treemodel_->append());
     row[spots_.mouseover] = false;
-    row[spots_.id] = newSpot->id;
     row[spots_.name] = newSpot->name;
     row[spots_.isvisible] = newSpot->isvisible;
     row[spots_.curveid] = 0; // No associated curve
     row[spots_.shape] = newSpot->shape;
     row[spots_.spotMethod] = newSpot->spotMethod;
-//   row[spots_.mergeMethod] = newSpot->mergeMethod;
     row[spots_.sensiexclu] = newSpot->sensiexclu;
     row[spots_.structexclu] = newSpot->structexclu;
-    row[spots_.struc] = newSpot->struc;
     row[spots_.shapeMethod] = newSpot->shapeMethod;
     row[spots_.locX] = newSpot->locX;
     row[spots_.locXL] = newSpot->locXL;
@@ -2424,24 +2259,25 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.centerY] = newSpot->centerY;
     row[spots_.circrad] = newSpot->circrad;
     row[spots_.qualityMethod] = newSpot->qualityMethod;
-    row[spots_.complexMethod] = newSpot->complexMethod;
     row[spots_.transit] = newSpot->transit;
+    row[spots_.transitweak] = newSpot->transitweak;
+    row[spots_.transitgrad] = newSpot->transitgrad;
     row[spots_.feather] = newSpot->feather;
+    row[spots_.struc] = newSpot->struc;
     row[spots_.thresh] = newSpot->thresh;
     row[spots_.iter] = newSpot->iter;
     row[spots_.balan] = newSpot->balan;
     row[spots_.balanh] = newSpot->balanh;
     row[spots_.colorde] = newSpot->colorde;
-    row[spots_.transitweak] = newSpot->transitweak;
-    row[spots_.transitgrad] = newSpot->transitgrad;
-    row[spots_.scopemask] = newSpot->scopemask;
-    row[spots_.lumask] = newSpot->lumask;
     row[spots_.avoid] = newSpot->avoid;
     row[spots_.recurs] = newSpot->recurs;
     row[spots_.laplac] = newSpot->laplac;
     row[spots_.deltae] = newSpot->deltae;
+    row[spots_.scopemask] = newSpot->scopemask;
     row[spots_.shortc] = newSpot->shortc;
+    row[spots_.lumask] = newSpot->lumask;
     row[spots_.savrest] = newSpot->savrest;
+    row[spots_.complexMethod] = newSpot->complexMethod;
     row[spots_.wavMethod] = newSpot->wavMethod;
     updateParamVisibility();
     disableParamlistener(false);
@@ -2451,85 +2287,23 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     updateControlSpotCurve(row);
 }
 
-int ControlSpotPanel::updateControlSpot(SpotRow* spot)
+void ControlSpotPanel::deleteControlSpot(const int index)
 {
-    // printf("updateControlSpot: %d\n", spot->id);
+    // printf("deleteControlSpot: %d\n", index);
 
     MyMutex::MyLock lock(mTreeview);
 
     disableParamlistener(true);
 
-    const Gtk::TreeModel::Children children = treemodel_->children();
+    int i = -1;
 
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        Gtk::TreeModel::Row row = *iter;
+    for (auto iter : treemodel_->children()) {
+        i++;
 
-        if (row[spots_.id] == spot->id) {
-            row[spots_.name] = spot->name;
-            row[spots_.isvisible] = spot->isvisible;
-            row[spots_.shape] = spot->shape;
-            row[spots_.spotMethod] = spot->spotMethod;
-//           row[spots_.mergeMethod] = spot->mergeMethod;
-            row[spots_.sensiexclu] = spot->sensiexclu;
-            row[spots_.structexclu] = spot->structexclu;
-            row[spots_.struc] = spot->struc;
-            row[spots_.shapeMethod] = spot->shapeMethod;
-            row[spots_.locX] = spot->locX;
-            row[spots_.locXL] = spot->locXL;
-            row[spots_.locY] = spot->locY;
-            row[spots_.locYT] = spot->locYT;
-            row[spots_.centerX] = spot->centerX;
-            row[spots_.centerY] = spot->centerY;
-            row[spots_.circrad] = spot->circrad;
-            row[spots_.qualityMethod] = spot->qualityMethod;
-            row[spots_.complexMethod] = spot->complexMethod;
-            row[spots_.transit] = spot->transit;
-            row[spots_.feather] = spot->feather;
-            row[spots_.thresh] = spot->thresh;
-            row[spots_.iter] = spot->iter;
-            row[spots_.balan] = spot->balan;
-            row[spots_.balanh] = spot->balanh;
-            row[spots_.colorde] = spot->colorde;
-            row[spots_.transitweak] = spot->transitweak;
-            row[spots_.transitgrad] = spot->transitgrad;
-            row[spots_.scopemask] = spot->scopemask;
-            row[spots_.lumask] = spot->lumask;
-            row[spots_.avoid] = spot->avoid;
-            row[spots_.recurs] = spot->recurs;
-            row[spots_.laplac] = spot->laplac;
-            row[spots_.deltae] = spot->deltae;
-            row[spots_.shortc] = spot->shortc;
-            row[spots_.savrest] = spot->savrest;
-            row[spots_.wavMethod] = spot->wavMethod;
-
-            updateControlSpotCurve(row);
-            updateParamVisibility();
-            disableParamlistener(false);
-
-            return 1;
-        }
-    }
-
-    disableParamlistener(false);
-    return 0;
-}
-
-void ControlSpotPanel::deleteControlSpot(const int id)
-{
-    // printf("deleteControlSpot: %d\n", id);
-
-    MyMutex::MyLock lock(mTreeview);
-
-    disableParamlistener(true);
-
-    const Gtk::TreeModel::Children children = treemodel_->children();
-
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        Gtk::TreeModel::Row row = *iter;
-
-        if (row[spots_.id] == id) {
+        if (i == index) {
+            Gtk::TreeModel::Row row = *iter;
             deleteControlSpotCurve(row);
-            treemodel_->erase(iter);
+            treemodel_->erase(*row);
             break;
         }
     }
@@ -2537,305 +2311,38 @@ void ControlSpotPanel::deleteControlSpot(const int id)
     disableParamlistener(false);
 }
 
-ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
+void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defParams, const ParamsEdited * pedited)
 {
-    // printf("getEditedStates\n");
+    const int index = defParams->locallab.selspot;
 
-    SpotEdited* se = new SpotEdited();
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
 
-    if (nbSpotChanged_) {
-        se->nbspot = true;
-        // nbSpotChanged_ = false;
-    } else {
-        se->nbspot = false;
+        // Set default values for adjuster widgets
+        sensiexclu_->setDefault((double)defSpot.sensiexclu);
+        structexclu_->setDefault((double)defSpot.structexclu);
+        locX_->setDefault((double)defSpot.loc.at(0));
+        locXL_->setDefault((double)defSpot.loc.at(1));
+        locY_->setDefault((double)defSpot.loc.at(2));
+        locYT_->setDefault((double)defSpot.loc.at(3));
+        centerX_->setDefault((double)defSpot.centerX);
+        centerY_->setDefault((double)defSpot.centerY);
+        circrad_->setDefault((double)defSpot.circrad);
+        transit_->setDefault(defSpot.transit);
+        transitweak_->setDefault(defSpot.transitweak);
+        transitgrad_->setDefault(defSpot.transitgrad);
+        feather_->setDefault(defSpot.feather);
+        struc_->setDefault(defSpot.struc);
+        thresh_->setDefault(defSpot.thresh);
+        iter_->setDefault(defSpot.iter);
+        balan_->setDefault(defSpot.balan);
+        balanh_->setDefault(defSpot.balanh);
+        colorde_->setDefault(defSpot.colorde);
+        scopemask_->setDefault((double)defSpot.scopemask);
+        lumask_->setDefault((double)defSpot.lumask);
     }
 
-    if (selSpotChanged_) {
-        se->selspot = true;
-        // selSpotChanged_ = false;
-    } else {
-        se->selspot = false;
-    }
-
-    if (nameChanged_) {
-        se->name = true;
-        // nameChanged_ = false;
-    } else {
-        se->name = false;
-    }
-
-    if (visibilityChanged_) {
-        se->isvisible = true;
-        // visibilityChanged_ = false;
-    } else {
-        se->isvisible = false;
-    }
-
-    se->shape = shape_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->spotMethod = spotMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-//    se->mergeMethod = mergeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->sensiexclu = sensiexclu_->getEditedState();
-    se->structexclu = structexclu_->getEditedState();
-    se->struc = struc_->getEditedState();
-    se->shapeMethod = shapeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->locX = locX_->getEditedState();
-    se->locXL = locXL_->getEditedState();
-    se->locY = locY_->getEditedState();
-    se->locYT = locYT_->getEditedState();
-    se->centerX = centerX_->getEditedState();
-    se-> centerY = centerY_->getEditedState();
-    se->circrad = circrad_->getEditedState();
-    se->qualityMethod = qualityMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->complexMethod = complexMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->transit = transit_->getEditedState();
-    se->feather = feather_->getEditedState();
-    se->thresh = thresh_->getEditedState();
-    se->iter = iter_->getEditedState();
-    se->balan = balan_->getEditedState();
-    se->balanh = balanh_->getEditedState();
-    se->colorde = colorde_->getEditedState();
-    se->transitweak = transitweak_->getEditedState();
-    se->transitgrad = transitgrad_->getEditedState();
-    se->scopemask = scopemask_->getEditedState();
-    se->lumask = lumask_->getEditedState();
-    se->avoid = !avoid_->get_inconsistent();
-    se->recurs = !recurs_->get_inconsistent();
-    se->laplac = !laplac_->get_inconsistent();
-    se->deltae = !deltae_->get_inconsistent();
-    se->shortc = !shortc_->get_inconsistent();
-    se->savrest = !savrest_->get_inconsistent();
-    se->wavMethod = wavMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-
-    return se;
-}
-
-void ControlSpotPanel::setEditedStates(SpotEdited* se)
-{
-    // printf("setEditedStates\n");
-
-    // Reset treeview edited states
-    nbSpotChanged_ = false;
-    selSpotChanged_ = false;
-    nameChanged_ = false;
-    visibilityChanged_ = false;
-
-    // Disable params listeners
-    disableParamlistener(true);
-
-    // Set widgets edited states
-    if (!se->nbspot || !se->selspot) {
-        treeview_->set_sensitive(false);
-        button_add_->set_sensitive(false);
-        button_delete_->set_sensitive(false);
-        button_duplicate_->set_sensitive(false);
-        button_rename_->set_sensitive(false);
-        button_visibility_->set_sensitive(false);
-    } else {
-        treeview_->set_sensitive(true);
-        button_add_->set_sensitive(true);
-        button_delete_->set_sensitive(true);
-        button_duplicate_->set_sensitive(true);
-        button_rename_->set_sensitive(se->name);
-        button_visibility_->set_sensitive(se->isvisible);
-    }
-
-    if (!se->shape) {
-        shape_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    if (!se->spotMethod) {
-        spotMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    if (!se->wavMethod) {
-        wavMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    /*
-        if (!se->mergeMethod) {
-            mergeMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-    */
-    sensiexclu_->setEditedState(se->sensiexclu ? Edited : UnEdited);
-    structexclu_->setEditedState(se->structexclu ? Edited : UnEdited);
-    struc_->setEditedState(se->struc ? Edited : UnEdited);
-
-    if (!se->shapeMethod) {
-        shapeMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    locX_->setEditedState(se->locX ? Edited : UnEdited);
-    locXL_->setEditedState(se->locXL ? Edited : UnEdited);
-    locY_->setEditedState(se->locY ? Edited : UnEdited);
-    locYT_->setEditedState(se->locYT ? Edited : UnEdited);
-    centerX_->setEditedState(se->centerX ? Edited : UnEdited);
-    centerY_->setEditedState(se->centerY ? Edited : UnEdited);
-    circrad_->setEditedState(se->circrad ? Edited : UnEdited);
-
-    if (!se->qualityMethod) {
-        qualityMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    if (!se->complexMethod) {
-        complexMethod_->set_active_text(M("GENERAL_UNCHANGED"));
-    }
-
-    transit_->setEditedState(se->transit ? Edited : UnEdited);
-    feather_->setEditedState(se->feather ? Edited : UnEdited);
-    thresh_->setEditedState(se->thresh ? Edited : UnEdited);
-    iter_->setEditedState(se->iter ? Edited : UnEdited);
-    balan_->setEditedState(se->balan ? Edited : UnEdited);
-    balanh_->setEditedState(se->balanh ? Edited : UnEdited);
-    colorde_->setEditedState(se->colorde ? Edited : UnEdited);
-    transitweak_->setEditedState(se->transitweak ? Edited : UnEdited);
-    transitgrad_->setEditedState(se->transitgrad ? Edited : UnEdited);
-    scopemask_->setEditedState(se->scopemask ? Edited : UnEdited);
-    lumask_->setEditedState(se->lumask ? Edited : UnEdited);
-    avoid_->set_inconsistent(multiImage && !se->avoid);
-    recurs_->set_inconsistent(multiImage && !se->recurs);
-    laplac_->set_inconsistent(multiImage && !se->laplac);
-    deltae_->set_inconsistent(multiImage && !se->deltae);
-    shortc_->set_inconsistent(multiImage && !se->shortc);
-    savrest_->set_inconsistent(multiImage && !se->savrest);
-
-    // Update Control Spot GUI according to widgets edited states
-    updateParamVisibility();
-
-    // Enable params listeners
-    disableParamlistener(false);
-}
-
-void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defParams, const ParamsEdited * pedited, int id)
-{
-    // Find vector index of given spot id (index = -1 if not found)
-    int index = -1;
-
-    for (int i = 0; i < (int)defParams->locallab.spots.size(); i++) {
-        if (defParams->locallab.spots.at(i).id == id) {
-            index = i;
-
-            break;
-        }
-    }
-
-    // Set default values for adjusters
-    const rtengine::procparams::LocallabParams::LocallabSpot* defSpot = new rtengine::procparams::LocallabParams::LocallabSpot();
-
-    if (index != -1 && index < (int)defParams->locallab.spots.size()) {
-        defSpot = &defParams->locallab.spots.at(index);
-    }
-
-    sensiexclu_->setDefault((double)defSpot->sensiexclu);
-    structexclu_->setDefault((double)defSpot->structexclu);
-    struc_->setDefault(defSpot->struc);
-    locX_->setDefault((double)defSpot->locX);
-    locXL_->setDefault((double)defSpot->locXL);
-    locY_->setDefault((double)defSpot->locY);
-    locYT_->setDefault((double)defSpot->locYT);
-    centerX_->setDefault((double)defSpot->centerX);
-    centerY_->setDefault((double)defSpot->centerY);
-    circrad_->setDefault((double)defSpot->circrad);
-    transit_->setDefault(defSpot->transit);
-    feather_->setDefault(defSpot->feather);
-    thresh_->setDefault(defSpot->thresh);
-    iter_->setDefault(defSpot->iter);
-    balan_->setDefault(defSpot->balan);
-    balanh_->setDefault(defSpot->balanh);
-    colorde_->setDefault(defSpot->colorde);
-    transitweak_->setDefault(defSpot->transitweak);
-    transitgrad_->setDefault(defSpot->transitgrad);
-    scopemask_->setDefault(defSpot->scopemask);
-    lumask_->setDefault(defSpot->lumask);
-
-    // Set default edited states for adjusters
-    if (!pedited) {
-        sensiexclu_->setDefaultEditedState(Irrelevant);
-        structexclu_->setDefaultEditedState(Irrelevant);
-        struc_->setDefaultEditedState(Irrelevant);
-        locX_->setDefaultEditedState(Irrelevant);
-        locXL_->setDefaultEditedState(Irrelevant);
-        locY_->setDefaultEditedState(Irrelevant);
-        locYT_->setDefaultEditedState(Irrelevant);
-        centerX_->setDefaultEditedState(Irrelevant);
-        centerY_->setDefaultEditedState(Irrelevant);
-        circrad_->setDefaultEditedState(Irrelevant);
-        transit_->setDefaultEditedState(Irrelevant);
-        feather_->setDefaultEditedState(Irrelevant);
-        thresh_->setDefaultEditedState(Irrelevant);
-        iter_->setDefaultEditedState(Irrelevant);
-        balan_->setDefaultEditedState(Irrelevant);
-        balanh_->setDefaultEditedState(Irrelevant);
-        colorde_->setDefaultEditedState(Irrelevant);
-        transitweak_->setDefaultEditedState(Irrelevant);
-        transitgrad_->setDefaultEditedState(Irrelevant);
-        scopemask_->setDefaultEditedState(Irrelevant);
-        lumask_->setDefaultEditedState(Irrelevant);
-    } else {
-        const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
-
-        if (index != 1 && index < (int)pedited->locallab.spots.size()) {
-            defSpotState = &pedited->locallab.spots.at(index);
-        }
-
-        sensiexclu_->setDefaultEditedState(defSpotState->sensiexclu ? Edited : UnEdited);
-        structexclu_->setDefaultEditedState(defSpotState->structexclu ? Edited : UnEdited);
-        struc_->setDefaultEditedState(defSpotState->struc ? Edited : UnEdited);
-        locX_->setDefaultEditedState(defSpotState->locX ? Edited : UnEdited);
-        locXL_->setDefaultEditedState(defSpotState->locXL ? Edited : UnEdited);
-        locY_->setDefaultEditedState(defSpotState->locY ? Edited : UnEdited);
-        locYT_->setDefaultEditedState(defSpotState->locYT ? Edited : UnEdited);
-        centerX_->setDefaultEditedState(defSpotState->centerX ? Edited : UnEdited);
-        centerY_->setDefaultEditedState(defSpotState->centerY ? Edited : UnEdited);
-        circrad_->setDefaultEditedState(defSpotState->circrad ? Edited : UnEdited);
-        transit_->setDefaultEditedState(defSpotState->transit ? Edited : UnEdited);
-        feather_->setDefaultEditedState(defSpotState->feather ? Edited : UnEdited);
-        thresh_->setDefaultEditedState(defSpotState->thresh ? Edited : UnEdited);
-        iter_->setDefaultEditedState(defSpotState->iter ? Edited : UnEdited);
-        balan_->setDefaultEditedState(defSpotState->balan ? Edited : UnEdited);
-        balanh_->setDefaultEditedState(defSpotState->balanh ? Edited : UnEdited);
-        colorde_->setDefaultEditedState(defSpotState->colorde ? Edited : UnEdited);
-        transitweak_->setDefaultEditedState(defSpotState->transitweak ? Edited : UnEdited);
-        transitgrad_->setDefaultEditedState(defSpotState->transitgrad ? Edited : UnEdited);
-        scopemask_->setDefaultEditedState(defSpotState->scopemask ? Edited : UnEdited);
-        lumask_->setDefaultEditedState(defSpotState->lumask ? Edited : UnEdited);
-    }
-}
-
-void ControlSpotPanel::setBatchMode(bool batchMode)
-{
-    ToolPanel::setBatchMode(batchMode);
-
-    // Set batch mode for adjusters
-    sensiexclu_->showEditedCB();
-    structexclu_->showEditedCB();
-    struc_->showEditedCB();
-    locX_->showEditedCB();
-    locXL_->showEditedCB();
-    locY_->showEditedCB();
-    locYT_->showEditedCB();
-    centerX_->showEditedCB();
-    centerY_->showEditedCB();
-    circrad_->showEditedCB();
-    transit_->showEditedCB();
-    feather_->showEditedCB();
-    thresh_->showEditedCB();
-    iter_->showEditedCB();
-    balan_->showEditedCB();
-    balanh_->showEditedCB();
-    colorde_->showEditedCB();
-    transitweak_->showEditedCB();
-    transitgrad_->showEditedCB();
-    scopemask_->showEditedCB();
-    lumask_->showEditedCB();
-
-    // Set batch mode for comboBoxText
-    shape_->append(M("GENERAL_UNCHANGED"));
-    spotMethod_->append(M("GENERAL_UNCHANGED"));
-//    mergeMethod_->append(M("GENERAL_UNCHANGED"));
-    shapeMethod_->append(M("GENERAL_UNCHANGED"));
-    qualityMethod_->append(M("GENERAL_UNCHANGED"));
-    complexMethod_->append(M("GENERAL_UNCHANGED"));
-    wavMethod_->append(M("GENERAL_UNCHANGED"));
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 //-----------------------------------------------------------------------------
@@ -2845,7 +2352,6 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
 ControlSpotPanel::ControlSpots::ControlSpots()
 {
     add(mouseover);
-    add(id);
     add(name);
     add(isvisible);
     add(curveid);
@@ -2853,7 +2359,6 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(spotMethod);
     add(sensiexclu);
     add(structexclu);
-    add(struc);
     add(shapeMethod);
     add(locX);
     add(locXL);
@@ -2863,26 +2368,26 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(centerY);
     add(circrad);
     add(qualityMethod);
-    add(complexMethod);
     add(transit);
+    add(transitweak);
+    add(transitgrad);
     add(feather);
+    add(struc);
     add(thresh);
     add(iter);
     add(balan);
     add(balanh);
     add(colorde);
-    add(transitweak);
-    add(transitgrad);
-    add(scopemask);
-    add(lumask);
     add(avoid);
     add(recurs);
     add(laplac);
     add(deltae);
+    add(scopemask);
     add(shortc);
+    add(lumask);
     add(savrest);
+    add(complexMethod);
     add(wavMethod);
-//    add(mergeMethod);
 }
 
 //-----------------------------------------------------------------------------

@@ -852,8 +852,8 @@ HISTORY_MSG_600;Local - Soft Light enable
 HISTORY_MSG_601;Local - Soft Light strength
 HISTORY_MSG_602;Local - Soft Light scope
 HISTORY_MSG_603;Local - Sh Blur radius
-HISTORY_MSG_605;Local - Color Modifications
-HISTORY_MSG_606;Local - Exp Modifications
+HISTORY_MSG_605;Local - Mask preview choice
+HISTORY_MSG_606;Local Spot selected
 HISTORY_MSG_607;Local - Color Mask C
 HISTORY_MSG_608;Local - Color Mask L
 HISTORY_MSG_609;Local - Exp Mask C
@@ -883,6 +883,7 @@ HISTORY_MSG_632;Local - SH radius
 HISTORY_MSG_633;Local - SH Scope
 HISTORY_MSG_634;Local - radius color
 HISTORY_MSG_635;Local - radius Exp
+HISTORY_MSG_636;Local - Tool added
 HISTORY_MSG_637;Local - SH Mask C
 HISTORY_MSG_638;Local - SH Mask L
 HISTORY_MSG_639;Local - SH Mask H
@@ -920,6 +921,7 @@ HISTORY_MSG_670;Local - cbdl mask C
 HISTORY_MSG_671;Local - cbdl mask L
 HISTORY_MSG_672;Local - cbdl mask CL
 HISTORY_MSG_673;Local - Use cbdl mask
+HISTORY_MSG_674;Local - Tool removed
 HISTORY_MSG_675;Local - TM soft radius
 HISTORY_MSG_676;Local Spot transition-differentiation
 HISTORY_MSG_677;Local - TM amount
@@ -933,6 +935,7 @@ HISTORY_MSG_684;Local - Retinex mask radius
 HISTORY_MSG_685;Local - Retinex mask chroma
 HISTORY_MSG_686;Local - Retinex mask gamma
 HISTORY_MSG_687;Local - Retinex mask slope
+HISTORY_MSG_688;Local - Tool removed
 HISTORY_MSG_689;Local - Retinex mask transmission map
 HISTORY_MSG_690;Local - Retinex scale
 HISTORY_MSG_691;Local - Retinex darkness
@@ -1146,7 +1149,10 @@ HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
 HISTORY_MSG_909;Local - Contrast Wavelet ES show
 HISTORY_MSG_910;Local - Wavelet Edge performance
 HISTORY_MSG_911;Local - Blur Chroma Luma
-HISTORY_MSG_912;Local - Blur Guide filter strength 
+HISTORY_MSG_912;Local - Blur Guide filter strength
+HISTORY_MSG_913;Local - Contrast Wavelet Sigma DR
+HISTORY_MSG_914;Local - Blur Wavelet Sigma BL
+HISTORY_MSG_915;Local - Edge Wavelet Sigma ED
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
@@ -2288,7 +2294,8 @@ TP_LOCALLAB_BLMED;Median
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and without enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLSYM;Symmetric
-TP_LOCALLAB_BLUFR;Smooth - Blur - Grain (& additional denoise)
+TP_LOCALLAB_SPOTNAME;New Spot
+TP_LOCALLAB_BLUFR;Smooth - Blur - Grain - Denoise
 TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n*Blur the background by a RT-spot fully covering the image (high values for scope and transition) - normal or inverse.\n*Isolate the foreground by one or more excluding RT-spot with the tools you want (increse scope), you can use a mask to enhance and amplify the effects.\n\nThis module can be used in additional noise reduction,including "median" and "Guided filter" 
 TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLURCBDL;Blur levels 0-1-2-3-4
@@ -2469,7 +2476,7 @@ TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
-TP_LOCALLAB_LOC_CONTRAST;Local contrast & Wavelet Pyramid Ψ 
+TP_LOCALLAB_LOC_CONTRAST;Local contrast & Wavelet Pyramid Ψ Big defects
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
@@ -2555,8 +2562,7 @@ TP_LOCALLAB_OFFSETWAV;Offset
 TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_ORIGLC;Merge only with original image
 TP_LOCALLAB_PASTELS2;Vibrance
-TP_LOCALLAB_PDE;Dynamic Range compression + Standard ƒ
-TP_LOCALLAB_PDE2;ΔØ Laplacian PDE - Dynamic Range compression + Standard
+TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Dynamic Range compression + Standard
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure.\n
 TP_LOCALLAB_PREVIEWSEL;Preview selection ΔE
@@ -2649,7 +2655,7 @@ TP_LOCALLAB_SHOWSTRUC;Show structure Spot
 TP_LOCALLAB_SHOWSTRUCEX;Show structure Spot - disabled in "normal"
 TP_LOCALLAB_SHOWT;4 - Mask and modifications
 TP_LOCALLAB_SHOWVI;3 - Mask and modifications
-TP_LOCALLAB_SIGMAWAV;Sigma
+TP_LOCALLAB_SIGMAWAV;Damper
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_SLOSH;Slope
@@ -2707,6 +2713,19 @@ TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance - Warm & Cool
 TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctrl</b>+<b>click</b> to show/hide all Control Spot.
+TP_LOCALLAB_LIST_NAME;Add tool to current spot...
+TP_LOCALLAB_COLOR_TOOLNAME;Locallab Color&Light
+TP_LOCALLAB_EXP_TOOLNAME;Locallab Exposure
+TP_LOCALLAB_SH_TOOLNAME;Locallab Shadows Highlight
+TP_LOCALLAB_VIB_TOOLNAME;Locallab Vibrance
+TP_LOCALLAB_SOFT_TOOLNAME;Locallab Soft Light
+TP_LOCALLAB_BLUR_TOOLNAME;Locallab Blur, Noise & Denoise
+TP_LOCALLAB_TONE_TOOLNAME;Locallab Tone Mapping
+TP_LOCALLAB_RET_TOOLNAME;Locallab Retinex
+TP_LOCALLAB_SHARP_TOOLNAME;Locallab Sharpening
+TP_LOCALLAB_LC_TOOLNAME;Locallab Local Constrast & Wavelet
+TP_LOCALLAB_CBDL_TOOLNAME;Locallab CBDL
+TP_LOCALLAB_LOG_TOOLNAME;Locallab Encoding log
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
@@ -2726,6 +2745,8 @@ TP_LOCALLAB_WAVMASK;Ψ Mask Levels local contrast
 TP_LOCALLAB_WAVMED;Ψ Wavelet normal
 TP_LOCALLAB_WEDIANHI;Median Hi
 TP_LOCALLAB_WHITE_EV;White Ev
+TP_LOCALLAB_BLNOI_EXP;Blur & Noise
+TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right
