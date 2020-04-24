@@ -53,7 +53,7 @@
 
 #define TS 64       // Tile size
 #define offset1 25   // shift between tiles
-#define fTS ((TS/2+1))  // second dimension of Fourier tiles
+//#define fTS ((TS/2+1))  // second dimension of Fourier tiles
 #define blkrad 1    // radius of block averaging
 #define offset2 25   // shift between tiles
 
@@ -66,18 +66,18 @@
 #define mSPwav 32  //minimum size Spot Wavelet
 
 #define CLIPC(a) LIM(a, -42000.f, 42000.f)  // limit a and b  to 130 probably enough ?
-#define CLIPL(x) LIM(x,0.f,40000.f) // limit L to about L=120 probably enough ?
+//#define CLIPL(x) LIM(x,0.f,40000.f) // limit L to about L=120 probably enough ?
 #define CLIPLOC(x) LIM(x,0.f,32767.f)
-#define CLIPLIG(x) LIM(x,-99.5f, 99.5f)
+//#define CLIPLIG(x) LIM(x,-99.5f, 99.5f)
 #define CLIPCHRO(x) LIM(x,0.f, 140.f)
-#define CLIPRET(x) LIM(x,-99.5f, 99.5f)
+//#define CLIPRET(x) LIM(x,-99.5f, 99.5f)
 #define CLIP1(x) LIM(x, 0.f, 1.f)
 //define to prevent crash with old pp3 with integer range 100 instead of double range 1.
 #define CLIP24(x) LIM(x, -2., 4.)
 #define CLIP04(x) LIM(x, 0.f, 4.f)
 #define CLIP42_35(x) LIM(x, 0.42, 3.5)
 #define CLIP2_30(x) LIM(x, 0.2, 3.)
-#define CLIPMAX(x) LIM(x,0.f,500000.f)
+//#define CLIPMAX(x) LIM(x,0.f,500000.f)
 #define CLIPdE(x) LIM(x,0.3f,1.f)
 
 #pragma GCC diagnostic warning "-Wall"
@@ -2423,8 +2423,8 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     srand(1);
 
     const float variaFactor = SQR(variance) / sk;
-    constexpr float randFactor1 = 1.f / RAND_MAX;
-    constexpr float randFactor2 = (2.f * rtengine::RT_PI_F) / RAND_MAX;
+    constexpr float randFactor1 = 1.f / (float) RAND_MAX;
+    constexpr float randFactor2 = (2.f * rtengine::RT_PI_F) / (float) RAND_MAX;
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -12319,7 +12319,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool delt = false;
             int sco = params->locallab.spots.at(sp).scopemask;
             int shortcu = 0;//lp.mergemet;
-            params->locallab.spots.at(sp).shortc;
+            shortcu = params->locallab.spots.at(sp).shortc;
 
             const int limscope = 80;//
             const float mindE = 2.f + MINSCOPE * sco * lp.thr;

@@ -1137,6 +1137,10 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
 
     if (py) {//enabled
         float mean, stddv, maxtr, mintr;
+        mean = 0.f;
+        stddv = 0.f;
+        maxtr = 0.f;
+        mintr = 0.f;
         float delta;
         constexpr float eps = 2.f;
         bool useHslLin = false;
