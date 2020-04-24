@@ -46,7 +46,7 @@ endif()
 
 # Warning for GCC 10, which causes problems #5749:
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "10.1")
-    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
+    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
 endif()
@@ -482,10 +482,17 @@ set(EXIV2_LIBRARIES "")
 foreach(l ${_exiv2_libs})
     set(_el "_el-NOTFOUND")
     if(EXIV2_LIBRARY_DIRS)
+        message(STATUS "searching for library ${l} in ${EXIV2_LIBRARY_DIRS}")
         find_library(_el ${l} PATHS ${EXIV2_LIBRARY_DIRS} NO_DEFAULT_PATH)
+        if(NOT _el)
+            message(STATUS  "  NOT FOUND, searching again in default path")
+            find_library(_el ${l})
+        endif()
     else()
-        find_library(_el ${l} PATHS ${EXIV2_LIBRARY_DIRS})
+        message(STATUS "searching for library ${l}")
+        find_library(_el ${l})# PATHS ${EXIV2_LIBRARY_DIRS})
     endif()
+    message(STATUS "  result: ${_el}")
     set(EXIV2_LIBRARIES ${EXIV2_LIBRARIES} ${_el})
 endforeach()
 
@@ -709,7 +716,7 @@ elseif(APPLE)
              -DSYSTEM:STRING=Apple
              -DCXX_FLAGS:STRING=${CXX_FLAGS}
              -DLFLAGS:STRING=${LFLAGS}
-             -DCOMPILER_INFO:STRING=${COMPILER_INFO})    
+             -DCOMPILER_INFO:STRING=${COMPILER_INFO})
 else()
     list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
          -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS}
@@ -771,14 +778,17 @@ foreach(l ${LENSFUN_LIBRARIES})
         # want, and not the system's one (e.g. if we have a custom version
         # installed in a non-standard location)
         set(_l "_l-NOTFOUND")
+        message(STATUS "searching for library ${l} in ${LENSFUN_LIBRARY_DIRS}")
         find_library(_l ${l} PATHS ${LENSFUN_LIBRARY_DIRS} NO_DEFAULT_PATH)
     else()
         # LENSFUN_LIBRARY_DIRS can be empty if lensfun is installed in the
         # default path. In this case, adding NO_DEFAULT_PATH would make
         # find_library fail...
         set(_l "_l-NOTFOUND")
+        message(STATUS "searching for library ${l}")
         find_library(_l ${l})
     endif()
+    message(STATUS "  result: ${_l}")
     set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_l})
 endforeach()
 check_cxx_source_compiles(
