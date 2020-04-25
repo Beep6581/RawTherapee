@@ -43,11 +43,11 @@ void LabImage::CopyFrom(LabImage *Img)
     #pragma omp parallel sections
     {
         #pragma omp section
-        memcpy(L[0], Img->L[0], W * H * sizeof(float));
+        memcpy(L[0], Img->L[0], W * H * 1 * sizeof(float));
         #pragma omp section
-        memcpy(a[0], Img->a[0], W * H * sizeof(float));
+        memcpy(a[0], Img->a[0], W * H * 1 * sizeof(float));
         #pragma omp section
-        memcpy(b[0], Img->b[0], W * H * sizeof(float));
+        memcpy(b[0], Img->b[0], W * H * 1 * sizeof(float));
     }
 #else
     memcpy(data, Img->data, W * H * 3 * sizeof(float));
