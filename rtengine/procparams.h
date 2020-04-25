@@ -155,7 +155,6 @@ public:
         top_left = top;
     }
 
-
     void setValues(T bottom_left, T top_left, T bottom_right, T top_right)
     {
         this->bottom_left = bottom_left;
