@@ -1320,6 +1320,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lclightness = locallab.spots.at(j).lclightness && pSpot.lclightness == otherSpot.lclightness;
                 locallab.spots.at(j).levelwav = locallab.spots.at(j).levelwav && pSpot.levelwav == otherSpot.levelwav;
                 locallab.spots.at(j).residcont = locallab.spots.at(j).residcont && pSpot.residcont == otherSpot.residcont;
+                locallab.spots.at(j).residsha = locallab.spots.at(j).residsha && pSpot.residsha == otherSpot.residsha;
+                locallab.spots.at(j).residshathr = locallab.spots.at(j).residshathr && pSpot.residshathr == otherSpot.residshathr;
+                locallab.spots.at(j).residhi = locallab.spots.at(j).residhi && pSpot.residhi == otherSpot.residhi;
+                locallab.spots.at(j).residhithr = locallab.spots.at(j).residhithr && pSpot.residhithr == otherSpot.residhithr;
                 locallab.spots.at(j).residblur = locallab.spots.at(j).residblur && pSpot.residblur == otherSpot.residblur;
                 locallab.spots.at(j).levelblur = locallab.spots.at(j).levelblur && pSpot.levelblur == otherSpot.levelblur;
                 locallab.spots.at(j).sigmabl = locallab.spots.at(j).sigmabl && pSpot.sigmabl == otherSpot.sigmabl;
@@ -4202,6 +4206,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).residcont   = mods.locallab.spots.at(i).residcont;
         }
 
+        if (locallab.spots.at(i).residsha) {
+            toEdit.locallab.spots.at(i).residsha   = mods.locallab.spots.at(i).residsha;
+        }
+
+        if (locallab.spots.at(i).residshathr) {
+            toEdit.locallab.spots.at(i).residshathr   = mods.locallab.spots.at(i).residshathr;
+        }
+
+        if (locallab.spots.at(i).residhi) {
+            toEdit.locallab.spots.at(i).residhi   = mods.locallab.spots.at(i).residhi;
+        }
+
+        if (locallab.spots.at(i).residhithr) {
+            toEdit.locallab.spots.at(i).residhithr   = mods.locallab.spots.at(i).residhithr;
+        }
+
         if (locallab.spots.at(i).residblur) {
             toEdit.locallab.spots.at(i).residblur   = mods.locallab.spots.at(i).residblur;
         }
@@ -4221,6 +4241,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         if (locallab.spots.at(i).residcomp) {
             toEdit.locallab.spots.at(i).residcomp   = mods.locallab.spots.at(i).residcomp;
         }
+
 
         if (locallab.spots.at(i).sigma) {
             toEdit.locallab.spots.at(i).sigma   = mods.locallab.spots.at(i).sigma;
@@ -5979,6 +6000,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lclightness(v),
     levelwav(v),
     residcont(v),
+    residsha(v),
+    residshathr(v),
+    residhi(v),
+    residhithr(v),
     residblur(v),
     levelblur(v),
     sigmabl(v),
@@ -6414,6 +6439,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lclightness = v;
     levelwav = v;
     residcont = v;
+    residsha = v;
+    residshathr = v;
+    residhi = v;
+    residhithr = v;
     residblur = v;
     levelblur = v;
     sigmabl = v;

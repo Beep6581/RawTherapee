@@ -1153,6 +1153,10 @@ HISTORY_MSG_912;Local - Blur Guide filter strength
 HISTORY_MSG_913;Local - Contrast Wavelet Sigma DR
 HISTORY_MSG_914;Local - Blur Wavelet Sigma BL
 HISTORY_MSG_915;Local - Edge Wavelet Sigma ED
+HISTORY_MSG_916;Local - Residual wavelet shadows
+HISTORY_MSG_917;Local - Residual wavelet shadows threshold
+HISTORY_MSG_918;Local - Residual wavelet highlights
+HISTORY_MSG_919;Local - Residual wavelet highlights threshold
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
@@ -2481,6 +2485,7 @@ TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by Levels- Tone Mapping(s)
+TP_LOCALLAB_LOC_RESIDPYR;Residual Image Main
 TP_LOCALLAB_LOG;Encoding log
 TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGFRA;Source Gray Point
@@ -2584,6 +2589,10 @@ TP_LOCALLAB_RESIDBLUR;Blur Residual Image
 TP_LOCALLAB_RESIDCHRO;Residual image Chroma
 TP_LOCALLAB_RESIDCOMP;Compress Residual image
 TP_LOCALLAB_RESIDCONT;Residual image Contrast
+TP_LOCALLAB_RESIDHI;Highlights
+TP_LOCALLAB_RESIDHITHR;Highlights threshold
+TP_LOCALLAB_RESIDSHA;Shadows
+TP_LOCALLAB_RESIDSHATHR;Shadows threshold
 TP_LOCALLAB_RETI;Dehaze - Retinex Strong local contrast
 TP_LOCALLAB_RETIFRA;Retinex
 TP_LOCALLAB_RETIM;Original Retinex
@@ -2655,6 +2664,7 @@ TP_LOCALLAB_SHOWSTRUC;Show structure Spot
 TP_LOCALLAB_SHOWSTRUCEX;Show structure Spot - disabled in "normal"
 TP_LOCALLAB_SHOWT;4 - Mask and modifications
 TP_LOCALLAB_SHOWVI;3 - Mask and modifications
+TP_LOCALLAB_SHRESFRA;Shadows/Highlights
 TP_LOCALLAB_SIGMAWAV;Damper
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope mask

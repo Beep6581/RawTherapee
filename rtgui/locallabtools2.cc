@@ -2006,8 +2006,14 @@ LocallabContrast::LocallabContrast():
     wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
     levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
     csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 6, 6, 0, false))),
+    expresidpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
     residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
     residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100., 100., 1., 0.))),
+    shresFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHRESFRA")))),
+    residsha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHA"), -100., 100., 1., 0.))),
+    residshathr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHATHR"), 0., 100., 1., 30.))),
+    residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
+    residhithr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHITHR"), 0., 100., 1., 70.))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 30))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
@@ -2126,9 +2132,25 @@ LocallabContrast::LocallabContrast():
 
     csThreshold->setAdjusterListener(this);
 
+    Gtk::HBox* const LresTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const LresLabel = Gtk::manage(new Gtk::Label());
+    LresLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_RESIDPYR")) + Glib::ustring("</b>"));
+    LresLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    LresTitleHBox->pack_start(*LresLabel, Gtk::PACK_EXPAND_WIDGET, 0);
+    expresidpyr->setLabel(LresTitleHBox);
+    setExpandAlignProperties(expresidpyr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    
     residcont->setAdjusterListener(this);
 
     residchro->setAdjusterListener(this);
+
+    residsha->setAdjusterListener(this);
+
+    residshathr->setAdjusterListener(this);
+
+    residhi->setAdjusterListener(this);
+
+    residhithr->setAdjusterListener(this);
 
     sensilc->setAdjusterListener(this);
 
@@ -2381,6 +2403,7 @@ LocallabContrast::LocallabContrast():
     if (complexsoft < 2) {
         pack_start(*localcontMethod);
     }
+    shresFrame->set_label_align(0.025, 0.5);
 
     pack_start(*lcradius);
     pack_start(*lcamount);
@@ -2389,8 +2412,19 @@ LocallabContrast::LocallabContrast():
     pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // pack_start(*levelwav);
     pack_start(*csThreshold);
-    pack_start(*residcont);
-    pack_start(*residchro);
+    ToolParamBlock* const resiBox = Gtk::manage(new ToolParamBlock());
+    resiBox->pack_start(*residcont);
+    resiBox->pack_start(*residchro);
+    ToolParamBlock* const shresBox = Gtk::manage(new ToolParamBlock());
+    shresBox->pack_start(*residsha);
+    shresBox->pack_start(*residshathr);
+    shresBox->pack_start(*residhi);
+    shresBox->pack_start(*residhithr);
+
+    shresFrame->add(*shresBox);
+    resiBox->pack_start(*shresFrame);
+    expresidpyr->add(*resiBox, false);
+    pack_start(*expresidpyr);
     pack_start(*sensilc);
     Gtk::HSeparator* const separatorcontr = Gtk::manage(new  Gtk::HSeparator());
     pack_start(*separatorcontr);
@@ -2526,6 +2560,7 @@ void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
 
 void LocallabContrast::setDefaultExpanderVisibility()
 {
+    expresidpyr->set_expanded(false);
     expcontrastpyr->set_expanded(false);
     expcontrastpyr2->set_expanded(false);
     expmasklc->set_expanded(false);
@@ -2608,6 +2643,10 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         csThreshold->setValue<int>(pp->locallab.spots.at(index).csthreshold);
         residcont->setValue(pp->locallab.spots.at(index).residcont);
         residchro->setValue(pp->locallab.spots.at(index).residchro);
+        residsha->setValue(pp->locallab.spots.at(index).residsha);
+        residshathr->setValue(pp->locallab.spots.at(index).residshathr);
+        residhi->setValue(pp->locallab.spots.at(index).residhi);
+        residhithr->setValue(pp->locallab.spots.at(index).residhithr);
         sensilc->setValue((double)pp->locallab.spots.at(index).sensilc);
         clarilres->setValue(pp->locallab.spots.at(index).clarilres);
         claricres->setValue(pp->locallab.spots.at(index).claricres);
@@ -2723,6 +2762,10 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         pp->locallab.spots.at(index).csthreshold = csThreshold->getValue<int>();
         pp->locallab.spots.at(index).residcont = residcont->getValue();
         pp->locallab.spots.at(index).residchro = residchro->getValue();
+        pp->locallab.spots.at(index).residsha = residsha->getValue();
+        pp->locallab.spots.at(index).residshathr = residshathr->getValue();
+        pp->locallab.spots.at(index).residhi = residhi->getValue();
+        pp->locallab.spots.at(index).residhithr = residhithr->getValue();
         pp->locallab.spots.at(index).sensilc = sensilc->getIntValue();
         pp->locallab.spots.at(index).clarilres = clarilres->getValue();
         pp->locallab.spots.at(index).claricres = claricres->getValue();
@@ -2813,6 +2856,10 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         csThreshold->setDefault<int>(defSpot.csthreshold);
         residcont->setDefault(defSpot.residcont);
         residchro->setDefault(defSpot.residchro);
+        residsha->setDefault(defSpot.residsha);
+        residshathr->setDefault(defSpot.residshathr);
+        residhi->setDefault(defSpot.residhi);
+        residhithr->setDefault(defSpot.residhithr);
         sensilc->setDefault((double)defSpot.sensilc);
         clarilres->setDefault(defSpot.clarilres);
         claricres->setDefault(defSpot.claricres);
@@ -2898,6 +2945,34 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabresidchro,
                                        residchro->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == residsha) {
+            if (listener) {
+                listener->panelChanged(Evlocallabresidsha,
+                                       residsha->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == residshathr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabresidshathr,
+                                       residshathr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == residhi) {
+            if (listener) {
+                listener->panelChanged(Evlocallabresidhi,
+                                       residhi->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == residhithr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabresidhithr,
+                                       residhithr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3466,6 +3541,11 @@ void LocallabContrast::updateContrastGUI1()
         csThreshold->hide();
         residcont->hide();
         residchro->hide();
+        residsha->hide();
+        residshathr->hide();
+        residhi->hide();
+        residhithr->hide();
+        shresFrame->hide();
         clariFrame->hide();
         strwav->hide();
         angwav->hide();
@@ -3507,6 +3587,11 @@ void LocallabContrast::updateContrastGUI1()
         csThreshold->show();
         residcont->show();
         residchro->show();
+        residsha->show();
+        residshathr->show();
+        residhi->show();
+        residhithr->show();
+        shresFrame->show();
         clariFrame->show();
         strwav->show();
         angwav->show();

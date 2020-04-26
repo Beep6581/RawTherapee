@@ -720,6 +720,10 @@ public:
         bool lclightness;
         bool levelwav;
         bool residcont;
+        bool residsha;
+        bool residshathr;
+        bool residhi;
+        bool residhithr;
         bool residblur;
         bool levelblur;
         bool sigmabl;

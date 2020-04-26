@@ -885,8 +885,14 @@ private:
     FlatCurveEditor* const wavshape;
     Adjuster* const levelwav;
     ThresholdAdjuster* const csThreshold;
+    MyExpander* const expresidpyr;
     Adjuster* const residcont;
     Adjuster* const residchro;
+    Gtk::Frame* const shresFrame;
+    Adjuster* const residsha;
+    Adjuster* const residshathr;
+    Adjuster* const residhi;
+    Adjuster* const residhithr;
     Adjuster* const sensilc;
     Gtk::Frame* const clariFrame;
     Adjuster* const clarilres;
