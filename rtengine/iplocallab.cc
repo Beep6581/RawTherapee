@@ -450,6 +450,10 @@ struct local_params {
     float sigmadr;
     float sigmabl;
     float sigmaed;
+    float residsha;
+    float residshathr;
+    float residhi;
+    float residhithr;
 
 };
 
@@ -1241,6 +1245,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sigmadr = locallab.spots.at(sp).sigmadr;
     lp.sigmabl = locallab.spots.at(sp).sigmabl;
     lp.sigmaed = locallab.spots.at(sp).sigmaed;
+    lp.residsha = locallab.spots.at(sp).residsha;
+    lp.residshathr = locallab.spots.at(sp).residshathr;
+    lp.residhi = locallab.spots.at(sp).residhi;
+    lp.residhithr = locallab.spots.at(sp).residhithr;
 
 }
 
@@ -7895,6 +7903,53 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 
         CompressDR(wav_L0, W_L, H_L, Compression, DetailBoost);
 
+    }
+
+#ifdef _OPENMP
+    #pragma omp barrier // ?
+#endif
+
+    if ((lp.residsha != 0.f || lp.residhi != 0.f)) {
+#ifdef _OPENMP
+        #pragma omp for nowait
+#endif
+
+        for (int i = 0; i < W_L * H_L; i++) {
+            float LL = wav_L0[i];
+            float LL100 = LL / 327.68f;
+            float tran = 5.f;//transition
+            //shadow
+            float alp = 3.f;
+
+            if (lp.residshathr > (100.f - tran)) {
+                tran = 100.f - lp.residshathr;
+            }
+
+            if (LL100 < lp.residshathr) {
+                float aalp = (1.f - alp) / lp.residshathr;
+                float kk = aalp * LL100 + alp;
+                wav_L0[i] *= (1.f + kk * lp.residsha / 200.f);
+            } else if (LL100 < lp.residshathr + tran) {
+                float ath = -lp.residsha / tran;
+                float bth = lp.residsha - ath * lp.residshathr;
+                wav_L0[i] *= (1.f + (LL100 * ath + bth) / 200.f);
+            }
+
+            //highlight
+            tran = 5.f;
+
+            if (lp.residhithr < (tran)) {
+                tran = lp.residhithr;
+            }
+
+            if (LL100 > lp.residhithr) {
+                wav_L0[i] *= (1.f + lp.residhi / 200.f);
+            } else if (LL100 > (lp.residhithr - tran)) {
+                float athH = lp.residhi / tran;
+                float bthH = lp.residhi - athH * lp.residhithr;
+                wav_L0[i] *= (1.f + (LL100 * athH + bthH) / 200.f);
+            }
+        }
     }
 
     if (contrast != 0.) {
