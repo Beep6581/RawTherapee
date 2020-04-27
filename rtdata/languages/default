@@ -2448,7 +2448,7 @@ TP_LOCALLAB_GRADSTRLUM;Gradient strength Luminance
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
 TP_LOCALLAB_GRAINFRA;Film Grain   1:1
 TP_LOCALLAB_GRALWFRA;Graduated Filter Local contrast
-TP_LOCALLAB_GRIDFRAME_TOOLTIP;It is desirable that the spot is in a flat area.\n\nOnly mode NORMAL and eventually Hue, Saturation, Color, Luminosity are concerned by Merge background 
+TP_LOCALLAB_GRIDFRAME_TOOLTIP;You can use this tool as a brush. Use small spot and adapt transition and transition weakening\nOnly mode NORMAL and eventually Hue, Saturation, Color, Luminosity are concerned by Merge background (ΔE)
 TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
 TP_LOCALLAB_GUIDBL;Soft radius
