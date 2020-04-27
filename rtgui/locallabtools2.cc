@@ -2315,6 +2315,7 @@ LocallabContrast::LocallabContrast():
 
     wavshapecomp->setIdentityValue(0.);
     wavshapecomp->setResetCurve(FlatCurveType(defSpot.loccompwavcurve.at(0)), defSpot.loccompwavcurve);
+    wavshapecomp->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     LocalcurveEditorwavcomp->curveListComplete();
 
