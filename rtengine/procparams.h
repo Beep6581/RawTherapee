@@ -1307,8 +1307,8 @@ struct LocallabParams {
         double threswav;
         double chromalev;
         double chromablu;
-        double fatdet;
-        double fatanch;
+        double sigmadc;
+        double deltad;
         double fatres;
         double clarilres;
         double claricres;

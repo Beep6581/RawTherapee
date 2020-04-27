@@ -2070,8 +2070,8 @@ LocallabContrast::LocallabContrast():
     residcomp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCOMP"), -1., 1., 0.01, 0.))),
     compFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPFRA")))),
     wavcomp(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPFRA")))),
-    fatdet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
-    fatanch(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    sigmadc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 3., 0.01, 1.))),
+    deltad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DELTAD"), -3., 3., 0.1, 0.))),//, Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     LocalcurveEditorwavcomp(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCOMP"))),
     wavshapecomp(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcomp->addCurve(CT_Flat, "", nullptr, false, false))),
     fatres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATRES"), 0., 100., 1., 0.))),
@@ -2304,12 +2304,12 @@ LocallabContrast::LocallabContrast():
     wavcompConn = wavcomp->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavcompChanged));
 
     if (showtooltip) {
-        fatdet->set_tooltip_text(M("TP_LOCALLAB_COMPFRAME_TOOLTIP"));
+    //    sigmadc->set_tooltip_text(M("TP_LOCALLAB_COMPFRAME_TOOLTIP"));
     }
 
-    fatdet->setAdjusterListener(this);
+    sigmadc->setAdjusterListener(this);
 
-    fatanch->setAdjusterListener(this);
+    deltad->setAdjusterListener(this);
 
     LocalcurveEditorwavcomp->setCurveListener(this);
 
@@ -2507,14 +2507,14 @@ LocallabContrast::LocallabContrast():
     Gtk::VBox* const compBox = Gtk::manage(new Gtk::VBox());
     compBox->set_spacing(2);
     compFrame->set_label_widget(*wavcomp);
-    compBox->pack_start(*fatdet);
-    compBox->pack_start(*fatanch);
+    compBox->pack_start(*sigmadc);
+    compBox->pack_start(*deltad);
     compBox->pack_start(*LocalcurveEditorwavcomp, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    Gtk::HSeparator* const separatorcomp = Gtk::manage(new  Gtk::HSeparator());
-    compBox->pack_start(*separatorcomp);
-    compBox->pack_start(*fatres);
+//    Gtk::HSeparator* const separatorcomp = Gtk::manage(new  Gtk::HSeparator());
+//    compBox->pack_start(*separatorcomp);
+    //compBox->pack_start(*fatres);
     compFrame->add(*compBox);
-    // blurcontBox2->pack_start(*compFrame);
+    blurcontBox2->pack_start(*compFrame);
     expcontrastpyr2->add(*blurcontBox2, false);
     pack_start(*expcontrastpyr2);
 
@@ -2703,8 +2703,8 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         threswav->setValue(pp->locallab.spots.at(index).threswav);
         residcomp->setValue(pp->locallab.spots.at(index).residcomp);
         wavcomp->set_active(pp->locallab.spots.at(index).wavcomp);
-        fatdet->setValue(pp->locallab.spots.at(index).fatdet);
-        fatanch->setValue(pp->locallab.spots.at(index).fatanch);
+        sigmadc->setValue(pp->locallab.spots.at(index).sigmadc);
+        deltad->setValue(pp->locallab.spots.at(index).deltad);
         wavshapecomp->setCurve(pp->locallab.spots.at(index).loccompwavcurve);
         fatres->setValue(pp->locallab.spots.at(index).fatres);
 
@@ -2822,8 +2822,8 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         pp->locallab.spots.at(index).threswav = threswav->getValue();
         pp->locallab.spots.at(index).residcomp = residcomp->getValue();
         pp->locallab.spots.at(index).wavcomp = wavcomp->get_active();
-        pp->locallab.spots.at(index).fatdet = fatdet->getValue();
-        pp->locallab.spots.at(index).fatanch = fatanch->getValue();
+        pp->locallab.spots.at(index).sigmadc = sigmadc->getValue();
+        pp->locallab.spots.at(index).deltad = deltad->getValue();
         pp->locallab.spots.at(index).loccompwavcurve = wavshapecomp->getCurve();
         pp->locallab.spots.at(index).fatres = fatres->getValue();
         pp->locallab.spots.at(index).fftwlc = fftwlc->get_active();
@@ -2885,8 +2885,8 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         sigmadr->setDefault(defSpot.sigmadr);
         threswav->setDefault(defSpot.threswav);
         residcomp->setDefault(defSpot.residcomp);
-        fatdet->setDefault(defSpot.fatdet);
-        fatanch->setDefault(defSpot.fatanch);
+        sigmadc->setDefault(defSpot.sigmadc);
+        deltad->setDefault(defSpot.deltad);
         fatres->setDefault(defSpot.fatres);
         blendmasklc->setDefault((double)defSpot.blendmasklc);
         radmasklc->setDefault(defSpot.radmasklc);
@@ -3152,17 +3152,17 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
-        if (a == fatdet) {
+        if (a == sigmadc) {
             if (listener) {
-                listener->panelChanged(Evlocallabfatdet,
-                                       fatdet->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                listener->panelChanged(Evlocallabsigmadc,
+                                       sigmadc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
-        if (a == fatanch) {
+        if (a == deltad) {
             if (listener) {
-                listener->panelChanged(Evlocallabfatanch,
-                                       fatanch->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                listener->panelChanged(Evlocallabdeltad,
+                                       deltad->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3572,8 +3572,8 @@ void LocallabContrast::updateContrastGUI1()
         sigmadr->hide();
         threswav->hide();
         residcomp->hide();
-        fatdet->hide();
-        fatanch->hide();
+        sigmadc->hide();
+        deltad->hide();
         LocalcurveEditorwavcomp->hide();
         fatres->hide();
         fftwlc->show();
@@ -3618,8 +3618,8 @@ void LocallabContrast::updateContrastGUI1()
         sigmadr->show();
         threswav->show();
         residcomp->show();
-        fatdet->show();
-        fatanch->show();
+        sigmadc->show();
+        deltad->show();
         LocalcurveEditorwavcomp->show();
         fatres->show();
         fftwlc->hide();

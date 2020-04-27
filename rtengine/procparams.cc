@@ -3353,8 +3353,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     threswav(1.4),
     chromalev(1.0),
     chromablu(1.0),
-    fatdet(40.0),
-    fatanch(50.0),
+    sigmadc(1.0),
+    deltad(0.0),
     fatres(0.0),
     clarilres(0.0),
     claricres(0.0),
@@ -3424,18 +3424,22 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     loccompwavcurve{
         static_cast<double>(FCT_MinMaxCPoints),
-        0.0,
-        0.0,
-        0.0,
-        0.35,
-        0.5,
-        0.,
+        0.00,
         0.35,
         0.35,
-        1.0,
-        0.0,
+        0.00,
         0.35,
-        0.35
+        0.75,
+        0.35,
+        0.35,
+        0.60,
+        0.75,
+        0.35,
+        0.35,
+        1.00,
+        0.35,
+        0.00,
+        0.00
     },
     loccomprewavcurve{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -3966,8 +3970,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && threswav == other.threswav
         && chromalev == other.chromalev
         && chromablu == other.chromablu
-        && fatdet == other.fatdet
-        && fatanch == other.fatanch
+        && sigmadc == other.sigmadc
+        && deltad == other.deltad
         && fatres == other.fatres
         && clarilres == other.clarilres
         && claricres == other.claricres
@@ -5410,8 +5414,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->threswav, "Locallab", "Threswav_" + index_str, spot.threswav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromalev, "Locallab", "Chromalev_" + index_str, spot.chromalev, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromablu, "Locallab", "Chromablu_" + index_str, spot.chromablu, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->fatdet, "Locallab", "Fatdet_" + index_str, spot.fatdet, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->fatanch, "Locallab", "Fatanch_" + index_str, spot.fatanch, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmadc, "Locallab", "sigmadc_" + index_str, spot.sigmadc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->deltad, "Locallab", "deltad_" + index_str, spot.deltad, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatres, "Locallab", "Fatres_" + index_str, spot.fatres, keyFile);
                     saveToKeyfile(!pedited || spot_edited->clarilres, "Locallab", "ClariLres_" + index_str, spot.clarilres, keyFile);
                     saveToKeyfile(!pedited || spot_edited->claricres, "Locallab", "ClariCres_" + index_str, spot.claricres, keyFile);
@@ -7063,8 +7067,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Threswav_" + index_str, pedited, spot.threswav, spotEdited.threswav);
                 assignFromKeyfile(keyFile, "Locallab", "Chromalev_" + index_str, pedited, spot.chromalev, spotEdited.chromalev);
                 assignFromKeyfile(keyFile, "Locallab", "Chromablu_" + index_str, pedited, spot.chromablu, spotEdited.chromablu);
-                assignFromKeyfile(keyFile, "Locallab", "Fatdet_" + index_str, pedited, spot.fatdet, spotEdited.fatdet);
-                assignFromKeyfile(keyFile, "Locallab", "Fatanch_" + index_str, pedited, spot.fatanch, spotEdited.fatanch);
+                assignFromKeyfile(keyFile, "Locallab", "sigmadc_" + index_str, pedited, spot.sigmadc, spotEdited.sigmadc);
+                assignFromKeyfile(keyFile, "Locallab", "deltad_" + index_str, pedited, spot.deltad, spotEdited.deltad);
                 assignFromKeyfile(keyFile, "Locallab", "Fatres_" + index_str, pedited, spot.fatres, spotEdited.fatres);
                 assignFromKeyfile(keyFile, "Locallab", "ClariLres_" + index_str, pedited, spot.clarilres, spotEdited.clarilres);
                 assignFromKeyfile(keyFile, "Locallab", "ClariCres_" + index_str, pedited, spot.claricres, spotEdited.claricres);

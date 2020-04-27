@@ -735,8 +735,8 @@ public:
         bool threswav;
         bool chromalev;
         bool chromablu;
-        bool fatdet;
-        bool fatanch;
+        bool sigmadc;
+        bool deltad;
         bool fatres;
         bool clarilres;
         bool claricres;

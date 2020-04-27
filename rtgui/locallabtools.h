@@ -949,8 +949,8 @@ private:
     Adjuster* const residcomp;
     Gtk::Frame* const compFrame;
     Gtk::CheckButton* const wavcomp;
-    Adjuster* const fatdet;
-    Adjuster* const fatanch;
+    Adjuster* const sigmadc;
+    Adjuster* const deltad;
     CurveEditorGroup* const LocalcurveEditorwavcomp;
     FlatCurveEditor* const wavshapecomp;
     Adjuster* const fatres;

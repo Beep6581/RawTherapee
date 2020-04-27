@@ -4275,7 +4275,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             bool wavcurvecompre = false;
             bool wavcurve = false;
             bool locedgwavutili = false;
-            wavcontrast4(lp, bufmaskblurcol->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav,  wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, dummy, locedgwavutili, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
+            wavcontrast4(lp, bufmaskblurcol->L, nullptr, nullptr, contrast, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav,  wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, dummy, locedgwavutili, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
 
         }
 
@@ -7450,11 +7450,11 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
 }
 
 
-void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl,
+void ImProcFunctions::wavcont(struct local_params& lp, float ** tmp, wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl,
                               const LocwavCurve & loclevwavCurve, bool & loclevwavutili,
                               const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
                               const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
-                              float radlevblur, int process, FattalToneMappingParams &fatParams, float chromablu, float thres)
+                              float radlevblur, int process, float chromablu, float thres,  float sigmadc, float deltad)
 {
     float madL[10][3];
     int W_L = wdspot.level_W(0);
@@ -7462,9 +7462,14 @@ void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wd
 
     float * beta = nullptr;
     float * betabl = nullptr;
+    float * betadc = nullptr;
 
     if (process == 3) {
         beta = new float[W_L * H_L];
+    }
+
+    if (process == 2) {
+        betadc = new float[W_L * H_L];
     }
 
     if (process == 1) {
@@ -7554,20 +7559,94 @@ void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wd
         }
     }
 
-    if (process == 2) { //Dynamic compression laplacian - Huge ressources
+    if (process == 2) { //Directionnal contrast
+        float mean[10];
+        float meanN[10];
+        float sigma[10];
+        float sigmaN[10];
+        float MaxP[10];
+        float MaxN[10];
+        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+    
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
                 int H_L = wdspot.level_H(level);
+                float effect = sigmadc;
+                float offs = 1.f;
+                float mea[10];
+                for (int co = 0; co < H_L * W_L; co++) {
+                    betadc[co] = 1.f;
+                }
+                calceffect(level, mean, sigma, mea, effect, offs);
+                float **WavL = wdspot.level_coeffs(level);
 
-                if (loccompwavCurve && loccompwavutili) {
+                for (int co = 0; co < H_L * W_L; co++) {
+                    float WavCL = std::fabs(WavL[dir][co]);
 
-                    float klev = (loccompwavCurve[level * 55.5f]);
-                    fatParams.amount = 50.f * klev;
-                    {
-                        ToneMapFattal02(nullptr, fatParams, 3, 1, templevel[dir - 1][level], W_L, H_L, 0);
+                    if (WavCL < mea[0]) {
+                        betadc[co] = 0.05f;
+                    } else if (WavCL < mea[1]) {
+                        betadc[co] = 0.2f;
+                    } else if (WavCL < mea[2]) {
+                        betadc[co] = 0.7f;
+                    } else if (WavCL < mea[3]) {
+                        betadc[co] = 1.f;    //standard
+                    } else if (WavCL < mea[4]) {
+                        betadc[co] = 1.f;
+                    } else if (WavCL < mea[5]) {
+                        betadc[co] = 0.8f;    //+sigma
+                    } else if (WavCL < mea[6]) {
+                        betadc[co] = 0.7f;
+                    } else if (WavCL < mea[7]) {
+                        betadc[co] = 0.5f;
+                    } else if (WavCL < mea[8]) {
+                        betadc[co] = 0.3f;    // + 2 sigma
+                    } else if (WavCL < mea[9]) {
+                        betadc[co] = 0.2f;
+                    } else {
+                        betadc[co] = 0.1f;
                     }
                 }
+
+                int iteration = deltad;
+                int itplus = 7 + iteration;
+                int itmoins = 7 - iteration;
+                int med = maxlvl / 2;
+                int it;
+
+                if (level < med) {
+                    it = itmoins;
+                } else if (level == med) {
+                    it = 7;
+                } else {
+                    it = itplus;
+                }
+                if (loccompwavCurve && loccompwavutili) {
+
+                    for (int j = 0; j < it; j++) {
+                        float kba = 1.f;
+
+                        for (int i = 0; i < W_L * H_L; i++) {
+                            int ii = i / W_L;
+                            int jj = i - ii * W_L;
+                            float LL100 = tmp[ii * 2][jj * 2] / 327.68f;
+                            float k1 = 0.3f * (loccompwavCurve[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
+                            float k2 = k1 * 2.f;
+
+                            if (dir < 3) {
+                                kba = 1.f + k1;
+                            }
+
+                            if (dir == 3) {
+                                kba = 1.f - k2;
+                            }
+                            templevel[dir - 1][level][ii][jj] *= (1.f + (kba - 1.f) * betadc[i]);
+
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -7681,6 +7760,10 @@ void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wd
         delete[] beta;
     }
 
+    if (process == 2) {
+        delete[] betadc;
+    }
+
     if (process == 1) {
         delete[] betabl;
     }
@@ -7688,13 +7771,13 @@ void ImProcFunctions::wavcont(struct local_params& lp, wavelet_decomposition &wd
 }
 
 
-void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float fatres, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads,
+void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads,
                                    const LocwavCurve & locwavCurve, bool & locwavutili, bool wavcurve, const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev,
                                    const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon,
                                    const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp,
                                    const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili, bool wavcurvecompre,
                                    const LocwavCurve & locedgwavCurve, bool & locedgwavutili,
-                                   float sigm, float offs, int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres)
+                                   float sigm, float offs, int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres)
 {
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
@@ -7831,10 +7914,10 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     int H_L = wdspot->level_H(0);
     float *wav_L0 = wdspot->coeff0;
 
-    FattalToneMappingParams fatParams;
-    fatParams.threshold = fatdet;
-    fatParams.anchor = fatanch;
-
+//    FattalToneMappingParams fatParams;
+//    fatParams.threshold = fatdet;
+//    fatParams.anchor = fatanch;
+/*
     if (fatres > 0.f) {
         fatParams.enabled = true;
         fatParams.amount = fatres;
@@ -7862,7 +7945,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         }
 
     }
-
+*/
 
     if (radblur > 0.f && blurena) {
         array2D<float> bufl(W_L, H_L);
@@ -8024,7 +8107,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 float MaxN[10];
                 Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
         */
-        fatParams.enabled = wavcurvecomp;
+       // fatParams.enabled = wavcurvecomp;
 
         templevel = new float***[dir];
 
@@ -8047,15 +8130,15 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         }
 
         if (wavcurvelev && radlevblur > 0.f && blurena) {
-            wavcont(lp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, 1.f, 0.f);
+            wavcont(lp, tmp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, 1.f, 0.f, 0.f, 0.f);
         }
 
         if (wavcurvecomp && comprena) {
-            wavcont(lp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 2, fatParams, 1.f, 0.f);
+            wavcont(lp, tmp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 2, 1.f, 0.f, sigmadc, deltad);
         }
 
         if (wavcurvecompre && compreena) {
-            wavcont(lp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 3, fatParams, 1.f, thres);
+            wavcont(lp, tmp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 3, 1.f, thres, 0.f, 0.f);
         }
 
         //free memory templevel
@@ -8590,7 +8673,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             }
 
             if (wavcurvelev && radlevblur > 0.f) {
-                wavcont(lp, *wdspota, templevela, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
+                wavcont(lp, tmp, *wdspota, templevela, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
             }
 
             wdspota->reconstruct(tmpa[0], 1.f);
@@ -8645,7 +8728,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             }
 
             if (wavcurvelev && radlevblur > 0.f) {
-                wavcont(lp, *wdspotb, templevelb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, fatParams, chromablu, 0.f);
+                wavcont(lp, tmp, *wdspotb, templevelb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
             }
 
             wdspotb->reconstruct(tmpb[0], 1.f);
@@ -10698,7 +10781,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bool locedgwavutili = false;
                 bool wavcurvecompre = false;
                 bool wavcurve = false;
-                wavcontrast4(lp, bufmaskblurbl->L, nullptr, nullptr, contrast, 0.f, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, dummy, locedgwavutili, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
+                wavcontrast4(lp, bufmaskblurbl->L, nullptr, nullptr, contrast, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, dummy, locedgwavutili, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
             }
 
             int shado = params->locallab.spots.at(sp).shadmaskbl;
@@ -12801,9 +12884,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         const float radlevblur = (params->locallab.spots.at(sp).levelblur) / sk;
                         const float sigma = params->locallab.spots.at(sp).sigma;
                         const float offs = params->locallab.spots.at(sp).offset;
-                        const float fatdet = params->locallab.spots.at(sp).fatdet;
-                        const float fatanch = params->locallab.spots.at(sp).fatanch;
-                        const float fatres = params->locallab.spots.at(sp).fatres;
+                        const float sigmadc = params->locallab.spots.at(sp).sigmadc;
+                        const float deltad = params->locallab.spots.at(sp).deltad;
+                       // const float fatres = params->locallab.spots.at(sp).fatres;
                         const float chrol = params->locallab.spots.at(sp).chromalev;
                         const float chrobl = params->locallab.spots.at(sp).chromablu;
                         const bool blurena = params->locallab.spots.at(sp).wavblur;
@@ -12813,7 +12896,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         const float compress = params->locallab.spots.at(sp).residcomp;
                         const float thres = params->locallab.spots.at(sp).threswav;
 
-                        wavcontrast4(lp, tmp1->L, tmp1->a, tmp1->b, contrast, fatres, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, fatdet, fatanch, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres);
+                        wavcontrast4(lp, tmp1->L, tmp1->a, tmp1->b, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, sigmadc, deltad, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres);
 
                         const float satur = params->locallab.spots.at(sp).residchro;
 

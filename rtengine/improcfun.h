@@ -330,7 +330,7 @@ public:
     static void strcurv_data(std::string retistr, int *s_datc, int &siz);
     void blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread);
 
-    void wavcontrast4(struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float fatres, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, bool wavcurve,
+    void wavcontrast4(struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, bool wavcurve,
         const LocwavCurve & loclevwavCurve, bool & loclevwavutili, bool wavcurvelev, 
         const LocwavCurve & locconwavCurve, bool & locconwavutili, bool wavcurvecon, 
         const LocwavCurve & loccompwavCurve, bool & loccompwavutili, bool wavcurvecomp, 
@@ -338,11 +338,11 @@ public:
         const LocwavCurve & locedgwavCurve, bool & locedgwavutili,
         float sigm, float offs,int & maxlvl, float fatdet, float fatanch, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres);
         
-    void wavcont(struct local_params& lp, wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl, 
+    void wavcont(struct local_params& lp, float ** tmp, wavelet_decomposition &wdspot, float ****templevel, int level_bl, int maxlvl, 
                 const LocwavCurve & loclevwavCurve, bool & loclevwavutili, 
                 const LocwavCurve & loccompwavCurve, bool & loccompwavutili,
                 const LocwavCurve & loccomprewavCurve, bool & loccomprewavutili,
-                float radlevblur, int process, procparams::FattalToneMappingParams &fatParams, float chromablu, float thres);
+                float radlevblur, int process, float chromablu, float thres, float sigmadc, float deltad);
 
     void wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
                 const LocwavCurve & locconwavCurve, bool & locconwavutili, float sigm, float offs, float chromalev, int sk);

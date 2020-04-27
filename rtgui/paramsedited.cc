@@ -1335,8 +1335,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).threswav = locallab.spots.at(j).threswav && pSpot.threswav == otherSpot.threswav;
                 locallab.spots.at(j).chromalev = locallab.spots.at(j).chromalev && pSpot.chromalev == otherSpot.chromalev;
                 locallab.spots.at(j).chromablu = locallab.spots.at(j).chromablu && pSpot.chromablu == otherSpot.chromablu;
-                locallab.spots.at(j).fatdet = locallab.spots.at(j).fatdet && pSpot.fatdet == otherSpot.fatdet;
-                locallab.spots.at(j).fatanch = locallab.spots.at(j).fatanch && pSpot.fatanch == otherSpot.fatanch;
+                locallab.spots.at(j).sigmadc = locallab.spots.at(j).sigmadc && pSpot.sigmadc == otherSpot.sigmadc;
+                locallab.spots.at(j).deltad = locallab.spots.at(j).deltad && pSpot.deltad == otherSpot.deltad;
                 locallab.spots.at(j).fatres = locallab.spots.at(j).fatres && pSpot.fatres == otherSpot.fatres;
                 locallab.spots.at(j).clarilres = locallab.spots.at(j).clarilres && pSpot.clarilres == otherSpot.clarilres;
                 locallab.spots.at(j).claricres = locallab.spots.at(j).claricres && pSpot.claricres == otherSpot.claricres;
@@ -4267,12 +4267,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).chromablu   = mods.locallab.spots.at(i).chromablu;
         }
 
-        if (locallab.spots.at(i).fatdet) {
-            toEdit.locallab.spots.at(i).fatdet   = mods.locallab.spots.at(i).fatdet;
+        if (locallab.spots.at(i).sigmadc) {
+            toEdit.locallab.spots.at(i).sigmadc   = mods.locallab.spots.at(i).sigmadc;
         }
 
-        if (locallab.spots.at(i).fatanch) {
-            toEdit.locallab.spots.at(i).fatanch   = mods.locallab.spots.at(i).fatanch;
+        if (locallab.spots.at(i).deltad) {
+            toEdit.locallab.spots.at(i).deltad   = mods.locallab.spots.at(i).deltad;
         }
 
         if (locallab.spots.at(i).fatres) {
@@ -6015,8 +6015,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     threswav(v),
     chromalev(v),
     chromablu(v),
-    fatdet(v),
-    fatanch(v),
+    sigmadc(v),
+    deltad(v),
     fatres(v),
     clarilres(v),
     claricres(v),
@@ -6454,8 +6454,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     threswav = v;
     chromalev = v;
     chromablu = v;
-    fatdet = v;
-    fatanch = v;
+    sigmadc = v;
+    deltad = v;
     fatres = v;
     clarilres = v;
     claricres = v;

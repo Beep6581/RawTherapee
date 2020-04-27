@@ -1104,8 +1104,8 @@ HISTORY_MSG_860;Local - Contrast Curve Blur levels
 HISTORY_MSG_861;Local - Contrast Curve Contrast levels
 HISTORY_MSG_862;Local - Contrast Sigma luminance
 HISTORY_MSG_863;Local - Contrast Merge Original
-HISTORY_MSG_864;Local - Contrast Detail
-HISTORY_MSG_865;Local - Contrast Anchor
+HISTORY_MSG_864;Local - Directional sigma
+HISTORY_MSG_865;Local - Directional delta
 HISTORY_MSG_866;Local - Contrast Curve Compression
 HISTORY_MSG_867;Local - Contrast Amount residual
 HISTORY_MSG_868;Local - balance ΔE C-H
@@ -2338,7 +2338,7 @@ TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COLORDE;Color preview selection ΔE and Intensity
 TP_LOCALLAB_COLORDE_TOOLTIP;Show preview selection ΔE in blue if negative and in green if positive.\nShow real modifications if positive, show enhanced modifications with blue and yellow if negative.\nThe intensity is function of the level.\nFor 'Denoise' the appearance is different.
-TP_LOCALLAB_COMPFRA;Levels Dynamic Laplacian Range Compression ƒ
+TP_LOCALLAB_COMPFRA;Levels Directional Contrast
 TP_LOCALLAB_COMPREFRA;Levels Dynamic Wavelet Range (un)Compression
 TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend & Soft Images' by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_COMPFRAME_TOOLTIP;Allows special effects. You can reduce artifacts with 'Clarity & Sharp mask - Blend & Soft Images".\nUses a lot of resources
@@ -2367,6 +2367,7 @@ TP_LOCALLAB_DARKRETI;Darkness
 TP_LOCALLAB_DEHAFRA;Dehaze
 TP_LOCALLAB_DEHAZ;Strength
 TP_LOCALLAB_DEHAZ_TOOLTIP;Negative values add haze
+TP_LOCALLAB_DELTAD;Delta balance
 TP_LOCALLAB_DELTAEC;Mask ΔE Image
 TP_LOCALLAB_DENOIS;Ψ Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used alone (at the end of process), or in complement of main denoise (at the beginning).\nScope allows to differentiate the action according to the color (deltaE).\nYou can complete the action with "median" or "Guided Filter" (Smooth Blur...).\nYou can complete the action with "Blur levels" "Wavelet pyramid" 
@@ -2484,7 +2485,7 @@ TP_LOCALLAB_LOC_CONTRAST;Local contrast & Wavelet Pyramid Ψ Big defects
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
-TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by Levels- Tone Mapping(s)
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by Levels- Directional contrast- Tone Mapping
 TP_LOCALLAB_LOC_RESIDPYR;Residual Image Main
 TP_LOCALLAB_LOG;Encoding log
 TP_LOCALLAB_LOGAUTO;Automatic
