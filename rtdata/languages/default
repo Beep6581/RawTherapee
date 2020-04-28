@@ -2330,6 +2330,7 @@ TP_LOCALLAB_CLARICRES;Merge Chroma
 TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend & Soft images 
 TP_LOCALLAB_CLARILRES;Merge Luma
 TP_LOCALLAB_CLARISOFT;Soft radius
+TP_LOCALLAB_CLARISOFT_TOOLTIP;Enabled for Clarity & Sharp mask.\nContrast by level.\nLevel Dynamic Range Compression.\nDirectional contrast.\nGraduated filter local contrast
 TP_LOCALLAB_CLARITYML;Clarity
 TP_LOCALLAB_CLARI_TOOLTIP;Under or equal level wavelet 4, 'Sharp mask' is enabled.\nAbove level wavelet 5 'Clarity' is enabled.\nUsefull if you use 'Level dynamic Range Compression'
 TP_LOCALLAB_CLIPTM;Clip Restored datas (gain)

@@ -2166,6 +2166,9 @@ LocallabContrast::LocallabContrast():
 
     clarisoft->setLogScale(10, -10);
     clarisoft->setAdjusterListener(this);
+    if (showtooltip) {
+        clarisoft->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFT_TOOLTIP"));
+    }
 
     origlcConn = origlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::origlcChanged));
 

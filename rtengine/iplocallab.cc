@@ -13053,7 +13053,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             mL0 = mL = mC0 = mC = 0.f;
                         }
 
-                        if (exec  || compreena) {
+                        if (exec  || compreena || comprena || levelena || lp.wavgradl) {
                             bool origl = false;
                             // origlc = false;
                             LabImage *mergfile = origl ? tmpres.get() : tmp1.get();
@@ -13069,7 +13069,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     tmp1->b[x][y] = CLIPC((1.f + mC0) * mergfile->b[x][y] - mC * tmpresid->b[x][y]);
                                 }
 
-                            if (softr > 0.f && (compreena || fabs(mL) > 0.001f)) {
+                            if (softr != 0.f && (compreena || comprena || levelena || lp.wavgradl || fabs(mL) > 0.001f)) {
                                 softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
                             }
                         }
