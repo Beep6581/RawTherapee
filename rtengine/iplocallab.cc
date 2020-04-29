@@ -450,6 +450,8 @@ struct local_params {
     float sigmadr;
     float sigmabl;
     float sigmaed;
+    float sigmalc;
+    float sigmalc2;
     float residsha;
     float residshathr;
     float residhi;
@@ -1245,6 +1247,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sigmadr = locallab.spots.at(sp).sigmadr;
     lp.sigmabl = locallab.spots.at(sp).sigmabl;
     lp.sigmaed = locallab.spots.at(sp).sigmaed;
+    lp.sigmalc = locallab.spots.at(sp).sigmalc;
+    lp.sigmalc2 = locallab.spots.at(sp).sigmalc2;
     lp.residsha = locallab.spots.at(sp).residsha;
     lp.residshathr = locallab.spots.at(sp).residshathr;
     lp.residhi = locallab.spots.at(sp).residhi;
@@ -7810,7 +7814,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 }
             }
         }
-
+//printf("lp.sigmalc2 = %f\n", lp.sigmalc2);
         float mean[10];
         float meanN[10];
         float sigma[10];
@@ -7839,15 +7843,21 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 int W_L = wdspot->level_W(level);
                 int H_L = wdspot->level_H(level);
                 float **wav_L = wdspot->level_coeffs(level);
+                float effect = lp.sigmalc2;
+                float offs = 1.f;
+                float mea[10];
+                float beta = 1.f;
+                calceffect(level, mean, sigma, mea, effect, offs);
+
 
                 if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                     float insigma = 0.666f; //SD
                     float logmax = log(MaxP[level]); //log Max
-                    float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+                    float rapX = (mean[level] + lp.sigmalc2 * sigma[level]) / MaxP[level]; //rapport between sD / max
                     float inx = log(insigma);
                     float iny = log(rapX);
                     float rap = inx / iny; //koef
-                    float asig = 0.166f / sigma[level];
+                    float asig = 0.166f / (sigma[level] * lp.sigmalc2);
                     float bsig = 0.5f - asig * mean[level];
                     float amean = 0.5f / mean[level];
 
@@ -7857,11 +7867,36 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 
                     for (int y = 0; y < H_L; y++) {
                         for (int x = 0; x < W_L; x++) {
+                            float WavCL = std::fabs(wav_L[dir][y * W_L + x]);
+
+                            if (WavCL < mea[0]) {
+                                beta = 0.05f;
+                            } else if (WavCL < mea[1]) {
+                                beta = 0.2f;
+                            } else if (WavCL < mea[2]) {
+                                beta = 0.7f;
+                            } else if (WavCL < mea[3]) {
+                                beta = 1.f;    //standard
+                            } else if (WavCL < mea[4]) {
+                                beta = 1.f;
+                            } else if (WavCL < mea[5]) {
+                                beta = 0.8f;    //+sigma
+                            } else if (WavCL < mea[6]) {
+                                beta = 0.6f;
+                            } else if (WavCL < mea[7]) {
+                                beta = 0.5f;
+                            } else if (WavCL < mea[8]) {
+                                beta = 0.4f;    // + 2 sigma
+                            } else if (WavCL < mea[9]) {
+                                beta = 0.3f;
+                            } else {
+                                beta = 0.1f;
+                            }
 
                             float absciss;
                             float &val = wav_L[dir][y * W_L + x];
 
-                            if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
+                            if (fabsf(val) >= (mean[level] + lp.sigmalc2 * sigma[level])) { //for max
                                 float valcour = xlogf(fabsf(val));
                                 float valc = valcour - logmax;
                                 float vald = valc * rap;
@@ -7890,20 +7925,17 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                 }
                             }
 
-                            float kc = 0.5f * klev * factorwav[y][x] * absciss;
+                            float kc = 0.8f * klev * factorwav[y][x] * absciss;
                             float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
 
                             float kinterm = 1.f + reduceeffect * kc;
                             kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-
-                            val *=  kinterm;
+                            val *= (1.f + (kinterm - 1.f) * beta);
                         }
                     }
                 }
             }
         }
-
-
     }
 
     //declare a and b if need
@@ -8557,11 +8589,11 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                     float insigma = 0.666f; //SD
                     float logmax = log(MaxP[level]); //log Max
-                    float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+                    float rapX = (mean[level] + lp.sigmalc * sigma[level]) / MaxP[level]; //rapport between sD / max
                     float inx = log(insigma);
                     float iny = log(rapX);
                     float rap = inx / iny; //koef
-                    float asig = 0.166f / sigma[level];
+                    float asig = 0.166f / (sigma[level] * lp.sigmalc);
                     float bsig = 0.5f - asig * mean[level];
                     float amean = 0.5f / mean[level];
 
@@ -8574,7 +8606,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                             float absciss;
                             float &val = wav_L[dir][i];
 
-                            if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
+                            if (fabsf(val) >= (mean[level] + lp.sigmalc * sigma[level])) { //for max
                                 float valcour = xlogf(fabsf(val));
                                 float valc = valcour - logmax;
                                 float vald = valc * rap;
@@ -13035,7 +13067,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         float thr = 0.001f;
                         int flag = 0;
-
+ 
                         if (maxlvl <= 4) {
                             mL0 = 0.f;
                             mC0 = 0.f;
@@ -13053,7 +13085,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             mL0 = mL = mC0 = mC = 0.f;
                         }
 
-                        if (exec  || compreena || comprena || levelena || lp.wavgradl) {
+                        if (exec  || compreena || comprena || levelena || blurena || lp.wavgradl || locwavCurve || lp.edgwena) {
                             bool origl = false;
                             // origlc = false;
                             LabImage *mergfile = origl ? tmpres.get() : tmp1.get();
@@ -13069,7 +13101,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     tmp1->b[x][y] = CLIPC((1.f + mC0) * mergfile->b[x][y] - mC * tmpresid->b[x][y]);
                                 }
 
-                            if (softr != 0.f && (compreena || comprena || levelena || lp.wavgradl || fabs(mL) > 0.001f)) {
+                            if (softr != 0.f && (compreena || locwavCurve || comprena || blurena || levelena || lp.wavgradl || lp.edgwena || fabs(mL) > 0.001f)) {
                                 softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
                             }
                         }
@@ -13094,7 +13126,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             JaggedArray<float> loctemp(bfw, bfh);
 
             if (call == 2) { //call from simpleprocess
-                printf("bfw=%i bfh=%i\n", bfw, bfh);
+              //  printf("bfw=%i bfh=%i\n", bfw, bfh);
 
                 if (bfw < mSPsharp || bfh < mSPsharp) {
                     printf("too small RT-spot - minimum size 39 * 39\n");

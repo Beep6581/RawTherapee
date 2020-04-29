@@ -881,6 +881,7 @@ private:
     Adjuster* const lcamount;
     Adjuster* const lcdarkness;
     Adjuster* const lclightness;
+    Adjuster* const sigmalc;
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;
     Adjuster* const levelwav;
@@ -902,6 +903,7 @@ private:
     MyExpander* const expcontrastpyr;
     Gtk::Frame* const gradwavFrame;
     Gtk::CheckButton* const wavgradl;
+    Adjuster* const sigmalc2;
     Adjuster* const strwav;
     Adjuster* const angwav;
     Gtk::Frame* const edgFrame;

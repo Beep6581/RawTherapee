@@ -1290,6 +1290,7 @@ struct LocallabParams {
         double lcamount;
         double lcdarkness;
         double lclightness;
+        double sigmalc;
         int levelwav;
         double residcont;
         double residsha;
@@ -1313,6 +1314,7 @@ struct LocallabParams {
         double clarilres;
         double claricres;
         double clarisoft;
+        double sigmalc2;
         double strwav;
         double angwav;
         double strengthw;

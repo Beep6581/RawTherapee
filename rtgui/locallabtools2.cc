@@ -2002,6 +2002,7 @@ LocallabContrast::LocallabContrast():
     lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
     lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
     lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
+    sigmalc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     LocalcurveEditorwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
     wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
     levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
@@ -2023,6 +2024,7 @@ LocallabContrast::LocallabContrast():
     expcontrastpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
     gradwavFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADWAVFRA")))),
     wavgradl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GRALWFRA")))),
+    sigmalc2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
     angwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
     edgFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EDGSHARPFRA")))),
@@ -2115,6 +2117,7 @@ LocallabContrast::LocallabContrast():
     lcdarkness->setAdjusterListener(this);
 
     lclightness->setAdjusterListener(this);
+    sigmalc->setAdjusterListener(this);
 
     LocalcurveEditorwav->setCurveListener(this);
 
@@ -2184,6 +2187,7 @@ LocallabContrast::LocallabContrast():
 
     wavgradlConn = wavgradl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavgradlChanged));
 
+    sigmalc2->setAdjusterListener(this);
     strwav->setAdjusterListener(this);
 
     angwav->setAdjusterListener(this);
@@ -2413,6 +2417,7 @@ LocallabContrast::LocallabContrast():
     pack_start(*lcamount);
     pack_start(*lcdarkness);
     pack_start(*lclightness);
+    pack_start(*sigmalc);
     pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // pack_start(*levelwav);
     pack_start(*csThreshold);
@@ -2442,6 +2447,7 @@ LocallabContrast::LocallabContrast():
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
     gradwavFrame->set_label_widget(*wavgradl);
     ToolParamBlock* const gradwavBox = Gtk::manage(new ToolParamBlock());
+    gradwavBox->pack_start(*sigmalc2);
     gradwavBox->pack_start(*strwav);
     gradwavBox->pack_start(*angwav);
     gradwavFrame->add(*gradwavBox);
@@ -2642,6 +2648,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         lcamount->setValue(pp->locallab.spots.at(index).lcamount);
         lcdarkness->setValue(pp->locallab.spots.at(index).lcdarkness);
         lclightness->setValue(pp->locallab.spots.at(index).lclightness);
+        sigmalc->setValue(pp->locallab.spots.at(index).sigmalc);
         wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
         levelwav->setValue((double)pp->locallab.spots.at(index).levelwav);
         csThreshold->setValue<int>(pp->locallab.spots.at(index).csthreshold);
@@ -2657,6 +2664,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         clarisoft->setValue(pp->locallab.spots.at(index).clarisoft);
         origlc->set_active(pp->locallab.spots.at(index).origlc);
         wavgradl->set_active(pp->locallab.spots.at(index).wavgradl);
+        sigmalc2->setValue(pp->locallab.spots.at(index).sigmalc2);
         strwav->setValue(pp->locallab.spots.at(index).strwav);
         angwav->setValue(pp->locallab.spots.at(index).angwav);
         wavedg->set_active(pp->locallab.spots.at(index).wavedg);
@@ -2761,6 +2769,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         pp->locallab.spots.at(index).lcamount = lcamount->getValue();
         pp->locallab.spots.at(index).lcdarkness = lcdarkness->getValue();
         pp->locallab.spots.at(index).lclightness = lclightness->getValue();
+        pp->locallab.spots.at(index).sigmalc = sigmalc->getValue();
         pp->locallab.spots.at(index).locwavcurve = wavshape->getCurve();
         pp->locallab.spots.at(index).levelwav = levelwav->getIntValue();
         pp->locallab.spots.at(index).csthreshold = csThreshold->getValue<int>();
@@ -2776,6 +2785,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         pp->locallab.spots.at(index).clarisoft = clarisoft->getValue();
         pp->locallab.spots.at(index).origlc = origlc->get_active();
         pp->locallab.spots.at(index).wavgradl = wavgradl->get_active();
+        pp->locallab.spots.at(index).sigmalc2 = sigmalc2->getValue();
         pp->locallab.spots.at(index).strwav = strwav->getValue();
         pp->locallab.spots.at(index).angwav = angwav->getValue();
         pp->locallab.spots.at(index).wavedg = wavedg->get_active();
@@ -2856,6 +2866,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         lcamount->setDefault(defSpot.lcamount);
         lcdarkness->setDefault(defSpot.lcdarkness);
         lclightness->setDefault(defSpot.lclightness);
+        sigmalc->setDefault(defSpot.sigmalc);
         levelwav->setDefault((double)defSpot.levelwav);
         csThreshold->setDefault<int>(defSpot.csthreshold);
         residcont->setDefault(defSpot.residcont);
@@ -2868,6 +2879,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         clarilres->setDefault(defSpot.clarilres);
         claricres->setDefault(defSpot.claricres);
         clarisoft->setDefault(defSpot.clarisoft);
+        sigmalc2->setDefault(defSpot.sigmalc2);
         strwav->setDefault(defSpot.strwav);
         angwav->setDefault(defSpot.angwav);
         strengthw->setDefault(defSpot.strengthw);
@@ -2928,6 +2940,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablclightness,
                                        lclightness->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sigmalc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmalc,
+                                       sigmalc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3005,6 +3024,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabclarisoft,
                                        clarisoft->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sigmalc2) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmalc2,
+                                       sigmalc2->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3540,6 +3566,7 @@ void LocallabContrast::updateContrastGUI1()
         lcamount->show();
         lcdarkness->show();
         lclightness->show();
+        sigmalc->hide();
         LocalcurveEditorwav->hide();
         levelwav->hide();
         csThreshold->hide();
@@ -3551,6 +3578,7 @@ void LocallabContrast::updateContrastGUI1()
         residhithr->hide();
         shresFrame->hide();
         clariFrame->hide();
+        sigmalc2->hide();
         strwav->hide();
         angwav->hide();
         strengthw->hide();
@@ -3586,6 +3614,7 @@ void LocallabContrast::updateContrastGUI1()
         lcamount->hide();
         lcdarkness->hide();
         lclightness->hide();
+        sigmalc->show();
         LocalcurveEditorwav->show();
         levelwav->show();
         csThreshold->show();
@@ -3597,6 +3626,7 @@ void LocallabContrast::updateContrastGUI1()
         residhithr->show();
         shresFrame->show();
         clariFrame->show();
+        sigmalc2->show();
         strwav->show();
         angwav->show();
         strengthw->show();
