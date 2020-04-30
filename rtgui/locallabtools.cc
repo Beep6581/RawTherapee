@@ -4925,7 +4925,8 @@ void LocallabSoft::read(const rtengine::procparams::ProcParams* pp, const Params
             streng->setValue((double)pp->locallab.spots.at(index).streng);
         } else {
             softMethod->set_active(0);
-            streng->setValue(1.);
+           // streng->setValue(1.);
+            streng->setValue((double)pp->locallab.spots.at(index).streng);
         }
 
         sensisf->setValue((double)pp->locallab.spots.at(index).sensisf);
