@@ -1335,6 +1335,7 @@ IPTCPANEL_TITLE;Title
 IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 IPTCPANEL_TRANSREFERENCE;Job ID
 IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+LOCAL_HELP;Help Local Adjustments
 MAIN_BUTTON_FULLSCREEN;Fullscreen
 MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
