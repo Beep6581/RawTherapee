@@ -411,6 +411,7 @@ function CreateDmg {
     
     # Zip disk image for redistribution
     msg "Zipping disk image for redistribution:"
+    rm *dmg.zip
     mkdir "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder"
         ditto {"${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}.dmg","rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder"
     zip -r "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}" "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder/"
