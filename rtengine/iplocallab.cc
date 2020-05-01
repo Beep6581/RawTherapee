@@ -8704,7 +8704,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 return;
             }
 
-            if (wavcurvelev && radlevblur > 0.f) {
+            if (wavcurvelev && radlevblur > 0.f && chromablu > 0.f) {
                 wavcont(lp, tmp, *wdspota, templevela, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
             }
 
@@ -8759,7 +8759,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 return;
             }
 
-            if (wavcurvelev && radlevblur > 0.f) {
+            if (wavcurvelev && radlevblur > 0.f && chromablu > 0.f) {
                 wavcont(lp, tmp, *wdspotb, templevelb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
             }
 

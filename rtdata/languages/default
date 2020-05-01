@@ -2325,6 +2325,7 @@ TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
 TP_LOCALLAB_CHROMALEV;Chroma levels
 TP_LOCALLAB_CHROMABLU;Chroma levels
+TP_LOCALLAB_CHROMABLU_TOOLTIP;Acts as an amplifier-reducer action compare to settings of luma.\nUnder 1 reduce, above 1 amplifie
 TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_CHRRT;Chroma
