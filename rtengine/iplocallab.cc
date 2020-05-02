@@ -456,6 +456,7 @@ struct local_params {
     float residshathr;
     float residhi;
     float residhithr;
+    bool blwh;
 
 };
 
@@ -1253,6 +1254,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.residshathr = locallab.spots.at(sp).residshathr;
     lp.residhi = locallab.spots.at(sp).residhi;
     lp.residhithr = locallab.spots.at(sp).residhithr;
+    lp.blwh = locallab.spots.at(sp).blwh;
 
 }
 
@@ -6467,7 +6469,6 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     int bfwr = bfw;
     bool reduH = false;
     bool reduW = false;
-
     if (lp.blurcolmask >= 0.25f  && lp.fftColorMask  && call == 2) {
         optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, reduH, reduW, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
     }
@@ -6738,6 +6739,10 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     cli = bufexpfin->L[y][x] - original->L[y + ystart][x + xstart];
                     cla = bufexpfin->a[y][x] - original->a[y + ystart][x + xstart];
                     clb = bufexpfin->b[y][x] - original->b[y + ystart][x + xstart];
+                }
+                if(lp.blwh) {
+                    cla = 0.f;
+                    clb = 0.f;
                 }
 
                 // const float previewint = settings->previewselection;

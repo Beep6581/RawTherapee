@@ -413,6 +413,7 @@ public:
         bool transitweak;
         bool transitgrad;
         bool avoid;
+        bool blwh;
         bool recurs;
         bool laplac;
         bool deltae;

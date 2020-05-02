@@ -985,6 +985,7 @@ struct LocallabParams {
         double transitweak;
         double transitgrad;
         bool avoid;
+        bool blwh;
         bool recurs;
         bool laplac;
         bool deltae;
