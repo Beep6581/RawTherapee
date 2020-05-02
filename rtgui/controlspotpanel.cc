@@ -346,6 +346,9 @@ ControlSpotPanel::ControlSpotPanel():
     if (complexsoft < 2) {
         artifBox->pack_start(*thresh_);
     }
+    if (showtooltip) {
+        blwh_->set_tooltip_text(M("TP_LOCALLAB_BLWH_TOOLTIP"));
+    }
 
     artifBox->pack_start(*iter_);
     artifBox->pack_start(*balan_);
