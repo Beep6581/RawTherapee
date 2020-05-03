@@ -423,6 +423,7 @@ public:
         // Color & Light
         bool visicolor;
         bool expcolor;
+        bool complexcolor;
         bool curvactiv;
         bool lightness;
         bool contrast;
@@ -485,6 +486,7 @@ public:
         // Exposure
         bool visiexpose;
         bool expexpose;
+        bool complexexpose;
         bool expcomp;
         bool hlcompr;
         bool hlcomprthresh;
@@ -527,6 +529,7 @@ public:
         // Shadow highlight
         bool visishadhigh;
         bool expshadhigh;
+        bool complexshadhigh;
         bool shMethod;
         bool multsh[6];
         bool highlights;
@@ -558,6 +561,7 @@ public:
         // Vibrance
         bool visivibrance;
         bool expvibrance;
+        bool complexvibrance;
         bool saturated;
         bool pastels;
         bool warm;
@@ -585,6 +589,7 @@ public:
         // Soft Light
         bool visisoft;
         bool expsoft;
+        bool complexsoft;
         bool streng;
         bool sensisf;
         bool laplace;
@@ -592,6 +597,7 @@ public:
         // Blur & Noise
         bool visiblur;
         bool expblur;
+        bool complexblur;
         bool radius;
         bool strength;
         bool sensibn;
@@ -641,6 +647,7 @@ public:
         // Tone Mapping
         bool visitonemap;
         bool exptonemap;
+        bool complextonemap;
         bool stren;
         bool gamma;
         bool estop;
@@ -666,6 +673,7 @@ public:
         // Retinex
         bool visireti;
         bool expreti;
+        bool complexreti;
         bool retinexMethod;
         bool str;
         bool chrrt;
@@ -703,6 +711,7 @@ public:
         // Sharpening
         bool visisharp;
         bool expsharp;
+        bool complexsharp;
         bool sharcontrast;
         bool sharradius;
         bool sharamount;
@@ -714,6 +723,7 @@ public:
         // Local Contrast
         bool visicontrast;
         bool expcontrast;
+        bool complexcontrast;
         bool lcradius;
         bool lcamount;
         bool lcdarkness;
@@ -784,6 +794,7 @@ public:
         // Contrast by detail levels
         bool visicbdl;
         bool expcbdl;
+        bool complexcbdl;
         bool mult[6];
         bool chromacbdl;
         bool threshold;

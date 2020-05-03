@@ -995,6 +995,7 @@ struct LocallabParams {
         // Color & Light
         bool visicolor;
         bool expcolor;
+        int complexcolor;
         bool curvactiv;
         int lightness;
         int contrast;
@@ -1057,6 +1058,7 @@ struct LocallabParams {
         // Exposure
         bool visiexpose;
         bool expexpose;
+        int complexexpose;
         double expcomp;
         int hlcompr;
         int hlcomprthresh;
@@ -1099,6 +1101,7 @@ struct LocallabParams {
         // Shadow highlight
         bool visishadhigh;
         bool expshadhigh;
+        int complexshadhigh;
         Glib::ustring shMethod; // std, tone
         int multsh[5];
         int highlights;
@@ -1130,6 +1133,7 @@ struct LocallabParams {
         // Vibrance
         bool visivibrance;
         bool expvibrance;
+        int complexvibrance;
         int saturated;
         int pastels;
         int warm;
@@ -1157,6 +1161,7 @@ struct LocallabParams {
         // Soft Light
         bool visisoft;
         bool expsoft;
+        int complexsoft;
         int streng;
         int sensisf;
         double laplace;
@@ -1164,6 +1169,7 @@ struct LocallabParams {
         // Blur & Noise
         bool visiblur;
         bool expblur;
+        int complexblur;
         double radius;
         int strength;
         int sensibn;
@@ -1213,6 +1219,7 @@ struct LocallabParams {
         // Tone Mapping
         bool visitonemap;
         bool exptonemap;
+        int complextonemap;
         double stren;
         double gamma;
         double estop;
@@ -1238,6 +1245,7 @@ struct LocallabParams {
         // Retinex
         bool visireti;
         bool expreti;
+        int complexreti;
         Glib::ustring retinexMethod; // low, uni, high
         double str;
         double chrrt;
@@ -1275,6 +1283,7 @@ struct LocallabParams {
         // Sharpening
         bool visisharp;
         bool expsharp;
+        int complexsharp;
         int sharcontrast;
         double sharradius;
         int sharamount;
@@ -1286,6 +1295,7 @@ struct LocallabParams {
         // Local Contrast
         bool visicontrast;
         bool expcontrast;
+        int complexcontrast;
         int lcradius;
         double lcamount;
         double lcdarkness;
@@ -1356,6 +1366,7 @@ struct LocallabParams {
         // Contrast by detail levels
         bool visicbdl;
         bool expcbdl;
+        int complexcbdl;
         double mult[6];
         double chromacbdl;
         double threshold;

@@ -1157,6 +1157,8 @@ HISTORY_MSG_916;Local - Residual wavelet shadows
 HISTORY_MSG_917;Local - Residual wavelet shadows threshold
 HISTORY_MSG_918;Local - Residual wavelet highlights
 HISTORY_MSG_919;Local - Residual wavelet highlights threshold
+HISTORY_MSG_920;Local - Tool complexity mode
+HISTORY_MSG_921;Local - Tool complexity mode
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
@@ -2545,6 +2547,8 @@ TP_LOCALLAB_MERTWO;Substract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_MLABEL;Restored datas Min=%1 Max=%2 (Clip - Offset)
 TP_LOCALLAB_MLABEL_TOOLTIP;'Should be' near min=0 max=32768 but others values are possible.\nYou can act on Clip Restored datas and Offset to normalize.\n\nRestored image with no mixture.
+TP_LOCALLAB_MODE_EXPERT;Expert
+TP_LOCALLAB_MODE_NORMAL;Normal
 TP_LOCALLAB_MRFIV;Background
 TP_LOCALLAB_MRFOU;Previous Spot
 TP_LOCALLAB_MRONE;None

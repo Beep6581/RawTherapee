@@ -49,21 +49,29 @@ class LocallabTool:
     public AdjusterListener
 {
 protected:
+    // LocallabTool mode enumeration
+    enum modeType {
+        Expert = 0,
+        Normal = 1
+    };
+
     // LocallabTool parameters
+    bool needMode;
     bool isLocActivated;
     Glib::ustring spotName;
     LocallabToolListener* locToolListener;
 
     // LocallabTool generic widgets
     MyExpander* exp;
+    MyComboBoxText* const complexity;
 
-    sigc::connection enaExpConn;
+    sigc::connection enaExpConn, complexityConn;
 
     IdleRegister idle_register;
 
 public:
     // Locallab tool constructor/destructor
-    LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false);
+    LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, bool needMode = true);
     virtual ~LocallabTool();
 
     // Getter for Locallab tool expander
@@ -142,8 +150,13 @@ private:
     // Tool expander event function
     void foldThemAll(GdkEventButton* event);
 
+    // Complexity mode event function
+    void complexityModeChanged();
+
     // To be implemented
     virtual void enabledChanged() {};
+    virtual void convertParamToNormal() {}; // Only necessary when using mode
+    virtual void updateGUIToMode(const modeType new_type) {}; // Only necessary when using mode
 };
 
 /* ==== LocallabColor ==== */
@@ -207,8 +220,10 @@ private:
     FlatCurveEditor* const CCmaskshape;
     FlatCurveEditor* const LLmaskshape;
     FlatCurveEditor* const HHmaskshape;
+    Gtk::Frame* const struFrame;
     Adjuster* const strumaskcol;
     Gtk::CheckButton* const toolcol;
+    Gtk::Frame* const blurFrame;
     Gtk::CheckButton* const fftColorMask;
     Adjuster* const contcol;
     Adjuster* const blurcol;
@@ -254,6 +269,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -355,6 +372,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -435,6 +454,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -514,6 +535,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -557,6 +580,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void softMethodChanged();
     void showmasksoftMethodChanged();
@@ -654,6 +679,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -724,6 +751,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -812,6 +841,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -864,6 +895,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void inversshaChanged();
     void showmasksharMethodChanged();
@@ -993,6 +1026,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -1074,6 +1109,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
