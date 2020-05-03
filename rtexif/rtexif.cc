@@ -1510,8 +1510,6 @@ int Tag::toInt (int ofs, TagType astype) const
         return attrib->interpreter->toInt (this, ofs, astype);
     }
 
-    int a;
-
     if (astype == INVALID) {
         astype = type;
     }
@@ -1537,10 +1535,15 @@ int Tag::toInt (int ofs, TagType astype) const
         case LONG:
             return (int)sget4 (value + ofs, getOrder());
 
-        case SRATIONAL:
-        case RATIONAL:
-            a = (int)sget4 (value + ofs + 4, getOrder());
+        case SRATIONAL: {
+            int a = (int)sget4 (value + ofs + 4, getOrder());
             return a == 0 ? 0 : (int)sget4 (value + ofs, getOrder()) / a;
+        }
+
+        case RATIONAL: {
+            uint32_t a = (uint32_t)sget4 (value + ofs + 4, getOrder());
+            return a == 0 ? 0 : (uint32_t)sget4 (value + ofs, getOrder()) / a;
+        }
 
         case FLOAT:
             return (int)toDouble (ofs);
@@ -1589,10 +1592,14 @@ double Tag::toDouble (int ofs) const
             return (double) ((int)sget4 (value + ofs, getOrder()));
 
         case SRATIONAL:
-        case RATIONAL:
             ud = (int)sget4 (value + ofs, getOrder());
             dd = (int)sget4 (value + ofs + 4, getOrder());
-            return dd == 0. ? 0. : (double)ud / (double)dd;
+            return dd == 0. ? 0. : ud / dd;
+
+        case RATIONAL:
+            ud = (uint32_t)sget4 (value + ofs, getOrder());
+            dd = (uint32_t)sget4 (value + ofs + 4, getOrder());
+            return dd == 0. ? 0. : ud / dd;
 
         case FLOAT:
             conv.i = sget4 (value + ofs, getOrder());
@@ -1735,8 +1742,11 @@ void Tag::toString (char* buffer, int ofs) const
                 break;
 
             case SRATIONAL:
-            case RATIONAL:
                 sprintf (b, "%d/%d", (int)sget4 (value + 8 * i + ofs, getOrder()), (int)sget4 (value + 8 * i + ofs + 4, getOrder()));
+                break;
+
+            case RATIONAL:
+                sprintf (b, "%u/%u", (uint32_t)sget4 (value + 8 * i + ofs, getOrder()), (uint32_t)sget4 (value + 8 * i + ofs + 4, getOrder()));
                 break;
 
             case FLOAT:
