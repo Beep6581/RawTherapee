@@ -43,7 +43,7 @@ class ToolBar;
  *   - handling the thumbnail toolbar,
  *   - monitoring the directory (for any change)
  */
-class FileCatalog : public Gtk::VBox,
+class FileCatalog final : public Gtk::VBox,
     public PreviewLoaderListener,
     public FilterPanelListener,
     public FileBrowserListener,
@@ -123,6 +123,9 @@ private:
 
     Gtk::Button* zoomInButton;
     Gtk::Button* zoomOutButton;
+
+    RTImage* progressImage;
+    Gtk::Label* progressLabel;
 
     MyMutex dirEFSMutex;
     ExifFilterSettings dirEFS;

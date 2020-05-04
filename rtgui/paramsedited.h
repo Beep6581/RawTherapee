@@ -275,6 +275,7 @@ struct ColorAppearanceParamsEdited {
     bool ybscen;
     bool badpixsl;
     bool wbmodel;
+    bool illum;
     bool algo;
     bool jlight;
     bool qbright;
@@ -290,10 +291,12 @@ struct ColorAppearanceParamsEdited {
     bool datacie;
     bool tonecie;
     bool tempout;
+    bool autotempout;
     bool greenout;
     bool ybout;
     bool tempsc;
     bool greensc;
+    bool presetcat02;
 };
 
 struct DirPyrDenoiseParamsEdited {
@@ -365,6 +368,7 @@ struct CoarseTransformParamsEdited {
 };
 
 struct CommonTransformParamsEdited {
+    bool method;
     bool autofill;
 };
 
@@ -501,7 +505,10 @@ struct WaveletParamsEdited {
     bool cbenab;
     bool lipst;
     bool Medgreinf;
+    bool ushamethod;
     bool avoid;
+    bool showmask;
+    bool oldsh;
     bool tmr;
     bool c[9];
     bool ch[9];
@@ -518,10 +525,17 @@ struct WaveletParamsEdited {
     bool Tilesmethod;
     bool daubcoeffmethod;
     bool Dirmethod;
+    bool sigma;
+    bool offset;
+    bool lowthr;
     bool rescon;
     bool resconH;
     bool reschro;
+    bool resblur;
+    bool resblurc;
     bool tmrs;
+    bool edgs;
+    bool scale;
     bool gamma;
     bool sup;
     bool sky;
@@ -537,21 +551,26 @@ struct WaveletParamsEdited {
     bool chroma;
     bool contrast;
     bool edgrad;
+    bool edgeffect;
     bool edgval;
     bool edgthresh;
     bool thr;
     bool thrH;
+    bool radius;
     bool skinprotect;
     bool hueskin;
     bool hueskin2;
     bool hllev;
     bool bllev;
     bool edgcont;
+    bool chrwav;
+    bool bluwav;
     bool level0noise;
     bool level1noise;
     bool level2noise;
     bool level3noise;
     bool ccwcurve;
+    bool blcurve;
     bool opacityCurveBY;
     bool opacityCurveRG;
     bool opacityCurveW;
@@ -567,13 +586,23 @@ struct WaveletParamsEdited {
     bool bluemed;
     bool greenhigh;
     bool bluehigh;
+    bool ballum;
+    bool balchrom;
+    bool chromfi;
+    bool chromco;
+    bool mergeL;
+    bool mergeC;
+    bool softrad;
+    bool softradend;
     bool expcontrast;
     bool expchroma;
     bool expedge;
+    bool expbl;
     bool expresid;
     bool expfinal;
     bool exptoning;
     bool expnoise;
+    bool expclari;
 };
 
 struct DirPyrEqualizerParamsEdited {
@@ -698,6 +727,7 @@ struct FilmNegativeParamsEdited {
     bool redRatio;
     bool greenExp;
     bool blueRatio;
+    bool baseValues;
 
     bool isUnchanged() const;
 };

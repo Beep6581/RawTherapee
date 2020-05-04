@@ -23,11 +23,17 @@
 #include <string>
 #include <vector>
 
-#include <glibmm/ustring.h>
 
 #include <libiptcdata/iptc-data.h>
 
 #include "imageio.h"
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtexif
 {
@@ -38,7 +44,7 @@ class TagDirectory;
 namespace rtengine
 {
 
-class FrameData
+class FrameData final
 {
 
 protected:
@@ -95,7 +101,7 @@ public:
     int getRating () const;
 };
 
-class FramesData : public FramesMetaData {
+class FramesData final : public FramesMetaData {
 private:
     // frame's root IFD, can be a file root IFD or a SUB-IFD
     std::vector<std::unique_ptr<FrameData>> frames;

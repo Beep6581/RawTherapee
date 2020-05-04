@@ -25,7 +25,7 @@
 #include "toolpanel.h"
 #include "../rtexif/rtexif.h"
 
-class ExifPanel :
+class ExifPanel final :
     public Gtk::VBox,
     public ToolPanel
 {

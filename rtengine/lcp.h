@@ -54,7 +54,6 @@ public:
     LCPModelCommon();
 
     bool empty() const;  // is it empty
-    void print() const;  // printf all values
     void merge(const LCPModelCommon& a, const LCPModelCommon& b, float facA);
     void prepareParams(
         int fullWidth,
@@ -106,7 +105,6 @@ public:
         LCPModelCommon *pCorr3
     ) const; // Interpolates between the persModels frames
 
-    void print() const;
 
 //private:
     // Common data

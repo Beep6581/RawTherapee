@@ -609,6 +609,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
         ipc->setImageTypeListener (this);
+        ipc->setFilmNegListener (filmNegative);
         flatfield->setShortcutPath (Glib::path_get_dirname (ipc->getInitialImage()->getFileName()));
 
         icm->setRawMeta (raw, (const rtengine::FramesData*)pMetaData);
@@ -632,40 +633,52 @@ void ToolPanelCoordinator::closeImage ()
 
 void ToolPanelCoordinator::closeAllTools()
 {
-
-    for (size_t i = 0; i < options.tpOpen.size(); i++)
+    for (size_t i = 0; i < options.tpOpen.size(); ++i) {
         if (i < expList.size()) {
-            expList.at (i)->set_expanded (false);
+            expList[i]->set_expanded(false);
         }
+    }
 }
 
 void ToolPanelCoordinator::openAllTools()
 {
-
-    for (size_t i = 0; i < options.tpOpen.size(); i++)
+    for (size_t i = 0; i < options.tpOpen.size(); ++i) {
         if (i < expList.size()) {
-            expList.at (i)->set_expanded (true);
+            expList[i]->set_expanded(true);
         }
+    }
 }
 
 void ToolPanelCoordinator::updateToolState()
 {
-
-    for (size_t i = 0; i < options.tpOpen.size(); i++)
-        if (i < expList.size()) {
-            expList.at (i)->set_expanded (options.tpOpen.at (i));
+    if (options.tpOpen.empty()) {
+        for (auto expander : expList) {
+            expander->set_expanded(false);
         }
+
+        wavelet->updateToolState({});
+        retinex->updateToolState({});
+
+        return;
+    }
+
+    for (size_t i = 0; i < options.tpOpen.size(); ++i) {
+        if (i < expList.size()) {
+            expList[i]->set_expanded(options.tpOpen[i]);
+        }
+    }
 
     if (options.tpOpen.size() > expList.size()) {
-        size_t sizeWavelet = options.tpOpen.size() - expList.size();
+        const size_t sizeWavelet = options.tpOpen.size() - expList.size();
+
         std::vector<int> temp;
 
-        for (size_t i = 0; i < sizeWavelet; i++) {
-            temp.push_back (options.tpOpen.at (i + expList.size()));
+        for (size_t i = 0; i < sizeWavelet; ++i) {
+            temp.push_back(options.tpOpen[i + expList.size()]);
         }
 
-        wavelet->updateToolState (temp);
-        retinex->updateToolState (temp);
+        wavelet->updateToolState(temp);
+        retinex->updateToolState(temp);
     }
 }
 
@@ -1060,4 +1073,9 @@ void ToolPanelCoordinator::setEditProvider (EditDataProvider *provider)
 bool ToolPanelCoordinator::getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps)
 {
     return ipc && ipc->getFilmNegativeExponents(spotA.x, spotA.y, spotB.x, spotB.y, newExps);
+}
+
+bool ToolPanelCoordinator::getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues)
+{
+    return ipc && ipc->getRawSpotValues(spot.x, spot.y, spotSize, rawValues);
 }

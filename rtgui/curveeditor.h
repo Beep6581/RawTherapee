@@ -18,8 +18,8 @@
  */
 #pragma once
 
-#include "coloredbar.h"
 #include "editcallbacks.h"
+#include "guiutils.h"
 
 #include "../rtengine/diagonalcurvetypes.h"
 #include "../rtengine/flatcurvetypes.h"
@@ -28,6 +28,7 @@
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
+class ColorProvider;
 class PopUpToggleButton;
 
 /*

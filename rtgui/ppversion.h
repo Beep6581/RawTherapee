@@ -1,11 +1,13 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 346
+#define PPVERSION 347
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   347  2019-11-17
+        added special values in filmNegative for backwards compatibility with previous channel scaling method
    346  2019-01-01
         changed microcontrast uniformity
    345  2018-10-21

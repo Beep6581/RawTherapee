@@ -139,7 +139,7 @@ BENCHFUN
                     auto &hm = hmask[i];
                     auto &cm = cmask[i];
                     auto &lm = lmask[i];
-                    float blend = LIM01((hm ? hm->getVal(h) : 1.f) * (cm ? cm->getVal(c) : 1.f) * (lm ? lm->getVal(l) : 1.f));
+                    float blend = LIM01((hm ? hm->getVal(h) : 1.0) * (cm ? cm->getVal(c) : 1.0) * (lm ? lm->getVal(l) : 1.0));
                     Lmask[i][y][x] = abmask[i][y][x] = blend;
                 }
             }
@@ -147,8 +147,8 @@ BENCHFUN
     }
 
     for (int i = begin_idx; i < end_idx; ++i) {
-        float blur = params->colorToning.labregions[i].maskBlur;
-        blur = blur < 0.f ? -1.f/blur : 1.f + blur;
+        double blur = params->colorToning.labregions[i].maskBlur;
+        blur = blur < 0.0 ? -1.0 / blur : 1.0 + blur;
         int r1 = max(int(4 / scale * blur + 0.5), 1);
         int r2 = max(int(25 / scale * blur + 0.5), 1);
         rtengine::guidedFilter(guide, abmask[i], abmask[i], r1, 0.001, multiThread);
@@ -188,7 +188,7 @@ BENCHFUN
         auto &r = params->colorToning.labregions[i];
         abca[i] = abcoord(r.a);
         abcb[i] = abcoord(r.b);
-        rs[i] = 1.f + r.saturation / (SGN(r.saturation) > 0 ? 50.f : 100.f);
+        rs[i] = 1.0 + r.saturation / (SGN(r.saturation) > 0 ? 50.0 : 100.0);
         slope[i] = r.slope;
         offset[i] = r.offset;
         power[i] = r.power;

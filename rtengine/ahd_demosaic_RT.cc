@@ -52,13 +52,13 @@ void RawImageSource::ahd_demosaic()
 
     int width = W, height = H;
 
-    constexpr double xyz_rgb[3][3] = {        /* XYZ from RGB */
-        { 0.412453, 0.357580, 0.180423 },
-        { 0.212671, 0.715160, 0.072169 },
-        { 0.019334, 0.119193, 0.950227 }
+    constexpr float xyz_rgb[3][3] = {        /* XYZ from RGB */
+        { 0.412453f, 0.357580f, 0.180423f },
+        { 0.212671f, 0.715160f, 0.072169f },
+        { 0.019334f, 0.119193f, 0.950227f }
     };
 
-    constexpr float d65_white[3] = { 0.950456, 1, 1.088754 };
+    constexpr float d65_white[3] = { 0.950456f, 1.f, 1.088754f };
 
     double progress = 0.0;
 
@@ -76,7 +76,7 @@ void RawImageSource::ahd_demosaic()
         for (unsigned int j = 0; j < 3; j++) {
             xyz_cam[i][j] = 0;
             for (int k = 0; k < 3; k++) {
-                xyz_cam[i][j] += xyz_rgb[i][k] * imatrices.rgb_cam[k][j] / d65_white[i];
+                xyz_cam[i][j] += xyz_rgb[i][k] * static_cast<float>(imatrices.rgb_cam[k][j]) / d65_white[i];
             }
         }
     }

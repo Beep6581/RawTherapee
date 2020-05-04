@@ -171,7 +171,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
                             }
 
                         for (int c = 0; c < 4; c++) {
-                            dsumthr[c] += sum[c];
+                            dsumthr[c] += static_cast<double>(sum[c]);
                         }
 
 skip_block2:
@@ -195,7 +195,7 @@ skip_block2:
             }
 
             for(int c = 0; c < 4; c++) {
-                dsum[c] -= cblack_[c] * dsum[c + 4];
+                dsum[c] -= static_cast<double>(cblack_[c]) * dsum[c + 4];
             }
 
         } else if(isXtrans()) {
@@ -241,7 +241,7 @@ skip_block2:
                             }
 
                         for (int c = 0; c < 8; c++) {
-                            dsumthr[c] += sum[c];
+                            dsumthr[c] += static_cast<double>(sum[c]);
                         }
 
 skip_block3:
@@ -365,18 +365,14 @@ skip_block:
     }
 
     for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
-        if (dmin > pre_mul_[c]) {
-            dmin = pre_mul_[c];
-        }
-
-        if (dmax < pre_mul_[c]) {
-            dmax = pre_mul_[c];
-        }
+        dmin = rtengine::min<double>(dmin, pre_mul_[c]);
+        dmax = rtengine::max<double>(dmax, pre_mul_[c]);
     }
 
     for (c = 0; c < 4; c++) {
         int sat = this->get_white(c) - cblack_[c];
-        scale_mul_[c] = (pre_mul_[c] /= dmax) * 65535.0 / sat;
+        pre_mul_[c] /= static_cast<float>(dmax);
+        scale_mul_[c] = pre_mul_[c] * 65535.f / sat;
     }
 
     if (settings->verbose) {
@@ -387,25 +383,30 @@ skip_block:
                 asn[c] = 0;
             }
 
-            if (asn[c] > dmax) {
+            if (asn[c] > static_cast<float>(dmax)) {
                 dmax = asn[c];
             }
         }
 
         for (c = 0; c < 4; c++) {
-            asn[c] /= dmax;
+            asn[c] /= static_cast<float>(dmax);
         }
 
         printf("cam_mul:[%f %f %f %f], AsShotNeutral:[%f %f %f %f]\n",
-               cam_mul[0], cam_mul[1], cam_mul[2], cam_mul[3], asn[0], asn[1], asn[2], asn[3]);
+               static_cast<double>(cam_mul[0]), static_cast<double>(cam_mul[1]),
+               static_cast<double>(cam_mul[2]), static_cast<double>(cam_mul[3]),
+               static_cast<double>(asn[0]), static_cast<double>(asn[1]), static_cast<double>(asn[2]), static_cast<double>(asn[3]));
         printf("pre_mul:[%f %f %f %f], scale_mul:[%f %f %f %f], cblack:[%f %f %f %f]\n",
-               pre_mul_[0], pre_mul_[1], pre_mul_[2], pre_mul_[3],
-               scale_mul_[0], scale_mul_[1], scale_mul_[2], scale_mul_[3],
-               cblack_[0], cblack_[1], cblack_[2], cblack_[3]);
+               static_cast<double>(pre_mul_[0]), static_cast<double>(pre_mul_[1]),
+               static_cast<double>(pre_mul_[2]), static_cast<double>(pre_mul_[3]),
+               static_cast<double>(scale_mul_[0]), static_cast<double>(scale_mul_[1]),
+               static_cast<double>(scale_mul_[2]), static_cast<double>(scale_mul_[3]),
+               static_cast<double>(cblack_[0]), static_cast<double>(cblack_[1]),
+               static_cast<double>(cblack_[2]), static_cast<double>(cblack_[3]));
         printf("rgb_cam:[ [ %f %f %f], [%f %f %f], [%f %f %f] ]%s\n",
-               rgb_cam[0][0], rgb_cam[1][0], rgb_cam[2][0],
-               rgb_cam[0][1], rgb_cam[1][1], rgb_cam[2][1],
-               rgb_cam[0][2], rgb_cam[1][2], rgb_cam[2][2],
+               static_cast<double>(rgb_cam[0][0]), static_cast<double>(rgb_cam[1][0]), static_cast<double>(rgb_cam[2][0]),
+               static_cast<double>(rgb_cam[0][1]), static_cast<double>(rgb_cam[1][1]), static_cast<double>(rgb_cam[2][1]),
+               static_cast<double>(rgb_cam[0][2]), static_cast<double>(rgb_cam[1][2]), static_cast<double>(rgb_cam[2][2]),
                (!this->isBayer()) ? " (not bayer)" : "");
 
     }
@@ -523,7 +524,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         }
 
         CameraConstantsStore* ccs = CameraConstantsStore::getInstance();
-        CameraConst *cc = ccs->get(make, model);
+        const CameraConst *cc = ccs->get(make, model);
 
         if (raw_image) {
             if (cc && cc->has_rawCrop()) {
@@ -850,40 +851,16 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
     } table[] = {
 
         {
-            "Canon EOS 5D Mark III", -1, 0x3a98,  /* RT */
-            { 6722, -635, -963, -4287, 12460, 2028, -908, 2162, 5668 }
-        },
-        {
             "Canon EOS 5D", -1, 0xe6c, /* RT */
             { 6319, -793, -614, -5809, 13342, 2738, -1132, 1559, 7971 }
-        },
-        {
-            "Canon EOS 6D", -1, 0x3c82,
-            { 7034, -804, -1014, -4420, 12564, 2058, -851, 1994, 5758 }
-        },
-        {
-            "Canon EOS 7D", -1, 0x3510, /* RT - Colin Walker */
-            { 5962, -171, -732, -4189, 12307, 2099, -911, 1981, 6304 }
         },
         {
             "Canon EOS 20D", -1, 0xfff,  /* RT */
             { 7590, -1646, -673, -4697, 12411, 2568, -627, 1118, 7295 }
         },
         {
-            "Canon EOS 40D", -1, 0x3f60,  /* RT */
-            { 6070, -531, -883, -5763, 13647, 2315, -1533, 2582, 6801 }
-        },
-        {
-            "Canon EOS 60D", -1, 0x2ff7, /* RT - Colin Walker */
-            { 5678, -179, -718, -4389, 12381, 2243, -869, 1819, 6380 }
-        },
-        {
             "Canon EOS 450D", -1, 0x390d, /* RT */
             { 6246, -1272, -523, -5075, 12357, 3075, -1035, 1825, 7333 }
-        },
-        {
-            "Canon EOS 550D", -1, 0x3dd7, /* RT - Lebedev*/
-            { 6519, -772, -703, -4994, 12737, 2519, -1387, 2492, 6175 }
         },
         {
             "Canon EOS-1D Mark III", 0, 0x3bb0,  /* RT */
@@ -894,17 +871,9 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
             { 12535, -5030, -796, -2711, 10134, 3006, -413, 1605, 5264 }
         },
         {
-            "Canon PowerShot G12", -1, -1,  /* RT */
-            { 12222, -4097, -1380, -2876, 11016, 2130, -888, 1630, 4434 }
-        },
-
-
-        {
             "Fujifilm X100", -1, -1,  /* RT - Colin Walker */
             { 10841, -3288, -807, -4652, 12552, 2344, -642, 1355, 7206 }
         },
-
-
         {
             "Nikon D200", -1, 0xfbc, /* RT */
             { 8498, -2633, -295, -5423, 12869, 2860, -777, 1077, 8124 }
@@ -918,31 +887,13 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
             { 7729, -2212, -481, -5709, 13148, 2858, -1295, 1908, 8936 }
         },
         {
-            "Nikon D3S", -1, -1, /* RT */
-            { 8792, -2663, -344, -5221, 12764, 2752, -1491, 2165, 8121 }
-        },
-        {
             "Nikon D5200", -1, -1, // color matrix copied from D5200 DNG D65 matrix
             { 8322, -3112, -1047, -6367, 14342, 2179, -988, 1638, 6394 }
-        },
-        {
-            "Nikon D7000", -1, -1, /* RT - Tanveer(tsk1979) */
-            { 7530, -1942, -255, -4318, 11390, 3362, -926, 1694, 7649 }
         },
         {
             "Nikon D7100", -1, -1, // color matrix and WP copied from D7100 DNG D65 matrix
             { 8322, -3112, -1047, -6367, 14342, 2179, -988, 1638, 6394 }
         },
-        {
-            "Nikon D700", -1, -1, /* RT */
-            { 8364, -2503, -352, -6307, 14026, 2492, -1134, 1512, 8156 }
-        },
-        {
-            "Nikon COOLPIX A", -1, 0x3e00, // color matrix and WP copied from "COOLPIX A" DNG D65 matrix
-            { 8198, -2239, -724, -4871, 12389, 2798, -1043, 205, 7181 }
-        },
-
-
         {
             "Olympus E-30", -1, 0xfbc,  /* RT - Colin Walker */
             { 8510, -2355, -693, -4819, 12520, 2578, -1029, 2067, 7752 }
@@ -983,69 +934,14 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
             "Olympus XZ-1", -1, -1, /* RT - Colin Walker */
             { 8665, -2247, -762, -2424, 10372, 2382, -1011, 2286, 5189 }
         },
-
-
-        /* since Dcraw_v9.21 Panasonic BlackLevel is read from exif (tags 0x001c BlackLevelRed, 0x001d BlackLevelGreen, 0x001e BlackLevelBlue
-          and we define here the needed offset of around 15. The total BL is BL + BLoffset (cblack + black)  */
-
-        {
-            "Panasonic DMC-FZ150", 15, 0xfd2,  /* RT */
-            { 10435, -3208, -72, -2293, 10506, 2067, -486, 1725, 4682 }
-        },
-        {
-            "Panasonic DMC-G10", 15, 0xf50, /* RT - Colin Walker - variable WL 3920 - 4080 */
-            { 8310, -1811, -960, -4941, 12990, 2151, -1378, 2468, 6860 }
-        },
-        {
-            "Panasonic DMC-G1", 15, 0xf50,  /* RT - Colin Walker - variable WL 3920 - 4080 */
-            { 7477, -1615, -651, -5016, 12769, 2506, -1380, 2475, 7240 }
-        },
-        {
-            "Panasonic DMC-G2", 15, 0xf50,  /* RT - Colin Walker - variable WL 3920 - 4080  */
-            { 8310, -1811, -960, -4941, 12990, 2151, -1378, 2468, 6860 }
-        },
-        {
-            "Panasonic DMC-G3", 15, 0xfdc,  /* RT - Colin Walker - WL 4060 */
-            { 6051, -1406, -671, -4015, 11505, 2868, -1654, 2667, 6219 }
-        },
-        {
-            "Panasonic DMC-G5", 15, 0xfdc,   /* RT - WL 4060 */
-            { 7122, -2092, -419, -4643, 11769, 3283, -1363, 2413, 5944 }
-        },
-        {
-            "Panasonic DMC-GF1", 15, 0xf50, /* RT - Colin Walker - Variable WL 3920 - 4080 */
-            { 7863, -2080, -668, -4623, 12331, 2578, -1020, 2066, 7266 }
-        },
-        {
-            "Panasonic DMC-GF2", 15, 0xfd2, /* RT - Colin Walker - WL 4050 */
-            { 7694, -1791, -745, -4917, 12818, 2332, -1221, 2322, 7197 }
-        },
-        {
-            "Panasonic DMC-GF3", 15, 0xfd2, /* RT - Colin Walker - WL 4050 */
-            { 8074, -1846, -861, -5026, 12999, 2239, -1320, 2375, 7422 }
-        },
-        {
-            "Panasonic DMC-GH1", 15, 0xf5a,  /* RT - Colin Walker - variable WL 3930 - 4080 */
-            { 6360, -1557, -375, -4201, 11504, 3086, -1378, 2518, 5843 }
-        },
-        {
-            "Panasonic DMC-GH2", 15, 0xf5a,  /* RT - Colin Walker - variable WL 3930 - 4080 */
-//        { 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 } }, disabled due to problems with underwater WB
-            { 7780, -2410, -806, -3913, 11724, 2484, -1018, 2390, 5298 }
-        }, // dcraw original
-
         {
             "Pentax K200D", -1, -1,  /* RT */
             { 10962, -4428, -542, -5486, 13023, 2748, -569, 842, 8390 }
         },
-
-
         {
             "Leica Camera AG M9 Digital Camera", -1, -1,  /* RT */
             { 7181, -1706, -55, -3557, 11409, 2450, -621, 2072, 7533 }
         },
-
-
         {
             "SONY NEX-3", 128 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT - Colin Walker */
             { 5145, -741, -123, -4915, 12310, 2945, -794, 1489, 6906 }
@@ -1103,7 +999,7 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
     {
         // test if we have any information in the camera constants store, if so we take that.
         rtengine::CameraConstantsStore* ccs = rtengine::CameraConstantsStore::getInstance();
-        rtengine::CameraConst *cc = ccs->get(make, model);
+        const rtengine::CameraConst *cc = ccs->get(make, model);
 
         if (cc) {
             if (RT_blacklevel_from_constant == ThreeValBool::T) {

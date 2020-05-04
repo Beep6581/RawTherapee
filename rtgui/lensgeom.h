@@ -29,6 +29,7 @@ class LensGeometry final :
 {
 
 protected:
+    MyComboBoxText*     method;
     Gtk::Button*        autoCrop;
     LensGeomListener*   rlistener;
     Gtk::CheckButton*   fill;
@@ -36,6 +37,7 @@ protected:
     sigc::connection    fillConn;
     ToolParamBlock*     packBox;
 
+    rtengine::ProcEvent EvTransMethod;
 public:
 
     LensGeometry ();
@@ -50,6 +52,7 @@ public:
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setBatchMode   (bool batchMode) override;
 
+    void methodChanged();
     void fillPressed            ();
     void autoCropPressed        ();
     void setLensGeomListener    (LensGeomListener* l)

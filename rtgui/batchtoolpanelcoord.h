@@ -28,7 +28,7 @@
 
 class FilePanel;
 class Thumbnail;
-class BatchToolPanelCoordinator :
+class BatchToolPanelCoordinator final :
     public ToolPanelCoordinator,
     public FileSelectionChangeListener,
     public BatchPParamsChangeListener,
