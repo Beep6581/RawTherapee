@@ -87,7 +87,16 @@ void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
     }
     //GDK_SCROLL_SMOOTH can come in as many events with small deltas, don't quantize these to +/-1.0 so trackpads work well
     double coef;
+    double scroll_unit;
+    if (arrangement == TB_Vertical) {
+        scroll_unit = vscroll.get_adjustment()->get_step_increment();
+    } else {
+        scroll_unit = hscroll.get_adjustment()->get_step_increment();
+    }
     if(direction == GDK_SCROLL_SMOOTH) {
+#ifdef GDK_WINDOWING_QUARTZ
+        scroll_unit = 1.0;
+#endif
         coef = delta;
     } else if (direction == GDK_SCROLL_DOWN) {
         coef = +1.0;
@@ -99,7 +108,7 @@ void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
     if (direction == GDK_SCROLL_UP || direction == GDK_SCROLL_DOWN || direction == GDK_SCROLL_SMOOTH) {
         if (arrangement == TB_Vertical) {
             double currValue = vscroll.get_value();
-            double newValue = rtengine::LIM<double>(currValue + coef * vscroll.get_adjustment()->get_step_increment(),
+            double newValue = rtengine::LIM<double>(currValue + coef * scroll_unit,
                                                     vscroll.get_adjustment()->get_lower (),
                                                     vscroll.get_adjustment()->get_upper());
             if (newValue != currValue) {
@@ -107,7 +116,7 @@ void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
             }
         } else {
             double currValue = hscroll.get_value();
-            double newValue = rtengine::LIM<double>(currValue + coef * hscroll.get_adjustment()->get_step_increment(),
+            double newValue = rtengine::LIM<double>(currValue + coef * scroll_unit,
                                                     hscroll.get_adjustment()->get_lower(),
                                                     hscroll.get_adjustment()->get_upper());
             if (newValue != currValue) {

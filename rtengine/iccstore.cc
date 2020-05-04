@@ -43,7 +43,6 @@
 #include "color.h"
 
 #include "cJSON.h"
-#define inkc_constant 0x696E6B43
 
 namespace
 {
@@ -636,7 +635,7 @@ public:
 
         MyMutex::MyLock lock(mutex);
 
-        for (const auto profile : fileProfiles) {
+        for (const auto& profile : fileProfiles) {
             if (
                 (
                     type == ICCStore::ProfileType::MONITOR

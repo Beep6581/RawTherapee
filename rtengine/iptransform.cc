@@ -807,11 +807,11 @@ static void calcGradientParams (int oW, int oH, const GradientParams& gradient, 
     gp.ta = tan (gradient_angle);
     gp.xc = w * gradient_center_x;
     gp.yc = h * gradient_center_y;
-    gp.ys = sqrt ((float)h * h + (float)w * w) * (gradient_span / cos (gradient_angle));
-    gp.ys_inv = 1.0 / gp.ys;
-    gp.top_edge_0 = gp.yc - gp.ys / 2.0;
+    gp.ys = rtengine::norm2(static_cast<double>(h), static_cast<double>(w)) * (gradient_span / cos(gradient_angle));
+    gp.ys_inv = 1.f / gp.ys;
+    gp.top_edge_0 = gp.yc - gp.ys / 2.f;
 
-    if (gp.ys < 1.0 / h) {
+    if (h * gp.ys < 1.f) {
         gp.ys_inv = 0;
         gp.ys = 0;
     }
@@ -841,7 +841,7 @@ static float calcGradientFactor (const struct grad_params& gp, int x, int y)
                 val = 1.f - pow3 (xcosf (val));
             }
 
-            return gp.scale + val * (1.0 - gp.scale);
+            return gp.scale + val * (1.f - gp.scale);
         }
     } else {
         int gy = gp.transpose ? x : y;
@@ -865,7 +865,7 @@ static float calcGradientFactor (const struct grad_params& gp, int x, int y)
                 val = 1.f - pow3 (xcosf (val));
             }
 
-            return gp.scale + val * (1.0 - gp.scale);
+            return gp.scale + val * (1.f - gp.scale);
         }
     }
 }
@@ -884,7 +884,7 @@ static void calcPCVignetteParams (int fW, int fH, int oW, int oH, const PCVignet
 {
 
     // ellipse formula: (x/a)^2 + (y/b)^2 = 1
-    double roundness = pcvignette.roundness / 100.0;
+    float roundness = pcvignette.roundness / 100.f;
     pcv.feather = pcvignette.feather / 100.0;
 
     if (crop.enabled) {
@@ -901,42 +901,40 @@ static void calcPCVignetteParams (int fW, int fH, int oW, int oH, const PCVignet
         pcv.h = oH;
     }
 
-    pcv.fadeout_mul = 1.0 / (0.05 * sqrtf (oW * oW + oH * oH));
+    pcv.fadeout_mul = 20.0 / rtengine::norm2(static_cast<double>(oW), static_cast<double>(oW));
     float short_side = (pcv.w < pcv.h) ? pcv.w : pcv.h;
     float long_side =  (pcv.w > pcv.h) ? pcv.w : pcv.h;
 
     pcv.sep = 2;
     pcv.sepmix = 0;
-    pcv.oe_a = sqrt (2.0) * long_side * 0.5;
+    pcv.oe_a = std::sqrt(2.f) * long_side * 0.5f;
     pcv.oe_b = pcv.oe_a * short_side / long_side;
-    pcv.ie_mul = (1.0 / sqrt (2.0)) * (1.0 - pcv.feather);
+    pcv.ie_mul = (1.f - pcv.feather) / std::sqrt(2.f);
     pcv.is_super_ellipse_mode = false;
     pcv.is_portrait = (pcv.w < pcv.h);
 
-    if (roundness < 0.5) {
+    if (roundness < 0.5f) {
         // make super-ellipse of higher and higher degree
         pcv.is_super_ellipse_mode = true;
-        float sepf = 2 + 4 * powf (1.0 - 2 * roundness, 1.3); // gamma 1.3 used to balance the effect in the 0.0...0.5 roundness range
+        float sepf = 2 + 4 * std::pow(1.f - 2 * roundness, 1.3f); // gamma 1.3 used to balance the effect in the 0.0...0.5 roundness range
         pcv.sep = ((int)sepf) & ~0x1;
-        pcv.sepmix = (sepf - pcv.sep) * 0.5; // 0.0 to 1.0
-        pcv.oe1_a = powf (2.0, 1.0 / pcv.sep) * long_side * 0.5;
+        pcv.sepmix = (sepf - pcv.sep) * 0.5f; // 0.0 to 1.0
+        pcv.oe1_a = std::pow(2.f, 1.f / pcv.sep) * long_side * 0.5f;
         pcv.oe1_b = pcv.oe1_a * short_side / long_side;
-        pcv.ie1_mul = (1.0 / powf (2.0, 1.0 / pcv.sep)) * (1.0 - pcv.feather);
-        pcv.oe2_a = powf (2.0, 1.0 / (pcv.sep + 2)) * long_side * 0.5;
+        pcv.ie1_mul = (1.f - pcv.feather) / std::pow(2.f, 1.f / pcv.sep);
+        pcv.oe2_a = std::pow(2.f, 1.f / (pcv.sep + 2)) * long_side * 0.5f;
         pcv.oe2_b = pcv.oe2_a * short_side / long_side;
-        pcv.ie2_mul = (1.0 / powf (2.0, 1.0 / (pcv.sep + 2))) * (1.0 - pcv.feather);
-    }
-
-    if (roundness > 0.5) {
+        pcv.ie2_mul = (1.f - pcv.feather) / std::pow(2.f, 1.f / (pcv.sep + 2));
+    } else if (roundness > 0.5f) {
         // scale from fitted ellipse towards circle
-        float rad = sqrtf (pcv.w * pcv.w + pcv.h * pcv.h) / 2.0;
+        float rad = rtengine::norm2(static_cast<float>(pcv.w), static_cast<float>(pcv.h)) / 2.f;
         float diff_a = rad - pcv.oe_a;
         float diff_b = rad - pcv.oe_b;
-        pcv.oe_a = pcv.oe_a + diff_a * 2 * (roundness - 0.5);
-        pcv.oe_b = pcv.oe_b + diff_b * 2 * (roundness - 0.5);
+        pcv.oe_a = pcv.oe_a + diff_a * 2 * (roundness - 0.5f);
+        pcv.oe_b = pcv.oe_b + diff_b * 2 * (roundness - 0.5f);
     }
 
-    pcv.scale = powf (2, -pcvignette.strength);
+    pcv.scale = std::pow(2, -pcvignette.strength);
 
     if (pcvignette.strength >= 6.0) {
         pcv.scale = 0.0;
@@ -1072,23 +1070,23 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
                 double r = sqrt (vig_x_d * vig_x_d + vig_y_d * vig_y_d);
 
                 if (darkening) {
-                    factor /= std::max (v + mul * tanh (b * (maxRadius - r) / maxRadius), 0.001);
+                    factor /= std::max (v + mul * tanh(b * (maxRadius - r) / maxRadius), 0.001);
                 } else {
-                    factor = v + mul * tanh (b * (maxRadius - r) / maxRadius);
+                    factor = v + mul * tanh(b * (maxRadius - r) / maxRadius);
                 }
             }
 
             if (applyGradient) {
-                factor *= calcGradientFactor (gp, cx + x, cy + y);
+                factor *= static_cast<double>(calcGradientFactor(gp, cx + x, cy + y));
             }
 
             if (applyPCVignetting) {
-                factor *= calcPCVignetteFactor (pcv, cx + x, cy + y);
+                factor *= static_cast<double>(calcPCVignetteFactor(pcv, cx + x, cy + y));
             }
 
-            transformed->r (y, x) = original->r (y, x) * factor;
-            transformed->g (y, x) = original->g (y, x) * factor;
-            transformed->b (y, x) = original->b (y, x) * factor;
+            transformed->r(y, x) = static_cast<double>(original->r(y, x)) * factor;
+            transformed->g(y, x) = static_cast<double>(original->g(y, x)) * factor;
+            transformed->b(y, x) = static_cast<double>(original->b(y, x)) * factor;
         }
     }
 }
@@ -1299,11 +1297,11 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     }
 
                     if (enableGradient) {
-                        vignmul *= calcGradientFactor(gp, cx + x, cy + y);
+                        vignmul *= static_cast<double>(calcGradientFactor(gp, cx + x, cy + y));
                     }
 
                     if (enablePCVignetting) {
-                        vignmul *= calcPCVignetteFactor(pcv, cx + x, cy + y);
+                        vignmul *= static_cast<double>(calcPCVignetteFactor(pcv, cx + x, cy + y));
                     }
 
                     if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {

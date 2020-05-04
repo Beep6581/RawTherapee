@@ -24,7 +24,7 @@
 namespace rtengine
 {
 
-class ProcessingJobImpl : public ProcessingJob
+class ProcessingJobImpl final : public ProcessingJob
 {
 
 public:

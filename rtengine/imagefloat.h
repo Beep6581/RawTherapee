@@ -34,7 +34,7 @@ class LabImage;
 /*
  * Image type used by most tools; expected range: [0.0 ; 65535.0]
  */
-class Imagefloat : public IImagefloat, public ImageIO
+class Imagefloat final : public IImagefloat, public ImageIO
 {
 
 public:

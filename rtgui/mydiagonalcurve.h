@@ -41,7 +41,7 @@ public:
     std::vector<double> x, y;   // in case of parametric curves the curve parameters are stored in vector x. In other cases these vectors store the coordinates of the bullets.
 };
 
-class MyDiagonalCurve : public MyCurve
+class MyDiagonalCurve final : public MyCurve
 {
 private:
     IdleRegister idle_register;

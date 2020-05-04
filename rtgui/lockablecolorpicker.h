@@ -33,7 +33,7 @@ public:
     virtual void switchPickerVisibility(bool isVisible) = 0;
 };
 
-class LockableColorPicker : BackBuffer
+class LockableColorPicker final : BackBuffer
 {
 public:
     enum class Size {

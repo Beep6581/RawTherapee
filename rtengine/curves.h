@@ -22,20 +22,22 @@
 #include <string>
 #include <vector>
 
-#include <glibmm/ustring.h>
-
 #include "rt_math.h"
 #include "flatcurvetypes.h"
 #include "diagonalcurvetypes.h"
-#include "pipettebuffer.h"
 #include "noncopyable.h"
 #include "LUT.h"
 #include "sleef.h"
 #define CURVES_MIN_POLY_POINTS  1000
 
-#include "rt_math.h"
-
 #define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 using namespace std;
 
@@ -292,11 +294,11 @@ public:
     }
     static inline float gamma2            (float x)
     {
-        return x <= 0.00304 ? x * 12.92310 : 1.055 * expf(logf(x) / sRGBGammaCurve) - 0.055;
+        return x <= 0.00304f ? x * 12.92310f : 1.055f * expf(logf(x) / static_cast<float>(sRGBGammaCurve)) - 0.055f;
     }
     static inline float igamma2           (float x)
     {
-        return x <= 0.03928 ? x / 12.92310 : expf(logf((x + 0.055) / 1.055) * sRGBGammaCurve);
+        return x <= 0.03928f ? x / 12.92310f : expf(logf((x + 0.055f) / 1.055f) * static_cast<float>(sRGBGammaCurve));
     }
     // gamma function with adjustable parameters
     static inline double gamma            (double x, double gamma, double start, double slope, double mul, double add)
@@ -327,8 +329,8 @@ public:
 #endif
     static inline float hlcurve (const float exp_scale, const float comp, const float hlrange, float level)
     {
-        if (comp > 0.0) {
-            float val = level + (hlrange - 65536.0);
+        if (comp > 0.f) {
+            float val = level + (hlrange - 65536.f);
 
             if(val == 0.0f) { // to avoid division by zero
                 val = 0.000001f;
@@ -337,7 +339,7 @@ public:
             float Y = val * exp_scale / hlrange;
             Y *= comp;
 
-            if(Y <= -1.0) { // to avoid log(<=0)
+            if(Y <= -1.f) { // to avoid log(<=0)
                 Y = -.999999f;
             }
 
@@ -454,7 +456,7 @@ public:
     virtual bool   isIdentity () const = 0;
 };
 
-class DiagonalCurve : public Curve
+class DiagonalCurve final : public Curve
 {
 
 protected:
@@ -476,7 +478,7 @@ public:
     };
 };
 
-class FlatCurve : public Curve, public rtengine::NonCopyable
+class FlatCurve final : public Curve, public rtengine::NonCopyable
 {
 
 private:
@@ -624,6 +626,30 @@ public:
         return lutWavCurve;
     }
 };
+
+class Wavblcurve
+{
+private:
+    LUTf lutblcurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+public:
+    virtual ~Wavblcurve() {};
+    Wavblcurve();
+
+    void Reset();
+    //  void Set(const std::vector<double> &curvePoints, bool &opautili);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
+    {
+        return lutblcurve[index];
+    }
+
+    operator bool (void) const
+    {
+        return lutblcurve;
+    }
+};
+
 
 class WavOpacityCurveRG
 {
@@ -940,7 +966,7 @@ private:
     float calculateToneCurveContrastValue() const;
 public:
     static void init();
-    void initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const;
+    void initApplyState(PerceptualToneCurveState & state, const Glib::ustring& workingSpace) const;
     void BatchApply(const size_t start, const size_t end, float *r, float *g, float *b, const PerceptualToneCurveState &state) const;
 };
 

@@ -27,7 +27,6 @@
 #include "imagesource.h"
 #include "improcfun.h"
 #include "LUT.h"
-#include "procevents.h"
 #include "rtengine.h"
 
 #include "../rtgui/threadutils.h"
@@ -55,7 +54,7 @@ class Crop;
   * but using this class' LUT and other precomputed parameters. The main preview area is displaying a non framed Crop object,
   * while detail windows are framed Crop objects.
   */
-class ImProcCoordinator : public StagedImageProcessor
+class ImProcCoordinator final : public StagedImageProcessor
 {
 
     friend class Crop;
@@ -74,9 +73,13 @@ protected:
 
     ColorTemp currWB;
     ColorTemp autoWB;
+    ColorTemp currWBloc;
+    ColorTemp autoWBloc;
+    ColorTemp currWBitc;
 
     double lastAwbEqual;
     double lastAwbTempBias;
+    Glib::ustring lastAwbauto;
 
     Glib::ustring monitorProfile;
     RenderingIntent monitorIntent;
@@ -136,6 +139,7 @@ protected:
     NoiseCurve noiseLCurve;
     NoiseCurve noiseCCurve;
     WavCurve wavCLVCurve;
+    Wavblcurve wavblcurve;
     WavOpacityCurveRG waOpacityCurveRG;
     WavOpacityCurveBY waOpacityCurveBY;
     WavOpacityCurveW waOpacityCurveW;
@@ -171,6 +175,7 @@ protected:
     AutoRadiusListener *pdSharpenAutoRadiusListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
+    FilmNegListener *filmNegListener;
 
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
@@ -277,6 +282,7 @@ public:
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
     bool getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) override;
+    bool getRawSpotValues(int x, int y, int spotSize, std::array<float, 3>& rawValues) override;
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;
     bool getHighQualComputed() override;
     void setHighQualComputed() override;
@@ -383,6 +389,11 @@ public:
     void setImageTypeListener  (ImageTypeListener* itl) override
     {
         imageTypeListener = itl;
+    }
+
+    void setFilmNegListener  (FilmNegListener* fnl) override
+    {
+        filmNegListener = fnl;
     }
 
     void saveInputICCReference (const Glib::ustring& fname, bool apply_wb) override;

@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _NIKONATTRIBS_
-#define _NIKONATTRIBS_
 
 #include <cstdio>
 #include <cstring>
@@ -70,7 +68,7 @@ public:
         int a = t->getValue()[ofs];
 
         if (a > 1) {
-            int i = int (double (powf (2.f, float (a) / 12.f - 5.f)) * 100.f + 0.5f);
+            int i = static_cast<double>(powf(2.f, float (a) / 12.f - 5.f)) * 100.0 + 0.5;
             return i;
         } else {
             return 0;
@@ -627,6 +625,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"02 48 65 65 24 24 02 00", "Sigma Macro 90mm f/2.8"},
     {"03 43 5C 81 35 35 02 00", "Soligor AF C/D Zoom UMCS 70-210mm 1:4.5"},
     {"03 48 5C 81 30 30 02 00", "AF Zoom-Nikkor 70-210mm f/4"},
+    {"03 54 68 68 0C 0C 00 00", "Zeiss Otus 1.4/100"},
     {"04 48 3C 3C 24 24 03 00", "AF Nikkor 28mm f/2.8"},
     {"05 54 50 50 0C 0C 04 00", "AF Nikkor 50mm f/1.4"},
     {"06 3F 68 68 2C 2C 06 00", "Cosina AF 100mm f/3.5 Macro"},
@@ -906,12 +905,14 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"7F 48 2B 5C 24 34 1C 06", "Sigma 17-70mm f/2.8-4.5 DC Macro Asp. IF"},
     {"7F 48 2D 50 24 24 1C 06", "Sigma 18-50mm f/2.8 EX DC Macro"},
     {"80 48 1A 1A 24 24 85 06", "AF DX Fisheye-Nikkor 10.5mm f/2.8G ED"},
+    {"80 48 1C 29 24 24 7A 06", "Tokina atx-i 11-16mm f/2.8 CF"},
     {"81 34 76 A6 38 40 4B 0E", "Sigma 150-600mm f/5-6.3 DG OS HSM | S"},
     {"81 54 80 80 18 18 86 0E", "AF-S VR Nikkor 200mm f/2G IF-ED"},
     {"82 34 76 A6 38 40 4B 0E", "Sigma 150-600mm f/5-6.3 DG OS HSM | C"},
     {"82 48 8E 8E 24 24 87 0E", "AF-S VR Nikkor 300mm f/2.8G IF-ED"},
     {"83 00 B0 B0 5A 5A 88 04", "FSA-L2, EDG 65, 800mm f/13 G"},
     {"88 54 50 50 0C 0C 4B 06", "Sigma 50mm f/1.4 DG HSM | A"},
+    {"89 30 2D 80 2C 40 4B 0E", "Sigma 18-200mm f/3.5-6.3 DC Macro OS HS | C"},
     {"89 3C 53 80 30 3C 8B 06", "AF-S DX Zoom-Nikkor 55-200mm f/4-5.6G ED"},
     {"8A 3C 37 6A 30 30 4B 0E", "Sigma 24-105mm f/4 DG OS HSM"},
     {"8A 54 6A 6A 24 24 8C 0E", "AF-S VR Micro-Nikkor 105mm f/2.8G IF-ED"},
@@ -955,6 +956,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"9E 38 11 29 34 3C 4B 06", "Sigma 8-16mm f/4.5-5.6 DC HSM"},
     {"9E 40 2D 6A 2C 3C A0 0E", "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED"},
     {"9F 37 50 A0 34 40 4B 0E", "Sigma 50-500mm f/4.5-6.3 DG OS HSM"},
+    {"9F 48 48 48 24 24 A1 06", "Yongnuo YN40mm f/2.8N"},
     {"9F 58 44 44 14 14 A1 06", "AF-S DX Nikkor 35mm f/1.8G"},
     {"A0 40 2D 53 2C 3C CA 0E", "AF-P DX Nikkor 18-55mm f/3.5-5.6G VR"},
     {"A0 40 2D 53 2C 3C CA 8E", "AF-P DX Nikkor 18-55mm f/3.5-5.6G"},
@@ -1007,6 +1009,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"AA 48 88 A4 3C 3C D5 4E", "AF-S Nikkor 180-400mm f/4E TC1.4 FL ED VR + 1.4x TC"},
     {"AB 3C A0 A0 30 30 C6 4E", "AF-S Nikkor 500mm f/4E FL ED VR"},
     {"AB 44 5C 8E 34 3C D6 0E", "AF-P Nikkor 70-300mm f/4.5-5.6E ED VR"},
+    {"AB 44 5C 8E 34 3C D6 4E", "AF-P Nikkor 70-300mm f/4.5-5.6E ED VR"},
     {"AB 44 5C 8E 34 3C D6 CE", "AF-P Nikkor 70-300mm f/4.5-5.6E ED VR"},
     {"AC 38 53 8E 34 3C AE 0E", "AF-S DX Nikkor 55-300mm f/4.5-5.6G ED VR"},
     {"AC 3C A6 A6 30 30 C7 4E", "AF-S Nikkor 600mm f/4E FL ED VR"},
@@ -1038,6 +1041,8 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"C1 48 24 37 24 24 4B 46", "Sigma 14-24mm f/2.8 DG HSM | A"},
     {"C2 4C 24 24 14 14 4B 06", "Sigma 14mm f/1.8 DG HSM | A"},
     {"C3 34 68 98 38 40 4B 4E", "Sigma 100-400mm f/5-6.3 DG OS HSM | C"},
+    {"C8 54 44 44 0D 0D DF 46", "Tamron SP 35mm f/1.4 Di USD (F045)"},
+    {"C8 54 62 62 0C 0C 4B 06", "Sigma 85mm f/1.4 DG HSM | A"},
     {"C8 54 62 62 0C 0C 4B 46", "Sigma 85mm f/1.4 DG HSM | A"},
     {"C9 48 37 5C 24 24 4B 4E", "Sigma 24-70mm f/2.8 DG OS HSM | A"},
     {"CA 48 27 3E 24 24 DF 4E", "Tamron SP 15-30mm f/2.8 Di VC USD G2 (A041)"},
@@ -1051,21 +1056,22 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"DC 48 19 19 24 24 4B 06", "Sigma 10mm f/2.8 EX DC HSM Fisheye"},
     {"DE 54 50 50 0C 0C 4B 06", "Sigma 50mm f/1.4 EX DG HSM"},
     {"E0 3C 5C 8E 30 3C 4B 06", "Sigma 70-300mm f/4-5.6 APO DG Macro HSM"},
-    {"E0 40 2D 98 2C 41 DF 4E", "Tamron AF 18-400mm f/3.5-6.3 Di II VC HLD (B028)"},
+    {"E0 40 2D 98 2C 41 DF 4E", "Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)"},
     {"E1 40 19 36 2C 35 DF 4E", "Tamron 10-24mm f/3.5-4.5 Di II VC HLD (B023)"},
     {"E1 58 37 37 14 14 1C 02", "Sigma 24mm f/1.8 EX DG Aspherical Macro"},
     {"E2 47 5C 80 24 24 DF 4E", "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)"},
     {"E3 40 76 A6 38 40 DF 4E", "Tamron SP 150-600mm f/5-6.3 Di VC USD G2"},
     {"E3 54 50 50 24 24 35 02", "Sigma Macro 50mm f/2.8 EX DG"},
     {"E4 54 64 64 24 24 DF 0E", "Tamron SP 90mm f/2.8 Di VC USD Macro 1:1 (F017)"},
+    {"E5 4C 62 62 14 14 C9 4E", "Tamron SP 85mm f/1.8 Di VC USD (F016)"},
     {"E5 54 6A 6A 24 24 35 02", "Sigma Macro 105mm f/2.8 EX DG"},
-    {"E6 40 2D 80 2C 40 DF 0E", "Tamron AF 18-200mm f/3.5-6.3 Di II VC (B018)"},
+    {"E6 40 2D 80 2C 40 DF 0E", "Tamron 18-200mm f/3.5-6.3 Di II VC (B018)"},
     {"E6 41 3C 8E 2C 40 1C 02", "Sigma 28-300mm f/3.5-6.3 DG Macro"},
     {"E7 4C 4C 4C 14 14 DF 0E", "Tamron SP 45mm f/1.8 Di VC USD (F013)"},
     {"E8 4C 44 44 14 14 DF 0E", "Tamron SP 35mm f/1.8 Di VC USD (F012)"},
     {"E9 48 27 3E 24 24 DF 0E", "Tamron SP 15-30mm f/2.8 Di VC USD (A012)"},
     {"E9 54 37 5C 24 24 1C 02", "Sigma 24-70mm f/2.8 EX DG Macro"},
-    {"EA 40 29 8E 2C 40 DF 0E", "Tamron AF 16-300mm f/3.5-6.3 Di II VC PZD (B016)"},
+    {"EA 40 29 8E 2C 40 DF 0E", "Tamron 16-300mm f/3.5-6.3 Di II VC PZD (B016)"},
     {"EA 48 27 27 24 24 1C 02", "Sigma 15mm f/2.8 EX Diagonal Fisheye"},
     {"EB 40 76 A6 38 40 DF 0E", "Tamron SP AF 150-600mm f/5-6.3 VC USD (A011)"},
     {"ED 40 2D 80 2C 40 4B 0E", "Sigma 18-200mm f/3.5-6.3 DC OS HSM"},
@@ -1076,6 +1082,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"F1 47 5C 8E 30 3C DF 0E", "Tamron SP 70-300mm f/4-5.6 Di VC USD (A005)"},
     {"F3 48 68 8E 30 30 4B 02", "Sigma APO 100-300mm f/4 EX IF HSM"},
     {"F3 54 2B 50 24 24 84 0E", "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical (IF) (B005)"},
+    {"F4 4C 7C 7C 2C 2C 4B 02", "Sigma APO Macro 180mm f/3.5 EX DG HSM"},
     {"F4 54 56 56 18 18 84 06", "Tamron SP AF 60mm f/2.0 Di II Macro 1:1 (G005)"},
     {"F5 40 2C 8A 2C 40 40 0E", "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical (IF) Macro (B003)"},
     {"F5 48 76 76 24 24 4B 06", "Sigma APO Macro 150mm f/2.8 EX DG HSM"},
@@ -1220,5 +1227,3 @@ const TagAttrib nikon3Attribs[] = {
 };
 
 }
-#endif
-
