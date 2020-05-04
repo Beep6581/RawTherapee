@@ -20,13 +20,10 @@
  *  2019 Pierre Cabrera <pierre.cab@gmail.com>
  */
 #include "locallab.h"
-#include "options.h"
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace procparams;
-
-extern Options options;
 
 /* ==== LocallabToolList ==== */
 LocallabToolList::LocallabToolList():
@@ -219,9 +216,6 @@ Locallab::Locallab():
 
 void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
-    // printf("Locallab read\n");
-    const int complexsoft = options.complexity;
-
     // Disable all listeners
     disableListener();
 
@@ -264,18 +258,14 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
         r->structexclu = pp->locallab.spots.at(i).structexclu;
 
-        if (complexsoft < 2) {
-            if (pp->locallab.spots.at(i).shapeMethod == "IND") {
-                r->shapeMethod = 0;
-            } else if (pp->locallab.spots.at(i).shapeMethod == "SYM") {
-                r->shapeMethod = 1;
-            } else if (pp->locallab.spots.at(i).shapeMethod == "INDSL") {
-                r->shapeMethod = 2;
-            } else {
-                r->shapeMethod = 3;
-            }
-        } else {
+        if (pp->locallab.spots.at(i).shapeMethod == "IND") {
             r->shapeMethod = 0;
+        } else if (pp->locallab.spots.at(i).shapeMethod == "SYM") {
+            r->shapeMethod = 1;
+        } else if (pp->locallab.spots.at(i).shapeMethod == "INDSL") {
+            r->shapeMethod = 2;
+        } else {
+            r->shapeMethod = 3;
         }
 
         r->locX = pp->locallab.spots.at(i).loc.at(0);

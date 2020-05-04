@@ -939,16 +939,10 @@ Gtk::Widget* Preferences::getGeneralPanel()
     complexitylocal = Gtk::manage(new Gtk::ComboBoxText());
     setExpandAlignProperties(complexitylocal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_EXP"));
-    complexitylocal->append(M("PREFERENCES_COMPLEXITY_CONF"));
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_NORM"));
-    complexitylocal->set_active(2);
-    Gtk::Label* complexitylocalRestartL = Gtk::manage(new Gtk::Label(Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")"));
-    setExpandAlignProperties(complexitylocalRestartL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    complexitylocal->set_active(1);
     workflowGrid->attach_next_to(*complexityL, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*complexitylocal, *curveBBoxPosC, Gtk::POS_BOTTOM, 1, 1);
-    workflowGrid->attach_next_to(*complexitylocalRestartL, *curveBBoxPosRestartL, Gtk::POS_BOTTOM, 1, 1);
-
-
 
     ckbHistogramPositionLeft = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_HISTOGRAMPOSITIONLEFT")));
     setExpandAlignProperties(ckbHistogramPositionLeft, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);

@@ -190,7 +190,22 @@ void LocallabTool::addLocallabTool(bool raiseEvent)
     exp->set_visible(true);
 
     // Raise event if required
-    if (raiseEvent) {
+    if (raiseEvent) { // Note: Event is only raised when a tool is added by user
+        if (needMode) {
+            // Set complexity mode according to chosen default one
+            complexityConn.block(true);
+            complexity->set_active(options.complexity);
+            complexityConn.block(false);
+
+            // Update GUI accordingly
+            if (complexity->get_active_row_number() == Normal) {
+                convertParamToNormal();
+                updateGUIToMode(Normal);
+            } else {
+                updateGUIToMode(Expert);
+            }
+        }
+
         if (listener) {
             listener->panelChanged(EvlocallabToolAdded,
                                    toolName + " (" + escapeHtmlChars(spotName) + ")");
