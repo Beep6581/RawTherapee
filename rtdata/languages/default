@@ -1157,8 +1157,11 @@ HISTORY_MSG_916;Local - Residual wavelet shadows
 HISTORY_MSG_917;Local - Residual wavelet shadows threshold
 HISTORY_MSG_918;Local - Residual wavelet highlights
 HISTORY_MSG_919;Local - Residual wavelet highlights threshold
-HISTORY_MSG_920;Local - Tool complexity mode
-HISTORY_MSG_921;Local - Tool complexity mode
+HISTORY_MSG_920;Local - Wavelet sigma LC
+HISTORY_MSG_921;Local - Wavelet Graduated sigma LC2
+HISTORY_MSG_922;Local - changes In Black and White
+HISTORY_MSG_923;Local - Tool complexity mode
+HISTORY_MSG_924;Local - Tool complexity mode
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
@@ -1335,6 +1338,7 @@ IPTCPANEL_TITLE;Title
 IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 IPTCPANEL_TRANSREFERENCE;Job ID
 IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+LOCAL_HELP;Help Local Adjustments
 MAIN_BUTTON_FULLSCREEN;Fullscreen
 MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
@@ -1549,7 +1553,7 @@ PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMMBPC;Black point compensation
-PREFERENCES_COMPLEXITYLOC;Complexity Local Adjustements
+PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustements
 PREFERENCES_COMPLEXITY_EXP;Expert
 PREFERENCES_COMPLEXITY_NORM;Normal
 PREFERENCES_CROP;Crop Editing
@@ -2299,6 +2303,8 @@ TP_LOCALLAB_BLMED;Median
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and without enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLSYM;Symmetric
+TP_LOCALLAB_BLWH;All changes forced in Black and White
+TP_LOCALLAB_BLWH_TOOLTIP;Force color change composante "a" and "b" to zero. 
 TP_LOCALLAB_SPOTNAME;New Spot
 TP_LOCALLAB_BLUFR;Smooth - Blur - Grain - Denoise
 TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n*Blur the background by a RT-spot fully covering the image (high values for scope and transition) - normal or inverse.\n*Isolate the foreground by one or more excluding RT-spot with the tools you want (increse scope), you can use a mask to enhance and amplify the effects.\n\nThis module can be used in additional noise reduction,including "median" and "Guided filter" 
@@ -2323,6 +2329,7 @@ TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
 TP_LOCALLAB_CHROMALEV;Chroma levels
 TP_LOCALLAB_CHROMABLU;Chroma levels
+TP_LOCALLAB_CHROMABLU_TOOLTIP;Acts as an amplifier-reducer action compare to settings of luma.\nUnder 1 reduce, above 1 amplifie
 TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_CHRRT;Chroma
@@ -2331,7 +2338,7 @@ TP_LOCALLAB_CLARICRES;Merge Chroma
 TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend & Soft images 
 TP_LOCALLAB_CLARILRES;Merge Luma
 TP_LOCALLAB_CLARISOFT;Soft radius
-TP_LOCALLAB_CLARISOFT_TOOLTIP;Enabled for Clarity & Sharp mask.\nContrast by level.\nLevel Dynamic Range Compression.\nDirectional contrast.\nGraduated filter local contrast
+TP_LOCALLAB_CLARISOFT_TOOLTIP;Enabled for Clarity and Sharp mask if Merge Luma different from zero.\n\nEnabled for all wavelets pyramid modules.\nDisabled if Soft radius = 0
 TP_LOCALLAB_CLARITYML;Clarity
 TP_LOCALLAB_CLARI_TOOLTIP;Under or equal level wavelet 4, 'Sharp mask' is enabled.\nAbove level wavelet 5 'Clarity' is enabled.\nUsefull if you use 'Level dynamic Range Compression'
 TP_LOCALLAB_CLIPTM;Clip Restored datas (gain)

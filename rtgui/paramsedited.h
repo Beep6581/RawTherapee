@@ -413,6 +413,7 @@ public:
         bool transitweak;
         bool transitgrad;
         bool avoid;
+        bool blwh;
         bool recurs;
         bool laplac;
         bool deltae;
@@ -728,6 +729,7 @@ public:
         bool lcamount;
         bool lcdarkness;
         bool lclightness;
+        bool sigmalc;
         bool levelwav;
         bool residcont;
         bool residsha;
@@ -751,6 +753,7 @@ public:
         bool clarilres;
         bool claricres;
         bool clarisoft;
+        bool sigmalc2;
         bool strwav;
         bool angwav;
         bool strengthw;

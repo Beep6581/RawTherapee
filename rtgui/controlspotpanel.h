@@ -64,6 +64,7 @@ public:
         double balanh;
         double colorde;
         bool avoid;
+        bool blwh;
         bool recurs;
         bool laplac;
         bool deltae;
@@ -208,6 +209,7 @@ private:
     void adjusterChanged(Adjuster* a, double newval);
 
     void avoidChanged();
+    void blwhChanged();
     void recursChanged();
     void laplacChanged();
     void deltaeChanged();
@@ -262,6 +264,7 @@ private:
         Gtk::TreeModelColumn<double> balanh;
         Gtk::TreeModelColumn<double> colorde;
         Gtk::TreeModelColumn<bool> avoid;
+        Gtk::TreeModelColumn<bool> blwh;
         Gtk::TreeModelColumn<bool> recurs;
         Gtk::TreeModelColumn<bool> laplac;
         Gtk::TreeModelColumn<bool> deltae;
@@ -346,6 +349,8 @@ private:
 
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;
+    Gtk::CheckButton* const blwh_;
+    sigc::connection blwhConn_;
     Gtk::CheckButton* const recurs_;
     sigc::connection recursConn_;
     Gtk::CheckButton* const laplac_;

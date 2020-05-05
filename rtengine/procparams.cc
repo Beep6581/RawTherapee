@@ -2530,6 +2530,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitweak(1.0),
     transitgrad(0.0),
     avoid(false),
+    blwh(false),
     recurs(false),
     laplac(false),
     deltae(true),
@@ -3346,6 +3347,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lcamount(0.0),
     lcdarkness(1.0),
     lclightness(1.0),
+    sigmalc(1.0),
     levelwav(4),
     residcont(0.0),
     residsha(0.0),
@@ -3362,13 +3364,14 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sigmadr(1.0),
     threswav(1.4),
     chromalev(1.0),
-    chromablu(1.0),
+    chromablu(0.0),
     sigmadc(1.0),
     deltad(0.0),
     fatres(0.0),
     clarilres(0.0),
     claricres(0.0),
     clarisoft(1.0),
+    sigmalc2(1.0),
     strwav(0.0),
     angwav(0.0),
     strengthw(0.0),
@@ -3380,7 +3383,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     thigw(0.0),
     edgw(60.0),
     basew(10.0),
-    sensilc(30),
+    sensilc(50),
     fftwlc(false),
     blurlc(true),
     wavblur(false),
@@ -3391,7 +3394,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     wavgradl(false),
     wavcompre(false),
     origlc(false),
-    localcontMethod("loc"),
+    localcontMethod("wav"),
     localedgMethod("thr"),
     localneiMethod("low"),
     locwavcurve{
@@ -3651,6 +3654,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && transitweak == other.transitweak
         && transitgrad == other.transitgrad
         && avoid == other.avoid
+        && blwh == other.blwh
         && recurs == other.recurs
         && laplac == other.laplac
         && deltae == other.deltae
@@ -3974,6 +3978,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lcamount == other.lcamount
         && lcdarkness == other.lcdarkness
         && lclightness == other.lclightness
+        && sigmalc == other.sigmalc
         && levelwav == other.levelwav
         && residcont == other.residcont
         && residsha == other.residsha
@@ -3997,6 +4002,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && clarilres == other.clarilres
         && claricres == other.claricres
         && clarisoft == other.clarisoft
+        && sigmalc2 == other.sigmalc2
         && strwav == other.strwav
         && angwav == other.angwav
         && strengthw == other.strengthw
@@ -5103,6 +5109,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->transitweak, "Locallab", "Transitweak_" + index_str, spot.transitweak, keyFile);
                 saveToKeyfile(!pedited || spot_edited->transitgrad, "Locallab", "Transitgrad_" + index_str, spot.transitgrad, keyFile);
                 saveToKeyfile(!pedited || spot_edited->avoid, "Locallab", "Avoid_" + index_str, spot.avoid, keyFile);
+                saveToKeyfile(!pedited || spot_edited->blwh, "Locallab", "Blwh_" + index_str, spot.blwh, keyFile);
                 saveToKeyfile(!pedited || spot_edited->recurs, "Locallab", "Recurs_" + index_str, spot.recurs, keyFile);
                 saveToKeyfile(!pedited || spot_edited->laplac, "Locallab", "Laplac_" + index_str, spot.laplac, keyFile);
                 saveToKeyfile(!pedited || spot_edited->deltae, "Locallab", "Deltae_" + index_str, spot.deltae, keyFile);
@@ -5429,6 +5436,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->lcamount, "Locallab", "Lcamount_" + index_str, spot.lcamount, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lcdarkness, "Locallab", "Lcdarkness_" + index_str, spot.lcdarkness, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lclightness, "Locallab", "Lclightness_" + index_str, spot.lclightness, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmalc, "Locallab", "Sigmalc_" + index_str, spot.sigmalc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->levelwav, "Locallab", "Levelwav_" + index_str, spot.levelwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residcont, "Locallab", "Residcont_" + index_str, spot.residcont, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residsha, "Locallab", "Residsha_" + index_str, spot.residsha, keyFile);
@@ -5452,6 +5460,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->clarilres, "Locallab", "ClariLres_" + index_str, spot.clarilres, keyFile);
                     saveToKeyfile(!pedited || spot_edited->claricres, "Locallab", "ClariCres_" + index_str, spot.claricres, keyFile);
                     saveToKeyfile(!pedited || spot_edited->clarisoft, "Locallab", "Clarisoft_" + index_str, spot.clarisoft, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmalc2, "Locallab", "Sigmalc2_" + index_str, spot.sigmalc2, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strwav, "Locallab", "Strwav_" + index_str, spot.strwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angwav, "Locallab", "Angwav_" + index_str, spot.angwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strengthw, "Locallab", "Strengthw_" + index_str, spot.strengthw, keyFile);
@@ -6704,6 +6713,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Transitweak_" + index_str, pedited, spot.transitweak, spotEdited.transitweak);
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + index_str, pedited, spot.transitgrad, spotEdited.transitgrad);
                 assignFromKeyfile(keyFile, "Locallab", "Avoid_" + index_str, pedited, spot.avoid, spotEdited.avoid);
+                assignFromKeyfile(keyFile, "Locallab", "Blwh_" + index_str, pedited, spot.blwh, spotEdited.blwh);
                 assignFromKeyfile(keyFile, "Locallab", "Recurs_" + index_str, pedited, spot.recurs, spotEdited.recurs);
                 assignFromKeyfile(keyFile, "Locallab", "Laplac_" + index_str, pedited, spot.laplac, spotEdited.laplac);
                 assignFromKeyfile(keyFile, "Locallab", "Deltae_" + index_str, pedited, spot.deltae, spotEdited.deltae);
@@ -7093,6 +7103,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lcamount_" + index_str, pedited, spot.lcamount, spotEdited.lcamount);
                 assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + index_str, pedited, spot.lcdarkness, spotEdited.lcdarkness);
                 assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + index_str, pedited, spot.lclightness, spotEdited.lclightness);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmalc_" + index_str, pedited, spot.sigmalc, spotEdited.sigmalc);
                 assignFromKeyfile(keyFile, "Locallab", "Levelwav_" + index_str, pedited, spot.levelwav, spotEdited.levelwav);
                 assignFromKeyfile(keyFile, "Locallab", "Residcont_" + index_str, pedited, spot.residcont, spotEdited.residcont);
                 assignFromKeyfile(keyFile, "Locallab", "Residsha_" + index_str, pedited, spot.residsha, spotEdited.residsha);
@@ -7116,6 +7127,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ClariLres_" + index_str, pedited, spot.clarilres, spotEdited.clarilres);
                 assignFromKeyfile(keyFile, "Locallab", "ClariCres_" + index_str, pedited, spot.claricres, spotEdited.claricres);
                 assignFromKeyfile(keyFile, "Locallab", "Clarisoft_" + index_str, pedited, spot.clarisoft, spotEdited.clarisoft);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmalc2_" + index_str, pedited, spot.sigmalc2, spotEdited.sigmalc2);
                 assignFromKeyfile(keyFile, "Locallab", "Strwav_" + index_str, pedited, spot.strwav, spotEdited.strwav);
                 assignFromKeyfile(keyFile, "Locallab", "Angwav_" + index_str, pedited, spot.angwav, spotEdited.angwav);
                 assignFromKeyfile(keyFile, "Locallab", "Strengthw_" + index_str, pedited, spot.strengthw, spotEdited.strengthw);

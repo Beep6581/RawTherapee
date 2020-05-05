@@ -368,7 +368,7 @@ void LocallabTool::complexityModeChanged()
         // Raise event with refreshing
         if (listener) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                    M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(spotName) + ")");
         }
     } else { // New selected mode is Expert one
         // Update GUI based on new mode
@@ -377,7 +377,7 @@ void LocallabTool::complexityModeChanged()
         // Raise event without refreshing
         if (listener) {
             listener->panelChanged(EvlocallabcomplexityWithoutRefresh,
-                    M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(spotName) + ")");
         }
     }
 }

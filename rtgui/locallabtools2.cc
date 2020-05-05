@@ -2045,6 +2045,7 @@ LocallabContrast::LocallabContrast():
     lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
     lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
     lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
+    sigmalc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     LocalcurveEditorwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
     wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
     levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
@@ -2057,7 +2058,7 @@ LocallabContrast::LocallabContrast():
     residshathr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHATHR"), 0., 100., 1., 30.))),
     residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
     residhithr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHITHR"), 0., 100., 1., 70.))),
-    sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 30))),
+    sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 50))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
     claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
@@ -2066,6 +2067,7 @@ LocallabContrast::LocallabContrast():
     expcontrastpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
     gradwavFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADWAVFRA")))),
     wavgradl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GRALWFRA")))),
+    sigmalc2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
     angwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
     edgFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EDGSHARPFRA")))),
@@ -2091,7 +2093,7 @@ LocallabContrast::LocallabContrast():
     wavblur(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLURLEVELFRA")))),
     levelblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELBLUR"), 0., 100., 0.5, 0.))),
     sigmabl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
-    chromablu(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMABLU"), 0.01, 5., 0.01, 1.))),
+    chromablu(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMABLU"), 0.0, 5., 0.1, 0.))),
     LocalcurveEditorwavlev(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVLEV"))),
     wavshapelev(static_cast<FlatCurveEditor*>(LocalcurveEditorwavlev->addCurve(CT_Flat, "", nullptr, false, false))),
     residblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDBLUR"), 0., 100., 0.5, 0.))),
@@ -2101,7 +2103,7 @@ LocallabContrast::LocallabContrast():
     wavcont(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CONTFRA")))),
     sigma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     offset(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFSETWAV"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    chromalev(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMALEV"), 0.01, 5., 0.01, 1.))),
+    chromalev(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMALEV"), 0.1, 5., 0.1, 1.))),
     LocalcurveEditorwavcon(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCON"))),
     wavshapecon(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcon->addCurve(CT_Flat, "", nullptr, false, false))),
     compreFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPREFRA")))),
@@ -2153,6 +2155,7 @@ LocallabContrast::LocallabContrast():
     lcdarkness->setAdjusterListener(this);
 
     lclightness->setAdjusterListener(this);
+    sigmalc->setAdjusterListener(this);
 
     LocalcurveEditorwav->setCurveListener(this);
 
@@ -2177,10 +2180,12 @@ LocallabContrast::LocallabContrast():
     LresTitleHBox->pack_start(*LresLabel, Gtk::PACK_EXPAND_WIDGET, 0);
     expresidpyr->setLabel(LresTitleHBox);
     setExpandAlignProperties(expresidpyr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    
+
     residcont->setAdjusterListener(this);
 
     residchro->setAdjusterListener(this);
+
+    shresFrame->set_label_align(0.025, 0.5);
 
     residsha->setAdjusterListener(this);
 
@@ -2222,6 +2227,8 @@ LocallabContrast::LocallabContrast():
     gradwavFrame->set_label_align(0.025, 0.5);
 
     wavgradlConn = wavgradl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavgradlChanged));
+
+    sigmalc2->setAdjusterListener(this);
 
     strwav->setAdjusterListener(this);
 
@@ -2313,6 +2320,11 @@ LocallabContrast::LocallabContrast():
 
     chromalev->setAdjusterListener(this);
 
+    if (showtooltip) {
+        chromalev->set_tooltip_text(M("TP_LOCALLAB_CHROMABLU_TOOLTIP"));
+        chromablu->set_tooltip_text(M("TP_LOCALLAB_CHROMABLU_TOOLTIP"));
+    }
+
     LocalcurveEditorwavcon->setCurveListener(this);
 
     wavshapecon->setIdentityValue(0.);
@@ -2344,10 +2356,6 @@ LocallabContrast::LocallabContrast():
     compFrame->set_label_align(0.025, 0.5);
 
     wavcompConn = wavcomp->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavcompChanged));
-
-    if (showtooltip) {
-        // sigmadc->set_tooltip_text(M("TP_LOCALLAB_COMPFRAME_TOOLTIP"));
-    }
 
     sigmadc->setAdjusterListener(this);
 
@@ -2444,11 +2452,11 @@ LocallabContrast::LocallabContrast():
 
     // Add Local contrast specific widgets to GUI
     pack_start(*localcontMethod);
-    shresFrame->set_label_align(0.025, 0.5);
     pack_start(*lcradius);
     pack_start(*lcamount);
     pack_start(*lcdarkness);
     pack_start(*lclightness);
+    pack_start(*sigmalc);
     pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // pack_start(*levelwav);
     pack_start(*csThreshold);
@@ -2477,6 +2485,7 @@ LocallabContrast::LocallabContrast():
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
     gradwavFrame->set_label_widget(*wavgradl);
     ToolParamBlock* const gradwavBox = Gtk::manage(new ToolParamBlock());
+    gradwavBox->pack_start(*sigmalc2);
     gradwavBox->pack_start(*strwav);
     gradwavBox->pack_start(*angwav);
     gradwavFrame->add(*gradwavBox);
@@ -2668,6 +2677,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         lcamount->setValue(pp->locallab.spots.at(index).lcamount);
         lcdarkness->setValue(pp->locallab.spots.at(index).lcdarkness);
         lclightness->setValue(pp->locallab.spots.at(index).lclightness);
+        sigmalc->setValue(pp->locallab.spots.at(index).sigmalc);
         wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
         levelwav->setValue((double)pp->locallab.spots.at(index).levelwav);
         csThreshold->setValue<int>(pp->locallab.spots.at(index).csthreshold);
@@ -2683,6 +2693,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         clarisoft->setValue(pp->locallab.spots.at(index).clarisoft);
         origlc->set_active(pp->locallab.spots.at(index).origlc);
         wavgradl->set_active(pp->locallab.spots.at(index).wavgradl);
+        sigmalc2->setValue(pp->locallab.spots.at(index).sigmalc2);
         strwav->setValue(pp->locallab.spots.at(index).strwav);
         angwav->setValue(pp->locallab.spots.at(index).angwav);
         wavedg->set_active(pp->locallab.spots.at(index).wavedg);
@@ -2785,6 +2796,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         pp->locallab.spots.at(index).lcamount = lcamount->getValue();
         pp->locallab.spots.at(index).lcdarkness = lcdarkness->getValue();
         pp->locallab.spots.at(index).lclightness = lclightness->getValue();
+        pp->locallab.spots.at(index).sigmalc = sigmalc->getValue();
         pp->locallab.spots.at(index).locwavcurve = wavshape->getCurve();
         pp->locallab.spots.at(index).levelwav = levelwav->getIntValue();
         pp->locallab.spots.at(index).csthreshold = csThreshold->getValue<int>();
@@ -2800,6 +2812,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         pp->locallab.spots.at(index).clarisoft = clarisoft->getValue();
         pp->locallab.spots.at(index).origlc = origlc->get_active();
         pp->locallab.spots.at(index).wavgradl = wavgradl->get_active();
+        pp->locallab.spots.at(index).sigmalc2 = sigmalc2->getValue();
         pp->locallab.spots.at(index).strwav = strwav->getValue();
         pp->locallab.spots.at(index).angwav = angwav->getValue();
         pp->locallab.spots.at(index).wavedg = wavedg->get_active();
@@ -2880,6 +2893,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         lcamount->setDefault(defSpot.lcamount);
         lcdarkness->setDefault(defSpot.lcdarkness);
         lclightness->setDefault(defSpot.lclightness);
+        sigmalc->setDefault(defSpot.sigmalc);
         levelwav->setDefault((double)defSpot.levelwav);
         csThreshold->setDefault<int>(defSpot.csthreshold);
         residcont->setDefault(defSpot.residcont);
@@ -2892,6 +2906,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         clarilres->setDefault(defSpot.clarilres);
         claricres->setDefault(defSpot.claricres);
         clarisoft->setDefault(defSpot.clarisoft);
+        sigmalc2->setDefault(defSpot.sigmalc2);
         strwav->setDefault(defSpot.strwav);
         angwav->setDefault(defSpot.angwav);
         strengthw->setDefault(defSpot.strengthw);
@@ -2952,6 +2967,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablclightness,
                                        lclightness->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sigmalc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmalc,
+                                       sigmalc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3029,6 +3051,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabclarisoft,
                                        clarisoft->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sigmalc2) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmalc2,
+                                       sigmalc2->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3603,92 +3632,28 @@ void LocallabContrast::updateContrastGUI1()
         lcamount->show();
         lcdarkness->show();
         lclightness->show();
+        sigmalc->hide();
         LocalcurveEditorwav->hide();
         levelwav->hide();
         csThreshold->hide();
-        residcont->hide();
-        residchro->hide();
-        residsha->hide();
-        residshathr->hide();
-        residhi->hide();
-        residhithr->hide();
-        shresFrame->hide();
+        expresidpyr->hide();
         clariFrame->hide();
-        strwav->hide();
-        angwav->hide();
-        strengthw->hide();
-        sigmaed->hide();
-        LocalcurveEditorwavedg->hide();
-        gradw->hide();
-        radiusw->hide();
-        detailw->hide();
-        tloww->hide();
-        thigw->hide();
-        edgw->hide();
-        basew->hide();
-        levelblur->hide();
-        sigmabl->hide();
-        chromablu->hide();
-        LocalcurveEditorwavlev->hide();
-        residblur->hide();
-        sigma->hide();
-        offset->hide();
-        chromalev->hide();
-        LocalcurveEditorwavcon->hide();
-        LocalcurveEditorwavcompre->hide();
-        sigmadr->hide();
-        threswav->hide();
-        residcomp->hide();
-        sigmadc->hide();
-        deltad->hide();
-        LocalcurveEditorwavcomp->hide();
-        fatres->hide();
+        expcontrastpyr->hide();
+        expcontrastpyr2->hide();
         fftwlc->show();
     } else if (localcontMethod->get_active_row_number() == 1) {
         lcradius->hide();
         lcamount->hide();
         lcdarkness->hide();
         lclightness->hide();
+        sigmalc->show();
         LocalcurveEditorwav->show();
         levelwav->show();
         csThreshold->show();
-        residcont->show();
-        residchro->show();
-        residsha->show();
-        residshathr->show();
-        residhi->show();
-        residhithr->show();
-        shresFrame->show();
+        expresidpyr->show();
         clariFrame->show();
-        strwav->show();
-        angwav->show();
-        strengthw->show();
-        sigmaed->show();
-        LocalcurveEditorwavedg->show();
-        gradw->show();
-        radiusw->show();
-        detailw->show();
-        tloww->show();
-        thigw->show();
-        edgw->show();
-        basew->show();
-        levelblur->show();
-        sigmabl->show();
-        chromablu->show();
-        LocalcurveEditorwavlev->show();
-        residblur->show();
-        sigma->show();
-        offset->show();
-        chromalev->show();
-        LocalcurveEditorwavcon->show();
-        LocalcurveEditorwavcompre->show();
-        sigmadr->show();
-        threswav->show();
-        residcomp->show();
-        sigmadc->show();
-        deltad->show();
-        LocalcurveEditorwavcomp->show();
-        fatres->show();
+        expcontrastpyr->show();
+        expcontrastpyr2->show();
         fftwlc->hide();
     }
 }

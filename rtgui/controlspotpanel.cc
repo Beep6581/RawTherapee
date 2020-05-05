@@ -78,6 +78,7 @@ ControlSpotPanel::ControlSpotPanel():
     lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), 0, 30, 1, 10))),
 
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
+    blwh_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLWH")))),
     recurs_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_RECURS")))),
     laplac_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LAPLACC")))),
     deltae_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_DELTAEC")))),
@@ -343,6 +344,15 @@ ControlSpotPanel::ControlSpotPanel():
     avoidConn_  = avoid_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
     pack_start(*avoid_);
+
+    blwhConn_  = blwh_->signal_toggled().connect(
+                      sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
+
+    if (showtooltip) {
+        blwh_->set_tooltip_text(M("TP_LOCALLAB_BLWH_TOOLTIP"));
+    }
+
+    pack_start(*blwh_);
 
     recursConn_  = recurs_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::recursChanged));
@@ -741,6 +751,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     balanh_->setValue((double)row[spots_.balanh]);
     colorde_->setValue((double)row[spots_.colorde]);
     avoid_->set_active(row[spots_.avoid]);
+    blwh_->set_active(row[spots_.blwh]);
     recurs_->set_active(row[spots_.recurs]);
     laplac_->set_active(row[spots_.laplac]);
     deltae_->set_active(row[spots_.deltae]);
@@ -1291,6 +1302,31 @@ void ControlSpotPanel::avoidChanged()
     }
 }
 
+void ControlSpotPanel::blwhChanged()
+{
+    // printf("blwhChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+    row[spots_.blwh] = blwh_->get_active();
+
+    // Raise event
+    if (listener) {
+        if (blwh_->get_active()) {
+            listener->panelChanged(Evlocallabblwh, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evlocallabblwh, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
 void ControlSpotPanel::recursChanged()
 {
     // printf("recursChanged\n");
@@ -1451,6 +1487,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     balanh_->block(cond);
     colorde_->block(cond);
     avoidConn_.block(cond);
+    blwhConn_.block(cond);
     recursConn_.block(cond);
     laplacConn_.block(cond);
     deltaeConn_.block(cond);
@@ -1490,6 +1527,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     balanh_->set_sensitive(cond);
     colorde_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
+    blwh_->set_sensitive(cond);
     recurs_->set_sensitive(cond);
     laplac_->set_sensitive(cond);
     deltae_->set_sensitive(cond);
@@ -2140,6 +2178,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
             r->scopemask = row[spots_.scopemask];
             r->lumask = row[spots_.lumask];
             r->avoid = row[spots_.avoid];
+            r->blwh = row[spots_.blwh];
             r->recurs = row[spots_.recurs];
             r->laplac = row[spots_.laplac];
             r->deltae = row[spots_.deltae];
@@ -2254,6 +2293,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.balanh] = newSpot->balanh;
     row[spots_.colorde] = newSpot->colorde;
     row[spots_.avoid] = newSpot->avoid;
+    row[spots_.blwh] = newSpot->blwh;
     row[spots_.recurs] = newSpot->recurs;
     row[spots_.laplac] = newSpot->laplac;
     row[spots_.deltae] = newSpot->deltae;
@@ -2363,6 +2403,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(balanh);
     add(colorde);
     add(avoid);
+    add(blwh);
     add(recurs);
     add(laplac);
     add(deltae);

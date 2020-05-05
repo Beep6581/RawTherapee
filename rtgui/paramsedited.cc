@@ -1009,6 +1009,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).transitweak = locallab.spots.at(j).transitweak && pSpot.transitweak == otherSpot.transitweak;
                 locallab.spots.at(j).transitgrad = locallab.spots.at(j).transitgrad && pSpot.transitgrad == otherSpot.transitgrad;
                 locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
+                locallab.spots.at(j).blwh = locallab.spots.at(j).blwh && pSpot.blwh == otherSpot.blwh;
                 locallab.spots.at(j).recurs = locallab.spots.at(j).recurs && pSpot.recurs == otherSpot.recurs;
                 locallab.spots.at(j).laplac = locallab.spots.at(j).laplac && pSpot.laplac == otherSpot.laplac;
                 locallab.spots.at(j).deltae = locallab.spots.at(j).deltae && pSpot.deltae == otherSpot.deltae;
@@ -1328,6 +1329,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lcamount = locallab.spots.at(j).lcamount && pSpot.lcamount == otherSpot.lcamount;
                 locallab.spots.at(j).lcdarkness = locallab.spots.at(j).lcdarkness && pSpot.lcdarkness == otherSpot.lcdarkness;
                 locallab.spots.at(j).lclightness = locallab.spots.at(j).lclightness && pSpot.lclightness == otherSpot.lclightness;
+                locallab.spots.at(j).sigmalc = locallab.spots.at(j).sigmalc && pSpot.sigmalc == otherSpot.sigmalc;
                 locallab.spots.at(j).levelwav = locallab.spots.at(j).levelwav && pSpot.levelwav == otherSpot.levelwav;
                 locallab.spots.at(j).residcont = locallab.spots.at(j).residcont && pSpot.residcont == otherSpot.residcont;
                 locallab.spots.at(j).residsha = locallab.spots.at(j).residsha && pSpot.residsha == otherSpot.residsha;
@@ -1351,6 +1353,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).clarilres = locallab.spots.at(j).clarilres && pSpot.clarilres == otherSpot.clarilres;
                 locallab.spots.at(j).claricres = locallab.spots.at(j).claricres && pSpot.claricres == otherSpot.claricres;
                 locallab.spots.at(j).clarisoft = locallab.spots.at(j).clarisoft && pSpot.clarisoft == otherSpot.clarisoft;
+                locallab.spots.at(j).sigmalc2 = locallab.spots.at(j).sigmalc2 && pSpot.sigmalc2 == otherSpot.sigmalc2;
                 locallab.spots.at(j).strwav = locallab.spots.at(j).strwav && pSpot.strwav == otherSpot.strwav;
                 locallab.spots.at(j).angwav = locallab.spots.at(j).angwav && pSpot.angwav == otherSpot.angwav;
                 locallab.spots.at(j).strengthw = locallab.spots.at(j).strengthw && pSpot.strengthw == otherSpot.strengthw;
@@ -3017,6 +3020,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).avoid = mods.locallab.spots.at(i).avoid;
         }
 
+        if (locallab.spots.at(i).blwh) {
+            toEdit.locallab.spots.at(i).blwh = mods.locallab.spots.at(i).blwh;
+        }
+
         if (locallab.spots.at(i).recurs) {
             toEdit.locallab.spots.at(i).recurs = mods.locallab.spots.at(i).recurs;
         }
@@ -4249,6 +4256,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lclightness   = mods.locallab.spots.at(i).lclightness;
         }
 
+        if (locallab.spots.at(i).sigmalc) {
+            toEdit.locallab.spots.at(i).sigmalc   = mods.locallab.spots.at(i).sigmalc;
+        }
+
         if (locallab.spots.at(i).levelwav) {
             toEdit.locallab.spots.at(i).levelwav   = mods.locallab.spots.at(i).levelwav;
         }
@@ -4340,6 +4351,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).clarisoft) {
             toEdit.locallab.spots.at(i).clarisoft   = mods.locallab.spots.at(i).clarisoft;
+        }
+
+        if (locallab.spots.at(i).sigmalc2) {
+            toEdit.locallab.spots.at(i).sigmalc2   = mods.locallab.spots.at(i).sigmalc2;
         }
 
         if (locallab.spots.at(i).strwav) {
@@ -5748,6 +5763,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     transitweak(v),
     transitgrad(v),
     avoid(v),
+    blwh(v),
     recurs(v),
     laplac(v),
     deltae(v),
@@ -6063,6 +6079,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lcamount(v),
     lcdarkness(v),
     lclightness(v),
+    sigmalc(v),
     levelwav(v),
     residcont(v),
     residsha(v),
@@ -6086,6 +6103,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     clarilres(v),
     claricres(v),
     clarisoft(v),
+    sigmalc2(v),
     strwav(v),
     angwav(v),
     strengthw(v),
@@ -6194,6 +6212,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     transitweak = v;
     transitgrad = v;
     avoid = v;
+    blwh = v;
     recurs = v;
     laplac = v;
     deltae = v;
@@ -6513,6 +6532,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lcamount = v;
     lcdarkness = v;
     lclightness = v;
+    sigmalc = v;
     levelwav = v;
     residcont = v;
     residsha = v;
@@ -6536,6 +6556,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     clarilres = v;
     claricres = v;
     clarisoft = v;
+    sigmalc2 = v;
     strwav = v;
     angwav = v;
     strengthw = v;
