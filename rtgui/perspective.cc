@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include "eventmapper.h"
 #include "perspective.h"
 
 #include "rtimage.h"
@@ -28,6 +29,14 @@ using namespace rtengine::procparams;
 PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("TP_PERSPECTIVE_LABEL"))
 {
 
+    auto mapper = ProcEventMapper::getInstance();
+    EvPerspCamAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_ANGLE");
+    EvPerspCamFocalLength = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_FL");
+    EvPerspCamShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_SHIFT");
+    EvPerspMethod = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_METHOD");
+    EvPerspProjAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ANGLE");
+    EvPerspProjRotate = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ROTATE");
+    EvPerspProjShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     lens_geom_listener = nullptr;
 
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));

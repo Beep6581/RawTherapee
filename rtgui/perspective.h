@@ -51,6 +51,13 @@ protected:
     Adjuster* projection_shift_horiz;
     Adjuster* projection_shift_vert;
     Adjuster* projection_yaw;
+    rtengine::ProcEvent EvPerspCamFocalLength;
+    rtengine::ProcEvent EvPerspCamShift;
+    rtengine::ProcEvent EvPerspCamAngle;
+    rtengine::ProcEvent EvPerspMethod;
+    rtengine::ProcEvent EvPerspProjShift;
+    rtengine::ProcEvent EvPerspProjRotate;
+    rtengine::ProcEvent EvPerspProjAngle;
     LensGeomListener* lens_geom_listener;
     const rtengine::FramesMetaData* metadata;
 
