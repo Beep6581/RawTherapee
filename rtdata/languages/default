@@ -2490,11 +2490,11 @@ TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
-TP_LOCALLAB_LOC_CONTRAST;Local contrast & Wavelet Pyramid Ψ Big defects
+TP_LOCALLAB_LOC_CONTRAST;Local contrast - Wavelet
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
-TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by Levels- Tone Mapping- Dir. Contrast
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by Levels- Tone Mapping - Dir. Contrast
 TP_LOCALLAB_LOC_RESIDPYR;Residual Image Main
 TP_LOCALLAB_LOG;Encoding log
 TP_LOCALLAB_LOGAUTO;Automatic
@@ -2639,7 +2639,7 @@ TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadows compression & tonal width
-TP_LOCALLAB_SHADHIGH;Shadows Highlights-Gradient - Tone Equalizer - TRC
+TP_LOCALLAB_SHADHIGH;Shadows Highlight - Tone equalizer
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Can be used instead - or in complement - of exposure module in difficult cases.\nThe use of Denoise may be necessary : lightening the shadows.\n\nCan be used as graduated filter (increase Scope)
 TP_LOCALLAB_SHAMASKCOL;Shadows mask
 TP_LOCALLAB_SHAPETYPE;Shape RT-spot area

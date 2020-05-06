@@ -354,34 +354,36 @@ void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const Params
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visitonemap);
-        exp->setEnabled(pp->locallab.spots.at(index).exptonemap);
-        complexity->set_active(pp->locallab.spots.at(index).complextonemap);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        amount->setValue(pp->locallab.spots.at(index).amount);
-        stren->setValue(pp->locallab.spots.at(index).stren);
-        equiltm->set_active(pp->locallab.spots.at(index).equiltm);
-        gamma->setValue(pp->locallab.spots.at(index).gamma);
-        satur->setValue(pp->locallab.spots.at(index).satur);
-        estop->setValue(pp->locallab.spots.at(index).estop);
-        scaltm->setValue(pp->locallab.spots.at(index).scaltm);
-        rewei->setValue((double)pp->locallab.spots.at(index).rewei);
-        softradiustm->setValue(pp->locallab.spots.at(index).softradiustm);
-        sensitm->setValue((double)pp->locallab.spots.at(index).sensitm);
-        enatmMask->set_active(pp->locallab.spots.at(index).enatmMask);
-        enatmMaskaft->set_active(pp->locallab.spots.at(index).enatmMaskaft);
-        CCmasktmshape->setCurve(pp->locallab.spots.at(index).CCmasktmcurve);
-        LLmasktmshape->setCurve(pp->locallab.spots.at(index).LLmasktmcurve);
-        HHmasktmshape->setCurve(pp->locallab.spots.at(index).HHmasktmcurve);
-        blendmasktm->setValue((double)pp->locallab.spots.at(index).blendmasktm);
-        lapmasktm->setValue(pp->locallab.spots.at(index).lapmasktm);
-        radmasktm->setValue(pp->locallab.spots.at(index).radmasktm);
-        chromasktm->setValue(pp->locallab.spots.at(index).chromasktm);
-        gammasktm->setValue(pp->locallab.spots.at(index).gammasktm);
-        slomasktm->setValue(pp->locallab.spots.at(index).slomasktm);
-        Lmasktmshape->setCurve(pp->locallab.spots.at(index).Lmasktmcurve);
+        exp->set_visible(spot.visitonemap);
+        exp->setEnabled(spot.exptonemap);
+        complexity->set_active(spot.complextonemap);
+
+        amount->setValue(spot.amount);
+        stren->setValue(spot.stren);
+        equiltm->set_active(spot.equiltm);
+        gamma->setValue(spot.gamma);
+        satur->setValue(spot.satur);
+        estop->setValue(spot.estop);
+        scaltm->setValue(spot.scaltm);
+        rewei->setValue((double)spot.rewei);
+        softradiustm->setValue(spot.softradiustm);
+        sensitm->setValue((double)spot.sensitm);
+        enatmMask->set_active(spot.enatmMask);
+        enatmMaskaft->set_active(spot.enatmMaskaft);
+        CCmasktmshape->setCurve(spot.CCmasktmcurve);
+        LLmasktmshape->setCurve(spot.LLmasktmcurve);
+        HHmasktmshape->setCurve(spot.HHmasktmcurve);
+        blendmasktm->setValue((double)spot.blendmasktm);
+        lapmasktm->setValue(spot.lapmasktm);
+        radmasktm->setValue(spot.radmasktm);
+        chromasktm->setValue(spot.chromasktm);
+        gammasktm->setValue(spot.gammasktm);
+        slomasktm->setValue(spot.slomasktm);
+        Lmasktmshape->setCurve(spot.Lmasktmcurve);
     }
 
     // Enable all listeners
@@ -398,32 +400,34 @@ void LocallabTone::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).exptonemap = exp->getEnabled();
-        pp->locallab.spots.at(index).visitonemap = exp->get_visible();
-        pp->locallab.spots.at(index).complextonemap = complexity->get_active_row_number();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        pp->locallab.spots.at(index).amount = amount->getValue();
-        pp->locallab.spots.at(index).stren = stren->getValue();
-        pp->locallab.spots.at(index).equiltm = equiltm->get_active();
-        pp->locallab.spots.at(index).gamma = gamma->getValue();
-        pp->locallab.spots.at(index).satur = satur->getValue();
-        pp->locallab.spots.at(index).estop = estop->getValue();
-        pp->locallab.spots.at(index).scaltm = scaltm->getValue();
-        pp->locallab.spots.at(index).rewei = rewei->getIntValue();
-        pp->locallab.spots.at(index).softradiustm = softradiustm->getValue();
-        pp->locallab.spots.at(index).sensitm = sensitm->getIntValue();
-        pp->locallab.spots.at(index).enatmMask = enatmMask->get_active();
-        pp->locallab.spots.at(index).enatmMaskaft = enatmMaskaft->get_active();
-        pp->locallab.spots.at(index).LLmasktmcurve = LLmasktmshape->getCurve();
-        pp->locallab.spots.at(index).CCmasktmcurve = CCmasktmshape->getCurve();
-        pp->locallab.spots.at(index).HHmasktmcurve = HHmasktmshape->getCurve();
-        pp->locallab.spots.at(index).blendmasktm = blendmasktm->getIntValue();
-        pp->locallab.spots.at(index).lapmasktm = lapmasktm->getValue();
-        pp->locallab.spots.at(index).radmasktm = radmasktm->getValue();
-        pp->locallab.spots.at(index).chromasktm = chromasktm->getValue();
-        pp->locallab.spots.at(index).gammasktm = gammasktm->getValue();
-        pp->locallab.spots.at(index).slomasktm = slomasktm->getValue();
-        pp->locallab.spots.at(index).Lmasktmcurve = Lmasktmshape->getCurve();
+        spot.exptonemap = exp->getEnabled();
+        spot.visitonemap = exp->get_visible();
+        spot.complextonemap = complexity->get_active_row_number();
+
+        spot.amount = amount->getValue();
+        spot.stren = stren->getValue();
+        spot.equiltm = equiltm->get_active();
+        spot.gamma = gamma->getValue();
+        spot.satur = satur->getValue();
+        spot.estop = estop->getValue();
+        spot.scaltm = scaltm->getValue();
+        spot.rewei = rewei->getIntValue();
+        spot.softradiustm = softradiustm->getValue();
+        spot.sensitm = sensitm->getIntValue();
+        spot.enatmMask = enatmMask->get_active();
+        spot.enatmMaskaft = enatmMaskaft->get_active();
+        spot.LLmasktmcurve = LLmasktmshape->getCurve();
+        spot.CCmasktmcurve = CCmasktmshape->getCurve();
+        spot.HHmasktmcurve = HHmasktmshape->getCurve();
+        spot.blendmasktm = blendmasktm->getIntValue();
+        spot.lapmasktm = lapmasktm->getValue();
+        spot.radmasktm = radmasktm->getValue();
+        spot.chromasktm = chromasktm->getValue();
+        spot.gammasktm = gammasktm->getValue();
+        spot.slomasktm = slomasktm->getValue();
+        spot.Lmasktmcurve = Lmasktmshape->getCurve();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -434,7 +438,7 @@ void LocallabTone::setDefaults(const rtengine::procparams::ProcParams* defParams
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
         amount->setDefault(defSpot.amount);
@@ -1148,54 +1152,56 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visireti);
-        exp->setEnabled(pp->locallab.spots.at(index).expreti);
-        complexity->set_active(pp->locallab.spots.at(index).complexreti);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        dehaz->setValue((double)pp->locallab.spots.at(index).dehaz);
-        depth->setValue((double)pp->locallab.spots.at(index).depth);
-        lumonly->set_active(pp->locallab.spots.at(index).lumonly);
-        str->setValue(pp->locallab.spots.at(index).str);
-        loglin->set_active(pp->locallab.spots.at(index).loglin);
-        sensih->setValue((double)pp->locallab.spots.at(index).sensih);
+        exp->set_visible(spot.visireti);
+        exp->setEnabled(spot.expreti);
+        complexity->set_active(spot.complexreti);
 
-        if (pp->locallab.spots.at(index).retinexMethod == "low") {
+        dehaz->setValue((double)spot.dehaz);
+        depth->setValue((double)spot.depth);
+        lumonly->set_active(spot.lumonly);
+        str->setValue(spot.str);
+        loglin->set_active(spot.loglin);
+        sensih->setValue((double)spot.sensih);
+
+        if (spot.retinexMethod == "low") {
             retinexMethod->set_active(0);
-        } else if (pp->locallab.spots.at(index).retinexMethod == "uni") {
+        } else if (spot.retinexMethod == "uni") {
             retinexMethod->set_active(1);
         } else {
             retinexMethod->set_active(2);
         }
 
-        fftwreti->set_active(pp->locallab.spots.at(index).fftwreti);
-        equilret->set_active(pp->locallab.spots.at(index).equilret);
-        neigh->setValue(pp->locallab.spots.at(index).neigh);
-        vart->setValue(pp->locallab.spots.at(index).vart);
-        scalereti->setValue(pp->locallab.spots.at(index).scalereti);
-        limd->setValue(pp->locallab.spots.at(index).limd);
-        offs->setValue(pp->locallab.spots.at(index).offs);
-        chrrt->setValue(pp->locallab.spots.at(index).chrrt);
-        darkness->setValue(pp->locallab.spots.at(index).darkness);
-        lightnessreti->setValue(pp->locallab.spots.at(index).lightnessreti);
-        cliptm->setValue(pp->locallab.spots.at(index).cliptm);
-        softradiusret->setValue(pp->locallab.spots.at(index).softradiusret);
-        cTtransshape->setCurve(pp->locallab.spots.at(index).localTtranscurve);
-        cTgainshape->setCurve(pp->locallab.spots.at(index).localTgaincurve);
-        enaretiMask->set_active(pp->locallab.spots.at(index).enaretiMask);
-        enaretiMasktmap->set_active(pp->locallab.spots.at(index).enaretiMasktmap);
-        CCmaskretishape->setCurve(pp->locallab.spots.at(index).CCmaskreticurve);
-        LLmaskretishape->setCurve(pp->locallab.spots.at(index).LLmaskreticurve);
-        HHmaskretishape->setCurve(pp->locallab.spots.at(index).HHmaskreticurve);
-        blendmaskreti->setValue((double)pp->locallab.spots.at(index).blendmaskreti);
-        radmaskreti->setValue(pp->locallab.spots.at(index).radmaskreti);
-        lapmaskreti->setValue(pp->locallab.spots.at(index).lapmaskreti);
-        chromaskreti->setValue(pp->locallab.spots.at(index).chromaskreti);
-        gammaskreti->setValue(pp->locallab.spots.at(index).gammaskreti);
-        slomaskreti->setValue(pp->locallab.spots.at(index).slomaskreti);
-        Lmaskretishape->setCurve(pp->locallab.spots.at(index).Lmaskreticurve);
-        inversret->set_active(pp->locallab.spots.at(index).inversret);
+        fftwreti->set_active(spot.fftwreti);
+        equilret->set_active(spot.equilret);
+        neigh->setValue(spot.neigh);
+        vart->setValue(spot.vart);
+        scalereti->setValue(spot.scalereti);
+        limd->setValue(spot.limd);
+        offs->setValue(spot.offs);
+        chrrt->setValue(spot.chrrt);
+        darkness->setValue(spot.darkness);
+        lightnessreti->setValue(spot.lightnessreti);
+        cliptm->setValue(spot.cliptm);
+        softradiusret->setValue(spot.softradiusret);
+        cTtransshape->setCurve(spot.localTtranscurve);
+        cTgainshape->setCurve(spot.localTgaincurve);
+        enaretiMask->set_active(spot.enaretiMask);
+        enaretiMasktmap->set_active(spot.enaretiMasktmap);
+        CCmaskretishape->setCurve(spot.CCmaskreticurve);
+        LLmaskretishape->setCurve(spot.LLmaskreticurve);
+        HHmaskretishape->setCurve(spot.HHmaskreticurve);
+        blendmaskreti->setValue((double)spot.blendmaskreti);
+        radmaskreti->setValue(spot.radmaskreti);
+        lapmaskreti->setValue(spot.lapmaskreti);
+        chromaskreti->setValue(spot.chromaskreti);
+        gammaskreti->setValue(spot.gammaskreti);
+        slomaskreti->setValue(spot.slomaskreti);
+        Lmaskretishape->setCurve(spot.Lmaskreticurve);
+        inversret->set_active(spot.inversret);
     }
 
     // Enable all listeners
@@ -1221,52 +1227,54 @@ void LocallabRetinex::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).expreti = exp->getEnabled();
-        pp->locallab.spots.at(index).visireti = exp->get_visible();
-        pp->locallab.spots.at(index).complexreti = complexity->get_active_row_number();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        pp->locallab.spots.at(index).dehaz = dehaz->getIntValue();
-        pp->locallab.spots.at(index).depth = depth->getIntValue();
-        pp->locallab.spots.at(index).lumonly = lumonly->get_active();
-        pp->locallab.spots.at(index).str = str->getValue();
-        pp->locallab.spots.at(index).loglin = loglin->get_active();
-        pp->locallab.spots.at(index).sensih = sensih->getIntValue();
+        spot.expreti = exp->getEnabled();
+        spot.visireti = exp->get_visible();
+        spot.complexreti = complexity->get_active_row_number();
+
+        spot.dehaz = dehaz->getIntValue();
+        spot.depth = depth->getIntValue();
+        spot.lumonly = lumonly->get_active();
+        spot.str = str->getValue();
+        spot.loglin = loglin->get_active();
+        spot.sensih = sensih->getIntValue();
 
         if (retinexMethod->get_active_row_number() == 0) {
-            pp->locallab.spots.at(index).retinexMethod = "low";
+            spot.retinexMethod = "low";
         } else if (retinexMethod->get_active_row_number() == 1) {
-            pp->locallab.spots.at(index).retinexMethod = "uni";
+            spot.retinexMethod = "uni";
         } else if (retinexMethod->get_active_row_number() == 2) {
-            pp->locallab.spots.at(index).retinexMethod = "high";
+            spot.retinexMethod = "high";
         }
 
-        pp->locallab.spots.at(index).fftwreti = fftwreti->get_active();
-        pp->locallab.spots.at(index).equilret = equilret->get_active();
-        pp->locallab.spots.at(index).neigh = neigh->getValue();
-        pp->locallab.spots.at(index).vart = vart->getValue();
-        pp->locallab.spots.at(index).scalereti = scalereti->getValue();
-        pp->locallab.spots.at(index).limd = limd->getValue();
-        pp->locallab.spots.at(index).offs = offs->getValue();
-        pp->locallab.spots.at(index).chrrt = chrrt->getValue();
-        pp->locallab.spots.at(index).darkness = darkness->getValue();
-        pp->locallab.spots.at(index).lightnessreti = lightnessreti->getValue();
-        pp->locallab.spots.at(index).cliptm = cliptm->getValue();
-        pp->locallab.spots.at(index).softradiusret = softradiusret->getValue();
-        pp->locallab.spots.at(index).localTtranscurve = cTtransshape->getCurve();
-        pp->locallab.spots.at(index).localTgaincurve = cTgainshape->getCurve();
-        pp->locallab.spots.at(index).enaretiMask = enaretiMask->get_active();
-        pp->locallab.spots.at(index).enaretiMasktmap = enaretiMasktmap->get_active();
-        pp->locallab.spots.at(index).CCmaskreticurve = CCmaskretishape->getCurve();
-        pp->locallab.spots.at(index).LLmaskreticurve = LLmaskretishape->getCurve();
-        pp->locallab.spots.at(index).HHmaskreticurve = HHmaskretishape->getCurve();
-        pp->locallab.spots.at(index).blendmaskreti = blendmaskreti->getIntValue();
-        pp->locallab.spots.at(index).radmaskreti = radmaskreti->getValue();
-        pp->locallab.spots.at(index).lapmaskreti = lapmaskreti->getValue();
-        pp->locallab.spots.at(index).chromaskreti = chromaskreti->getValue();
-        pp->locallab.spots.at(index).gammaskreti = gammaskreti->getValue();
-        pp->locallab.spots.at(index).slomaskreti = slomaskreti->getValue();
-        pp->locallab.spots.at(index).Lmaskreticurve = Lmaskretishape->getCurve();
-        pp->locallab.spots.at(index).inversret = inversret->get_active();
+        spot.fftwreti = fftwreti->get_active();
+        spot.equilret = equilret->get_active();
+        spot.neigh = neigh->getValue();
+        spot.vart = vart->getValue();
+        spot.scalereti = scalereti->getValue();
+        spot.limd = limd->getValue();
+        spot.offs = offs->getValue();
+        spot.chrrt = chrrt->getValue();
+        spot.darkness = darkness->getValue();
+        spot.lightnessreti = lightnessreti->getValue();
+        spot.cliptm = cliptm->getValue();
+        spot.softradiusret = softradiusret->getValue();
+        spot.localTtranscurve = cTtransshape->getCurve();
+        spot.localTgaincurve = cTgainshape->getCurve();
+        spot.enaretiMask = enaretiMask->get_active();
+        spot.enaretiMasktmap = enaretiMasktmap->get_active();
+        spot.CCmaskreticurve = CCmaskretishape->getCurve();
+        spot.LLmaskreticurve = LLmaskretishape->getCurve();
+        spot.HHmaskreticurve = HHmaskretishape->getCurve();
+        spot.blendmaskreti = blendmaskreti->getIntValue();
+        spot.radmaskreti = radmaskreti->getValue();
+        spot.lapmaskreti = lapmaskreti->getValue();
+        spot.chromaskreti = chromaskreti->getValue();
+        spot.gammaskreti = gammaskreti->getValue();
+        spot.slomaskreti = slomaskreti->getValue();
+        spot.Lmaskreticurve = Lmaskretishape->getCurve();
+        spot.inversret = inversret->get_active();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -1277,7 +1285,7 @@ void LocallabRetinex::setDefaults(const rtengine::procparams::ProcParams* defPar
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
         dehaz->setDefault((double)defSpot.dehaz);
@@ -1841,20 +1849,22 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visisharp);
-        exp->setEnabled(pp->locallab.spots.at(index).expsharp);
-        complexity->set_active(pp->locallab.spots.at(index).complexsharp);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        sharcontrast->setValue((double)pp->locallab.spots.at(index).sharcontrast);
-        sharradius->setValue(pp->locallab.spots.at(index).sharradius);
-        sharamount->setValue((double)pp->locallab.spots.at(index).sharamount);
-        shardamping->setValue((double)pp->locallab.spots.at(index).shardamping);
-        shariter->setValue((double)pp->locallab.spots.at(index).shariter);
-        sharblur->setValue(pp->locallab.spots.at(index).sharblur);
-        sensisha->setValue((double)pp->locallab.spots.at(index).sensisha);
-        inverssha->set_active(pp->locallab.spots.at(index).inverssha);
+        exp->set_visible(spot.visisharp);
+        exp->setEnabled(spot.expsharp);
+        complexity->set_active(spot.complexsharp);
+
+        sharcontrast->setValue((double)spot.sharcontrast);
+        sharradius->setValue(spot.sharradius);
+        sharamount->setValue((double)spot.sharamount);
+        shardamping->setValue((double)spot.shardamping);
+        shariter->setValue((double)spot.shariter);
+        sharblur->setValue(spot.sharblur);
+        sensisha->setValue((double)spot.sensisha);
+        inverssha->set_active(spot.inverssha);
     }
 
     // Enable all listeners
@@ -1871,18 +1881,20 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).expsharp = exp->getEnabled();
-        pp->locallab.spots.at(index).visisharp = exp->get_visible();
-        pp->locallab.spots.at(index).complexsharp = complexity->get_active_row_number();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        pp->locallab.spots.at(index).sharcontrast = sharcontrast->getIntValue();
-        pp->locallab.spots.at(index).sharradius = sharradius->getValue();
-        pp->locallab.spots.at(index).sharamount = sharamount->getIntValue();
-        pp->locallab.spots.at(index).shardamping = shardamping->getIntValue();
-        pp->locallab.spots.at(index).shariter = shariter->getIntValue();
-        pp->locallab.spots.at(index).sharblur = sharblur->getValue();
-        pp->locallab.spots.at(index).sensisha = sensisha->getIntValue();
-        pp->locallab.spots.at(index).inverssha = inverssha->get_active();
+        spot.expsharp = exp->getEnabled();
+        spot.visisharp = exp->get_visible();
+        spot.complexsharp = complexity->get_active_row_number();
+
+        spot.sharcontrast = sharcontrast->getIntValue();
+        spot.sharradius = sharradius->getValue();
+        spot.sharamount = sharamount->getIntValue();
+        spot.shardamping = shardamping->getIntValue();
+        spot.shariter = shariter->getIntValue();
+        spot.sharblur = sharblur->getValue();
+        spot.sensisha = sensisha->getIntValue();
+        spot.inverssha = inverssha->get_active();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -1893,7 +1905,7 @@ void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParam
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
         sharcontrast->setDefault((double)defSpot.sharcontrast);
@@ -2661,102 +2673,104 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visicontrast);
-        exp->setEnabled(pp->locallab.spots.at(index).expcontrast);
-        complexity->set_active(pp->locallab.spots.at(index).complexcontrast);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        if (pp->locallab.spots.at(index).localcontMethod == "loc") {
+        exp->set_visible(spot.visicontrast);
+        exp->setEnabled(spot.expcontrast);
+        complexity->set_active(spot.complexcontrast);
+
+        if (spot.localcontMethod == "loc") {
             localcontMethod->set_active(0);
-        } else if (pp->locallab.spots.at(index).localcontMethod == "wav") {
+        } else if (spot.localcontMethod == "wav") {
             localcontMethod->set_active(1);
         }
 
-        lcradius->setValue((double)pp->locallab.spots.at(index).lcradius);
-        lcamount->setValue(pp->locallab.spots.at(index).lcamount);
-        lcdarkness->setValue(pp->locallab.spots.at(index).lcdarkness);
-        lclightness->setValue(pp->locallab.spots.at(index).lclightness);
-        sigmalc->setValue(pp->locallab.spots.at(index).sigmalc);
-        wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
-        levelwav->setValue((double)pp->locallab.spots.at(index).levelwav);
-        csThreshold->setValue<int>(pp->locallab.spots.at(index).csthreshold);
-        residcont->setValue(pp->locallab.spots.at(index).residcont);
-        residchro->setValue(pp->locallab.spots.at(index).residchro);
-        residsha->setValue(pp->locallab.spots.at(index).residsha);
-        residshathr->setValue(pp->locallab.spots.at(index).residshathr);
-        residhi->setValue(pp->locallab.spots.at(index).residhi);
-        residhithr->setValue(pp->locallab.spots.at(index).residhithr);
-        sensilc->setValue((double)pp->locallab.spots.at(index).sensilc);
-        clarilres->setValue(pp->locallab.spots.at(index).clarilres);
-        claricres->setValue(pp->locallab.spots.at(index).claricres);
-        clarisoft->setValue(pp->locallab.spots.at(index).clarisoft);
-        origlc->set_active(pp->locallab.spots.at(index).origlc);
-        wavgradl->set_active(pp->locallab.spots.at(index).wavgradl);
-        sigmalc2->setValue(pp->locallab.spots.at(index).sigmalc2);
-        strwav->setValue(pp->locallab.spots.at(index).strwav);
-        angwav->setValue(pp->locallab.spots.at(index).angwav);
-        wavedg->set_active(pp->locallab.spots.at(index).wavedg);
-        strengthw->setValue(pp->locallab.spots.at(index).strengthw);
-        sigmaed->setValue(pp->locallab.spots.at(index).sigmaed);
-        wavshapeedg->setCurve(pp->locallab.spots.at(index).locedgwavcurve);
-        gradw->setValue(pp->locallab.spots.at(index).gradw);
-        waveshow->set_active(pp->locallab.spots.at(index).waveshow);
-        radiusw->setValue(pp->locallab.spots.at(index).radiusw);
-        detailw->setValue(pp->locallab.spots.at(index).detailw);
+        lcradius->setValue((double)spot.lcradius);
+        lcamount->setValue(spot.lcamount);
+        lcdarkness->setValue(spot.lcdarkness);
+        lclightness->setValue(spot.lclightness);
+        sigmalc->setValue(spot.sigmalc);
+        wavshape->setCurve(spot.locwavcurve);
+        levelwav->setValue((double)spot.levelwav);
+        csThreshold->setValue<int>(spot.csthreshold);
+        residcont->setValue(spot.residcont);
+        residchro->setValue(spot.residchro);
+        residsha->setValue(spot.residsha);
+        residshathr->setValue(spot.residshathr);
+        residhi->setValue(spot.residhi);
+        residhithr->setValue(spot.residhithr);
+        sensilc->setValue((double)spot.sensilc);
+        clarilres->setValue(spot.clarilres);
+        claricres->setValue(spot.claricres);
+        clarisoft->setValue(spot.clarisoft);
+        origlc->set_active(spot.origlc);
+        wavgradl->set_active(spot.wavgradl);
+        sigmalc2->setValue(spot.sigmalc2);
+        strwav->setValue(spot.strwav);
+        angwav->setValue(spot.angwav);
+        wavedg->set_active(spot.wavedg);
+        strengthw->setValue(spot.strengthw);
+        sigmaed->setValue(spot.sigmaed);
+        wavshapeedg->setCurve(spot.locedgwavcurve);
+        gradw->setValue(spot.gradw);
+        waveshow->set_active(spot.waveshow);
+        radiusw->setValue(spot.radiusw);
+        detailw->setValue(spot.detailw);
 
-        if (pp->locallab.spots.at(index).localedgMethod == "fir") {
+        if (spot.localedgMethod == "fir") {
             localedgMethod->set_active(0);
-        } else if (pp->locallab.spots.at(index).localedgMethod == "sec") {
+        } else if (spot.localedgMethod == "sec") {
             localedgMethod->set_active(1);
-        } else if (pp->locallab.spots.at(index).localedgMethod == "thr") {
+        } else if (spot.localedgMethod == "thr") {
             localedgMethod->set_active(2);
         }
 
-        tloww->setValue(pp->locallab.spots.at(index).tloww);
-        thigw->setValue(pp->locallab.spots.at(index).thigw);
-        edgw->setValue(pp->locallab.spots.at(index).edgw);
-        basew->setValue(pp->locallab.spots.at(index).basew);
+        tloww->setValue(spot.tloww);
+        thigw->setValue(spot.thigw);
+        edgw->setValue(spot.edgw);
+        basew->setValue(spot.basew);
 
-        if (pp->locallab.spots.at(index).localneiMethod == "none") {
+        if (spot.localneiMethod == "none") {
             localneiMethod->set_active(0);
-        } else if (pp->locallab.spots.at(index).localneiMethod == "low") {
+        } else if (spot.localneiMethod == "low") {
             localneiMethod->set_active(1);
-        } else if (pp->locallab.spots.at(index).localneiMethod == "high") {
+        } else if (spot.localneiMethod == "high") {
             localneiMethod->set_active(2);
         }
 
-        wavblur->set_active(pp->locallab.spots.at(index).wavblur);
-        levelblur->setValue(pp->locallab.spots.at(index).levelblur);
-        sigmabl->setValue(pp->locallab.spots.at(index).sigmabl);
-        chromablu->setValue(pp->locallab.spots.at(index).chromablu);
-        wavshapelev->setCurve(pp->locallab.spots.at(index).loclevwavcurve);
-        residblur->setValue(pp->locallab.spots.at(index).residblur);
-        blurlc->set_active(pp->locallab.spots.at(index).blurlc);
-        wavcont->set_active(pp->locallab.spots.at(index).wavcont);
-        sigma->setValue(pp->locallab.spots.at(index).sigma);
-        offset->setValue(pp->locallab.spots.at(index).offset);
-        chromalev->setValue(pp->locallab.spots.at(index).chromalev);
-        wavshapecon->setCurve(pp->locallab.spots.at(index).locconwavcurve);
-        wavcompre->set_active(pp->locallab.spots.at(index).wavcompre);
-        wavshapecompre->setCurve(pp->locallab.spots.at(index).loccomprewavcurve);
-        sigmadr->setValue(pp->locallab.spots.at(index).sigmadr);
-        threswav->setValue(pp->locallab.spots.at(index).threswav);
-        residcomp->setValue(pp->locallab.spots.at(index).residcomp);
-        wavcomp->set_active(pp->locallab.spots.at(index).wavcomp);
-        sigmadc->setValue(pp->locallab.spots.at(index).sigmadc);
-        deltad->setValue(pp->locallab.spots.at(index).deltad);
-        wavshapecomp->setCurve(pp->locallab.spots.at(index).loccompwavcurve);
-        fatres->setValue(pp->locallab.spots.at(index).fatres);
-        fftwlc->set_active(pp->locallab.spots.at(index).fftwlc);
-        enalcMask->set_active(pp->locallab.spots.at(index).enalcMask);
-        CCmasklcshape->setCurve(pp->locallab.spots.at(index).CCmasklccurve);
-        LLmasklcshape->setCurve(pp->locallab.spots.at(index).LLmasklccurve);
-        HHmasklcshape->setCurve(pp->locallab.spots.at(index).HHmasklccurve);
-        blendmasklc->setValue((double)pp->locallab.spots.at(index).blendmasklc);
-        radmasklc->setValue(pp->locallab.spots.at(index).radmasklc);
-        chromasklc->setValue(pp->locallab.spots.at(index).chromasklc);
-        Lmasklcshape->setCurve(pp->locallab.spots.at(index).Lmasklccurve);
+        wavblur->set_active(spot.wavblur);
+        levelblur->setValue(spot.levelblur);
+        sigmabl->setValue(spot.sigmabl);
+        chromablu->setValue(spot.chromablu);
+        wavshapelev->setCurve(spot.loclevwavcurve);
+        residblur->setValue(spot.residblur);
+        blurlc->set_active(spot.blurlc);
+        wavcont->set_active(spot.wavcont);
+        sigma->setValue(spot.sigma);
+        offset->setValue(spot.offset);
+        chromalev->setValue(spot.chromalev);
+        wavshapecon->setCurve(spot.locconwavcurve);
+        wavcompre->set_active(spot.wavcompre);
+        wavshapecompre->setCurve(spot.loccomprewavcurve);
+        sigmadr->setValue(spot.sigmadr);
+        threswav->setValue(spot.threswav);
+        residcomp->setValue(spot.residcomp);
+        wavcomp->set_active(spot.wavcomp);
+        sigmadc->setValue(spot.sigmadc);
+        deltad->setValue(spot.deltad);
+        wavshapecomp->setCurve(spot.loccompwavcurve);
+        fatres->setValue(spot.fatres);
+        fftwlc->set_active(spot.fftwlc);
+        enalcMask->set_active(spot.enalcMask);
+        CCmasklcshape->setCurve(spot.CCmasklccurve);
+        LLmasklcshape->setCurve(spot.LLmasklccurve);
+        HHmasklcshape->setCurve(spot.HHmasklccurve);
+        blendmasklc->setValue((double)spot.blendmasklc);
+        radmasklc->setValue(spot.radmasklc);
+        chromasklc->setValue(spot.chromasklc);
+        Lmasklcshape->setCurve(spot.Lmasklccurve);
     }
 
     // Enable all listeners
@@ -2782,100 +2796,102 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).expcontrast = exp->getEnabled();
-        pp->locallab.spots.at(index).visicontrast = exp->get_visible();
-        pp->locallab.spots.at(index).complexcontrast = complexity->get_active_row_number();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+
+        spot.expcontrast = exp->getEnabled();
+        spot.visicontrast = exp->get_visible();
+        spot.complexcontrast = complexity->get_active_row_number();
 
         if (localcontMethod->get_active_row_number() == 0) {
-            pp->locallab.spots.at(index).localcontMethod = "loc";
+            spot.localcontMethod = "loc";
         } else if (localcontMethod->get_active_row_number() == 1) {
-            pp->locallab.spots.at(index).localcontMethod = "wav";
+            spot.localcontMethod = "wav";
         }
 
-        pp->locallab.spots.at(index).lcradius = lcradius->getIntValue();
-        pp->locallab.spots.at(index).lcamount = lcamount->getValue();
-        pp->locallab.spots.at(index).lcdarkness = lcdarkness->getValue();
-        pp->locallab.spots.at(index).lclightness = lclightness->getValue();
-        pp->locallab.spots.at(index).sigmalc = sigmalc->getValue();
-        pp->locallab.spots.at(index).locwavcurve = wavshape->getCurve();
-        pp->locallab.spots.at(index).levelwav = levelwav->getIntValue();
-        pp->locallab.spots.at(index).csthreshold = csThreshold->getValue<int>();
-        pp->locallab.spots.at(index).residcont = residcont->getValue();
-        pp->locallab.spots.at(index).residchro = residchro->getValue();
-        pp->locallab.spots.at(index).residsha = residsha->getValue();
-        pp->locallab.spots.at(index).residshathr = residshathr->getValue();
-        pp->locallab.spots.at(index).residhi = residhi->getValue();
-        pp->locallab.spots.at(index).residhithr = residhithr->getValue();
-        pp->locallab.spots.at(index).sensilc = sensilc->getIntValue();
-        pp->locallab.spots.at(index).clarilres = clarilres->getValue();
-        pp->locallab.spots.at(index).claricres = claricres->getValue();
-        pp->locallab.spots.at(index).clarisoft = clarisoft->getValue();
-        pp->locallab.spots.at(index).origlc = origlc->get_active();
-        pp->locallab.spots.at(index).wavgradl = wavgradl->get_active();
-        pp->locallab.spots.at(index).sigmalc2 = sigmalc2->getValue();
-        pp->locallab.spots.at(index).strwav = strwav->getValue();
-        pp->locallab.spots.at(index).angwav = angwav->getValue();
-        pp->locallab.spots.at(index).wavedg = wavedg->get_active();
-        pp->locallab.spots.at(index).strengthw = strengthw->getValue();
-        pp->locallab.spots.at(index).sigmaed = sigmaed->getValue();
-        pp->locallab.spots.at(index).locedgwavcurve = wavshapeedg->getCurve();
-        pp->locallab.spots.at(index).gradw = gradw->getValue();
-        pp->locallab.spots.at(index).waveshow = waveshow->get_active();
-        pp->locallab.spots.at(index).radiusw = radiusw->getValue();
-        pp->locallab.spots.at(index).detailw = detailw->getValue();
+        spot.lcradius = lcradius->getIntValue();
+        spot.lcamount = lcamount->getValue();
+        spot.lcdarkness = lcdarkness->getValue();
+        spot.lclightness = lclightness->getValue();
+        spot.sigmalc = sigmalc->getValue();
+        spot.locwavcurve = wavshape->getCurve();
+        spot.levelwav = levelwav->getIntValue();
+        spot.csthreshold = csThreshold->getValue<int>();
+        spot.residcont = residcont->getValue();
+        spot.residchro = residchro->getValue();
+        spot.residsha = residsha->getValue();
+        spot.residshathr = residshathr->getValue();
+        spot.residhi = residhi->getValue();
+        spot.residhithr = residhithr->getValue();
+        spot.sensilc = sensilc->getIntValue();
+        spot.clarilres = clarilres->getValue();
+        spot.claricres = claricres->getValue();
+        spot.clarisoft = clarisoft->getValue();
+        spot.origlc = origlc->get_active();
+        spot.wavgradl = wavgradl->get_active();
+        spot.sigmalc2 = sigmalc2->getValue();
+        spot.strwav = strwav->getValue();
+        spot.angwav = angwav->getValue();
+        spot.wavedg = wavedg->get_active();
+        spot.strengthw = strengthw->getValue();
+        spot.sigmaed = sigmaed->getValue();
+        spot.locedgwavcurve = wavshapeedg->getCurve();
+        spot.gradw = gradw->getValue();
+        spot.waveshow = waveshow->get_active();
+        spot.radiusw = radiusw->getValue();
+        spot.detailw = detailw->getValue();
 
         if (localedgMethod->get_active_row_number() == 0) {
-            pp->locallab.spots.at(index).localedgMethod = "fir";
+            spot.localedgMethod = "fir";
         } else if (localedgMethod->get_active_row_number() == 1) {
-            pp->locallab.spots.at(index).localedgMethod = "sec";
+            spot.localedgMethod = "sec";
         } else if (localedgMethod->get_active_row_number() == 2) {
-            pp->locallab.spots.at(index).localedgMethod = "thr";
+            spot.localedgMethod = "thr";
         }
 
-        pp->locallab.spots.at(index).tloww = tloww->getValue();
-        pp->locallab.spots.at(index).thigw = thigw->getValue();
-        pp->locallab.spots.at(index).edgw = edgw->getValue();
-        pp->locallab.spots.at(index).basew = basew->getValue();
+        spot.tloww = tloww->getValue();
+        spot.thigw = thigw->getValue();
+        spot.edgw = edgw->getValue();
+        spot.basew = basew->getValue();
 
         if (localneiMethod->get_active_row_number() == 0) {
-            pp->locallab.spots.at(index).localneiMethod = "none";
+            spot.localneiMethod = "none";
         } else if (localneiMethod->get_active_row_number() == 1) {
-            pp->locallab.spots.at(index).localneiMethod = "low";
+            spot.localneiMethod = "low";
         } else if (localneiMethod->get_active_row_number() == 2) {
-            pp->locallab.spots.at(index).localneiMethod = "high";
+            spot.localneiMethod = "high";
         }
 
-        pp->locallab.spots.at(index).wavblur = wavblur->get_active();
-        pp->locallab.spots.at(index).levelblur = levelblur->getValue();
-        pp->locallab.spots.at(index).sigmabl = sigmabl->getValue();
-        pp->locallab.spots.at(index).chromablu = chromablu->getValue();
-        pp->locallab.spots.at(index).loclevwavcurve = wavshapelev->getCurve();
-        pp->locallab.spots.at(index).residblur = residblur->getValue();
-        pp->locallab.spots.at(index).blurlc = blurlc->get_active();
-        pp->locallab.spots.at(index).wavcont = wavcont->get_active();
-        pp->locallab.spots.at(index).sigma = sigma->getValue();
-        pp->locallab.spots.at(index).offset = offset->getValue();
-        pp->locallab.spots.at(index).chromalev = chromalev->getValue();
-        pp->locallab.spots.at(index).locconwavcurve = wavshapecon->getCurve();
-        pp->locallab.spots.at(index).wavcompre = wavcompre->get_active();
-        pp->locallab.spots.at(index).loccomprewavcurve = wavshapecompre->getCurve();
-        pp->locallab.spots.at(index).sigmadr = sigmadr->getValue();
-        pp->locallab.spots.at(index).threswav = threswav->getValue();
-        pp->locallab.spots.at(index).residcomp = residcomp->getValue();
-        pp->locallab.spots.at(index).wavcomp = wavcomp->get_active();
-        pp->locallab.spots.at(index).sigmadc = sigmadc->getValue();
-        pp->locallab.spots.at(index).deltad = deltad->getValue();
-        pp->locallab.spots.at(index).loccompwavcurve = wavshapecomp->getCurve();
-        pp->locallab.spots.at(index).fatres = fatres->getValue();
-        pp->locallab.spots.at(index).fftwlc = fftwlc->get_active();
-        pp->locallab.spots.at(index).enalcMask = enalcMask->get_active();
-        pp->locallab.spots.at(index).CCmasklccurve = CCmasklcshape->getCurve();
-        pp->locallab.spots.at(index).LLmasklccurve = LLmasklcshape->getCurve();
-        pp->locallab.spots.at(index).HHmasklccurve = HHmasklcshape->getCurve();
-        pp->locallab.spots.at(index).blendmasklc = blendmasklc->getIntValue();
-        pp->locallab.spots.at(index).radmasklc = radmasklc->getValue();
-        pp->locallab.spots.at(index).chromasklc = chromasklc->getValue();
-        pp->locallab.spots.at(index).Lmasklccurve = Lmasklcshape->getCurve();
+        spot.wavblur = wavblur->get_active();
+        spot.levelblur = levelblur->getValue();
+        spot.sigmabl = sigmabl->getValue();
+        spot.chromablu = chromablu->getValue();
+        spot.loclevwavcurve = wavshapelev->getCurve();
+        spot.residblur = residblur->getValue();
+        spot.blurlc = blurlc->get_active();
+        spot.wavcont = wavcont->get_active();
+        spot.sigma = sigma->getValue();
+        spot.offset = offset->getValue();
+        spot.chromalev = chromalev->getValue();
+        spot.locconwavcurve = wavshapecon->getCurve();
+        spot.wavcompre = wavcompre->get_active();
+        spot.loccomprewavcurve = wavshapecompre->getCurve();
+        spot.sigmadr = sigmadr->getValue();
+        spot.threswav = threswav->getValue();
+        spot.residcomp = residcomp->getValue();
+        spot.wavcomp = wavcomp->get_active();
+        spot.sigmadc = sigmadc->getValue();
+        spot.deltad = deltad->getValue();
+        spot.loccompwavcurve = wavshapecomp->getCurve();
+        spot.fatres = fatres->getValue();
+        spot.fftwlc = fftwlc->get_active();
+        spot.enalcMask = enalcMask->get_active();
+        spot.CCmasklccurve = CCmasklcshape->getCurve();
+        spot.LLmasklccurve = LLmasklcshape->getCurve();
+        spot.HHmasklccurve = HHmasklcshape->getCurve();
+        spot.blendmasklc = blendmasklc->getIntValue();
+        spot.radmasklc = radmasklc->getValue();
+        spot.chromasklc = chromasklc->getValue();
+        spot.Lmasklccurve = Lmasklcshape->getCurve();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -2886,7 +2902,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster and threshold adjuster widgets
         lcradius->setDefault((double)defSpot.lcradius);
@@ -3957,34 +3973,36 @@ void LocallabCBDL::read(const rtengine::procparams::ProcParams* pp, const Params
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visicbdl);
-        exp->setEnabled(pp->locallab.spots.at(index).expcbdl);
-        complexity->set_active(pp->locallab.spots.at(index).complexcbdl);
+        spotName = spot.name; // Update spot name according to selected spot
+
+        exp->set_visible(spot.visicbdl);
+        exp->setEnabled(spot.expcbdl);
+        complexity->set_active(spot.complexcbdl);
 
         for (int i = 0; i < 6; i++) {
-            multiplier[i]->setValue(pp->locallab.spots.at(index).mult[i]);
+            multiplier[i]->setValue(spot.mult[i]);
         }
 
-        chromacbdl->setValue(pp->locallab.spots.at(index).chromacbdl);
-        threshold->setValue(pp->locallab.spots.at(index).threshold);
-        blurcbdl->setValue(pp->locallab.spots.at(index).blurcbdl);
-        clarityml->setValue(pp->locallab.spots.at(index).clarityml);
-        contresid->setValue((double)pp->locallab.spots.at(index).contresid);
-        softradiuscb->setValue(pp->locallab.spots.at(index).softradiuscb);
-        sensicb->setValue((double)pp->locallab.spots.at(index).sensicb);
-        enacbMask->set_active(pp->locallab.spots.at(index).enacbMask);
-        CCmaskcbshape->setCurve(pp->locallab.spots.at(index).CCmaskcbcurve);
-        LLmaskcbshape->setCurve(pp->locallab.spots.at(index).LLmaskcbcurve);
-        HHmaskcbshape->setCurve(pp->locallab.spots.at(index).HHmaskcbcurve);
-        blendmaskcb->setValue((double)pp->locallab.spots.at(index).blendmaskcb);
-        radmaskcb->setValue(pp->locallab.spots.at(index).radmaskcb);
-        lapmaskcb->setValue(pp->locallab.spots.at(index).lapmaskcb);
-        chromaskcb->setValue(pp->locallab.spots.at(index).chromaskcb);
-        gammaskcb->setValue(pp->locallab.spots.at(index).gammaskcb);
-        slomaskcb->setValue(pp->locallab.spots.at(index).slomaskcb);
-        Lmaskcbshape->setCurve(pp->locallab.spots.at(index).Lmaskcbcurve);
+        chromacbdl->setValue(spot.chromacbdl);
+        threshold->setValue(spot.threshold);
+        blurcbdl->setValue(spot.blurcbdl);
+        clarityml->setValue(spot.clarityml);
+        contresid->setValue((double)spot.contresid);
+        softradiuscb->setValue(spot.softradiuscb);
+        sensicb->setValue((double)spot.sensicb);
+        enacbMask->set_active(spot.enacbMask);
+        CCmaskcbshape->setCurve(spot.CCmaskcbcurve);
+        LLmaskcbshape->setCurve(spot.LLmaskcbcurve);
+        HHmaskcbshape->setCurve(spot.HHmaskcbcurve);
+        blendmaskcb->setValue((double)spot.blendmaskcb);
+        radmaskcb->setValue(spot.radmaskcb);
+        lapmaskcb->setValue(spot.lapmaskcb);
+        chromaskcb->setValue(spot.chromaskcb);
+        gammaskcb->setValue(spot.gammaskcb);
+        slomaskcb->setValue(spot.slomaskcb);
+        Lmaskcbshape->setCurve(spot.Lmaskcbcurve);
     }
 
     // Enable all listeners
@@ -4001,32 +4019,34 @@ void LocallabCBDL::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).expcbdl = exp->getEnabled();
-        pp->locallab.spots.at(index).visicbdl = exp->get_visible();
-        pp->locallab.spots.at(index).complexcbdl = complexity->get_active_row_number();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+
+        spot.expcbdl = exp->getEnabled();
+        spot.visicbdl = exp->get_visible();
+        spot.complexcbdl = complexity->get_active_row_number();
 
         for (int i = 0; i < 6; i++) {
-            pp->locallab.spots.at(index).mult[i] = multiplier[i]->getValue();
+            spot.mult[i] = multiplier[i]->getValue();
         }
 
-        pp->locallab.spots.at(index).chromacbdl = chromacbdl->getValue();
-        pp->locallab.spots.at(index).threshold = threshold->getValue();
-        pp->locallab.spots.at(index).blurcbdl = blurcbdl->getValue();
-        pp->locallab.spots.at(index).clarityml = clarityml->getValue();
-        pp->locallab.spots.at(index).contresid = contresid->getIntValue();
-        pp->locallab.spots.at(index).softradiuscb = softradiuscb->getValue();
-        pp->locallab.spots.at(index).sensicb = sensicb->getIntValue();
-        pp->locallab.spots.at(index).enacbMask = enacbMask->get_active();
-        pp->locallab.spots.at(index).LLmaskcbcurve = LLmaskcbshape->getCurve();
-        pp->locallab.spots.at(index).CCmaskcbcurve = CCmaskcbshape->getCurve();
-        pp->locallab.spots.at(index).HHmaskcbcurve = HHmaskcbshape->getCurve();
-        pp->locallab.spots.at(index).blendmaskcb = blendmaskcb->getIntValue();
-        pp->locallab.spots.at(index).radmaskcb = radmaskcb->getValue();
-        pp->locallab.spots.at(index).lapmaskcb = lapmaskcb->getValue();
-        pp->locallab.spots.at(index).chromaskcb = chromaskcb->getValue();
-        pp->locallab.spots.at(index).gammaskcb = gammaskcb->getValue();
-        pp->locallab.spots.at(index).slomaskcb = slomaskcb->getValue();
-        pp->locallab.spots.at(index).Lmaskcbcurve = Lmaskcbshape->getCurve();
+        spot.chromacbdl = chromacbdl->getValue();
+        spot.threshold = threshold->getValue();
+        spot.blurcbdl = blurcbdl->getValue();
+        spot.clarityml = clarityml->getValue();
+        spot.contresid = contresid->getIntValue();
+        spot.softradiuscb = softradiuscb->getValue();
+        spot.sensicb = sensicb->getIntValue();
+        spot.enacbMask = enacbMask->get_active();
+        spot.LLmaskcbcurve = LLmaskcbshape->getCurve();
+        spot.CCmaskcbcurve = CCmaskcbshape->getCurve();
+        spot.HHmaskcbcurve = HHmaskcbshape->getCurve();
+        spot.blendmaskcb = blendmaskcb->getIntValue();
+        spot.radmaskcb = radmaskcb->getValue();
+        spot.lapmaskcb = lapmaskcb->getValue();
+        spot.chromaskcb = chromaskcb->getValue();
+        spot.gammaskcb = gammaskcb->getValue();
+        spot.slomaskcb = slomaskcb->getValue();
+        spot.Lmaskcbcurve = Lmaskcbshape->getCurve();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -4037,7 +4057,7 @@ void LocallabCBDL::setDefaults(const rtengine::procparams::ProcParams* defParams
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
         for (int i = 0; i < 6; i++) {
@@ -4425,23 +4445,25 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visilog);
-        exp->setEnabled(pp->locallab.spots.at(index).explog);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        autocompute->set_active(pp->locallab.spots.at(index).autocompute);
-        blackEv->setValue(pp->locallab.spots.at(index).blackEv);
-        whiteEv->setValue(pp->locallab.spots.at(index).whiteEv);
-        fullimage->set_active(pp->locallab.spots.at(index).fullimage);
-        Autogray->set_active(pp->locallab.spots.at(index).Autogray);
-        sourceGray->setValue(pp->locallab.spots.at(index).sourceGray);
-        targetGray->setValue(pp->locallab.spots.at(index).targetGray);
-        detail->setValue(pp->locallab.spots.at(index).detail);
-        baselog->setValue(pp->locallab.spots.at(index).baselog);
-        sensilog->setValue((double)pp->locallab.spots.at(index).sensilog);
-        strlog->setValue(pp->locallab.spots.at(index).strlog);
-        anglog->setValue(pp->locallab.spots.at(index).anglog);
+        exp->set_visible(spot.visilog);
+        exp->setEnabled(spot.explog);
+
+        autocompute->set_active(spot.autocompute);
+        blackEv->setValue(spot.blackEv);
+        whiteEv->setValue(spot.whiteEv);
+        fullimage->set_active(spot.fullimage);
+        Autogray->set_active(spot.Autogray);
+        sourceGray->setValue(spot.sourceGray);
+        targetGray->setValue(spot.targetGray);
+        detail->setValue(spot.detail);
+        baselog->setValue(spot.baselog);
+        sensilog->setValue((double)spot.sensilog);
+        strlog->setValue(spot.strlog);
+        anglog->setValue(spot.anglog);
     }
 
     // Enable all listeners
@@ -4458,21 +4480,23 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).explog = exp->getEnabled();
-        pp->locallab.spots.at(index).visilog = exp->get_visible();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        pp->locallab.spots.at(index).autocompute = autocompute->get_active();
-        pp->locallab.spots.at(index).blackEv = blackEv->getValue();
-        pp->locallab.spots.at(index).whiteEv = whiteEv->getValue();
-        pp->locallab.spots.at(index).fullimage = fullimage->get_active();
-        pp->locallab.spots.at(index).Autogray = Autogray->get_active();
-        pp->locallab.spots.at(index).sourceGray = sourceGray->getValue();
-        pp->locallab.spots.at(index).targetGray = targetGray->getValue();
-        pp->locallab.spots.at(index).detail = detail->getValue();
-        pp->locallab.spots.at(index).baselog = baselog->getValue();
-        pp->locallab.spots.at(index).sensilog = sensilog->getIntValue();
-        pp->locallab.spots.at(index).strlog = strlog->getValue();
-        pp->locallab.spots.at(index).anglog = anglog->getValue();
+        spot.explog = exp->getEnabled();
+        spot.visilog = exp->get_visible();
+
+        spot.autocompute = autocompute->get_active();
+        spot.blackEv = blackEv->getValue();
+        spot.whiteEv = whiteEv->getValue();
+        spot.fullimage = fullimage->get_active();
+        spot.Autogray = Autogray->get_active();
+        spot.sourceGray = sourceGray->getValue();
+        spot.targetGray = targetGray->getValue();
+        spot.detail = detail->getValue();
+        spot.baselog = baselog->getValue();
+        spot.sensilog = sensilog->getIntValue();
+        spot.strlog = strlog->getValue();
+        spot.anglog = anglog->getValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -4483,7 +4507,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default value for adjuster widgets
         blackEv->setDefault(defSpot.blackEv);

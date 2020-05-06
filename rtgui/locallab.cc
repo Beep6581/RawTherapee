@@ -357,9 +357,6 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
     // Enable all listeners
     enableListener();
 
-    // Open/re-open all Locallab tools expanders
-    openAllTools();
-
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
@@ -528,9 +525,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             // Update default values according to selected spot
             setDefaults(pp, pedited);
 
-            // Open/re-open all Locallab tools expanders
-            openAllTools();
-
             // Note: No need to manage pedited as batch mode is deactivated for Locallab
 
             break;
@@ -586,9 +580,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                     // Update default values according to selected spot
                     setDefaults(pp, pedited);
-
-                    // Open/re-open all Locallab tools expanders
-                    openAllTools();
 
                     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 
@@ -650,9 +641,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             // Update default values according to selected spot
             setDefaults(pp, pedited);
-
-            // Open/re-open all Locallab tools expanders
-            openAllTools();
 
             // Note: No need to manage pedited as batch mode is deactivated for Locallab
 
@@ -809,9 +797,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             // Update default values according to selected spot
             setDefaults(pp, pedited);
-
-            // Open/re-open all Locallab tools expanders
-            openAllTools();
 
             // Note: No need to manage pedited as batch mode is deactivated for Locallab
 
@@ -1090,14 +1075,6 @@ void Locallab::foldAllButOne(LocallabTool* except)
     }
 }
 
-void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
-{
-    tool->getExpander()->setLevel(3);
-    where->pack_start(*tool->getExpander(), false, false);
-    locallabTools.push_back(tool);
-    tool->setLocallabToolListener(this);
-}
-
 void Locallab::openAllTools()
 {
     for (auto tool : locallabTools) {
@@ -1106,6 +1083,14 @@ void Locallab::openAllTools()
         // Set default visibility for tool sub-expanders
         tool->setDefaultExpanderVisibility();
     }
+}
+
+void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
+{
+    tool->getExpander()->setLevel(3);
+    where->pack_start(*tool->getExpander(), false, false);
+    locallabTools.push_back(tool);
+    tool->setLocallabToolListener(this);
 }
 
 void Locallab::setParamEditable(bool cond)
@@ -1152,6 +1137,11 @@ void Locallab::locallabToolToAdd(const Glib::ustring &toolname)
 {
     for (auto tool : locallabTools) {
         if (tool->getToolName() == toolname) {
+            // Set expanders visibility default state when adding tool
+            tool->setExpanded(true);
+            tool->setDefaultExpanderVisibility();
+
+            // Add tool
             tool->addLocallabTool(true);
         }
     }

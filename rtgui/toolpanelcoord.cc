@@ -629,6 +629,9 @@ void ToolPanelCoordinator::profileChange(
 
         if (event == rtengine::EvPhotoLoaded || event == rtengine::EvProfileChanged) {
             toolPanel->autoOpenCurve();
+
+            // For Locallab, reset tool expanders visibility only when a photo or profile is loaded
+            locallab->openAllTools();
         }
     }
 
