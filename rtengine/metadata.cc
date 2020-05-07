@@ -68,7 +68,7 @@ std::unique_ptr<Exiv2::Image> open_exiv2(const Glib::ustring& fname)
     auto image = Exiv2::ImageFactory::open(Glib::filename_from_utf8(fname));
 #endif
     image->readMetadata();
-    if (!image->good()) {
+    if (!image->good() || image->exifData().empty()) {
 #if EXIV2_TEST_VERSION(0,27,0)
         auto error_code = Exiv2::kerErrorMessage;
 #else
