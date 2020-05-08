@@ -629,6 +629,9 @@ void ToolPanelCoordinator::profileChange(
 
         if (event == rtengine::EvPhotoLoaded || event == rtengine::EvProfileChanged) {
             toolPanel->autoOpenCurve();
+
+            // For Locallab, reset tool expanders visibility only when a photo or profile is loaded
+            locallab->openAllTools();
         }
     }
 
@@ -820,6 +823,12 @@ void ToolPanelCoordinator::writeToolExpandedStatus(std::vector<int> &tpOpen)
     wavelet->writeOptions(tpOpen);
     retinex->writeOptions(tpOpen);
 
+}
+
+
+void ToolPanelCoordinator::updateShowtooltipVisibility (bool showtooltip)
+{
+    locallab->updateShowtooltipVisibility(showtooltip);
 }
 
 

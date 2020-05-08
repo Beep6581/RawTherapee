@@ -145,16 +145,9 @@ LocallabTone::LocallabTone():
     mask2tmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasktmshape(static_cast<DiagonalCurveEditor*>(mask2tmCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
-    const bool showtooltip = options.showtooltip;
-    const int complexsoft = options.complexity;
-
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Tone Mapping specific widgets
-    if (showtooltip) {
-        exp->set_tooltip_text(M("TP_LOCALLAB_TONEMAP_TOOLTIP"));
-    }
-
     amount->setAdjusterListener(this);
 
     stren->setAdjusterListener(this);
@@ -167,32 +160,16 @@ LocallabTone::LocallabTone():
 
     estop->setAdjusterListener(this);
 
-    if (showtooltip) {
-        estop->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
-    }
-
     scaltm->setAdjusterListener(this);
 
     rewei->setAdjusterListener(this);
-
-    if (showtooltip) {
-        rewei->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
-    }
 
     softradiustm->setLogScale(10, -10);
     softradiustm->setAdjusterListener(this);
 
     sensitm->setAdjusterListener(this);
 
-    if (showtooltip) {
-        sensitm->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
-    }
-
     setExpandAlignProperties(expmasktm, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-
-    if (showtooltip) {
-        expmasktm->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
-    }
 
     showmasktmMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasktmMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -200,11 +177,7 @@ LocallabTone::LocallabTone():
     showmasktmMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmasktmMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmasktmMethod->set_active(0);
-
-    if (showtooltip) {
-        showmasktmMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
-    }
-
+    showmasktmMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmasktmMethodConn = showmasktmMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabTone::showmasktmMethodChanged));
 
     enatmMaskConn = enatmMask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabTone::enatmMaskChanged));
@@ -215,29 +188,14 @@ LocallabTone::LocallabTone():
 
     CCmasktmshape->setIdentityValue(0.);
     CCmasktmshape->setResetCurve(FlatCurveType(defSpot.CCmasktmcurve.at(0)), defSpot.CCmasktmcurve);
-
-    if (showtooltip) {
-        CCmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     CCmasktmshape->setBottomBarColorProvider(this, 1);
 
     LLmasktmshape->setIdentityValue(0.);
     LLmasktmshape->setResetCurve(FlatCurveType(defSpot.LLmasktmcurve.at(0)), defSpot.LLmasktmcurve);
-
-    if (showtooltip) {
-        LLmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     LLmasktmshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     HHmasktmshape->setIdentityValue(0.);
     HHmasktmshape->setResetCurve(FlatCurveType(defSpot.HHmasktmcurve.at(0)), defSpot.HHmasktmcurve);
-
-    if (showtooltip) {
-        HHmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     HHmasktmshape->setCurveColorProvider(this, 2);
     HHmasktmshape->setBottomBarColorProvider(this, 2);
 
@@ -247,16 +205,8 @@ LocallabTone::LocallabTone():
 
     lapmasktm->setAdjusterListener(this);
 
-    if (showtooltip) {
-        lapmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-    }
-
     radmasktm->setLogScale(10, -10);
     radmasktm->setAdjusterListener(this);
-
-    if (showtooltip) {
-        radmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-    }
 
     chromasktm->setAdjusterListener(this);
 
@@ -266,11 +216,6 @@ LocallabTone::LocallabTone():
 
     mask2tmCurveEditorG->setCurveListener(this);
     Lmasktmshape->setResetCurve(DiagonalCurveType(defSpot.Lmasktmcurve.at(0)), defSpot.Lmasktmcurve);
-
-    if (showtooltip) {
-        Lmasktmshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
-    }
-
     Lmasktmshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
     Lmasktmshape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
@@ -280,19 +225,11 @@ LocallabTone::LocallabTone():
     // pack_start(*amount); // To use if we change transit_shapedetect parameters
     pack_start(*stren);
     pack_start(*equiltm);
-
-    if (complexsoft < 2) {
-        pack_start(*gamma);
-        pack_start(*satur);
-    }
-
+    pack_start(*gamma);
+    pack_start(*satur);
     pack_start(*estop);
     pack_start(*scaltm);
-
-    if (complexsoft < 2) {
-        pack_start(*rewei);
-    }
-
+    pack_start(*rewei);
     // pack_start(*softradiustm); // Always bad with TM ??
     pack_start(*sensitm);
     ToolParamBlock* const masktmBox = Gtk::manage(new ToolParamBlock());
@@ -301,19 +238,11 @@ LocallabTone::LocallabTone():
     masktmBox->pack_start(*enatmMaskaft, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*masktmCurveEditorG, Gtk::PACK_SHRINK, 4);
     masktmBox->pack_start(*blendmasktm, Gtk::PACK_SHRINK, 0);
-
-    if (complexsoft < 1) {
-        masktmBox->pack_start(*lapmasktm, Gtk::PACK_SHRINK, 0);
-    }
-
+    masktmBox->pack_start(*lapmasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*radmasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*chromasktm, Gtk::PACK_SHRINK, 0);
-
-    if (complexsoft < 2) {
-        masktmBox->pack_start(*gammasktm, Gtk::PACK_SHRINK, 0);
-        masktmBox->pack_start(*slomasktm, Gtk::PACK_SHRINK, 0);
-    }
-
+    masktmBox->pack_start(*gammasktm, Gtk::PACK_SHRINK, 0);
+    masktmBox->pack_start(*slomasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*mask2tmCurveEditorG, Gtk::PACK_SHRINK, 4);
     expmasktm->add(*masktmBox, false);
     pack_start(*expmasktm, false, false);
@@ -335,6 +264,35 @@ void LocallabTone::resetMaskView()
 void LocallabTone::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
 {
     tmMask = showmasktmMethod->get_active_row_number();
+}
+
+void LocallabTone::updateAdviceTooltips(const bool showTooltips)
+{
+    if (showTooltips) {
+        exp->set_tooltip_text(M("TP_LOCALLAB_TONEMAP_TOOLTIP"));
+        estop->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
+        rewei->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
+        sensitm->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        expmasktm->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        CCmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        LLmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        HHmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        lapmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        radmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        Lmasktmshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+    } else {
+        exp->set_tooltip_text("");
+        estop->set_tooltip_text("");
+        rewei->set_tooltip_text("");
+        sensitm->set_tooltip_text("");
+        expmasktm->set_tooltip_text("");
+        CCmasktmshape->setTooltip("");
+        LLmasktmshape->setTooltip("");
+        HHmasktmshape->setTooltip("");
+        lapmasktm->set_tooltip_text("");
+        radmasktm->set_tooltip_text("");
+        Lmasktmshape->setTooltip("");
+    }
 }
 
 void LocallabTone::setDefaultExpanderVisibility()
@@ -364,8 +322,6 @@ void LocallabTone::enableListener()
 
 void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
-    const int complexsoft = options.complexity;
-
     // Disable all listeners
     disableListener();
 
@@ -373,63 +329,43 @@ void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const Params
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visitonemap);
-        exp->setEnabled(pp->locallab.spots.at(index).exptonemap);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        amount->setValue(pp->locallab.spots.at(index).amount);
-        stren->setValue(pp->locallab.spots.at(index).stren);
-        equiltm->set_active(pp->locallab.spots.at(index).equiltm);
+        exp->set_visible(spot.visitonemap);
+        exp->setEnabled(spot.exptonemap);
+        complexity->set_active(spot.complextonemap);
 
-        if (complexsoft < 2) {
-            gamma->setValue(pp->locallab.spots.at(index).gamma);
-            satur->setValue(pp->locallab.spots.at(index).satur);
-        } else {
-            gamma->setValue(1.);
-            satur->setValue(0.);
-        }
-
-        estop->setValue(pp->locallab.spots.at(index).estop);
-        scaltm->setValue(pp->locallab.spots.at(index).scaltm);
-
-        if (complexsoft < 2) {
-            rewei->setValue((double)pp->locallab.spots.at(index).rewei);
-        } else {
-            rewei->setValue(0.);
-        }
-
-        softradiustm->setValue(pp->locallab.spots.at(index).softradiustm);
-        sensitm->setValue((double)pp->locallab.spots.at(index).sensitm);
-        enatmMask->set_active(pp->locallab.spots.at(index).enatmMask);
-        enatmMaskaft->set_active(pp->locallab.spots.at(index).enatmMaskaft);
-        CCmasktmshape->setCurve(pp->locallab.spots.at(index).CCmasktmcurve);
-        LLmasktmshape->setCurve(pp->locallab.spots.at(index).LLmasktmcurve);
-        HHmasktmshape->setCurve(pp->locallab.spots.at(index).HHmasktmcurve);
-        blendmasktm->setValue((double)pp->locallab.spots.at(index).blendmasktm);
-
-        if (complexsoft == 0) {
-            lapmasktm->setValue(pp->locallab.spots.at(index).lapmasktm);
-        } else {
-            lapmasktm->setValue(0.);
-        }
-
-        radmasktm->setValue(pp->locallab.spots.at(index).radmasktm);
-        chromasktm->setValue(pp->locallab.spots.at(index).chromasktm);
-
-        if (complexsoft < 2) {
-            gammasktm->setValue(pp->locallab.spots.at(index).gammasktm);
-            slomasktm->setValue(pp->locallab.spots.at(index).slomasktm);
-        } else {
-            gammasktm->setValue(1.);
-            slomasktm->setValue(0.);
-        }
-
-        Lmasktmshape->setCurve(pp->locallab.spots.at(index).Lmasktmcurve);
+        amount->setValue(spot.amount);
+        stren->setValue(spot.stren);
+        equiltm->set_active(spot.equiltm);
+        gamma->setValue(spot.gamma);
+        satur->setValue(spot.satur);
+        estop->setValue(spot.estop);
+        scaltm->setValue(spot.scaltm);
+        rewei->setValue((double)spot.rewei);
+        softradiustm->setValue(spot.softradiustm);
+        sensitm->setValue((double)spot.sensitm);
+        enatmMask->set_active(spot.enatmMask);
+        enatmMaskaft->set_active(spot.enatmMaskaft);
+        CCmasktmshape->setCurve(spot.CCmasktmcurve);
+        LLmasktmshape->setCurve(spot.LLmasktmcurve);
+        HHmasktmshape->setCurve(spot.HHmasktmcurve);
+        blendmasktm->setValue((double)spot.blendmasktm);
+        lapmasktm->setValue(spot.lapmasktm);
+        radmasktm->setValue(spot.radmasktm);
+        chromasktm->setValue(spot.chromasktm);
+        gammasktm->setValue(spot.gammasktm);
+        slomasktm->setValue(spot.slomasktm);
+        Lmasktmshape->setCurve(spot.Lmasktmcurve);
     }
 
     // Enable all listeners
     enableListener();
+
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
@@ -439,31 +375,34 @@ void LocallabTone::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).exptonemap = exp->getEnabled();
-        pp->locallab.spots.at(index).visitonemap = exp->get_visible();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        pp->locallab.spots.at(index).amount = amount->getValue();
-        pp->locallab.spots.at(index).stren = stren->getValue();
-        pp->locallab.spots.at(index).equiltm = equiltm->get_active();
-        pp->locallab.spots.at(index).gamma = gamma->getValue();
-        pp->locallab.spots.at(index).satur = satur->getValue();
-        pp->locallab.spots.at(index).estop = estop->getValue();
-        pp->locallab.spots.at(index).scaltm = scaltm->getValue();
-        pp->locallab.spots.at(index).rewei = rewei->getIntValue();
-        pp->locallab.spots.at(index).softradiustm = softradiustm->getValue();
-        pp->locallab.spots.at(index).sensitm = sensitm->getIntValue();
-        pp->locallab.spots.at(index).enatmMask = enatmMask->get_active();
-        pp->locallab.spots.at(index).enatmMaskaft = enatmMaskaft->get_active();
-        pp->locallab.spots.at(index).LLmasktmcurve = LLmasktmshape->getCurve();
-        pp->locallab.spots.at(index).CCmasktmcurve = CCmasktmshape->getCurve();
-        pp->locallab.spots.at(index).HHmasktmcurve = HHmasktmshape->getCurve();
-        pp->locallab.spots.at(index).blendmasktm = blendmasktm->getIntValue();
-        pp->locallab.spots.at(index).lapmasktm = lapmasktm->getValue();
-        pp->locallab.spots.at(index).radmasktm = radmasktm->getValue();
-        pp->locallab.spots.at(index).chromasktm = chromasktm->getValue();
-        pp->locallab.spots.at(index).gammasktm = gammasktm->getValue();
-        pp->locallab.spots.at(index).slomasktm = slomasktm->getValue();
-        pp->locallab.spots.at(index).Lmasktmcurve = Lmasktmshape->getCurve();
+        spot.exptonemap = exp->getEnabled();
+        spot.visitonemap = exp->get_visible();
+        spot.complextonemap = complexity->get_active_row_number();
+
+        spot.amount = amount->getValue();
+        spot.stren = stren->getValue();
+        spot.equiltm = equiltm->get_active();
+        spot.gamma = gamma->getValue();
+        spot.satur = satur->getValue();
+        spot.estop = estop->getValue();
+        spot.scaltm = scaltm->getValue();
+        spot.rewei = rewei->getIntValue();
+        spot.softradiustm = softradiustm->getValue();
+        spot.sensitm = sensitm->getIntValue();
+        spot.enatmMask = enatmMask->get_active();
+        spot.enatmMaskaft = enatmMaskaft->get_active();
+        spot.LLmasktmcurve = LLmasktmshape->getCurve();
+        spot.CCmasktmcurve = CCmasktmshape->getCurve();
+        spot.HHmasktmcurve = HHmasktmshape->getCurve();
+        spot.blendmasktm = blendmasktm->getIntValue();
+        spot.lapmasktm = lapmasktm->getValue();
+        spot.radmasktm = radmasktm->getValue();
+        spot.chromasktm = chromasktm->getValue();
+        spot.gammasktm = gammasktm->getValue();
+        spot.slomasktm = slomasktm->getValue();
+        spot.Lmasktmcurve = Lmasktmshape->getCurve();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -474,7 +413,7 @@ void LocallabTone::setDefaults(const rtengine::procparams::ProcParams* defParams
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
         amount->setDefault(defSpot.amount);
@@ -655,6 +594,46 @@ void LocallabTone::enabledChanged()
     }
 }
 
+void LocallabTone::convertParamToNormal()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+
+    // Set hidden GUI widgets in Normal mode to default spot values
+    gamma->setValue(defSpot.gamma);
+    satur->setValue(defSpot.satur);
+    rewei->setValue((double)defSpot.rewei);
+    lapmasktm->setValue(defSpot.lapmasktm);
+    gammasktm->setValue(defSpot.gammasktm);
+    slomasktm->setValue(defSpot.slomasktm);
+
+    // Enable all listeners
+    enableListener();
+}
+
+void LocallabTone::updateGUIToMode(const modeType new_type)
+{
+    if (new_type == Normal) {
+        // Advanced widgets are hidden in Normal mode
+        gamma->hide();
+        satur->hide();
+        rewei->hide();
+        lapmasktm->hide();
+        gammasktm->hide();
+        slomasktm->hide();
+    } else {
+        // Advanced widgets are shown in Expert mode
+        gamma->show();
+        satur->show();
+        rewei->show();
+        lapmasktm->show();
+        gammasktm->show();
+        slomasktm->show();
+    }
+}
+
 void LocallabTone::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
@@ -733,7 +712,6 @@ LocallabRetinex::LocallabRetinex():
     LocallabTool(this, M("TP_LOCALLAB_RET_TOOLNAME"), M("TP_LOCALLAB_RETI"), true),
 
     // Retinex specific widgets
-    dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), -100, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
     lumonly(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LUMONLY")))),
@@ -742,7 +720,6 @@ LocallabRetinex::LocallabRetinex():
     loglin(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGLIN")))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 60))),
     retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
-    retiBox(Gtk::manage(new ToolParamBlock())),
     retinexMethod(Gtk::manage(new MyComboBoxText())),
     fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
     equilret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
@@ -765,7 +742,6 @@ LocallabRetinex::LocallabRetinex():
     LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
     cTgainshape(static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false))),
     expmaskreti(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWR")))),
-    maskretiBox(Gtk::manage(new ToolParamBlock())),
     showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
     enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
@@ -783,18 +759,10 @@ LocallabRetinex::LocallabRetinex():
     Lmaskretishape(static_cast<DiagonalCurveEditor*>(mask2retiCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS"))))
 {
-    const bool showtooltip = options.showtooltip;
-    const int complexsoft = options.complexity;
-
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Retinex specific widgets
-    dehaFrame->set_label_align(0.025, 0.5);
-
-    if (showtooltip) {
-        dehaz->set_tooltip_text(M("TP_LOCALLAB_DEHAZ_TOOLTIP"));
-    }
-
+    dehaz->set_tooltip_text(M("TP_LOCALLAB_DEHAZ_TOOLTIP"));
     dehaz->setAdjusterListener(this);
 
     depth->setAdjusterListener(this);
@@ -807,10 +775,6 @@ LocallabRetinex::LocallabRetinex():
 
     loglinConn = loglin->signal_toggled().connect(sigc::mem_fun(*this, &LocallabRetinex::loglinChanged));
 
-    if (showtooltip) {
-        sensih->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
-    }
-
     sensih->setAdjusterListener(this);
 
     retitoolFrame->set_label_align(0.025, 0.5);
@@ -819,30 +783,14 @@ LocallabRetinex::LocallabRetinex():
     retinexMethod->append(M("TP_RETINEX_UNIFORM"));
     retinexMethod->append(M("TP_RETINEX_HIGH"));
     retinexMethod->set_active(0);
-
-    if (showtooltip) {
-        retinexMethod->set_tooltip_markup(M("TP_LOCRETI_METHOD_TOOLTIP"));
-    }
-
+    retinexMethod->set_tooltip_markup(M("TP_LOCRETI_METHOD_TOOLTIP"));
     retinexMethodConn = retinexMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabRetinex::retinexMethodChanged));
-
-    if (showtooltip) {
-        fftwreti->set_tooltip_text(M("TP_LOCALLAB_RETI_FFTW_TOOLTIP"));
-    }
 
     fftwretiConn = fftwreti->signal_toggled().connect(sigc::mem_fun(*this, &LocallabRetinex::fftwretiChanged));
 
     equilretConn = equilret->signal_toggled().connect(sigc::mem_fun(*this, &LocallabRetinex::equilretChanged));
 
-    if (showtooltip) {
-        neigh->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
-    }
-
     neigh->setAdjusterListener(this);
-
-    if (showtooltip) {
-        vart->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
-    }
 
     vart->setAdjusterListener(this);
 
@@ -862,10 +810,6 @@ LocallabRetinex::LocallabRetinex():
 
     cliptm->setAdjusterListener(this);
 
-    if (showtooltip) {
-        softradiusret->set_tooltip_text(M("TP_LOCALLAB_GUIDFILTER_TOOLTIP"));
-    }
-
     softradiusret->setLogScale(10, -10);
     softradiusret->setAdjusterListener(this);
 
@@ -874,21 +818,9 @@ LocallabRetinex::LocallabRetinex():
     cTtransshape->setIdentityValue(0.);
     cTtransshape->setResetCurve(FlatCurveType(defSpot.localTtranscurve.at(0)), defSpot.localTtranscurve);
 
-    if (showtooltip) {
-        cTtransshape->setTooltip(M("TP_LOCALLAB_TRANSMISSION_TOOLTIP"));
-    }
-
     LocalcurveEditortransT->curveListComplete();
 
-    if (showtooltip) {
-        mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
-    }
-
     setExpandAlignProperties(mMLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-
-    if (showtooltip) {
-        transLabels->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
-    }
 
     setExpandAlignProperties(transLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
@@ -899,15 +831,7 @@ LocallabRetinex::LocallabRetinex():
     cTgainshape->setIdentityValue(0.);
     cTgainshape->setResetCurve(FlatCurveType(defSpot.localTgaincurve.at(0)), defSpot.localTgaincurve);
 
-    if (showtooltip) {
-        cTgainshape->setTooltip(M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
-    }
-
     LocalcurveEditorgainT->curveListComplete();
-
-    if (showtooltip) {
-        expmaskreti->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
-    }
 
     setExpandAlignProperties(expmaskreti, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -917,18 +841,10 @@ LocallabRetinex::LocallabRetinex():
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskretiMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskretiMethod->set_active(0);
-
-    if (showtooltip) {
-        showmaskretiMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
-    }
-
+    showmaskretiMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskretiMethodConn = showmaskretiMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabRetinex::showmaskretiMethodChanged));
 
     enaretiMaskConn = enaretiMask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabRetinex::enaretiMaskChanged));
-
-    if (showtooltip) {
-        enaretiMasktmap->set_tooltip_markup(M("TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP"));
-    }
 
     enaretiMasktmapConn = enaretiMasktmap->signal_toggled().connect(sigc::mem_fun(*this, &LocallabRetinex::enaretiMasktmapChanged));
 
@@ -936,29 +852,14 @@ LocallabRetinex::LocallabRetinex():
 
     CCmaskretishape->setIdentityValue(0.);
     CCmaskretishape->setResetCurve(FlatCurveType(defSpot.CCmaskreticurve.at(0)), defSpot.CCmaskreticurve);
-
-    if (showtooltip) {
-        CCmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     CCmaskretishape->setBottomBarColorProvider(this, 1);
 
     LLmaskretishape->setIdentityValue(0.);
     LLmaskretishape->setResetCurve(FlatCurveType(defSpot.LLmaskreticurve.at(0)), defSpot.LLmaskreticurve);
-
-    if (showtooltip) {
-        LLmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     LLmaskretishape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     HHmaskretishape->setIdentityValue(0.);
     HHmaskretishape->setResetCurve(FlatCurveType(defSpot.HHmaskreticurve.at(0)), defSpot.HHmaskreticurve);
-
-    if (showtooltip) {
-        HHmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     HHmaskretishape->setCurveColorProvider(this, 2);
     HHmaskretishape->setBottomBarColorProvider(this, 2);
 
@@ -966,15 +867,7 @@ LocallabRetinex::LocallabRetinex():
 
     blendmaskreti->setAdjusterListener(this);
 
-    if (showtooltip) {
-        radmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-    }
-
     radmaskreti->setAdjusterListener(this);
-
-    if (showtooltip) {
-        lapmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-    }
 
     lapmaskreti->setAdjusterListener(this);
 
@@ -987,11 +880,6 @@ LocallabRetinex::LocallabRetinex():
     mask2retiCurveEditorG->setCurveListener(this);
 
     Lmaskretishape->setResetCurve(DiagonalCurveType(defSpot.Lmaskreticurve.at(0)), defSpot.Lmaskreticurve);
-
-    if (showtooltip) {
-        Lmaskretishape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
-    }
-
     Lmaskretishape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
     Lmaskretishape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
@@ -1001,6 +889,8 @@ LocallabRetinex::LocallabRetinex():
 
     // Add Retinex specific widgets to GUI
     ToolParamBlock* const auxBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Frame* const dehaFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")));
+    dehaFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const dehaBox = Gtk::manage(new ToolParamBlock());
     dehaBox->pack_start(*dehaz);
     dehaBox->pack_start(*depth);
@@ -1011,15 +901,12 @@ LocallabRetinex::LocallabRetinex():
     deharetiBox->pack_start(*str);
     deharetiBox->pack_start(*loglin);
     retiFrame->add(*deharetiBox);
-
-    if (complexsoft < 1) {
-        auxBox->add(*retiFrame);
-    }
-
+    auxBox->add(*retiFrame);
     ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
     scopeBox->pack_start(*sensih);
     auxBox->add(*scopeBox);
     pack_start(*auxBox);
+    ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
     retiBox->pack_start(*fftwreti);
     retiBox->pack_start(*equilret);
@@ -1041,6 +928,7 @@ LocallabRetinex::LocallabRetinex():
     toolretiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4);
     expretitools->add(*toolretiBox, false);
     retiBox->pack_start(*expretitools, false, false);
+    ToolParamBlock* const maskretiBox = Gtk::manage(new ToolParamBlock());
     maskretiBox->pack_start(*showmaskretiMethod, Gtk::PACK_SHRINK, 4);
     maskretiBox->pack_start(*enaretiMask, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*enaretiMasktmap, Gtk::PACK_SHRINK, 0);
@@ -1108,6 +996,47 @@ void LocallabRetinex::getMaskView(int &colorMask, int &colorMaskinv, int &expMas
     retiMask = showmaskretiMethod->get_active_row_number();
 }
 
+void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
+{
+    if (showTooltips) {
+        sensih->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
+        fftwreti->set_tooltip_text(M("TP_LOCALLAB_RETI_FFTW_TOOLTIP"));
+        neigh->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
+        vart->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
+        softradiusret->set_tooltip_text(M("TP_LOCALLAB_GUIDFILTER_TOOLTIP"));
+        cTtransshape->setTooltip(M("TP_LOCALLAB_TRANSMISSION_TOOLTIP"));
+        mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
+        transLabels->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
+        cTgainshape->setTooltip(M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
+        expmaskreti->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        enaretiMasktmap->set_tooltip_markup(M("TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP"));
+        CCmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        LLmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        HHmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        radmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        lapmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        Lmaskretishape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+    } else {
+        sensih->set_tooltip_text("");
+        fftwreti->set_tooltip_text("");
+        neigh->set_tooltip_text("");
+        vart->set_tooltip_text("");
+        softradiusret->set_tooltip_text("");
+        cTtransshape->setTooltip("");
+        mMLabels->set_tooltip_text("");
+        transLabels->set_tooltip_text("");
+        cTgainshape->setTooltip("");
+        expmaskreti->set_tooltip_text("");
+        enaretiMasktmap->set_tooltip_text("");
+        CCmaskretishape->setTooltip("");
+        LLmaskretishape->setTooltip("");
+        HHmaskretishape->setTooltip("");
+        radmaskreti->set_tooltip_text("");
+        lapmaskreti->set_tooltip_text("");
+        Lmaskretishape->setTooltip("");
+    }
+}
+
 void LocallabRetinex::setDefaultExpanderVisibility()
 {
     expretitools->set_expanded(false);
@@ -1146,8 +1075,6 @@ void LocallabRetinex::enableListener()
 
 void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
-    const int complexsoft = options.complexity;
-
     // Disable all listeners
     disableListener();
 
@@ -1155,63 +1082,63 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visireti);
-        exp->setEnabled(pp->locallab.spots.at(index).expreti);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        dehaz->setValue((double)pp->locallab.spots.at(index).dehaz);
-        depth->setValue((double)pp->locallab.spots.at(index).depth);
-        lumonly->set_active(pp->locallab.spots.at(index).lumonly);
+        exp->set_visible(spot.visireti);
+        exp->setEnabled(spot.expreti);
+        complexity->set_active(spot.complexreti);
 
-        if (complexsoft < 2) {
-            str->setValue(pp->locallab.spots.at(index).str);
-        } else {
-            str->setValue(0.);
-        }
+        dehaz->setValue((double)spot.dehaz);
+        depth->setValue((double)spot.depth);
+        lumonly->set_active(spot.lumonly);
+        str->setValue(spot.str);
+        loglin->set_active(spot.loglin);
+        sensih->setValue((double)spot.sensih);
 
-        loglin->set_active(pp->locallab.spots.at(index).loglin);
-        sensih->setValue((double)pp->locallab.spots.at(index).sensih);
-
-        if (pp->locallab.spots.at(index).retinexMethod == "low") {
+        if (spot.retinexMethod == "low") {
             retinexMethod->set_active(0);
-        } else if (pp->locallab.spots.at(index).retinexMethod == "uni") {
+        } else if (spot.retinexMethod == "uni") {
             retinexMethod->set_active(1);
         } else {
             retinexMethod->set_active(2);
         }
 
-        fftwreti->set_active(pp->locallab.spots.at(index).fftwreti);
-        equilret->set_active(pp->locallab.spots.at(index).equilret);
-        neigh->setValue(pp->locallab.spots.at(index).neigh);
-        vart->setValue(pp->locallab.spots.at(index).vart);
-        scalereti->setValue(pp->locallab.spots.at(index).scalereti);
-        limd->setValue(pp->locallab.spots.at(index).limd);
-        offs->setValue(pp->locallab.spots.at(index).offs);
-        chrrt->setValue(pp->locallab.spots.at(index).chrrt);
-        darkness->setValue(pp->locallab.spots.at(index).darkness);
-        lightnessreti->setValue(pp->locallab.spots.at(index).lightnessreti);
-        cliptm->setValue(pp->locallab.spots.at(index).cliptm);
-        softradiusret->setValue(pp->locallab.spots.at(index).softradiusret);
-        cTtransshape->setCurve(pp->locallab.spots.at(index).localTtranscurve);
-        cTgainshape->setCurve(pp->locallab.spots.at(index).localTgaincurve);
-        enaretiMask->set_active(pp->locallab.spots.at(index).enaretiMask);
-        enaretiMasktmap->set_active(pp->locallab.spots.at(index).enaretiMasktmap);
-        CCmaskretishape->setCurve(pp->locallab.spots.at(index).CCmaskreticurve);
-        LLmaskretishape->setCurve(pp->locallab.spots.at(index).LLmaskreticurve);
-        HHmaskretishape->setCurve(pp->locallab.spots.at(index).HHmaskreticurve);
-        blendmaskreti->setValue((double)pp->locallab.spots.at(index).blendmaskreti);
-        radmaskreti->setValue(pp->locallab.spots.at(index).radmaskreti);
-        lapmaskreti->setValue(pp->locallab.spots.at(index).lapmaskreti);
-        chromaskreti->setValue(pp->locallab.spots.at(index).chromaskreti);
-        gammaskreti->setValue(pp->locallab.spots.at(index).gammaskreti);
-        slomaskreti->setValue(pp->locallab.spots.at(index).slomaskreti);
-        Lmaskretishape->setCurve(pp->locallab.spots.at(index).Lmaskreticurve);
-        inversret->set_active(pp->locallab.spots.at(index).inversret);
+        fftwreti->set_active(spot.fftwreti);
+        equilret->set_active(spot.equilret);
+        neigh->setValue(spot.neigh);
+        vart->setValue(spot.vart);
+        scalereti->setValue(spot.scalereti);
+        limd->setValue(spot.limd);
+        offs->setValue(spot.offs);
+        chrrt->setValue(spot.chrrt);
+        darkness->setValue(spot.darkness);
+        lightnessreti->setValue(spot.lightnessreti);
+        cliptm->setValue(spot.cliptm);
+        softradiusret->setValue(spot.softradiusret);
+        cTtransshape->setCurve(spot.localTtranscurve);
+        cTgainshape->setCurve(spot.localTgaincurve);
+        enaretiMask->set_active(spot.enaretiMask);
+        enaretiMasktmap->set_active(spot.enaretiMasktmap);
+        CCmaskretishape->setCurve(spot.CCmaskreticurve);
+        LLmaskretishape->setCurve(spot.LLmaskreticurve);
+        HHmaskretishape->setCurve(spot.HHmaskreticurve);
+        blendmaskreti->setValue((double)spot.blendmaskreti);
+        radmaskreti->setValue(spot.radmaskreti);
+        lapmaskreti->setValue(spot.lapmaskreti);
+        chromaskreti->setValue(spot.chromaskreti);
+        gammaskreti->setValue(spot.gammaskreti);
+        slomaskreti->setValue(spot.slomaskreti);
+        Lmaskretishape->setCurve(spot.Lmaskreticurve);
+        inversret->set_active(spot.inversret);
     }
 
     // Enable all listeners
     enableListener();
+
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
     // Update Retinex GUI according to scalereti adjuster value
     updateRetinexGUI1();
@@ -1230,51 +1157,54 @@ void LocallabRetinex::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).expreti = exp->getEnabled();
-        pp->locallab.spots.at(index).visireti = exp->get_visible();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        pp->locallab.spots.at(index).dehaz = dehaz->getIntValue();
-        pp->locallab.spots.at(index).depth = depth->getIntValue();
-        pp->locallab.spots.at(index).lumonly = lumonly->get_active();
-        pp->locallab.spots.at(index).str = str->getValue();
-        pp->locallab.spots.at(index).loglin = loglin->get_active();
-        pp->locallab.spots.at(index).sensih = sensih->getIntValue();
+        spot.expreti = exp->getEnabled();
+        spot.visireti = exp->get_visible();
+        spot.complexreti = complexity->get_active_row_number();
+
+        spot.dehaz = dehaz->getIntValue();
+        spot.depth = depth->getIntValue();
+        spot.lumonly = lumonly->get_active();
+        spot.str = str->getValue();
+        spot.loglin = loglin->get_active();
+        spot.sensih = sensih->getIntValue();
 
         if (retinexMethod->get_active_row_number() == 0) {
-            pp->locallab.spots.at(index).retinexMethod = "low";
+            spot.retinexMethod = "low";
         } else if (retinexMethod->get_active_row_number() == 1) {
-            pp->locallab.spots.at(index).retinexMethod = "uni";
+            spot.retinexMethod = "uni";
         } else if (retinexMethod->get_active_row_number() == 2) {
-            pp->locallab.spots.at(index).retinexMethod = "high";
+            spot.retinexMethod = "high";
         }
 
-        pp->locallab.spots.at(index).fftwreti = fftwreti->get_active();
-        pp->locallab.spots.at(index).equilret = equilret->get_active();
-        pp->locallab.spots.at(index).neigh = neigh->getValue();
-        pp->locallab.spots.at(index).vart = vart->getValue();
-        pp->locallab.spots.at(index).scalereti = scalereti->getValue();
-        pp->locallab.spots.at(index).limd = limd->getValue();
-        pp->locallab.spots.at(index).offs = offs->getValue();
-        pp->locallab.spots.at(index).chrrt = chrrt->getValue();
-        pp->locallab.spots.at(index).darkness = darkness->getValue();
-        pp->locallab.spots.at(index).lightnessreti = lightnessreti->getValue();
-        pp->locallab.spots.at(index).cliptm = cliptm->getValue();
-        pp->locallab.spots.at(index).softradiusret = softradiusret->getValue();
-        pp->locallab.spots.at(index).localTtranscurve = cTtransshape->getCurve();
-        pp->locallab.spots.at(index).localTgaincurve = cTgainshape->getCurve();
-        pp->locallab.spots.at(index).enaretiMask = enaretiMask->get_active();
-        pp->locallab.spots.at(index).enaretiMasktmap = enaretiMasktmap->get_active();
-        pp->locallab.spots.at(index).CCmaskreticurve = CCmaskretishape->getCurve();
-        pp->locallab.spots.at(index).LLmaskreticurve = LLmaskretishape->getCurve();
-        pp->locallab.spots.at(index).HHmaskreticurve = HHmaskretishape->getCurve();
-        pp->locallab.spots.at(index).blendmaskreti = blendmaskreti->getIntValue();
-        pp->locallab.spots.at(index).radmaskreti = radmaskreti->getValue();
-        pp->locallab.spots.at(index).lapmaskreti = lapmaskreti->getValue();
-        pp->locallab.spots.at(index).chromaskreti = chromaskreti->getValue();
-        pp->locallab.spots.at(index).gammaskreti = gammaskreti->getValue();
-        pp->locallab.spots.at(index).slomaskreti = slomaskreti->getValue();
-        pp->locallab.spots.at(index).Lmaskreticurve = Lmaskretishape->getCurve();
-        pp->locallab.spots.at(index).inversret = inversret->get_active();
+        spot.fftwreti = fftwreti->get_active();
+        spot.equilret = equilret->get_active();
+        spot.neigh = neigh->getValue();
+        spot.vart = vart->getValue();
+        spot.scalereti = scalereti->getValue();
+        spot.limd = limd->getValue();
+        spot.offs = offs->getValue();
+        spot.chrrt = chrrt->getValue();
+        spot.darkness = darkness->getValue();
+        spot.lightnessreti = lightnessreti->getValue();
+        spot.cliptm = cliptm->getValue();
+        spot.softradiusret = softradiusret->getValue();
+        spot.localTtranscurve = cTtransshape->getCurve();
+        spot.localTgaincurve = cTgainshape->getCurve();
+        spot.enaretiMask = enaretiMask->get_active();
+        spot.enaretiMasktmap = enaretiMasktmap->get_active();
+        spot.CCmaskreticurve = CCmaskretishape->getCurve();
+        spot.LLmaskreticurve = LLmaskretishape->getCurve();
+        spot.HHmaskreticurve = HHmaskretishape->getCurve();
+        spot.blendmaskreti = blendmaskreti->getIntValue();
+        spot.radmaskreti = radmaskreti->getValue();
+        spot.lapmaskreti = lapmaskreti->getValue();
+        spot.chromaskreti = chromaskreti->getValue();
+        spot.gammaskreti = gammaskreti->getValue();
+        spot.slomaskreti = slomaskreti->getValue();
+        spot.Lmaskreticurve = Lmaskretishape->getCurve();
+        spot.inversret = inversret->get_active();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -1285,7 +1215,7 @@ void LocallabRetinex::setDefaults(const rtengine::procparams::ProcParams* defPar
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
         dehaz->setDefault((double)defSpot.dehaz);
@@ -1530,6 +1460,40 @@ void LocallabRetinex::enabledChanged()
     }
 }
 
+void LocallabRetinex::convertParamToNormal()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+
+    // Set hidden GUI widgets in Normal mode to default spot values
+    str->setValue(defSpot.str);
+    loglin->set_active(defSpot.loglin);
+
+    // Enable all listeners
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+    // - Update Retinex GUI according to str adjuster value
+    updateRetinexGUI3();
+}
+
+void LocallabRetinex::updateGUIToMode(const modeType new_type)
+{
+    if (new_type == Normal) {
+        // Advanced widgets are hidden in Normal mode
+        retiFrame->hide();
+        retitoolFrame->hide();
+        expretitools->hide();
+    } else {
+        // Advanced widgets are shown in Expert mode
+        retiFrame->show();
+        retitoolFrame->show();
+        expretitools->show();
+    }
+}
+
 void LocallabRetinex::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
@@ -1724,17 +1688,9 @@ LocallabSharp::LocallabSharp():
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
     sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
-    sharFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")))),
     showmasksharMethod(Gtk::manage(new MyComboBoxText()))
 {
-    const bool showtooltip = options.showtooltip;
-    const int complexsoft = options.complexity;
-
     // Parameter Sharpening specific widgets
-    if (showtooltip) {
-        exp->set_tooltip_text(M("TP_LOCALLAB_EXPSHARP_TOOLTIP"));
-    }
-
     sharcontrast->setAdjusterListener(this);
 
     sharradius->setAdjusterListener(this);
@@ -1747,40 +1703,28 @@ LocallabSharp::LocallabSharp():
 
     sharblur->setAdjusterListener(this);
 
-    if (showtooltip) {
-        sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
-    }
-
     sensisha->setAdjusterListener(this);
 
     inversshaConn = inverssha->signal_toggled().connect(sigc::mem_fun(*this, &LocallabSharp::inversshaChanged));
-
-    sharFrame->set_label_align(0.025, 0.5);
 
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmasksharMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmasksharMethod->set_active(0);
-
-    if (showtooltip) {
-        showmasksharMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
-    }
-
+    showmasksharMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmasksharMethodConn = showmasksharMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabSharp::showmasksharMethodChanged));
 
     // Add Sharpening specific widgets to GUI
     pack_start(*sharcontrast);
     pack_start(*sharradius);
     pack_start(*sharamount);
-
-    if (complexsoft < 2) {
-        pack_start(*shardamping);
-        pack_start(*shariter);
-        pack_start(*sharblur);
-    }
-
+    pack_start(*shardamping);
+    pack_start(*shariter);
+    pack_start(*sharblur);
     pack_start(*sensisha);
     pack_start(*inverssha);
+    Gtk::Frame* const sharFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")));
+    sharFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sharfBox = Gtk::manage(new ToolParamBlock());
     sharfBox->pack_start(*showmasksharMethod);
     sharFrame->add(*sharfBox);
@@ -1797,6 +1741,17 @@ void LocallabSharp::resetMaskView()
 void LocallabSharp::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
 {
     sharMask = showmasksharMethod->get_active_row_number();
+}
+
+void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
+{
+    if (showTooltips) {
+        exp->set_tooltip_text(M("TP_LOCALLAB_EXPSHARP_TOOLTIP"));
+        sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
+    } else {
+        exp->set_tooltip_text("");
+        sensisha->set_tooltip_text("");
+    }
 }
 
 void LocallabSharp::disableListener()
@@ -1817,8 +1772,6 @@ void LocallabSharp::enableListener()
 
 void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
-    const int complexsoft = options.complexity;
-
     // Disable all listeners
     disableListener();
 
@@ -1826,31 +1779,29 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visisharp);
-        exp->setEnabled(pp->locallab.spots.at(index).expsharp);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        sharcontrast->setValue((double)pp->locallab.spots.at(index).sharcontrast);
-        sharradius->setValue(pp->locallab.spots.at(index).sharradius);
-        sharamount->setValue((double)pp->locallab.spots.at(index).sharamount);
+        exp->set_visible(spot.visisharp);
+        exp->setEnabled(spot.expsharp);
+        complexity->set_active(spot.complexsharp);
 
-        if (complexsoft < 2) {
-            shardamping->setValue((double)pp->locallab.spots.at(index).shardamping);
-            shariter->setValue((double)pp->locallab.spots.at(index).shariter);
-            sharblur->setValue(pp->locallab.spots.at(index).sharblur);
-        } else {
-            shardamping->setValue(0.);
-            shariter->setValue(30.);
-            sharblur->setValue(0.2);
-        }
-
-        sensisha->setValue((double)pp->locallab.spots.at(index).sensisha);
-        inverssha->set_active(pp->locallab.spots.at(index).inverssha);
+        sharcontrast->setValue((double)spot.sharcontrast);
+        sharradius->setValue(spot.sharradius);
+        sharamount->setValue((double)spot.sharamount);
+        shardamping->setValue((double)spot.shardamping);
+        shariter->setValue((double)spot.shariter);
+        sharblur->setValue(spot.sharblur);
+        sensisha->setValue((double)spot.sensisha);
+        inverssha->set_active(spot.inverssha);
     }
 
     // Enable all listeners
     enableListener();
+
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
@@ -1860,17 +1811,20 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).expsharp = exp->getEnabled();
-        pp->locallab.spots.at(index).visisharp = exp->get_visible();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        pp->locallab.spots.at(index).sharcontrast = sharcontrast->getIntValue();
-        pp->locallab.spots.at(index).sharradius = sharradius->getValue();
-        pp->locallab.spots.at(index).sharamount = sharamount->getIntValue();
-        pp->locallab.spots.at(index).shardamping = shardamping->getIntValue();
-        pp->locallab.spots.at(index).shariter = shariter->getIntValue();
-        pp->locallab.spots.at(index).sharblur = sharblur->getValue();
-        pp->locallab.spots.at(index).sensisha = sensisha->getIntValue();
-        pp->locallab.spots.at(index).inverssha = inverssha->get_active();
+        spot.expsharp = exp->getEnabled();
+        spot.visisharp = exp->get_visible();
+        spot.complexsharp = complexity->get_active_row_number();
+
+        spot.sharcontrast = sharcontrast->getIntValue();
+        spot.sharradius = sharradius->getValue();
+        spot.sharamount = sharamount->getIntValue();
+        spot.shardamping = shardamping->getIntValue();
+        spot.shariter = shariter->getIntValue();
+        spot.sharblur = sharblur->getValue();
+        spot.sensisha = sensisha->getIntValue();
+        spot.inverssha = inverssha->get_active();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -1881,7 +1835,7 @@ void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParam
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
         sharcontrast->setDefault((double)defSpot.sharcontrast);
@@ -1965,6 +1919,37 @@ void LocallabSharp::enabledChanged()
     }
 }
 
+void LocallabSharp::convertParamToNormal()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+
+    // Set hidden GUI widgets in Normal mode to default spot values
+    shardamping->setValue((double)defSpot.shardamping);
+    shariter->setValue((double)defSpot.shariter);
+    sharblur->setValue(defSpot.sharblur);
+
+    // Enable all listeners
+    enableListener();
+}
+
+void LocallabSharp::updateGUIToMode(const modeType new_type)
+{
+    if (new_type == Normal) {
+        // Advanced widgets are hidden in Normal mode
+        shardamping->hide();
+        shariter->hide();
+        sharblur->hide();
+    } else {
+        // Advanced widgets are shown in Expert mode
+        shardamping->show();
+        shariter->show();
+        sharblur->show();
+    }
+}
+
 void LocallabSharp::inversshaChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
@@ -2010,7 +1995,6 @@ LocallabContrast::LocallabContrast():
     expresidpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
     residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
     residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100., 100., 1., 0.))),
-    shresFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHRESFRA")))),
     residsha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHA"), -100., 100., 1., 0.))),
     residshathr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHATHR"), 0., 100., 1., 30.))),
     residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
@@ -2022,14 +2006,11 @@ LocallabContrast::LocallabContrast():
     clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 1000.0, 0.5, 1.))),
     origlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ORIGLC")))),
     expcontrastpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
-    gradwavFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADWAVFRA")))),
     wavgradl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GRALWFRA")))),
     sigmalc2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
     angwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
-    edgFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EDGSHARPFRA")))),
     wavedg(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EDGFRA")))),
-    edgsBox(Gtk::manage(new ToolParamBlock())),
     strengthw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDVAL"), 0., 100.0, 0.5, 0.))),
     sigmaed(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     LocalcurveEditorwavedg(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVEDG"))),
@@ -2044,9 +2025,7 @@ LocallabContrast::LocallabContrast():
     thigw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR2"), -10., 100.0, 1., 0.))),
     edgw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGESENSI"), 0., 100.0, 1., 60.))),
     basew(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEAMPLI"), 0., 100.0, 1., 10.))),
-    labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
     localneiMethod(Gtk::manage(new MyComboBoxText())),
-    blurlevelFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURLEVELFRA")))),
     wavblur(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLURLEVELFRA")))),
     levelblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELBLUR"), 0., 100., 0.5, 0.))),
     sigmabl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
@@ -2056,21 +2035,18 @@ LocallabContrast::LocallabContrast():
     residblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDBLUR"), 0., 100., 0.5, 0.))),
     blurlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLURLC")))),
     expcontrastpyr2(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
-    contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTFRA")))),
     wavcont(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CONTFRA")))),
     sigma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     offset(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFSETWAV"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     chromalev(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMALEV"), 0.1, 5., 0.1, 1.))),
     LocalcurveEditorwavcon(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCON"))),
     wavshapecon(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcon->addCurve(CT_Flat, "", nullptr, false, false))),
-    compreFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPREFRA")))),
     wavcompre(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPREFRA")))),
     LocalcurveEditorwavcompre(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCOMPRE"))),
     wavshapecompre(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcompre->addCurve(CT_Flat, "", nullptr, false, false))),
     sigmadr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     threswav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESWAV"), 0.9, 2., 0.01, 1.4))),
     residcomp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCOMP"), -1., 1., 0.01, 0.))),
-    compFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPFRA")))),
     wavcomp(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPFRA")))),
     sigmadc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 3., 0.01, 1.))),
     deltad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DELTAD"), -3., 3., 0.1, 0.))),//, Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
@@ -2091,24 +2067,13 @@ LocallabContrast::LocallabContrast():
     mask2lcCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasklcshape(static_cast<DiagonalCurveEditor*>(mask2lcCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
-    const bool showtooltip = options.showtooltip;
-    const int complexsoft = options.complexity;
-
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Local contrast specific widgets
-    if (showtooltip) {
-        exp->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
-    }
-
     localcontMethod->append(M("TP_LOCALLAB_LOCCONT"));
     localcontMethod->append(M("TP_LOCALLAB_WAVE"));
     localcontMethod->set_active(0);
     localcontMethodConn = localcontMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabContrast::localcontMethodChanged));
-
-    if (complexsoft == 2) {
-        lcradius->setLimits(20, 100, 1, 80);
-    }
 
     lcradius->setAdjusterListener(this);
 
@@ -2127,10 +2092,6 @@ LocallabContrast::LocallabContrast():
 
     LocalcurveEditorwav->curveListComplete();
 
-    if (showtooltip) {
-        levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
-    }
-
     levelwav->setAdjusterListener(this);
 
     csThreshold->setAdjusterListener(this);
@@ -2142,7 +2103,7 @@ LocallabContrast::LocallabContrast():
     LresTitleHBox->pack_start(*LresLabel, Gtk::PACK_EXPAND_WIDGET, 0);
     expresidpyr->setLabel(LresTitleHBox);
     setExpandAlignProperties(expresidpyr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    
+
     residcont->setAdjusterListener(this);
 
     residchro->setAdjusterListener(this);
@@ -2157,10 +2118,6 @@ LocallabContrast::LocallabContrast():
 
     sensilc->setAdjusterListener(this);
 
-    if (showtooltip) {
-        clariFrame->set_tooltip_markup(M("TP_LOCALLAB_CLARI_TOOLTIP"));
-    }
-
     clariFrame->set_label_align(0.025, 0.5);
 
     clarilres->setAdjusterListener(this);
@@ -2169,9 +2126,6 @@ LocallabContrast::LocallabContrast():
 
     clarisoft->setLogScale(10, -10);
     clarisoft->setAdjusterListener(this);
-    if (showtooltip) {
-        clarisoft->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFT_TOOLTIP"));
-    }
 
     origlcConn = origlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::origlcChanged));
 
@@ -2183,20 +2137,13 @@ LocallabContrast::LocallabContrast():
     expcontrastpyr->setLabel(LCTitleHBox);
     setExpandAlignProperties(expcontrastpyr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    gradwavFrame->set_label_align(0.025, 0.5);
-
     wavgradlConn = wavgradl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavgradlChanged));
 
     sigmalc2->setAdjusterListener(this);
+
     strwav->setAdjusterListener(this);
 
     angwav->setAdjusterListener(this);
-
-    edgFrame->set_label_align(0.025, 0.5);
-
-    if (showtooltip) {
-        wavedg->set_tooltip_text(M("TP_LOCALLAB_WAVEEDG_TOOLTIP"));
-    }
 
     wavedgConn = wavedg->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavedgChanged));
 
@@ -2239,8 +2186,6 @@ LocallabContrast::LocallabContrast():
     localneiMethod->set_active(0);
     localneiMethodConn = localneiMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabContrast::localneiMethodChanged));
 
-    blurlevelFrame->set_label_align(0.025, 0.5);
-
     wavblurConn = wavblur->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavblurChanged));
 
     levelblur->setAdjusterListener(this);
@@ -2268,8 +2213,6 @@ LocallabContrast::LocallabContrast():
     expcontrastpyr2->setLabel(LCTitleHBox2);
     setExpandAlignProperties(expcontrastpyr2, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    contFrame->set_label_align(0.025, 0.5);
-
     wavcontConn = wavcont->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavcontChanged));
 
     sigma->setAdjusterListener(this);
@@ -2278,11 +2221,6 @@ LocallabContrast::LocallabContrast():
 
     chromalev->setAdjusterListener(this);
 
-    if (showtooltip) {
-        chromalev->set_tooltip_text(M("TP_LOCALLAB_CHROMABLU_TOOLTIP"));
-        chromablu->set_tooltip_text(M("TP_LOCALLAB_CHROMABLU_TOOLTIP"));
-    }
-
     LocalcurveEditorwavcon->setCurveListener(this);
 
     wavshapecon->setIdentityValue(0.);
@@ -2290,18 +2228,13 @@ LocallabContrast::LocallabContrast():
 
     LocalcurveEditorwavcon->curveListComplete();
 
-    compreFrame->set_label_align(0.025, 0.5);
-
     wavcompreConn = wavcompre->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavcompreChanged));
 
     LocalcurveEditorwavcompre->setCurveListener(this);
 
     wavshapecompre->setIdentityValue(0.);
     wavshapecompre->setResetCurve(FlatCurveType(defSpot.loccomprewavcurve.at(0)), defSpot.loccomprewavcurve);
-
-    if (showtooltip) {
-        wavshapecompre->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
-    }
+    wavshapecompre->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
 
     LocalcurveEditorwavcompre->curveListComplete();
 
@@ -2311,13 +2244,7 @@ LocallabContrast::LocallabContrast():
 
     residcomp->setAdjusterListener(this);
 
-    compFrame->set_label_align(0.025, 0.5);
-
     wavcompConn = wavcomp->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavcompChanged));
-
-    if (showtooltip) {
-    //    sigmadc->set_tooltip_text(M("TP_LOCALLAB_COMPFRAME_TOOLTIP"));
-    }
 
     sigmadc->setAdjusterListener(this);
 
@@ -2333,15 +2260,7 @@ LocallabContrast::LocallabContrast():
 
     fatres->setAdjusterListener(this);
 
-    if (showtooltip) {
-        fftwlc->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
-    }
-
     fftwlcConn = fftwlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::fftwlcChanged));
-
-    if (showtooltip) {
-        expmasklc->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
-    }
 
     setExpandAlignProperties(expmasklc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -2351,11 +2270,7 @@ LocallabContrast::LocallabContrast():
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmasklcMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmasklcMethod->set_active(0);
-
-    if (showtooltip) {
-        showmasklcMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
-    }
-
+    showmasklcMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmasklcMethodConn = showmasklcMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabContrast::showmasklcMethodChanged));
 
     enalcMaskConn = enalcMask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::enalcMaskChanged));
@@ -2364,29 +2279,14 @@ LocallabContrast::LocallabContrast():
 
     CCmasklcshape->setIdentityValue(0.);
     CCmasklcshape->setResetCurve(FlatCurveType(defSpot.CCmasklccurve.at(0)), defSpot.CCmasklccurve);
-
-    if (showtooltip) {
-        CCmasklcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     CCmasklcshape->setBottomBarColorProvider(this, 1);
 
     LLmasklcshape->setIdentityValue(0.);
     LLmasklcshape->setResetCurve(FlatCurveType(defSpot.LLmasklccurve.at(0)), defSpot.LLmasklccurve);
-
-    if (showtooltip) {
-        LLmasklcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     LLmasklcshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     HHmasklcshape->setIdentityValue(0.);
     HHmasklcshape->setResetCurve(FlatCurveType(defSpot.HHmasklccurve.at(0)), defSpot.HHmasklccurve);
-
-    if (showtooltip) {
-        HHmasklcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     HHmasklcshape->setCurveColorProvider(this, 2);
     HHmasklcshape->setBottomBarColorProvider(this, 2);
 
@@ -2402,22 +2302,13 @@ LocallabContrast::LocallabContrast():
     mask2lcCurveEditorG->setCurveListener(this);
 
     Lmasklcshape->setResetCurve(DiagonalCurveType(defSpot.Lmasklccurve.at(0)), defSpot.Lmasklccurve);
-
-    if (showtooltip) {
-        Lmasklcshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
-    }
-
     Lmasklcshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
     Lmasklcshape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     mask2lcCurveEditorG->curveListComplete();
 
     // Add Local contrast specific widgets to GUI
-    if (complexsoft < 2) {
-        pack_start(*localcontMethod);
-    }
-    shresFrame->set_label_align(0.025, 0.5);
-
+    pack_start(*localcontMethod);
     pack_start(*lcradius);
     pack_start(*lcamount);
     pack_start(*lcdarkness);
@@ -2426,6 +2317,8 @@ LocallabContrast::LocallabContrast():
     pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // pack_start(*levelwav);
     pack_start(*csThreshold);
+    Gtk::Frame* const shresFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHRESFRA")));
+    shresFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const resiBox = Gtk::manage(new ToolParamBlock());
     resiBox->pack_start(*residcont);
     resiBox->pack_start(*residchro);
@@ -2434,7 +2327,6 @@ LocallabContrast::LocallabContrast():
     shresBox->pack_start(*residshathr);
     shresBox->pack_start(*residhi);
     shresBox->pack_start(*residhithr);
-
     shresFrame->add(*shresBox);
     resiBox->pack_start(*shresFrame);
     expresidpyr->add(*resiBox, false);
@@ -2450,6 +2342,8 @@ LocallabContrast::LocallabContrast():
     clariFrame->add(*clariBox);
     pack_start(*clariFrame);
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Frame* const gradwavFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADWAVFRA")));
+    gradwavFrame->set_label_align(0.025, 0.5);
     gradwavFrame->set_label_widget(*wavgradl);
     ToolParamBlock* const gradwavBox = Gtk::manage(new ToolParamBlock());
     gradwavBox->pack_start(*sigmalc2);
@@ -2457,7 +2351,10 @@ LocallabContrast::LocallabContrast():
     gradwavBox->pack_start(*angwav);
     gradwavFrame->add(*gradwavBox);
     blurcontBox->pack_start(*gradwavFrame);
+    Gtk::Frame* const edgFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EDGSHARPFRA")));
+    edgFrame->set_label_align(0.025, 0.5);
     edgFrame->set_label_widget(*wavedg);
+    ToolParamBlock* const edgsBox = Gtk::manage(new ToolParamBlock());
     edgsBox->pack_start(*strengthw);
     edgsBox->pack_start(*sigmaed);
     edgsBox->pack_start(*LocalcurveEditorwavedg, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
@@ -2479,12 +2376,15 @@ LocallabContrast::LocallabContrast():
     edgsBoxshow->pack_start(*edgw);
     edgsBoxshow->pack_start(*basew);
     Gtk::HBox* const ctboxNP = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labmNP = Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"));
     ctboxNP->pack_start(*labmNP, Gtk::PACK_SHRINK, 1);
     ctboxNP->pack_start(*localneiMethod);
     edgsBoxshow->pack_start(*ctboxNP);
     edgsBox->pack_start(*edgsBoxshow);
     edgFrame->add(*edgsBox);
     blurcontBox->pack_start(*edgFrame);
+    Gtk::Frame* const blurlevelFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURLEVELFRA")));
+    blurlevelFrame->set_label_align(0.025, 0.5);
     blurlevelFrame->set_label_widget(*wavblur);
     Gtk::VBox* const blurlevcontBox = Gtk::manage(new Gtk::VBox());
     blurlevcontBox->set_spacing(2);
@@ -2501,6 +2401,8 @@ LocallabContrast::LocallabContrast():
     expcontrastpyr->add(*blurcontBox, false);
     pack_start(*expcontrastpyr);
     ToolParamBlock* const blurcontBox2 = Gtk::manage(new ToolParamBlock());
+    Gtk::Frame* const contFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTFRA")));
+    contFrame->set_label_align(0.025, 0.5);
     Gtk::VBox* const contlevBox = Gtk::manage(new Gtk::VBox());
     contlevBox->set_spacing(2);
     contFrame->set_label_widget(*wavcont);
@@ -2510,6 +2412,8 @@ LocallabContrast::LocallabContrast():
     contlevBox->pack_start(*LocalcurveEditorwavcon, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     contFrame->add(*contlevBox);
     blurcontBox2->pack_start(*contFrame);
+    Gtk::Frame* const compreFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPREFRA")));
+    compreFrame->set_label_align(0.025, 0.5);
     Gtk::VBox* const compreBox = Gtk::manage(new Gtk::VBox());
     compreBox->set_spacing(2);
     compreFrame->set_label_widget(*wavcompre);
@@ -2519,24 +2423,22 @@ LocallabContrast::LocallabContrast():
     compreBox->pack_start(*residcomp);
     compreFrame->add(*compreBox);
     blurcontBox2->pack_start(*compreFrame);
+    Gtk::Frame* const compFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPFRA")));
+    compFrame->set_label_align(0.025, 0.5);
     Gtk::VBox* const compBox = Gtk::manage(new Gtk::VBox());
     compBox->set_spacing(2);
     compFrame->set_label_widget(*wavcomp);
     compBox->pack_start(*sigmadc);
     compBox->pack_start(*deltad);
     compBox->pack_start(*LocalcurveEditorwavcomp, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-//    Gtk::HSeparator* const separatorcomp = Gtk::manage(new  Gtk::HSeparator());
-//    compBox->pack_start(*separatorcomp);
-    //compBox->pack_start(*fatres);
+    // Gtk::HSeparator* const separatorcomp = Gtk::manage(new  Gtk::HSeparator());
+    // compBox->pack_start(*separatorcomp);
+    // compBox->pack_start(*fatres);
     compFrame->add(*compBox);
     blurcontBox2->pack_start(*compFrame);
     expcontrastpyr2->add(*blurcontBox2, false);
     pack_start(*expcontrastpyr2);
-
-    if (complexsoft < 2) {
-        pack_start(*fftwlc);
-    }
-
+    pack_start(*fftwlc);
     ToolParamBlock* const masklcBox = Gtk::manage(new ToolParamBlock());
     masklcBox->pack_start(*showmasklcMethod, Gtk::PACK_SHRINK, 4);
     masklcBox->pack_start(*enalcMask, Gtk::PACK_SHRINK, 0);
@@ -2571,6 +2473,39 @@ void LocallabContrast::resetMaskView()
 void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
 {
     lcMask = showmasklcMethod->get_active_row_number();
+}
+
+void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
+{
+    if (showTooltips) {
+        exp->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
+        levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
+        clariFrame->set_tooltip_markup(M("TP_LOCALLAB_CLARI_TOOLTIP"));
+        clarisoft->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFT_TOOLTIP"));
+        wavedg->set_tooltip_text(M("TP_LOCALLAB_WAVEEDG_TOOLTIP"));
+        chromablu->set_tooltip_text(M("TP_LOCALLAB_CHROMABLU_TOOLTIP"));
+        chromalev->set_tooltip_text(M("TP_LOCALLAB_CHROMABLU_TOOLTIP"));
+        fftwlc->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
+        expmasklc->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        CCmasklcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        LLmasklcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        HHmasklcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        Lmasklcshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+    } else {
+        exp->set_tooltip_text("");
+        levelwav->set_tooltip_text("");
+        clariFrame->set_tooltip_text("");
+        clarisoft->set_tooltip_text("");
+        wavedg->set_tooltip_text("");
+        chromablu->set_tooltip_text("");
+        chromalev->set_tooltip_text("");
+        fftwlc->set_tooltip_text("");
+        expmasklc->set_tooltip_text("");
+        CCmasklcshape->setTooltip("");
+        LLmasklcshape->setTooltip("");
+        HHmasklcshape->setTooltip("");
+        Lmasklcshape->setTooltip("");
+    }
 }
 
 void LocallabContrast::setDefaultExpanderVisibility()
@@ -2625,8 +2560,6 @@ void LocallabContrast::enableListener()
 
 void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
-    const int complexsoft = options.complexity;
-
     // Disable all listeners
     disableListener();
 
@@ -2634,115 +2567,111 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visicontrast);
-        exp->setEnabled(pp->locallab.spots.at(index).expcontrast);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        if (complexsoft < 2) {
-            if (pp->locallab.spots.at(index).localcontMethod == "loc") {
-                localcontMethod->set_active(0);
-            } else if (pp->locallab.spots.at(index).localcontMethod == "wav") {
-                localcontMethod->set_active(1);
-            }
-        } else {
+        exp->set_visible(spot.visicontrast);
+        exp->setEnabled(spot.expcontrast);
+        complexity->set_active(spot.complexcontrast);
+
+        if (spot.localcontMethod == "loc") {
+            localcontMethod->set_active(0);
+        } else if (spot.localcontMethod == "wav") {
             localcontMethod->set_active(1);
         }
 
-        lcradius->setValue((double)pp->locallab.spots.at(index).lcradius);
-        lcamount->setValue(pp->locallab.spots.at(index).lcamount);
-        lcdarkness->setValue(pp->locallab.spots.at(index).lcdarkness);
-        lclightness->setValue(pp->locallab.spots.at(index).lclightness);
-        sigmalc->setValue(pp->locallab.spots.at(index).sigmalc);
-        wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
-        levelwav->setValue((double)pp->locallab.spots.at(index).levelwav);
-        csThreshold->setValue<int>(pp->locallab.spots.at(index).csthreshold);
-        residcont->setValue(pp->locallab.spots.at(index).residcont);
-        residchro->setValue(pp->locallab.spots.at(index).residchro);
-        residsha->setValue(pp->locallab.spots.at(index).residsha);
-        residshathr->setValue(pp->locallab.spots.at(index).residshathr);
-        residhi->setValue(pp->locallab.spots.at(index).residhi);
-        residhithr->setValue(pp->locallab.spots.at(index).residhithr);
-        sensilc->setValue((double)pp->locallab.spots.at(index).sensilc);
-        clarilres->setValue(pp->locallab.spots.at(index).clarilres);
-        claricres->setValue(pp->locallab.spots.at(index).claricres);
-        clarisoft->setValue(pp->locallab.spots.at(index).clarisoft);
-        origlc->set_active(pp->locallab.spots.at(index).origlc);
-        wavgradl->set_active(pp->locallab.spots.at(index).wavgradl);
-        sigmalc2->setValue(pp->locallab.spots.at(index).sigmalc2);
-        strwav->setValue(pp->locallab.spots.at(index).strwav);
-        angwav->setValue(pp->locallab.spots.at(index).angwav);
-        wavedg->set_active(pp->locallab.spots.at(index).wavedg);
-        strengthw->setValue(pp->locallab.spots.at(index).strengthw);
-        sigmaed->setValue(pp->locallab.spots.at(index).sigmaed);
-        wavshapeedg->setCurve(pp->locallab.spots.at(index).locedgwavcurve);
-        gradw->setValue(pp->locallab.spots.at(index).gradw);
-        waveshow->set_active(pp->locallab.spots.at(index).waveshow);
-        radiusw->setValue(pp->locallab.spots.at(index).radiusw);
-        detailw->setValue(pp->locallab.spots.at(index).detailw);
+        lcradius->setValue((double)spot.lcradius);
+        lcamount->setValue(spot.lcamount);
+        lcdarkness->setValue(spot.lcdarkness);
+        lclightness->setValue(spot.lclightness);
+        sigmalc->setValue(spot.sigmalc);
+        wavshape->setCurve(spot.locwavcurve);
+        levelwav->setValue((double)spot.levelwav);
+        csThreshold->setValue<int>(spot.csthreshold);
+        residcont->setValue(spot.residcont);
+        residchro->setValue(spot.residchro);
+        residsha->setValue(spot.residsha);
+        residshathr->setValue(spot.residshathr);
+        residhi->setValue(spot.residhi);
+        residhithr->setValue(spot.residhithr);
+        sensilc->setValue((double)spot.sensilc);
+        clarilres->setValue(spot.clarilres);
+        claricres->setValue(spot.claricres);
+        clarisoft->setValue(spot.clarisoft);
+        origlc->set_active(spot.origlc);
+        wavgradl->set_active(spot.wavgradl);
+        sigmalc2->setValue(spot.sigmalc2);
+        strwav->setValue(spot.strwav);
+        angwav->setValue(spot.angwav);
+        wavedg->set_active(spot.wavedg);
+        strengthw->setValue(spot.strengthw);
+        sigmaed->setValue(spot.sigmaed);
+        wavshapeedg->setCurve(spot.locedgwavcurve);
+        gradw->setValue(spot.gradw);
+        waveshow->set_active(spot.waveshow);
+        radiusw->setValue(spot.radiusw);
+        detailw->setValue(spot.detailw);
 
-        if (pp->locallab.spots.at(index).localedgMethod == "fir") {
+        if (spot.localedgMethod == "fir") {
             localedgMethod->set_active(0);
-        } else if (pp->locallab.spots.at(index).localedgMethod == "sec") {
+        } else if (spot.localedgMethod == "sec") {
             localedgMethod->set_active(1);
-        } else if (pp->locallab.spots.at(index).localedgMethod == "thr") {
+        } else if (spot.localedgMethod == "thr") {
             localedgMethod->set_active(2);
         }
 
-        tloww->setValue(pp->locallab.spots.at(index).tloww);
-        thigw->setValue(pp->locallab.spots.at(index).thigw);
-        edgw->setValue(pp->locallab.spots.at(index).edgw);
-        basew->setValue(pp->locallab.spots.at(index).basew);
+        tloww->setValue(spot.tloww);
+        thigw->setValue(spot.thigw);
+        edgw->setValue(spot.edgw);
+        basew->setValue(spot.basew);
 
-        if (pp->locallab.spots.at(index).localneiMethod == "none") {
+        if (spot.localneiMethod == "none") {
             localneiMethod->set_active(0);
-        } else if (pp->locallab.spots.at(index).localneiMethod == "low") {
+        } else if (spot.localneiMethod == "low") {
             localneiMethod->set_active(1);
-        } else if (pp->locallab.spots.at(index).localneiMethod == "high") {
+        } else if (spot.localneiMethod == "high") {
             localneiMethod->set_active(2);
         }
 
-        wavblur->set_active(pp->locallab.spots.at(index).wavblur);
-        levelblur->setValue(pp->locallab.spots.at(index).levelblur);
-        sigmabl->setValue(pp->locallab.spots.at(index).sigmabl);
-        chromablu->setValue(pp->locallab.spots.at(index).chromablu);
-        wavshapelev->setCurve(pp->locallab.spots.at(index).loclevwavcurve);
-        residblur->setValue(pp->locallab.spots.at(index).residblur);
-        blurlc->set_active(pp->locallab.spots.at(index).blurlc);
-        wavcont->set_active(pp->locallab.spots.at(index).wavcont);
-        sigma->setValue(pp->locallab.spots.at(index).sigma);
-        offset->setValue(pp->locallab.spots.at(index).offset);
-        chromalev->setValue(pp->locallab.spots.at(index).chromalev);
-        wavshapecon->setCurve(pp->locallab.spots.at(index).locconwavcurve);
-        wavcompre->set_active(pp->locallab.spots.at(index).wavcompre);
-        wavshapecompre->setCurve(pp->locallab.spots.at(index).loccomprewavcurve);
-        sigmadr->setValue(pp->locallab.spots.at(index).sigmadr);
-        threswav->setValue(pp->locallab.spots.at(index).threswav);
-        residcomp->setValue(pp->locallab.spots.at(index).residcomp);
-        wavcomp->set_active(pp->locallab.spots.at(index).wavcomp);
-        sigmadc->setValue(pp->locallab.spots.at(index).sigmadc);
-        deltad->setValue(pp->locallab.spots.at(index).deltad);
-        wavshapecomp->setCurve(pp->locallab.spots.at(index).loccompwavcurve);
-        fatres->setValue(pp->locallab.spots.at(index).fatres);
-
-        if (complexsoft < 2) {
-            fftwlc->set_active(pp->locallab.spots.at(index).fftwlc);
-        } else {
-            fftwlc->set_active(false);
-        }
-
-        enalcMask->set_active(pp->locallab.spots.at(index).enalcMask);
-        CCmasklcshape->setCurve(pp->locallab.spots.at(index).CCmasklccurve);
-        LLmasklcshape->setCurve(pp->locallab.spots.at(index).LLmasklccurve);
-        HHmasklcshape->setCurve(pp->locallab.spots.at(index).HHmasklccurve);
-        blendmasklc->setValue((double)pp->locallab.spots.at(index).blendmasklc);
-        radmasklc->setValue(pp->locallab.spots.at(index).radmasklc);
-        chromasklc->setValue(pp->locallab.spots.at(index).chromasklc);
-        Lmasklcshape->setCurve(pp->locallab.spots.at(index).Lmasklccurve);
+        wavblur->set_active(spot.wavblur);
+        levelblur->setValue(spot.levelblur);
+        sigmabl->setValue(spot.sigmabl);
+        chromablu->setValue(spot.chromablu);
+        wavshapelev->setCurve(spot.loclevwavcurve);
+        residblur->setValue(spot.residblur);
+        blurlc->set_active(spot.blurlc);
+        wavcont->set_active(spot.wavcont);
+        sigma->setValue(spot.sigma);
+        offset->setValue(spot.offset);
+        chromalev->setValue(spot.chromalev);
+        wavshapecon->setCurve(spot.locconwavcurve);
+        wavcompre->set_active(spot.wavcompre);
+        wavshapecompre->setCurve(spot.loccomprewavcurve);
+        sigmadr->setValue(spot.sigmadr);
+        threswav->setValue(spot.threswav);
+        residcomp->setValue(spot.residcomp);
+        wavcomp->set_active(spot.wavcomp);
+        sigmadc->setValue(spot.sigmadc);
+        deltad->setValue(spot.deltad);
+        wavshapecomp->setCurve(spot.loccompwavcurve);
+        fatres->setValue(spot.fatres);
+        fftwlc->set_active(spot.fftwlc);
+        enalcMask->set_active(spot.enalcMask);
+        CCmasklcshape->setCurve(spot.CCmasklccurve);
+        LLmasklcshape->setCurve(spot.LLmasklccurve);
+        HHmasklcshape->setCurve(spot.HHmasklccurve);
+        blendmasklc->setValue((double)spot.blendmasklc);
+        radmasklc->setValue(spot.radmasklc);
+        chromasklc->setValue(spot.chromasklc);
+        Lmasklcshape->setCurve(spot.Lmasklccurve);
     }
 
     // Enable all listeners
     enableListener();
+
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
     // Update Local contrast GUI according to localcontMethod combobox value
     updateContrastGUI1();
@@ -2761,99 +2690,102 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).expcontrast = exp->getEnabled();
-        pp->locallab.spots.at(index).visicontrast = exp->get_visible();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+
+        spot.expcontrast = exp->getEnabled();
+        spot.visicontrast = exp->get_visible();
+        spot.complexcontrast = complexity->get_active_row_number();
 
         if (localcontMethod->get_active_row_number() == 0) {
-            pp->locallab.spots.at(index).localcontMethod = "loc";
+            spot.localcontMethod = "loc";
         } else if (localcontMethod->get_active_row_number() == 1) {
-            pp->locallab.spots.at(index).localcontMethod = "wav";
+            spot.localcontMethod = "wav";
         }
 
-        pp->locallab.spots.at(index).lcradius = lcradius->getIntValue();
-        pp->locallab.spots.at(index).lcamount = lcamount->getValue();
-        pp->locallab.spots.at(index).lcdarkness = lcdarkness->getValue();
-        pp->locallab.spots.at(index).lclightness = lclightness->getValue();
-        pp->locallab.spots.at(index).sigmalc = sigmalc->getValue();
-        pp->locallab.spots.at(index).locwavcurve = wavshape->getCurve();
-        pp->locallab.spots.at(index).levelwav = levelwav->getIntValue();
-        pp->locallab.spots.at(index).csthreshold = csThreshold->getValue<int>();
-        pp->locallab.spots.at(index).residcont = residcont->getValue();
-        pp->locallab.spots.at(index).residchro = residchro->getValue();
-        pp->locallab.spots.at(index).residsha = residsha->getValue();
-        pp->locallab.spots.at(index).residshathr = residshathr->getValue();
-        pp->locallab.spots.at(index).residhi = residhi->getValue();
-        pp->locallab.spots.at(index).residhithr = residhithr->getValue();
-        pp->locallab.spots.at(index).sensilc = sensilc->getIntValue();
-        pp->locallab.spots.at(index).clarilres = clarilres->getValue();
-        pp->locallab.spots.at(index).claricres = claricres->getValue();
-        pp->locallab.spots.at(index).clarisoft = clarisoft->getValue();
-        pp->locallab.spots.at(index).origlc = origlc->get_active();
-        pp->locallab.spots.at(index).wavgradl = wavgradl->get_active();
-        pp->locallab.spots.at(index).sigmalc2 = sigmalc2->getValue();
-        pp->locallab.spots.at(index).strwav = strwav->getValue();
-        pp->locallab.spots.at(index).angwav = angwav->getValue();
-        pp->locallab.spots.at(index).wavedg = wavedg->get_active();
-        pp->locallab.spots.at(index).strengthw = strengthw->getValue();
-        pp->locallab.spots.at(index).sigmaed = sigmaed->getValue();
-        pp->locallab.spots.at(index).locedgwavcurve = wavshapeedg->getCurve();
-        pp->locallab.spots.at(index).gradw = gradw->getValue();
-        pp->locallab.spots.at(index).waveshow = waveshow->get_active();
-        pp->locallab.spots.at(index).radiusw = radiusw->getValue();
-        pp->locallab.spots.at(index).detailw = detailw->getValue();
+        spot.lcradius = lcradius->getIntValue();
+        spot.lcamount = lcamount->getValue();
+        spot.lcdarkness = lcdarkness->getValue();
+        spot.lclightness = lclightness->getValue();
+        spot.sigmalc = sigmalc->getValue();
+        spot.locwavcurve = wavshape->getCurve();
+        spot.levelwav = levelwav->getIntValue();
+        spot.csthreshold = csThreshold->getValue<int>();
+        spot.residcont = residcont->getValue();
+        spot.residchro = residchro->getValue();
+        spot.residsha = residsha->getValue();
+        spot.residshathr = residshathr->getValue();
+        spot.residhi = residhi->getValue();
+        spot.residhithr = residhithr->getValue();
+        spot.sensilc = sensilc->getIntValue();
+        spot.clarilres = clarilres->getValue();
+        spot.claricres = claricres->getValue();
+        spot.clarisoft = clarisoft->getValue();
+        spot.origlc = origlc->get_active();
+        spot.wavgradl = wavgradl->get_active();
+        spot.sigmalc2 = sigmalc2->getValue();
+        spot.strwav = strwav->getValue();
+        spot.angwav = angwav->getValue();
+        spot.wavedg = wavedg->get_active();
+        spot.strengthw = strengthw->getValue();
+        spot.sigmaed = sigmaed->getValue();
+        spot.locedgwavcurve = wavshapeedg->getCurve();
+        spot.gradw = gradw->getValue();
+        spot.waveshow = waveshow->get_active();
+        spot.radiusw = radiusw->getValue();
+        spot.detailw = detailw->getValue();
 
         if (localedgMethod->get_active_row_number() == 0) {
-            pp->locallab.spots.at(index).localedgMethod = "fir";
+            spot.localedgMethod = "fir";
         } else if (localedgMethod->get_active_row_number() == 1) {
-            pp->locallab.spots.at(index).localedgMethod = "sec";
+            spot.localedgMethod = "sec";
         } else if (localedgMethod->get_active_row_number() == 2) {
-            pp->locallab.spots.at(index).localedgMethod = "thr";
+            spot.localedgMethod = "thr";
         }
 
-        pp->locallab.spots.at(index).tloww = tloww->getValue();
-        pp->locallab.spots.at(index).thigw = thigw->getValue();
-        pp->locallab.spots.at(index).edgw = edgw->getValue();
-        pp->locallab.spots.at(index).basew = basew->getValue();
+        spot.tloww = tloww->getValue();
+        spot.thigw = thigw->getValue();
+        spot.edgw = edgw->getValue();
+        spot.basew = basew->getValue();
 
         if (localneiMethod->get_active_row_number() == 0) {
-            pp->locallab.spots.at(index).localneiMethod = "none";
+            spot.localneiMethod = "none";
         } else if (localneiMethod->get_active_row_number() == 1) {
-            pp->locallab.spots.at(index).localneiMethod = "low";
+            spot.localneiMethod = "low";
         } else if (localneiMethod->get_active_row_number() == 2) {
-            pp->locallab.spots.at(index).localneiMethod = "high";
+            spot.localneiMethod = "high";
         }
 
-        pp->locallab.spots.at(index).wavblur = wavblur->get_active();
-        pp->locallab.spots.at(index).levelblur = levelblur->getValue();
-        pp->locallab.spots.at(index).sigmabl = sigmabl->getValue();
-        pp->locallab.spots.at(index).chromablu = chromablu->getValue();
-        pp->locallab.spots.at(index).loclevwavcurve = wavshapelev->getCurve();
-        pp->locallab.spots.at(index).residblur = residblur->getValue();
-        pp->locallab.spots.at(index).blurlc = blurlc->get_active();
-        pp->locallab.spots.at(index).wavcont = wavcont->get_active();
-        pp->locallab.spots.at(index).sigma = sigma->getValue();
-        pp->locallab.spots.at(index).offset = offset->getValue();
-        pp->locallab.spots.at(index).chromalev = chromalev->getValue();
-        pp->locallab.spots.at(index).locconwavcurve = wavshapecon->getCurve();
-        pp->locallab.spots.at(index).wavcompre = wavcompre->get_active();
-        pp->locallab.spots.at(index).loccomprewavcurve = wavshapecompre->getCurve();
-        pp->locallab.spots.at(index).sigmadr = sigmadr->getValue();
-        pp->locallab.spots.at(index).threswav = threswav->getValue();
-        pp->locallab.spots.at(index).residcomp = residcomp->getValue();
-        pp->locallab.spots.at(index).wavcomp = wavcomp->get_active();
-        pp->locallab.spots.at(index).sigmadc = sigmadc->getValue();
-        pp->locallab.spots.at(index).deltad = deltad->getValue();
-        pp->locallab.spots.at(index).loccompwavcurve = wavshapecomp->getCurve();
-        pp->locallab.spots.at(index).fatres = fatres->getValue();
-        pp->locallab.spots.at(index).fftwlc = fftwlc->get_active();
-        pp->locallab.spots.at(index).enalcMask = enalcMask->get_active();
-        pp->locallab.spots.at(index).CCmasklccurve = CCmasklcshape->getCurve();
-        pp->locallab.spots.at(index).LLmasklccurve = LLmasklcshape->getCurve();
-        pp->locallab.spots.at(index).HHmasklccurve = HHmasklcshape->getCurve();
-        pp->locallab.spots.at(index).blendmasklc = blendmasklc->getIntValue();
-        pp->locallab.spots.at(index).radmasklc = radmasklc->getValue();
-        pp->locallab.spots.at(index).chromasklc = chromasklc->getValue();
-        pp->locallab.spots.at(index).Lmasklccurve = Lmasklcshape->getCurve();
+        spot.wavblur = wavblur->get_active();
+        spot.levelblur = levelblur->getValue();
+        spot.sigmabl = sigmabl->getValue();
+        spot.chromablu = chromablu->getValue();
+        spot.loclevwavcurve = wavshapelev->getCurve();
+        spot.residblur = residblur->getValue();
+        spot.blurlc = blurlc->get_active();
+        spot.wavcont = wavcont->get_active();
+        spot.sigma = sigma->getValue();
+        spot.offset = offset->getValue();
+        spot.chromalev = chromalev->getValue();
+        spot.locconwavcurve = wavshapecon->getCurve();
+        spot.wavcompre = wavcompre->get_active();
+        spot.loccomprewavcurve = wavshapecompre->getCurve();
+        spot.sigmadr = sigmadr->getValue();
+        spot.threswav = threswav->getValue();
+        spot.residcomp = residcomp->getValue();
+        spot.wavcomp = wavcomp->get_active();
+        spot.sigmadc = sigmadc->getValue();
+        spot.deltad = deltad->getValue();
+        spot.loccompwavcurve = wavshapecomp->getCurve();
+        spot.fatres = fatres->getValue();
+        spot.fftwlc = fftwlc->get_active();
+        spot.enalcMask = enalcMask->get_active();
+        spot.CCmasklccurve = CCmasklcshape->getCurve();
+        spot.LLmasklccurve = LLmasklcshape->getCurve();
+        spot.HHmasklccurve = HHmasklcshape->getCurve();
+        spot.blendmasklc = blendmasklc->getIntValue();
+        spot.radmasklc = radmasklc->getValue();
+        spot.chromasklc = chromasklc->getValue();
+        spot.Lmasklccurve = Lmasklcshape->getCurve();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -2864,7 +2796,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster and threshold adjuster widgets
         lcradius->setDefault((double)defSpot.lcradius);
@@ -3331,6 +3263,45 @@ void LocallabContrast::enabledChanged()
     }
 }
 
+void LocallabContrast::convertParamToNormal()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+
+    // Set hidden GUI widgets in Normal mode to default spot values
+    if (defSpot.localcontMethod == "loc") {
+        localcontMethod->set_active(0);
+    } else if (defSpot.localcontMethod == "wav") {
+        localcontMethod->set_active(1);
+    }
+
+    fftwlc->set_active(defSpot.fftwlc);
+
+    // Enable all listeners
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+    // - Update Local contrast GUI according to localcontMethod combobox value
+    updateContrastGUI1();
+    // - Update Local contrast GUI according to fftwlc button state
+    updateContrastGUI3();
+}
+
+void LocallabContrast::updateGUIToMode(const modeType new_type)
+{
+    if (new_type == Normal) {
+        // Advanced widgets are hidden in Normal mode
+        localcontMethod->hide();
+        fftwlc->hide();
+    } else {
+        // Advanced widgets are shown in Expert mode
+        localcontMethod->show();
+        fftwlc->show();
+    }
+}
+
 void LocallabContrast::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
@@ -3575,44 +3546,10 @@ void LocallabContrast::updateContrastGUI1()
         LocalcurveEditorwav->hide();
         levelwav->hide();
         csThreshold->hide();
-        residcont->hide();
-        residchro->hide();
-        residsha->hide();
-        residshathr->hide();
-        residhi->hide();
-        residhithr->hide();
-        shresFrame->hide();
+        expresidpyr->hide();
         clariFrame->hide();
-        sigmalc2->hide();
-        strwav->hide();
-        angwav->hide();
-        strengthw->hide();
-        sigmaed->hide();
-        LocalcurveEditorwavedg->hide();
-        gradw->hide();
-        radiusw->hide();
-        detailw->hide();
-        tloww->hide();
-        thigw->hide();
-        edgw->hide();
-        basew->hide();
-        levelblur->hide();
-        sigmabl->hide();
-        chromablu->hide();
-        LocalcurveEditorwavlev->hide();
-        residblur->hide();
-        sigma->hide();
-        offset->hide();
-        chromalev->hide();
-        LocalcurveEditorwavcon->hide();
-        LocalcurveEditorwavcompre->hide();
-        sigmadr->hide();
-        threswav->hide();
-        residcomp->hide();
-        sigmadc->hide();
-        deltad->hide();
-        LocalcurveEditorwavcomp->hide();
-        fatres->hide();
+        expcontrastpyr->hide();
+        expcontrastpyr2->hide();
         fftwlc->show();
     } else if (localcontMethod->get_active_row_number() == 1) {
         lcradius->hide();
@@ -3623,44 +3560,10 @@ void LocallabContrast::updateContrastGUI1()
         LocalcurveEditorwav->show();
         levelwav->show();
         csThreshold->show();
-        residcont->show();
-        residchro->show();
-        residsha->show();
-        residshathr->show();
-        residhi->show();
-        residhithr->show();
-        shresFrame->show();
+        expresidpyr->show();
         clariFrame->show();
-        sigmalc2->show();
-        strwav->show();
-        angwav->show();
-        strengthw->show();
-        sigmaed->show();
-        LocalcurveEditorwavedg->show();
-        gradw->show();
-        radiusw->show();
-        detailw->show();
-        tloww->show();
-        thigw->show();
-        edgw->show();
-        basew->show();
-        levelblur->show();
-        sigmabl->show();
-        chromablu->show();
-        LocalcurveEditorwavlev->show();
-        residblur->show();
-        sigma->show();
-        offset->show();
-        chromalev->show();
-        LocalcurveEditorwavcon->show();
-        LocalcurveEditorwavcompre->show();
-        sigmadr->show();
-        threswav->show();
-        residcomp->show();
-        sigmadc->show();
-        deltad->show();
-        LocalcurveEditorwavcomp->show();
-        fatres->show();
+        expcontrastpyr->show();
+        expcontrastpyr2->show();
         fftwlc->hide();
     }
 }
@@ -3716,7 +3619,6 @@ LocallabCBDL::LocallabCBDL():
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
     blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0., 100., 0.1, 0.))),
-    residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
     clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
     contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
     softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 1000.0, 0.5, 0.))),
@@ -3741,22 +3643,11 @@ LocallabCBDL::LocallabCBDL():
     lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
     lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS"))))
 {
-    const bool showtooltip = options.showtooltip;
-    const int complexsoft = options.complexity;
-
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter CBDL specific widgets
-    if (showtooltip) {
-        exp->set_tooltip_text(M("TP_LOCALLAB_EXPCBDL_TOOLTIP"));
-    }
-
     for (const auto adj : multiplier) {
         adj->setAdjusterListener(this);
-    }
-
-    if (showtooltip) {
-        chromacbdl->set_tooltip_text(M("TP_LOCALLAB_CHROMACB_TOOLTIP"));
     }
 
     chromacbdl->setAdjusterListener(this);
@@ -3765,8 +3656,6 @@ LocallabCBDL::LocallabCBDL():
 
     blurcbdl->setAdjusterListener(this);
 
-    residFrame->set_label_align(0.025, 0.5);
-
     clarityml->setAdjusterListener(this);
 
     contresid->setAdjusterListener(this);
@@ -3774,15 +3663,7 @@ LocallabCBDL::LocallabCBDL():
     softradiuscb->setLogScale(10, -10);
     softradiuscb->setAdjusterListener(this);
 
-    if (showtooltip) {
-        sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
-    }
-
     sensicb->setAdjusterListener(this);
-
-    if (showtooltip) {
-        expmaskcb->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
-    }
 
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -3790,11 +3671,7 @@ LocallabCBDL::LocallabCBDL():
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskcbMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskcbMethod->set_active(0);
-
-    if (showtooltip) {
-        showmaskcbMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
-    }
-
+    showmaskcbMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskcbMethodConn = showmaskcbMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabCBDL::showmaskcbMethodChanged));
 
     enacbMaskConn = enacbMask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabCBDL::enacbMaskChanged));
@@ -3803,29 +3680,14 @@ LocallabCBDL::LocallabCBDL():
 
     CCmaskcbshape->setIdentityValue(0.);
     CCmaskcbshape->setResetCurve(FlatCurveType(defSpot.CCmaskcbcurve.at(0)), defSpot.CCmaskcbcurve);
-
-    if (showtooltip) {
-        CCmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     CCmaskcbshape->setBottomBarColorProvider(this, 1);
 
     LLmaskcbshape->setIdentityValue(0.);
     LLmaskcbshape->setResetCurve(FlatCurveType(defSpot.LLmaskcbcurve.at(0)), defSpot.LLmaskcbcurve);
-
-    if (showtooltip) {
-        LLmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     LLmaskcbshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     HHmaskcbshape->setIdentityValue(0.);
     HHmaskcbshape->setResetCurve(FlatCurveType(defSpot.HHmaskcbcurve.at(0)), defSpot.HHmaskcbcurve);
-
-    if (showtooltip) {
-        HHmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
     HHmaskcbshape->setCurveColorProvider(this, 2);
     HHmaskcbshape->setBottomBarColorProvider(this, 2);
 
@@ -3833,16 +3695,8 @@ LocallabCBDL::LocallabCBDL():
 
     blendmaskcb->setAdjusterListener(this);
 
-    if (showtooltip) {
-        radmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-    }
-
     radmaskcb->setLogScale(10, -10);
     radmaskcb->setAdjusterListener(this);
-
-    if (showtooltip) {
-        lapmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-    }
 
     lapmaskcb->setAdjusterListener(this);
 
@@ -3855,11 +3709,6 @@ LocallabCBDL::LocallabCBDL():
     mask2cbCurveEditorG->setCurveListener(this);
 
     Lmaskcbshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskcbcurve.at(0)), defSpot.Lmaskcbcurve);
-
-    if (showtooltip) {
-        Lmaskcbshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
-    }
-
     Lmaskcbshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
     Lmaskcbshape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
@@ -3886,7 +3735,9 @@ LocallabCBDL::LocallabCBDL():
     pack_start(*separator, Gtk::PACK_SHRINK, 2);
     pack_start(*chromacbdl);
     pack_start(*threshold);
-   // pack_start(*blurcbdl);
+    // pack_start(*blurcbdl);
+    Gtk::Frame* const residFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")));
+    residFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const residBox = Gtk::manage(new ToolParamBlock());
     residBox->pack_start(*clarityml);
     residBox->pack_start(*contresid);
@@ -3900,11 +3751,7 @@ LocallabCBDL::LocallabCBDL():
     maskcbBox->pack_start(*maskcbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcbBox->pack_start(*blendmaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*radmaskcb, Gtk::PACK_SHRINK, 0);
-
-    if (complexsoft < 1) {
-        maskcbBox->pack_start(*lapmaskcb, Gtk::PACK_SHRINK, 0);
-    }
-
+    maskcbBox->pack_start(*lapmaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*chromaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*gammaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*slomaskcb, Gtk::PACK_SHRINK, 0);
@@ -3929,6 +3776,33 @@ void LocallabCBDL::resetMaskView()
 void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
 {
     cbMask = showmaskcbMethod->get_active_row_number();
+}
+
+void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
+{
+    if (showTooltips) {
+        exp->set_tooltip_text(M("TP_LOCALLAB_EXPCBDL_TOOLTIP"));
+        chromacbdl->set_tooltip_text(M("TP_LOCALLAB_CHROMACB_TOOLTIP"));
+        sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
+        expmaskcb->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        CCmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        LLmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        HHmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        radmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        lapmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        Lmaskcbshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+    } else {
+        exp->set_tooltip_text("");
+        chromacbdl->set_tooltip_text("");
+        sensicb->set_tooltip_text("");
+        expmaskcb->set_tooltip_text("");
+        CCmaskcbshape->setTooltip("");
+        LLmaskcbshape->setTooltip("");
+        HHmaskcbshape->setTooltip("");
+        radmaskcb->set_tooltip_text("");
+        lapmaskcb->set_tooltip_text("");
+        Lmaskcbshape->setTooltip("");
+    }
 }
 
 void LocallabCBDL::setDefaultExpanderVisibility()
@@ -3962,8 +3836,6 @@ void LocallabCBDL::enableListener()
 
 void LocallabCBDL::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
-    const int complexsoft = options.complexity;
-
     // Disable all listeners
     disableListener();
 
@@ -3971,43 +3843,43 @@ void LocallabCBDL::read(const rtengine::procparams::ProcParams* pp, const Params
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visicbdl);
-        exp->setEnabled(pp->locallab.spots.at(index).expcbdl);
+        spotName = spot.name; // Update spot name according to selected spot
+
+        exp->set_visible(spot.visicbdl);
+        exp->setEnabled(spot.expcbdl);
+        complexity->set_active(spot.complexcbdl);
 
         for (int i = 0; i < 6; i++) {
-            multiplier[i]->setValue(pp->locallab.spots.at(index).mult[i]);
+            multiplier[i]->setValue(spot.mult[i]);
         }
 
-        chromacbdl->setValue(pp->locallab.spots.at(index).chromacbdl);
-        threshold->setValue(pp->locallab.spots.at(index).threshold);
-        blurcbdl->setValue(pp->locallab.spots.at(index).blurcbdl);
-        clarityml->setValue(pp->locallab.spots.at(index).clarityml);
-        contresid->setValue((double)pp->locallab.spots.at(index).contresid);
-        softradiuscb->setValue(pp->locallab.spots.at(index).softradiuscb);
-        sensicb->setValue((double)pp->locallab.spots.at(index).sensicb);
-        enacbMask->set_active(pp->locallab.spots.at(index).enacbMask);
-        CCmaskcbshape->setCurve(pp->locallab.spots.at(index).CCmaskcbcurve);
-        LLmaskcbshape->setCurve(pp->locallab.spots.at(index).LLmaskcbcurve);
-        HHmaskcbshape->setCurve(pp->locallab.spots.at(index).HHmaskcbcurve);
-        blendmaskcb->setValue((double)pp->locallab.spots.at(index).blendmaskcb);
-        radmaskcb->setValue(pp->locallab.spots.at(index).radmaskcb);
-
-        if (complexsoft == 0) {
-            lapmaskcb->setValue(pp->locallab.spots.at(index).lapmaskcb);
-        } else {
-            lapmaskcb->setValue(0.);
-        }
-
-        chromaskcb->setValue(pp->locallab.spots.at(index).chromaskcb);
-        gammaskcb->setValue(pp->locallab.spots.at(index).gammaskcb);
-        slomaskcb->setValue(pp->locallab.spots.at(index).slomaskcb);
-        Lmaskcbshape->setCurve(pp->locallab.spots.at(index).Lmaskcbcurve);
+        chromacbdl->setValue(spot.chromacbdl);
+        threshold->setValue(spot.threshold);
+        blurcbdl->setValue(spot.blurcbdl);
+        clarityml->setValue(spot.clarityml);
+        contresid->setValue((double)spot.contresid);
+        softradiuscb->setValue(spot.softradiuscb);
+        sensicb->setValue((double)spot.sensicb);
+        enacbMask->set_active(spot.enacbMask);
+        CCmaskcbshape->setCurve(spot.CCmaskcbcurve);
+        LLmaskcbshape->setCurve(spot.LLmaskcbcurve);
+        HHmaskcbshape->setCurve(spot.HHmaskcbcurve);
+        blendmaskcb->setValue((double)spot.blendmaskcb);
+        radmaskcb->setValue(spot.radmaskcb);
+        lapmaskcb->setValue(spot.lapmaskcb);
+        chromaskcb->setValue(spot.chromaskcb);
+        gammaskcb->setValue(spot.gammaskcb);
+        slomaskcb->setValue(spot.slomaskcb);
+        Lmaskcbshape->setCurve(spot.Lmaskcbcurve);
     }
 
     // Enable all listeners
     enableListener();
+
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
@@ -4017,31 +3889,34 @@ void LocallabCBDL::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).expcbdl = exp->getEnabled();
-        pp->locallab.spots.at(index).visicbdl = exp->get_visible();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+
+        spot.expcbdl = exp->getEnabled();
+        spot.visicbdl = exp->get_visible();
+        spot.complexcbdl = complexity->get_active_row_number();
 
         for (int i = 0; i < 6; i++) {
-            pp->locallab.spots.at(index).mult[i] = multiplier[i]->getValue();
+            spot.mult[i] = multiplier[i]->getValue();
         }
 
-        pp->locallab.spots.at(index).chromacbdl = chromacbdl->getValue();
-        pp->locallab.spots.at(index).threshold = threshold->getValue();
-        pp->locallab.spots.at(index).blurcbdl = blurcbdl->getValue();
-        pp->locallab.spots.at(index).clarityml = clarityml->getValue();
-        pp->locallab.spots.at(index).contresid = contresid->getIntValue();
-        pp->locallab.spots.at(index).softradiuscb = softradiuscb->getValue();
-        pp->locallab.spots.at(index).sensicb = sensicb->getIntValue();
-        pp->locallab.spots.at(index).enacbMask = enacbMask->get_active();
-        pp->locallab.spots.at(index).LLmaskcbcurve = LLmaskcbshape->getCurve();
-        pp->locallab.spots.at(index).CCmaskcbcurve = CCmaskcbshape->getCurve();
-        pp->locallab.spots.at(index).HHmaskcbcurve = HHmaskcbshape->getCurve();
-        pp->locallab.spots.at(index).blendmaskcb = blendmaskcb->getIntValue();
-        pp->locallab.spots.at(index).radmaskcb = radmaskcb->getValue();
-        pp->locallab.spots.at(index).lapmaskcb = lapmaskcb->getValue();
-        pp->locallab.spots.at(index).chromaskcb = chromaskcb->getValue();
-        pp->locallab.spots.at(index).gammaskcb = gammaskcb->getValue();
-        pp->locallab.spots.at(index).slomaskcb = slomaskcb->getValue();
-        pp->locallab.spots.at(index).Lmaskcbcurve = Lmaskcbshape->getCurve();
+        spot.chromacbdl = chromacbdl->getValue();
+        spot.threshold = threshold->getValue();
+        spot.blurcbdl = blurcbdl->getValue();
+        spot.clarityml = clarityml->getValue();
+        spot.contresid = contresid->getIntValue();
+        spot.softradiuscb = softradiuscb->getValue();
+        spot.sensicb = sensicb->getIntValue();
+        spot.enacbMask = enacbMask->get_active();
+        spot.LLmaskcbcurve = LLmaskcbshape->getCurve();
+        spot.CCmaskcbcurve = CCmaskcbshape->getCurve();
+        spot.HHmaskcbcurve = HHmaskcbshape->getCurve();
+        spot.blendmaskcb = blendmaskcb->getIntValue();
+        spot.radmaskcb = radmaskcb->getValue();
+        spot.lapmaskcb = lapmaskcb->getValue();
+        spot.chromaskcb = chromaskcb->getValue();
+        spot.gammaskcb = gammaskcb->getValue();
+        spot.slomaskcb = slomaskcb->getValue();
+        spot.Lmaskcbcurve = Lmaskcbshape->getCurve();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -4052,7 +3927,7 @@ void LocallabCBDL::setDefaults(const rtengine::procparams::ProcParams* defParams
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
         for (int i = 0; i < 6; i++) {
@@ -4235,6 +4110,31 @@ void LocallabCBDL::enabledChanged()
     }
 }
 
+void LocallabCBDL::convertParamToNormal()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+
+    // Set hidden GUI widgets in Normal mode to default spot values
+    lapmaskcb->setValue(defSpot.lapmaskcb);
+
+    // Enable all listeners
+    enableListener();
+}
+
+void LocallabCBDL::updateGUIToMode(const modeType new_type)
+{
+    if (new_type == Normal) {
+        // Advanced widgets are hidden in Normal mode
+        lapmaskcb->hide();
+    } else {
+        // Advanced widgets are shown in Expert mode
+        lapmaskcb->show();
+    }
+}
+
 void LocallabCBDL::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
@@ -4312,28 +4212,23 @@ void LocallabCBDL::lumacontrastPlusPressed()
 
 /* ==== LocallabLog ==== */
 LocallabLog::LocallabLog():
-    LocallabTool(this, M("TP_LOCALLAB_LOG_TOOLNAME"), M("TP_LOCALLAB_LOG"), false),
+    LocallabTool(this, M("TP_LOCALLAB_LOG_TOOLNAME"), M("TP_LOCALLAB_LOG"), false, false),
 
     // Log encoding specific widgets
-    logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
     blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
     whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.0, 32.0, 0.1, 10.0))),
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
-    logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
     baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 8., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSILOG"), 0, 100, 1, 50))),
-    gradlogFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.)))
 {
     // Parameter Log encoding specific widgets
-    logPFrame->set_label_align(0.025, 0.5);
-
     autoconn = autocompute->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::autocomputeToggled));
 
     blackEv->setLogScale(2, -8);
@@ -4343,8 +4238,6 @@ LocallabLog::LocallabLog():
     whiteEv->setAdjusterListener(this);
 
     fullimageConn = fullimage->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::fullimageChanged));
-
-    logFrame->set_label_align(0.025, 0.5);
 
     AutograyConn = Autogray->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::AutograyChanged));
 
@@ -4358,13 +4251,13 @@ LocallabLog::LocallabLog():
 
     sensilog->setAdjusterListener(this);
 
-    gradlogFrame->set_label_align(0.025, 0.5);
-
     strlog->setAdjusterListener(this);
 
     anglog->setAdjusterListener(this);
 
-    // Add Log encoding specific widgets to HUI
+    // Add Log encoding specific widgets to GUI
+    Gtk::Frame* const logPFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")));
+    logPFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const logPBox = Gtk::manage(new ToolParamBlock());
     logPBox->pack_start(*autocompute);
     logPBox->pack_start(*blackEv);
@@ -4372,6 +4265,8 @@ LocallabLog::LocallabLog():
     logPBox->pack_start(*fullimage);
     logPFrame->add(*logPBox);
     pack_start(*logPFrame);
+    Gtk::Frame* const logFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")));
+    logFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const logFBox = Gtk::manage(new ToolParamBlock());
     logFBox->pack_start(*Autogray);
     logFBox->pack_start(*sourceGray);
@@ -4381,6 +4276,8 @@ LocallabLog::LocallabLog():
     pack_start(*detail);
     pack_start(*baselog);
     pack_start(*sensilog);
+    Gtk::Frame* const gradlogFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")));
+    gradlogFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradlogBox = Gtk::manage(new ToolParamBlock());
     gradlogBox->pack_start(*strlog);
     gradlogBox->pack_start(*anglog);
@@ -4415,23 +4312,25 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        exp->set_visible(pp->locallab.spots.at(index).visilog);
-        exp->setEnabled(pp->locallab.spots.at(index).explog);
+        spotName = spot.name; // Update spot name according to selected spot
 
-        autocompute->set_active(pp->locallab.spots.at(index).autocompute);
-        blackEv->setValue(pp->locallab.spots.at(index).blackEv);
-        whiteEv->setValue(pp->locallab.spots.at(index).whiteEv);
-        fullimage->set_active(pp->locallab.spots.at(index).fullimage);
-        Autogray->set_active(pp->locallab.spots.at(index).Autogray);
-        sourceGray->setValue(pp->locallab.spots.at(index).sourceGray);
-        targetGray->setValue(pp->locallab.spots.at(index).targetGray);
-        detail->setValue(pp->locallab.spots.at(index).detail);
-        baselog->setValue(pp->locallab.spots.at(index).baselog);
-        sensilog->setValue((double)pp->locallab.spots.at(index).sensilog);
-        strlog->setValue(pp->locallab.spots.at(index).strlog);
-        anglog->setValue(pp->locallab.spots.at(index).anglog);
+        exp->set_visible(spot.visilog);
+        exp->setEnabled(spot.explog);
+
+        autocompute->set_active(spot.autocompute);
+        blackEv->setValue(spot.blackEv);
+        whiteEv->setValue(spot.whiteEv);
+        fullimage->set_active(spot.fullimage);
+        Autogray->set_active(spot.Autogray);
+        sourceGray->setValue(spot.sourceGray);
+        targetGray->setValue(spot.targetGray);
+        detail->setValue(spot.detail);
+        baselog->setValue(spot.baselog);
+        sensilog->setValue((double)spot.sensilog);
+        strlog->setValue(spot.strlog);
+        anglog->setValue(spot.anglog);
     }
 
     // Enable all listeners
@@ -4448,21 +4347,23 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).explog = exp->getEnabled();
-        pp->locallab.spots.at(index).visilog = exp->get_visible();
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        pp->locallab.spots.at(index).autocompute = autocompute->get_active();
-        pp->locallab.spots.at(index).blackEv = blackEv->getValue();
-        pp->locallab.spots.at(index).whiteEv = whiteEv->getValue();
-        pp->locallab.spots.at(index).fullimage = fullimage->get_active();
-        pp->locallab.spots.at(index).Autogray = Autogray->get_active();
-        pp->locallab.spots.at(index).sourceGray = sourceGray->getValue();
-        pp->locallab.spots.at(index).targetGray = targetGray->getValue();
-        pp->locallab.spots.at(index).detail = detail->getValue();
-        pp->locallab.spots.at(index).baselog = baselog->getValue();
-        pp->locallab.spots.at(index).sensilog = sensilog->getIntValue();
-        pp->locallab.spots.at(index).strlog = strlog->getValue();
-        pp->locallab.spots.at(index).anglog = anglog->getValue();
+        spot.explog = exp->getEnabled();
+        spot.visilog = exp->get_visible();
+
+        spot.autocompute = autocompute->get_active();
+        spot.blackEv = blackEv->getValue();
+        spot.whiteEv = whiteEv->getValue();
+        spot.fullimage = fullimage->get_active();
+        spot.Autogray = Autogray->get_active();
+        spot.sourceGray = sourceGray->getValue();
+        spot.targetGray = targetGray->getValue();
+        spot.detail = detail->getValue();
+        spot.baselog = baselog->getValue();
+        spot.sensilog = sensilog->getIntValue();
+        spot.strlog = strlog->getValue();
+        spot.anglog = anglog->getValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -4473,7 +4374,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
     const int index = defParams->locallab.selspot;
 
     if (index < (int)defParams->locallab.spots.size()) {
-        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default value for adjuster widgets
         blackEv->setDefault(defSpot.blackEv);

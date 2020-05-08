@@ -20,6 +20,7 @@
  *  2019 Pierre Cabrera <pierre.cab@gmail.com>
  */
 #include "locallab.h"
+
 #include "options.h"
 #include "../rtengine/procparams.h"
 
@@ -212,6 +213,11 @@ Locallab::Locallab():
     // Show all widgets
     show_all();
 
+    // Update Locallab tools advice tooltips visibility based on saved option
+    for (auto tool : locallabTools) {
+        tool->updateAdviceTooltips(options.showtooltip);
+    }
+
     // By default, if no photo is loaded, all Locallab tools are removed and it's not possible to add them
     // (to be necessary called after "show_all" function)
     setParamEditable(false);
@@ -219,9 +225,6 @@ Locallab::Locallab():
 
 void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
-    // printf("Locallab read\n");
-    const int complexsoft = options.complexity;
-
     // Disable all listeners
     disableListener();
 
@@ -264,18 +267,14 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
         r->structexclu = pp->locallab.spots.at(i).structexclu;
 
-        if (complexsoft < 2) {
-            if (pp->locallab.spots.at(i).shapeMethod == "IND") {
-                r->shapeMethod = 0;
-            } else if (pp->locallab.spots.at(i).shapeMethod == "SYM") {
-                r->shapeMethod = 1;
-            } else if (pp->locallab.spots.at(i).shapeMethod == "INDSL") {
-                r->shapeMethod = 2;
-            } else {
-                r->shapeMethod = 3;
-            }
-        } else {
+        if (pp->locallab.spots.at(i).shapeMethod == "IND") {
             r->shapeMethod = 0;
+        } else if (pp->locallab.spots.at(i).shapeMethod == "SYM") {
+            r->shapeMethod = 1;
+        } else if (pp->locallab.spots.at(i).shapeMethod == "INDSL") {
+            r->shapeMethod = 2;
+        } else {
+            r->shapeMethod = 3;
         }
 
         r->locX = pp->locallab.spots.at(i).loc.at(0);
@@ -366,9 +365,6 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
     // Enable all listeners
     enableListener();
-
-    // Open/re-open all Locallab tools expanders
-    openAllTools();
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
@@ -538,9 +534,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             // Update default values according to selected spot
             setDefaults(pp, pedited);
 
-            // Open/re-open all Locallab tools expanders
-            openAllTools();
-
             // Note: No need to manage pedited as batch mode is deactivated for Locallab
 
             break;
@@ -596,9 +589,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                     // Update default values according to selected spot
                     setDefaults(pp, pedited);
-
-                    // Open/re-open all Locallab tools expanders
-                    openAllTools();
 
                     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 
@@ -660,9 +650,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             // Update default values according to selected spot
             setDefaults(pp, pedited);
-
-            // Open/re-open all Locallab tools expanders
-            openAllTools();
 
             // Note: No need to manage pedited as batch mode is deactivated for Locallab
 
@@ -819,9 +806,6 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             // Update default values according to selected spot
             setDefaults(pp, pedited);
-
-            // Open/re-open all Locallab tools expanders
-            openAllTools();
 
             // Note: No need to manage pedited as batch mode is deactivated for Locallab
 
@@ -1100,14 +1084,6 @@ void Locallab::foldAllButOne(LocallabTool* except)
     }
 }
 
-void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
-{
-    tool->getExpander()->setLevel(3);
-    where->pack_start(*tool->getExpander(), false, false);
-    locallabTools.push_back(tool);
-    tool->setLocallabToolListener(this);
-}
-
 void Locallab::openAllTools()
 {
     for (auto tool : locallabTools) {
@@ -1116,6 +1092,21 @@ void Locallab::openAllTools()
         // Set default visibility for tool sub-expanders
         tool->setDefaultExpanderVisibility();
     }
+}
+
+void Locallab::updateShowtooltipVisibility(bool showtooltip)
+{
+    for (auto tool : locallabTools) {
+        tool->updateAdviceTooltips(showtooltip);
+    }
+}
+
+void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
+{
+    tool->getExpander()->setLevel(3);
+    where->pack_start(*tool->getExpander(), false, false);
+    locallabTools.push_back(tool);
+    tool->setLocallabToolListener(this);
 }
 
 void Locallab::setParamEditable(bool cond)
@@ -1162,6 +1153,11 @@ void Locallab::locallabToolToAdd(const Glib::ustring &toolname)
 {
     for (auto tool : locallabTools) {
         if (tool->getToolName() == toolname) {
+            // Set expanders visibility default state when adding tool
+            tool->setExpanded(true);
+            tool->setDefaultExpanderVisibility();
+
+            // Add tool
             tool->addLocallabTool(true);
         }
     }

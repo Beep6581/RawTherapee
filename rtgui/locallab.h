@@ -181,13 +181,14 @@ public:
 
     // Locallab tools expanders management functions
     void foldAllButOne(LocallabTool* except);
+    void openAllTools();
+
+    // Locallab tools advice tooltips management function
+    void updateShowtooltipVisibility(bool showtooltip);
 
 private:
     // Locallab tools management functions
     void addTool(Gtk::Box* where, LocallabTool* tool);
-
-    // Locallab tools management functions
-    void openAllTools();
 
     // Locallab GUI management function
     void setParamEditable(bool cond);

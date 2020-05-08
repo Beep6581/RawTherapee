@@ -938,7 +938,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // Evlocallabwaveshow
     LUMINANCECURVE,   // EvLocallabSpotwavMethod
     LUMINANCECURVE,   // EvlocallabchroMethod
-    LUMINANCECURVE,    // Evlocallabstrbl
+    LUMINANCECURVE,   // Evlocallabstrbl
     LUMINANCECURVE,   // Evlocallabsigmadr
     LUMINANCECURVE,   // Evlocallabsigmabl
     LUMINANCECURVE,   // Evlocallabsigmaed
@@ -948,7 +948,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // Evlocallabresidhithr
     LUMINANCECURVE,   // Evlocallabsigmalc
     LUMINANCECURVE,   // Evlocallabsigmalc2
-    LUMINANCECURVE   // Evlocallabblwh
+    LUMINANCECURVE,   // Evlocallabblwh
+    LUMINANCECURVE,   // EvlocallabcomplexityWithRefresh
+    M_VOID            // EvlocallabcomplexityWithoutRefresh
 };
 
 

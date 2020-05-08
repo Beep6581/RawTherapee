@@ -95,7 +95,6 @@ ControlSpotPanel::ControlSpotPanel():
     maskPrevActive(false)
 {
     const bool showtooltip = options.showtooltip;
-    const int complexsoft = options.complexity;
 
     Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
     buttonaddconn_ = button_add_->signal_clicked().connect(
@@ -231,10 +230,7 @@ ControlSpotPanel::ControlSpotPanel():
                            sigc::mem_fun(
                                *this, &ControlSpotPanel::shapeMethodChanged));
     ctboxshapemethod->pack_start(*shapeMethod_);
-
-    if (complexsoft < 2) {
-        pack_start(*ctboxshapemethod);
-    }
+    pack_start(*ctboxshapemethod);
 
     pack_start(*locX_);
     locX_->setAdjusterListener(this);
@@ -272,10 +268,7 @@ ControlSpotPanel::ControlSpotPanel():
                              sigc::mem_fun(
                                  *this, &ControlSpotPanel::qualityMethodChanged));
     ctboxqualitymethod->pack_start(*qualityMethod_);
-
-    if (complexsoft < 2) {
-        pack_start(*ctboxqualitymethod);
-    }
+    pack_start(*ctboxqualitymethod);
 
     Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
     transitFrame->set_label_align(0.025, 0.5);
@@ -339,17 +332,8 @@ ControlSpotPanel::ControlSpotPanel():
         colorde_->set_tooltip_text(M("TP_LOCALLAB_COLORDE_TOOLTIP"));
     }
 
-    if (complexsoft < 2) {
-        artifBox->pack_start(*struc_);
-    }
-
-    if (complexsoft < 2) {
-        artifBox->pack_start(*thresh_);
-    }
-    if (showtooltip) {
-        blwh_->set_tooltip_text(M("TP_LOCALLAB_BLWH_TOOLTIP"));
-    }
-
+    artifBox->pack_start(*struc_);
+    artifBox->pack_start(*thresh_);
     artifBox->pack_start(*iter_);
     artifBox->pack_start(*balan_);
     artifBox->pack_start(*balanh_);
@@ -363,6 +347,11 @@ ControlSpotPanel::ControlSpotPanel():
 
     blwhConn_  = blwh_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
+
+    if (showtooltip) {
+        blwh_->set_tooltip_text(M("TP_LOCALLAB_BLWH_TOOLTIP"));
+    }
+
     pack_start(*blwh_);
 
     recursConn_  = recurs_->signal_toggled().connect(
@@ -401,10 +390,7 @@ ControlSpotPanel::ControlSpotPanel():
         savrest_->set_tooltip_text(M("TP_LOCALLAB_SAVREST_TOOLTIP"));
     }
 
-    if (complexsoft < 1) {
-        maskBox->pack_start(*laplac_);
-    }
-
+    maskBox->pack_start(*laplac_);
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
     // maskBox->pack_start(*shortc_);

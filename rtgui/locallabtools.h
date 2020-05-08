@@ -49,21 +49,29 @@ class LocallabTool:
     public AdjusterListener
 {
 protected:
+    // LocallabTool mode enumeration
+    enum modeType {
+        Expert = 0,
+        Normal = 1
+    };
+
     // LocallabTool parameters
+    bool needMode;
     bool isLocActivated;
     Glib::ustring spotName;
     LocallabToolListener* locToolListener;
 
     // LocallabTool generic widgets
     MyExpander* exp;
+    MyComboBoxText* const complexity;
 
-    sigc::connection enaExpConn;
+    sigc::connection enaExpConn, complexityConn;
 
     IdleRegister idle_register;
 
 public:
     // Locallab tool constructor/destructor
-    LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false);
+    LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, bool needMode = true);
     virtual ~LocallabTool();
 
     // Getter for Locallab tool expander
@@ -113,6 +121,9 @@ public:
     virtual void resetMaskView() {};
     virtual void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) {};
 
+    // Advice tooltips management function
+    virtual void updateAdviceTooltips(const bool showTooltips) {};
+
     /* Notes:
      - callerId #1: Mask CC shape (bottom bar) + Color CC/LC shape (left bar)
      - callerId #2: Mask HH shape (main curve and bottom bar)
@@ -142,8 +153,13 @@ private:
     // Tool expander event function
     void foldThemAll(GdkEventButton* event);
 
+    // Complexity mode event function
+    void complexityModeChanged();
+
     // To be implemented
     virtual void enabledChanged() {};
+    virtual void convertParamToNormal() {}; // Only necessary when using mode
+    virtual void updateGUIToMode(const modeType new_type) {}; // Only necessary when using mode
 };
 
 /* ==== LocallabColor ==== */
@@ -207,8 +223,10 @@ private:
     FlatCurveEditor* const CCmaskshape;
     FlatCurveEditor* const LLmaskshape;
     FlatCurveEditor* const HHmaskshape;
+    Gtk::Frame* const struFrame;
     Adjuster* const strumaskcol;
     Gtk::CheckButton* const toolcol;
+    Gtk::Frame* const blurFrame;
     Gtk::CheckButton* const fftColorMask;
     Adjuster* const contcol;
     Adjuster* const blurcol;
@@ -238,6 +256,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -254,6 +274,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -289,7 +311,6 @@ private:
     Adjuster* const linear;
     Adjuster* const balanexp;
     Adjuster* const gamm;
-    Gtk::HBox* const ctboxexpmethod;
     MyComboBoxText* const exnoiseMethod;
     Gtk::Frame* const fatFrame;
     Adjuster* const fatamount;
@@ -344,6 +365,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -355,6 +378,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -388,7 +413,6 @@ private:
     Adjuster* const sh_radius;
     Adjuster* const sensihs;
     Adjuster* const blurSHde;
-    Gtk::Frame* const gamFrame;
     Adjuster* const gamSH;
     Adjuster* const sloSH;
     MyExpander* const expgradsh;
@@ -424,6 +448,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -435,6 +461,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -497,6 +525,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -514,6 +544,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -548,6 +580,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void disableListener() override;
     void enableListener() override;
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
@@ -557,6 +591,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void softMethodChanged();
     void showmasksoftMethodChanged();
@@ -616,7 +652,6 @@ private:
     Adjuster* const strumaskbl;
     Gtk::CheckButton* const toolbl;
     Adjuster* const blendmaskbl;
-    Gtk::Frame* const toolblFrame;
     Adjuster* const radmaskbl;
     Adjuster* const lapmaskbl;
     Adjuster* const chromaskbl;
@@ -638,6 +673,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -654,6 +691,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -713,6 +752,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -724,6 +765,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -740,7 +783,6 @@ class LocallabRetinex:
 {
 private:
     // Retinex specific widgets
-    Gtk::Frame* const dehaFrame;
     Adjuster* const dehaz;
     Adjuster* const depth;
     Gtk::CheckButton* const lumonly;
@@ -749,7 +791,6 @@ private:
     Gtk::CheckButton* const loglin;
     Adjuster* const sensih;
     Gtk::Frame* const retitoolFrame;
-    ToolParamBlock* const retiBox;
     MyComboBoxText* const retinexMethod;
     Gtk::CheckButton* const fftwreti;
     Gtk::CheckButton* const equilret;
@@ -772,7 +813,6 @@ private:
     CurveEditorGroup* const LocalcurveEditorgainT;
     FlatCurveEditor* const cTgainshape;
     MyExpander* const expmaskreti;
-    ToolParamBlock* const maskretiBox;
     MyComboBoxText* const showmaskretiMethod;
     Gtk::CheckButton* const enaretiMask;
     Gtk::CheckButton* const enaretiMasktmap;
@@ -801,6 +841,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -812,6 +854,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -844,7 +888,6 @@ private:
     Adjuster* const sharblur;
     Adjuster* const sensisha;
     Gtk::CheckButton* const inverssha;
-    Gtk::Frame* const sharFrame;
     MyComboBoxText* const showmasksharMethod;
 
     sigc::connection inversshaConn, showmasksharMethodConn;
@@ -855,6 +898,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void disableListener() override;
     void enableListener() override;
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
@@ -864,6 +909,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void inversshaChanged();
     void showmasksharMethodChanged();
@@ -889,7 +936,6 @@ private:
     MyExpander* const expresidpyr;
     Adjuster* const residcont;
     Adjuster* const residchro;
-    Gtk::Frame* const shresFrame;
     Adjuster* const residsha;
     Adjuster* const residshathr;
     Adjuster* const residhi;
@@ -901,14 +947,11 @@ private:
     Adjuster* const clarisoft;
     Gtk::CheckButton* const origlc;
     MyExpander* const expcontrastpyr;
-    Gtk::Frame* const gradwavFrame;
     Gtk::CheckButton* const wavgradl;
     Adjuster* const sigmalc2;
     Adjuster* const strwav;
     Adjuster* const angwav;
-    Gtk::Frame* const edgFrame;
     Gtk::CheckButton* const wavedg;
-    ToolParamBlock* const edgsBox;
     Adjuster* const strengthw;
     Adjuster* const sigmaed;
     CurveEditorGroup* const LocalcurveEditorwavedg;
@@ -923,9 +966,7 @@ private:
     Adjuster* const thigw;
     Adjuster* const edgw;
     Adjuster* const basew;
-    Gtk::Label* const labmNP;
     MyComboBoxText* const localneiMethod;
-    Gtk::Frame* const blurlevelFrame;
     Gtk::CheckButton* const wavblur;
     Adjuster* const levelblur;
     Adjuster* const sigmabl;
@@ -935,21 +976,18 @@ private:
     Adjuster* const residblur;
     Gtk::CheckButton* const blurlc;
     MyExpander* const expcontrastpyr2;
-    Gtk::Frame* const contFrame;
     Gtk::CheckButton* const wavcont;
     Adjuster* const sigma;
     Adjuster* const offset;
     Adjuster* const chromalev;
     CurveEditorGroup* const LocalcurveEditorwavcon;
     FlatCurveEditor* const wavshapecon;
-    Gtk::Frame* const compreFrame;
     Gtk::CheckButton* const wavcompre;
     CurveEditorGroup* const LocalcurveEditorwavcompre;
     FlatCurveEditor* const wavshapecompre;
     Adjuster* const sigmadr;
     Adjuster* const threswav;
     Adjuster* const residcomp;
-    Gtk::Frame* const compFrame;
     Gtk::CheckButton* const wavcomp;
     Adjuster* const sigmadc;
     Adjuster* const deltad;
@@ -979,6 +1017,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -995,6 +1035,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -1029,7 +1071,6 @@ private:
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const blurcbdl;
-    Gtk::Frame* const residFrame;
     Adjuster* const clarityml;
     Adjuster* const contresid;
     Adjuster* const softradiuscb;
@@ -1065,6 +1106,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
+    void updateAdviceTooltips(const bool showTooltips) override;
+
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -1076,6 +1119,8 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
@@ -1093,19 +1138,16 @@ class LocallabLog:
     public LocallabTool
 {
 private:
-    Gtk::Frame* const logPFrame;
     Gtk::ToggleButton* const autocompute;
     Adjuster* const blackEv;
     Adjuster* const whiteEv;
     Gtk::CheckButton* const fullimage;
-    Gtk::Frame* const logFrame;
     Gtk::CheckButton* const Autogray;
     Adjuster* const sourceGray;
     Adjuster* const targetGray;
     Adjuster* const detail;
     Adjuster* const baselog;
     Adjuster* const sensilog;
-    Gtk::Frame* const gradlogFrame;
     Adjuster* const strlog;
     Adjuster* const anglog;
 

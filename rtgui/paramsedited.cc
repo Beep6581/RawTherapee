@@ -1020,6 +1020,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Color & Light
                 locallab.spots.at(j).visicolor = locallab.spots.at(j).visicolor && pSpot.visicolor == otherSpot.visicolor;
                 locallab.spots.at(j).expcolor = locallab.spots.at(j).expcolor && pSpot.expcolor == otherSpot.expcolor;
+                locallab.spots.at(j).complexcolor = locallab.spots.at(j).complexcolor && pSpot.complexcolor == otherSpot.complexcolor;
                 locallab.spots.at(j).curvactiv = locallab.spots.at(j).curvactiv && pSpot.curvactiv == otherSpot.curvactiv;
                 locallab.spots.at(j).lightness = locallab.spots.at(j).lightness && pSpot.lightness == otherSpot.lightness;
                 locallab.spots.at(j).contrast = locallab.spots.at(j).contrast && pSpot.contrast == otherSpot.contrast;
@@ -1082,6 +1083,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Exposure
                 locallab.spots.at(j).visiexpose = locallab.spots.at(j).visiexpose && pSpot.visiexpose == otherSpot.visiexpose;
                 locallab.spots.at(j).expexpose = locallab.spots.at(j).expexpose && pSpot.expexpose == otherSpot.expexpose;
+                locallab.spots.at(j).complexexpose = locallab.spots.at(j).complexexpose && pSpot.complexexpose == otherSpot.complexexpose;
                 locallab.spots.at(j).expcomp = locallab.spots.at(j).expcomp && pSpot.expcomp == otherSpot.expcomp;
                 locallab.spots.at(j).hlcompr = locallab.spots.at(j).hlcompr && pSpot.hlcompr == otherSpot.hlcompr;
                 locallab.spots.at(j).hlcomprthresh = locallab.spots.at(j).hlcomprthresh && pSpot.hlcomprthresh == otherSpot.hlcomprthresh;
@@ -1124,6 +1126,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Shadow highlight
                 locallab.spots.at(j).visishadhigh = locallab.spots.at(j).visishadhigh && pSpot.visishadhigh == otherSpot.visishadhigh;
                 locallab.spots.at(j).expshadhigh = locallab.spots.at(j).expshadhigh && pSpot.expshadhigh == otherSpot.expshadhigh;
+                locallab.spots.at(j).complexshadhigh = locallab.spots.at(j).complexshadhigh && pSpot.complexshadhigh == otherSpot.complexshadhigh;
                 locallab.spots.at(j).shMethod = locallab.spots.at(j).shMethod && pSpot.shMethod == otherSpot.shMethod;
 
                 for (int k = 0; k < 5; k++) {
@@ -1159,6 +1162,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Vibrance
                 locallab.spots.at(j).visivibrance = locallab.spots.at(j).visivibrance && pSpot.visivibrance == otherSpot.visivibrance;
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
+                locallab.spots.at(j).complexvibrance = locallab.spots.at(j).complexvibrance && pSpot.complexvibrance == otherSpot.complexvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
                 locallab.spots.at(j).pastels = locallab.spots.at(j).pastels && pSpot.pastels == otherSpot.pastels;
                 locallab.spots.at(j).warm = locallab.spots.at(j).warm && pSpot.warm == otherSpot.warm;
@@ -1186,6 +1190,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Soft Light
                 locallab.spots.at(j).visisoft = locallab.spots.at(j).visisoft && pSpot.visisoft == otherSpot.visisoft;
                 locallab.spots.at(j).expsoft = locallab.spots.at(j).expsoft && pSpot.expsoft == otherSpot.expsoft;
+                locallab.spots.at(j).complexsoft = locallab.spots.at(j).complexsoft && pSpot.complexsoft == otherSpot.complexsoft;
                 locallab.spots.at(j).streng = locallab.spots.at(j).streng && pSpot.streng == otherSpot.streng;
                 locallab.spots.at(j).sensisf = locallab.spots.at(j).sensisf && pSpot.sensisf == otherSpot.sensisf;
                 locallab.spots.at(j).laplace = locallab.spots.at(j).laplace && pSpot.laplace == otherSpot.laplace;
@@ -1193,6 +1198,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Blur & Noise
                 locallab.spots.at(j).visiblur = locallab.spots.at(j).visiblur && pSpot.visiblur == otherSpot.visiblur;
                 locallab.spots.at(j).expblur = locallab.spots.at(j).expblur && pSpot.expblur == otherSpot.expblur;
+                locallab.spots.at(j).complexblur = locallab.spots.at(j).complexblur && pSpot.complexblur == otherSpot.complexblur;
                 locallab.spots.at(j).radius = locallab.spots.at(j).radius && pSpot.radius == otherSpot.radius;
                 locallab.spots.at(j).strength = locallab.spots.at(j).strength && pSpot.strength == otherSpot.strength;
                 locallab.spots.at(j).sensibn = locallab.spots.at(j).sensibn && pSpot.sensibn == otherSpot.sensibn;
@@ -1242,6 +1248,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Tone Mapping
                 locallab.spots.at(j).visitonemap = locallab.spots.at(j).visitonemap && pSpot.visitonemap == otherSpot.visitonemap;
                 locallab.spots.at(j).exptonemap = locallab.spots.at(j).exptonemap && pSpot.exptonemap == otherSpot.exptonemap;
+                locallab.spots.at(j).complextonemap = locallab.spots.at(j).complextonemap && pSpot.complextonemap == otherSpot.complextonemap;
                 locallab.spots.at(j).stren = locallab.spots.at(j).stren && pSpot.stren == otherSpot.stren;
                 locallab.spots.at(j).gamma = locallab.spots.at(j).gamma && pSpot.gamma == otherSpot.gamma;
                 locallab.spots.at(j).estop = locallab.spots.at(j).estop && pSpot.estop == otherSpot.estop;
@@ -1267,6 +1274,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Retinex
                 locallab.spots.at(j).visireti = locallab.spots.at(j).visireti && pSpot.visireti == otherSpot.visireti;
                 locallab.spots.at(j).expreti = locallab.spots.at(j).expreti && pSpot.expreti == otherSpot.expreti;
+                locallab.spots.at(j).complexreti = locallab.spots.at(j).complexreti && pSpot.complexreti == otherSpot.complexreti;
                 locallab.spots.at(j).retinexMethod = locallab.spots.at(j).retinexMethod && pSpot.retinexMethod == otherSpot.retinexMethod;
                 locallab.spots.at(j).str = locallab.spots.at(j).str && pSpot.str == otherSpot.str;
                 locallab.spots.at(j).chrrt = locallab.spots.at(j).chrrt && pSpot.chrrt == otherSpot.chrrt;
@@ -1304,6 +1312,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Sharpening
                 locallab.spots.at(j).visisharp = locallab.spots.at(j).visisharp && pSpot.visisharp == otherSpot.visisharp;
                 locallab.spots.at(j).expsharp = locallab.spots.at(j).expsharp && pSpot.expsharp == otherSpot.expsharp;
+                locallab.spots.at(j).complexsharp = locallab.spots.at(j).complexsharp && pSpot.complexsharp == otherSpot.complexsharp;
                 locallab.spots.at(j).sharcontrast = locallab.spots.at(j).sharcontrast && pSpot.sharcontrast == otherSpot.sharcontrast;
                 locallab.spots.at(j).sharradius = locallab.spots.at(j).sharradius && pSpot.sharradius == otherSpot.sharradius;
                 locallab.spots.at(j).sharamount = locallab.spots.at(j).sharamount && pSpot.sharamount == otherSpot.sharamount;
@@ -1315,6 +1324,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Local Contrast
                 locallab.spots.at(j).visicontrast = locallab.spots.at(j).visicontrast && pSpot.visicontrast == otherSpot.visicontrast;
                 locallab.spots.at(j).expcontrast = locallab.spots.at(j).expcontrast && pSpot.expcontrast == otherSpot.expcontrast;
+                locallab.spots.at(j).complexcontrast = locallab.spots.at(j).complexcontrast && pSpot.complexcontrast == otherSpot.complexcontrast;
                 locallab.spots.at(j).lcradius = locallab.spots.at(j).lcradius && pSpot.lcradius == otherSpot.lcradius;
                 locallab.spots.at(j).lcamount = locallab.spots.at(j).lcamount && pSpot.lcamount == otherSpot.lcamount;
                 locallab.spots.at(j).lcdarkness = locallab.spots.at(j).lcdarkness && pSpot.lcdarkness == otherSpot.lcdarkness;
@@ -1387,6 +1397,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Contrast by detail levels
                 locallab.spots.at(j).visicbdl = locallab.spots.at(j).visicbdl && pSpot.visicbdl == otherSpot.visicbdl;
                 locallab.spots.at(j).expcbdl = locallab.spots.at(j).expcbdl && pSpot.expcbdl == otherSpot.expcbdl;
+                locallab.spots.at(j).complexcbdl = locallab.spots.at(j).complexcbdl && pSpot.complexcbdl == otherSpot.complexcbdl;
 
                 for (int k = 0; k < 6; k++) {
                     locallab.spots.at(j).mult[k] = locallab.spots.at(j).mult[k] && pSpot.mult[k] == otherSpot.mult[k];
@@ -3050,6 +3061,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).expcolor = mods.locallab.spots.at(i).expcolor;
         }
 
+        if (locallab.spots.at(i).complexcolor) {
+            toEdit.locallab.spots.at(i).complexcolor = mods.locallab.spots.at(i).complexcolor;
+        }
+
         if (locallab.spots.at(i).curvactiv) {
             toEdit.locallab.spots.at(i).curvactiv = mods.locallab.spots.at(i).curvactiv;
         }
@@ -3295,6 +3310,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).expexpose = mods.locallab.spots.at(i).expexpose;
         }
 
+        if (locallab.spots.at(i).complexexpose) {
+            toEdit.locallab.spots.at(i).complexexpose = mods.locallab.spots.at(i).complexexpose;
+        }
+
         if (locallab.spots.at(i).expcomp) {
             toEdit.locallab.spots.at(i).expcomp = mods.locallab.spots.at(i).expcomp;
         }
@@ -3460,6 +3479,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).expshadhigh = mods.locallab.spots.at(i).expshadhigh;
         }
 
+        if (locallab.spots.at(i).complexshadhigh) {
+            toEdit.locallab.spots.at(i).complexshadhigh = mods.locallab.spots.at(i).complexshadhigh;
+        }
+
         if (locallab.spots.at(i).shMethod) {
             toEdit.locallab.spots.at(i).shMethod = mods.locallab.spots.at(i).shMethod;
         }
@@ -3583,6 +3606,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).expvibrance = mods.locallab.spots.at(i).expvibrance;
         }
 
+        if (locallab.spots.at(i).complexvibrance) {
+            toEdit.locallab.spots.at(i).complexvibrance = mods.locallab.spots.at(i).complexvibrance;
+        }
+
         if (locallab.spots.at(i).saturated) {
             toEdit.locallab.spots.at(i).saturated = mods.locallab.spots.at(i).saturated;
         }
@@ -3688,6 +3715,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).expsoft = mods.locallab.spots.at(i).expsoft;
         }
 
+        if (locallab.spots.at(i).complexsoft) {
+            toEdit.locallab.spots.at(i).complexsoft = mods.locallab.spots.at(i).complexsoft;
+        }
+
         if (locallab.spots.at(i).streng) {
             toEdit.locallab.spots.at(i).streng = mods.locallab.spots.at(i).streng;
         }
@@ -3711,6 +3742,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).expblur) {
             toEdit.locallab.spots.at(i).expblur = mods.locallab.spots.at(i).expblur;
+        }
+
+        if (locallab.spots.at(i).complexblur) {
+            toEdit.locallab.spots.at(i).complexblur = mods.locallab.spots.at(i).complexblur;
         }
 
         if (locallab.spots.at(i).radius) {
@@ -3906,6 +3941,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).exptonemap = mods.locallab.spots.at(i).exptonemap;
         }
 
+        if (locallab.spots.at(i).complextonemap) {
+            toEdit.locallab.spots.at(i).complextonemap = mods.locallab.spots.at(i).complextonemap;
+        }
+
         if (locallab.spots.at(i).stren) {
             toEdit.locallab.spots.at(i).stren = mods.locallab.spots.at(i).stren;
         }
@@ -4001,6 +4040,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).expreti) {
             toEdit.locallab.spots.at(i).expreti = mods.locallab.spots.at(i).expreti;
+        }
+
+        if (locallab.spots.at(i).complexreti) {
+            toEdit.locallab.spots.at(i).complexreti = mods.locallab.spots.at(i).complexreti;
         }
 
         if (locallab.spots.at(i).retinexMethod) {
@@ -4148,6 +4191,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).expsharp = mods.locallab.spots.at(i).expsharp;
         }
 
+        if (locallab.spots.at(i).complexsharp) {
+            toEdit.locallab.spots.at(i).complexsharp = mods.locallab.spots.at(i).complexsharp;
+        }
+
         if (locallab.spots.at(i).sharcontrast) {
             toEdit.locallab.spots.at(i).sharcontrast    = mods.locallab.spots.at(i).sharcontrast;
         }
@@ -4187,6 +4234,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).expcontrast) {
             toEdit.locallab.spots.at(i).expcontrast   = mods.locallab.spots.at(i).expcontrast;
+        }
+
+        if (locallab.spots.at(i).complexcontrast) {
+            toEdit.locallab.spots.at(i).complexcontrast   = mods.locallab.spots.at(i).complexcontrast;
         }
 
         if (locallab.spots.at(i).lcradius) {
@@ -4473,6 +4524,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).expcbdl) {
             toEdit.locallab.spots.at(i).expcbdl = mods.locallab.spots.at(i).expcbdl;
+        }
+
+        if (locallab.spots.at(i).complexcbdl) {
+            toEdit.locallab.spots.at(i).complexcbdl = mods.locallab.spots.at(i).complexcbdl;
         }
 
         for (int j = 0; j < 6; j++) {
@@ -5719,6 +5774,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Color & Light
     visicolor(v),
     expcolor(v),
+    complexcolor(v),
     curvactiv(v),
     lightness(v),
     contrast(v),
@@ -5781,6 +5837,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Exposure
     visiexpose(v),
     expexpose(v),
+    complexexpose(v),
     expcomp(v),
     hlcompr(v),
     hlcomprthresh(v),
@@ -5823,6 +5880,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Shadow highlight
     visishadhigh(v),
     expshadhigh(v),
+    complexshadhigh(v),
     shMethod(v),
     multsh{v, v, v, v, v, v},
     highlights(v),
@@ -5854,6 +5912,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Vibrance
     visivibrance(v),
     expvibrance(v),
+    complexvibrance(v),
     saturated(v),
     pastels(v),
     warm(v),
@@ -5881,6 +5940,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Soft Light
     visisoft(v),
     expsoft(v),
+    complexsoft(v),
     streng(v),
     sensisf(v),
     laplace(v),
@@ -5888,6 +5948,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Blur & Noise
     visiblur(v),
     expblur(v),
+    complexblur(v),
     radius(v),
     strength(v),
     sensibn(v),
@@ -5937,6 +5998,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Tone Mapping
     visitonemap(v),
     exptonemap(v),
+    complextonemap(v),
     stren(v),
     gamma(v),
     estop(v),
@@ -5962,6 +6024,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Retinex
     visireti(v),
     expreti(v),
+    complexreti(v),
     retinexMethod(v),
     str(v),
     chrrt(v),
@@ -5999,6 +6062,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Sharpening
     visisharp(v),
     expsharp(v),
+    complexsharp(v),
     sharcontrast(v),
     sharradius(v),
     sharamount(v),
@@ -6010,6 +6074,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Local Contrast
     visicontrast(v),
     expcontrast(v),
+    complexcontrast(v),
     lcradius(v),
     lcamount(v),
     lcdarkness(v),
@@ -6082,6 +6147,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Contrast by detail levels
     visicbdl(v),
     expcbdl(v),
+    complexcbdl(v),
     mult{v, v, v, v, v, v},
     chromacbdl(v),
     threshold(v),
@@ -6157,6 +6223,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Color & Light
     visicolor = v;
     expcolor = v;
+    complexcolor = v;
     curvactiv = v;
     lightness = v;
     contrast = v;
@@ -6219,6 +6286,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Exposure
     visiexpose = v;
     expexpose = v;
+    complexexpose = v;
     expcomp = v;
     hlcompr = v;
     hlcomprthresh = v;
@@ -6261,6 +6329,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Shadow highlight
     visishadhigh = v;
     expshadhigh = v;
+    complexshadhigh = v;
     shMethod = v;
 
     for (int i = 0; i < 5; i++) {
@@ -6296,6 +6365,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Vibrance
     visivibrance = v;
     expvibrance = v;
+    complexvibrance = v;
     saturated = v;
     pastels = v;
     warm = v;
@@ -6323,6 +6393,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Soft Light
     visisoft = v;
     expsoft = v;
+    complexsoft = v;
     streng = v;
     sensisf = v;
     laplace = v;
@@ -6330,6 +6401,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Blur & Noise
     visiblur = v;
     expblur = v;
+    complexblur = v;
     radius = v;
     strength = v;
     sensibn = v;
@@ -6379,6 +6451,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Tone Mapping
     visitonemap = v;
     exptonemap = v;
+    complextonemap = v;
     stren = v;
     gamma = v;
     estop = v;
@@ -6404,6 +6477,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Retinex
     visireti = v;
     expreti = v;
+    complexreti = v;
     retinexMethod = v;
     str = v;
     chrrt = v;
@@ -6441,6 +6515,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Sharpening
     visisharp = v;
     expsharp = v;
+    complexsharp = v;
     sharcontrast = v;
     sharradius = v;
     sharamount = v;
@@ -6452,6 +6527,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Local Contrast
     visicontrast = v;
     expcontrast = v;
+    complexcontrast = v;
     lcradius = v;
     lcamount = v;
     lcdarkness = v;
@@ -6524,6 +6600,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Contrast by detail levels
     visicbdl = v;
     expcbdl = v;
+    complexcbdl = v;
 
     for (int i = 0; i < 6; i++) {
         mult[i] = v;
