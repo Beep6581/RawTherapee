@@ -9285,16 +9285,16 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             float noiseccr = lp.noisecc;
 
             if (lp.adjch > 0.f) {
-                noisecfr = lp.noisecf * ((100.f + lp.adjch) / 10.f);
-                noiseccr = lp.noisecc + ((100.f + lp.adjch) / 10.f);
+                noisecfr = lp.noisecf + 0.1f * lp.adjch;
+                noiseccr = lp.noisecc + 0.1f * lp.adjch;
             }
 
             float noisecfb = lp.noisecf;
             float noiseccb = lp.noisecc;
 
             if (lp.adjch < 0.f) {
-                noisecfb = lp.noisecf * ((100.f - lp.adjch) / 10.f);
-                noiseccb = lp.noisecc * ((100.f - lp.adjch) / 10.f);
+                noisecfb = lp.noisecf - 0.1f * lp.adjch;
+                noiseccb = lp.noisecc - 0.1f * lp.adjch;
             }
 
 
@@ -9843,16 +9843,16 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 float noiseccr = lp.noisecc;
 
                 if (lp.adjch > 0.f) {
-                    noisecfr = lp.noisecf * ((100.f + lp.adjch) / 10.f);
-                    noiseccr = lp.noisecc + ((100.f + lp.adjch) / 10.f);
+                    noisecfr = lp.noisecf + 0.1f * lp.adjch;
+                    noiseccr = lp.noisecc + 0.1f * lp.adjch;
                 }
 
                 float noisecfb = lp.noisecf;
                 float noiseccb = lp.noisecc;
 
                 if (lp.adjch < 0.f) {
-                    noisecfb = lp.noisecf * ((100.f - lp.adjch) / 10.f);
-                    noiseccb = lp.noisecc * ((100.f - lp.adjch) / 10.f);
+                    noisecfb = lp.noisecf - 0.1f * lp.adjch;
+                    noiseccb = lp.noisecc - 0.1f * lp.adjch;
                 }
 
 
