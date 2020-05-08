@@ -2428,8 +2428,6 @@ void Preferences::workflowUpdate()
         parent->updateShowtooltipVisibility(moptions.showtooltip);
     }
 
-    moptions.showtooltip = ckbshowtooltiplocallab->get_active();
-
     if (moptions.histogramPosition != options.histogramPosition) {
         // Update the position of the Histogram
         parent->updateHistogramPosition(options.histogramPosition, moptions.histogramPosition);

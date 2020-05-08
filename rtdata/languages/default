@@ -1672,7 +1672,7 @@ PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 PREFERENCES_SHOWDATETIME;Show date and time
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-PREFERENCES_SHOWTOOLTIP;Show Local Adjustements Tooltips
+PREFERENCES_SHOWTOOLTIP;Show Local Adjustements advice tooltips
 PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 PREFERENCES_SINGLETAB;Single Editor Tab Mode
 PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
@@ -2375,7 +2375,7 @@ TP_LOCALLAB_CURVNONE;Disable curves
 TP_LOCALLAB_DARKRETI;Darkness
 TP_LOCALLAB_DEHAFRA;Dehaze
 TP_LOCALLAB_DEHAZ;Strength
-TP_LOCALLAB_DEHAZ_TOOLTIP;Negative values add haze
+TP_LOCALLAB_DEHAZ_TOOLTIP;Negative values adds haze
 TP_LOCALLAB_DELTAD;Delta balance
 TP_LOCALLAB_DELTAEC;Mask ΔE Image
 TP_LOCALLAB_DENOIS;Ψ Denoise
@@ -2629,7 +2629,7 @@ TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust color to include in exclusion!
 TP_LOCALLAB_SENSIH;Scope
-TP_LOCALLAB_SENSIH_TOOLTIP; Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
+TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SENSILOG;Scope
 TP_LOCALLAB_SENSIS;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
@@ -2662,7 +2662,7 @@ TP_LOCALLAB_SHOWFOURIER;Fourier ƒ(dct)
 TP_LOCALLAB_SHOWLAPLACE;∆ Laplacian (first)
 TP_LOCALLAB_SHOWLC;6 - Mask and modifications
 TP_LOCALLAB_SHOWMASK;Show mask
-TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR or Blur).\n\nUse Mask is before algorihtm shape detection  
+TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display mask modifications.\nBeware, you can only view one tool mask at the same time.\n\nNote: Use Mask is before algorihtm shape detection.
 TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Show process Fourier:\nShows the different stages of the process.\nLaplace - builds the second derivative according to the threshold (first step).\nFourier -shows the transformed Laplacian with DCT.\nPoisson - show solution of Poisson DCE.\nNormalize - show result without normalization luminance.
 TP_LOCALLAB_SHOWMNONE;None
 TP_LOCALLAB_SHOWMODIF;Show modifications without mask

@@ -281,7 +281,7 @@ public:
     void readOptions();
     void writeOptions();
     void writeToolExpandedStatus(std::vector<int> &tpOpen);
-
+    void updateShowtooltipVisibility (bool showtooltip);
 
     // wbprovider interface
     void getAutoWB (double& temp, double& green, double equal, double tempBias) override

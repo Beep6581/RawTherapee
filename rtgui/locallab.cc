@@ -20,10 +20,14 @@
  *  2019 Pierre Cabrera <pierre.cab@gmail.com>
  */
 #include "locallab.h"
+
+#include "options.h"
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace procparams;
+
+extern Options options;
 
 /* ==== LocallabToolList ==== */
 LocallabToolList::LocallabToolList():
@@ -208,6 +212,11 @@ Locallab::Locallab():
 
     // Show all widgets
     show_all();
+
+    // Update Locallab tools advice tooltips visibility based on saved option
+    for (auto tool : locallabTools) {
+        tool->updateAdviceTooltips(options.showtooltip);
+    }
 
     // By default, if no photo is loaded, all Locallab tools are removed and it's not possible to add them
     // (to be necessary called after "show_all" function)
@@ -1082,6 +1091,13 @@ void Locallab::openAllTools()
 
         // Set default visibility for tool sub-expanders
         tool->setDefaultExpanderVisibility();
+    }
+}
+
+void Locallab::updateShowtooltipVisibility(bool showtooltip)
+{
+    for (auto tool : locallabTools) {
+        tool->updateAdviceTooltips(showtooltip);
     }
 }
 

@@ -826,6 +826,12 @@ void ToolPanelCoordinator::writeToolExpandedStatus(std::vector<int> &tpOpen)
 }
 
 
+void ToolPanelCoordinator::updateShowtooltipVisibility (bool showtooltip)
+{
+    locallab->updateShowtooltipVisibility(showtooltip);
+}
+
+
 void ToolPanelCoordinator::spotWBselected(int x, int y, Thumbnail* thm)
 {
     if (!ipc) {

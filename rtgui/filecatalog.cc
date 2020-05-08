@@ -1976,19 +1976,6 @@ void FileCatalog::updateFBQueryTB (bool singleRow)
     hbToolBar1->unreference();
 }
 
-void FileCatalog::updateShowtooltipVisibility (bool showtooltip)
-{
-    if (showtooltip) {
-        showToolBar();
-    } else {
-        hideToolBar();
-    }
-
-    refreshHeight();
-}
-
-
-
 void FileCatalog::updateFBToolBarVisibility (bool showFilmStripToolBar)
 {
     if (showFilmStripToolBar) {

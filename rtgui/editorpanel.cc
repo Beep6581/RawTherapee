@@ -957,6 +957,13 @@ void EditorPanel::writeToolExpandedStatus (std::vector<int> &tpOpen)
     }
 }
 
+void EditorPanel::updateShowtooltipVisibility (bool showtooltip)
+{
+    if (tpc) {
+        tpc->updateShowtooltipVisibility (showtooltip);
+    }
+}
+
 void EditorPanel::showTopPanel (bool show)
 {
     if (tbTopPanel_1->get_active() != show) {
