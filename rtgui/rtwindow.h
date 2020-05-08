@@ -91,7 +91,6 @@ public:
     void on_mainNB_switch_page (Gtk::Widget* widget, guint page_num);
 
     void showRawPedia();
-    void showRawPedialoc();
     void showICCProfileCreator ();
     void showPreferences ();
     void on_realize () override;

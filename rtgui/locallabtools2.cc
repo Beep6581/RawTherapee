@@ -1471,10 +1471,50 @@ void LocallabRetinex::convertParamToNormal()
     str->setValue(defSpot.str);
     loglin->set_active(defSpot.loglin);
 
+    if (defSpot.retinexMethod == "low") {
+        retinexMethod->set_active(0);
+    } else if (defSpot.retinexMethod == "uni") {
+        retinexMethod->set_active(1);
+    } else {
+        retinexMethod->set_active(2);
+    }
+
+    fftwreti->set_active(defSpot.fftwreti);
+    equilret->set_active(defSpot.equilret);
+    neigh->setValue(defSpot.neigh);
+    vart->setValue(defSpot.vart);
+    scalereti->setValue(defSpot.scalereti);
+    limd->setValue(defSpot.limd);
+    offs->setValue(defSpot.offs);
+    chrrt->setValue(defSpot.chrrt);
+    darkness->setValue(defSpot.darkness);
+    lightnessreti->setValue(defSpot.lightnessreti);
+    cliptm->setValue(defSpot.cliptm);
+    softradiusret->setValue(defSpot.softradiusret);
+    cTtransshape->setCurve(defSpot.localTtranscurve);
+    cTgainshape->setCurve(defSpot.localTgaincurve);
+    enaretiMask->set_active(defSpot.enaretiMask);
+    enaretiMasktmap->set_active(defSpot.enaretiMasktmap);
+    CCmaskretishape->setCurve(defSpot.CCmaskreticurve);
+    LLmaskretishape->setCurve(defSpot.LLmaskreticurve);
+    HHmaskretishape->setCurve(defSpot.HHmaskreticurve);
+    blendmaskreti->setValue((double)defSpot.blendmaskreti);
+    radmaskreti->setValue(defSpot.radmaskreti);
+    lapmaskreti->setValue(defSpot.lapmaskreti);
+    chromaskreti->setValue(defSpot.chromaskreti);
+    gammaskreti->setValue(defSpot.gammaskreti);
+    slomaskreti->setValue(defSpot.slomaskreti);
+    Lmaskretishape->setCurve(defSpot.Lmaskreticurve);
+    inversret->set_active(defSpot.inversret);
+
     // Enable all listeners
     enableListener();
 
     // Update GUI based on converted widget parameters:
+    // - Update Retinex GUI according to scalereti adjuster value
+    updateRetinexGUI1();
+    // - Update Retinex GUI according to inversret button state
+    updateRetinexGUI2();
     // - Update Retinex GUI according to str adjuster value
     updateRetinexGUI3();
 }
@@ -1485,12 +1525,10 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
         // Advanced widgets are hidden in Normal mode
         retiFrame->hide();
         retitoolFrame->hide();
-        expretitools->hide();
     } else {
         // Advanced widgets are shown in Expert mode
         retiFrame->show();
         retitoolFrame->show();
-        expretitools->show();
     }
 }
 
