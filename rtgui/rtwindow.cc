@@ -385,13 +385,6 @@ RTWindow::RTWindow ()
         iccProfileCreator->set_tooltip_markup (M ("MAIN_BUTTON_ICCPROFCREATOR"));
         iccProfileCreator->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showICCProfileCreator) );
 
-        Gtk::Button* helpBtnloc = Gtk::manage (new Gtk::Button ());
-        setExpandAlignProperties (helpBtnloc, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-        helpBtnloc->set_relief(Gtk::RELIEF_NONE);
-        helpBtnloc->set_image (*Gtk::manage (new RTImage ("questionmark.png")));
-        helpBtnloc->set_tooltip_markup (M ("LOCAL_HELP"));
-        helpBtnloc->signal_clicked().connect (sigc::mem_fun (*this, &RTWindow::showRawPedialoc));
-
         Gtk::Button* helpBtn = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (helpBtn, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         helpBtn->set_relief(Gtk::RELIEF_NONE);
@@ -427,7 +420,6 @@ RTWindow::RTWindow ()
             actionGrid->set_orientation (Gtk::ORIENTATION_VERTICAL);
             actionGrid->attach_next_to (prProgBar, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*iccProfileCreator, Gtk::POS_BOTTOM, 1, 1);
-            actionGrid->attach_next_to (*helpBtnloc, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*helpBtn, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*preferences, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*btn_fullscreen, Gtk::POS_BOTTOM, 1, 1);
@@ -437,7 +429,6 @@ RTWindow::RTWindow ()
             actionGrid->set_orientation (Gtk::ORIENTATION_HORIZONTAL);
             actionGrid->attach_next_to (prProgBar, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*iccProfileCreator, Gtk::POS_RIGHT, 1, 1);
-            actionGrid->attach_next_to (*helpBtnloc, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*helpBtn, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*preferences, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*btn_fullscreen, Gtk::POS_RIGHT, 1, 1);
@@ -936,12 +927,6 @@ void RTWindow::showRawPedia()
     gtk_show_uri(nullptr, "https://rawpedia.rawtherapee.com/", GDK_CURRENT_TIME, &gerror);
 }
 
-void RTWindow::showRawPedialoc()
-{
-    GError* gerror = nullptr;
-    gtk_show_uri(nullptr, "https://rawpedia.rawtherapee.com/Local_Adjustments/fr", GDK_CURRENT_TIME, &gerror);
-}
-
 void RTWindow::showICCProfileCreator ()
 {
     ICCProfileCreator *iccpc = new ICCProfileCreator (this);
@@ -1098,7 +1083,13 @@ void RTWindow::updateFBToolBarVisibility (bool showFilmStripToolBar)
 
 void RTWindow::updateShowtooltipVisibility (bool showtooltip)
 {
-    epanel->updateShowtooltipVisibility (showtooltip);
+    if (epanel) {
+        epanel->updateShowtooltipVisibility (showtooltip);
+    }
+
+    for (auto panel : epanels) {
+        panel.second->updateShowtooltipVisibility (showtooltip);
+    }
 }
 
 void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
