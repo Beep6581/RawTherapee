@@ -2738,12 +2738,12 @@ TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctr
 TP_LOCALLAB_LIST_NAME;Add tool to current spot...
 TP_LOCALLAB_COLOR_TOOLNAME;Locallab Color&Light
 TP_LOCALLAB_EXP_TOOLNAME;Locallab Exposure
-TP_LOCALLAB_SH_TOOLNAME;Locallab Shadows Highlight
+TP_LOCALLAB_SH_TOOLNAME;Locallab Shadows Highlight & Tone Equalizer
 TP_LOCALLAB_VIB_TOOLNAME;Locallab Vibrance
-TP_LOCALLAB_SOFT_TOOLNAME;Locallab Soft Light
+TP_LOCALLAB_SOFT_TOOLNAME;Locallab Soft Light & Original Retinex
 TP_LOCALLAB_BLUR_TOOLNAME;Locallab Blur, Noise & Denoise
 TP_LOCALLAB_TONE_TOOLNAME;Locallab Tone Mapping
-TP_LOCALLAB_RET_TOOLNAME;Locallab Retinex
+TP_LOCALLAB_RET_TOOLNAME;Locallab Dehaze & Retinex
 TP_LOCALLAB_SHARP_TOOLNAME;Locallab Sharpening
 TP_LOCALLAB_LC_TOOLNAME;Locallab Local Constrast & Wavelet
 TP_LOCALLAB_CBDL_TOOLNAME;Locallab CBDL

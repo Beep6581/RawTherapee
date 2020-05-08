@@ -1484,9 +1484,13 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
     if (new_type == Normal) {
         // Advanced widgets are hidden in Normal mode
         retiFrame->hide();
+        retitoolFrame->hide();
+        expretitools->hide();
     } else {
         // Advanced widgets are shown in Expert mode
         retiFrame->show();
+        retitoolFrame->show();
+        expretitools->show();
     }
 }
 
