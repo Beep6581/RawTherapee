@@ -2319,7 +2319,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
-TP_LOCALLAB_CBDL;Contrast by detail levels - Big defects
+TP_LOCALLAB_CBDL;Contrast by detail levels - Defects
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
 TP_LOCALLAB_CH;Curves CL - LC
@@ -2410,7 +2410,7 @@ TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXPCBDL_TOOLTIP;In the case of contaminated sensor (type "grease"), and when the area is important or for a series of small defects.\n\na) Put the selection spot on a pronounced default (adapting its size if necessary), use a large spot enough to allow wavelet; b) choose a wide selection area to cover most of the area affected by the defects; c) Select a transition value (low) and transition weakening (high value); d) act on levels 2, 3, 4 or 5 or lower by reducing the contrast (values below 100) and by acting on the chroma slider if necessary. e)possibly act on "scope" to reduce the extent of the action.\n\nYou can also complete with Blur levels and Gaussian blur (Smooth Blur and noise)
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;In the case of small defects.\n\nRed-eyes : red-centered circular selector, spot delimiters close to the eye, weak scope, "lightness" -100, "chrominance" -100.\n\nSpotIR :Circular selector centered on the defect, spot delimiters close to the default - reduce "chrominance", possibly act on "scope" to reduce the extent of the action.\n\nDust - grease (small) :Circular selector centered on the defect (adapt the size of the spot), spot delimiters not too close to the defect to allow an inconspicuous transition. a) "Transition" (low values) and "Transition weak" (high values); b) act on "lightness" and possibly on "chrominance" or "Color correction grid - direct" to approach the rendering of the polluted zone to that of the healthy zone; c) act moderately on "scope" to modulate the desired action.\n\nYou can also complete with Gaussian blur (Smooth Blur and noise)
-TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 50x50 pixels).\nUse low transition values and high weakening transition values and scope to simulate small RT-spot.\nUse if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
+TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 32x32 pixels).\nUse low transition values and high weakening transition values and scope to simulate small RT-spot and deal wth defects.\nUse if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_EXPCURV;Curves
 TP_LOCALLAB_EXPGRAD;Graduated Filter
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE IPOL, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
@@ -2489,7 +2489,7 @@ TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
-TP_LOCALLAB_LOC_CONTRAST;Local contrast - Wavelet
+TP_LOCALLAB_LOC_CONTRAST;Local contrast -Wavelet - defects
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
@@ -2735,18 +2735,18 @@ TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance - Warm & Cool
 TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctrl</b>+<b>click</b> to show/hide all Control Spot.
 TP_LOCALLAB_LIST_NAME;Add tool to current spot...
-TP_LOCALLAB_COLOR_TOOLNAME;Locallab Color&Light
-TP_LOCALLAB_EXP_TOOLNAME;Locallab Exposure
-TP_LOCALLAB_SH_TOOLNAME;Locallab Shadows Highlight & Tone Equalizer
-TP_LOCALLAB_VIB_TOOLNAME;Locallab Vibrance
-TP_LOCALLAB_SOFT_TOOLNAME;Locallab Soft Light & Original Retinex
-TP_LOCALLAB_BLUR_TOOLNAME;Locallab Blur, Noise & Denoise
-TP_LOCALLAB_TONE_TOOLNAME;Locallab Tone Mapping
-TP_LOCALLAB_RET_TOOLNAME;Locallab Dehaze & Retinex
-TP_LOCALLAB_SHARP_TOOLNAME;Locallab Sharpening
-TP_LOCALLAB_LC_TOOLNAME;Locallab Local Constrast & Wavelet
-TP_LOCALLAB_CBDL_TOOLNAME;Locallab CBDL
-TP_LOCALLAB_LOG_TOOLNAME;Locallab Encoding log
+TP_LOCALLAB_COLOR_TOOLNAME;Color&Light (Defects)
+TP_LOCALLAB_EXP_TOOLNAME;Exposure - Dynamic Range Compression
+TP_LOCALLAB_SH_TOOLNAME;Shadows Highlight & Tone Equalizer
+TP_LOCALLAB_VIB_TOOLNAME;Vibrance - Warm & Cool
+TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex
+TP_LOCALLAB_BLUR_TOOLNAME;Blur, Noise & Denoise
+TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping
+TP_LOCALLAB_RET_TOOLNAME;Dehaze & Retinex
+TP_LOCALLAB_SHARP_TOOLNAME;Sharpening
+TP_LOCALLAB_LC_TOOLNAME;Local Constrast & Wavelet (Defects)
+TP_LOCALLAB_CBDL_TOOLNAME;CBDL (Defects)
+TP_LOCALLAB_LOG_TOOLNAME;Encoding log
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
