@@ -9132,7 +9132,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             wavelet_decomposition adecomp(tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
             wavelet_decomposition bdecomp(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
 
-            float madL[8][3];
+            float madL[10][3];
             int edge = 2;
 
             if (!Ldecomp.memoryAllocationFailed) {
@@ -9553,7 +9553,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
 
-                    if ((lp.noisecc < 0.02f && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
+                    if ((lp.noisecc < 2.f && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
                     } else {
@@ -9689,7 +9689,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 wavelet_decomposition Ldecomp(bufwv.L[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, lp.daubLen);
                 wavelet_decomposition adecomp(bufwv.a[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, lp.daubLen);
                 wavelet_decomposition bdecomp(bufwv.b[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, lp.daubLen);
-                float madL[8][3];
+                float madL[10][3];
                 int edge = 2;
 
                 if (!Ldecomp.memoryAllocationFailed) {
