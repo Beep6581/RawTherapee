@@ -33,7 +33,7 @@
 
 #include "../rtgui/options.h"
 
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 
 using namespace std;
@@ -52,6 +52,8 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const procparams::RAWParams 
                 amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
             } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4) ) {
                 dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
+            } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDBILINEAR) ) {
+                rcd_demosaic(options.chunkSizeRCD, options.measure);
             } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDVNG4) ) {
                 rcd_demosaic(options.chunkSizeRCD, options.measure);
             }
@@ -73,6 +75,8 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const procparams::RAWParams 
             amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
         } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4) ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
+        } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDBILINEAR) ) {
+            rcd_demosaic(options.chunkSizeRCD, options.measure);
         } else if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDVNG4) ) {
             rcd_demosaic(options.chunkSizeRCD, options.measure);
         }
@@ -113,7 +117,11 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const procparams::RAWParams 
     array2D<float> blueTmp(winw, winh);
 
     if (isBayer) {
-        vng4_demosaic(rawData, redTmp, greenTmp, blueTmp);
+        if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDBILINEAR) ) {
+            bayer_bilinear_demosaic(rawData, redTmp, greenTmp, blueTmp);
+        } else {
+            vng4_demosaic(rawData, redTmp, greenTmp, blueTmp);
+        }
     } else {
         fast_xtrans_interpolate(rawData, redTmp, greenTmp, blueTmp);
     }

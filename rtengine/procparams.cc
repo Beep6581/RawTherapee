@@ -2717,6 +2717,7 @@ const std::vector<const char*>& RAWParams::BayerSensor::getMethodStrings()
         "amaze",
         "amazevng4",
         "rcd",
+        "rcdbilinear",
         "rcdvng4",
         "dcb",
         "dcbvng4",

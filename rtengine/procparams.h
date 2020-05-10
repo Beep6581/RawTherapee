@@ -1395,6 +1395,7 @@ struct RAWParams {
             AMAZE,
             AMAZEVNG4,
             RCD,
+            RCDBILINEAR,
             RCDVNG4,
             DCB,
             DCBVNG4,
