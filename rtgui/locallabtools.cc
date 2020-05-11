@@ -3491,9 +3491,9 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         complexity->set_active(spot.complexshadhigh);
 
         if (spot.shMethod == "std") {
-            shMethod->set_active(1);
-        } else if (spot.shMethod == "tone") {
             shMethod->set_active(0);
+        } else if (spot.shMethod == "tone") {
+            shMethod->set_active(1);
         }
 
         for (int i = 0; i < 5; i++) {
@@ -3554,9 +3554,9 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.visishadhigh = exp->get_visible();
         spot.complexshadhigh = complexity->get_active_row_number();
 
-        if (shMethod->get_active_row_number() == 1) {
+        if (shMethod->get_active_row_number() == 0) {
             spot.shMethod = "std";
-        } else if (shMethod->get_active_row_number() == 0) {
+        } else if (shMethod->get_active_row_number() == 1) {
             spot.shMethod = "tone";
         }
 
@@ -3847,9 +3847,9 @@ void LocallabShadow::convertParamToNormal()
 
     // Set hidden GUI widgets in Normal mode to default spot values
     if (defSpot.shMethod == "std") {
-        shMethod->set_active(1);
-    } else if (defSpot.shMethod == "tone") {
         shMethod->set_active(0);
+    } else if (defSpot.shMethod == "tone") {
+        shMethod->set_active(1);
     }
 
     blurSHde->setValue((double)defSpot.blurSHde);

@@ -12261,7 +12261,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfw = xend - xstart;
 
             if (complexsoft == 2) {
-                lp.shmeth = 1;
+                lp.shmeth = 0;
             }
 
             if (bfw >= mSP && bfh >= mSP) {

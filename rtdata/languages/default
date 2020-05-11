@@ -2282,7 +2282,7 @@ TP_LOCALLAB_ADJ;Equalizer blue-red
 TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
-TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but can reduce the scope of detection.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nThreshold structure take into account the structure level of solid areas
+TP_LOCALLAB_ARTIF_TOOLTIP;Threshold structure take into account the structure level of solid areas.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nIncrease deltaE Weakening improve shape detection, but can reduce the scope of detection.
 TP_LOCALLAB_AUTOGRAY;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance ΔE ab-L
