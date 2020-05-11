@@ -10403,7 +10403,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
         BENCHFUN
-        int complexsoft = options.complexity;
 #ifdef _DEBUG
 // init variables to display Munsell corrections
         MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
@@ -12260,9 +12259,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
 
-            if (complexsoft == 2) {
-                lp.shmeth = 0;
-            }
 
             if (bfw >= mSP && bfh >= mSP) {
 
@@ -14011,10 +14007,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool reduH = false;
             bool reduW = false;
 
-            if (complexsoft == 2) {
-                lp.expmet = 1;
-                lp.laplacexp = 0.f;
-            }
 
             if (bfw >= mSP && bfh >= mSP) {
 
