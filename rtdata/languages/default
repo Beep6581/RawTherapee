@@ -763,7 +763,7 @@ HISTORY_MSG_511;Local Spot thresh
 HISTORY_MSG_512;Local Spot ΔE -weakening
 HISTORY_MSG_513;Local Spot scope
 HISTORY_MSG_514;Local Spot structure
-HISTORY_MSG_515;Local Adjustements
+HISTORY_MSG_515;Local Adjustments
 HISTORY_MSG_516;Local - Color and light
 HISTORY_MSG_517;Local - Enable super
 HISTORY_MSG_518;Local - Lightness
@@ -1434,7 +1434,7 @@ NAVIGATOR_XY_NA;x: --, y: --
 OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
 OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
-PARTIALPASTE_LOCALLABGROUP;Local Adjustements Settings
+PARTIALPASTE_LOCALLABGROUP;Local Adjustments Settings
 PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 PARTIALPASTE_BASICGROUP;Basic Settings
 PARTIALPASTE_CACORRECTION;Chromatic aberration correction
@@ -1475,7 +1475,7 @@ PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 PARTIALPASTE_IPTCINFO;IPTC
 PARTIALPASTE_LABCURVE;L*a*b* adjustments
 PARTIALPASTE_LENSGROUP;Lens Related Settings
-PARTIALPASTE_LOCALLAB;Local Adjustements
+PARTIALPASTE_LOCALLAB;Local Adjustments
 PARTIALPASTE_LOCGROUP;Local 
 PARTIALPASTE_LENSPROFILE;Profiled lens correction
 PARTIALPASTE_LOCALCONTRAST;Local contrast
@@ -1552,7 +1552,7 @@ PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMMBPC;Black point compensation
-PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustements
+PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustments
 PREFERENCES_COMPLEXITY_EXP;Expert
 PREFERENCES_COMPLEXITY_NORM;Normal
 PREFERENCES_CROP;Crop Editing
@@ -1671,7 +1671,7 @@ PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 PREFERENCES_SHOWDATETIME;Show date and time
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-PREFERENCES_SHOWTOOLTIP;Show Local Adjustements advice tooltips
+PREFERENCES_SHOWTOOLTIP;Show Local Adjustments advice tooltips
 PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 PREFERENCES_SINGLETAB;Single Editor Tab Mode
 PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
@@ -2351,7 +2351,7 @@ TP_LOCALLAB_COMPREFRA;Levels Dynamic Wavelet Range (un)Compression
 TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend & Soft Images' by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_COMPFRAME_TOOLTIP;Allows special effects. You can reduce artifacts with 'Clarity & Sharp mask - Blend & Soft Images".\nUses a lot of resources
 TP_LOCALLAB_COMPLEX_METHOD;Software Complexity
-TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustements rubrics.
+TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustments rubrics.
 TP_LOCALLAB_CONTCOL;Contrast threshold Mask Blur
 TP_LOCALLAB_CONTFRA;Contrast by Level
 TP_LOCALLAB_CONTRAST;Contrast
@@ -2414,7 +2414,7 @@ TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 32x32 pixels).\
 TP_LOCALLAB_EXPCURV;Curves
 TP_LOCALLAB_EXPGRAD;Graduated Filter
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE IPOL, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
-TP_LOCALLAB_EXPOSE;Exposure
+TP_LOCALLAB_EXPOSE;Exposure - Dynamic Range Compression
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high weakening transition values and scope to simulate small RT-spot.
@@ -2468,7 +2468,7 @@ TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INDSL;Independent (mouse + sliders)
 TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_ISOGR;Coarseness (ISO)
-TP_LOCALLAB_LABEL;Local Adjustements
+TP_LOCALLAB_LABEL;Local Adjustments
 TP_LOCALLAB_LABBLURM;Mask Blur
 TP_LOCALLAB_LABGRID;Color correction grid
 TP_LOCALLAB_LABGRIDMERG;Background
@@ -2680,7 +2680,7 @@ TP_LOCALLAB_SIGMAWAV;Damper
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_SLOSH;Slope
-TP_LOCALLAB_SOFT;Soft Light & Original Retinex
+TP_LOCALLAB_SOFT;Soft Light - Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Retinex method.\nIts acts on grey and balance luminance.
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
