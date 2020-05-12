@@ -254,6 +254,11 @@ LocallabTone::~LocallabTone()
     delete mask2tmCurveEditorG;
 }
 
+bool LocallabTone::isMaskViewActive()
+{
+    return (showmasktmMethod->get_active_row_number() != 0);
+}
+
 void LocallabTone::resetMaskView()
 {
     showmasktmMethodConn.block(true);
@@ -982,6 +987,11 @@ void LocallabRetinex::updateMinMax(const double cdma, const double cdmin, const 
         return false;
     }
     );
+}
+
+bool LocallabRetinex::isMaskViewActive()
+{
+    return (showmaskretiMethod->get_active_row_number() != 0);
 }
 
 void LocallabRetinex::resetMaskView()
@@ -1769,6 +1779,11 @@ LocallabSharp::LocallabSharp():
     pack_start(*sharFrame);
 }
 
+bool LocallabSharp::isMaskViewActive()
+{
+    return (showmasksharMethod->get_active_row_number() != 0);
+}
+
 void LocallabSharp::resetMaskView()
 {
     showmasksharMethodConn.block(true);
@@ -2499,6 +2514,11 @@ LocallabContrast::~LocallabContrast()
     delete LocalcurveEditorwavcomp;
     delete masklcCurveEditorG;
     delete mask2lcCurveEditorG;
+}
+
+bool LocallabContrast::isMaskViewActive()
+{
+    return (showmasklcMethod->get_active_row_number() != 0);
 }
 
 void LocallabContrast::resetMaskView()
@@ -3803,6 +3823,12 @@ LocallabCBDL::~LocallabCBDL()
     delete maskcbCurveEditorG;
     delete mask2cbCurveEditorG;
 }
+
+bool LocallabCBDL::isMaskViewActive()
+{
+    return (showmaskcbMethod->get_active_row_number() != 0);
+}
+
 
 void LocallabCBDL::resetMaskView()
 {

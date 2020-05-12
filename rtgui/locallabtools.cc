@@ -216,11 +216,12 @@ void LocallabTool::removeLocallabTool(bool raiseEvent)
         locToolListener->toolRemoved(this);
     }
 
-    if (exp->getEnabled()) {
+    if (exp->getEnabled() || isMaskViewActive()) {
         // Disable tool while removing it
         disableListener();
         exp->setEnabled(false);
         enableListener();
+        // Note: Mask views are all resetted when removing tool (in toolpanelcoord.cc)
 
         // Raise event if required refreshing image
         if (raiseEvent && listener) {
@@ -840,6 +841,11 @@ void LocallabColor::setListener(ToolPanelListener* tpl)
 
     labgrid->setListener(tpl);
     labgridmerg->setListener(tpl);
+}
+
+bool LocallabColor::isMaskViewActive()
+{
+    return ((showmaskcolMethod->get_active_row_number() != 0) || (showmaskcolMethodinv->get_active_row_number() != 0));
 }
 
 void LocallabColor::resetMaskView()
@@ -2401,6 +2407,11 @@ LocallabExposure::~LocallabExposure()
     delete mask2expCurveEditorG;
 }
 
+bool LocallabExposure::isMaskViewActive()
+{
+    return ((showmaskexpMethod->get_active_row_number() != 0) || (showmaskexpMethodinv->get_active_row_number() != 0));
+}
+
 void LocallabExposure::resetMaskView()
 {
     showmaskexpMethodConn.block(true);
@@ -3402,6 +3413,11 @@ LocallabShadow::~LocallabShadow()
     delete mask2SHCurveEditorG;
 }
 
+bool LocallabShadow::isMaskViewActive()
+{
+    return ((showmaskSHMethod->get_active_row_number() != 0) || (showmaskSHMethodinv->get_active_row_number() != 0));
+}
+
 void LocallabShadow::resetMaskView()
 {
     showmaskSHMethodConn.block(true);
@@ -4220,12 +4236,15 @@ LocallabVibrance::~LocallabVibrance()
     delete mask2vibCurveEditorG;
 }
 
+bool LocallabVibrance::isMaskViewActive()
+{
+    return (showmaskvibMethod->get_active_row_number() != 0);
+}
+
 void LocallabVibrance::resetMaskView()
 {
     showmaskvibMethodConn.block(true);
-
     showmaskvibMethod->set_active(0);
-
     showmaskvibMethodConn.block(false);
 }
 
@@ -4840,6 +4859,11 @@ LocallabSoft::LocallabSoft():
     pack_start(*sensisf);
 }
 
+bool LocallabSoft::isMaskViewActive()
+{
+    return (showmasksoftMethod->get_active_row_number() != 0);
+}
+
 void LocallabSoft::resetMaskView()
 {
     showmasksoftMethodConn.block(true);
@@ -5374,6 +5398,11 @@ LocallabBlur::~LocallabBlur()
     delete mask2blCurveEditorG;
     delete mask2blCurveEditorGwav;
     delete LocalcurveEditorwavden;
+}
+
+bool LocallabBlur::isMaskViewActive()
+{
+    return (showmaskblMethod->get_active_row_number() != 0);
 }
 
 void LocallabBlur::resetMaskView()
