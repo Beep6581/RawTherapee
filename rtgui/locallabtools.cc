@@ -633,7 +633,6 @@ LocallabColor::LocallabColor():
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWSTRUC"));
-    showmaskcolMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskcolMethod->set_active(0);
     showmaskcolMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskcolMethodConn  = showmaskcolMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabColor::showmaskcolMethodChanged));
@@ -2276,7 +2275,6 @@ LocallabExposure::LocallabExposure():
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWSTRUCEX"));
-    showmaskexpMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskexpMethod->set_active(0);
     showmaskexpMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskexpMethodConn  = showmaskexpMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabExposure::showmaskexpMethodChanged));
@@ -3301,7 +3299,6 @@ LocallabShadow::LocallabShadow():
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskSHMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskSHMethod->set_active(0);
     showmaskSHMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskSHMethodConn = showmaskSHMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::showmaskSHMethodChanged));
@@ -4152,7 +4149,6 @@ LocallabVibrance::LocallabVibrance():
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskvibMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskvibMethod->set_active(0);
     showmaskvibMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskvibMethodConn = showmaskvibMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabVibrance::showmaskvibMethodChanged));
@@ -4837,7 +4833,6 @@ LocallabSoft::LocallabSoft():
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWPOISSON"));
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWNORMAL"));
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
-    showmasksoftMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmasksoftMethod->set_active(0);
     showmasksoftMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP"));
     showmasksoftMethodConn = showmasksoftMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabSoft::showmasksoftMethodChanged));
@@ -5262,7 +5257,6 @@ LocallabBlur::LocallabBlur():
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskblMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskblMethod->set_active(0);
     showmaskblMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskblMethodConn = showmaskblMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::showmaskblMethodChanged));

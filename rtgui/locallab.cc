@@ -171,6 +171,7 @@ Locallab::Locallab():
     panel->set_spacing(2);
 
     // Add spot control panel to panel widget
+    expsettings->setControlPanelListener(this);
     expsettings->setLevel(2);
     panel->pack_start(*expsettings->getExpander(), false, false);
 
@@ -1005,6 +1006,9 @@ void Locallab::resetMaskVisibility()
     // Indicate to spot control panel that no more mask preview is active
     expsettings->setMaskPrevActive(false);
 
+    // Reset deltaE preview
+    expsettings->resetDeltaEPreview();
+
     // Reset mask preview for all Locallab tools
     for (auto tool : locallabTools) {
         tool->resetMaskView();
@@ -1013,6 +1017,9 @@ void Locallab::resetMaskVisibility()
 
 Locallab::llMaskVisibility Locallab::getMaskVisibility() const
 {
+    // Get deltaE preview state
+    const bool prevDeltaE = expsettings->isDeltaEPrevActive();
+
     // Get mask preview from Locallab tools
     int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask;
 
@@ -1027,7 +1034,7 @@ Locallab::llMaskVisibility Locallab::getMaskVisibility() const
                               (lcMask == 0) || (cbMask == 0);
     expsettings->setMaskPrevActive(isMaskActive);
 
-    return {colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask};
+    return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask};
 }
 
 void Locallab::resetshowPressed()
@@ -1125,8 +1132,19 @@ void Locallab::setParamEditable(bool cond)
     }
 }
 
+void Locallab::resetToolMaskView()
+{
+    // Reset mask view GUI for all other Locallab tools
+    for (auto tool : locallabTools) {
+        tool->resetMaskView();
+    }
+}
+
 void Locallab::resetOtherMaskView(LocallabTool* current)
 {
+    // Reset deltaE preview
+    expsettings->resetDeltaEPreview();
+
     // Reset mask view GUI for all other Locallab tools except current
     for (auto tool : locallabTools) {
         if (tool != current) {

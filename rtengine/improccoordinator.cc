@@ -154,6 +154,7 @@ ImProcCoordinator::ImProcCoordinator() :
     pdSharpenAutoRadiusListener(nullptr),
     frameCountListener(nullptr),
     imageTypeListener(nullptr),
+    filmNegListener(nullptr),
     actListener(nullptr),
     adnListener(nullptr),
     awavListener(nullptr),
@@ -281,6 +282,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lastsav(0),
     avg(0),
     lastspotdup(false),
+    previewDeltaE(false),
     locallColorMask(0),
     locallColorMaskinv(0),
     locallExpMask(0),
@@ -1288,6 +1290,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float Tsigma;
                     float Tmin;
                     float Tmax;
+                    printf("preview: %d\n", previewDeltaE);
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                                   lllocalcurve, locallutili,
                                   cllocalcurve, localclutili,

@@ -524,7 +524,7 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
      */
     if (event == rtengine::EvlocallabshowmaskMethod) {
         const Locallab::llMaskVisibility maskStruc = locallab->getMaskVisibility();
-        ipc->setLocallabMaskVisibility(maskStruc.colorMask, maskStruc.colorMaskinv, maskStruc.expMask, maskStruc.expMaskinv,
+        ipc->setLocallabMaskVisibility(maskStruc.previewDeltaE, maskStruc.colorMask, maskStruc.colorMaskinv, maskStruc.expMask, maskStruc.expMaskinv,
                 maskStruc.SHMask, maskStruc.SHMaskinv, maskStruc.vibMask, maskStruc.softMask,
                 maskStruc.blMask, maskStruc.tmMask, maskStruc.retiMask, maskStruc.sharMask,
                 maskStruc.lcMask, maskStruc.cbMask);
@@ -532,7 +532,7 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
             event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset ||
             event == rtengine::EvlocallabToolRemovedWithRefresh) {
         locallab->resetMaskVisibility();
-        ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing
@@ -642,7 +642,7 @@ void ToolPanelCoordinator::profileChange(
 
     // Reset Locallab mask visibility
     locallab->resetMaskVisibility();
-    ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     // start the IPC processing
     if (filterRawRefresh) {

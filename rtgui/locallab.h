@@ -91,6 +91,7 @@ class Locallab :
     public ToolParamBlock,
     public FoldableToolPanel,
     public rtengine::LocallabListener,
+    public ControlPanelListener,
     public LocallabToolListener,
     public LocallabToolListListener
 {
@@ -146,6 +147,7 @@ public:
 
     // Mask visibility management functions
     struct llMaskVisibility {
+        bool previewDeltaE;
         int colorMask;
         int colorMaskinv;
         int expMask;
@@ -192,6 +194,9 @@ private:
 
     // Locallab GUI management function
     void setParamEditable(bool cond);
+
+    // ControlSpotListener function
+    void resetToolMaskView() override;
 
     // LocallabToolListener function
     void resetOtherMaskView(LocallabTool* current) override;
