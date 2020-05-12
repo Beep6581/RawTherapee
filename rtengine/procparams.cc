@@ -2170,15 +2170,18 @@ WaveletParams::WaveletParams() :
     },
     blcurve{
         static_cast<double>(FCT_MinMaxCPoints),
-0.0, 0.0, 0.0, 0.35, 0.5, 0., 0.35, 0.35, 1.0, 0.0, 0.35, 0.35
-/*        0.0,
-        0.75,
-        0.35,
-        0.35,
-        1.0,
-        0.75,
-        0.35,
-        0.35*/
+        0.0, 
+        0.0, 
+        0.0, 
+        0.35, 
+        0.5, 
+        0., 
+        0.35, 
+        0.35, 
+        1.0, 
+        0.0, 
+        0.35, 
+        0.35
     },
     opacityCurveRG{
         static_cast<double>(FCT_MinMaxCPoints),

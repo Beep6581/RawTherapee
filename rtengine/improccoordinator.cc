@@ -891,7 +891,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if ((params->wavelet.enabled)) {
                 WaveletParams WaveParams = params->wavelet;
-//                WaveParams.getCurves(wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
                 WaveParams.getCurves(wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
                 int kall = 0;
                 LabImage *unshar = nullptr;
@@ -922,7 +921,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     provis = params->wavelet.CLmethod;
                     params->wavelet.CLmethod = "all";
                     ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
-//                    ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
                     unshar->CopyFrom(nprevl);
 
@@ -936,7 +934,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     WaveParams.expnoise = false; 
                 }
 
-//                ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
                 ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
 
