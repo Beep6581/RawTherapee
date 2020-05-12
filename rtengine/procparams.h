@@ -42,6 +42,7 @@ class RetinextransmissionCurve;
 class WavCurve;
 class Wavblcurve;
 class WavOpacityCurveBY;
+class WavOpacityCurveSH;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
@@ -1187,7 +1188,9 @@ private:
 struct WaveletParams {
     std::vector<double> ccwcurve;
     std::vector<double> blcurve;
+    std::vector<double> levelshc;
     std::vector<double> opacityCurveRG;
+    std::vector<double> opacityCurveSH;
     std::vector<double> opacityCurveBY;
     std::vector<double> opacityCurveW;
     std::vector<double> opacityCurveWL;
@@ -1316,8 +1319,8 @@ struct WaveletParams {
     void getCurves(
         WavCurve& cCurve,
         Wavblcurve& tCurve,
-        WavOpacityCurveRG&
-        opacityCurveLUTRG,
+        WavOpacityCurveRG& opacityCurveLUTRG,
+        WavOpacityCurveSH& opacityCurveLUTSH,
         WavOpacityCurveBY& opacityCurveLUTBY,
         WavOpacityCurveW& opacityCurveLUTW,
         WavOpacityCurveWL& opacityCurveLUTWL

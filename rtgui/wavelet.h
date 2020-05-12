@@ -101,6 +101,7 @@ private:
     rtengine::ProcEvent EvWavLabGridValue;
     rtengine::ProcEvent EvWavrangeab;
     rtengine::ProcEvent EvWavprotab;
+    rtengine::ProcEvent EvWavlevelshc;
 
     LabGrid *labgrid;
 
@@ -164,6 +165,8 @@ private:
     void enableToggled(MyExpander* expander);
 
     CurveEditorGroup* const curveEditorG;
+    CurveEditorGroup* const curveEditorC;
+    FlatCurveEditor* opacityShapeSH;
 
     CurveEditorGroup* const CCWcurveEditorG;
     CurveEditorGroup* const curveEditorbl;

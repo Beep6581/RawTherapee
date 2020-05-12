@@ -577,6 +577,7 @@ struct WaveletParamsEdited {
     bool level3noise;
     bool ccwcurve;
     bool blcurve;
+    bool opacityCurveSH;
     bool opacityCurveBY;
     bool opacityCurveRG;
     bool opacityCurveW;

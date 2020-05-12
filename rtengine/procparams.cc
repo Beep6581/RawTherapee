@@ -2191,6 +2191,25 @@ WaveletParams::WaveletParams() :
         0.35,
         0.35
     },
+    opacityCurveSH{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        1.,
+        0.35,
+        0.35,
+        0.4,
+        0.5,
+        0.35,
+        0.35,
+        0.5,
+        0.5,
+        0.35,
+        0.35,
+        1.,
+        0.,
+        0.35,
+        0.35
+    },
     opacityCurveBY{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -2322,7 +2341,7 @@ WaveletParams::WaveletParams() :
     chroma(5),
     chro(0),
     threshold(5),
-    threshold2(4),
+    threshold2(5),
     edgedetect(90),
     edgedetectthr(20),
     edgedetectthr2(0),
@@ -2359,6 +2378,7 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         ccwcurve == other.ccwcurve
         && blcurve == other.blcurve
         && opacityCurveRG == other.opacityCurveRG
+        && opacityCurveSH == other.opacityCurveSH
         && opacityCurveBY == other.opacityCurveBY
         && opacityCurveW == other.opacityCurveW
         && opacityCurveWL == other.opacityCurveWL
@@ -2492,6 +2512,7 @@ void WaveletParams::getCurves(
     WavCurve& cCurve,
     Wavblcurve& tCurve,
     WavOpacityCurveRG& opacityCurveLUTRG,
+    WavOpacityCurveSH& opacityCurveLUTSH,
     WavOpacityCurveBY& opacityCurveLUTBY,
     WavOpacityCurveW& opacityCurveLUTW,
     WavOpacityCurveWL& opacityCurveLUTWL
@@ -2500,6 +2521,7 @@ void WaveletParams::getCurves(
     cCurve.Set(this->ccwcurve);
     tCurve.Set(this->blcurve);
     opacityCurveLUTRG.Set(this->opacityCurveRG);
+    opacityCurveLUTSH.Set(this->opacityCurveSH);
     opacityCurveLUTBY.Set(this->opacityCurveBY);
     opacityCurveLUTW.Set(this->opacityCurveW);
     opacityCurveLUTWL.Set(this->opacityCurveWL);
@@ -3631,6 +3653,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.pastlev, "Wavelet", "Pastlev", wavelet.pastlev.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.satlev, "Wavelet", "Satlev", wavelet.satlev.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveRG, "Wavelet", "OpacityCurveRG", wavelet.opacityCurveRG, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.opacityCurveSH, "Wavelet", "Levalshc", wavelet.opacityCurveSH, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveBY, "Wavelet", "OpacityCurveBY", wavelet.opacityCurveBY, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveW, "Wavelet", "OpacityCurveW", wavelet.opacityCurveW, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveWL, "Wavelet", "OpacityCurveWL", wavelet.opacityCurveWL, keyFile);
@@ -4830,6 +4853,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "ContrastCurve", pedited, wavelet.ccwcurve, pedited->wavelet.ccwcurve);
             assignFromKeyfile(keyFile, "Wavelet", "blcurve", pedited, wavelet.blcurve, pedited->wavelet.blcurve);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveRG", pedited, wavelet.opacityCurveRG, pedited->wavelet.opacityCurveRG);
+            assignFromKeyfile(keyFile, "Wavelet", "Levelshc", pedited, wavelet.opacityCurveSH, pedited->wavelet.opacityCurveSH);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveBY", pedited, wavelet.opacityCurveBY, pedited->wavelet.opacityCurveBY);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveW", pedited, wavelet.opacityCurveW, pedited->wavelet.opacityCurveW);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveWL", pedited, wavelet.opacityCurveWL, pedited->wavelet.opacityCurveWL);

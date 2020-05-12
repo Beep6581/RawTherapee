@@ -565,6 +565,7 @@ void ParamsEdited::set(bool v)
     wavelet.level3noise = v;
     wavelet.ccwcurve = v;
     wavelet.blcurve = v;
+    wavelet.opacityCurveSH   = v;
     wavelet.opacityCurveRG   = v;
     wavelet.opacityCurveBY   = v;
     wavelet.opacityCurveW   = v;
@@ -1187,6 +1188,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.satlev = wavelet.satlev && p.wavelet.satlev == other.wavelet.satlev;
         wavelet.ccwcurve = wavelet.ccwcurve && p.wavelet.ccwcurve == other.wavelet.ccwcurve;
         wavelet.blcurve = wavelet.blcurve && p.wavelet.blcurve == other.wavelet.blcurve;
+        wavelet.opacityCurveSH = wavelet.opacityCurveSH && p.wavelet.opacityCurveSH == other.wavelet.opacityCurveSH;
         wavelet.opacityCurveRG = wavelet.opacityCurveRG && p.wavelet.opacityCurveRG == other.wavelet.opacityCurveRG;
         wavelet.opacityCurveBY = wavelet.opacityCurveBY && p.wavelet.opacityCurveBY == other.wavelet.opacityCurveBY;
         wavelet.opacityCurveW = wavelet.opacityCurveW && p.wavelet.opacityCurveW == other.wavelet.opacityCurveW;
@@ -3187,6 +3189,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.blcurve) {
         toEdit.wavelet.blcurve = mods.wavelet.blcurve;
+    }
+
+    if (wavelet.opacityCurveSH) {
+        toEdit.wavelet.opacityCurveSH = mods.wavelet.opacityCurveSH;
     }
 
     if (wavelet.opacityCurveRG) {

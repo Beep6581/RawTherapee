@@ -567,10 +567,10 @@ HISTORY_MSG_314;W - Gamut - Reduce artifacts
 HISTORY_MSG_315;W - Residual - Contrast
 HISTORY_MSG_316;W - Gamut - Skin tar/prot
 HISTORY_MSG_317;W - Gamut - Skin hue
-HISTORY_MSG_318;W - Contrast - Highlight levels
-HISTORY_MSG_319;W - Contrast - Highlight range
-HISTORY_MSG_320;W - Contrast - Shadow range
-HISTORY_MSG_321;W - Contrast - Shadow levels
+HISTORY_MSG_318;W - Contrast - Fine levels
+HISTORY_MSG_319;W - Contrast - Fine range
+HISTORY_MSG_320;W - Contrast - Coarse range
+HISTORY_MSG_321;W - Contrast - Coarse levels
 HISTORY_MSG_322;W - Gamut - Avoid color shift
 HISTORY_MSG_323;W - ES - Local contrast
 HISTORY_MSG_324;W - Chroma - Pastel
@@ -2193,6 +2193,7 @@ TP_WAVELET_CONTEDIT;'After' contrast curve
 TP_WAVELET_CONTFRAME;Contrast - Compression
 TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Contrast
+TP_WAVELET_CONTRASTEDIT;Finer - Coarser levels
 TP_WAVELET_CONTRAST_MINUS;Contrast -
 TP_WAVELET_CONTRAST_PLUS;Contrast +
 TP_WAVELET_CONTRA_TOOLTIP;Changes contrast of the residual image.
@@ -2240,9 +2241,10 @@ TP_WAVELET_EDVAL;Strength
 TP_WAVELET_FINAL;Final Touchup
 TP_WAVELET_FINCFRAME;Final Local Contrast
 TP_WAVELET_FINEST;Finest
-TP_WAVELET_HIGHLIGHT;Highlight luminance range
+TP_WAVELET_HIGHLIGHT;Finer levels luminance range
+TP_WAVELET_FINCOAR_TOOLTIP;The left (positive) part of the curve acts on the finer levels (increase).\nThe 2 points on the abscissa represent the respective action limits of finer and coarser levels 5 and 6 (default).\nThe right (negative) part of the curve acts on the coarser levels (increase).\nAvoid moving the left part of the curve with negative values. Avoid moving the right part of the curve with positives values
 TP_WAVELET_HS1;Whole luminance range
-TP_WAVELET_HS2;Shadows/Highlights
+TP_WAVELET_HS2;Selective luminance range
 TP_WAVELET_HUESKIN;Skin hue
 TP_WAVELET_HUESKIN_TOOLTIP;The bottom points set the beginning of the transition zone, and the upper points the end of it, where the effect is at its maximum.\n\nIf you need to move the area significantly, or if there are artifacts, then the <b>white balance is incorrect</b>.
 TP_WAVELET_HUESKY;Sky hue
@@ -2252,8 +2254,8 @@ TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight
 TP_WAVELET_LABEL;Wavelet Levels
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chroma
-TP_WAVELET_LEVDIR_ALL;All levels in all directions
-TP_WAVELET_LEVDIR_INF;Below or equal the level
+TP_WAVELET_LEVDIR_ALL;All levels, in all directions
+TP_WAVELET_LEVDIR_INF;Finer details levels, with selected level
 TP_WAVELET_LEVDIR_ONE;One level
 TP_WAVELET_LEVDIR_SUP;Above the level
 TP_WAVELET_LEVELS;Wavelet levels
@@ -2266,7 +2268,7 @@ TP_WAVELET_LEVTWO;Level 3
 TP_WAVELET_LEVZERO;Level 1
 TP_WAVELET_LINKEDG;Link with Edge Sharpness' Strength
 TP_WAVELET_LIPST;Enhanced algoritm
-TP_WAVELET_LOWLIGHT;Shadow luminance range
+TP_WAVELET_LOWLIGHT;Coarser levels luminance range
 TP_WAVELET_LOWTHR_TOOLTIP;Prevents amplification of fine textures and noise
 TP_WAVELET_MEDGREINF;First level
 TP_WAVELET_MEDI;Reduce artifacts in blue sky
@@ -2277,6 +2279,7 @@ TP_WAVELET_MERGEL;Merge Luma
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOIS;Denoise
 TP_WAVELET_NOISE;Denoise and Refine
+TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 20, mode Agressive is used.\nIf chrominance coarse superior to 20, mode Agressive is used.
 TP_WAVELET_NPHIGH;High
 TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
@@ -2318,11 +2321,12 @@ TP_WAVELET_SOFTRAD;Soft Radius
 TP_WAVELET_STREN;Strength
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
-TP_WAVELET_THR;Shadows threshold
-TP_WAVELET_THRESHOLD;Highlight levels
-TP_WAVELET_THRESHOLD2;Shadow levels
-TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value).
-TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels.
+TP_WAVELET_THRESHOLD;Finer levels
+TP_WAVELET_THRESHOLD2;Coarser levels
+//TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value).
+//TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels.
+TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels. : All levels from level 1 up to the chosen value will only be affected within the Finer levels luminance range.\nAll other levels will have the whole range of luminances affected, unless the Coarser levels setting limits it.\nThe chosen value in this slider becomes the minimum possible value of the Coarser levels.
+TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value). : Only levels between the chosen value and level 9/Extra will be affected by the Coarser levels luminance range.\nAll other levels will have the whole range of luminances affected, unless the Finer levels setting limits it.\nThe lower level possible that will be considered by the algorithm is limited by the Finer levels value.
 TP_WAVELET_THRESWAV;Balance Threshold
 TP_WAVELET_THRH;Highlights threshold
 TP_WAVELET_TILESBIG;Tiles
