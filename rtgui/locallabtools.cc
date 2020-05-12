@@ -3884,7 +3884,7 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
 {
     if (new_type == Normal) {
         // Advanced widgets are hidden in Normal mode
-        shMethod->hide();
+        shMethod->show();
         blurSHde->hide();
         lapmaskSH->hide();
         gammaskSH->hide();
