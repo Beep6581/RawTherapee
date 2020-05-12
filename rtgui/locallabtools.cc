@@ -3859,12 +3859,6 @@ void LocallabShadow::convertParamToNormal()
     disableListener();
 
     // Set hidden GUI widgets in Normal mode to default spot values
-    if (defSpot.shMethod == "std") {
-        shMethod->set_active(0);
-    } else if (defSpot.shMethod == "tone") {
-        shMethod->set_active(1);
-    }
-
     blurSHde->setValue((double)defSpot.blurSHde);
     lapmaskSH->setValue(defSpot.lapmaskSH);
     gammaskSH->setValue(defSpot.gammaskSH);
@@ -3874,17 +3868,12 @@ void LocallabShadow::convertParamToNormal()
 
     // Enable all listeners
     enableListener();
-
-    // Update GUI based on converted widget parameters:
-    // - Update shadow highlight GUI according to shMethod combobox state
-    updateShadowGUI2();
 }
 
 void LocallabShadow::updateGUIToMode(const modeType new_type)
 {
     if (new_type == Normal) {
         // Advanced widgets are hidden in Normal mode
-        shMethod->show();
         blurSHde->hide();
         lapmaskSH->hide();
         gammaskSH->hide();
@@ -3892,7 +3881,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
         fatSHFrame->hide();
     } else {
         // Advanced widgets are shown in Expert mode
-        shMethod->show();
         blurSHde->show();
         lapmaskSH->show();
         gammaskSH->show();

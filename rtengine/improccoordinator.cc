@@ -1290,7 +1290,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float Tsigma;
                     float Tmin;
                     float Tmax;
-                    printf("preview: %d\n", previewDeltaE);
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                                   lllocalcurve, locallutili,
                                   cllocalcurve, localclutili,
@@ -1323,7 +1322,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   locwavCurveden, locwavdenutili,
                                   locedgwavCurve, locedgwavutili,
                                   LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                   minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                     lastorigimp->CopyFrom(nprevl);
