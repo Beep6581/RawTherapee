@@ -4561,7 +4561,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                         if (sharshow) {
                             transformed->a[y][x] = 0.f;
                             transformed->b[y][x] = ampli * 5.f * difL * reducdE;
-                        } else if (previewshar) {
+                        } else if (previewshar || lp.prevdE) {
                             float difbdisp = reducview * 10000.f * lp.colorde;
 
                             if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
@@ -4707,7 +4707,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
                 if (sharshow) {
                     transformed->a[y][x] = 0.f;
                     transformed->b[y][x] = ampli * 5.f * difL * reducdE;
-                } else if (previewshar) {
+                } else if (previewshar || lp.prevdE) {
                     float difbdisp = reducview * 10000.f * lp.colorde;
 
                     if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
