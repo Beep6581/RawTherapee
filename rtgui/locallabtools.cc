@@ -216,11 +216,12 @@ void LocallabTool::removeLocallabTool(bool raiseEvent)
         locToolListener->toolRemoved(this);
     }
 
-    if (exp->getEnabled()) {
+    if (exp->getEnabled() || isMaskViewActive()) {
         // Disable tool while removing it
         disableListener();
         exp->setEnabled(false);
         enableListener();
+        // Note: Mask views are all resetted when removing tool (in toolpanelcoord.cc)
 
         // Raise event if required refreshing image
         if (raiseEvent && listener) {
@@ -632,7 +633,6 @@ LocallabColor::LocallabColor():
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWSTRUC"));
-    showmaskcolMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskcolMethod->set_active(0);
     showmaskcolMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskcolMethodConn  = showmaskcolMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabColor::showmaskcolMethodChanged));
@@ -840,6 +840,11 @@ void LocallabColor::setListener(ToolPanelListener* tpl)
 
     labgrid->setListener(tpl);
     labgridmerg->setListener(tpl);
+}
+
+bool LocallabColor::isMaskViewActive()
+{
+    return ((showmaskcolMethod->get_active_row_number() != 0) || (showmaskcolMethodinv->get_active_row_number() != 0));
 }
 
 void LocallabColor::resetMaskView()
@@ -2270,7 +2275,6 @@ LocallabExposure::LocallabExposure():
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWSTRUCEX"));
-    showmaskexpMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskexpMethod->set_active(0);
     showmaskexpMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskexpMethodConn  = showmaskexpMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabExposure::showmaskexpMethodChanged));
@@ -2399,6 +2403,11 @@ LocallabExposure::~LocallabExposure()
     delete curveEditorG;
     delete maskexpCurveEditorG;
     delete mask2expCurveEditorG;
+}
+
+bool LocallabExposure::isMaskViewActive()
+{
+    return ((showmaskexpMethod->get_active_row_number() != 0) || (showmaskexpMethodinv->get_active_row_number() != 0));
 }
 
 void LocallabExposure::resetMaskView()
@@ -3290,7 +3299,6 @@ LocallabShadow::LocallabShadow():
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskSHMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskSHMethod->set_active(0);
     showmaskSHMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskSHMethodConn = showmaskSHMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabShadow::showmaskSHMethodChanged));
@@ -3400,6 +3408,11 @@ LocallabShadow::~LocallabShadow()
 {
     delete maskSHCurveEditorG;
     delete mask2SHCurveEditorG;
+}
+
+bool LocallabShadow::isMaskViewActive()
+{
+    return ((showmaskSHMethod->get_active_row_number() != 0) || (showmaskSHMethodinv->get_active_row_number() != 0));
 }
 
 void LocallabShadow::resetMaskView()
@@ -3846,12 +3859,6 @@ void LocallabShadow::convertParamToNormal()
     disableListener();
 
     // Set hidden GUI widgets in Normal mode to default spot values
-    if (defSpot.shMethod == "std") {
-        shMethod->set_active(0);
-    } else if (defSpot.shMethod == "tone") {
-        shMethod->set_active(1);
-    }
-
     blurSHde->setValue((double)defSpot.blurSHde);
     lapmaskSH->setValue(defSpot.lapmaskSH);
     gammaskSH->setValue(defSpot.gammaskSH);
@@ -3861,17 +3868,12 @@ void LocallabShadow::convertParamToNormal()
 
     // Enable all listeners
     enableListener();
-
-    // Update GUI based on converted widget parameters:
-    // - Update shadow highlight GUI according to shMethod combobox state
-    updateShadowGUI2();
 }
 
 void LocallabShadow::updateGUIToMode(const modeType new_type)
 {
     if (new_type == Normal) {
         // Advanced widgets are hidden in Normal mode
-        shMethod->hide();
         blurSHde->hide();
         lapmaskSH->hide();
         gammaskSH->hide();
@@ -3879,7 +3881,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
         fatSHFrame->hide();
     } else {
         // Advanced widgets are shown in Expert mode
-        shMethod->show();
         blurSHde->show();
         lapmaskSH->show();
         gammaskSH->show();
@@ -4136,7 +4137,6 @@ LocallabVibrance::LocallabVibrance():
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskvibMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskvibMethod->set_active(0);
     showmaskvibMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskvibMethodConn = showmaskvibMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabVibrance::showmaskvibMethodChanged));
@@ -4220,12 +4220,15 @@ LocallabVibrance::~LocallabVibrance()
     delete mask2vibCurveEditorG;
 }
 
+bool LocallabVibrance::isMaskViewActive()
+{
+    return (showmaskvibMethod->get_active_row_number() != 0);
+}
+
 void LocallabVibrance::resetMaskView()
 {
     showmaskvibMethodConn.block(true);
-
     showmaskvibMethod->set_active(0);
-
     showmaskvibMethodConn.block(false);
 }
 
@@ -4818,7 +4821,6 @@ LocallabSoft::LocallabSoft():
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWPOISSON"));
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWNORMAL"));
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
-    showmasksoftMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmasksoftMethod->set_active(0);
     showmasksoftMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP"));
     showmasksoftMethodConn = showmasksoftMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabSoft::showmasksoftMethodChanged));
@@ -4838,6 +4840,11 @@ LocallabSoft::LocallabSoft():
     pack_start(*streng);
     pack_start(*laplace);
     pack_start(*sensisf);
+}
+
+bool LocallabSoft::isMaskViewActive()
+{
+    return (showmasksoftMethod->get_active_row_number() != 0);
 }
 
 void LocallabSoft::resetMaskView()
@@ -5238,7 +5245,6 @@ LocallabBlur::LocallabBlur():
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskblMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskblMethod->set_active(0);
     showmaskblMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskblMethodConn = showmaskblMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::showmaskblMethodChanged));
@@ -5374,6 +5380,11 @@ LocallabBlur::~LocallabBlur()
     delete mask2blCurveEditorG;
     delete mask2blCurveEditorGwav;
     delete LocalcurveEditorwavden;
+}
+
+bool LocallabBlur::isMaskViewActive()
+{
+    return (showmaskblMethod->get_active_row_number() != 0);
 }
 
 void LocallabBlur::resetMaskView()

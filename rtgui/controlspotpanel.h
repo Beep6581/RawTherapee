@@ -27,6 +27,16 @@
 #include "toolpanel.h"
 #include "adjuster.h"
 
+class ControlPanelListener
+{
+public:
+    ControlPanelListener() {};
+    virtual ~ControlPanelListener() {};
+
+    virtual void resetToolMaskView() = 0;
+};
+
+
 class ControlSpotPanel:
     public ToolParamBlock,
     public AdjusterListener,
@@ -104,6 +114,15 @@ public:
      */
     void setEditProvider(EditDataProvider* provider);
     /**
+     * Setter for controlPanelListener
+     *
+     * @param cpl The ControlPanelListener to be linked to the panel
+     */
+    void setControlPanelListener(ControlPanelListener* cpl)
+    {
+        controlPanelListener = cpl;
+    }
+    /**
      * Getter of the event type raised by this panel
      *
      * @return The raised event type (refer to eventType enumeration)
@@ -144,6 +163,16 @@ public:
     {
         maskPrevActive = ind;
     }
+    /**
+     * Getter for deltaE preview active
+     *
+     * @return True if preview deltaE is active
+     */
+    bool isDeltaEPrevActive();
+    /**
+     * Reset deltaE preview active state
+     */
+    void resetDeltaEPreview();
 
     // Control spot creation functions
     /**
@@ -215,6 +244,8 @@ private:
     void deltaeChanged();
     void shortcChanged();
     void savrestChanged();
+
+    void previewChanged();
 
     void disableParamlistener(bool cond);
 
@@ -362,7 +393,11 @@ private:
     Gtk::CheckButton* const savrest_;
     sigc::connection savrestConn_;
 
+    Gtk::ToggleButton* const preview_;
+    sigc::connection previewConn_;
+
     // Internal variables
+    ControlPanelListener* controlPanelListener;
     int lastObject_;
     rtengine::Coord lastCoord_;
     bool nbSpotChanged_;

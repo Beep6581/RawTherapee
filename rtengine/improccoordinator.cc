@@ -154,6 +154,7 @@ ImProcCoordinator::ImProcCoordinator() :
     pdSharpenAutoRadiusListener(nullptr),
     frameCountListener(nullptr),
     imageTypeListener(nullptr),
+    filmNegListener(nullptr),
     actListener(nullptr),
     adnListener(nullptr),
     awavListener(nullptr),
@@ -281,6 +282,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lastsav(0),
     avg(0),
     lastspotdup(false),
+    previewDeltaE(false),
     locallColorMask(0),
     locallColorMaskinv(0),
     locallExpMask(0),
@@ -1320,7 +1322,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   locwavCurveden, locwavdenutili,
                                   locedgwavCurve, locedgwavutili,
                                   LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                   minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                     lastorigimp->CopyFrom(nprevl);

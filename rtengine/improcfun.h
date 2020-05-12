@@ -319,7 +319,7 @@ public:
                 const LocwavCurve & locedgwavCurve, bool & locedgwavutili,
                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                 double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
-                int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
+                bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
 
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);

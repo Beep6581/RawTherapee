@@ -118,6 +118,10 @@ public:
     void refChanged(const double huer, const double lumar, const double chromar);
 
     // Mask preview functions
+    virtual bool isMaskViewActive()
+    {
+        return false;
+    };
     virtual void resetMaskView() {};
     virtual void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) {};
 
@@ -253,6 +257,7 @@ public:
 
     void setListener(ToolPanelListener* tpl) override;
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -362,6 +367,7 @@ public:
     LocallabExposure();
     ~LocallabExposure();
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -445,6 +451,7 @@ public:
     LocallabShadow();
     ~LocallabShadow();
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -522,6 +529,7 @@ public:
     LocallabVibrance();
     ~LocallabVibrance();
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -577,6 +585,7 @@ private:
 public:
     LocallabSoft();
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -670,6 +679,7 @@ public:
     LocallabBlur();
     ~LocallabBlur();
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -749,6 +759,7 @@ public:
     LocallabTone();
     ~LocallabTone();
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -838,6 +849,7 @@ public:
 
     void updateMinMax(const double cdma, const double cdmin, const double mini, const double maxi, const double Tmean, const double Tsigma, const double Tmin, const double Tmax);
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -895,6 +907,7 @@ private:
 public:
     LocallabSharp();
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -1014,6 +1027,7 @@ public:
     LocallabContrast();
     ~LocallabContrast();
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 
@@ -1103,6 +1117,7 @@ public:
     LocallabCBDL();
     ~LocallabCBDL();
 
+    bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
 

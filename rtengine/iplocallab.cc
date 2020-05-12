@@ -327,6 +327,7 @@ struct local_params {
     int qualmet;
     int qualcurvemet;
     int gridmet;
+    bool prevdE;
     int showmaskcolmet;
     int showmaskcolmetinv;
     int showmaskexpmet;
@@ -540,7 +541,7 @@ static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float
 
 
 
-static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, const LocwavCurve & locwavCurveden, bool & locwavdenutili)
+static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, const LocwavCurve & locwavCurveden, bool & locwavdenutili)
 {
     int w = oW;
     int h = oH;
@@ -619,7 +620,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.linear = locallab.spots.at(sp).linear;
 
     lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
-
+    lp.prevdE = prevDeltaE;
     lp.showmaskcolmet = llColorMask;
     lp.showmaskcolmetinv = llColorMaskinv;
     lp.showmaskexpmet = llExpMask;
@@ -2688,7 +2689,7 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
                         transformed->L[y][x] = CLIP(12000.f + amplabL * difL);// * 10.f empirical to can visualize modifications
                         transformed->a[y][x] = CLIPC(amplabL * difa);// * 10.f empirical to can visualize modifications
                         transformed->b[y][x] = CLIPC(amplabL * difb);// * 10.f empirical to can visualize modifications
-                    } else if (previewbl) {
+                    } else if (previewbl || lp.prevdE) {
                         float difbdisp = (reducdEL +  reducdEa + reducdEb) * 10000.f * lp.colorde;
 
                         if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
@@ -2960,9 +2961,9 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                             transformed->L[y][x] = CLIP(12000.f + difL);
                             transformed->a[y][x] = CLIPC(difa);
                             transformed->b[y][x] = CLIPC(difb);
-                        } else if (previewbl) {
+                        } else if (previewbl || lp.prevdE) {
                             transformed->a[y][x] = 0.f;
-                            transformed->b[y][x] = (difb);
+                            transformed->b[y] [x] = (difb);
                         }
 
                         break;
@@ -4560,7 +4561,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                         if (sharshow) {
                             transformed->a[y][x] = 0.f;
                             transformed->b[y][x] = ampli * 5.f * difL * reducdE;
-                        } else if (previewshar) {
+                        } else if (previewshar || lp.prevdE) {
                             float difbdisp = reducview * 10000.f * lp.colorde;
 
                             if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
@@ -4706,7 +4707,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
                 if (sharshow) {
                     transformed->a[y][x] = 0.f;
                     transformed->b[y][x] = ampli * 5.f * difL * reducdE;
-                } else if (previewshar) {
+                } else if (previewshar || lp.prevdE) {
                     float difbdisp = reducview * 10000.f * lp.colorde;
 
                     if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
@@ -5393,7 +5394,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     transformed->L[y][x] = CLIP(12000.f + difL);
                                     transformed->a[y][x] = CLIPC(difa);
                                     transformed->b[y][x] = CLIPC(difb);
-                                } else if (previewcb  || previewtm) {
+                                } else if (previewcb  || previewtm || lp.prevdE) {
                                     if (fabs(difb) < 500.f) {
                                         difb += difL;
                                     }
@@ -5893,7 +5894,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, locwavCurveden, locwavdenutili);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, locwavCurveden, locwavdenutili);
         int begy = lp.yc - lp.lyT;
         int begx = lp.xc - lp.lxL;
         int yEn = lp.yc + lp.ly;
@@ -6357,7 +6358,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
                     transformed->L[y][x] = CLIP(12000.f + 0.5f * ampli * difL);
                     transformed->a[y][x] = CLIPC(ampli * difa);
                     transformed->b[y][x] = CLIPC(ampli * difb);
-                } else if (previewbl) {//show deltaE
+                } else if (previewbl || lp.prevdE) {//show deltaE
                     float difbdisp = reducdE * 10000.f * lp.colorde;
 
                     if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
@@ -6780,7 +6781,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
                         transformed->a[y + ystart][x + xstart] = CLIPC(ampli * difa);
                         transformed->b[y + ystart][x + xstart] = CLIPC(ampli * difb);
-                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previeworig) {//show deltaE
+                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previeworig || lp.prevdE) {//show deltaE
                         float difbdisp = reducdE * 10000.f * lp.colorde;
 
                         if (transformed->L[y + ystart][x + xstart] < darklim) { //enhance dark luminance as user can see!
@@ -10397,7 +10398,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocwavCurve & locedgwavCurve, bool & locedgwavutili,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, LUTf & rgblocalcurve, bool & localrgbutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                                 double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int &lastsav,
-                                int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
+                                bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
                                 float & minCD, float & maxCD, float & mini, float & maxi, float & Tmean, float & Tsigma, float & Tmin, float & Tmax)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -10411,7 +10412,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
         int delxy = 0;
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, locwavCurveden, locwavdenutili);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, locwavCurveden, locwavdenutili);
 
         const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
         int strred = 1;//(lp.strucc - 1);

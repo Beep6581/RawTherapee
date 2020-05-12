@@ -175,7 +175,6 @@ LocallabTone::LocallabTone():
     showmasktmMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmasktmMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmasktmMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmasktmMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmasktmMethod->set_active(0);
     showmasktmMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmasktmMethodConn = showmasktmMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabTone::showmasktmMethodChanged));
@@ -252,6 +251,11 @@ LocallabTone::~LocallabTone()
 {
     delete masktmCurveEditorG;
     delete mask2tmCurveEditorG;
+}
+
+bool LocallabTone::isMaskViewActive()
+{
+    return (showmasktmMethod->get_active_row_number() != 0);
 }
 
 void LocallabTone::resetMaskView()
@@ -839,7 +843,6 @@ LocallabRetinex::LocallabRetinex():
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskretiMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskretiMethod->set_active(0);
     showmaskretiMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskretiMethodConn = showmaskretiMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabRetinex::showmaskretiMethodChanged));
@@ -982,6 +985,11 @@ void LocallabRetinex::updateMinMax(const double cdma, const double cdmin, const 
         return false;
     }
     );
+}
+
+bool LocallabRetinex::isMaskViewActive()
+{
+    return (showmaskretiMethod->get_active_row_number() != 0);
 }
 
 void LocallabRetinex::resetMaskView()
@@ -1747,7 +1755,6 @@ LocallabSharp::LocallabSharp():
 
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
-    showmasksharMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmasksharMethod->set_active(0);
     showmasksharMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmasksharMethodConn = showmasksharMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabSharp::showmasksharMethodChanged));
@@ -1767,6 +1774,11 @@ LocallabSharp::LocallabSharp():
     sharfBox->pack_start(*showmasksharMethod);
     sharFrame->add(*sharfBox);
     pack_start(*sharFrame);
+}
+
+bool LocallabSharp::isMaskViewActive()
+{
+    return (showmasksharMethod->get_active_row_number() != 0);
 }
 
 void LocallabSharp::resetMaskView()
@@ -2306,7 +2318,6 @@ LocallabContrast::LocallabContrast():
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmasklcMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmasklcMethod->set_active(0);
     showmasklcMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmasklcMethodConn = showmasklcMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabContrast::showmasklcMethodChanged));
@@ -2499,6 +2510,11 @@ LocallabContrast::~LocallabContrast()
     delete LocalcurveEditorwavcomp;
     delete masklcCurveEditorG;
     delete mask2lcCurveEditorG;
+}
+
+bool LocallabContrast::isMaskViewActive()
+{
+    return (showmasklcMethod->get_active_row_number() != 0);
 }
 
 void LocallabContrast::resetMaskView()
@@ -3707,7 +3723,6 @@ LocallabCBDL::LocallabCBDL():
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskcbMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     showmaskcbMethod->set_active(0);
     showmaskcbMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskcbMethodConn = showmaskcbMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabCBDL::showmaskcbMethodChanged));
@@ -3803,6 +3818,12 @@ LocallabCBDL::~LocallabCBDL()
     delete maskcbCurveEditorG;
     delete mask2cbCurveEditorG;
 }
+
+bool LocallabCBDL::isMaskViewActive()
+{
+    return (showmaskcbMethod->get_active_row_number() != 0);
+}
+
 
 void LocallabCBDL::resetMaskView()
 {

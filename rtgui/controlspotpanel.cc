@@ -85,6 +85,9 @@ ControlSpotPanel::ControlSpotPanel():
     shortc_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SHORTC")))),
     savrest_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SAVREST")))),
 
+    preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+
+    controlPanelListener(nullptr),
     lastObject_(-1),
     nbSpotChanged_(false),
     selSpotChanged_(false),
@@ -326,6 +329,11 @@ ControlSpotPanel::ControlSpotPanel():
     balanh_->setAdjusterListener(this);
     colorde_->setAdjusterListener(this);
 
+    preview_->set_active(false);
+    previewConn_ = preview_->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &ControlSpotPanel::previewChanged));
+
     if (showtooltip) {
         balan_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
         balanh_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
@@ -337,16 +345,19 @@ ControlSpotPanel::ControlSpotPanel():
     artifBox->pack_start(*iter_);
     artifBox->pack_start(*balan_);
     artifBox->pack_start(*balanh_);
-    artifBox->pack_start(*colorde_);
+    Gtk::HBox* const prevBox = Gtk::manage(new Gtk::HBox());
+    prevBox->pack_start(*colorde_);
+    prevBox->pack_start(*preview_, Gtk::PACK_SHRINK, 4);
+    artifBox->pack_start(*prevBox);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
-    
+
     avoidConn_  = avoid_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
     pack_start(*avoid_);
 
     blwhConn_  = blwh_->signal_toggled().connect(
-                      sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
+                     sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
 
     if (showtooltip) {
         blwh_->set_tooltip_text(M("TP_LOCALLAB_BLWH_TOOLTIP"));
@@ -440,8 +451,8 @@ ControlSpotPanel::ControlSpotPanel():
     wavMethod_->append(M("TP_WAVELET_DAUB14"));
     wavMethod_->set_active(1);
     wavMethodconn_ = wavMethod_->signal_changed().connect(
-                          sigc::mem_fun(
-                              *this, &ControlSpotPanel::wavMethodChanged));
+                         sigc::mem_fun(
+                             *this, &ControlSpotPanel::wavMethodChanged));
     ctboxwavmethod->pack_start(*wavMethod_);
     pack_start(*ctboxwavmethod);
 
@@ -782,8 +793,8 @@ void ControlSpotPanel::controlspotChanged()
     eventType = SpotSelection;
     SpotRow* const spotRow = getSpot(selIndex);
 
-    // Image area shall be regenerated if mask preview was active when switching spot
-    if (maskPrevActive) {
+    // Image area shall be regenerated if mask or deltaE preview was active when switching spot
+    if (maskPrevActive || preview_->get_active()) {
         listener->panelChanged(EvLocallabSpotSelectedWithMask, spotRow->name);
     } else {
         listener->panelChanged(EvLocallabSpotSelected, spotRow->name);
@@ -1355,8 +1366,6 @@ void ControlSpotPanel::recursChanged()
 
 void ControlSpotPanel::laplacChanged()
 {
-    // printf("laplacChanged\n");
-
     // Get selected control spot
     const auto s = treeview_->get_selection();
 
@@ -1381,8 +1390,6 @@ void ControlSpotPanel::laplacChanged()
 
 void ControlSpotPanel::deltaeChanged()
 {
-    // printf("laplacChanged\n");
-
     // Get selected control spot
     const auto s = treeview_->get_selection();
 
@@ -1406,7 +1413,6 @@ void ControlSpotPanel::deltaeChanged()
 
 void ControlSpotPanel::shortcChanged()
 {
-
     // Get selected control spot
     const auto s = treeview_->get_selection();
 
@@ -1430,7 +1436,6 @@ void ControlSpotPanel::shortcChanged()
 
 void ControlSpotPanel::savrestChanged()
 {
-
     // Get selected control spot
     const auto s = treeview_->get_selection();
 
@@ -1452,6 +1457,17 @@ void ControlSpotPanel::savrestChanged()
     }
 }
 
+void ControlSpotPanel::previewChanged()
+{
+    // If deltaE preview is activated, deactivate all other tool mask preview
+    if (controlPanelListener) {
+        controlPanelListener->resetToolMaskView();
+    }
+
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    }
+}
 
 void ControlSpotPanel::disableParamlistener(bool cond)
 {
@@ -2255,6 +2271,18 @@ bool ControlSpotPanel::setSelectedSpot(const int index)
     }
 
     return false;
+}
+
+bool ControlSpotPanel::isDeltaEPrevActive()
+{
+    return (preview_->get_active());
+}
+
+void ControlSpotPanel::resetDeltaEPreview()
+{
+    previewConn_.block(true);
+    preview_->set_active(false);
+    previewConn_.block(false);
 }
 
 void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
