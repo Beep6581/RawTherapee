@@ -549,7 +549,7 @@ BENCHFUN
     const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f)) : SQR((noiseluma / 125.f) * (1.f + noiseluma / 25.f));
     const bool denoiseLuminance = (noisevarL > 0.00001f);
 
-    //printf("NL=%f \n",noisevarL);
+//    printf("NL=%f \n",noisevarL);
     if (useNoiseLCurve || useNoiseCCurve) {
         int hei = calclum->getHeight();
         int wid = calclum->getWidth();

@@ -475,6 +475,12 @@ void ParamsEdited::set(bool v)
     wavelet.strength = v;
     wavelet.balance = v;
     wavelet.iter = v;
+    wavelet.sigmafin = v;
+    wavelet.sigmaton = v;
+    wavelet.sigmacol = v;
+    wavelet.sigmadir = v;
+    wavelet.rangeab = v;
+    wavelet.protab = v;
     wavelet.median = v;
     wavelet.medianlev = v;
     wavelet.linkedg = v;
@@ -559,6 +565,7 @@ void ParamsEdited::set(bool v)
     wavelet.level3noise = v;
     wavelet.ccwcurve = v;
     wavelet.blcurve = v;
+    wavelet.opacityCurveSH   = v;
     wavelet.opacityCurveRG   = v;
     wavelet.opacityCurveBY   = v;
     wavelet.opacityCurveW   = v;
@@ -582,6 +589,10 @@ void ParamsEdited::set(bool v)
     wavelet.expresid = v;
     wavelet.exptoning = v;
     wavelet.expnoise = v;
+    wavelet.labgridALow = v;
+    wavelet.labgridBLow = v;
+    wavelet.labgridAHigh = v;
+    wavelet.labgridBHigh = v;
 
     for (int i = 0; i < 9; i++) {
         wavelet.c[i] = v;
@@ -1086,6 +1097,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.strength = wavelet.strength && p.wavelet.strength == other.wavelet.strength;
         wavelet.balance = wavelet.balance && p.wavelet.balance == other.wavelet.balance;
         wavelet.iter = wavelet.iter && p.wavelet.iter == other.wavelet.iter;
+        wavelet.sigmafin = wavelet.sigmafin && p.wavelet.sigmafin == other.wavelet.sigmafin;
+        wavelet.sigmaton = wavelet.sigmaton && p.wavelet.sigmaton == other.wavelet.sigmaton;
+        wavelet.sigmacol = wavelet.sigmacol && p.wavelet.sigmacol == other.wavelet.sigmacol;
+        wavelet.sigmadir = wavelet.sigmadir && p.wavelet.sigmadir == other.wavelet.sigmadir;
+        wavelet.rangeab = wavelet.rangeab && p.wavelet.rangeab == other.wavelet.rangeab;
+        wavelet.protab = wavelet.protab && p.wavelet.protab == other.wavelet.protab;
         wavelet.median = wavelet.median && p.wavelet.median == other.wavelet.median;
         wavelet.medianlev = wavelet.medianlev && p.wavelet.medianlev == other.wavelet.medianlev;
         wavelet.linkedg = wavelet.linkedg && p.wavelet.linkedg == other.wavelet.linkedg;
@@ -1171,6 +1188,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.satlev = wavelet.satlev && p.wavelet.satlev == other.wavelet.satlev;
         wavelet.ccwcurve = wavelet.ccwcurve && p.wavelet.ccwcurve == other.wavelet.ccwcurve;
         wavelet.blcurve = wavelet.blcurve && p.wavelet.blcurve == other.wavelet.blcurve;
+        wavelet.opacityCurveSH = wavelet.opacityCurveSH && p.wavelet.opacityCurveSH == other.wavelet.opacityCurveSH;
         wavelet.opacityCurveRG = wavelet.opacityCurveRG && p.wavelet.opacityCurveRG == other.wavelet.opacityCurveRG;
         wavelet.opacityCurveBY = wavelet.opacityCurveBY && p.wavelet.opacityCurveBY == other.wavelet.opacityCurveBY;
         wavelet.opacityCurveW = wavelet.opacityCurveW && p.wavelet.opacityCurveW == other.wavelet.opacityCurveW;
@@ -1189,6 +1207,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.exptoning = wavelet.exptoning && p.wavelet.exptoning == other.wavelet.exptoning;
         wavelet.expnoise = wavelet.expnoise && p.wavelet.expnoise == other.wavelet.expnoise;
         wavelet.expclari = wavelet.expclari && p.wavelet.expclari == other.wavelet.expclari;
+        wavelet.labgridALow = wavelet.labgridALow && p.wavelet.labgridALow == other.wavelet.labgridALow;
+        wavelet.labgridBLow = wavelet.labgridBLow && p.wavelet.labgridBLow == other.wavelet.labgridBLow;
+        wavelet.labgridAHigh = wavelet.labgridAHigh && p.wavelet.labgridAHigh == other.wavelet.labgridAHigh;
+        wavelet.labgridBHigh = wavelet.labgridBHigh && p.wavelet.labgridBHigh == other.wavelet.labgridBHigh;
 
         for (int level = 0; level < 9; ++level) {
             wavelet.c[level] = wavelet.c[level] && p.wavelet.c[level] == other.wavelet.c[level];
@@ -2889,12 +2911,52 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.enabled = mods.wavelet.enabled;
     }
 
+    if (wavelet.labgridALow) {
+        toEdit.wavelet.labgridALow = mods.wavelet.labgridALow;
+    }
+
+    if (wavelet.labgridBLow) {
+        toEdit.wavelet.labgridBLow = mods.wavelet.labgridBLow;
+    }
+
+    if (wavelet.labgridAHigh) {
+        toEdit.wavelet.labgridAHigh = mods.wavelet.labgridAHigh;
+    }
+
+    if (wavelet.labgridBHigh) {
+        toEdit.wavelet.labgridBHigh = mods.wavelet.labgridBHigh;
+    }
+
     if (wavelet.strength) {
         toEdit.wavelet.strength = mods.wavelet.strength;
     }
 
     if (wavelet.balance) {
         toEdit.wavelet.balance = mods.wavelet.balance;
+    }
+
+    if (wavelet.sigmafin) {
+        toEdit.wavelet.sigmafin = mods.wavelet.sigmafin;
+    }
+
+    if (wavelet.sigmaton) {
+        toEdit.wavelet.sigmaton = mods.wavelet.sigmaton;
+    }
+
+    if (wavelet.sigmacol) {
+        toEdit.wavelet.sigmacol = mods.wavelet.sigmacol;
+    }
+
+    if (wavelet.sigmadir) {
+        toEdit.wavelet.sigmadir = mods.wavelet.sigmadir;
+    }
+
+    if (wavelet.rangeab) {
+        toEdit.wavelet.rangeab = mods.wavelet.rangeab;
+    }
+
+    if (wavelet.protab) {
+        toEdit.wavelet.protab = mods.wavelet.protab;
     }
 
     if (wavelet.iter) {
@@ -3127,6 +3189,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.blcurve) {
         toEdit.wavelet.blcurve = mods.wavelet.blcurve;
+    }
+
+    if (wavelet.opacityCurveSH) {
+        toEdit.wavelet.opacityCurveSH = mods.wavelet.opacityCurveSH;
     }
 
     if (wavelet.opacityCurveRG) {

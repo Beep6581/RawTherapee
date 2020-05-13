@@ -499,6 +499,12 @@ struct WaveletParamsEdited {
     bool strength;
     bool balance;
     bool iter;
+    bool sigmafin;
+    bool sigmaton;
+    bool sigmacol;
+    bool sigmadir;
+    bool rangeab;
+    bool protab;
     bool median;
     bool medianlev;
     bool linkedg;
@@ -571,6 +577,7 @@ struct WaveletParamsEdited {
     bool level3noise;
     bool ccwcurve;
     bool blcurve;
+    bool opacityCurveSH;
     bool opacityCurveBY;
     bool opacityCurveRG;
     bool opacityCurveW;
@@ -603,6 +610,11 @@ struct WaveletParamsEdited {
     bool exptoning;
     bool expnoise;
     bool expclari;
+    bool labgridALow;
+    bool labgridBLow;
+    bool labgridAHigh;
+    bool labgridBHigh;
+    
 };
 
 struct DirPyrEqualizerParamsEdited {
