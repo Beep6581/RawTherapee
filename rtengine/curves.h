@@ -627,6 +627,30 @@ public:
     }
 };
 
+class Wavblcurve
+{
+private:
+    LUTf lutblcurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+public:
+    virtual ~Wavblcurve() {};
+    Wavblcurve();
+
+    void Reset();
+    //  void Set(const std::vector<double> &curvePoints, bool &opautili);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
+    {
+        return lutblcurve[index];
+    }
+
+    operator bool (void) const
+    {
+        return lutblcurve;
+    }
+};
+
+
 class WavOpacityCurveRG
 {
 private:
@@ -649,6 +673,32 @@ public:
         return lutOpacityCurveRG;
     }
 };
+
+class WavOpacityCurveSH
+{
+private:
+    LUTf lutOpacityCurveSH;  // 0xffff range
+    void Set(const Curve &pCurve);
+public:
+    virtual ~WavOpacityCurveSH() {};
+    WavOpacityCurveSH();
+
+    void Reset();
+    //  void Set(const std::vector<double> &curvePoints, bool &opautili);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
+    {
+        return lutOpacityCurveSH[index];
+    }
+
+    operator bool (void) const
+    {
+        return lutOpacityCurveSH;
+    }
+};
+
+
+
 class WavOpacityCurveBY
 {
 private:

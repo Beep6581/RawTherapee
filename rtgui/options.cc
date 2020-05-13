@@ -597,6 +597,8 @@ void Options::setDefaults()
     rtSettings.itcwb_forceextra = true;
     rtSettings.itcwb_sizereference = 3;//between 1 and 5
     rtSettings.itcwb_delta = 1;//between 0 and 5
+    rtSettings.itcwb_stdobserver10 = true;
+    rtSettings.itcwb_precis = 5;//3  or 5 or 9
 
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
@@ -1513,6 +1515,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.itcwb_forceextra = keyFile.get_boolean("Color Management", "Itcwb_forceextra");
                 }
 
+                if (keyFile.has_key("Color Management", "Itcwb_stdobserver10")) {
+                    rtSettings.itcwb_stdobserver10 = keyFile.get_boolean("Color Management", "Itcwb_stdobserver10");
+                }
+
                 if (keyFile.has_key("Color Management", "Itcwb_greenrange")) {
                     rtSettings.itcwb_greenrange = keyFile.get_integer("Color Management", "Itcwb_greenrange");
                 }
@@ -1529,6 +1535,9 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.itcwb_delta = keyFile.get_integer("Color Management", "Itcwb_delta");
                 }
 
+                if (keyFile.has_key("Color Management", "Itcwb_precis")) {
+                    rtSettings.itcwb_precis = keyFile.get_integer("Color Management", "Itcwb_precis");
+                }
 
                 //if (keyFile.has_key ("Color Management", "Colortoningab")) rtSettings.colortoningab = keyFile.get_double("Color Management", "Colortoningab");
                 //if (keyFile.has_key ("Color Management", "Decaction")) rtSettings.decaction = keyFile.get_double("Color Management", "Decaction");
@@ -2201,6 +2210,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Color Management", "Itcwb_forceextra", rtSettings.itcwb_forceextra);
         keyFile.set_integer("Color Management", "Itcwb_sizereference", rtSettings.itcwb_sizereference);
         keyFile.set_integer("Color Management", "Itcwb_delta", rtSettings.itcwb_delta);
+        keyFile.set_boolean("Color Management", "Itcwb_stdobserver10", rtSettings.itcwb_stdobserver10);
+        keyFile.set_integer("Color Management", "Itcwb_precis", rtSettings.itcwb_precis);
 
         //keyFile.set_double  ("Color Management", "Colortoningab", rtSettings.colortoningab);
         //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);

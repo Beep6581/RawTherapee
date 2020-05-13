@@ -1457,7 +1457,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         [&]() -> bool
         {
             CameraConstantsStore *ccs = CameraConstantsStore::getInstance();
-            CameraConst *cc = ccs->get(ri->get_maker().c_str(), ri->get_model().c_str());
+            const CameraConst *cc = ccs->get(ri->get_maker().c_str(), ri->get_model().c_str());
             return cc && cc->get_globalGreenEquilibration();
         };
     
@@ -3901,9 +3901,9 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 
 static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy)
 {
-    //calculate histogram x y in a rane of 158 colors
+    //calculate histogram x y in a range of 190 colors
     //this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
-    // of course we can chnage to be more precise
+    // of course we can change to be more precise
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -4004,279 +4004,345 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                         nh = 32;
                     } else if (yc[y][x] < 0.32f) {
                         nh = 33;
-                    } else if (yc[y][x] < 0.34f) {
+                    } else if (yc[y][x] < 0.33f) {
                         nh = 34;
-                    } else if (yc[y][x] < 0.37f) {
+                    } else if (yc[y][x] < 0.335f) {
                         nh = 35;
-                    } else if (yc[y][x] < 0.4f) {
+                    } else if (yc[y][x] < 0.34f) {
                         nh = 36;
-                    } else if (yc[y][x] < 0.45f) {
+                    } else if (yc[y][x] < 0.35f) {
                         nh = 37;
-                    } else if (yc[y][x] < 0.5f) {
+                    } else if (yc[y][x] < 0.37f) {
                         nh = 38;
-                    } else if (yc[y][x] < 0.55f) {
+                    } else if (yc[y][x] < 0.4f) {
                         nh = 39;
-                    } else if (yc[y][x] < 0.7f) {
+                    } else if (yc[y][x] < 0.45f) {
                         nh = 40;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 41;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 42;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 43;
                     }
                 } else if (xc[y][x] < 0.335f && yc[y][x] > 0.1f) {//neutral
                     if (yc[y][x] < 0.2f) {
-                        nh = 41;
-                    } else if (yc[y][x] < 0.24f) {
-                        nh = 42;
-                    } else if (yc[y][x] < 0.29f) {
-                        nh = 43;
-                    } else if (yc[y][x] < 0.32f) {
                         nh = 44;
-                    } else if (yc[y][x] < 0.33f) {
+                    } else if (yc[y][x] < 0.24f) {
                         nh = 45;
-                    } else if (yc[y][x] < 0.34f) {
+                    } else if (yc[y][x] < 0.29f) {
                         nh = 46;
-                    } else if (yc[y][x] < 0.35f) {
+                    } else if (yc[y][x] < 0.32f) {
                         nh = 47;
-                    } else if (yc[y][x] < 0.36f) {
+                    } else if (yc[y][x] < 0.33f) {
                         nh = 48;
-                    } else if (yc[y][x] < 0.37f) {
-                        nh = 47;
-                    } else if (yc[y][x] < 0.38f) {
-                        nh = 48;
-                    } else if (yc[y][x] < 0.4f) {
+                    } else if (yc[y][x] < 0.335f) {
                         nh = 49;
-                    } else if (yc[y][x] < 0.45f) {
+                    } else if (yc[y][x] < 0.34f) {
                         nh = 50;
-                    } else if (yc[y][x] < 0.5f) {
+                    } else if (yc[y][x] < 0.345f) {
                         nh = 51;
-                    } else if (yc[y][x] < 0.55f) {
+                    } else if (yc[y][x] < 0.35f) {
                         nh = 52;
-                    } else if (yc[y][x] < 0.7f) {
+                    } else if (yc[y][x] < 0.355f) {
                         nh = 53;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 54;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 55;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 56;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 57;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 58;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 59;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 60;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 61;
+                    }
+                } else if (xc[y][x] < 0.340f && yc[y][x] > 0.1f) {//neutral
+                    if (yc[y][x] < 0.2f) {
+                        nh = 62;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 63;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 64;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 65;
+                    } else if (yc[y][x] < 0.325f) {
+                        nh = 66;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 67;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 68;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 69;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 70;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 71;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 72;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 73;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 74;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 75;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 76;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 77;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 78;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 79;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 80;
                     }
                 } else if (xc[y][x] < 0.345f && yc[y][x] > 0.1f) {//neutral  37
                     if (yc[y][x] < 0.2f) {
-                        nh = 54;
+                        nh = 81;
                     } else if (yc[y][x] < 0.24f) {
-                        nh = 55;
+                        nh = 82;
                     } else if (yc[y][x] < 0.29f) {
-                        nh = 56;
+                        nh = 83;
                     } else if (yc[y][x] < 0.32f) {
-                        nh = 57;
-                    } else if (yc[y][x] < 0.33f) {//34
-                        nh = 58;
+                        nh = 84;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 85;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 86;
                     } else if (yc[y][x] < 0.34f) {
-                        nh = 59;
-                    } else if (yc[y][x] < 0.35f) {//34
-                        nh = 60;
-                    } else if (yc[y][x] < 0.36f) {//34
-                        nh = 61;
+                        nh = 87;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 88;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 89;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 90;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 91;
                     } else if (yc[y][x] < 0.37f) {
-                        nh = 62;
+                        nh = 92;
                     } else if (yc[y][x] < 0.38f) {
-                        nh = 63;
+                        nh = 93;
                     } else if (yc[y][x] < 0.39f) {
-                        nh = 64;
+                        nh = 94;
                     } else if (yc[y][x] < 0.4f) {
-                        nh = 65;
+                        nh = 95;
                     } else if (yc[y][x] < 0.42f) {
-                        nh = 66;
+                        nh = 96;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 67;
+                        nh = 97;
                     } else if (yc[y][x] < 0.48f) {
-                        nh = 68;
+                        nh = 98;
                     } else if (yc[y][x] < 0.5f) {
-                        nh = 69;
+                        nh = 99;
                     } else if (yc[y][x] < 0.55f) {
-                        nh = 70;
+                        nh = 100;
                     } else if (yc[y][x] < 0.65f) {
-                        nh = 71;
+                        nh = 101;
                     }
                 } else if (xc[y][x] < 0.355f && yc[y][x] > 0.1f) {//neutral  37
                     if (yc[y][x] < 0.2f) {
-                        nh = 72;
+                        nh = 102;
                     } else if (yc[y][x] < 0.24f) {
-                        nh = 73;
+                        nh = 103;
                     } else if (yc[y][x] < 0.29f) {
-                        nh = 74;
+                        nh = 104;
                     } else if (yc[y][x] < 0.32f) {
-                        nh = 75;
-                    } else if (yc[y][x] < 0.33f) {//34
-                        nh = 76;
+                        nh = 105;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 106;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 107;
                     } else if (yc[y][x] < 0.34f) {
-                        nh = 77;
-                    } else if (yc[y][x] < 0.35f) {//34
-                        nh = 78;
-                    } else if (yc[y][x] < 0.36f) {//34
-                        nh = 79;
+                        nh = 108;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 109;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 110;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 111;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 112;
                     } else if (yc[y][x] < 0.37f) {
-                        nh = 80;
+                        nh = 113;
                     } else if (yc[y][x] < 0.38f) {
-                        nh = 81;
+                        nh = 114;
                     } else if (yc[y][x] < 0.39f) {
-                        nh = 82;
+                        nh = 115;
                     } else if (yc[y][x] < 0.4f) {
-                        nh = 83;
+                        nh = 116;
                     } else if (yc[y][x] < 0.42f) {
-                        nh = 84;
+                        nh = 117;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 85;
+                        nh = 118;
                     } else if (yc[y][x] < 0.48f) {
-                        nh = 86;
+                        nh = 119;
                     } else if (yc[y][x] < 0.5f) {
-                        nh = 87;
+                        nh = 120;
                     } else if (yc[y][x] < 0.55f) {
-                        nh = 88;
+                        nh = 121;
                     } else if (yc[y][x] < 0.65f) {
-                        nh = 89;
+                        nh = 122;
                     }
                 } else if (xc[y][x] < 0.365f && yc[y][x] > 0.15f) {  //0.4
                     if (yc[y][x] < 0.2f) {
-                        nh = 90;
-                    } else if (yc[y][x] < 0.24f) {
-                        nh = 91;
-                    } else if (yc[y][x] < 0.29f) {
-                        nh = 92;
-                    } else if (yc[y][x] < 0.32f) {
-                        nh = 93;
-                    } else if (yc[y][x] < 0.33f) {
-                        nh = 94;
-                    } else if (yc[y][x] < 0.34f) {
-                        nh = 95;
-                    } else if (yc[y][x] < 0.36f) {
-                        nh = 96;
-                    } else if (yc[y][x] < 0.37f) {
-                        nh = 97;
-                    } else if (yc[y][x] < 0.38f) {
-                        nh = 98;
-                    } else if (yc[y][x] < 0.39f) {
-                        nh = 99;
-                    } else if (yc[y][x] < 0.4f) {
-                        nh = 100;
-                    } else if (yc[y][x] < 0.42f) {
-                        nh = 101;
-                    } else if (yc[y][x] < 0.45f) {
-                        nh = 102;
-                    } else if (yc[y][x] < 0.5f) {
-                        nh = 103;
-                    } else if (yc[y][x] < 0.55f) {
-                        nh = 104;
-                    } else if (yc[y][x] < 0.63f) {
-                        nh = 105;
-                    }
-                } else if (xc[y][x] < 0.405f && yc[y][x] > 0.15f) {//45
-                    if (yc[y][x] < 0.2f) {
-                        nh = 106;
-                    } else if (yc[y][x] < 0.24f) {
-                        nh = 107;
-                    } else if (yc[y][x] < 0.29f) {
-                        nh = 108;
-                    } else if (yc[y][x] < 0.32f) {
-                        nh = 109;
-                    } else if (yc[y][x] < 0.34f) {
-                        nh = 110;
-                    } else if (yc[y][x] < 0.37f) {
-                        nh = 111;
-                    } else if (yc[y][x] < 0.4f) {
-                        nh = 112;
-                    } else if (yc[y][x] < 0.45f) {
-                        nh = 113;
-                    } else if (yc[y][x] < 0.5f) {
-                        nh = 114;
-                    } else if (yc[y][x] < 0.55f) {
-                        nh = 115;
-                    } else if (yc[y][x] < 0.6f) {
-                        nh = 116;
-                    }
-                } else if (xc[y][x] < 0.445f && yc[y][x] > 0.15f) {//45
-                    if (yc[y][x] < 0.2f) {
-                        nh = 117;
-                    } else if (yc[y][x] < 0.24f) {
-                        nh = 118;
-                    } else if (yc[y][x] < 0.29f) {
-                        nh = 119;
-                    } else if (yc[y][x] < 0.32f) {
-                        nh = 120;
-                    } else if (yc[y][x] < 0.34f) {
-                        nh = 121;
-                    } else if (yc[y][x] < 0.37f) {
-                        nh = 122;
-                    } else if (yc[y][x] < 0.4f) {
                         nh = 123;
-                    } else if (yc[y][x] < 0.45f) {
-                        nh = 124;
-                    } else if (yc[y][x] < 0.5f) {
-                        nh = 125;
-                    } else if (yc[y][x] < 0.55f) {
-                        nh = 126;
-                    } else if (yc[y][x] < 0.58f) {
-                        nh = 127;
-                    }
-                } else if (xc[y][x] < 0.495f && yc[y][x] > 0.15f) {
-                    if (yc[y][x] < 0.2f) {
-                        nh = 128;
                     } else if (yc[y][x] < 0.24f) {
-                        nh = 129;
+                        nh = 124;
                     } else if (yc[y][x] < 0.29f) {
-                        nh = 130;
+                        nh = 125;
                     } else if (yc[y][x] < 0.32f) {
-                        nh = 131;
+                        nh = 126;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 127;
                     } else if (yc[y][x] < 0.34f) {
-                        nh = 132;
+                        nh = 128;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 129;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 130;
                     } else if (yc[y][x] < 0.37f) {
+                        nh = 131;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 132;
+                    } else if (yc[y][x] < 0.39f) {
                         nh = 133;
                     } else if (yc[y][x] < 0.4f) {
                         nh = 134;
-                    } else if (yc[y][x] < 0.45f) {
+                    } else if (yc[y][x] < 0.42f) {
                         nh = 135;
-                    } else if (yc[y][x] < 0.5f) {
+                    } else if (yc[y][x] < 0.45f) {
                         nh = 136;
-                    } else if (yc[y][x] < 0.55f) {
+                    } else if (yc[y][x] < 0.5f) {
                         nh = 137;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 138;
+                    } else if (yc[y][x] < 0.63f) {
+                        nh = 139;
+                    }
+                } else if (xc[y][x] < 0.405f && yc[y][x] > 0.15f) {//45
+                    if (yc[y][x] < 0.2f) {
+                        nh = 140;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 141;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 142;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 143;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 144;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 145;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 146;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 147;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 148;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 149;
+                    } else if (yc[y][x] < 0.6f) {
+                        nh = 150;
+                    }
+                } else if (xc[y][x] < 0.445f && yc[y][x] > 0.15f) {//45
+                    if (yc[y][x] < 0.2f) {
+                        nh = 151;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 152;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 153;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 154;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 155;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 156;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 157;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 158;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 159;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 160;
+                    } else if (yc[y][x] < 0.58f) {
+                        nh = 161;
+                    }
+                } else if (xc[y][x] < 0.495f && yc[y][x] > 0.15f) {
+                    if (yc[y][x] < 0.2f) {
+                        nh = 162;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 163;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 164;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 165;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 166;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 167;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 168;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 169;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 170;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 171;
                     }
                 } else if (xc[y][x] < 0.545f && yc[y][x] > 0.15f) {
                     if (yc[y][x] < 0.2f) {
-                        nh = 138;
+                        nh = 172;
                     } else if (yc[y][x] < 0.24f) {
-                        nh = 139;
+                        nh = 173;
                     } else if (yc[y][x] < 0.29f) {
-                        nh = 140;
+                        nh = 174;
                     } else if (yc[y][x] < 0.32f) {
-                        nh = 141;
+                        nh = 175;
                     } else if (yc[y][x] < 0.34f) {
-                        nh = 142;
+                        nh = 176;
                     } else if (yc[y][x] < 0.37f) {
-                        nh = 143;
+                        nh = 177;
                     } else if (yc[y][x] < 0.4f) {
-                        nh = 144;
+                        nh = 178;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 145;
+                        nh = 179;
                     } else if (yc[y][x] < 0.5f) {
-                        nh = 146;
+                        nh = 180;
                     }
                 } else if (xc[y][x] < 0.595f && yc[y][x] > 0.15f) {
                     if (yc[y][x] < 0.22f) {
-                        nh = 147;
+                        nh = 181;
                     } else if (yc[y][x] < 0.25f) {
-                        nh = 148;
+                        nh = 182;
                     } else if (yc[y][x] < 0.3f) {
-                        nh = 149;
+                        nh = 183;
                     } else if (yc[y][x] < 0.35f) {
-                        nh = 150;
+                        nh = 184;
                     } else if (yc[y][x] < 0.4f) {
-                        nh = 151;
+                        nh = 185;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 152;
+                        nh = 186;
                     }
                 } else if (xc[y][x] < 0.65f && yc[y][x] > 0.12f) {
                     if (yc[y][x] < 0.25f) {
-                        nh = 153;
+                        nh = 187;
                     } else if (yc[y][x] < 0.3f) {
-                        nh = 154;
+                        nh = 188;
                     } else if (yc[y][x] < 0.35f) {
-                        nh = 155;
+                        nh = 189;
                     } else if (yc[y][x] < 0.45f) {
-                        nh = 156;
+                        nh = 190;
                     }
                 } else if (xc[y][x] < 0.75f && yc[y][x] > 0.1f) {
-                    nh = 157;
+                    nh = 191;
                 }
                 if (nh >= 0) {
                     histxythr[nh]++;
@@ -4350,21 +4416,22 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
-    This algorithm try to find temperature correlation between 20 to 200 color between 200 spectral color and about 20 to 55 color found in the image, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
+    This algorithm try to find temperature correlation between 20 to 201 color between 201 spectral color and about 20 to 55 color found in the image between 192, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
 
     I have test many many algorithms to find the first one that work :)
     Probably (sure) there are improvement to do...
 
-    I have create a table temperature with temp and white point with 100 values between 2000K and 12000K we can obviously  change these values, more...with different steps
-    I have create or recuparate and transformed 200 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
-    I think this value of 200 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
+    I have create a table temperature with temp and white point with 118 values between 2000K and 12000K we can obviously  change these values, more...with different steps
+    I have create a table for tint (green)with 134 values between 0.4 to 4. 
+    I have create or recuparate and transformed 201 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
+    I think this value of 201 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
     Of course we can increase this number :)
 
     1) for the current raw file we create a table for each temp of RGB multipliers
     2) then, I choose the "camera temp" to initialize calculation (why not)
-    3) for this temp, I calculated XYZ values for the 200 spectral datas
-    4) then I create for the image an "histogram", but for xyY (Cie 1931 color space)
-    5) for each pixel (in fact to accelerate only 1/10 for and 1/10 for y), I determine for each couple xy, the number of occurences
+    3) for this temp, I calculated XYZ values for the 201 spectral datas
+    4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964 (default))
+    5) for each pixel (in fact to accelerate only 1/5 for and 1/5 for y), I determine for each couple xy, the number of occurences, can be change by Itcwb_precis to 3 or 9
     6) I sort this result in ascending order
     7) in option we can sort in another manner to take into account chroma : chromax = x - white point x, chromay = y - white point y
     8) then I compare this result, with spectral datas found above in 3) with deltaE (limited to chroma)
@@ -4383,10 +4450,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     20) between these green limits, we make slightly vary temp (settings in options) and recalculated RGB multipliers
     21) with this multipliers for the RGB color find in histogram we recalculate xyY
     22) we re-adjust references color for these xyY from 20)
-    23) we add if chroma image is very low, k colors to degrad correlation
-    24) then find all Student correlation for each couple green / temp
-    25) sort these Student values, and choose the minimum
-    26) then for the 3 better couple "temp / green" choose the one where green is nearest from 1.
+    23) then find all Student correlation for each couple green / temp
+    24) sort these Student values, and choose the minimum
+    25) then for the 3 better couple "temp / green" choose the one where green is nearest from 1.
 
     Some variables or function are not used, keep in case of
     I have test with cat02 but result are not stable enough ! why ??, therefore cat02 neutralized
@@ -4397,7 +4463,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     You can used it in images :flowers, landscape, portrait, skin, where illuminants are "normal" (daylight, blackbody)
     You must avoid when illuminant is non standard (fluorescent, LED...) and also, when the subject is lost in the image (some target to generate profiles).
 
-    You can change 4 parameters in option.cc
+    You can change  parameters in option.cc
     Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 55
     Itcwb_sort : false by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
@@ -4405,6 +4471,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_forceextra : false - if true force algorithm "extra" ("extra" is used when camera wbsettings are wrong) to all images
     Itcwb_sizereference : 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
+    itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
+    itcwb_precis : 5 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     */
 //    BENCHFUN
  
@@ -4431,14 +4499,30 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         float snedecor;//1. actually but put in case of confiance interval
     } WbGreen;
     //green (tint) values between 0.4 to 4.0
-    constexpr WbGreen gree[118] = {//symmetric coefficient between 0.717 and 1.40
+    constexpr WbGreen gree[134] = {//symmetric coefficient between 0.717 and 1.40
         {0.400, 1.f},
+        {0.420, 1.f},
+        {0.440, 1.f},
+        {0.460, 1.f},
+        {0.480, 1.f},
         {0.500, 1.f},
+        {0.520, 1.f},
+        {0.540, 1.f},
         {0.550, 1.f},
+        {0.560, 1.f},
+        {0.570, 1.f},
+        {0.580, 1.f},
+        {0.590, 1.f},
         {0.600, 1.f},
-        {0.625, 1.f},
+        {0.610, 1.f},
+        {0.620, 1.f},
+        {0.630, 1.f},
+        {0.640, 1.f},
         {0.650, 1.f},
-        {0.675, 1.f},
+        {0.660, 1.f},
+        {0.670, 1.f},
+        {0.680, 1.f},
+        {0.690, 1.f},
         {0.700, 1.f},
         {0.714, 1.f},
         {0.727, 1.f},
@@ -4471,7 +4555,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.971, 1.f},
         {0.980, 1.f},
         {0.990, 1.f},
-        {1.000, 1.f},//39
+        {1.000, 1.f},//55
         {1.010, 1.f},
         {1.020, 1.f},
         {1.030, 1.f},
@@ -4558,8 +4642,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int end;
     } RangeGreen;
 
-    constexpr RangeGreen Rangestandard = {8, 70};
-    constexpr RangeGreen Rangeextended = {4, 77};
+    constexpr RangeGreen Rangestandard = {24, 86};
+    constexpr RangeGreen Rangeextended = {15, 93};
     const RangeGreen Rangemax = {0, N_g};
 
     RangeGreen Rangegreenused;
@@ -4581,7 +4665,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //I don't know how to pass this structure to Colortemp !
     // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
     //of course we can change the step between each temp if need
-    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},
         {2201., 1.217338, 0.190697},
@@ -4702,7 +4786,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 200 + 1;//200 number of reference spectral colors, I think it is enough to retrieve good values
+    constexpr int Nc = 201 + 1;//201 number of reference spectral colors, I think it is enough to retrieve good values
     array2D<float> Tx(N_t, Nc);
     array2D<float> Ty(N_t, Nc);
     array2D<float> Tz(N_t, Nc);
@@ -4718,7 +4802,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     float gmm[N_t];
     float bmm[N_t];
 
-    constexpr int siza = 158;//size of histogram
+    constexpr int siza = 192;//size of histogram
 
     //tempref and greenref are camera wb values.
     // I used them by default to select good spectral values !!
@@ -4801,7 +4885,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
-    //call tempxy to calculate for 200 color references Temp and XYZ with cat02
+    //call tempxy to calculate for 201 color references Temp and XYZ with cat02
 
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
@@ -4936,7 +5020,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     estimchrom /= sizcu4;
-
+    if (settings->verbose) {   
+        printf("estimchrom=%f\n", estimchrom);
+    }
     if (settings->itcwb_sort) { //sort in ascending with chroma values
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
@@ -4958,8 +5044,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //calculate deltaE xx to find best values of spectrals datas - limited to chroma values
     int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
 
-    if (settings->itcwb_thres > 39) {
-        maxnb = 200 / settings->itcwb_thres;
+    if (settings->itcwb_thres > 55) {
+        maxnb = 201 / settings->itcwb_thres;
     }
 
     for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
@@ -5051,7 +5137,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if (extra) {//always used because I amde this choice, brings better results
+    if (extra) {//always used because I made this choice, brings better results
         struct Tempgreen {
             float student;
             int tempref;
@@ -5066,7 +5152,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         for (int i = 0; i < N_g; ++i) {//init variables with
             Tgstud[i].student = 1000.f;//max value to initialize
             Tgstud[i].tempref = 57;//5002K
-            Tgstud[i].greenref = 39;// 1.f
+            Tgstud[i].greenref = 55;// 1.f
 
         }
 
@@ -5115,14 +5201,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
                 }
 
-                //degrade correllation with color high chroma, but not too much...seems not good, but keep in case of??
-                if (estimchrom < 0.025f) {//very smal value of chroma for image
-
-                    good_spectral[0] = true;//blue
-                    good_spectral[11] = true;//green
-                    good_spectral[62] = true;//red
-                }
-
                 int kkg = -1;
                 for (int i = 0; i < Nc ; ++i) {
                     if (good_spectral[i]) {
@@ -5158,13 +5236,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int goodrefprov;
         float studprov;
         const int goodref0 = Tgstud[0].tempref;
-        const int greengood0 = Tgstud[0].greenref - 39;//39 green = 1
+        const int greengood0 = Tgstud[0].greenref - 55;//55 green = 1
         const float stud0 = Tgstud[0].student;
         const int goodref1 = Tgstud[1].tempref;
         const float stud1 = Tgstud[1].student;
-        const int greengood1 = Tgstud[1].greenref - 39;
+        const int greengood1 = Tgstud[1].greenref - 55;
         const int goodref2 = Tgstud[2].tempref;
-        const int greengood2 = Tgstud[2].greenref - 39;
+        const int greengood2 = Tgstud[2].greenref - 55;
         const float stud2 = Tgstud[2].student;
 
         if (std::fabs(greengood2) < std::fabs(greengood1)) {
@@ -5180,18 +5258,21 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         if (std::fabs(greengoodprov) < std::fabs(greengood0)) {
             goodref = goodrefprov;
-            greengood = greengoodprov + 39;
+            greengood = greengoodprov + 55;
             studgood = studprov;
 
         } else {
             goodref = goodref0;
-            greengood = greengood0 + 39;
+            greengood = greengood0 + 55;
             studgood = stud0;
         }
 
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
-
+        if (estimchrom < 0.025f) {
+            float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
+            greenitc += ac;
+        }
     }
 
     avg_rm = 10000.f * rmm[goodref];
@@ -5216,7 +5297,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
     if (wbpar.method == "autitcgreen") {
         bool extra = false;
 
-        if (greenref > 0.77 && greenref < 1.3) {// 0/77 and 1.3 arbitraties values
+        if (greenref > 0.5 && greenref < 1.3) {// 0.5 and 1.3 arbitraties values
             greenitc = greenref;
 
             if (settings->itcwb_forceextra) {
@@ -5237,8 +5318,17 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 {
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
-    const int bfw = W / 10 + ((W % 10) > 0 ? 1 : 0);// 10 arbitrary value  ; perhaps 4 or 5 or 20
-    const int bfh = H / 10 + ((H % 10) > 0 ? 1 : 0);
+    int precision = 5;
+    if (settings->itcwb_precis == 5) {
+        precision = 5;
+    } else if (settings->itcwb_precis < 5) {
+        precision = 3; 
+    } else if (settings->itcwb_precis > 5) {
+        precision = 9;
+    }
+
+    const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
+    const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
 
     if (! greenloc) {
         greenloc(bfw, bfh);
@@ -5288,9 +5378,9 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     #pragma omp parallel for
 #endif
     for (int i = 0; i < bfh; ++i) {
-        const int ii = i * 10;
+        const int ii = i * precision;
         if (ii < H) {
-            for (int j = 0, jj = 0; jj < W; ++j, jj += 10) {
+            for (int j = 0, jj = 0; j < bfw; ++j, jj += precision) {
                 redloc[i][j] = red[ii][jj] * multip;
                 greenloc[i][j] = green[ii][jj] * multip;
                 blueloc[i][j] = blue[ii][jj] * multip;
@@ -5490,8 +5580,17 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
-        const int bfw = W / 10 + ((W % 10) > 0 ? 1 : 0);// 10 arbitrary value  ; perhaps 4 or 5 or 20
-        const int bfh = H / 10 + ((H % 10) > 0 ? 1 : 0);
+        int precision = 5;
+        if (settings->itcwb_precis == 5) {
+            precision = 5;
+        } else if (settings->itcwb_precis < 5) {
+            precision = 3; 
+        } else if (settings->itcwb_precis > 5) {
+            precision = 9;
+        }
+        
+        const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
+        const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
     }
 

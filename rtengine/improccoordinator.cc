@@ -44,6 +44,22 @@
 #include <omp.h>
 #endif
 
+namespace
+{
+using rtengine::Coord2D;
+Coord2D translateCoord(const rtengine::ImProcFunctions& ipf, int fw, int fh, int x, int y) {
+
+    const std::vector<Coord2D> points = {Coord2D(x, y)};
+
+    std::vector<Coord2D> red;
+    std::vector<Coord2D> green;
+    std::vector<Coord2D> blue;
+    ipf.transCoord(fw, fh, points, red, green, blue);
+
+    return green[0];
+}
+
+}
 
 namespace rtengine
 {
@@ -300,7 +316,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 )
                 && params->filmNegative.enabled
             ) {
-                imgsrc->filmNegativeProcess(params->filmNegative);
+                std::array<float, 3> filmBaseValues = {
+                    static_cast<float>(params->filmNegative.redBase),
+                    static_cast<float>(params->filmNegative.greenBase),
+                    static_cast<float>(params->filmNegative.blueBase)
+                };
+                imgsrc->filmNegativeProcess(params->filmNegative, filmBaseValues);
+                if (filmNegListener && params->filmNegative.redBase <= 0.f) {
+                    filmNegListener->filmBaseValuesChanged(filmBaseValues);
+                }
             }
         }
 
@@ -434,7 +458,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = imgsrc->getWB();
                 lastAwbauto = ""; //reinitialize auto
             } else if (autowb) {
-                if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
+                if (params->wb.method == "autitcgreen" || lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
                     double tempitc = 5000.f;
                     double greenitc = 1.;
@@ -867,7 +891,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if ((params->wavelet.enabled)) {
                 WaveletParams WaveParams = params->wavelet;
-                WaveParams.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+                WaveParams.getCurves(wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
                 int kall = 0;
                 LabImage *unshar = nullptr;
                 Glib::ustring provis;
@@ -896,7 +920,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     unshar = new LabImage(pW, pH);
                     provis = params->wavelet.CLmethod;
                     params->wavelet.CLmethod = "all";
-                    ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
+                    ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
                     unshar->CopyFrom(nprevl);
 
@@ -910,7 +934,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     WaveParams.expnoise = false; 
                 }
 
-                ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
+                ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
 
                 if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
@@ -922,10 +946,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     WaveParams.expnoise = pronois;
                     
                     if (WaveParams.softrad > 0.f) {
+
                         array2D<float> ble(pW, pH);
                         array2D<float> guid(pW, pH);
                         Imagefloat *tmpImage = nullptr;
                         tmpImage = new Imagefloat(pW, pH);
+
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -948,6 +974,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 tmpImage->b(ir, jr) = Z;
                                 ble[ir][jr] = Y / 32768.f;
                             }
+    
                         double epsilmax = 0.0001;
                         double epsilmin = 0.00001;
                         double aepsil = (epsilmax - epsilmin) / 90.f;
@@ -973,6 +1000,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 Color::XYZ2Lab(X, Y, Z, L, a, b);
                                 nprevl->L[ir][jr] =  L;
                             }
+      
                     delete tmpImage;
 
                     }
@@ -1063,8 +1091,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 */
                     if (WaveParams.softrad > 0.f) {
+
                         delete provradius;
                         provradius    = NULL;
+
                     }
 
 
@@ -1158,7 +1188,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 if (params->colorappearance.enabled && params->colorappearance.presetcat02  && params->colorappearance.autotempout) {
-                    acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
+              //      acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
+                    acListener->wbCamChanged(params->wb.temperature, 1.f);    //real temp and tint = 1.
                 }
                 
             } else {
@@ -1474,25 +1505,20 @@ bool ImProcCoordinator::getFilmNegativeExponents(int xA, int yA, int xB, int yB,
 {
     MyMutex::MyLock lock(mProcessing);
 
-    const auto xlate =
-        [this](int x, int y) -> Coord2D
-        {
-            const std::vector<Coord2D> points = {Coord2D(x, y)};
-
-            std::vector<Coord2D> red;
-            std::vector<Coord2D> green;
-            std::vector<Coord2D> blue;
-            ipf.transCoord(fw, fh, points, red, green, blue);
-
-            return green[0];
-        };
-
     const int tr = getCoarseBitMask(params->coarse);
 
-    const Coord2D p1 = xlate(xA, yA);
-    const Coord2D p2 = xlate(xB, yB);
+    const Coord2D p1 = translateCoord(ipf, fw, fh, xA, yA);
+    const Coord2D p2 = translateCoord(ipf, fw, fh, xB, yB);
 
     return imgsrc->getFilmNegativeExponents(p1, p2, tr, params->filmNegative, newExps);
+}
+
+bool ImProcCoordinator::getRawSpotValues(int x, int y, int spotSize, std::array<float, 3>& rawValues)
+{
+    MyMutex::MyLock lock(mProcessing);
+
+    return imgsrc->getRawSpotValues(translateCoord(ipf, fw, fh, x, y), spotSize,
+        getCoarseBitMask(params->coarse), params->filmNegative, rawValues);
 }
 
 void ImProcCoordinator::getAutoCrop(double ratio, int &x, int &y, int &w, int &h)

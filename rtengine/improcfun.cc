@@ -1989,8 +1989,8 @@ void ImProcFunctions::moyeqt (Imagefloat* working, float &moyS, float &eqty)
 {
     BENCHFUN
 
-    int tHh = working->getHeight();
-    int tWw = working->getWidth();
+    const int height = working->getHeight();
+    const int width = working->getWidth();
     double moy = 0.0;
     double sqrs = 0.0;
 
@@ -1998,17 +1998,17 @@ void ImProcFunctions::moyeqt (Imagefloat* working, float &moyS, float &eqty)
     #pragma omp parallel for reduction(+:moy,sqrs) schedule(dynamic,16)
 #endif
 
-    for (int i = 0; i < tHh; i++) {
-        for (int j = 0; j < tWw; j++) {
-            double s = Color::rgb2s (CLIP (working->r (i, j)), CLIP (working->g (i, j)), CLIP (working->b (i, j)));
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            const double s = Color::rgb2s(CLIP(working->r (i, j)), CLIP(working->g (i, j)), CLIP(working->b (i, j)));
             moy += s;
             sqrs += SQR(s);
         }
     }
 
-    moy /= (tHh * tWw);
-    sqrs /= (tHh * tWw);
-    eqty = sqrt (sqrs - SQR (moy));
+    moy /= (height * width);
+    sqrs /= (height * width);
+    eqty = std::sqrt(std::max(sqrs - SQR(moy), 0.0));
     moyS = moy;
 }
 

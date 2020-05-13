@@ -53,6 +53,7 @@ public:
     void surroundChanged     ();
     void surrsrcChanged     ();
     void wbmodelChanged      ();
+    void illumChanged      ();
     void algoChanged         ();
     void surrsource_toggled  ();
     void gamut_toggled       ();
@@ -102,6 +103,7 @@ public:
 private:
     rtengine::ProcEvent Evcatpreset;
     rtengine::ProcEvent EvCATAutotempout;
+    rtengine::ProcEvent EvCATillum;
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
@@ -156,6 +158,8 @@ private:
     sigc::connection  surroundconn;
     MyComboBoxText*   wbmodel;
     sigc::connection  wbmodelconn;
+    MyComboBoxText*   illum;
+    sigc::connection  illumconn;
     MyComboBoxText*   algo;
     sigc::connection  algoconn;
     sigc::connection  surrconn;

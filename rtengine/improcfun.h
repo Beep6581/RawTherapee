@@ -53,7 +53,9 @@ class OpacityCurve;
 class PipetteBuffer;
 class ToneCurve;
 class WavCurve;
+class Wavblcurve;
 class WavOpacityCurveBY;
+class WavOpacityCurveSH;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
@@ -200,31 +202,31 @@ public:
                  int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/);
 
     void Tile_calc(int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip);
-    void ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, const LUTf &wavclCurve, int skip);
+    void ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const Wavblcurve & wavblcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveSH & waOpacityCurveSH, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, const LUTf &wavclCurve, int skip);
 
-    void WaveletcontAllL(LabImage * lab, float **varhue, float **varchrom, const wavelet_decomposition &WaveletCoeffs_L,
-                         struct cont_params &cp, int skip, float *mean, float *sigma, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, FlatCurve* ChCurve, bool Chutili);
+    void WaveletcontAllL(LabImage * lab, float **varhue, float **varchrom, const wavelet_decomposition &WaveletCoeffs_L, const Wavblcurve & wavblcurve,
+            struct cont_params &cp, int skip, float *mean, float *sigma, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveSH & waOpacityCurveSH, FlatCurve* ChCurve, bool Chutili);
     void WaveletcontAllLfinal(const wavelet_decomposition &WaveletCoeffs_L, const cont_params &cp, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL);
-    void WaveletcontAllAB(LabImage * lab, float **varhue, float **varchrom, const wavelet_decomposition &WaveletCoeffs_a, const WavOpacityCurveW & waOpacityCurveW,
-                          struct cont_params &cp, const bool useChannelA);
+    void WaveletcontAllAB(LabImage * lab, float **varhue, float **varchrom, const wavelet_decomposition &WaveletCoeffs_a, const Wavblcurve & wavblcurve, const WavOpacityCurveW & waOpacityCurveW,
+            struct cont_params &cp, const bool useChannelA, int skip, float *meanab, float *sigmaab);
     void WaveletAandBAllAB(const wavelet_decomposition &WaveletCoeffs_a, const wavelet_decomposition &WaveletCoeffs_b,
-                           const cont_params &cp, FlatCurve* hhcurve, bool hhutili);
+            const cont_params &cp, FlatCurve* hhcurve, bool hhutili);
     void ContAllL(float **koeLi, float *maxkoeLi, bool lipschitz, int maxlvl, LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params &cp,
-                  int W_L, int H_L, int skip, float *mean, float *sigma, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, FlatCurve* ChCurve, bool Chutili);
-    void finalContAllL(float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, const cont_params &cp,
-                       int W_L, int H_L, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL);
+            int W_L, int H_L, int skip, float *mean, float *sigma, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveSH & waOpacityCurveSH, FlatCurve* ChCurve, bool Chutili);
+   void finalContAllL(float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, const cont_params &cp,
+            int W_L, int H_L, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL);
     void ContAllAB(LabImage * lab, int maxlvl, float **varhue, float **varchrom, float ** WavCoeffs_a, float * WavCoeffs_a0, int level, int dir, const WavOpacityCurveW & waOpacityCurveW, struct cont_params &cp,
-                   int W_ab, int H_ab, const bool useChannelA);
+            int W_ab, int H_ab, const bool useChannelA, float *meanab, float *sigmaab);
     void Evaluate2(const wavelet_decomposition &WaveletCoeffs_L,
-                   float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN);
+            float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN);
     void Eval2(float ** WavCoeffs_L, int level,
-               int W_L, int H_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN);
+            int W_L, int H_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN);
+
+    void calceffect(int level, float *mean, float *sigma, float *mea, float effect, float offs);
 
     void Aver(float * HH_Coeffs, int datalen, float &averagePlus, float &averageNeg, float &max, float &min);
     void Sigma(float * HH_Coeffs, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg);
     void calckoe(float ** WavCoeffs_LL, const cont_params& cp, float ** koeLi, int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC = nullptr);
-
-
 
     void Median_Denoise(float **src, float **dst, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
     void Median_Denoise(float **src, float **dst, float upperBound, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
@@ -233,18 +235,22 @@ public:
     void RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, bool isRAW, const LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &minredaut, float & minblueaut, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread = false);
     void RGBtile_denoise(float * fLblox, int hblproc, float noisevar_Ldetail);     //for DCT
     void RGBoutput_tile_row(float *bloxrow_L, float ** Ldetail, float ** tilemask_out, int height, int width, int top);
-    bool WaveletDenoiseAllL(const wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge);
-    bool WaveletDenoiseAllAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb);
+
     void WaveletDenoiseAll_info(int levwav, const wavelet_decomposition &WaveletCoeffs_a,
                                 const wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float & minblueaut, int schoice, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
                                 float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb);
 
-    bool WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3]);
-    bool WaveletDenoiseAll_BiShrinkAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float noisevar_ab,
-                                      const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb);
+    bool WaveletDenoiseAllL(const wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels);
+    bool WaveletDenoiseAllAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels);
+
+    bool WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels);
+    bool WaveletDenoiseAll_BiShrinkAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels);
+
     void ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, float **buffer, int level, int dir, float *noisevarlum, float * madL, float * vari, int edge);
     void ShrinkAllAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab, float **buffer, int level, int dir,
-                     float *noisevarchrom, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, float * madL, float * madaab = nullptr, bool madCalculated = false);
+                     float *noisevarchrom, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, float * madL, float * variC, int local, float * madaab = nullptr, bool madCalculated = false);
+
+
     void ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b,
                         int W_ab, int H_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
                         float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb);

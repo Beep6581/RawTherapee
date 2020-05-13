@@ -75,8 +75,9 @@ class Thumbnail
     int scaleForSave;
     bool gammaCorrected;
     double colorMatrix[3][3];
+    double scaleGain;
 
-    void processFilmNegative(const procparams::ProcParams& params, const Imagefloat* baseImg, int rwidth, int rheight, float &rmi, float &gmi, float &bmi);
+    void processFilmNegative(const procparams::ProcParams& params, const Imagefloat* baseImg, int rwidth, int rheight);
 
 public:
 

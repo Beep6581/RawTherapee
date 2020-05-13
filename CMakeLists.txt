@@ -128,6 +128,10 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=unused-label")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=delete-incomplete")
 
+# Do net set math errno, as we never check its value.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-math-errno")
+
 # Special treatment for x87 and x86-32 SSE (see GitHub issue #4324)
 include(FindX87Math)
 if(HAVE_X87_MATH)
@@ -665,7 +669,14 @@ if(WIN32)
 elseif(APPLE)
     set(
          ABOUT_COMMAND_WITH_ARGS
-         cmake -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR} -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake -DSYSTEM:STRING=Apple -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS} -DCOMPILER_INFO:STRING=${COMPILER_INFO} -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX})
+         cmake
+             -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
+             -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
+             -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake
+             -DSYSTEM:STRING=Apple
+             -DCXX_FLAGS:STRING=${CXX_FLAGS}
+             -DLFLAGS:STRING=${LFLAGS}
+             -DCOMPILER_INFO:STRING=${COMPILER_INFO})    
 else()
     list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
          -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS}
