@@ -1552,6 +1552,22 @@ struct RAWParams {
     // exposure before interpolation
     double expos;
 
+    struct PreprocessWB {
+        enum class Mode {
+            CAMERA = 0,
+            AUTO
+        };
+
+        Mode mode;
+
+        PreprocessWB();
+
+        bool operator ==(const PreprocessWB& other) const;
+        bool operator !=(const PreprocessWB& other) const;
+    };
+
+    PreprocessWB preprocessWB;
+
     bool hotPixelFilter;
     bool deadPixelFilter;
     int hotdeadpix_thresh;

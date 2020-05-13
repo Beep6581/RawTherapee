@@ -726,6 +726,14 @@ struct RAWParamsEdited {
     bool ff_clipControl;
     bool exPos;
 
+    struct PreprocessWBParamsEdited {
+        bool mode;
+
+        bool isUnchanged() const;
+    };
+
+    PreprocessWBParamsEdited preprocessWB;
+
     bool isUnchanged() const;
 };
 
