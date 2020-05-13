@@ -141,6 +141,7 @@ protected:
     WavCurve wavCLVCurve;
     Wavblcurve wavblcurve;
     WavOpacityCurveRG waOpacityCurveRG;
+    WavOpacityCurveSH waOpacityCurveSH;
     WavOpacityCurveBY waOpacityCurveBY;
     WavOpacityCurveW waOpacityCurveW;
     WavOpacityCurveWL waOpacityCurveWL;

@@ -42,6 +42,7 @@ class RetinextransmissionCurve;
 class WavCurve;
 class Wavblcurve;
 class WavOpacityCurveBY;
+class WavOpacityCurveSH;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
@@ -1676,7 +1677,9 @@ private:
 struct WaveletParams {
     std::vector<double> ccwcurve;
     std::vector<double> blcurve;
+    std::vector<double> levelshc;
     std::vector<double> opacityCurveRG;
+    std::vector<double> opacityCurveSH;
     std::vector<double> opacityCurveBY;
     std::vector<double> opacityCurveW;
     std::vector<double> opacityCurveWL;
@@ -1710,6 +1713,12 @@ struct WaveletParams {
     bool tmr;
     int strength;
     int balance;
+    double sigmafin;
+    double sigmaton;
+    double sigmacol;
+    double sigmadir;
+    double rangeab;
+    double protab;
     int iter;
     bool expcontrast;
     bool expchroma;
@@ -1722,7 +1731,13 @@ struct WaveletParams {
     bool exptoning;
     bool expnoise;
     bool expclari;
-
+    double labgridALow;
+    double labgridBLow;
+    double labgridAHigh;
+    double labgridBHigh;
+    static const double LABGRID_CORR_MAX;
+    static const double LABGRID_CORR_SCALE;
+    static const double LABGRIDL_DIRECT_SCALE;
     int Lmethod;
     Glib::ustring CLmethod;
     Glib::ustring Backmethod;
@@ -1793,8 +1808,8 @@ struct WaveletParams {
     void getCurves(
         WavCurve& cCurve,
         Wavblcurve& tCurve,
-        WavOpacityCurveRG&
-        opacityCurveLUTRG,
+        WavOpacityCurveRG& opacityCurveLUTRG,
+        WavOpacityCurveSH& opacityCurveLUTSH,
         WavOpacityCurveBY& opacityCurveLUTBY,
         WavOpacityCurveW& opacityCurveLUTW,
         WavOpacityCurveWL& opacityCurveLUTWL
