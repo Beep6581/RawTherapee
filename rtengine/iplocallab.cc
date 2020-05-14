@@ -3020,7 +3020,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
     }
 }
 
-static void calclight(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
+static void calclight(float lum, float &lumnew, const LUTf &lightCurveloc)
 {
     lumnew = CLIPLOC(lightCurveloc[lum]);
 }
@@ -15090,7 +15090,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                                 if (lp.ligh != 0.f || lp.cont != 0) {//slider luminance or slider contrast with curve
-                                    calclight(bufcolcalcL, lp.ligh, bufcolcalcL, lightCurveloc);
+                                    calclight(bufcolcalcL, bufcolcalcL, lightCurveloc);
                                 }
 
                                 if (lllocalcurve && locallutili  && lp.qualcurvemet != 0) {// L=f(L) curve
