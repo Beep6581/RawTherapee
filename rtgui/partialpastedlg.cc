@@ -308,6 +308,8 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     filmNegative        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FILMNEGATIVE")) );
     //---
     captureSharpening   = Gtk::manage (new Gtk::CheckButton (M("TP_PDSHARPENING_LABEL")) );
+    //---
+    raw_preprocwb       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCWB")));
 
     Gtk::VBox* vboxes[9];
     Gtk::HSeparator* hseps[9];
@@ -391,13 +393,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //META
     vboxes[7]->pack_start (*meta, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*hseps[7], Gtk::PACK_SHRINK, 2);
-    vboxes[7]->pack_start(*metadata, Gtk::PACK_SHRINK, 2);
-    vboxes[7]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
-    vboxes[7]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
-
-    //RAW
-    vboxes[8]->pack_start (*raw, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*hseps[8], Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_method, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_border, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_imagenum, Gtk::PACK_SHRINK, 2);
@@ -415,6 +410,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*raw_expos, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_black, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*raw_preprocwb, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*df_file, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*df_AutoSelect, Gtk::PACK_SHRINK, 2);
@@ -423,13 +419,14 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*captureSharpening, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*ff_ClipControl, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_ca_avoid_colourshift, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*filmNegative, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*captureSharpening, Gtk::PACK_SHRINK, 2);
 
     Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());
     Gtk::VBox* vbCol2 = Gtk::manage (new Gtk::VBox ());
@@ -582,6 +579,8 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     filmNegativeConn        = filmNegative->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     //---
     captureSharpeningConn   = captureSharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    //---
+    raw_preprocwbConn       = raw_preprocwb->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
 
     add_button (M("GENERAL_OK"), Gtk::RESPONSE_OK);
     add_button (M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
@@ -658,6 +657,7 @@ void PartialPasteDlg::rawToggled ()
     ConnectionBlocker raw_ca_avoid_colourshiftBlocker(raw_ca_avoid_colourshiftconn);
     ConnectionBlocker filmNegativeBlocker(filmNegativeConn);
     ConnectionBlocker captureSharpeningBlocker(captureSharpeningConn);
+    ConnectionBlocker raw_preprocwbBlocker(raw_preprocwbConn);
 
     raw->set_inconsistent (false);
 
@@ -688,6 +688,7 @@ void PartialPasteDlg::rawToggled ()
     raw_ca_avoid_colourshift->set_active (raw->get_active ());
     filmNegative->set_active (raw->get_active());
     captureSharpening->set_active (raw->get_active());
+    raw_preprocwb->set_active (raw->get_active());
 }
 
 void PartialPasteDlg::basicToggled ()
@@ -1189,6 +1190,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.pdsharpening.deconvradiusOffset   = falsePE.pdsharpening.deconvradiusOffset;
         filterPE.pdsharpening.deconviter   = falsePE.pdsharpening.deconviter;
         filterPE.pdsharpening.deconvitercheck   = falsePE.pdsharpening.deconvitercheck;
+    }
+
+    if (!raw_preprocwb->get_active ()) {
+        filterPE.raw.preprocessWB.mode    = falsePE.raw.preprocessWB.mode;
     }
 
     // Locallab shall be kept in last position

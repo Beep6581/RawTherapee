@@ -84,19 +84,20 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     filmSimulation      = Gtk::manage(new FilmSimulation());
     softlight           = Gtk::manage(new SoftLight());
     dehaze              = Gtk::manage(new Dehaze());
-    sensorbayer         = Gtk::manage(new SensorBayer());
-    sensorxtrans        = Gtk::manage(new SensorXTrans());
-    bayerprocess        = Gtk::manage(new BayerProcess());
-    xtransprocess       = Gtk::manage(new XTransProcess());
-    bayerpreprocess     = Gtk::manage(new BayerPreProcess());
-    preprocess          = Gtk::manage(new PreProcess());
-    darkframe           = Gtk::manage(new DarkFrame());
-    flatfield           = Gtk::manage(new FlatField());
-    rawcacorrection     = Gtk::manage(new RAWCACorr());
-    rawexposure         = Gtk::manage(new RAWExposure());
-    bayerrawexposure    = Gtk::manage(new BayerRAWExposure());
-    xtransrawexposure   = Gtk::manage(new XTransRAWExposure());
-    fattal              = Gtk::manage(new FattalToneMapping());
+    sensorbayer         = Gtk::manage (new SensorBayer ());
+    sensorxtrans        = Gtk::manage (new SensorXTrans ());
+    bayerprocess        = Gtk::manage (new BayerProcess ());
+    xtransprocess       = Gtk::manage (new XTransProcess ());
+    bayerpreprocess     = Gtk::manage (new BayerPreProcess ());
+    preprocess          = Gtk::manage (new PreProcess ());
+    darkframe           = Gtk::manage (new DarkFrame ());
+    flatfield           = Gtk::manage (new FlatField ());
+    rawcacorrection     = Gtk::manage (new RAWCACorr ());
+    rawexposure         = Gtk::manage (new RAWExposure ());
+    preprocessWB        = Gtk::manage (new PreprocessWB ());
+    bayerrawexposure    = Gtk::manage (new BayerRAWExposure ());
+    xtransrawexposure   = Gtk::manage (new XTransRAWExposure ());
+    fattal              = Gtk::manage (new FattalToneMapping ());
     filmNegative        = Gtk::manage (new FilmNegative ());
     pdSharpening        = Gtk::manage (new PdSharpening());
     // So Demosaic, Line noise filter, Green Equilibration, Ca-Correction (garder le nom de section identique!) and Black-Level will be moved in a "Bayer sensor" tool,
@@ -159,6 +160,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (sensorxtrans->getPackBox(), xtransprocess, 2);
     addfavoritePanel (sensorxtrans->getPackBox(), xtransrawexposure, 2);
     addfavoritePanel (rawPanel, rawexposure);
+    addfavoritePanel (rawPanel, preprocessWB);
     addfavoritePanel (rawPanel, preprocess);
     addfavoritePanel (rawPanel, darkframe);
     addfavoritePanel (rawPanel, flatfield);
@@ -399,6 +401,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorxtrans->FoldableToolPanel::hide();
                     xtransprocess->FoldableToolPanel::hide();
                     xtransrawexposure->FoldableToolPanel::hide();
+                    preprocessWB->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::hide();
@@ -419,6 +422,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorxtrans->FoldableToolPanel::hide();
                     xtransprocess->FoldableToolPanel::hide();
                     xtransrawexposure->FoldableToolPanel::hide();
+                    preprocessWB->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::hide();
                     filmNegative->FoldableToolPanel::hide();
@@ -440,6 +444,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                 sensorxtrans->FoldableToolPanel::hide();
                 xtransprocess->FoldableToolPanel::hide();
                 xtransrawexposure->FoldableToolPanel::hide();
+                preprocessWB->FoldableToolPanel::hide();
                 preprocess->FoldableToolPanel::hide();
                 flatfield->FoldableToolPanel::hide();
                 filmNegative->FoldableToolPanel::hide();
