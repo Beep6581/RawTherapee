@@ -3022,9 +3022,13 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 
 static void calclight(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
 {
-    lumnew = koef != -100.f ? CLIPLOC(lightCurveloc[lum]) : 0.f;
+    lumnew = koef  = CLIPLOC(lightCurveloc[lum]);
 }
 
+static void calclightinv(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
+{
+    lumnew = koef != -100.f ? CLIPLOC(lightCurveloc[lum]) : 0.f;
+}
 
 static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexporig, const LabImage* original, float &fab, float &meanfab, float chrom)
 {
@@ -5757,7 +5761,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                                     float lightcont;
 
                                     if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                        calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
+                                        calclightinv(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                         lightcont = lumnew;
 
                                     } else {
@@ -5776,7 +5780,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                                     float fac = (100.f + factorx * lp.chro) / 100.f; //chroma factor transition
 
                                     if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                        calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
+                                        calclightinv(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
                                     }
 
                                     float lightcont = lumnew ; //apply lightness
@@ -5834,7 +5838,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                                     float lightcont;
 
                                     if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                        calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
+                                        calclightinv(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                         lightcont = lumnew;
 
                                     } else {
@@ -5852,7 +5856,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
                                 } else {
                                     if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                        calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
+                                        calclightinv(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
                                     }
 
                                     float lightcont = lumnew ;
