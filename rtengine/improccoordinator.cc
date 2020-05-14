@@ -362,7 +362,6 @@ DetailedCrop* ImProcCoordinator::createCrop(::EditDataProvider *editDataProvider
 void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 {
     // TODO Locallab printf
-    printf("updatePreviewImage\n");
 
     MyMutex::MyLock processingLock(mProcessing);
 
