@@ -3022,7 +3022,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 
 static void calclight(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
 {
-    lumnew = koef  = CLIPLOC(lightCurveloc[lum]);
+    lumnew = CLIPLOC(lightCurveloc[lum]);
 }
 
 static void calclightinv(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
