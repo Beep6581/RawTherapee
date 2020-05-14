@@ -2355,11 +2355,11 @@ LocallabExposure::LocallabExposure():
     fatBox->pack_start(*fatanchor);
     fatFrame->add(*fatBox);
     pack_start(*fatFrame);
+    pack_start(*expcomp);
     pack_start(*sensiex);
     pack_start(*structexp);
     pack_start(*blurexpde);
     ToolParamBlock* const toolBox = Gtk::manage(new ToolParamBlock());
-    toolBox->pack_start(*expcomp);
     toolBox->pack_start(*black);
     toolBox->pack_start(*hlcompr);
     toolBox->pack_start(*hlcomprthresh);
