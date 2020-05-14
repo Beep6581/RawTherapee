@@ -60,6 +60,7 @@
 #include "perspective.h"
 #include "pparamschangelistener.h"
 #include "preprocess.h"
+#include "preprocesswb.h"
 #include "profilechangelistener.h"
 #include "prsharpening.h"
 #include "rawcacorrection.h"
@@ -157,6 +158,7 @@ protected:
     FlatField* flatfield;
     RAWCACorr* rawcacorrection;
     RAWExposure* rawexposure;
+    PreprocessWB* preprocessWB;
     BayerRAWExposure* bayerrawexposure;
     XTransRAWExposure* xtransrawexposure;
     FattalToneMapping *fattal;

@@ -643,6 +643,7 @@ void ParamsEdited::set(bool v)
     filmNegative.greenExp = v;
     filmNegative.blueRatio = v;
     filmNegative.baseValues = v;
+    raw.preprocessWB.mode = v;
 
     exif = v;
     iptc = v;
@@ -1737,6 +1738,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmNegative.baseValues = filmNegative.baseValues && p.filmNegative.redBase == other.filmNegative.redBase
                                                     && p.filmNegative.greenBase == other.filmNegative.greenBase
                                                     && p.filmNegative.blueBase == other.filmNegative.blueBase;
+        raw.preprocessWB.mode  = raw.preprocessWB.mode  && p.raw.preprocessWB.mode  == other.raw.preprocessWB.mode;
 
 //      How the hell can we handle that???
 //      exif = exif && p.exif==other.exif
@@ -5753,6 +5755,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.filmNegative.blueBase = mods.filmNegative.blueBase;
     }
 
+    if (raw.preprocessWB.mode) {
+        toEdit.raw.preprocessWB.mode = mods.raw.preprocessWB.mode;
+    }
+
     // Exif changes are added to the existing ones
     if (exif) {
         for (procparams::ExifPairs::const_iterator i = mods.exif.begin(); i != mods.exif.end(); ++i) {
@@ -6710,4 +6716,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
 bool CaptureSharpeningParamsEdited::isUnchanged() const
 {
     return enabled && contrast && autoContrast && autoRadius && deconvradius && deconvradiusOffset && deconviter && deconvitercheck;
+}
+
+bool RAWParamsEdited::PreprocessWBParamsEdited::isUnchanged() const
+{
+    return mode;
 }

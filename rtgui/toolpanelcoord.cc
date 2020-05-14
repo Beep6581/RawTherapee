@@ -94,6 +94,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     flatfield           = Gtk::manage(new FlatField());
     rawcacorrection     = Gtk::manage(new RAWCACorr());
     rawexposure         = Gtk::manage(new RAWExposure());
+    preprocessWB        = Gtk::manage (new PreprocessWB ());
     bayerrawexposure    = Gtk::manage(new BayerRAWExposure());
     xtransrawexposure   = Gtk::manage(new XTransRAWExposure());
     fattal              = Gtk::manage(new FattalToneMapping());
@@ -159,6 +160,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (sensorxtrans->getPackBox(), xtransprocess, 2);
     addfavoritePanel (sensorxtrans->getPackBox(), xtransrawexposure, 2);
     addfavoritePanel (rawPanel, rawexposure);
+    addfavoritePanel (rawPanel, preprocessWB);
     addfavoritePanel (rawPanel, preprocess);
     addfavoritePanel (rawPanel, darkframe);
     addfavoritePanel (rawPanel, flatfield);
@@ -399,6 +401,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorxtrans->FoldableToolPanel::hide();
                     xtransprocess->FoldableToolPanel::hide();
                     xtransrawexposure->FoldableToolPanel::hide();
+                    preprocessWB->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::hide();
@@ -419,6 +422,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorxtrans->FoldableToolPanel::hide();
                     xtransprocess->FoldableToolPanel::hide();
                     xtransrawexposure->FoldableToolPanel::hide();
+                    preprocessWB->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::hide();
                     filmNegative->FoldableToolPanel::hide();
@@ -440,6 +444,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                 sensorxtrans->FoldableToolPanel::hide();
                 xtransprocess->FoldableToolPanel::hide();
                 xtransrawexposure->FoldableToolPanel::hide();
+                preprocessWB->FoldableToolPanel::hide();
                 preprocess->FoldableToolPanel::hide();
                 flatfield->FoldableToolPanel::hide();
                 filmNegative->FoldableToolPanel::hide();

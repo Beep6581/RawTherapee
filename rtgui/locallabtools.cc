@@ -2355,6 +2355,7 @@ LocallabExposure::LocallabExposure():
     fatBox->pack_start(*fatanchor);
     fatFrame->add(*fatBox);
     pack_start(*fatFrame);
+    pack_start(*expcomp);
     pack_start(*sensiex);
     pack_start(*structexp);
     pack_start(*blurexpde);

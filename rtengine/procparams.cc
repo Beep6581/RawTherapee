@@ -4487,6 +4487,23 @@ Glib::ustring RAWParams::XTransSensor::getMethodString(Method method)
     return getMethodStrings()[toUnderlying(method)];
 }
 
+
+RAWParams::PreprocessWB::PreprocessWB() :
+    mode(Mode::AUTO)
+{
+}
+
+bool RAWParams::PreprocessWB::operator ==(const PreprocessWB& other) const
+{
+    return mode == other.mode;
+}
+
+bool RAWParams::PreprocessWB::operator !=(const PreprocessWB& other) const
+{
+    return !(*this == other);
+}
+
+
 RAWParams::RAWParams() :
     df_autoselect(false),
     ff_AutoSelect(false),
@@ -4525,6 +4542,7 @@ bool RAWParams::operator ==(const RAWParams& other) const
         && cared == other.cared
         && cablue == other.cablue
         && expos == other.expos
+        && preprocessWB == other.preprocessWB
         && hotPixelFilter == other.hotPixelFilter
         && deadPixelFilter == other.deadPixelFilter
         && hotdeadpix_thresh == other.hotdeadpix_thresh;
@@ -5969,6 +5987,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "RedBase", filmNegative.redBase, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "GreenBase", filmNegative.greenBase, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "BlueBase", filmNegative.blueBase, keyFile);
+
+// Preprocess WB
+        saveToKeyfile(!pedited || pedited->raw.preprocessWB.mode, "RAW Preprocess WB", "Mode", toUnderlying(raw.preprocessWB.mode), keyFile);
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -8173,6 +8194,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 filmNegative.blueBase = -1.f;
                 if (pedited) {
                     pedited->filmNegative.baseValues = true;
+                }
+            }
+        }
+
+        if (keyFile.has_group("RAW Preprocess WB")) {
+            if (keyFile.has_key("RAW Preprocess WB", "Mode")) {
+                raw.preprocessWB.mode = RAWParams::PreprocessWB::Mode(keyFile.get_integer("RAW Preprocess WB", "Mode"));
+
+                if (pedited) {
+                    pedited->raw.preprocessWB.mode = true;
                 }
             }
         }

@@ -219,6 +219,7 @@ public:
 
     Gtk::CheckButton* filmNegative;
     Gtk::CheckButton* captureSharpening;
+    Gtk::CheckButton* raw_preprocwb;
 
     sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, advancedConn;
     sigc::connection locallabConn;
@@ -232,6 +233,7 @@ public:
     sigc::connection raw_caredblueConn, raw_ca_autocorrectConn, raw_ca_avoid_colourshiftconn, raw_hotpix_filtConn, raw_deadpix_filtConn, raw_pdaf_lines_filterConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_methodConn, raw_borderConn, raw_imagenumConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_pixelshiftConn, raw_dcb_enhanceConn, raw_exposConn, raw_blackConn;
     sigc::connection filmNegativeConn;
     sigc::connection captureSharpeningConn;
+    sigc::connection raw_preprocwbConn;
 
 public:
     PartialPasteDlg (const Glib::ustring &title, Gtk::Window* parent);

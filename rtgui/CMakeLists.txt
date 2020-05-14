@@ -117,6 +117,7 @@ set(NONCLISOURCEFILES
     popuptogglebutton.cc
     preferences.cc
     preprocess.cc
+    preprocesswb.cc
     previewhandler.cc
     previewloader.cc
     previewmodepanel.cc
