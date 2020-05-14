@@ -202,11 +202,11 @@ Locallab::Locallab():
 
     // Add separator
     Gtk::HSeparator* const separator2 = Gtk::manage(new Gtk::HSeparator());
-    panel->pack_start(*separator2, false, false);
+   // panel->pack_start(*separator2, false, false);
 
     // Add mask reset button to panel widget
     resetshowButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::resetshowPressed));
-    panel->pack_start(*resetshowButton);
+   // panel->pack_start(*resetshowButton);
 
     // Add panel widget to Locallab GUI
     pack_start(*panel);
