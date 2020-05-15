@@ -1157,7 +1157,9 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     // check if brightness curve is needed
     if (br > 0.00001 || br < -0.00001) {
         //     utili = true;
-        br /= 4.f;//to avoid artifacts in some cases
+        if(br > 0) {
+            br /= 4.f;//to avoid artifacts in some cases
+        }
         std::vector<double> brightcurvePoints;
         brightcurvePoints.resize(9);
         brightcurvePoints.at(0) = double (DCT_NURBS);
