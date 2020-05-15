@@ -33,12 +33,13 @@
 #define MINCHRO 0.
 #define MAXCHRO 150.
 #define MAXCHROCC 100.
+#define MINEXP -1.5
+#define MAXEXP 1.5
 
 using namespace rtengine;
 using namespace procparams;
 
 extern Options options;
-
 static double blurSlider2radius(double sval)
 {
     // Slider range: 0 - 1000
@@ -2157,7 +2158,7 @@ LocallabExposure::LocallabExposure():
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exptoolexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPTOOL")))),
-    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 3.0, 0.05, 0.0))),
+    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), MINEXP, MAXEXP, 0.02, 0.))), 
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 10, 0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0))),

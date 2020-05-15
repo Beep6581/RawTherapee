@@ -1235,6 +1235,13 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
     lp.expcomp = locallab.spots.at(sp).expcomp;
     lp.expcomp = CLIP24(lp.expcomp); //to prevent crash with Old pp3 with integer
+    //increase sensitivity for low values
+    float proexp = lp.expcomp;
+    if(fabs(proexp < 0.6f)) {
+        float interm = fabs(proexp) / 0.6f;
+        interm = SQR(interm);
+        lp.expcomp = proexp * interm;
+    }
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
     lp.sensex = local_sensiex;
     lp.war = local_warm;
