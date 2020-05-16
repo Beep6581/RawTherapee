@@ -2361,7 +2361,7 @@ LocallabExposure::LocallabExposure():
     pack_start(*structexp);
     pack_start(*blurexpde);
     ToolParamBlock* const toolBox = Gtk::manage(new ToolParamBlock());
-    toolBox->pack_start(*expcomp);
+//    toolBox->pack_start(*expcomp);
     toolBox->pack_start(*black);
     toolBox->pack_start(*hlcompr);
     toolBox->pack_start(*hlcomprthresh);
