@@ -249,10 +249,10 @@ public:
                           float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh);
     void discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t);
     void rex_poisson_dct(float * data, size_t nx, size_t ny, double m);
-    void mean_dt(const float * data, size_t size, double * mean_p, double * dt_p);
-    double *cos_table(size_t size);
+    void mean_dt(const float * data, size_t size, double& mean_p, double& dt_p);
+    float *cos_table(size_t size);
 
-    void normalize_mean_dt(float *data, float *ref, size_t size, float mod, float sigm);
+    void normalize_mean_dt(float *data, const float *ref, size_t size, float mod, float sigm);
     void retinex_pde(float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, float *dE, int show, int dEenable, int normalize);
     void exposure_pde(float *dataor, float *datain, float * dataout, int bfw, int bfh, float thresh, float mod);
     void fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern, int algo);
@@ -272,7 +272,7 @@ public:
     void log_encode(Imagefloat *rgb, const struct local_params & lp, bool multiThread, int bfw, int bfh);
     void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE);
 
-    void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance,
+    void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, const float* const *originalLuminance,
         const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
         const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
         const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask,

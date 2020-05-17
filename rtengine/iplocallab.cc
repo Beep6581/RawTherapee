@@ -3470,12 +3470,7 @@ void ImProcFunctions::discrete_laplacian_threshold(float * data_out, const float
 {
     BENCHFUN
 
-    size_t i, j;
-    float *ptr_out;
-    /* pointers to the current and neighbour values */
-    const float *ptr_in, *ptr_in_xm1, *ptr_in_xp1, *ptr_in_ym1, *ptr_in_yp1;
-
-    if (NULL == data_in || NULL == data_out) {
+    if (!data_in || !data_out) {
         fprintf(stderr, "a pointer is NULL and should not be so\n");
         abort();
     }
@@ -3487,70 +3482,49 @@ void ImProcFunctions::discrete_laplacian_threshold(float * data_out, const float
      *                 y+1
      *    <---------------------nx------->
      */
-    ptr_in = data_in;
-    ptr_in_xm1 = data_in - 1;
-    ptr_in_xp1 = data_in + 1;
-    ptr_in_ym1 = data_in - nx;
-    ptr_in_yp1 = data_in + nx;
-    ptr_out = data_out;
 
-    for (j = 0; j < ny; j++) {
-        for (i = 0; i < nx; i++) {
-            *ptr_out = 0.f;
-
+#ifdef _OPENMP
+    #pragma omp parallel for if (multiThread)
+#endif
+    for (size_t j = 0; j < ny; j++) {
+        const float* ptr_in = &data_in[j * nx];
+        float* ptr_out = &data_out[j * nx];
+        for (size_t i = 0; i < nx; i++) {
+            float val = 0.f;
             /* row differences */
             if (0 < i) {
-                const float diff = *ptr_in - *ptr_in_xm1;
-
-                if (std::fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
+                const float diff = ptr_in[i] - ptr_in[i - 1];
+                val += std::fabs(diff) > t ? diff : 0.f;
             }
 
             if (nx - 1 > i) {
-                const float diff = *ptr_in - *ptr_in_xp1;
-
-                if (std::fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
+                const float diff = ptr_in[i] - ptr_in[i + 1];;
+                val += std::fabs(diff) > t ? diff : 0.f;
             }
 
             /* column differences */
             if (0 < j) {
-                const float diff = *ptr_in - *ptr_in_ym1;
-
-                if (std::fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
+                const float diff = ptr_in[i] - ptr_in[i - nx];;
+                val += std::fabs(diff) > t ? diff : 0.f;
             }
 
             if (ny - 1 > j) {
-                const float diff = *ptr_in - *ptr_in_yp1;
-
-                if (std::fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
+                const float diff = ptr_in[i] - ptr_in[i + nx];;
+                val += std::fabs(diff) > t ? diff : 0.f;
             }
 
-            ptr_in++;
-            ptr_in_xm1++;
-            ptr_in_xp1++;
-            ptr_in_ym1++;
-            ptr_in_yp1++;
-            ptr_out++;
+            ptr_out[i] = val;
         }
     }
 
 }
 
-double *ImProcFunctions::cos_table(size_t size)
+float *ImProcFunctions::cos_table(size_t size)
 {
-    double *table = NULL;
-    double pi_size;
-    size_t i;
+    float *table = NULL;
 
     /* allocate the cosinus table */
-    if (NULL == (table = (double *) malloc(sizeof(double) * size))) {
+    if (NULL == (table = (float *) malloc(sizeof(*table) * size))) {
         fprintf(stderr, "allocation error\n");
         abort();
     }
@@ -3559,10 +3533,10 @@ double *ImProcFunctions::cos_table(size_t size)
      * fill the cosinus table,
      * table[i] = cos(i Pi / n) for i in [0..n[
      */
-    pi_size = rtengine::RT_PI / size;
+    const double pi_size = rtengine::RT_PI / size;
 
-    for (i = 0; i < size; i++) {
-        table[i] = cos(pi_size * i);
+    for (size_t i = 0; i < size; i++) {
+        table[i] = std::cos(pi_size * i);
     }
 
     return table;
@@ -3583,73 +3557,60 @@ void ImProcFunctions::rex_poisson_dct(float * data, size_t nx, size_t ny, double
      */
     BENCHFUN
 
-    double *cosx = NULL, *cosy = NULL;
-    size_t i;
-    double m2;
-
     /*
      * get the cosinus tables
      * cosx[i] = cos(i Pi / nx) for i in [0..nx[
      * cosy[i] = cos(i Pi / ny) for i in [0..ny[
      */
 
-    cosx = cos_table(nx);
-    cosy = cos_table(ny);
+    float* cosx = cos_table(nx);
+    float* cosy = cos_table(ny);
 
     /*
      * we will now multiply data[i, j] by
      * m / (4 - 2 * cosx[i] - 2 * cosy[j]))
      * and set data[0, 0] to 0
      */
-    m2 = m / 2.;
+    float m2 = m / 2.;
     /*
-     * handle the first value, data[0, 0] = 0
      * after that, by construction, we always have
      * cosx[] + cosy[] != 2.
-     */
-    data[0] = 0.;
+    */
 
-    /*
-     * continue with all the array:
-     * i % nx is the position on the x axis (column number)
-     * i / nx is the position on the y axis (row number)
-     */
-    for (i = 1; i < nx * ny; i++) {
-        data[i] *= m2 / (2. - cosx[i % nx] - cosy[i / nx]);
+#ifdef _OPENMP
+    #pragma omp parallel for if (multiThread)
+#endif
+    for (size_t i = 0; i < ny; ++i) {
+        for (size_t j = 0; j < nx; ++j) {
+            data[i * nx + j] *= m2 / (2.f - cosx[j] - cosy[i]);
+        }
     }
+    // handle the first value, data[0, 0] = 0
+    data[0] = 0.f;
 
     free(cosx);
     free(cosy);
 
 }
 
-void ImProcFunctions::mean_dt(const float * data, size_t size, double * mean_p, double * dt_p)
+void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, double& dt_p)
 {
-    double mean, dt;
-    const float *ptr_data;
-    size_t i;
 
-    mean = 0.;
-    dt = 0.;
-    ptr_data = data;
-
-    for (i = 0; i < size; i++) {
-        mean += *ptr_data;
-        dt += (*ptr_data) * (*ptr_data);
-        ptr_data++;
+    double mean = 0.;
+    double dt = 0.;
+    for (size_t i = 0; i < size; i++) {
+        mean += data[i];
+        dt += SQR(data[i]);
     }
 
-    mean /= (double) size;
-    dt /= (double) size;
-    dt -= (mean * mean);
-    dt = std::sqrt(dt);
-
-    *mean_p = mean;
-    *dt_p = dt;
-
+    mean /= size;
+    dt /= size;
+    dt -= SQR(mean);
+    mean_p = mean;
+    dt_p = std::sqrt(dt);
 }
 
-void ImProcFunctions::normalize_mean_dt(float * data,  float * ref, size_t size, float mod, float sigm)
+void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod, float sigm)
 {
     /*
      * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -3662,32 +3623,28 @@ void ImProcFunctions::normalize_mean_dt(float * data,  float * ref, size_t size,
      * adapted for Rawtherapee - jacques Desmis july 2019
      */
 
-    double mean_ref, mean_data, dt_ref, dt_data;
-    double a, b;
-    size_t i;
-    float *ptr_data;
-    float *ptr_dataold;
-
     if (NULL == data || NULL == ref) {
         fprintf(stderr, "a pointer is NULL and should not be so\n");
         abort();
     }
 
+    double mean_ref, mean_data, dt_ref, dt_data;
+
     /* compute mean and variance of the two arrays */
-    mean_dt(ref, size, &mean_ref, &dt_ref);
-    mean_dt(data, size, &mean_data, &dt_data);
+    mean_dt(ref, size, mean_ref, dt_ref);
+    mean_dt(data, size, mean_data, dt_data);
 
     /* compute the normalization coefficients */
-    a = dt_ref / dt_data;
-    b = mean_ref - a * mean_data;
+    const double a = dt_ref / dt_data;
+    const double b = mean_ref - a * mean_data;
 
+    const float modma = mod * a;
+    const float sigmmmodmb = sigm * mod * b;
+    const float onesmod = 1.f - mod;
     /* normalize the array */
-    ptr_data = data;
-    ptr_dataold = ref;//data;
 
-    for (i = 0; i < size; i++) {
-        *ptr_data = mod * (a * *ptr_data + sigm * b) + (1.f - mod) * *ptr_dataold;//normalize mean and stdv and balance PDE
-        ptr_data++;
+    for (size_t i = 0; i < size; i++) {
+        data[i] = (modma * data[i] + sigmmmodmb) + onesmod * ref[i];//normalize mean and stdv and balance PDE
     }
 
 }
@@ -13305,7 +13262,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const float maxdE2 = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                 const float mindElim2 = 2.f + MINSCOPE * limscope2 * lp.thr;
                 const float maxdElim2 = 5.f + MAXSCOPE * limscope2 * (1 + 0.1f * lp.thr);
-                ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1,
+                ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, orig1,
                                           Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
                                           lmaskretilocalcurve, localmaskretiutili,
@@ -13316,10 +13273,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 #pragma omp parallel for
 #endif
 
-                for (int ir = 0; ir < Hd; ir += 1)
+                for (int ir = 0; ir < Hd; ir += 1) {
                     for (int jr = 0; jr < Wd; jr += 1) {
                         tmpl->L[ir][jr] = orig[ir][jr];
                     }
+                }
 
                 if (lp.equret) { //equilibrate luminance before / after MSR
                     float *datain = new float[Hd * Wd];
@@ -13381,10 +13339,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                     }
 
-                } else {
-                    //
                 }
-
 
                 if (params->locallab.spots.at(sp).chrrt > 0) {
 
@@ -13678,7 +13633,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const float mindElim2 = 2.f + MINSCOPE * limscope2 * lp.thr;
                 const float maxdElim2 = 5.f + MAXSCOPE * limscope2 * (1 + 0.1f * lp.thr);
 
-                ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1,
+                ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, orig1,
                                           Wd, Hd, bfwr, bfhr, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
                                           lmaskretilocalcurve, localmaskretiutili,
