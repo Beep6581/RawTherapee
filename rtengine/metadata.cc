@@ -238,7 +238,35 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
     dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
     import_exif_pairs(dst->exifData());
     import_iptc_pairs(dst->iptcData());
-    dst->writeMetadata();    
+    bool xmp_tried = false;
+    bool iptc_tried = false;
+    for (int i = 0; i < 3; ++i) {
+        try {
+            dst->writeMetadata();
+            return;
+        } catch (Exiv2::Error &exc) {
+            if (exc.code() == 37) {
+                std::string msg = exc.what();
+                if (msg.find("XMP") != std::string::npos &&
+                    !dst->xmpData().empty()) {
+                    dst->xmpData().clear();
+                    if (!xmp_tried && merge_xmp_) {
+                        do_merge_xmp(dst.get());
+                        xmp_tried = true;
+                    }
+                } else if (msg.find("IPTC") != std::string::npos &&
+                           !dst->iptcData().empty()) {
+                    dst->iptcData().clear();
+                    if (!iptc_tried) {
+                        import_iptc_pairs(dst->iptcData());
+                        iptc_tried = true;
+                    }
+                }
+            } else {
+                throw exc;
+            }
+        }
+    }
 }
 
 
