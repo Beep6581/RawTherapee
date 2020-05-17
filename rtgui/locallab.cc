@@ -573,7 +573,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     enableListener();
 
                     // Update tool list widget
-                    int toolNb = 0;
+                    toolNb = 0;
                     toollist->removeAllTool(); // Reset Locallab list firstly
 
                     for (auto tool : locallabTools) {

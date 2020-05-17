@@ -112,7 +112,7 @@ public:
      *
      * @param provider The EditDataProvider to be linked to the panel to manage curves
      */
-    void setEditProvider(EditDataProvider* provider);
+    void setEditProvider(EditDataProvider* provider) override;
     /**
      * Setter for controlPanelListener
      *
@@ -235,7 +235,7 @@ private:
 
     void updateParamVisibility();
 
-    void adjusterChanged(Adjuster* a, double newval);
+    void adjusterChanged(Adjuster* a, double newval) override;
 
     void avoidChanged();
     void blwhChanged();
@@ -253,11 +253,11 @@ private:
     void updateControlSpotCurve(const Gtk::TreeModel::Row& row);
     void deleteControlSpotCurve(Gtk::TreeModel::Row& row);
     void updateCurveOpacity(const Gtk::TreeModel::Row& selectedRow);
-    CursorShape getCursor(int objectID) const;
-    bool mouseOver(int modifierKey);
-    bool button1Pressed(int modifierKey);
-    bool button1Released();
-    bool drag1(int modifierKey);
+    CursorShape getCursor(int objectID) const override;
+    bool mouseOver(int modifierKey) override;
+    bool button1Pressed(int modifierKey) override;
+    bool button1Released() override;
+    bool drag1(int modifierKey) override;
 
     using ToolPanel::setDefaults;
 
