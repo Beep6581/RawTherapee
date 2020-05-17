@@ -75,18 +75,18 @@ public:
     virtual ~LocallabTool();
 
     // Getter for Locallab tool expander
-    MyExpander* getExpander()
+    MyExpander* getExpander() override
     {
         return exp;
     }
 
     // Getter/setter for Locallab tool expanded status
-    void setExpanded(bool expanded)
+    void setExpanded(bool expanded) override
     {
         exp->set_expanded(expanded);
     }
 
-    bool getExpanded()
+    bool getExpanded() override
     {
         return exp->get_expanded();
     }
@@ -134,7 +134,7 @@ public:
      - callerId #3: Color LH/HH shape (main curve)
      - callerId #4: Color CC/LC shape (bottom bar)
     */
-    void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 
     // To be implemented
     virtual void setDefaultExpanderVisibility() {};
