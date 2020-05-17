@@ -958,7 +958,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         }
 
                         if ((cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f) && cp.noiseena) {
-                            int edge = 1;
+                            int edge = 5;
                             vari[0] = rtengine::max(0.000001f, vari[0]);
                             vari[1] = rtengine::max(0.000001f, vari[1]);
                             vari[2] = rtengine::max(0.000001f, vari[2]);
