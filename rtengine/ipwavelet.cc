@@ -958,7 +958,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         }
 
                         if ((cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f) && cp.noiseena) {
-                            int edge = 1;
+                            int edge = 5;
                             vari[0] = rtengine::max(0.000001f, vari[0]);
                             vari[1] = rtengine::max(0.000001f, vari[1]);
                             vari[2] = rtengine::max(0.000001f, vari[2]);
@@ -2437,84 +2437,86 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
 //                ContAllL(koeLi, maxkoeLi, true, maxlvl, labco, varhue, varchrom, WavCoeffs_L, WavCoeffs_L0, lvl, dir, cp, Wlvl_L, Hlvl_L, skip, mean, sigma, MaxP, MaxN, wavCLVCcurve, waOpacityCurveW, ChCurve, Chutili);
                 ContAllL(koeLi, maxkoeLi, true, maxlvl, labco,  varhue, varchrom, WavCoeffs_L, WavCoeffs_L0, lvl, dir, cp, Wlvl_L, Hlvl_L, skip, mean, sigma, MaxP, MaxN, wavCLVCcurve, waOpacityCurveW, waOpacityCurveSH, ChCurve, Chutili);
+                int minWL = min(Wlvl_L, Hlvl_L);
 
-                if (wavblcurve && wavcurvecomp && cp.blena) {
-                    // printf("Blur level L\n");
-                    float mea[10];
-                    const float effect = cp.bluwav;
-                    constexpr float offs = 1.f;
-                    float * beta = new float[Wlvl_L * Hlvl_L];
+                if(minWL > 180) {
+                    if (wavblcurve && wavcurvecomp && cp.blena) {
+                        // printf("Blur level L\n");
+                        float mea[10];
+                        const float effect = cp.bluwav;
+                        constexpr float offs = 1.f;
+                        float * beta = new float[Wlvl_L * Hlvl_L];
 
-                    calceffect(lvl, mean, sigma, mea, effect, offs);
+                        calceffect(lvl, mean, sigma, mea, effect, offs);
 
-                    float * bef = new float[Wlvl_L * Hlvl_L];
-                    float * aft = new float[Wlvl_L * Hlvl_L];
+                        float * bef = new float[Wlvl_L * Hlvl_L];
+                        float * aft = new float[Wlvl_L * Hlvl_L];
 
-                    for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
-                        bef[co] = WavCoeffs_L[dir][co];
-                        float WavCL = std::fabs(WavCoeffs_L[dir][co]);
+                        for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
+                            bef[co] = WavCoeffs_L[dir][co];
+                            float WavCL = std::fabs(WavCoeffs_L[dir][co]);
 
-                        if (WavCL < mea[0]) {
-                            beta[co] = 0.05f;
-                            n0++;
+                            if (WavCL < mea[0]) {
+                                beta[co] = 0.05f;
+                                n0++;
 
-                            if (WavCL < 32.7) {
-                                n32++;
+                                if (WavCL < 32.7) {
+                                    n32++;
+                                }
+                            } else if (WavCL < mea[1]) {
+                                beta[co] = 0.2f;
+                                n1++;
+                            } else if (WavCL < mea[2]) {
+                                beta[co] = 0.7f;
+                                n2++;
+                            } else if (WavCL < mea[3]) {
+                                beta[co] = 1.f;    //standard
+                                n3++;
+                            } else if (WavCL < mea[4]) {
+                                beta[co] = 1.f;
+                                n4++;
+                            } else if (WavCL < mea[5]) {
+                                beta[co] = 0.8f;    //+sigma
+                                n5++;
+                            } else if (WavCL < mea[6]) {
+                                beta[co] = 0.6f;
+                                n6++;
+                            } else if (WavCL < mea[7]) {
+                                beta[co] = 0.4f;
+                                n7++;
+                            } else if (WavCL < mea[8]) {
+                                beta[co] = 0.2f;    // + 2 sigma
+                                n8++;
+                            } else if (WavCL < mea[9]) {
+                                beta[co] = 0.1f;
+                                n9++;
+                            } else {
+                                beta[co] = 0.01f;
+                                n10++;
                             }
-                        } else if (WavCL < mea[1]) {
-                            beta[co] = 0.2f;
-                            n1++;
-                        } else if (WavCL < mea[2]) {
-                            beta[co] = 0.7f;
-                            n2++;
-                        } else if (WavCL < mea[3]) {
-                            beta[co] = 1.f;    //standard
-                            n3++;
-                        } else if (WavCL < mea[4]) {
-                            beta[co] = 1.f;
-                            n4++;
-                        } else if (WavCL < mea[5]) {
-                            beta[co] = 0.8f;    //+sigma
-                            n5++;
-                        } else if (WavCL < mea[6]) {
-                            beta[co] = 0.6f;
-                            n6++;
-                        } else if (WavCL < mea[7]) {
-                            beta[co] = 0.4f;
-                            n7++;
-                        } else if (WavCL < mea[8]) {
-                            beta[co] = 0.2f;    // + 2 sigma
-                            n8++;
-                        } else if (WavCL < mea[9]) {
-                            beta[co] = 0.1f;
-                            n9++;
-                        } else {
-                            beta[co] = 0.01f;
-                            n10++;
+
+
                         }
 
+                        if (settings->verbose) {
+                            printf("lvl=%i n0=%i n32=%i n1=%i n2=%i n3=%i n4=%i n5=%i n6=%i n7=%i n8=%i n9=%i n10=%i\n", lvl, n0, n0 - n32, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10);
+                        }
 
-                    }
-
-                    if (settings->verbose) {
-                        printf("lvl=%i n0=%i n32=%i n1=%i n2=%i n3=%i n4=%i n5=%i n6=%i n7=%i n8=%i n9=%i n10=%i\n", lvl, n0, n0 - n32, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10);
-                    }
-
-                    float klev = (wavblcurve[lvl * 55.5f]);
+                        float klev = (wavblcurve[lvl * 55.5f]);
 
                     //blur level
-                    //   klev *= beta * 100.f / skip;
-                    klev *= 100.f / skip;
-                    boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
+                        klev *= 80.f / skip;
+                        boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
 
-                    for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
-                        aft[co] = bef[co] * (1.f - beta[co]) + aft[co] * beta[co];
-                        WavCoeffs_L[dir][co] = aft[co];
+                        for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
+                            aft[co] = bef[co] * (1.f - beta[co]) + aft[co] * beta[co];
+                            WavCoeffs_L[dir][co] = aft[co];
+                        }
+
+                        delete[] bef;
+                        delete[] aft;
+                        delete[] beta;
                     }
-
-                    delete[] bef;
-                    delete[] aft;
-                    delete[] beta;
                 }
             }
         }
@@ -2751,71 +2753,73 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 
                 float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
                 ContAllAB(labco, maxlvl, varhue, varchrom, WavCoeffs_ab, WavCoeffs_ab0, lvl, dir, waOpacityCurveW, cp, Wlvl_ab, Hlvl_ab, useChannelA, meanab, sigmaab);
+                int minWL = min(Wlvl_ab, Hlvl_ab);
+                
+                if(minWL > 180) {
+                    if (wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f) {
 
-                if (wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f) {
+                        float mea[10];
+                        float effect = cp.bluwav;
+                        float offs = 1.f;
+                        float * beta = new float[Wlvl_ab * Hlvl_ab];
 
-                    float mea[10];
-                    float effect = cp.bluwav;
-                    float offs = 1.f;
-                    float * beta = new float[Wlvl_ab * Hlvl_ab];
-
-                    for (int co = 0; co < Wlvl_ab * Hlvl_ab; co++) {
-                        beta[co] = 1.f;
-                    }
-
-                    calceffect(lvl, meanab, sigmaab, mea, effect, offs);
-
-                    float * bef = new float[Wlvl_ab * Hlvl_ab];
-                    float * aft = new float[Wlvl_ab * Hlvl_ab];
-                    float klev;
-
-                    for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
-                        bef[co] = WavCoeffs_ab[dir][co];
-                        float WavCab = std::fabs(WavCoeffs_ab[dir][co]);
-
-                        if (WavCab < mea[0]) {
-                            beta[co] = 0.05f;
-                        } else if (WavCab < mea[1]) {
-                            beta[co] = 0.2f;
-                        } else if (WavCab < mea[2]) {
-                            beta[co] = 0.7f;
-                        } else if (WavCab < mea[3]) {
-                            beta[co] = 1.f;    //standard
-                        } else if (WavCab < mea[4]) {
+                        for (int co = 0; co < Wlvl_ab * Hlvl_ab; co++) {
                             beta[co] = 1.f;
-                        } else if (WavCab < mea[5]) {
-                            beta[co] = 0.8f;    //+sigma
-                        } else if (WavCab < mea[6]) {
-                            beta[co] = 0.6f;
-                        } else if (WavCab < mea[7]) {
-                            beta[co] = 0.4f;
-                        } else if (WavCab < mea[8]) {
-                            beta[co] = 0.2f;    // + 2 sigma
-                        } else if (WavCab < mea[9]) {
-                            beta[co] = 0.1f;
-                        } else {
-                            beta[co] = 0.0f;
                         }
 
+                        calceffect(lvl, meanab, sigmaab, mea, effect, offs);
 
+                        float * bef = new float[Wlvl_ab * Hlvl_ab];
+                        float * aft = new float[Wlvl_ab * Hlvl_ab];
+                        float klev;
+
+                        for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
+                            bef[co] = WavCoeffs_ab[dir][co];
+                            float WavCab = std::fabs(WavCoeffs_ab[dir][co]);
+
+                            if (WavCab < mea[0]) {
+                                beta[co] = 0.05f;
+                            } else if (WavCab < mea[1]) {
+                                beta[co] = 0.2f;
+                            } else if (WavCab < mea[2]) {
+                                beta[co] = 0.7f;
+                            } else if (WavCab < mea[3]) {
+                                beta[co] = 1.f;    //standard
+                            } else if (WavCab < mea[4]) {
+                                beta[co] = 1.f;
+                            } else if (WavCab < mea[5]) {
+                                beta[co] = 0.8f;    //+sigma
+                            } else if (WavCab < mea[6]) {
+                                beta[co] = 0.6f;
+                            } else if (WavCab < mea[7]) {
+                                beta[co] = 0.4f;
+                            } else if (WavCab < mea[8]) {
+                                beta[co] = 0.2f;    // + 2 sigma
+                            } else if (WavCab < mea[9]) {
+                                beta[co] = 0.1f;
+                            } else {
+                                beta[co] = 0.0f;
+                            }
+
+
+                        }
+
+                        klev = (wavblcurve[lvl * 55.5f]);
+
+                        klev *=  cp.chrwav * 80.f / skip;
+
+                        boxblur(bef, aft, klev, Wlvl_ab, Hlvl_ab, false);
+
+                        for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
+                            aft[co] = bef[co] * (1.f - beta[co]) + aft[co] * beta[co];
+                            WavCoeffs_ab[dir][co] = aft[co];
+                        }
+
+                        delete[] bef;
+                        delete[] aft;
+                        delete[] beta;
                     }
-
-                    klev = (wavblcurve[lvl * 55.5f]);
-
-                    klev *=  cp.chrwav * 100.f / skip;
-
-                    boxblur(bef, aft, klev, Wlvl_ab, Hlvl_ab, false);
-
-                    for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
-                        aft[co] = bef[co] * (1.f - beta[co]) + aft[co] * beta[co];
-                        WavCoeffs_ab[dir][co] = aft[co];
-                    }
-
-                    delete[] bef;
-                    delete[] aft;
-                    delete[] beta;
                 }
-
 
             }
         }

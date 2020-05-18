@@ -3143,6 +3143,7 @@ TP_WAVELET_CONTRAST_MINUS;Contrast -
 TP_WAVELET_CONTRAST_PLUS;Contrast +
 TP_WAVELET_CONTRA_TOOLTIP;Changes contrast of the residual image.
 TP_WAVELET_CTYPE;Chrominance control
+TP_WAVELET_CURVEEDITOR_BL_TOOLTIP;Disabled if zoom > about 300%
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifies local contrast as a function of the original local contrast (abscissa).\nLow abscissa values represent small local contrast (real values about 10..20).\n50% abscissa represents average local contrast (real value about 100..300).\n66% abscissa represents standard deviation of local contrast (real value about 300..800).\n100% abscissa represents maximum local contrast (real value about 3000..8000).
 TP_WAVELET_CURVEEDITOR_CH;Contrast levels=f(Hue)
 TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modifies each level's contrast as a function of hue.\nTake care not to overwrite changes made with the Gamut sub-tool's hue controls.\nThe curve will only have an effect when wavelet contrast level sliders are non-zero.

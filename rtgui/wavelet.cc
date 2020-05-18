@@ -758,7 +758,7 @@ Wavelet::Wavelet() :
 
     blshape->setIdentityValue(0.);
     blshape->setResetCurve(FlatCurveType(default_params.blcurve.at(0)), default_params.blcurve);
-    blshape->setTooltip(M("TP_WAVELET_CURVEEDITOR_CC_TOOLTIP"));
+    blshape->setTooltip(M("TP_WAVELET_CURVEEDITOR_BL_TOOLTIP"));
 
     curveEditorbl->curveListComplete();
     curveEditorbl->show();
