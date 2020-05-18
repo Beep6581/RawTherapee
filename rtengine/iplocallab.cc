@@ -4157,7 +4157,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
         }
 
         wavelet_level = min(wavelet_level, maxlevelspot);
-        int maxlvl;
+        int maxlvl = wavelet_level;
         float contrast = 0.f;
         bool wavcurvemask = false;
 
@@ -4176,18 +4176,103 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
             const int numThreads = 1;
 
 #endif
-            LocwavCurve dummy;
-            bool loclevwavutili = false;
-            bool wavcurvelev = false;
-            bool locconwavutili = false;
-            bool wavcurvecon = false;
-            bool loccompwavutili = false;
-            bool wavcurvecomp = false;
-            bool loccomprewavutili = false;
-            bool wavcurvecompre = false;
-            bool wavcurve = false;
-            bool locedgwavutili = false;
-            wavcontrast4(lp, bufmaskblurcol->L, nullptr, nullptr, contrast, 0.f, 0.f, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav,  wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, dummy, locedgwavutili, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
+            wavelet_decomposition *wdspot = new wavelet_decomposition(bufmaskblurcol->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
+            if (wdspot->memoryAllocationFailed) {
+                return;
+            }
+            float mean[10];
+            float meanN[10];
+            float sigma[10];
+            float sigmaN[10];
+            float MaxP[10];
+            float MaxN[10];
+            Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+            float alow = 1.f;
+            float blow = 0.f;
+            if (level_hl != level_bl) {
+                alow = 1.f / (level_hl - level_bl);
+                blow = -alow * level_bl;
+            }
+
+            float ahigh = 1.f;
+            float bhigh = 0.f;
+
+            if (level_hr != level_br) {
+                ahigh = 1.f / (level_hr - level_br);
+                bhigh =  -ahigh * level_br;
+            }
+        
+            for (int dir = 1; dir < 4; dir++) {
+                for (int level = level_bl; level < maxlvl; ++level) {
+                    int W_L = wdspot->level_W(level);
+                    int H_L = wdspot->level_H(level);
+                    float **wav_L = wdspot->level_coeffs(level);
+                
+                    if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
+                        float insigma = 0.666f; //SD
+                        float logmax = log(MaxP[level]); //log Max
+                        float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+                        float inx = log(insigma);
+                        float iny = log(rapX);
+                        float rap = inx / iny; //koef
+                        float asig = 0.166f / (sigma[level]);
+                        float bsig = 0.5f - asig * mean[level];
+                        float amean = 0.5f / mean[level];
+                    
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+
+                        for (int i = 0; i < W_L * H_L; i++) {
+                            if(loclmasCurvecolwav && lmasutilicolwav) {
+                                float absciss;
+                                float &val = wav_L[dir][i];
+
+                                if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
+                                    float valcour = xlogf(fabsf(val));
+                                    float valc = valcour - logmax;
+                                    float vald = valc * rap;
+                                    absciss = xexpf(vald);
+                                } else if (fabsf(val) >= mean[level]) {
+                                    absciss = asig * fabsf(val) + bsig;
+                                } else {
+                                    absciss = amean * fabsf(val);
+                                }
+
+                                float klev = 1.f;
+                                if (level >= level_hl && level <= level_hr) {
+                                    klev = 1.f;
+                                }
+
+                                if (level_hl != level_bl) {
+                                    if (level >= level_bl && level < level_hl) {
+                                        klev = alow * level + blow;
+                                    }
+                                }
+
+                                if (level_hr != level_br) {
+                                    if (level > level_hr && level <= level_br) {
+                                        klev = ahigh * level + bhigh;
+                                    }
+                                }
+            
+                                float kc = klev * (loclmasCurvecolwav[absciss * 500.f] - 0.5f);
+                                float amplieffect = kc <= 0.f ? 1.f : 4.f;
+
+                                float kinterm = 1.f + amplieffect * kc;
+                                kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+
+                                val *=  kinterm;
+                            
+                            }
+                        }
+                    }
+                
+                }
+            }
+        
+            wdspot->reconstruct(bufmaskblurcol->L[0], 1.f);
+            delete wdspot;
 
         }
 

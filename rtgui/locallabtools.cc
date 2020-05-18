@@ -5373,7 +5373,7 @@ LocallabBlur::LocallabBlur():
     toolblFrame->add(*toolblBox);
     maskblBox->pack_start(*toolblFrame);
     expmaskbl->add(*maskblBox, false);
-    pack_start(*expmaskbl);
+//    pack_start(*expmaskbl);
 }
 
 LocallabBlur::~LocallabBlur()
