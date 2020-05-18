@@ -25,8 +25,9 @@
 
 #include "coord2d.h"
 #include "imagedata.h"
-#include "LUT.h"
 #include "rtengine.h"
+#include "colortemp.h"
+#include "array2D.h"
 
 template<typename T>
 class LUT;
@@ -86,19 +87,19 @@ protected:
 
 public:
     ImageSource () : references (1), redAWBMul(-1.), greenAWBMul(-1.), blueAWBMul(-1.),
-        embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
+        embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(RT_INFINITY) {}
 
     ~ImageSource            () override {}
     virtual int         load        (const Glib::ustring &fname) = 0;
     virtual void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) {};
-    virtual void        filmNegativeProcess (const procparams::FilmNegativeParams &params) {};
+    virtual void        filmNegativeProcess (const procparams::FilmNegativeParams &params, std::array<float, 3>& filmBaseValues) {};
     virtual bool        getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const procparams::FilmNegativeParams& currentParams, std::array<float, 3>& newExps) { return false; };
+    virtual bool        getRawSpotValues (Coord2D spot, int spotSize, int tran, const procparams::FilmNegativeParams &params, std::array<float, 3>& rawValues) { return false; };
     virtual void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache = false) {};
     virtual void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
     virtual void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) {};
     virtual void        retinexPrepareBuffers      (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
-    virtual void        flushRawData       () {};
-    virtual void        flushRGB           () {};
+    virtual void        flush           () = 0;
     virtual void        HLRecovery_Global  (const procparams::ToneCurveParams &hrp) {};
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
 
@@ -119,8 +120,11 @@ public:
 
     virtual void        convertColorSpace    (Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) = 0; // DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
     virtual void        getAutoWBMultipliers (double &rm, double &gm, double &bm) = 0;
+    virtual void        getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double & greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw) = 0;
     virtual ColorTemp   getWB       () const = 0;
     virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) = 0;
+    virtual void        WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw) = 0;
+    virtual void        getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w) = 0;
 
     virtual double      getDefGain  () const
     {
@@ -143,11 +147,11 @@ public:
 
     virtual void        setProgressListener (ProgressListener* pl) {}
 
-    void        increaseRef () override
+    void        increaseRef () final
     {
         references++;
     }
-    void        decreaseRef () override
+    void        decreaseRef () final
     {
         references--;
 
@@ -175,15 +179,15 @@ public:
         return dirpyrdenoiseExpComp;
     }
     // functions inherited from the InitialImage interface
-    Glib::ustring getFileName () override
+    Glib::ustring getFileName () final
     {
         return fileName;
     }
-    cmsHPROFILE getEmbeddedProfile () override
+    cmsHPROFILE getEmbeddedProfile () final
     {
         return embProfile;
     }
-    const FramesMetaData* getMetaData () override
+    const FramesMetaData* getMetaData () final
     {
         return idata;
     }

@@ -182,7 +182,7 @@ Gtk::TreeIter ProfileStoreComboBox::findRowFromEntry (const ProfileStoreEntry *p
 Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath_ (Gtk::TreeModel::Children childs, int parentFolderId, const Glib::ustring &name) const
 {
 
-    for (const auto iter : childs) {
+    for (const auto& iter : childs) {
         const Gtk::TreeModel::Row row = *iter;
         // Hombre: is there a smarter way of knowing if this row has childs?
         const ProfileStoreEntry *pse = row[methodColumns.profileStoreEntry];
@@ -309,7 +309,7 @@ Gtk::TreeIter ProfileStoreComboBox::getRowFromLabel (const Glib::ustring &name) 
     const Gtk::TreeModel::Children childs = refTreeModel->children();
 
     if (!name.empty()) {
-        for (const auto iter : childs) {
+        for (const auto& iter : childs) {
             const Gtk::TreeModel::Row currRow = *iter;
             const ProfileStoreEntry *pse = currRow[methodColumns.profileStoreEntry];
 

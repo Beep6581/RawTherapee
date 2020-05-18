@@ -360,8 +360,8 @@ void RawImageSource::eahd_demosaic ()
 
             int wh = 0;
 
-            for (int dmi = 0; dmi < 9; dmi++) {
-                wh += (dLmaph[dmi] <= eL) * (dCamaph[dmi] <= eCa) * (dCbmaph[dmi] <= eCb);
+            for (int d = 0; d < 9; ++d) {
+                wh += (dLmaph[d] <= eL) * (dCamaph[d] <= eCa) * (dCbmaph[d] <= eCb);
             }
 
             homh[imx][j - 1] += wh;
@@ -376,8 +376,8 @@ void RawImageSource::eahd_demosaic ()
 
             int wv = 0;
 
-            for (int dmi = 0; dmi < 9; dmi++) {
-                wv += (dLmapv[dmi] <= eL) * (dCamapv[dmi] <= eCa) * (dCbmapv[dmi] <= eCb);
+            for (int d = 0; d < 9; ++d) {
+                wv += (dLmapv[d] <= eL) * (dCamapv[d] <= eCa) * (dCbmapv[d] <= eCb);
             }
 
             homv[imx][j - 1] += wv;
@@ -400,11 +400,11 @@ void RawImageSource::eahd_demosaic ()
                 int vc = homv[imx][j];
 
                 if (hc > vc) {
-                    green[i - 1][j] = gh[(i - 1) % 4][j];
+                    green[i - 1][j] = std::max(0.f, gh[(i - 1) % 4][j]);
                 } else if (hc < vc) {
-                    green[i - 1][j] = gv[(i - 1) % 4][j];
+                    green[i - 1][j] = std::max(0.f, gv[(i - 1) % 4][j]);
                 } else {
-                    green[i - 1][j] = (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2;
+                    green[i - 1][j] = std::max(0.f, (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2);
                 }
             }
         }
@@ -421,11 +421,11 @@ void RawImageSource::eahd_demosaic ()
             int vc = homv[(i - 1) % 3][j];
 
             if (hc > vc) {
-                green[i - 1][j] = gh[(i - 1) % 4][j];
+                green[i - 1][j] = std::max(0.f, gh[(i - 1) % 4][j]);
             } else if (hc < vc) {
-                green[i - 1][j] = gv[(i - 1) % 4][j];
+                green[i - 1][j] = std::max(0.f, gv[(i - 1) % 4][j]);
             } else {
-                green[i - 1][j] = (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2;
+                green[i - 1][j] = std::max(0.f, (gh[(i - 1) % 4][j] + gv[(i - 1) % 4][j]) / 2);
             }
         }
 

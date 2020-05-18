@@ -53,6 +53,7 @@ public:
     void surroundChanged     ();
     void surrsrcChanged     ();
     void wbmodelChanged      ();
+    void illumChanged      ();
     void algoChanged         ();
     void surrsource_toggled  ();
     void gamut_toggled       ();
@@ -63,10 +64,11 @@ public:
     void autoCamChanged (double ccam, double ccamout) override;
     bool autoCamComputed_ ();
     void adapCamChanged (double cadap) override;
+    void wbCamChanged(double tem, double tin) override;
     bool adapCamComputed_ ();
     void ybCamChanged (int yb) override;
     bool ybCamComputed_ ();
-
+    void presetcat02pressed ();
     void curveChanged        (CurveEditor* ce) override;
     void curveMode1Changed   ();
     bool curveMode1Changed_  ();
@@ -99,6 +101,9 @@ public:
     void writeOptions (std::vector<int> &tpOpen);
 
 private:
+    rtengine::ProcEvent Evcatpreset;
+    rtengine::ProcEvent EvCATAutotempout;
+    rtengine::ProcEvent EvCATillum;
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
@@ -143,6 +148,9 @@ private:
     Gtk::CheckButton* tonecie;
     //  Gtk::CheckButton* sharpcie;
     Gtk::Button* neutral;
+    Gtk::CheckButton* presetcat02;
+    sigc::connection  presetcat02conn;
+
     MyComboBoxText* surrsrc;
     sigc::connection  surrsrcconn;
 
@@ -150,6 +158,8 @@ private:
     sigc::connection  surroundconn;
     MyComboBoxText*   wbmodel;
     sigc::connection  wbmodelconn;
+    MyComboBoxText*   illum;
+    sigc::connection  illumconn;
     MyComboBoxText*   algo;
     sigc::connection  algoconn;
     sigc::connection  surrconn;
@@ -168,10 +178,14 @@ private:
     bool lastAutoAdapscen;
     bool lastAutoDegreeout;
     bool lastAutoybscen;
+    bool lastAutotempout;
     bool lastsurr;
     bool lastgamut;
     bool lastdatacie;
     bool lasttonecie;
+    bool lastpresetcat02;
+    double nexttemp;
+    double nextgreen;
 
     IdleRegister idle_register;
 };

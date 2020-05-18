@@ -27,7 +27,7 @@ namespace rtengine
 {
 class Imagefloat;
 
-class Image8 : public IImage8, public ImageIO
+class Image8 final : public IImage8, public ImageIO
 {
 
 public:

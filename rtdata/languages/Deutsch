@@ -2390,5 +2390,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!GENERAL_HELP;Help
 !HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
+!HISTORY_MSG_TRANS_Method;Geometry - Method
+!TP_LENSGEOM_LIN;Linear
+!TP_LENSGEOM_LOG;Logarithmic
 !TP_SHARPENING_ITERCHECK;Auto limit iterations

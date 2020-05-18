@@ -254,7 +254,6 @@ public:
     }
 
     // handy to sum up per thread histograms. #pragma omp simd speeds up the loop by about factor 3 for LUTu (uint32_t).
-    template<typename U = T, typename = typename std::enable_if<std::is_same<U, std::uint32_t>::value>::type>
     LUT<T> & operator+=(const LUT<T>& rhs)
     {
         if (rhs.size == this->size) {

@@ -28,7 +28,7 @@
 #endif
 
 #undef CLIPD
-#define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
+#define CLIPD(a) ((a)>0.f?((a)<1.f?(a):1.f):0.f)
 #define MAXR(a,b) ((a) > (b) ? (a) : (b))
 
 namespace rtengine
@@ -408,7 +408,7 @@ void Ciecam02::initcam1float (float yb, float pilotd, float f, float la, float x
 {
     n = yb / yw;
 
-    if (pilotd == 2.0) {
+    if (pilotd == 2.f) {
         d = d_factorfloat ( f, la );
     } else {
         d = pilotd;
@@ -434,7 +434,7 @@ void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float x
 {
     n = yb / yw;
 
-    if (pilotd == 2.0) {
+    if (pilotd == 2.f) {
         d = d_factorfloat ( f, la );
     } else {
         d = pilotd;
@@ -492,7 +492,7 @@ void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q
     myh = xatan2f ( cb, ca );
 
     if ( myh < 0.0f ) {
-        myh += (2.f * rtengine::RT_PI);
+        myh += (2.f * rtengine::RT_PI_F);
     }
 
     a = ((2.0f * rpa) + gpa + (0.05f * bpa) - 0.305f) * nbb;
@@ -620,7 +620,7 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
     myh = xatan2f ( cb, ca );
 
     if ( myh < 0.0f ) {
-        myh += (2.f * rtengine::RT_PI);
+        myh += (2.f * rtengine::RT_PI_F);
     }
 
     a = ((2.0f * rpa) + gpa + (0.05f * bpa) - 0.305f) * nbb;

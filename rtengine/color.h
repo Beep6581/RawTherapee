@@ -20,15 +20,16 @@
 #pragma once
 
 #include <array>
-#include <glibmm/ustring.h>
 
 #include "rt_math.h"
 #include "LUT.h"
-#include "iccmatrices.h"
 #include "lcms2.h"
 #include "sleef.h"
 
-#define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
+namespace Glib
+{
+class ustring;
+}
 
 namespace rtengine
 {
@@ -100,7 +101,6 @@ private:
 #endif
 
     static float computeXYZ2Lab(float f);
-    static float computeXYZ2LabY(float f);
 
 public:
 
@@ -132,7 +132,7 @@ public:
     constexpr static double sRGBGammaCurve = 2.4;
 
     constexpr static double eps = 216.0 / 24389.0; //0.008856
-    constexpr static double eps_max = MAXVALF * eps; //580.40756;
+    constexpr static double eps_max = MAXVALD * eps; //580.40756;
     constexpr static double kappa = 24389.0 / 27.0; //903.29630;
     constexpr static double kappaInv = 27.0 / 24389.0;
     constexpr static double epsilonExpInv3 = 6.0 / 29.0;
@@ -144,9 +144,10 @@ public:
 
     constexpr static float D50x = 0.9642f; //0.96422;
     constexpr static float D50z = 0.8249f; //0.82521;
-    constexpr static double u0 = 4.0 * D50x / (D50x + 15 + 3 * D50z);
-    constexpr static double v0 = 9.0 / (D50x + 15 + 3 * D50z);
+    constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
+    constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
     constexpr static double epskap = 8.0;
+    constexpr static float epskapf = epskap;
 
     constexpr static float c1By116 = 1.0 / 116.0;
     constexpr static float c16By116 = 16.0 / 116.0;
@@ -183,6 +184,16 @@ public:
     static void init ();
     static void cleanup ();
 
+    static inline float computeXYZ2LabY(float f)
+    {
+        if (f < 0.f) {
+            return 327.68f * (kappa * f / MAXVALF);
+        } else if (f > 65535.f) {
+            return 327.68f * (116.f * xcbrtf(f / MAXVALF) - 16.f);
+        } else {
+            return cachefy[f];
+        }
+    }
 
     /**
     * @brief Extract luminance "sRGB" from red/green/blue values
@@ -206,7 +217,7 @@ public:
 
     static float rgbLuminance(float r, float g, float b, const double workingspace[3][3])
     {
-        return r * workingspace[1][0] + g * workingspace[1][1] + b * workingspace[1][2];
+        return static_cast<double>(r) * workingspace[1][0] + static_cast<double>(g) * workingspace[1][1] + static_cast<double>(b) * workingspace[1][2];
     }
 
 #ifdef __SSE2__
@@ -591,6 +602,7 @@ public:
     * @param xyz_rgb[3][3] transformation matrix to use for the conversion
     */
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3]);
+    static void rgbxyY(float r, float g, float b, float &x, float &y, float &Y, const float xyz_rgb[3][3]);
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3]);
 #ifdef __SSE2__
     static void rgbxyz (vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3]);
@@ -607,6 +619,7 @@ public:
     */
     static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
     static void L2XYZ(float L, float &x, float &y, float &z);
+    static float L2Y(float L);
 
 #ifdef __SSE2__
     static void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);
@@ -972,10 +985,10 @@ public:
     template <typename T, typename U>
     static inline T interpolatePolarHue_PI (T h1, T h2, U balance)
     {
-        float d = h2 - h1;
-        float f;
+        T d = h2 - h1;
+        T f;
         f = T(balance);
-        double h;
+        T h;
 
         if (h1 > h2) {
             std::swap(h1, h2);
@@ -986,7 +999,7 @@ public:
         if (d < T(0) || d < T(0.5) || d > T(1.)) { //there was an inversion here !! d > T(rtengine::RT_PI)
             h1 += T(1.);
             h = h1 + f * (h2 - h1);
-            h = std::fmod(h, 1.);
+            h = std::fmod(h, T(1.));
         } else {
             h = h1 + f * d;
         }
@@ -1372,7 +1385,7 @@ public:
     * @param HH hue before [-PI ; +PI]
     * @param Chprov1 chroma after [0 ; 180 (can be superior)]
     * @param CC chroma before [0 ; 180]
-    * @param corectionHuechroma hue correction depending on chromaticity (saturation), in radians [0 ; 0.45] (return value)
+    * @param correctionHueChroma hue correction depending on chromaticity (saturation), in radians [0 ; 0.45] (return value)
     * @param correctlum hue correction depending on luminance (brightness, contrast,...), in radians [0 ; 0.45] (return value)
     * @param munsDbgInfo (Debug target only) object to collect information
     */

@@ -1475,6 +1475,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
+!GENERAL_HELP;Help
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_235;B&amp;W - CM - Auto
@@ -1735,6 +1736,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
+!HISTORY_MSG_TRANS_Method;Geometry - Method
 !ICCPROFCREATOR_COPYRIGHT;Copyright:
 !ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
 !ICCPROFCREATOR_CUSTOM;Custom
@@ -2013,6 +2015,8 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
+!TP_LENSGEOM_LIN;Linear
+!TP_LENSGEOM_LOG;Logarithmic
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_MODE_HEADER;Lens Profile

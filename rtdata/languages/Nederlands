@@ -1982,6 +1982,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !GENERAL_CURRENT;Current
+!GENERAL_HELP;Help
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...
 !GENERAL_SLIDER;Slider
@@ -2075,6 +2076,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!HISTORY_MSG_TRANS_Method;Geometry - Method
 !ICCPROFCREATOR_COPYRIGHT;Copyright:
 !ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
 !ICCPROFCREATOR_CUSTOM;Custom
@@ -2255,6 +2257,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
+!TP_LENSGEOM_LIN;Linear
+!TP_LENSGEOM_LOG;Logarithmic
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected

@@ -973,6 +973,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
 !FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
 !GENERAL_CURRENT;Current
+!GENERAL_HELP;Help
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...
 !GENERAL_SLIDER;Slider
@@ -1400,6 +1401,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!HISTORY_MSG_TRANS_Method;Geometry - Method
 !ICCPROFCREATOR_COPYRIGHT;Copyright:
 !ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
 !ICCPROFCREATOR_CUSTOM;Custom
@@ -1884,6 +1886,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
 !TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 !TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
+!TP_LENSGEOM_LIN;Linear
+!TP_LENSGEOM_LOG;Logarithmic
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected

@@ -59,6 +59,7 @@
 #include "perspective.h"
 #include "pparamschangelistener.h"
 #include "preprocess.h"
+#include "preprocesswb.h"
 #include "profilechangelistener.h"
 #include "prsharpening.h"
 #include "rawcacorrection.h"
@@ -157,6 +158,7 @@ protected:
     FlatField* flatfield;
     RAWCACorr* rawcacorrection;
     RAWExposure* rawexposure;
+    PreprocessWB* preprocessWB;
     BayerRAWExposure* bayerrawexposure;
     XTransRAWExposure* xtransrawexposure;
     FattalToneMapping *fattal;
@@ -303,6 +305,7 @@ public:
 
     // FilmNegProvider interface
     bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) override;
+    bool getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues) override;
 
     // rotatelistener interface
     void straightenRequested () override;
@@ -320,11 +323,11 @@ public:
 
     // imageareatoollistener interface
     void spotWBselected(int x, int y, Thumbnail* thm = nullptr) override;
-    void sharpMaskSelected(bool sharpMask) override;
+    void sharpMaskSelected(bool sharpMask) override final;
     int getSpotWBRectSize() const override;
     void cropSelectionReady() override;
     void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr) override;
-    ToolBar* getToolBar() const override;
+    ToolBar* getToolBar() const final;
     CropGUIListener* startCropEditing(Thumbnail* thm = nullptr) override;
 
     void updateTPVScrollbar (bool hide);
@@ -332,7 +335,7 @@ public:
 
     // ToolBarListener interface
     void toolSelected (ToolMode tool) override;
-    void editModeSwitchedOff () override;
+    void editModeSwitchedOff () final;
 
     void setEditProvider (EditDataProvider *provider);
 

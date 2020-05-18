@@ -2323,6 +2323,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !FILEBROWSER_POPUPREMOVE;Delete permanently
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
+!GENERAL_HELP;Help
 !HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
 !HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
@@ -2334,6 +2335,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
 !HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
 !HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
+!HISTORY_MSG_TRANS_Method;Geometry - Method
 !PARTIALPASTE_FILMNEGATIVE;Film Negative
 !PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !TP_DEHAZE_LUMINANCE;Luminance only
@@ -2343,6 +2345,8 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_FILMNEGATIVE_LABEL;Film Negative
 !TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
+!TP_LENSGEOM_LIN;Linear
+!TP_LENSGEOM_LOG;Logarithmic
 !TP_PDSHARPENING_LABEL;Capture Sharpening
 !TP_SHARPENING_ITERCHECK;Auto limit iterations
 !TP_SHARPENING_RADIUS_BOOST;Corner radius boost

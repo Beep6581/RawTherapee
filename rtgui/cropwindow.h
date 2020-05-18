@@ -54,7 +54,7 @@ public:
 };
 
 class ImageArea;
-class CropWindow : public LWButtonListener, public CropDisplayHandler, public EditCoordSystem, public ObjectMOBuffer, public rtengine::NonCopyable
+class CropWindow final : public LWButtonListener, public CropDisplayHandler, public EditCoordSystem, public ObjectMOBuffer, public rtengine::NonCopyable
 {
     static bool initialized;
 

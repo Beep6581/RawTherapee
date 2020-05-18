@@ -217,7 +217,7 @@ void hphd_green(const RawImage *ri, const array2D<float> &rawData, float** hpmap
 
                     const float e4 = 1.f / (dx + (std::fabs(d1) + std::fabs(d2)) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
-                    green[i][j] = rawData[i][j] * 0.5f + (e2 * g2 + e4 * g4) / (e2 + e4);
+                    green[i][j] = std::max(0.f, rawData[i][j] * 0.5f + (e2 * g2 + e4 * g4) / (e2 + e4));
                 } else if (hpmap[i][j] == 2) {
                     const float g1 = rawData[i - 1][j] - rawData[i - 2][j] * 0.5f;
                     const float g3 = rawData[i + 1][j] - rawData[i + 2][j] * 0.5f;
@@ -237,7 +237,7 @@ void hphd_green(const RawImage *ri, const array2D<float> &rawData, float** hpmap
 
                     const float e3 = 1.f / (dy + (std::fabs(d1) + std::fabs(d2)) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
-                    green[i][j] = rawData[i][j] * 0.5f + (e1 * g1 + e3 * g3) / (e1 + e3);
+                    green[i][j] = std::max(0.f, rawData[i][j] * 0.5f + (e1 * g1 + e3 * g3) / (e1 + e3));
                 } else {
                     const float g1 = rawData[i - 1][j] - rawData[i - 2][j] * 0.5f;
                     const float g2 = rawData[i][j + 1] - rawData[i][j + 2] * 0.5f;
@@ -275,7 +275,7 @@ void hphd_green(const RawImage *ri, const array2D<float> &rawData, float** hpmap
 
                     const float e4 = 1.f / (dx + (std::fabs(d1) + std::fabs(d2)) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
-                    green[i][j] = rawData[i][j] * 0.5f + ((e1 * g1 + e2 * g2) + (e3 * g3 + e4 * g4)) / (e1 + e2 + e3 + e4);
+                    green[i][j] = std::max(0.f, rawData[i][j] * 0.5f + ((e1 * g1 + e2 * g2) + (e3 * g3 + e4 * g4)) / (e1 + e2 + e3 + e4));
                 }
             }
         }

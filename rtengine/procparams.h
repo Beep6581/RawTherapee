@@ -41,7 +41,9 @@ class OpacityCurve;
 class RetinexgaintransmissionCurve;
 class RetinextransmissionCurve;
 class WavCurve;
+class Wavblcurve;
 class WavOpacityCurveBY;
+class WavOpacityCurveSH;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
@@ -662,6 +664,7 @@ struct ColorAppearanceParams {
     double        adaplum;
     int           badpixsl;
     Glib::ustring wbmodel;
+    Glib::ustring illum;
     Glib::ustring algo;
     double        contrast;
     double        qcontrast;
@@ -677,10 +680,12 @@ struct ColorAppearanceParams {
     bool          datacie;
     bool          tonecie;
     int tempout;
+    bool          autotempout;
     int ybout;
     double greenout;
     int tempsc;
     double greensc;
+    bool presetcat02;
 
     ColorAppearanceParams();
 
@@ -838,6 +843,7 @@ struct CoarseTransformParams {
   * Common transformation parameters
   */
 struct CommonTransformParams {
+    Glib::ustring method;
     bool autofill;
 
     CommonTransformParams();
@@ -1217,7 +1223,10 @@ private:
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
+    std::vector<double> blcurve;
+    std::vector<double> levelshc;
     std::vector<double> opacityCurveRG;
+    std::vector<double> opacityCurveSH;
     std::vector<double> opacityCurveBY;
     std::vector<double> opacityCurveW;
     std::vector<double> opacityCurveWL;
@@ -1235,23 +1244,47 @@ struct WaveletParams {
     int bluemed;
     int greenhigh;
     int bluehigh;
+    double ballum;
+    double balchrom;
+    double chromfi;
+    double chromco;
+    double mergeL;
+    double mergeC;
+    double softrad;
+    double softradend;
 
     bool lipst;
     bool avoid;
+    bool showmask;
+    bool oldsh;
     bool tmr;
     int strength;
     int balance;
+    double sigmafin;
+    double sigmaton;
+    double sigmacol;
+    double sigmadir;
+    double rangeab;
+    double protab;
     int iter;
     bool expcontrast;
     bool expchroma;
     int c[9];
     int ch[9];
     bool expedge;
+    bool expbl;
     bool expresid;
     bool expfinal;
     bool exptoning;
     bool expnoise;
-
+    bool expclari;
+    double labgridALow;
+    double labgridBLow;
+    double labgridAHigh;
+    double labgridBHigh;
+    static const double LABGRID_CORR_MAX;
+    static const double LABGRID_CORR_SCALE;
+    static const double LABGRIDL_DIRECT_SCALE;
     int Lmethod;
     Glib::ustring CLmethod;
     Glib::ustring Backmethod;
@@ -1259,6 +1292,7 @@ struct WaveletParams {
     Glib::ustring daubcoeffmethod;
     Glib::ustring CHmethod;
     Glib::ustring Medgreinf;
+    Glib::ustring ushamethod;
     Glib::ustring CHSLmethod;
     Glib::ustring EDmethod;
     Glib::ustring NPmethod;
@@ -1266,10 +1300,17 @@ struct WaveletParams {
     Glib::ustring TMmethod;
     Glib::ustring Dirmethod;
     Glib::ustring HSmethod;
+    double sigma;
+    double offset;
+    double lowthr;
     int rescon;
     int resconH;
     int reschro;
+    int resblur;
+    int resblurc;
     double tmrs;
+    double edgs;
+    double scale;
     double gamma;
     int sup;
     double sky;
@@ -1285,11 +1326,15 @@ struct WaveletParams {
     int edgeampli;
     int contrast;
     int edgrad;
+    double edgeffect;
     int edgval;
     int edgthresh;
     int thr;
     int thrH;
+    int radius;
     double skinprotect;
+    double chrwav;
+    double bluwav;
     Threshold<int> hueskin;
     Threshold<int> hueskin2;
     Threshold<int> hllev;
@@ -1309,8 +1354,9 @@ struct WaveletParams {
 
     void getCurves(
         WavCurve& cCurve,
-        WavOpacityCurveRG&
-        opacityCurveLUTRG,
+        Wavblcurve& tCurve,
+        WavOpacityCurveRG& opacityCurveLUTRG,
+        WavOpacityCurveSH& opacityCurveLUTSH,
         WavOpacityCurveBY& opacityCurveLUTBY,
         WavOpacityCurveW& opacityCurveLUTW,
         WavOpacityCurveWL& opacityCurveLUTWL
@@ -1542,6 +1588,22 @@ struct RAWParams {
     // exposure before interpolation
     double expos;
 
+    struct PreprocessWB {
+        enum class Mode {
+            CAMERA = 0,
+            AUTO
+        };
+
+        Mode mode;
+
+        PreprocessWB();
+
+        bool operator ==(const PreprocessWB& other) const;
+        bool operator !=(const PreprocessWB& other) const;
+    };
+
+    PreprocessWB preprocessWB;
+
     bool hotPixelFilter;
     bool deadPixelFilter;
     int hotdeadpix_thresh;
@@ -1564,6 +1626,10 @@ struct FilmNegativeParams {
     double greenExp;
     double blueRatio;
 
+    double redBase;
+    double greenBase;
+    double blueBase;
+    
     FilmNegativeParams();
 
     bool operator ==(const FilmNegativeParams& other) const;

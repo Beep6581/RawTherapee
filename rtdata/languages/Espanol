@@ -2321,6 +2321,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !FILEBROWSER_POPUPREMOVE;Delete permanently
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
+!GENERAL_HELP;Help
 !HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
 !HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
@@ -2333,6 +2334,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
 !HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
+!HISTORY_MSG_TRANS_Method;Geometry - Method
 !MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
@@ -2361,6 +2363,8 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !TP_FILMNEGATIVE_LABEL;Film Negative
 !TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
+!TP_LENSGEOM_LIN;Linear
+!TP_LENSGEOM_LOG;Logarithmic
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_MODE_HEADER;Lens Profile

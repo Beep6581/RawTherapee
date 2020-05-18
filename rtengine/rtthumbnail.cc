@@ -31,6 +31,7 @@
 #include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
 #include "image8.h"
 #include "improcfun.h"
@@ -511,8 +512,6 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0 || !filter)
 #define FISGREEN(filter,row,col) \
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
-#define FISBLUE(filter,row,col) \
-    ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
 
 RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
 {
@@ -594,6 +593,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     //tpp->defGain = 1.0 / min(ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2));
     tpp->defGain = max (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
     tpp->defGain *= std::pow(2, ri->getBaselineExposure());
+
+    tpp->scaleGain = scale_mul[0] / pre_mul[0]; // used to reconstruct scale_mul from filmnegativethumb.cc
 
     tpp->gammaCorrected = true;
 
@@ -1043,6 +1044,7 @@ Thumbnail::Thumbnail () :
     scaleForSave (8192),
     gammaCorrected (false),
     colorMatrix{},
+    scaleGain (1.0),
     isRaw (true)
 {
 }
@@ -1131,7 +1133,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         double cam_g = colorMatrix[1][0] * camwbRed + colorMatrix[1][1] * camwbGreen + colorMatrix[1][2] * camwbBlue;
         double cam_b = colorMatrix[2][0] * camwbRed + colorMatrix[2][1] * camwbGreen + colorMatrix[2][2] * camwbBlue;
         currWB = ColorTemp (cam_r, cam_g, cam_b, params.wb.equal);
-    } else if (params.wb.method == "Auto") {
+    } else if (params.wb.method == "autold") {
         currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom");
     }
 
@@ -1180,7 +1182,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
 
     if (isRaw && params.filmNegative.enabled) {
-        processFilmNegative(params, baseImg, rwidth, rheight, rmi, gmi, bmi);
+        processFilmNegative(params, baseImg, rwidth, rheight);
     }
 
     if (params.coarse.rotate) {
@@ -1247,12 +1249,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.ToneMapFattal02(baseImg);
     
     // perform transform
-    if (ipf.needsTransform()) {
+    int origFW;
+    int origFH;
+    double tscale = 0.0;
+    getDimensions (origFW, origFH, tscale);
+    if (ipf.needsTransform(origFW * tscale + 0.5, origFH * tscale + 0.5, 0, metadata)) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
-        int origFW;
-        int origFH;
-        double tscale = 0.0;
-        getDimensions (origFW, origFH, tscale);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, metadata, 0, true); // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;
@@ -2123,6 +2125,10 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
                         colorMatrix[i][j] = cm[ix++];
                     }
             }
+            
+            if (keyFile.has_key ("LiveThumbData", "ScaleGain")) {
+                scaleGain           = keyFile.get_double ("LiveThumbData", "ScaleGain");
+            }
         }
 
         return true;
@@ -2174,6 +2180,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         keyFile.set_boolean ("LiveThumbData", "GammaCorrected", gammaCorrected);
         Glib::ArrayHandle<double> cm ((double*)colorMatrix, 9, Glib::OWNERSHIP_NONE);
         keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
+        keyFile.set_double  ("LiveThumbData", "ScaleGain", scaleGain);
 
         keyData = keyFile.to_data ();
 
@@ -2246,44 +2253,6 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);
-            fclose (f);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
-{
-
-    FILE* f = g_fopen(fname.c_str(), "rb");
-
-    if (!f) {
-        aeHistogram.reset();
-    } else {
-        aeHistogram(65536 >> aeHistCompression);
-        const size_t histoBytes = (65536 >> aeHistCompression) * sizeof(aeHistogram[0]);
-        const size_t bytesRead = fread(&aeHistogram[0], 1, histoBytes, f);
-        fclose (f);
-        if (bytesRead != histoBytes) {
-            aeHistogram.reset();
-            return false;
-        }
-        return true;
-    }
-
-    return false;
-}
-
-bool Thumbnail::writeAEHistogram (const Glib::ustring& fname)
-{
-
-    if (aeHistogram) {
-        FILE* f = g_fopen (fname.c_str (), "wb");
-
-        if (f) {
-            fwrite (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);
             fclose (f);
             return true;
         }

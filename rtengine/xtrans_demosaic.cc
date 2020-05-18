@@ -31,7 +31,7 @@
 
 namespace rtengine
 {
-const double xyz_rgb[3][3] = {          // XYZ from RGB
+const float xyz_rgb[3][3] = {          // XYZ from RGB
     { 0.412453, 0.357580, 0.180423 },
     { 0.212671, 0.715160, 0.072169 },
     { 0.019334, 0.119193, 0.950227 }
@@ -939,9 +939,9 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
                                 avg[3]++;
                             }
 
-                        red[row + top][col + left] = avg[0] / avg[3];
-                        green[row + top][col + left] = avg[1] / avg[3];
-                        blue[row + top][col + left] = avg[2] / avg[3];
+                        red[row + top][col + left] = std::max(0.f, avg[0] / avg[3]);
+                        green[row + top][col + left] = std::max(0.f, avg[1] / avg[3]);
+                        blue[row + top][col + left] = std::max(0.f, avg[2] / avg[3]);
                     }
 
                 if(plistenerActive && ((++progressCounter) % 32 == 0)) {

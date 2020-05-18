@@ -37,6 +37,7 @@
 #include "rtsurface.h"
 
 #include "../rtengine/dcrop.h"
+#include "../rtengine/imagesource.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/rt_math.h"
 
@@ -123,7 +124,7 @@ void CropWindow::initZoomSteps()
     zoomSteps.push_back(ZoomStep("  8%", 1.0/12.0, 120, true));
     char lbl[64];
     for (int s = 100; s >= 11; --s) {
-        float z = 10./float(s);
+        float z = 10.f / s;
         sprintf(lbl, "% 2d%%", int(z * 100));
         bool is_major = (s == s/10 * 10);
         zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));
@@ -294,7 +295,7 @@ void CropWindow::flawnOver (bool isFlawnOver)
 void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, double deltaX, double deltaY)
 {
     double delta = 0.0;
-    if (abs(deltaX) > abs(deltaY)) {
+    if (std::fabs(deltaX) > std::fabs(deltaY)) {
         delta = deltaX;
     } else {
         delta = deltaY;
@@ -303,7 +304,7 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, 
     if (direction == GDK_SCROLL_SMOOTH) {
         scrollAccum += delta;
         //Only change zoom level if we've accumulated +/- 1.0 of deltas.  This conditional handles the previous delta=0.0 case
-        if (abs(scrollAccum) < 1.0) {
+        if (std::fabs(scrollAccum) < 1.0) {
             return;
         }
     }
@@ -1511,9 +1512,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                     const float kernel_size2 = SQR(2.f * blur_radius2 + 1.f); // count of pixels in the small blur kernel
                     const float rkernel_size2 = 1.0f / kernel_size2;        // reciprocal of kernel_size to avoid divisions
 
-                    // aloocate buffer for precalculated Luminance
+                    // allocate buffer for precalculated Luminance
                     float* tmpL = (float*)malloc(bHeight * bWidth * sizeof(float) );
-                    // aloocate buffers for sums and sums of squares of small kernel
+                    // allocate buffers for sums and sums of squares of small kernel
                     float* tmpLsum = (float*)malloc((bHeight) * (bWidth) * sizeof(float) );
                     float* tmpLsumSq = (float*)malloc((bHeight) * (bWidth) * sizeof(float) );
                     float* tmpstdDev2 = (float*)malloc((bHeight) * (bWidth) * sizeof(float) );
@@ -1650,7 +1651,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                                     && stdDev_L2 > stdDev_L //this is the key to select fine detail within lower contrast on larger scale
                                     && stdDev_L > focus_threshby10 //options.highlightThreshold
                                ) {
-                                // transpareny depends on sdtDev_L2 and maxstdDev_L2
+                                // transparency depends on sdtDev_L2 and maxstdDev_L2
                                 float transparency = 1.f - std::min(stdDev_L2 / maxstdDev_L2, 1.0f) ;
                                 // first row of circle
                                 guint8* currtmp = &curr[0] + (-3 * pixRowStride);

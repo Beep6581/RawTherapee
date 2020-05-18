@@ -45,12 +45,12 @@ inline void vng4interpolate_row_redblue (const RawImage *ri, const array2D<float
             // cross interpolation of red/blue
             float rb = (rawData[i - 1][j - 1] - pg[j - 1] + rawData[i + 1][j - 1] - ng[j - 1]);
             rb += (rawData[i - 1][j + 1] - pg[j + 1] + rawData[i + 1][j + 1] - ng[j + 1]);
-            ab[j] = cg[j] + rb * 0.25f;
+            ab[j] = std::max(0.f, cg[j] + rb * 0.25f);
         } else {
             // linear R/B-G interpolation horizontally
-            ar[j] = cg[j] + (rawData[i][j - 1] - cg[j - 1] + rawData[i][j + 1] - cg[j + 1]) / 2;
+            ar[j] = std::max(0.f, cg[j] + (rawData[i][j - 1] - cg[j - 1] + rawData[i][j + 1] - cg[j + 1]) / 2);
             // linear B/R-G interpolation vertically
-            ab[j] = cg[j] + (rawData[i - 1][j] - pg[j] + rawData[i + 1][j] - ng[j]) / 2;
+            ab[j] = std::max(0.f, cg[j] + (rawData[i - 1][j] - pg[j] + rawData[i + 1][j] - ng[j]) / 2);
         }
     }
 }
@@ -354,7 +354,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                         }
                     }
                 }
-                green[row][col] = greenval + (sum1 - sum0) / (2 * num);
+                green[row][col] = std::max(0.f, greenval + (sum1 - sum0) / (2 * num));
             }
             if (row - 1 > firstRow) {
                 vng4interpolate_row_redblue(ri, rawData, red[row - 1], blue[row - 1], green[row - 2], green[row - 1], green[row], row - 1, W);

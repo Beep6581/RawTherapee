@@ -33,7 +33,7 @@ public:
 
 typedef double(*double2double_fun)(double val);
 
-class Adjuster : public Gtk::Grid
+class Adjuster final : public Gtk::Grid
 {
 
 protected:

@@ -476,7 +476,7 @@ dfInfo* DFManager::find( const std::string &mak, const std::string &mod, int iso
             }
         }
 
-        return bestD != INFINITY ? &(bestMatch->second) : nullptr ;
+        return bestD != RT_INFINITY ? &(bestMatch->second) : nullptr ;
     }
 }
 

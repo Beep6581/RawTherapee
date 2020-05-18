@@ -31,7 +31,6 @@
 #include "imageformat.h"
 #include "procevents.h"
 #include "rawmetadatalocation.h"
-#include "rt_math.h"
 #include "settings.h"
 
 #include "../rtgui/threadutils.h"
@@ -357,6 +356,8 @@ public :
     virtual void autoCamChanged(double ccam, double ccamout) = 0;
     virtual void adapCamChanged(double cadap) = 0;
     virtual void ybCamChanged(int yb) = 0;
+    virtual void wbCamChanged(double tem, double tin) = 0;
+    
 };
 
 class AutoChromaListener
@@ -393,7 +394,7 @@ class AutoWBListener
 {
 public:
     virtual ~AutoWBListener() = default;
-    virtual void WBChanged(double temp, double green) = 0;
+    virtual void WBChanged(double temp, double green, float studgood) = 0;
 };
 
 class FrameCountListener
@@ -437,6 +438,13 @@ public:
     virtual ~WaveletListener() = default;
     virtual void wavChanged(double nlevel) = 0;
 
+};
+
+class FilmNegListener
+{
+public:
+    virtual ~FilmNegListener() = default;
+    virtual void filmBaseValuesChanged(std::array<float, 3> rgb) = 0;
 };
 
 /** This class represents a detailed part of the image (looking through a kind of window).
@@ -535,6 +543,8 @@ public:
     virtual void        getCamWB    (double& temp, double& green) = 0;
     virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) = 0;
     virtual bool        getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) = 0;
+    virtual bool        getRawSpotValues  (int x, int y, int spotSize, std::array<float, 3>& rawValues) = 0;
+
     virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) = 0;
 
     virtual void        saveInputICCReference (const Glib::ustring& fname, bool apply_wb) = 0;
@@ -559,6 +569,7 @@ public:
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
     virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;
+    virtual void        setFilmNegListener      (FilmNegListener* l) = 0;
 
     virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;
