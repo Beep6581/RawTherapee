@@ -4158,7 +4158,7 @@ void ImProcFunctions::maskcalccol(int call, bool invmask, bool pde, int bfw, int
 
         wavelet_level = min(wavelet_level, maxlevelspot);
         int maxlvl = wavelet_level;
-        float contrast = 0.f;
+//        float contrast = 0.f;
         bool wavcurvemask = false;
 
         if (loclmasCurvecolwav && lmasutilicolwav) {
