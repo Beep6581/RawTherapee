@@ -615,6 +615,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskcbmet = llcbMask;
     lp.showmaskretimet = llretiMask;
     lp.showmasksoftmet = llsoftMask;
+    
     lp.showmasktmmet = lltmMask;
     lp.showmaskblmet = llblMask;
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0  && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -6499,7 +6500,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
     const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2)  &&  senstype == 8);
     const bool lcshow = ((lp.showmasklcmet == 1 || lp.showmasklcmet == 2)  &&  senstype == 10);
-    const bool origshow = ((lp.showmasksoftmet == 5)  &&  senstype == 3 && lp.softmet == 0);
+    const bool origshow = ((lp.showmasksoftmet == 5)  &&  senstype == 3 && lp.softmet == 1);
 
 
     const bool previewvib = ((lp.showmaskvibmet == 4)  &&  senstype == 2);
@@ -6508,7 +6509,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
     const bool previewtm = ((lp.showmasktmmet == 4)  &&  senstype == 8);
     const bool previewlc = ((lp.showmasklcmet == 4)  &&  senstype == 10);
-    const bool previeworig = ((lp.showmasksoftmet == 6)  &&  senstype == 3 && lp.softmet == 0);
+    const bool previeworig = ((lp.showmasksoftmet == 6)  &&  senstype == 3 && lp.softmet == 1);
 
     float radius = 3.f / sk;
 
