@@ -1235,7 +1235,8 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     {
         // Recalculate the scaling coefficients, using auto WB if selected in the Preprocess WB param.
         // Auto WB gives us better demosaicing and CA auto-correct performance for strange white balance settings (such as UniWB)
-        ri->get_colorsCoeff( ref_pre_mul, scale_mul, c_black, raw.preprocessWB.mode == RAWParams::PreprocessWB::Mode::AUTO);
+        float dummy_cblk[4] = { 0.f }; // Avoid overwriting c_black, see issue #5676
+        ri->get_colorsCoeff( ref_pre_mul, scale_mul, dummy_cblk, raw.preprocessWB.mode == RAWParams::PreprocessWB::Mode::AUTO);
 
         refwb_red = ri->get_pre_mul(0) / ref_pre_mul[0];
         refwb_green = ri->get_pre_mul(1) / ref_pre_mul[1];
