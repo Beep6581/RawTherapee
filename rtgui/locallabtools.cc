@@ -498,6 +498,7 @@ LocallabColor::LocallabColor():
     softradiuscol->setAdjusterListener(this);
 
     inversConn = invers->signal_toggled().connect(sigc::mem_fun(*this, &LocallabColor::inversChanged));
+    invers->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
 
     setExpandAlignProperties(expgradcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -2268,6 +2269,7 @@ LocallabExposure::LocallabExposure():
     softradiusexp->setAdjusterListener(this);
 
     inversexConn  = inversex->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::inversexChanged));
+    inversex->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
 
     setExpandAlignProperties(expmaskexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -3294,6 +3296,7 @@ LocallabShadow::LocallabShadow():
     angSH->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
 
     inversshConn = inverssh->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::inversshChanged));
+    inverssh->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
 
     setExpandAlignProperties(expmasksh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
