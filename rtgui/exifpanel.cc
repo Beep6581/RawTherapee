@@ -303,10 +303,12 @@ void ExifPanel::refreshTags()
         const auto to_value =
             [&](Exiv2::Exifdatum &tag) -> Glib::ustring
             {
-                if (!tag.tagLabel().empty() && //tag.typeId() != Exiv2::undefined &&
-                    (tag.typeId() == Exiv2::asciiString || tag.size() < 256)) {
-                    return escapeHtmlChars(tag.print(&exif));
-                }
+                try {
+                    if (!tag.tagLabel().empty() && //tag.typeId() != Exiv2::undefined &&
+                        (tag.typeId() == Exiv2::asciiString || tag.size() < 256)) {
+                        return escapeHtmlChars(tag.print(&exif));
+                    }
+                } catch (std::exception &) {}
                 return "<i>(" + M("EXIFPANEL_VALUE_NOT_SHOWN") + ")</i>";
             };
 
