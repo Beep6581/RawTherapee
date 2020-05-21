@@ -2447,6 +2447,47 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
                     rawData[row][col] = src->data[row][col];
                 }
             }
+// poor man dehaze test
+            float minVals[3] = {100000.f, 100000.f, 100000.f};
+            if (getSensorType() == ST_FUJI_XTRANS) {
+#ifdef _OPENMP
+                #pragma omp parallel for reduction (min:minVals)
+#endif
+                for (int row = 0; row < H; row++) {
+                    for (int col = 0; col < W; col++) {
+                        if(rawData[row][col] > 0.f) {
+                            minVals[ri->XTRANSFC(row,col)] = rtengine::min(minVals[ri->XTRANSFC(row,col)], rawData[row][col] - c_black[ri->XTRANSFC(row,col)]);
+                        }
+                    }
+                }
+            } else {
+                if (!ri->zeroIsBad()) {
+#ifdef _OPENMP
+                    #pragma omp parallel for reduction (min:minVals)
+#endif
+
+                    for (int row = 0; row < H; row++) {
+                        for (int col = 0; col < W; col++) {
+                            minVals[FC(row,col)] = rtengine::min(minVals[FC(row,col)], rawData[row][col] - c_black[FC(row,col)]);
+                        }
+                    }
+                } else {
+#ifdef _OPENMP
+                    #pragma omp parallel for reduction (min:minVals)
+#endif
+
+                    for (int row = 0; row < H; row++) {
+                        for (int col = 0; col < W; col++) {
+                            if(rawData[row][col] > 0.f) {
+                                minVals[FC(row,col)] = rtengine::min(minVals[FC(row,col)], rawData[row][col] - c_black[FC(row,col)]);
+                            }
+                        }
+                    }
+                }
+            }
+            std::cout << "red : " << minVals[0] << std::endl;
+            std::cout << "green : " << minVals[1] << std::endl;
+            std::cout << "blue : " << minVals[2] << std::endl;
         }
 
 
