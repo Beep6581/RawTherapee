@@ -2439,7 +2439,7 @@ TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATRES;Amount Residual Image
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n.Used by all Graduated filter in all tools.
-TP_LOCALLAB_FEATVALUE;Feather gradient
+TP_LOCALLAB_FEATVALUE;Feather gradient (Graduated Filters)
 TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
 TP_LOCALLAB_FFTW2;ƒ - Use Fast Fourier Transform (TIF, JPG,..)
