@@ -2307,7 +2307,7 @@ TP_LOCALLAB_BLCO;Chrominance only
 TP_LOCALLAB_BLLO;Luminance only
 TP_LOCALLAB_BLLC;Luminance & Chrominance
 TP_LOCALLAB_BLMED;Median
-TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and without enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
+TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLSYM;Symmetric
 TP_LOCALLAB_BLWH;All changes forced in Black and White
@@ -2750,7 +2750,7 @@ TP_LOCALLAB_EXP_TOOLNAME;Exposure - Dynamic Range Compression
 TP_LOCALLAB_SH_TOOLNAME;Shadows Highlight & Tone Equalizer
 TP_LOCALLAB_VIB_TOOLNAME;Vibrance - Warm & Cool
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex
-TP_LOCALLAB_BLUR_TOOLNAME;Blur, Noise & Denoise
+TP_LOCALLAB_BLUR_TOOLNAME;Smooth Blur Gain & Denoise
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping
 TP_LOCALLAB_RET_TOOLNAME;Dehaze & Retinex
 TP_LOCALLAB_SHARP_TOOLNAME;Sharpening
