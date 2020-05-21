@@ -179,6 +179,9 @@ ControlSpotPanel::ControlSpotPanel():
                          *this, &ControlSpotPanel::shapeChanged));
     ctboxshape->pack_start(*shape_);
     pack_start(*ctboxshape);
+    if (showtooltip) {
+        shape_->set_tooltip_text(M("TP_LOCALLAB_SHAPE_TOOLTIP"));
+    }
 
     Gtk::HBox* const ctboxspotmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelspotmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"));
@@ -233,7 +236,7 @@ ControlSpotPanel::ControlSpotPanel():
                            sigc::mem_fun(
                                *this, &ControlSpotPanel::shapeMethodChanged));
     ctboxshapemethod->pack_start(*shapeMethod_);
-    pack_start(*ctboxshapemethod);
+//    pack_start(*ctboxshapemethod);
 
     pack_start(*locX_);
     locX_->setAdjusterListener(this);
@@ -256,6 +259,10 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*circrad_);
     circrad_->setAdjusterListener(this);
 
+    if (showtooltip) {
+        circrad_->set_tooltip_text(M("TP_LOCALLAB_CIRCRAD_TOOLTIP"));
+    }
+
     Gtk::HBox* const ctboxqualitymethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelqualitymethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUAL_METHOD") + ":"));
     ctboxqualitymethod->pack_start(*labelqualitymethod, Gtk::PACK_SHRINK, 4);
@@ -271,7 +278,7 @@ ControlSpotPanel::ControlSpotPanel():
                              sigc::mem_fun(
                                  *this, &ControlSpotPanel::qualityMethodChanged));
     ctboxqualitymethod->pack_start(*qualityMethod_);
-    pack_start(*ctboxqualitymethod);
+//    pack_start(*ctboxqualitymethod);
 
     Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
     transitFrame->set_label_align(0.025, 0.5);

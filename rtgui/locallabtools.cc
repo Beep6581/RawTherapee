@@ -3404,7 +3404,7 @@ LocallabShadow::LocallabShadow():
     fatSHBox->pack_start(*fatamountSH);
     fatSHBox->pack_start(*fatanchorSH);
     fatSHFrame->add(*fatSHBox);
-    maskSHBox->pack_start(*fatSHFrame);
+//    maskSHBox->pack_start(*fatSHFrame);
     expmasksh->add(*maskSHBox, false);
     pack_start(*expmasksh, false, false);
 }

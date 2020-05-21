@@ -2341,6 +2341,7 @@ TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
+TP_LOCALLAB_CIRCRAD_TOOLTIP;Low values may be useful for treating foliage.\nHigh values may be useful for treating skin
 TP_LOCALLAB_CLARICRES;Merge Chroma
 TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend & Soft images 
 TP_LOCALLAB_CLARILRES;Merge Luma
@@ -2412,7 +2413,7 @@ TP_LOCALLAB_EV_VIS_ALL;Show all
 TP_LOCALLAB_EXCLUF;Excluding
 TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scope to extend color.\n You can apply all settings to this RT-spot.
 TP_LOCALLAB_EXCLUTYPE;Spot method
-TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot use recursive data.\nExcluding spot reinitialize data to origin.
+TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot use recursive data.\nExcluding spot reinitialize data to origin. Can be used to perform a inverse mode
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXPCBDL_TOOLTIP;In the case of contaminated sensor (type "grease"), and when the area is important or for a series of small defects.\n\na) Put the selection spot on a pronounced default (adapting its size if necessary), use a large spot enough to allow wavelet; b) choose a wide selection area to cover most of the area affected by the defects; c) Select a transition value (low) and transition weakening (high value); d) act on levels 2, 3, 4 or 5 or lower by reducing the contrast (values below 100) and by acting on the chroma slider if necessary. e)possibly act on "scope" to reduce the extent of the action.\n\nYou can also complete with Blur levels and Gaussian blur (Smooth Blur and noise)
@@ -2475,7 +2476,7 @@ TP_LOCALLAB_HLH;Curves H
 TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INDSL;Independent (mouse + sliders)
 TP_LOCALLAB_INVERS;Inverse
-TP_LOCALLAB_INVERS_TOOLTIP;If selected (inverse) less possibilities.\n\nAlternative\nFirst Spot:\n full picture - delimiter outside preview\n Shape RT-spot area : rectangle. Transition 100\n\nSecond spot : Excluding spot
+TP_LOCALLAB_INVERS_TOOLTIP;If selected (inverse) less possibilities.\n\nAlternative\nFirst Spot:\n full image - delimiter outside preview\n Shape RT-spot area : rectangle. Transition 100\n\nSecond spot : Excluding spot
 TP_LOCALLAB_ISOGR;Coarseness (ISO)
 TP_LOCALLAB_LABEL;Local Adjustments
 TP_LOCALLAB_LABBLURM;Mask Blur
@@ -2651,7 +2652,7 @@ TP_LOCALLAB_SHADHIGH;Shadows Highlight - Tone equalizer
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Can be used instead - or in complement - of exposure module in difficult cases.\nThe use of Denoise may be necessary : lightening the shadows.\n\nCan be used as graduated filter (increase Scope)
 TP_LOCALLAB_SHAMASKCOL;Shadows mask
 TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
-TP_LOCALLAB_SHAPE_TOOLTIP;Rectangle is only in normal mode.
+TP_LOCALLAB_SHAPE_TOOLTIP;Elipse is normal mode.\nRectangle can be used in some cases, for example to work in full image in conjonction with delimiters outside preview, transition = 100
 TP_LOCALLAB_SHARAMOUNT;Amount
 TP_LOCALLAB_SHARBLUR;Blur radius
 TP_LOCALLAB_SHARDAMPING;Damping
@@ -2734,7 +2735,7 @@ TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that of the ordinate 
 TP_LOCALLAB_TRANSITVALUE;Transition value
 TP_LOCALLAB_TRANSITWEAK;Transition weakening
-TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust weakening : change smoothness process - 1 linear - 2 parabolic - 3 cubic - ^25
+TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust weakening : change smoothness process - 1 linear - 2 parabolic - 3 cubic - ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelet, Color & Light)
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
