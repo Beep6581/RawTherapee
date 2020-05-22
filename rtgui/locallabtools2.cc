@@ -2205,6 +2205,7 @@ LocallabContrast::LocallabContrast():
 
     wavshapeedg->setIdentityValue(0.);
     wavshapeedg->setResetCurve(FlatCurveType(defSpot.locedgwavcurve.at(0)), defSpot.locedgwavcurve);
+    wavshapeedg->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     LocalcurveEditorwavedg->curveListComplete();
 

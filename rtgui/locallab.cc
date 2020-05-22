@@ -41,7 +41,7 @@ LocallabToolList::LocallabToolList():
     list->set_model(listTreeModel);
     list->pack_start(toolRow.name);
     listConn = list->signal_changed().connect(sigc::mem_fun(*this, &LocallabToolList::toolRowSelected));
-
+    list->set_tooltip_text(M("TP_LOCALLAB_LIST_TOOLTIP"));
     // Append title row to list
     // Important: Title row shall always be the first one
     const auto titleRow = *(listTreeModel->append());
