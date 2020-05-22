@@ -7476,6 +7476,9 @@ void ImProcFunctions::wavcont(struct local_params& lp, float ** tmp, wavelet_dec
         float MaxN[10];
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
     
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic) collapse(2)
+#endif
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
@@ -7536,6 +7539,9 @@ void ImProcFunctions::wavcont(struct local_params& lp, float ** tmp, wavelet_dec
         float MaxN[10];
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
     
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic) collapse(2)
+#endif
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
@@ -7625,6 +7631,9 @@ void ImProcFunctions::wavcont(struct local_params& lp, float ** tmp, wavelet_dec
         float MaxN[10];
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
 
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic) collapse(2)
+#endif
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
@@ -7693,9 +7702,8 @@ void ImProcFunctions::wavcont(struct local_params& lp, float ** tmp, wavelet_dec
 
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for schedule(dynamic) collapse(2)
 #endif
-
     for (int dir = 1; dir < 4; dir++) {
         for (int level = level_bl; level < maxlvl; ++level) {
             int W_L = wdspot.level_W(level);
@@ -9064,8 +9072,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             int edge = 2;
 
             if (!Ldecomp.memoryAllocationFailed) {
+#ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic) collapse(2)
-
+#endif
                 for (int lvl = 0; lvl < levred; lvl++) {
                     for (int dir = 1; dir < 4; dir++) {
                         int Wlvl_L = Ldecomp.level_W(lvl);
@@ -9621,7 +9630,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 int edge = 2;
 
                 if (!Ldecomp.memoryAllocationFailed) {
+#ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic) collapse(2)
+#endif
 
                     for (int lvl = 0; lvl < levred; lvl++) {
                         for (int dir = 1; dir < 4; dir++) {
@@ -10191,6 +10202,9 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
         int maxlvlresid = wdspotresid->maxlevel();
 
         if (maxlvlresid > 4) {//Clarity
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic) collapse(2)
+#endif
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = 0; level < maxlvlresid; ++level) {
                     int W_L = wdspotresid->level_W(level);
@@ -10228,6 +10242,9 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
         int maxlvlresid = wdspotresida->maxlevel();
 
         if (maxlvlresid > 4) {//Clarity
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic) collapse(2)
+#endif
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = 0; level < maxlvlresid; ++level) {
                     int W_L = wdspotresida->level_W(level);
@@ -10261,6 +10278,9 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
         maxlvlresid = wdspotresidb->maxlevel();
 
         if (maxlvlresid > 4) {//Clarity
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic) collapse(2)
+#endif
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = 0; level < maxlvlresid; ++level) {
                     int W_L = wdspotresidb->level_W(level);
