@@ -74,6 +74,7 @@ ControlSpotPanel::ControlSpotPanel():
     balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")),  Gtk::manage(new RTImage("circle-white-small.png"))))),
     balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
     colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-green-small.png"))))),
+    colorscope_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORSCOPE"), 0., 100.0, 1., 15.))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
     lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), 0, 30, 1, 10))),
 
@@ -335,6 +336,7 @@ ControlSpotPanel::ControlSpotPanel():
     balan_->setAdjusterListener(this);
     balanh_->setAdjusterListener(this);
     colorde_->setAdjusterListener(this);
+    colorscope_->setAdjusterListener(this);
 
     preview_->set_active(false);
     previewConn_ = preview_->signal_clicked().connect(
@@ -345,6 +347,7 @@ ControlSpotPanel::ControlSpotPanel():
         balan_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
         balanh_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
         colorde_->set_tooltip_text(M("TP_LOCALLAB_COLORDE_TOOLTIP"));
+        colorscope_->set_tooltip_text(M("TP_LOCALLAB_COLORSCOPE_TOOLTIP"));
     }
 
     artifBox->pack_start(*struc_);
@@ -356,6 +359,7 @@ ControlSpotPanel::ControlSpotPanel():
     prevBox->pack_start(*colorde_);
     prevBox->pack_start(*preview_, Gtk::PACK_SHRINK, 4);
     artifBox->pack_start(*prevBox);
+    artifBox->pack_start(*colorscope_);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
 
@@ -768,6 +772,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     balan_->setValue((double)row[spots_.balan]);
     balanh_->setValue((double)row[spots_.balanh]);
     colorde_->setValue((double)row[spots_.colorde]);
+    colorscope_->setValue((double)row[spots_.colorscope]);
     avoid_->set_active(row[spots_.avoid]);
     blwh_->set_active(row[spots_.blwh]);
     recurs_->set_active(row[spots_.recurs]);
@@ -1278,6 +1283,14 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (a == colorscope_) {
+        row[spots_.colorscope] = colorscope_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotcolorscope, colorscope_->getTextValue());
+        }
+    }
+
     if (a == scopemask_) {
         row[spots_.scopemask] = scopemask_->getIntValue();
 
@@ -1509,6 +1522,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     balan_->block(cond);
     balanh_->block(cond);
     colorde_->block(cond);
+    colorscope_->block(cond);
     avoidConn_.block(cond);
     blwhConn_.block(cond);
     recursConn_.block(cond);
@@ -1549,6 +1563,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     balan_->set_sensitive(cond);
     balanh_->set_sensitive(cond);
     colorde_->set_sensitive(cond);
+    colorscope_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
     blwh_->set_sensitive(cond);
     recurs_->set_sensitive(cond);
@@ -2196,6 +2211,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
             r->balan = row[spots_.balan];
             r->balanh = row[spots_.balanh];
             r->colorde = row[spots_.colorde];
+            r->colorscope = row[spots_.colorscope];
             r->transitweak = row[spots_.transitweak];
             r->transitgrad = row[spots_.transitgrad];
             r->scopemask = row[spots_.scopemask];
@@ -2327,6 +2343,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.balan] = newSpot->balan;
     row[spots_.balanh] = newSpot->balanh;
     row[spots_.colorde] = newSpot->colorde;
+    row[spots_.colorscope] = newSpot->colorscope;
     row[spots_.avoid] = newSpot->avoid;
     row[spots_.blwh] = newSpot->blwh;
     row[spots_.recurs] = newSpot->recurs;
@@ -2397,6 +2414,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         balan_->setDefault(defSpot.balan);
         balanh_->setDefault(defSpot.balanh);
         colorde_->setDefault(defSpot.colorde);
+        colorscope_->setDefault(defSpot.colorscope);
         scopemask_->setDefault((double)defSpot.scopemask);
         lumask_->setDefault((double)defSpot.lumask);
     }
@@ -2437,6 +2455,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(balan);
     add(balanh);
     add(colorde);
+    add(colorscope);
     add(avoid);
     add(blwh);
     add(recurs);

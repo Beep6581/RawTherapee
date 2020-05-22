@@ -73,6 +73,7 @@ public:
         double balan;
         double balanh;
         double colorde;
+        double colorscope;
         bool avoid;
         bool blwh;
         bool recurs;
@@ -294,6 +295,7 @@ private:
         Gtk::TreeModelColumn<double> balan;
         Gtk::TreeModelColumn<double> balanh;
         Gtk::TreeModelColumn<double> colorde;
+        Gtk::TreeModelColumn<double> colorscope;
         Gtk::TreeModelColumn<bool> avoid;
         Gtk::TreeModelColumn<bool> blwh;
         Gtk::TreeModelColumn<bool> recurs;
@@ -375,6 +377,7 @@ private:
     Adjuster* const balan_;
     Adjuster* const balanh_;
     Adjuster* const colorde_;
+    Adjuster* const colorscope_;
     Adjuster* const scopemask_;
     Adjuster* const lumask_;
 

@@ -2572,6 +2572,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     balan(1.0),
     balanh(1.0),
     colorde(5.0),
+    colorscope(15.0),
     transitweak(1.0),
     transitgrad(0.0),
     avoid(false),
@@ -3696,6 +3697,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && balan == other.balan
         && balanh == other.balanh
         && colorde == other.colorde
+        && colorscope == other.colorscope
         && transitweak == other.transitweak
         && transitgrad == other.transitgrad
         && avoid == other.avoid
@@ -5169,6 +5171,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->balan, "Locallab", "Balan_" + index_str, spot.balan, keyFile);
                 saveToKeyfile(!pedited || spot_edited->balanh, "Locallab", "Balanh_" + index_str, spot.balanh, keyFile);
                 saveToKeyfile(!pedited || spot_edited->colorde, "Locallab", "Colorde_" + index_str, spot.colorde, keyFile);
+                saveToKeyfile(!pedited || spot_edited->colorscope, "Locallab", "Colorscope_" + index_str, spot.colorscope, keyFile);
                 saveToKeyfile(!pedited || spot_edited->transitweak, "Locallab", "Transitweak_" + index_str, spot.transitweak, keyFile);
                 saveToKeyfile(!pedited || spot_edited->transitgrad, "Locallab", "Transitgrad_" + index_str, spot.transitgrad, keyFile);
                 saveToKeyfile(!pedited || spot_edited->avoid, "Locallab", "Avoid_" + index_str, spot.avoid, keyFile);
@@ -6787,6 +6790,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Balan_" + index_str, pedited, spot.balan, spotEdited.balan);
                 assignFromKeyfile(keyFile, "Locallab", "Balanh_" + index_str, pedited, spot.balanh, spotEdited.balanh);
                 assignFromKeyfile(keyFile, "Locallab", "Colorde_" + index_str, pedited, spot.colorde, spotEdited.colorde);
+                assignFromKeyfile(keyFile, "Locallab", "Colorscope_" + index_str, pedited, spot.colorscope, spotEdited.colorscope);
                 assignFromKeyfile(keyFile, "Locallab", "Transitweak_" + index_str, pedited, spot.transitweak, spotEdited.transitweak);
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + index_str, pedited, spot.transitgrad, spotEdited.transitgrad);
                 assignFromKeyfile(keyFile, "Locallab", "Avoid_" + index_str, pedited, spot.avoid, spotEdited.avoid);

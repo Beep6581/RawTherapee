@@ -410,6 +410,7 @@ public:
         bool balan;
         bool balanh;
         bool colorde;
+        bool colorscope;
         bool transitweak;
         bool transitgrad;
         bool avoid;

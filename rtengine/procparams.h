@@ -983,6 +983,7 @@ struct LocallabParams {
         double balan;
         double balanh;
         double colorde;
+        double colorscope;
         double transitweak;
         double transitgrad;
         bool avoid;

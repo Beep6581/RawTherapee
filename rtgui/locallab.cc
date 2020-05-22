@@ -302,6 +302,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->balan = pp->locallab.spots.at(i).balan;
         r->balanh = pp->locallab.spots.at(i).balanh;
         r->colorde = pp->locallab.spots.at(i).colorde;
+        r->colorscope = pp->locallab.spots.at(i).colorscope;
         r->avoid = pp->locallab.spots.at(i).avoid;
         r->blwh = pp->locallab.spots.at(i).blwh;
         r->recurs = pp->locallab.spots.at(i).recurs;
@@ -468,6 +469,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balan = newSpot->balan;
             r->balanh = newSpot->balanh;
             r->colorde = newSpot->colorde;
+            r->colorscope = newSpot->colorscope;
             r->avoid = newSpot->avoid;
             r->blwh = newSpot->blwh;
             r->recurs = newSpot->recurs;
@@ -744,6 +746,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balan = newSpot->balan;
             r->balanh = newSpot->balanh;
             r->colorde = newSpot->colorde;
+            r->colorscope = newSpot->colorscope;
             r->avoid = newSpot->avoid;
             r->blwh = newSpot->blwh;
             r->recurs = newSpot->recurs;
@@ -883,6 +886,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).balan = r->balan;
                     pp->locallab.spots.at(pp->locallab.selspot).balanh = r->balanh;
                     pp->locallab.spots.at(pp->locallab.selspot).colorde = r->colorde;
+                    pp->locallab.spots.at(pp->locallab.selspot).colorscope = r->colorscope;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
                     pp->locallab.spots.at(pp->locallab.selspot).blwh = r->blwh;
                     pp->locallab.spots.at(pp->locallab.selspot).recurs = r->recurs;

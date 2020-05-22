@@ -191,7 +191,7 @@ struct local_params {
     int cir;
     float thr;
     float stru;
-    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf, senshs;
+    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf, senshs, senscolor;
     float clarityml;
     float contresid;
     float blurcbdl;
@@ -1238,6 +1238,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.residhi = locallab.spots.at(sp).residhi;
     lp.residhithr = locallab.spots.at(sp).residhithr;
     lp.blwh = locallab.spots.at(sp).blwh;
+    lp.senscolor = (int) locallab.spots.at(sp).colorscope;
+    //replace scope color exposure vibrance shadows
+    lp.sens = lp.senscolor;
+    lp.sensv = lp.senscolor;
+    lp.senshs = lp.senscolor;
+    lp.sensex = lp.senscolor;
 }
 
 static void calcTransitionrect(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)

@@ -737,7 +737,7 @@ LocallabColor::LocallabColor():
     superBox->pack_start(*gridFrame);
     superFrame->add(*superBox);
     pack_start(*superFrame);
-    pack_start(*sensi);
+//    pack_start(*sensi);
     pack_start(*structcol);
     pack_start(*blurcolde);
     pack_start(*softradiuscol);
@@ -2359,7 +2359,7 @@ LocallabExposure::LocallabExposure():
     fatFrame->add(*fatBox);
     pack_start(*fatFrame);
     pack_start(*expcomp);
-    pack_start(*sensiex);
+//    pack_start(*sensiex);
     pack_start(*structexp);
     pack_start(*blurexpde);
     ToolParamBlock* const toolBox = Gtk::manage(new ToolParamBlock());
@@ -3373,7 +3373,7 @@ LocallabShadow::LocallabShadow():
     pack_start(*shadows);
     pack_start(*s_tonalwidth);
     pack_start(*sh_radius);
-    pack_start(*sensihs);
+//    pack_start(*sensihs);
     pack_start(*blurSHde);
     Gtk::Frame* const gamFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")));
     gamFrame->set_label_align(0.025, 0.5);
@@ -4194,7 +4194,7 @@ LocallabVibrance::LocallabVibrance():
     pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
     pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
     pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
-    pack_start(*sensiv, Gtk::PACK_SHRINK, 0);
+//    pack_start(*sensiv, Gtk::PACK_SHRINK, 0);
     pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     ToolParamBlock* const gradvibBox = Gtk::manage(new ToolParamBlock());
     gradvibBox->pack_start(*strvib);
