@@ -2513,6 +2513,7 @@ TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGFRA;Source Gray Point
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
+TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows Tone Mapping with Logarithm encoding (ACES).\nUsefull for underexposed pictures, or with high dynamic range. 
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Luminance Background Mask

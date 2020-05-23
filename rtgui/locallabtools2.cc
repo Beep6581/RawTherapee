@@ -4318,6 +4318,7 @@ LocallabLog::LocallabLog():
     // Add Log encoding specific widgets to GUI
     Gtk::Frame* const logPFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")));
     logPFrame->set_label_align(0.025, 0.5);
+    logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
     ToolParamBlock* const logPBox = Gtk::manage(new ToolParamBlock());
     logPBox->pack_start(*autocompute);
     logPBox->pack_start(*blackEv);
