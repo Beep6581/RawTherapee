@@ -2513,7 +2513,13 @@ TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGFRA;Source Gray Point
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
-TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows Tone Mapping with Logarithm encoding (ACES).\nUsefull for underexposed pictures, or with high dynamic range. 
+TP_LOCALLAB_LOGENCOD_TOOLTIP;Allows Tone Mapping with Logarithm encoding (ACES).\nUsefull for underexposed pictures, or with high dynamic range.\n\nTwo steps in the process : 1) Calculate Dynamic Range 2) User adaptation
+TP_LOCALLAB_LOGFRAME_TOOLTIP;Calculate or use Exposure levels of the image early in the process:\n Black Ev, White Ev and Source Gray point.\n Take into account main exposure compensation.
+TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will bring an evaluation of dynamic range and Source Gray point (if "Automatic" Source gray enabled).\nTo be able to touch up the automatic values, press the button again
+TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of Dynamic Range - Black Ev and White Ev
+TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image, early in the process
+TP_LOCALLAB_LOGTARGGREY_TOOLTIP;You can change this value to adapt it to your taste.
+TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm, the shadows are darker, the highlights are brighter.\nValues greater than 2 change the action of the algorithm, the shadows are grayer the highlights are more washed out
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Luminance Background Mask

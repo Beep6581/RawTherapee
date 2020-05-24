@@ -4348,16 +4348,18 @@ LocallabLog::LocallabLog():
 void LocallabLog::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
-        exp->set_tooltip_text(M("TP_LOCALLAB_ENCODLOG_TOOLTIP"));
+        exp->set_tooltip_text(M("TP_LOCALLAB_LOGENCOD_TOOLTIP"));
         logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
-        autocompute->set_tooltip_text(M("TP_LOCALLAB_AUTOLOG_TOOLTIP"));
-        blackEv->set_tooltip_text(M("TP_LOCALLAB_BLACKWHEV_TOOLTIP"));
-        whiteEv->set_tooltip_text(M("TP_LOCALLAB_BLACKWHEV_TOOLTIP"));
-        Autogray->set_tooltip_text(M("TP_LOCALLAB_AUTOGREY_TOOLTIP"));
-        sourceGray->set_tooltip_text(M("TP_LOCALLAB_SRCGREY_TOOLTIP"));
-        targetGray->set_tooltip_text(M("TP_LOCALLAB_TARGGREY_TOOLTIP"));
-        detail->set_tooltip_text(M("TP_LOCALLAB_DETLOG_TOOLTIP"));
-        baselog->set_tooltip_text(M("TP_LOCALLAB_BASELOG_TOOLTIP"));
+        autocompute->set_tooltip_text(M("TP_LOCALLAB_LOGAUTO_TOOLTIP"));
+        blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
+        whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
+      //  Autogray->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGREY_TOOLTIP"));
+        Autogray->set_tooltip_text(M(""));
+        sourceGray->set_tooltip_text(M("TP_LOCALLAB_LOGSRCGREY_TOOLTIP"));
+        targetGray->set_tooltip_text(M("TP_LOCALLAB_LOGTARGGREY_TOOLTIP"));
+      //  detail->set_tooltip_text(M("TP_LOCALLAB_LOGDET_TOOLTIP"));
+        detail->set_tooltip_text(M(""));
+        baselog->set_tooltip_text(M("TP_LOCALLAB_LOGBASE_TOOLTIP"));
     } else {
         exp->set_tooltip_text(M(""));
         logPFrame->set_tooltip_text("");
