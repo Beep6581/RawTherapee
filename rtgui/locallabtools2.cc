@@ -4276,6 +4276,7 @@ LocallabLog::LocallabLog():
 
     // Log encoding specific widgets
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
+    logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
     blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
     whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.0, 32.0, 0.1, 10.0))),
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
@@ -4316,9 +4317,7 @@ LocallabLog::LocallabLog():
     anglog->setAdjusterListener(this);
 
     // Add Log encoding specific widgets to GUI
-    Gtk::Frame* const logPFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")));
     logPFrame->set_label_align(0.025, 0.5);
-    logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
     ToolParamBlock* const logPBox = Gtk::manage(new ToolParamBlock());
     logPBox->pack_start(*autocompute);
     logPBox->pack_start(*blackEv);
@@ -4344,6 +4343,33 @@ LocallabLog::LocallabLog():
     gradlogBox->pack_start(*anglog);
     gradlogFrame->add(*gradlogBox);
     pack_start(*gradlogFrame);
+}
+
+void LocallabLog::updateAdviceTooltips(const bool showTooltips)
+{
+    if (showTooltips) {
+        exp->set_tooltip_text(M("TP_LOCALLAB_ENCODLOG_TOOLTIP"));
+        logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
+        autocompute->set_tooltip_text(M("TP_LOCALLAB_AUTOLOG_TOOLTIP"));
+        blackEv->set_tooltip_text(M("TP_LOCALLAB_BLACKWHEV_TOOLTIP"));
+        whiteEv->set_tooltip_text(M("TP_LOCALLAB_BLACKWHEV_TOOLTIP"));
+        Autogray->set_tooltip_text(M("TP_LOCALLAB_AUTOGREY_TOOLTIP"));
+        sourceGray->set_tooltip_text(M("TP_LOCALLAB_SRCGREY_TOOLTIP"));
+        targetGray->set_tooltip_text(M("TP_LOCALLAB_TARGGREY_TOOLTIP"));
+        detail->set_tooltip_text(M("TP_LOCALLAB_DETLOG_TOOLTIP"));
+        baselog->set_tooltip_text(M("TP_LOCALLAB_BASELOG_TOOLTIP"));
+    } else {
+        exp->set_tooltip_text(M(""));
+        logPFrame->set_tooltip_text("");
+        autocompute->set_tooltip_text(M(""));
+        blackEv->set_tooltip_text(M(""));
+        whiteEv->set_tooltip_text(M(""));
+        Autogray->set_tooltip_text(M(""));
+        sourceGray->set_tooltip_text(M(""));
+        targetGray->set_tooltip_text(M(""));
+        detail->set_tooltip_text(M(""));
+        baselog->set_tooltip_text(M(""));
+    }
 }
 
 void LocallabLog::disableListener()
@@ -4610,11 +4636,11 @@ void LocallabLog::updateLogGUI()
         blackEv->set_sensitive(false);
         whiteEv->set_sensitive(false);
         sourceGray->set_sensitive(false);
-        targetGray->set_sensitive(false);
+     //   targetGray->set_sensitive(true);
     } else {
         blackEv->set_sensitive(true);
         whiteEv->set_sensitive(true);
         sourceGray->set_sensitive(true);
-        targetGray->set_sensitive(true);
+     //   targetGray->set_sensitive(true);
     }
 }

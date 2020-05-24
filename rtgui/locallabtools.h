@@ -1154,6 +1154,7 @@ class LocallabLog:
 {
 private:
     Gtk::ToggleButton* const autocompute;
+    Gtk::Frame* const logPFrame;
     Adjuster* const blackEv;
     Adjuster* const whiteEv;
     Gtk::CheckButton* const fullimage;
@@ -1170,6 +1171,7 @@ private:
 
 public:
     LocallabLog();
+    void updateAdviceTooltips(const bool showTooltips) override;
 
     void disableListener();
     void enableListener();
