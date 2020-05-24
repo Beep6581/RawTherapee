@@ -27,6 +27,7 @@
 #include "rtimage.h"
 #include "options.h"
 #include "eventmapper.h"
+#include "labgrid.h"
 #include "../rtengine/color.h"
 
 using namespace rtengine;
@@ -62,6 +63,7 @@ std::vector<GradientMilestone> makeWholeHueRange()
 Wavelet::Wavelet() :
     FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), true, true),
     curveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CONTEDIT"))),
+    curveEditorC(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CONTRASTEDIT"))),
     CCWcurveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CCURVE"))),
     curveEditorbl(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_BLCURVE"))),
     curveEditorRES(new CurveEditorGroup(options.lastWaveletCurvesDir)),
@@ -112,6 +114,12 @@ Wavelet::Wavelet() :
     strength(Gtk::manage(new Adjuster(M("TP_WAVELET_STRENGTH"), 0, 100, 1, 100))),
     balance(Gtk::manage(new Adjuster(M("TP_WAVELET_BALANCE"), -30, 100, 1, 0))),
     iter(Gtk::manage(new Adjuster(M("TP_WAVELET_ITER"), -3, 3, 1, 0))),
+    sigmafin(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
+    sigmaton(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
+    sigmacol(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
+    sigmadir(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.))),
+    rangeab(Gtk::manage(new Adjuster(M("TP_WAVELET_RANGEAB"), 0., 100., 0.1, 20.))),
+    protab(Gtk::manage(new Adjuster(M("TP_WAVELET_PROTAB"), 0., 100., 0.5, 0.))),
     hueskin(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HUESKIN"), -314., 314., -5., 25., 170., 120., 0, false))),
     hueskin2(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HUESKY"), -314., 314., -260., -250, -130., -140., 0, false))),
     hllev(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_HIGHLIGHT"), 0., 100., 50., 75., 100., 98., 0, false))),
@@ -124,7 +132,8 @@ Wavelet::Wavelet() :
     level2noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTWO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     level3noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTHRE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     threshold(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD"), 1, 9, 1, 5))),
-    threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 1, 9, 1, 4))),
+ //   threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 1, 9, 1, 4))),
+    threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 1, 9, 1, 5))),
     edgedetect(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECT"), 0, 100, 1, 90))),
     edgedetectthr(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR"), 0, 100, 1, 20))),
     edgedetectthr2(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR2"), -10, 100, 1, 0))),
@@ -162,6 +171,9 @@ Wavelet::Wavelet() :
     blurFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_BLURFRAME")))),
     chromaFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROMAFRAME")))),
     chroFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROFRAME")))),
+    fincFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_FINCFRAME")))),
+    dirFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_DIRFRAME")))),
+    tonFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_TONFRAME")))),
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     labmC(Gtk::manage(new Gtk::Label(M("TP_WAVELET_CTYPE") + ":"))),
     labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
@@ -207,6 +219,17 @@ Wavelet::Wavelet() :
     EvWavresblur = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURWAV");
     EvWavresblurc = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_BLURCWAV");
     EvWavedgeffect = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_EDGEFFECT");
+    EvWavsigmafin = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMAFIN");
+    EvWavsigmaton = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMATON");
+    EvWavsigmacol = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMACOL");
+    EvWavsigmadir = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_SIGMADIR");
+    EvWavLabGridValue = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVLABGRID_VALUE");
+    EvWavrangeab = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_RANGEAB");
+    EvWavprotab = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_PROTAB");
+    EvWavlevelshc = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_LEVELSHC");
+
+    labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
+
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
     expcontrast->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expcontrast));
@@ -402,11 +425,25 @@ Wavelet::Wavelet() :
     threshold2->setAdjusterListener(this);
     threshold2->set_tooltip_text(M("TP_WAVELET_THRESHOLD2_TOOLTIP"));
 
+    const WaveletParams default_params;
+
+    curveEditorC->setCurveListener(this);
+    curveEditorC->set_tooltip_text(M("TP_WAVELET_FINCOAR_TOOLTIP"));
+
+
+   opacityShapeSH = static_cast<FlatCurveEditor*>(curveEditorC->addCurve(CT_Flat, "", nullptr, false, false));
+    opacityShapeSH->setIdentityValue(0.);
+    opacityShapeSH->setResetCurve(FlatCurveType(default_params.opacityCurveSH.at(0)), default_params.opacityCurveSH);
+
+    curveEditorC->curveListComplete();
+    curveEditorC->show();
+
     contrastSHVBox->pack_start(*HSmethod);
     contrastSHVBox->pack_start(*hllev);
-    contrastSHVBox->pack_start(*threshold);
+ //   contrastSHVBox->pack_start(*threshold);
     contrastSHVBox->pack_start(*bllev);
-    contrastSHVBox->pack_start(*threshold2);
+//    contrastSHVBox->pack_start(*threshold2);
+    contrastSHVBox->pack_start(*curveEditorC);
     Gtk::Frame* const contrastSHFrame = Gtk::manage(new Gtk::Frame(M("TP_WAVELET_APPLYTO")));
     contrastSHFrame->add(*contrastSHVBox);
     levBox->pack_start(*contrastSHFrame);
@@ -450,8 +487,10 @@ Wavelet::Wavelet() :
     chBox->pack_start(*satlev);
 
     chro->set_tooltip_text(M("TP_WAVELET_CHR_TOOLTIP"));
-    chBox->pack_start(*chro);
     chro->setAdjusterListener(this);
+    sigmacol->setAdjusterListener(this);
+    chBox->pack_start(*chro);
+    chBox->pack_start(*sigmacol);
 
     Gtk::HBox* const buttonchBox = Gtk::manage(new Gtk::HBox(true, 10));
     neutralchPressedConn = neutralchButton->signal_pressed().connect(sigc::mem_fun(*this, &Wavelet::neutralchPressed));
@@ -483,17 +522,35 @@ Wavelet::Wavelet() :
 
 // Toning
     ToolParamBlock* const tonBox = Gtk::manage(new ToolParamBlock());
+    sigmaton->setAdjusterListener(this);
+    rangeab->setAdjusterListener(this);
+    protab->setAdjusterListener(this);
 
     opaCurveEditorG->setCurveListener(this);
 
-    const WaveletParams default_params;
+//    const WaveletParams default_params;
 
     opacityShapeRG = static_cast<FlatCurveEditor*>(opaCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeRG->setIdentityValue(0.);
     opacityShapeRG->setResetCurve(FlatCurveType(default_params.opacityCurveRG.at(0)), default_params.opacityCurveRG);
+    //from green to magenta
+    std::vector<GradientMilestone> mileston = {
+        GradientMilestone(0., 0., 1., 0.),
+        GradientMilestone(1., 1., 0., 1.)
+    };
+    opacityShapeRG->setLeftBarBgGradient(mileston);
 
     opaCurveEditorG->curveListComplete();
     opaCurveEditorG->show();
+    tonBox->pack_start(*sigmaton);
+    
+    tonFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const ton2Box = Gtk::manage(new ToolParamBlock());
+    ton2Box->pack_start(*labgrid, Gtk::PACK_EXPAND_WIDGET, 2);
+    ton2Box->pack_start(*rangeab);
+    ton2Box->pack_start(*protab);
+    tonFrame->add(*ton2Box);
+    tonBox->pack_start(*tonFrame);
 
     tonBox->pack_start(*opaCurveEditorG, Gtk::PACK_SHRINK, 2);
 
@@ -502,6 +559,12 @@ Wavelet::Wavelet() :
     opacityShapeBY = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeBY->setIdentityValue(0.);
     opacityShapeBY->setResetCurve(FlatCurveType(default_params.opacityCurveBY.at(0)), default_params.opacityCurveBY);
+    //from blue to yellow
+    mileston = {
+        GradientMilestone(0., 0., 0., 1.),
+        GradientMilestone(1., 1., 1., 0.)
+    };
+    opacityShapeBY->setLeftBarBgGradient(mileston);
 
     opacityCurveEditorG->curveListComplete();
     opacityCurveEditorG->show();
@@ -545,6 +608,7 @@ Wavelet::Wavelet() :
     chroBox->pack_start(*chromco);
     chroFrame->add(*chroBox);
     noiseBox->pack_start(*chroFrame);
+    noiseBox->set_tooltip_text(M("TP_WAVELET_NOISE_TOOLTIP"));
 
 
 //Clarity
@@ -571,13 +635,13 @@ Wavelet::Wavelet() :
 
 // Edge Sharpness
     ToolParamBlock* const edgBox = Gtk::manage(new ToolParamBlock());
-    edgeffect->setAdjusterListener(this);
-    edgBox->pack_start(*edgeffect);
-    edgeffect->set_tooltip_markup(M("TP_WAVELET_EDEFFECT_TOOLTIP"));
 
     edgval->setAdjusterListener(this);
     edgBox->pack_start(*edgval);
 
+    edgeffect->setAdjusterListener(this);
+    edgBox->pack_start(*edgeffect);
+    edgeffect->set_tooltip_markup(M("TP_WAVELET_EDEFFECT_TOOLTIP"));
 
     edgrad->setAdjusterListener(this);
     edgBox->pack_start(*edgrad);
@@ -694,7 +758,7 @@ Wavelet::Wavelet() :
 
     blshape->setIdentityValue(0.);
     blshape->setResetCurve(FlatCurveType(default_params.blcurve.at(0)), default_params.blcurve);
-    blshape->setTooltip(M("TP_WAVELET_CURVEEDITOR_CC_TOOLTIP"));
+    blshape->setTooltip(M("TP_WAVELET_CURVEEDITOR_BL_TOOLTIP"));
 
     curveEditorbl->curveListComplete();
     curveEditorbl->show();
@@ -800,6 +864,8 @@ Wavelet::Wavelet() :
     blurBox->pack_start(*resblur);
     blurBox->pack_start(*resblurc);
     blurFrame->add(*blurBox);
+    resblur->set_tooltip_text(M("TP_WAVELET_RESBLUR_TOOLTIP"));
+    resblurc->set_tooltip_text(M("TP_WAVELET_RESBLUR_TOOLTIP"));
 
     chromaFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const chromaBox = Gtk::manage(new ToolParamBlock());
@@ -975,8 +1041,9 @@ Wavelet::Wavelet() :
 
     iter->setAdjusterListener(this);
     iter->set_tooltip_text(M("TP_WAVELET_ITER_TOOLTIP"));
+    sigmadir->setAdjusterListener(this);
 
-    Gtk::HSeparator* const separatorbalend = Gtk::manage(new  Gtk::HSeparator());
+//    Gtk::HSeparator* const separatorbalend = Gtk::manage(new  Gtk::HSeparator());
 
     opacityCurveEditorWL->setCurveListener(this);
 
@@ -984,6 +1051,8 @@ Wavelet::Wavelet() :
     opacityShapeWL->setIdentityValue(0.);
     opacityShapeWL->setResetCurve(FlatCurveType(default_params.opacityCurveWL.at(0)), default_params.opacityCurveWL);
     opacityShapeWL->setTooltip(M("TP_WAVELET_OPACITYWL_TOOLTIP"));
+    opacityShapeWL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+    sigmafin->setAdjusterListener(this);
 
     // This will add the reset button at the end of the curveType buttons
     opacityCurveEditorWL->curveListComplete();
@@ -1002,19 +1071,26 @@ Wavelet::Wavelet() :
     tmr->set_tooltip_text(M("TP_WAVELET_BALCHRO_TOOLTIP"));
     tmrConn = tmr->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::tmrToggled));
 
+    fincFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const fincBox = Gtk::manage(new ToolParamBlock());
+    fincBox->pack_start(*opacityCurveEditorWL, Gtk::PACK_SHRINK, 2);
+    fincBox->pack_start(*sigmafin);
+    fincFrame->add(*fincBox);
+
+    dirFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const dirBox = Gtk::manage(new ToolParamBlock());
+    dirBox->pack_start(*ctboxBA);
+    dirBox->pack_start(*balance);
+    dirBox->pack_start(*opacityCurveEditorW, Gtk::PACK_SHRINK, 2);
+    dirBox->pack_start(*iter);
+    dirBox->pack_start(*sigmadir);
+    dirBox->pack_start(*tmr);
+    dirFrame->add(*dirBox);
+
     ToolParamBlock* const finalBox = Gtk::manage(new ToolParamBlock());
+    finalBox->pack_start(*dirFrame);
 
-    finalBox->pack_start(*ctboxBA);
-    finalBox->pack_start(*balance);
-
-    finalBox->pack_start(*opacityCurveEditorW, Gtk::PACK_SHRINK, 2);
-
-    finalBox->pack_start(*iter);
-
-    finalBox->pack_start(*tmr);
-    finalBox->pack_start(*separatorbalend, Gtk::PACK_SHRINK, 2);
-    finalBox->pack_start(*opacityCurveEditorWL, Gtk::PACK_SHRINK, 2);
-
+    finalBox->pack_start(*fincFrame);
     finalBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
     finalBox->pack_start(*softradend);
 
@@ -1073,6 +1149,7 @@ Wavelet::~Wavelet()
     idle_register.destroy();
 
     delete opaCurveEditorG;
+    delete curveEditorC;
     delete opacityCurveEditorG;
     delete curveEditorbl;
     delete CCWcurveEditorG;
@@ -1119,6 +1196,13 @@ void Wavelet::neutral_pressed()
         listener->panelChanged(EvWavNeutral, M("GENERAL_RESET"));
     }
 }
+
+void Wavelet::setListener(ToolPanelListener *tpl)
+{
+    ToolPanel::setListener(tpl);
+    labgrid->setListener(tpl);
+}
+
 
 void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -1295,6 +1379,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     ccshape->setCurve(pp->wavelet.ccwcurve);
     blshape->setCurve(pp->wavelet.blcurve);
     opacityShapeRG->setCurve(pp->wavelet.opacityCurveRG);
+    opacityShapeSH->setCurve(pp->wavelet.opacityCurveSH);
     opacityShapeBY->setCurve(pp->wavelet.opacityCurveBY);
     opacityShape->setCurve(pp->wavelet.opacityCurveW);
     opacityShapeWL->setCurve(pp->wavelet.opacityCurveWL);
@@ -1406,6 +1491,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     mergeC->setValue(pp->wavelet.mergeC);
     softrad->setValue(pp->wavelet.softrad);
     softradend->setValue(pp->wavelet.softradend);
+    labgrid->setParams(pp->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX, false);
 
     ballum->setValue(pp->wavelet.ballum);
     balchrom->setValue(pp->wavelet.balchrom);
@@ -1418,6 +1504,12 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     strength->setValue(pp->wavelet.strength);
     balance->setValue(pp->wavelet.balance);
     iter->setValue(pp->wavelet.iter);
+    sigmafin->setValue(pp->wavelet.sigmafin);
+    sigmaton->setValue(pp->wavelet.sigmaton);
+    sigmacol->setValue(pp->wavelet.sigmacol);
+    sigmadir->setValue(pp->wavelet.sigmadir);
+    rangeab->setValue(pp->wavelet.rangeab);
+    protab->setValue(pp->wavelet.protab);
 
     for (int i = 0; i < 9; i++) {
         correction[i]->setValue(pp->wavelet.c[i]);
@@ -1493,6 +1585,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->wavelet.ushamethod) {
             ushamethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
+        labgrid->setEdited(pedited->wavelet.labgridALow || pedited->wavelet.labgridBLow || pedited->wavelet.labgridAHigh || pedited->wavelet.labgridBHigh);
 
         set_inconsistent(multiImage && !pedited->wavelet.enabled);
         ccshape->setUnChanged(!pedited->wavelet.ccwcurve);
@@ -1507,6 +1600,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         exptoning->set_inconsistent(!pedited->wavelet.exptoning);
         expnoise->set_inconsistent(!pedited->wavelet.expnoise);
         opacityShapeRG->setCurve(pp->wavelet.opacityCurveRG);
+        opacityShapeSH->setCurve(pp->wavelet.opacityCurveSH);
         opacityShapeBY->setCurve(pp->wavelet.opacityCurveBY);
         opacityShape->setCurve(pp->wavelet.opacityCurveW);
         opacityShapeWL->setCurve(pp->wavelet.opacityCurveWL);
@@ -1535,6 +1629,12 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         thres->setEditedState(pedited->wavelet.thres ? Edited : UnEdited);
         balance->setEditedState(pedited->wavelet.balance ? Edited : UnEdited);
         iter->setEditedState(pedited->wavelet.iter ? Edited : UnEdited);
+        sigmafin->setEditedState(pedited->wavelet.sigmafin ? Edited : UnEdited);
+        sigmaton->setEditedState(pedited->wavelet.sigmaton ? Edited : UnEdited);
+        sigmacol->setEditedState(pedited->wavelet.sigmacol ? Edited : UnEdited);
+        sigmadir->setEditedState(pedited->wavelet.sigmadir ? Edited : UnEdited);
+        rangeab->setEditedState(pedited->wavelet.rangeab ? Edited : UnEdited);
+        protab->setEditedState(pedited->wavelet.protab ? Edited : UnEdited);
         threshold->setEditedState(pedited->wavelet.threshold ? Edited : UnEdited);
         threshold2->setEditedState(pedited->wavelet.threshold2 ? Edited : UnEdited);
         edgedetect->setEditedState(pedited->wavelet.edgedetect ? Edited : UnEdited);
@@ -1693,6 +1793,7 @@ void Wavelet::setEditProvider(EditDataProvider *provider)
     ccshape->setEditProvider(provider);
     blshape->setEditProvider(provider);
     opacityShapeRG->setEditProvider(provider);
+    opacityShapeSH->setEditProvider(provider);
     opacityShapeBY->setEditProvider(provider);
     opacityShape->setEditProvider(provider);
     opacityShapeWL->setEditProvider(provider);
@@ -1770,6 +1871,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.ccwcurve       = ccshape->getCurve();
     pp->wavelet.blcurve       = blshape->getCurve();
     pp->wavelet.opacityCurveRG = opacityShapeRG->getCurve();
+    pp->wavelet.opacityCurveSH = opacityShapeSH->getCurve();
     pp->wavelet.opacityCurveBY = opacityShapeBY->getCurve();
     pp->wavelet.opacityCurveW  = opacityShape->getCurve();
     pp->wavelet.opacityCurveWL = opacityShapeWL->getCurve();
@@ -1783,6 +1885,11 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.ballum         = ballum->getValue();
     pp->wavelet.chromfi        = chromfi->getValue();
     pp->wavelet.chromco        = chromco->getValue();
+    labgrid->getParams(pp->wavelet.labgridALow, pp->wavelet.labgridBLow, pp->wavelet.labgridAHigh, pp->wavelet.labgridBHigh);
+    pp->wavelet.labgridALow *= WaveletParams::LABGRID_CORR_MAX;
+    pp->wavelet.labgridAHigh *= WaveletParams::LABGRID_CORR_MAX;
+    pp->wavelet.labgridBLow *= WaveletParams::LABGRID_CORR_MAX;
+    pp->wavelet.labgridBHigh *= WaveletParams::LABGRID_CORR_MAX;
 
     pp->wavelet.greenlow       = greenlow->getValue();
     pp->wavelet.bluelow        = bluelow->getValue();
@@ -1806,6 +1913,12 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
 
     pp->wavelet.iter = (int) iter->getValue();
     pp->wavelet.wavclCurve = clshape->getCurve();
+    pp->wavelet.sigmafin = sigmafin->getValue();
+    pp->wavelet.sigmaton = sigmaton->getValue();
+    pp->wavelet.sigmacol = sigmacol->getValue();
+    pp->wavelet.sigmadir = sigmadir->getValue();
+    pp->wavelet.rangeab = rangeab->getValue();
+    pp->wavelet.protab = protab->getValue();
 
     for (int i = 0; i < 9; i++) {
         pp->wavelet.c[i] = (int) correction[i]->getValue();
@@ -1887,6 +2000,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.level2noise     = level2noise->getEditedState();
         pedited->wavelet.level3noise     = level3noise->getEditedState();
         pedited->wavelet.opacityCurveRG  = !opacityShapeRG->isUnChanged();
+        pedited->wavelet.opacityCurveSH  = !opacityShapeSH->isUnChanged();
         pedited->wavelet.opacityCurveBY  = !opacityShapeBY->isUnChanged();
         pedited->wavelet.opacityCurveW   = !opacityShape->isUnChanged();
         pedited->wavelet.opacityCurveWL  = !opacityShapeWL->isUnChanged();
@@ -1912,6 +2026,12 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.softradend      = softradend->getEditedState();
         pedited->wavelet.balance         = balance->getEditedState();
         pedited->wavelet.iter            = iter->getEditedState();
+        pedited->wavelet.sigmafin        = sigmafin->getEditedState();
+        pedited->wavelet.sigmaton        = sigmaton->getEditedState();
+        pedited->wavelet.sigmacol        = sigmacol->getEditedState();
+        pedited->wavelet.sigmadir        = sigmadir->getEditedState();
+        pedited->wavelet.rangeab         = rangeab->getEditedState();
+        pedited->wavelet.protab          = protab->getEditedState();
         pedited->wavelet.wavclCurve      = !clshape->isUnChanged();
         pedited->wavelet.expcontrast     = !expcontrast->get_inconsistent();
         pedited->wavelet.expchroma       = !expchroma->get_inconsistent();
@@ -1922,6 +2042,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.exptoning       = !exptoning->get_inconsistent();
         pedited->wavelet.expnoise        = !expnoise->get_inconsistent();
         pedited->wavelet.expclari        = !expclari->get_inconsistent();
+        pedited->wavelet.labgridALow = pedited->wavelet.labgridBLow = pedited->wavelet.labgridAHigh = pedited->wavelet.labgridBHigh = labgrid->getEdited();
 
         for (int i = 0; i < 9; i++) {
             pedited->wavelet.c[i]        = correction[i]->getEditedState();
@@ -2062,6 +2183,8 @@ void Wavelet::curveChanged(CurveEditor* ce)
             listener->panelChanged(EvWavblshape, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == opacityShapeRG) {
             listener->panelChanged(EvWavColor, M("HISTORY_CUSTOMCURVE"));
+        } else if (ce == opacityShapeSH) {
+            listener->panelChanged(EvWavlevelshc, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == opacityShapeBY) {
             listener->panelChanged(EvWavOpac, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == opacityShape) {
@@ -2092,7 +2215,13 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     strength->setDefault(defParams->wavelet.strength);
     balance->setDefault(defParams->wavelet.balance);
     iter->setDefault(defParams->wavelet.iter);
+    sigmafin->setDefault(defParams->wavelet.sigmafin);
+    sigmaton->setDefault(defParams->wavelet.sigmaton);
+    sigmacol->setDefault(defParams->wavelet.sigmacol);
+    sigmadir->setDefault(defParams->wavelet.sigmadir);
     sigma->setDefault(defParams->wavelet.sigma);
+    rangeab->setDefault(defParams->wavelet.rangeab);
+    protab->setDefault(defParams->wavelet.protab);
     offset->setDefault(defParams->wavelet.offset);
     lowthr->setDefault(defParams->wavelet.lowthr);
     rescon->setDefault(defParams->wavelet.rescon);
@@ -2141,6 +2270,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     balchrom->setDefault(defParams->wavelet.balchrom);
     chromfi->setDefault(defParams->wavelet.chromfi);
     chromco->setDefault(defParams->wavelet.chromco);
+    labgrid->setDefault(defParams->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, defParams->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, defParams->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, defParams->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX);
 
     greenlow->setDefault(defParams->wavelet.greenlow);
     bluelow->setDefault(defParams->wavelet.bluelow);
@@ -2168,6 +2298,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         balchrom->setDefaultEditedState(pedited->wavelet.balchrom ? Edited : UnEdited);
         chromfi->setDefaultEditedState(pedited->wavelet.chromfi ? Edited : UnEdited);
         chromco->setDefaultEditedState(pedited->wavelet.chromco ? Edited : UnEdited);
+        labgrid->setEdited((pedited->wavelet.labgridALow || pedited->wavelet.labgridBLow || pedited->wavelet.labgridAHigh || pedited->wavelet.labgridBHigh) ? Edited : UnEdited);
 
         sigma->setDefault(defParams->wavelet.sigma);
         offset->setDefault(defParams->wavelet.offset);
@@ -2214,6 +2345,12 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         strength->setDefaultEditedState(pedited->wavelet.strength ? Edited : UnEdited);
         balance->setDefaultEditedState(pedited->wavelet.balance ? Edited : UnEdited);
         iter->setDefaultEditedState(pedited->wavelet.iter ? Edited : UnEdited);
+        sigmafin->setDefaultEditedState(pedited->wavelet.sigmafin ? Edited : UnEdited);
+        sigmaton->setDefaultEditedState(pedited->wavelet.sigmaton ? Edited : UnEdited);
+        sigmacol->setDefaultEditedState(pedited->wavelet.sigmacol ? Edited : UnEdited);
+        sigmadir->setDefaultEditedState(pedited->wavelet.sigmadir ? Edited : UnEdited);
+        rangeab->setDefaultEditedState(pedited->wavelet.rangeab ? Edited : UnEdited);
+        protab->setDefaultEditedState(pedited->wavelet.protab ? Edited : UnEdited);
         level0noise->setDefaultEditedState(pedited->wavelet.level0noise ? Edited : UnEdited);
         level1noise->setDefaultEditedState(pedited->wavelet.level1noise ? Edited : UnEdited);
         level2noise->setDefaultEditedState(pedited->wavelet.level2noise ? Edited : UnEdited);
@@ -2276,6 +2413,13 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         strength->setDefaultEditedState(Irrelevant);
         balance->setDefaultEditedState(Irrelevant);
         iter->setDefaultEditedState(Irrelevant);
+        sigmafin->setDefaultEditedState(Irrelevant);
+        sigmaton->setDefaultEditedState(Irrelevant);
+        sigmacol->setDefaultEditedState(Irrelevant);
+        sigmadir->setDefaultEditedState(Irrelevant);
+        rangeab->setDefaultEditedState(Irrelevant);
+        protab->setDefaultEditedState(Irrelevant);
+        labgrid->setEdited(Edited);
 
         for (int i = 0; i < 9; i++) {
             correction[i]->setDefaultEditedState(Irrelevant);
@@ -2348,11 +2492,13 @@ void Wavelet::HSmethodUpdateUI()
             bllev->hide();
             threshold->hide();
             threshold2->hide();
+            curveEditorC->hide();
         } else { //with
             hllev->show();
             bllev->show();
             threshold->show();
             threshold2->show();
+            curveEditorC->show();
         }
     }
 }
@@ -2371,6 +2517,7 @@ void Wavelet::CHmethodUpdateUI()
     if (!batchMode) {
         if (CHmethod->get_active_row_number() == 0) {
             CHSLmethod->show();
+        //    sigmacol->show();
             pastlev->hide();
             satlev->hide();
             chroma->hide();
@@ -2390,6 +2537,7 @@ void Wavelet::CHmethodUpdateUI()
             }
         } else if (CHmethod->get_active_row_number() == 1) {
             CHSLmethod->show();
+        //    sigmacol->show();
             pastlev->show();
             satlev->show();
             chroma->show();
@@ -2409,6 +2557,7 @@ void Wavelet::CHmethodUpdateUI()
             }
         } else {
             chro->show();
+         //   sigmacol->hide();
             pastlev->hide();
             satlev->hide();
             chroma->hide();
@@ -2510,15 +2659,18 @@ void Wavelet::BAmethodUpdateUI()
             balance->hide();
             opacityCurveEditorW->hide();
             iter->hide();
+            tmr->hide();
 
         } else if (BAmethod->get_active_row_number() == 1) { //sli
             opacityCurveEditorW->hide();
             balance->show();
             iter->show();
+            tmr->show();
         } else if (BAmethod->get_active_row_number() == 2) { //CU
             opacityCurveEditorW->show();
             balance->hide();
             iter->show();
+            tmr->show();
         }
     }
 }
@@ -2757,6 +2909,7 @@ void Wavelet::setBatchMode(bool batchMode)
     Dirmethod->append(M("GENERAL_UNCHANGED"));
     CCWcurveEditorG->setBatchMode(batchMode);
     opaCurveEditorG->setBatchMode(batchMode);
+    curveEditorC->setBatchMode(batchMode);
     opacityCurveEditorG->setBatchMode(batchMode);
     opacityCurveEditorW->setBatchMode(batchMode);
     opacityCurveEditorWL->setBatchMode(batchMode);
@@ -2808,6 +2961,12 @@ void Wavelet::setBatchMode(bool batchMode)
     strength->showEditedCB();
     balance->showEditedCB();
     iter->showEditedCB();
+    sigmafin->showEditedCB();
+    sigmaton->showEditedCB();
+    sigmacol->showEditedCB();
+    sigmadir->showEditedCB();
+    rangeab->showEditedCB();
+    protab->showEditedCB();
     level0noise->showEditedCB();
     level1noise->showEditedCB();
     level2noise->showEditedCB();
@@ -2957,6 +3116,18 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavbalance, balance->getTextValue());
         } else if (a == iter) {
             listener->panelChanged(EvWaviter, iter->getTextValue());
+        } else if (a == sigmafin) {
+            listener->panelChanged(EvWavsigmafin, sigmafin->getTextValue());
+        } else if (a == sigmaton) {
+            listener->panelChanged(EvWavsigmaton, sigmaton->getTextValue());
+        } else if (a == rangeab) {
+            listener->panelChanged(EvWavrangeab, rangeab->getTextValue());
+        } else if (a == protab) {
+            listener->panelChanged(EvWavprotab, protab->getTextValue());
+        } else if (a == sigmacol) {
+            listener->panelChanged(EvWavsigmacol, sigmacol->getTextValue());
+        } else if (a == sigmadir) {
+            listener->panelChanged(EvWavsigmadir, sigmadir->getTextValue());
         } else if (a == greenhigh) {
             listener->panelChanged(EvWavgreenhigh, greenhigh->getTextValue());
         } else if (a == bluehigh) {

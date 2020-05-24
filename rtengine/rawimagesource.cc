@@ -1161,25 +1161,8 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     double cam_b = imatrices.rgb_cam[2][0] * camwb_red + imatrices.rgb_cam[2][1] * camwb_green + imatrices.rgb_cam[2][2] * camwb_blue;
     camera_wb = ColorTemp (cam_r, cam_g, cam_b, 1.); // as shot WB
 
-    ColorTemp ReferenceWB;
-    double ref_r, ref_g, ref_b;
-    {
-        // ...then we re-get the constants but now with auto which gives us better demosaicing and CA auto-correct
-        // performance for strange white balance settings (such as UniWB)
-        ri->get_colorsCoeff(ref_pre_mul, scale_mul, c_black, true);
-        refwb_red = ri->get_pre_mul(0) / ref_pre_mul[0];
-        refwb_green = ri->get_pre_mul(1) / ref_pre_mul[1];
-        refwb_blue = ri->get_pre_mul(2) / ref_pre_mul[2];
-        initialGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
-        ref_r = imatrices.rgb_cam[0][0] * refwb_red + imatrices.rgb_cam[0][1] * refwb_green + imatrices.rgb_cam[0][2] * refwb_blue;
-        ref_g = imatrices.rgb_cam[1][0] * refwb_red + imatrices.rgb_cam[1][1] * refwb_green + imatrices.rgb_cam[1][2] * refwb_blue;
-        ref_b = imatrices.rgb_cam[2][0] * refwb_red + imatrices.rgb_cam[2][1] * refwb_green + imatrices.rgb_cam[2][2] * refwb_blue;
-        ReferenceWB = ColorTemp (ref_r, ref_g, ref_b, 1.);
-    }
-
     if (settings->verbose) {
         printf("Raw As Shot White balance: temp %f, tint %f\n", camera_wb.getTemp(), camera_wb.getGreen());
-        printf("Raw Reference (auto) white balance: temp %f, tint %f, multipliers [%f %f %f | %f %f %f]\n", ReferenceWB.getTemp(), ReferenceWB.getGreen(), ref_r, ref_g, ref_b, refwb_red, refwb_blue, refwb_green);
     }
 
     /*{
@@ -1248,6 +1231,28 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 //    BENCHFUN
     MyTime t1, t2;
     t1.set();
+
+    {
+        // Recalculate the scaling coefficients, using auto WB if selected in the Preprocess WB param.
+        // Auto WB gives us better demosaicing and CA auto-correct performance for strange white balance settings (such as UniWB)
+        float dummy_cblk[4] = { 0.f }; // Avoid overwriting c_black, see issue #5676
+        ri->get_colorsCoeff( ref_pre_mul, scale_mul, dummy_cblk, raw.preprocessWB.mode == RAWParams::PreprocessWB::Mode::AUTO);
+
+        refwb_red = ri->get_pre_mul(0) / ref_pre_mul[0];
+        refwb_green = ri->get_pre_mul(1) / ref_pre_mul[1];
+        refwb_blue = ri->get_pre_mul(2) / ref_pre_mul[2];
+        initialGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+
+        const double ref_r = imatrices.rgb_cam[0][0] * refwb_red + imatrices.rgb_cam[0][1] * refwb_green + imatrices.rgb_cam[0][2] * refwb_blue;
+        const double ref_g = imatrices.rgb_cam[1][0] * refwb_red + imatrices.rgb_cam[1][1] * refwb_green + imatrices.rgb_cam[1][2] * refwb_blue;
+        const double ref_b = imatrices.rgb_cam[2][0] * refwb_red + imatrices.rgb_cam[2][1] * refwb_green + imatrices.rgb_cam[2][2] * refwb_blue;
+        const ColorTemp ReferenceWB = ColorTemp (ref_r, ref_g, ref_b, 1.);
+
+        if (settings->verbose) {
+            printf("Raw Reference white balance: temp %f, tint %f, multipliers [%f %f %f | %f %f %f]\n", ReferenceWB.getTemp(), ReferenceWB.getGreen(), ref_r, ref_g, ref_b, refwb_red, refwb_blue, refwb_green);
+        }
+    }
+
 
     Glib::ustring newDF = raw.dark_frame;
     RawImage *rid = nullptr;

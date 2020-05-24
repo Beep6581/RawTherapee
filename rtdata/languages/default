@@ -567,10 +567,10 @@ HISTORY_MSG_314;W - Gamut - Reduce artifacts
 HISTORY_MSG_315;W - Residual - Contrast
 HISTORY_MSG_316;W - Gamut - Skin tar/prot
 HISTORY_MSG_317;W - Gamut - Skin hue
-HISTORY_MSG_318;W - Contrast - Highlight levels
-HISTORY_MSG_319;W - Contrast - Highlight range
-HISTORY_MSG_320;W - Contrast - Shadow range
-HISTORY_MSG_321;W - Contrast - Shadow levels
+HISTORY_MSG_318;W - Contrast - Fine levels
+HISTORY_MSG_319;W - Contrast - Fine range
+HISTORY_MSG_320;W - Contrast - Coarse range
+HISTORY_MSG_321;W - Contrast - Coarse levels
 HISTORY_MSG_322;W - Gamut - Avoid color shift
 HISTORY_MSG_323;W - ES - Local contrast
 HISTORY_MSG_324;W - Chroma - Pastel
@@ -779,6 +779,7 @@ HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+HISTORY_MSG_PREPROCWB_MODE;Preprocess WB Mode
 HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
 HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
@@ -817,6 +818,12 @@ HISTORY_MSG_WAVBL;Blur levels
 HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_EDGEFFECT;Edge Damper
+HISTORY_MSG_SIGMAFIN;Final contrast Damper
+HISTORY_MSG_SIGMATON;Toning Damper
+HISTORY_MSG_SIGMACOL;Chroma Damper
+HISTORY_MSG_SIGMADIR;Dir Damper
+HISTORY_MSG_RANGEAB;Range ab
+HISTORY_MSG_PROTAB;Protection
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1049,6 +1056,7 @@ PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
 PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+PARTIALPASTE_PREPROCWB;Preprocess White Balance
 PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
 PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
@@ -1872,6 +1880,10 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 TP_PREPROCESS_NO_FOUND;None found
 TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+TP_PREPROCWB_LABEL;Preprocess White Balance
+TP_PREPROCWB_MODE;Mode
+TP_PREPROCWB_MODE_AUTO;Auto
+TP_PREPROCWB_MODE_CAMERA;Camera
 TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 TP_RAWCACORR_AUTO;Auto-correction
@@ -2188,10 +2200,12 @@ TP_WAVELET_CONTEDIT;'After' contrast curve
 TP_WAVELET_CONTFRAME;Contrast - Compression
 TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Contrast
+TP_WAVELET_CONTRASTEDIT;Finer - Coarser levels
 TP_WAVELET_CONTRAST_MINUS;Contrast -
 TP_WAVELET_CONTRAST_PLUS;Contrast +
 TP_WAVELET_CONTRA_TOOLTIP;Changes contrast of the residual image.
 TP_WAVELET_CTYPE;Chrominance control
+TP_WAVELET_CURVEEDITOR_BL_TOOLTIP;Disabled if zoom > about 300%
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifies local contrast as a function of the original local contrast (abscissa).\nLow abscissa values represent small local contrast (real values about 10..20).\n50% abscissa represents average local contrast (real value about 100..300).\n66% abscissa represents standard deviation of local contrast (real value about 300..800).\n100% abscissa represents maximum local contrast (real value about 3000..8000).
 TP_WAVELET_CURVEEDITOR_CH;Contrast levels=f(Hue)
 TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modifies each level's contrast as a function of hue.\nTake care not to overwrite changes made with the Gamut sub-tool's hue controls.\nThe curve will only have an effect when wavelet contrast level sliders are non-zero.
@@ -2207,6 +2221,7 @@ TP_WAVELET_DAUB6;D6 - standard plus
 TP_WAVELET_DAUB10;D10 - medium
 TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the firsts levels. However the quality is not strictly related to this coefficient and can vary with images and uses.
+TP_WAVELET_DIRFRAME;Directional contrast
 TP_WAVELET_DONE;Vertical
 TP_WAVELET_DTHR;Diagonal
 TP_WAVELET_DTWO;Horizontal
@@ -2232,10 +2247,12 @@ TP_WAVELET_EDSL;Threshold Sliders
 TP_WAVELET_EDTYPE;Local contrast method
 TP_WAVELET_EDVAL;Strength
 TP_WAVELET_FINAL;Final Touchup
+TP_WAVELET_FINCFRAME;Final Local Contrast
 TP_WAVELET_FINEST;Finest
-TP_WAVELET_HIGHLIGHT;Highlight luminance range
+TP_WAVELET_HIGHLIGHT;Finer levels luminance range
+TP_WAVELET_FINCOAR_TOOLTIP;The left (positive) part of the curve acts on the finer levels (increase).\nThe 2 points on the abscissa represent the respective action limits of finer and coarser levels 5 and 6 (default).\nThe right (negative) part of the curve acts on the coarser levels (increase).\nAvoid moving the left part of the curve with negative values. Avoid moving the right part of the curve with positives values
 TP_WAVELET_HS1;Whole luminance range
-TP_WAVELET_HS2;Shadows/Highlights
+TP_WAVELET_HS2;Selective luminance range
 TP_WAVELET_HUESKIN;Skin hue
 TP_WAVELET_HUESKIN_TOOLTIP;The bottom points set the beginning of the transition zone, and the upper points the end of it, where the effect is at its maximum.\n\nIf you need to move the area significantly, or if there are artifacts, then the <b>white balance is incorrect</b>.
 TP_WAVELET_HUESKY;Sky hue
@@ -2245,10 +2262,10 @@ TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight
 TP_WAVELET_LABEL;Wavelet Levels
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chroma
-TP_WAVELET_LEVDIR_ALL;All levels in all directions
-TP_WAVELET_LEVDIR_INF;Below or equal the level
+TP_WAVELET_LEVDIR_ALL;All levels, in all directions
+TP_WAVELET_LEVDIR_INF;Finer details levels, with selected level
 TP_WAVELET_LEVDIR_ONE;One level
-TP_WAVELET_LEVDIR_SUP;Above the level
+TP_WAVELET_LEVDIR_SUP;Coarser details levels, without selected level
 TP_WAVELET_LEVELS;Wavelet levels
 TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
 TP_WAVELET_LEVF;Contrast
@@ -2259,7 +2276,7 @@ TP_WAVELET_LEVTWO;Level 3
 TP_WAVELET_LEVZERO;Level 1
 TP_WAVELET_LINKEDG;Link with Edge Sharpness' Strength
 TP_WAVELET_LIPST;Enhanced algoritm
-TP_WAVELET_LOWLIGHT;Shadow luminance range
+TP_WAVELET_LOWLIGHT;Coarser levels luminance range
 TP_WAVELET_LOWTHR_TOOLTIP;Prevents amplification of fine textures and noise
 TP_WAVELET_MEDGREINF;First level
 TP_WAVELET_MEDI;Reduce artifacts in blue sky
@@ -2270,6 +2287,7 @@ TP_WAVELET_MERGEL;Merge Luma
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOIS;Denoise
 TP_WAVELET_NOISE;Denoise and Refine
+TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 20, mode Agressive is used.\nIf chrominance coarse superior to 20, mode Agressive is used.
 TP_WAVELET_NPHIGH;High
 TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
@@ -2278,16 +2296,19 @@ TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight
 TP_WAVELET_OLDSH;Algorithm using negatives values
 TP_WAVELET_OPACITY;Opacity Blue-Yellow
 TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
-TP_WAVELET_OPACITYWL;Final local contrast
+TP_WAVELET_OPACITYWL;Local contrast
 TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
+TP_WAVELET_PROTAB;Protection
 TP_WAVELET_RADIUS;Radius Shadows - Highlight
+TP_WAVELET_RANGEAB;Range a and b %
 TP_WAVELET_RE1;Reinforced
 TP_WAVELET_RE2;Unchanged
 TP_WAVELET_RE3;Reduced
 TP_WAVELET_RESBLUR;Blur Luminance
 TP_WAVELET_RESBLURC;Blur Chroma
+TP_WAVELET_RESBLUR_TOOLTIP;Disabled if zoom > about 500%
 TP_WAVELET_RESCHRO;Intensity
 TP_WAVELET_RESCON;Shadows
 TP_WAVELET_RESCONH;Highlights
@@ -2298,6 +2319,7 @@ TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
 TP_WAVELET_SIGMA;Damper
+TP_WAVELET_SIGMAFIN;Damper
 TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n The lower it is, the more pinpoint will the effect be applied to a narrow range of contrast values.
 TP_WAVELET_SKIN;Skin targetting/protection
 TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
@@ -2308,10 +2330,10 @@ TP_WAVELET_STREN;Strength
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold
-TP_WAVELET_THRESHOLD;Highlight levels
-TP_WAVELET_THRESHOLD2;Shadow levels
-TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value).
-TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels.
+TP_WAVELET_THRESHOLD;Finer levels
+TP_WAVELET_THRESHOLD2;Coarser levels
+TP_WAVELET_THRESHOLD_TOOLTIP;Only levels beyond the chosen value will be affected by the highlight luminance range. Other levels will be fully treated. The chosen value here limits the highest possible value of the shadow levels. : All levels from level 1 up to the chosen value will only be affected within the Finer levels luminance range.\nAll other levels will have the whole range of luminances affected, unless the Coarser levels setting limits it.\nThe chosen value in this slider becomes the minimum possible value of the Coarser levels.
+TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels between 9 and 9 minus the value will be affected by the shadow luminance range. Other levels will be fully treated. The highest level possible is limited by the highlight level value (9 minus highlight level value). : Only levels between the chosen value and level 9/Extra will be affected by the Coarser levels luminance range.\nAll other levels will have the whole range of luminances affected, unless the Finer levels setting limits it.\nThe lower level possible that will be considered by the algorithm is limited by the Finer levels value.
 TP_WAVELET_THRESWAV;Balance Threshold
 TP_WAVELET_THRH;Highlights threshold
 TP_WAVELET_TILESBIG;Tiles
@@ -2326,6 +2348,7 @@ TP_WAVELET_TMSTRENGTH;Compression strength
 TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image.
 TP_WAVELET_TMEDGS;Edge stopping
 TP_WAVELET_TON;Toning
+TP_WAVELET_TONFRAME;Excluded Colors
 TP_WAVELET_TMTYPE;Compression method
 TP_WAVELET_USH;None
 TP_WAVELET_USHARP;Clarity method
@@ -2335,9 +2358,9 @@ TP_WAVELET_WAVLOWTHR;Low contrast threshold
 TP_WAVELET_WAVOFFSET;Offset
 TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between shadows and highlights.\nHigh values here will amplify the contrast change of the highlights, whereas low values will amplify the contrast change of the shadows.\nAlong with a low Damper value you will able to select the contrasts that will be enhanced.
 TP_WBALANCE_AUTO;Auto
-TP_WBALANCE_AUTOITCGREEN;Auto iterate temperature correlation
-TP_WBALANCE_AUTOOLD;Auto RGB grey
-TP_WBALANCE_AUTO_HEADER;Autos
+TP_WBALANCE_AUTOITCGREEN;Temperature correlation
+TP_WBALANCE_AUTOOLD;RGB grey
+TP_WBALANCE_AUTO_HEADER;Automatic
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy
 TP_WBALANCE_CUSTOM;Custom
@@ -2379,8 +2402,8 @@ TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Use the pipette to pick the white balance from a neutral patch in the preview.
-TP_WBALANCE_STUDLABEL;Student Itcwb: %1
-TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation\nThe lower the student value, the better the correlation\nValues below 0.002 are excellent\nValues below 0.005 are very good\nValues below 0.01 are good\nValues below 0.05 are good enough\nValues above 0.5 are poor\nVery good Student test results does not mean that the WB is good, if the illuminant is non-standard the results are erratic.\nStudent=1000 means the calculations were not restarted but results are probably goods, use previous results 
+TP_WBALANCE_STUDLABEL;Correlation factor: %1
+TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation.\nLower values are better, where <0.005 is excellent,\n<0.01 is good, and >0.5 is poor.\nLow values do not mean that the white balance is good:\nif the illuminant is non-standard the results can be erratic.\nA value of 1000 means previous calculations are used and\nthe resultsare probably good.
 TP_WBALANCE_TEMPBIAS;AWB temperature bias
 TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 TP_WBALANCE_TEMPERATURE;Temperature

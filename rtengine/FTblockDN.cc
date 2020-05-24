@@ -549,7 +549,7 @@ BENCHFUN
     const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? SQR(((noiseluma + 1.f) / 125.f) * (10.f + (noiseluma + 1.f) / 25.f)) : SQR((noiseluma / 125.f) * (1.f + noiseluma / 25.f));
     const bool denoiseLuminance = (noisevarL > 0.00001f);
 
-    //printf("NL=%f \n",noisevarL);
+//    printf("NL=%f \n",noisevarL);
     if (useNoiseLCurve || useNoiseCCurve) {
         int hei = calclum->getHeight();
         int wid = calclum->getWidth();
@@ -2214,7 +2214,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
     int maxlvl = min(WaveletCoeffs_L.maxlevel(), 5);
     const float eps = 0.01f;
 
-    if (edge == 1 || edge == 3 || edge == 4) {
+    if (edge == 1 || edge == 3 || edge == 4 || edge == 5) {
         maxlvl = 4;    //for refine denoise edge wavelet
     }
 
@@ -2286,7 +2286,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
                         for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                             nvl[i] = 0.f;
                         }
-                        if ((edge == 1 || edge == 2 || edge == 3) && vari) {
+                        if ((edge == 1 || edge == 2 || edge == 3  || edge == 5) && vari) {
                             //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
                             if ((edge == 1 || edge == 3)) {
                                 for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
@@ -2294,7 +2294,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
                                 }
                             }
 
-                            if (edge == 2 || edge == 4) {
+                            if (edge == 2 || edge == 4 || edge == 5) {
                                 for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                                     nvl[i] = vari[lvl] * SQR(noisevarlum[i]);
                                 }
@@ -2569,7 +2569,7 @@ bool ImProcFunctions::WaveletDenoiseAllL(const wavelet_decomposition &WaveletCoe
 
     int maxlvl = min(WaveletCoeffs_L.maxlevel(), 5);
 
-    if (edge == 1 || edge == 3) {
+    if (edge == 1 || edge == 3 || edge  == 5) {
         maxlvl = 4;    //for refine denoise edge wavelet
     }
 
@@ -2713,7 +2713,7 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
         nvl[i] = 0.f;
     }
 
-    if ((edge == 1 || edge == 2 || edge == 3) && vari) {
+    if ((edge == 1 || edge == 2 || edge == 3 || edge == 5) && vari) {
         //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
         if ((edge == 1 || edge == 3)) {
             for (int i = 0; i < W_L * H_L; ++i) {
@@ -2721,7 +2721,7 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
             }
         }
 
-        if (edge == 2 || edge == 4) {
+        if (edge == 2 || edge == 4 || edge == 5) {
             for (int i = 0; i < W_L * H_L; ++i) {
                 nvl[i] = vari[level] * SQR(noisevarlum[i]);
             }
