@@ -885,6 +885,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         lapmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         Lmaskshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         LLmaskcolshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
+        expmaskcol1->set_tooltip_text(M("TP_LOCALLAB_EXPMERGEFILE_TOOLTIP"));
     } else {
         lightness->set_tooltip_text("");
         sensi->set_tooltip_text("");
@@ -901,6 +902,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         lapmaskcol->set_tooltip_text("");
         Lmaskshape->setTooltip("");
         LLmaskcolshapewav->setTooltip("");
+        expmaskcol1->set_tooltip_text(M(""));
     }
 }
 
