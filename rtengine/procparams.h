@@ -1408,11 +1408,13 @@ struct RAWParams {
     struct BayerSensor {
         enum class Method {
             AMAZE,
+            AMAZEBILINEAR,
             AMAZEVNG4,
             RCD,
             RCDBILINEAR,
             RCDVNG4,
             DCB,
+            DCBBILINEAR,
             DCBVNG4,
             LMMSE,
             IGV,
