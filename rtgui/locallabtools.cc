@@ -4827,7 +4827,7 @@ LocallabSoft::LocallabSoft():
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWNORMAL"));
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmasksoftMethod->set_active(0);
-    showmasksoftMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP"));
+//    showmasksoftMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP"));
     showmasksoftMethodConn = showmasksoftMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabSoft::showmasksoftMethodChanged));
 
     streng->setAdjusterListener(this);
@@ -4868,8 +4868,16 @@ void LocallabSoft::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         softMethod->set_tooltip_markup(M("TP_LOCALLAB_SOFTMETHOD_TOOLTIP"));
+       // ctboxsoftmethod->set_tooltip_markup(M("TP_LOCALLAB_ORRETISTEP_TOOLTIP"));
+        showmasksoftMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP"));
+        streng->set_tooltip_text(M("TP_LOCALLAB_ORRETISTREN_TOOLTIP"));
+        laplace->set_tooltip_text(M("TP_LOCALLAB_ORRETILAP_TOOLTIP"));
     } else {
-        softMethod->set_tooltip_text("");
+        softMethod->set_tooltip_markup(M(""));
+       // ctboxsoftmethod->set_tooltip_markup(M(""));
+        showmasksoftMethod->set_tooltip_markup(M(""));
+        streng->set_tooltip_text(M(""));
+        laplace->set_tooltip_text(M(""));
     }
 }
 
