@@ -2438,7 +2438,11 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPOSURE_TOOLTIP"));
         expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
         pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
-        exnoiseMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
+        laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
+        balanexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAPBAL_TOOLTIP"));
+        gamm->set_tooltip_text(M("TP_LOCALLAB_EXPLAPGAMM_TOOLTIP"));
+        linear->set_tooltip_text(M("TP_LOCALLAB_EXPLAPLIN_TOOLTIP"));
+        exnoiseMethod->set_tooltip_text(M("TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP"));
         fatFrame->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
         sensiex->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         shapeexpos->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP"));
@@ -2456,6 +2460,10 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         expMethod->set_tooltip_text("");
         pdeFrame->set_tooltip_text("");
         exnoiseMethod->set_tooltip_text("");
+        laplacexp->set_tooltip_text(M(""));
+        balanexp->set_tooltip_text(M(""));
+        gamm->set_tooltip_text(M(""));
+        linear->set_tooltip_text(M(""));
         fatFrame->set_tooltip_text("");
         sensiex->set_tooltip_text("");
         shapeexpos->setTooltip("");

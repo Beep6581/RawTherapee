@@ -2425,6 +2425,11 @@ TP_LOCALLAB_EXPCOLOR_TOOLTIP;In the case of small defects.\n\nRed-eyes : red-cen
 TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 32x32 pixels).\nUse low transition values and high weakening transition values and scope to simulate small RT-spot and deal wth defects.\nUse if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_EXPCURV;Curves
 TP_LOCALLAB_EXPGRAD;Graduated Filter
+TP_LOCALLAB_EXPLAP_TOOLTIP;The more you act on this threshold slider, the greater the action of reducing contrast.
+TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Balances the action between the original image and the Laplace transform.
+TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Add linear exposure component before application Laplace transform
+TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Apply a gamma before and after Laplace transform
+TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Apply a median before Laplace transform to prevent artifacts (noise).\nYou can also use "Denoise" tool.
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE IPOL, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
 TP_LOCALLAB_EXPOSE;Exposure - Dynamic Range Compression
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
@@ -2602,7 +2607,7 @@ TP_LOCALLAB_ORRETILAP_TOOLTIP;Acts on a second Laplacian threshold, to take into
 TP_LOCALLAB_PASTELS2;Vibrance
 TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Dynamic Range compression + Standard
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator ƒ
-TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure.\n
+TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure or high dynamic range.\n
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PROXI;ΔE weakening
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
