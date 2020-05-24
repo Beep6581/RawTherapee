@@ -1243,7 +1243,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sens = lp.senscolor;
     lp.sensv = lp.senscolor;
     lp.senshs = lp.senscolor;
-    lp.sensex = lp.senscolor;
+    if(lp.expmet == 0){
+        lp.sensex = lp.senscolor;
+    }
 }
 
 static void calcTransitionrect(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)

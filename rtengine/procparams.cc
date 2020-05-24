@@ -2812,7 +2812,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shadex(0),
     shcompr(50),
     expchroma(30),
-    sensiex(15),
+    sensiex(60),
     structexp(0),
     blurexpde(5),
     strexp(0.),

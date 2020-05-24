@@ -2157,7 +2157,7 @@ LocallabExposure::LocallabExposure():
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.25, 2.5, 0.05, 1.))),
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHORA"), 0.1, 3.0, 0.05, 1.))),
-    sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
+    sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exptoolexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPTOOL")))),
@@ -2361,7 +2361,7 @@ LocallabExposure::LocallabExposure():
     fatFrame->add(*fatBox);
     pack_start(*fatFrame);
     pack_start(*expcomp);
-//    pack_start(*sensiex);
+    pack_start(*sensiex);
     pack_start(*structexp);
     pack_start(*blurexpde);
     ToolParamBlock* const toolBox = Gtk::manage(new ToolParamBlock());
@@ -3159,10 +3159,12 @@ void LocallabExposure::updateExposureGUI2()
         pdeFrame->hide();
         fatFrame->hide();
         softradiusexp->set_sensitive(true);
+        sensiex->set_sensitive(false);
     } else if (expMethod->get_active_row_number() == 1) {
         pdeFrame->show();
         fatFrame->show();
         softradiusexp->set_sensitive(false);
+        sensiex->set_sensitive(true);
     }
 }
 
