@@ -2546,6 +2546,8 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         LLmasklcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         HHmasklcshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         Lmasklcshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        expcontrastpyr->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP"));
+        expcontrastpyr2->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         levelwav->set_tooltip_text("");
@@ -2560,6 +2562,8 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         LLmasklcshape->setTooltip("");
         HHmasklcshape->setTooltip("");
         Lmasklcshape->setTooltip("");
+        expcontrastpyr->set_tooltip_text(M(""));
+        expcontrastpyr2->set_tooltip_text(M(""));
     }
 }
 
