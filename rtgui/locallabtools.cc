@@ -589,7 +589,7 @@ LocallabColor::LocallabColor():
     setExpandAlignProperties(expmaskcol1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     merMethod->append(M("TP_LOCALLAB_MRONE"));
-    merMethod->append(M("TP_LOCALLAB_MRTWO"));
+//    merMethod->append(M("TP_LOCALLAB_MRTWO"));
     merMethod->append(M("TP_LOCALLAB_MRTHR"));
     merMethod->append(M("TP_LOCALLAB_MRFOU"));
     merMethod->append(M("TP_LOCALLAB_MRFIV"));
@@ -870,10 +870,13 @@ void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask,
 void LocallabColor::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
-        lightness->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
+        exp->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
+        lightness->set_tooltip_text(M("TP_LOCALLAB_LIGHTN_TOOLTIP"));
+        structcol->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
         sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         strcol->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         qualitycurveMethod->set_tooltip_markup(M("TP_LOCALLAB_CURVEMETHOD_TOOLTIP"));
+        mercol->set_tooltip_text(M("TP_LOCALLAB_MERGEMER_TOOLTIP"));
         opacol->set_tooltip_text(M("TP_LOCALLAB_MERGEOPA_TOOLTIP"));
         conthrcol->set_tooltip_text(M("TP_LOCALLAB_MERGEOPA_TOOLTIP"));
         gridmerFrame->set_tooltip_text(M("TP_LOCALLAB_GRIDFRAME_TOOLTIP"));
@@ -887,10 +890,13 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         LLmaskcolshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
         expmaskcol1->set_tooltip_text(M("TP_LOCALLAB_EXPMERGEFILE_TOOLTIP"));
     } else {
+        exp->set_tooltip_text("");
         lightness->set_tooltip_text("");
+        structcol->set_tooltip_text("");
         sensi->set_tooltip_text("");
         strcol->set_tooltip_text("");
         qualitycurveMethod->set_tooltip_text("");
+        mercol->set_tooltip_text("");
         opacol->set_tooltip_text("");
         conthrcol->set_tooltip_text("");
         gridmerFrame->set_tooltip_text("");
@@ -1024,14 +1030,14 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
 
         if (spot.merMethod == "mone") {
             merMethod->set_active(0);
-        } else if (spot.merMethod == "mtwo") {
-            merMethod->set_active(1);
+//        } else if (spot.merMethod == "mtwo") {
+//            merMethod->set_active(1);
         } else if (spot.merMethod == "mthr") {
-            merMethod->set_active(2);
+            merMethod->set_active(1);
         } else if (spot.merMethod == "mfou") {
-            merMethod->set_active(3);
+            merMethod->set_active(2);
         } else if (spot.merMethod == "mfiv") {
-            merMethod->set_active(4);
+            merMethod->set_active(3);
         }
 
         if (spot.mergecolMethod == "one") {
@@ -1195,13 +1201,13 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
 
         if (merMethod->get_active_row_number() == 0) {
             spot.merMethod = "mone";
+//        } else if (merMethod->get_active_row_number() == 1) {
+//            spot.merMethod = "mtwo";
         } else if (merMethod->get_active_row_number() == 1) {
-            spot.merMethod = "mtwo";
-        } else if (merMethod->get_active_row_number() == 2) {
             spot.merMethod = "mthr";
-        } else if (merMethod->get_active_row_number() == 3) {
+        } else if (merMethod->get_active_row_number() == 2) {
             spot.merMethod = "mfou";
-        } else if (merMethod->get_active_row_number() == 4) {
+        } else if (merMethod->get_active_row_number() == 3) {
             spot.merMethod = "mfiv";
         }
 
@@ -1676,14 +1682,14 @@ void LocallabColor::convertParamToNormal()
 
     if (defSpot.merMethod == "mone") {
         merMethod->set_active(0);
-    } else if (defSpot.merMethod == "mtwo") {
-        merMethod->set_active(1);
+//    } else if (defSpot.merMethod == "mtwo") {
+//        merMethod->set_active(1);
     } else if (defSpot.merMethod == "mthr") {
-        merMethod->set_active(2);
+        merMethod->set_active(1);
     } else if (defSpot.merMethod == "mfou") {
-        merMethod->set_active(3);
+        merMethod->set_active(2);
     } else if (defSpot.merMethod == "mfiv") {
-        merMethod->set_active(4);
+        merMethod->set_active(3);
     }
 
     if (defSpot.mergecolMethod == "one") {
@@ -2085,7 +2091,7 @@ void LocallabColor::updateColorGUI2()
             conthrcol->hide();
             gridmerFrame->hide();
             break;
-
+/*
         case 1:
             invers->set_sensitive(false);
             H2CurveEditorG->set_sensitive(true);
@@ -2093,6 +2099,16 @@ void LocallabColor::updateColorGUI2()
             special->set_sensitive(true);
             mask7->hide();
             conthrcol->hide();
+            gridmerFrame->hide();
+            break;
+*/
+        case 1:
+            invers->set_sensitive(false);
+            H2CurveEditorG->set_sensitive(true);
+            rgbCurveEditorG->set_sensitive(false);
+            special->set_sensitive(false);
+            mask7->show();
+            conthrcol->show();
             gridmerFrame->hide();
             break;
 
@@ -2107,16 +2123,6 @@ void LocallabColor::updateColorGUI2()
             break;
 
         case 3:
-            invers->set_sensitive(false);
-            H2CurveEditorG->set_sensitive(true);
-            rgbCurveEditorG->set_sensitive(false);
-            special->set_sensitive(false);
-            mask7->show();
-            conthrcol->show();
-            gridmerFrame->hide();
-            break;
-
-        case 4:
             invers->set_sensitive(false);
             H2CurveEditorG->set_sensitive(true);
             rgbCurveEditorG->set_sensitive(false);
@@ -2439,6 +2445,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPOSURE_TOOLTIP"));
         expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
+        structexp->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
         pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
         laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
         balanexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAPBAL_TOOLTIP"));
@@ -2460,6 +2467,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         expMethod->set_tooltip_text("");
+        structexp->set_tooltip_text("");
         pdeFrame->set_tooltip_text("");
         exnoiseMethod->set_tooltip_text("");
         laplacexp->set_tooltip_text(M(""));
@@ -2989,6 +2997,7 @@ void LocallabExposure::convertParamToNormal()
     disableListener();
 
     // Set hidden GUI widgets in Normal mode to default spot values
+    blurexpde->setValue((double)defSpot.blurexpde);
     lapmaskexp->setValue(defSpot.lapmaskexp);
     gammaskexp->setValue(defSpot.gammaskexp);
     slomaskexp->setValue(defSpot.slomaskexp);
@@ -3007,12 +3016,14 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
         gammaskexp->hide();
         slomaskexp->hide();
         gradFramemask->hide();
+        blurexpde->hide();
     } else {
         // Advanced widgets are shown in Expert mode
         lapmaskexp->show();
         gammaskexp->show();
         slomaskexp->show();
         gradFramemask->show();
+        blurexpde->show();
     }
 }
 

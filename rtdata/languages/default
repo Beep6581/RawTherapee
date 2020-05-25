@@ -2429,7 +2429,7 @@ TP_LOCALLAB_EXPLAP_TOOLTIP;The more you act on this threshold slider, the greate
 TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Balances the action between the original image and the Laplace transform.
 TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Add linear exposure component before application Laplace transform
 TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Apply a gamma before and after Laplace transform
-TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows various possibilities to blend image (as layers in Photosshop) : difference, multiply, soft light, overlay...with opacity...  
+TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows various possibilities to blend image (as layers in Photosshop) : difference, multiply, soft light, overlay...with opacity...\nOriginal Image : merge current RT-spot with Original.\nPrevious spot : merge current Rt-spot with previous - if there is only one spot previous = original.\nBackground : merge current RT-spot with a color and luminance background (less possibilties)  
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Apply a median before Laplace transform to prevent artifacts (noise).\nYou can also use "Denoise" tool.
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE IPOL, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
 TP_LOCALLAB_EXPOSE;Exposure - Dynamic Range Compression
@@ -2503,6 +2503,7 @@ TP_LOCALLAB_LEVELBLUR;Maximum Blur levels
 TP_LOCALLAB_LEVELWAV;Ψ Wavelets Levels
 TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 9 size max 512 to level 1 size max = 4
 TP_LOCALLAB_LIGHTNESS;Lightness
+TP_LOCALLAB_LIGHTN_TOOLTIP;In inverse mode: selection = -100 force luminance to zero
 TP_LOCALLAB_LIGHTRETI;Lightness
 TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
@@ -2558,6 +2559,7 @@ TP_LOCALLAB_MERGETHR;Original(Mask 7) + Mask LCH
 TP_LOCALLAB_MERGETWO;Original(Mask 7)
 TP_LOCALLAB_MERGETYPE;Merge image and mask
 TP_LOCALLAB_MERGETYPE_TOOLTIP;None, use all mask in LCH mode.\nShort curves 'L' mask, use a short circuit for mask 2, 3, 4, 6, 7.\nOriginal mask 8, blend current image with original
+"TP_LOCALLAB_MERGEMER_TOOLTIP;Take into account ΔE to merge files (equivalent of scope for this use)
 TP_LOCALLAB_MERHEI;Overlay
 TP_LOCALLAB_MERHUE;Hue
 TP_LOCALLAB_MERLUCOL;Luminance
@@ -2728,6 +2730,7 @@ TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_STRRETI_TOOLTIP;if Strength Retinex < 0.2 only Dehaze is enabled.\nif Strength Retinex >= 0.1 Dehaze is in luminance mode.
 TP_LOCALLAB_STRUC;Structure
 TP_LOCALLAB_STRUCCOL1;Structure Spot
+TP_LOCALLAB_STRUCT_TOOLTIP;Use Sobel algorithm to take into account structure in shape detection.\nyou can have a preview by activating "mask and modifications - Show structure spot" 
 TP_LOCALLAB_STRUCCOL;Structure
 TP_LOCALLAB_STRUMASKCOL;Structure mask strength
 TP_LOCALLAB_STYPE;Shape method
