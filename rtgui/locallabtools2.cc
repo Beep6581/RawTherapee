@@ -2535,9 +2535,15 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
         levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
+        LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP"));
+        wavgradl->set_tooltip_text(M("TP_LOCALLAB_WAVGRAD_TOOLTIP"));
         clariFrame->set_tooltip_markup(M("TP_LOCALLAB_CLARI_TOOLTIP"));
         clarisoft->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFT_TOOLTIP"));
         wavedg->set_tooltip_text(M("TP_LOCALLAB_WAVEEDG_TOOLTIP"));
+        wavblur->set_tooltip_text(M("TP_LOCALLAB_WAVBLUR_TOOLTIP"));
+        wavcont->set_tooltip_text(M("TP_LOCALLAB_WAVCONTF_TOOLTIP"));
+        wavcompre->set_tooltip_text(M("TP_LOCALLAB_WAVCOMPRE_TOOLTIP"));
+        wavcomp->set_tooltip_text(M("TP_LOCALLAB_WAVCOMP_TOOLTIP"));
         chromablu->set_tooltip_text(M("TP_LOCALLAB_CHROMABLU_TOOLTIP"));
         chromalev->set_tooltip_text(M("TP_LOCALLAB_CHROMABLU_TOOLTIP"));
         fftwlc->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
@@ -2551,9 +2557,15 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         levelwav->set_tooltip_text("");
+        LocalcurveEditorwav->set_tooltip_markup(M(""));
+        wavgradl->set_tooltip_text("");
         clariFrame->set_tooltip_text("");
         clarisoft->set_tooltip_text("");
         wavedg->set_tooltip_text("");
+        wavblur->set_tooltip_text(M(""));
+        wavcont->set_tooltip_text(M(""));
+        wavcompre->set_tooltip_text(M(""));
+        wavcomp->set_tooltip_text(M(""));
         chromablu->set_tooltip_text("");
         chromalev->set_tooltip_text("");
         fftwlc->set_tooltip_text("");
