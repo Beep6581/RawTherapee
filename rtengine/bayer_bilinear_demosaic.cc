@@ -23,12 +23,13 @@
 ////////////////////////////////////////////////////////////////
 
 #include "rawimagesource.h"
+#include "rt_math.h"
 #define BENCHMARK
 #include "StopWatch.h"
 
 using namespace rtengine;
 
-void RawImageSource::bayer_bilinear_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::bayer_bilinear_demosaic(const float* const * blend, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
 BENCHFUN
 #ifdef _OPENMP
@@ -46,13 +47,12 @@ BENCHFUN
         #pragma GCC ivdep
 #endif
         for (int j = 2 - (FC(i, 1) & 1); j < W - 2; j += 2) { // always begin with a green pixel
-            green[i][j] = rawData[i][j];
-            nonGreen1[i][j] = (rawData[i][j - 1] + rawData[i][j + 1]) * 0.5f;
-            nonGreen2[i][j] = (rawData[i - 1][j] + rawData[i + 1][j]) * 0.5f;
-            green[i][j + 1] = ((rawData[i - 1][j + 1] + rawData[i][j]) + (rawData[i][j + 2] + rawData[i + 1][j + 1])) * 0.25f;
-            nonGreen1[i][j + 1] = rawData[i][j + 1];
-            nonGreen2[i][j + 1] = ((rawData[i - 1][j] + rawData[i - 1][j + 2]) + (rawData[i + 1][j] + rawData[i + 1][j + 2])) * 0.25f;
+            green[i][j] = intp(blend[i][j], green[i][j], rawData[i][j]);
+            nonGreen1[i][j] = intp(blend[i][j], nonGreen1[i][j], (rawData[i][j - 1] + rawData[i][j + 1]) * 0.5f);
+            nonGreen2[i][j] = intp(blend[i][j], nonGreen2[i][j], (rawData[i - 1][j] + rawData[i + 1][j]) * 0.5f);
+            green[i][j + 1] = intp(blend[i][j + 1], green[i][j + 1], ((rawData[i - 1][j + 1] + rawData[i][j]) + (rawData[i][j + 2] + rawData[i + 1][j + 1])) * 0.25f);
+            nonGreen1[i][j + 1] = intp(blend[i][j + 1], nonGreen1[i][j + 1], rawData[i][j + 1]);
+            nonGreen2[i][j + 1] = intp(blend[i][j + 1], nonGreen2[i][j + 1], ((rawData[i - 1][j] + rawData[i - 1][j + 2]) + (rawData[i + 1][j] + rawData[i + 1][j + 2])) * 0.25f);
         }
     }
-    border_interpolate(W, H, 2, rawData, red, green, blue);
 }

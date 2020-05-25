@@ -112,18 +112,23 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const procparams::RAWParams 
     contrast = contrastf * 100.f;
 
     array2D<float>& redTmp = L; // L is not needed anymore => reuse it
-    array2D<float> greenTmp(winw, winh);
-    array2D<float> blueTmp(winw, winh);
+    array2D<float> greenTmp;
+    array2D<float> blueTmp;
 
     if (isBayer) {
         if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEBILINEAR) ||
             raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDBILINEAR) ||
             raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBBILINEAR)) {
-            bayer_bilinear_demosaic(rawData, redTmp, greenTmp, blueTmp);
+            bayer_bilinear_demosaic(blend, rawData, red, green, blue);
+            return;
         } else {
+            greenTmp(winw, winh);
+            blueTmp(winw, winh);
             vng4_demosaic(rawData, redTmp, greenTmp, blueTmp);
         }
     } else {
+        greenTmp(winw, winh);
+        blueTmp(winw, winh);
         fast_xtrans_interpolate(rawData, redTmp, greenTmp, blueTmp);
     }
 
