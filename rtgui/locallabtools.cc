@@ -3473,6 +3473,11 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         radmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         LmaskSHshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        for (unsigned int i = 0; i < multipliersh.size(); i++) {
+            multipliersh[i]->set_tooltip_text(M("TP_LOCALLAB_MULTIPL_TOOLTIP"));
+        }
+        gamSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
+        sloSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         strSH->set_tooltip_text("");
@@ -3483,6 +3488,11 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         radmaskSH->set_tooltip_text("");
         lapmaskSH->set_tooltip_text("");
         LmaskSHshape->setTooltip("");
+        for (unsigned int i = 0; i < multipliersh.size(); i++) {
+            multipliersh[i]->set_tooltip_text(M(""));
+        }
+        gamSH->set_tooltip_text(M(""));
+        sloSH->set_tooltip_text(M(""));
     }
 }
 

@@ -2589,6 +2589,7 @@ TP_LOCALLAB_MRFOU;Previous Spot
 TP_LOCALLAB_MRONE;None
 TP_LOCALLAB_MRTHR;Original Image
 TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
+TP_LOCALLAB_MULTIPL_TOOLTIP;Allows the retouching of tones over a very wide range : -18EV +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts light tones up to 4EV  
 TP_LOCALLAB_NEIGH;Radius
 TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse (Wav)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=0.02
@@ -2708,6 +2709,7 @@ TP_LOCALLAB_SHOWSTRUCEX;Show structure Spot - disabled in "normal"
 TP_LOCALLAB_SHOWT;Mask and modifications
 TP_LOCALLAB_SHOWVI;Mask and modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights
+TP_LOCALLAB_SHTRC_TOOLTIP;Modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones
 TP_LOCALLAB_SIGMAWAV;Damper
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope mask
