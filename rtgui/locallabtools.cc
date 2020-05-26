@@ -697,7 +697,7 @@ LocallabColor::LocallabColor():
 
     HHhmaskshape->setIdentityValue(0.);
     HHhmaskshape->setResetCurve(FlatCurveType(defSpot.HHhmaskcurve.at(0)), defSpot.HHhmaskcurve);
-    HHhmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+//    HHhmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     HHhmaskshape->setCurveColorProvider(this, 2);
     HHhmaskshape->setBottomBarColorProvider(this, 2);
 
@@ -889,6 +889,9 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         Lmaskshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         LLmaskcolshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
         expmaskcol1->set_tooltip_text(M("TP_LOCALLAB_EXPMERGEFILE_TOOLTIP"));
+        blendmaskcol->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
+        struFrame->set_tooltip_text(M("TP_LOCALLAB_STRUMASK_TOOLTIP"));
+        blurFrame->set_tooltip_text(M("TP_LOCALLAB_BLURMASK_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         lightness->set_tooltip_text("");
@@ -909,6 +912,9 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         Lmaskshape->setTooltip("");
         LLmaskcolshapewav->setTooltip("");
         expmaskcol1->set_tooltip_text(M(""));
+        blendmaskcol->set_tooltip_text(M(""));
+        struFrame->set_tooltip_text(M(""));
+        blurFrame->set_tooltip_text(M(""));
     }
 }
 
@@ -2464,6 +2470,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         lapmaskexp->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         strmaskexp->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         Lmaskexpshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        blendmaskexp->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         expMethod->set_tooltip_text("");
@@ -2486,6 +2493,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         lapmaskexp->set_tooltip_text("");
         strmaskexp->set_tooltip_text("");
         Lmaskexpshape->setTooltip("");
+        blendmaskexp->set_tooltip_text(M(""));
     }
 }
 
@@ -3478,6 +3486,8 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         }
         gamSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
         sloSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
+        blendmaskSH->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
+        
     } else {
         exp->set_tooltip_text("");
         strSH->set_tooltip_text("");
@@ -3493,6 +3503,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         }
         gamSH->set_tooltip_text(M(""));
         sloSH->set_tooltip_text(M(""));
+        blendmaskSH->set_tooltip_text(M(""));
     }
 }
 
@@ -4285,6 +4296,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         LLmaskvibshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         HHmaskvibshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         Lmaskvibshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        blendmaskvib->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
     } else {
         warm->set_tooltip_text("");
         strvib->set_tooltip_text("");
@@ -4293,6 +4305,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         LLmaskvibshape->setTooltip("");
         HHmaskvibshape->setTooltip("");
         Lmaskvibshape->setTooltip("");
+        blendmaskvib->set_tooltip_text(M(""));
     }
 }
 
@@ -5463,6 +5476,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         lapmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         Lmaskblshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         LLmaskblshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
+        blendmaskbl->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
     } else {
         expblnoise->set_tooltip_text("");
         radius->set_tooltip_text("");
@@ -5479,6 +5493,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         lapmaskbl->set_tooltip_text("");
         Lmaskblshape->setTooltip("");
         LLmaskblshapewav->setTooltip("");
+        blendmaskbl->set_tooltip_text(M(""));
     }
 }
 
