@@ -186,6 +186,11 @@ void LocallabTool::addLocallabTool(bool raiseEvent)
 
     // Raise event if required
     if (raiseEvent) { // Note: Event is only raised when a tool is added by user
+        // By default, activate newly added tool
+        enaExpConn.block(true);
+        exp->setEnabled(true);
+        enaExpConn.block(false);
+
         if (needMode) {
             // Set complexity mode according to chosen default one
             complexityConn.block(true);
