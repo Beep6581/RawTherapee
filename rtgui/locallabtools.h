@@ -140,11 +140,11 @@ public:
     virtual void setDefaultExpanderVisibility() {};
     virtual void disableListener();
     virtual void enableListener();
-    virtual void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) {};
-    virtual void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) {};
-    virtual void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) {};
-    virtual void adjusterChanged(Adjuster* a, double newval) {};
-    virtual void curveChanged(CurveEditor* ce) {};
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override {};
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override {};
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override {};
+    void adjusterChanged(Adjuster* a, double newval) override {};
+    void curveChanged(CurveEditor* ce) override {};
 
 protected:
     // To be implemented
@@ -1173,17 +1173,17 @@ public:
     LocallabLog();
     void updateAdviceTooltips(const bool showTooltips) override;
 
-    void disableListener();
-    void enableListener();
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
 
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float targetg);
 
 private:
-    void enabledChanged();
+    void enabledChanged() override;
 
     void autocomputeToggled();
     void fullimageChanged();

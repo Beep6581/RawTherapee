@@ -198,7 +198,7 @@ public:
      * @param defParams ProcParams containing default values to set to the adjusters
      * @param pedited ParamsEdited containing default state values to set to the adjusters (not used because batch mode is deactivated for Locallab)
      */
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     /**
      * Enable or disable the interactions with panel widgets
      *
