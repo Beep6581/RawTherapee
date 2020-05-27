@@ -355,10 +355,8 @@ ControlSpotPanel::ControlSpotPanel():
     artifBox->pack_start(*iter_);
     artifBox->pack_start(*balan_);
     artifBox->pack_start(*balanh_);
-    Gtk::HBox* const prevBox = Gtk::manage(new Gtk::HBox());
-    prevBox->pack_start(*colorde_);
-    prevBox->pack_start(*preview_, Gtk::PACK_SHRINK, 4);
-    artifBox->pack_start(*prevBox);
+    artifBox->pack_start(*colorde_);
+    artifBox->pack_start(*preview_);
     artifBox->pack_start(*colorscope_);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
