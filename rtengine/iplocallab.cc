@@ -2131,7 +2131,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
                                                 J,  C, h,
                                                 xw2, yw2,  zw2,
                                                 c2, nc2,  pow1n, nbbj, ncbj, flj, czj, dj, awj);
-                float x, y, z;
                 x = xx * 655.35f;
                 y = yy * 655.35f;
                 z = zz * 655.35f;
