@@ -4388,6 +4388,8 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
       //  detail->set_tooltip_text(M("TP_LOCALLAB_LOGDET_TOOLTIP"));
         detail->set_tooltip_text(M(""));
         baselog->set_tooltip_text(M("TP_LOCALLAB_LOGBASE_TOOLTIP"));
+        strlog->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
+        anglog->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     } else {
         exp->set_tooltip_text(M(""));
         logPFrame->set_tooltip_text("");
@@ -4399,6 +4401,8 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         targetGray->set_tooltip_text(M(""));
         detail->set_tooltip_text(M(""));
         baselog->set_tooltip_text(M(""));
+        strlog->set_tooltip_text(M(""));
+        anglog->set_tooltip_text(M(""));
     }
 }
 

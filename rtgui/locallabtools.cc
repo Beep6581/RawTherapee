@@ -516,7 +516,6 @@ LocallabColor::LocallabColor():
     strcolh->set_tooltip_text(M("TP_LOCALLAB_GRADSTRHUE_TOOLTIP"));
 
     angcol->setAdjusterListener(this);
-    angcol->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
 
     setExpandAlignProperties(expcurvcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -881,6 +880,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         structcol->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
         sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         strcol->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
+        angcol->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
         qualitycurveMethod->set_tooltip_markup(M("TP_LOCALLAB_CURVEMETHOD_TOOLTIP"));
         mercol->set_tooltip_text(M("TP_LOCALLAB_MERGEMER_TOOLTIP"));
         opacol->set_tooltip_text(M("TP_LOCALLAB_MERGEOPA_TOOLTIP"));
@@ -903,6 +903,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         lightness->set_tooltip_text("");
         structcol->set_tooltip_text("");
         sensi->set_tooltip_text("");
+        angcol->set_tooltip_text(M(""));
         strcol->set_tooltip_text("");
         qualitycurveMethod->set_tooltip_text("");
         mercol->set_tooltip_text("");

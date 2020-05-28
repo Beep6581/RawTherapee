@@ -2419,7 +2419,7 @@ TP_LOCALLAB_EV_VIS_ALL;Show all
 TP_LOCALLAB_EXCLUF;Excluding
 TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scope to extend color.\n You can apply all settings to this RT-spot.
 TP_LOCALLAB_EXCLUTYPE;Spot method
-TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot use recursive data.\nExcluding spot reinitialize data to origin. Can be used to perform a inverse mode
+TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot use recursive data.\n\nExcluding spot reinitialize data to origin.\nCan be used to totally or partially cancel a previous action or to perform a inverse mode
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXPCBDL_TOOLTIP;In the case of contaminated sensor (type "grease"), and when the area is important or for a series of small defects.\n\na) Put the selection spot on a pronounced default (adapting its size if necessary), use a large spot enough to allow wavelet; b) choose a wide selection area to cover most of the area affected by the defects; c) Select a transition value (low) and transition weakening (high value); d) act on levels 2, 3, 4 or 5 or lower by reducing the contrast (values below 100) and by acting on the chroma slider if necessary. e)possibly act on "scope" to reduce the extent of the action.\n\nYou can also complete with Blur levels and Gaussian blur (Smooth Blur and noise)
@@ -2466,7 +2466,7 @@ TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees : -180 0 +180
 TP_LOCALLAB_GRADFRA;Graduated Filter
-TP_LOCALLAB_GRADGEN_TOOLTIP;Graduated filter is supplied with Color and Light & merge file, Exposure & mask, Shadows Highlight, Vibrance.\n\nVibrance, Color and Light & merge file, are provided with GF luminance, chrominance, Hue.\nFeather is located in settings. 
+TP_LOCALLAB_GRADGEN_TOOLTIP;Graduated filter is supplied with Color and Light & merge file, Exposure & mask, Shadows Highlight, Vibrance, Encoding log.\n\nVibrance, Color and Light & merge file, are provided with GF luminance, chrominance, Hue.\nFeather is located in settings. 
 TP_LOCALLAB_GRADLOGFRA;Graduated Filter Luminance
 TP_LOCALLAB_GRADSTR;Gradient strength
 TP_LOCALLAB_GRADSTRAB_TOOLTIP;Filter chroma strength
@@ -2767,7 +2767,7 @@ TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that o
 TP_LOCALLAB_TRANSITVALUE;Transition value
 TP_LOCALLAB_TRANSITWEAK;Transition weakening
 TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust weakening : change smoothness process - 1 linear - 2 parabolic - 3 cubic - ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelet, Color & Light)
-TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
+TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas, as a percentage of the "radius" 
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
 TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.\nYou can act on this curve to change Transmission and reduce the artifacts
