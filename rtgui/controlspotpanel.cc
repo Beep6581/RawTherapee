@@ -348,6 +348,7 @@ ControlSpotPanel::ControlSpotPanel():
         balanh_->set_tooltip_text(M("TP_LOCALLAB_BALAN_TOOLTIP"));
         colorde_->set_tooltip_text(M("TP_LOCALLAB_COLORDE_TOOLTIP"));
         colorscope_->set_tooltip_text(M("TP_LOCALLAB_COLORSCOPE_TOOLTIP"));
+        preview_->set_tooltip_text(M("TP_LOCALLAB_COLORDEPREV_TOOLTIP"));
     }
 
     artifBox->pack_start(*struc_);
@@ -408,6 +409,7 @@ ControlSpotPanel::ControlSpotPanel():
 
     if (showtooltip) {
         savrest_->set_tooltip_text(M("TP_LOCALLAB_SAVREST_TOOLTIP"));
+        lumask_->set_tooltip_text(M("TP_LOCALLAB_LUMASK_TOOLTIP"));
     }
 
     maskBox->pack_start(*laplac_);

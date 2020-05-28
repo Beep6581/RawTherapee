@@ -2291,7 +2291,7 @@ TP_LOCALLAB_ADJ;Equalizer blue-red
 TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
-TP_LOCALLAB_ARTIF_TOOLTIP;Threshold structure take into account the structure level of solid areas.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nIncrease deltaE Weakening improve shape detection, but can reduce the scope of detection.
+TP_LOCALLAB_ARTIF_TOOLTIP;Threshold structure take into account the structure level of solid areas (Sliders in Color and Light or Exposure) - if these sliders are enabled.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nIncrease deltaE Weakening improve shape detection, but can reduce the scope of detection.
 TP_LOCALLAB_AUTOGRAY;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance ΔE ab-L
@@ -2356,10 +2356,11 @@ TP_LOCALLAB_CLIPTM;Clip Restored datas (gain)
 TP_LOCALLAB_COFR;Color & Light - Small defects
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
-TP_LOCALLAB_COLORDE;Color preview selection ΔE - Strength
-TP_LOCALLAB_COLORDE_TOOLTIP;Show preview selection ΔE in blue if negative and in green if positive.\nButton Preview needs only one tool is enabled (expander + one slider...).\n\nMask and modifications (show modifications without mask): Show real modifications if positive, show enhanced modifications (only luminance) with blue and yellow if negative.
+TP_LOCALLAB_COLORDE;Color preview selection ΔE - Intensity
+TP_LOCALLAB_COLORDE_TOOLTIP;Show preview selection ΔE in blue if negative and in green if positive.\n\nMask and modifications (show modifications without mask): Show real modifications if positive, show enhanced modifications (only luminance) with blue and yellow if negative.
+TP_LOCALLAB_COLORDEPREV_TOOLTIP;Button Preview ΔE needs that only one tool is enabled (expander).\nTo be able to have an Preview ΔE with several enable tools use Mask and modifications - Preview ΔE
 TP_LOCALLAB_COLORSCOPE;Scope Color Tools
-TP_LOCALLAB_COLORSCOPE_TOOLTIP;Use a common Scope for Color and light, Exposure, Shadows highlight, Vibrance.\nOthers tools have their specific scope.
+TP_LOCALLAB_COLORSCOPE_TOOLTIP;Use a common Scope for Color and light, Exposure (Standard), Shadows highlight, Vibrance.\nOthers tools have their specific scope.
 TP_LOCALLAB_COMPFRA;Levels Directional Contrast
 TP_LOCALLAB_COMPREFRA;Levels Dynamic Wavelet Range (un)Compression
 TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend & Soft Images' by adjusting 'Soft radius' to reduce artifacts.
@@ -2450,7 +2451,7 @@ TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.\nAn
 TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATRES;Amount Residual Image
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
-TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\n.Used by all Graduated filter in all tools.
+TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\nUsed by all Graduated filter in all tools.\nNo action if Graduated Filter are not used.
 TP_LOCALLAB_FEATVALUE;Feather gradient (Graduated Filters)
 TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
@@ -2534,6 +2535,7 @@ TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action o
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Luminance Background Mask
+TP_LOCALLAB_LUMASK_TOOLTIP;Adjust the gray of the mask background in Show Mask (Mask and modifications)
 TP_LOCALLAB_LUMAWHITESEST;Whiteest
 TP_LOCALLAB_LUMONLY;Luminance only 
 TP_LOCALLAB_MASFRAME;Mask and Merge
