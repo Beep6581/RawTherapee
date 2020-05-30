@@ -399,7 +399,7 @@ LocallabColor::LocallabColor():
     sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL1"), 0, 100, 1, 0))),
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
-    softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 1000.0, 0.5, 0.))),
+    softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 1000.0, 0.5, 0.))),
     invers(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     expgradcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRLUM"), -4., 4., 0.05, 0.))),
@@ -1672,7 +1672,7 @@ void LocallabColor::convertParamToNormal()
 
     // Set hidden GUI widgets in Normal mode to default spot values
     blurcolde->setValue((double)defSpot.blurcolde);
-    softradiuscol->setValue(defSpot.softradiuscol);
+  //  softradiuscol->setValue(defSpot.softradiuscol);
     strcolab->setValue(defSpot.strcolab);
     strcolh->setValue(defSpot.strcolh);
     clshape->setCurve(defSpot.clcurve);
@@ -1784,7 +1784,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
     if (new_type == Normal) {
         // Advanced widgets are hidden in Normal mode
         blurcolde->hide();
-        softradiuscol->hide();
+        softradiuscol->show();
         strcolab->hide();
         strcolh->hide();
         clCurveEditorG->hide();
@@ -2192,7 +2192,7 @@ LocallabExposure::LocallabExposure():
     expgradexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
-    softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 1000.0, 0.5, 0.))),
+    softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 1000.0, 0.5, 0.))),
     inversex(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWE")))),
     showmaskexpMethod(Gtk::manage(new MyComboBoxText())),
