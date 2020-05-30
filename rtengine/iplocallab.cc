@@ -81,6 +81,77 @@
 
 namespace
 {
+void softlig(float &a, float b, float minc, float maxc)
+{
+    // as Photoshop
+    const float alpha = 0.5f * (maxc - minc);
+
+    if (b <= alpha) {
+        a = (2.f * a * b) + a * a * (maxc - 2.f * b);
+    } else {
+        a = 2.f * a * (maxc - b) + std::sqrt(rtengine::LIM(a, 0.f, 2.f)) * (2.f * b - maxc);
+    }
+}
+
+void softlig3(float &a, float b)
+{
+    // as w3C
+    if (b <= 0.5f) {
+        a = a - (1.f - 2.f * b) * a * (1.f - a);
+    } else if (((2.f * b) > 1.f) && ((4.f * a) <= 1.f)) {
+        a = a + ((2.f * b) - 1.f) * (4.f * a * ((4.f * a) + 1.f) * (a - 1.f) + 7.f * a);
+    } else if (((2.f * b) > 1.f) && ((4.f * a) > 1.f)) {
+        a = a + ((2.f * a) - 1.f) * (std::sqrt(a) - a);
+    }
+
+}
+
+void softlig2(float &a, float b)
+{
+    // illusions.hu
+    a = pow_F(b, pow_F(2.f, (2.f * (0.5f - a))));
+}
+
+void colburn(float &a, float b)
+{
+    // w3C
+    if (b == 0.f) {
+        a = 0.f;
+    } else {
+        a = 1.f - std::min(1.f, (1.f - a) / b);
+    }
+}
+
+void coldodge(float &a, float b)
+{
+    // w3C
+    if (b == 1.f) {
+        a = 1.f;
+    } else {
+        a = std::min(1.f, a / (1.f - b));
+    }
+}
+
+void overlay(float &a, float b, float minc, float maxc)
+{
+    const float alpha = 0.5f * (maxc - minc);
+
+    if (b <= alpha) {
+        a = (2.f * a * b);
+    } else {
+        a = maxc - 2.f * (1.f - a) * (maxc - b);
+    }
+}
+
+void screen(float &a, float b, float maxc)
+{
+    a = 1.f - (1.f - a) * (maxc - b);
+}
+
+void exclusion(float &a, float b)
+{
+    a = a + b - 2.f * a * b;
+}
 
 void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
 {
@@ -777,7 +848,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     lp.edgwena = locallab.spots.at(sp).wavedg;
 
-    lp.opacol = 0.01f * locallab.spots.at(sp).opacol;
+    lp.opacol = 0.01 * locallab.spots.at(sp).opacol;
 
     if (locallab.spots.at(sp).shape == "ELI") {
         lp.shapmet = 0;
@@ -796,7 +867,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     if (locwavCurveden && locwavdenutili) {
         if (lp.denoiena) {
             for (int i = 0; i < 500; i++) {
-                if (locwavCurveden[i] != 0.) {
+                if (locwavCurveden[i] != 0.f) {
                     wavcurveden = true;
                 }
             }
@@ -1604,7 +1675,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {
             const float r = img.r(y, x), g = img.g(y, x), b = img.b(y, x);
-            mean += 0.2126f * Color::gamma_srgb(r) + 0.7152f * Color::gamma_srgb(g) + 0.0722f * Color::gamma_srgb(b);
+            mean += static_cast<double>(0.2126f * Color::gamma_srgb(r) + 0.7152f * Color::gamma_srgb(g) + 0.0722f * Color::gamma_srgb(b));
             nc++;
 
             const float m = max(0.f, r, g, b) / 65535.f * ec;
@@ -1642,35 +1713,35 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                     const float l = img.g(y, x) / 65535.f;
 
                     if (l >= gmin && l <= gmax) {
-                        tot += l;
+                        tot += static_cast<double>(l);
                         ++n;
                     }
                 }
             }
 
             if (n > 0) {
-                sourceg[sp] = tot / n * 100.f;
+                sourceg[sp] = tot / n * 100.0;
 
                 if (settings->verbose) {
                     std::cout << "         computed gray point from " << n << " samples: " << sourceg[sp] << std::endl;
                 }
             } else {
-                mean /= (nc * 65535.f);
+                mean /= (nc * 65535.0);
                 float yb;
 
-                if (mean < 0.15f) {
+                if (mean < 0.15) {
                     yb = 3.0f;
-                } else if (mean < 0.3f) {
+                } else if (mean < 0.3) {
                     yb = 5.0f;
-                } else if (mean < 0.4f) {
+                } else if (mean < 0.4) {
                     yb = 10.0f;
-                } else if (mean < 0.45f) {
+                } else if (mean < 0.45) {
                     yb = 15.0f;
-                } else if (mean < 0.5f) {
+                } else if (mean < 0.5) {
                     yb = 18.0f;
-                } else if (mean < 0.55f) {
+                } else if (mean < 0.55) {
                     yb = 23.0f;
-                } else if (mean < 0.6f) {
+                } else if (mean < 0.6) {
                     yb = 30.0f;
                 } else {
                     yb = 45.f;
@@ -1766,7 +1837,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
     }
 
     int detail = LIM(lp.detailsh + 5, 0, 5);
-    int radius = float(detail) / scale + 0.5f;
+    int radius = detail / scale + 0.5;
     float epsilon2 = 0.01f + 0.002f * max(detail - 3, 0);
 
     if (radius > 0) {
@@ -1791,7 +1862,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
             }
         }
 
-        radius = 350.f / scale;
+        radius = 350.0 / scale;
         epsilon2 = base_epsilon / float(6 - std::min(lp.detailsh, 5));
         rtengine::guidedFilter(Y2, Y, Y, radius, epsilon2, multithread);
     }
@@ -1957,12 +2028,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     //  alg = 0;
 
 
-    xwd = 100.f * Xwout;
-    zwd = 100.f * Zwout;
+    xwd = 100.0 * Xwout;
+    zwd = 100.0 * Zwout;
     ywd = 100.f;
 
-    xws = 100.f * Xwsc;
-    zws = 100.f * Zwsc;
+    xws = 100.0 * Xwsc;
+    zws = 100.0 * Zwsc;
     yws = 100.f;
 
 
@@ -1981,9 +2052,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     float d, dj;
 
     // const int gamu = 0; //(params->colorappearance.gamut) ? 1 : 0;
-    xw = 100.0f * Xw;
-    yw = 100.0f * Yw;
-    zw = 100.0f * Zw;
+    xw = 100.0 * Xw;
+    yw = 100.f * Yw;
+    zw = 100.0 * Zw;
     float xw1 = xws, yw1 = yws, zw1 = zws, xw2 = xwd, yw2 = ywd, zw2 = zwd;
 
     float cz, wh, pfl;
@@ -5400,7 +5471,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     }
 }
 
-void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp, int senstype,  struct local_params & lp, LabImage * originalmask, LUTf & lightCurveloc, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & exlocalcurve, LUTf & cclocalcurve, float adjustr, bool localcutili, LUTf & lllocalcurve, bool locallutili, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
+void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp, int senstype,  struct local_params & lp, LabImage * originalmask, const LUTf& lightCurveloc, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& exlocalcurve, const LUTf& cclocalcurve, float adjustr, bool localcutili, const LUTf& lllocalcurve, bool locallutili, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
     float ach = (float)lp.trans / 100.f;
@@ -6091,7 +6162,7 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
 
-void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct local_params& lp, int &H, int &W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy)
+void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct local_params& lp, int H, int W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy)
 {
     int ftsizeH = 1;
     int ftsizeW = 1;
@@ -6333,82 +6404,6 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
             }
         }
     }
-}
-
-
-static void softlig(float &a, float &b, float minc, float maxc)
-{
-    // as Photoshop
-    float alpha = 0.5f * (maxc - minc);
-
-    if (b <= alpha) {
-        a = (2.f * a * b) + a * a * (maxc - 2.f * b);
-    } else {
-        a = 2.f * a * (maxc - b) + std::sqrt(LIM(a, 0.f, 2.f)) * (2.f * b - maxc);
-    }
-}
-
-
-static void softlig3(float &a, float &b)
-{
-    // as w3C
-    if (b <= 0.5f) {
-        a = a - (1.f - 2.f * b) * a * (1.f - a);
-    } else if (((2.f * b) > 1.f) && ((4.f * a) <= 1.f)) {
-        a = a + ((2.f * b) - 1.f) * (4.f * a * ((4.f * a) + 1.f) * (a - 1.f) + 7.f * a);
-    } else if (((2.f * b) > 1.f) && ((4.f * a) > 1.f)) {
-        a = a + ((2.f * a) - 1.f) * (pow(a, 0.5f) - a);
-    }
-
-}
-
-
-
-static void softlig2(float &a, float &b)
-{
-    // illusions.hu
-    a = pow(b, pow(2.f, (2.f * (0.5f - a))));
-}
-
-static void colburn(float &a, float &b)
-{
-    // w3C
-    if (b == 0.f) {
-        a = 0.f;
-    } else {
-        a = 1.f - std::min(1.f, (1.f - a) / b);
-    }
-}
-
-static void coldodge(float &a, float &b)
-{
-    // w3C
-    if (b == 1.f) {
-        a = 1.f;
-    } else {
-        a = std::min(1.f, a / (1.f - b));
-    }
-}
-
-static void overlay(float &a, float &b, float minc, float maxc)
-{
-    float alpha = 0.5f * (maxc - minc);
-
-    if (b <= alpha) {
-        a = (2.f * a * b);
-    } else {
-        a = maxc - 2.f * (1.f - a) * (maxc - b);
-    }
-}
-
-static void screen(float &a, float &b, float maxc)
-{
-    a = 1.f - (1.f - a) * (maxc - b);
-}
-
-static void exclusion(float &a, float &b)
-{
-    a = a + b - 2.f * a * b;
 }
 
 void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
