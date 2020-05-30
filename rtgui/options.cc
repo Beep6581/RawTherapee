@@ -2411,18 +2411,8 @@ void Options::load(bool lightweight)
     const gchar* path;
     Glib::ustring dPath;
 
-#ifdef __APPLE__
-    // Build Application Support directory path for macOS.
-    const char* homedir = g_getenv("HOME"); // This returns the current container data dir in ~/Library
-    std::string homebuf{homedir};
-    int homelength = strlen(homebuf.c_str());
-    homebuf[homelength-44] = '\0'; // Terminate string after ${HOME}/Library
-    std::string homeconfig{homebuf};
-    std::strcat(&homeconfig[0], "/Application Support/RawTherapee/config");
-    path = homeconfig.c_str();
-#else
     path = g_getenv("RT_SETTINGS");
-#endif
+
     if (path != nullptr) {
         rtdir = Glib::ustring(path);
 
@@ -2442,7 +2432,11 @@ void Options::load(bool lightweight)
         }
 
 #else
+    #ifdef __APPLE__
+        rtdir = Glib::build_filename(Glib::ustring(g_get_home_dir()), "/Library/Application Support/", Glib::ustring(CACHEFOLDERNAME), "/config/");
+    #else
         rtdir = Glib::build_filename(Glib::ustring(g_get_user_config_dir()), Glib::ustring(CACHEFOLDERNAME));
+    #endif
 #endif
     }
 
@@ -2464,14 +2458,9 @@ void Options::load(bool lightweight)
         rtdir = Glib::build_filename(argv0, "mysettings");
     }
 
-    // Modify the path of the cache folder to the one provided in RT_CACHE environment variable. Build the cache folder name in macOS.
-#ifdef __APPLE__
-    std::string homecache{homebuf};
-    std::strcat(&homecache[0], "/Application Support/RawTherapee/cache");
-    path = homecache.c_str();
-#else
+    // Modify the path of the cache folder to the one provided in RT_CACHE environment variable.
     path = g_getenv("RT_CACHE");
-#endif
+
     if (path != nullptr) {
         cacheBaseDir = Glib::ustring(path);
 
@@ -2486,7 +2475,11 @@ void Options::load(bool lightweight)
 #ifdef WIN32
         cacheBaseDir = Glib::build_filename(rtdir, "cache");
 #else
+    #ifdef __APPLE__
+        cacheBaseDir = Glib::build_filename(Glib::ustring(g_get_home_dir()), "/Library/Application Support/", Glib::ustring(CACHEFOLDERNAME), "/cache/");
+    #else
         cacheBaseDir = Glib::build_filename(Glib::ustring(g_get_user_cache_dir()), Glib::ustring(CACHEFOLDERNAME));
+    #endif
 #endif
     }
 

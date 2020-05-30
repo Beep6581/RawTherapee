@@ -68,6 +68,11 @@ set(CACHE_NAME_SUFFIX
     ""
     CACHE STRING "RawTherapee's cache folder suffix")
 
+# For macOS only, OSX_DEV_BUILD option allows using relative paths instead of absolute
+# paths. Consequently, for development builds, application can be launching without
+# being bundled. However, file access can be restricted for some folder.
+option(OSX_DEV_BUILD "Generate macOS development builds" OFF)
+
 # By default we don't use a specific processor target, so PROC_TARGET_NUMBER is
 # set to 0. Specify other values to optimize for specific processor architecture
 # as listed in ProcessorTargets.cmake:

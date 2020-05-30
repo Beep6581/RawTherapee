@@ -1296,12 +1296,6 @@ Camera constants:
     },
 
     { // Quality C
-        "make_model": [ "FUJIFILM X100V", "FUJIFILM X-T4" ],
-        "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v12.2 D65
-        "raw_crop": [ 0, 5, 6252, 4140 ]
-    },
-
-    { // Quality C
         "make_model": "Fujifilm X10",
         "ranges": { "white": 3788 }
     },
@@ -1384,7 +1378,7 @@ Camera constants:
     },
 
     { // Quality C, only raw crop
-        "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-T30", "FUJIFILM X-PRO3" ],
+        "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-T30", "FUJIFILM X-PRO3", "FUJIFILM X100V", "FUJIFILM X-T4" ],
         "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v11, standard_v2 d65
         "raw_crop": [ 0, 5, 6252, 4176]
     },

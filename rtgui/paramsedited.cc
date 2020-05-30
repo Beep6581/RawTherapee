@@ -528,7 +528,6 @@ void ParamsEdited::set(bool v)
     wavelet.HSmethod = v;
     wavelet.Dirmethod = v;
     wavelet.sigma = v;
-    wavelet.sigma = v;
     wavelet.offset = v;
     wavelet.lowthr = v;
     wavelet.resconH = v;

@@ -280,23 +280,6 @@ RTWindow::RTWindow ()
     set_default_size (options.windowWidth, options.windowHeight);
     set_modal (false);
 
-    Gdk::Rectangle lMonitorRect;
-    get_screen()->get_monitor_geometry (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1), lMonitorRect);
-
-    if (options.windowMaximized) {
-        move (lMonitorRect.get_x(), lMonitorRect.get_y());
-        maximize();
-    } else {
-        unmaximize();
-        resize (options.windowWidth, options.windowHeight);
-
-        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
-            move (options.windowX, options.windowY);
-        } else {
-            move (lMonitorRect.get_x(), lMonitorRect.get_y());
-        }
-    }
-
     on_delete_has_run = false;
     is_fullscreen = false;
     property_destroy_with_parent().set_value (false);
@@ -1109,6 +1092,44 @@ bool RTWindow::splashClosed (GdkEventAny* event)
     splash = nullptr;
     showErrors();
     return true;
+}
+
+void RTWindow::setWindowSize ()
+{
+    Gdk::Rectangle lMonitorRect;
+    get_screen()->get_monitor_geometry (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1), lMonitorRect);
+
+#ifdef __APPLE__
+    // Get macOS menu bar height
+    const Gdk::Rectangle lWorkAreaRect = get_screen()->get_monitor_workarea (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1));
+    const int macMenuBarHeight = lWorkAreaRect.get_y();
+#endif
+
+    if (options.windowMaximized) {
+#ifdef __APPLE__
+        move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
+#else
+        move (lMonitorRect.get_x(), lMonitorRect.get_y());
+#endif
+        maximize();
+    } else {
+        unmaximize();
+        resize (options.windowWidth, options.windowHeight);
+
+#ifdef __APPLE__
+        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight) {
+            move (options.windowX, options.windowY + macMenuBarHeight);
+        } else {
+            move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
+        }
+#else
+        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
+            move (options.windowX, options.windowY);
+        } else {
+            move (lMonitorRect.get_x(), lMonitorRect.get_y());
+        }
+#endif
+    }
 }
 
 void RTWindow::set_title_decorated (Glib::ustring fname)

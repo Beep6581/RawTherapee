@@ -124,6 +124,7 @@ public:
     {
         return is_fullscreen;
     }
+    void setWindowSize ();
     void set_title_decorated (Glib::ustring fname);
     void closeOpenEditors();
     void setEditorMode (bool tabbedUI);
