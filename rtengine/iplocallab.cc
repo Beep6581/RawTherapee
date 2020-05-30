@@ -2248,121 +2248,72 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     }
 }
 
-void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, double epsilmax, double epsilmin,  float thres, int sk, bool multiThread, int flag)
+void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, float epsilmax, float epsilmin, float thres, int sk, bool multiThread, int flag)
 {
-    if (flag == 0) {
-        if (rad > 0.f) {
-            array2D<float> ble(bfw, bfh);
-            array2D<float> guid(bfw, bfh);
-            Imagefloat *tmpImage = nullptr;
-            tmpImage = new Imagefloat(bfw, bfh);
+    if (rad > 0.f) {
+        array2D<float> ble(bfw, bfh);
+        array2D<float> guid(bfw, bfh);
+        if (flag == 0) {
 
 #ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-
-            for (int ir = 0; ir < bfh; ir++)
-                for (int jr = 0; jr < bfw; jr++) {
-
-                    float X, Y, Z;
-                    float L = bufcolorig->L[ir][jr];
-                    float a = bufcolorig->a[ir][jr];
-                    float b = bufcolorig->b[ir][jr];
-                    Color::Lab2XYZ(L, a, b, X, Y, Z);
-
-                    guid[ir][jr] = Y / 32768.f;
-                    float La = bufcolfin->L[ir][jr];
-                    float aa = bufcolfin->a[ir][jr];
-                    float ba = bufcolfin->b[ir][jr];
-                    Color::Lab2XYZ(La, aa, ba, X, Y, Z);
-                    tmpImage->r(ir, jr) = X;
-                    tmpImage->g(ir, jr) = Y;
-                    tmpImage->b(ir, jr) = Z;
-
-                    ble[ir][jr] = Y / 32768.f;
-                }
-
-            double aepsil = (epsilmax - epsilmin) / 90.f;
-            double bepsil = epsilmax - 100.f * aepsil;
-            double epsil = aepsil * 0.1 * rad + bepsil;
-
-            float blur = 10.f / sk * (thres + 0.8f * rad);
-            rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
-
-
-
-#ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-
-            for (int ir = 0; ir < bfh; ir++)
-                for (int jr = 0; jr < bfw; jr++) {
-                    float X = tmpImage->r(ir, jr);
-                    float Y = 32768.f * ble[ir][jr];
-                    float Z = tmpImage->b(ir, jr);
-                    float L, a, b;
-                    Color::XYZ2Lab(X, Y, Z, L, a, b);
-                    bufcolfin->L[ir][jr] =  L;
-                }
-
-            delete tmpImage;
-        }
-    } else if (flag == 1) {
-        if (rad > 0.f) {
-            array2D<float> ble(bfw, bfh);
-            array2D<float> blechro(bfw, bfh);
-            array2D<float> hue(bfw, bfh);
-            array2D<float> guid(bfw, bfh);
-
-#ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-
-            for (int ir = 0; ir < bfh; ir++)
-                for (int jr = 0; jr < bfw; jr++) {
-//                    hue[ir][jr] = xatan2f(bufcolfin->b[ir][jr], bufcolfin->a[ir][jr]);
-//                    float chromah = std::sqrt(SQR(bufcolfin->b[ir][jr]) + SQR(bufcolfin->a[ir][jr]));
-
-                    ble[ir][jr] = (bufcolfin->L[ir][jr]) / 32768.f;
-//                    blechro[ir][jr] = chromah / 32768.f;
-                    guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
-                }
-
-            double aepsil = (epsilmax - epsilmin) / 90.f;
-            double bepsil = epsilmax - 100.f * aepsil;
-            double epsil = aepsil * 0.1 * rad + bepsil;
-
-            if (rad != 0.f) {
-                float blur = rad;
-                blur = blur < 0.f ? -1.f / blur : 1.f + blur;
-                // int r1 = max(int(4 / sk * blur + 0.5), 1);
-                int r2 = max(int(25 / sk * blur + 0.5), 1);
-
-                if (rad < 0.f) {
-                    epsil = 0.0001;
-                }
-                rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
-            }
-
-
-
-#ifdef _OPENMP
-            #pragma omp parallel for
+            #pragma omp parallel for if(multiThread)
 #endif
 
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
-                    //    float2 sincosval = xsincosf(hue[ir][jr]);
+                    guid[ir][jr] = Color::L2Y(bufcolorig->L[ir][jr]) / 32768.f;
+                    ble[ir][jr] = Color::L2Y(bufcolfin->L[ir][jr]) / 32768.f;
+                }
+            }
 
+            const float aepsil = (epsilmax - epsilmin) / 90.f;
+            const float bepsil = epsilmax - 100.f * aepsil;
+            const float epsil = aepsil * 0.1f * rad + bepsil;
+            const float blur = 10.f / sk * (thres + 0.8f * rad);
+
+            rtengine::guidedFilter(guid, ble, ble, blur, epsil, multiThread, 4);
+
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+
+            for (int ir = 0; ir < bfh; ir++) {
+                for (int jr = 0; jr < bfw; jr++) {
+                    bufcolfin->L[ir][jr] =  Color::computeXYZ2LabY(32768.f * ble[ir][jr]);
+                }
+            }
+        } else if (flag == 1) {
+
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    ble[ir][jr] = bufcolfin->L[ir][jr] / 32768.f;
+                    guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
+                }
+
+            const float aepsil = (epsilmax - epsilmin) / 90.f;
+            const float bepsil = epsilmax - 100.f * aepsil;
+            const float epsil = rad < 0.f ? 0.0001f : aepsil * 0.1f * rad + bepsil;
+            const float blur = rad < 0.f ? -1.f / rad : 1.f + rad;
+            const int r2 = std::max(int(25 / sk * blur + 0.5f), 1);
+
+            rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
+
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+
+            for (int ir = 0; ir < bfh; ir++) {
+                for (int jr = 0; jr < bfw; jr++) {
                     bufcolfin->L[ir][jr] =  32768.f * ble[ir][jr];
-                    //    bufcolfin->a[ir][jr] =  32768.f * sincosval.y * blechro[ir][jr];
-                    //    bufcolfin->b[ir][jr] =  32768.f * sincosval.x * blechro[ir][jr];
                 }
             }
         }
     }
 }
-
 
 void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &buflight, float rad, int bfh, int bfw, double epsilmax, double epsilmin,  float thres, int sk, bool multiThread)
 {
