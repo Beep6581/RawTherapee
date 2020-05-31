@@ -3059,18 +3059,16 @@ void ExifManager::parse (bool isRaw, bool skipIgnored, bool parseJpeg)
 
         bool frameRootDetected = false;
 
-        if(!frameRootDetected) {
-            std::vector<const Tag*> risTagList = root->findTags("RawImageSegmentation");
-            if (!risTagList.empty()) {
-                for (auto ris : risTagList) {
-                    frames.push_back(ris->getParent());
-                    frameRootDetected = true;
+        std::vector<const Tag*> risTagList = root->findTags("RawImageSegmentation");
+        if (!risTagList.empty()) {
+            for (auto ris : risTagList) {
+                frames.push_back(ris->getParent());
+                frameRootDetected = true;
 
-    #if PRINT_METADATA_TREE
-                    printf("\n--------------- FRAME (RAWIMAGESEGMENTATION) ---------------\n\n");
-                    ris->getParent()->printAll ();
-    #endif
-                }
+#if PRINT_METADATA_TREE
+                printf("\n--------------- FRAME (RAWIMAGESEGMENTATION) ---------------\n\n");
+                ris->getParent()->printAll ();
+#endif
             }
         }
 

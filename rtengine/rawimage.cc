@@ -497,11 +497,10 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
 
         // dcraw needs this global variable to hold pixel data
         image = (dcrawImage_t)calloc (static_cast<unsigned int>(height) * static_cast<unsigned int>(width) * sizeof * image + meta_length, 1);
-        meta_data = (char *) (image + static_cast<unsigned int>(height) * static_cast<unsigned int>(width));
-
         if(!image) {
             return 200;
         }
+        meta_data = (char *) (image + static_cast<unsigned int>(height) * static_cast<unsigned int>(width));
 
         /* Issue 2467
               if (setjmp (failure)) {

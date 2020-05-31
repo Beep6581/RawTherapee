@@ -187,9 +187,9 @@ public:
     void dirpyrequalizer(LabImage* lab, int scale);  //Emil's wavelet
 
 
-    void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params& cp, int W_L, int H_L, float max0, float min0);
+    void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates, int skip, const struct cont_params& cp, int W_L, int H_L, float max0);
     void CompressDR(float *Source, int W_L, int H_L, float Compression, float DetailBoost);
-    void ContrastResid(float * WavCoeffs_L0, struct cont_params &cp, int W_L, int H_L, float max0, float min0);
+    void ContrastResid(float * WavCoeffs_L0, const struct cont_params &cp, int W_L, int H_L, float max0);
 
     void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
     void EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid, int Hei, float minQ, float maxQ, unsigned int Iterates = 0, int skip = 1);
@@ -211,7 +211,7 @@ public:
             struct cont_params &cp, const bool useChannelA, int skip, float *meanab, float *sigmaab);
     void WaveletAandBAllAB(const wavelet_decomposition &WaveletCoeffs_a, const wavelet_decomposition &WaveletCoeffs_b,
             const cont_params &cp, FlatCurve* hhcurve, bool hhutili);
-    void ContAllL(float **koeLi, float *maxkoeLi, bool lipschitz, int maxlvl, LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params &cp,
+    void ContAllL(float **koeLi, float maxkoeLi, bool lipschitz, int maxlvl, LabImage * lab, float **varhue, float **varchrom, float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, struct cont_params &cp,
             int W_L, int H_L, int skip, float *mean, float *sigma, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveSH & waOpacityCurveSH, FlatCurve* ChCurve, bool Chutili);
    void finalContAllL(float ** WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, const cont_params &cp,
             int W_L, int H_L, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL);
@@ -226,7 +226,7 @@ public:
 
     void Aver(float * HH_Coeffs, int datalen, float &averagePlus, float &averageNeg, float &max, float &min);
     void Sigma(float * HH_Coeffs, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg);
-    void calckoe(float ** WavCoeffs_LL, const cont_params& cp, float ** koeLi, int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC = nullptr);
+    void calckoe(float ** WavCoeffs_LL, const cont_params& cp, float ** koeLi, int level, int dir, int W_L, int H_L, float edd, float& maxkoeLi, float **tmC = nullptr);
 
     void Median_Denoise(float **src, float **dst, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
     void Median_Denoise(float **src, float **dst, float upperBound, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);

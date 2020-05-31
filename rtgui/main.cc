@@ -440,7 +440,7 @@ int main (int argc, char **argv)
 
     if (argc > 1) {
         if (!remote && !Glib::file_test (argv1, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
-            bool stdoutRedirecttoConsole = (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0000);
+            const bool stdoutRedirecttoConsole = (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0000);
             // open console, if stdout is invalid
             if (stdoutRedirecttoConsole) {
                 // check if parameter -w was passed.
@@ -472,10 +472,9 @@ int main (int argc, char **argv)
                     cursorInfo.bVisible = false;
                     SetConsoleCursorInfo ( GetStdHandle ( STD_OUTPUT_HANDLE ), &cursorInfo );
 
-                    if (stdoutRedirecttoConsole) { // if stdout is Redirect to console, we also redirect stderr to console
-                        freopen ( "CON", "w", stdout ) ;
-                        freopen ( "CON", "w", stderr ) ;
-                    }
+                    // we also redirect stderr to console
+                    freopen ( "CON", "w", stdout ) ;
+                    freopen ( "CON", "w", stderr ) ;
 
                     freopen ( "CON", "r", stdin ) ;
 
