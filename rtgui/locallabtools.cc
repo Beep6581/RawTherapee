@@ -499,7 +499,7 @@ LocallabColor::LocallabColor():
 
     blurcolde->setAdjusterListener(this);
 
-    softradiuscol->setLogScale(10, -10);
+    softradiuscol->setLogScale(10, 0);
     softradiuscol->setAdjusterListener(this);
 
     inversConn = invers->signal_toggled().connect(sigc::mem_fun(*this, &LocallabColor::inversChanged));
@@ -2286,7 +2286,7 @@ LocallabExposure::LocallabExposure():
     angexp->setAdjusterListener(this);
     angexp->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
 
-    softradiusexp->setLogScale(10, -10);
+    softradiusexp->setLogScale(10, 0);
     softradiusexp->setAdjusterListener(this);
 
     inversexConn  = inversex->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::inversexChanged));

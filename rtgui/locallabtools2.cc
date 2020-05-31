@@ -164,7 +164,7 @@ LocallabTone::LocallabTone():
 
     rewei->setAdjusterListener(this);
 
-    softradiustm->setLogScale(10, -10);
+    softradiustm->setLogScale(10, 0);
     softradiustm->setAdjusterListener(this);
 
     sensitm->setAdjusterListener(this);
@@ -817,7 +817,7 @@ LocallabRetinex::LocallabRetinex():
 
     cliptm->setAdjusterListener(this);
 
-    softradiusret->setLogScale(10, -10);
+    softradiusret->setLogScale(10, 0);
     softradiusret->setAdjusterListener(this);
 
     LocalcurveEditortransT->setCurveListener(this);
@@ -2180,7 +2180,7 @@ LocallabContrast::LocallabContrast():
 
     claricres->setAdjusterListener(this);
 
-    clarisoft->setLogScale(10, -10);
+    clarisoft->setLogScale(10, 0);
     clarisoft->setAdjusterListener(this);
 
     origlcConn = origlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::origlcChanged));
@@ -3740,7 +3740,7 @@ LocallabCBDL::LocallabCBDL():
 
     contresid->setAdjusterListener(this);
 
-    softradiuscb->setLogScale(10, -10);
+    softradiuscb->setLogScale(10, 0);
     softradiuscb->setAdjusterListener(this);
 
     sensicb->setAdjusterListener(this);
