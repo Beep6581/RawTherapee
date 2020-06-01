@@ -10227,7 +10227,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
         int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
-        int delxy = 0;
         struct local_params lp;
         calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, locwavCurveden, locwavdenutili);
 
@@ -10241,7 +10240,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         if (lp.qualmet == 2) { //suppress artifacts with quality enhanced
             levred = 4;
             noiscfactiv = true;
-        }    else {
+        } else {
             levred = 7;
             noiscfactiv = false;
         }
@@ -10263,10 +10262,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-            for (int y = std::max(begy - cy, 0); y < ((std::min(yEn - cy, original->H)) + delxy); y++) {
+            for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
                 const int loy = cy + y;
 
-                for (int x = std::max(begx - cx, 0); x < ((std::min(xEn - cx, original->W)) + delxy); x++) {
+                for (int x = std::max(begx - cx, 0); x < std::min(xEn - cx, original->W); x++) {
                     const int lox = cx + x;
 
                     bufsob[loy - begy][lox - begx] = bufreserv.L[loy - begy][lox - begx] = reserved->L[y][x];
@@ -10605,8 +10604,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             wavelet_level = min(wavelet_level, maxlevelspot);
-            int maxlvl;
-            float contrast = 0.f;
             bool wavcurvemask = false;
 
             if (loclmasCurveblwav && lmasutiliblwav && (lp.enablMask || lp.showmaskblmet == 3)) {
@@ -10630,16 +10627,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 int level_hr = params->locallab.spots.at(sp).csthresholdblur.getTopRight();
 
                 LocwavCurve dummy;
-                bool loclevwavutili = false;
-                bool wavcurvelev = false;
-                bool locconwavutili = false;
-                bool wavcurvecon = false;
-                bool loccompwavutili = false;
-                bool wavcurvecomp = false;
-                bool loccomprewavutili = false;
-                bool locedgwavutili = false;
-                bool wavcurvecompre = false;
-                bool wavcurve = false;
+                constexpr bool loclevwavutili = false;
+                constexpr bool wavcurvelev = false;
+                constexpr bool locconwavutili = false;
+                constexpr bool wavcurvecon = false;
+                constexpr bool loccompwavutili = false;
+                constexpr bool wavcurvecomp = false;
+                constexpr bool loccomprewavutili = false;
+                constexpr bool locedgwavutili = false;
+                constexpr bool wavcurvecompre = false;
+                constexpr bool wavcurve = false;
+                constexpr float contrast = 0.f;
+                int maxlvl;
+
                 wavcontrast4(lp, bufmaskblurbl->L, nullptr, nullptr, contrast, 0.f, 0.f, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, wavcurve, dummy, loclevwavutili, wavcurvelev, dummy, locconwavutili, wavcurvecon, dummy, loccompwavutili, wavcurvecomp, dummy, loccomprewavutili, wavcurvecompre, dummy, locedgwavutili, 1.f, 1.f, maxlvl, 0.f, 0.f, 1.f, 1.f, false, false, false, false, false, 0.f, 0.f);
             }
 
@@ -11354,12 +11354,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         }
 
 //local denoise
-        int aut = 0;
 
         if (lp.denoiena) {
             float slidL[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
             float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
             float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
+            constexpr int aut = 0;
             DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk);
 
             if (params->locallab.spots.at(sp).recurs) {
@@ -11385,7 +11385,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 if (bfw > 65 && bfh > 65) {
                     array2D<float> bufsh(bfw, bfh);
-                    array2D<float> &buflight = bufsh;
                     JaggedArray<float> bufchrom(bfw, bfh, true);
                     std::unique_ptr<LabImage> loctemp(new LabImage(bfw, bfh));
                     std::unique_ptr<LabImage> origcbdl(new LabImage(bfw, bfh));
@@ -11584,7 +11583,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         transit_shapedetect(7, loctemp.get(), nullptr, bufchrom, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-                        buflight.free();
                         bufsh.free();
 
                         if (params->locallab.spots.at(sp).recurs) {
@@ -11854,12 +11852,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         originalmasktm.reset(new LabImage(bfw, bfh));
                     }
 
-                    int itera = 0;
-
-                    if (call == 1) {
-                        //  itera = 5;
-                    }
-
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -11950,9 +11942,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     if (lp.showmasktmmet == 0 || lp.showmasktmmet == 1  || lp.showmasktmmet == 2 || lp.showmasktmmet == 4 || lp.showmasktmmet == 3 || lp.enatmMask) {
-
-
-
+                        constexpr int itera = 0;
                         ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
 
                         tmp1m->CopyFrom(tmp1.get());//save current result
@@ -14342,7 +14332,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             int bfh = yend - ystart;
             int bfw = xend - xstart;
-            bool HHcurve = false;
             bool spez = params->locallab.spots.at(sp).special;
             int bfhr = bfh;
             int bfwr = bfw;
@@ -14703,6 +14692,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             execcolor = true;
                         }
 
+                        bool HHcurve = false;
                         if (lochhCurve && HHutili) {
                             for (int i = 0; i < 500; i++) {
                                 if (lochhCurve[i] != 0.5) {
