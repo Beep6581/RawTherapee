@@ -410,6 +410,7 @@ ControlSpotPanel::ControlSpotPanel():
     if (showtooltip) {
         savrest_->set_tooltip_text(M("TP_LOCALLAB_SAVREST_TOOLTIP"));
         lumask_->set_tooltip_text(M("TP_LOCALLAB_LUMASK_TOOLTIP"));
+        laplac_->set_tooltip_text(M("TP_LOCALLAB_LAP_MASK_TOOLTIP"));
     }
 
     maskBox->pack_start(*laplac_);
