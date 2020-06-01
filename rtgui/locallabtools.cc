@@ -4316,7 +4316,8 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         HHmaskvibshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         Lmaskvibshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         blendmaskvib->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
-    } else {
+        mask2vibCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
+        } else {
         warm->set_tooltip_text("");
         strvib->set_tooltip_text("");
         expmaskvib->set_tooltip_text("");
@@ -4325,6 +4326,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         HHmaskvibshape->setTooltip("");
         Lmaskvibshape->setTooltip("");
         blendmaskvib->set_tooltip_text(M(""));
+        mask2vibCurveEditorG->set_tooltip_text(M(""));
     }
 }
 
