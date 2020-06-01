@@ -2370,6 +2370,7 @@ TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustments rubrics.
 TP_LOCALLAB_CONTCOL;Contrast threshold Mask Blur
 TP_LOCALLAB_CONTFRA;Contrast by Level
 TP_LOCALLAB_CONTRAST;Contrast
+TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Main mask contrast control.
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_CONTTHR;Contrast Threshold
 TP_LOCALLAB_CSTHRESHOLD;Ψ Wavelets Levels 
@@ -2483,8 +2484,9 @@ TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
 TP_LOCALLAB_GUIDBL;Soft radius
 TP_LOCALLAB_GUIDFILTER;Guided filter radius
-TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapt this values according to images - can reduce or increase artifacts. 
+TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapt this values according to images - can reduce or increase artifacts.
 TP_LOCALLAB_HIGHMASKCOL;Highlights mask
+TP_LOCALLAB_HHMASK_TOOLTIP;Fine hue adjustments for example for the skin.
 TP_LOCALLAB_HLH;Curves H
 TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INDSL;Independent (mouse + sliders)
@@ -2794,6 +2796,7 @@ TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
 TP_LOCALLAB_WAV;Levels local contrast
+TP_LOCALLAB_WAVMASK_TOOLTIP;Allows fine work on mask levels contrasts (structure)
 TP_LOCALLAB_WAVBLUR_TOOLTIP;Performs a blur for each level of decomposition, as well as the residual image.
 TP_LOCALLAB_WAVEDG;Local contrast
 TP_LOCALLAB_WAVCOMP;Compression by Level
