@@ -6539,8 +6539,10 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
         gaussianBlur(origblur->b, origblur->b, bfw, bfh, radius);
 
     }
+    
+    
     //choice between original and mask
-    const LabImage *maskptr = usemaskexp ? origblurmask.get() : origblur.get();
+    const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
 
     //parameters deltaE
     const int limscope = 80;
