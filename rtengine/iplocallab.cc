@@ -5208,10 +5208,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                 gaussianBlur(originalmask->b, origblurmask->b, bfw, bfh, radius);
             }
         }
-if(lp.equtm) {printf("equtm\n");
-} else printf("NON equtm\n");
         if (lp.equtm  && senstype == 8) //normalize luminance for Tone mapping , at this place we can use for others senstype!
-        { printf("OK equalize TM\n");
+        {
             float *datain = new float[bfh * bfw];
             float *data = new float[bfh * bfw];
 
