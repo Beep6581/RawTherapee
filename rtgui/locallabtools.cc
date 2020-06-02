@@ -901,6 +901,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         maskHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
         mask2CurveEditorGwav->set_tooltip_text(M("TP_LOCALLAB_WAVMASK_TOOLTIP"));
         mask2CurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
+        special->set_tooltip_text(M("TP_LOCALLAB_SPECIAL_TOOLTIP"));
         } else {
         exp->set_tooltip_text("");
         lightness->set_tooltip_text("");
@@ -928,6 +929,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         maskHCurveEditorG->set_tooltip_text(M(""));
         mask2CurveEditorGwav->set_tooltip_text(M(""));
         mask2CurveEditorG->set_tooltip_text(M(""));
+        special->set_tooltip_text(M(""));
     }
 }
 
