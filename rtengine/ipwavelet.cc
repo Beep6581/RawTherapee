@@ -50,6 +50,7 @@
 #endif
 
 #include "cplx_wavelet_dec.h"
+#pragma GCC diagnostic warning "-Wdouble-promotion"
 
 namespace rtengine
 {
@@ -2059,7 +2060,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     }
 
     if ((cp.conres >= 0.f || cp.conresH >= 0.f) && cp.resena && !cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
-        std::unique_ptr<LabImage> temp(new LabImage(W_L, H_L));
+        const std::unique_ptr<LabImage> temp(new LabImage(W_L, H_L));
 #ifdef _OPENMP
         #pragma omp parallel for num_threads(wavNestedLevels) if (wavNestedLevels>1)
 #endif
@@ -2158,16 +2159,10 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
     float *koeLi[12];
 
-    std::unique_ptr<float[]> koeLibuffer(new float[12 * H_L * W_L]);
+    const std::unique_ptr<float[]> koeLibuffer(new float[12 * H_L * W_L]());
 
     for (int i = 0; i < 12; i++) {
         koeLi[i] = &koeLibuffer[i * W_L * H_L];
-    }
-
-    for (int j = 0; j < 12; j++) {
-        for (int i = 0; i < W_L * H_L; i++) {
-            koeLi[j][i] = 0.f;
-        }
     }
 
 #ifdef _OPENMP
@@ -2187,7 +2182,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         float maxkoeLi = 0.f;
 
         if (cp.detectedge) { //enabled Lipschitz control...more memory..more time...
-            std::unique_ptr<float[]> tmCBuffer(new float[H_L * W_L]);
+            const std::unique_ptr<float[]> tmCBuffer(new float[H_L * W_L]);
             float *tmC[H_L];
 
             for (int i = 0; i < H_L; i++) {
