@@ -2466,14 +2466,14 @@ TP_LOCALLAB_GAMMASKCOL;Gamma mask
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees : -180 0 +180
-TP_LOCALLAB_GRADFRA;Graduated Filter
+TP_LOCALLAB_GRADFRA;Graduated Filter Mask
 TP_LOCALLAB_GRADGEN_TOOLTIP;Graduated filter is supplied with Color and Light & merge file, Exposure & mask, Shadows Highlight, Vibrance, Encoding log.\n\nVibrance, Color and Light & merge file, are provided with GF luminance, chrominance, Hue.\nFeather is located in settings. 
 TP_LOCALLAB_GRADLOGFRA;Graduated Filter Luminance
 TP_LOCALLAB_GRADSTR;Gradient strength
 TP_LOCALLAB_GRADSTRAB_TOOLTIP;Filter chroma strength
 TP_LOCALLAB_GRADSTRCHRO;Gradient strength Chrominance
 TP_LOCALLAB_GRADSTRHUE2;Gradient strength Hue
-TP_LOCALLAB_GRADSTRHUE;Gradient strength Hue (merge file)
+TP_LOCALLAB_GRADSTRHUE;Gradient strength Hue
 TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Filter Hue strength
 TP_LOCALLAB_GRADSTRLUM;Gradient strength Luminance
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
