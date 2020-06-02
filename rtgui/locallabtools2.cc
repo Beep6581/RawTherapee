@@ -1765,6 +1765,7 @@ LocallabSharp::LocallabSharp():
 
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasksharMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+    showmasksharMethod->append(M("TP_LOCALLAB_SHOWREF"));
     showmasksharMethod->set_active(0);
     showmasksharMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmasksharMethodConn = showmasksharMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabSharp::showmasksharMethodChanged));
