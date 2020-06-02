@@ -5208,9 +5208,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                 gaussianBlur(originalmask->b, origblurmask->b, bfw, bfh, radius);
             }
         }
-
+if(lp.equtm) {printf("equtm\n");
+} else printf("NON equtm\n");
         if (lp.equtm  && senstype == 8) //normalize luminance for Tone mapping , at this place we can use for others senstype!
-        {
+        { printf("OK equalize TM\n");
             float *datain = new float[bfh * bfw];
             float *data = new float[bfh * bfw];
 
@@ -6501,7 +6502,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
                 datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
-                data[(y - ystart)* bfw + (x - xstart)] = bufexporig->L[y - ystart][x - xstart];
+                data[(y - ystart)* bfw + (x - xstart)] = bufexpfin->L[y - ystart][x - xstart];
             }
 
         normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f);
@@ -6511,7 +6512,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
-                bufexporig->L[y - ystart][x - xstart] = data[(y - ystart) * bfw + x - xstart];
+                bufexpfin->L[y - ystart][x - xstart] = data[(y - ystart) * bfw + x - xstart];
             }
 
         delete [] datain;
