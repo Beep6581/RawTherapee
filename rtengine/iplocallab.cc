@@ -16,8 +16,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
- *  2016 Jacques Desmis <jdesmis@gmail.com>
- *  2016 Ingo Weyrich <heckflosse@i-weyrich.de>
+ *  2016 - 2020 Jacques Desmis <jdesmis@gmail.com>
+ *  2016 - 2020 Ingo Weyrich <heckflosse@i-weyrich.de>
 
  */
 #include <cmath>
@@ -2557,7 +2557,7 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
     const bool blshow = ((lp.showmaskblmet == 1 || lp.showmaskblmet == 2));
     const bool previewbl = ((lp.showmaskblmet == 4));
 
-    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
     std::unique_ptr<LabImage> origblurmask;
 
     const float radius = 3.f / sk;
@@ -2710,7 +2710,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     kab /= SQR(327.68f);
     kL /= SQR(327.68f);
 
-    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
 
     float radius = 3.f / sk;
 #ifdef _OPENMP
@@ -2839,7 +2839,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
     kab /= SQR(327.68f);
     kL /= SQR(327.68f);
 
-    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
     std::unique_ptr<LabImage> origblurmask;
     const bool usemaskbl = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 4);
     const bool usemaskall = usemaskbl;
@@ -3847,7 +3847,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
     array2D<float> blechro(bfw, bfh);
     array2D<float> hue(bfw, bfh);
     array2D<float> guid(bfw, bfh);
-    std::unique_ptr<LabImage> bufreserv(new LabImage(bfw, bfh));
+    const std::unique_ptr<LabImage> bufreserv(new LabImage(bfw, bfh));
     float meanfab, fab;
     mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, chrom);
     float chromult = 1.f - 0.01f * chrom;
@@ -4351,7 +4351,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         }
 
         if (delt) {
-            std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
+            const std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
             float** rdE = *(rdEBuffer.get());
 
             deltaEforMask(rdE, bfw, bfh, bufreserv.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, lp.balance, lp.balanceh);
@@ -4360,7 +4360,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-            for (int ir = 0; ir < bfh; ir++)
+            for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     delta->L[ir][jr] = bufmaskblurcol->L[ir][jr] - bufprov->L[ir][jr];
                     delta->a[ir][jr] = bufmaskblurcol->a[ir][jr] - bufprov->a[ir][jr];
@@ -4370,9 +4370,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     bufmaskblurcol->a[ir][jr] = bufprov->a[ir][jr] + rdE[ir][jr] * delta->a[ir][jr];
                     bufmaskblurcol->b[ir][jr] = bufprov->b[ir][jr] + rdE[ir][jr] * delta->b[ir][jr];
                 }
-
-            rdEBuffer.reset();
-
+            }
         }
 
         struct grad_params gp;
@@ -4394,7 +4392,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         if (lap > 0.f) {
             const float *datain = bufmaskblurcol->L[0];
-            std::unique_ptr<float[]> data_tmp(new float[bfh * bfw]);
+            const std::unique_ptr<float[]> data_tmp(new float[bfh * bfw]);
 
             if (!pde) {
                 ImProcFunctions::discrete_laplacian_threshold(data_tmp.get(), datain, bfw, bfh, 200.f * lap);
@@ -4465,7 +4463,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
     constexpr float aadark = -1.f;
     constexpr float bbdark = 5000.f;
 
-    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
 
     float radius = 3.f / sk;
 #ifdef _OPENMP
@@ -4613,7 +4611,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
     const int GW = transformed->W;
     const int GH = transformed->H;
 
-    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
     const float refa = chromaref * cos(hueref) * 327.68f;
     const float refb = chromaref * sin(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
@@ -4748,7 +4746,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 
         sobelref = log1p(sobelref);
 
-        std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+        const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
 
         const float radius = 3.f / sk;
 
@@ -4910,7 +4908,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
             showmas = true;
         }
 
-        std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+        const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
         const float radius = 3.f / sk;
         const bool usemaskreti = lp.enaretiMask && senstype == 4 && !lp.enaretiMasktmap;
         float strcli = 0.03f * lp.str;
@@ -5142,7 +5140,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     const bool previewcb = ((lp.showmaskcbmet == 4) &&  senstype == 6);
     const bool previewtm = ((lp.showmasktmmet == 4) &&  senstype == 8);
 
-    std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
+    const std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
     std::unique_ptr<LabImage> origblurmask;
 
     float radius = 3.f / sk;
@@ -5423,7 +5421,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
         }
 
         if (lp.shmeth == 1) {
-            std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(GW, GH));
+            const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(GW, GH));
 
             lab2rgb(*temp, *tmpImage, params->icm.workingProfile);
 
@@ -5576,7 +5574,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
     kab /= SQR(327.68f);
     kL /= SQR(327.68f);
 
-    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
     std::unique_ptr<LabImage> origblurmask;
     const bool usemaskcol = (lp.enaColorMaskinv) && senstype == 0;
     const bool usemaskexp = (lp.enaExpMaskinv) && senstype == 1;
@@ -6190,7 +6188,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
     const float radius = 3.f / sk;
     std::unique_ptr<LabImage> origblurmask;
 
-    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
 
     if (usemaskall) {
         origblurmask.reset(new LabImage(GW, GH));
@@ -6399,7 +6397,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     }
 
 
-    std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
+    const std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
     std::unique_ptr<LabImage> origblurmask;
 
     //balance deltaE
@@ -10270,8 +10268,8 @@ void ImProcFunctions::Lab_Local(
         const int bfw = xend - xstart;
 
         if (bfh >= mSP && bfw >= mSP) {
-            std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
-            std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+            const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
+            const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -10450,7 +10448,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            std::unique_ptr<LabImage> bufprov(new LabImage(GW, GH));
+            const std::unique_ptr<LabImage> bufprov(new LabImage(GW, GH));
 
             bufprov->CopyFrom(bufmaskblurbl.get());
 
@@ -10601,7 +10599,7 @@ void ImProcFunctions::Lab_Local(
 
         if (lap > 0.f && (lp.enablMask || lp.showmaskblmet == 3)) {
             const float *datain = bufmaskblurbl->L[0];
-            std::unique_ptr<float[]> data_tmp(new float[GH * GW]);
+            const std::unique_ptr<float[]> data_tmp(new float[GH * GW]);
 
             if (!pde) {
                 ImProcFunctions::discrete_laplacian_threshold(data_tmp.get(), datain, GW, GH, 200.f * lap);
@@ -10670,7 +10668,7 @@ void ImProcFunctions::Lab_Local(
             }
 
             JaggedArray<float> bufchroi(GW, GH);
-            std::unique_ptr<LabImage> bufgbi(new LabImage(GW, GH));
+            const std::unique_ptr<LabImage> bufgbi(new LabImage(GW, GH));
             JaggedArray<float> bufchro(bfw, bfh);
 
             //here mask is used with plein image for normal and inverse
@@ -11269,8 +11267,8 @@ void ImProcFunctions::Lab_Local(
             if (bfw > 65 && bfh > 65) {
                 array2D<float> bufsh(bfw, bfh);
                 JaggedArray<float> bufchrom(bfw, bfh, true);
-                std::unique_ptr<LabImage> loctemp(new LabImage(bfw, bfh));
-                std::unique_ptr<LabImage> origcbdl(new LabImage(bfw, bfh));
+                const std::unique_ptr<LabImage> loctemp(new LabImage(bfw, bfh));
+                const std::unique_ptr<LabImage> origcbdl(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskorigcb;
                 std::unique_ptr<LabImage> bufmaskblurcb;
                 std::unique_ptr<LabImage> originalmaskcb;
@@ -11493,8 +11491,8 @@ void ImProcFunctions::Lab_Local(
             const int bfw = xend - xstart;
 
             if (bfw >= mSP && bfh >= mSP) {
-                std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-                std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+                const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+                const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskorigvib;
                 std::unique_ptr<LabImage> bufmaskblurvib;
                 std::unique_ptr<LabImage> originalmaskvib;
@@ -11721,9 +11719,9 @@ void ImProcFunctions::Lab_Local(
                 array2D<float> buflight(bfw, bfh);
                 JaggedArray<float> bufchro(bfw, bfh);
                 std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
-                std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
-                std::unique_ptr<LabImage> bufgbm(new LabImage(bfw, bfh));
-                std::unique_ptr<LabImage> tmp1m(new LabImage(bfw, bfh));
+                const std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
+                const std::unique_ptr<LabImage> bufgbm(new LabImage(bfw, bfh));
+                const std::unique_ptr<LabImage> tmp1m(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskorigtm;
                 std::unique_ptr<LabImage> bufmaskblurtm;
                 std::unique_ptr<LabImage> originalmasktm;
@@ -11956,8 +11954,8 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSP && bfh >= mSP) {
 
-            std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-            std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
             std::unique_ptr<LabImage> bufmaskorigSH;
             std::unique_ptr<LabImage> bufmaskblurSH;
             std::unique_ptr<LabImage> originalmaskSH;
@@ -12127,8 +12125,7 @@ void ImProcFunctions::Lab_Local(
     } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ  || tonecurv || lp.showmaskSHmetinv == 1 || lp.enaSHMaskinv) && call < 3 && lp.hsena) {
         std::unique_ptr<LabImage> bufmaskblurcol;
         std::unique_ptr<LabImage> originalmaskSH;
-        std::unique_ptr<LabImage> bufcolorig;
-        bufcolorig.reset(new LabImage(GW, GH));
+        const std::unique_ptr<LabImage> bufcolorig(new LabImage(GW, GH));
 
         if (lp.enaSHMaskinv || lp.showmaskSHmetinv == 1) {
             bufmaskblurcol.reset(new LabImage(GW, GH, true));
@@ -12238,8 +12235,8 @@ void ImProcFunctions::Lab_Local(
                 optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
             }
 
-            std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-            std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -12403,11 +12400,10 @@ void ImProcFunctions::Lab_Local(
 
             array2D<float> buflight(bfw, bfh);
             JaggedArray<float> bufchro(bfw, bfh);
-            std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
             std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
-
-            std::unique_ptr<LabImage> tmpresid(new LabImage(bfw, bfh));
-            std::unique_ptr<LabImage> tmpres(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> tmpresid(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> tmpres(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -12525,7 +12521,7 @@ void ImProcFunctions::Lab_Local(
                     if (!lp.ftwlc) { // || (lp.ftwlc && call != 2)) {
                         ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, fftwlc, sk);
                     } else {
-                        std::unique_ptr<LabImage> tmpfftw(new LabImage(bfwr, bfhr));
+                        const std::unique_ptr<LabImage> tmpfftw(new LabImage(bfwr, bfhr));
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -12872,8 +12868,8 @@ void ImProcFunctions::Lab_Local(
         int bfw = xend - xstart;
 
         if (bfh >= mSP && bfw >= mSP) {
-            std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
-            std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+            const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
+            const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -12889,7 +12885,7 @@ void ImProcFunctions::Lab_Local(
 
             bufexpfin->CopyFrom(bufexporig.get());
             //calc dehaze
-            std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
+            const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
 
             DehazeParams dehazeParams;
             dehazeParams.enabled = true;
@@ -12983,7 +12979,7 @@ void ImProcFunctions::Lab_Local(
             const float refa = chromaref * cos(hueref);
             const float refb = chromaref * sin(hueref);
 
-            std::unique_ptr<JaggedArray<float>> reducDEBuffer(new JaggedArray<float>(Wd, Hd));
+            const std::unique_ptr<JaggedArray<float>> reducDEBuffer(new JaggedArray<float>(Wd, Hd));
             float** reducDE = *(reducDEBuffer.get());
 
             float ade = 0.01f * raddE;
@@ -13002,10 +12998,10 @@ void ImProcFunctions::Lab_Local(
 
                 }
 
-            std::unique_ptr<JaggedArray<float>> origBuffer(new JaggedArray<float>(Wd, Hd));
+            const std::unique_ptr<JaggedArray<float>> origBuffer(new JaggedArray<float>(Wd, Hd));
             float** orig = *(origBuffer.get());
 
-            std::unique_ptr<JaggedArray<float>> origBuffer1(new JaggedArray<float>(Wd, Hd));
+            const std::unique_ptr<JaggedArray<float>> origBuffer1(new JaggedArray<float>(Wd, Hd));
             float** orig1 = *(origBuffer1.get());
 
 #ifdef _OPENMP
@@ -13215,13 +13211,7 @@ void ImProcFunctions::Lab_Local(
             }
 
             delete tmpl;
-            reducDEBuffer.reset();
-            origBuffer.reset();
-            origBuffer1.reset();
-
-            if (bufmask) {
-                delete bufmask;
-            }
+            delete bufmask;
 
             if (!lp.enaretiMasktmap && lp.enaretiMask) {
                 if (buforig) {
@@ -13232,11 +13222,7 @@ void ImProcFunctions::Lab_Local(
                     delete buforigmas;
                 }
             }
-
-            if (bufreti) {
-                delete  bufreti;
-            }
-
+            delete  bufreti;
         }
     }
 
@@ -13328,7 +13314,7 @@ void ImProcFunctions::Lab_Local(
             const float refa = chromaref * cos(hueref);
             const float refb = chromaref * sin(hueref);
 
-            std::unique_ptr<JaggedArray<float>> reducDEBuffer(new JaggedArray<float>(Wd, Hd));
+            const std::unique_ptr<JaggedArray<float>> reducDEBuffer(new JaggedArray<float>(Wd, Hd));
             float** reducDE = *(reducDEBuffer.get());
             float ade = 0.01f * raddE;
             float bde = 100.f - raddE;
@@ -13346,10 +13332,10 @@ void ImProcFunctions::Lab_Local(
 
                 }
 
-            std::unique_ptr<JaggedArray<float>> origBuffer(new JaggedArray<float>(Wd, Hd));
+            const std::unique_ptr<JaggedArray<float>> origBuffer(new JaggedArray<float>(Wd, Hd));
             float** orig = *(origBuffer.get());
 
-            std::unique_ptr<JaggedArray<float>> origBuffer1(new JaggedArray<float>(Wd, Hd));
+            const std::unique_ptr<JaggedArray<float>> origBuffer1(new JaggedArray<float>(Wd, Hd));
             float** orig1 = *(origBuffer1.get());
 
             LabImage *tmpl = nullptr;
@@ -13591,13 +13577,7 @@ void ImProcFunctions::Lab_Local(
             }
 
             delete tmpl;
-            origBuffer.reset();
-            origBuffer1.reset();
-            reducDEBuffer.reset();
-
-            if (bufmask) {
-                delete bufmask;
-            }
+            delete bufmask;
 
             if (!lp.enaretiMasktmap && lp.enaretiMask) {
                 if (buforig) {
@@ -13608,10 +13588,7 @@ void ImProcFunctions::Lab_Local(
                     delete buforigmas;
                 }
             }
-
-            if (bufreti) {
-                delete  bufreti;
-            }
+            delete  bufreti;
         }
     }
 
@@ -13641,8 +13618,8 @@ void ImProcFunctions::Lab_Local(
                 optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
             }
 
-            std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-            std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
 
             std::unique_ptr<LabImage> bufmaskblurexp;
             std::unique_ptr<LabImage> originalmaskexp;
@@ -14028,8 +14005,7 @@ void ImProcFunctions::Lab_Local(
         float adjustr = 2.f;
         std::unique_ptr<LabImage> bufmaskblurexp;
         std::unique_ptr<LabImage> originalmaskexp;
-        std::unique_ptr<LabImage> bufexporig;
-        bufexporig.reset(new LabImage(GW, GH));
+        const std::unique_ptr<LabImage> bufexporig(new LabImage(GW, GH));
 
         if (lp.enaExpMaskinv || lp.showmaskexpmetinv == 1) {
             bufmaskblurexp.reset(new LabImage(GW, GH, true));
@@ -14746,9 +14722,7 @@ void ImProcFunctions::Lab_Local(
                         nottransit = true;
                         bufcolreserv.reset(new LabImage(bfw, bfh));
                         JaggedArray<float> lumreserv(bfw, bfh);
-                        std::unique_ptr<LabImage> bufreser;
-                        bufreser.reset(new LabImage(bfw, bfh));
-
+                        const std::unique_ptr<LabImage> bufreser(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
@@ -14857,7 +14831,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
 
-                        std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
+                        const std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
                         float** rdE = *(rdEBuffer.get());
 
                         deltaEforMask(rdE, bfw, bfh, bufreser.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, mercol, lp.balance, lp.balanceh);
@@ -15496,8 +15470,7 @@ void ImProcFunctions::Lab_Local(
 
         std::unique_ptr<LabImage> bufmaskblurcol;
         std::unique_ptr<LabImage> originalmaskcol;
-        std::unique_ptr<LabImage> bufcolorig;
-        bufcolorig.reset(new LabImage(GW, GH));
+        const std::unique_ptr<LabImage> bufcolorig(new LabImage(GW, GH));
 
         if (lp.enaColorMaskinv || lp.showmaskcolmetinv == 1) {
             bufmaskblurcol.reset(new LabImage(GW, GH, true));
