@@ -196,8 +196,8 @@ void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst) const
         auto xmp = getXmpSidecar(src_);
         Exiv2::ExifData exif;
         Exiv2::IptcData iptc;
-        Exiv2::moveXmpToIptc(xmp, iptc);
-        Exiv2::moveXmpToExif(xmp, exif);
+        Exiv2::copyXmpToIptc(xmp, iptc);
+        Exiv2::copyXmpToExif(xmp, exif);
 
         for (auto &datum : exif) {
             dst->exifData()[datum.key()] = datum;
