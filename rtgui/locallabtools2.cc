@@ -2668,6 +2668,10 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
             localcontMethod->set_active(1);
         }
 
+        fftwlc->set_active(spot.fftwlc);
+        // Update Local contrast GUI according to fftwlc button state
+        // Note: Contrary to the others, shall be called before setting 'lcradius' value
+        updateContrastGUI3();
         lcradius->setValue((double)spot.lcradius);
         lcamount->setValue(spot.lcamount);
         lcdarkness->setValue(spot.lcdarkness);
@@ -2743,7 +2747,6 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         deltad->setValue(spot.deltad);
         wavshapecomp->setCurve(spot.loccompwavcurve);
         fatres->setValue(spot.fatres);
-        fftwlc->set_active(spot.fftwlc);
         enalcMask->set_active(spot.enalcMask);
         CCmasklcshape->setCurve(spot.CCmasklccurve);
         LLmasklcshape->setCurve(spot.LLmasklccurve);
@@ -2765,9 +2768,6 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     // Update Local contrast GUI according to waveshow button state
     updateContrastGUI2();
-
-    // Update Local contrast GUI according to fftwlc button state
-    updateContrastGUI3();
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
