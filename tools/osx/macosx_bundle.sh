@@ -241,12 +241,12 @@ for lib in "${LIB}"/*; do
     install_name_tool -change libfreetype.6.dylib "${LIB}"/libfreetype.6.dylib "${lib}"
 done
 
-# pixbuf loaders & immodules
+# Build GTK3 pixbuf loaders & immodules database
 msg "Build GTK3 databases:"
-"${LOCAL_PREFIX}"/local/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
-"${LOCAL_PREFIX}"/local/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
-sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
-sed -i "" -e "s|/opt/local/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}/gtk-3.0/gtk.immodules"
+"${LOCAL_PREFIX}"/local/bin/gdk-pixbuf-query-loaders "${LIB}/libpix*.so" > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
+"${LOCAL_PREFIX}/local/bin/gtk-query-immodules-3.0" "${LIB}/im-*" > "${ETC}/gtk-3.0/gtk.immodules"
+sed -i.bak "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i.bak "" -e "s|/opt/local/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}/gtk-3.0/gtk.immodules"
 
 # Install names
 ModifyInstallNames
@@ -265,7 +265,7 @@ ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/cliInfo.plist.in" "${LIB}/Info.plist"
-sed -i "" -e "s|@version@|${PROJECT_FULL_VERSION}|
+sed -i.bak "" -e "s|@version@|${PROJECT_FULL_VERSION}|
 s|@shortVersion@|${PROJECT_VERSION}|
 s|@arch@|${arch}|" \
 "${CONTENTS}/Info.plist"
@@ -334,7 +334,7 @@ if [[ -n $NOTARY ]]; then
 fi
 
 function CreateDmg {
-    local srcDir="$(mktemp -dt $$)"
+    local srcDir="$(mktemp -dt $$.XXXXXXXXXXXX)"
     
     msg "Preparing disk image sources at ${srcDir}:"
     cp -R "${APP}" "${srcDir}"
@@ -379,6 +379,7 @@ function CreateDmg {
     
     # Sign disk image
     if [[ -n $CODESIGNID ]]; then
+        msg "Signing disk image"
         codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
     fi
     
