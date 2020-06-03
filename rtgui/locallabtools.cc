@@ -447,7 +447,7 @@ LocallabColor::LocallabColor():
     blurFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABBLURM")))),
     fftColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTCOL_MASK")))),
     contcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTCOL"), 0., 200., 0.5, 0.))),
-    blurcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 100., 0.5, 0.2))),
+    blurcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 200., 0.5, 0.2))),
     blendmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 1000.0, 0.1, 0.))),
     lapmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -2156,7 +2156,7 @@ void LocallabColor::updateColorGUI2()
 
 void LocallabColor::updateColorGUI3()
 {
-    const double temp = blurcol->getValue();
+/*    const double temp = blurcol->getValue();
 
     if (fftColorMask->get_active()) {
         blurcol->setLimits(0.2, 1000., 0.5, 0.2);
@@ -2165,6 +2165,7 @@ void LocallabColor::updateColorGUI3()
     }
 
     blurcol->setValue(temp);
+    */
 }
 
 /* ==== LocallabExposure ==== */
