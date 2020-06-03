@@ -1121,6 +1121,9 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         toolcol->set_active(spot.toolcol);
         fftColorMask->set_active(spot.fftColorMask);
         contcol->setValue(spot.contcol);
+        // Update GUI according to fftColorMash button state
+        // Note: Contrary to the others, shall be called before setting 'blurcol' value
+        updateColorGUI3();
         blurcol->setValue(spot.blurcol);
         blendmaskcol->setValue(spot.blendmaskcol);
         radmaskcol->setValue(spot.radmaskcol);
@@ -1146,9 +1149,6 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
 
     // Update GUI according to merMethod combobox state
     updateColorGUI2();
-
-    // Update GUI according to fftColorMash button state
-    updateColorGUI3();
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
