@@ -52,6 +52,7 @@ DYNPROFILEEDITOR_PROFILE;Processing Profile
 EDITWINDOW_TITLE;Image Edit
 EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
+ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
 EXIFFILTER_APERTURE;Aperture
 EXIFFILTER_CAMERA;Camera
 EXIFFILTER_EXPOSURECOMPENSATION;Exposure compensation (EV)
@@ -1556,7 +1557,7 @@ MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-e</b>
 MAIN_TAB_FAVORITES;Favorites
 MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 MAIN_TAB_FILTER; Filter 
-MAIN_TAB_INSPECT; Inspect 
+MAIN_TAB_INSPECT; Inspect
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_LOCALLAB;Local
 MAIN_TAB_LOCALLAB_TOOLTIP;Shortcut: <b>Alt-o</b>

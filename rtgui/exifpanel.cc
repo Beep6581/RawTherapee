@@ -34,7 +34,8 @@ using namespace rtengine::procparams;
 ExifPanel::ExifPanel() :
     idata(nullptr),
     changeList(new rtengine::procparams::ExifPairs),
-    defChangeList(new rtengine::procparams::ExifPairs)
+    defChangeList(new rtengine::procparams::ExifPairs),
+    pl_(nullptr)
 {
     for (auto &k : MetaDataParams::basicExifKeys) {
         editableTags.push_back(std::make_pair(k, ""));
@@ -318,8 +319,16 @@ void ExifPanel::refreshTags()
 
         for (const auto& p : *changeList) {
             try {
-                exif[p.first] = p.second;
+                auto &datum = exif[p.first];
+                if (datum.setValue(p.second) != 0) {
+                    if (pl_) {
+                        pl_->error(Glib::ustring::compose(M("ERROR_MSG_METADATA_VALUE"), p.first, p.second));
+                    }
+                }
             } catch (const std::exception& exc) {
+                if (pl_) {
+                    pl_->error(Glib::ustring::compose(M("ERROR_MSG_METADATA_VALUE"), p.first, p.second));
+                }
             }
         }
 
@@ -628,19 +637,45 @@ void ExifPanel::setExifTagValue(Gtk::CellRenderer *renderer, const Gtk::TreeMode
 }
 
 
-void ExifPanel::onEditExifTagValue(const Glib::ustring &path, const Glib::ustring &value)
+void ExifPanel::onEditExifTagValue(const Glib::ustring &path, const Glib::ustring &val)
 {
     auto it = exifTreeModel->get_iter(path);
     auto row = *it;
     std::string key = row[exifColumns.key];
+    auto value = val;
 
-    (*changeList)[key] = value;
-    if (!all_keys_active()) {
-        cur_active_keys_.insert(key);
+    bool good = true;
+    try {
+        Exiv2::ExifData data;
+        auto &datum = data[key];
+        if (datum.setValue(value) != 0) {
+            if ((datum.typeId() == Exiv2::signedRational || datum.typeId() == Exiv2::unsignedRational) && datum.setValue(value + "/1") == 0) {
+                value += "/1";
+            } else {
+                good = false;
+            }
+        }
+    } catch (std::exception &exc) {
+        good = false;
     }
-    refreshTags();
 
-    it = exifTreeModel->get_iter(path);
-    exifTree->get_selection()->select(it);
-    notifyListener();
+    if (good) {
+        (*changeList)[key] = value;
+        if (!all_keys_active()) {
+            cur_active_keys_.insert(key);
+        }
+        refreshTags();
+
+        it = exifTreeModel->get_iter(path);
+        exifTree->get_selection()->select(it);
+        notifyListener();
+    } else if (pl_) {
+        pl_->error(Glib::ustring::compose(M("ERROR_MSG_METADATA_VALUE"), key, value));
+    }
+}
+
+
+void ExifPanel::setProgressListener(rtengine::ProgressListener *pl)
+{
+    pl_ = pl;
 }

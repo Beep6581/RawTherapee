@@ -348,6 +348,8 @@ public:
 
     void setEditProvider(EditDataProvider *provider);
 
+    void setProgressListener(rtengine::ProgressListener *pl);
+
 private:
     IdleRegister idle_register;
 };

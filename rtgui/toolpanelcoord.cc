@@ -1271,3 +1271,9 @@ bool ToolPanelCoordinator::getFilmNegativeSpot(rtengine::Coord spot, int spotSiz
 {
     return ipc && ipc->getFilmNegativeSpot(spot.x, spot.y, spotSize, refInput, refOutput);
 }
+
+
+void ToolPanelCoordinator::setProgressListener(rtengine::ProgressListener *pl)
+{
+    metadata->setProgressListener(pl);
+}
