@@ -270,7 +270,6 @@ ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
-install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/cliInfo.plist.in" "${LIB}/Info.plist"
 sed -i.bak "" -e "s|@version@|${PROJECT_FULL_VERSION}|
 s|@shortVersion@|${PROJECT_VERSION}|
 s|@arch@|${arch}|" \
@@ -302,7 +301,6 @@ ditto "${EXECUTABLE}"-cli "${APP}"/..
 if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
     iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements > "${CMAKE_BUILD_TYPE}"/rt.entitlements
-        iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt-cli.entitlements > "${CMAKE_BUILD_TYPE}"/rt-cli.entitlements
     mv "${EXECUTABLE}"-cli "${LIB}"
     for frameworklibs in "${LIB}"/*{dylib,so}; do
         codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${frameworklibs}"
