@@ -277,6 +277,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text(M("TP_LOCALLAB_TONEMAP_TOOLTIP"));
         estop->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
         rewei->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
+        equiltm->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
         sensitm->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         expmasktm->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         CCmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -291,6 +292,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text("");
         estop->set_tooltip_text("");
         rewei->set_tooltip_text("");
+        equiltm->set_tooltip_text(M(""));
         sensitm->set_tooltip_text("");
         expmasktm->set_tooltip_text("");
         CCmasktmshape->setTooltip("");
@@ -1017,6 +1019,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         fftwreti->set_tooltip_text(M("TP_LOCALLAB_RETI_FFTW_TOOLTIP"));
         neigh->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
         vart->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
+        equilret->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
         softradiusret->set_tooltip_text(M("TP_LOCALLAB_GUIDFILTER_TOOLTIP"));
         cTtransshape->setTooltip(M("TP_LOCALLAB_TRANSMISSION_TOOLTIP"));
         mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
@@ -1037,6 +1040,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         fftwreti->set_tooltip_text("");
         neigh->set_tooltip_text("");
         vart->set_tooltip_text("");
+        equilret->set_tooltip_text(M(""));
         softradiusret->set_tooltip_text("");
         cTtransshape->setTooltip("");
         mMLabels->set_tooltip_text("");

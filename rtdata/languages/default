@@ -2411,6 +2411,7 @@ TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_EPSBL;Detail
 TP_LOCALLAB_EQUIL;Normalize Luminance
+TP_LOCALLAB_EQUILTM_TOOLTIP;Reconstruct luminance in such a way that the mean and the variance of the output image is identical to that of the original.
 TP_LOCALLAB_ESTOP;Edge stopping
 TP_LOCALLAB_EV_DUPL;Copy of
 TP_LOCALLAB_EV_NVIS;Hide
@@ -2448,7 +2449,7 @@ TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATANCHORA;Offset
 TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
-TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.\nAnchor allows selection according to the images over or under exposed.\nUseful to increase Luminance for a Second spot near the current and using mask
+TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.\nAnchor allows selection according to the images over or under exposed.
 TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATRES;Amount Residual Image
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
@@ -2644,7 +2645,7 @@ TP_LOCALLAB_RESIDHI;Highlights
 TP_LOCALLAB_RESIDHITHR;Highlights threshold
 TP_LOCALLAB_RESIDSHA;Shadows
 TP_LOCALLAB_RESIDSHATHR;Shadows threshold
-TP_LOCALLAB_RETI;Dehaze - Retinex Strong local contrast
+TP_LOCALLAB_RETI;Dehaze - Retinex Strong contrast
 TP_LOCALLAB_RETIFRA;Retinex
 TP_LOCALLAB_RETIM;Original Retinex
 TP_LOCALLAB_RETITOOLFRA;Retinex Tools
@@ -2668,7 +2669,7 @@ TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust color to include in exclusion!
 TP_LOCALLAB_SENSIH;Scope
-TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
+TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.
 TP_LOCALLAB_SENSILOG;Scope
 TP_LOCALLAB_SENSIS;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
