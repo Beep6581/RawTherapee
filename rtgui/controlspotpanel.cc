@@ -107,6 +107,7 @@ ControlSpotPanel::ControlSpotPanel():
                             sigc::mem_fun(*this, &ControlSpotPanel::on_button_delete));
     buttonduplicateconn_ = button_duplicate_->signal_clicked().connect(
                                sigc::mem_fun(*this, &ControlSpotPanel::on_button_duplicate));
+
     hbox1_->pack_start(*button_add_);
     hbox1_->pack_start(*button_delete_);
     hbox1_->pack_start(*button_duplicate_);
@@ -117,6 +118,7 @@ ControlSpotPanel::ControlSpotPanel():
                             sigc::mem_fun(*this, &ControlSpotPanel::on_button_rename));
     buttonvisibilityconn_ = button_visibility_->signal_button_release_event().connect(
                                 sigc::mem_fun(*this, &ControlSpotPanel::on_button_visibility));
+
 
     if (showtooltip) {
         button_visibility_->set_tooltip_markup(M("TP_LOCALLAB_VIS_TOOLTIP"));
@@ -380,6 +382,7 @@ ControlSpotPanel::ControlSpotPanel():
 
     if (showtooltip) {
         recurs_->set_tooltip_text(M("TP_LOCALLAB_RECURS_TOOLTIP"));
+        avoid_->set_tooltip_text(M("TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP"));
     }
 
     pack_start(*recurs_);
