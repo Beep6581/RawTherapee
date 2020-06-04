@@ -5,8 +5,6 @@
         <dict>
             <key>XDG_DATA_DIRS</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/share</string>
-            <key>DYLD_FALLBACK_LIBRARY_PATH</key>
-            <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
             <key>GTK_PATH</key>
             <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
             <key>GTK_IM_MODULE_FILE</key>
