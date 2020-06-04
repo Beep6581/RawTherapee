@@ -165,7 +165,13 @@ echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${RESOURCES}/AboutThisBuild.
 
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"
-ditto ${LOCAL_PREFIX}/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+lensfunversion=$(pkg-config --modversion lensfun | cut -f3 -d'.')
+if [ $lensfunversion = 95 ]
+then
+    ditto ${LOCAL_PREFIX}/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+else
+    ditto ${LOCAL_PREFIX}/local/share/lensfun/version_1/* "${RESOURCES}/share/lensfun"
+fi
 
 # Copy liblensfun to Frameworks
 ditto ${LOCAL_PREFIX}/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
