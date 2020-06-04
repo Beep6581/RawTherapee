@@ -2679,7 +2679,7 @@ TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadows compression & tonal width
-TP_LOCALLAB_SHADHIGH;Shadows Highlight - Tone equalizer
+TP_LOCALLAB_SHADHIGH;ShadowsHighlight - Tone equalizer
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Can be used instead - or in complement - of exposure module in difficult cases.\nThe use of Denoise may be necessary : lightening the shadows.\n\nCan be used as graduated filter (increase Scope)
 TP_LOCALLAB_SHAMASKCOL;Shadows mask
 TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
@@ -2760,7 +2760,7 @@ TP_LOCALLAB_THRESWAV;Balance Threshold
 TP_LOCALLAB_TLABEL2;TM Effective Tm=%1 TM=%2
 TP_LOCALLAB_TLABEL;TM Datas Min=%1 Max=%2 Mean=%3 Sigma=%4 (Threshold)
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can act on Threshold to normalize
-TP_LOCALLAB_TM;Tone Mapping - Reinforced texture
+TP_LOCALLAB_TM;Tone Mapping - Texture
 TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;Increase Edge stopping - or Reweighting iterates, increase processing time - but increases the effects 
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
