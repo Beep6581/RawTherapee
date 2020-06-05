@@ -894,11 +894,11 @@ class LocallabSharp:
 {
 private:
     Adjuster* const sharcontrast;
-    Adjuster* const sharradius;
+    Adjuster* const sharblur;
     Adjuster* const sharamount;
     Adjuster* const shardamping;
     Adjuster* const shariter;
-    Adjuster* const sharblur;
+    Adjuster* const sharradius;
     Adjuster* const sensisha;
     Gtk::CheckButton* const inverssha;
     MyComboBoxText* const showmasksharMethod;

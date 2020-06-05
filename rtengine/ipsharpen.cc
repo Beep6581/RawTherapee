@@ -251,14 +251,8 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
     if (amo < 1) {
         return;
     }
+    JaggedArray<float> tmpI(W, H);
 
-    float *tmpI[H] ALIGNED16;
-
-    tmpI[0] = new float[W * H];
-
-    for (int i = 1; i < H; i++) {
-        tmpI[i] = tmpI[i - 1] + W;
-    }
 
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
@@ -271,8 +265,12 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
     float contras = contrast / 100.f;
     buildBlendMask(luminance, blend, W, H, contras, 1.f);
     JaggedArray<float> blur(W, H);
-    
+
+    JaggedArray<float>* blurbuffer = nullptr;
+
     if (blurrad >= 0.25) {
+        blurbuffer = new JaggedArray<float>(W, H);
+        JaggedArray<float> &blur = *blurbuffer;
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -340,8 +338,8 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
         }
             
     } // end parallel
+    delete blurbuffer;
 
-    delete [] tmpI[0];
 
 }
 

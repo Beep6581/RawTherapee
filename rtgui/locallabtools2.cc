@@ -1741,11 +1741,11 @@ LocallabSharp::LocallabSharp():
 
     // Sharpening specific widgets
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
-    sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
+    sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
     sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 0))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
-    sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
+    sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
     sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 40))),
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     showmasksharMethod(Gtk::manage(new MyComboBoxText()))
@@ -1776,11 +1776,11 @@ LocallabSharp::LocallabSharp():
 
     // Add Sharpening specific widgets to GUI
     pack_start(*sharcontrast);
+    pack_start(*sharblur);
     pack_start(*sharradius);
     pack_start(*sharamount);
     pack_start(*shardamping);
     pack_start(*shariter);
-    pack_start(*sharblur);
     pack_start(*sensisha);
     pack_start(*inverssha);
     Gtk::Frame* const sharFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")));
@@ -1995,6 +1995,7 @@ void LocallabSharp::convertParamToNormal()
     shardamping->setValue((double)defSpot.shardamping);
     shariter->setValue((double)defSpot.shariter);
     sharblur->setValue(defSpot.sharblur);
+    sharamount->setValue(defSpot.sharamount);
 
     // Enable all listeners
     enableListener();
@@ -2007,11 +2008,15 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
         shardamping->hide();
         shariter->hide();
         sharblur->hide();
+        sharcontrast->hide();
+        sharamount->hide();
     } else {
         // Advanced widgets are shown in Expert mode
         shardamping->show();
         shariter->show();
-        sharblur->show();
+        sharblur->hide();
+        sharcontrast->hide();
+        sharamount->show();
     }
 }
 
