@@ -3279,6 +3279,7 @@ LocallabShadow::LocallabShadow():
     sh_radius(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0, 100, 1, 40))),
     sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
+    gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
     gamSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
     sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 150.0, 0.01, 12.92))),
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
@@ -3425,7 +3426,7 @@ LocallabShadow::LocallabShadow():
     pack_start(*sh_radius);
 //    pack_start(*sensihs);
     pack_start(*blurSHde);
-    Gtk::Frame* const gamFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")));
+//    Gtk::Frame* const gamFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")));
     gamFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gammBox = Gtk::manage(new ToolParamBlock());
     gammBox->pack_start(*gamSH);
@@ -4089,7 +4090,7 @@ void LocallabShadow::updateShadowGUI2()
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->hide();
         }
-
+        gamFrame->hide();
         detailSH->hide();
         highlights->show();
         h_tonalwidth->show();
@@ -4100,6 +4101,7 @@ void LocallabShadow::updateShadowGUI2()
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->show();
         }
+        gamFrame->show();
 
         detailSH->show();
         highlights->hide();
