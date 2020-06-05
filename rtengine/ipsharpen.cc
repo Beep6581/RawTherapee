@@ -244,27 +244,31 @@ BENCHFUN
     delete blurbuffer;
 }
 
-void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W, int H, float** loctemp, int damp, double radi, int ite, int amo, int contrast, double blurrad)
+void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W, int H, float** loctemp, int damp, double radi, int ite, int amo, int contrast, double blurrad, int sk)
 {
     // BENCHFUN
 
     if (amo < 1) {
         return;
     }
+    JaggedArray<float> blend(W, H);
+    float contras = contrast / 100.f;
+    buildBlendMask(luminance, blend, W, H, contras, 1.f);
+
+
     JaggedArray<float> tmpI(W, H);
 
 
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
-            tmpI[i][j] = luminance[i][j];
+            tmpI[i][j] = max(luminance[i][j], 0.f);
         }
     }
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
-    JaggedArray<float> blend(W, H);
-    float contras = contrast / 100.f;
-    buildBlendMask(luminance, blend, W, H, contras, 1.f);
-    JaggedArray<float> blur(W, H);
 
     JaggedArray<float>* blurbuffer = nullptr;
 
@@ -289,7 +293,7 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
 
     float damping = (float) damp / 5.0;
     bool needdamp = damp > 0;
-    double sigma = radi / scale;
+    double sigma = radi / sk;
     const float amount = (float) amo / 100.f;
 
     if (sigma < 0.26f) {
@@ -327,6 +331,7 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
             }
             
         if (blurrad >= 0.25) {
+            JaggedArray<float> &blur = *blurbuffer;
 #ifdef _OPENMP
         #pragma omp for
 #endif
