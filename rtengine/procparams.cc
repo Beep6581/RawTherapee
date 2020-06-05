@@ -2891,7 +2891,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     exnoiseMethod("none"),
     laplacexp(0.0),
     balanexp(1.0),
-    linear(0.3),
+    linear(0.05),
     gamm(0.4),
     fatamount(1.0),
     fatdetail(40.0),
