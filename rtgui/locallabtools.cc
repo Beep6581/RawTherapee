@@ -2488,6 +2488,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         Lmaskexpshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         blendmaskexp->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         mask2expCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
+        expchroma->set_tooltip_text(M("TP_LOCALLAB_EXPCHROMA_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         expMethod->set_tooltip_text("");
@@ -2512,6 +2513,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         Lmaskexpshape->setTooltip("");
         blendmaskexp->set_tooltip_text(M(""));
         mask2expCurveEditorG->set_tooltip_text(M(""));
+        expchroma->set_tooltip_text(M(""));
     }
 }
 
@@ -2567,7 +2569,6 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
 
         if (spot.expMethod == "std") {
             expMethod->set_active(0);
-            updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
         } else if (spot.expMethod == "pde") {
             expMethod->set_active(1);
         }
@@ -2651,7 +2652,6 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
         if (expMethod->get_active_row_number() == 0) {
             spot.expMethod = "std";
-            updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
         } else if (expMethod->get_active_row_number() == 1) {
             spot.expMethod = "pde";
         }
@@ -3031,10 +3031,10 @@ void LocallabExposure::convertParamToNormal()
     slomaskexp->setValue(defSpot.slomaskexp);
     strmaskexp->setValue(defSpot.strmaskexp);
     angmaskexp->setValue(defSpot.angmaskexp);
-    laplacexp->setValue(defSpot.laplacexp);
-    linear->setValue(defSpot.linear);
-    balanexp->setValue(defSpot.balanexp);
-    gamm->setValue(defSpot.gamm);
+ //   laplacexp->setValue(defSpot.laplacexp);
+  //  linear->setValue(defSpot.linear);
+  //  balanexp->setValue(defSpot.balanexp);
+  //  gamm->setValue(defSpot.gamm);
 
     // Enable all listeners
     enableListener();
@@ -3049,7 +3049,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
         slomaskexp->hide();
         gradFramemask->hide();
         blurexpde->hide();
-        pdeFrame->hide();
+     //   pdeFrame->hide();
     } else {
         // Advanced widgets are shown in Expert mode
         lapmaskexp->show();
@@ -3057,7 +3057,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
         slomaskexp->show();
         gradFramemask->show();
         blurexpde->show();
-        pdeFrame->show();
+      //  pdeFrame->show();
     }
 }
 
@@ -3081,7 +3081,6 @@ void LocallabExposure::expMethodChanged()
 {
     // Update exposure GUI according to expMethod value
     updateExposureGUI2();
-    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {

@@ -2371,13 +2371,16 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
     float shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
     float hlrange = maxran - shoulder;
     float linear = lp.linear;
-    float kl = 1.5f;
+    float kl = 1.f;
     float addcomp = 0.f;
 
     if (lp.linear > 0.f) {
         if (lp.expcomp == 0.f) {
             lp.expcomp = 0.01f;
         }
+    }
+    if (settings->verbose) {
+        printf("mean=%f\n", mean); 
     }
 
 #ifdef _OPENMP
@@ -2388,9 +2391,10 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
         for (int jr = 0; jr < bfw; jr++) {
             float L = bufexporig->L[ir][jr];
 
-            if (L < mean && lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {
+        //    if (L < mean && lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {//disabled generate artifacts
+            if (lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {
                 float Llin = LIM01(L / 32768.f);
-                addcomp = linear * (-kl * Llin + kl);//maximum about 1.5 IL
+                addcomp = linear * (-kl * Llin + kl);//maximum about 1. IL
                 exp_scale = pow(2.0, (lp.expcomp + addcomp));
                 shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
                 comp = (max(0.0, (lp.expcomp + addcomp)) + 1.0) * lp.hlcomp / 100.0;
@@ -13954,7 +13958,7 @@ void ImProcFunctions::Lab_Local(
                         float ch = 0.f;
                         float chprosl = 0.f;
 
-                        if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
+                        if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili) || lp.laplacexp > 0.1f) {
                             ch = (1.f + 0.02f * lp.expchroma);
                             chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
                         }
