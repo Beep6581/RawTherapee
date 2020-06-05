@@ -13949,39 +13949,31 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
-                    /*
-                                            //cat02
-                                            if (params->locallab.spots.at(sp).warm != 0) {
-                                                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
-                                            }
-                    */
-                    /*
-                                            constexpr float ampli = 70.f;
-                                            float ch = 0.f;
-                                            float chprosl = 0.f;
+                    if (lp.expchroma != 0.f) {
+                        constexpr float ampli = 70.f;
+                        float ch = 0.f;
+                        float chprosl = 0.f;
 
-                                            if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
-                                                ch = (1.f + 0.02f * lp.expchroma);
-                                                chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
-                                            }
+                        if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
+                            ch = (1.f + 0.02f * lp.expchroma);
+                            chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
+                        }
 
-                    #ifdef _OPENMP
-                                            #pragma omp parallel for schedule(dynamic,16)
-                    #endif
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
 
-                                            for (int ir = 0; ir < bfh; ir++) {
-                                                for (int jr = 0; jr < bfw; jr++) {
-                                                    const float epsi = bufexporig->L[ir][jr] == 0.f ? 0.001f : 0.f;
-                                                    const float rapexp = bufexpfin->L[ir][jr] / (bufexporig->L[ir][jr] + epsi);
+                        for (int ir = 0; ir < bfh; ir++) {
+                            for (int jr = 0; jr < bfw; jr++) {
+                                const float epsi = bufexporig->L[ir][jr] == 0.f ? 0.001f : 0.f;
+                                const float rapexp = bufexpfin->L[ir][jr] / (bufexporig->L[ir][jr] + epsi);
+                                bufexpfin->a[ir][jr] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
+                                bufexpfin->b[ir][jr] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
+                            }
+                        }
 
-                                                    if (rapexp >= 1.f) {
-                                                        bufl_ab[ir][jr] = chprosl * rapexp;
-                                                    } else {
-                                                        bufl_ab[ir][jr] = chprosl * rapexp;
-                                                    }
-                                                }
-                                            }
-                    */
+                    }
+                    
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
                         softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
                     }

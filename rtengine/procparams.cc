@@ -2811,7 +2811,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     black(0),
     shadex(0),
     shcompr(50),
-    expchroma(30),
+    expchroma(5),
     sensiex(60),
     structexp(0),
     blurexpde(5),
