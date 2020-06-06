@@ -852,7 +852,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     if (locallab.spots.at(sp).shape == "ELI") {
         lp.shapmet = 0;
-    } else if (locallab.spots.at(sp).shape == "RECT") {
+    } else /*if (locallab.spots.at(sp).shape == "RECT")*/ {
         lp.shapmet = 1;
     }
 
@@ -2072,7 +2072,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
 #ifndef _DEBUG
-    #pragma omp parallel
+    #pragma omp parallel if (multiThread)
 #endif
     {
 #ifdef __SSE2__
@@ -2320,7 +2320,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     float minlig = buflight[0][0];
 
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(min:minlig) schedule(dynamic,16)
+    #pragma omp parallel for reduction(min:minlig) schedule(dynamic,16) if (multiThread)
 #endif
 
     for (int ir = 0; ir < bfh; ir++) {
@@ -2332,7 +2332,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     array2D<float> guidsoft(bfw, bfh);
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
     for (int ir = 0; ir < bfh; ir++) {
@@ -2350,7 +2350,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
 
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
     for (int ir = 0; ir < bfh; ir++) {
@@ -2381,7 +2381,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
     if (lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for if (multiThread)
 #endif
 
         for (int ir = 0; ir < bfh; ir++) {
@@ -2405,7 +2405,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
         }
     } else {
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for if (multiThread)
 #endif
 
         for (int ir = 0; ir < bfh; ir++) {
@@ -2436,7 +2436,7 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     constexpr float randFactor1 = 1.f / (float) RAND_MAX;
     constexpr float randFactor2 = (2.f * rtengine::RT_PI_F) / (float) RAND_MAX;
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel if (multiThread)
 #endif
     {
         float z0, z1;
@@ -2626,13 +2626,13 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
             }
 
             for (int x = 0, lox = cx + x; x < transformed->W; x++, lox++) {
-                int zone = 0;
+                int zone;
 
                 float localFactor = 1.f;
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
+                } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -2728,7 +2728,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 
     float radius = 3.f / sk;
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel if (multiThread)
 #endif
     {
         gaussianBlur(original->L, origblur->L, GW, GH, radius);
@@ -2761,7 +2761,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
+                } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -2875,7 +2875,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 
 
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel if (multiThread)
 #endif
     {
         gaussianBlur(original->L, origblur->L, GW, GH, radius);
@@ -2909,7 +2909,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
+                } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -3063,12 +3063,6 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
         }
     }
 }
-
-float pow3(float x)
-{
-    return x * x * x;
-}
-
 
 struct grad_params {
     bool angle_is_zero, transpose, bright_top;
@@ -3280,14 +3274,14 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 
         for (int x = 0; x < bfw; x++) {
             const int lox = x + xstart + cx;
-            int zone = 0;
+            int zone;
 
             float localFactor = 1.f;
             const float achm = (float)lp.trans / 100.f;
 
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, achm, lp, zone, localFactor);
-            } else if (lp.shapmet == 1) {
+            } else /*if (lp.shapmet == 1)*/ {
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
             }
 
@@ -3372,7 +3366,7 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
     balancedeltaEH(kH, kch);
 
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel for if (multiThread)
 #endif
 
     for (int y = 0; y < bfh; y++) {
@@ -3475,13 +3469,13 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
 
         for (int x = 0; x < bfw; x++) {
             const int lox = x + xstart + cx;
-            int zone = 0;
+            int zone;
             float localFactor = 1.f;
             const float achm = (float)lp.trans / 100.f;
 
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, achm, lp, zone, localFactor);
-            } else if (lp.shapmet == 1) {
+            } else /*if (lp.shapmet == 1)*/ {
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
             }
 
@@ -3634,6 +3628,10 @@ void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, do
 
     double mean = 0.;
     double dt = 0.;
+
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(+:mean,dt) if(multiThread)
+#endif
     for (size_t i = 0; i < size; i++) {
         mean += data[i];
         dt += SQR(data[i]);
@@ -3679,6 +3677,9 @@ void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t 
     const float onesmod = 1.f - mod;
     /* normalize the array */
 
+#ifdef _OPENMP
+    #pragma omp parallel for if(multiThread)
+#endif
     for (size_t i = 0; i < size; i++) {
         data[i] = (modma * data[i] + sigmmmodmb) + onesmod * ref[i];//normalize mean and stdv and balance PDE
     }
@@ -3699,15 +3700,12 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
      */
 
     BENCHFUN
-#ifdef _OPENMP
-
+#ifdef RT_FFTW3F_OMP
     if (multiThread) {
         fftwf_init_threads();
         fftwf_plan_with_nthreads(omp_get_max_threads());
     }
-
 #endif
-    fftwf_plan dct_fw, dct_fw04, dct_bw;
     float *data_fft, *data_fft04, *data_tmp, *data, *data_tmp04;
     float *datashow = nullptr;
 
@@ -3758,15 +3756,17 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     }
 
     //execute first
-    dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+    const auto dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_fw);
 
     //execute second
     if (dEenable == 1) {
-        dct_fw04 = fftwf_plan_r2r_2d(bfh, bfw, data_tmp04, data_fft04, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+        const auto dct_fw04 = fftwf_plan_r2r_2d(bfh, bfw, data_tmp04, data_fft04, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
         fftwf_execute(dct_fw04);
+        fftwf_destroy_plan(dct_fw04);
+
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for if (multiThread)
 #endif
 
         for (int y = 0; y < bfh ; y++) {//mix two fftw Laplacian : plein if dE near ref
@@ -3789,10 +3789,6 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     fftwf_free(data_tmp);
     fftwf_free(data_tmp04);
 
-    if (dEenable == 1) {
-        fftwf_destroy_plan(dct_fw04);
-    }
-
     /* solve the Poisson PDE in Fourier space */
     /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
     ImProcFunctions::rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
@@ -3805,17 +3801,18 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
         }
     }
 
-    dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+    const auto dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_bw);
     fftwf_destroy_plan(dct_fw);
     fftwf_destroy_plan(dct_bw);
     fftwf_free(data_fft);
     fftwf_cleanup();
 
+#ifdef RT_FFTW3F_OMP
     if (multiThread) {
         fftwf_cleanup_threads();
     }
-
+#endif
     if (show != 4 && normalize == 1) {
         normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f);
     }
@@ -3823,7 +3820,7 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     if (show == 0  || show == 4) {
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for if (multiThread)
 #endif
 
         for (int y = 0; y < bfh ; y++) {
@@ -3876,7 +3873,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
     if (deltaE || modmask || enaMask || showmaske) {
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
         for (int y = 0; y < bfh; y++) {
@@ -3973,7 +3970,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         }
 
 #ifdef _OPENMP
-        #pragma omp parallel
+        #pragma omp parallel if (multiThread)
 #endif
         {
 #ifdef __SSE2__
@@ -4139,7 +4136,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         calcGammaLut(gamma, slope, lutTonemaskexp);
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
         for (int ir = 0; ir < bfh; ir++) {
@@ -4155,7 +4152,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         if (strumask > 0.f && astool) {
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
             for (int ir = 0; ir < bfh; ir++) {
@@ -4168,7 +4165,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         if (lmasklocalcurve && localmaskutili) {
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
             for (int ir = 0; ir < bfh; ir++)
@@ -4312,7 +4309,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         if (lochhhmasCurve && HHmaskcurve) {
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
             for (int ir = 0; ir < bfh; ir++)
@@ -4369,20 +4366,16 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             float** rdE = *(rdEBuffer.get());
 
             deltaEforMask(rdE, bfw, bfh, bufreserv.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, lp.balance, lp.balanceh);
-            std::unique_ptr<LabImage> delta(new LabImage(bfw, bfh));
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
-                    delta->L[ir][jr] = bufmaskblurcol->L[ir][jr] - bufprov->L[ir][jr];
-                    delta->a[ir][jr] = bufmaskblurcol->a[ir][jr] - bufprov->a[ir][jr];
-                    delta->b[ir][jr] = bufmaskblurcol->b[ir][jr] - bufprov->b[ir][jr];
-
-                    bufmaskblurcol->L[ir][jr] = bufprov->L[ir][jr] + rdE[ir][jr] * delta->L[ir][jr];
-                    bufmaskblurcol->a[ir][jr] = bufprov->a[ir][jr] + rdE[ir][jr] * delta->a[ir][jr];
-                    bufmaskblurcol->b[ir][jr] = bufprov->b[ir][jr] + rdE[ir][jr] * delta->b[ir][jr];
+                    const float rdEval = rdE[ir][jr];
+                    bufmaskblurcol->L[ir][jr] = bufprov->L[ir][jr] + rdEval * (bufmaskblurcol->L[ir][jr] - bufprov->L[ir][jr]);
+                    bufmaskblurcol->a[ir][jr] = bufprov->a[ir][jr] + rdEval * (bufmaskblurcol->a[ir][jr] - bufprov->a[ir][jr]);
+                    bufmaskblurcol->b[ir][jr] = bufprov->b[ir][jr] + rdEval * (bufmaskblurcol->b[ir][jr] - bufprov->b[ir][jr]);
                 }
             }
         }
@@ -4392,17 +4385,15 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         if (lp.strmaexp != 0.f) {
             calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 0);
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
-            for (int ir = 0; ir < bfh; ir++)
+            for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
-                    double factor = 1.0;
-                    factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
-                    bufmaskblurcol->L[ir][jr] *= factor;
+                    bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
                 }
+            }
         }
-
 
         if (lap > 0.f) {
             const float *datain = bufmaskblurcol->L[0];
@@ -4415,7 +4406,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             }
 
 #ifdef _OPENMP
-            #pragma omp parallel for
+            #pragma omp parallel for if (multiThread)
 #endif
 
             for (int y = 0; y < bfh; y++) {
@@ -4430,7 +4421,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
     if (deltaE || modmask || enaMask || showmaske) {
 #ifdef _OPENMP
-        #pragma omp parallel
+        #pragma omp parallel if (multiThread)
 #endif
         {
             gaussianBlur(bufmaskblurcol->L, bufmaskblurcol->L, bfw, bfh, radiusb);
@@ -4514,7 +4505,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
+                } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -4666,12 +4657,12 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
 
             for (int x = 0; x < transformed->W; x++) {
                 const int lox = cx + x;
-                int zone = 0;
+                int zone;
                 float localFactor = 1.f;
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
+                } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -4806,12 +4797,12 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
                     const int begx = int (lp.xc - lp.lxL);
                     const int begy = int (lp.yc - lp.lyT);
 
-                    int zone = 0;
+                    int zone;
                     float localFactor = 1.f;
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else if (lp.shapmet == 1) {
+                    } else /*if (lp.shapmet == 1)*/ {
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                     }
 
@@ -4963,12 +4954,12 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 
                 for (int x = xstart; x < xend; x++) {
                     const int lox = cx + x;
-                    int zone = 0;
+                    int zone;
                     float localFactor = 1.f;
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else if (lp.shapmet == 1) {
+                    } else /*if (lp.shapmet == 1)*/ {
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                     }
 
@@ -5277,12 +5268,12 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
             for (int x = xstart; x < xend; x++) {
                 const int lox = cx + x;
 
-                int zone = 0;
+                int zone;
                 float localFactor = 1.f;
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
+                } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -5647,13 +5638,13 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
             for (int x = 0; x < transformed->W; x++) {
                 const int lox = cx + x;
-                int zone = 0;
+                int zone;
 
                 float localFactor = 1.f;
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
+                } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);//rect not good
                 }
 
@@ -6244,12 +6235,12 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
             const int loy = cy + y;
 
             for (int x = xstart, lox = cx + x; x < xend; x++, lox++) {
-                int zone = 0;
+                int zone;
                 float localFactor = 1.f;
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
+                } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -6551,14 +6542,14 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 
             for (int x = 0; x < bfw; x++) {
                 const int lox = x + xstart + cx;
-                int zone = 0;
+                int zone;
                 float localFactor = 1.f;
                 const float achm = (float)lp.trans / 100.f;
 
                 //claculate transition
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, achm, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
+                } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                 }
 
@@ -6678,15 +6669,13 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
 {
 
     BENCHFUN
-#ifdef _OPENMP
-
+#ifdef RT_FFTW3F_OMP
     if (multiThread) {
         fftwf_init_threads();
         fftwf_plan_with_nthreads(omp_get_max_threads());
     }
 
 #endif
-    fftwf_plan dct_fw, dct_bw;
     float *data_fft, *data_tmp, *data;
 
     if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
@@ -6706,7 +6695,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
         abort();
     }
 
-    dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+    const auto dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_fw);
 
     fftwf_free(data_tmp);
@@ -6715,16 +6704,18 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
     /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
     ImProcFunctions::rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
 
-    dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+    const auto dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_bw);
     fftwf_destroy_plan(dct_fw);
     fftwf_destroy_plan(dct_bw);
     fftwf_free(data_fft);
     fftwf_cleanup();
 
+#ifdef RT_FFTW3F_OMP
     if (multiThread) {
         fftwf_cleanup_threads();
     }
+#endif
 
     normalize_mean_dt(data, dataor, bfw * bfh, mod, 1.f);
     {
@@ -6735,7 +6726,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
 
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
-                dataout[y * bfw + x]   = CLIPLOC(data[y * bfw + x]);
+                dataout[y * bfw + x] = CLIPLOC(data[y * bfw + x]);
             }
         }
     }
@@ -6767,13 +6758,11 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
     */
     BENCHFUN
 
-#ifdef _OPENMP
-
+#ifdef RT_FFTW3F_OMP
     if (multiThread) {
         fftwf_init_threads();
         fftwf_plan_with_nthreads(omp_get_max_threads());
     }
-
 #endif
 
 
@@ -6895,9 +6884,11 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
     fftwf_destroy_plan(p);
     fftwf_free(out);
 
+#ifdef RT_FFTW3F_OMP
     if (multiThread) {
         fftwf_cleanup_threads();
     }
+#endif
 }
 
 void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw, int bfh, float radius, int fftkern, int algo)
@@ -10215,7 +10206,7 @@ void ImProcFunctions::Lab_Local(
         array2D<float> bufsob(bfw, bfh);
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
 
         for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
@@ -10235,7 +10226,7 @@ void ImProcFunctions::Lab_Local(
         array2D<float> &guid = bufsob;
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for if(multiThread)
 #endif
 
         for (int ir = 0; ir < bfh; ir++)
@@ -10254,7 +10245,7 @@ void ImProcFunctions::Lab_Local(
         array2D<float> &deltasobelL = guid;
 
 #ifdef _OPENMP
-        #pragma omp parallel for reduction(+:sombel)
+        #pragma omp parallel for reduction(+:sombel) if(multiThread)
 #endif
 
         for (int ir = 0; ir < bfh; ir++) {
@@ -10285,7 +10276,7 @@ void ImProcFunctions::Lab_Local(
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
 
             for (int y = ystart; y < yend; y++) {
@@ -10311,7 +10302,7 @@ void ImProcFunctions::Lab_Local(
                 struct grad_params gplog;
                 calclocalGradientParams(lp, gplog, ystart, xstart, bfw, bfh, 11);
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
 
                 for (int ir = 0; ir < bfh; ir++) {
@@ -13670,13 +13661,13 @@ void ImProcFunctions::Lab_Local(
                             for (int x = xstart; x < xend; x++) {
                                 const int lox = cx + x;
                                 const int loy = cy + y;
-                                int zone = 0;
+                                int zone;
                                 float localFactor = 1.f;
                                 const float achm = lp.trans / 100.f;
 
                                 if (lp.shapmet == 0) {
                                     calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                } else if (lp.shapmet == 1) {
+                                } else /*if (lp.shapmet == 1)*/ {
                                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                                 }
 
@@ -14281,13 +14272,13 @@ void ImProcFunctions::Lab_Local(
                             for (int x = xstart; x < xend; x++) {
                                 const int lox = cx + x;
                                 const int loy = cy + y;
-                                int zone = 0;
+                                int zone;
                                 float localFactor = 1.f;
                                 const float achm = lp.trans / 100.f;
 
                                 if (lp.shapmet == 0) {
                                     calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                } else if (lp.shapmet == 1) {
+                                } else /*if (lp.shapmet == 1)*/ {
                                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                                 }
 
@@ -14517,13 +14508,13 @@ void ImProcFunctions::Lab_Local(
 
                             for (int x = 0; x < bfw; x++) {
                                 const int lox = x + xstart + cx;
-                                int zone = 0;
+                                int zone;
                                 float localFactor = 1.f;
                                 const float achm = (float)lp.trans / 100.f;
 
                                 if (lp.shapmet == 0) {
                                     calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                } else if (lp.shapmet == 1) {
+                                } else /*if (lp.shapmet == 1)*/ {
                                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                                 }
 
@@ -15645,12 +15636,12 @@ void ImProcFunctions::Lab_Local(
 
                 for (int x = 0; x < transformed->W; x++) {
                     int lox = cx + x;
-                    int zone = 0;
+                    int zone;
                     float localFactor = 1.f;
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else if (lp.shapmet == 1) {
+                    } else /*if (lp.shapmet == 1)*/ {
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                     }
 
