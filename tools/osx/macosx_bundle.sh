@@ -251,8 +251,8 @@ done
 msg "Build GTK3 databases:"
 "${LOCAL_PREFIX}"/local/bin/gdk-pixbuf-query-loaders "${LIB}/libpix*.so" > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
 "${LOCAL_PREFIX}/local/bin/gtk-query-immodules-3.0" "${LIB}/im-*" > "${ETC}/gtk-3.0/gtk.immodules"
-sed -i.bak "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
-sed -i.bak "" -e "s|/opt/local/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i.bak -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i.bak -e "s|/opt/local/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}/gtk-3.0/gtk.immodules"
 
 # Install names
 ModifyInstallNames
@@ -270,10 +270,7 @@ ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
-sed -i.bak "" -e "s|@version@|${PROJECT_FULL_VERSION}|
-s|@shortVersion@|${PROJECT_VERSION}|
-s|@arch@|${arch}|" \
-"${CONTENTS}/Info.plist"
+sed -i.bak "" -e "s|@version@|${PROJECT_FULL_VERSION}|s|@shortVersion@|${PROJECT_VERSION}|s|@arch@|${arch}|" "${CONTENTS}/Info.plist"
 update-mime-database -V  "${RESOURCES}/share/mime"
 
 msg "Build glib database:"
@@ -302,10 +299,10 @@ if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
     iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements > "${CMAKE_BUILD_TYPE}"/rt.entitlements
     mv "${EXECUTABLE}"-cli "${LIB}"
-    for frameworklibs in "${LIB}"/*{dylib,so}; do
-        codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${frameworklibs}"
-    done
-    codesign --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
+ #   for frameworklibs in "${LIB}"/*{dylib,so}; do
+ #       codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${frameworklibs}"
+ #   done
+    codesign --force --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
     spctl -a -vvvv "${APP}"
 fi
 
@@ -313,6 +310,7 @@ fi
 if [[ -n $NOTARY ]]; then
     msg "Notarizing the application:"
     ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
+    echo "Uploading..."
     uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee.RawTherapee" ${NOTARY} --file "${APP}.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
     echo "Result= $uuid" # Display identifier string
     sleep 15
@@ -390,6 +388,7 @@ function CreateDmg {
     if ! test -z "$NOTARY"; then
         msg "Notarizing the dmg:"
         zip "${dmg_name}.dmg.zip" "${dmg_name}.dmg"
+        echo "Uploading..."
         uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
         echo "dmg Result= $uuid" # Display identifier string
         sleep 15
