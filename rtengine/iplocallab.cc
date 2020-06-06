@@ -70,7 +70,7 @@
 #define CLIPCHRO(x) LIM(x,0.f, 140.f)
 #define CLIP1(x) LIM(x, 0.f, 1.f)
 //define to prevent crash with old pp3 with integer range 100 instead of double range 1.
-#define CLIP24(x) LIM(x, -2., 4.)
+#define CLIP24(x) LIM(x, -2.f, 4.f)
 #define CLIP04(x) LIM(x, 0.f, 4.f)
 #define CLIP42_35(x) LIM(x, 0.42, 3.5)
 #define CLIP2_30(x) LIM(x, 0.2, 3.)
@@ -458,7 +458,7 @@ struct local_params {
     int shadex;
     int hlcomp;
     int hlcompthr;
-    double expcomp;
+    float expcomp;
     float expchroma;
     int excmet;
     int mergemet;
@@ -2360,55 +2360,65 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     }
 }
 
-void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve, float mean)
+void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve)
 {
     BENCHFUN
     //exposure local
 
     constexpr float maxran = 65536.f;
-    float exp_scale = pow(2.0, lp.expcomp);
-    float comp = (max(0.0, lp.expcomp) + 1.0) * lp.hlcomp / 100.0;
-    float shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
-    float hlrange = maxran - shoulder;
-    float linear = lp.linear;
-    float kl = 1.f;
-    float addcomp = 0.f;
-
-    if (lp.linear > 0.f) {
-        if (lp.expcomp == 0.f) {
+    const float cexp_scale = std::pow(2.f, lp.expcomp);
+    const float ccomp = (max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
+    const float cshoulder = ((maxran / max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
+    const float chlrange = maxran - cshoulder;
+    const float linear = lp.linear;
+    constexpr float kl = 1.f;
+    const float hlcompthr = lp.hlcompthr / 200.f;
+    const float hlcomp = lp.hlcomp / 100.f;
+    if (lp.linear > 0.f && lp.expcomp == 0.f) {
             lp.expcomp = 0.01f;
-        }
     }
-    if (settings->verbose) {
-        printf("mean=%f\n", mean); 
-    }
+
+    if (lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {
 
 #ifdef _OPENMP
-    #pragma omp parallel for
+        #pragma omp parallel for
 #endif
 
-    for (int ir = 0; ir < bfh; ir++) {
-        for (int jr = 0; jr < bfw; jr++) {
-            float L = bufexporig->L[ir][jr];
+        for (int ir = 0; ir < bfh; ir++) {
+            for (int jr = 0; jr < bfw; jr++) {
+                float L = bufexporig->L[ir][jr];
+                const float Llin = LIM01(L / 32768.f);
+                const float addcomp = linear * (-kl * Llin + kl);//maximum about 1. IL
+                const float exp_scale = pow_F(2.0, (lp.expcomp + addcomp));
+                const float shoulder = ((maxran / max(1.0f, exp_scale)) * hlcompthr) + 0.1f;
+                const float comp = (max(0.f, (lp.expcomp + addcomp)) + 1.f) * hlcomp;
+                const float hlrange = maxran - shoulder;
 
-        //    if (L < mean && lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {//disabled generate artifacts
-            if (lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {
-                float Llin = LIM01(L / 32768.f);
-                addcomp = linear * (-kl * Llin + kl);//maximum about 1. IL
-                exp_scale = pow(2.0, (lp.expcomp + addcomp));
-                shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
-                comp = (max(0.0, (lp.expcomp + addcomp)) + 1.0) * lp.hlcomp / 100.0;
-                hlrange = maxran - shoulder;
+                //highlight
+                const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
+                L *= hlfactor * pow_F(2.f, addcomp);//approximation but pretty good with Laplacian and L < mean, hl aren't call
+                //shadow tone curve
+                L *= shtonecurve[2 * L];
+                //tonecurve
+                lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
             }
+        }
+    } else {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
 
-            //highlight
-            const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
-            L *= hlfactor * pow(2.0, addcomp);//approximation but pretty good with Laplacian and L < mean, hl aren't call
-            //shadow tone curve
-            const float shfactor = shtonecurve[2 * L];
-            //tonecurve
-            L *= shfactor;
-            lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
+        for (int ir = 0; ir < bfh; ir++) {
+            for (int jr = 0; jr < bfw; jr++) {
+                float L = bufexporig->L[ir][jr];
+                //highlight
+                const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(cexp_scale, ccomp, chlrange, 2 * L));
+                L *= hlfactor;//approximation but pretty good with Laplacian and L < mean, hl aren't call
+                //shadow tone curve
+                L *= shtonecurve[2 * L];
+                //tonecurve
+                lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
+            }
         }
     }
 }
@@ -5463,8 +5473,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             }
         }
 
-        float meanorig = 0.f;
-        ImProcFunctions::exlabLocal(lp, GH, GW, original, temp, hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
+        ImProcFunctions::exlabLocal(lp, GH, GW, original, temp, hltonecurveloc, shtonecurveloc, tonecurveloc);
 
         if (exlocalcurve) {
 #ifdef _OPENMP
@@ -13683,15 +13692,6 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                float meanorig = 0.f;
-
-                for (int ir = 0; ir < bfh; ir++)
-                    for (int jr = 0; jr < bfw; jr++) {
-                        meanorig += bufexporig->L[ir][jr];
-                    }
-
-                meanorig /= (bfh * bfw);
-
                 int inv = 0;
                 bool showmaske = false;
                 const bool enaMask = lp.enaExpMask;
@@ -13784,12 +13784,12 @@ void ImProcFunctions::Lab_Local(
                             lp.expcomp = 0.011f;    // to enabled
                         }
 
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
+                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
 
 
                     } else {
 
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
+                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
                     }
 
 //gradient
