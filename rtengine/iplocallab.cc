@@ -15204,15 +15204,15 @@ void ImProcFunctions::Lab_Local(
                                     for (int x = 0; x < bfw; x++) {
                                         float a = tmpImageorig->r(y, x);
                                         float b = tmpImagereserv->r(y, x);
-                                        overlay(a, b, minR, maxR);
+                                        a = overlay(a, b, minR, maxR);
                                         tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                         a = tmpImageorig->g(y, x);
                                         b = tmpImagereserv->g(y, x);
-                                        overlay(a, b, minG, maxG);
+                                        a = overlay(a, b, minG, maxG);
                                         tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                         a = tmpImageorig->b(y, x);
                                         b = tmpImagereserv->b(y, x);
-                                        overlay(a, b, minB, maxB);
+                                        a = overlay(a, b, minB, maxB);
                                         tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                     }
                                 }
