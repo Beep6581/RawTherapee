@@ -81,76 +81,65 @@
 
 namespace
 {
-void softlig(float &a, float b, float minc, float maxc)
+float softlig(float a, float b, float minc, float maxc)
 {
     // as Photoshop
-    const float alpha = 0.5f * (maxc - minc);
-
-    if (b <= alpha) {
-        a = (2.f * a * b) + a * a * (maxc - 2.f * b);
+    if (2.f * b <= maxc - minc) {
+        return a * (2.f * b + a * (maxc - 2.f * b));
     } else {
-        a = 2.f * a * (maxc - b) + std::sqrt(rtengine::LIM(a, 0.f, 2.f)) * (2.f * b - maxc);
+        return 2.f * a * (maxc - b) + std::sqrt(rtengine::LIM(a, 0.f, 2.f)) * (2.f * b - maxc);
     }
 }
 
-void softlig3(float &a, float b)
+float softlig3(float a, float b)
 {
     // as w3C
-    if (b <= 0.5f) {
-        a = a - (1.f - 2.f * b) * a * (1.f - a);
-    } else if (((2.f * b) > 1.f) && ((4.f * a) <= 1.f)) {
-        a = a + ((2.f * b) - 1.f) * (4.f * a * ((4.f * a) + 1.f) * (a - 1.f) + 7.f * a);
-    } else if (((2.f * b) > 1.f) && ((4.f * a) > 1.f)) {
-        a = a + ((2.f * a) - 1.f) * (std::sqrt(a) - a);
+    if (2.f * b <= 1.f) {
+        return a - (1.f - 2.f * b) * a * (1.f - a);
+    } else {
+        if (4.f * a <= 1.f) {
+            return a + (2.f * b - 1.f) * (4.f * a * (4.f * a + 1.f) * (a - 1.f) + 7.f * a);
+        } else {
+            return a + (2.f * a - 1.f) * (std::sqrt(a) - a);
+        }
     }
-
 }
 
-void softlig2(float &a, float b)
+float softlig2(float a, float b)
 {
     // illusions.hu
-    a = pow_F(b, pow_F(2.f, (2.f * (0.5f - a))));
+    return pow_F(b, pow_F(2.f, (2.f * (0.5f - a))));
 }
 
-void colburn(float &a, float b)
+constexpr float colburn(float a, float b)
 {
     // w3C
-    if (b == 0.f) {
-        a = 0.f;
-    } else {
-        a = 1.f - std::min(1.f, (1.f - a) / b);
-    }
+    return b == 0.f ? 0.f : 1.f - rtengine::min(1.f, (1.f - a) / b);
 }
 
-void coldodge(float &a, float b)
+constexpr float coldodge(float a, float b)
 {
     // w3C
-    if (b == 1.f) {
-        a = 1.f;
-    } else {
-        a = std::min(1.f, a / (1.f - b));
-    }
+    return b == 1.f ? 1.f : rtengine::min(1.f, a / (1.f - b));
 }
 
 float overlay(float a, float b, float minc, float maxc)
 {
-    const float alpha = 0.5f * (maxc - minc);
-
-    if (b <= alpha) {
-        return (2.f * a * b);
+    if (2.f * b <= maxc - minc) {
+        return 2.f * b * a;
     } else {
         return maxc - 2.f * (1.f - a) * (maxc - b);
     }
 }
 
-void screen(float &a, float b, float maxc)
+constexpr float screen(float a, float b, float maxc)
 {
-    a = 1.f - (1.f - a) * (maxc - b);
+    return 1.f - (1.f - a) * (maxc - b);
 }
 
-void exclusion(float &a, float b)
+constexpr float exclusion(float a, float b)
 {
-    a = a + b - 2.f * a * b;
+    return a + b - 2.f * a * b;
 }
 
 void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
@@ -14982,304 +14971,202 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
-                                    bufcolfin->L[y][x] = (rdE[y][x]) * bufcolfin->L[y][x] + (1.f - rdE[y][x]) * bufcolreserv->L[y][x];
-                                    bufcolfin->a[y][x] = (rdE[y][x]) * bufcolfin->a[y][x] + (1.f - rdE[y][x]) * bufcolreserv->a[y][x];
-                                    bufcolfin->b[y][x] = (rdE[y][x]) * bufcolfin->b[y][x] + (1.f - rdE[y][x]) * bufcolreserv->b[y][x];
+                                    bufcolfin->L[y][x] = intp(rdE[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
+                                    bufcolfin->a[y][x] = intp(rdE[y][x], bufcolfin->a[y][x], bufcolreserv->a[y][x]);
+                                    bufcolfin->b[y][x] = intp(rdE[y][x], bufcolfin->b[y][x], bufcolreserv->b[y][x]);
                                 }
                             }
 
                             //prepare RGB values in 0 1(or more)for current image and reserved
-                            Imagefloat *tmpImageorig = nullptr;
-                            tmpImageorig = new Imagefloat(bfw, bfh);
-                            lab2rgb(*bufcolfin, *tmpImageorig, params->icm.workingProfile);
+                            std::unique_ptr<Imagefloat> tmpImageorig(new Imagefloat(bfw, bfh));
+                            lab2rgb(*bufcolfin, *(tmpImageorig.get()), params->icm.workingProfile);
                             tmpImageorig->normalizeFloatTo1();
 
-                            Imagefloat *tmpImagereserv = nullptr;
-                            tmpImagereserv = new Imagefloat(bfw, bfh);
-                            lab2rgb(*bufcolreserv, *tmpImagereserv, params->icm.workingProfile);
+                            std::unique_ptr<Imagefloat> tmpImagereserv(new Imagefloat(bfw, bfh));
+                            lab2rgb(*bufcolreserv, *(tmpImagereserv.get()), params->icm.workingProfile);
                             tmpImagereserv->normalizeFloatTo1();
 
                             float minR = tmpImagereserv->r(0, 0);
                             float maxR = minR;
+                            float minG = tmpImagereserv->g(0, 0);
+                            float maxG = minG;
+                            float minB = tmpImagereserv->b(0, 0);
+                            float maxB = minB;
 #ifdef _OPENMP
-                            #pragma omp parallel for reduction(max:maxR) reduction(min:minR) schedule(dynamic,16)
+                            #pragma omp parallel for reduction(max:maxR,maxG,maxB) reduction(min:minR,minG,minB) schedule(dynamic,16)
 #endif
-
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
                                     minR = rtengine::min(minR, tmpImagereserv->r(ir, jr));
                                     maxR = rtengine::max(maxR, tmpImagereserv->r(ir, jr));
-                                }
-                            }
-
-                            float minG = tmpImagereserv->g(0, 0);
-                            float maxG = minG;
-#ifdef _OPENMP
-                            #pragma omp parallel for reduction(max:maxG) reduction(min:minG) schedule(dynamic,16)
-#endif
-
-                            for (int ir = 0; ir < bfh; ir++) {
-                                for (int jr = 0; jr < bfw; jr++) {
                                     minG = rtengine::min(minG, tmpImagereserv->g(ir, jr));
                                     maxG = rtengine::max(maxG, tmpImagereserv->g(ir, jr));
-                                }
-                            }
-
-                            float minB = tmpImagereserv->b(0, 0);
-                            float maxB = minB;
-#ifdef _OPENMP
-                            #pragma omp parallel for reduction(max:maxB) reduction(min:minB) schedule(dynamic,16)
-#endif
-
-                            for (int ir = 0; ir < bfh; ir++) {
-                                for (int jr = 0; jr < bfw; jr++) {
                                     minB = rtengine::min(minB, tmpImagereserv->b(ir, jr));
                                     maxB = rtengine::max(maxB, tmpImagereserv->b(ir, jr));
                                 }
                             }
 
-                            //various combinaison  substrct, multiply, difference, etc
-                            if (lp.mergecolMethod == 1) { //substract
+                            //various combinations  subtract, multiply, difference, etc
+                            if (lp.mergecolMethod == 1) { //subtract
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
-                                for (int y = 0; y < bfh ; y++) {//LIM(x 0 2) 2 arbitral value but limit...
+                                for (int y = 0; y < bfh ; y++) {//LIM(x 0 2) 2 arbitrary value but limit...
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = lp.opacol * ((tmpImageorig->r(y, x) - tmpImagereserv->r(y, x))) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        tmpImageorig->g(y, x) = lp.opacol * ((tmpImageorig->g(y, x) - tmpImagereserv->g(y, x))) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        tmpImageorig->b(y, x) = lp.opacol * ((tmpImageorig->b(y, x) - tmpImagereserv->b(y, x))) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, tmpImageorig->r(y, x) - tmpImagereserv->r(y, x), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, tmpImageorig->g(y, x) - tmpImagereserv->g(y, x), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, tmpImageorig->b(y, x) - tmpImagereserv->b(y, x), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 2) { //difference
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = lp.opacol * (std::fabs(tmpImageorig->r(y, x) - tmpImagereserv->r(y, x))) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        tmpImageorig->g(y, x) = lp.opacol * (std::fabs(tmpImageorig->g(y, x) - tmpImagereserv->g(y, x))) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        tmpImageorig->b(y, x) = lp.opacol * (std::fabs(tmpImageorig->b(y, x) - tmpImagereserv->b(y, x))) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, std::fabs(tmpImageorig->r(y, x) - tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, std::fabs(tmpImageorig->g(y, x) - tmpImagereserv->g(y, x)), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, std::fabs(tmpImageorig->b(y, x) - tmpImagereserv->b(y, x)), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 3) { //multiply
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = lp.opacol * tmpImageorig->r(y, x) * tmpImagereserv->r(y, x) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        tmpImageorig->g(y, x) = lp.opacol * tmpImageorig->g(y, x) * tmpImagereserv->g(y, x) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        tmpImageorig->b(y, x) = lp.opacol * tmpImageorig->b(y, x) * tmpImagereserv->b(y, x) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, tmpImageorig->r(y, x) * tmpImagereserv->r(y, x), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, tmpImageorig->g(y, x) * tmpImagereserv->g(y, x), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, tmpImageorig->b(y, x) * tmpImagereserv->b(y, x), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 4) { //addition
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = lp.opacol * (tmpImageorig->r(y, x) + tmpImagereserv->r(y, x)) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        tmpImageorig->g(y, x) = lp.opacol * (tmpImageorig->g(y, x) + tmpImagereserv->g(y, x)) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        tmpImageorig->b(y, x) = lp.opacol * (tmpImageorig->b(y, x) + tmpImagereserv->b(y, x)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, tmpImageorig->r(y, x) + tmpImagereserv->r(y, x), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, tmpImageorig->g(y, x) + tmpImagereserv->g(y, x), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, tmpImageorig->b(y, x) + tmpImagereserv->b(y, x), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 5) { //divide
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = lp.opacol * (tmpImageorig->r(y, x) / (tmpImagereserv->r(y, x) + 0.00001f)) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        tmpImageorig->g(y, x) = lp.opacol * (tmpImageorig->g(y, x) / (tmpImagereserv->g(y, x) + 0.00001f)) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        tmpImageorig->b(y, x) = lp.opacol * (tmpImageorig->b(y, x) / (tmpImagereserv->b(y, x) + 0.00001f)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, tmpImageorig->r(y, x) / (tmpImagereserv->r(y, x) + 0.00001f), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, tmpImageorig->g(y, x) / (tmpImagereserv->g(y, x) + 0.00001f), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, tmpImageorig->b(y, x) / (tmpImagereserv->b(y, x) + 0.00001f), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 6) { //soft light as Photoshop
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        float a = tmpImageorig->r(y, x);
-                                        float b = tmpImagereserv->r(y, x);
-                                        softlig(a, b, minR, maxR);
-                                        tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        a = tmpImageorig->g(y, x);
-                                        b = tmpImagereserv->g(y, x);
-                                        softlig(a, b, minG, maxG);
-                                        tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        a = tmpImageorig->b(y, x);
-                                        b = tmpImagereserv->b(y, x);
-                                        softlig(a, b, minB, maxB);
-                                        tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, softlig(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), minR, maxR), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, softlig(tmpImageorig->g(y, x), tmpImagereserv->g(y, x), minG, maxG), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, softlig(tmpImageorig->b(y, x), tmpImagereserv->b(y, x), minB, maxB), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 7) { //soft light as illusions.hu
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        float a = LIM01(tmpImageorig->r(y, x));
-                                        float b = tmpImagereserv->r(y, x);
-                                        if(lp.mergemet == 3) {
-                                            b = a;
-                                        }
-                                        softlig2(a, b);
-                                        tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        a = LIM01(tmpImageorig->g(y, x));
-                                        b = tmpImagereserv->g(y, x);
-                                        if(lp.mergemet == 3) {
-                                            b = a;
-                                        }
-                                        softlig2(a, b);
-                                        tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        a = LIM01(tmpImageorig->b(y, x));
-                                        b = tmpImagereserv->b(y, x);
-                                        if(lp.mergemet == 3) {
-                                            b = a;
-                                        }
-                                        softlig2(a, b);
-                                        tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        const float ar = LIM01(tmpImageorig->r(y, x));
+                                        const float br = lp.mergemet == 3 ? ar : tmpImagereserv->r(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, softlig2(ar, br), tmpImageorig->r(y, x));
+                                        const float ag = LIM01(tmpImageorig->g(y, x));
+                                        const float bg = lp.mergemet == 3 ? ag : tmpImagereserv->g(y, x);
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, softlig2(ag, bg), tmpImageorig->g(y, x));
+                                        const float ab = LIM01(tmpImageorig->b(y, x));
+                                        const float bb = lp.mergemet == 3 ? ab : tmpImagereserv->b(y, x);
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, softlig2(ab, bb), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 8) { //soft light as W3C
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        float a = LIM01(tmpImageorig->r(y, x));
-                                        float b = tmpImagereserv->r(y, x);
-                                        softlig3(a, b);
-                                        tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        a = LIM01(tmpImageorig->g(y, x));
-                                        b = tmpImagereserv->g(y, x);
-                                        softlig3(a, b);
-                                        tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        a = LIM01(tmpImageorig->b(y, x));
-                                        b = tmpImagereserv->b(y, x);
-                                        softlig3(a, b);
-                                        tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, softlig3(LIM01(tmpImageorig->r(y, x)), tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, softlig3(LIM01(tmpImageorig->g(y, x)), tmpImagereserv->g(y, x)), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, softlig3(LIM01(tmpImageorig->b(y, x)), tmpImagereserv->b(y, x)), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 9) { //hard light overlay (float &b, float &a)
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        float a = tmpImageorig->r(y, x);
-                                        float b = tmpImagereserv->r(y, x);
-                                        a = overlay(b, a, minR, maxR);
-                                        tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        a = tmpImageorig->g(y, x);
-                                        b = tmpImagereserv->g(y, x);
-                                        a = overlay(b, a, minG, maxG);
-                                        tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        a = tmpImageorig->b(y, x);
-                                        b = tmpImagereserv->b(y, x);
-                                        a = overlay(b, a, minB, maxB);
-                                        tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, overlay(tmpImagereserv->r(y, x), tmpImageorig->r(y, x), minR, maxR), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, overlay(tmpImagereserv->g(y, x), tmpImageorig->g(y, x), minG, maxG), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, overlay(tmpImagereserv->b(y, x), tmpImageorig->b(y, x), minB, maxB), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 10) { //overlay overlay(float &a, float &b)
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        float a = tmpImageorig->r(y, x);
-                                        float b = tmpImagereserv->r(y, x);
-                                        a = overlay(a, b, minR, maxR);
-                                        tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        a = tmpImageorig->g(y, x);
-                                        b = tmpImagereserv->g(y, x);
-                                        a = overlay(a, b, minG, maxG);
-                                        tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        a = tmpImageorig->b(y, x);
-                                        b = tmpImagereserv->b(y, x);
-                                        a = overlay(a, b, minB, maxB);
-                                        tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, overlay(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), minR, maxR), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, overlay(tmpImageorig->g(y, x), tmpImagereserv->g(y, x), minG, maxG), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, overlay(tmpImageorig->b(y, x), tmpImagereserv->b(y, x), minB, maxB), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 11) { //screen screen (float &a, float &b)
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        float a = tmpImageorig->r(y, x);
-                                        float b = tmpImagereserv->r(y, x);
-                                        screen(a, b, maxR);
-                                        tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        a = tmpImageorig->g(y, x);
-                                        b = tmpImagereserv->g(y, x);
-                                        screen(a, b, maxG);
-                                        tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        a = tmpImageorig->b(y, x);
-                                        b = tmpImagereserv->b(y, x);
-                                        screen(a, b, maxB);
-                                        tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, screen(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), maxR), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, screen(tmpImageorig->g(y, x), tmpImagereserv->g(y, x), maxG), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, screen(tmpImageorig->b(y, x), tmpImagereserv->b(y, x), maxB), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 12) { //darken only
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = lp.opacol * std::min(tmpImageorig->r(y, x), tmpImagereserv->r(y, x)) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        tmpImageorig->g(y, x) = lp.opacol * std::min(tmpImageorig->g(y, x), tmpImagereserv->g(y, x)) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        tmpImageorig->b(y, x) = lp.opacol * std::min(tmpImageorig->b(y, x), tmpImagereserv->b(y, x)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, rtengine::min(tmpImageorig->r(y, x), tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, rtengine::min(tmpImageorig->g(y, x), tmpImagereserv->g(y, x)), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, rtengine::min(tmpImageorig->b(y, x), tmpImagereserv->b(y, x)), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 13) { //lighten only
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = lp.opacol * std::max(tmpImageorig->r(y, x), tmpImagereserv->r(y, x)) + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        tmpImageorig->g(y, x) = lp.opacol * std::max(tmpImageorig->g(y, x), tmpImagereserv->g(y, x)) + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        tmpImageorig->b(y, x) = lp.opacol * std::max(tmpImageorig->b(y, x), tmpImagereserv->b(y, x)) + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, rtengine::max(tmpImageorig->r(y, x), tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, rtengine::max(tmpImageorig->g(y, x), tmpImagereserv->g(y, x)), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, rtengine::max(tmpImageorig->b(y, x), tmpImagereserv->b(y, x)), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 14) { //exclusion exclusion (float &a, float &b)
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        float a = tmpImageorig->r(y, x);
-                                        float b = tmpImagereserv->r(y, x);
-                                        exclusion(a, b);
-                                        tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        a = tmpImageorig->g(y, x);
-                                        b = tmpImagereserv->g(y, x);
-                                        exclusion(a, b);
-                                        tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        a = tmpImageorig->b(y, x);
-                                        b = tmpImagereserv->b(y, x);
-                                        exclusion(a, b);
-                                        tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, exclusion(tmpImageorig->r(y, x), tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, exclusion(tmpImageorig->g(y, x), tmpImagereserv->g(y, x)), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, exclusion(tmpImageorig->b(y, x), tmpImagereserv->b(y, x)), tmpImageorig->b(y, x));
                                     }
                                 }
 
@@ -15287,42 +15174,22 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        float a = LIM01(tmpImageorig->r(y, x));
-                                        float b = LIM01(tmpImagereserv->r(y, x));
-                                        colburn(a, b);
-                                        tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        a = LIM01(tmpImageorig->g(y, x));
-                                        b = LIM01(tmpImagereserv->g(y, x));
-                                        colburn(a, b);
-                                        tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        a = LIM01(tmpImageorig->b(y, x));
-                                        b = LIM01(tmpImagereserv->b(y, x));
-                                        colburn(a, b);
-                                        tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, colburn(LIM01(tmpImageorig->r(y, x)), LIM01(tmpImagereserv->r(y, x))), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, colburn(LIM01(tmpImageorig->g(y, x)), LIM01(tmpImagereserv->g(y, x))), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, colburn(LIM01(tmpImageorig->b(y, x)), LIM01(tmpImagereserv->b(y, x))), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 16) { //Color dodge
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        float a = LIM01(tmpImageorig->r(y, x));
-                                        float b = LIM01(tmpImagereserv->r(y, x));
-                                        coldodge(a, b);
-                                        tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
-                                        a = LIM01(tmpImageorig->g(y, x));
-                                        b = LIM01(tmpImagereserv->g(y, x));
-                                        coldodge(a, b);
-                                        tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
-                                        a = LIM01(tmpImageorig->b(y, x));
-                                        b = LIM01(tmpImagereserv->b(y, x));
-                                        coldodge(a, b);
-                                        tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, coldodge(LIM01(tmpImageorig->r(y, x)), LIM01(tmpImagereserv->r(y, x))), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, coldodge(LIM01(tmpImageorig->g(y, x)), LIM01(tmpImagereserv->g(y, x))), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, coldodge(LIM01(tmpImageorig->b(y, x)), LIM01(tmpImagereserv->b(y, x))), tmpImageorig->b(y, x));
                                     }
                                 }
                             }
@@ -15330,14 +15197,10 @@ void ImProcFunctions::Lab_Local(
                             tmpImageorig->normalizeFloatTo65535();
                             rgb2lab(*tmpImageorig, *bufcolfin, params->icm.workingProfile);
 
-                            delete tmpImageorig;
-                            delete tmpImagereserv;
-
                             if (conthr > 0.f && lp.mergemet != 4) {
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
