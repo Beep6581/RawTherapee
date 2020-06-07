@@ -13834,27 +13834,25 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.laplacexp > 0.1f) {
                             MyMutex::MyLock lock(*fftwMutex);
-                            float *datain = new float[bfwr * bfhr];
-                            float *dataout = new float[bfwr * bfhr];
-                            float *dataor = new float[bfwr * bfhr];
-                            float gam = params->locallab.spots.at(sp).gamm;
-                            float igam = 1.f / gam;
+                            std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
+                            std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
+                            const float gam = params->locallab.spots.at(sp).gamm;
+                            const float igam = 1.f / gam;
 
                             if (params->locallab.spots.at(sp).exnoiseMethod == "med" || params->locallab.spots.at(sp).exnoiseMethod == "medhi") {
                                 if (lp.blac < -100.f && lp.linear > 0.01f) {
-                                    Median med;
                                     float evnoise = lp.blac - lp.linear * 2000.f;
-
                                     if (params->locallab.spots.at(sp).exnoiseMethod == "med") {
                                         evnoise *= 0.4f;
                                     }
 
                                     //soft denoise, user must use Local Denoise to best result
-                                    if (evnoise < - 18000.f) {
+                                    Median med;
+                                    if (evnoise < -18000.f) {
                                         med = Median::TYPE_5X5_STRONG;
-                                    } else if (evnoise < - 15000.f) {
+                                    } else if (evnoise < -15000.f) {
                                         med = Median::TYPE_5X5_SOFT;
-                                    } else if (evnoise < - 10000.f) {
+                                    } else if (evnoise < -10000.f) {
                                         med = Median::TYPE_3X3_STRONG;
                                     } else {
                                         med = Median:: TYPE_3X3_SOFT;
@@ -13863,7 +13861,6 @@ void ImProcFunctions::Lab_Local(
                                     Median_Denoise(bufexpfin->L, bufexpfin->L, bfwr, bfhr, med, 1, multiThread);
                                     Median_Denoise(bufexpfin->a, bufexpfin->a, bfwr, bfhr, Median::TYPE_3X3_SOFT, 1, multiThread);
                                     Median_Denoise(bufexpfin->b, bufexpfin->b, bfwr, bfhr, Median::TYPE_3X3_SOFT, 1, multiThread);
-
                                 }
                             }
 
@@ -13873,32 +13870,21 @@ void ImProcFunctions::Lab_Local(
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
                                     float L = LIM01(bufexpfin->L[y][x] / 32768.f);//change gamma for Laplacian
-
-                                    L = pow(L, gam);
-                                    L *= 32768.f;
-                                    datain[y * bfwr + x] = L;
-                                    dataor[y * bfwr + x] = L;
+                                    datain[y * bfwr + x] = pow_F(L, gam) * 32768.f;
                                 }
                             }
 
                             //call PDE equation - with Laplacian threshold
-                            ImProcFunctions::exposure_pde(dataor, datain, dataout, bfwr, bfhr, 12.f * lp.laplacexp, lp.balanexp);
+                            ImProcFunctions::exposure_pde(datain.get(), datain.get(), dataout.get(), bfwr, bfhr, 12.f * lp.laplacexp, lp.balanexp);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
-                                    float Y = dataout[y * bfwr + x] / 32768.f;//inverse Laplacian gamma
-                                    Y = pow(Y, igam);
-                                    Y *= 32768.f;
-                                    bufexpfin->L[y][x] = Y;
+                                    const float Y = dataout[y * bfwr + x] / 32768.f;//inverse Laplacian gamma
+                                    bufexpfin->L[y][x] = pow_F(Y, igam) * 32768.f;
                                 }
                             }
-
-                            delete [] datain;
-                            delete [] dataout;
-                            delete [] dataor;
                         }
                     }
 
@@ -13910,7 +13896,6 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (lp.expchroma != 0.f) {
-
                         if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili) || lp.laplacexp > 0.1f) {
                             constexpr float ampli = 70.f;
                             const float ch = (1.f + 0.02f * lp.expchroma);
@@ -13922,8 +13907,8 @@ void ImProcFunctions::Lab_Local(
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float epsi = bufexporig->L[ir][jr] == 0.f ? 0.001f : 0.f;
                                     const float rapexp = bufexpfin->L[ir][jr] / (bufexporig->L[ir][jr] + epsi);
-                                    bufexpfin->a[ir][jr] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
-                                    bufexpfin->b[ir][jr] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
+                                    bufexpfin->a[ir][jr] *= 1.f + chprosl * rapexp;
+                                    bufexpfin->b[ir][jr] *= 1.f + chprosl * rapexp;
                                 }
                             }
                         }
