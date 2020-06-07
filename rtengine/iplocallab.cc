@@ -15132,14 +15132,23 @@ void ImProcFunctions::Lab_Local(
                                     for (int x = 0; x < bfw; x++) {
                                         float a = LIM01(tmpImageorig->r(y, x));
                                         float b = tmpImagereserv->r(y, x);
+                                        if(lp.mergemet == 3) {
+                                            b = a;
+                                        }
                                         softlig2(a, b);
                                         tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                         a = LIM01(tmpImageorig->g(y, x));
                                         b = tmpImagereserv->g(y, x);
+                                        if(lp.mergemet == 3) {
+                                            b = a;
+                                        }
                                         softlig2(a, b);
                                         tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                         a = LIM01(tmpImageorig->b(y, x));
                                         b = tmpImagereserv->b(y, x);
+                                        if(lp.mergemet == 3) {
+                                            b = a;
+                                        }
                                         softlig2(a, b);
                                         tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                     }
