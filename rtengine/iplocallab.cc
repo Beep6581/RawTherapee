@@ -132,14 +132,14 @@ void coldodge(float &a, float b)
     }
 }
 
-void overlay(float &a, float b, float minc, float maxc)
+float overlay(float a, float b, float minc, float maxc)
 {
     const float alpha = 0.5f * (maxc - minc);
 
     if (b <= alpha) {
-        a = (2.f * a * b);
+        return (2.f * a * b);
     } else {
-        a = maxc - 2.f * (1.f - a) * (maxc - b);
+        return maxc - 2.f * (1.f - a) * (maxc - b);
     }
 }
 
@@ -15183,15 +15183,15 @@ void ImProcFunctions::Lab_Local(
                                     for (int x = 0; x < bfw; x++) {
                                         float a = tmpImageorig->r(y, x);
                                         float b = tmpImagereserv->r(y, x);
-                                        overlay(b, a, minR, maxR);
+                                        a = overlay(b, a, minR, maxR);
                                         tmpImageorig->r(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->r(y, x);
                                         a = tmpImageorig->g(y, x);
                                         b = tmpImagereserv->g(y, x);
-                                        overlay(b, a, minG, maxG);
+                                        a = overlay(b, a, minG, maxG);
                                         tmpImageorig->g(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->g(y, x);
                                         a = tmpImageorig->b(y, x);
                                         b = tmpImagereserv->b(y, x);
-                                        overlay(b, a, minB, maxB);
+                                        a = overlay(b, a, minB, maxB);
                                         tmpImageorig->b(y, x) = lp.opacol * a + (1.f - lp.opacol) * tmpImageorig->b(y, x);
                                     }
                                 }
