@@ -15082,13 +15082,13 @@ void ImProcFunctions::Lab_Local(
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         const float ar = LIM01(tmpImageorig->r(y, x));
-                                        const float br = lp.mergemet == 3 ? ar : tmpImagereserv->r(y, x);
+                                        const float br = lp.mergemet >= 2 ? ar : tmpImagereserv->r(y, x);
                                         tmpImageorig->r(y, x) = intp(lp.opacol, softlig2(ar, br), tmpImageorig->r(y, x));
                                         const float ag = LIM01(tmpImageorig->g(y, x));
-                                        const float bg = lp.mergemet == 3 ? ag : tmpImagereserv->g(y, x);
+                                        const float bg = lp.mergemet >= 2 ? ag : tmpImagereserv->g(y, x);
                                         tmpImageorig->g(y, x) = intp(lp.opacol, softlig2(ag, bg), tmpImageorig->g(y, x));
                                         const float ab = LIM01(tmpImageorig->b(y, x));
-                                        const float bb = lp.mergemet == 3 ? ab : tmpImagereserv->b(y, x);
+                                        const float bb = lp.mergemet >= 2 ? ab : tmpImagereserv->b(y, x);
                                         tmpImageorig->b(y, x) = intp(lp.opacol, softlig2(ab, bb), tmpImageorig->b(y, x));
                                     }
                                 }
