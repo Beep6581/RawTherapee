@@ -51,36 +51,39 @@
 #include "StopWatch.h"
 #include "guidedfilter.h"
 
-#define TS 64       // Tile size
-#define offset1 25   // shift between tiles
-//#define fTS ((TS/2+1))  // second dimension of Fourier tiles
-#define blkrad 1    // radius of block averaging
-#define offset2 25   // shift between tiles
-
-#define epsilonw 0.001f/(TS*TS) //tolerance
-#define MAXSCOPE 1.25f
-#define MINSCOPE 0.025f
-#define mSP 5  //minimum size Spot
-#define mDEN 64  //minimum size Spot Denoise
 #define mSPsharp 39  //minimum size Spot Sharp due to buildblendmask
 #define mSPwav 32  //minimum size Spot Wavelet
-
-#define CLIPC(a) LIM(a, -42000.f, 42000.f)  // limit a and b  to 130 probably enough ?
-#define CLIPLOC(x) LIM(x,0.f,32767.f)
-#define CLIPCHRO(x) LIM(x,0.f, 140.f)
-#define CLIP1(x) LIM(x, 0.f, 1.f)
-//define to prevent crash with old pp3 with integer range 100 instead of double range 1.
-#define CLIP24(x) LIM(x, -2.f, 4.f)
-#define CLIP04(x) LIM(x, 0.f, 4.f)
-#define CLIP42_35(x) LIM(x, 0.42, 3.5)
-#define CLIP2_30(x) LIM(x, 0.2, 3.)
-#define CLIPdE(x) LIM(x,0.3f,1.f)
 
 #pragma GCC diagnostic warning "-Wall"
 #pragma GCC diagnostic warning "-Wextra"
 
 namespace
 {
+
+constexpr int mDEN = 64; //minimum size Spot Denoise
+constexpr int mSP = 5;  //minimum size Spot
+constexpr float MAXSCOPE = 1.25f;
+constexpr float MINSCOPE = 0.025f;
+constexpr int TS = 64; // Tile size
+constexpr float epsilonw = 0.001f / (TS * TS); //tolerance
+constexpr int offset = 25; // shift between tiles
+
+constexpr float clipLoc(float x) {
+    return rtengine::LIM(x, 0.f, 32767.f);
+}
+
+constexpr float clipDE(float x) {
+    return rtengine::LIM(x, 0.3f, 1.f);
+}
+
+constexpr float clipC(float x) {
+    return rtengine::LIM(x, -42000.f, 42000.f);
+}
+
+constexpr float clipChro(float x) {
+    return rtengine::LIM(x, 0.f, 140.f);
+}
+
 float softlig(float a, float b, float minc, float maxc)
 {
     // as Photoshop
@@ -578,7 +581,7 @@ static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float
                 //we can add if need teta = atan2 (sumYr, sumXr)
             }
 
-            sobelL[y][x] = CLIPLOC(SUML);
+            sobelL[y][x] = clipLoc(SUML);
         }
     }
 }
@@ -983,12 +986,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int itera = locallab.spots.at(sp).itera;
     int guidbl = locallab.spots.at(sp).guidbl;
     float epsbl = (float) locallab.spots.at(sp).epsbl;
-    double sharradius = ((double) locallab.spots.at(sp).sharradius);
-    sharradius = CLIP42_35(sharradius);
+    float sharradius = LIM(locallab.spots.at(sp).sharradius, 0.42, 3.5);
     float lcamount = ((float) locallab.spots.at(sp).lcamount);
-    lcamount = CLIP1(lcamount); //to prevent crash with old pp3 integer
-    double sharblurr = ((double) locallab.spots.at(sp).sharblur);
-    sharblurr = CLIP2_30(sharblurr);//to prevent crash with old pp3 integer
+    lcamount = LIM01(lcamount); //to prevent crash with old pp3 integer
+    float sharblurr = LIM(locallab.spots.at(sp).sharblur, 0.2, 3.); //to prevent crash with old pp3 integer
     int local_sensisha = locallab.spots.at(sp).sensisha;
     int local_sharamount = locallab.spots.at(sp).sharamount;
     int local_shardamping = locallab.spots.at(sp).shardamping;
@@ -1234,7 +1235,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.amo = amo;
 
     for (int y = 0; y < 6; y++) {
-        lp.mulloc[y] = CLIP04(multi[y]);//to prevent crash with old pp3 integer
+        lp.mulloc[y] = LIM(multi[y], 0.f, 4.f);//to prevent crash with old pp3 integer
     }
 
     for (int y = 0; y < 5; y++) {
@@ -1268,11 +1269,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.shadex = locallab.spots.at(sp).shadex;
     lp.hlcomp = locallab.spots.at(sp).hlcompr;
     lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
-    lp.expcomp = locallab.spots.at(sp).expcomp;
-    lp.expcomp = CLIP24(lp.expcomp); //to prevent crash with Old pp3 with integer
+    lp.expcomp = LIM(locallab.spots.at(sp).expcomp, -2.0, 4.0); //to prevent crash with Old pp3 with integer
     //increase sensitivity for low values
     float proexp = lp.expcomp;
-    if(std::fabs(proexp < 0.6f)) {
+    if (std::fabs(proexp) < 0.6f) {
         float interm = std::fabs(proexp) / 0.6f;
         interm = SQR(interm);
         lp.expcomp = proexp * interm;
@@ -2665,14 +2665,14 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
                     difa *= localFactor * reducdEa;
                     difb *= localFactor * reducdEb;
                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                    transformed->a[y][x] = CLIPC((original->a[y][x] + difa) * factnoise);
-                    transformed->b[y][x] = CLIPC((original->b[y][x] + difb) * factnoise) ;
+                    transformed->a[y][x] = clipC((original->a[y][x] + difa) * factnoise);
+                    transformed->b[y][x] = clipC((original->b[y][x] + difb) * factnoise) ;
                     float amplabL = 2.f * lp.colorde;
 
                     if (blshow) {
                         transformed->L[y][x] = CLIP(12000.f + amplabL * difL);// * 10.f empirical to can visualize modifications
-                        transformed->a[y][x] = CLIPC(amplabL * difa);// * 10.f empirical to can visualize modifications
-                        transformed->b[y][x] = CLIPC(amplabL * difb);// * 10.f empirical to can visualize modifications
+                        transformed->a[y][x] = clipC(amplabL * difa);// * 10.f empirical to can visualize modifications
+                        transformed->b[y][x] = clipC(amplabL * difb);// * 10.f empirical to can visualize modifications
                     } else if (previewbl || lp.prevdE) {
                         float difbdisp = (reducdEL +  reducdEa + reducdEb) * 10000.f * lp.colorde;
 
@@ -2770,8 +2770,8 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                             float difa = tmp1->a[y][x] - original->a[y][x];
                             float difb = tmp1->b[y][x] - original->b[y][x];
 
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * reducdE);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * reducdE);
+                            transformed->a[y][x] = clipC(original->a[y][x] + difa * reducdE);
+                            transformed->b[y][x] = clipC(original->b[y][x] + difb * reducdE);
                         }
                         break;
                     }
@@ -2792,8 +2792,8 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                             difa *= factorx;
                             difb *= factorx;
 
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * reducdE);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * reducdE);
+                            transformed->a[y][x] = clipC(original->a[y][x] + difa * reducdE);
+                            transformed->b[y][x] = clipC(original->b[y][x] + difb * reducdE);
                         }
                         break;
                     }
@@ -2927,14 +2927,14 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                         if (!lp.actsp) {
                             difa = chra * flia - original->a[y][x];
                             difb = chrb * flib - original->b[y][x];
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                            transformed->a[y][x] = clipC(original->a[y][x] + difa);
+                            transformed->b[y][x] = clipC(original->b[y][x] + difb);
                         }
 
                         if (blshow) {
                             transformed->L[y][x] = CLIP(12000.f + difL);
-                            transformed->a[y][x] = CLIPC(difa);
-                            transformed->b[y][x] = CLIPC(difb);
+                            transformed->a[y][x] = clipC(difa);
+                            transformed->b[y][x] = clipC(difb);
                         } else if (previewbl || lp.prevdE) {
                             transformed->a[y][x] = 0.f;
                             transformed->b[y] [x] = (difb);
@@ -2962,15 +2962,15 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                             difb = chrb * flib - original->b[y][x];
                             difa *= factorx;
                             difb *= factorx;
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                            transformed->a[y][x] = clipC(original->a[y][x] + difa);
+                            transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
                         }
 
                         if (blshow) {
                             transformed->L[y][x] = CLIP(12000.f + difL);
-                            transformed->a[y][x] = CLIPC(difa);
-                            transformed->b[y][x] = CLIPC(difb);
+                            transformed->a[y][x] = clipC(difa);
+                            transformed->b[y][x] = clipC(difb);
                         } else if (previewbl) {
                             transformed->a[y][x] = 0.f;
                             transformed->b[y][x] = (difb);
@@ -2996,12 +2996,12 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 
 static void calclight(float lum, float &lumnew, const LUTf &lightCurveloc)
 {
-    lumnew = CLIPLOC(lightCurveloc[lum]);
+    lumnew = clipLoc(lightCurveloc[lum]);
 }
 
 static void calclightinv(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
 {
-    lumnew = koef != -100.f ? CLIPLOC(lightCurveloc[lum]) : 0.f;
+    lumnew = koef != -100.f ? clipLoc(lightCurveloc[lum]) : 0.f;
 }
 
 
@@ -3281,19 +3281,19 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
                     bufexporig->b[y][x] *= (1.f + bl * bufmaskor->b[y][x]);
 
                     bufexporig->L[y][x] = CLIP(bufexporig->L[y][x]);
-                    bufexporig->a[y][x] = CLIPC(bufexporig->a[y][x]);
-                    bufexporig->b[y][x] = CLIPC(bufexporig->b[y][x]);
+                    bufexporig->a[y][x] = clipC(bufexporig->a[y][x]);
+                    bufexporig->b[y][x] = clipC(bufexporig->b[y][x]);
 
                     originalmas->L[y][x] = CLIP(bufexporig->L[y][x] - bufmaskor->L[y][x]);
-                    originalmas->a[y][x] = CLIPC(bufexporig->a[y][x] * (1.f - bufmaskor->a[y][x]));
-                    originalmas->b[y][x] = CLIPC(bufexporig->b[y][x] * (1.f - bufmaskor->b[y][x]));
+                    originalmas->a[y][x] = clipC(bufexporig->a[y][x] * (1.f - bufmaskor->a[y][x]));
+                    originalmas->b[y][x] = clipC(bufexporig->b[y][x] * (1.f - bufmaskor->b[y][x]));
 
                     original->L[y + ystart][x + xstart] += (bl * localFactor * bufmaskor->L[y][x]);
                     original->a[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->a[y][x]);
                     original->b[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->b[y][x]);
                     original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
-                    original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
-                    original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
+                    original->a[y + ystart][x + xstart] = clipC(original->a[y + ystart][x + xstart]);
+                    original->b[y + ystart][x + xstart] = clipC(original->b[y + ystart][x + xstart]);
 
                 }
             } else if (inv == 1) {
@@ -3305,12 +3305,12 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
                     bufexporig->b[y][x] *= (1.f + bl * bufmaskor->b[y][x]);
 
                     bufexporig->L[y][x] = CLIP(bufexporig->L[y][x]);
-                    bufexporig->a[y][x] = CLIPC(bufexporig->a[y][x]);
-                    bufexporig->b[y][x] = CLIPC(bufexporig->b[y][x]);
+                    bufexporig->a[y][x] = clipC(bufexporig->a[y][x]);
+                    bufexporig->b[y][x] = clipC(bufexporig->b[y][x]);
 
                     originalmas->L[y][x] = CLIP(bufexporig->L[y][x] - bufmaskor->L[y][x]);
-                    originalmas->a[y][x] = CLIPC(bufexporig->a[y][x] * (1.f - bufmaskor->a[y][x]));
-                    originalmas->b[y][x] = CLIPC(bufexporig->b[y][x] * (1.f - bufmaskor->b[y][x]));
+                    originalmas->a[y][x] = clipC(bufexporig->a[y][x] * (1.f - bufmaskor->a[y][x]));
+                    originalmas->b[y][x] = clipC(bufexporig->b[y][x] * (1.f - bufmaskor->b[y][x]));
 
                     switch (zone) {
                         case 0: {
@@ -3318,8 +3318,8 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
                             original->a[y + ystart][x + xstart] *= (1.f + bl * bufmaskor->a[y][x]);
                             original->b[y + ystart][x + xstart] *= (1.f + bl * bufmaskor->b[y][x]);
                             original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
-                            original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
-                            original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
+                            original->a[y + ystart][x + xstart] = clipC(original->a[y + ystart][x + xstart]);
+                            original->b[y + ystart][x + xstart] = clipC(original->b[y + ystart][x + xstart]);
                             break;
                         }
 
@@ -3328,8 +3328,8 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
                             original->a[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->a[y][x]);
                             original->b[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->b[y][x]);
                             original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
-                            original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
-                            original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
+                            original->a[y + ystart][x + xstart] = clipC(original->a[y + ystart][x + xstart]);
+                            original->b[y + ystart][x + xstart] = clipC(original->b[y + ystart][x + xstart]);
                         }
 
                     }
@@ -3470,13 +3470,13 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
 
             if (inv == 0) {
                 if (zone > 0) {//normal
-                    transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + CLIPLOC(bufmaskorigSH->L[y][x]);
+                    transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + clipLoc(bufmaskorigSH->L[y][x]);
                     transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
                     transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
                 }
             } else if (inv == 1) { //inverse
                 if (zone == 0) {
-                    transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + CLIPLOC(bufmaskorigSH->L[y][x]);
+                    transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + clipLoc(bufmaskorigSH->L[y][x]);
                     transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
                     transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
                 }
@@ -3814,13 +3814,13 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
 
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
-                dataout[y * bfw + x]   = CLIPLOC(multy * data[y * bfw + x]);
+                dataout[y * bfw + x]   = clipLoc(multy * data[y * bfw + x]);
             }
         }
     } else if (show == 1 || show == 2 || show == 3) {
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
-                dataout[y * bfw + x]   = CLIPLOC(multy * datashow[y * bfw + x]);
+                dataout[y * bfw + x]   = clipLoc(multy * datashow[y * bfw + x]);
             }
         }
 
@@ -4080,9 +4080,9 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
                                         }
                     */
-                    bufmaskblurcol->L[ir][jr] = CLIPLOC(kmaskL + kmaskHL + kmasstru + kmasblur);
-                    bufmaskblurcol->a[ir][jr] = CLIPC((kmaskC + chromult * kmaskH));
-                    bufmaskblurcol->b[ir][jr] = CLIPC((kmaskC + chromult * kmaskH));
+                    bufmaskblurcol->L[ir][jr] = clipLoc(kmaskL + kmaskHL + kmasstru + kmasblur);
+                    bufmaskblurcol->a[ir][jr] = clipC((kmaskC + chromult * kmaskH));
+                    bufmaskblurcol->b[ir][jr] = clipC((kmaskC + chromult * kmaskH));
 
                     if (shortcu == 1) { //short circuit all L curve
                         bufmaskblurcol->L[ir][jr] = 32768.f - bufcolorig->L[ir][jr];
@@ -4329,8 +4329,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     float2 sincosval = xsincosf(newhr);
-                    bufmaskblurcol->a[ir][jr] = CLIPC(chromah * sincosval.y);
-                    bufmaskblurcol->b[ir][jr] = CLIPC(chromah * sincosval.x);
+                    bufmaskblurcol->a[ir][jr] = clipC(chromah * sincosval.y);
+                    bufmaskblurcol->b[ir][jr] = clipC(chromah * sincosval.x);
 
                 }
         }
@@ -4843,10 +4843,10 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
                             transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob * affde);
 
                             const float difa = (rsv->a[loy - begy][lox - begx] - original->a[y][x]) * localFactor;
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob * affde);
+                            transformed->a[y][x] = clipC(original->a[y][x] + difa * affsob * affde);
 
                             const float difb = (rsv->b[loy - begy][lox - begx] - original->b[y][x]) * localFactor;
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob * affde);
+                            transformed->b[y][x] = clipC(original->b[y][x] + difb * affsob * affde);
 
                         }
                     }
@@ -5052,8 +5052,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                         const float difa = (chra * fliab - original->a[y][x]) * localFactor;
                         float difb = (chrb * fliab - original->b[y][x]) * localFactor;
 
-                        transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                        transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                        transformed->a[y][x] = clipC(original->a[y][x] + difa);
+                        transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
                         if (showmas) {
                             if (call == 2) {
@@ -5067,8 +5067,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                         }
 
                         if (retishow) {
-                            transformed->a[y][x] = CLIPC(difa);
-                            transformed->b[y][x] = CLIPC(difb);
+                            transformed->a[y][x] = clipC(difa);
+                            transformed->b[y][x] = clipC(difb);
                         }
 
                         if (previewreti) {
@@ -5330,8 +5330,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                             float difb = difab * sincosval.x;
                             difa *= factorx * (100.f + realstrchdE) / 100.f;
                             difb *= factorx * (100.f + realstrchdE) / 100.f;
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                            transformed->a[y][x] = clipC(original->a[y][x] + difa);
+                            transformed->b[y][x] = clipC(original->b[y][x] + difb);
                         } else {
                             float flia = 1.f;
                             float flib = 1.f;
@@ -5348,14 +5348,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                             difa *= factorx;
                             difb *= factorx;
 
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                            transformed->a[y][x] = clipC(original->a[y][x] + difa);
+                            transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
 
                             if (cbshow || tmshow) {
                                 transformed->L[y][x] = CLIP(12000.f + difL);
-                                transformed->a[y][x] = CLIPC(difa);
-                                transformed->b[y][x] = CLIPC(difb);
+                                transformed->a[y][x] = clipC(difa);
+                                transformed->b[y][x] = clipC(difb);
                             } else if (previewcb  || previewtm || lp.prevdE) {
                                 if (std::fabs(difb) < 500.f) {
                                     difb += difL;
@@ -5478,7 +5478,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                 chprosl = 99.f * ch - 99.f;
             } else {
                 float ampli = 70.f;
-                chprosl = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+                chprosl = clipChro(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
             }
 
 #ifdef _OPENMP
@@ -5531,7 +5531,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                     float ch;
                     float ampli = 25.f;
                     ch = (cclocalcurve[chromat * adjustr ])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
-                    float chprocu = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+                    float chprocu = clipChro(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
                     tempCL->a[y][x] = original->a[y][x] * (1.f + 0.01f * (chprocu));
                     tempCL->b[y][x] = original->b[y][x] * (1.f + 0.01f * (chprocu));
 
@@ -5708,8 +5708,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                                     diflc *= factorx; //transition lightness
                                     transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc + difL));
 
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac * facCa) ;
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac * facCb);
+                                    transformed->a[y][x] = clipC(original->a[y][x] * fac * facCa) ;
+                                    transformed->b[y][x] = clipC(original->b[y][x] * fac * facCb);
                                 } else {
                                     float fac = (100.f + factorx * lp.chro) / 100.f; //chroma factor transition
 
@@ -5722,8 +5722,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                                     float diflc = lightcont - original->L[y][x];
                                     diflc *= factorx;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc + difL);
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac * facCa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac * facCb);
+                                    transformed->a[y][x] = clipC(original->a[y][x] * fac * facCa);
+                                    transformed->b[y][x] = clipC(original->b[y][x] * fac * facCb);
 
 
                                 }
@@ -5735,8 +5735,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                                 difa *= factorx;
                                 difb *= factorx;
                                 transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa) ;
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
+                                transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
                             }
 
@@ -5784,8 +5784,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
                                     transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc + difL));
 
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac * facCa) ;
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac * facCb);
+                                    transformed->a[y][x] = clipC(original->a[y][x] * fac * facCa) ;
+                                    transformed->b[y][x] = clipC(original->b[y][x] * fac * facCb);
 
 
                                 } else {
@@ -5795,8 +5795,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
                                     float lightcont = lumnew ;
                                     transformed->L[y][x] = CLIP(lightcont + difL) ;
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] * facc * facCa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] * facc * facCb);
+                                    transformed->a[y][x] = clipC(original->a[y][x] * facc * facCa);
+                                    transformed->b[y][x] = clipC(original->b[y][x] * facc * facCb);
 
                                 }
                             } else if (senstype == 1  || senstype == 2) {
@@ -5804,8 +5804,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                                 difa = (temp->a[y][x] - original->a[y][x]) * reducdE;
                                 difb = (temp->b[y][x] - original->b[y][x]) * reducdE;
                                 transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa) ;
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
+                                transformed->b[y][x] = clipC(original->b[y][x] + difb);
                             }
 
                         }
@@ -6262,8 +6262,8 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
                 difb *= localFactor;
 
                 if (!lp.actsp) {
-                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                    transformed->a[y][x] = clipC(original->a[y][x] + difa);
+                    transformed->b[y][x] = clipC(original->b[y][x] + difb);
                 }
 
                 float maxdifab = max(std::fabs(difa), std::fabs(difb));
@@ -6280,8 +6280,8 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
                     }
 
                     transformed->L[y][x] = CLIP(12000.f + 0.5f * ampli * difL);
-                    transformed->a[y][x] = CLIPC(ampli * difa);
-                    transformed->b[y][x] = CLIPC(ampli * difb);
+                    transformed->a[y][x] = clipC(ampli * difa);
+                    transformed->b[y][x] = clipC(ampli * difb);
                 } else if (previewbl || lp.prevdE) {//show deltaE
                     float difbdisp = reducdE * 10000.f * lp.colorde;
 
@@ -6604,11 +6604,11 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 
                 if (zone > 0) {
                     //simplified transformed with deltaE and transition
-                    transformed->L[y + ystart][x + xstart] = CLIPLOC(original->L[y + ystart][x + xstart] + factorx * realstrdE);
+                    transformed->L[y + ystart][x + xstart] = clipLoc(original->L[y + ystart][x + xstart] + factorx * realstrdE);
                     float diflc = factorx * realstrdE;
-                    transformed->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart] + factorx * realstradE);
+                    transformed->a[y + ystart][x + xstart] = clipC(original->a[y + ystart][x + xstart] + factorx * realstradE);
                     const float difa = factorx * realstradE;
-                    transformed->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart] + factorx * realstrbdE);
+                    transformed->b[y + ystart][x + xstart] = clipC(original->b[y + ystart][x + xstart] + factorx * realstrbdE);
                     const float difb = factorx * realstrbdE;
                     float maxdifab = max(std::fabs(difa), std::fabs(difb));
 
@@ -6624,8 +6624,8 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         }
 
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
-                        transformed->a[y + ystart][x + xstart] = CLIPC(ampli * difa);
-                        transformed->b[y + ystart][x + xstart] = CLIPC(ampli * difb);
+                        transformed->a[y + ystart][x + xstart] = clipC(ampli * difa);
+                        transformed->b[y + ystart][x + xstart] = clipC(ampli * difb);
                     } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previeworig || lp.prevdE) {//show deltaE
                         float difbdisp = reducdE * 10000.f * lp.colorde;
 
@@ -6715,7 +6715,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
 
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
-                dataout[y * bfw + x] = CLIPLOC(data[y * bfw + x]);
+                dataout[y * bfw + x] = clipLoc(data[y * bfw + x]);
             }
         }
     }
@@ -6970,8 +6970,8 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     float *LbloxArray[numThreads];
     float *fLbloxArray[numThreads];
 
-    const int numblox_W = ceil((static_cast<float>(GW)) / (offset2)) + 2 * blkrad;
-    const int numblox_H = ceil((static_cast<float>(GH)) / (offset2)) + 2 * blkrad;
+    const int numblox_W = ceil((static_cast<float>(GW)) / offset) + 2;
+    const int numblox_H = ceil((static_cast<float>(GH)) / offset) + 2;
 
     array2D<float> Lresult(GW, GH, ARRAY2D_CLEAR_DATA);
     array2D<float> totwt(GW, GH, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
@@ -6995,15 +6995,15 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
 #endif
         float *Lblox = LbloxArray[subThread];
         float *fLblox = fLbloxArray[subThread];
-        float pBuf[GW + tilssize + 2 * blkrad * offset2] ALIGNED16;
+        float pBuf[GW + tilssize + 2 * offset] ALIGNED16;
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for (int vblk = 0; vblk < numblox_H; ++vblk) {
 
-            int top = (vblk - blkrad) * offset2;
-            float * datarow = pBuf + blkrad * offset2;
+            int top = (vblk - 1) * offset;
+            float * datarow = pBuf + offset;
 
             for (int i = 0; i < tilssize; ++i) {
                 int row = top + i;
@@ -7019,16 +7019,16 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
                     datarow[j] = (tmp1[rr][j]);
                 }
 
-                for (int j = -blkrad * offset2; j < 0; ++j) {
+                for (int j = -1 * offset; j < 0; ++j) {
                     datarow[j] = datarow[MIN(-j, GW - 1)];
                 }
 
-                for (int j = GW; j < GW + tilssize + blkrad * offset2; ++j) {
+                for (int j = GW; j < GW + tilssize + offset; ++j) {
                     datarow[j] = datarow[MAX(0, 2 * GW - 2 - j)];
                 }//now we have a padded data row
 
                 for (int hblk = 0; hblk < numblox_W; ++hblk) {
-                    int left = (hblk - blkrad) * offset2;
+                    int left = (hblk - 1) * offset;
                     int indx = (hblk) * tilssize; //index of block in malloc
 
                     if (top + i >= 0 && top + i < GH) {
@@ -7085,8 +7085,8 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
                 fftwf_execute_r2r(plan_backward_blox[1], fLblox, Lblox);    //for DCT
             }
 
-            int topproc = (vblk - blkrad) * offset2;
-            const int numblox_W = ceil((static_cast<float>(GW)) / (offset2));
+            int topproc = (vblk - 1) * offset;
+            const int numblox_W = ceil((static_cast<float>(GW)) / offset);
             const float DCTnorm = 1.0f / (4 * tilssize * tilssize); //for DCT
 
             int imin = MAX(0, - topproc);
@@ -7095,7 +7095,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
 
             for (int i = imin; i < imax; ++i) {
                 for (int hblk = 0; hblk < numblox_W; ++hblk) {
-                    int left = (hblk - blkrad) * offset2;
+                    int left = (hblk - 1) * offset;
                     int right  = MIN(left + tilssize, GW);
                     int jmin = MAX(0, -left);
                     int jmax = right - left;
@@ -7117,7 +7117,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     for (int i = 0; i < GH; ++i) {
         for (int j = 0; j < GW; ++j) {
             tmp1[i][j] = Lresult[i][j] / totwt[i][j];
-            tmp1[i][j] = CLIPLOC(tmp1[i][j]);
+            tmp1[i][j] = clipLoc(tmp1[i][j]);
         }
     }
 
@@ -8602,8 +8602,8 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 
 
-    const int numblox_W = ceil((static_cast<float>(GW)) / (offset1)) + 2 * blkrad;
-    const int numblox_H = ceil((static_cast<float>(GH)) / (offset1)) + 2 * blkrad;
+    const int numblox_W = ceil((static_cast<float>(GW)) / offset) + 2;
+    const int numblox_H = ceil((static_cast<float>(GH)) / offset) + 2;
 
 
     //residual between input and denoised L channel
@@ -8630,15 +8630,15 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 #endif
         float *Lblox = LbloxArray[subThread];
         float *fLblox = fLbloxArray[subThread];
-        float pBuf[GW + TS + 2 * blkrad * offset1] ALIGNED16;
+        float pBuf[GW + TS + 2 * offset] ALIGNED16;
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for (int vblk = 0; vblk < numblox_H; ++vblk) {
 
-            int top = (vblk - blkrad) * offset1;
-            float * datarow = pBuf + blkrad * offset1;
+            int top = (vblk - 1) * offset;
+            float * datarow = pBuf + offset;
 
             for (int i = 0; i < TS; ++i) {
                 int row = top + i;
@@ -8656,17 +8656,17 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
                 }
 
-                for (int j = -blkrad * offset1; j < 0; ++j) {
+                for (int j = -1 * offset; j < 0; ++j) {
                     datarow[j] = datarow[MIN(-j, GW - 1)];
                 }
 
-                for (int j = GW; j < GW + TS + blkrad * offset1; ++j) {
+                for (int j = GW; j < GW + TS + offset; ++j) {
                     datarow[j] = datarow[MAX(0, 2 * GW - 2 - j)];
                 }//now we have a padded data row
 
                 //now fill this row of the blocks with Lab high pass data
                 for (int hblk = 0; hblk < numblox_W; ++hblk) {
-                    int left = (hblk - blkrad) * offset1;
+                    int left = (hblk - 1) * offset;
                     int indx = (hblk) * TS; //index of block in malloc
 
                     if (top + i >= 0 && top + i < GH) {
@@ -8731,7 +8731,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
                 fftwf_execute_r2r(plan_backward_blox[1], fLblox, Lblox);    //for DCT
             }
 
-            int topproc = (vblk - blkrad) * offset1;
+            int topproc = (vblk - 1) * offset;
 
             //add row of blocks to output image tile
             ImProcFunctions::RGBoutput_tile_row(Lblox, Ldetail, tilemask_out, GH, GW, topproc);
@@ -8851,9 +8851,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             array2D<float> *Ain = nullptr;
             array2D<float> *Bin = nullptr;
 
-            int max_numblox_W = ceil((static_cast<float>(GW)) / (offset1)) + 2 * blkrad;
+            int max_numblox_W = ceil((static_cast<float>(GW)) / offset) + 2;
             // calculate min size of numblox_W.
-            int min_numblox_W = ceil((static_cast<float>(GW)) / (offset1)) + 2 * blkrad;
+            int min_numblox_W = ceil((static_cast<float>(GW)) / offset) + 2;
 
 
             for (int ir = 0; ir < GH; ir++)
@@ -9395,9 +9395,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 array2D<float> *Ain = nullptr;
                 array2D<float> *Bin = nullptr;
 
-                int max_numblox_W = ceil((static_cast<float>(bfw)) / (offset1)) + 2 * blkrad;
+                int max_numblox_W = ceil((static_cast<float>(bfw)) / offset) + 2;
                 // calculate min size of numblox_W.
-                int min_numblox_W = ceil((static_cast<float>(bfw)) / (offset1)) + 2 * blkrad;
+                int min_numblox_W = ceil((static_cast<float>(bfw)) / offset) + 2;
                 // these are needed only for creation of the plans and will be freed before entering the parallel loop
 
 
@@ -10430,7 +10430,7 @@ void ImProcFunctions::Lab_Local(
                         kmaskLexp += 32768.f * valHH;
                     }
 
-                    bufmaskblurbl->L[ir][jr] = CLIPLOC(kmaskLexp +  kmasstru);
+                    bufmaskblurbl->L[ir][jr] = clipLoc(kmaskLexp +  kmasstru);
                     bufmaskblurbl->a[ir][jr] = kmaskCH;
                     bufmaskblurbl->b[ir][jr] = kmaskCH;
                     ble[ir][jr] = bufmaskblurbl->L[ir][jr] / 32768.f;
@@ -11638,8 +11638,8 @@ void ImProcFunctions::Lab_Local(
                                 }
 
                                 float2 sincosval = xsincosf(newhr);
-                                bufexpfin->a[ir][jr] = CLIPC(chrm * sincosval.y);
-                                bufexpfin->b[ir][jr] = CLIPC(chrm * sincosval.x);
+                                bufexpfin->a[ir][jr] = clipC(chrm * sincosval.y);
+                                bufexpfin->b[ir][jr] = clipC(chrm * sincosval.x);
                             }
                     }
 
@@ -12652,7 +12652,7 @@ void ImProcFunctions::Lab_Local(
 
                             for (int i = 0; i < W_La * H_La; i++) {
                                 wav_ab0a[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));//more progressive than linear
-                                wav_ab0a[i] = CLIPC(wav_ab0a[i]);
+                                wav_ab0a[i] = clipC(wav_ab0a[i]);
                             }
                         }
 
@@ -12708,7 +12708,7 @@ void ImProcFunctions::Lab_Local(
 
                             for (int i = 0; i < W_Lb * H_Lb; i++) {
                                 wav_ab0b[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));
-                                wav_ab0b[i] = CLIPC(wav_ab0b[i]);
+                                wav_ab0b[i] = clipC(wav_ab0b[i]);
                             }
                         }
 
@@ -12762,9 +12762,9 @@ void ImProcFunctions::Lab_Local(
 
                         for (int x = 0; x < bfh; x++)
                             for (int y = 0; y < bfw; y++) {
-                                tmp1->L[x][y] = CLIPLOC((1.f + mL0) * mergfile->L[x][y] - mL * tmpresid->L[x][y]);
-                                tmp1->a[x][y] = CLIPC((1.f + mC0) * mergfile->a[x][y] - mC * tmpresid->a[x][y]);
-                                tmp1->b[x][y] = CLIPC((1.f + mC0) * mergfile->b[x][y] - mC * tmpresid->b[x][y]);
+                                tmp1->L[x][y] = clipLoc((1.f + mL0) * mergfile->L[x][y] - mL * tmpresid->L[x][y]);
+                                tmp1->a[x][y] = clipC((1.f + mC0) * mergfile->a[x][y] - mC * tmpresid->a[x][y]);
+                                tmp1->b[x][y] = clipC((1.f + mC0) * mergfile->b[x][y] - mC * tmpresid->b[x][y]);
                             }
 
                         if (softr != 0.f && (compreena || locwavCurve || comprena || blurena || levelena || lp.wavgradl || lp.edgwena || std::fabs(mL) > 0.001f)) {
@@ -12987,7 +12987,7 @@ void ImProcFunctions::Lab_Local(
                     float dE = std::sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) +  SQR(lumaref - bufreti->b[y][x] / 327.68f));
                     float reducdE;
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore, reducdE);
-                    reducDE[y][x] = CLIPdE(reducdE);
+                    reducDE[y][x] = clipDE(reducdE);
 
                 }
 
@@ -13321,7 +13321,7 @@ void ImProcFunctions::Lab_Local(
                     float dE = std::sqrt(SQR(refa - bufreti->a[y - ystart][x - xstart] / 327.68f) + SQR(refb - bufreti->b[y - ystart][x - xstart] / 327.68f) +  SQR(lumaref - bufreti->b[y - ystart][x - xstart] / 327.68f));
                     float reducdE;
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore, reducdE);
-                    reducDE[y - ystart][x - xstart] = CLIPdE(reducdE);
+                    reducDE[y - ystart][x - xstart] = clipDE(reducdE);
 
                 }
 
@@ -13780,33 +13780,24 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
-
-                        for (int ir = 0; ir < bfh; ir++)
+                        for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
-                                double factor = 1.0;
-                                factor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
-                                bufexpfin->L[ir][jr] *= factor;
+                                bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
                             }
+                        }
                     }
-
-
 
 //exposure_pde
                     if (lp.expmet == 1) {
-                        Imagefloat *tmpImagefat = nullptr;
-
-
                         if (enablefat) {
-                            float *datain = new float[bfwr * bfhr];
-                            float *dataout = new float[bfwr * bfhr];
+                            const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
+                            const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
-                                    float L = bufexpfin->L[y][x];
-                                    datain[y * bfwr + x] = L;
+                                    datain[y * bfwr + x] = bufexpfin->L[y][x];
                                 }
                             }
 
@@ -13815,40 +13806,31 @@ void ImProcFunctions::Lab_Local(
                             fatParams.threshold = params->locallab.spots.at(sp).fatdetail;
                             fatParams.amount = params->locallab.spots.at(sp).fatamount;
                             fatParams.anchor = 50.f; //params->locallab.spots.at(sp).fatanchor;
-                            float sigm = params->locallab.spots.at(sp).fatlevel;
-                            float mean = params->locallab.spots.at(sp).fatanchor;
-                            tmpImagefat = new Imagefloat(bfwr, bfhr);
-                            lab2rgb(*bufexpfin, *tmpImagefat, params->icm.workingProfile);
-                            ToneMapFattal02(tmpImagefat, fatParams, 3, 0, nullptr, 0, 0, 1);//last parameter = 1 ==>ART algorithm
-                            rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
-                            delete tmpImagefat;
+                            const float sigm = params->locallab.spots.at(sp).fatlevel;
+                            const float mean = params->locallab.spots.at(sp).fatanchor;
+                            const std::unique_ptr<Imagefloat> tmpImagefat(new Imagefloat(bfwr, bfhr));
+                            lab2rgb(*bufexpfin, *(tmpImagefat.get()), params->icm.workingProfile);
+                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, 1);//last parameter = 1 ==>ART algorithm
+                            rgb2lab(*(tmpImagefat.get()), *bufexpfin, params->icm.workingProfile);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
-                                    float L = bufexpfin->L[y][x];
-                                    dataout[y * bfwr + x] = L;
+                                    dataout[y * bfwr + x] = bufexpfin->L[y][x];
                                 }
                             }
 
-                            normalize_mean_dt(dataout, datain, bfwr * bfhr, mean, sigm);
+                            normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
                                     bufexpfin->L[y][x] = dataout[y * bfwr + x];
                                 }
                             }
-
-
-                            delete [] datain;
-                            delete [] dataout;
                         }
-
 
                         if (lp.laplacexp > 0.1f) {
                             MyMutex::MyLock lock(*fftwMutex);
@@ -13858,10 +13840,7 @@ void ImProcFunctions::Lab_Local(
                             float gam = params->locallab.spots.at(sp).gamm;
                             float igam = 1.f / gam;
 
-
                             if (params->locallab.spots.at(sp).exnoiseMethod == "med" || params->locallab.spots.at(sp).exnoiseMethod == "medhi") {
-
-
                                 if (lp.blac < -100.f && lp.linear > 0.01f) {
                                     Median med;
                                     float evnoise = lp.blac - lp.linear * 2000.f;
@@ -13886,13 +13865,11 @@ void ImProcFunctions::Lab_Local(
                                     Median_Denoise(bufexpfin->b, bufexpfin->b, bfwr, bfhr, Median::TYPE_3X3_SOFT, 1, multiThread);
 
                                 }
-
                             }
 
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
-
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
                                     float L = LIM01(bufexpfin->L[y][x] / 32768.f);//change gamma for Laplacian
@@ -13925,7 +13902,6 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
-
                     //shadows with ipshadowshighlight
                     if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
                         if (lp.shadex > 0) {
@@ -13934,28 +13910,23 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (lp.expchroma != 0.f) {
-                        constexpr float ampli = 70.f;
-                        float ch = 0.f;
-                        float chprosl = 0.f;
 
                         if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili) || lp.laplacexp > 0.1f) {
-                            ch = (1.f + 0.02f * lp.expchroma);
-                            chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
-                        }
-
+                            constexpr float ampli = 70.f;
+                            const float ch = (1.f + 0.02f * lp.expchroma);
+                            const float chprosl = ch <= 1.f ? 99.f * ch - 99.f : clipChro(ampli * ch - ampli);
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
-
-                        for (int ir = 0; ir < bfh; ir++) {
-                            for (int jr = 0; jr < bfw; jr++) {
-                                const float epsi = bufexporig->L[ir][jr] == 0.f ? 0.001f : 0.f;
-                                const float rapexp = bufexpfin->L[ir][jr] / (bufexporig->L[ir][jr] + epsi);
-                                bufexpfin->a[ir][jr] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
-                                bufexpfin->b[ir][jr] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
+                            for (int ir = 0; ir < bfh; ir++) {
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    const float epsi = bufexporig->L[ir][jr] == 0.f ? 0.001f : 0.f;
+                                    const float rapexp = bufexpfin->L[ir][jr] / (bufexporig->L[ir][jr] + epsi);
+                                    bufexpfin->a[ir][jr] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
+                                    bufexpfin->b[ir][jr] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
+                                }
                             }
                         }
-
                     }
                     
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
@@ -13963,7 +13934,6 @@ void ImProcFunctions::Lab_Local(
                     }
                     float meansob = 0.f;
                     transit_shapedetect2(call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
-
                 }
 
                 if (params->locallab.spots.at(sp).recurs) {
@@ -13971,7 +13941,6 @@ void ImProcFunctions::Lab_Local(
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                 }
-
             }
         }
     }
@@ -14100,9 +14069,9 @@ void ImProcFunctions::Lab_Local(
                     const int numThreads = 1;
 
         #endif
-                    int max_numblox_W = ceil((static_cast<float>(GW)) / (offset2)) + 2 * blkrad;
+                    int max_numblox_W = ceil((static_cast<float>(GW)) / offset) + 2;
                         // calculate min size of numblox_W.
-                    int min_numblox_W = ceil((static_cast<float>(GW)) / (offset2)) + 2 * blkrad;
+                    int min_numblox_W = ceil((static_cast<float>(GW)) / offset) + 2;
                     fftw_tile_blur(GW, GH, tilssize , max_numblox_W, min_numblox_W, original->L, numThreads, radius);
         */
 
@@ -14665,8 +14634,8 @@ void ImProcFunctions::Lab_Local(
                                     bufcolcalcb += kd * scaledirect * b_scale;
                                 }
 
-                                bufcolcalca = CLIPC(bufcolcalca);
-                                bufcolcalcb = CLIPC(bufcolcalcb);
+                                bufcolcalca = clipC(bufcolcalca);
+                                bufcolcalcb = clipC(bufcolcalcb);
 
                             }
 
@@ -14788,8 +14757,8 @@ void ImProcFunctions::Lab_Local(
                                     }
 
                                     const float2 sincosval = xsincosf(newhr);
-                                    bufcolfin->a[ir][jr] = CLIPC(chrm * sincosval.y);
-                                    bufcolfin->b[ir][jr] = CLIPC(chrm * sincosval.x);
+                                    bufcolfin->a[ir][jr] = clipC(chrm * sincosval.y);
+                                    bufcolfin->b[ir][jr] = clipC(chrm * sincosval.x);
                                 }
                         }
 
@@ -15081,15 +15050,9 @@ void ImProcFunctions::Lab_Local(
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        const float ar = LIM01(tmpImageorig->r(y, x));
-                                        const float br = lp.mergemet >= 2 ? ar : tmpImagereserv->r(y, x);
-                                        tmpImageorig->r(y, x) = intp(lp.opacol, softlig2(ar, br), tmpImageorig->r(y, x));
-                                        const float ag = LIM01(tmpImageorig->g(y, x));
-                                        const float bg = lp.mergemet >= 2 ? ag : tmpImagereserv->g(y, x);
-                                        tmpImageorig->g(y, x) = intp(lp.opacol, softlig2(ag, bg), tmpImageorig->g(y, x));
-                                        const float ab = LIM01(tmpImageorig->b(y, x));
-                                        const float bb = lp.mergemet >= 2 ? ab : tmpImagereserv->b(y, x);
-                                        tmpImageorig->b(y, x) = intp(lp.opacol, softlig2(ab, bb), tmpImageorig->b(y, x));
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, softlig2(LIM01(tmpImageorig->r(y, x)), LIM01(tmpImageorig->r(y, x))), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, softlig2(LIM01(tmpImageorig->g(y, x)), LIM01(tmpImageorig->g(y, x))), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, softlig2(LIM01(tmpImageorig->b(y, x)), LIM01(tmpImageorig->b(y, x))), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 8) { //soft light as W3C
@@ -15281,8 +15244,8 @@ void ImProcFunctions::Lab_Local(
                                     }
 
                                     const float2 sincosval = xsincosf(newhr);
-                                    bufcolfin->a[ir][jr] = CLIPC(chrm * sincosval.y);
-                                    bufcolfin->b[ir][jr] = CLIPC(chrm * sincosval.x);
+                                    bufcolfin->a[ir][jr] = clipC(chrm * sincosval.y);
+                                    bufcolfin->b[ir][jr] = clipC(chrm * sincosval.x);
                                 }
                         }
 
