@@ -440,10 +440,10 @@ Wavelet::Wavelet() :
 
     contrastSHVBox->pack_start(*HSmethod);
     contrastSHVBox->pack_start(*hllev);
- //   contrastSHVBox->pack_start(*threshold);
+    contrastSHVBox->pack_start(*threshold);
     contrastSHVBox->pack_start(*bllev);
-//    contrastSHVBox->pack_start(*threshold2);
-    contrastSHVBox->pack_start(*curveEditorC);
+    contrastSHVBox->pack_start(*threshold2);
+ //   contrastSHVBox->pack_start(*curveEditorC);
     Gtk::Frame* const contrastSHFrame = Gtk::manage(new Gtk::Frame(M("TP_WAVELET_APPLYTO")));
     contrastSHFrame->add(*contrastSHVBox);
     levBox->pack_start(*contrastSHFrame);
