@@ -36,7 +36,7 @@ LabImage::~LabImage ()
 
 void LabImage::CopyFrom(LabImage *Img)
 {
-    memcpy(data, Img->data, W * H * 3 * sizeof(float));
+    memcpy(data, Img->data, static_cast<std::size_t>(W) * H * 3 * sizeof(float));
 }
 
 void LabImage::getPipetteData (float &v1, float &v2, float &v3, int posX, int posY, int squareSize)

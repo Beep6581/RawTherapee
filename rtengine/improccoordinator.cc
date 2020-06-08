@@ -158,6 +158,7 @@ ImProcCoordinator::ImProcCoordinator() :
     awavListener(nullptr),
     dehaListener(nullptr),
     hListener(nullptr),
+    filmNegListener(nullptr),
     resultValid(false),
     params(new procparams::ProcParams),
     lastOutputProfile("BADFOOD"),

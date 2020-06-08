@@ -44,6 +44,13 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
             "Building RawTherapee requires using GCC version 4.9 or higher!")
 endif()
 
+# Warning for GCC 10, which causes problems #5749:
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0")
+    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
+endif()
+
 # We might want to build using the old C++ ABI, even when using a new GCC
 # version:
 if(USE_OLD_CXX_ABI)
@@ -67,6 +74,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 set(CACHE_NAME_SUFFIX
     ""
     CACHE STRING "RawTherapee's cache folder suffix")
+
+# For macOS only, OSX_DEV_BUILD option allows using relative paths instead of absolute
+# paths. Consequently, for development builds, application can be launching without
+# being bundled. However, file access can be restricted for some folder.
+option(OSX_DEV_BUILD "Generate macOS development builds" OFF)
 
 # By default we don't use a specific processor target, so PROC_TARGET_NUMBER is
 # set to 0. Specify other values to optimize for specific processor architecture

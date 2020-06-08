@@ -255,6 +255,7 @@ RTWindow *create_rt_window()
 
     //gdk_threads_enter ();
     RTWindow *rtWindow = new RTWindow();
+    rtWindow->setWindowSize(); // Need to be called after RTWindow creation to work with all OS Windows Manager
     return rtWindow;
 }
 
