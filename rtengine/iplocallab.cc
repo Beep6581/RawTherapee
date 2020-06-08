@@ -10145,7 +10145,7 @@ void ImProcFunctions::Lab_Local(
     const LocwavCurve& loccomprewavCurve, bool loccomprewavutili,
     const LocwavCurve& locwavCurveden, bool locwavdenutili,
     const LocwavCurve& locedgwavCurve, bool locedgwavutili,
-    bool LHutili, bool HHutili, const LUTf& cclocalcurve, bool localcutili, LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
+    bool LHutili, bool HHutili, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax
@@ -14195,65 +14195,49 @@ void ImProcFunctions::Lab_Local(
 
                     if (rgblocalcurve && localrgbutili && lp.qualcurvemet != 0) {
                         usergb = true;
-                        Imagefloat *tmpImage = new Imagefloat(bfw, bfh);
+                        const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
 
-                        float *rtemp = new float[bfw * bfh];
-                        float *gtemp = new float[bfw * bfh];
-                        float *btemp = new float[bfw * bfh];
-
-                        lab2rgb(*buftemp, *tmpImage, params->icm.workingProfile);
+                        lab2rgb(*buftemp, *(tmpImage.get()), params->icm.workingProfile);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                         for (int y = 0; y < bfh; y++)
                             for (int x = 0; x < bfw; x++) {
-                                rtemp[y * bfw + x] = tmpImage->r(y, x);
-                                gtemp[y * bfw + x] = tmpImage->g(y, x);
-                                btemp[y * bfw + x] = tmpImage->b(y, x);
 
                                 //std
                                 if (tonemod == 0) {
-                                    curves::setLutVal(rgblocalcurve, rtemp[y * bfw + x], gtemp[y * bfw + x], btemp[y * bfw + x]);
+                                    curves::setLutVal(rgblocalcurve, tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x));
                                 } else {
-                                    float r = CLIP(rtemp[y * bfw + x]);
-                                    float g = CLIP(gtemp[y * bfw + x]);
-                                    float b = CLIP(btemp[y * bfw + x]);
+                                    float r = CLIP(tmpImage->r(y, x));
+                                    float g = CLIP(tmpImage->g(y, x));
+                                    float b = CLIP(tmpImage->b(y, x));
 
-                                    //weightstd
-                                    if (tonemod == 1) {
-                                        float r1 = rgblocalcurve[r];
-                                        float g1 = triangle(r, r1, g);
-                                        float b1 = triangle(r, r1, b);
+                                    if (tonemod == 1) { // weightstd
+                                        const float r1 = rgblocalcurve[r];
+                                        const float g1 = triangle(r, r1, g);
+                                        const float b1 = triangle(r, r1, b);
 
-                                        float g2 = rgblocalcurve[g];
-                                        float r2 = triangle(g, g2, r);
-                                        float b2 = triangle(g, g2, b);
+                                        const float g2 = rgblocalcurve[g];
+                                        const float r2 = triangle(g, g2, r);
+                                        const float b2 = triangle(g, g2, b);
 
-                                        float b3 = rgblocalcurve[b];
-                                        float r3 = triangle(b, b3, r);
-                                        float g3 = triangle(b, b3, g);
-                                        r = CLIP<float>(r1 * 0.50f + r2 * 0.25f + r3 * 0.25f);
-                                        g = CLIP<float> (g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
-                                        b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
-                                    }
-
-
-                                    //Luminance
-                                    if (tonemod == 2) {
+                                        const float b3 = rgblocalcurve[b];
+                                        const float r3 = triangle(b, b3, r);
+                                        const float g3 = triangle(b, b3, g);
+                                        r = CLIP(r1 * 0.50f + r2 * 0.25f + r3 * 0.25f);
+                                        g = CLIP(g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
+                                        b = CLIP(b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
+                                    } else if (tonemod == 2) { // Luminance
                                         float currLuminance = r * 0.2126729f + g * 0.7151521f + b * 0.0721750f;
 
                                         const float newLuminance = rgblocalcurve[currLuminance];
                                         currLuminance = currLuminance == 0.f ? 0.00001f : currLuminance;
                                         const float coef = newLuminance / currLuminance;
-                                        r = LIM<float> (r * coef, 0.f, 65535.f);
-                                        g = LIM<float> (g * coef, 0.f, 65535.f);
-                                        b = LIM<float> (b * coef, 0.f, 65535.f);
-                                    }
-
-                                    //Film like Adobe
-                                    if (tonemod == 3) {
-
+                                        r = LIM(r * coef, 0.f, 65535.f);
+                                        g = LIM(g * coef, 0.f, 65535.f);
+                                        b = LIM(b * coef, 0.f, 65535.f);
+                                    } else if (tonemod == 3) { // Film like Adobe
                                         if (r >= g) {
                                             if (g > b) {
                                                 rgbtone(r, g, b, rgblocalcurve);     // Case 1: r >= g >  b
@@ -14277,28 +14261,17 @@ void ImProcFunctions::Lab_Local(
                                         }
                                     }
 
-
-                                    setUnlessOOG(rtemp[y * bfw + x], gtemp[y * bfw + x], btemp[y * bfw + x], r, g, b);
+                                    setUnlessOOG(tmpImage->r(y, x), tmpImage->g(y, x), tmpImage->b(y, x), r, g, b);
                                 }
-
-
-                                tmpImage->r(y, x) = rtemp[y * bfw + x];
-                                tmpImage->g(y, x) = gtemp[y * bfw + x];
-                                tmpImage->b(y, x) = btemp[y * bfw + x];
                             }
 
-                        rgb2lab(*tmpImage, *buftemp, params->icm.workingProfile);
+                        rgb2lab(*(tmpImage.get()), *buftemp, params->icm.workingProfile);
 
-                        delete tmpImage;
-                        delete [] rtemp;
-                        delete [] gtemp;
-                        delete [] btemp;
                         // end rgb curves
                     }
 
-
-
                     if (usergb && spez) {//special use of rgb curves ex : negative
+                        const float achm = lp.trans / 100.f;
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -14310,7 +14283,6 @@ void ImProcFunctions::Lab_Local(
                                 const int lox = x + xstart + cx;
                                 int zone;
                                 float localFactor = 1.f;
-                                const float achm = (float)lp.trans / 100.f;
 
                                 if (lp.shapmet == 0) {
                                     calcTransition(lox, loy, achm, lp, zone, localFactor);
@@ -14325,7 +14297,6 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
-
                     }
 
                     //others curves
@@ -14343,15 +14314,15 @@ void ImProcFunctions::Lab_Local(
                         for (int i = 0; i < 500; i++) {
                             if (lochhCurve[i] != 0.5) {
                                 HHcurve = true;
+                                break;
                             }
                         }
                     }
 
-                    float kd = 1.f;//correction to ctoning
-                    kd = 10.f * 0.01f * lp.strengrid;
+                    const float kd = 10.f * 0.01f * lp.strengrid;//correction to ctoning
 
                     //chroma slider with curve instead of linear
-                    float satreal = lp.chro;
+                    const float satreal = lp.chro;
 
                     DiagonalCurve color_satur({
                         DCT_NURBS,
@@ -14370,40 +14341,33 @@ void ImProcFunctions::Lab_Local(
                     });
 
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
-                    for (int ir = 0; ir < bfh; ir++)
+                    for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
                             float bufcolcalca = origptr->a[ir][jr];
                             float bufcolcalcb = origptr->b[ir][jr];
                             float bufcolcalcL = origptr->L[ir][jr];
 
                             if (lp.chro != 0.f) {//slider chroma with curve DCT_NURBS
-                                const float Chprov = std::sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
-                                float chp = Chprov;
+                                float Chprov = std::sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
                                 float2 sincosval;
                                 sincosval.y = Chprov == 0.0f ? 1.f : bufcolcalca / Chprov;
                                 sincosval.x = Chprov == 0.0f ? 0.f : bufcolcalcb / Chprov;
 
+                                // 35000 must be globally good, more than 32768...and less than !! to avoid calculation min max
                                 if (lp.chro > 0.f) {
-                                    float buf = LIM01(chp / 35000.f);//35000 must be globaly good, more than 32768...anf les than !! to avoid calculation min max
-                                    buf = color_satur.getVal(buf);
-                                    buf *= 35000.f;
-                                    chp = buf;
+                                    Chprov = color_satur.getVal(LIM01(Chprov / 35000.f)) * 35000.f;
                                 } else {
-                                    float buf = LIM01(chp / 35000.f);
-                                    buf = color_saturmoins.getVal(buf);
-                                    buf *= 35000.f;
-                                    chp = buf;
+                                    Chprov = color_saturmoins.getVal(LIM01(Chprov / 35000.f)) * 35000.f;
                                 }
 
                                 if (lp.chro == -100.f) {
-                                    chp = 0.f;
+                                    Chprov = 0.f;
                                 }
 
-                                bufcolcalca = chp * sincosval.y;
-                                bufcolcalcb = chp * sincosval.x;
+                                bufcolcalca = Chprov * sincosval.y;
+                                bufcolcalcb = Chprov * sincosval.x;
                             }
 
                             if (cclocalcurve && lp.qualcurvemet != 0 && localcutili) { // C=f(C) curve
@@ -14440,7 +14404,6 @@ void ImProcFunctions::Lab_Local(
                                 bufcolcalca = chromat * sincosval.y;
                                 bufcolcalcb = chromat * sincosval.x;
                             }
-
 
                             if (lp.ligh != 0.f || lp.cont != 0) {//slider luminance or slider contrast with curve
                                 calclight(bufcolcalcL, bufcolcalcL, lightCurveloc);
@@ -14485,7 +14448,7 @@ void ImProcFunctions::Lab_Local(
                             bufcolfin->a[ir][jr] = bufcolcalca;
                             bufcolfin->b[ir][jr] = bufcolcalcb;
                         }
-
+                    }
 
                     if (HHcurve && ctoning) {//not use ctoning and H(H) simultaneous but priority to ctoning
                         HHcurve = false;
@@ -14493,9 +14456,8 @@ void ImProcFunctions::Lab_Local(
 
                     if (!execcolor) {//if we don't use color and light sliders, curves except RGB
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 bufcolfin->L[ir][jr] = origptr->L[ir][jr];
@@ -14512,9 +14474,8 @@ void ImProcFunctions::Lab_Local(
                         const std::unique_ptr<LabImage> bufreser(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < bfh ; y++) {
                             for (int x = 0; x < bfw; x++) {
                                 lumreserv[y][x] = 32768.f - reserved->L[y + ystart][x + xstart];
@@ -14530,12 +14491,10 @@ void ImProcFunctions::Lab_Local(
                                     bufcolreserv->L[y][x] = lastorig->L[y + ystart][x + xstart];
                                     bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
                                     bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
-                                } else if (lp.mergemet == 4) {
-                                    if (ctoningmerg) {
+                                } else if (lp.mergemet == 4 && ctoningmerg) {
                                         bufcolreserv->L[y][x] = merlucol * 327.68f;
                                         bufcolreserv->a[y][x] = 9.f * scaledirect * a_scalemerg;
                                         bufcolreserv->b[y][x] = 9.f * scaledirect * b_scalemerg;
-                                    }
                                 }
                             }
                         }
@@ -14544,39 +14503,38 @@ void ImProcFunctions::Lab_Local(
                             struct grad_params gp;
                             calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 3);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
-                            for (int ir = 0; ir < bfh; ir++)
+                            for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
                                     bufcolfin->L[ir][jr] *= corrFactor;
                                 }
+                            }
                         }
 
                         if (lp.strcolab != 0.f) {
                             struct grad_params gpab;
                             calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 4);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
-                            for (int ir = 0; ir < bfh; ir++)
+                            for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
                                     bufcolfin->a[ir][jr] *= corrFactor;
                                     bufcolfin->b[ir][jr] *= corrFactor;
                                 }
+                            }
                         }
 
                         if (lp.strcolh != 0.f) {
                             struct grad_params gph;
                             calclocalGradientParams(lp, gph, ystart, xstart, bfw, bfh, 6);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
-                            for (int ir = 0; ir < bfh; ir++)
+                            for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gph, jr, ir);
                                     const float aa = bufcolfin->a[ir][jr];
@@ -14602,11 +14560,12 @@ void ImProcFunctions::Lab_Local(
                                     bufcolfin->a[ir][jr] = clipC(chrm * sincosval.y);
                                     bufcolfin->b[ir][jr] = clipC(chrm * sincosval.x);
                                 }
+                            }
                         }
 
                         JaggedArray<float> blend(bfw, bfh);
                         buildBlendMask(lumreserv, blend, bfw, bfh, conthr);
-                        float rm = 20.f / sk;
+                        const float rm = 20.f / sk;
 
                         if (rm > 0) {
                             float **mb = blend;
@@ -14629,134 +14588,124 @@ void ImProcFunctions::Lab_Local(
                                 bufprov.reset(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         rdE[y][x] *= SQR(rdE[y][x]);
-                                        bufprov->L[y][x] = (1.f - rdE[y][x]) * bufcolfin->L[y][x] + (rdE[y][x]) * bufcolreserv->L[y][x];
-                                        bufprov->a[y][x] = (1.f - rdE[y][x]) * bufcolfin->a[y][x] + (rdE[y][x]) * bufcolreserv->a[y][x];
-                                        bufprov->b[y][x] = (1.f - rdE[y][x]) * bufcolfin->b[y][x] + (rdE[y][x]) * bufcolreserv->b[y][x];
+                                        bufprov->L[y][x] = intp(rdE[y][x], bufcolreserv->L[y][x], bufcolfin->L[y][x]);
+                                        bufprov->a[y][x] = intp(rdE[y][x], bufcolreserv->a[y][x], bufcolfin->a[y][x]);
+                                        bufprov->b[y][x] = intp(rdE[y][x], bufcolreserv->b[y][x], bufcolfin->b[y][x]);
 
-                                        bufcolfin->L[y][x] = (1.f - lp.opacol) * bufcolfin->L[y][x] + (lp.opacol) * bufprov->L[y][x];
-                                        bufcolfin->a[y][x] = (1.f - lp.opacol) * bufcolfin->a[y][x] + (lp.opacol) * bufprov->a[y][x];
-                                        bufcolfin->b[y][x] = (1.f - lp.opacol) * bufcolfin->b[y][x] + (lp.opacol) * bufprov->b[y][x];
+                                        bufcolfin->L[y][x] = intp(lp.opacol, bufprov->L[y][x], bufcolfin->L[y][x]);
+                                        bufcolfin->a[y][x] = intp(lp.opacol, bufprov->a[y][x], bufcolfin->a[y][x]);
+                                        bufcolfin->b[y][x] = intp(lp.opacol, bufprov->b[y][x], bufcolfin->b[y][x]);
                                     }
                                 }
                             } else {
                                 bufprov.reset(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        bufprov->L[y][x] = (rdE[y][x]) * bufcolfin->L[y][x] + (1.f - rdE[y][x]) * bufcolreserv->L[y][x];
-                                        bufprov->a[y][x] = (rdE[y][x]) * bufcolfin->a[y][x] + (1.f - rdE[y][x]) * bufcolreserv->a[y][x];
-                                        bufprov->b[y][x] = (rdE[y][x]) * bufcolfin->b[y][x] + (1.f - rdE[y][x]) * bufcolreserv->b[y][x];
+                                        bufprov->L[y][x] = intp(rdE[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
+                                        bufprov->a[y][x] = intp(rdE[y][x], bufcolfin->a[y][x], bufcolreserv->a[y][x]);
+                                        bufprov->b[y][x] = intp(rdE[y][x], bufcolfin->b[y][x], bufcolreserv->b[y][x]);
 
-                                        bufcolfin->L[y][x] = (lp.opacol) * bufprov->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
-                                        bufcolfin->a[y][x] = (lp.opacol) * bufprov->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
-                                        bufcolfin->b[y][x] = (lp.opacol) * bufprov->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
+                                        bufcolfin->L[y][x] = intp(lp.opacol, bufprov->L[y][x], bufcolreserv->L[y][x]);
+                                        bufcolfin->a[y][x] = intp(lp.opacol, bufprov->a[y][x], bufcolreserv->a[y][x]);
+                                        bufcolfin->b[y][x] = intp(lp.opacol, bufprov->b[y][x], bufcolreserv->b[y][x]);
                                     }
                                 }
-
                             }
 
-
                             if (conthr > 0.f && lp.mergemet != 4) {
-
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        bufcolfin->L[y][x] = intp((blend[y][x]), bufcolfin->L[y][x], bufreser->L[y][x]);
-                                        bufcolfin->a[y][x] = intp((blend[y][x]), bufcolfin->a[y][x], bufreser->a[y][x]);
-                                        bufcolfin->b[y][x] = intp((blend[y][x]), bufcolfin->b[y][x], bufreser->b[y][x]);
+                                        bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufreser->L[y][x]);
+                                        bufcolfin->a[y][x] = intp(blend[y][x], bufcolfin->a[y][x], bufreser->a[y][x]);
+                                        bufcolfin->b[y][x] = intp(blend[y][x], bufcolfin->b[y][x], bufreser->b[y][x]);
                                     }
                                 }
                             }
                         }
 
-
                         if (lp.mergecolMethod > 16) { //hue sat chroma luma
                             bufprov.reset(new LabImage(bfw, bfh));
 
                             if (lp.mergemet == 4) {
-
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         rdE[y][x] *= SQR(rdE[y][x]);
-                                        bufprov->L[y][x] = (1.f - rdE[y][x]) * bufcolfin->L[y][x] + (rdE[y][x]) * bufcolreserv->L[y][x];
-                                        bufprov->a[y][x] = (1.f - rdE[y][x]) * bufcolfin->a[y][x] + (rdE[y][x]) * bufcolreserv->a[y][x];
-                                        bufprov->b[y][x] = (1.f - rdE[y][x]) * bufcolfin->b[y][x] + (rdE[y][x]) * bufcolreserv->b[y][x];
+                                        bufprov->L[y][x] = intp(rdE[y][x], bufcolreserv->L[y][x], bufcolfin->L[y][x]);
+                                        bufprov->a[y][x] = intp(rdE[y][x], bufcolreserv->a[y][x], bufcolfin->a[y][x]);
+                                        bufprov->b[y][x] = intp(rdE[y][x], bufcolreserv->b[y][x], bufcolfin->b[y][x]);
                                     }
                                 }
                             } else {
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        bufprov->L[y][x] = (rdE[y][x]) * bufcolfin->L[y][x] + (1.f - rdE[y][x]) * bufcolreserv->L[y][x];
-                                        bufprov->a[y][x] = (rdE[y][x]) * bufcolfin->a[y][x] + (1.f - rdE[y][x]) * bufcolreserv->a[y][x];
-                                        bufprov->b[y][x] = (rdE[y][x]) * bufcolfin->b[y][x] + (1.f - rdE[y][x]) * bufcolreserv->b[y][x];
+                                        bufprov->L[y][x] = intp(rdE[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
+                                        bufprov->a[y][x] = intp(rdE[y][x], bufcolfin->a[y][x], bufcolreserv->a[y][x]);
+                                        bufprov->b[y][x] = intp(rdE[y][x], bufcolfin->b[y][x], bufcolreserv->b[y][x]);
                                     }
                                 }
                             }
 
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
-                                    float huefin = xatan2f(bufprov->b[y][x], bufprov->a[y][x]);
-                                    float hueres = xatan2f(bufcolreserv->b[y][x], bufcolreserv->a[y][x]);
-                                    float chrofin = std::sqrt(SQR(bufprov->a[y][x]) + SQR(bufprov->b[y][x]));
-                                    float chrores = std::sqrt(SQR(bufcolreserv->a[y][x]) + SQR(bufcolreserv->b[y][x]));
-                                    float lumfin = bufprov->L[y][x];
-                                    float lumres = bufcolreserv->L[y][x];
-
                                     if (lp.mergecolMethod == 17) {
-                                        float2 sincosval1 = xsincosf(huefin);
+                                        const float huefin = xatan2f(bufprov->b[y][x], bufprov->a[y][x]);
+                                        const float2 sincosval1 = xsincosf(huefin);
+                                        const float chrores = std::sqrt(SQR(bufcolreserv->a[y][x]) + SQR(bufcolreserv->b[y][x]));
                                         buftemp->a[y][x] = chrores * sincosval1.y;
                                         buftemp->b[y][x] = chrores * sincosval1.x;
-                                        buftemp->L[y][x] = lumres;
+                                        buftemp->L[y][x] = bufcolreserv->L[y][x];
                                     } else if (lp.mergecolMethod == 18) {
-                                        float2 sincosval2 = xsincosf(hueres);
+                                        const float hueres = xatan2f(bufcolreserv->b[y][x], bufcolreserv->a[y][x]);
+                                        const float2 sincosval2 = xsincosf(hueres);
+                                        const float chrofin = std::sqrt(SQR(bufprov->a[y][x]) + SQR(bufprov->b[y][x]));
                                         buftemp->a[y][x] = chrofin * sincosval2.y;
                                         buftemp->b[y][x] = chrofin * sincosval2.x;
-                                        buftemp->L[y][x] = lumres;
+                                        buftemp->L[y][x] = bufcolreserv->L[y][x];
                                     } else if (lp.mergecolMethod == 19) {
-                                        float2 sincosval3 = xsincosf(huefin);
+                                        const float huefin = xatan2f(bufprov->b[y][x], bufprov->a[y][x]);
+                                        const float2 sincosval3 = xsincosf(huefin);
+                                        const float chrofin = std::sqrt(SQR(bufprov->a[y][x]) + SQR(bufprov->b[y][x]));
                                         buftemp->a[y][x] = chrofin * sincosval3.y;
                                         buftemp->b[y][x] = chrofin * sincosval3.x;
-                                        buftemp->L[y][x] = lumres;
+                                        buftemp->L[y][x] = bufcolreserv->L[y][x];
                                     } else if (lp.mergecolMethod == 20) {
-                                        float2 sincosval4 = xsincosf(hueres);
+                                        const float hueres = xatan2f(bufcolreserv->b[y][x], bufcolreserv->a[y][x]);
+                                        const float2 sincosval4 = xsincosf(hueres);
+                                        const float chrores = std::sqrt(SQR(bufcolreserv->a[y][x]) + SQR(bufcolreserv->b[y][x]));
                                         buftemp->a[y][x] = chrores * sincosval4.y;
                                         buftemp->b[y][x] = chrores * sincosval4.x;
-                                        buftemp->L[y][x] = lumfin;
+                                        buftemp->L[y][x] = bufprov->L[y][x];
                                     }
 
                                     if (lp.mergemet == 4) {
-                                        bufcolfin->L[y][x] = (1.f - lp.opacol) * bufcolfin->L[y][x] + (lp.opacol) * bufprov->L[y][x];
-                                        bufcolfin->a[y][x] = (1.f - lp.opacol) * bufcolfin->a[y][x] + (lp.opacol) * bufprov->a[y][x];
-                                        bufcolfin->b[y][x] = (1.f - lp.opacol) * bufcolfin->b[y][x] + (lp.opacol) * bufprov->b[y][x];
+                                        bufcolfin->L[y][x] = intp(lp.opacol, bufprov->L[y][x], bufcolfin->L[y][x]);
+                                        bufcolfin->a[y][x] = intp(lp.opacol, bufprov->a[y][x], bufcolfin->a[y][x]);
+                                        bufcolfin->b[y][x] = intp(lp.opacol, bufprov->b[y][x], bufcolfin->b[y][x]);
                                     } else {
-                                        bufcolfin->L[y][x] = (lp.opacol) * bufprov->L[y][x] + (1.f - lp.opacol) * bufcolreserv->L[y][x];
-                                        bufcolfin->a[y][x] = (lp.opacol) * bufprov->a[y][x] + (1.f - lp.opacol) * bufcolreserv->a[y][x];
-                                        bufcolfin->b[y][x] = (lp.opacol) * bufprov->b[y][x] + (1.f - lp.opacol) * bufcolreserv->b[y][x];
+                                        bufcolfin->L[y][x] = intp(lp.opacol, bufprov->L[y][x], bufcolreserv->L[y][x]);
+                                        bufcolfin->a[y][x] = intp(lp.opacol, bufprov->a[y][x], bufcolreserv->a[y][x]);
+                                        bufcolfin->b[y][x] = intp(lp.opacol, bufprov->b[y][x], bufcolreserv->b[y][x]);
                                     }
                                 }
                             }
@@ -14805,17 +14754,19 @@ void ImProcFunctions::Lab_Local(
                             float maxG = minG;
                             float minB = tmpImagereserv->b(0, 0);
                             float maxB = minB;
+                            if (lp.mergecolMethod == 6 || lp.mergecolMethod == 9 || lp.mergecolMethod == 10 || lp.mergecolMethod == 11) {
 #ifdef _OPENMP
-                            #pragma omp parallel for reduction(max:maxR,maxG,maxB) reduction(min:minR,minG,minB) schedule(dynamic,16)
+                                #pragma omp parallel for reduction(max:maxR,maxG,maxB) reduction(min:minR,minG,minB) schedule(dynamic,16)
 #endif
-                            for (int ir = 0; ir < bfh; ir++) {
-                                for (int jr = 0; jr < bfw; jr++) {
-                                    minR = rtengine::min(minR, tmpImagereserv->r(ir, jr));
-                                    maxR = rtengine::max(maxR, tmpImagereserv->r(ir, jr));
-                                    minG = rtengine::min(minG, tmpImagereserv->g(ir, jr));
-                                    maxG = rtengine::max(maxG, tmpImagereserv->g(ir, jr));
-                                    minB = rtengine::min(minB, tmpImagereserv->b(ir, jr));
-                                    maxB = rtengine::max(maxB, tmpImagereserv->b(ir, jr));
+                                for (int ir = 0; ir < bfh; ir++) {
+                                    for (int jr = 0; jr < bfw; jr++) {
+                                        minR = rtengine::min(minR, tmpImagereserv->r(ir, jr));
+                                        maxR = rtengine::max(maxR, tmpImagereserv->r(ir, jr));
+                                        minG = rtengine::min(minG, tmpImagereserv->g(ir, jr));
+                                        maxG = rtengine::max(maxG, tmpImagereserv->g(ir, jr));
+                                        minB = rtengine::min(minB, tmpImagereserv->b(ir, jr));
+                                        maxB = rtengine::max(maxB, tmpImagereserv->b(ir, jr));
+                                    }
                                 }
                             }
 
