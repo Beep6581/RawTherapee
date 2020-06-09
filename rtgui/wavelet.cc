@@ -1165,11 +1165,20 @@ void Wavelet::updateGUI()
 {
     const int temp2 = threshold2->getValue();
     const int temp = threshold->getValue();
-    const int tempmax = (temp + 1) > 9 ? 9 : temp + 1;
-    threshold2->setLimits(temp, 9, 1, tempmax);
+    const int maxlev = thres->getValue();
+    const int tempmax = (temp + 1) > maxlev ? maxlev : temp + 1;
+    threshold2->setLimits(temp, maxlev, 1, maxlev + 1);
     threshold2 ->setValue(temp2);
 }
 
+void Wavelet::updateGUImaxlev()
+{
+    const int temp4 = threshold->getValue();
+    const int temp3 = thres->getValue();
+  //  const int tempmax = (temp3) > 9 ? 9 : temp + 1;
+    threshold->setLimits(1, temp3, 1, temp3);
+    threshold ->setValue(temp4);
+}
 
 
 void Wavelet::wavChanged(double nlevel)
@@ -1477,6 +1486,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     skinprotect->setValue(pp->wavelet.skinprotect);
     hueskin->setValue<int>(pp->wavelet.hueskin);
     hueskin2->setValue<int>(pp->wavelet.hueskin2);
+    updateGUImaxlev();
     threshold->setValue(pp->wavelet.threshold);
     updateGUI();
     threshold2->setValue(pp->wavelet.threshold2);
@@ -3076,6 +3086,7 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
         } else if (a == threshold) {
             listener->panelChanged(EvWavThreshold, threshold->getTextValue());
             updateGUI();
+            updateGUImaxlev();
 
         } else if (a == threshold2) {
             listener->panelChanged(EvWavThreshold2, threshold2->getTextValue());
@@ -3122,6 +3133,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             }
 
             listener->panelChanged(EvWavthres, thres->getTextValue());
+             updateGUImaxlev();
+             updateGUI();
         } else if (a == skinprotect) {
             listener->panelChanged(EvWavSkin, skinprotect->getTextValue());
         } else if (a == strength) {
