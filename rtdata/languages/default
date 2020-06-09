@@ -2162,7 +2162,7 @@ TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
 TP_WAVELET_BALCHRO;Chrominance balance
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
-TP_WAVELET_BALCHROM;Denoise Equalizer  Blue-Red
+TP_WAVELET_BALCHROM;Denoise Equalizer  Blue-yellow Red-green
 TP_WAVELET_BALLUM;Denoise Equalizer  White-Black
 TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider

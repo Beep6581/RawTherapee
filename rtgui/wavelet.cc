@@ -131,16 +131,16 @@ Wavelet::Wavelet() :
     level1noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVONE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     level2noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTWO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     level3noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTHRE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
-    threshold(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD"), 1, 9, 1, 5))),
+    threshold(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD"), 1, 9, 1, 4))),
  //   threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 1, 9, 1, 4))),
-    threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 1, 9, 1, 5))),
+    threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 3, 9, 1, 5))),
     edgedetect(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECT"), 0, 100, 1, 90))),
     edgedetectthr(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR"), 0, 100, 1, 20))),
     edgedetectthr2(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR2"), -10, 100, 1, 0))),
     edgesensi(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGESENSI"), 0, 100, 1, 60))),
     edgeampli(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEAMPLI"), 0, 100, 1, 10))),
     ballum(Gtk::manage(new Adjuster(M("TP_WAVELET_BALLUM"), -2., 10., 0.5, 7., Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
-    balchrom(Gtk::manage(new Adjuster(M("TP_WAVELET_BALCHROM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-red-small.png"))))),
+    balchrom(Gtk::manage(new Adjuster(M("TP_WAVELET_BALCHROM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
     chromfi(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMFI"), 0.0, 150., 0.01, 0.))),
     chromco(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMCO"), 0, 100., 0.01, 0.))),
     mergeL(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEL"), -50, 100, 1, 40))),
@@ -1161,6 +1161,20 @@ Wavelet::~Wavelet()
 
 }
 
+void Wavelet::updateGUI()
+{
+    const int temp2 = threshold2->getValue();
+    const int temp = threshold->getValue();
+    int tempmax = temp + 1;
+    if(tempmax > 9) {
+        tempmax = 9;
+    }
+    threshold2->setLimits(temp, 9, 1, temp + 1);
+    threshold2 ->setValue(temp2);
+}
+
+
+
 void Wavelet::wavChanged(double nlevel)
 {
     if (!batchMode) {
@@ -1467,6 +1481,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     hueskin->setValue<int>(pp->wavelet.hueskin);
     hueskin2->setValue<int>(pp->wavelet.hueskin2);
     threshold->setValue(pp->wavelet.threshold);
+    updateGUI();
     threshold2->setValue(pp->wavelet.threshold2);
     edgedetect->setValue(pp->wavelet.edgedetect);
     edgedetectthr->setValue(pp->wavelet.edgedetectthr);
@@ -3063,6 +3078,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavradius, radius->getTextValue());
         } else if (a == threshold) {
             listener->panelChanged(EvWavThreshold, threshold->getTextValue());
+            updateGUI();
+
         } else if (a == threshold2) {
             listener->panelChanged(EvWavThreshold2, threshold2->getTextValue());
         } else if (a == edgedetect) {
