@@ -1165,11 +1165,8 @@ void Wavelet::updateGUI()
 {
     const int temp2 = threshold2->getValue();
     const int temp = threshold->getValue();
-    int tempmax = temp + 1;
-    if(tempmax > 9) {
-        tempmax = 9;
-    }
-    threshold2->setLimits(temp, 9, 1, temp + 1);
+    const int tempmax = (temp + 1) > 9 ? 9 : temp + 1;
+    threshold2->setLimits(temp, 9, 1, tempmax);
     threshold2 ->setValue(temp2);
 }
 
