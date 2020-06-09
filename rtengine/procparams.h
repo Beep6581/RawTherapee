@@ -911,6 +911,7 @@ struct LensProfParams {
   */
 struct PerspectiveParams {
     Glib::ustring method;
+    bool    render;
     double  horizontal;
     double  vertical;
     double  camera_crop_factor;

@@ -37,6 +37,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspProjAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ANGLE");
     EvPerspProjRotate = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ROTATE");
     EvPerspProjShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SHIFT");
+    EvPerspRender = mapper->newEvent(TRANSFORM);
     lens_geom_listener = nullptr;
 
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
@@ -107,6 +108,31 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
                 -60, 60, 0.1, 0, ipers_cam_yaw_left, ipers_cam_yaw_right));
     camera_yaw->setAdjusterListener (this);
 
+    // Begin control lines interface.
+    lines_button_h = Gtk::manage (new Gtk::ToggleButton());
+    lines_button_h->signal_toggled().connect(sigc::bind(sigc::mem_fun(
+            *this, &::PerspCorrection::linesButtonPressed), lines_button_h));
+
+    lines_button_v = Gtk::manage (new Gtk::ToggleButton());
+    lines_button_v->signal_toggled().connect(sigc::bind(sigc::mem_fun(
+            *this, &::PerspCorrection::linesButtonPressed), lines_button_v));
+
+    lines_button_edit = Gtk::manage (new Gtk::ToggleButton());
+    lines_button_edit->signal_toggled().connect(sigc::mem_fun(
+            *this, &::PerspCorrection::linesEditButtonPressed));
+
+    lines = new ControlLineManager();
+    lines->callbacks = new LinesCallbacks(this, lines);
+
+    img_ctrl_lines_apply = NULL;
+    img_ctrl_lines_edit = NULL;
+
+    Gtk::HBox* control_lines_box = Gtk::manage (new Gtk::HBox());
+    control_lines_box->pack_start(*lines_button_v);
+    control_lines_box->pack_start(*lines_button_h);
+    control_lines_box->pack_start(*lines_button_edit);
+    // End control lines interface.
+
     auto_pitch = Gtk::manage (new Gtk::Button ());
     auto_pitch->set_image(*ipers_auto_pitch);
     auto_pitch->signal_pressed().connect( sigc::bind(sigc::mem_fun(*this, &PerspCorrection::autoCorrectionPressed), auto_pitch) );
@@ -164,6 +190,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     camera_vbox->pack_start (*camera_roll);
     camera_vbox->pack_start (*camera_pitch);
     camera_vbox->pack_start (*camera_yaw);
+    camera_vbox->pack_start (*control_lines_box);
     camera_vbox->pack_start (*auto_hbox);
     camera_frame->add(*camera_vbox);
     camera_based->pack_start(*camera_frame);
@@ -190,6 +217,18 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     method->signal_changed().connect(sigc::mem_fun(*this, &PerspCorrection::methodChanged));
 
     show_all();
+}
+
+PerspCorrection::~PerspCorrection()
+{
+    delete lines->callbacks;
+    delete lines;
+    if (img_ctrl_lines_apply) {
+        delete img_ctrl_lines_apply;
+    }
+    if (img_ctrl_lines_edit) {
+        delete img_ctrl_lines_edit;
+    }
 }
 
 void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -241,6 +280,8 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
 {
+
+    pp->perspective.render = render;
 
     pp->perspective.horizontal  = horiz->getValue ();
     pp->perspective.vertical = vert->getValue ();
@@ -385,6 +426,39 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
                         projection_yaw->getValue()));
         }
     }
+}
+
+void PerspCorrection::applyControlLines(void)
+{
+    if (!lens_geom_listener) {
+        return;
+    }
+
+    auto control_lines = lines->toControlLines();
+    int h_count = 0, v_count = 0;
+    double rot = 0;
+    double pitch = 0;
+    double yaw = 0;
+
+    for (unsigned int i = 0; i < lines->size(); i++) {
+        if (control_lines[i].type == rtengine::ControlLine::HORIZONTAL) {
+            h_count++;
+        } else if (control_lines[i].type == rtengine::ControlLine::VERTICAL) {
+            v_count++;
+        }
+    }
+    lens_geom_listener->autoPerspRequested(v_count > 1, h_count > 1, rot, pitch,
+            yaw, control_lines, lines->size());
+
+    free(control_lines);
+
+    disableListener();
+    camera_pitch->setValue(pitch);
+    camera_roll->setValue(rot);
+    camera_yaw->setValue(yaw);
+    enableListener();
+
+    adjusterChanged(camera_pitch, pitch);
 }
 
 void PerspCorrection::autoCorrectionPressed(Gtk::Button* b)
@@ -546,5 +620,395 @@ void PerspCorrection::setFocalLengthValue (const ProcParams* pparams, const Fram
     } else {
         camera_focal_length->setDefault(default_focal_length);
         camera_focal_length->setValue(default_focal_length);
+    }
+}
+
+void PerspCorrection::switchOffEditMode(ControlLineManager* lines)
+{
+    lines_button_h->set_active(false);
+    lines_button_v->set_active(false);
+    lines_button_edit->set_active(false);
+}
+
+void PerspCorrection::setEditProvider(EditDataProvider* provider)
+{
+    lines->setEditProvider(provider);
+}
+
+void PerspCorrection::linesButtonPressed(Gtk::ToggleButton* button)
+{
+    lines->setLinesState(lines_button_h->get_active(), lines_button_v->get_active());
+
+    if (!button->get_active()) {
+        return;
+    }
+
+    if (button == lines_button_h) {
+        lines->draw_line_type = rtengine::ControlLine::HORIZONTAL;
+        if (lines_button_v->get_active()) {
+            lines_button_v->set_active(false);
+        }
+    } else if (button == lines_button_v) {
+        lines->draw_line_type = rtengine::ControlLine::VERTICAL;
+        if (lines_button_h->get_active()) {
+            lines_button_h->set_active(false);
+        }
+    }
+
+    if (!lines_button_edit->get_active()) {
+        lines_button_edit->set_active(true);
+    }
+
+    lines->setDrawMode(true);
+}
+
+void PerspCorrection::linesEditButtonPressed(void)
+{
+    if (lines_button_edit->get_active()) { // Enter edit mode.
+        lines->setActive(true);
+        if (img_ctrl_lines_apply) {
+            lines_button_edit->set_image(*img_ctrl_lines_apply);
+        }
+        render = false;
+        lines->setLinesState(lines_button_h->get_active(), lines_button_v->get_active());
+        if (lens_geom_listener) {
+            lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, false);
+        }
+    } else { // Leave edit mode.
+        render = true;
+        lines->setDrawMode(false);
+        lines->setActive(false);
+        if (img_ctrl_lines_edit) {
+            lines_button_edit->set_image(*img_ctrl_lines_edit);
+        }
+        lines_button_h->set_active(false);
+        lines_button_v->set_active(false);
+        applyControlLines();
+    }
+}
+
+ControlLineManager::ControlLineManager():
+    EditSubscriber(ET_OBJECTS),
+    cursor(CSCrosshair),
+    prev_obj(-1),
+    selected_object(-1)
+{
+    canvas_area = new Rectangle();
+    canvas_area->filled = true;
+    canvas_area->topLeft = Coord(0, 0);
+    mouseOverGeometry.push_back(canvas_area);
+}
+
+ControlLineManager::~ControlLineManager()
+{
+    for (auto i = mouseOverGeometry.begin(); i != mouseOverGeometry.end(); i++) {
+        delete *i;
+    }
+    for (auto i = control_lines.begin(); i != control_lines.end(); i++) {
+        delete *i;
+    }
+}
+
+Geometry::State ControlLineManager::calcLineState(const ::ControlLine& line) const
+{
+    if (line.type == rtengine::ControlLine::HORIZONTAL && active_h) {
+        return Geometry::NORMAL;
+    } else if (line.type == rtengine::ControlLine::VERTICAL && active_v) {
+        return Geometry::NORMAL;
+    }
+    return Geometry::INSENSITIVE;
+}
+
+void ControlLineManager::setActive(bool active)
+{
+    EditDataProvider* provider = getEditProvider();
+
+    if (!provider || (this == provider->getCurrSubscriber()) == active) {
+        return;
+    }
+
+    if (active) {
+        subscribe();
+
+        int ih, iw;
+        provider->getImageSize(iw, ih);
+        canvas_area->bottomRight = Coord(iw, ih);
+    } else {
+        unsubscribe();
+    }
+}
+
+void ControlLineManager::setDrawMode(bool draw)
+{
+    draw_mode = draw;
+}
+
+void ControlLineManager::setLinesState(bool horiz_active, bool vert_active)
+{
+    active_h = horiz_active;
+    active_v = vert_active;
+
+    for (auto line = control_lines.begin(); line != control_lines.end(); line++) {
+        auto state = calcLineState(**line);
+        (*line)->begin->state = state;
+        (*line)->end->state = state;
+        (*line)->line->state = state;
+    }
+}
+
+size_t ControlLineManager::size(void) const
+{
+    return control_lines.size();
+}
+
+bool ControlLineManager::button1Pressed(int modifierKey)
+{
+    EditDataProvider* dataProvider = getEditProvider();
+
+    if (!dataProvider) {
+        return false;
+    }
+
+    drag_delta = Coord(0, 0);
+
+    const int object = dataProvider->getObject();
+    if (object > 0) { // A control line.
+        selected_object = object;
+        action = Action::DRAGGING;
+    } else if (draw_mode && (modifierKey & GDK_CONTROL_MASK)) { // Add new line.
+        addLine(dataProvider->posImage, dataProvider->posImage);
+        selected_object = mouseOverGeometry.size() - 1; // Select endpoint.
+        action = Action::DRAGGING;
+    }
+
+    return false;
+}
+
+bool ControlLineManager::button1Released(void)
+{
+    action = Action::NONE;
+    selected_object = -1;
+    return false;
+}
+
+bool ControlLineManager::button3Pressed(int modifierKey)
+{
+    EditDataProvider* provider = getEditProvider();
+
+    action = Action::NONE;
+
+    if (!provider || provider->getObject() < 1) {
+        return false;
+    }
+
+    action = Action::PICKING;
+    return false;
+}
+
+bool ControlLineManager::pick3(bool picked)
+{
+    if (!picked) {
+        return false;
+    }
+
+    EditDataProvider* provider = getEditProvider();
+
+    if (!provider) {
+        return false;
+    }
+
+    removeLine((provider->getObject() - 1) / 3);
+    return false;
+}
+
+bool ControlLineManager::drag1(int modifierKey)
+{
+    EditDataProvider* provider = getEditProvider();
+
+    if (!provider || selected_object < 1) {
+        return false;
+    }
+
+    ::ControlLine* control_line = control_lines[(selected_object - 1) / 3];
+    int component = selected_object % 3; // 0 == end, 1 == line, 2 == begin
+    Coord mouse = provider->posImage + provider->deltaImage;
+    Coord delta = provider->deltaImage - drag_delta;
+    int ih, iw;
+    provider->getImageSize(iw, ih);
+
+    switch (component) {
+        case (0): // end
+            control_line->end->center = mouse;
+            control_line->end->center.clip(iw, ih);
+            control_line->line->end = control_line->end->center;
+            control_line->end->state = Geometry::DRAGGED;
+            break;
+        case (1): { // line
+            // Constrain delta so the end stays above the image.
+            Coord new_delta = control_line->end->center + delta;
+            new_delta.clip(iw, ih);
+            new_delta -= control_line->end->center;
+            // Constrain delta so the beginning stays above the image.
+            new_delta += control_line->begin->center;
+            new_delta.clip(iw, ih);
+            new_delta -= control_line->begin->center;
+            // Move all objects in the control line.
+            control_line->end->center += new_delta;
+            control_line->begin->center += new_delta;
+            control_line->line->end = control_line->end->center;
+            control_line->line->begin = control_line->begin->center;
+            drag_delta += new_delta;
+            control_line->line->state = Geometry::DRAGGED;
+            break;
+        }
+        case (2): // begin
+            control_line->begin->center = mouse;
+            control_line->begin->center.clip(iw, ih);
+            control_line->line->begin = control_line->begin->center;
+            control_line->begin->state = Geometry::DRAGGED;
+            break;
+    }
+
+    return false;
+}
+
+CursorShape ControlLineManager::getCursor(int objectID) const
+{
+    return cursor;
+}
+
+bool ControlLineManager::mouseOver(int modifierKey)
+{
+    EditDataProvider* provider = getEditProvider();
+
+    if (!provider) {
+        return false;
+    }
+
+    int cur_obj = provider->getObject();
+
+    if (cur_obj == 0) { // Canvas
+        if (draw_mode && modifierKey & GDK_CONTROL_MASK) {
+            cursor = CSPlus;
+        } else {
+            cursor = CSCrosshair;
+        }
+    } else if (cur_obj < 0) { // Nothing
+        cursor = CSArrow;
+    } else { // Object
+        visibleGeometry[cur_obj - 1]->state = Geometry::PRELIGHT;
+        cursor = CSMove2D;
+    }
+
+    if (prev_obj != cur_obj && prev_obj > 0) {
+        auto state = calcLineState(*control_lines[(prev_obj - 1) / 3]);
+        visibleGeometry[prev_obj - 1]->state = state;
+    }
+
+    prev_obj = cur_obj;
+
+    return false;
+}
+
+void ControlLineManager::switchOffEditMode(void)
+{
+    if (callbacks) {
+        callbacks->switchOffEditMode();
+    }
+}
+
+void ControlLineManager::setEditProvider(EditDataProvider* provider)
+{
+    EditSubscriber::setEditProvider(provider);
+}
+
+void ControlLineManager::addLine(Coord begin, Coord end)
+{
+    constexpr int line_width = 2;
+    constexpr int handle_radius = 6;
+    Line* line;
+    Circle *begin_c, *end_c;
+
+    line = new Line();
+    line->datum = Geometry::IMAGE;
+    line->innerLineWidth = line_width;
+    line->begin = begin;
+    line->end = end;
+
+    begin_c = new Circle();
+    begin_c->datum = Geometry::IMAGE;
+    begin_c->filled = true;
+    begin_c->radius = handle_radius;
+    begin_c->center = begin;
+
+    end_c = new Circle();
+    end_c->datum = Geometry::IMAGE;
+    end_c->filled = true;
+    end_c->radius = handle_radius;
+    end_c->center = begin;
+
+    EditSubscriber::visibleGeometry.push_back(line);
+    EditSubscriber::visibleGeometry.push_back(begin_c);
+    EditSubscriber::visibleGeometry.push_back(end_c);
+
+    EditSubscriber::mouseOverGeometry.push_back(line);
+    EditSubscriber::mouseOverGeometry.push_back(begin_c);
+    EditSubscriber::mouseOverGeometry.push_back(end_c);
+
+    ::ControlLine* control_line = new ::ControlLine();
+    control_line->begin = begin_c;
+    control_line->end = end_c;
+    control_line->line = line;
+    control_line->type = draw_line_type;
+    control_lines.push_back(control_line);
+}
+
+void ControlLineManager::removeLine(size_t line_id)
+{
+    if (line_id >= control_lines.size()) {
+        return;
+    }
+
+    ::ControlLine* line = control_lines[line_id];
+    delete line->begin;
+    delete line->end;
+    delete line->line;
+    delete line;
+    control_lines.erase(control_lines.begin() + line_id);
+    visibleGeometry.erase(visibleGeometry.begin() + 3 * line_id,
+            visibleGeometry.begin() + 3 * line_id + 3);
+    mouseOverGeometry.erase(mouseOverGeometry.begin() + 3 * line_id + 1,
+            mouseOverGeometry.begin() + 3 * line_id + 4);
+}
+
+rtengine::ControlLine* ControlLineManager::toControlLines(void) const
+{
+    auto retval = (rtengine::ControlLine*)malloc(control_lines.size() * sizeof(rtengine::ControlLine));
+
+    for (unsigned int i = 0; i < control_lines.size(); i++) {
+        retval[i].x1 = control_lines[i]->begin->center.x;
+        retval[i].y1 = control_lines[i]->begin->center.y;
+        retval[i].x2 = control_lines[i]->end->center.x;
+        retval[i].y2 = control_lines[i]->end->center.y;
+        retval[i].type = control_lines[i]->type;
+    }
+
+    return retval;
+}
+
+LinesCallbacks::LinesCallbacks(PerspCorrection* tool, ControlLineManager* lines):
+    lines(lines),
+    tool(tool)
+{
+}
+
+LinesCallbacks::~LinesCallbacks()
+{
+}
+
+void LinesCallbacks::switchOffEditMode(void)
+{
+    if (tool) {
+        tool->switchOffEditMode(lines);
     }
 }

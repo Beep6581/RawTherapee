@@ -26,6 +26,18 @@
 
 namespace rtengine {
 
+class ControlLine
+{
+public:
+    enum Type
+    {
+        HORIZONTAL,
+        VERTICAL
+    };
+    float x1, y1, x2, y2;
+    Type type;
+};
+
 class PerspectiveCorrection {
 public:
     struct Params
@@ -35,7 +47,7 @@ public:
         double yaw;
     };
 
-    static Params autocompute(ImageSource *src, bool corr_pitch, bool corr_yaw, const procparams::ProcParams *pparams, const FramesMetaData *metadata);
+    static Params autocompute(ImageSource *src, bool corr_pitch, bool corr_yaw, const procparams::ProcParams *pparams, const FramesMetaData *metadata, const ControlLine *control_lines = nullptr, size_t control_lines_count = 0);
 
     //static void autocrop(int width, int height, bool fixratio, const procparams::PerspectiveParams &params, const FramesMetaData *metadata, int &x, int &y, int &w, int &h);
 };

@@ -21,8 +21,80 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
+#include "editcallbacks.h"
+#include "editwidgets.h"
 #include "lensgeomlistener.h"
 #include "toolpanel.h"
+#include "../rtengine/coord.h"
+#include "../rtengine/perspectivecorrection.h"
+
+struct ControlLine
+{
+    Line* line;
+    Circle *begin, *end;
+    rtengine::ControlLine::Type type;
+};
+
+class ControlLineManager: EditSubscriber
+{
+
+protected:
+    /** Determine how horizontal and vertical lines are displayed. */
+    bool active_h, active_v;
+    /** Hidden object for capturing mouse events. */
+    Rectangle* canvas_area;
+    rtengine::Coord drag_delta;
+    std::vector<ControlLine*> control_lines;
+    CursorShape cursor;
+    bool draw_mode;
+    int prev_obj;
+    int selected_object;
+
+    void addLine (rtengine::Coord begin, rtengine::Coord end);
+    Geometry::State calcLineState(const ControlLine& line) const;
+    void removeLine (size_t line_id);
+
+public:
+    class Callbacks
+    {
+    public:
+        virtual ~Callbacks() {};
+        /** Called when the EditSubscriber's switchOffEditMode is called. */
+        virtual void switchOffEditMode (void) {};
+    };
+
+    /** Callbacks to invoke. */
+    Callbacks* callbacks;
+    /** Type of line for newly drawn lines. */
+    rtengine::ControlLine::Type draw_line_type;
+
+    ControlLineManager();
+    ~ControlLineManager();
+
+    /** Sets whether or not the lines are visible and interact-able. */
+    void setActive (bool active);
+    /** Set whether or not lines can be drawn and deleted. */
+    void setDrawMode (bool draw);
+    void setEditProvider (EditDataProvider* provider);
+    /** Determines how each line type is displayed. */
+    void setLinesState (bool horiz_active, bool vert_active);
+    /** Returns the number of lines. */
+    size_t size (void) const;
+    /**
+     * Allocates a new array and populates it with copies of the control lines.
+     */
+    rtengine::ControlLine* toControlLines (void) const;
+
+    // EditSubscriber overrides
+    bool button1Pressed (int modifierKey) override;
+    bool button1Released (void) override;
+    bool button3Pressed (int modifierKey) override;
+    bool pick3 (bool picked) override;
+    bool drag1 (int modifierKey) override;
+    CursorShape getCursor (int objectID) const override;
+    bool mouseOver (int modifierKey) override;
+    void switchOffEditMode (void) override;
+};
 
 class PerspCorrection final :
     public ToolParamBlock,
@@ -31,6 +103,7 @@ class PerspCorrection final :
 {
 
 protected:
+    bool render = true;
     MyComboBoxText* method;
     Gtk::VBox* simple;
     Adjuster* horiz;
@@ -46,6 +119,12 @@ protected:
     Adjuster* camera_shift_horiz;
     Adjuster* camera_shift_vert;
     Adjuster* camera_yaw;
+    Gtk::Image* img_ctrl_lines_edit;
+    Gtk::Image* img_ctrl_lines_apply;
+    ControlLineManager* lines;
+    Gtk::ToggleButton* lines_button_edit;
+    Gtk::ToggleButton* lines_button_h;
+    Gtk::ToggleButton* lines_button_v;
     Adjuster* projection_pitch;
     Adjuster* projection_rotate;
     Adjuster* projection_shift_horiz;
@@ -58,14 +137,17 @@ protected:
     rtengine::ProcEvent EvPerspProjShift;
     rtengine::ProcEvent EvPerspProjRotate;
     rtengine::ProcEvent EvPerspProjAngle;
+    rtengine::ProcEvent EvPerspRender;
     LensGeomListener* lens_geom_listener;
     const rtengine::FramesMetaData* metadata;
 
+    void applyControlLines (void);
     void setFocalLengthValue (const rtengine::procparams::ProcParams* pparams, const rtengine::FramesMetaData* metadata);
 
 public:
 
     PerspCorrection ();
+    ~PerspCorrection ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
@@ -74,12 +156,28 @@ public:
 
     void adjusterChanged (Adjuster* a, double newval) override;
     void autoCorrectionPressed (Gtk::Button* b);
+    void linesButtonPressed (Gtk::ToggleButton* button);
+    void linesEditButtonPressed (void);
     void methodChanged (void);
     void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add);
+    void setEditProvider (EditDataProvider* provider) override;
     void setLensGeomListener (LensGeomListener* listener)
     {
         lens_geom_listener = listener;
     }
     void setMetadata (const rtengine::FramesMetaData* metadata);
+    void switchOffEditMode (ControlLineManager* lines);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
+};
+
+class LinesCallbacks: public ControlLineManager::Callbacks
+{
+protected:
+    ControlLineManager* lines;
+    PerspCorrection* tool;
+
+public:
+    LinesCallbacks(PerspCorrection* tool, ControlLineManager* lines);
+    ~LinesCallbacks();
+    void switchOffEditMode (void) override;
 };

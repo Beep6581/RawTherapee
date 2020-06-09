@@ -225,10 +225,44 @@ void get_view_size(int w, int h, const procparams::PerspectiveParams &params, do
 }    
 */
 
+/**
+ * Allocates a new array and populates it with ashift lines corresponding to the
+ * provided control lines.
+ */
+dt_iop_ashift_line_t* toAshiftLines(const ControlLine *lines, size_t count)
+{
+    auto retval = (dt_iop_ashift_line_t*)malloc(count * sizeof(dt_iop_ashift_line_t));
+
+    for (size_t i = 0; i < count; i++) {
+        const float x1 = lines[i].x1;
+        const float y1 = lines[i].y1;
+        const float x2 = lines[i].x2;
+        const float y2 = lines[i].y2;
+        retval[i].p1[0] = x1;
+        retval[i].p1[1] = y1;
+        retval[i].p1[2] = 1.0f;
+        retval[i].p2[0] = x2;
+        retval[i].p2[1] = y2;
+        retval[i].p2[2] = 1.0f;
+        retval[i].length = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+        retval[i].width = 1.0f;
+        retval[i].weight = retval[i].length;
+        if (lines[i].type == ControlLine::HORIZONTAL) {
+            retval[i].type = ASHIFT_LINE_HORIZONTAL_SELECTED;
+        } else if (lines[i].type == ControlLine::VERTICAL) {
+            retval[i].type = ASHIFT_LINE_VERTICAL_SELECTED;
+        } else {
+            retval[i].type = ASHIFT_LINE_IRRELEVANT;
+        }
+    }
+
+    return retval;
+}
+
 } // namespace
 
 
-PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *src, bool corr_pitch, bool corr_yaw, const procparams::ProcParams *pparams, const FramesMetaData *metadata)
+PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *src, bool corr_pitch, bool corr_yaw, const procparams::ProcParams *pparams, const FramesMetaData *metadata, const ControlLine *control_lines, size_t control_lines_count)
 {
     auto pcp = procparams::PerspectiveParams(pparams->perspective);
     procparams::PerspectiveParams dflt;
@@ -252,49 +286,51 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
     int tr = getCoarseBitMask(pparams->coarse);
     int fw, fh;
     src->getFullSize(fw, fh, tr);
-    int skip = max(float(max(fw, fh)) / 900.f + 0.5f, 1.f);
-    PreviewProps pp(0, 0, fw, fh, skip);
-    int w, h;
-    src->getSize(pp, w, h);
-    std::unique_ptr<Imagefloat> img(new Imagefloat(w, h));
+    if (control_lines == nullptr) {
+        int skip = max(float(max(fw, fh)) / 900.f + 0.5f, 1.f);
+        PreviewProps pp(0, 0, fw, fh, skip);
+        int w, h;
+        src->getSize(pp, w, h);
+        std::unique_ptr<Imagefloat> img(new Imagefloat(w, h));
 
-    ProcParams neutral;
-    neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
-    neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
-    neutral.icm.outputProfile = ColorManagementParams::NoICMString;    
-    src->getImage(src->getWB(), tr, img.get(), pp, neutral.toneCurve, neutral.raw);
-    src->convertColorSpace(img.get(), pparams->icm, src->getWB());
+        ProcParams neutral;
+        neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
+        neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
+        neutral.icm.outputProfile = ColorManagementParams::NoICMString;    
+        src->getImage(src->getWB(), tr, img.get(), pp, neutral.toneCurve, neutral.raw);
+        src->convertColorSpace(img.get(), pparams->icm, src->getWB());
 
-    neutral.commonTrans.autofill = false; // Ensures crop factor is correct.
-    // TODO: Ensure image borders of rotated image do not get detected as lines.
-    neutral.rotate = pparams->rotate;
-    neutral.distortion = pparams->distortion;
-    neutral.lensProf = pparams->lensProf;
-    ImProcFunctions ipf(&neutral, true);
-    if (ipf.needsTransform(w, h, src->getRotateDegree(), src->getMetaData())) {
-        Imagefloat *tmp = new Imagefloat(w, h);
-        ipf.transform(img.get(), tmp, 0, 0, 0, 0, w, h, w, h,
-                      src->getMetaData(), src->getRotateDegree(), false);
-        img.reset(tmp);
-    }
+        neutral.commonTrans.autofill = false; // Ensures crop factor is correct.
+        // TODO: Ensure image borders of rotated image do not get detected as lines.
+        neutral.rotate = pparams->rotate;
+        neutral.distortion = pparams->distortion;
+        neutral.lensProf = pparams->lensProf;
+        ImProcFunctions ipf(&neutral, true);
+        if (ipf.needsTransform(w, h, src->getRotateDegree(), src->getMetaData())) {
+            Imagefloat *tmp = new Imagefloat(w, h);
+            ipf.transform(img.get(), tmp, 0, 0, 0, 0, w, h, w, h,
+                    src->getMetaData(), src->getRotateDegree(), false);
+            img.reset(tmp);
+        }
 
-    // allocate the gui buffer
-    g.buf = static_cast<float *>(malloc(sizeof(float) * w * h * 4));
-    g.buf_width = w;
-    g.buf_height = h;
+        // allocate the gui buffer
+        g.buf = static_cast<float *>(malloc(sizeof(float) * w * h * 4));
+        g.buf_width = w;
+        g.buf_height = h;
 
-    img->normalizeFloatTo1();
-    
+        img->normalizeFloatTo1();
+
 #ifdef _OPENMP
 #   pragma omp parallel for
 #endif
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            int i = (y * w + x) * 4;
-            g.buf[i] = img->r(y, x);
-            g.buf[i+1] = img->g(y, x);
-            g.buf[i+2] = img->b(y, x);
-            g.buf[i+3] = 1.f;
+        for (int y = 0; y < h; ++y) {
+            for (int x = 0; x < w; ++x) {
+                int i = (y * w + x) * 4;
+                g.buf[i] = img->r(y, x);
+                g.buf[i+1] = img->g(y, x);
+                g.buf[i+2] = img->b(y, x);
+                g.buf[i+3] = 1.f;
+            }
         }
     }
 
@@ -311,7 +347,20 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
     // internally!
     srand(1);
     
-    auto res = do_get_structure(&module, &p, ASHIFT_ENHANCE_EDGES) && do_fit(&module, &p, fitaxis);
+    bool res;
+    if (control_lines == nullptr) {
+        res = do_get_structure(&module, &p, ASHIFT_ENHANCE_EDGES) && do_fit(&module, &p, fitaxis);
+    } else {
+        dt_iop_ashift_gui_data_t *g = module.gui_data;
+        g->lines_count = control_lines_count;
+        g->lines = toAshiftLines(control_lines, control_lines_count);
+        g->lines_in_height = fh;
+        g->lines_in_width = fw;
+        // A hack.
+        g->horizontal_count = 4;
+        g->vertical_count = 4;
+        res = do_fit(&module, &p, fitaxis);
+    }
     Params retval = {
         .angle = p.rotation,
         .pitch = p.camera_pitch,

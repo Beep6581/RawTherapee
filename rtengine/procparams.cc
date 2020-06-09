@@ -1860,6 +1860,7 @@ LensProfParams::LcMode LensProfParams::getMethodNumber(const Glib::ustring& mode
 
 PerspectiveParams::PerspectiveParams() :
     method("simple"),
+    render(true),
     horizontal(0.0),
     vertical(0.0),
     camera_crop_factor(0.0),
@@ -1881,6 +1882,7 @@ bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
 {
     return
         method == other.method
+        && render == other.render
         && horizontal == other.horizontal
         && vertical == other.vertical
         && camera_focal_length == other.camera_focal_length

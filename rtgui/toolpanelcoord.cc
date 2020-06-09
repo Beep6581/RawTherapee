@@ -860,7 +860,7 @@ void ToolPanelCoordinator::straightenRequested ()
     toolBar->setTool (TMStraighten);
 }
 
-void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw)
+void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const rtengine::ControlLine *lines, size_t line_count)
 {
     if (!(ipc && (corr_pitch || corr_yaw))) {
         return;
@@ -874,7 +874,7 @@ void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, d
     rtengine::procparams::ProcParams params;
     ipc->getParams(&params);
 
-    auto res = rtengine::PerspectiveCorrection::autocompute(src, corr_pitch, corr_yaw, &params, src->getMetaData());
+    auto res = rtengine::PerspectiveCorrection::autocompute(src, corr_pitch, corr_yaw, &params, src->getMetaData(), lines, line_count);
     rot = res.angle;
     pitch = res.pitch;
     yaw = res.yaw;
@@ -887,6 +887,16 @@ double ToolPanelCoordinator::autoDistorRequested ()
     }
 
     return rtengine::ImProcFunctions::getAutoDistor (ipc->getInitialImage()->getFileName(), 400);
+}
+
+void ToolPanelCoordinator::updateTransformPreviewRequested(rtengine::ProcEvent event, bool render_perspective)
+{
+    if (!ipc) {
+        return;
+    }
+
+    ipc->beginUpdateParams()->perspective.render = render_perspective;
+    ipc->endUpdateParams(event);
 }
 
 void ToolPanelCoordinator::spotWBRequested (int size)

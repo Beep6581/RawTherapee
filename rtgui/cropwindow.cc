@@ -429,6 +429,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                                 state = SEditPick1;
                                 pickedObject = iarea->getObject();
                                 pickModifierKey = bstate;
+                            } else {
+                                state = SCropImgMove;
                             }
                             press_x = x;
                             press_y = y;
@@ -764,7 +766,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
 
             iarea->setObject(ObjectMOBuffer::getObjectID(cropPos));
 
-            bool elemPicked = iarea->getObject() == pickedObject && bstate == pickModifierKey;
+            int buttonMask = ((state == SEditPick1) ? GDK_BUTTON1_MASK : 0)
+                           | ((state == SEditPick2) ? GDK_BUTTON2_MASK : 0)
+                           | ((state == SEditPick3) ? GDK_BUTTON3_MASK : 0);
+            bool elemPicked = iarea->getObject() == pickedObject && bstate == (pickModifierKey | buttonMask);
 
             if        (state == SEditPick1) {
                 needRedraw = editSubscriber->pick1 (elemPicked);

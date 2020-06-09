@@ -302,8 +302,9 @@ public:
     // rotatelistener interface
     void straightenRequested () override;
     void autoCropRequested () override;
-    void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw) override;
+    void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const rtengine::ControlLine *lines = nullptr, size_t line_count = 0) override;
     double autoDistorRequested () override;
+    void updateTransformPreviewRequested (rtengine::ProcEvent event, bool render_perspective) override;
 
     // spotwblistener interface
     void spotWBRequested (int size) override;
