@@ -470,9 +470,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.b_rsl = static_cast<float>(params->wavelet.bllev.getBottomRight());
     cp.t_rsl = static_cast<float>(params->wavelet.bllev.getTopRight());
 //    cp.numlevS = 9 - params->wavelet.threshold2;
-    cp.numlevS =  params->wavelet.thres - params->wavelet.threshold2;
-    int maxlevS = cp.numlevH;
-    cp.numlevS = rtengine::max(cp.numlevS, maxlevS);
+ //   cp.numlevS =  params->wavelet.thres - params->wavelet.threshold2;
+ //   int maxlevS = cp.numlevH;
+    cp.numlevS = params->wavelet.threshold2; //rtengine::max(cp.numlevS, maxlevS);
     //highlight
     cp.b_lhl = static_cast<float>(params->wavelet.hllev.getBottomLeft());
     cp.t_lhl = static_cast<float>(params->wavelet.hllev.getTopLeft());
@@ -3742,7 +3742,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                     //  kLlevH = 1.f + (kLlevH - 1.f);
                 }
 
-                if (level >= (9 - cp.numlevS)) {
+                if (level >= cp.numlevS) {
                     //   if(klevred < 0.f && level >= 3) {//level > 3 to avoid bad use of the curve if user put positives values negatives
                     if ((LL100 > cp.t_lsl && LL100 < cp.t_rsl)) {
                         kLlevS = alpha;
