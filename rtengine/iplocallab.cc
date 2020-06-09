@@ -51,8 +51,8 @@
 #include "StopWatch.h"
 #include "guidedfilter.h"
 
-#define mSPsharp 39  //minimum size Spot Sharp due to buildblendmask
-#define mSPwav 32  //minimum size Spot Wavelet
+#define mSPsharp 39 //minimum size Spot Sharp due to buildblendmask
+#define mSPwav 32 //minimum size Spot Wavelet
 
 #pragma GCC diagnostic warning "-Wall"
 #pragma GCC diagnostic warning "-Wextra"
@@ -61,7 +61,7 @@ namespace
 {
 
 constexpr int mDEN = 64; //minimum size Spot Denoise
-constexpr int mSP = 5;  //minimum size Spot
+constexpr int mSP = 5; //minimum size Spot
 constexpr float MAXSCOPE = 1.25f;
 constexpr float MINSCOPE = 0.025f;
 constexpr int TS = 64; // Tile size
@@ -181,24 +181,19 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
 
 float calcLocalFactor(const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach, const float gradient)
 {
-    //elipse x2/a2 + y2/b2=1
-    //transition elipsoidal
-    float kelip = dx / dy;
-    float belip = std::sqrt((rtengine::SQR((lox - lcx) / kelip) + rtengine::SQR(loy - lcy)));    //determine position ellipse ==> a and b
-
-    if (belip == 0.f) {
-        belip = 0.0001f;
-    }
+    //ellipse x2/a2 + y2/b2=1
+    //transition ellipsoidal
+    const float kelip = dx / dy;
+    const float belip = rtengine::max(0.0001f, std::sqrt((rtengine::SQR((lox - lcx) / kelip) + rtengine::SQR(loy - lcy)))); //determine position ellipse ==> a and b
 
     //gradient allows differenciation between transition x and y
-    float rapy = std::fabs((loy - lcy) / belip);
-    float aelip = belip * kelip;
-    float degrad = aelip / dx;
-    float gradreal = gradient * rapy + 1.f;
-    float ap = rtengine::RT_PI_F / (1.f - ach);
-    float bp = rtengine::RT_PI_F - ap;
-    float retreal = pow(0.5f * (1.f + xcosf(degrad * ap + bp)), rtengine::SQR(gradreal));
-    return retreal;  //trigo cos transition
+    const float rapy = std::fabs((loy - lcy) / belip);
+    const float aelip = belip * kelip;
+    const float degrad = aelip / dx;
+    const float gradreal = gradient * rapy + 1.f;
+    const float ap = rtengine::RT_PI_F / (1.f - ach);
+    const float bp = rtengine::RT_PI_F - ap;
+    return pow(0.5f * (1.f + xcosf(degrad * ap + bp)), rtengine::SQR(gradreal)); // trigo cos transition
 }
 
 float calcLocalFactorrect(const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach, const float gradient)
@@ -229,7 +224,6 @@ float calcLocalFactorrect(const float lox, const float loy, const float lcx, con
     float ac = 1.f / (ach - 1.f);
     float fact = ac * (coef - 1.f);
     return pow(fact, rtengine::SQR(gradreal));
-
 }
 
 }
@@ -1361,48 +1355,52 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 
     zone = 0;
 
-    if (lox >= lp.xc && lox < (lp.xc + lp.lx) && loy >= lp.yc && loy < lp.yc + lp.ly) {
-        float zoneVal = SQR((lox - lp.xc) / (ach * lp.lx)) + SQR((loy - lp.yc) / (ach * lp.ly));
-        zone = zoneVal < 1.f ? 2 : 0;
+    if (lox >= lp.xc && lox < lp.xc + lp.lx) {
+        if (loy >= lp.yc && loy < lp.yc + lp.ly) {
+            const float zoneVal = SQR((lox - lp.xc) / (ach * lp.lx)) + SQR((loy - lp.yc) / (ach * lp.ly));
+            zone = zoneVal < 1.f ? 2 : 0;
 
-        if (!zone) {
-            zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
+            if (!zone) {
+                zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
-            if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
+                if (zone == 1) {
+                    localFactor = pow_F(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
+                }
+            }
+        } else if (loy < lp.yc && loy > lp.yc - lp.lyT) {
+            const float zoneVal = SQR((lox - lp.xc) / (ach * lp.lx)) + SQR((loy - lp.yc) / (ach * lp.lyT));
+            zone = zoneVal < 1.f ? 2 : 0;
+
+            if (!zone) {
+                zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
+
+                if (zone == 1) {
+                    localFactor = pow_F(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
+                }
             }
         }
-    } else if (lox >= lp.xc && lox < lp.xc + lp.lx && loy < lp.yc && loy > lp.yc - lp.lyT) {
-        float zoneVal = SQR((lox - lp.xc) / (ach * lp.lx)) + SQR((loy - lp.yc) / (ach * lp.lyT));
-        zone = zoneVal < 1.f ? 2 : 0;
+    } else if (lox < lp.xc && lox > lp.xc - lp.lxL) {
+        if (loy <= lp.yc && loy > lp.yc - lp.lyT) {
+            const float zoneVal = SQR((lox - lp.xc) / (ach * lp.lxL)) + SQR((loy - lp.yc) / (ach * lp.lyT));
+            zone = zoneVal < 1.f ? 2 : 0;
 
-        if (!zone) {
-            zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
+            if (!zone) {
+                zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
 
-            if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
+                if (zone == 1) {
+                    localFactor = pow_F(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
+                }
             }
-        }
-    } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy <= lp.yc && loy > lp.yc - lp.lyT) {
-        float zoneVal = SQR((lox - lp.xc) / (ach * lp.lxL)) + SQR((loy - lp.yc) / (ach * lp.lyT));
-        zone = zoneVal < 1.f ? 2 : 0;
+        } else if (loy > lp.yc && loy < lp.yc + lp.ly) {
+            const float zoneVal = SQR((lox - lp.xc) / (ach * lp.lxL)) + SQR((loy - lp.yc) / (ach * lp.ly));
+            zone = zoneVal < 1.f ? 2 : 0;
 
-        if (!zone) {
-            zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
+            if (!zone) {
+                zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
-            if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
-            }
-        }
-    } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy > lp.yc && loy < lp.yc + lp.ly) {
-        float zoneVal = SQR((lox - lp.xc) / (ach * lp.lxL)) + SQR((loy - lp.yc) / (ach * lp.ly));
-        zone = zoneVal < 1.f ? 2 : 0;
-
-        if (!zone) {
-            zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
-
-            if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
+                if (zone == 1) {
+                    localFactor = pow_F(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
+                }
             }
         }
     }
@@ -2149,9 +2147,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
                 float x1, y1, z1;
                 //convert Lab => XYZ
                 Color::Lab2XYZ(L, a, b, x1, y1, z1);
-                x = (float)x1 / 655.35f;
-                y = (float)y1 / 655.35f;
-                z = (float)z1 / 655.35f;
+                x = x1 / 655.35f;
+                y = y1 / 655.35f;
+                z = z1 / 655.35f;
                 //process source==> normal
                 Ciecam02::xyz2jchqms_ciecam02float(J, C,  h,
                                                    Q,  M,  s, aw, fl, wh,
@@ -2422,8 +2420,8 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     srand(1);
 
     const float variaFactor = SQR(variance) / sk;
-    constexpr float randFactor1 = 1.f / (float) RAND_MAX;
-    constexpr float randFactor2 = (2.f * rtengine::RT_PI_F) / (float) RAND_MAX;
+    constexpr float randFactor1 = 1.f / RAND_MAX;
+    constexpr float randFactor2 = (2.f * rtengine::RT_PI_F) / RAND_MAX;
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
@@ -2524,7 +2522,7 @@ static void calcreducdE(float dE, float maxdE, float mindE, float maxdElim,  flo
             const float reducdElim = pow(arlim * dE + brlim, iterat);
             const float aalim = (1.f - reducdElim) / 20.f;
             const float bblim = 1.f - 100.f * aalim;
-            reducdE = aalim * scope  +  bblim;
+            reducdE = aalim * scope + bblim;
         } else {
             reducdE = 1.f;
         }
@@ -2536,7 +2534,7 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
     // local denoise and impulse
     //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
     // BENCHFUN
-    const float ach = (float)lp.trans / 100.f;
+    const float ach = lp.trans / 100.f;
 
     const float factnoise1 = 1.f + (lp.noisecf) / 500.f;
     const float factnoise2 = 1.f + (lp.noisecc) / 500.f;
@@ -2674,7 +2672,7 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
                         transformed->a[y][x] = clipC(amplabL * difa);// * 10.f empirical to can visualize modifications
                         transformed->b[y][x] = clipC(amplabL * difb);// * 10.f empirical to can visualize modifications
                     } else if (previewbl || lp.prevdE) {
-                        float difbdisp = (reducdEL +  reducdEa + reducdEb) * 10000.f * lp.colorde;
+                        float difbdisp = (reducdEL + reducdEa + reducdEb) * 10000.f * lp.colorde;
 
                         if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
                             float dark = transformed->L[y][x];
@@ -2699,7 +2697,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 {
     // BENCHFUN
 //inverse local retinex
-    float ach = (float)lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
     int GW = transformed->W;
     int GH = transformed->H;
     float refa = chromaref * cos(hueref);
@@ -2821,7 +2819,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 {
     // BENCHFUN
 //inverse local blur and noise
-    float ach = (float)lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
     int GW = transformed->W;
     int GH = transformed->H;
     const float refa = chromaref * cos(hueref) * 327.68f;
@@ -2907,7 +2905,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                 float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
                 float huedelta2 = abdelta2 - chrodelta2;
 
-                float dE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
+                float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                 float reducdE;
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn, reducdE);
                 const float realstrchdE = reducdE * clc;
@@ -3266,7 +3264,7 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
             int zone;
 
             float localFactor = 1.f;
-            const float achm = (float)lp.trans / 100.f;
+            const float achm = lp.trans / 100.f;
 
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, achm, lp, zone, localFactor);
@@ -3364,7 +3362,7 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
             float chrodelta2 = SQR(std::sqrt(SQR(bufcolorig->a[y][x] / 327.68f) + SQR(bufcolorig->b[y][x] / 327.68f)) - (chromaref));
             float huedelta2 = abdelta2 - chrodelta2;
 
-            float tempdE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
+            float tempdE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
 
             float reducdE;
             if (tempdE > maxdE) {
@@ -3386,7 +3384,7 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
                     const float reducdElim = pow(arlim * tempdE + brlim, iterat);
                     const float aalim = (1.f - reducdElim) / 20.f;
                     const float bblim = 1.f - 100.f * aalim;
-                    reducdE = aalim * scope  +  bblim;
+                    reducdE = aalim * scope + bblim;
                 } else {
                     reducdE = 1.f;
                 }
@@ -3405,14 +3403,14 @@ static void deltaEforLaplace(float *dE, const local_params& lp, int bfw, int bfh
     const float refL = lumaref;
     float maxdE = 5.f + MAXSCOPE * lp.lap;
     float *dEforLaplace = new float [bfw * bfh];
-    float maxC = std::sqrt((SQR(refa - bufexporig->a[0][0] / 327.68f) + SQR(refb - bufexporig->b[0][0] / 327.68f)) +  SQR(refL - bufexporig->L[0][0] / 327.68f));
+    float maxC = std::sqrt((SQR(refa - bufexporig->a[0][0] / 327.68f) + SQR(refb - bufexporig->b[0][0] / 327.68f)) + SQR(refL - bufexporig->L[0][0] / 327.68f));
 #ifdef _OPENMP
     #pragma omp parallel for reduction(max:maxC)
 #endif
 
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
-            dEforLaplace[y * bfw + x] = std::sqrt((SQR(refa - bufexporig->a[y][x] / 327.68f) + SQR(refb - bufexporig->b[y][x] / 327.68f)) +  SQR(refL - bufexporig->L[y][x] / 327.68f));
+            dEforLaplace[y * bfw + x] = std::sqrt((SQR(refa - bufexporig->a[y][x] / 327.68f) + SQR(refb - bufexporig->b[y][x] / 327.68f)) + SQR(refL - bufexporig->L[y][x] / 327.68f));
             maxC = rtengine::max(maxC, dEforLaplace[y * bfw + x]);
         }
     }
@@ -3460,7 +3458,7 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
             const int lox = x + xstart + cx;
             int zone;
             float localFactor = 1.f;
-            const float achm = (float)lp.trans / 100.f;
+            const float achm = lp.trans / 100.f;
 
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, achm, lp, zone, localFactor);
@@ -4429,7 +4427,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
 {
 //local sharp
     //  BENCHFUN
-    const float ach = (float)lp.trans / 100.f;
+    const float ach = lp.trans / 100.f;
     const int GW = transformed->W;
     const int GH = transformed->H;
     const float refa = chromaref * cos(hueref) * 327.68f;
@@ -4502,7 +4500,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                 const float abdelta2 = SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x]);
                 const float chrodelta2 = SQR(std::sqrt(SQR(origblur->a[y][x]) + SQR(origblur->b[y][x])) - (chromaref * 327.68f));
                 const float huedelta2 = abdelta2 - chrodelta2;
-                const float dE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
+                const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
 
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.senssha, reducdE);
                 const float reducview = reducdE;
@@ -4663,7 +4661,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
                 const float abdelta2 = SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x]);
                 const float chrodelta2 = SQR(std::sqrt(SQR(origblur->a[y][x]) + SQR(origblur->b[y][x])) - (chromaref * 327.68f));
                 const float huedelta2 = abdelta2 - chrodelta2;
-                const float dE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
+                const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
                 float reducdE = 0.f;
                 float reducview = 0.f;
 
@@ -4708,7 +4706,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 {
 
     BENCHFUN {
-        const float ach = (float)lp.trans / 100.f;
+        const float ach = lp.trans / 100.f;
         const float varsens =  lp.sensexclu;
 
         const int limscope = 80;
@@ -4827,7 +4825,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
                     float abdelta2 = SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x]);
                     float chrodelta2 = SQR(std::sqrt(SQR(origblur->a[y][x]) + SQR(origblur->b[y][x])) - (chromaref * 327.68f));
                     float huedelta2 = abdelta2 - chrodelta2;
-                    const float dE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
+                    const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
                     const float rL = origblur->L[y][x];
 
 
@@ -4868,7 +4866,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
         const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
 
 
-        const float ach = (float)lp.trans / 100.f;
+        const float ach = lp.trans / 100.f;
         const float varsens = lp.sensh;
 
         int GW = transformed->W;
@@ -4967,19 +4965,19 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                         abdelta2 = SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x]);
                         chrodelta2 = SQR(std::sqrt(SQR(origblur->a[y][x]) + SQR(origblur->b[y][x])) - (chromaref * 327.68f));
                         huedelta2 = abdelta2 - chrodelta2;
-                        dE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
+                        dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - origblur->L[y][x]));
                     } else {
                         if (call == 2) {
                             abdelta2 = SQR(refa - buforigmas->a[y - ystart][x - xstart]) + SQR(refb - buforigmas->b[y - ystart][x - xstart]);
                             chrodelta2 = SQR(std::sqrt(SQR(buforigmas->a[y - ystart][x - xstart]) + SQR(buforigmas->b[y - ystart][x - xstart])) - (chromaref * 327.68f));
                             huedelta2 = abdelta2 - chrodelta2;
-                            dE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - buforigmas->L[y - ystart][x - xstart]));
+                            dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - buforigmas->L[y - ystart][x - xstart]));
 
                         } else {
                             abdelta2 = SQR(refa - buforigmas->a[y][x]) + SQR(refb - buforigmas->b[y][x]);
                             chrodelta2 = SQR(std::sqrt(SQR(buforigmas->a[y][x]) + SQR(buforigmas->b[y][x])) - (chromaref * 327.68f));
                             huedelta2 = abdelta2 - chrodelta2;
-                            dE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - buforigmas->L[y][x]));
+                            dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - buforigmas->L[y][x]));
                         }
                     }
 
@@ -5375,7 +5373,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp, int senstype,  struct local_params & lp, LabImage * originalmask, const LUTf& lightCurveloc, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& exlocalcurve, const LUTf& cclocalcurve, float adjustr, bool localcutili, const LUTf& lllocalcurve, bool locallutili, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
-    float ach = (float)lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
     const float facc = (100.f + lp.chro) / 100.f; //chroma factor transition
     float varsens = lp.sens;
 
@@ -5527,7 +5525,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     //same as in "normal"
-                    float chromat = std::sqrt(SQR(original->a[y][x]) +  SQR(original->b[y][x]));
+                    float chromat = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
                     float ch;
                     float ampli = 25.f;
                     ch = (cclocalcurve[chromat * adjustr ])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
@@ -5647,7 +5645,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                 float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
                 float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
                 float huedelta2 = abdelta2 - chrodelta2;
-                const float dE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
+                const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
 
 
                 float reducdE = 0.f;
@@ -6237,11 +6235,10 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
                     continue;
                 }
 
-
                 float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
-                float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
+                float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - chromaref * 327.68f);
                 float huedelta2 = abdelta2 - chrodelta2;
-                const float dE = std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
+                const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
 
 
                 float reducdE;
@@ -6533,7 +6530,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                 const int lox = x + xstart + cx;
                 int zone;
                 float localFactor = 1.f;
-                const float achm = (float)lp.trans / 100.f;
+                const float achm = lp.trans / 100.f;
 
                 //claculate transition
                 if (lp.shapmet == 0) {
@@ -6575,7 +6572,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                 float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
                 float huedelta2 = abdelta2 - chrodelta2;
 
-                const float dE = rsob + std::sqrt(kab * (kch * chrodelta2  + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
+                const float dE = rsob + std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                 float reducdE;
                 //reduction action with deltaE
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
@@ -6785,8 +6782,8 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
         n_x = rtengine::RT_PI / (double) bfw; //ipol
         n_y = rtengine::RT_PI / (double) bfh;
     } else if (algo == 1) {
-        n_x = 1.f / (float) bfw; //gauss
-        n_y = 1.f / (float) bfh;
+        n_x = 1.f / bfw; //gauss
+        n_y = 1.f / bfh;
         radsig = 1.f / (2.f * rtengine::RT_PI * radius * radius);//gauss
     }
 
@@ -8079,34 +8076,32 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
-
             for (int i = 1; i < H_L - 1; i++) {
                 for (int j = 1; j < W_L - 1; j++) {
                     //treatment of koeLi and maxkoeLi
                     float interm = 0.f;
 
                     if (lp.lip3) {//Sobel Canny algo improve with parameters
-                        // comparison between pixel and neighbours
+                        // comparison between pixel and neighbors
                         const auto neigh = lp.neiwmet == 1;
                         const auto kneigh = neigh ? 28.f : 38.f;
                         const auto somm = neigh ? 40.f : 50.f;
 
-                        for (int dir = 1; dir < 4; dir++) { //neighbours proxi
-                            koeLi[lvl * 3 + dir - 1][i * W_L + j] = (kneigh * koeLi[lvl * 3 + dir - 1][i * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j]
-                                                                    + 2.f * koeLi[lvl * 3 + dir - 1][i * W_L + j + 1] + 2.f * koeLi[lvl * 3 + dir - 1][i * W_L + j - 1] + koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j - 1]
-                                                                    + koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j + 1] + koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j - 1] + koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j + 1]) / somm;
+                        for (int dir = 1; dir < 4; dir++) { //neighbors proxi
+                            koeLi[lvl * 3 + dir - 1][i * W_L + j] = (kneigh * koeLi[lvl * 3 + dir - 1][i * W_L + j] + 
+                                                                    2.f * koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][i * W_L + j + 1] + 2.f * koeLi[lvl * 3 + dir - 1][i * W_L + j - 1]
+                                                                    + koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j - 1] + koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j + 1] + koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j - 1] + koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j + 1]) / somm;
                         }
                     }
 
                     for (int dir = 1; dir < 4; dir++) {
-                        //here I evaluate combinaison of vert / diag / horiz...we are with multiplicators of the signal
+                        //here I evaluate combination of vert / diag / horiz...we are with multiplicators of the signal
                         interm += SQR(koeLi[lvl * 3 + dir - 1][i * W_L + j]);
                     }
 
                     interm = std::sqrt(interm);
 
                     interm *= 0.57736721f;
-                    float kampli = 1.f;
                     float eps = 0.0001f;
                     // I think this double ratio (alph, beta) is better than arctg
 
@@ -8136,20 +8131,18 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                     //if not no edge or reduction
                     float bet = 1.f;
 
-                    //if(cp.lip3) {//enhance algorithm
                     if (alph > eddlipinfl && beta < 0.85f * eddlipinfl) { //0.85 arbitrary value ==> eliminate from edge if H V D too different
                         bet = beta;
                     }
 
-                    //}
-                    float AmpLip = 1.f;
+                    float kampli;
 
                     if (alph > eddlipinfl) {
-                        AmpLip = alipinfl * alph + blipinfl;    //If beta low reduce kampli
-                        kampli = SQR(bet) * AmpLip * aamp;
+                        kampli = alipinfl * alph + blipinfl; //If beta low reduce kampli
+                        kampli = SQR(bet) * kampli * aamp;
                     } else {
-                        AmpLip = (1.f / eddlipinfl) * SQR(SQR(alph * bet));    //Strong Reduce if beta low
-                        kampli = AmpLip / aamp;
+                        kampli = SQR(SQR(alph * bet)) / eddlipinfl; //Strong Reduce if beta low
+                        kampli = kampli / aamp;
                     }
 
 
@@ -10430,7 +10423,7 @@ void ImProcFunctions::Lab_Local(
                         kmaskLexp += 32768.f * valHH;
                     }
 
-                    bufmaskblurbl->L[ir][jr] = clipLoc(kmaskLexp +  kmasstru);
+                    bufmaskblurbl->L[ir][jr] = clipLoc(kmaskLexp + kmasstru);
                     bufmaskblurbl->a[ir][jr] = kmaskCH;
                     bufmaskblurbl->b[ir][jr] = kmaskCH;
                     ble[ir][jr] = bufmaskblurbl->L[ir][jr] / 32768.f;
@@ -12984,7 +12977,7 @@ void ImProcFunctions::Lab_Local(
 
             for (int y = 0; y < transformed->H ; y++)
                 for (int x = 0; x < transformed->W; x++) {
-                    float dE = std::sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) +  SQR(lumaref - bufreti->b[y][x] / 327.68f));
+                    float dE = std::sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) + SQR(lumaref - bufreti->b[y][x] / 327.68f));
                     float reducdE;
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore, reducdE);
                     reducDE[y][x] = clipDE(reducdE);
@@ -13318,7 +13311,7 @@ void ImProcFunctions::Lab_Local(
 
             for (int y = ystart; y < yend ; y++)
                 for (int x = xstart; x < xend; x++) {
-                    float dE = std::sqrt(SQR(refa - bufreti->a[y - ystart][x - xstart] / 327.68f) + SQR(refb - bufreti->b[y - ystart][x - xstart] / 327.68f) +  SQR(lumaref - bufreti->b[y - ystart][x - xstart] / 327.68f));
+                    float dE = std::sqrt(SQR(refa - bufreti->a[y - ystart][x - xstart] / 327.68f) + SQR(refb - bufreti->b[y - ystart][x - xstart] / 327.68f) + SQR(lumaref - bufreti->b[y - ystart][x - xstart] / 327.68f));
                     float reducdE;
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore, reducdE);
                     reducDE[y - ystart][x - xstart] = clipDE(reducdE);
@@ -14350,7 +14343,7 @@ void ImProcFunctions::Lab_Local(
                             float bufcolcalcL = origptr->L[ir][jr];
 
                             if (lp.chro != 0.f) {//slider chroma with curve DCT_NURBS
-                                float Chprov = std::sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
+                                float Chprov = std::sqrt(SQR(bufcolcalca) + SQR(bufcolcalcb));
                                 float2 sincosval;
                                 sincosval.y = Chprov == 0.0f ? 1.f : bufcolcalca / Chprov;
                                 sincosval.x = Chprov == 0.0f ? 0.f : bufcolcalcb / Chprov;
@@ -14371,7 +14364,7 @@ void ImProcFunctions::Lab_Local(
                             }
 
                             if (cclocalcurve && lp.qualcurvemet != 0 && localcutili) { // C=f(C) curve
-                                const float chromat = std::sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
+                                const float chromat = std::sqrt(SQR(bufcolcalca) + SQR(bufcolcalcb));
                                 const float ch = cclocalcurve[chromat * adjustr] / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
                                 bufcolcalca *= ch;
                                 bufcolcalcb *= ch;
@@ -14384,7 +14377,7 @@ void ImProcFunctions::Lab_Local(
                             }
 
                             if (lclocalcurve && lp.qualcurvemet != 0 && locallcutili) { // L=f(C) curve
-                                const float chromat = std::sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
+                                const float chromat = std::sqrt(SQR(bufcolcalca) + SQR(bufcolcalcb));
                                 float Lc = lclocalcurve[chromat * adjustr] / ((chromat + 0.00001f) * adjustr);
 
                                 if (Lc > 1.f) {
@@ -14397,7 +14390,7 @@ void ImProcFunctions::Lab_Local(
                             }
 
                             if (lochhCurve && HHcurve && lp.qualcurvemet != 0 && !ctoning) { // H=f(H)
-                                const float chromat = std::sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
+                                const float chromat = std::sqrt(SQR(bufcolcalca) + SQR(bufcolcalcb));
                                 const float hhforcurv = xatan2f(bufcolcalcb, bufcolcalca);
                                 const float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)
                                 float2 sincosval = xsincosf(valparam);
