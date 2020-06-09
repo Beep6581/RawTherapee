@@ -2287,7 +2287,7 @@ TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
 TP_LENSPROFILE_USE_HEADER;Correct
 TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 TP_LOCALLAB_ACTIV;Luminance only
-TP_LOCALLAB_ADJ;Equalizer blue-red
+TP_LOCALLAB_ADJ;Equalizer Blue-yellow Red-green
 TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
