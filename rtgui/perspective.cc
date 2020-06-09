@@ -40,6 +40,10 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspRender = mapper->newEvent(TRANSFORM);
     lens_geom_listener = nullptr;
 
+    Gtk::Image* ipers_draw_horiz = Gtk::manage (new RTImage ("draw-horizontal.png"));
+    Gtk::Image* ipers_draw_vert = Gtk::manage (new RTImage ("draw-vertical.png"));
+    Gtk::Image* ipers_draw = new RTImage ("draw.png");
+
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
     Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
     Gtk::Image* ipersVL =   Gtk::manage (new RTImage ("perspective-vertical-bottom-small.png"));
@@ -110,22 +114,25 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
 
     // Begin control lines interface.
     lines_button_h = Gtk::manage (new Gtk::ToggleButton());
+    lines_button_h->set_image(*ipers_draw_horiz);
     lines_button_h->signal_toggled().connect(sigc::bind(sigc::mem_fun(
             *this, &::PerspCorrection::linesButtonPressed), lines_button_h));
 
     lines_button_v = Gtk::manage (new Gtk::ToggleButton());
+    lines_button_v->set_image(*ipers_draw_vert);
     lines_button_v->signal_toggled().connect(sigc::bind(sigc::mem_fun(
             *this, &::PerspCorrection::linesButtonPressed), lines_button_v));
 
     lines_button_edit = Gtk::manage (new Gtk::ToggleButton());
+    lines_button_edit->set_image(*ipers_draw);
     lines_button_edit->signal_toggled().connect(sigc::mem_fun(
             *this, &::PerspCorrection::linesEditButtonPressed));
 
     lines = new ControlLineManager();
     lines->callbacks = new LinesCallbacks(this, lines);
 
-    img_ctrl_lines_apply = NULL;
-    img_ctrl_lines_edit = NULL;
+    img_ctrl_lines_apply = new RTImage ("tick.png");
+    img_ctrl_lines_edit = ipers_draw;
 
     Gtk::HBox* control_lines_box = Gtk::manage (new Gtk::HBox());
     control_lines_box->pack_start(*lines_button_v);
