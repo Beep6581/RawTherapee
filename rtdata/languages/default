@@ -1869,6 +1869,7 @@ TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL;Horizontal shift
 TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL;Vertical shift
 TP_PERSPECTIVE_CAMERA_YAW;Horizontal
 TP_PERSPECTIVE_CONTROL_LINES;Control lines
+TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP;Correct perspective distortion by drawing control lines.\n\nTo draw a line, activate either the vertical or horizontal drawing button. Hold down the control key and click-and-drag to draw a line. At least two vertical lines are required for vertical perspective correction. The same is true for horizontal correction. Click the tick mark button to apply perspective correction.
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_METHOD;Method

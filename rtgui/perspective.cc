@@ -136,6 +136,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     img_ctrl_lines_edit = ipers_draw;
 
     Gtk::HBox* control_lines_box = Gtk::manage (new Gtk::HBox());
+    control_lines_box->set_tooltip_text( M("TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP") );
     Gtk::Label* control_lines_label = Gtk::manage (new Gtk::Label (M("TP_PERSPECTIVE_CONTROL_LINES") + ": "));
     control_lines_box->pack_start(*control_lines_label, Gtk::PACK_SHRINK);
     control_lines_box->pack_start(*lines_button_v);
