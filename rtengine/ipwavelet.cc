@@ -3619,10 +3619,12 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
         float red0 = 0.005f * (110.f - lowthr);
         float red1 = 0.008f * (110.f - lowthr);
         float red2 = 0.011f * (110.f - lowthr);
-
+//        int n = 0;
+//        int m = 0;
+//        int p = 0;
+//        int q = 0;
         for (int i = 0; i < W_L * H_L; i++) {
-            float kLlevH = 1.f;
-            float kLlevS = 1.f;
+            float kLlev = 1.f;
 
             if (cpMul < 0.f) {
                 lbeta = 1.f; // disabled for negatives values "less contrast"
@@ -3727,41 +3729,42 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float *maxkoeLi, bool lipschitz
                 float bbbrS = 1.f - cp.b_rsl * aaarS;
 
                 if (level <= cp.numlevH) { //in function of levels
-                    //    float klevred = 2.f * (waOpacityCurveSH[level * 55.5f] - 0.5f);
-                    //    if(klevred > 0.f && level <= 6) {// level < 6 to avoid bad use of the curve if user put negative values positives
                     if ((LL100 > cp.t_lhl * kH[level] && LL100 < cp.t_rhl * kH[level])) {
-                        kLlevH = alpha;
+                        kLlev = alpha;
                     } else if ((LL100 > cp.b_lhl * kH[level] && LL100 <= cp.t_lhl * kH[level])) {
-                        kLlevH = aaal * LL100 + bbal;
+                        kLlev = aaal * LL100 + bbal;
                     } else if ((LL100 > cp.t_rhl * kH[level] && LL100 <= cp.b_rhl * kH[level])) {
-                        kLlevH = aaar * LL100 + bbbr;
+                        kLlev = aaar * LL100 + bbbr;
                     } else {
-                        kLlevH = 1.f;
+                        kLlev = 1.f;
                     }
-                    //  kLlevH = 1.f + (kLlevH - 1.f) * klevred;
-                    //  kLlevH = 1.f + (kLlevH - 1.f);
                 }
 
-                if (level >= cp.numlevS) {
+                if (level >= cp.numlevS - 1) {
                     //   if(klevred < 0.f && level >= 3) {//level > 3 to avoid bad use of the curve if user put positives values negatives
                     if ((LL100 > cp.t_lsl && LL100 < cp.t_rsl)) {
-                        kLlevS = alpha;
+                        kLlev = alpha;
+                      //  n++;
                     } else if ((LL100 > cp.b_lsl && LL100 <= cp.t_lsl)) {
-                        kLlevS = aaalS * LL100 + bbalS;
+                        kLlev = aaalS * LL100 + bbalS;
+                      //  m++;
                     } else if ((LL100 > cp.t_rsl && LL100 <= cp.b_rsl)) {
-                        kLlevS = aaarS * LL100 + bbbrS;
+                        kLlev = aaarS * LL100 + bbbrS;
+                      //  p++;
                     } else {
-                        kLlevS = 1.f;
+                        kLlev = 1.f;
+                      //  q++;
                     }
-                    //  kLlevS = 1.f - (kLlevS - 1.f) * klevred;
                 }
 
             } else {
-                kLlevH = kLlevS = alpha;
+                kLlev = alpha;
             }
 
-            WavCoeffs_L[dir][i] *= (kLlevH * kLlevS);
+            WavCoeffs_L[dir][i] *= (kLlev);
         }
+        
+      //  printf("lev=%i n=%i m=%i p=%i q=%i\n", level, n, m, p, q);
     }
 
     if (waOpacityCurveW) {

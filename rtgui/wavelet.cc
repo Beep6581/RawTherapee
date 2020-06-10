@@ -1166,8 +1166,7 @@ void Wavelet::updateGUI()
     const int temp2 = threshold2->getValue();
     const int temp = threshold->getValue();
     const int maxlev = thres->getValue();
-    const int tempmax = (temp + 1) > maxlev ? maxlev : temp + 1;
-    threshold2->setLimits(temp, maxlev, 1, maxlev + 1);
+    threshold2->setLimits(temp + 1, maxlev, 1, maxlev + 1);
     threshold2 ->setValue(temp2);
 }
 
@@ -1175,7 +1174,6 @@ void Wavelet::updateGUImaxlev()
 {
     const int temp4 = threshold->getValue();
     const int temp3 = thres->getValue();
-  //  const int tempmax = (temp3) > 9 ? 9 : temp + 1;
     threshold->setLimits(1, temp3, 1, temp3);
     threshold ->setValue(temp4);
 }
@@ -3698,6 +3696,8 @@ void Wavelet::neutralPressed()
         correction[i]->setValue(0);
         adjusterChanged(correction[i], 0);
     }
+    sup->setValue(0);
+    adjusterChanged(sup, 0);
 }
 
 void Wavelet::neutralchPressed()
