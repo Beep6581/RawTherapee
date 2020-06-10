@@ -462,7 +462,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.t_ly = static_cast<float>(params->wavelet.hueskin2.getTopLeft()) / 100.0f;
     cp.b_ry = static_cast<float>(params->wavelet.hueskin2.getBottomRight()) / 100.0f;
     cp.t_ry = static_cast<float>(params->wavelet.hueskin2.getTopRight()) / 100.0f;
-    cp.numlevH = params->wavelet.threshold;
+    cp.numlevH = params->wavelet.threshold -1;
 
     //shadows
     cp.b_lsl = static_cast<float>(params->wavelet.bllev.getBottomLeft());
