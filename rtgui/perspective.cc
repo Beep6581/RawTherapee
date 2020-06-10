@@ -807,6 +807,9 @@ bool ControlLineManager::button1Pressed(int modifierKey)
 bool ControlLineManager::button1Released(void)
 {
     action = Action::NONE;
+    if (selected_object > 0) {
+        mouseOverGeometry[selected_object]->state = Geometry::NORMAL;
+    }
     selected_object = -1;
     return false;
 }
@@ -863,6 +866,8 @@ bool ControlLineManager::pick1(bool picked)
 
 bool ControlLineManager::pick3(bool picked)
 {
+    action = Action::NONE;
+
     if (!picked) {
         return false;
     }
