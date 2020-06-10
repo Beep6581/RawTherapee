@@ -925,8 +925,7 @@ bool ControlLineManager::drag1(int modifierKey)
             control_line->line->end = control_line->end->center;
             control_line->end->state = Geometry::DRAGGED;
             break;
-        case (1):
-        case (2): { // line
+        case (1): { // line
             // Constrain delta so the end stays above the image.
             Coord new_delta = control_line->end->center + delta;
             new_delta.clip(iw, ih);

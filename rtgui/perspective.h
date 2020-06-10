@@ -25,7 +25,6 @@
 #include "editwidgets.h"
 #include "lensgeomlistener.h"
 #include "toolpanel.h"
-#include "../rtengine/coord.h"
 #include "../rtengine/perspectivecorrection.h"
 
 struct ControlLine
