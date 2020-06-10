@@ -580,6 +580,9 @@ void PerspCorrection::setBatchMode (bool batchMode)
     projection_shift_vert->showEditedCB ();
     projection_yaw->showEditedCB ();
 
+    lines_button_h->set_sensitive(false);
+    lines_button_v->set_sensitive(false);
+    lines_button_edit->set_sensitive(false);
     auto_pitch->set_sensitive(false);
     auto_yaw->set_sensitive(false);
     auto_pitch_yaw->set_sensitive(false);
