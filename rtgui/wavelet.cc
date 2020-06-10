@@ -143,7 +143,7 @@ Wavelet::Wavelet() :
     balchrom(Gtk::manage(new Adjuster(M("TP_WAVELET_BALCHROM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
     chromfi(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMFI"), 0.0, 150., 0.01, 0.))),
     chromco(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMCO"), 0, 100., 0.01, 0.))),
-    mergeL(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEL"), -50, 100, 1, 40))),
+    mergeL(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEL"), -50, 100, 1, 20))),
     mergeC(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEC"), -50, 100, 1, 20))),
     softrad(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
     softradend(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.5, 0.))),
@@ -574,7 +574,7 @@ Wavelet::Wavelet() :
 // Denoise and Refine
     ToolParamBlock* const noiseBox = Gtk::manage(new ToolParamBlock());
 
-    linkedg->set_active(true);
+    linkedg->set_active(false);
     linkedgConn = linkedg->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::linkedgToggled));
     noiseBox->pack_start(*linkedg);
 
