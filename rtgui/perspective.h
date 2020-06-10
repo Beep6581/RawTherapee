@@ -30,7 +30,10 @@
 
 struct ControlLine
 {
+    static constexpr int OBJ_COUNT = 4;
     Line* line;
+    OPIcon* icon;
+    OPIcon *icon_h, *icon_v;
     Circle *begin, *end;
     rtengine::ControlLine::Type type;
 };
@@ -47,6 +50,8 @@ protected:
     std::vector<ControlLine*> control_lines;
     CursorShape cursor;
     bool draw_mode;
+    Cairo::RefPtr<RTSurface> line_icon_h, line_icon_v;
+    Cairo::RefPtr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
     int prev_obj;
     int selected_object;
 
@@ -89,6 +94,7 @@ public:
     bool button1Pressed (int modifierKey) override;
     bool button1Released (void) override;
     bool button3Pressed (int modifierKey) override;
+    bool pick1 (bool picked) override;
     bool pick3 (bool picked) override;
     bool drag1 (int modifierKey) override;
     CursorShape getCursor (int objectID) const override;
