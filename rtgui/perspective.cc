@@ -44,6 +44,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     Gtk::Image* ipers_draw_horiz = Gtk::manage (new RTImage ("draw-horizontal.png"));
     Gtk::Image* ipers_draw_vert = Gtk::manage (new RTImage ("draw-vertical.png"));
     Gtk::Image* ipers_draw = new RTImage ("draw.png");
+    Gtk::Image* ipers_trash = new RTImage ("trash-empty.png");
 
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
     Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
@@ -129,6 +130,12 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     lines_button_edit->signal_toggled().connect(sigc::mem_fun(
             *this, &::PerspCorrection::linesEditButtonPressed));
 
+    lines_button_erase = Gtk::manage (new Gtk::Button());
+    lines_button_erase->set_image(*ipers_trash);
+    lines_button_erase->set_sensitive(false);
+    lines_button_erase->signal_pressed().connect(sigc::mem_fun(
+            *this, &::PerspCorrection::linesEraseButtonPressed));
+
     lines = new ControlLineManager();
     lines->callbacks = new LinesCallbacks(this, lines);
 
@@ -142,6 +149,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     control_lines_box->pack_start(*lines_button_v);
     control_lines_box->pack_start(*lines_button_h);
     control_lines_box->pack_start(*lines_button_edit);
+    control_lines_box->pack_start(*lines_button_erase);
     // End control lines interface.
 
     auto_pitch = Gtk::manage (new Gtk::Button ());
@@ -688,7 +696,9 @@ void PerspCorrection::linesEditButtonPressed(void)
         if (lens_geom_listener) {
             lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, false);
         }
+        lines_button_erase->set_sensitive(true);
     } else { // Leave edit mode.
+        lines_button_erase->set_sensitive(false);
         render = true;
         lines->setDrawMode(false);
         lines->setActive(false);
@@ -699,6 +709,11 @@ void PerspCorrection::linesEditButtonPressed(void)
         lines_button_v->set_active(false);
         applyControlLines();
     }
+}
+
+void PerspCorrection::linesEraseButtonPressed(void)
+{
+    lines->removeAll();
 }
 
 ControlLineManager::ControlLineManager():
@@ -1058,6 +1073,19 @@ void ControlLineManager::addLine(Coord begin, Coord end)
     EditSubscriber::mouseOverGeometry.push_back(control_line->icon);
     EditSubscriber::mouseOverGeometry.push_back(begin_c);
     EditSubscriber::mouseOverGeometry.push_back(end_c);
+}
+
+void ControlLineManager::removeAll(void)
+{
+    for (unsigned int i = 0; i < control_lines.size(); i++) {
+        delete control_lines[i]->begin;
+        delete control_lines[i]->end;
+        delete control_lines[i]->line;
+        delete control_lines[i];
+    }
+    control_lines.clear();
+    visibleGeometry.clear();
+    mouseOverGeometry.erase(mouseOverGeometry.begin() + 1, mouseOverGeometry.end());
 }
 
 void ControlLineManager::removeLine(size_t line_id)

@@ -76,6 +76,7 @@ public:
     ControlLineManager();
     ~ControlLineManager();
 
+    void removeAll (void);
     /** Sets whether or not the lines are visible and interact-able. */
     void setActive (bool active);
     /** Set whether or not lines can be drawn and deleted. */
@@ -129,6 +130,7 @@ protected:
     Gtk::Image* img_ctrl_lines_apply;
     ControlLineManager* lines;
     Gtk::ToggleButton* lines_button_edit;
+    Gtk::Button* lines_button_erase;
     Gtk::ToggleButton* lines_button_h;
     Gtk::ToggleButton* lines_button_v;
     Adjuster* projection_pitch;
@@ -164,6 +166,7 @@ public:
     void autoCorrectionPressed (Gtk::Button* b);
     void linesButtonPressed (Gtk::ToggleButton* button);
     void linesEditButtonPressed (void);
+    void linesEraseButtonPressed (void);
     void methodChanged (void);
     void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add);
     void setEditProvider (EditDataProvider* provider) override;
