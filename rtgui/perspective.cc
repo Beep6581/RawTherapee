@@ -44,7 +44,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     Gtk::Image* ipers_draw_horiz = Gtk::manage (new RTImage ("draw-horizontal.png"));
     Gtk::Image* ipers_draw_vert = Gtk::manage (new RTImage ("draw-vertical.png"));
     Gtk::Image* ipers_draw = new RTImage ("draw.png");
-    Gtk::Image* ipers_trash = new RTImage ("trash-empty.png");
+    Gtk::Image* ipers_trash = Gtk::manage (new RTImage ("trash-empty.png"));
 
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
     Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
@@ -242,12 +242,8 @@ PerspCorrection::~PerspCorrection()
 {
     delete lines->callbacks;
     delete lines;
-    if (img_ctrl_lines_apply) {
-        delete img_ctrl_lines_apply;
-    }
-    if (img_ctrl_lines_edit) {
-        delete img_ctrl_lines_edit;
-    }
+    delete img_ctrl_lines_apply;
+    delete img_ctrl_lines_edit;
 }
 
 void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -1080,6 +1076,8 @@ void ControlLineManager::removeAll(void)
         delete control_lines[i]->begin;
         delete control_lines[i]->end;
         delete control_lines[i]->line;
+        delete control_lines[i]->icon_h;
+        delete control_lines[i]->icon_v;
         delete control_lines[i];
     }
     control_lines.clear();
@@ -1097,6 +1095,8 @@ void ControlLineManager::removeLine(size_t line_id)
     delete line->begin;
     delete line->end;
     delete line->line;
+    delete line->icon_h;
+    delete line->icon_v;
     delete line;
     control_lines.erase(control_lines.begin() + line_id);
     visibleGeometry.erase(visibleGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id,

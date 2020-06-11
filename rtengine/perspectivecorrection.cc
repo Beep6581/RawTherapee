@@ -371,7 +371,7 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
     if (g.lines) free(g.lines);
     if (g.points) free(g.points);
     if (g.points_idx) free(g.points_idx);
-    free(g.buf);
+    if (g.buf) free(g.buf);
 
     if (!res) {
         retval.angle = pparams->perspective.camera_roll;
