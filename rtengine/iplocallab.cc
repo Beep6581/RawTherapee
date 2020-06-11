@@ -10979,7 +10979,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (tmp1.get()) {
-                    JaggedArray<float> bufchro(bfw, bfh);
+                    JaggedArray<float> bufchro(lp.blurmet == 1 ? GW : bfw, lp.blurmet == 1 ? GH : bfh);
                     float minC = std::sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - std::sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
                     float maxC = minC;
 #ifdef _OPENMP
