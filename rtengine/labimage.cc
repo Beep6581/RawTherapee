@@ -37,10 +37,10 @@ LabImage::~LabImage ()
     deleteLab();
 }
 
-void LabImage::CopyFrom(LabImage *Img)
+void LabImage::CopyFrom(LabImage *Img, bool multiThread)
 {
 #ifdef _OPENMP
-    #pragma omp parallel sections
+    #pragma omp parallel sections if(multiThread)
     {
         #pragma omp section
         memcpy(L[0], Img->L[0], static_cast<std::size_t>(W) * H * sizeof(float));

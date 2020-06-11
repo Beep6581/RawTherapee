@@ -57,6 +57,7 @@
 
 namespace
 {
+constexpr int limscope = 80;
 constexpr int mSPsharp = 39; //minimum size Spot Sharp due to buildblendmask
 constexpr int mSPwav = 32; //minimum size Spot Wavelet
 constexpr int mDEN = 64; //minimum size Spot Denoise
@@ -162,15 +163,17 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
     const double mul = 1.0 + g_a[4];
 
     if (gamm2 < 1.) {
+#ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 1024)
-
+#endif
         for (int i = 0; i < 65536; i++) {
             const double x = rtengine::Color::igammareti(i / 65535.0, gamm, start, ts, mul, add);
             gammaLut[i] = 0.5 * rtengine::CLIP(x * 65535.0);  // CLIP avoid in some case extra values
         }
     } else {
+#ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 1024)
-
+#endif
         for (int i = 0; i < 65536; i++) {
             const double x = rtengine::Color::gammareti(i / 65535.0, gamm, start, ts, mul, add);
             gammaLut[i] = 0.5 * rtengine::CLIP(x * 65535.0);  // CLIP avoid in some case extra values
@@ -598,7 +601,6 @@ static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
 #endif
-
     for (int y = 0; y < bfh ; y++) {
         for (int x = 0; x < bfw ; x++) {
             float sumXL = 0.f;
@@ -1519,7 +1521,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
     const float noise = pow_F(2.f, -16.f);
     const float log2 = xlogf(lp.baselog);
     const float base = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, lp.targetgray / 100.f) : 0.f;
-    const float linbase = max(base, 0.f);
+    const float linbase = rtengine::max(base, 0.f);
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     const auto apply =
@@ -1529,9 +1531,9 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
             x /= 65535.f;
         }
 
-        x = max(x, noise);
-        x = max(x / gray, noise);
-        x = max((xlogf(x) / log2 - shadows_range) / dynamic_range, noise);
+        x = rtengine::max(x, noise);
+        x = rtengine::max(x / gray, noise);
+        x = rtengine::max((xlogf(x) / log2 - shadows_range) / dynamic_range, noise);
         assert(x == x);
 
         if (linbase > 0.f)
@@ -1576,7 +1578,6 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
         // }
     };
 
-//    const int detail2 = float(max(lp.detail, 0)) / scale + 0.5f;
     const float detail = lp.detail;
     const int W = rgb->getWidth(), H = rgb->getHeight();
 
@@ -1584,7 +1585,6 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-
         for (int y = 0; y < H; ++y) {
             for (int x = 0; x < W; ++x) {
                 float r = rgb->r(y, x);
@@ -1619,17 +1619,16 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
-
             for (int y = 0; y < H; ++y) {
                 for (int x = 0; x < W; ++x) {
                     Y2[y][x] = norm(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)) / 65535.f;
-                    float l = xlogf(std::max(Y2[y][x], 1e-9f));
+                    float l = xlogf(rtengine::max(Y2[y][x], 1e-9f));
                     float ll = round(l * base_posterization) / base_posterization;
                     Y[y][x] = xexpf(ll);
                     assert(std::isfinite(Y[y][x]));
                 }
             }
-            const float radius = max(max(bfw, W), max(bfh, H)) / 30.f;
+            const float radius = rtengine::max(rtengine::max(bfw, W), rtengine::max(bfh, H)) / 30.f;
             const float epsilon = 0.005f;
             rtengine::guidedFilter(Y2, Y, Y, radius, epsilon, multiThread);
         }
@@ -1638,7 +1637,6 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-
         for (int y = 0; y < H; ++y) {
             for (int x = 0; x < W; ++x) {
                 float &r = rgb->r(y, x);
@@ -1698,11 +1696,11 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             mean += static_cast<double>(0.2126f * Color::gamma_srgb(r) + 0.7152f * Color::gamma_srgb(g) + 0.0722f * Color::gamma_srgb(b));
             nc++;
 
-            const float m = max(0.f, r, g, b) / 65535.f * ec;
+            const float m = rtengine::max(0.f, r, g, b) / 65535.f * ec;
             if (m > noise) {
-                const float l = min(r, g, b) / 65535.f * ec;
-                minVal = min(minVal, l > noise ? l : m);
-                maxVal = max(maxVal, m);
+                const float l = rtengine::min(r, g, b) / 65535.f * ec;
+                minVal = rtengine::min(minVal, l > noise ? l : m);
+                maxVal = rtengine::max(maxVal, m);
             }
         }
     }
@@ -1721,8 +1719,8 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         if (Autogr[sp]) {
             double tot = 0.0;
             int n = 0;
-            const float gmax = std::min(maxVal / 2.f, 0.25f);
-            const float gmin = std::max(minVal * std::pow(2.f, std::max((dynamic_range - 1.f) / 2.f, 1.f)), 0.05f);
+            const float gmax = rtengine::min(maxVal / 2.f, 0.25f);
+            const float gmin = rtengine::max(minVal * std::pow(2.f, rtengine::max((dynamic_range - 1.f) / 2.f, 1.f)), 0.05f);
 
             if (settings->verbose) {
                 std::cout << "         gray boundaries: " << gmin << ", " << gmax << std::endl;
@@ -1849,7 +1847,6 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)
 #endif
-
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
             Y[y][x] = Color::rgbLuminance(R[y][x], G[y][x], B[y][x], ws);
@@ -1858,7 +1855,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 
     int detail = LIM(lp.detailsh + 5, 0, 5);
     int radius = detail / scale + 0.5;
-    float epsilon2 = 0.01f + 0.002f * max(detail - 3, 0);
+    float epsilon2 = 0.01f + 0.002f * rtengine::max(detail - 3, 0);
 
     if (radius > 0) {
         rtengine::guidedFilterLog(10.f, Y, radius, epsilon2, multithread);
@@ -1872,10 +1869,9 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 #ifdef _OPENMP
         #pragma omp parallel for if (multithread)
 #endif
-
         for (int y = 0; y < H; ++y) {
             for (int x = 0; x < W; ++x) {
-                float l = LIM(log2(std::max(Y[y][x], 1e-9f)), centers[0], centers[11]);
+                float l = LIM(log2(rtengine::max(Y[y][x], 1e-9f)), centers[0], centers[11]);
                 float ll = round(l * base_posterization) / base_posterization;
                 Y2[y][x] = Y[y][x];
                 Y[y][x] = exp2(ll);
@@ -1883,7 +1879,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
         }
 
         radius = 350.0 / scale;
-        epsilon2 = base_epsilon / float(6 - std::min(lp.detailsh, 5));
+        epsilon2 = base_epsilon / float(6 - rtengine::min(lp.detailsh, 5));
         rtengine::guidedFilter(Y2, Y, Y, radius, epsilon2, multithread);
     }
 
@@ -1902,7 +1898,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
     const auto process_pixel =
     [&](float y) -> float {
         // convert to log space
-        const float luma = max(log2(max(y, 0.f)), -18.0f);
+        const float luma = rtengine::max(log2(rtengine::max(y, 0.f)), -18.0f);
 
         // build the correction as the sum of the contribution of each
         // luminance channel to current pixel
@@ -1973,7 +1969,6 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)
 #endif
-
     for (int y = 0; y < H; ++y) {
         int x = 0;
 
@@ -2107,7 +2102,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
 #ifndef _DEBUG
         #pragma omp for schedule(dynamic, 16)
 #endif
-
         for (int i = 0; i < height; i++) {
 #ifdef __SSE2__
             // vectorized conversion from Lab to jchqms
@@ -2278,7 +2272,6 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
-
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     guid[ir][jr] = Color::L2Y(bufcolorig->L[ir][jr]) / 32768.f;
@@ -2296,7 +2289,6 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
-
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     bufcolfin->L[ir][jr] =  Color::computeXYZ2LabY(32768.f * ble[ir][jr]);
@@ -2307,7 +2299,6 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
-
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     ble[ir][jr] = bufcolfin->L[ir][jr] / 32768.f;
@@ -2318,14 +2309,13 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
             const float bepsil = epsilmax - 100.f * aepsil;
             const float epsil = rad < 0.f ? 0.0001f : aepsil * 0.1f * rad + bepsil;
             const float blur = rad < 0.f ? -1.f / rad : 1.f + rad;
-            const int r2 = std::max(int(25 / sk * blur + 0.5f), 1);
+            const int r2 = rtengine::max(int(25 / sk * blur + 0.5f), 1);
 
             rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
 
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
-
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     bufcolfin->L[ir][jr] =  32768.f * ble[ir][jr];
@@ -2342,7 +2332,6 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
 #ifdef _OPENMP
     #pragma omp parallel for reduction(min:minlig) schedule(dynamic,16) if (multiThread)
 #endif
-
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             minlig = rtengine::min(buflight[ir][jr], minlig);
@@ -2354,7 +2343,6 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             buflight[ir][jr] = LIM01((buflight[ir][jr] - minlig) / (100.f - minlig));
@@ -2372,7 +2360,6 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             buflight[ir][jr] = (100.f - minlig) * buflight[ir][jr] + minlig;
@@ -2387,8 +2374,8 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
 
     constexpr float maxran = 65536.f;
     const float cexp_scale = std::pow(2.f, lp.expcomp);
-    const float ccomp = (max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
-    const float cshoulder = ((maxran / max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
+    const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
+    const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
     const float chlrange = maxran - cshoulder;
     const float linear = lp.linear;
     constexpr float kl = 1.f;
@@ -2403,15 +2390,14 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-
         for (int ir = 0; ir < bfh; ir++) {
             for (int jr = 0; jr < bfw; jr++) {
                 float L = bufexporig->L[ir][jr];
                 const float Llin = LIM01(L / 32768.f);
                 const float addcomp = linear * (-kl * Llin + kl);//maximum about 1. IL
                 const float exp_scale = pow_F(2.0, (lp.expcomp + addcomp));
-                const float shoulder = ((maxran / max(1.0f, exp_scale)) * hlcompthr) + 0.1f;
-                const float comp = (max(0.f, (lp.expcomp + addcomp)) + 1.f) * hlcomp;
+                const float shoulder = ((maxran / rtengine::max(1.0f, exp_scale)) * hlcompthr) + 0.1f;
+                const float comp = (rtengine::max(0.f, (lp.expcomp + addcomp)) + 1.f) * hlcomp;
                 const float hlrange = maxran - shoulder;
 
                 //highlight
@@ -2427,7 +2413,6 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-
         for (int ir = 0; ir < bfh; ir++) {
             for (int jr = 0; jr < bfw; jr++) {
                 float L = bufexporig->L[ir][jr];
@@ -2464,7 +2449,6 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
 #ifdef _OPENMP
         #pragma omp for schedule(static) // static scheduling is important to avoid artefacts
 #endif
-
         for (int y = 0; y < lab->H; y++) {
             for (int x = 0; x < lab->W; x++) {
                 generate = !generate;
@@ -2598,7 +2582,6 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
 #endif
     {
         const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
-        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * lp.sensden * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * lp.sensden * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -2607,7 +2590,6 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = 0; y < transformed->H; y++) {
             const int loy = cy + y;
 
@@ -2728,7 +2710,6 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     #pragma omp parallel if (multiThread)
 #endif
     {
-        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * lp.sensh * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * lp.sensh * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -2737,7 +2718,6 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = 0; y < transformed->H; y++) {
             int loy = cy + y;
 
@@ -2875,7 +2855,6 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 #endif
     {
         const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
-        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * lp.sensbn * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * lp.sensbn * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -2884,7 +2863,6 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = 0; y < transformed->H; y++) {
             int loy = cy + y;
 
@@ -3015,7 +2993,6 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:sumab)
 #endif
-
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 bufexporig->a[y][x] = original->a[y + ystart][x + xstart];
@@ -3032,7 +3009,6 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:som)
 #endif
-
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 som += SQR(std::fabs(bufexporig->a[y][x]) - meanfab) + SQR(std::fabs(bufexporig->b[y][x]) - meanfab);
@@ -3216,7 +3192,6 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
-
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             float X, Y, Z;
@@ -3238,14 +3213,11 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
-
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             blend2[ir][jr] = 32768.f * ble[ir][jr];
         }
     }
-
-//   Median_Denoise(ble, blend2, bfw, bfh, Median::TYPE_3X3_STRONG, 1, multiThread);
 }
 
 
@@ -3254,7 +3226,6 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
-
     for (int y = 0; y < bfh ; y++) {
         const int loy = y + ystart + cy;
 
@@ -3354,7 +3325,6 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
-
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
             const float abdelta2 = SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f);
@@ -3702,7 +3672,6 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-
         for (int y = 0; y < bfh ; y++) {//mix two fftw Laplacian : plein if dE near ref
             for (int x = 0; x < bfw; x++) {
                 float prov = pow(dE[y * bfw + x], 4.5f);
@@ -3756,7 +3725,6 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
                 dataout[y * bfw + x]   = clipLoc(multy * data[y * bfw + x]);
@@ -3809,7 +3777,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 bufmaskblurcol->L[y][x] = original->L[y + ystart][x + xstart];
@@ -3887,7 +3854,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
                 for (int i = 0; i < bfh; i++) {
                     for (int j = 0; j < bfw; j++) {
-                        blur[i][j] = intp(blendblur[i][j], bufcolorig->L[i][j], std::max(blur[i][j], 0.0f));
+                        blur[i][j] = intp(blendblur[i][j], bufcolorig->L[i][j], rtengine::max(blur[i][j], 0.0f));
                     }
                 }
             }
@@ -3914,7 +3881,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic, 16)
 #endif
-
             for (int ir = 0; ir < bfh; ir++) {
 #ifdef __SSE2__
 
@@ -3939,10 +3905,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     float kmaskH = 0.f;
                     float kmasstru = 0.f;
                     float kmasblur = 0.f;
-                    //   float kmaskHH = 0.f;
-                    //   float huemah;
-                    //  float newhr = 0.f;
-                    //   float2 sincosval;
 
                     if (strumask > 0.f && !astool) {
                         kmasstru = bufcolorig->L[ir][jr] * blendstru[ir][jr];
@@ -3952,7 +3914,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
                         if (lp.blurcolmask >= 0.25f) {
 
-                            float prov = intp(blendstru[ir][jr], bufcolorig->L[ir][jr], max(blur[ir][jr], 0.0f));
+                            float prov = intp(blendstru[ir][jr], bufcolorig->L[ir][jr], rtengine::max(blur[ir][jr], 0.0f));
                             kmasblur = bufcolorig->L[ir][jr] - prov ;
 
                         }
@@ -3987,8 +3949,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                         }
 
                         kmaskHL = 32768.f * valHH;
-
-
                     }
 
                     /*
@@ -4047,13 +4007,13 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         std::unique_ptr<LabImage> bufprov;
         if (delt) {
             bufprov.reset(new LabImage(bfw, bfh));
-            bufprov->CopyFrom(bufmaskblurcol);
+            bufprov->CopyFrom(bufmaskblurcol, multiThread);
         }
 
         if (rad != 0.f) {
             const float tmpblur = rad < 0.f ? -1.f / rad : 1.f + rad;
-            const int r1 = std::max<int>(4 / sk * tmpblur + 0.5, 1);
-            const int r2 = std::max<int>(25 / sk * tmpblur + 0.5, 1);
+            const int r1 = rtengine::max<int>(4 / sk * tmpblur + 0.5, 1);
+            const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.5, 1);
 
             constexpr float epsilmax = 0.0005f;
             constexpr float epsilmin = 0.00001f;
@@ -4072,7 +4032,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int ir = 0; ir < bfh; ir++) {
             for (int jr = 0; jr < bfw; jr++) {
                 float2 sincosval = xsincosf(hue[ir][jr]);
@@ -4088,20 +4047,17 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     bufmaskblurcol->L[ir][jr] *= (1.f + blendstru[ir][jr]);
                 }
             }
-
         }
 
         if (lmasklocalcurve && localmaskutili) {
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     bufmaskblurcol->L[ir][jr] = 0.5f * lmasklocalcurve[2.f * bufmaskblurcol->L[ir][jr]];
@@ -4114,14 +4070,14 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         int wavelet_level = level_br;
 
-        int minwin = min(bfw, bfh);
+        int minwin = rtengine::min(bfw, bfh);
         int maxlevelspot = 9;
 
         while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
             --maxlevelspot ;
         }
 
-        wavelet_level = min(wavelet_level, maxlevelspot);
+        wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
         int maxlvl = wavelet_level;
 //        float contrast = 0.f;
         bool wavcurvemask = false;
@@ -4187,7 +4143,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
-
                         for (int i = 0; i < W_L * H_L; i++) {
                             if(loclmasCurvecolwav && lmasutilicolwav) {
                                 float absciss;
@@ -4245,7 +4200,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     float huemah = xatan2f(bufmaskblurcol->b[ir][jr], bufmaskblurcol->a[ir][jr]);
@@ -4303,7 +4257,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     const float rdEval = rdE[ir][jr];
@@ -4321,7 +4274,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
@@ -4342,7 +4294,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
-
             for (int y = 0; y < bfh; y++) {
                 for (int x = 0; x < bfw; x++) {
                     bufmaskblurcol->L[y][x] = data_tmp[y * bfw + x];
@@ -4364,7 +4315,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         }
 
         if (zero || modif || modmask || deltaE || enaMask) {
-            originalmaskcol->CopyFrom(bufcolorig);
+            originalmaskcol->CopyFrom(bufcolorig, multiThread);
             blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig, original, bufmaskblurcol, originalmaskcol, blendm, inv);
         }
     }
@@ -4412,14 +4363,12 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
         gaussianBlur(original->L, origblur->L, GW, GH, radius);
         gaussianBlur(original->a, origblur->a, GW, GH, radius);
         gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
     }
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
     {
-        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * lp.senssha * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * lp.senssha * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -4428,7 +4377,6 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = 0; y < transformed->H; y++) {
             int loy = cy + y;
 
@@ -4569,7 +4517,6 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
     {
         const int begy = int (lp.yc - lp.lyT);
         const int begx = int (lp.xc - lp.lxL);
-        constexpr int limscope = 80;
         const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -4578,7 +4525,6 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = 0; y < transformed->H; y++) {
             const int loy = cy + y;
             const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
@@ -4651,8 +4597,6 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
     BENCHFUN {
         const float ach = lp.trans / 100.f;
         const float varsens =  lp.sensexclu;
-
-        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -4698,7 +4642,6 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
             #pragma omp barrier
             #pragma omp for schedule(dynamic,16)
 #endif
-
             for (int y = 0; y < transformed->H; y++)
             {
                 const int loy = cy + y;
@@ -4798,10 +4741,10 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 {
 
     BENCHFUN {
-        const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
 
 
         const float ach = lp.trans / 100.f;
@@ -4862,7 +4805,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
         #pragma omp parallel if (multiThread)
 #endif
         {
-            const int limscope = 80;
             const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
             const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -4872,7 +4814,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
-
             for (int y = ystart; y < yend; y++)
             {
                 const int loy = cy + y;
@@ -5026,10 +4967,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 {
 
     BENCHFUN
-    const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-    const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-    const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-    const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+    const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+    const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+    const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+    const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
     const int bfw = xend - xstart;
     const int bfh = yend - ystart;
     // printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
@@ -5100,9 +5041,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         float *data = new float[bfh * bfw];
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel if (multiThread)
 #endif
-
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
                 datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
@@ -5111,9 +5051,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 
         normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f);
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for if (multiThread)
 #endif
-
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
                 bufexporig->L[y - ystart][x - xstart] = data[(y - ystart) * bfw + x - xstart];
@@ -5130,7 +5069,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = 0; y < bfh; y++)
         {
             for (int x = 0; x < bfw; x++) {
@@ -5147,7 +5085,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     }
 
     const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
-    const int limscope = 80;
     const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
     const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
     const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -5164,7 +5101,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = ystart; y < yend; y++)
         {
             const int loy = cy + y;
@@ -5218,7 +5154,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                 float rsob = 0.f;
 
                 if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || ((senstype == 0 || senstype == 100) && lp.struco > 0.f))) {//keep in case of, not used
-                    const float csob = xlogf(1.f + std::min(blend2[y - ystart][x - xstart] / 100.f, 60.f) + 0.001f);
+                    const float csob = xlogf(1.f + rtengine::min(blend2[y - ystart][x - xstart] / 100.f, 60.f) + 0.001f);
 
                     float rs;
 
@@ -5326,9 +5262,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
     if (senstype == 2) { // Shadows highlight
         temp = new LabImage(GW, GH);
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < transformed->H; y++) {
             for (int x = 0; x < transformed->W; x++) {
                 temp->L[y][x] = original->L[y][x];
@@ -5369,9 +5304,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
     } else if (senstype == 1) { //exposure
         temp = new LabImage(GW, GH);
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < transformed->H; y++) {
             for (int x = 0; x < transformed->W; x++) {
                 temp->a[y][x] = original->a[y][x];
@@ -5384,9 +5318,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
         if (exlocalcurve) {
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = 0; y < temp->H; y++) {
                 for (int x = 0; x < temp->W; x++) {
                     float lighn =  temp->L[y][x];
@@ -5409,9 +5342,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             }
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     float epsi = 0.f;
@@ -5435,9 +5367,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
     } else if (senstype == 0) { //Color and Light curves L C
         tempCL = new LabImage(GW, GH);
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < tempCL->H; y++) {
             for (int x = 0; x < tempCL->W; x++) {
                 tempCL->a[y][x] = original->a[y][x];
@@ -5448,9 +5379,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
         if (cclocalcurve && localcutili) { // C=f(C) curve
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     //same as in "normal"
@@ -5469,9 +5399,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
         if (lllocalcurve && locallutili) {
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     float lighn =  original->L[y][x];
@@ -5525,13 +5454,12 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
     }
 
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel if (multiThread)
 #endif
     {
         gaussianBlur(original->L, origblur->L, GW, GH, radius);
         gaussianBlur(original->a, origblur->a, GW, GH, radius);
         gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
     }
 
 #ifdef _OPENMP
@@ -5539,7 +5467,6 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #endif
     {
         const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
-        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -5548,7 +5475,6 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = 0; y < transformed->H; y++) {
             const int loy = cy + y;
 
@@ -5795,7 +5721,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         int nsb = 0;
 // single precision for the result
         float avA, avB, avL;
-        int spotSize = 0.88623f * max(1,  lp.cir / sk);  //18
+        int spotSize = 0.88623f * rtengine::max(1,  lp.cir / sk);  //18
         //O.88623 = std::sqrt(PI / 4) ==> sqare equal to circle
         int spotSise2; // = 0.88623f * max (1,  lp.cir / sk); //18
 
@@ -5806,7 +5732,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         LabImage *origblur = nullptr;
         LabImage *blurorig = nullptr;
 
-        int spotSi = 1 + 2 * max(1,  lp.cir / sk);
+        int spotSi = 1 + 2 * rtengine::max(1,  lp.cir / sk);
 
         if (spotSi < 5) {
             spotSi = 5;
@@ -5829,11 +5755,11 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
             origblur = new LabImage(spotSi, spotSi);
             blurorig = new LabImage(spotSi, spotSi);
 
-            for (int y = max(cy, (int)(lp.yc - spotSise2)); y < min(transformed->H + cy, (int)(lp.yc + spotSise2 + 1)); y++) {
-                for (int x = max(cx, (int)(lp.xc - spotSise2)); x < min(transformed->W + cx, (int)(lp.xc + spotSise2 + 1)); x++) {
-                    int yb = max(cy, (int)(lp.yc - spotSise2));
+            for (int y = rtengine::max(cy, (int)(lp.yc - spotSise2)); y < rtengine::min(transformed->H + cy, (int)(lp.yc + spotSise2 + 1)); y++) {
+                for (int x = rtengine::max(cx, (int)(lp.xc - spotSise2)); x < rtengine::min(transformed->W + cx, (int)(lp.xc + spotSise2 + 1)); x++) {
+                    int yb = rtengine::max(cy, (int)(lp.yc - spotSise2));
 
-                    int xb = max(cx, (int)(lp.xc - spotSise2));
+                    int xb = rtengine::max(cx, (int)(lp.xc - spotSise2));
 
                     int z = y - yb;
                     int u = x - xb;
@@ -5866,8 +5792,8 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         }
 
         //ref for luma, chroma, hue
-        for (int y = max(cy, (int)(lp.yc - spotSize)); y < min(transformed->H + cy, (int)(lp.yc + spotSize + 1)); y++) {
-            for (int x = max(cx, (int)(lp.xc - spotSize)); x < min(transformed->W + cx, (int)(lp.xc + spotSize + 1)); x++) {
+        for (int y = rtengine::max(cy, (int)(lp.yc - spotSize)); y < rtengine::min(transformed->H + cy, (int)(lp.yc + spotSize + 1)); y++) {
+            for (int x = rtengine::max(cx, (int)(lp.xc - spotSize)); x < rtengine::min(transformed->W + cx, (int)(lp.xc + spotSize + 1)); x++) {
                 aveL += original->L[y - cy][x - cx];
                 aveA += original->a[y - cy][x - cx];
                 aveB += original->b[y - cy][x - cx];
@@ -5877,11 +5803,11 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         }
 
         //ref for sobel
-        for (int y = max(cy, (int)(lp.yc - spotSise2)); y < min(transformed->H + cy, (int)(lp.yc + spotSise2 + 1)); y++) {
-            for (int x = max(cx, (int)(lp.xc - spotSise2)); x < min(transformed->W + cx, (int)(lp.xc + spotSise2 + 1)); x++) {
-                int yb = max(cy, (int)(lp.yc - spotSise2));
+        for (int y = rtengine::max(cy, (int)(lp.yc - spotSise2)); y < rtengine::min(transformed->H + cy, (int)(lp.yc + spotSise2 + 1)); y++) {
+            for (int x = rtengine::max(cx, (int)(lp.xc - spotSise2)); x < rtengine::min(transformed->W + cx, (int)(lp.xc + spotSise2 + 1)); x++) {
+                int yb = rtengine::max(cy, (int)(lp.yc - spotSise2));
 
-                int xb = max(cx, (int)(lp.xc - spotSise2));
+                int xb = rtengine::max(cx, (int)(lp.xc - spotSise2));
 
                 int z = y - yb;
                 int u = x - xb;
@@ -6039,10 +5965,10 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
     }
 
     //new values optimized
-    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, H);
-    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, W);
+    ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+    yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, H);
+    xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+    xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, W);
     bfh = bfhr = yend - ystart;
     bfw = bfwr = xend - xstart;
 
@@ -6065,10 +5991,10 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
 //local BLUR
     BENCHFUN
 
-    const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-    const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-    const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-    const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+    const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+    const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+    const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+    const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
 
     const float ach = lp.trans / 100.f;
     const int GW = transformed->W;
@@ -6120,7 +6046,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
     }
 
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel if (multiThread)
 #endif
     {
         gaussianBlur(original->L, origblur->L, GW, GH, radius);
@@ -6133,7 +6059,6 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
 #endif
     {
         const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
-        constexpr int limscope = 80;
         const float mindE = 4.f + MINSCOPE * lp.sensbn * lp.thr;//best usage ?? with blurnoise
         const float maxdE = 5.f + MAXSCOPE * lp.sensbn * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -6142,7 +6067,6 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = ystart; y < yend; y++) {
             const int loy = cy + y;
 
@@ -6219,10 +6143,10 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
 void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     //initialize coordonates
-    int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-    int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-    int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-    int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+    int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+    int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+    int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+    int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
     int bfw = xend - xstart;
     int bfh = yend - ystart;
 
@@ -6356,7 +6280,6 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
                 datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
@@ -6367,7 +6290,6 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
                 bufexpfin->L[y - ystart][x - xstart] = data[(y - ystart) * bfw + x - xstart];
@@ -6384,7 +6306,6 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 origblur->L[y][x] = original->L[y + ystart][x + xstart];
@@ -6404,7 +6325,6 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
 
     //parameters deltaE
-    const int limscope = 80;
     const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
     const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
     const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -6421,7 +6341,6 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-
         for (int y = 0; y < bfh; y++) {
 
             const int loy = y + ystart + cy;
@@ -6465,7 +6384,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 
                 //claculate additive sobel to deltaE
                 if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || ((senstype == 0) && lp.struco > 0.f))) {
-                    const float csob = xlogf(1.f + std::min(blend2[y][x] / 100.f, 60.f) + 0.001f);
+                    const float csob = xlogf(1.f + rtengine::min(blend2[y][x] / 100.f, 60.f) + 0.001f);
 
                     float rs;
 
@@ -6521,7 +6440,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     const float difa = factorx * realstradE;
                     transformed->b[y + ystart][x + xstart] = clipC(original->b[y + ystart][x + xstart] + factorx * realstrbdE);
                     const float difb = factorx * realstrbdE;
-                    float maxdifab = max(std::fabs(difa), std::fabs(difb));
+                    float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
                     if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow) && lp.colorde < 0) { //show modifications whith use "b"
                         //  (origshow && lp.colorde < 0) { //original Retinex
@@ -6623,7 +6542,6 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
                 dataout[y * bfw + x] = clipLoc(data[y * bfw + x]);
@@ -6632,9 +6550,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
     }
 
     fftwf_free(data);
-
 }
-
 
 void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, int bfh, float radius, int fftkern, int algo)
 {
@@ -6709,9 +6625,8 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 
     if (fftkern == 1) { //convolution with FFT kernel
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for if (multiThread)
 #endif
-
         for (int j = 0; j < bfh; j++) {
             int index = j * bfw;
 
@@ -6729,9 +6644,8 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
         fftwf_destroy_plan(pkern);
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for if (multiThread)
 #endif
-
         for (int j = 0; j < bfh; j++) {
             int index = j * bfw;
 
@@ -6748,9 +6662,8 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
     } else if (fftkern == 0) {//whithout FFT kernel
         if (algo == 0) {
 #ifdef _OPENMP
-            #pragma omp parallel for
+            #pragma omp parallel for if (multiThread)
 #endif
-
             for (int j = 0; j < bfh; j++) {
                 int index = j * bfw;
 
@@ -6760,9 +6673,8 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
             }
         } else if (algo == 1) {
 #ifdef _OPENMP
-            #pragma omp parallel for
+            #pragma omp parallel for if (multiThread)
 #endif
-
             for (int j = 0; j < bfh; j++) {
                 int index = j * bfw;
 
@@ -6776,9 +6688,11 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
     p = fftwf_plan_r2r_2d(bfh, bfw, out, output, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE);//FFT 2 dimensions backward
     fftwf_execute(p);
 
+#ifdef _OPENMP
+    #pragma omp parallel for if (multiThread)
+#endif
     for (int index = 0; index < image_size; index++) { //restore datas
         output[index] /= image_sizechange;
-        // output[index] = CLIPMAX(output[index]);
     }
 
     fftwf_destroy_plan(p);
@@ -6810,9 +6724,8 @@ void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw
     }
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
             input[y * bfw + x] =  input2[y][x];
@@ -6822,9 +6735,8 @@ void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw
     ImProcFunctions::fftw_convol_blur(input, output, bfw, bfh, radius, fftkern, algo);
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
             output2[y][x] = output[y * bfw + x];
@@ -6833,7 +6745,6 @@ void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw
 
     fftwf_free(input);
     fftwf_free(output);
-
 }
 
 
@@ -6863,7 +6774,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     plan_backward_blox[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fLbloxtmp, nullptr, 1, tilssize * tilssize, Lbloxtmp, nullptr, 1, tilssize * tilssize, bwdkind, FFTW_MEASURE | FFTW_DESTROY_INPUT);
     fftwf_free(Lbloxtmp);
     fftwf_free(fLbloxtmp);
-    const int border = MAX(2, tilssize / 16);
+    const int border = rtengine::max(2, tilssize / 16);
 
     for (int i = 0; i < tilssize; ++i) {
         float i1 = abs((i > tilssize / 2 ? i - tilssize + 1 : i));
@@ -6896,7 +6807,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     int masterThread = omp_get_thread_num();
 #endif
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel if (multiThread)
 #endif
     {
 #ifdef _OPENMP
@@ -6910,7 +6821,6 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
 #ifdef _OPENMP
         #pragma omp for
 #endif
-
         for (int vblk = 0; vblk < numblox_H; ++vblk) {
 
             int top = (vblk - 1) * offset;
@@ -6921,9 +6831,9 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
                 int rr = row;
 
                 if (row < 0) {
-                    rr = MIN(-row, GH - 1);
+                    rr = rtengine::min(-row, GH - 1);
                 } else if (row >= GH) {
-                    rr = MAX(0, 2 * GH - 2 - row);
+                    rr = rtengine::max(0, 2 * GH - 2 - row);
                 }
 
                 for (int j = 0; j < GW; ++j) {
@@ -6931,11 +6841,11 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
                 }
 
                 for (int j = -1 * offset; j < 0; ++j) {
-                    datarow[j] = datarow[MIN(-j, GW - 1)];
+                    datarow[j] = datarow[rtengine::min(-j, GW - 1)];
                 }
 
                 for (int j = GW; j < GW + tilssize + offset; ++j) {
-                    datarow[j] = datarow[MAX(0, 2 * GW - 2 - j)];
+                    datarow[j] = datarow[rtengine::max(0, 2 * GW - 2 - j)];
                 }//now we have a padded data row
 
                 for (int hblk = 0; hblk < numblox_W; ++hblk) {
@@ -6945,11 +6855,11 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
                     if (top + i >= 0 && top + i < GH) {
                         int j;
 
-                        for (j = 0; j < min((-left), tilssize); ++j) {
+                        for (j = 0; j < rtengine::min((-left), tilssize); ++j) {
                             Lblox[(indx + i)*tilssize + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
                         }
 
-                        for (; j < min(tilssize, GW - left); ++j) {
+                        for (; j < rtengine::min(tilssize, GW - left); ++j) {
                             Lblox[(indx + i)*tilssize + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
                             totwt[top + i][left + j] += tilemask_in[i][j] * tilemask_out[i][j];
                         }
@@ -7000,15 +6910,15 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
             const int numblox_W = ceil((static_cast<float>(GW)) / offset);
             const float DCTnorm = 1.0f / (4 * tilssize * tilssize); //for DCT
 
-            int imin = MAX(0, - topproc);
-            int bottom = MIN(topproc + tilssize, GH);
+            int imin = rtengine::max(0, - topproc);
+            int bottom = rtengine::min(topproc + tilssize, GH);
             int imax = bottom - topproc;
 
             for (int i = imin; i < imax; ++i) {
                 for (int hblk = 0; hblk < numblox_W; ++hblk) {
                     int left = (hblk - 1) * offset;
-                    int right  = MIN(left + tilssize, GW);
-                    int jmin = MAX(0, -left);
+                    int right  = rtengine::min(left + tilssize, GW);
+                    int jmin = rtengine::max(0, -left);
                     int jmax = right - left;
                     int indx = hblk * tilssize;
 
@@ -7021,10 +6931,8 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     }
 
 #ifdef _OPENMP
-
-    #pragma omp parallel for
+    #pragma omp parallel for if (multiThread)
 #endif
-
     for (int i = 0; i < GH; ++i) {
         for (int j = 0; j < GW; ++j) {
             tmp1[i][j] = Lresult[i][j] / totwt[i][j];
@@ -7057,7 +6965,7 @@ void ImProcFunctions::wavcbd(const wavelet_decomposition &wdspot, int level_bl, 
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic) collapse(2)
+        #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
@@ -7127,7 +7035,7 @@ void ImProcFunctions::wavcbd(const wavelet_decomposition &wdspot, int level_bl, 
                         beta = 0.0f;
                     }
 
-                    const float alpha = max((1024.f + 15.f * cpMul * beta) / 1024.f, 0.02f) ;
+                    const float alpha = rtengine::max((1024.f + 15.f * cpMul * beta) / 1024.f, 0.02f) ;
                     wav_L[dir][i] *= alpha * chromalev;
                 }
             }
@@ -7175,9 +7083,8 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
 
 
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel for if (multiThread)
 #endif
-
     for (int y = 0; y < H_L; y++) {
         for (int x = 0; x < W_L; x++) {
             float expone = 1.f;
@@ -7229,9 +7136,8 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
     }
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic) collapse(2)
+    #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
-
     for (int dir = 1; dir < 4; dir++) {
         for (int level = level_bl; level < maxlvl; ++level) {
             int W_L = wdspot.level_W(level);
@@ -7258,7 +7164,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
     
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic) collapse(2)
+        #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
@@ -7302,7 +7208,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
                 if (loclevwavCurve && loclevwavutili) {
 
                     float klev = 0.25f * (loclevwavCurve[level * 55.5f]);
-                    #pragma omp parallel
+                    #pragma omp parallel if (multiThread)
                     {
                         gaussianBlur(templevel[dir - 1][level], templevel[dir - 1][level], W_L, H_L, radlevblur * klev * chromablu);
                     }
@@ -7321,7 +7227,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
     
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic) collapse(2)
+        #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
@@ -7413,7 +7319,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic) collapse(2)
+        #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
@@ -7483,7 +7389,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
 
 
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic) collapse(2)
+    #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
     for (int dir = 1; dir < 4; dir++) {
         for (int level = level_bl; level < maxlvl; ++level) {
@@ -7687,24 +7593,24 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     if (radblur > 0.f && blurena) {
         array2D<float> bufl(W_L, H_L);
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < H_L; y++) {
             for (int x = 0; x < W_L; x++) {
                 bufl[y][x]  = wav_L0[y * W_L + x];
             }
         }
 
-        #pragma omp parallel
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
         {
             gaussianBlur(bufl, bufl, W_L, H_L, radblur);
         }
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < H_L; y++) {
             for (int x = 0; x < W_L; x++) {
                 wav_L0[y * W_L + x] = bufl[y][x];
@@ -7737,14 +7643,13 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         const float bth = lp.residsha - ath * lp.residshathr;
 
         //highlight
-        const float tranh = std::min(5.f, lp.residhithr);
+        const float tranh = rtengine::min(5.f, lp.residhithr);
         const float athH = lp.residhi / tranh;
         const float bthH = lp.residhi - athH * lp.residhithr;
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for if (multiThread)
 #endif
-
         for (int i = 0; i < W_L * H_L; i++) {
             const float LL100 = wav_L0[i] / 327.68f;
 
@@ -7770,7 +7675,6 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:avedbl) if (multiThread)
 #endif
-
         for (int i = 0; i < W_L * H_L; i++) {
             avedbl += wav_L0[i];
         }
@@ -7790,7 +7694,6 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-
         for (int i = 0; i < W_L * H_L; i++) {
             float buf = LIM01(wav_L0[i] / 32768.f);
             buf = resid_contrast.getVal(buf);
@@ -7940,7 +7843,6 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
 #endif
-
         for (int lvl = 0; lvl < 4; lvl++) {
             for (int dir = 1; dir < 4; dir++) {
                 const int W_L = wdspot->level_W(lvl);
@@ -8112,7 +8014,6 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
 #endif
-
         for (int lvl = 0; lvl < maxlvl; lvl++) {
             for (int dir = 1; dir < 4; dir++) {
                 int W_L = wdspot->level_W(lvl);
@@ -8270,7 +8171,6 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
-
                     for (int i = 0; i < W_L * H_L; i++) {
                         float absciss;
                         float &val = wav_L[dir][i];
@@ -8488,7 +8388,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
     plan_backward_blox[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE | FFTW_DESTROY_INPUT);
     fftwf_free(Lbloxtmp);
     fftwf_free(fLbloxtmp);
-    const int border = MAX(2, TS / 16);
+    const int border = rtengine::max(2, TS / 16);
 
     for (int i = 0; i < TS; ++i) {
         float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
@@ -8527,7 +8427,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
     int masterThread = omp_get_thread_num();
 #endif
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel if (multiThread)
 #endif
     {
 #ifdef _OPENMP
@@ -8541,7 +8441,6 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 #ifdef _OPENMP
         #pragma omp for
 #endif
-
         for (int vblk = 0; vblk < numblox_H; ++vblk) {
 
             int top = (vblk - 1) * offset;
@@ -8552,9 +8451,9 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
                 int rr = row;
 
                 if (row < 0) {
-                    rr = MIN(-row, GH - 1);
+                    rr = rtengine::min(-row, GH - 1);
                 } else if (row >= GH) {
-                    rr = MAX(0, 2 * GH - 2 - row);
+                    rr = rtengine::max(0, 2 * GH - 2 - row);
                 }
 
                 for (int j = 0; j < GW; ++j) {
@@ -8564,11 +8463,11 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
                 }
 
                 for (int j = -1 * offset; j < 0; ++j) {
-                    datarow[j] = datarow[MIN(-j, GW - 1)];
+                    datarow[j] = datarow[rtengine::min(-j, GW - 1)];
                 }
 
                 for (int j = GW; j < GW + TS + offset; ++j) {
-                    datarow[j] = datarow[MAX(0, 2 * GW - 2 - j)];
+                    datarow[j] = datarow[rtengine::max(0, 2 * GW - 2 - j)];
                 }//now we have a padded data row
 
                 //now fill this row of the blocks with Lab high pass data
@@ -8579,11 +8478,11 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
                     if (top + i >= 0 && top + i < GH) {
                         int j;
 
-                        for (j = 0; j < min((-left), TS); ++j) {
+                        for (j = 0; j < rtengine::min((-left), TS); ++j) {
                             Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
                         }
 
-                        for (; j < min(TS, GW - left); ++j) {
+                        for (; j < rtengine::min(TS, GW - left); ++j) {
                             Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
                             totwt[top + i][left + j] += tilemask_in[i][j] * tilemask_out[i][j];
                         }
@@ -8613,10 +8512,10 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
             float noisevar_Ldetail = 1.f;
 
             if (chrom == 0) {
-                params_Ldetail = min(float(lp.noiseldetail), 99.9f);    // max out to avoid div by zero when using noisevar_Ldetail as divisor
+                params_Ldetail = rtengine::min(float(lp.noiseldetail), 99.9f);    // max out to avoid div by zero when using noisevar_Ldetail as divisor
                 noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
             } else if (chrom == 1) {
-                params_Ldetail = min(float(lp.noisechrodetail), 99.9f);
+                params_Ldetail = rtengine::min(float(lp.noisechrodetail), 99.9f);
                 //   noisevar_Ldetail = 100.f * pow((static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f), 2);//to test ???
                 noisevar_Ldetail = 100.f * pow((static_cast<float>(SQR(100. - params_Ldetail)) * TS * 0.5f), 2);//to test ???
             }
@@ -8784,7 +8683,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
             if (!Ldecomp.memoryAllocationFailed) {
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic) collapse(2)
+                #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
                 for (int lvl = 0; lvl < levred; lvl++) {
                     for (int dir = 1; dir < 4; dir++) {
@@ -8825,16 +8724,13 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     vari[0] = SQR(slidL[0]);
                     vari[1] = SQR(slidL[1]);
                     vari[2] = SQR(slidL[2]);
-                    //       float maxf01 = max(slidL[0], slidL[1]);
-                    //       mxsfl = max(maxf01, slidL[2]);
-
                     vari[3] = SQR(slidL[3]);
                     vari[4] = SQR(slidL[4]);
                     vari[5] = SQR(slidL[5]);
                     vari[6] = SQR(slidL[6]);
-                    float mxslid34 = max(slidL[3], slidL[4]);
-                    float mxslid56 = max(slidL[5], slidL[6]);
-                    mxsl = max(mxslid34, mxslid56);
+                    float mxslid34 = rtengine::max(slidL[3], slidL[4]);
+                    float mxslid56 = rtengine::max(slidL[5], slidL[6]);
+                    mxsl = rtengine::max(mxslid34, mxslid56);
 
                 }
 
@@ -8867,17 +8763,16 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         kr5 = 1.f;
                     }
 
-                    vari[0] = max(0.000001f, vari[0]);
-                    vari[1] = max(0.000001f, vari[1]);
-                    vari[2] = max(0.000001f, vari[2]);
-                    vari[3] = max(0.000001f, kr3 * vari[3]);
+                    vari[0] = rtengine::max(0.000001f, vari[0]);
+                    vari[1] = rtengine::max(0.000001f, vari[1]);
+                    vari[2] = rtengine::max(0.000001f, vari[2]);
+                    vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
 
                     if (levred == 7) {
-                        vari[4] = max(0.000001f, kr4 * vari[4]);
-                        vari[5] = max(0.000001f, kr5 * vari[5]);
-                        vari[6] = max(0.000001f, kr5 * vari[6]);
+                        vari[4] = rtengine::max(0.000001f, kr4 * vari[4]);
+                        vari[5] = rtengine::max(0.000001f, kr5 * vari[5]);
+                        vari[6] = rtengine::max(0.000001f, kr5 * vari[6]);
                     }
-
 
                     float* noisevarlum = new float[GH * GW];
                     int GW2 = (GW + 1) / 2;
@@ -8892,10 +8787,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     float bc = nvlh[i] - seuillow * ac;
                     //ac and bc for transition
 #ifdef _OPENMP
-                    #pragma omp parallel for
-
+                    #pragma omp parallel for if (multiThread)
 #endif
-
                     for (int ir = 0; ir < GH; ir++)
                         for (int jr = 0; jr < GW; jr++) {
                             float lN = tmp1.L[ir][jr];
@@ -9009,11 +8902,11 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     variC[4] = SQR(slida[4]);
                     variC[5] = SQR(slida[5]);
                     variC[6] = SQR(slida[6]);
-                    float maxc01 = max(slida[0], slida[1]);
-                    float maxc23 = max(slida[2], slida[3]);
-                    float max03 = max(maxc01, maxc23);
-                    float maxrf = max(max03, slida[4]);
-                    float maxrc = max(slida[5], slida[6]);
+                    float maxc01 = rtengine::max(slida[0], slida[1]);
+                    float maxc23 = rtengine::max(slida[2], slida[3]);
+                    float max03 = rtengine::max(maxc01, maxc23);
+                    float maxrf = rtengine::max(max03, slida[4]);
+                    float maxrc = rtengine::max(slida[5], slida[6]);
 
                     variCb[0] = SQR(slidb[0]);
                     variCb[1] = SQR(slidb[1]);
@@ -9022,14 +8915,14 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     variCb[4] = SQR(slidb[4]);
                     variCb[5] = SQR(slidb[5]);
                     variCb[6] = SQR(slidb[6]);
-                    float maxb01 = max(slidb[0], slidb[1]);
-                    float maxb23 = max(slidb[2], slidb[3]);
-                    float maxb03 = max(maxb01, maxb23);
-                    float maxbf = max(maxb03, slidb[4]);
-                    maxcfine = max(maxrf, maxbf);
+                    float maxb01 = rtengine::max(slidb[0], slidb[1]);
+                    float maxb23 = rtengine::max(slidb[2], slidb[3]);
+                    float maxb03 = rtengine::max(maxb01, maxb23);
+                    float maxbf = rtengine::max(maxb03, slidb[4]);
+                    maxcfine = rtengine::max(maxrf, maxbf);
 
-                    float maxbc = max(slidb[5], slidb[6]);
-                    maxccoarse = max(maxrc, maxbc);
+                    float maxbc = rtengine::max(slidb[5], slidb[6]);
+                    maxccoarse = rtengine::max(maxrc, maxbc);
 
                 }
 
@@ -9106,15 +8999,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     }
 
 
-                    variC[0] = max(minic, variC[0]);
-                    variC[1] = max(minic, k1 * variC[1]);
-                    variC[2] = max(minic, k2 * variC[2]);
-                    variC[3] = max(minic, k3 * variC[3]);
+                    variC[0] = rtengine::max(minic, variC[0]);
+                    variC[1] = rtengine::max(minic, k1 * variC[1]);
+                    variC[2] = rtengine::max(minic, k2 * variC[2]);
+                    variC[3] = rtengine::max(minic, k3 * variC[3]);
 
-                    variCb[0] = max(minic, variCb[0]);
-                    variCb[1] = max(minic, k1 * variCb[1]);
-                    variCb[2] = max(minic, k2 * variCb[2]);
-                    variCb[3] = max(minic, k3 * variCb[3]);
+                    variCb[0] = rtengine::max(minic, variCb[0]);
+                    variCb[1] = rtengine::max(minic, k1 * variCb[1]);
+                    variCb[2] = rtengine::max(minic, k2 * variCb[2]);
+                    variCb[3] = rtengine::max(minic, k3 * variCb[3]);
 
                     if (levred == 7) {
                         float k4 = 0.f;
@@ -9144,10 +9037,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             k5 = 1.f;
                         }
 
-                        variC[4] = max(0.000001f, k4 * variC[4]);
-                        variC[5] = max(0.000001f, k5 * variC[5]);
-                        variCb[4] = max(0.000001f, k4 * variCb[4]);
-                        variCb[5] = max(0.000001f, k5 * variCb[5]);
+                        variC[4] = rtengine::max(0.000001f, k4 * variC[4]);
+                        variC[5] = rtengine::max(0.000001f, k5 * variC[5]);
+                        variCb[4] = rtengine::max(0.000001f, k4 * variCb[4]);
+                        variCb[5] = rtengine::max(0.000001f, k5 * variCb[5]);
 
                         if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
                             k6 = 0.f;
@@ -9159,8 +9052,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             k6 = 1.f;
                         }
 
-                        variC[6] = max(0.00001f, k6 * variC[6]);
-                        variCb[6] = max(0.00001f, k6 * variCb[6]);
+                        variC[6] = rtengine::max(0.00001f, k6 * variC[6]);
+                        variCb[6] = rtengine::max(0.00001f, k6 * variCb[6]);
 
                     }
 
@@ -9181,10 +9074,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     float ac = (nvch - nvcl) / (seuil - seuil2);
                     float bc = nvch - seuil * ac;
 #ifdef _OPENMP
-                    #pragma omp parallel for
-
+                    #pragma omp parallel for if (multiThread)
 #endif
-
                     for (int ir = 0; ir < GH; ir++)
                         for (int jr = 0; jr < GW; jr++) {
                             float cN = std::sqrt(SQR(tmp1.a[ir][jr]) + SQR(tmp1.b[ir][jr]));
@@ -9220,10 +9111,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             if (!Ldecomp.memoryAllocationFailed) {
                 Lin = new array2D<float>(GW, GH);
 #ifdef _OPENMP
-                #pragma omp parallel for
-
+                #pragma omp parallel for if (multiThread)
 #endif
-
                 for (int i = 0; i < GH; ++i) {
                     for (int j = 0; j < GW; ++j) {
                         (*Lin)[i][j] = tmp1.L[i][j];
@@ -9242,10 +9131,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             if (!adecomp.memoryAllocationFailed) {
                 Ain = new array2D<float>(GW, GH);
 #ifdef _OPENMP
-                #pragma omp parallel for
-
+                #pragma omp parallel for if (multiThread)
 #endif
-
                 for (int i = 0; i < GH; ++i) {
                     for (int j = 0; j < GW; ++j) {
                         (*Ain)[i][j] = tmp1.a[i][j];
@@ -9267,10 +9154,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                 Bin = new array2D<float>(GW, GH);
 #ifdef _OPENMP
-                #pragma omp parallel for
-
+                #pragma omp parallel for if (multiThread)
 #endif
-
                 for (int i = 0; i < GH; ++i) {
                     for (int j = 0; j < GW; ++j) {
                         (*Bin)[i][j] = tmp1.b[i][j];
@@ -9314,9 +9199,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 int xEn = lp.xc + lp.lx;
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
@@ -9342,9 +9226,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                 if (!Ldecomp.memoryAllocationFailed) {
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic) collapse(2)
+                    #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
-
                     for (int lvl = 0; lvl < levred; lvl++) {
                         for (int dir = 1; dir < 4; dir++) {
                             int Wlvl_L = Ldecomp.level_W(lvl);
@@ -9384,22 +9267,16 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         vari[0] = SQR(slidL[0]);
                         vari[1] = SQR(slidL[1]);
                         vari[2] = SQR(slidL[2]);
-                        //    float maxf01 = max(slidL[0], slidL[1]);
-                        //     mxsfl = max(maxf01, slidL[2]);
-
                         vari[3] = SQR(slidL[3]);
                         vari[4] = SQR(slidL[4]);
                         vari[5] = SQR(slidL[5]);
                         vari[6] = SQR(slidL[6]);
-                        float mxslid34 = max(slidL[3], slidL[4]);
-                        float mxslid56 = max(slidL[5], slidL[6]);
-                        mxsl = max(mxslid34, mxslid56);
+                        float mxslid34 = rtengine::max(slidL[3], slidL[4]);
+                        float mxslid56 = rtengine::max(slidL[5], slidL[6]);
+                        mxsl = rtengine::max(mxslid34, mxslid56);
 
                     }
 
-
-
-                    //        if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f  || mxsl >= 0.1f || mxsfl >= 0.1f)) {
                     {
                         float kr3 = 0.f;
                         float kr4 = 0.f;
@@ -9430,15 +9307,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         }
 
-                        vari[0] = max(0.000001f, vari[0]);
-                        vari[1] = max(0.000001f, vari[1]);
-                        vari[2] = max(0.000001f, vari[2]);
-                        vari[3] = max(0.000001f, kr3 * vari[3]);
+                        vari[0] = rtengine::max(0.000001f, vari[0]);
+                        vari[1] = rtengine::max(0.000001f, vari[1]);
+                        vari[2] = rtengine::max(0.000001f, vari[2]);
+                        vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
 
                         if (levred == 7) {
-                            vari[4] = max(0.000001f, kr4 * vari[4]);
-                            vari[5] = max(0.000001f, kr5 * vari[5]);
-                            vari[6] = max(0.000001f, kr5 * vari[6]);
+                            vari[4] = rtengine::max(0.000001f, kr4 * vari[4]);
+                            vari[5] = rtengine::max(0.000001f, kr5 * vari[5]);
+                            vari[6] = rtengine::max(0.000001f, kr5 * vari[6]);
                         }
 
                         //    float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
@@ -9455,10 +9332,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         float bc = nvlh[i] - seuillow * ac;
                         //ac and bc for transition
 #ifdef _OPENMP
-                        #pragma omp parallel for
-
+                        #pragma omp parallel for if (multiThread)
 #endif
-
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 float lN = bufwv.L[ir][jr];
@@ -9572,11 +9447,11 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         variC[4] = SQR(slida[4]);
                         variC[5] = SQR(slida[5]);
                         variC[6] = SQR(slida[6]);
-                        float maxc01 = max(slida[0], slida[1]);
-                        float maxc23 = max(slida[2], slida[3]);
-                        float max03 = max(maxc01, maxc23);
-                        float maxrf = max(max03, slida[4]);
-                        float maxrc = max(slida[5], slida[6]);
+                        float maxc01 = rtengine::max(slida[0], slida[1]);
+                        float maxc23 = rtengine::max(slida[2], slida[3]);
+                        float max03 = rtengine::max(maxc01, maxc23);
+                        float maxrf = rtengine::max(max03, slida[4]);
+                        float maxrc = rtengine::max(slida[5], slida[6]);
 
                         variCb[0] = SQR(slidb[0]);
                         variCb[1] = SQR(slidb[1]);
@@ -9585,20 +9460,17 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         variCb[4] = SQR(slidb[4]);
                         variCb[5] = SQR(slidb[5]);
                         variCb[6] = SQR(slidb[6]);
-                        float maxb01 = max(slidb[0], slidb[1]);
-                        float maxb23 = max(slidb[2], slidb[3]);
-                        float maxb03 = max(maxb01, maxb23);
-                        float maxbf = max(maxb03, slidb[4]);
-                        maxcfine = max(maxrf, maxbf);
+                        float maxb01 = rtengine::max(slidb[0], slidb[1]);
+                        float maxb23 = rtengine::max(slidb[2], slidb[3]);
+                        float maxb03 = rtengine::max(maxb01, maxb23);
+                        float maxbf = rtengine::max(maxb03, slidb[4]);
+                        maxcfine = rtengine::max(maxrf, maxbf);
 
-                        float maxbc = max(slidb[5], slidb[6]);
-                        maxccoarse = max(maxrc, maxbc);
+                        float maxbc = rtengine::max(slidb[5], slidb[6]);
+                        maxccoarse = rtengine::max(maxrc, maxbc);
 
                     }
 
-
-
-                    //      if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f  || noiscfactiv || maxcfine >= 0.1f || maxccoarse > 0.1f)) {
                     {
                         float minic = 0.000001f;
 
@@ -9671,15 +9543,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             k3 = 1.f;
                         }
 
-                        variC[0] = max(minic, variC[0]);
-                        variC[1] = max(minic, k1 * variC[1]);
-                        variC[2] = max(minic, k2 * variC[2]);
-                        variC[3] = max(minic, k3 * variC[3]);
+                        variC[0] = rtengine::max(minic, variC[0]);
+                        variC[1] = rtengine::max(minic, k1 * variC[1]);
+                        variC[2] = rtengine::max(minic, k2 * variC[2]);
+                        variC[3] = rtengine::max(minic, k3 * variC[3]);
 
-                        variCb[0] = max(minic, variCb[0]);
-                        variCb[1] = max(minic, k1 * variCb[1]);
-                        variCb[2] = max(minic, k2 * variCb[2]);
-                        variCb[3] = max(minic, k3 * variCb[3]);
+                        variCb[0] = rtengine::max(minic, variCb[0]);
+                        variCb[1] = rtengine::max(minic, k1 * variCb[1]);
+                        variCb[2] = rtengine::max(minic, k2 * variCb[2]);
+                        variCb[3] = rtengine::max(minic, k3 * variCb[3]);
 
                         if (levred == 7) {
                             float k4 = 0.f;
@@ -9710,10 +9582,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
 
 
-                            variC[4] = max(0.000001f, k4 * variC[4]);
-                            variC[5] = max(0.000001f, k5 * variC[5]);
-                            variCb[4] = max(0.000001f, k4 * variCb[4]);
-                            variCb[5] = max(0.000001f, k5 * variCb[5]);
+                            variC[4] = rtengine::max(0.000001f, k4 * variC[4]);
+                            variC[5] = rtengine::max(0.000001f, k5 * variC[5]);
+                            variCb[4] = rtengine::max(0.000001f, k4 * variCb[4]);
+                            variCb[5] = rtengine::max(0.000001f, k5 * variCb[5]);
 
                             if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
                                 k6 = 0.f;
@@ -9725,8 +9597,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 k6 = 1.f;
                             }
 
-                            variC[6] = max(0.00001f, k6 * variC[6]);
-                            variCb[6] = max(0.00001f, k6 * variCb[6]);
+                            variC[6] = rtengine::max(0.00001f, k6 * variC[6]);
+                            variCb[6] = rtengine::max(0.00001f, k6 * variCb[6]);
                         }
 
                         float* noisevarchrom = new float[bfh * bfw];
@@ -9745,10 +9617,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         float ac = (nvch - nvcl) / (seuil - seuil2);
                         float bc = nvch - seuil * ac;
 #ifdef _OPENMP
-                        #pragma omp parallel for
-
+                        #pragma omp parallel for if (multiThread)
 #endif
-
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 float cN = std::sqrt(SQR(bufwv.a[ir][jr]) + SQR(bufwv.b[ir][jr]));
@@ -9783,10 +9653,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     Lin = new array2D<float>(bfw, bfh);
 
 #ifdef _OPENMP
-                    #pragma omp parallel for
-
+                    #pragma omp parallel for if (multiThread)
 #endif
-
                     for (int i = 0; i < bfh; ++i) {
                         for (int j = 0; j < bfw; ++j) {
                             (*Lin)[i][j] = bufwv.L[i][j];
@@ -9809,10 +9677,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 if (!adecomp.memoryAllocationFailed) {
                     Ain = new array2D<float>(bfw, bfh);
 #ifdef _OPENMP
-                    #pragma omp parallel for
-
+                    #pragma omp parallel for if (multiThread)
 #endif
-
                     for (int i = 0; i < bfh; ++i) {
                         for (int j = 0; j < bfw; ++j) {
                             (*Ain)[i][j] = bufwv.a[i][j];
@@ -9832,10 +9698,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 if (!bdecomp.memoryAllocationFailed) {
                     Bin = new array2D<float>(bfw, bfh);
 #ifdef _OPENMP
-                    #pragma omp parallel for
-
+                    #pragma omp parallel for if (multiThread)
 #endif
-
                     for (int i = 0; i < bfh; ++i) {
                         for (int j = 0; j < bfw; ++j) {
                             (*Bin)[i][j] = bufwv.b[i][j];
@@ -10101,10 +9965,10 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
-        for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
+        for (int y = rtengine::max(begy - cy, 0); y < rtengine::min(yEn - cy, original->H); y++) {
             const int loy = cy + y;
 
-            for (int x = std::max(begx - cx, 0); x < std::min(xEn - cx, original->W); x++) {
+            for (int x = rtengine::max(begx - cx, 0); x < rtengine::min(xEn - cx, original->W); x++) {
                 const int lox = cx + x;
 
                 bufsob[loy - begy][lox - begx] = bufreserv.L[loy - begy][lox - begx] = reserved->L[y][x];
@@ -10153,10 +10017,10 @@ void ImProcFunctions::Lab_Local(
 
 //encoding lab at the beginning
     if (lp.logena) {
-        const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         const int bfh = yend - ystart;
         const int bfw = xend - xstart;
 
@@ -10175,7 +10039,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            bufexpfin->CopyFrom(bufexporig.get());
+            bufexpfin->CopyFrom(bufexporig.get(), multiThread);
             std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
             lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
             log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
@@ -10201,7 +10065,7 @@ void ImProcFunctions::Lab_Local(
             transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             if (params->locallab.spots.at(sp).recurs) {
-                original->CopyFrom(transformed);
+                original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
             }
@@ -10250,9 +10114,8 @@ void ImProcFunctions::Lab_Local(
         float chromult =  1.f - 0.01f * lp.chromabl;
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < GH; y++) {
             for (int x = 0; x < GW; x++) {
                 bufgb->L[y][x] = original->L[y][x];
@@ -10284,7 +10147,6 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < GH; ir++) {
                 for (int jr = 0; jr < GW; jr++) {
                     float kmaskLexp = 0.f;
@@ -10338,13 +10200,13 @@ void ImProcFunctions::Lab_Local(
 
             const std::unique_ptr<LabImage> bufprov(new LabImage(GW, GH));
 
-            bufprov->CopyFrom(bufmaskblurbl.get());
+            bufprov->CopyFrom(bufmaskblurbl.get(), multiThread);
 
             if (lp.radmabl != 0.f) {
                 float blur = lp.radmabl;
                 blur = blur < 0.f ? -1.f / blur : 1.f + blur;
-                const int r1 = std::max<int>(4 / sk * blur + 0.5f, 1);
-                const int r2 = std::max<int>(25 / sk * blur + 0.5f, 1);
+                const int r1 = rtengine::max<int>(4 / sk * blur + 0.5f, 1);
+                const int r2 = rtengine::max<int>(25 / sk * blur + 0.5f, 1);
 
                 constexpr float epsilmax = 0.0005f;
                 constexpr float epsilmin = 0.00001f;
@@ -10363,9 +10225,8 @@ void ImProcFunctions::Lab_Local(
             calcGammaLut(lp.gammabl, lp.slomabl, lutTonemaskbl);
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < GH; ir++) {
                 for (int jr = 0; jr < GW; jr++) {
                     const float2 sincosval = xsincosf(hue[ir][jr]);
@@ -10381,9 +10242,8 @@ void ImProcFunctions::Lab_Local(
         if (strumask > 0.f && astool && (lp.enablMask || lp.showmaskblmet == 3)) {
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < GH; ir++) {
                 for (int jr = 0; jr < GW; jr++) {
                     bufmaskblurbl->L[ir][jr] *= (1.f + blendstru[ir][jr]);
@@ -10393,9 +10253,8 @@ void ImProcFunctions::Lab_Local(
 
         if (lmaskbllocalcurve && localmaskblutili && (lp.enablMask || lp.showmaskblmet == 3)) {
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < GH; ir++)
                 for (int jr = 0; jr < GW; jr++) {
                     bufmaskblurbl->L[ir][jr] = 0.5f * lmaskbllocalcurve[2.f * bufmaskblurbl->L[ir][jr]];
@@ -10404,14 +10263,14 @@ void ImProcFunctions::Lab_Local(
 
         int wavelet_level = params->locallab.spots.at(sp).shadmaskbl;
 
-        int minwin = min(GW, GH);
+        int minwin = rtengine::min(GW, GH);
         int maxlevelspot = 9;
 
         while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
             --maxlevelspot ;
         }
 
-        wavelet_level = min(wavelet_level, maxlevelspot);
+        wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
         bool wavcurvemask = false;
 
         if (loclmasCurveblwav && lmasutiliblwav && (lp.enablMask || lp.showmaskblmet == 3)) {
@@ -10459,7 +10318,6 @@ void ImProcFunctions::Lab_Local(
 
         // deltae Mask with scope
         int sco = params->locallab.spots.at(sp).scopemask;
-        constexpr int limscope = 80;
         const float mindE = 2.f + MINSCOPE * sco * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -10469,9 +10327,8 @@ void ImProcFunctions::Lab_Local(
             JaggedArray<float> rdE(GW, GH);
             deltaEforMask(rdE, GW, GH, bufgb.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.balance, lp.balanceh);
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < GH; ir++) {
                 for (int jr = 0; jr < GW; jr++) {
                     bufmaskblurbl->L[ir][jr] = bufprov->L[ir][jr] + rdE[ir][jr] * (bufmaskblurbl->L[ir][jr] - bufprov->L[ir][jr]);
@@ -10496,9 +10353,8 @@ void ImProcFunctions::Lab_Local(
             }
 
 #ifdef _OPENMP
-            #pragma omp parallel for
+            #pragma omp parallel for if (multiThread)
 #endif
-
             for (int y = 0; y < GH; y++) {
                 for (int x = 0; x < GW; x++) {
                     bufmaskblurbl->L[y][x] = data_tmp[y * GW + x];
@@ -10512,7 +10368,7 @@ void ImProcFunctions::Lab_Local(
             const int invers = lp.blurmet == 1 ? 1 : 0;
 
 #ifdef _OPENMP
-            #pragma omp parallel
+            #pragma omp parallel if (multiThread)
 #endif
             {
                 gaussianBlur(bufmaskblurbl->L, bufmaskorigbl->L, GW, GH, radiusb);
@@ -10534,10 +10390,10 @@ void ImProcFunctions::Lab_Local(
     if (((radius > 1.5 * GAUSS_SKIP && lp.rad > 1.6) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
         std::unique_ptr<LabImage> tmp1;
         std::unique_ptr<LabImage> tmp2;
-        int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         int bfh = yend - ystart;
         int bfw = xend - xstart;
         int bfhr = bfh;
@@ -10565,9 +10421,8 @@ void ImProcFunctions::Lab_Local(
                     if (bfw > 0 && bfh > 0) {
                         tmp1.reset(new LabImage(bfw, bfh));
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = ystart; y < yend ; y++) {
                             for (int x = xstart; x < xend; x++) {
                                 tmp1->L[y - ystart][x - xstart] = original->L[y][x];
@@ -10609,12 +10464,11 @@ void ImProcFunctions::Lab_Local(
                     } else {
 
 #ifdef _OPENMP
-                        #pragma omp parallel
+                        #pragma omp parallel if (multiThread)
 #endif
                         {
                             if (lp.chromet == 0)
                             {
-
                                 gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
                             }
 
@@ -10628,7 +10482,6 @@ void ImProcFunctions::Lab_Local(
                                 gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
                                 gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
                             }
-
                         }
                     }
 
@@ -10650,7 +10503,7 @@ void ImProcFunctions::Lab_Local(
                     } else {
 
 #ifdef _OPENMP
-                        #pragma omp parallel
+                        #pragma omp parallel if (multiThread)
 #endif
                         {
                             if (lp.chromet == 0)
@@ -10668,7 +10521,6 @@ void ImProcFunctions::Lab_Local(
                                 gaussianBlur(original->a, tmp1->a, GW, GH, radius);
                                 gaussianBlur(original->b, tmp1->b, GW, GH, radius);
                             }
-
                         }
                     }
                 }
@@ -10792,9 +10644,8 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.guidb > 0) {
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = ystart; y < yend ; y++) {
                             for (int x = xstart; x < xend; x++) {
                                 tmp1->L[y - ystart][x - xstart] = original->L[y][x];
@@ -10815,14 +10666,13 @@ void ImProcFunctions::Lab_Local(
                         
                         
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < bfh ; y++) {
                             for (int x = 0; x < bfw; x++) {
                                 LL[y][x] = tmp1->L[y][x];
                                 float ll = LL[y][x] / 32768.f;
-                                guide[y][x] = xlin2log(max(ll, 0.f), 10.f);
+                                guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
                                 rr[y][x] = tmpImage->r(y, x);
                                 gg[y][x] = tmpImage->g(y, x);
                                 bb[y][x] = tmpImage->b(y, x);
@@ -10834,7 +10684,7 @@ void ImProcFunctions::Lab_Local(
                         array2D<float> iB(bfw, bfh, bb, 0);
                         array2D<float> iL(bfw, bfh, LL, 0);
 
-                        int r = max(int(lp.guidb / sk), 1);
+                        int r = rtengine::max(int(lp.guidb / sk), 1);
 
                         const float epsil = 0.001f * std::pow(2, - lp.epsb);
 
@@ -10850,9 +10700,8 @@ void ImProcFunctions::Lab_Local(
                         }
 
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < bfh ; y++) {
                             for (int x = 0; x < bfw; x++) {
                                 rr[y][x] = intp(lp.strbl, rr[y][x] , iR[y][x]);
@@ -10869,9 +10718,8 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.chromet == 0) {
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
                                     LL[y][x] = intp(lp.strbl, LL[y][x] , iL[y][x]);
@@ -10887,9 +10735,8 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.guidb > 0) {
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < GH ; y++) {
                             for (int x = 0; x < GW; x++) {
                                 tmp1->L[y][x] = original->L[y][x];
@@ -10909,14 +10756,13 @@ void ImProcFunctions::Lab_Local(
                         array2D<float> guide(GW, GH);
 
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < GH ; y++) {
                             for (int x = 0; x < GW; x++) {
                                 LL[y][x] = tmp1->L[y][x];
                                 float ll = LL[y][x] / 32768.f;
-                                guide[y][x] = xlin2log(max(ll, 0.f), 10.f);
+                                guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
                                 rr[y][x] = tmpImage->r(y, x);
                                 gg[y][x] = tmpImage->g(y, x);
                                 bb[y][x] = tmpImage->b(y, x);
@@ -10929,7 +10775,7 @@ void ImProcFunctions::Lab_Local(
                         array2D<float> iB(GW, GH, bb, 0);
                         array2D<float> iL(GW, GH, LL, 0);
 
-                        int r = max(int(lp.guidb / sk), 1);
+                        int r = rtengine::max(int(lp.guidb / sk), 1);
 
                         const float epsil = 0.001f * std::pow(2, - lp.epsb);
 
@@ -10945,9 +10791,8 @@ void ImProcFunctions::Lab_Local(
                         }
 
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < GH ; y++) {
                             for (int x = 0; x < GW; x++) {
                                 rr[y][x] = intp(lp.strbl, rr[y][x] , iR[y][x]);
@@ -10964,9 +10809,8 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.chromet == 0) {
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
                                     LL[y][x] = intp(lp.strbl, LL[y][x] , iL[y][x]);
@@ -10983,7 +10827,7 @@ void ImProcFunctions::Lab_Local(
                     float minC = std::sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - std::sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
                     float maxC = minC;
 #ifdef _OPENMP
-                    #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
+                    #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16) if (multiThread)
 #endif
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
@@ -10998,7 +10842,7 @@ void ImProcFunctions::Lab_Local(
                     if (coefC > 0.f) {
                         coefC = 1.f / coefC;
 #ifdef _OPENMP
-                        #pragma omp parallel for
+                        #pragma omp parallel for if (multiThread)
 #endif
                         for (int y = 0; y < bfh; y++) {
                             for (int x = 0; x < bfw; x++) {
@@ -11011,7 +10855,7 @@ void ImProcFunctions::Lab_Local(
                         BlurNoise_Local(tmp1.get(), originalmaskbl, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                         if (params->locallab.spots.at(sp).recurs) {
-                            original->CopyFrom(transformed);
+                            original->CopyFrom(transformed, multiThread);
                             float avge;
                             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                         }
@@ -11019,7 +10863,7 @@ void ImProcFunctions::Lab_Local(
                         InverseBlurNoise_Local(originalmaskbl, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
 
                         if (params->locallab.spots.at(sp).recurs) {
-                            original->CopyFrom(transformed);
+                            original->CopyFrom(transformed, multiThread);
                             float avge;
                             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                         }
@@ -11045,9 +10889,8 @@ void ImProcFunctions::Lab_Local(
             const int xEn = lp.xc + lp.lx;
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = rtengine::max(0, begy - cy); y < rtengine::min(transformed->H, yEn - cy); y++) {
                 const int loy = cy + y;
 
@@ -11060,7 +10903,7 @@ void ImProcFunctions::Lab_Local(
             }
         } else {//dcrop.cc
             bufwv.reset(new LabImage(transformed->W, transformed->H));
-            bufwv->CopyFrom(original);
+            bufwv->CopyFrom(original, multiThread);
         } //end dcrop
 
         const double threshold = lp.bilat / 20.0;
@@ -11072,7 +10915,7 @@ void ImProcFunctions::Lab_Local(
         DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, *(bufwv.get()), cx, cy, sk);
 
         if (params->locallab.spots.at(sp).recurs) {
-            original->CopyFrom(transformed);
+            original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
         }
@@ -11088,7 +10931,7 @@ void ImProcFunctions::Lab_Local(
         DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk);
 
         if (params->locallab.spots.at(sp).recurs) {
-            original->CopyFrom(transformed);
+            original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
         }
@@ -11101,10 +10944,10 @@ void ImProcFunctions::Lab_Local(
 //begin cbdl
     if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f || lp.mulloc[5] != 1.f || lp.clarityml != 0.f || lp.contresid != 0.f  || lp.enacbMask || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4 || lp.prevdE) && lp.cbdlena) {
         if (call <= 3) { //call from simpleprocess dcrop improcc
-            const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-            const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-            const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-            const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             int bfh = yend - ystart;
             int bfw = xend - xstart;
 
@@ -11124,9 +10967,8 @@ void ImProcFunctions::Lab_Local(
                 }
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                 for (int y = 0; y < bfh; y++) {
                     for (int x = 0; x < bfw; x++) {
                         loctemp->L[y][x] = original->L[y + ystart][x + xstart];
@@ -11177,7 +11019,6 @@ void ImProcFunctions::Lab_Local(
                 int sco = params->locallab.spots.at(sp).scopemask;
                 int lumask = params->locallab.spots.at(sp).lumask;
                 int shado = 0;
-                const int limscope = 80;
                 const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                 const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                 const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -11212,9 +11053,8 @@ void ImProcFunctions::Lab_Local(
                 if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 1  || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 4 || lp.enacbMask) {
 
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                     for (int y = ystart; y < yend; y++) {
                         for (int x = xstart; x < xend; x++) {
                             bufsh[y - ystart][x - xstart] = origcbdl->L[y - ystart][x - xstart] = original->L[y][x];
@@ -11246,9 +11086,8 @@ void ImProcFunctions::Lab_Local(
                 //chroma CBDL begin here
                 if (lp.chromacb > 0.f && !nochroma) {
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
                             bufsh[ir][jr] = std::sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr]));
@@ -11277,9 +11116,8 @@ void ImProcFunctions::Lab_Local(
                     float minC = loctemp->L[0][0] - std::sqrt(SQR(loctemp->a[0][0]) + SQR(loctemp->b[0][0]));
                     float maxC = minC;
 #ifdef _OPENMP
-                    #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
+                    #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16) if (multiThread)
 #endif
-
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
                             bufchrom[ir][jr] = (loctemp->L[ir][jr] - std::sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr])));
@@ -11288,14 +11126,13 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
-                    float coefC = 0.01f * (max(std::fabs(minC), std::fabs(maxC)));
+                    float coefC = 0.01f * rtengine::max(std::fabs(minC), std::fabs(maxC));
 
                     if (coefC > 0.f) {
                         coefC = 1.f / coefC;
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
                                 bufchrom[ir][jr] *= coefC;
@@ -11307,7 +11144,7 @@ void ImProcFunctions::Lab_Local(
                     bufsh.free();
 
                     if (params->locallab.spots.at(sp).recurs) {
-                        original->CopyFrom(transformed);
+                        original->CopyFrom(transformed, multiThread);
                         float avge;
                         calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                     }
@@ -11323,10 +11160,10 @@ void ImProcFunctions::Lab_Local(
 
     if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f || lp.strvib != 0.f  || lp.war != 0 || lp.strvibab != 0.f  || lp.strvibh != 0.f || lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 3 || lp.showmaskvibmet == 4 || lp.prevdE) && lp.vibena) { //interior ellipse renforced lightness and chroma  //locallutili
         if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-            const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-            const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-            const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-            const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
 
@@ -11344,9 +11181,8 @@ void ImProcFunctions::Lab_Local(
                 }
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                 for (int y = 0; y < bfh; y++) {
                     for (int x = 0; x < bfw; x++) {
                         bufexporig->L[y][x] = original->L[y + ystart][x + xstart];
@@ -11398,7 +11234,6 @@ void ImProcFunctions::Lab_Local(
                 int sco = params->locallab.spots.at(sp).scopemask;
                 int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
-                const int limscope = 80;
                 const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                 const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                 const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -11427,9 +11262,8 @@ void ImProcFunctions::Lab_Local(
                 if (lp.showmaskvibmet == 0 || lp.showmaskvibmet == 1  || lp.showmaskvibmet == 2 || lp.showmaskvibmet == 4 || lp.enavibMask) {
 
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                     for (int y = ystart; y < yend; y++) {
                         for (int x = xstart; x < xend; x++) {
                             bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
@@ -11449,15 +11283,14 @@ void ImProcFunctions::Lab_Local(
                     vibranceParams.skintonescurve = params->locallab.spots.at(sp).skintonescurve;
 
 
-                    bufexpfin->CopyFrom(bufexporig.get());
+                    bufexpfin->CopyFrom(bufexporig.get(), multiThread);
 
                     if (lp.strvibh != 0.f) {
                         struct grad_params gph;
                         calclocalGradientParams(lp, gph, ystart, xstart, bfw, bfh, 9);
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 double factor = 1.0;
@@ -11494,9 +11327,8 @@ void ImProcFunctions::Lab_Local(
                         struct grad_params gp;
                         calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 7);
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 double factor = 1.0;
@@ -11509,9 +11341,8 @@ void ImProcFunctions::Lab_Local(
                         struct grad_params gpab;
                         calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 8);
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 double factor = 1.0;
@@ -11535,7 +11366,7 @@ void ImProcFunctions::Lab_Local(
 
 
                 if (params->locallab.spots.at(sp).recurs) {
-                    original->CopyFrom(transformed);
+                    original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                 }
@@ -11548,10 +11379,10 @@ void ImProcFunctions::Lab_Local(
 
     if ((lp.strengt != 0.f || lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 3 || lp.showmasktmmet == 4 || lp.prevdE) && lp.tonemapena && !params->epd.enabled) {
         if (call <= 3) { //simpleprocess dcrop improcc
-            const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-            const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-            const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-            const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
 
@@ -11574,9 +11405,8 @@ void ImProcFunctions::Lab_Local(
                 }
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                 for (int y = ystart; y < yend; y++) {
                     for (int x = xstart; x < xend; x++) {
                         bufgb->L[y - ystart][x - xstart] = original->L[y][x];
@@ -11636,7 +11466,6 @@ void ImProcFunctions::Lab_Local(
                     int sco = params->locallab.spots.at(sp).scopemask;
                     int shortcu = 0; //lp.mergemet;// params->locallab.spots.at(sp).shortc;
 
-                    const int limscope = 80;
                     const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                     const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                     const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -11666,7 +11495,7 @@ void ImProcFunctions::Lab_Local(
                     constexpr int itera = 0;
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
 
-                    tmp1m->CopyFrom(tmp1.get());//save current result
+                    tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result
                     bool enatmMasktmap = params->locallab.spots.at(sp).enatmMaskaft;
 
                     if (enatmMasktmap) {
@@ -11678,7 +11507,6 @@ void ImProcFunctions::Lab_Local(
                         int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
                         int lumask = params->locallab.spots.at(sp).lumask;
 
-                        const int limscope = 80;
                         const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                         const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -11705,7 +11533,7 @@ void ImProcFunctions::Lab_Local(
 
                     }
 
-                    tmp1->CopyFrom(tmp1m.get());//restore current result
+                    tmp1->CopyFrom(tmp1m.get(), multiThread); //restore current result
 
 
                     float minL = tmp1->L[0][0] - bufgb->L[0][0];
@@ -11714,7 +11542,7 @@ void ImProcFunctions::Lab_Local(
                     float maxC = minC;
 
 #ifdef _OPENMP
-                    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
+                    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) reduction(max:maxC) reduction(min:minC) schedule(dynamic,16) if (multiThread)
 #endif
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
@@ -11727,8 +11555,8 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
-                    float coef = 0.01f * (max(std::fabs(minL), std::fabs(maxL)));
-                    float coefC = 0.01f * (max(std::fabs(minC), std::fabs(maxC)));
+                    float coef = 0.01f * rtengine::max(std::fabs(minL), std::fabs(maxL));
+                    float coefC = 0.01f * rtengine::max(std::fabs(minC), std::fabs(maxC));
 
                     if (coef == 0.f) {
                         coef = 1.f;
@@ -11743,7 +11571,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
 #ifdef _OPENMP
-                    #pragma omp parallel for
+                    #pragma omp parallel for if (multiThread)
 #endif
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
@@ -11759,7 +11587,7 @@ void ImProcFunctions::Lab_Local(
                     bufgb.reset();
 
                     if (params->locallab.spots.at(sp).recurs) {
-                        original->CopyFrom(transformed);
+                        original->CopyFrom(transformed, multiThread);
                         float avge;
                         calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                     }
@@ -11785,10 +11613,10 @@ void ImProcFunctions::Lab_Local(
     }
 
     if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || lp.strSH != 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4 || lp.prevdE) && call < 3 && lp.hsena) {
-        const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         const int bfh = yend - ystart;
         const int bfw = xend - xstart;
 
@@ -11808,9 +11636,8 @@ void ImProcFunctions::Lab_Local(
             }
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = 0; y < bfh; y++) {
                 for (int x = 0; x < bfw; x++) {
                     bufexporig->L[y][x] = original->L[y + ystart][x + xstart];
@@ -11862,7 +11689,6 @@ void ImProcFunctions::Lab_Local(
             int sco = params->locallab.spots.at(sp).scopemask;
             int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
-            const int limscope = 80;
             const float mindE = 2.f + MINSCOPE * sco * lp.thr;
             const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -11891,9 +11717,8 @@ void ImProcFunctions::Lab_Local(
             if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1  || lp.showmaskSHmet == 2 || lp.showmaskSHmet == 4 || lp.enaSHMask) {
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                 for (int y = 0; y < bfh ; y++) {
                     for (int x = 0; x < bfw; x++) {
                         bufexporig->L[y][x] = original->L[y + ystart][x + xstart];
@@ -11915,9 +11740,8 @@ void ImProcFunctions::Lab_Local(
                 if (lp.strSH != 0.f) {
                     calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 2);
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                     for (int ir = 0; ir < bfh; ir++)
                         for (int jr = 0; jr < bfw; jr++) {
                             double factor = 1.0;
@@ -11958,7 +11782,7 @@ void ImProcFunctions::Lab_Local(
             transit_shapedetect2(call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             if (params->locallab.spots.at(sp).recurs) {
-                original->CopyFrom(transformed);
+                original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
             }
@@ -11974,9 +11798,8 @@ void ImProcFunctions::Lab_Local(
         }
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < GH ; y++) {
             for (int x = 0; x < GW; x++) {
                 bufcolorig->L[y][x] = original->L[y][x];
@@ -12017,7 +11840,6 @@ void ImProcFunctions::Lab_Local(
         int sco = params->locallab.spots.at(sp).scopemask;
         int shortcu = params->locallab.spots.at(sp).shortc;
 
-        const int limscope = 80;//
         const float mindE = 2.f + MINSCOPE * sco * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -12048,7 +11870,7 @@ void ImProcFunctions::Lab_Local(
         InverseColorLight_Local(tonequ, tonecurv, sp, 2, lp, originalmaskSH.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
 
         if (params->locallab.spots.at(sp).recurs) {
-            original->CopyFrom(transformed);
+            original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
         }
@@ -12056,10 +11878,10 @@ void ImProcFunctions::Lab_Local(
 
 // soft light and retinex_pde
     if (lp.strng > 0.f && call <= 3 && lp.sfena) {
-        int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         int bfh = yend - ystart;
         int bfw = xend - xstart;
         //variable for fast FFTW
@@ -12076,7 +11898,7 @@ void ImProcFunctions::Lab_Local(
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
             for (int y = ystart; y < yend; y++) {
                 for (int x = xstart; x < xend; x++) {
@@ -12086,7 +11908,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            bufexpfin->CopyFrom(bufexporig.get());
+            bufexpfin->CopyFrom(bufexporig.get(), multiThread);
             SoftLightParams softLightParams;
             softLightParams.enabled = true;
             softLightParams.strength = lp.strng;
@@ -12102,7 +11924,7 @@ void ImProcFunctions::Lab_Local(
                 deltaEforLaplace(dE.get(), lp.lap, bfwr, bfhr, bufexpfin.get(), hueref, chromaref, lumaref);
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                 for (int y = 0; y < bfhr; y++) {
                     for (int x = 0; x < bfwr; x++) {
@@ -12114,7 +11936,7 @@ void ImProcFunctions::Lab_Local(
                 MyMutex::MyLock lock(*fftwMutex);
                 ImProcFunctions::retinex_pde(datain.get(), dataout.get(), bfwr, bfhr, 8.f * lp.strng, 1.f, dE.get(), showorig, 1, 1);
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                 for (int y = 0; y < bfhr; y++) {
                     for (int x = 0; x < bfwr; x++) {
@@ -12126,7 +11948,7 @@ void ImProcFunctions::Lab_Local(
             transit_shapedetect2(call, 3, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             if (params->locallab.spots.at(sp).recurs) {
-                original->CopyFrom(transformed);
+                original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
             }
@@ -12185,10 +12007,10 @@ void ImProcFunctions::Lab_Local(
 
     if ((lp.lcamount > 0.f || wavcurve || lp.showmasklcmet == 2 || lp.enalcMask || lp.showmasklcmet == 3 || lp.showmasklcmet == 4 || lp.prevdE || lp.strwav != 0.f || wavcurvelev || wavcurvecon || wavcurvecomp || wavcurvecompre || lp.edgwena || params->locallab.spots.at(sp).residblur > 0.f || params->locallab.spots.at(sp).levelblur > 0.f || params->locallab.spots.at(sp).residcont != 0.f || params->locallab.spots.at(sp).clarilres != 0.f || params->locallab.spots.at(sp).claricres != 0.f) && call < 3 && lp.lcena) {
 
-        int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         int bfh = yend - ystart;
         int bfw = xend - xstart;
         int bfhr = bfh;
@@ -12217,9 +12039,8 @@ void ImProcFunctions::Lab_Local(
             const std::unique_ptr<LabImage> tmpres(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = ystart; y < yend; y++) {
                 for (int x = xstart; x < xend; x++) {
                     bufgb->L[y - ystart][x - xstart] = original->L[y][x];
@@ -12238,9 +12059,8 @@ void ImProcFunctions::Lab_Local(
             }
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = 0; y < bfh; y++) {
                 for (int x = 0; x < bfw; x++) {
                     bufgb->L[y][x] = original->L[y + ystart][x + xstart];
@@ -12293,7 +12113,6 @@ void ImProcFunctions::Lab_Local(
             int sco = params->locallab.spots.at(sp).scopemask;
             int shado = 0;
             int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
-            const int limscope = 80;
             const float mindE = 2.f + MINSCOPE * sco * lp.thr;
             const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -12334,9 +12153,8 @@ void ImProcFunctions::Lab_Local(
                     } else {
                         const std::unique_ptr<LabImage> tmpfftw(new LabImage(bfwr, bfhr));
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < bfhr; y++) {
                             for (int x = 0; x < bfwr; x++) {
                                 tmpfftw->L[y][x] = tmp1->L[y][x];
@@ -12348,9 +12166,8 @@ void ImProcFunctions::Lab_Local(
                         fftwlc = true;
                         ImProcFunctions::localContrast(tmpfftw.get(), tmpfftw->L, localContrastParams, fftwlc, sk);
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < bfhr; y++) {
                             for (int x = 0; x < bfwr; x++) {
                                 tmp1->L[y][x] = tmpfftw->L[y][x];
@@ -12374,7 +12191,7 @@ void ImProcFunctions::Lab_Local(
 
 #endif
                     // adap maximum level wavelet to size of RT-spot
-                    int minwin = min(bfw, bfh);
+                    int minwin = rtengine::min(bfw, bfh);
                     int maxlevelspot = 10;//maximum possible
 
                     // adap maximum level wavelet to size of crop
@@ -12384,7 +12201,7 @@ void ImProcFunctions::Lab_Local(
 
                     // printf("minwin=%i maxlevelavant=%i  maxlespot=%i\n", minwin, wavelet_level, maxlevelspot);
 
-                    wavelet_level = min(wavelet_level, maxlevelspot);
+                    wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
                     //    printf("maxlevel=%i\n", wavelet_level);
                     bool exec = false;
                     bool origlc = params->locallab.spots.at(sp).origlc;
@@ -12437,24 +12254,22 @@ void ImProcFunctions::Lab_Local(
                         if (radblur > 0.f && !blurlc && blurena) {
                             array2D<float> bufa(W_La, H_La);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int y = 0; y < H_La; y++) {
                                 for (int x = 0; x < W_La; x++) {
                                     bufa[y][x]  = wav_ab0a [y * W_La + x];
                                 }
                             }
 
-                            #pragma omp parallel
+                            #pragma omp parallel if (multiThread)
                             {
                                 gaussianBlur(bufa, bufa, W_La, H_La, radblur);
                             }
 
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int y = 0; y < H_La; y++) {
                                 for (int x = 0; x < W_La; x++) {
                                     wav_ab0a[y * W_La + x] = bufa[y][x];
@@ -12467,7 +12282,6 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for if (multiThread)
 #endif
-
                             for (int i = 0; i < W_La * H_La; i++) {
                                 wav_ab0a[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));//more progressive than linear
                                 wav_ab0a[i] = clipC(wav_ab0a[i]);
@@ -12491,25 +12305,25 @@ void ImProcFunctions::Lab_Local(
                         if (radblur > 0.f && !blurlc && blurena) {
                             array2D<float> bufb(W_Lb, H_Lb);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int y = 0; y < H_Lb; y++) {
                                 for (int x = 0; x < W_Lb; x++) {
                                     bufb[y][x]  = wav_ab0b [y * W_Lb + x];
                                 }
                             }
 
-                            #pragma omp parallel
+#ifdef _OPENMP
+                            #pragma omp parallel if (multiThread)
+#endif
                             {
                                 gaussianBlur(bufb, bufb, W_Lb, H_Lb, radblur);
                             }
 
 
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int y = 0; y < H_Lb; y++) {
                                 for (int x = 0; x < W_Lb; x++) {
                                     wav_ab0b[y * W_Lb + x] = bufb[y][x];
@@ -12523,7 +12337,6 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for if (multiThread)
 #endif
-
                             for (int i = 0; i < W_Lb * H_Lb; i++) {
                                 wav_ab0b[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));
                                 wav_ab0b[i] = clipC(wav_ab0b[i]);
@@ -12532,16 +12345,14 @@ void ImProcFunctions::Lab_Local(
 
                         wdspotb->reconstruct(tmp1->b[0], 1.f);
                         delete wdspotb;
-
                     }
 
                     if (!origlc) {//merge all files
                         exec = false;
+                        //copy previous calculation in merge possibilities
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
-//copy previous calculation in merge possibilities
                         for (int y = 0; y < bfhr; y++) {
                             for (int x = 0; x < bfwr; x++) {
                                 tmpresid->L[y][x] = tmp1->L[y][x];
@@ -12549,7 +12360,6 @@ void ImProcFunctions::Lab_Local(
                                 tmpresid->b[y][x] = tmp1->b[y][x];
                             }
                         }
-
                         clarimerge(lp, mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
                     }
 
@@ -12575,9 +12385,8 @@ void ImProcFunctions::Lab_Local(
                         LabImage *mergfile = tmp1.get();
 
 #ifdef _OPENMP
-                        #pragma omp parallel for
+                        #pragma omp parallel for if (multiThread)
 #endif
-
                         for (int x = 0; x < bfh; x++)
                             for (int y = 0; y < bfw; y++) {
                                 tmp1->L[x][y] = clipLoc((1.f + mL0) * mergfile->L[x][y] - mL * tmpresid->L[x][y]);
@@ -12597,7 +12406,7 @@ void ImProcFunctions::Lab_Local(
             }
 
             if (params->locallab.spots.at(sp).recurs) {
-                original->CopyFrom(transformed);
+                original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
             }
@@ -12625,9 +12434,8 @@ void ImProcFunctions::Lab_Local(
             int xEn = lp.xc + lp.lx;
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = 0; y < transformed->H ; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     int lox = cx + x;
@@ -12649,7 +12457,7 @@ void ImProcFunctions::Lab_Local(
         Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
         if (params->locallab.spots.at(sp).recurs) {
-            original->CopyFrom(transformed);
+            original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
         }
@@ -12664,17 +12472,17 @@ void ImProcFunctions::Lab_Local(
         InverseSharp_Local(loctemp, hueref, lumaref, chromaref, lp, original, transformed, cx, cy, sk);
 
         if (params->locallab.spots.at(sp).recurs) {
-            original->CopyFrom(transformed);
+            original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
         }
     }
 
     if (lp.dehaze != 0 && lp.retiena) {
-        int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         int bfh = yend - ystart;
         int bfw = xend - xstart;
 
@@ -12683,9 +12491,8 @@ void ImProcFunctions::Lab_Local(
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = ystart; y < yend; y++) {
                 for (int x = xstart; x < xend; x++) {
                     bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
@@ -12694,7 +12501,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            bufexpfin->CopyFrom(bufexporig.get());
+            bufexpfin->CopyFrom(bufexporig.get(), multiThread);
             //calc dehaze
             const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
 
@@ -12711,7 +12518,7 @@ void ImProcFunctions::Lab_Local(
             transit_shapedetect2(call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             if (params->locallab.spots.at(sp).recurs) {
-                original->CopyFrom(transformed);
+                original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
             }
@@ -12746,9 +12553,8 @@ void ImProcFunctions::Lab_Local(
             }
 
 #ifdef _OPENMP
-            #pragma omp parallel for
+            #pragma omp parallel for if (multiThread)
 #endif
-
             for (int ir = 0; ir < GH; ir++) //fill with 0
                 for (int jr = 0; jr < GW; jr++) {
                     bufreti->L[ir][jr] = 0.f;
@@ -12759,9 +12565,8 @@ void ImProcFunctions::Lab_Local(
                 }
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = 0; y < transformed->H ; y++) //{
                 for (int x = 0; x < transformed->W; x++) {
                     bufreti->L[y][x] = original->L[y][x];
@@ -12782,7 +12587,6 @@ void ImProcFunctions::Lab_Local(
             float raddE = params->locallab.spots.at(sp).softradiusret;
 
             //calc dE and reduction to use in MSR to reduce artifacts
-            const int limscope = 80;
             const float mindE = 4.f + MINSCOPE * lp.sensh * lp.thr;
             const float maxdE = 5.f + MAXSCOPE * lp.sensh * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -12797,9 +12601,8 @@ void ImProcFunctions::Lab_Local(
             float bde = 100.f - raddE;
             float sensibefore = ade * lp.sensh + bde;//we can change sensitivity 0.1 90 or 0.3 70 or 0.4 60
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int y = 0; y < transformed->H ; y++)
                 for (int x = 0; x < transformed->W; x++) {
                     float dE = std::sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) + SQR(lumaref - bufreti->b[y][x] / 327.68f));
@@ -12814,9 +12617,8 @@ void ImProcFunctions::Lab_Local(
             float** orig1 = *(origBuffer1.get());
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < Hd; ir += 1)
                 for (int jr = 0; jr < Wd; jr += 1) {
                     orig[ir][jr] = bufreti->L[ir][jr];
@@ -12833,22 +12635,20 @@ void ImProcFunctions::Lab_Local(
             int sco = params->locallab.spots.at(sp).scopemask;
             float lumask = params->locallab.spots.at(sp).lumask;
 
-            const int limscope2 = 80;
             const float mindE2 = 2.f + MINSCOPE * sco * lp.thr;
             const float maxdE2 = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
-            const float mindElim2 = 2.f + MINSCOPE * limscope2 * lp.thr;
-            const float maxdElim2 = 5.f + MAXSCOPE * limscope2 * (1 + 0.1f * lp.thr);
+            const float mindElim2 = 2.f + MINSCOPE * limscope * lp.thr;
+            const float maxdElim2 = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
             ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, orig1,
                                       Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                       locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
                                       lmaskretilocalcurve, localmaskretiutili,
                                       transformed, lp.enaretiMasktmap, lp.enaretiMask,
                                       delt, hueref, chromaref, lumaref,
-                                      maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco, lp.balance, lp.balanceh, lumask);
+                                      maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope, sco, lp.balance, lp.balanceh, lumask);
 #ifdef _OPENMP
-            #pragma omp parallel for
+            #pragma omp parallel for if (multiThread)
 #endif
-
             for (int ir = 0; ir < Hd; ir += 1) {
                 for (int jr = 0; jr < Wd; jr += 1) {
                     tmpl->L[ir][jr] = orig[ir][jr];
@@ -12859,9 +12659,8 @@ void ImProcFunctions::Lab_Local(
                 float *datain = new float[Hd * Wd];
                 float *data = new float[Hd * Wd];
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for if (multiThread)
 #endif
-
                 for (int ir = 0; ir < Hd; ir += 1)
                     for (int jr = 0; jr < Wd; jr += 1) {
                         datain[ir * Wd + jr] = orig1[ir][jr];
@@ -12870,9 +12669,8 @@ void ImProcFunctions::Lab_Local(
 
                 normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f);
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for if (multiThread)
 #endif
-
                 for (int ir = 0; ir < Hd; ir += 1)
                     for (int jr = 0; jr < Wd; jr += 1) {
                         tmpl->L[ir][jr] = data[ir * Wd + jr];
@@ -12886,9 +12684,8 @@ void ImProcFunctions::Lab_Local(
             float minL = tmpl->L[0][0] - bufreti->L[0][0];
             float maxL = minL;
 #ifdef _OPENMP
-            #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16)
+            #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16) if (multiThread)
 #endif
-
             for (int ir = 0; ir < Hd; ir++) {
                 for (int jr = 0; jr < Wd; jr++) {
                     buflight[ir][jr] = tmpl->L[ir][jr] - bufreti->L[ir][jr];
@@ -12897,7 +12694,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            const float coef = 0.01f * (max(std::fabs(minL), std::fabs(maxL)));
+            const float coef = 0.01f * rtengine::max(std::fabs(minL), std::fabs(maxL));
 
             for (int ir = 0; ir < Hd; ir++) {
                 for (int jr = 0; jr < Wd; jr++) {
@@ -12908,7 +12705,7 @@ void ImProcFunctions::Lab_Local(
             transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
             if (params->locallab.spots.at(sp).recurs) {
-                original->CopyFrom(transformed);
+                original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
             }
@@ -12918,9 +12715,8 @@ void ImProcFunctions::Lab_Local(
                 if (call == 1) {
 
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
 
@@ -12932,9 +12728,8 @@ void ImProcFunctions::Lab_Local(
 
                 float maxChro = orig1[0][0];
 #ifdef _OPENMP
-                #pragma omp parallel for reduction(max:maxChro) schedule(dynamic,16)
+                #pragma omp parallel for reduction(max:maxChro) schedule(dynamic,16) if (multiThread)
 #endif
-
                 for (int ir = 0; ir < Hd; ir++) {
                     for (int jr = 0; jr < Wd; jr++) {
                         maxChro = rtengine::max(maxChro, orig1[ir][jr]);
@@ -12954,16 +12749,15 @@ void ImProcFunctions::Lab_Local(
                     DCT_NURBS,
                     0, 0,
                     0.2, 0.2 + satreal / 250.0,
-                    0.6,  min(1.0, 0.6 + satreal / 250.0),
+                    0.6,  rtengine::min(1.0, 0.6 + satreal / 250.0),
                     1, 1
                 });
 
                 if (call == 1) {
 
 #ifdef _OPENMP
-                    #pragma omp parallel for
+                    #pragma omp parallel for if (multiThread)
 #endif
-
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
                             const float Chprov = orig1[ir][jr];
@@ -12985,9 +12779,8 @@ void ImProcFunctions::Lab_Local(
                     float minC = std::sqrt(SQR(tmpl->a[0][0]) + SQR(tmpl->b[0][0])) - orig1[0][0];
                     float maxC = minC;
 #ifdef _OPENMP
-                    #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16)
+                    #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16) if (multiThread)
 #endif
-
                     for (int ir = 0; ir < Hd; ir++) {
                         for (int jr = 0; jr < Wd; jr++) {
                             bufchro[ir][jr] = std::sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - orig1[ir][jr];
@@ -12996,12 +12789,12 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
-                    float coefC = 0.01f * (max(std::fabs(minC), std::fabs(maxC)));
+                    float coefC = 0.01f * rtengine::max(std::fabs(minC), std::fabs(maxC));
 
                     if (coefC > 0.f) {
                         coefC = 1.f / coefC;
 #ifdef _OPENMP
-                        #pragma omp parallel for
+                        #pragma omp parallel for if (multiThread)
 #endif
                         for (int ir = 0; ir < Hd; ir++) {
                             for (int jr = 0; jr < Wd; jr++) {
@@ -13014,7 +12807,7 @@ void ImProcFunctions::Lab_Local(
                 transit_shapedetect_retinex(call, 5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
-                    original->CopyFrom(transformed);
+                    original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                 }
@@ -13039,10 +12832,10 @@ void ImProcFunctions::Lab_Local(
 
 
     if (lp.str >= 0.2f && lp.retiena && call == 2) {
-        int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         int bfh = yend - ystart;
         int bfw = xend - xstart;
 
@@ -13078,9 +12871,8 @@ void ImProcFunctions::Lab_Local(
                 }
 
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for if (multiThread)
 #endif
-
                 for (int ir = 0; ir < bfh; ir++) //fill with 0
                     for (int jr = 0; jr < bfw; jr++) {
                         bufreti->L[ir][jr] = 0.f;
@@ -13092,9 +12884,8 @@ void ImProcFunctions::Lab_Local(
 
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                 for (int y = ystart; y < yend; y++) {
                     for (int x = xstart; x < xend; x++) {
                         bufreti->L[y - ystart][x - xstart] = original->L[y][x];
@@ -13116,7 +12907,6 @@ void ImProcFunctions::Lab_Local(
             float raddE = params->locallab.spots.at(sp).softradiusret;
 
             //calc dE and reduction to use in MSR to reduce artifacts
-            const int limscope = 80;
             const float mindE = 4.f + MINSCOPE * lp.sensh * lp.thr;
             const float maxdE = 5.f + MAXSCOPE * lp.sensh * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -13130,7 +12920,7 @@ void ImProcFunctions::Lab_Local(
             float bde = 100.f - raddE;
             float sensibefore = ade * lp.sensh + bde;//we can change sensitivity 0.1 90 or 0.3 70 or 0.4 60
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
             for (int y = ystart; y < yend ; y++) {
                 for (int x = xstart; x < xend; x++) {
@@ -13150,7 +12940,7 @@ void ImProcFunctions::Lab_Local(
 
             if (!lp.invret && call == 2) {
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                 for (int ir = 0; ir < Hd; ir += 1) {
                     for (int jr = 0; jr < Wd; jr += 1) {
@@ -13169,11 +12959,10 @@ void ImProcFunctions::Lab_Local(
             int sco = params->locallab.spots.at(sp).scopemask;
             float lumask = params->locallab.spots.at(sp).lumask;
 
-            constexpr int limscope2 = 80;
             const float mindE2 = 2.f + MINSCOPE * sco * lp.thr;
             const float maxdE2 = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
-            const float mindElim2 = 2.f + MINSCOPE * limscope2 * lp.thr;
-            const float maxdElim2 = 5.f + MAXSCOPE * limscope2 * (1 + 0.1f * lp.thr);
+            const float mindElim2 = 2.f + MINSCOPE * limscope * lp.thr;
+            const float maxdElim2 = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
             ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, orig1,
                                       Wd, Hd, bfwr, bfhr, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
@@ -13181,12 +12970,11 @@ void ImProcFunctions::Lab_Local(
                                       lmaskretilocalcurve, localmaskretiutili,
                                       transformed, lp.enaretiMasktmap, lp.enaretiMask,
                                       delt, hueref, chromaref, lumaref,
-                                      maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco, lp.balance, lp.balanceh, lumask);
+                                      maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope, sco, lp.balance, lp.balanceh, lumask);
 
 #ifdef _OPENMP
-            #pragma omp parallel for
+            #pragma omp parallel for if (multiThread)
 #endif
-
             for (int ir = 0; ir < Hd; ir += 1)
                 for (int jr = 0; jr < Wd; jr += 1) {
                     tmpl->L[ir][jr] = orig[ir][jr];
@@ -13197,9 +12985,8 @@ void ImProcFunctions::Lab_Local(
                 const std::unique_ptr<float[]> datain(new float[Hd * Wd]);
                 const std::unique_ptr<float[]> data(new float[Hd * Wd]);
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for if (multiThread)
 #endif
-
                 for (int ir = 0; ir < Hd; ir += 1) {
                     for (int jr = 0; jr < Wd; jr += 1) {
                         datain[ir * Wd + jr] = orig1[ir][jr];
@@ -13209,7 +12996,7 @@ void ImProcFunctions::Lab_Local(
 
                 normalize_mean_dt(data.get(), datain.get(), Hd * Wd, 1.f, 1.f);
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for if (multiThread)
 #endif
                 for (int ir = 0; ir < Hd; ir += 1) {
                     for (int jr = 0; jr < Wd; jr += 1) {
@@ -13222,7 +13009,7 @@ void ImProcFunctions::Lab_Local(
                 float minL = tmpl->L[0][0] - bufreti->L[0][0];
                 float maxL = minL;
 #ifdef _OPENMP
-                #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16)
+                #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16) if (multiThread)
 #endif
                 for (int ir = 0; ir < Hd; ir++) {
                     for (int jr = 0; jr < Wd; jr++) {
@@ -13237,7 +13024,7 @@ void ImProcFunctions::Lab_Local(
                 if (coef > 0.f) {
                     coef = 1.f / coef;
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                     for (int ir = 0; ir < Hd; ir++) {
                         for (int jr = 0; jr < Wd; jr++) {
@@ -13249,7 +13036,7 @@ void ImProcFunctions::Lab_Local(
                 transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
-                    original->CopyFrom(transformed);
+                    original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                 }
@@ -13258,7 +13045,7 @@ void ImProcFunctions::Lab_Local(
             if (params->locallab.spots.at(sp).chrrt > 0) {
                 if (!lp.invret && call == 2) {
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                     for (int ir = 0; ir < Hd; ir += 1) {
                         for (int jr = 0; jr < Wd; jr += 1) {
@@ -13270,9 +13057,8 @@ void ImProcFunctions::Lab_Local(
 
                 float maxChro = orig1[0][0];
 #ifdef _OPENMP
-                #pragma omp parallel for reduction(max:maxChro) schedule(dynamic,16)
+                #pragma omp parallel for reduction(max:maxChro) schedule(dynamic,16) if (multiThread)
 #endif
-
                 for (int ir = 0; ir < Hd; ir++) {
                     for (int jr = 0; jr < Wd; jr++) {
                         maxChro = rtengine::max(maxChro, orig1[ir][jr]);
@@ -13290,16 +13076,15 @@ void ImProcFunctions::Lab_Local(
                     DCT_NURBS,
                     0, 0,
                     0.2, 0.2 + satreal / 250.0,
-                    0.6,  min(1.0, 0.6 + satreal / 250.0),
+                    0.6, rtengine::min(1.0, 0.6 + satreal / 250.0),
                     1, 1
                 });
 
                 if (!lp.invret && call == 2) {
 
 #ifdef _OPENMP
-                    #pragma omp parallel for
+                    #pragma omp parallel for if (multiThread)
 #endif
-
                     for (int ir = 0; ir < Hd; ir += 1) {
                         for (int jr = 0; jr < Wd; jr += 1) {
                             const float Chprov = orig1[ir][jr];
@@ -13319,9 +13104,8 @@ void ImProcFunctions::Lab_Local(
                     float minC = std::sqrt(SQR(tmpl->a[0][0]) + SQR(tmpl->b[0][0])) - orig1[0][0];
                     float maxC = minC;
 #ifdef _OPENMP
-                    #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16)
+                    #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16) if (multiThread)
 #endif
-
                     for (int ir = 0; ir < Hd; ir++) {
                         for (int jr = 0; jr < Wd; jr++) {
                             bufchro[ir][jr] = std::sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - orig1[ir][jr];
@@ -13335,7 +13119,7 @@ void ImProcFunctions::Lab_Local(
                     if (coefC > 0.f) {
                         coefC = 1.f / coefC;
 #ifdef _OPENMP
-                        #pragma omp parallel for
+                        #pragma omp parallel for if (multiThread)
 #endif
                         for (int ir = 0; ir < Hd; ir++) {
                             for (int jr = 0; jr < Wd; jr++) {
@@ -13349,7 +13133,7 @@ void ImProcFunctions::Lab_Local(
                     transit_shapedetect_retinex(call, 5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
-                        original->CopyFrom(transformed);
+                        original->CopyFrom(transformed, multiThread);
                         float avge;
                         calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                     }
@@ -13381,10 +13165,10 @@ void ImProcFunctions::Lab_Local(
     bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.blac != 0 || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || lp.prevdE || (exlocalcurve && localexutili)));
 
     if (!lp.invex && execex) {
-        int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         int bfh = yend - ystart;
         int bfw = xend - xstart;
         //variable for fast FFTW
@@ -13413,16 +13197,15 @@ void ImProcFunctions::Lab_Local(
                 }
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                 for (int y = ystart; y < yend; y++) {
                     for (int x = xstart; x < xend; x++) {
                         bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
                     }
                 }
 
-                const int spotSi = rtengine::max(1 + 2 * max(1, lp.cir / sk), 5);
+                const int spotSi = rtengine::max(1 + 2 * rtengine::max(1, lp.cir / sk), 5);
 
                 if (bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struexp > 0.f) {
                     blend2(bfw, bfh);
@@ -13430,9 +13213,8 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.showmaskexpmet == 4) {
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = ystart; y < yend ; y++) {
                             for (int x = xstart; x < xend; x++) {
                                 const int lox = cx + x;
@@ -13493,7 +13275,6 @@ void ImProcFunctions::Lab_Local(
                 int shado = 0;
                 int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
-                const int limscope = 80;
                 const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                 const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                 const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -13524,9 +13305,8 @@ void ImProcFunctions::Lab_Local(
 
                 if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 1  || lp.showmaskexpmet == 2  || lp.showmaskexpmet == 5 || lp.enaExpMask) {
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
                             bufexpfin->L[y][x] = original->L[y + ystart][x + xstart];
@@ -13539,9 +13319,8 @@ void ImProcFunctions::Lab_Local(
 
                     if (exlocalcurve && localexutili) {// L=f(L) curve enhanced
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 bufexpfin->L[ir][jr] = 0.5f * exlocalcurve[2.f * bufexporig->L[ir][jr]];
@@ -13565,7 +13344,7 @@ void ImProcFunctions::Lab_Local(
                     if (lp.strexp != 0.f) {
                         calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 1);
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
@@ -13580,7 +13359,7 @@ void ImProcFunctions::Lab_Local(
                             const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
                             const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
@@ -13600,7 +13379,7 @@ void ImProcFunctions::Lab_Local(
                             ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, 1);//last parameter = 1 ==>ART algorithm
                             rgb2lab(*(tmpImagefat.get()), *bufexpfin, params->icm.workingProfile);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
@@ -13610,7 +13389,7 @@ void ImProcFunctions::Lab_Local(
 
                             normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
@@ -13652,7 +13431,7 @@ void ImProcFunctions::Lab_Local(
                             }
 
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
@@ -13664,7 +13443,7 @@ void ImProcFunctions::Lab_Local(
                             //call PDE equation - with Laplacian threshold
                             ImProcFunctions::exposure_pde(datain.get(), datain.get(), dataout.get(), bfwr, bfhr, 12.f * lp.laplacexp, lp.balanexp);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
@@ -13688,7 +13467,7 @@ void ImProcFunctions::Lab_Local(
                             const float ch = (1.f + 0.02f * lp.expchroma);
                             const float chprosl = ch <= 1.f ? 99.f * ch - 99.f : clipChro(ampli * ch - ampli);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
@@ -13709,7 +13488,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (params->locallab.spots.at(sp).recurs) {
-                    original->CopyFrom(transformed);
+                    original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                 }
@@ -13730,9 +13509,8 @@ void ImProcFunctions::Lab_Local(
         }
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < GH ; y++) {
             for (int x = 0; x < GW; x++) {
                 bufexporig->L[y][x] = original->L[y][x];
@@ -13762,7 +13540,6 @@ void ImProcFunctions::Lab_Local(
         constexpr int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
         const int lumask = params->locallab.spots.at(sp).lumask;
 
-        constexpr int limscope = 80;
         const float mindE = 2.f + MINSCOPE * sco * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -13788,7 +13565,7 @@ void ImProcFunctions::Lab_Local(
         InverseColorLight_Local(false, false, sp, 1, lp, originalmaskexp.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
 
         if (params->locallab.spots.at(sp).recurs) {
-            original->CopyFrom(transformed);
+            original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
         }
@@ -13810,10 +13587,10 @@ void ImProcFunctions::Lab_Local(
     const bool ctoningmerg = (a_scalemerg != 0.f || b_scalemerg != 0.f || a_basemerg != 0.f || b_basemerg != 0.f);
 
     if (!lp.inv && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 ||  lp.strcol != 0.f ||  lp.strcolab != 0.f || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.prevdE) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
-        int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-        int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-        int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-        int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         int bfh = yend - ystart;
         int bfw = xend - xstart;
         const bool spez = params->locallab.spots.at(sp).special;
@@ -13862,7 +13639,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                 for (int y = 0; y < bfh ; y++) {
                     for (int x = 0; x < bfw; x++) {
@@ -13878,7 +13655,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                const int spotSi = std::max(1 + 2 * max(1,  lp.cir / sk), 5);
+                const int spotSi = rtengine::max(1 + 2 * rtengine::max(1,  lp.cir / sk), 5);
                 const bool blends = bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struco > 0.f;
 
                 if (blends) {
@@ -13887,7 +13664,7 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.showmaskcolmet == 4) {
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                         for (int y = ystart; y < yend ; y++) {
                             for (int x = xstart; x < xend; x++) {
@@ -13952,7 +13729,6 @@ void ImProcFunctions::Lab_Local(
                     tonemod = 3;
                 }
 
-                constexpr int limscope = 80;
                 const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                 const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                 const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -13986,9 +13762,8 @@ void ImProcFunctions::Lab_Local(
 
                         lab2rgb(*buftemp, *(tmpImage.get()), params->icm.workingProfile);
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < bfh; y++)
                             for (int x = 0; x < bfw; x++) {
 
@@ -14060,9 +13835,8 @@ void ImProcFunctions::Lab_Local(
                     if (usergb && spez) {//special use of rgb curves ex : negative
                         const float achm = lp.trans / 100.f;
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                         for (int y = 0; y < bfh; y++) {
                             const int loy = y + ystart + cy;
 
@@ -14115,7 +13889,7 @@ void ImProcFunctions::Lab_Local(
                         DCT_NURBS,
                         0, 0,
                         0.2, 0.2 + satreal / 250.0,
-                        0.6,  min(1.0, 0.6 + satreal / 250.0),
+                        0.6, rtengine::min(1.0, 0.6 + satreal / 250.0),
                         1, 1
                     });
 
@@ -14123,7 +13897,7 @@ void ImProcFunctions::Lab_Local(
                         DCT_NURBS,
                         0, 0,
                         0.1 - satreal / 150., 0.1,
-                        min(1.0, 0.7 - satreal / 300.), 0.7,
+                        rtengine::min(1.0, 0.7 - satreal / 300.), 0.7,
                         1, 1
                     });
 
@@ -14206,7 +13980,7 @@ void ImProcFunctions::Lab_Local(
                                 const float valparam = loclhCurve[500.f * Color::huelab_to_huehsv2(rhue)] - 0.5f;  //get l_r=f(H)
 
                                 if (valparam > 0.f) {
-                                    l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - min(l_r, 1.0f))))));
+                                    l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - rtengine::min(l_r, 1.0f))))));
                                 } else {
                                     constexpr float khu = 1.9f; //in reserve in case of!
                                     //for negative
@@ -14499,9 +14273,8 @@ void ImProcFunctions::Lab_Local(
 
                             if (conthr > 0.f && lp.mergemet != 4) {
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
@@ -14516,7 +14289,7 @@ void ImProcFunctions::Lab_Local(
                         if (lp.mergecolMethod > 0 && lp.mergecolMethod <= 16) {
                             //first deltaE
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
@@ -14543,7 +14316,7 @@ void ImProcFunctions::Lab_Local(
                             float maxB = minB;
                             if (lp.mergecolMethod == 6 || lp.mergecolMethod == 9 || lp.mergecolMethod == 10 || lp.mergecolMethod == 11) {
 #ifdef _OPENMP
-                                #pragma omp parallel for reduction(max:maxR,maxG,maxB) reduction(min:minR,minG,minB) schedule(dynamic,16)
+                                #pragma omp parallel for reduction(max:maxR,maxG,maxB) reduction(min:minR,minG,minB) schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int ir = 0; ir < bfh; ir++) {
                                     for (int jr = 0; jr < bfw; jr++) {
@@ -14560,7 +14333,7 @@ void ImProcFunctions::Lab_Local(
                             //various combinations  subtract, multiply, difference, etc
                             if (lp.mergecolMethod == 1) { //subtract
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {//LIM(x 0 2) 2 arbitrary value but limit...
                                     for (int x = 0; x < bfw; x++) {
@@ -14571,7 +14344,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 2) { //difference
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14582,7 +14355,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 3) { //multiply
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14593,7 +14366,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 4) { //addition
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14604,7 +14377,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 5) { //divide
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14615,7 +14388,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 6) { //soft light as Photoshop
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14626,7 +14399,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 7) { //soft light as illusions.hu
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14637,7 +14410,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 8) { //soft light as W3C
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14648,7 +14421,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 9) { //hard light overlay (float &b, float &a)
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14659,7 +14432,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 10) { //overlay overlay(float &a, float &b)
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14670,7 +14443,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 11) { //screen screen (float &a, float &b)
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14681,7 +14454,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 12) { //darken only
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14692,7 +14465,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 13) { //lighten only
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14703,7 +14476,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 14) { //exclusion exclusion (float &a, float &b)
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14715,7 +14488,7 @@ void ImProcFunctions::Lab_Local(
 
                             } else if (lp.mergecolMethod == 15) { //Color burn
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14726,7 +14499,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             } else if (lp.mergecolMethod == 16) { //Color dodge
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14742,7 +14515,7 @@ void ImProcFunctions::Lab_Local(
 
                             if (conthr > 0.f && lp.mergemet != 4) {
 #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
@@ -14767,9 +14540,8 @@ void ImProcFunctions::Lab_Local(
                             struct grad_params gp;
                             calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 3);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
@@ -14781,9 +14553,8 @@ void ImProcFunctions::Lab_Local(
                             struct grad_params gpab;
                             calclocalGradientParams(lp, gpab, ystart, xstart, bfw, bfh, 5);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
@@ -14796,9 +14567,8 @@ void ImProcFunctions::Lab_Local(
                             struct grad_params gph;
                             calclocalGradientParams(lp, gph, ystart, xstart, bfw, bfh, 6);
 #ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gph, jr, ir);
@@ -14840,7 +14610,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (params->locallab.spots.at(sp).recurs) {
-                    original->CopyFrom(transformed);
+                    original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                 }
@@ -14880,42 +14650,29 @@ void ImProcFunctions::Lab_Local(
         }
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-
         for (int y = 0; y < GH ; y++) {
             for (int x = 0; x < GW; x++) {
                 bufcolorig->L[y][x] = original->L[y][x];
             }
         }
 
-        int inv = 1;
-        bool showmaske = false;
-        bool enaMask = false;
-        bool deltaE = false;
-        bool modmask = false;
-        bool zero = false;
-        bool modif = false;
+        constexpr int inv = 1;
+        const bool showmaske = lp.showmaskcolmetinv == 1;
+        const bool enaMask = lp.enaColorMaskinv;
+        constexpr bool deltaE = false;
+        constexpr bool modmask = false;
+        const bool zero = lp.showmaskcolmetinv == 0;
+        constexpr bool modif = false;
 
-        if (lp.showmaskcolmetinv == 1) {
-            showmaske = true;
-        }
-
-        if (lp.enaColorMaskinv) {
-            enaMask = true;
-        }
-
-        if (lp.showmaskcolmetinv == 0) {
-            zero = true;
-        }
-
-        float chrom = lp.chromacol;
-        float rad = lp.radmacol;
-        float gamma = lp.gammacol;
-        float slope = lp.slomacol;
-        float blendm = lp.blendmacol;
-        float lap = params->locallab.spots.at(sp).lapmaskcol;
-        bool pde = params->locallab.spots.at(sp).laplac;
+        const float chrom = lp.chromacol;
+        const float rad = lp.radmacol;
+        const float gamma = lp.gammacol;
+        const float slope = lp.slomacol;
+        const float blendm = lp.blendmacol;
+        const float lap = params->locallab.spots.at(sp).lapmaskcol;
+        const bool pde = params->locallab.spots.at(sp).laplac;
         int shado = params->locallab.spots.at(sp).shadmaskcol;
         int level_bl = params->locallab.spots.at(sp).csthresholdcol.getBottomLeft();
         int level_hl = params->locallab.spots.at(sp).csthresholdcol.getTopLeft();
@@ -14926,13 +14683,12 @@ void ImProcFunctions::Lab_Local(
         int lumask = params->locallab.spots.at(sp).lumask;
         float strumask = 0.02f * params->locallab.spots.at(sp).strumaskcol;
 
-        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * sco * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
         const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-        float amountcd = 0.f;
-        float anchorcd = 50.f;
+        constexpr float amountcd = 0.f;
+        constexpr float anchorcd = 50.f;
 
         maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, reserved, inv, lp,
                     strumask, params->locallab.spots.at(sp).toolcol,
@@ -14943,10 +14699,8 @@ void ImProcFunctions::Lab_Local(
                     maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                    );
 
-
         if (lp.showmaskcolmetinv == 1) {
             showmask(lumask, lp, 0, 0, cx, cy, GW, GH, bufcolorig.get(), transformed, bufmaskblurcol.get(), inv);
-
             return;
         }
 
@@ -14954,11 +14708,10 @@ void ImProcFunctions::Lab_Local(
             InverseColorLight_Local(false, false, sp, 0, lp, originalmaskcol.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
 
             if (params->locallab.spots.at(sp).recurs) {
-                original->CopyFrom(transformed);
+                original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
             }
-
         }
     }
 
@@ -14994,13 +14747,11 @@ void ImProcFunctions::Lab_Local(
             #pragma omp for schedule(dynamic,16)
 #endif
 #endif
-
             for (int y = 0; y < transformed->H; y++) {
                 const int loy = cy + y;
                 const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
                 if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-
                     continue;
                 }
 
@@ -15044,7 +14795,6 @@ void ImProcFunctions::Lab_Local(
                         sincosyBuffer[i] = aa / Chprov1;
                         sincosxBuffer[i] = bb / Chprov1;
                     }
-
                 }
 
 #endif
@@ -15074,15 +14824,15 @@ void ImProcFunctions::Lab_Local(
                     float chr = 0.f;
 
 #else
-                    float aa = transformed->a[y][x];
-                    float bb = transformed->b[y][x];
+                    const float aa = transformed->a[y][x];
+                    const float bb = transformed->b[y][x];
                     float HH = 0.f, chr = 0.f;
 
                     if (needHH) { // only do expensive atan2 calculation if needed
                         HH = xatan2f(bb, aa);
                     }
 
-                    float Chprov1 = std::sqrt(SQR(aa) + SQR(bb)) / 327.68f;
+                    const float Chprov1 = std::sqrt(SQR(aa) + SQR(bb)) / 327.68f;
 
                     if (Chprov1 == 0.0f) {
                         sincosval.y = 1.f;
@@ -15091,18 +14841,14 @@ void ImProcFunctions::Lab_Local(
                         sincosval.y = aa / (Chprov1 * 327.68f);
                         sincosval.x = bb / (Chprov1 * 327.68f);
                     }
-
 #endif
 
 #ifdef _DEBUG
-                    bool neg = false;
-                    bool more_rgb = false;
-                    Chprov1 = min(Chprov1, chr);
-
-                    Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f, neg, more_rgb);
+                    Chprov1 = rtengine::min(Chprov1, chr);
+                    Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f, false, false);
 #else
                     Color::pregamutlab(Lprov1, HH, chr);
-                    Chprov1 = min(Chprov1, chr);
+                    Chprov1 = rtengine::min(Chprov1, chr);
                     Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f);
 #endif
 
@@ -15111,10 +14857,10 @@ void ImProcFunctions::Lab_Local(
                     transformed->b[y][x] = 327.68f * Chprov1 * sincosval.x;
 
                     if (needHH) {
-                        float Lprov2 = original->L[y][x] / 327.68f;
+                        const float Lprov2 = original->L[y][x] / 327.68f;
                         float correctionHue = 0.f; // Munsell's correction
                         float correctlum = 0.f;
-                        float memChprov = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x])) / 327.68f;
+                        const float memChprov = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x])) / 327.68f;
                         float Chprov = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x])) / 327.68f;
 #ifdef _DEBUG
                         Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum, MunsDebugInfo);
@@ -15127,7 +14873,6 @@ void ImProcFunctions::Lab_Local(
                         }
 
                         sincosval = xsincosf(HH + correctionHue);
-
                         transformed->a[y][x] = 327.68f * Chprov * sincosval.y; // apply Munsell
                         transformed->b[y][x] = 327.68f * Chprov * sincosval.x;
                     }
