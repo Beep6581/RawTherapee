@@ -141,6 +141,8 @@ private:
     void updatewavLabel ();
     void wavChanged(double nlevel) override;
     void ushamethodChanged();
+    void updateGUI();
+    void updateGUImaxlev();
 
     void HSmethodUpdateUI();
     void CHmethodUpdateUI();
