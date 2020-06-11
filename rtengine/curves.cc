@@ -3444,14 +3444,7 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
                 Color::Lab2Lch(a_1, b_1, c1, h1);
                 float Lr = L1 / 327.68f;
                 float RR, GG, BB;
-#ifndef NDEBUG
-                bool neg = false;
-                bool more_rgb = false;
-                //gamut control : Lab values are in gamut
-                Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
-#else
                 Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
-#endif
                 L1 = Lr * 327.68f;
                 float La, Lb, X, Y, Z;
                 // converting back to rgb
@@ -3469,14 +3462,6 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
             }
         }
     }
-
-    /*
-    #ifndef NDEBUG
-    lutRed.dump("red");
-    lutGreen.dump("green");
-    lutBlue.dump("blue");
-    #endif
-    */
 }
 
 void ColorGradientCurve::SetXYZ(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], float satur, float lumin)
@@ -3568,14 +3553,6 @@ void ColorGradientCurve::SetRGB(const Curve *pCurve)
             }
         }
     }
-
-    /*
-    #ifndef NDEBUG
-    lut1.dump("red");
-    lut2.dump("green");
-    lut3.dump("blue");
-    #endif
-    */
 }
 
 void ColorGradientCurve::SetRGB(const std::vector<double> &curvePoints)

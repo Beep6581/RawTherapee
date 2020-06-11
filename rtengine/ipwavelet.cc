@@ -168,10 +168,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
 
 {
-#ifdef _DEBUG
-    // init variables to display Munsell corrections
-    MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
-#endif
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -1519,13 +1515,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 float Lprov2 = Lold[i][j] / 327.68f;
                                 float memChprov = varchro[i1][j1];
                                 float R, G, B;
-#ifdef _DEBUG
-                                bool neg = false;
-                                bool more_rgb = false;
-                                Color::gamutLchonly(HH, sincosv, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
-#else
                                 Color::gamutLchonly(HH, sincosv, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
-#endif
                                 L = Lprov1 * 327.68f;
 
                                 a = 327.68f * Chprov1 * sincosv.y; //gamut
@@ -1534,11 +1524,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 float correctlum = 0.0f;
                                 Lprov1 = L / 327.68f;
                                 const float Chprov = sqrtf(SQR(a) + SQR(b)) / 327.68f;
-#ifdef _DEBUG
-                                Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum, MunsDebugInfo);
-#else
                                 Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
-#endif
 
                                 if (correctionHue != 0.f || correctlum != 0.f) { // only calculate sin and cos if HH changed
                                     if (std::fabs(correctionHue) < 0.015f) {
@@ -1647,11 +1633,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
             }
         }
     }
-
-#ifdef _DEBUG
-    delete MunsDebugInfo;
-#endif
-
 }
 
 

@@ -36,23 +36,6 @@ namespace rtengine
 
 typedef std::array<double, 7> GammaValues;
 
-#ifdef _DEBUG
-
-class MunsellDebugInfo
-{
-public:
-    float maxdhuelum[4];
-    float maxdhue[4];
-    unsigned int depass;
-    unsigned int depassLum;
-
-    MunsellDebugInfo();
-    void reinitValues();
-};
-
-#endif
-
-
 class Color
 {
 
@@ -1395,11 +1378,7 @@ public:
     * @param munsDbgInfo (Debug target only) object to collect information
     */
 
-#ifdef _DEBUG
-    static void AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHueChroma, float &correctlum, MunsellDebugInfo* munsDbgInfo);
-#else
     static void AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHueChroma, float &correctlum);
-#endif
     static void AllMunsellLch (float Lprov1, float HH, float Chprov1, float CC, float &correctionHueChroma);
 
 
@@ -1424,15 +1403,9 @@ public:
     * @param neg (Debug target only) to calculate iterations for negatives values
     * @param moreRGB (Debug target only) to calculate iterations for values >65535
     */
-#ifdef _DEBUG
-    static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef, bool &neg, bool &more_rgb);
-    static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef, bool &neg, bool &more_rgb);
-    static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef, bool &neg, bool &more_rgb);
-#else
     static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
     static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
     static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
-#endif
     static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &saturation, const float wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
 
 

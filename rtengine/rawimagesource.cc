@@ -2258,15 +2258,8 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
                     }
 
                     float R, G, B;
-#ifdef _DEBUG
-                    bool neg = false;
-                    bool more_rgb = false;
-                    //gamut control : Lab values are in gamut
-                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
-#else
                     //gamut control : Lab values are in gamut
                     Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
-#endif
 
 
 

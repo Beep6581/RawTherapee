@@ -25,10 +25,6 @@
 #include "opthelper.h"
 #include "iccstore.h"
 
-#ifdef _DEBUG
-#include "mytime.h"
-#endif
-
 using namespace std;
 
 namespace rtengine
@@ -105,20 +101,6 @@ LUTf Color::_1G30, Color::_1G40, Color::_1G50, Color::_1G60, Color::_1G70, Color
 LUTf Color::_10GY30, Color::_10GY40, Color::_10GY50, Color::_10GY60, Color::_10GY70, Color::_10GY80;
 LUTf Color::_75GY30, Color::_75GY40, Color::_75GY50, Color::_75GY60, Color::_75GY70, Color::_75GY80;
 LUTf Color::_5GY30, Color::_5GY40, Color::_5GY50, Color::_5GY60, Color::_5GY70, Color::_5GY80;
-
-#ifdef _DEBUG
-MunsellDebugInfo::MunsellDebugInfo()
-{
-    reinitValues();
-}
-void MunsellDebugInfo::reinitValues()
-{
-    maxdhue[0] = maxdhue[1] = maxdhue[2] = maxdhue[3] = 0.0f;
-    maxdhuelum[0] = maxdhuelum[1] = maxdhuelum[2] = maxdhuelum[3] = 0.0f;
-    depass = depassLum = 0;
-}
-#endif
-
 
 void Color::init ()
 {
@@ -1456,15 +1438,7 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
     Color::Lab2Lch(a_1, b_1, c1, h1);
     Lr = L1 / 327.68f; //for gamutlch
     //gamut control on r1 g1 b1
-#ifndef NDEBUG
-    bool neg = false;
-    bool more_rgb = false;
-
-    //gamut control : Lab values are in gamut
-    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
-#else
     Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
-#endif
 
     L1 = Lr * 327.68f;
 
@@ -1475,14 +1449,7 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
 
     Lr = L2 / 327.68f; //for gamutlch
     //gamut control on r2 g2 b2
-#ifndef NDEBUG
-    neg = false;
-    more_rgb = false;
-    //gamut control : Lab values are in gamut
-    Color::gamutLchonly(h2, Lr, c2, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
-#else
     Color::gamutLchonly(h2, Lr, c2, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
-#endif
     L2 = Lr * 327.68f;
 
     // interpolating Lch values
@@ -1512,15 +1479,8 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
 
     // here I have put gamut control with gamutlchonly  on final process
     Lr = L1 / 327.68f; //for gamutlch
-#ifndef NDEBUG
-    neg = false;
-    more_rgb = false;
-    //gamut control : Lab values are in gamut
-    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
-#else
     //gamut control : Lab values are in gamut
     Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
-#endif
     //convert CH ==> ab
     L1 = Lr * 327.68f;
 
@@ -2299,11 +2259,7 @@ void Color::transitred (const float HH, float const Chprov1, const float dred, c
  *    float correctlum : correction Hue for luminance (brigtness, contrast,...)
  *    MunsellDebugInfo* munsDbgInfo: (Debug target only) object to collect information.
  */
-#ifdef _DEBUG
-void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHuechroma, float &correctlum, MunsellDebugInfo* munsDbgInfo)
-#else
 void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHuechroma, float &correctlum)
-#endif
 {
 
     bool contin1, contin2;
@@ -2327,22 +2283,6 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
                 contin1 = contin2 = false;
                 correctL = false;
                 MunsellLch (Lprov1, HH, Chprov1, CC, correctionHue, zo, correctionHueLum, correctL);       //munsell chroma correction
-#ifdef _DEBUG
-                float absCorrectionHue = fabs(correctionHue);
-
-                if(correctionHue != 0.0) {
-                    int idx = zo - 1;
-                    #pragma omp critical (maxdhue)
-                    {
-                        munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
-                    }
-                }
-
-                if(absCorrectionHue > 0.45)
-                    #pragma omp atomic
-                    munsDbgInfo->depass++;        //verify if no bug in calculation
-
-#endif
                 correctionHuechroma = correctionHue;  //preserve
 
                 if(lumaMuns) {
@@ -2374,46 +2314,11 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
                         if(contin1 && contin2) {
                             correctlum = correctlumprov2 - correctlumprov;
                         }
-
-#ifdef _DEBUG
-                        float absCorrectLum = fabs(correctlum);
-
-                        if(correctlum != 0.0) {
-                            int idx = zo - 1;
-                            #pragma omp critical (maxdhuelum)
-                            {
-                                munsDbgInfo->maxdhuelum[idx] = MAX(munsDbgInfo->maxdhuelum[idx], absCorrectLum);
-                            }
-                        }
-
-                        if(absCorrectLum > 0.35)
-                            #pragma omp atomic
-                            munsDbgInfo->depassLum++;    //verify if no bug in calculation
-
-#endif
                     }
                 }
             }
         }
-
     }
-
-#ifdef _DEBUG
-
-    if     (correctlum < -0.35f) {
-        correctlum = -0.35f;
-    } else if(correctlum >  0.35f) {
-        correctlum = 0.35f;
-    }
-
-    if     (correctionHuechroma < -0.45f) {
-        correctionHuechroma = -0.45f;
-    } else if(correctionHuechroma > 0.45f) {
-        correctionHuechroma = 0.45f;
-    }
-
-#endif
-
 }
 
 /*
@@ -2472,17 +2377,10 @@ void Color::AllMunsellLch(float Lprov1, float HH, float Chprov1, float CC, float
  * float coef : a float number between [0.95 ; 1.0[... the nearest it is from 1.0, the more precise it will be... and the longer too as more iteration will be necessary)
  * bool neg and moreRGB : only in DEBUG mode to calculate iterations for negatives values and > 65535
  */
-#ifdef _DEBUG
-void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
-#else
 void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
-#endif
 {
     const float ClipLevel = 65535.0f;
     bool inGamut;
-#ifdef _DEBUG
-    neg = false, more_rgb = false;
-#endif
     float2  sincosval = xsincosf(HH);
 
     do {
@@ -2506,10 +2404,6 @@ void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, flo
 
         // gamut control before saturation to put Lab values in future gamut, but not RGB
         if (R < 0.0f || G < 0.0f || B < 0.0f) {
-#ifdef _DEBUG
-            neg = true;
-#endif
-
             if (Lprov1 < 0.1f) {
                 Lprov1 = 0.1f;
             }
@@ -2555,10 +2449,6 @@ void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, flo
         } else if (!isHLEnabled && rtengine::max(R, G, B) > ClipLevel && rtengine::min(R, G, B) <= ClipLevel) {
 
             // if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
-#ifdef _DEBUG
-            more_rgb = true;
-#endif
-
             if (Lprov1 > 99.999f) {
                 Lprov1 = 99.98f;
             }
@@ -2593,17 +2483,10 @@ void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, flo
  * float coef : a float number between [0.95 ; 1.0[... the nearest it is from 1.0, the more precise it will be... and the longer too as more iteration will be necessary)
  * bool neg and moreRGB : only in DEBUG mode to calculate iterations for negatives values and > 65535
  */
-#ifdef _DEBUG
-void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
-#else
 void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
-#endif
 {
     constexpr float ClipLevel = 65535.0f;
     bool inGamut;
-#ifdef _DEBUG
-    neg = false, more_rgb = false;
-#endif
     float ChprovSave = Chprov1;
 
     do {
@@ -2625,9 +2508,6 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
 
         // gamut control before saturation to put Lab values in future gamut, but not RGB
         if (R < 0.0f || G < 0.0f || B < 0.0f) {
-#ifdef _DEBUG
-            neg = true;
-#endif
 
             if (isnan(HH)) {
                 float atemp = ChprovSave * sincosval.y * 327.68;
@@ -2680,10 +2560,6 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
         } else if (!isHLEnabled && rtengine::max(R, G, B) > ClipLevel && rtengine::min(R, G, B) <= ClipLevel) {
 
             // if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
-#ifdef _DEBUG
-            more_rgb = true;
-#endif
-
             if (Lprov1 > 99.999f) {
                 Lprov1 = 99.98f;
             }
@@ -2805,17 +2681,10 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
 }
 
 
-#ifdef _DEBUG
-void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
-#else
 void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
-#endif
 {
     const float ClipLevel = 65535.0f;
     bool inGamut;
-#ifdef _DEBUG
-    neg = false, more_rgb = false;
-#endif
 
     do {
         inGamut = true;
@@ -2839,10 +2708,6 @@ void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const
 
         // gamut control before saturation to put Lab values in future gamut, but not RGB
         if (R < 0.0f || G < 0.0f || B < 0.0f) {
-#ifdef _DEBUG
-            neg = true;
-#endif
-
             if (Lprov1 < 0.01f) {
                 Lprov1 = 0.01f;
             }
@@ -2857,10 +2722,6 @@ void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const
         } else if (!isHLEnabled && rtengine::max(R, G, B) > ClipLevel && rtengine::min(R, G, B) <= ClipLevel) {
 
             // if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
-#ifdef _DEBUG
-            more_rgb = true;
-#endif
-
             if (Lprov1 > 99.999f) {
                 Lprov1 = 99.98f;
             }
@@ -2900,17 +2761,6 @@ void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const
  */
 void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3])
 {
-#ifdef _DEBUG
-    MyTime t1e, t2e;
-    t1e.set();
-    int negat = 0, moreRGB = 0;
-    MunsellDebugInfo* MunsDebugInfo = nullptr;
-
-    if (corMunsell) {
-        MunsDebugInfo = new MunsellDebugInfo();
-    }
-
-#endif
     float correctlum = 0.f;
     float correctionHuechroma = 0.f;
 #ifdef __SSE2__
@@ -2949,9 +2799,6 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
         float2 sincosval;
 
         if(gamut) {
-#ifdef _DEBUG
-            bool neg, more_rgb;
-#endif
             // According to mathematical laws we can get the sin and cos of HH by simple operations
             float R, G, B;
 
@@ -2964,23 +2811,7 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
             }
 
             //gamut control : Lab values are in gamut
-#ifdef _DEBUG
-            gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f, neg, more_rgb);
-#else
             gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f);
-#endif
-
-#ifdef _DEBUG
-
-            if(neg) {
-                negat++;
-            }
-
-            if(more_rgb) {
-                moreRGB++;
-            }
-
-#endif
         }
 
         labL[j] = Lprov1 * 327.68f;
@@ -2988,12 +2819,7 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
         correctlum = 0.f;
 
         if(corMunsell)
-#ifdef _DEBUG
-            AllMunsellLch(lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum, MunsDebugInfo);
-
-#else
             AllMunsellLch(lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum);
-#endif
 
         if(correctlum == 0.f && correctionHuechroma == 0.f) {
             if(!gamut) {
@@ -3014,28 +2840,6 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
         laba[j] = Chprov1 * sincosval.y * 327.68f;
         labb[j] = Chprov1 * sincosval.x * 327.68f;
     }
-
-#ifdef _DEBUG
-    t2e.set();
-
-    if (settings->verbose) {
-        printf("Color::LabGamutMunsell (correction performed in %d usec):\n", t2e.etime(t1e));
-        printf("   Gamut              : G1negat=%iiter G165535=%iiter \n", negat, moreRGB);
-
-        if (MunsDebugInfo) {
-            printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0],    MunsDebugInfo->maxdhue[1],    MunsDebugInfo->maxdhue[2],    MunsDebugInfo->maxdhue[3],    MunsDebugInfo->depass);
-            printf("   Munsell luminance  : MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhuelum[0] , MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
-        } else {
-            printf("   Munsell correction wasn't requested\n");
-        }
-    }
-
-    if (MunsDebugInfo) {
-        delete MunsDebugInfo;
-    }
-
-#endif
-
 }
 
 /*
@@ -3140,11 +2944,6 @@ void Color::SkinSat (float lum, float hue, float chrom, float &satreduc)
  */
 void Color::initMunsell ()
 {
-#ifdef _DEBUG
-    MyTime t1e, t2e;
-    t1e.set();
-#endif
-
     const int maxInd  = 140;
     const int maxInd2 = 90;
     const int maxInd3 = 50;
@@ -5745,14 +5544,6 @@ void Color::initMunsell ()
 
     //printf("5GY  %1.2f  %1.2f %1.2f\n",_5GY80[44],_5GY80[84],_5GY80[125] );
 
-#ifdef _DEBUG
-    t2e.set();
-
-    if (settings->verbose) {
-        printf("Lutf Munsell  %d usec\n", t2e.etime(t1e));
-    }
-
-#endif
 }
 
 }

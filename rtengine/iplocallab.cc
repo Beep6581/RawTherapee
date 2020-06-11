@@ -2086,9 +2086,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
 #ifdef __SSE2__
     int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
-#ifndef _DEBUG
     #pragma omp parallel if (multiThread)
-#endif
     {
 #ifdef __SSE2__
         // one line buffer per channel and thread
@@ -2099,9 +2097,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
         float Mbuffer[bufferLength] ALIGNED16;
         float sbuffer[bufferLength] ALIGNED16;
 #endif
-#ifndef _DEBUG
         #pragma omp for schedule(dynamic, 16)
-#endif
         for (int i = 0; i < height; i++) {
 #ifdef __SSE2__
             // vectorized conversion from Lab to jchqms
@@ -9928,10 +9924,6 @@ void ImProcFunctions::Lab_Local(
     }
 
     BENCHFUN
-#ifdef _DEBUG
-// init variables to display Munsell corrections
-    MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
-#endif
 
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;
@@ -14741,11 +14733,7 @@ void ImProcFunctions::Lab_Local(
 #endif
 
 #ifdef _OPENMP
-#ifdef _DEBUG
-            #pragma omp for schedule(dynamic,16) firstprivate(MunsDebugInfo)
-#else
             #pragma omp for schedule(dynamic,16)
-#endif
 #endif
             for (int y = 0; y < transformed->H; y++) {
                 const int loy = cy + y;
@@ -14843,15 +14831,9 @@ void ImProcFunctions::Lab_Local(
                     }
 #endif
 
-#ifdef _DEBUG
-                    Chprov1 = rtengine::min(Chprov1, chr);
-                    Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f, false, false);
-#else
                     Color::pregamutlab(Lprov1, HH, chr);
                     Chprov1 = rtengine::min(Chprov1, chr);
                     Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f);
-#endif
-
                     transformed->L[y][x] = Lprov1 * 327.68f;
                     transformed->a[y][x] = 327.68f * Chprov1 * sincosval.y;
                     transformed->b[y][x] = 327.68f * Chprov1 * sincosval.x;
@@ -14862,11 +14844,7 @@ void ImProcFunctions::Lab_Local(
                         float correctlum = 0.f;
                         const float memChprov = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x])) / 327.68f;
                         float Chprov = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x])) / 327.68f;
-#ifdef _DEBUG
-                        Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum, MunsDebugInfo);
-#else
                         Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
-#endif
 
                         if (std::fabs(correctionHue) < 0.015f) {
                             HH += correctlum;    // correct only if correct Munsell chroma very little.
@@ -14881,9 +14859,6 @@ void ImProcFunctions::Lab_Local(
         }
     }
 
-#ifdef _DEBUG
-    delete MunsDebugInfo;
-#endif
 }
 
 }
