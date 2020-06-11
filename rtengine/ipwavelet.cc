@@ -469,9 +469,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.t_lsl = static_cast<float>(params->wavelet.bllev.getTopLeft());
     cp.b_rsl = static_cast<float>(params->wavelet.bllev.getBottomRight());
     cp.t_rsl = static_cast<float>(params->wavelet.bllev.getTopRight());
-//    cp.numlevS = 9 - params->wavelet.threshold2;
- //   cp.numlevS =  params->wavelet.thres - params->wavelet.threshold2;
- //   int maxlevS = cp.numlevH;
     cp.numlevS = params->wavelet.threshold2; //rtengine::max(cp.numlevS, maxlevS);
     //highlight
     cp.b_lhl = static_cast<float>(params->wavelet.hllev.getBottomLeft());
