@@ -985,13 +985,8 @@ BENCHFUN
                                         labdn->b[i1][j1] = (Y - Z);
 
                                         if (((i1 | j1) & 1) == 0) {
-                                            if (numTries == 1) {
-                                                noisevarlum[(i1 >> 1)*width2 + (j1 >> 1)] = useNoiseLCurve ? lumcalc[i >> 1][j >> 1] : noisevarL;
-                                                noisevarchrom[(i1 >> 1)*width2 + (j1 >> 1)] = useNoiseCCurve ? maxNoiseVarab * ccalc[i >> 1][j >> 1] : 1.f;
-                                            } else {
-                                                noisevarlum[(i1 >> 1)*width2 + (j1 >> 1)] = lumcalc[i >> 1][j >> 1];
-                                                noisevarchrom[(i1 >> 1)*width2 + (j1 >> 1)] = ccalc[i >> 1][j >> 1];
-                                            }
+                                            noisevarlum[(i1 >> 1)*width2 + (j1 >> 1)] = useNoiseLCurve ? lumcalc[i >> 1][j >> 1] : noisevarL;
+                                            noisevarchrom[(i1 >> 1)*width2 + (j1 >> 1)] = useNoiseCCurve ? maxNoiseVarab * ccalc[i >> 1][j >> 1] : 1.f;
                                         }
                                     }
                                 }
