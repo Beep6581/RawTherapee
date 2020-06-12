@@ -578,7 +578,7 @@ struct local_params {
 
 };
 
-static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius, bool multiThread = false)
+static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius)
 {
     // base of the process to detect shape in complement of deltaE
     // use for calculate Spot reference
@@ -602,56 +602,37 @@ static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float
     };
 
     if (radius > 0.f) {
-        radius = rtengine::max(radius / 2.f, 0.5f);
-
-#ifdef _OPENMP
-        #pragma omp parallel if (multiThread)
-#endif
-        {
-            gaussianBlur(luma, tmL, bfw, bfh, radius);
-        }
+        gaussianBlur(luma, tmL, bfw, bfh, rtengine::max(radius / 2.f, 0.5f));
     } else {
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw ; x++) {
-                sobelL[y][x] = 0.f;
                 tmL[y][x] = luma[y][x];
             }
         }
     }
 
-#ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
-#endif
-    for (int y = 0; y < bfh ; y++) {
-        for (int x = 0; x < bfw ; x++) {
+    for (int x = 0; x < bfw; x++) {
+        sobelL[0][x] = 0.f;
+    }
+    for (int y = 1; y < bfh - 1; y++) {
+        sobelL[y][0] = 0.f;
+        for (int x = 1; x < bfw - 1; x++) {
             float sumXL = 0.f;
             float sumYL = 0.f;
-            float SUML;
-
-            if (y == 0 || y == bfh - 1) {
-                SUML = 0.f;
-            } else if (x == 0 || x == bfw - 1) {
-                SUML = 0.f;
-            } else {
-                for (int i = -1; i < 2; i += 2) {
-                    for (int j = -1; j < 2; j += 1) {
-                        sumXL += GX[j + 1][i + 1] * tmL[y + i][x + j];
-                    }
+            for (int i = -1; i < 2; i += 2) {
+                for (int j = -1; j < 2; j += 1) {
+                    sumXL += GX[j + 1][i + 1] * tmL[y + i][x + j];
+                    sumYL += GY[j + 1][i + 1] * tmL[y + i][x + j];
                 }
-
-                for (int i = -1; i < 2; i += 1) {
-                    for (int j = -1; j < 2; j += 2) {
-                        sumYL += GY[j + 1][i + 1] * tmL[y + i][x + j];
-                    }
-                }
-
-                //Edge strength
-                SUML = std::sqrt(SQR(sumXL) + SQR(sumYL));
-                //we can add if need teta = atan2 (sumYr, sumXr)
             }
-
-            sobelL[y][x] = clipLoc(SUML);
+            //Edge strength
+            //we can add if need teta = atan2 (sumYr, sumXr)
+            sobelL[y][x] = rtengine::min(std::sqrt(SQR(sumXL) + SQR(sumYL)), 32767.f);
         }
+        sobelL[y][bfw - 1] = 0.f;
+    }
+    for (int x = 0; x < bfw; x++) {
+        sobelL[bfh - 1][x] = 0.f;
     }
 }
 
@@ -3134,7 +3115,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
 
 void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread)
 {
-    SobelCannyLuma(blend2, bufcolorig->L, bfw, bfh, radius, multiThread);
+    SobelCannyLuma(blend2, bufcolorig->L, bfw, bfh, radius);
     float rm = 20.f / sk;
 
     if (rm > 0) {
@@ -9775,7 +9756,7 @@ void ImProcFunctions::Lab_Local(
 
         array2D<float> ble(bfw, bfh);
         const float radiussob = 1.f / (sk * 1.4f);
-        SobelCannyLuma(ble, bufsob, bfw, bfh, radiussob, true);
+        SobelCannyLuma(ble, bufsob, bfw, bfh, radiussob);
         array2D<float> &guid = bufsob;
 
 #ifdef _OPENMP
