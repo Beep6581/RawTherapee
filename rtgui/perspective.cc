@@ -38,6 +38,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspProjRotate = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ROTATE");
     EvPerspProjShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     lens_geom_listener = nullptr;
+    metadata = nullptr;
 
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
     Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
