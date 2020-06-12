@@ -283,6 +283,16 @@ void deltaEforLaplace(float *dE, const float lap, int bfw, int bfh, rtengine::La
     }
 }
 
+float calclight(float lum, const LUTf &lightCurveloc)
+{
+    return clipLoc(lightCurveloc[lum]);
+}
+
+float calclightinv(float lum, float koef, const LUTf &lightCurveloc)
+{
+    return koef != -100.f ? clipLoc(lightCurveloc[lum]) : 0.f;
+}
+
 }
 
 namespace rtengine
@@ -2965,18 +2975,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
     }
 }
 
-static void calclight(float lum, float &lumnew, const LUTf &lightCurveloc)
-{
-    lumnew = clipLoc(lightCurveloc[lum]);
-}
-
-static void calclightinv(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
-{
-    lumnew = koef != -100.f ? clipLoc(lightCurveloc[lum]) : 0.f;
-}
-
-
-static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexporig, const LabImage* original, float &fab, float &meanfab, float chrom)
+static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexporig, const LabImage* original, float &fab, float &meanfab, float chrom, bool multiThread)
 {
     const int nbfab = bfw * bfh;
 
@@ -2987,7 +2986,7 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
         double sumab = 0.0;
 
 #ifdef _OPENMP
-        #pragma omp parallel for reduction(+:sumab)
+        #pragma omp parallel for reduction(+:sumab) if(multiThread)
 #endif
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
@@ -3003,7 +3002,7 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
         double som = 0.0;
 
 #ifdef _OPENMP
-        #pragma omp parallel for reduction(+:som)
+        #pragma omp parallel for reduction(+:som) if(multiThread)
 #endif
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
@@ -3758,7 +3757,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
     array2D<float> guid(bfw, bfh);
     const std::unique_ptr<LabImage> bufreserv(new LabImage(bfw, bfh));
     float meanfab, fab;
-    mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, chrom);
+    mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, chrom, multiThread);
     float chromult = 1.f - 0.01f * chrom;
     float kinv = 1.f;
     float kneg = 1.f;
@@ -5234,52 +5233,47 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp, int senstype,  struct local_params & lp, LabImage * originalmask, const LUTf& lightCurveloc, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& exlocalcurve, const LUTf& cclocalcurve, float adjustr, bool localcutili, const LUTf& lllocalcurve, bool locallutili, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
-    float ach = lp.trans / 100.f;
+    const float ach = lp.trans / 100.f;
     const float facc = (100.f + lp.chro) / 100.f; //chroma factor transition
     float varsens = lp.sens;
 
     if (senstype == 0) { //Color and Light
-        varsens =  lp.sens;
+        varsens = lp.sens;
     } else if (senstype == 1) { //exposure
-        varsens =  lp.sensex;
+        varsens = lp.sensex;
     } else if (senstype == 2) { //shadows highlight
-        varsens =  lp.senshs;
+        varsens = lp.senshs;
     }
 
-    LabImage *temp = nullptr;
-    LabImage *tempCL = nullptr;
-
-    int GW = transformed->W;
-    int GH = transformed->H;
+    const int GW = transformed->W;
+    const int GH = transformed->H;
     const float refa = chromaref * cos(hueref) * 327.68f;
     const float refb = chromaref * sin(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
 
-    if (senstype == 2) { // Shadows highlight
-        temp = new LabImage(GW, GH);
+    const std::unique_ptr<LabImage> temp(new LabImage(GW, GH));
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-        for (int y = 0; y < transformed->H; y++) {
-            for (int x = 0; x < transformed->W; x++) {
-                temp->L[y][x] = original->L[y][x];
-                temp->a[y][x] = original->a[y][x];
-                temp->b[y][x] = original->b[y][x];
-            }
+    for (int y = 0; y < transformed->H; y++) {
+        for (int x = 0; x < transformed->W; x++) {
+            temp->L[y][x] = original->L[y][x];
+            temp->a[y][x] = original->a[y][x];
+            temp->b[y][x] = original->b[y][x];
         }
+    }
 
+    if (senstype == 2) { // Shadows highlight
         if (lp.shmeth == 0) {
-            ImProcFunctions::shadowsHighlights(temp, lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
-        }
-
-        if (lp.shmeth == 1) {
+            ImProcFunctions::shadowsHighlights(temp.get(), lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
+        } else if (lp.shmeth == 1) {
             const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(GW, GH));
 
             lab2rgb(*temp, *tmpImage, params->icm.workingProfile);
 
             if (tonecurv) { //Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
-                float gamtone = params->locallab.spots.at(sp).gamSH;
-                float slotone = params->locallab.spots.at(sp).sloSH;
+                const float gamtone = params->locallab.spots.at(sp).gamSH;
+                const float slotone = params->locallab.spots.at(sp).sloSH;
                 cmsHTRANSFORM dummy = nullptr;
                 workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
                 workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
@@ -5298,19 +5292,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
         }
 
     } else if (senstype == 1) { //exposure
-        temp = new LabImage(GW, GH);
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-        for (int y = 0; y < transformed->H; y++) {
-            for (int x = 0; x < transformed->W; x++) {
-                temp->a[y][x] = original->a[y][x];
-                temp->b[y][x] = original->b[y][x];
-                temp->L[y][x] = original->L[y][x];
-            }
-        }
-
-        ImProcFunctions::exlabLocal(lp, GH, GW, original, temp, hltonecurveloc, shtonecurveloc, tonecurveloc);
+        ImProcFunctions::exlabLocal(lp, GH, GW, original, temp.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
 
         if (exlocalcurve) {
 #ifdef _OPENMP
@@ -5318,22 +5300,20 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #endif
             for (int y = 0; y < temp->H; y++) {
                 for (int x = 0; x < temp->W; x++) {
-                    float lighn =  temp->L[y][x];
-                    float lh = 0.5f * exlocalcurve[2.f * lighn]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
+                    const float lh = 0.5f * exlocalcurve[2.f * temp->L[y][x]]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
                     temp->L[y][x] = lh;
                 }
             }
         }
 
         if (lp.expchroma != 0.f) {
-            float ch;
-            ch = (1.f + 0.02f * lp.expchroma) ;
+            const float ch = (1.f + 0.02f * lp.expchroma) ;
             float chprosl;
 
             if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
                 chprosl = 99.f * ch - 99.f;
             } else {
-                float ampli = 70.f;
+                constexpr float ampli = 70.f;
                 chprosl = clipChro(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
             }
 
@@ -5342,37 +5322,14 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #endif
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
-                    float epsi = 0.f;
-
-                    if (original->L[y][x] == 0.f) {
-                        epsi = 0.001f;
-                    }
-
-                    float rapexp = temp->L[y][x] / (original->L[y][x] + epsi);
-                    temp->a[y][x] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
-                    temp->b[y][x] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
+                    const float epsi = original->L[y][x] == 0.f ? 0.001f : 0.f;
+                    const float rapexp = temp->L[y][x] / (original->L[y][x] + epsi);
+                    temp->a[y][x] *= (1.f + chprosl * rapexp);
+                    temp->b[y][x] *= (1.f + chprosl * rapexp);
                 }
             }
         }
-
-        /*
-                if (lp.war != 0) {
-                    ImProcFunctions::ciecamloc_02float(sp, temp);
-                }
-                */
     } else if (senstype == 0) { //Color and Light curves L C
-        tempCL = new LabImage(GW, GH);
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-        for (int y = 0; y < tempCL->H; y++) {
-            for (int x = 0; x < tempCL->W; x++) {
-                tempCL->a[y][x] = original->a[y][x];
-                tempCL->b[y][x] = original->b[y][x];
-                tempCL->L[y][x] = original->L[y][x];
-            }
-        }
-
         if (cclocalcurve && localcutili) { // C=f(C) curve
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -5380,17 +5337,15 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     //same as in "normal"
-                    float chromat = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
-                    float ch;
-                    float ampli = 25.f;
-                    ch = (cclocalcurve[chromat * adjustr ])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
-                    float chprocu = clipChro(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
-                    tempCL->a[y][x] = original->a[y][x] * (1.f + 0.01f * (chprocu));
-                    tempCL->b[y][x] = original->b[y][x] * (1.f + 0.01f * (chprocu));
+                    const float chromat = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
+                    constexpr float ampli = 25.f;
+                    const float ch = (cclocalcurve[chromat * adjustr ])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
+                    const float chprocu = clipChro(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+                    temp->a[y][x] = original->a[y][x] * (1.f + 0.01f * chprocu);
+                    temp->b[y][x] = original->b[y][x] * (1.f + 0.01f * chprocu);
 
                 }
             }
-
         }
 
         if (lllocalcurve && locallutili) {
@@ -5399,13 +5354,10 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #endif
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
-                    float lighn =  original->L[y][x];
-                    float lh = 0.5f * lllocalcurve[2.f * lighn];
-                    tempCL->L[y][x] = lh;
+                    temp->L[y][x] = 0.5f * lllocalcurve[2.f * original->L[y][x]];
                 }
             }
         }
-
     }
 
     //balance deltaE
@@ -5475,33 +5427,34 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             const int loy = cy + y;
 
             for (int x = 0; x < transformed->W; x++) {
-                const int lox = cx + x;
-                int zone;
-
-                float localFactor = 1.f;
-
-                if (lp.shapmet == 0) {
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
-                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);//rect not good
-                }
-
-                float rL = origblur->L[y][x] / 327.68f;
+                const float rL = origblur->L[y][x] / 327.68f;
 
                 if (std::fabs(origblur->b[y][x]) < 0.01f) {
                     origblur->b[y][x] = 0.01f;
                 }
 
-                //deltaE
-                float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
-                float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
-                float huedelta2 = abdelta2 - chrodelta2;
-                const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-
-                float th_r = 0.01f;
+                constexpr float th_r = 0.01f;
 
                 if (rL > th_r) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
+                    const int lox = cx + x;
+                    int zone;
+                    float localFactor = 1.f;
+
+                    if (lp.shapmet == 0) {
+                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    } else /*if (lp.shapmet == 1)*/ {
+                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);//rect not good
+                    }
+
+                    //deltaE
+                    float reducdE;
+                    if (zone != 2) {
+                        const float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
+                        const float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
+                        const float huedelta2 = abdelta2 - chrodelta2;
+                        const float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
+                        reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
+                    }
 
                     switch (zone) {
                         case 2: { // outside selection and outside transition zone => no effect, keep original values
@@ -5512,166 +5465,98 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                         }
 
                         case 1: { // inside transition zone
-                            float difa = 0.f;
-                            float difb = 0.f;
-                            float factorx = 1.f - localFactor;
+                            const float factorx = 1.f - localFactor;
 
                             if (senstype == 0) {
-                                float epsia = 0.f;
-                                float epsib = 0.f;
+                                const float epsia = original->a[y][x] == 0.f ? 0.0001f : 0.f;
+                                const float epsib = original->b[y][x] == 0.f ? 0.0001f : 0.f;
                                 float lumnew = original->L[y][x];
-                                float difL = (tempCL->L[y][x] - original->L[y][x]) * reducdE;
-                                difa = (tempCL->a[y][x] - original->a[y][x]) * reducdE;
-                                difb = (tempCL->b[y][x] - original->b[y][x]) * reducdE;
-                                difL *= factorx;
-                                difa *= factorx;
-                                difb *= factorx;
-
-                                if (original->a[y][x] == 0.f) {
-                                    epsia = 0.0001f;
-                                }
-
-                                if (original->b[y][x] == 0.f) {
-                                    epsib = 0.0001f;
-                                }
-
-                                float facCa = 1.f + (difa / (original->a[y][x] + epsia));
-                                float facCb = 1.f + (difb / (original->b[y][x] + epsib));
+                                const float difL = (temp->L[y][x] - original->L[y][x]) * (reducdE * factorx);
+                                const float difa = (temp->a[y][x] - original->a[y][x]) * (reducdE * factorx);
+                                const float difb = (temp->b[y][x] - original->b[y][x]) * (reducdE * factorx);
+                                const float facCa = 1.f + (difa / (original->a[y][x] + epsia));
+                                const float facCb = 1.f + (difb / (original->b[y][x] + epsib));
 
                                 if (lp.sens < 75.f) {
-                                    float lightcont;
-
                                     if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                        calclightinv(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
-                                        lightcont = lumnew;
-
-                                    } else {
-                                        lightcont = lumnew;
+                                        lumnew = calclightinv(lumnew, lp.ligh, lightCurveloc);  //replace L-curve
                                     }
 
-                                    float fac = (100.f + factorx * lp.chro * reducdE) / 100.f; //chroma factor transition
-                                    float diflc = (lightcont - original->L[y][x]) * reducdE;
+                                    const float fac = (100.f + factorx * lp.chro * reducdE) / 100.f; //chroma factor transition
+                                    const float diflc = (lumnew - original->L[y][x]) * (reducdE * factorx);
 
-                                    diflc *= factorx; //transition lightness
                                     transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc + difL));
-
                                     transformed->a[y][x] = clipC(original->a[y][x] * fac * facCa) ;
                                     transformed->b[y][x] = clipC(original->b[y][x] * fac * facCb);
                                 } else {
-                                    float fac = (100.f + factorx * lp.chro) / 100.f; //chroma factor transition
+                                    const float fac = (100.f + factorx * lp.chro) / 100.f; //chroma factor transition
 
                                     if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                        calclightinv(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
+                                        lumnew = calclightinv(original->L[y][x], lp.ligh, lightCurveloc);
                                     }
 
-                                    float lightcont = lumnew ; //apply lightness
-
-                                    float diflc = lightcont - original->L[y][x];
-                                    diflc *= factorx;
+                                    const float diflc = (lumnew - original->L[y][x]) * factorx;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc + difL);
                                     transformed->a[y][x] = clipC(original->a[y][x] * fac * facCa);
                                     transformed->b[y][x] = clipC(original->b[y][x] * fac * facCb);
-
-
                                 }
                             } else if (senstype == 1 || senstype == 2) {
-                                float diflc = (temp->L[y][x] - original->L[y][x]) * reducdE;
-                                diflc *= factorx;
-                                difa = (temp->a[y][x] - original->a[y][x]) * reducdE;
-                                difb = (temp->b[y][x] - original->b[y][x]) * reducdE;
-                                difa *= factorx;
-                                difb *= factorx;
+                                const float diflc = (temp->L[y][x] - original->L[y][x]) * (reducdE * factorx);
+                                const float difa = (temp->a[y][x] - original->a[y][x]) * (reducdE * factorx);
+                                const float difb = (temp->b[y][x] - original->b[y][x]) * (reducdE * factorx);
                                 transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                                 transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
                                 transformed->b[y][x] = clipC(original->b[y][x] + difb);
-
                             }
 
                             break;
                         }
 
                         case 0: { // inside selection => full effect, no transition
-                            float diflc = 0.f;
-                            float difa = 0.f;
-                            float difb = 0.f;
-
                             if (senstype == 0) {
-                                float epsia = 0.f;
-                                float epsib = 0.f;
+                                const float epsia = original->a[y][x] == 0.f ? 0.0001f : 0.f;
+                                const float epsib = original->b[y][x] == 0.f ? 0.0001f : 0.f;
                                 float lumnew = original->L[y][x];
-                                float difL = (tempCL->L[y][x] - original->L[y][x]) * reducdE;
-                                difa = (tempCL->a[y][x] - original->a[y][x]) * reducdE;
-                                difb = (tempCL->b[y][x] - original->b[y][x]) * reducdE;
-
-                                if (original->a[y][x] == 0.f) {
-                                    epsia = 0.0001f;
-                                }
-
-                                if (original->b[y][x] == 0.f) {
-                                    epsib = 0.0001f;
-                                }
-
-                                float facCa = 1.f + (difa / (original->a[y][x] + epsia));
-                                float facCb = 1.f + (difb / (original->b[y][x] + epsib));
+                                const float difL = (temp->L[y][x] - original->L[y][x]) * reducdE;
+                                const float difa = (temp->a[y][x] - original->a[y][x]) * reducdE;
+                                const float difb = (temp->b[y][x] - original->b[y][x]) * reducdE;
+                                const float facCa = 1.f + difa / (original->a[y][x] + epsia);
+                                const float facCb = 1.f + difb / (original->b[y][x] + epsib);
 
                                 if (lp.sens < 75.f) {
-
-                                    float lightcont;
-
                                     if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                        calclightinv(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
-                                        lightcont = lumnew;
-
-                                    } else {
-                                        lightcont = lumnew;
+                                        lumnew = calclightinv(lumnew, lp.ligh, lightCurveloc);  //replace L-curve
                                     }
 
-                                    float fac = (100.f + lp.chro * reducdE) / 100.f; //chroma factor transition
-                                    diflc = (lightcont - original->L[y][x]) * reducdE;
+                                    const float fac = (100.f + lp.chro * reducdE) / 100.f; //chroma factor transition
+                                    const float diflc = (lumnew - original->L[y][x]) * reducdE;
 
-                                    transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc + difL));
-
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc + difL);
                                     transformed->a[y][x] = clipC(original->a[y][x] * fac * facCa) ;
                                     transformed->b[y][x] = clipC(original->b[y][x] * fac * facCb);
-
-
                                 } else {
                                     if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                        calclightinv(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
+                                        lumnew = calclightinv(original->L[y][x], lp.ligh, lightCurveloc);
                                     }
 
-                                    float lightcont = lumnew ;
-                                    transformed->L[y][x] = CLIP(lightcont + difL) ;
+                                    transformed->L[y][x] = CLIP(lumnew + difL) ;
                                     transformed->a[y][x] = clipC(original->a[y][x] * facc * facCa);
                                     transformed->b[y][x] = clipC(original->b[y][x] * facc * facCb);
-
                                 }
                             } else if (senstype == 1  || senstype == 2) {
-                                diflc = (temp->L[y][x] - original->L[y][x]) * reducdE;
-                                difa = (temp->a[y][x] - original->a[y][x]) * reducdE;
-                                difb = (temp->b[y][x] - original->b[y][x]) * reducdE;
+                                const float diflc = (temp->L[y][x] - original->L[y][x]) * reducdE;
+                                const float difa = (temp->a[y][x] - original->a[y][x]) * reducdE;
+                                const float difb = (temp->b[y][x] - original->b[y][x]) * reducdE;
                                 transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                                 transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
                                 transformed->b[y][x] = clipC(original->b[y][x] + difb);
                             }
-
                         }
                     }
-
                 }
-
             }
         }
     }
-
-    if (senstype == 1 || senstype == 2) {
-        delete temp;
-    }
-
-    if (senstype == 0) {
-        delete tempCL;
-    }
-
 }
 
 void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, float & avg, const LocwavCurve & locwavCurveden, bool locwavdenutili)
@@ -10102,7 +9987,7 @@ void ImProcFunctions::Lab_Local(
         array2D<float> hue(GW, GH);
         array2D<float> guid(GW, GH);
         float meanfab, fab;
-        mean_fab(0, 0, GW, GH, bufgb.get(), original, fab, meanfab, lp.chromabl);
+        mean_fab(0, 0, GW, GH, bufgb.get(), original, fab, meanfab, lp.chromabl, multiThread);
         float chromult =  1.f - 0.01f * lp.chromabl;
 
 #ifdef _OPENMP
@@ -13959,7 +13844,7 @@ void ImProcFunctions::Lab_Local(
                             }
 
                             if (lp.ligh != 0.f || lp.cont != 0) {//slider luminance or slider contrast with curve
-                                calclight(bufcolcalcL, bufcolcalcL, lightCurveloc);
+                                bufcolcalcL = calclight(bufcolcalcL, lightCurveloc);
                             }
 
                             if (lllocalcurve && locallutili && lp.qualcurvemet != 0) {// L=f(L) curve
