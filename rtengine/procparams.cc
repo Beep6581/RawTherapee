@@ -3264,7 +3264,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expreti(false),
     complexreti(0),
     retinexMethod("high"),
-    str(0.15),
+    str(0.),
     chrrt(0.0),
     neigh(50.0),
     vart(150.0),
