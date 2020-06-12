@@ -1017,6 +1017,13 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         sensih->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
         fftwreti->set_tooltip_text(M("TP_LOCALLAB_RETI_FFTW_TOOLTIP"));
+        loglin->set_tooltip_text(M("TP_LOCALLAB_RETI_LOGLIN_TOOLTIP"));
+        scalereti->set_tooltip_text(M("TP_LOCALLAB_RETI_SCALE_TOOLTIP"));
+        limd->set_tooltip_text(M("TP_LOCALLAB_RETI_LIMDOFFS_TOOLTIP"));
+        offs->set_tooltip_text(M("TP_LOCALLAB_RETI_LIMDOFFS_TOOLTIP"));
+        cliptm->set_tooltip_text(M("TP_LOCALLAB_RETI_LIMDOFFS_TOOLTIP"));
+        lightnessreti->set_tooltip_text(M("TP_LOCALLAB_RETI_LIGHTDARK_TOOLTIP"));
+        darkness->set_tooltip_text(M("TP_LOCALLAB_RETI_LIGHTDARK_TOOLTIP"));
         neigh->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
         vart->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
         equilret->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
@@ -1040,6 +1047,12 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         fftwreti->set_tooltip_text("");
         neigh->set_tooltip_text("");
         vart->set_tooltip_text("");
+        loglin->set_tooltip_text(M(""));
+        scalereti->set_tooltip_text(M(""));
+        limd->set_tooltip_text(M(""));
+        offs->set_tooltip_text(M(""));
+        lightnessreti->set_tooltip_text(M(""));
+        darkness->set_tooltip_text(M(""));
         equilret->set_tooltip_text(M(""));
         softradiusret->set_tooltip_text("");
         cTtransshape->setTooltip("");
