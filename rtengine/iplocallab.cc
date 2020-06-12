@@ -304,6 +304,64 @@ float balancedeltaE(float kL)
     return abal * kL + bbal;
 }
 
+void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius)
+{
+    // base of the process to detect shape in complement of deltaE
+    // use for calculate Spot reference
+    // and for structure of the shape
+    // actually , as the program don't use these function, I just create a simple "Canny" near of Sobel. This can be completed after with teta, etc.
+    array2D<float> tmL(bfw, bfh);
+
+    //inspired from Chen Guanghua Zhang Xiaolong
+    //Sobel Horizontal
+    constexpr float GX[3][3] = {
+        {1.f, 0.f, -1.f},
+        {2.f, 0.f, -2.f},
+        {1.f, 0.f, -1.f}
+    };
+
+    //Sobel Vertical
+    constexpr float GY[3][3] = {
+        {1.f, 2.f, 1.f},
+        {0.f, 0.f, 0.f},
+        {-1.f, -2.f, -1.f}
+    };
+
+    if (radius > 0.f) {
+        gaussianBlur(luma, tmL, bfw, bfh, rtengine::max(radius / 2.f, 0.5f));
+    } else {
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw ; x++) {
+                tmL[y][x] = luma[y][x];
+            }
+        }
+    }
+
+    for (int x = 0; x < bfw; x++) {
+        sobelL[0][x] = 0.f;
+    }
+    for (int y = 1; y < bfh - 1; y++) {
+        sobelL[y][0] = 0.f;
+        for (int x = 1; x < bfw - 1; x++) {
+            float sumXL = 0.f;
+            float sumYL = 0.f;
+            for (int i = -1; i < 2; i += 2) {
+                for (int j = -1; j < 2; j += 1) {
+                    sumXL += GX[j + 1][i + 1] * tmL[y + i][x + j];
+                    sumYL += GY[j + 1][i + 1] * tmL[y + i][x + j];
+                }
+            }
+            //Edge strength
+            //we can add if need teta = atan2 (sumYr, sumXr)
+            sobelL[y][x] = rtengine::min(std::sqrt(rtengine::SQR(sumXL) + rtengine::SQR(sumYL)), 32767.f);
+        }
+        sobelL[y][bfw - 1] = 0.f;
+    }
+    for (int x = 0; x < bfw; x++) {
+        sobelL[bfh - 1][x] = 0.f;
+    }
+}
+
 }
 
 namespace rtengine
@@ -577,64 +635,6 @@ struct local_params {
     bool blwh;
 
 };
-
-static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius)
-{
-    // base of the process to detect shape in complement of deltaE
-    // use for calculate Spot reference
-    // and for structure of the shape
-    // actually , as the program don't use these function, I just create a simple "Canny" near of Sobel. This can be completed after with teta, etc.
-    array2D<float> tmL(bfw, bfh);
-
-    //inspired from Chen Guanghua Zhang Xiaolong
-    //Sobel Horizontal
-    constexpr float GX[3][3] = {
-        {1.f, 0.f, -1.f},
-        {2.f, 0.f, -2.f},
-        {1.f, 0.f, -1.f}
-    };
-
-    //Sobel Vertical
-    constexpr float GY[3][3] = {
-        {1.f, 2.f, 1.f},
-        {0.f, 0.f, 0.f},
-        {-1.f, -2.f, -1.f}
-    };
-
-    if (radius > 0.f) {
-        gaussianBlur(luma, tmL, bfw, bfh, rtengine::max(radius / 2.f, 0.5f));
-    } else {
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw ; x++) {
-                tmL[y][x] = luma[y][x];
-            }
-        }
-    }
-
-    for (int x = 0; x < bfw; x++) {
-        sobelL[0][x] = 0.f;
-    }
-    for (int y = 1; y < bfh - 1; y++) {
-        sobelL[y][0] = 0.f;
-        for (int x = 1; x < bfw - 1; x++) {
-            float sumXL = 0.f;
-            float sumYL = 0.f;
-            for (int i = -1; i < 2; i += 2) {
-                for (int j = -1; j < 2; j += 1) {
-                    sumXL += GX[j + 1][i + 1] * tmL[y + i][x + j];
-                    sumYL += GY[j + 1][i + 1] * tmL[y + i][x + j];
-                }
-            }
-            //Edge strength
-            //we can add if need teta = atan2 (sumYr, sumXr)
-            sobelL[y][x] = rtengine::min(std::sqrt(SQR(sumXL) + SQR(sumYL)), 32767.f);
-        }
-        sobelL[y][bfw - 1] = 0.f;
-    }
-    for (int x = 0; x < bfw; x++) {
-        sobelL[bfh - 1][x] = 0.f;
-    }
-}
 
 static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, const LocwavCurve & locwavCurveden, bool locwavdenutili)
 {
