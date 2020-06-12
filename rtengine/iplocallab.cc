@@ -293,6 +293,17 @@ float calclightinv(float lum, float koef, const LUTf &lightCurveloc)
     return koef != -100.f ? clipLoc(lightCurveloc[lum]) : 0.f;
 }
 
+float balancedeltaE(float kL)
+{
+    constexpr float mincurs = 0.3f; // minimum slider balan_
+    constexpr float maxcurs = 1.7f; // maximum slider balan_
+    constexpr float maxkab = 1.35; // 0.5 * (3 - 0.3)
+    constexpr float minkab = 0.65; // 0.5 * (3 - 1.7)
+    constexpr float abal = (maxkab - minkab) / (mincurs - maxcurs);
+    constexpr float bbal = maxkab - mincurs * abal;
+    return abal * kL + bbal;
+}
+
 }
 
 namespace rtengine
@@ -2501,34 +2512,13 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     }
 }
 
-static void balancedeltaE(float kL, float &kab)
-{
-    float mincurs = 0.3f;//minimum slider balan_
-    float maxcurs = 1.7f;//maximum slider balan_
-    float maxkab = 1.35;//0.5 * (3 - 0.3)
-    float minkab = 0.65;//0.5 * (3 - 1.7)
-    float abal = (maxkab - minkab) / (mincurs - maxcurs);
-    float bbal = maxkab - mincurs * abal;
-    kab = abal * kL + bbal;
-}
-
-static void balancedeltaEH(float kH, float &kch)
-{
-    float mincurs = 0.3f;//minimum slider balan_
-    float maxcurs = 1.7f;//maximum slider balan_
-    float maxkab = 1.35;//0.5 * (3 - 0.3)
-    float minkab = 0.65;//0.5 * (3 - 1.7)
-    float abal = (maxkab - minkab) / (mincurs - maxcurs);
-    float bbal = maxkab - mincurs * abal;
-    kch = abal * kH + bbal;
-}
-
-void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage*originalmask, int levred, float hueref, float lumaref, float chromaref,  LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk)
 {
     //warning, but I hope used it next
     // local denoise and impulse
     //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
     // BENCHFUN
+    lumaref *= 327.68f;
     const float ach = lp.trans / 100.f;
 
     const float factnoise1 = 1.f + (lp.noisecf) / 500.f;
@@ -2538,56 +2528,48 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
     const int GW = transformed->W;
     const int GH = transformed->H;
 
-    if (lp.colorde == 0) {
-        lp.colorde = -1;//to avoid black
-    }
+    const float colorde = lp.colorde == 0 ? -1.f : lp.colorde; // -1.f to avoid black
+    const float amplabL = 2.f * colorde;
+    constexpr float darklim = 5000.f;
 
-    float darklim = 5000.f;
-    float aadark = -1.f;
-    float bbdark = darklim;
-
-    const float refa = chromaref * cos(hueref);
-    const float refb = chromaref * sin(hueref);
-    const bool usemaskbl = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 4);
-    const bool usemaskall = (usemaskbl);
-    const bool blshow = ((lp.showmaskblmet == 1 || lp.showmaskblmet == 2));
-    const bool previewbl = ((lp.showmaskblmet == 4));
+    const float refa = chromaref * std::cos(hueref) * 327.68f;
+    const float refb = chromaref * std::sin(hueref) * 327.68f;
+    const bool usemaskbl = lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 4;
+    const bool blshow = lp.showmaskblmet == 1 || lp.showmaskblmet == 2;
+    const bool previewbl = lp.showmaskblmet == 4;
 
     const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
-    std::unique_ptr<LabImage> origblurmask;
-
     const float radius = 3.f / sk;
 
-    if (usemaskall) {
-        origblurmask.reset(new LabImage(GW, GH));
-
+    if (usemaskbl) {
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
         {
-            gaussianBlur(originalmask->L, origblurmask->L, GW, GH, radius);
-            gaussianBlur(originalmask->a, origblurmask->a, GW, GH, radius);
-            gaussianBlur(originalmask->b, origblurmask->b, GW, GH, radius);
+            gaussianBlur(originalmask->L, origblur->L, GW, GH, radius);
+            gaussianBlur(originalmask->a, origblur->a, GW, GH, radius);
+            gaussianBlur(originalmask->b, origblur->b, GW, GH, radius);
+        }
+    } else {
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+            gaussianBlur(original->L, origblur->L, GW, GH, radius);
+            gaussianBlur(original->a, origblur->a, GW, GH, radius);
+            gaussianBlur(original->b, origblur->b, GW, GH, radius);
         }
     }
 
-#ifdef _OPENMP
-    #pragma omp parallel if (multiThread)
-#endif
-    {
-        gaussianBlur(original->L, origblur->L, GW, GH, radius);
-        gaussianBlur(original->a, origblur->a, GW, GH, radius);
-        gaussianBlur(original->b, origblur->b, GW, GH, radius);
-    }
-
-    const int begx = int (lp.xc - lp.lxL);
-    const int begy = int (lp.yc - lp.lyT);
+    const int begx = lp.xc - lp.lxL;
+    const int begy = lp.yc - lp.lyT;
+    constexpr float r327d68 = 1.f / 327.68f;
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
     {
-        const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
+        const LabImage* maskptr = origblur.get();
         const float mindE = 2.f + MINSCOPE * lp.sensden * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * lp.sensden * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -2598,7 +2580,6 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
 #endif
         for (int y = 0; y < transformed->H; y++) {
             const int loy = cy + y;
-
             const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
             if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
@@ -2607,7 +2588,6 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
 
             for (int x = 0, lox = cx + x; x < transformed->W; x++, lox++) {
                 int zone;
-
                 float localFactor = 1.f;
 
                 if (lp.shapmet == 0) {
@@ -2620,61 +2600,54 @@ void ImProcFunctions::DeNoise_Local(int call,  struct local_params& lp, LabImage
                     continue;
                 }
 
-                float dEL = std::sqrt(0.9f * SQR(refa - maskptr->a[y][x] / 327.6f) + 0.9f * SQR(refb - maskptr->b[y][x] / 327.8f) + 1.2f * SQR(lumaref - maskptr->L[y][x] / 327.8f));
-                float dEa = std::sqrt(1.2f * SQR(refa - maskptr->a[y][x] / 327.6f) + 1.f * SQR(refb - maskptr->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - maskptr->L[y][x] / 327.8f));
-                float dEb = std::sqrt(1.f * SQR(refa - maskptr->a[y][x] / 327.6f) + 1.2f * SQR(refb - maskptr->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - maskptr->L[y][x] / 327.8f));
+                float reducdEL = 1.f;
+                float reducdEa = 1.f;
+                float reducdEb = 1.f;
 
+                if (levred == 7) {
+                    const float dEL = std::sqrt(0.9f * SQR(refa - maskptr->a[y][x]) + 0.9f * SQR(refb - maskptr->b[y][x]) + 1.2f * SQR(lumaref - maskptr->L[y][x])) * r327d68;
+                    const float dEa = std::sqrt(1.2f * SQR(refa - maskptr->a[y][x]) + 1.f * SQR(refb - maskptr->b[y][x]) + 0.8f * SQR(lumaref - maskptr->L[y][x])) * r327d68;
+                    const float dEb = std::sqrt(1.f * SQR(refa - maskptr->a[y][x]) + 1.2f * SQR(refb - maskptr->b[y][x]) + 0.8f * SQR(lumaref - maskptr->L[y][x])) * r327d68;
+                    reducdEL = SQR(calcreducdE(dEL, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
+                    reducdEa = SQR(calcreducdE(dEa, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
+                    reducdEb = SQR(calcreducdE(dEb, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
+                }
+                float difL, difa, difb;
 
-                if (zone > 0) {
-                    float reducdEL = 1.f;
-                    float reducdEa = 1.f;
-                    float reducdEb = 1.f;
+                if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
+                    difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
+                    difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
+                    difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
+                } else  { //dcrop
+                    difL = tmp1.L[y][x] - original->L[y][x];
+                    difa = tmp1.a[y][x] - original->a[y][x];
+                    difb = tmp1.b[y][x] - original->b[y][x];
+                }
 
-                    if (levred == 7) {
-                        reducdEL = SQR(calcreducdE(dEL, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
-                        reducdEa = SQR(calcreducdE(dEa, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
-                        reducdEb = SQR(calcreducdE(dEb, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
+                difL *= localFactor * reducdEL;
+                difa *= localFactor * reducdEa;
+                difb *= localFactor * reducdEb;
+                transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                transformed->a[y][x] = clipC((original->a[y][x] + difa) * factnoise);
+                transformed->b[y][x] = clipC((original->b[y][x] + difb) * factnoise) ;
+
+                if (blshow) {
+                    transformed->L[y][x] = CLIP(12000.f + amplabL * difL);// * 10.f empirical to can visualize modifications
+                    transformed->a[y][x] = clipC(amplabL * difa);// * 10.f empirical to can visualize modifications
+                    transformed->b[y][x] = clipC(amplabL * difb);// * 10.f empirical to can visualize modifications
+                } else if (previewbl || lp.prevdE) {
+                    const float difbdisp = (reducdEL + reducdEa + reducdEb) * 10000.f * colorde;
+
+                    if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
+                        transformed->L[y][x] = darklim - transformed->L[y][x];
                     }
-                    float difL, difa, difb;
 
-                    if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
-                        difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
-                        difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
-                        difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
-                    } else  { //dcrop
-                        difL = tmp1.L[y][x] - original->L[y][x];
-                        difa = tmp1.a[y][x] - original->a[y][x];
-                        difb = tmp1.b[y][x] - original->b[y][x];
-
-                    }
-
-                    difL *= localFactor * reducdEL;
-                    difa *= localFactor * reducdEa;
-                    difb *= localFactor * reducdEb;
-                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                    transformed->a[y][x] = clipC((original->a[y][x] + difa) * factnoise);
-                    transformed->b[y][x] = clipC((original->b[y][x] + difb) * factnoise) ;
-                    float amplabL = 2.f * lp.colorde;
-
-                    if (blshow) {
-                        transformed->L[y][x] = CLIP(12000.f + amplabL * difL);// * 10.f empirical to can visualize modifications
-                        transformed->a[y][x] = clipC(amplabL * difa);// * 10.f empirical to can visualize modifications
-                        transformed->b[y][x] = clipC(amplabL * difb);// * 10.f empirical to can visualize modifications
-                    } else if (previewbl || lp.prevdE) {
-                        float difbdisp = (reducdEL + reducdEa + reducdEb) * 10000.f * lp.colorde;
-
-                        if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
-                            float dark = transformed->L[y][x];
-                            transformed->L[y][x] = dark * aadark + bbdark;
-                        }
-
-                        if (lp.colorde <= 0) {
-                            transformed->a[y][x] = 0.f;
-                            transformed->b[y][x] = difbdisp;
-                        } else {
-                            transformed->a[y][x] = -difbdisp;
-                            transformed->b[y][x] = 0.f;
-                        }
+                    if (colorde <= 0) {
+                        transformed->a[y][x] = 0.f;
+                        transformed->b[y][x] = difbdisp;
+                    } else {
+                        transformed->a[y][x] = -difbdisp;
+                        transformed->b[y][x] = 0.f;
                     }
                 }
             }
@@ -2693,12 +2666,8 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     float refb = chromaref * sin(hueref);
 
     //balance deltaE
-    float kL = lp.balance;
-    float kab = 1.f;
-    balancedeltaE(kL, kab);
-
-    kab /= SQR(327.68f);
-    kL /= SQR(327.68f);
+    const float kL = lp.balance / SQR(327.68f);
+    const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
 
     const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
 
@@ -2817,14 +2786,10 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
     const bool previewbl = (lp.showmaskblmet == 4);
 
     //balance deltaE
-    float kL = lp.balance;
-    float kab = 1.f;
-    balancedeltaE(kL, kab);
-    float kH = lp.balanceh;
-    float kch = 1.f;
-    balancedeltaEH(kH, kch);
-    kab /= SQR(327.68f);
-    kL /= SQR(327.68f);
+    const float kL = lp.balance / SQR(327.68f);
+    const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
+    const float kH = lp.balanceh;
+    const float kch = balancedeltaE(kH);
 
     const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
     std::unique_ptr<LabImage> origblurmask;
@@ -3310,12 +3275,10 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
     const float refb = chromaref * sin(hueref);
     const float refL = lumaref;
 
-    float kL = balance;
-    float kab = 1.f;
-    float kH = balanceh;
-    float kch = 1.f;
-    balancedeltaE(kL, kab);
-    balancedeltaEH(kH, kch);
+    const float kL = balance;
+    const float kab = balancedeltaE(kL);
+    const float kH = balanceh;
+    const float kch = balancedeltaE(kH);
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
@@ -4327,16 +4290,12 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
     const float refb = chromaref * sin(hueref) * 327.68f;
     const float refL = lumaref * 327.68f;
     //balance deltaE
-    float kL = lp.balance;
-    float kab = 1.f;
+    const float kL = lp.balance / SQR(327.68f);
+    const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
     const float kH = lp.balanceh;
-    float kch = 1.f;
-    balancedeltaE(kL, kab);
-    balancedeltaEH(kH, kch);
-    kab /= SQR(327.68f);
-    kL /= SQR(327.68f);
-    const bool sharshow = (lp.showmasksharmet == 1);
-    const bool previewshar = (lp.showmasksharmet == 2);
+    const float kch = balancedeltaE(kH);
+    const bool sharshow = lp.showmasksharmet == 1;
+    const bool previewshar = lp.showmasksharmet == 2;
 
     if (lp.colorde == 0) {
         lp.colorde = -1;//to avoid black
@@ -4466,16 +4425,10 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
     const bool previewshar = (lp.showmasksharmet == 2);
 
     //balance deltaE
-    //balance deltaE
-    float kL = lp.balance;
-    float kab = 1.f;
-    float kH = lp.balanceh;
-    float kch = 1.f;
-    balancedeltaE(kL, kab);
-    balancedeltaEH(kH, kch);
-
-    kab /= SQR(327.68f);
-    kL /= SQR(327.68f);
+    const float kL = lp.balance / SQR(327.68f);
+    const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
+    const float kH = lp.balanceh;
+    const float kch = balancedeltaE(kH);
 
     if (lp.colorde == 0) {
         lp.colorde = -1;//to avoid black
@@ -4605,14 +4558,10 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
         const float refL = lumaref * 327.68f;
         // lumaref *= 327.68f;
         //balance deltaE
-        float kL = lp.balance;
-        float kab = 1.f;
-        float kH = lp.balanceh;
-        float kch = 1.f;
-        balancedeltaE(kL, kab);
-        balancedeltaEH(kH, kch);
-        kL /= SQR(327.68f);
-        kab /= SQR(327.68f);
+        const float kL = lp.balance / SQR(327.68f);
+        const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
+        const float kH = lp.balanceh;
+        const float kch = balancedeltaE(kH);
         //sobel
         sobelref = rtengine::min(sobelref / 100.f, 60.f);
 
@@ -4758,23 +4707,12 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
         const bool retishow = ((lp.showmaskretimet == 1 || lp.showmaskretimet == 2));
         const bool previewreti = ((lp.showmaskretimet == 4));
         //balance deltaE
-        float kL = lp.balance;
-        float kab = 1.f;
-        float kH = lp.balanceh;
-        float kch = 1.f;
-        balancedeltaE(kL, kab);
-        balancedeltaEH(kH, kch);
+        const float kL = lp.balance / SQR(327.68f);
+        const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
+        const float kH = lp.balanceh;
+        const float kch = balancedeltaE(kH);
 
-        kab /= SQR(327.68f);
-        kL /= SQR(327.68f);
-
-
-        bool showmas = false ;
-
-        if (lp.showmaskretimet == 3)
-        {
-            showmas = true;
-        }
+        const bool showmas = lp.showmaskretimet == 3 ;
 
         const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
         const float radius = 3.f / sk;
@@ -5008,11 +4946,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 
     float radius = 3.f / sk;
     //balance deltaE
-    float kL = lp.balance;
-    float kab = 1.f;
-    balancedeltaE(kL, kab);
-    kab /= SQR(327.68f);
-    kL /= SQR(327.68f);
+    const float kL = lp.balance / SQR(327.68f);
+    const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
     const bool usemaskcb = (lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 4) && senstype == 6;
     const bool usemasktm = (lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 4) && senstype == 8;
     const bool usemaskall = (usemaskcb  || usemasktm);
@@ -5361,15 +5296,10 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
     }
 
     //balance deltaE
-    float kL = lp.balance;
-    float kab = 1.f;
-    float kH = lp.balanceh;
-    float kch = 1.f;
-    balancedeltaE(kL, kab);
-    balancedeltaEH(kH, kch);
-
-    kab /= SQR(327.68f);
-    kL /= SQR(327.68f);
+    const float kL = lp.balance / SQR(327.68f);
+    const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
+    const float kH = lp.balanceh;
+    const float kch = balancedeltaE(kH);
 
     const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
     std::unique_ptr<LabImage> origblurmask;
@@ -5887,15 +5817,10 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
     const bool previewbl = lp.showmaskblmet == 4;
 
     //balance deltaE
-    float kL = lp.balance;
-    float kab = 1.f;
-    float kH = lp.balanceh;
-    float kch = 1.f;
-    balancedeltaE(kL, kab);
-    balancedeltaEH(kH, kch);
-
-    kab /= SQR(327.68f);
-    kL /= SQR(327.68f);
+    const float kL = lp.balance / SQR(327.68f);
+    const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
+    const float kH = lp.balanceh;
+    const float kch = balancedeltaE(kH);
 
     if (lp.colorde == 0) {
         lp.colorde = -1;//to avoid black
@@ -6106,20 +6031,14 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
         radius = (2.f + 0.2f * lp.blurSH) / sk;
     }
 
-
     const std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
     std::unique_ptr<LabImage> origblurmask;
 
     //balance deltaE
-    float kL = lp.balance;
-    float kab = 1.f;
-    float kH = lp.balanceh;
-    float kch = 1.f;
-    balancedeltaE(kL, kab);
-    balancedeltaEH(kH, kch);
-
-    kab /= SQR(327.68f);
-    kL /= SQR(327.68f);
+    const float kL = lp.balance / SQR(327.68f);
+    const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
+    const float kH = lp.balanceh;
+    const float kch = balancedeltaE(kH);
 
     if (lp.colorde == 0) {
         lp.colorde = -1;//to avoid black
