@@ -939,7 +939,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
             cev = xexpf(LVFU(Source[i]) + LVFU(u[i]) * (tempv)) - epsv;
             uev = xexpf(LVFU(u[i])) - epsv;
             sourcev = xexpf(LVFU(Source[i])) - epsv;
-            _mm_storeu_ps( &Source[i], cev + DetailBoostv * (sourcev - uev) );
+            _mm_storeu_ps( &Source[i], vmaxf(cev + DetailBoostv * (sourcev - uev), ZEROV));
         }
     }
 
@@ -947,7 +947,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
         float ce = xexpf(Source[i] + u[i] * (temp)) - eps;
         float ue = xexpf(u[i]) - eps;
         Source[i] = xexpf(Source[i]) - eps;
-        Source[i] = ce + DetailBoost * (Source[i] - ue);
+        Source[i] = std::max(ce + DetailBoost * (Source[i] - ue), 0.f);
     }
 
 #else
@@ -959,7 +959,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
         float ce = xexpf(Source[i] + u[i] * (temp)) - eps;
         float ue = xexpf(u[i]) - eps;
         Source[i] = xexpf(Source[i]) - eps;
-        Source[i] = ce + DetailBoost * (Source[i] - ue);
+        Source[i] = std::max(ce + DetailBoost * (Source[i] - ue), 0.f);
     }
 
 #endif
