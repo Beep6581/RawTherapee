@@ -8,6 +8,7 @@ Development contributors, in last name alphabetical order:
   Roel Baars
   Martin Burri
   Javier Celaya
+  Pierre Cabrera
   Jacques Desmis
   Pavlov Dmitry
   Oliver Duis
