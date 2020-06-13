@@ -353,7 +353,7 @@ ControlSpotPanel::ControlSpotPanel():
         preview_->set_tooltip_text(M("TP_LOCALLAB_COLORDEPREV_TOOLTIP"));
     }
 
-    artifBox->pack_start(*struc_);
+//    artifBox->pack_start(*struc_);
     artifBox->pack_start(*thresh_);
     artifBox->pack_start(*iter_);
     artifBox->pack_start(*balan_);

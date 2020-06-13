@@ -1947,7 +1947,7 @@ TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 TP_COLORAPP_TCMODE_SATUR;Saturation
 TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
 TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
-TP_COLORAPP_TEMPOUT_TOOLTIP;Disable to chnage temperature and tint
+TP_COLORAPP_TEMPOUT_TOOLTIP;Disable to change temperature and tint
 TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16 cd/m²).
@@ -2291,7 +2291,7 @@ TP_LOCALLAB_ADJ;Equalizer Blue-yellow Red-green
 TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
-TP_LOCALLAB_ARTIF_TOOLTIP;Threshold structure take into account the structure level of solid areas (Sliders in Color and Light or Exposure) - if these sliders are enabled.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nIncrease deltaE Weakening improve shape detection, but can reduce the scope of detection.
+TP_LOCALLAB_ARTIF_TOOLTIP;Threshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nIncrease deltaE Weakening improve shape detection, but can reduce the scope of detection.
 TP_LOCALLAB_AUTOGRAY;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance ΔE ab-L
@@ -2719,7 +2719,7 @@ TP_LOCALLAB_SHOWR;Mask and modifications
 TP_LOCALLAB_SHOWS;Mask and modifications
 TP_LOCALLAB_SHOWREF;Preview ΔE
 TP_LOCALLAB_SHOWSTRUC;Show structure Spot
-TP_LOCALLAB_SHOWSTRUCEX;Show structure Spot - disabled in "normal"
+TP_LOCALLAB_SHOWSTRUCEX;Show structure Spot
 TP_LOCALLAB_SHOWT;Mask and modifications
 TP_LOCALLAB_SHOWVI;Mask and modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights
