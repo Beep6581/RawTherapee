@@ -2767,7 +2767,10 @@ TP_LOCALLAB_TLABEL;TM Datas Min=%1 Max=%2 Mean=%3 Sigma=%4 (Threshold)
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can act on Threshold to normalize
 TP_LOCALLAB_TM;Tone Mapping - Texture
 TP_LOCALLAB_TM_MASK;Use transmission map
-TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;Increase Edge stopping - or Reweighting iterates, increase processing time - but increases the effects 
+TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;This parameter affects sensitivity to edges.\n The greater it is the more likely an illumination change is to be considered an "edge".\n If set to zero tone mapping will have an effect similar to unsharp masking.
+TP_LOCALLAB_TONEMAPREWEI_TOOLTIP;In some cases tone mapping may result in a cartoonish appearance, and in some rare cases soft but wide halos may appear.\n Increasing the number of reweighting iterates will help fight some of these problems.
+TP_LOCALLAB_TONEMASCALE_TOOLTIP;This control gives meaning to the difference between "local" and "global" contrast.\nThe greater it is the larger a detail needs to be in order to be boosted
+TP_LOCALLAB_TONEMAPGAM_TOOLTIP;Gamma moves the action of tone-mapping to shadows or highlights.
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_TONEMAP_TOOLTIP;Tone Mapping - main menu must be disabled
 TP_LOCALLAB_TOOLMASK;Tools

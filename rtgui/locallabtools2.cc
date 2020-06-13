@@ -276,7 +276,9 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_TONEMAP_TOOLTIP"));
         estop->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
-        rewei->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
+        rewei->set_tooltip_text(M("TP_LOCALLAB_TONEMAPREWEI_TOOLTIP"));
+        scaltm->set_tooltip_text(M("TP_LOCALLAB_TONEMASCALE_TOOLTIP"));
+        gamma->set_tooltip_text(M("TP_LOCALLAB_TONEMAPGAM_TOOLTIP"));
         equiltm->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
         sensitm->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         expmasktm->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
@@ -292,6 +294,8 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text("");
         estop->set_tooltip_text("");
         rewei->set_tooltip_text("");
+        scaltm->set_tooltip_text(M(""));
+        gamma->set_tooltip_text(M(""));
         equiltm->set_tooltip_text(M(""));
         sensitm->set_tooltip_text("");
         expmasktm->set_tooltip_text("");
