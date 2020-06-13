@@ -2331,6 +2331,9 @@ TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
 TP_LOCALLAB_CBDL;Contrast by detail levels - Defects
+TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Acts as a wavelet tools.\nThe first level (0) acts on 2x2 details.\nThe last level (5) acts on 64x64 details.
+TP_LOCALLAB_CBDLCLARI_TOOLTIP;Takes the midtones and enhance them.
+TP_LOCALLAB_CBDL_THRES_TOOLTIP;Prevent the sharpening of noise
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
 TP_LOCALLAB_CH;Curves CL - LC

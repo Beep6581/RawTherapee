@@ -3901,7 +3901,12 @@ void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPCBDL_TOOLTIP"));
+        for (const auto adj : multiplier) {
+            adj->set_tooltip_text(M("TP_LOCALLAB_CBDL_ADJ_TOOLTIP"));
+        }
+        threshold->set_tooltip_text(M("TP_LOCALLAB_CBDL_THRES_TOOLTIP"));
         chromacbdl->set_tooltip_text(M("TP_LOCALLAB_CHROMACB_TOOLTIP"));
+        clarityml->set_tooltip_text(M("TP_LOCALLAB_CBDLCLARI_TOOLTIP"));
         sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
         expmaskcb->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         CCmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -3914,7 +3919,12 @@ void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
         mask2cbCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
+        for (const auto adj : multiplier) {
+            adj->set_tooltip_text(M(""));
+        }
+        threshold->set_tooltip_text(M(""));
         chromacbdl->set_tooltip_text("");
+        clarityml->set_tooltip_text(M(""));
         sensicb->set_tooltip_text("");
         expmaskcb->set_tooltip_text("");
         CCmaskcbshape->setTooltip("");
