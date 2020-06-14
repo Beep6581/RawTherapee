@@ -2196,6 +2196,42 @@ WaveletParams::WaveletParams() :
     },
     opacityCurveSH{
         static_cast<double>(FCT_MinMaxCPoints),
+        0.,
+        1.,
+        0.35,
+        0.35,
+        0.15,
+        0.9,
+        0.35,
+        0.35,
+        0.4,
+        0.8,
+        0.35,
+        0.35,
+        0.4,
+        0.5,
+        0.35,
+        0.35,
+        0.5,
+        0.5,
+        0.35,
+        0.35,
+        0.5,
+        0.2,
+        0.35,
+        0.35,
+        0.8,
+        0.1,
+        0.35,
+        0.35,
+        1.0,
+        0.,
+        0.35,
+        0.35
+    },
+/*
+    opacityCurveSH{
+        static_cast<double>(FCT_MinMaxCPoints),
         0.0,
         1.,
         0.35,
@@ -2213,6 +2249,7 @@ WaveletParams::WaveletParams() :
         0.35,
         0.35
     },
+*/
     opacityCurveBY{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -2266,7 +2303,7 @@ WaveletParams::WaveletParams() :
     enabled(false),
     median(false),
     medianlev(false),
-    linkedg(true),
+    linkedg(false),
     cbenab(false),
     greenlow(0),
     bluelow(0),
@@ -2278,7 +2315,7 @@ WaveletParams::WaveletParams() :
     balchrom(0.),
     chromfi(0.),
     chromco(0.),
-    mergeL(40.),
+    mergeL(20.),
     mergeC(20.),
     softrad(0.),
     softradend(0.),
@@ -2343,7 +2380,7 @@ WaveletParams::WaveletParams() :
     thres(7),
     chroma(5),
     chro(0),
-    threshold(5),
+    threshold(4),
     threshold2(5),
     edgedetect(90),
     edgedetectthr(20),
@@ -4877,7 +4914,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "ContrastCurve", pedited, wavelet.ccwcurve, pedited->wavelet.ccwcurve);
             assignFromKeyfile(keyFile, "Wavelet", "blcurve", pedited, wavelet.blcurve, pedited->wavelet.blcurve);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveRG", pedited, wavelet.opacityCurveRG, pedited->wavelet.opacityCurveRG);
-            assignFromKeyfile(keyFile, "Wavelet", "Levelshc", pedited, wavelet.opacityCurveSH, pedited->wavelet.opacityCurveSH);
+            assignFromKeyfile(keyFile, "Wavelet", "Levalshc", pedited, wavelet.opacityCurveSH, pedited->wavelet.opacityCurveSH);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveBY", pedited, wavelet.opacityCurveBY, pedited->wavelet.opacityCurveBY);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveW", pedited, wavelet.opacityCurveW, pedited->wavelet.opacityCurveW);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveWL", pedited, wavelet.opacityCurveWL, pedited->wavelet.opacityCurveWL);
