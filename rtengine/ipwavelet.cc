@@ -2143,6 +2143,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         koeLi[i] = &koeLibuffer[i * W_L * H_L];
     }
 
+    float maxkoeLi[12] = {0.f};
 #ifdef _OPENMP
     #pragma omp parallel num_threads(wavNestedLevels) if (wavNestedLevels>1)
 #endif
@@ -2157,7 +2158,6 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         constexpr float eddlow = 15.f;
         float eddlipinfl = 0.005f * cp.edgsens + 0.4f;
         float eddlipampl = 1.f + cp.edgampl / 50.f;
-        float maxkoeLi[12] = {0.f};
 
         if (cp.detectedge) { //enabled Lipschitz control...more memory..more time...
             const std::unique_ptr<float[]> tmCBuffer(new float[H_L * W_L]);
