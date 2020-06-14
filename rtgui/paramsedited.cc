@@ -633,7 +633,9 @@ void ParamsEdited::set(bool v)
     filmNegative.redRatio = v;
     filmNegative.greenExp = v;
     filmNegative.blueRatio = v;
-    filmNegative.baseValues = v;
+    filmNegative.greenBase = v;
+    filmNegative.redBalance = v;
+    filmNegative.blueBalance = v;
     raw.preprocessWB.mode = v;
 
     exif = v;
@@ -1248,9 +1250,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
         filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
         filmNegative.blueRatio = filmNegative.blueRatio && p.filmNegative.blueRatio == other.filmNegative.blueRatio;
-        filmNegative.baseValues = filmNegative.baseValues && p.filmNegative.redBase == other.filmNegative.redBase
-                                                    && p.filmNegative.greenBase == other.filmNegative.greenBase
-                                                    && p.filmNegative.blueBase == other.filmNegative.blueBase;
+        filmNegative.greenBase = filmNegative.greenBase && p.filmNegative.greenBase == other.filmNegative.greenBase;
+        filmNegative.redBalance = filmNegative.redBalance && p.filmNegative.redBalance == other.filmNegative.redBalance;
+        filmNegative.blueBalance = filmNegative.blueBalance && p.filmNegative.blueBalance == other.filmNegative.blueBalance;
         raw.preprocessWB.mode  = raw.preprocessWB.mode  && p.raw.preprocessWB.mode  == other.raw.preprocessWB.mode;
 
 //      How the hell can we handle that???
@@ -3501,10 +3503,16 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.filmNegative.blueRatio = mods.filmNegative.blueRatio;
     }
 
-    if (filmNegative.baseValues) {
-        toEdit.filmNegative.redBase = mods.filmNegative.redBase;
+    if (filmNegative.greenBase) {
         toEdit.filmNegative.greenBase = mods.filmNegative.greenBase;
-        toEdit.filmNegative.blueBase = mods.filmNegative.blueBase;
+    }
+
+    if (filmNegative.redBalance) {
+        toEdit.filmNegative.redBalance = mods.filmNegative.redBalance;
+    }
+
+    if (filmNegative.blueBalance) {
+        toEdit.filmNegative.blueBalance = mods.filmNegative.blueBalance;
     }
 
     if (raw.preprocessWB.mode) {
@@ -3557,7 +3565,7 @@ bool RetinexParamsEdited::isUnchanged() const
 
 bool FilmNegativeParamsEdited::isUnchanged() const
 {
-    return enabled && redRatio && greenExp && blueRatio && baseValues;
+    return enabled && redRatio && greenExp && blueRatio && greenBase && redBalance && blueBalance;
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

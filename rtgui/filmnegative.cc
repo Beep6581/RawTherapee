@@ -44,15 +44,13 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
     return adj;
 }
 
-Glib::ustring formatBaseValues(const std::array<float, 3>& rgb)
+Glib::ustring fmt(const float v)
 {
-    if (rgb[0] <= 0.f && rgb[1] <= 0.f && rgb[2] <= 0.f) {
-        return "- - -";
+    if (v <= 0.f) {
+        return "-";
     } else {
-        return Glib::ustring::format(std::fixed, std::setprecision(1), rgb[0]) + " " +
-               Glib::ustring::format(std::fixed, std::setprecision(1), rgb[1]) + " " +
-               Glib::ustring::format(std::fixed, std::setprecision(1), rgb[2]);
-    }
+        return Glib::ustring::format(std::fixed, std::setprecision(1), v);
+    }    
 }
 
 }
@@ -60,19 +58,22 @@ Glib::ustring formatBaseValues(const std::array<float, 3>& rgb)
 FilmNegative::FilmNegative() :
     FoldableToolPanel(this, "filmnegative", M("TP_FILMNEGATIVE_LABEL"), false, true),
     EditSubscriber(ET_OBJECTS),
-    evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
-    evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
-    evFilmBaseValues(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_FILMBASE")),
-    filmBaseValues({0.f, 0.f, 0.f}),
+    evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
+    evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(ALL, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
+    evFilmBaseValues(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_FILMBASE")),
+    evFilmNegativeBalance(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_BALANCE")),
+    evOldFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(ALL, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
+    filmBaseGreenValue(0.f),
     fnp(nullptr),
     greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 1.5)),  // master exponent (green channel)
     redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 3, (2.04 / 1.5))), // ratio of red exponent to master exponent
     blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 3, (1.29 / 1.5))), // ratio of blue exponent to master exponent
     spotgrid(Gtk::manage(new Gtk::Grid())),
     spotbutton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
-    filmBaseLabel(Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_FILMBASE_VALUES"), Gtk::ALIGN_START))),
-    filmBaseValuesLabel(Gtk::manage(new Gtk::Label("- - -"))),
-    filmBaseSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_FILMBASE_PICK"))))
+    filmBaseLabel(Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_BASE_LABEL")))), //, Gtk::ALIGN_CENTER))),
+    filmBaseSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_FILMBASE_PICK")))),
+    redBalance(createExponentAdjuster(this, M("TP_FILMNEGATIVE_REDBALANCE"), 0.05, 20, 1)),  // red balance
+    blueBalance(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), 0.05, 20, 1)) // blue balance
 {
     spotgrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -83,7 +84,10 @@ FilmNegative::FilmNegative() :
     spotbutton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
 
     filmBaseSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_FILMBASE_TOOLTIP"));
-    setExpandAlignProperties(filmBaseValuesLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+//    setExpandAlignProperties(filmBaseValuesLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    setExpandAlignProperties(filmBaseLabel, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    filmBaseLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
 
     // TODO make spot size configurable ?
 
@@ -109,16 +113,22 @@ FilmNegative::FilmNegative() :
     pack_start(*blueRatio, Gtk::PACK_SHRINK, 0);
     pack_start(*spotgrid, Gtk::PACK_SHRINK, 0);
 
+//    pack_start(*oldMethod, Gtk::PACK_SHRINK, 0);
+
     Gtk::HSeparator* const sep = Gtk::manage(new  Gtk::HSeparator());
     sep->get_style_context()->add_class("grid-row-separator");
     pack_start(*sep, Gtk::PACK_SHRINK, 0);
 
-    Gtk::Grid* const fbGrid = Gtk::manage(new Gtk::Grid());
-    fbGrid->attach(*filmBaseLabel, 0, 0, 1, 1);
-    fbGrid->attach(*filmBaseValuesLabel, 1, 0, 1, 1);
-    pack_start(*fbGrid, Gtk::PACK_SHRINK, 0);
+//    Gtk::Grid* const fbGrid = Gtk::manage(new Gtk::Grid());
+//    fbGrid->attach(*filmBaseLabel, 0, 0, 1, 1);
+//    fbGrid->attach(*filmBaseValuesLabel, 1, 0, 1, 1);
+//    pack_start(*fbGrid, Gtk::PACK_SHRINK, 0);
+    pack_start(*filmBaseLabel, Gtk::PACK_SHRINK, 0);
 
     pack_start(*filmBaseSpotButton, Gtk::PACK_SHRINK, 0);
+
+    pack_start(*redBalance, Gtk::PACK_SHRINK, 0);
+    pack_start(*blueBalance, Gtk::PACK_SHRINK, 0);
 
     spotbutton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
     // spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
@@ -141,6 +151,8 @@ FilmNegative::FilmNegative() :
 
 FilmNegative::~FilmNegative()
 {
+    idle_register.destroy();
+
     for (auto geometry : visibleGeometry) {
         delete geometry;
     }
@@ -158,6 +170,8 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
         redRatio->setEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
         greenExp->setEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
         blueRatio->setEditedState(pedited->filmNegative.blueRatio ? Edited : UnEdited);
+        redBalance->setEditedState(pedited->filmNegative.redBalance ? Edited : UnEdited);
+        blueBalance->setEditedState(pedited->filmNegative.blueBalance ? Edited : UnEdited);
         set_inconsistent(multiImage && !pedited->filmNegative.enabled);
     }
 
@@ -166,13 +180,35 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     greenExp->setValue(pp->filmNegative.greenExp);
     blueRatio->setValue(pp->filmNegative.blueRatio);
 
-    filmBaseValues[0] = pp->filmNegative.redBase;
-    filmBaseValues[1] = pp->filmNegative.greenBase;
-    filmBaseValues[2] = pp->filmNegative.blueBase;
+    filmBaseGreenValue = pp->filmNegative.greenBase;
 
-    // If base values are not set in params, estimated values will be passed in later
-    // (after processing) via FilmNegListener
-    filmBaseValuesLabel->set_text(formatBaseValues(filmBaseValues));
+    if (filmBaseGreenValue == -1) {
+
+        filmBaseLabel->set_markup(batchMode
+            ? M("TP_FILMNEGATIVE_UPGRADE_LABEL_BATCH")
+            : M("TP_FILMNEGATIVE_UPGRADE_LABEL"));
+
+        filmBaseSpotButton->set_label(M("TP_FILMNEGATIVE_UPGRADE_BUTTON"));
+        filmBaseSpotButton->set_tooltip_markup(M("TP_FILMNEGATIVE_UPGRADE_TOOLTIP"));
+
+        filmBaseSpotButton->set_sensitive(true);
+
+        redBalance->set_sensitive(false);
+        blueBalance->set_sensitive(false);
+    } else {
+        // If base values are not set in params, estimated values will be passed in later
+        // (after processing) via FilmNegListener
+        filmBaseLabel->set_markup(
+            Glib::ustring::compose(M("TP_FILMNEGATIVE_BASE_LABEL"), fmt(filmBaseGreenValue)));            
+        filmBaseSpotButton->set_label(M("TP_FILMNEGATIVE_FILMBASE_PICK"));
+        filmBaseSpotButton->set_sensitive(true);
+        filmBaseSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_FILMBASE_TOOLTIP"));
+
+        redBalance->set_sensitive(true);
+        blueBalance->set_sensitive(true);
+        redBalance->setValue(pp->filmNegative.redBalance);
+        blueBalance->setValue(pp->filmNegative.blueBalance);
+    }
 
     enableListener();
 }
@@ -189,15 +225,16 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         pedited->filmNegative.redRatio = redRatio->getEditedState();
         pedited->filmNegative.greenExp = greenExp->getEditedState();
         pedited->filmNegative.blueRatio = blueRatio->getEditedState();
-        pedited->filmNegative.baseValues = filmBaseValues[0] != pp->filmNegative.redBase
-                                           || filmBaseValues[1] != pp->filmNegative.greenBase
-                                           || filmBaseValues[2] != pp->filmNegative.blueBase;
+        pedited->filmNegative.greenBase = filmBaseGreenValue != pp->filmNegative.greenBase;
+        pedited->filmNegative.redBalance = redBalance->getEditedState();
+        pedited->filmNegative.blueBalance = blueBalance->getEditedState();
         pedited->filmNegative.enabled = !get_inconsistent();
     }
 
-    pp->filmNegative.redBase = filmBaseValues[0];
-    pp->filmNegative.greenBase = filmBaseValues[1];
-    pp->filmNegative.blueBase = filmBaseValues[2];
+    pp->filmNegative.greenBase = filmBaseGreenValue;
+    
+    pp->filmNegative.redBalance = redBalance->getValue();
+    pp->filmNegative.blueBalance = blueBalance->getValue();
 
 }
 
@@ -206,45 +243,63 @@ void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams
     redRatio->setValue(defParams->filmNegative.redRatio);
     greenExp->setValue(defParams->filmNegative.greenExp);
     blueRatio->setValue(defParams->filmNegative.blueRatio);
+    redBalance->setValue(defParams->filmNegative.redBalance);
+    blueBalance->setValue(defParams->filmNegative.blueBalance);
 
     if (pedited) {
         redRatio->setDefaultEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
         greenExp->setDefaultEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
         blueRatio->setDefaultEditedState(pedited->filmNegative.blueRatio ? Edited : UnEdited);
+        redBalance->setDefaultEditedState(pedited->filmNegative.redBalance ? Edited : UnEdited);
+        blueBalance->setDefaultEditedState(pedited->filmNegative.blueBalance ? Edited : UnEdited);
     } else {
         redRatio->setDefaultEditedState(Irrelevant);
         greenExp->setDefaultEditedState(Irrelevant);
         blueRatio->setDefaultEditedState(Irrelevant);
+        redBalance->setDefaultEditedState(Irrelevant);
+        blueBalance->setDefaultEditedState(Irrelevant);
     }
 }
 
 void FilmNegative::setBatchMode(bool batchMode)
 {
+    ToolPanel::setBatchMode(batchMode);
+
     if (batchMode) {
         removeIfThere(this, spotgrid, false);
         removeIfThere(this, filmBaseSpotButton, false);
-        ToolPanel::setBatchMode(batchMode);
         redRatio->showEditedCB();
         greenExp->showEditedCB();
         blueRatio->showEditedCB();
+        redBalance->showEditedCB();
+        blueBalance->showEditedCB();
     }
 }
 
 void FilmNegative::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener) {
+    if (listener && getEnabled()) {
         if (a == redRatio || a == greenExp || a == blueRatio) {
-            if (getEnabled()) {
-                listener->panelChanged(
-                    evFilmNegativeExponents,
-                    Glib::ustring::compose(
-                        "Ref=%1\nR=%2\nB=%3",
-                        greenExp->getValue(),
-                        redRatio->getValue(),
-                        blueRatio->getValue()
-                    )
-                );
-            }
+            // Exponents were changed; if we are in legacy mode,
+            // trigger ALL processing, otherwise ALLNORAW
+            listener->panelChanged(
+                (filmBaseGreenValue == -1) ? evOldFilmNegativeExponents : evFilmNegativeExponents,
+                Glib::ustring::compose(
+                    "Ref=%1\nR=%2\nB=%3",
+                    greenExp->getValue(),
+                    redRatio->getValue(),
+                    blueRatio->getValue()
+                )
+            );
+        } else if (a == redBalance || a == blueBalance) {
+            listener->panelChanged(
+                evFilmNegativeBalance,
+                Glib::ustring::compose(
+                    "B=%1 G=%2",
+                    redBalance->getValue(),
+                    blueBalance->getValue()
+                )
+            );
         }
     }
 }
@@ -262,10 +317,37 @@ void FilmNegative::enabledChanged()
     }
 }
 
-void FilmNegative::filmBaseValuesChanged(std::array<float, 3> rgb)
+void FilmNegative::filmBaseValuesChanged(float greenBase, float redBal, float blueBal)
 {
-    filmBaseValues = rgb;
-    filmBaseValuesLabel->set_text(formatBaseValues(filmBaseValues));
+
+    idle_register.add(
+        [this, greenBase, redBal, blueBal]() -> bool
+        {
+            filmBaseGreenValue = greenBase;
+
+            disableListener();
+
+            filmBaseLabel->set_markup(
+                Glib::ustring::compose(M("TP_FILMNEGATIVE_BASE_LABEL"), fmt(filmBaseGreenValue)));            
+            filmBaseSpotButton->set_label(M("TP_FILMNEGATIVE_FILMBASE_PICK"));
+            filmBaseSpotButton->set_sensitive(true);
+            filmBaseSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_FILMBASE_TOOLTIP"));
+
+            if (filmBaseGreenValue == -1) {
+                redBalance->set_sensitive(false);
+                blueBalance->set_sensitive(false);
+            } else {
+                redBalance->set_sensitive(true);
+                blueBalance->set_sensitive(true);
+                filmBaseSpotButton->set_sensitive(true);
+                redBalance->setValue(redBal);
+                blueBalance->setValue(blueBal);
+            }
+            enableListener();
+            return false;
+        }
+    );
+
 }
 
 void FilmNegative::setFilmNegProvider(FilmNegProvider* provider)
@@ -303,23 +385,36 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
             refSpotCoords.push_back(provider->posImage);
 
+            float rBal, bBal;
+
             if (refSpotCoords.size() == 2) {
                 // User has selected 2 reference gray spots. Calculating new exponents
                 // from channel values and updating parameters.
+                std::array<float, 3> newExps = { };
 
-                std::array<float, 3> newExps;
-
-                if (fnp->getFilmNegativeExponents(refSpotCoords[0], refSpotCoords[1], newExps)) {
+                if (fnp->getFilmNegativeExponents(refSpotCoords[0], refSpotCoords[1], newExps, rBal, bBal)) {
                     disableListener();
                     // Leaving green exponent unchanged, setting red and blue exponents based on
                     // the ratios between newly calculated exponents.
                     redRatio->setValue(newExps[0] / newExps[1]);
                     blueRatio->setValue(newExps[2] / newExps[1]);
+
+                    if (filmBaseGreenValue != -1) {
+                        redBalance->setValue(rBal);
+                        blueBalance->setValue(bBal);
+                    }
+
                     enableListener();
 
-                    if (listener && getEnabled()) {
+                }
+
+                switchOffEditMode();
+
+                if (listener && getEnabled()) {
+                    if (filmBaseGreenValue == -1) {
+                        // Legacy mode: trigger entire raw processing
                         listener->panelChanged(
-                            evFilmNegativeExponents,
+                            evOldFilmNegativeExponents,
                             Glib::ustring::compose(
                                 "Ref=%1\nR=%2\nB=%3",
                                 greenExp->getValue(),
@@ -327,30 +422,62 @@ bool FilmNegative::button1Pressed(int modifierKey)
                                 blueRatio->getValue()
                             )
                         );
+                    } else {
+                        listener->panelChanged(
+                            evFilmNegativeExponents,
+                            Glib::ustring::compose(
+                                "Ref=%1\nR=%2\nB=%3\nBalance: R=%4 B=%5",
+                                greenExp->getValue(),
+                                redRatio->getValue(),
+                                blueRatio->getValue(),
+                                redBalance->getValue(),
+                                blueBalance->getValue()
+                            )
+                        );
                     }
+
                 }
 
-                switchOffEditMode();
+            } else if (filmBaseGreenValue != -1) {
+
+                fnp->getFilmNegativeBalance(provider->posImage, 32, rBal, bBal);
+
+                disableListener();
+                redBalance->setValue(rBal);
+                blueBalance->setValue(bBal);
+                enableListener();
+
+                // const Glib::ustring vs = formatBaseValues(filmBaseValues);
+
+                // filmBaseValuesLabel->set_text(vs);
+
+                // if (listener && getEnabled()) {
+                //     listener->panelChanged(evFilmBaseValues, vs);
+                // }
+
+                if (listener && getEnabled()) {
+                    listener->panelChanged(
+                        evFilmNegativeBalance,
+                        Glib::ustring::compose(
+                            "R=%1 B=%2",
+                            redBalance->getValue(),
+                            blueBalance->getValue()
+                        )
+                    );
+                }
+
             }
+
 
         } else if (filmBaseSpotButton->get_active()) {
 
-            std::array<float, 3> newBaseLev;
+            filmBaseGreenValue = fnp->getFilmBaseGreen(provider->posImage, 32);
 
-            if (fnp->getRawSpotValues(provider->posImage, 32, newBaseLev)) {
-                disableListener();
+            filmBaseLabel->set_text(
+                Glib::ustring::compose(M("TP_FILMNEGATIVE_BASE_LABEL"), fmt(filmBaseGreenValue)));
 
-                filmBaseValues = newBaseLev;
-
-                enableListener();
-
-                const Glib::ustring vs = formatBaseValues(filmBaseValues);
-
-                filmBaseValuesLabel->set_text(vs);
-
-                if (listener && getEnabled()) {
-                    listener->panelChanged(evFilmBaseValues, vs);
-                }
+            if (listener && getEnabled()) {
+                listener->panelChanged(evFilmBaseValues, fmt(filmBaseGreenValue));
             }
 
             switchOffEditMode();
@@ -396,6 +523,7 @@ void FilmNegative::editToggled()
     }
 }
 
+
 void FilmNegative::baseSpotToggled()
 {
     if (filmBaseSpotButton->get_active()) {
@@ -403,15 +531,24 @@ void FilmNegative::baseSpotToggled()
         spotbutton->set_active(false);
         refSpotCoords.clear();
 
-        subscribe();
+        if (filmBaseGreenValue == -1) {
+            filmBaseSpotButton->set_active(false);
+            filmBaseSpotButton->set_sensitive(false);
 
-        int w, h;
-        getEditProvider()->getImageSize(w, h);
+            filmBaseGreenValue = 0.f;
+            listener->panelChanged(evFilmNegativeEnabled, M("HISTORY_MSG_FILMNEGATIVE_UPGRADE"));
+        } else {
 
-        // Stick a dummy rectangle over the whole image in mouseOverGeometry.
-        // This is to make sure the getCursor() call is fired everywhere.
-        Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
-        imgRect->setXYWH(0, 0, w, h);
+            subscribe();
+
+            int w, h;
+            getEditProvider()->getImageSize(w, h);
+
+            // Stick a dummy rectangle over the whole image in mouseOverGeometry.
+            // This is to make sure the getCursor() call is fired everywhere.
+            Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
+            imgRect->setXYWH(0, 0, w, h);
+        }
     } else {
         refSpotCoords.clear();
         unsubscribe();

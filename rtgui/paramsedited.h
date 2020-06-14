@@ -747,7 +747,9 @@ struct FilmNegativeParamsEdited {
     bool redRatio;
     bool greenExp;
     bool blueRatio;
-    bool baseValues;
+    bool greenBase;
+    bool redBalance;
+    bool blueBalance;
 
     bool isUnchanged() const;
 };

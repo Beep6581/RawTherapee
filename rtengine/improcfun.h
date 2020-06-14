@@ -73,6 +73,7 @@ class ProcParams;
 
 struct ColorManagementParams;
 struct DirPyrDenoiseParams;
+struct FilmNegativeParams;
 struct SharpeningParams;
 struct VignettingParams;
 struct WaveletParams;
@@ -130,6 +131,9 @@ public:
 
     bool needsTransform(int oW, int oH, int rawRotationDeg, const FramesMetaData *metadata) const;
     bool needsPCVignetting() const;
+
+
+    void filmNegativeProcess (rtengine::Imagefloat *input, rtengine::Imagefloat *output, const procparams::FilmNegativeParams &params, std::array<float, 3>& filmBaseValues);
 
     void firstAnalysis(const Imagefloat* const working, const procparams::ProcParams &params, LUTu & vhist16);
     void updateColorProfiles(const Glib::ustring& monitorProfile, RenderingIntent monitorIntent, bool softProof, bool gamutCheck);

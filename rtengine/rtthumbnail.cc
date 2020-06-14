@@ -594,7 +594,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->defGain = max (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
     tpp->defGain *= std::pow(2, ri->getBaselineExposure());
 
-    tpp->scaleGain = scale_mul[0] / pre_mul[0]; // used to reconstruct scale_mul from filmnegativethumb.cc
+    tpp->scaleGain = scale_mul[0] / pre_mul[0]; // can be used to reconstruct scale_mul later in processing
 
     tpp->gammaCorrected = true;
 
@@ -1181,7 +1181,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
 
-    if (isRaw && params.filmNegative.enabled) {
+    // Film negative legacy mode, for backwards compatibility RT v5.8
+    if (isRaw && params.filmNegative.enabled && params.filmNegative.greenBase == -1) {
         processFilmNegative(params, baseImg, rwidth, rheight);
     }
 
@@ -1242,6 +1243,16 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(settings->monitorIntent), false, false);
 
     LUTu hist16 (65536);
+
+    if (params.filmNegative.enabled && params.filmNegative.greenBase != -1) {
+        std::array<float, 3> filmBaseValues = {
+            static_cast<float>(params.filmNegative.greenBase * params.filmNegative.redBalance),
+            static_cast<float>(params.filmNegative.greenBase),
+            static_cast<float>(params.filmNegative.greenBase * params.filmNegative.blueBalance)
+        };
+
+        ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative, filmBaseValues);
+    }
 
     ipf.firstAnalysis (baseImg, params, hist16);
 

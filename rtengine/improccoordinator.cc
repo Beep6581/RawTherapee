@@ -44,22 +44,6 @@
 #include <omp.h>
 #endif
 
-namespace
-{
-using rtengine::Coord2D;
-Coord2D translateCoord(const rtengine::ImProcFunctions& ipf, int fw, int fh, int x, int y) {
-
-    const std::vector<Coord2D> points = {Coord2D(x, y)};
-
-    std::vector<Coord2D> red;
-    std::vector<Coord2D> green;
-    std::vector<Coord2D> blue;
-    ipf.transCoord(fw, fh, points, red, green, blue);
-
-    return green[0];
-}
-
-}
 
 namespace rtengine
 {
@@ -153,12 +137,12 @@ ImProcCoordinator::ImProcCoordinator() :
     pdSharpenAutoRadiusListener(nullptr),
     frameCountListener(nullptr),
     imageTypeListener(nullptr),
+    filmNegListener(nullptr),
     actListener(nullptr),
     adnListener(nullptr),
     awavListener(nullptr),
     dehaListener(nullptr),
     hListener(nullptr),
-    filmNegListener(nullptr),
     resultValid(false),
     params(new procparams::ProcParams),
     lastOutputProfile("BADFOOD"),
@@ -308,24 +292,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             highDetailPreprocessComputed = highDetailNeeded;
 
+            // TEMP *** legacy mode, for backwards compatibility only *** 
             // After preprocess, run film negative processing if enabled
             if (
-                (todo & M_RAW)
-                && (
-                    imgsrc->getSensorType() == ST_BAYER
-                    || imgsrc->getSensorType() == ST_FUJI_XTRANS
-                )
-                && params->filmNegative.enabled
+                (todo & M_RAW) && imgsrc->isRAW()
+                && (imgsrc->getSensorType() == ST_BAYER || imgsrc->getSensorType() == ST_FUJI_XTRANS)
+                && params->filmNegative.greenBase == -1.f
             ) {
-                std::array<float, 3> filmBaseValues = {
-                    static_cast<float>(params->filmNegative.redBase),
-                    static_cast<float>(params->filmNegative.greenBase),
-                    static_cast<float>(params->filmNegative.blueBase)
-                };
-                imgsrc->filmNegativeProcess(params->filmNegative, filmBaseValues);
-                if (filmNegListener && params->filmNegative.redBase <= 0.f) {
-                    filmNegListener->filmBaseValuesChanged(filmBaseValues);
+                if (settings->verbose) {
+                    printf("*** Film negative legacy mode raw convert\n");
                 }
+                imgsrc->filmNegativeProcess(params->filmNegative);
             }
         }
 
@@ -596,6 +573,23 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
             */
             imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
+
+            if (params->filmNegative.enabled && !(imgsrc->isRAW() && params->filmNegative.greenBase == -1.f)) {
+                filmBaseValues = {
+                    static_cast<float>(params->filmNegative.greenBase * params->filmNegative.redBalance),
+                    static_cast<float>(params->filmNegative.greenBase),
+                    static_cast<float>(params->filmNegative.greenBase * params->filmNegative.blueBalance)
+                };
+
+                ipf.filmNegativeProcess(orig_prev, orig_prev, params->filmNegative, filmBaseValues);
+
+                if (filmNegListener && params->filmNegative.greenBase <= 0.f) {
+                    filmNegListener->filmBaseValuesChanged(
+                        filmBaseValues[1],
+                        filmBaseValues[0] / filmBaseValues[1],
+                        filmBaseValues[2] / filmBaseValues[1]);
+                }
+            }
 
             ipf.firstAnalysis(orig_prev, *params, vhist16);
         }
@@ -1502,25 +1496,7 @@ void ImProcCoordinator::getSpotWB(int x, int y, int rect, double& temp, double& 
     }
 }
 
-bool ImProcCoordinator::getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps)
-{
-    MyMutex::MyLock lock(mProcessing);
 
-    const int tr = getCoarseBitMask(params->coarse);
-
-    const Coord2D p1 = translateCoord(ipf, fw, fh, xA, yA);
-    const Coord2D p2 = translateCoord(ipf, fw, fh, xB, yB);
-
-    return imgsrc->getFilmNegativeExponents(p1, p2, tr, params->filmNegative, newExps);
-}
-
-bool ImProcCoordinator::getRawSpotValues(int x, int y, int spotSize, std::array<float, 3>& rawValues)
-{
-    MyMutex::MyLock lock(mProcessing);
-
-    return imgsrc->getRawSpotValues(translateCoord(ipf, fw, fh, x, y), spotSize,
-        getCoarseBitMask(params->coarse), params->filmNegative, rawValues);
-}
 
 void ImProcCoordinator::getAutoCrop(double ratio, int &x, int &y, int &w, int &h)
 {
@@ -1790,6 +1766,7 @@ void ImProcCoordinator::process()
             || params->dirpyrequalizer != nextParams->dirpyrequalizer
             || params->dehaze != nextParams->dehaze
             || params->pdsharpening != nextParams->pdsharpening
+            || params->filmNegative != nextParams->filmNegative
             || sharpMaskChanged;
 
         sharpMaskChanged = false;

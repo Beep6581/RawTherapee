@@ -93,7 +93,6 @@ set(RTENGINESOURCEFILES
     fast_demo.cc
     ffmanager.cc
     filmnegativeproc.cc
-    filmnegativethumb.cc
     flatcurves.cc
     FTblockDN.cc
     gamutwarning.cc

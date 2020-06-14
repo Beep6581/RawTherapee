@@ -751,8 +751,10 @@ HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
+HISTORY_MSG_FILMNEGATIVE_BALANCE;Film negative color balance
 HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 HISTORY_MSG_FILMNEGATIVE_FILMBASE;Film base color
+HISTORY_MSG_FILMNEGATIVE_UPGRADE;Upgrade to new method
 HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
@@ -1701,15 +1703,23 @@ TP_EXPOSURE_TCMODE_STANDARD;Standard
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
+TP_FILMNEGATIVE_BASE_LABEL;Film base green level: %1
+TP_FILMNEGATIVE_BASE_PICK;Pick film base level
 TP_FILMNEGATIVE_BLUE;Blue ratio
+TP_FILMNEGATIVE_BLUEBALANCE;Blue balance
 TP_FILMNEGATIVE_FILMBASE_PICK;Pick film base color
-TP_FILMNEGATIVE_FILMBASE_TOOLTIP;Pick a spot of unexposed film (eg. the border between frames), to get the actual film base color values, and save them in the processing profile.\nThis makes it easy to get a more consistent color balance when batch-processing multiple pictures from the same roll.\nAlso use this when the converted image is extremely dark, bright, or color-unbalanced.
+TP_FILMNEGATIVE_FILMBASE_TOOLTIP;Pick a spot of unexposed film (eg. the border between frames), to get the actual film base level, and save it in the processing profile.\nThis makes it easy to get a more consistent exposure when batch-processing multiple pictures from the same roll.\nAlso use this when the converted image is extremely dark or bright.
 TP_FILMNEGATIVE_FILMBASE_VALUES;Film base RGB:
 TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness.\nClick only one patch to just set the color balance, leaving exponent ratios unchanged.
 TP_FILMNEGATIVE_LABEL;Film Negative
 TP_FILMNEGATIVE_PICK;Pick neutral spots
 TP_FILMNEGATIVE_RED;Red ratio
+TP_FILMNEGATIVE_REDBALANCE;Red balance
+TP_FILMNEGATIVE_UPGRADE_BUTTON;Upgrade to new method
+TP_FILMNEGATIVE_UPGRADE_LABEL;<b>* Using legacy inversion method *</b>\nPlease upgrade by clicking the\nbutton below (re-adjustment needed).
+TP_FILMNEGATIVE_UPGRADE_LABEL_BATCH;<b>* Using legacy inversion method *</b>\nPlease click the "Upgrade" button\n(not available in batch mode).
+TP_FILMNEGATIVE_UPGRADE_TOOLTIP;Click to upgrade to the new inversion method. Be aware that:\n- white balance must be set to the <b>backlight</b> color temperature, do not spot-wb on a gray part of the image.\n- after setting white balance, use "Pick neutral spots" above to re-set color balance and exponents.
 TP_FILMSIMULATION_LABEL;Film Simulation
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 TP_FILMSIMULATION_STRENGTH;Strength

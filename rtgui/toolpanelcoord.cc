@@ -120,6 +120,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (detailsPanel, sharpenMicro);
     addfavoritePanel (colorPanel, hsvequalizer);
     addfavoritePanel (colorPanel, filmSimulation);
+    addfavoritePanel (colorPanel, filmNegative);
     addfavoritePanel (colorPanel, softlight);
     addfavoritePanel (colorPanel, rgbcurves);
     addfavoritePanel (colorPanel, colortoning);
@@ -160,7 +161,6 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (rawPanel, preprocess);
     addfavoritePanel (rawPanel, darkframe);
     addfavoritePanel (rawPanel, flatfield);
-    addfavoritePanel (rawPanel, filmNegative);
     addfavoritePanel (rawPanel, pdSharpening);
 
     int favoriteCount = 0;
@@ -319,7 +319,6 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                     rawcacorrection->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
-                    filmNegative->FoldableToolPanel::show();
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -340,7 +339,6 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                     rawcacorrection->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
-                    filmNegative->FoldableToolPanel::show();
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -362,7 +360,6 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                     preprocessWB->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::show();
-                    filmNegative->FoldableToolPanel::hide();
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -383,7 +380,6 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                     preprocessWB->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::hide();
-                    filmNegative->FoldableToolPanel::hide();
                     pdSharpening->FoldableToolPanel::hide();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -405,7 +401,6 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 preprocessWB->FoldableToolPanel::hide();
                 preprocess->FoldableToolPanel::hide();
                 flatfield->FoldableToolPanel::hide();
-                filmNegative->FoldableToolPanel::hide();
                 pdSharpening->FoldableToolPanel::hide();
                 retinex->FoldableToolPanel::setGrayedOut(true);
                 return false;
@@ -1075,12 +1070,17 @@ void ToolPanelCoordinator::setEditProvider (EditDataProvider *provider)
     }
 }
 
-bool ToolPanelCoordinator::getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps)
+bool ToolPanelCoordinator::getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps, float& rBal, float& bBal)
 {
-    return ipc && ipc->getFilmNegativeExponents(spotA.x, spotA.y, spotB.x, spotB.y, newExps);
+    return ipc && ipc->getFilmNegativeExponents(spotA.x, spotA.y, spotB.x, spotB.y, newExps, rBal, bBal);
 }
 
-bool ToolPanelCoordinator::getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues)
+float ToolPanelCoordinator::getFilmBaseGreen(rtengine::Coord spot, int spotSize)
 {
-    return ipc && ipc->getRawSpotValues(spot.x, spot.y, spotSize, rawValues);
+    return ipc ? ipc->getFilmBaseGreen(spot.x, spot.y, spotSize) : 0.f;
+}
+
+bool ToolPanelCoordinator::getFilmNegativeBalance(rtengine::Coord spot, int spotSize, float &r, float &b)
+{
+    return ipc && ipc->getFilmNegativeBalance(spot.x, spot.y, spotSize, r, b);
 }

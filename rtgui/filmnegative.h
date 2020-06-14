@@ -32,8 +32,9 @@ class FilmNegProvider
 public:
     virtual ~FilmNegProvider() = default;
 
-    virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) = 0;
-    virtual bool getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues) = 0;
+    virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps, float &rBal, float &bBal) = 0;
+    virtual float getFilmBaseGreen(rtengine::Coord spot, int spotSize) = 0;
+    virtual bool getFilmNegativeBalance(rtengine::Coord spot, int spotSize, float &rBal, float &bBal) = 0;
 };
 
 class FilmNegative final :
@@ -55,7 +56,7 @@ public:
     void adjusterChanged(Adjuster* a, double newval) override;
     void enabledChanged() override;
 
-    void filmBaseValuesChanged(std::array<float, 3> rgb) override;
+    void filmBaseValuesChanged(float greenBase, float redBalance, float blueBalance) override;
 
     void setFilmNegProvider(FilmNegProvider* provider);
 
@@ -75,10 +76,12 @@ private:
     const rtengine::ProcEvent evFilmNegativeExponents;
     const rtengine::ProcEvent evFilmNegativeEnabled;
     const rtengine::ProcEvent evFilmBaseValues;
+    const rtengine::ProcEvent evFilmNegativeBalance;
+    const rtengine::ProcEvent evOldFilmNegativeExponents;
 
     std::vector<rtengine::Coord> refSpotCoords;
 
-    std::array<float, 3> filmBaseValues;
+    float filmBaseGreenValue;
 
     FilmNegProvider* fnp;
 
@@ -90,7 +93,11 @@ private:
     Gtk::ToggleButton* const spotbutton;
 
     Gtk::Label* const filmBaseLabel;
-    Gtk::Label* const filmBaseValuesLabel;
     Gtk::ToggleButton* const filmBaseSpotButton;
+
+    Adjuster* const redBalance;
+    Adjuster* const blueBalance;
+
+    IdleRegister idle_register;
 
 };

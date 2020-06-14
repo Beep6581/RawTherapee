@@ -684,6 +684,12 @@ void Crop::update(int todo)
     // has to be called after setCropSizes! Tools prior to this point can't handle the Edit mechanism, but that shouldn't be a problem.
     createBuffer(cropw, croph);
 
+    // Perform film negative inversion (only if not using legacy mode)
+    if ( (todo & M_INIT) && params.filmNegative.enabled && !(parent->imgsrc->isRAW() && params.filmNegative.greenBase == -1.f)) {
+        parent->ipf.filmNegativeProcess(baseCrop, baseCrop, params.filmNegative, parent->filmBaseValues);
+    }
+
+
     std::unique_ptr<Imagefloat> fattalCrop;
 
     if ((todo & M_HDR) && (params.fattal.enabled || params.dehaze.enabled)) {

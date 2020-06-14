@@ -158,6 +158,8 @@ protected:
     LUTu gcurvehist, gcurvehistCropped, gbeforehist;
     LUTu bcurvehist, bcurvehistCropped, bbeforehist;
 
+    std::array<float, 3> filmBaseValues;
+
     // ------------------------------------------------------------------------------------
 
     int fw, fh, tr, fullw, fullh;
@@ -282,8 +284,9 @@ public:
     bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
-    bool getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) override;
-    bool getRawSpotValues(int x, int y, int spotSize, std::array<float, 3>& rawValues) override;
+    bool getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps, float &r, float &b) override;
+    float getFilmBaseGreen(int x, int y, int spotSize) override;
+    bool getFilmNegativeBalance(int x, int y, int spotSize, float &r, float &b) override;
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;
     bool getHighQualComputed() override;
     void setHighQualComputed() override;
