@@ -536,7 +536,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                     if (mnote->getTag ("FocalLengthIn35mmFilm")) {
                         focal_len35mm = mnote->getTag ("FocalLengthIn35mmFilm")->toDouble ();
                     }
-                } else if (mnote && (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA"))) {
+                } else if (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA")) {
                     if (mnote->getTag ("LensID")) {
                         lens = mnote->getTag ("LensID")->valueToString ();
                         if (lens == "Unknown") {
@@ -554,7 +554,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                     if (lens == "Unknown") {
                         lens_from_make_and_model();
                     }
-                } else if (mnote && !make.compare (0, 9, "Panasonic")) {
+                } else if (!make.compare (0, 9, "Panasonic")) {
                     if (mnote->getTag ("LensType")) {
                         std::string panalens = mnote->getTag("LensType")->valueToString();
 
