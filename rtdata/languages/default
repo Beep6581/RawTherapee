@@ -2316,7 +2316,7 @@ TP_LOCALLAB_BLWH;All changes forced in Black and White
 TP_LOCALLAB_BLWH_TOOLTIP;Force color change composante "a" and "b" to zero.\nUsefull when the user chooses black and white processes, or film. 
 TP_LOCALLAB_SPOTNAME;New Spot
 TP_LOCALLAB_BLUFR;Smooth - Blur - Grain - Denoise
-TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n*Blur the background by a RT-spot fully covering the image (high values for scope and transition) - normal or inverse.\n*Isolate the foreground by one or more excluding RT-spot with the tools you want (increse scope), you can use a mask to enhance and amplify the effects.\n\nThis module can be used in additional noise reduction,including "median" and "Guided filter" 
+TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n*Blur the background by a RT-spot fully covering the image (high values for scope and transition) - normal or inverse.\n*Isolate the foreground by one or more excluding RT-spot with the tools you want (increse scope).\n\nThis module can be used in additional noise reduction,including "median" and "Guided filter" 
 TP_LOCALLAB_BLURMASK_TOOLTIP;Generate a blur mask, take into account the structure with the contrast threshold Mask Blur slider.
 TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLURCBDL;Blur levels 0-1-2-3-4
@@ -2432,7 +2432,7 @@ TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;Only in association with exposure compensation and PDE Ipol.\nAvoids desaturation of colors
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;In the case of small defects.\n\nRed-eyes : red-centered circular selector, spot delimiters close to the eye, weak scope, "lightness" -100, "chrominance" -100.\n\nSpotIR :Circular selector centered on the defect, spot delimiters close to the default - reduce "chrominance", possibly act on "scope" to reduce the extent of the action.\n\nDust - grease (small) :Circular selector centered on the defect (adapt the size of the spot), spot delimiters not too close to the defect to allow an inconspicuous transition. a) "Transition" (low values) and "Transition weak" (high values); b) act on "lightness" and possibly on "chrominance" or "Color correction grid - direct" to approach the rendering of the polluted zone to that of the healthy zone; c) act moderately on "scope" to modulate the desired action.\n\nYou can also complete with Gaussian blur (Smooth Blur and noise)
 TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 32x32 pixels).\nUse low transition values and high weakening transition values and scope to simulate small RT-spot and deal wth defects.\nUse if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
-TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation of wavelet levels or denoise.\nHowever there are some differences: more tools and closer to the details for denoise.\nTone mapping for wavelet levels. 
+TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation of wavelet levels.\nHowever there are some differences: more tools and closer to the details.\nEx: Tone mapping for wavelet levels. 
 TP_LOCALLAB_EXPCURV;Curves
 TP_LOCALLAB_EXPGRAD;Graduated Filter
 TP_LOCALLAB_EXPLAP_TOOLTIP;The more you act on this threshold slider, the greater the action of reducing contrast.
@@ -2443,7 +2443,7 @@ TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows various possibilities to blend image (as
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Apply a median before Laplace transform to prevent artifacts (noise).\nYou can also use "Denoise" tool.
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE IPOL, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
 TP_LOCALLAB_EXPOSE;Exposure - PDE algorithms
-TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
+TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use others modules "Shadows Highlights", "Tone equalizer", "TRC", "Encoding Log"...
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high weakening transition values and scope to simulate small RT-spot.
 TP_LOCALLAB_EXPTOOL;Tools exposure
