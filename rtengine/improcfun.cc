@@ -5240,7 +5240,7 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
     }
 
     const float stren = params->epd.strength;
-    const float edgest = params->epd.edgeStopping;
+    const float edgest = std::min(params->epd.edgeStopping, params->localContrast.enabled ? 3.2 : 4.0);
     const float sca = params->epd.scale;
     const float gamm = params->epd.gamma;
     const float rew = params->epd.reweightingIterates;
@@ -5297,7 +5297,7 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
     for (size_t ii = 0; ii < N; ++ii) {
         a[ii] *= s;
         b[ii] *= s;
-        L[ii] = std::min(std::max(L[ii] * maxL + minL, 0.0001f), 32768.f);
+        L[ii] = L[ii] * maxL + minL;
     }
 }
 
