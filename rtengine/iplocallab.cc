@@ -4037,7 +4037,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
 #endif
             wavelet_decomposition *wdspot = new wavelet_decomposition(bufmaskblurcol->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
-            if (wdspot->memoryAllocationFailed) {
+            if (wdspot->memory_allocation_failed()) {
                 return;
             }
             float mean[10];
@@ -4066,7 +4066,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 for (int level = level_bl; level < maxlvl; ++level) {
                     int W_L = wdspot->level_W(level);
                     int H_L = wdspot->level_H(level);
-                    float **wav_L = wdspot->level_coeffs(level);
+                    float* const* wav_L = wdspot->level_coeffs(level);
                 
                     if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                         float insigma = 0.666f; //SD
@@ -6733,7 +6733,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     fftwf_cleanup();
 }
 
-void ImProcFunctions::wavcbd(const wavelet_decomposition &wdspot, int level_bl, int maxlvl,
+void ImProcFunctions::wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
                              const LocwavCurve& locconwavCurve, bool locconwavutili, float sigm, float offs, float chromalev, int sk)
 {
     if (locconwavCurve && locconwavutili) {
@@ -6754,7 +6754,7 @@ void ImProcFunctions::wavcbd(const wavelet_decomposition &wdspot, int level_bl, 
                 const int H_L = wdspot.level_H(level);
                 float mea[9];
 
-                float **wav_L = wdspot.level_coeffs(level);
+                float* const* wav_L = wdspot.level_coeffs(level);
                 //offset
                 float rap = offs * mean[level] - 2.f * sigm * sigma[level];
 
@@ -6894,7 +6894,7 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
 }
 
 
-void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const wavelet_decomposition& wdspot, float ****templevel, int level_bl, int maxlvl,
+void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavelet_decomposition& wdspot, float ****templevel, int level_bl, int maxlvl,
                               const LocwavCurve & loclevwavCurve, bool loclevwavutili,
                               const LocwavCurve & loccompwavCurve, bool loccompwavutili,
                               const LocwavCurve & loccomprewavCurve, bool loccomprewavutili,
@@ -6923,7 +6923,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
         for (int level = level_bl; level < maxlvl; ++level) {
             int W_L = wdspot.level_W(level);
             int H_L = wdspot.level_H(level);
-            float **wav_L = wdspot.level_coeffs(level);
+            auto wav_L = wdspot.level_coeffs(level);
             madL[level][dir - 1] = Mad(wav_L[dir], W_L * H_L);//evaluate noise by level
 
             for (int y = 0; y < H_L; y++) {
@@ -6956,7 +6956,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
                 float mea[10];
 
                 calceffect(level, mean, sigma, mea, effect, offs);
-                float **WavL = wdspot.level_coeffs(level);
+                auto WavL = wdspot.level_coeffs(level);
 
                 for (int co = 0; co < H_L * W_L; co++) {
                     const float WavCL = std::fabs(WavL[dir][co]);
@@ -7018,7 +7018,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
                 float offs = 1.f;
                 float mea[10];
                 calceffect(level, mean, sigma, mea, effect, offs);
-                float **WavL = wdspot.level_coeffs(level);
+                auto WavL = wdspot.level_coeffs(level);
 
                 for (int co = 0; co < H_L * W_L; co++) {
                     const float WavCL = std::fabs(WavL[dir][co]);
@@ -7111,7 +7111,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
                 float mea[10];
 
                 calceffect(level, mean, sigma, mea, effect, offs);
-                float **WavL = wdspot.level_coeffs(level);
+                auto WavL = wdspot.level_coeffs(level);
 
                 for (int co = 0; co < H_L * W_L; co++) {
                     const float WavCL = std::fabs(WavL[dir][co]);
@@ -7176,7 +7176,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, const
         for (int level = level_bl; level < maxlvl; ++level) {
             int W_L = wdspot.level_W(level);
             int H_L = wdspot.level_H(level);
-            float **wav_L = wdspot.level_coeffs(level);
+            auto wav_L = wdspot.level_coeffs(level);
 
             for (int y = 0; y < H_L; y++) {
                 for (int x = 0; x < W_L; x++) {
@@ -7219,7 +7219,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
     //first decomposition for compress dynamic range positive values and other process
-    if (wdspot->memoryAllocationFailed) {
+    if (wdspot->memory_allocation_failed()) {
         return;
     }
 
@@ -7276,7 +7276,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                     const int W_L = wdspot->level_W(level);
                     const int H_L = wdspot->level_H(level);
-                    float **wav_L = wdspot->level_coeffs(level);
+                    float* const* wav_L = wdspot->level_coeffs(level);
                     const float effect = lp.sigmalc2;
                     constexpr float offset = 1.f;
                     float mea[10];
@@ -7369,7 +7369,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 
     int W_L = wdspot->level_W(0);
     int H_L = wdspot->level_H(0);
-    float *wav_L0 = wdspot->coeff0;
+    float *wav_L0 = wdspot->get_coeff0();
 
     if (radblur > 0.f && blurena) {
         array2D<float> bufl(W_L, H_L);
@@ -7628,7 +7628,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             for (int dir = 1; dir < 4; dir++) {
                 const int W_L = wdspot->level_W(lvl);
                 const int H_L = wdspot->level_H(lvl);
-                float **wav_L = wdspot->level_coeffs(lvl);
+                float* const* wav_L = wdspot->level_coeffs(lvl);
                 const float effect = lp.sigmaed;
                 constexpr float offset = 1.f;
                 float mea[10];
@@ -7661,7 +7661,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                         beta[co] = 0.05f;
                     }
                 }
-                calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi, tmC);
+                calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC);
                 // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
             }
         }
@@ -7799,7 +7799,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             for (int dir = 1; dir < 4; dir++) {
                 int W_L = wdspot->level_W(lvl);
                 int H_L = wdspot->level_H(lvl);
-                float **wav_L = wdspot->level_coeffs(lvl);
+                float* const* wav_L = wdspot->level_coeffs(lvl);
                 float lev = float (lvl);
 
                 float koef = ak * lvl + bk; //modulate for levels : more levels high, more koef low ==> concentrated action on low levels, without or near for high levels
@@ -7935,7 +7935,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot->level_W(level);
                 int H_L = wdspot->level_H(level);
-                float **wav_L = wdspot->level_coeffs(level);
+                float* const* wav_L = wdspot->level_coeffs(level);
 
                 //  printf("W_L=%i H_L=%i lev=%i\n", W_L, H_L, level);
                 if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
@@ -8005,7 +8005,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     if (wavcurvecon && (chromalev != 1.f) && levelena) { // a and b if need ) {//contrast  by levels for chroma a and b
         wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
-        if (wdspota->memoryAllocationFailed) {
+        if (wdspota->memory_allocation_failed()) {
             return;
         }
 
@@ -8015,7 +8015,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 
         wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
-        if (wdspotb->memoryAllocationFailed) {
+        if (wdspotb->memory_allocation_failed()) {
             return;
         }
 
@@ -8030,7 +8030,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             // a
             wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
-            if (wdspota->memoryAllocationFailed) {
+            if (wdspota->memory_allocation_failed()) {
                 return;
             }
 
@@ -8084,7 +8084,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             //b
             wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
-            if (wdspotb->memoryAllocationFailed) {
+            if (wdspotb->memory_allocation_failed()) {
                 return;
             }
 
@@ -8462,7 +8462,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             float madL[10][3];
             int edge = 2;
 
-            if (!Ldecomp.memoryAllocationFailed) {
+            if (!Ldecomp.memory_allocation_failed()) {
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
@@ -8470,8 +8470,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     for (int dir = 1; dir < 4; dir++) {
                         int Wlvl_L = Ldecomp.level_W(lvl);
                         int Hlvl_L = Ldecomp.level_H(lvl);
-
-                        float ** WavCoeffs_L = Ldecomp.level_coeffs(lvl);
+                        const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
 
                         madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                     }
@@ -8636,7 +8635,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 noiseccb = 0.00001f;
             }
 
-            if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
+            if (!adecomp.memory_allocation_failed() && !bdecomp.memory_allocation_failed()) {
                 float maxcfine = 0.f;
                 float maxccoarse = 0.f;
 
@@ -8889,7 +8888,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
             }
 
-            if (!Ldecomp.memoryAllocationFailed) {
+            if (!Ldecomp.memory_allocation_failed()) {
                 Lin = new array2D<float>(GW, GH);
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
@@ -8903,13 +8902,13 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 Ldecomp.reconstruct(tmp1.L[0]);
             }
 
-            if (!Ldecomp.memoryAllocationFailed && aut == 0) {
+            if (!Ldecomp.memory_allocation_failed() && aut == 0) {
                 if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f) {
                     fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
                 }
             }
 
-            if (!adecomp.memoryAllocationFailed) {
+            if (!adecomp.memory_allocation_failed()) {
                 Ain = new array2D<float>(GW, GH);
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
@@ -8924,14 +8923,14 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             }
 
 
-            if (!adecomp.memoryAllocationFailed && aut == 0) {
+            if (!adecomp.memory_allocation_failed() && aut == 0) {
                 if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f) && levred == 7 && lp.noisechrodetail != 100.f) {
                     fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.a, Ain,  numThreads, lp, 1);
                 }
             }
 
 
-            if (!bdecomp.memoryAllocationFailed) {
+            if (!bdecomp.memory_allocation_failed()) {
 
                 Bin = new array2D<float>(GW, GH);
 #ifdef _OPENMP
@@ -8947,7 +8946,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             }
 
 
-            if (!bdecomp.memoryAllocationFailed && aut == 0) {
+            if (!bdecomp.memory_allocation_failed() && aut == 0) {
                 if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f) && levred == 7 && lp.noisechrodetail != 100.f) {
                     fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.b, Bin,  numThreads, lp, 1);
                 }
@@ -9005,7 +9004,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 float madL[10][3];
                 int edge = 2;
 
-                if (!Ldecomp.memoryAllocationFailed) {
+                if (!Ldecomp.memory_allocation_failed()) {
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
@@ -9014,7 +9013,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             int Wlvl_L = Ldecomp.level_W(lvl);
                             int Hlvl_L = Ldecomp.level_H(lvl);
 
-                            float ** WavCoeffs_L = Ldecomp.level_coeffs(lvl);
+                            const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
 
                             madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                         }
@@ -9179,7 +9178,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
 
 
-                if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
+                if (!adecomp.memory_allocation_failed() && !bdecomp.memory_allocation_failed()) {
                     float maxcfine = 0.f;
                     float maxccoarse = 0.f;
 
@@ -9430,7 +9429,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     }
                 }
 
-                if (!Ldecomp.memoryAllocationFailed) {
+                if (!Ldecomp.memory_allocation_failed()) {
                     Lin = new array2D<float>(bfw, bfh);
 
 #ifdef _OPENMP
@@ -9446,7 +9445,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
 
 
-                if (!Ldecomp.memoryAllocationFailed && aut == 0) {
+                if (!Ldecomp.memory_allocation_failed() && aut == 0) {
 
 
                     if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f) {
@@ -9455,7 +9454,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
 
 
-                if (!adecomp.memoryAllocationFailed) {
+                if (!adecomp.memory_allocation_failed()) {
                     Ain = new array2D<float>(bfw, bfh);
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
@@ -9469,14 +9468,14 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     adecomp.reconstruct(bufwv.a[0]);
                 }
 
-                if (!adecomp.memoryAllocationFailed && aut == 0) {
+                if (!adecomp.memory_allocation_failed() && aut == 0) {
                     if ((lp.noisecf >= 0.001f ||  lp.noisecc >= 0.001f) && levred == 7 && lp.noisechrodetail != 100.f) {
                         fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.a, Ain,  numThreads, lp, 1);
                     }
                 }
 
 
-                if (!bdecomp.memoryAllocationFailed) {
+                if (!bdecomp.memory_allocation_failed()) {
                     Bin = new array2D<float>(bfw, bfh);
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
@@ -9490,7 +9489,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     bdecomp.reconstruct(bufwv.b[0]);
                 }
 
-                if (!bdecomp.memoryAllocationFailed && aut == 0) {
+                if (!bdecomp.memory_allocation_failed() && aut == 0) {
                     if ((lp.noisecf >= 0.001f ||  lp.noisecc >= 0.001f) && levred == 7 && lp.noisechrodetail != 100.f) {
                         fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
                     }
@@ -9551,7 +9550,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
 
         wavelet_decomposition *wdspotresid = new wavelet_decomposition(tmpresid->L[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
-        if (wdspotresid->memoryAllocationFailed) {
+        if (wdspotresid->memory_allocation_failed()) {
             return;
         }
 
@@ -9565,7 +9564,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
                 for (int level = 0; level < maxlvlresid; ++level) {
                     int W_L = wdspotresid->level_W(level);
                     int H_L = wdspotresid->level_H(level);
-                    float **wav_Lresid = wdspotresid->level_coeffs(level);
+                    float* const* wav_Lresid = wdspotresid->level_coeffs(level);
 
                     for (int i = 0; i < W_L * H_L; i++) {
                         wav_Lresid[dir][i] = 0.f;
@@ -9573,7 +9572,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
                 }
             }
         } else {//Sharp
-            float *wav_L0resid = wdspotresid->coeff0;
+            float *wav_L0resid = wdspotresid->get_coeff0();
             int W_L = wdspotresid->level_W(0);
             int H_L = wdspotresid->level_H(0);
 
@@ -9591,7 +9590,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
 
         wavelet_decomposition *wdspotresida = new wavelet_decomposition(tmpresid->a[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
-        if (wdspotresida->memoryAllocationFailed) {
+        if (wdspotresida->memory_allocation_failed()) {
             return;
         }
 
@@ -9605,7 +9604,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
                 for (int level = 0; level < maxlvlresid; ++level) {
                     int W_L = wdspotresida->level_W(level);
                     int H_L = wdspotresida->level_H(level);
-                    float **wav_Lresida = wdspotresida->level_coeffs(level);
+                    float* const* wav_Lresida = wdspotresida->level_coeffs(level);
 
                     for (int i = 0; i < W_L * H_L; i++) {
                         wav_Lresida[dir][i] = 0.f;
@@ -9613,7 +9612,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
                 }
             }
         } else {//Sharp
-            float *wav_L0resida = wdspotresida->coeff0;
+            float *wav_L0resida = wdspotresida->get_coeff0();
             int W_L = wdspotresida->level_W(0);
             int H_L = wdspotresida->level_H(0);
 
@@ -9627,7 +9626,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
 
         wavelet_decomposition *wdspotresidb = new wavelet_decomposition(tmpresid->b[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
-        if (wdspotresidb->memoryAllocationFailed) {
+        if (wdspotresidb->memory_allocation_failed()) {
             return;
         }
 
@@ -9641,7 +9640,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
                 for (int level = 0; level < maxlvlresid; ++level) {
                     int W_L = wdspotresidb->level_W(level);
                     int H_L = wdspotresidb->level_H(level);
-                    float **wav_Lresidb = wdspotresidb->level_coeffs(level);
+                    float* const* wav_Lresidb = wdspotresidb->level_coeffs(level);
 
                     for (int i = 0; i < W_L * H_L; i++) {
                         wav_Lresidb[dir][i] = 0.f;
@@ -9649,7 +9648,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
                 }
             }
         } else {//Sharp
-            float *wav_L0residb = wdspotresidb->coeff0;
+            float *wav_L0residb = wdspotresidb->get_coeff0();
             int W_L = wdspotresidb->level_W(0);
             int H_L = wdspotresidb->level_H(0);
 
@@ -12019,11 +12018,11 @@ void ImProcFunctions::Lab_Local(
 
                         wavelet_decomposition *wdspota = new wavelet_decomposition(tmp1->a[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
-                        if (wdspota->memoryAllocationFailed) {
+                        if (wdspota->memory_allocation_failed()) {
                             return;
                         }
 
-                        float *wav_ab0a = wdspota->coeff0;
+                        float *wav_ab0a = wdspota->get_coeff0();
                         //      int maxlvla = wdspota->maxlevel();
                         int W_La = wdspota->level_W(0);
                         int H_La = wdspota->level_H(0);
@@ -12070,12 +12069,11 @@ void ImProcFunctions::Lab_Local(
 
                         wavelet_decomposition *wdspotb = new wavelet_decomposition(tmp1->b[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, lp.daubLen);
 
-                        if (wdspotb->memoryAllocationFailed) {
+                        if (wdspotb->memory_allocation_failed()) {
                             return;
                         }
 
-                        float *wav_ab0b = wdspotb->coeff0;
-                        //      int maxlvlb = wdspotb->maxlevel();
+                        float *wav_ab0b = wdspotb->get_coeff0();
                         int W_Lb = wdspotb->level_W(0);
                         int H_Lb = wdspotb->level_H(0);
 

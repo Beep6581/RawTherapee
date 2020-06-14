@@ -875,7 +875,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     if (!succ && firstTrial) {
         _generateThumbnailImage ();
 
-        if (cfs.supported && firstTrial) {
+        if (cfs.supported) {
             _loadThumbnail (false);
         }
 

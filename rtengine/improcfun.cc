@@ -5247,123 +5247,73 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 
 
 
-//Map tones by way of edge preserving decomposition. Is this the right way to include source?
-//#include "EdgePreservingDecomposition.cc"
+//Map tones by way of edge preserving decomposition.
 void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
 {
-    //Hasten access to the parameters.
-//  EPDParams *p = (EPDParams *)(&params->epd);
 
-    //Enabled? Leave now if not.
-//  if(!p->enabled) return;
     if (!params->epd.enabled) {
         return;
     }
-/*
-    if (params->wavelet.enabled  && params->wavelet.tmrs != 0) {
-        return;
-    }
-*/
-    float stren = params->epd.strength;
-    float edgest = params->epd.edgeStopping;
-    float sca = params->epd.scale;
-    float gamm = params->epd.gamma;
-    float rew = params->epd.reweightingIterates;
+
+    const float stren = params->epd.strength;
+    const float edgest = std::min(params->epd.edgeStopping, params->localContrast.enabled ? 3.0 : 4.0);
+    const float sca = params->epd.scale;
+    const float gamm = params->epd.gamma;
+    const float rew = params->epd.reweightingIterates;
     //Pointers to whole data and size of it.
     float *L = lab->L[0];
     float *a = lab->a[0];
     float *b = lab->b[0];
-    size_t N = lab->W * lab->H;
+    const size_t N = lab->W * lab->H;
+
     EdgePreservingDecomposition epd(lab->W, lab->H);
 
     //Due to the taking of logarithms, L must be nonnegative. Further, scale to 0 to 1 using nominal range of L, 0 to 15 bit.
-    float minL = FLT_MAX;
-    float maxL = 0.f;
+    float minL = L[0];
+    float maxL = L[0];
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel for reduction(min:minL) reduction(max:maxL)
 #endif
-    {
-        float lminL = FLT_MAX;
-        float lmaxL = 0.f;
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (size_t i = 0; i < N; i++) {
-            if (L[i] < lminL) {
-                lminL = L[i];
-            }
-
-            if (L[i] > lmaxL) {
-                lmaxL = L[i];
-            }
-        }
-
-#ifdef _OPENMP
-        #pragma omp critical
-#endif
-        {
-            if (lminL < minL) {
-                minL = lminL;
-            }
-
-            if (lmaxL > maxL) {
-                maxL = lmaxL;
-            }
-        }
+    for (size_t i = 1; i < N; i++) {
+        minL = std::min(minL, L[i]);
+        maxL = std::max(maxL, L[i]);
     }
 
-    if (minL > 0.0f) {
-        minL = 0.0f;    //Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
+    if (maxL == 0.f) { // black input => do nothing
+        return;
     }
 
-    if (maxL == 0.f) { // avoid division by zero
-        maxL = 1.f;
-    }
+    minL = std::min(minL, 0.f); //Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
 
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
-
-    for (size_t i = 0; i < N; ++i)
-        //{L[i] = (L[i] - minL)/32767.0f;
-    {
-        L[i] = (L[i] - minL) / maxL;
-        L[i] *= gamm;
+    for (size_t i = 0; i < N; ++i) {
+        L[i] = (L[i] - minL) * (gamm / maxL);
     }
 
     //Some interpretations.
-    float Compression = expf(-stren);       //This modification turns numbers symmetric around 0 into exponents.
-    float DetailBoost = stren;
-
-    if (stren < 0.0f) {
-        DetailBoost = 0.0f;    //Go with effect of exponent only if uncompressing.
-    }
+    const float Compression = expf(-stren); //This modification turns numbers symmetric around 0 into exponents.
+    const float DetailBoost = std::max(stren, 0.f); //Go with effect of exponent only if uncompressing.
 
     //Auto select number of iterates. Note that p->EdgeStopping = 0 makes a Gaussian blur.
     if (Iterates == 0) {
-        Iterates = (unsigned int)(edgest * 15.0f);
+        Iterates = edgest * 15.f;
     }
 
-    /* Debuggery. Saves L for toying with outside of RT.
-    char nm[64];
-    sprintf(nm, "%ux%ufloat.bin", lab->W, lab->H);
-    FILE *f = fopen(nm, "wb");
-    fwrite(L, N, sizeof(float), f);
-    fclose(f);*/
-
-    epd.CompressDynamicRange(L, sca / float (skip), edgest, Compression, DetailBoost, Iterates, rew);
+    epd.CompressDynamicRange (L, sca / skip, edgest, Compression, DetailBoost, Iterates, rew);
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
-    float s = (1.0f + 38.7889f) * powf(Compression, 1.5856f) / (1.0f + 38.7889f * powf(Compression, 1.5856f));
-#ifdef _OPENMP
-    #pragma omp parallel for            // removed schedule(dynamic,10)
-#endif
+    const float s = (1.f + 38.7889f) * std::pow(Compression, 1.5856f) / (1.f + 38.7889f * std::pow(Compression, 1.5856f));
 
+    maxL /= gamm;
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
     for (size_t ii = 0; ii < N; ++ii) {
         a[ii] *= s;
         b[ii] *= s;
-        L[ii] = L[ii] * maxL * (1.f / gamm) + minL;
+        L[ii] = L[ii] * maxL + minL;
     }
 }
 

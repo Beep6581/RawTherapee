@@ -939,7 +939,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
             cev = xexpf(LVFU(Source[i]) + LVFU(u[i]) * (tempv)) - epsv;
             uev = xexpf(LVFU(u[i])) - epsv;
             sourcev = xexpf(LVFU(Source[i])) - epsv;
-            _mm_storeu_ps( &Source[i], cev + DetailBoostv * (sourcev - uev) );
+            _mm_storeu_ps( &Source[i], cev + DetailBoostv * (sourcev - uev));
         }
     }
 
