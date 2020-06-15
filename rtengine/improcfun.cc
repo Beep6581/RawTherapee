@@ -5063,7 +5063,7 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
     }
 */
     float stren = params->epd.strength;
-    float edgest = params->epd.edgeStopping;
+    const float edgest = std::min(params->epd.edgeStopping, params->localContrast.enabled ? 3.0 : 4.0);
     float sca = params->epd.scale;
     float gamm = params->epd.gamma;
     float rew = params->epd.reweightingIterates;
@@ -5159,7 +5159,8 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 {
 
     float stren = ((float)params->locallab.spots.at(sp).stren);
-    float edgest = ((float)params->locallab.spots.at(sp).estop);
+    const float edgest = std::min(params->locallab.spots.at(sp).estop, params->localContrast.enabled ? 3.0 : 4.0);
+    
     float sca  = ((float)params->locallab.spots.at(sp).scaltm);
     float gamm = ((float)params->locallab.spots.at(sp).gamma);
     float satur = ((float)params->locallab.spots.at(sp).satur) / 100.f;
