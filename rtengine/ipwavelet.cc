@@ -928,7 +928,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         }
 
                         if (cp.val > 0 || ref || contr) { //edge
-                            Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+                            Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
                         }
 
                         //init for edge and denoise
@@ -1019,7 +1019,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         WaveletcontAllL(labco, varhue, varchro, *Ldecomp, wavblcurve, cp, skip, mean, sigma, MaxP, MaxN, wavCLVCcurve, waOpacityCurveW, waOpacityCurveSH, ChCurve, Chutili);
 
                         if (cp.val > 0 || ref || contr  || cp.diagcurv) { //edge
-                            Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+                            Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
                         }
 
                         WaveletcontAllLfinal(*Ldecomp, cp, mean, sigma, MaxP, waOpacityCurveWL);
@@ -1293,7 +1293,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                     }
 
-                                    Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
+                                    Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab, wavNestedLevels);
                                     WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve, waOpacityCurveW, cp, true, skip, meanab, sigmaab);
                                     adecomp->reconstruct(labco->data + datalen, cp.strength);
                                 }
@@ -1329,7 +1329,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     }
 
-                                    Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
+                                    Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab, wavNestedLevels);
                                     WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip, meanab, sigmaab);
                                     bdecomp->reconstruct(labco->data + 2 * datalen, cp.strength);
                                 }
@@ -1355,7 +1355,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                     }
 
-                                    Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
+                                    Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab, wavNestedLevels);
                                     WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve, waOpacityCurveW, cp, true, skip, meanab, sigmaab);
                                     if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f)) {
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
@@ -1364,7 +1364,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     }
 
-                                    Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab);
+                                    Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab, wavNestedLevels);
 
                                     WaveletcontAllAB(labco, varhue, varchro, *bdecomp, wavblcurve, waOpacityCurveW, cp, false, skip, meanab, sigmaab);
                                     WaveletAandBAllAB(*adecomp, *bdecomp, cp, hhCurve, hhutili);
@@ -1627,7 +1627,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 }
 
 
-void ImProcFunctions::Aver(const float* RESTRICT DataList, int datalen, float &averagePlus, float &averageNeg, float &max, float &min)
+void ImProcFunctions::Aver(const float* RESTRICT DataList, int datalen, float &averagePlus, float &averageNeg, float &max, float &min, int numThreads)
 {
 
     //find absolute mean
@@ -1638,7 +1638,7 @@ void ImProcFunctions::Aver(const float* RESTRICT DataList, int datalen, float &a
     max = 0.f;
     min = RT_INFINITY_F;
 #ifdef _OPENMP
-    #pragma omp parallel num_threads(wavNestedLevels) if (wavNestedLevels>1)
+    #pragma omp parallel num_threads(numThreads) if (numThreads>1)
 #endif
     {
         float lmax = 0.f, lmin = 0.f;
@@ -1682,14 +1682,14 @@ void ImProcFunctions::Aver(const float* RESTRICT DataList, int datalen, float &a
 }
 
 
-void ImProcFunctions::Sigma(const float* RESTRICT DataList, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg)
+void ImProcFunctions::Sigma(const float* RESTRICT DataList, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg, int numThreads)
 {
     int countP = 0, countN = 0;
     double variP = 0.0, variN = 0.0; // use double precision for large summations
     float thres = 32.7f;//different fom zero to take into account only data large enough 32.7 = 0.1 in range 0..100
 
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(+:variP,variN,countP,countN) num_threads(wavNestedLevels) if (wavNestedLevels>1)
+    #pragma omp parallel for reduction(+:variP,variN,countP,countN) num_threads(numThreads) if (numThreads>1)
 #endif
 
     for (int i = 0; i < datalen; i++) {
@@ -1716,8 +1716,7 @@ void ImProcFunctions::Sigma(const float* RESTRICT DataList, int datalen, float a
 
 }
 
-void ImProcFunctions::Evaluate2(const wavelet_decomposition &WaveletCoeffs_L,
-                                float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN)
+void ImProcFunctions::Evaluate2(const wavelet_decomposition &WaveletCoeffs_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, int numThreads)
 {
 //StopWatch Stop1("Evaluate2");
     int maxlvl = WaveletCoeffs_L.maxlevel();
@@ -1729,7 +1728,7 @@ void ImProcFunctions::Evaluate2(const wavelet_decomposition &WaveletCoeffs_L,
 
         const float* const* WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 
-        Eval2(WavCoeffs_L, lvl, Wlvl_L, Hlvl_L, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+        Eval2(WavCoeffs_L, lvl, Wlvl_L, Hlvl_L, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
     }
 
 }
@@ -1786,8 +1785,7 @@ void ImProcFunctions::calceffect(int level, float *mean, float *sigma, float *me
     mea[9] = offs * mean[level] + effect * 2.5f * sigma[level]; //99%
 }
 
-void ImProcFunctions::Eval2(const float* const* WavCoeffs_L, int level,
-                            int W_L, int H_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN)
+void ImProcFunctions::Eval2(const float* const* WavCoeffs_L, int level, int W_L, int H_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, int numThreads)
 {
 
     float avLP[4], avLN[4];
@@ -1796,8 +1794,8 @@ void ImProcFunctions::Eval2(const float* const* WavCoeffs_L, int level,
     float AvL, AvN, SL, SN, maxLP, maxLN;
 
     for (int dir = 1; dir < 4; dir++) {
-        Aver(WavCoeffs_L[dir], W_L * H_L, avLP[dir], avLN[dir], maxL[dir], minL[dir]);
-        Sigma(WavCoeffs_L[dir], W_L * H_L, avLP[dir], avLN[dir], sigP[dir], sigN[dir]);
+        Aver(WavCoeffs_L[dir], W_L * H_L, avLP[dir], avLN[dir], maxL[dir], minL[dir], numThreads);
+        Sigma(WavCoeffs_L[dir], W_L * H_L, avLP[dir], avLN[dir], sigP[dir], sigN[dir], numThreads);
     }
 
     AvL = 0.f;

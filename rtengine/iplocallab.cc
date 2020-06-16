@@ -4046,7 +4046,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             float sigmaN[10];
             float MaxP[10];
             float MaxN[10];
-            Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+            Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
             float alow = 1.f;
             float blow = 0.f;
             if (level_hl != level_bl) {
@@ -6743,7 +6743,13 @@ void ImProcFunctions::wavcbd(wavelet_decomposition &wdspot, int level_bl, int ma
         float sigmaN[10];
         float MaxP[10];
         float MaxN[10];
-        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+
+#ifdef _OPENMP
+        const int numThreads = omp_get_max_threads();
+#else
+        const int numThreads = 1;
+#endif
+        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
@@ -6935,6 +6941,11 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
         }
     }
 
+#ifdef _OPENMP
+    const int numThreads = omp_get_max_threads();
+#else
+    const int numThreads = 1;
+#endif
     if (process == 1) { //blur
         float mean[10];
         float meanN[10];
@@ -6942,7 +6953,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
         float sigmaN[10];
         float MaxP[10];
         float MaxN[10];
-        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
     
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
@@ -7005,7 +7016,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
         float sigmaN[10];
         float MaxP[10];
         float MaxN[10];
-        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
     
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
@@ -7097,7 +7108,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
         float sigmaN[10];
         float MaxP[10];
         float MaxN[10];
-        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
@@ -7208,7 +7219,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 }
 
 
-void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads,
+void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, int numThreads,
                                    const LocwavCurve & locwavCurve, bool locwavutili, bool wavcurve, const LocwavCurve& loclevwavCurve, bool loclevwavutili, bool wavcurvelev,
                                    const LocwavCurve & locconwavCurve, bool locconwavutili, bool wavcurvecon,
                                    const LocwavCurve & loccompwavCurve, bool loccompwavutili, bool wavcurvecomp,
@@ -7216,6 +7227,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                    const LocwavCurve & locedgwavCurve, bool locedgwavutili,
                                    float sigm, float offs, int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres)
 {
+BENCHFUN
     wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
 
     //first decomposition for compress dynamic range positive values and other process
@@ -7247,14 +7259,14 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                 }
             }
         }
-//printf("lp.sigmalc2 = %f\n", lp.sigmalc2);
+
         float mean[10];
         float meanN[10];
         float sigma[10];
         float sigmaN[10];
         float MaxP[10];
         float MaxN[10];
-        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
         float alowg = 1.f;
         float blowg = 0.f;
 
@@ -7593,7 +7605,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         float sigmaN[10];
         float MaxP[10];
         float MaxN[10];
-        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
         float edd = 3.f;
         float eddlow = 15.f;
         float eddlipinfl = 0.005f * lp.edgw + 0.4f;
@@ -7620,45 +7632,47 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 
         float gradw = lp.gradw;
         float tloww = lp.tloww;
-
-#ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2)
-#endif
+//StopWatch Stop1("test");
         for (int lvl = 0; lvl < 4; lvl++) {
             for (int dir = 1; dir < 4; dir++) {
                 const int W_L = wdspot->level_W(lvl);
                 const int H_L = wdspot->level_H(lvl);
                 float* const* wav_L = wdspot->level_coeffs(lvl);
-                const float effect = lp.sigmaed;
-                constexpr float offset = 1.f;
-                float mea[10];
-                calceffect(lvl, mean, sigma, mea, effect, offset);
+                if (lvl == 3 && dir == 3) {
+                    const float effect = lp.sigmaed;
+                    constexpr float offset = 1.f;
+                    float mea[10];
+                    calceffect(lvl, mean, sigma, mea, effect, offset);
 
-                for (int co = 0; co < H_L * W_L; co++) {
-                    const float WavCL = std::fabs(wav_L[dir][co]);
+#ifdef _OPENMP
+                    #pragma omp parallel for if(multiThread)
+#endif
+                    for (int co = 0; co < H_L * W_L; co++) {
+                        const float WavCL = std::fabs(wav_L[dir][co]);
 
-                    if (WavCL < mea[0]) {
-                        beta[co] = 0.05f;
-                    } else if (WavCL < mea[1]) {
-                        beta[co] = 0.2f;
-                    } else if (WavCL < mea[2]) {
-                        beta[co] = 0.7f;
-                    } else if (WavCL < mea[3]) {
-                        beta[co] = 1.f;    //standard
-                    } else if (WavCL < mea[4]) {
-                        beta[co] = 1.f;
-                    } else if (WavCL < mea[5]) {
-                        beta[co] = 0.8f;    //+sigma
-                    } else if (WavCL < mea[6]) {
-                        beta[co] = 0.5f;
-                    } else if (WavCL < mea[7]) {
-                        beta[co] = 0.3f;
-                    } else if (WavCL < mea[8]) {
-                        beta[co] = 0.2f;    // + 2 sigma
-                    } else if (WavCL < mea[9]) {
-                        beta[co] = 0.1f;
-                    } else {
-                        beta[co] = 0.05f;
+                        if (WavCL < mea[0]) {
+                            beta[co] = 0.05f;
+                        } else if (WavCL < mea[1]) {
+                            beta[co] = 0.2f;
+                        } else if (WavCL < mea[2]) {
+                            beta[co] = 0.7f;
+                        } else if (WavCL < mea[3]) {
+                            beta[co] = 1.f;    //standard
+                        } else if (WavCL < mea[4]) {
+                            beta[co] = 1.f;
+                        } else if (WavCL < mea[5]) {
+                            beta[co] = 0.8f;    //+sigma
+                        } else if (WavCL < mea[6]) {
+                            beta[co] = 0.5f;
+                        } else if (WavCL < mea[7]) {
+                            beta[co] = 0.3f;
+                        } else if (WavCL < mea[8]) {
+                            beta[co] = 0.2f;    // + 2 sigma
+                        } else if (WavCL < mea[9]) {
+                            beta[co] = 0.1f;
+                        } else {
+                            beta[co] = 0.05f;
+                        }
                     }
                 }
                 calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC);
@@ -7666,18 +7680,19 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             }
         }
         tmC.free();
-
+//Stop1.stop();
         float aamp = 1.f + lp.thigw / 100.f;
+
+        const float alipinfl = (eddlipampl - 1.f) / (1.f - eddlipinfl);
+        const float blipinfl = eddlipampl - alipinfl;
 
         for (int lvl = 0; lvl < 4; lvl++) {
 #ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16)
 #endif
             for (int i = 1; i < H_L - 1; i++) {
                 for (int j = 1; j < W_L - 1; j++) {
                     //treatment of koeLi and maxkoeLi
-                    float interm = 0.f;
-
                     if (lp.lip3) {//Sobel Canny algo improve with parameters
                         // comparison between pixel and neighbors
                         const auto neigh = lp.neiwmet == 1;
@@ -7691,22 +7706,19 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                         }
                     }
 
+                    float interm = 0.f;
                     for (int dir = 1; dir < 4; dir++) {
                         //here I evaluate combination of vert / diag / horiz...we are with multiplicators of the signal
                         interm += SQR(koeLi[lvl * 3 + dir - 1][i * W_L + j]);
                     }
 
-                    interm = std::sqrt(interm);
+                    interm = std::sqrt(interm) * 0.57736721f;
 
-                    interm *= 0.57736721f;
-                    float eps = 0.0001f;
+                    constexpr float eps = 0.0001f;
                     // I think this double ratio (alph, beta) is better than arctg
 
                     float alph = koeLi[lvl * 3][i * W_L + j] / (koeLi[lvl * 3 + 1][i * W_L + j] + eps); //ratio between horizontal and vertical
                     float beta = koeLi[lvl * 3 + 2][i * W_L + j] / (koeLi[lvl * 3 + 1][i * W_L + j] + eps); //ratio between diagonal and horizontal
-
-                    float alipinfl = (eddlipampl - 1.f) / (1.f - eddlipinfl);
-                    float blipinfl = eddlipampl - alipinfl;
 
                     //alph evaluate the direction of the gradient regularity Lipschitz
                     // if = 1 we are on an edge
@@ -7733,7 +7745,6 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                     }
 
                     float kampli;
-
                     if (alph > eddlipinfl) {
                         kampli = alipinfl * alph + blipinfl; //If beta low reduce kampli
                         kampli = SQR(bet) * kampli * aamp;
@@ -7745,7 +7756,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 
                     interm *= kampli;
 
-                    if (interm < lp.tloww / eddlow) {
+                    if (interm * eddlow < lp.tloww) {
                         interm = 0.01f;    //eliminate too low values
                     }
 
@@ -7756,22 +7767,22 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             }
         }
 
-        static const float scales[10] = {1.f, 2.f, 4.f, 8.f, 16.f, 32.f, 64.f, 128.f, 256.f, 512.f};
+        constexpr float scales[10] = {1.f, 2.f, 4.f, 8.f, 16.f, 32.f, 64.f, 128.f, 256.f, 512.f};
         float scaleskip[10];
 
         for (int sc = 0; sc < 10; sc++) {
             scaleskip[sc] = scales[sc] / sk;
         }
 
-        float rad = lp.radiusw / 60.f; //radius ==> not too high value to avoid artifacts
+        const float rad = lp.radiusw / 60.f; //radius ==> not too high value to avoid artifacts
         float value = lp.strengthw / 8.f; //strength
 
         if (scaleskip[1] < 1.f) {
-            float atten01234 = 0.80f;
-            value *= (atten01234 * scaleskip[1]);    //for zoom < 100% reduce strength...I choose level 1...but!!
+            constexpr float atten01234 = 0.80f;
+            value *= atten01234 * scaleskip[1];    //for zoom < 100% reduce strength...I choose level 1...but!!
         }
 
-        float lim0 = 20.f; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
+        constexpr float lim0 = 20.f; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
         float repart = lp.detailw;
 
         if (lp.edgwmet != 1) {
@@ -7781,66 +7792,61 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
             } else /*if (lp.edgwmet == 2)*/ {
                 brepart = 0.5f;    //arbitrary value to increase / decrease repart, between 1 and 0
             }
-            float arepart = - (brepart - 1.f) / (lim0 / 60.f);
             if (rad < lim0 / 60.f) {
-                repart *= (arepart * rad + brepart);    //linear repartition of repart
+                const float arepart = - (brepart - 1.f) / (lim0 / 60.f);
+                repart *= arepart * rad + brepart;    //linear repartition of repart
             }
         }
 
-        float al0 = 1.f + (repart) / 50.f;
-        float al10 = 1.0f; //arbitrary value ==> less = take into account high levels
-        float ak = - (al0 - al10) / 10.f; //10 = maximum levels
-        float bk = al0;
+        const float bk = 1.f + repart / 50.f;
+        constexpr float al10 = 1.0f; //arbitrary value ==> less = take into account high levels
+        const float ak = - (bk - al10) / 10.f; //10 = maximum levels
 
-#ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2)
-#endif
         for (int lvl = 0; lvl < maxlvl; lvl++) {
-            for (int dir = 1; dir < 4; dir++) {
-                int W_L = wdspot->level_W(lvl);
-                int H_L = wdspot->level_H(lvl);
+            if (MaxP[lvl] > 0.f) { //curve
+                const int W_L = wdspot->level_W(lvl);
+                const int H_L = wdspot->level_H(lvl);
                 float* const* wav_L = wdspot->level_coeffs(lvl);
-                float lev = float (lvl);
-
-                float koef = ak * lvl + bk; //modulate for levels : more levels high, more koef low ==> concentrated action on low levels, without or near for high levels
-                float expkoef = -pow(std::fabs(rad - lev), koef);   //reduce effect for high levels
-
+                const float koef = ak * lvl + bk; //modulate for levels : more levels high, more koef low ==> concentrated action on low levels, without or near for high levels
+                float expkoef = -pow_F(std::fabs(rad - lvl), koef);   //reduce effect for high levels
                 if (lp.edgwmet == 2) {
                     if (rad < lim0 / 60.f && lvl == 0) {
                         expkoef *= abs(repart);    //reduce effect for low values of rad and level=0==> quasi only level 1 is effective
                     }
-                }
-
-                if (lp.edgwmet == 0) {
+                } else if (lp.edgwmet == 0) {
                     if (rad < lim0 / 60.f && lvl == 1) {
                         expkoef /= repart;    //increase effect for low values of rad and level=1==> quasi only level 0 is effective
                     }
                 }
-
-
                 //take into account local contrast
-                float refin = value * exp(expkoef);
-                float edgePrecalc = 1.f + refin; //estimate edge "pseudo variance"
-
-
-                if (MaxP[lvl] > 0.f) { //curve
-                    float insigma = 0.666f; //SD
-                    float logmax = log(MaxP[lvl]);  //log Max
-                    float rapX = (mean[lvl] + sigma[lvl]) / MaxP[lvl]; //rapport between sD / max
-                    float inx = log(insigma);
-                    float iny = log(rapX);
-                    float rap = inx / iny; //koef
-                    float asig = 0.166f / sigma[lvl];
-                    float bsig = 0.5f - asig * mean[lvl];
-                    float amean = 0.5f / mean[lvl];
-                    float absciss = 0.f;
-                    float kinterm;
-                    float kmul;
-                    int borderL = 1;
-
+                const float refin = value * xexpf(expkoef);
+                const float edgePrecalc = 1.f + refin; //estimate edge "pseudo variance"
+                constexpr float insigma = 0.666f; //SD
+                const float logmax = xlogf(MaxP[lvl]);  //log Max
+                const float rapX = (mean[lvl] + sigma[lvl]) / MaxP[lvl]; //rapport between sD / max
+                const float inx = xlogf(insigma);
+                const float iny = xlogf(rapX);
+                const float rap = inx / iny; //koef
+                const float asig = 0.166f / sigma[lvl];
+                const float bsig = 0.5f - asig * mean[lvl];
+                const float amean = 0.5f / mean[lvl];
+                constexpr int borderL = 1;
+                constexpr float abssd = 4.f; //amplification reference
+                constexpr float bbssd = 2.f; //mini ampli
+                constexpr float maxamp = 2.5f; //maxi ampli at end
+                constexpr float maxampd = 10.f; //maxi ampli at end
+                constexpr float a_abssd = (maxamp - abssd) / 0.333f;
+                constexpr float b_abssd = maxamp - a_abssd;
+                constexpr float da_abssd = (maxampd - abssd) / 0.333f;
+                constexpr float db_abssd = maxampd - da_abssd;
+                constexpr float am = (abssd - bbssd) / 0.666f;
+                for (int dir = 1; dir < 4; dir++) {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
+#endif
                     for (int i = borderL; i < H_L - borderL; i++) {
                         for (int j = borderL; j < W_L - borderL; j++) {
-                            int k = i * W_L + j;
+                            const int k = i * W_L + j;
 
                             float edge;
                             if (lvl < 4) {
@@ -7849,15 +7855,12 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                 edge = edgePrecalc;
                             }
 
-                            if (std::fabs(wav_L[dir][k]) >= (mean[lvl] + sigma[lvl])) {  //for max
-                                float valcour = log(std::fabs(wav_L[dir][k]));
-                                float valc = valcour - logmax;
-                                float vald = valc * rap;
-                                absciss = exp(vald);
-
-                            } else if (std::fabs(wav_L[dir][k]) >= mean[lvl] &&  std::fabs(wav_L[dir][k]) < (mean[lvl] + sigma[lvl])) {
+                            float absciss = 0.f;
+                            if (std::fabs(wav_L[dir][k]) >= mean[lvl] + sigma[lvl]) {  //for max
+                                absciss = xexpf((xlogf(std::fabs(wav_L[dir][k])) - logmax) * rap);
+                            } else if (std::fabs(wav_L[dir][k]) >= mean[lvl]) {
                                 absciss = asig * std::fabs(wav_L[dir][k]) + bsig;
-                            } else if (std::fabs(wav_L[dir][k]) < mean[lvl]) {
+                            } else /*if (std::fabs(wav_L[dir][k]) < mean[lvl])*/ {
                                 absciss = amean * std::fabs(wav_L[dir][k]);
                             }
 
@@ -7868,16 +7871,8 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                             // kmul about max ==> 9
                             // we can change these values
                             // result is different not best or bad than threshold slider...but similar
-                            float abssd = 4.f; //amplification reference
-                            float bbssd = 2.f; //mini ampli
-                            float maxamp = 2.5f; //maxi ampli at end
-                            float maxampd = 10.f; //maxi ampli at end
-                            float a_abssd = (maxamp - abssd) / 0.333f;
-                            float b_abssd = maxamp - a_abssd;
-                            float da_abssd = (maxampd - abssd) / 0.333f;
-                            float db_abssd = maxampd - da_abssd;
-                            float am = (abssd - bbssd) / 0.666f;
-                            float kmuld = 0.f;
+                            float kmul;
+                            float kmuld;
 
                             if (absciss > 0.666f && absciss < 1.f) {
                                 kmul = a_abssd * absciss + b_abssd;    //about max  ==> kinterm
@@ -7886,27 +7881,23 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                 kmul = kmuld = absciss * am + bbssd;
                             }
 
-                            float kc = kmul * (locedgwavCurve[absciss * 500.f] - 0.5f);
-                            float kcd = kmuld * (locedgwavCurve[absciss * 500.f] - 0.5f);
+                            const float kc = kmul * (locedgwavCurve[absciss * 500.f] - 0.5f);
 
+                            float kinterm;
                             if (kc >= 0.f) {
-                                float reduceeffect = 0.6f;
-                                kinterm = 1.f + reduceeffect * kmul * (locedgwavCurve[absciss * 500.f] - 0.5f);    //about 1 to 3 general and big amplification for max (under 0)
+                                constexpr float reduceeffect = 0.6f;
+                                kinterm = 1.f + reduceeffect * kc;    //about 1 to 3 general and big amplification for max (under 0)
                             } else {
-                                kinterm = 1.f - (SQR(kcd)) / 10.f;
+                                const float kcd = kmuld * (locedgwavCurve[absciss * 500.f] - 0.5f);
+                                kinterm = 1.f - SQR(kcd) / 10.f;
                             }
 
                             if (kinterm < 0.f) {
                                 kinterm = 0.01f;
                             }
 
-                            edge *= kinterm;
-
-                            if (edge < 1.f) {
-                                edge = 1.f;
-                            }
-
-                            wav_L[dir][k] *=  (1.f + (edge - 1.f) * beta[k]);
+                            edge = std::max(edge * kinterm, 1.f);
+                            wav_L[dir][k] *= 1.f + (edge - 1.f) * beta[k];
                         }
                     }
                 }
@@ -7929,69 +7920,65 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         float sigmaN[10];
         float MaxP[10];
         float MaxN[10];
-        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-
+        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot->level_W(level);
                 int H_L = wdspot->level_H(level);
+                float klev = 1.f;
+
+                if (level >= level_hl && level <= level_hr) {
+                    klev = 1.f;
+                }
+
+                if (level_hl != level_bl) {
+                    if (level >= level_bl && level < level_hl) {
+                        klev = alow * level + blow;
+                    }
+                }
+
+                if (level_hr != level_br) {
+                    if (level > level_hr && level <= level_br) {
+                        klev = ahigh * level + bhigh;
+                    }
+                }
                 float* const* wav_L = wdspot->level_coeffs(level);
 
-                //  printf("W_L=%i H_L=%i lev=%i\n", W_L, H_L, level);
                 if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
-                    float insigma = 0.666f; //SD
-                    float logmax = log(MaxP[level]); //log Max
-                    float rapX = (mean[level] + lp.sigmalc * sigma[level]) / MaxP[level]; //rapport between sD / max
-                    float inx = log(insigma);
-                    float iny = log(rapX);
-                    float rap = inx / iny; //koef
-                    float asig = 0.166f / (sigma[level] * lp.sigmalc);
-                    float bsig = 0.5f - asig * mean[level];
-                    float amean = 0.5f / mean[level];
-
+                    constexpr float insigma = 0.666f; //SD
+                    const float logmax = log(MaxP[level]); //log Max
+                    const float rapX = (mean[level] + lp.sigmalc * sigma[level]) / MaxP[level]; //rapport between sD / max
+                    const float inx = log(insigma);
+                    const float iny = log(rapX);
+                    const float rap = inx / iny; //koef
+                    const float asig = 0.166f / (sigma[level] * lp.sigmalc);
+                    const float bsig = 0.5f - asig * mean[level];
+                    const float amean = 0.5f / mean[level];
+                    const float limit1 = mean[level] + lp.sigmalc * sigma[level];
+                    const float limit2 = mean[level];
 #ifdef _OPENMP
-                    #pragma omp parallel for if (multiThread)
+                    #pragma omp parallel for schedule(dynamic, 16 * W_L) if (multiThread)
 #endif
                     for (int i = 0; i < W_L * H_L; i++) {
-                        float absciss;
-                        float &val = wav_L[dir][i];
+                        const float val = wav_L[dir][i];
 
-                        if (std::fabs(val) >= (mean[level] + lp.sigmalc * sigma[level])) { //for max
-                            float valcour = xlogf(std::fabs(val));
-                            float valc = valcour - logmax;
-                            float vald = valc * rap;
-                            absciss = xexpf(vald);
-                        } else if (std::fabs(val) >= mean[level]) {
+                        float absciss;
+                        if (std::fabs(val) >= limit1) { //for max
+                            const float valcour = xlogf(std::fabs(val));
+                            absciss = xexpf((valcour - logmax) * rap);
+                        } else if (std::fabs(val) >= limit2) {
                             absciss = asig * std::fabs(val) + bsig;
                         } else {
                             absciss = amean * std::fabs(val);
                         }
 
-                        float klev = 1.f;
-
-                        if (level >= level_hl && level <= level_hr) {
-                            klev = 1.f;
-                        }
-
-                        if (level_hl != level_bl) {
-                            if (level >= level_bl && level < level_hl) {
-                                klev = alow * level + blow;
-                            }
-                        }
-
-                        if (level_hr != level_br) {
-                            if (level > level_hr && level <= level_br) {
-                                klev = ahigh * level + bhigh;
-                            }
-                        }
-
-                        float kc = klev * (locwavCurve[absciss * 500.f] - 0.5f);
-                        float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
+                        const float kc = klev * (locwavCurve[absciss * 500.f] - 0.5f);
+                        const float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
 
                         float kinterm = 1.f + reduceeffect * kc;
                         kinterm = kinterm <= 0.f ? 0.01f : kinterm;
 
-                        val *=  kinterm;
+                        wav_L[dir][i] *= kinterm <= 0.f ? 0.01f : kinterm;
                     }
                 }
             }
@@ -9530,7 +9517,7 @@ void rgbtone(float& maxval, float& medval, float& minval, const LUTf& lutToneCur
     medval = minval + ((maxval - minval) * (medvalold - minvalold) / (maxvalold - minvalold));
 }
 
-void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavelet_level, int sk, bool numThreads)
+void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavelet_level, int sk, int numThreads)
 {
     if (mL != 0.f && mC == 0.f) {
         mC = 0.0001f;

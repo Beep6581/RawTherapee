@@ -330,7 +330,7 @@ public:
     static void strcurv_data(std::string retistr, int *s_datc, int &siz);
     void blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread);
 
-    void wavcontrast4(struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool locwavutili, bool wavcurve,
+    void wavcontrast4(struct local_params& lp, float ** tmp, float ** tmpa, float ** tmpb, float contrast, float radblur, float radlevblur, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, int numThreads, const LocwavCurve & locwavCurve, bool locwavutili, bool wavcurve,
         const LocwavCurve & loclevwavCurve, bool loclevwavutili, bool wavcurvelev, 
         const LocwavCurve & locconwavCurve, bool locconwavutili, bool wavcurvecon, 
         const LocwavCurve & loccompwavCurve, bool loccompwavutili, bool wavcurvecomp, 
@@ -383,15 +383,13 @@ public:
             int W_L, int H_L, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL);
     void ContAllAB(LabImage * lab, int maxlvl, float **varhue, float **varchrom, float* const* WavCoeffs_a, float * WavCoeffs_a0, int level, int dir, const WavOpacityCurveW & waOpacityCurveW, struct cont_params &cp,
             int W_ab, int H_ab, const bool useChannelA, float *meanab, float *sigmaab);
-    void Evaluate2(const wavelet_decomposition &WaveletCoeffs_L,
-            float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN);
-    void Eval2(const float* const* WavCoeffs_L, int level,
-            int W_L, int H_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN);
+    void Evaluate2(const wavelet_decomposition &WaveletCoeffs_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, int numThreads);
+    void Eval2(const float* const* WavCoeffs_L, int level, int W_L, int H_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, int numThreads);
 
     void calceffect(int level, float *mean, float *sigma, float *mea, float effect, float offs);
 
-    void Aver(const float* HH_Coeffs, int datalen, float &averagePlus, float &averageNeg, float &max, float &min);
-    void Sigma(const float* HH_Coeffs, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg);
+    void Aver(const float* HH_Coeffs, int datalen, float &averagePlus, float &averageNeg, float &max, float &min, int numThreads);
+    void Sigma(const float* HH_Coeffs, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg, int numThreads);
     void calckoe(const float* const* WavCoeffs_LL, float gradw, float tloww, float ** koeLi, int level, int dir, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC = nullptr);
 
     void Median_Denoise(float **src, float **dst, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
