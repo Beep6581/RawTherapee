@@ -654,6 +654,7 @@ private:
     Adjuster* const sensiden;
     MyExpander* const expmaskbl;
     MyComboBoxText* const showmaskblMethod;
+    MyComboBoxText* const showmaskblMethodtyp;
     Gtk::CheckButton* const enablMask;
     CurveEditorGroup* const maskblCurveEditorG;
     FlatCurveEditor* const CCmaskblshape;
@@ -668,13 +669,14 @@ private:
     Adjuster* const gammaskbl;
     Adjuster* const slomaskbl;
     Adjuster* const shadmaskbl;
+    Adjuster* const shadmaskblsha;
     CurveEditorGroup* const mask2blCurveEditorG;
     DiagonalCurveEditor* const Lmaskblshape;
     CurveEditorGroup* const mask2blCurveEditorGwav;
     FlatCurveEditor* const LLmaskblshapewav;
     ThresholdAdjuster* const csThresholdblur;
 
-    sigc::connection blMethodConn, fftwblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, enablMaskConn, toolblConn;
+    sigc::connection blMethodConn, fftwblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
 
 public:
     LocallabBlur();
@@ -714,6 +716,7 @@ private:
     void chroMethodChanged();
     void activlumChanged();
     void showmaskblMethodChanged();
+    void showmaskblMethodtypChanged();
     void enablMaskChanged();
     void toolblChanged();
 

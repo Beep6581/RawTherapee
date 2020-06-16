@@ -3147,6 +3147,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
+    showmaskblMethodtyp("blur"),
     CCmaskblcurve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -3202,6 +3203,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     slomaskbl(0.0),
     lapmaskbl(0.0),
     shadmaskbl(0),
+    shadmaskblsha(0),
     strumaskbl(0.),
     Lmaskblcurve{
         static_cast<double>(DCT_NURBS),
@@ -3961,6 +3963,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensiden == other.sensiden
         && detailthr == other.detailthr
         && locwavcurveden == other.locwavcurveden
+        && showmaskblMethodtyp == other.showmaskblMethodtyp
         && CCmaskblcurve == other.CCmaskblcurve
         && LLmaskblcurve == other.LLmaskblcurve
         && HHmaskblcurve == other.HHmaskblcurve
@@ -3974,6 +3977,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomaskbl == other.slomaskbl
         && lapmaskbl == other.lapmaskbl
         && shadmaskbl == other.shadmaskbl
+        && shadmaskblsha == other.shadmaskblsha
         && strumaskbl == other.strumaskbl
         && Lmaskblcurve == other.Lmaskblcurve
         && LLmaskblcurvewav == other.LLmaskblcurvewav
@@ -5435,6 +5439,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sensiden, "Locallab", "Sensiden_" + index_str, spot.sensiden, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailthr, "Locallab", "Detailthr_" + index_str, spot.detailthr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->locwavcurveden, "Locallab", "LocwavCurveden_" + index_str, spot.locwavcurveden, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->showmaskblMethodtyp, "Locallab", "Showmasktyp_" + index_str, spot.showmaskblMethodtyp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskblcurve, "Locallab", "CCmaskblCurve_" + index_str, spot.CCmaskblcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskblcurve, "Locallab", "LLmaskblCurve_" + index_str, spot.LLmaskblcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHmaskblcurve, "Locallab", "HHmaskblCurve_" + index_str, spot.HHmaskblcurve, keyFile);
@@ -5448,6 +5453,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->slomaskbl, "Locallab", "Slomaskbl_" + index_str, spot.slomaskbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lapmaskbl, "Locallab", "Lapmaskbl_" + index_str, spot.lapmaskbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shadmaskbl, "Locallab", "shadmaskbl_" + index_str, spot.shadmaskbl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->shadmaskblsha, "Locallab", "shadmaskblsha_" + index_str, spot.shadmaskblsha, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strumaskbl, "Locallab", "strumaskbl_" + index_str, spot.strumaskbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskblcurve, "Locallab", "LmaskblCurve_" + index_str, spot.Lmaskblcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskblcurvewav, "Locallab", "LLmaskblCurvewav_" + index_str, spot.LLmaskblcurvewav, keyFile);
@@ -7096,6 +7102,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + index_str, pedited, spot.sensiden, spotEdited.sensiden);
                 assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + index_str, pedited, spot.detailthr, spotEdited.detailthr);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurveden_" + index_str, pedited, spot.locwavcurveden, spotEdited.locwavcurveden);
+                assignFromKeyfile(keyFile, "Locallab", "Showmasktyp_" + index_str, pedited, spot.showmaskblMethodtyp, spotEdited.showmaskblMethodtyp);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskblCurve_" + index_str, pedited, spot.CCmaskblcurve, spotEdited.CCmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurve_" + index_str, pedited, spot.LLmaskblcurve, spotEdited.LLmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskblCurve_" + index_str, pedited, spot.HHmaskblcurve, spotEdited.HHmaskblcurve);
@@ -7109,6 +7116,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskbl_" + index_str, pedited, spot.slomaskbl, spotEdited.slomaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskbl_" + index_str, pedited, spot.lapmaskbl, spotEdited.lapmaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "shadmaskbl_" + index_str, pedited, spot.shadmaskbl, spotEdited.shadmaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "shadmaskblsha_" + index_str, pedited, spot.shadmaskblsha, spotEdited.shadmaskblsha);
                 assignFromKeyfile(keyFile, "Locallab", "strumaskbl_" + index_str, pedited, spot.strumaskbl, spotEdited.strumaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskblCurve_" + index_str, pedited, spot.Lmaskblcurve, spotEdited.Lmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurvewav_" + index_str, pedited, spot.LLmaskblcurvewav, spotEdited.LLmaskblcurvewav);

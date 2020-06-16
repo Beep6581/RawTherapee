@@ -1240,6 +1240,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
                 locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
                 locallab.spots.at(j).locwavcurveden = locallab.spots.at(j).locwavcurveden && pSpot.locwavcurveden == otherSpot.locwavcurveden;
+                locallab.spots.at(j).showmaskblMethodtyp = locallab.spots.at(j).showmaskblMethodtyp && pSpot.showmaskblMethodtyp == otherSpot.showmaskblMethodtyp;
                 locallab.spots.at(j).CCmaskblcurve = locallab.spots.at(j).CCmaskblcurve && pSpot.CCmaskblcurve == otherSpot.CCmaskblcurve;
                 locallab.spots.at(j).LLmaskblcurve = locallab.spots.at(j).LLmaskblcurve && pSpot.LLmaskblcurve == otherSpot.LLmaskblcurve;
                 locallab.spots.at(j).HHmaskblcurve = locallab.spots.at(j).HHmaskblcurve && pSpot.HHmaskblcurve == otherSpot.HHmaskblcurve;
@@ -1253,6 +1254,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).slomaskbl = locallab.spots.at(j).slomaskbl && pSpot.slomaskbl == otherSpot.slomaskbl;
                 locallab.spots.at(j).lapmaskbl = locallab.spots.at(j).lapmaskbl && pSpot.lapmaskbl == otherSpot.lapmaskbl;
                 locallab.spots.at(j).shadmaskbl = locallab.spots.at(j).shadmaskbl && pSpot.shadmaskbl == otherSpot.shadmaskbl;
+                locallab.spots.at(j).shadmaskblsha = locallab.spots.at(j).shadmaskblsha && pSpot.shadmaskblsha == otherSpot.shadmaskblsha;
                 locallab.spots.at(j).strumaskbl = locallab.spots.at(j).strumaskbl && pSpot.strumaskbl == otherSpot.strumaskbl;
                 locallab.spots.at(j).Lmaskblcurve = locallab.spots.at(j).Lmaskblcurve && pSpot.Lmaskblcurve == otherSpot.Lmaskblcurve;
                 locallab.spots.at(j).LLmaskblcurvewav = locallab.spots.at(j).LLmaskblcurvewav && pSpot.LLmaskblcurvewav == otherSpot.LLmaskblcurvewav;
@@ -3892,6 +3894,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).locwavcurveden = mods.locallab.spots.at(i).locwavcurveden;
         }
 
+        if (locallab.spots.at(i).showmaskblMethodtyp) {
+            toEdit.locallab.spots.at(i).showmaskblMethodtyp = mods.locallab.spots.at(i).showmaskblMethodtyp;
+        }
+
         if (locallab.spots.at(i).CCmaskblcurve) {
             toEdit.locallab.spots.at(i).CCmaskblcurve = mods.locallab.spots.at(i).CCmaskblcurve;
         }
@@ -3942,6 +3948,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).shadmaskbl) {
             toEdit.locallab.spots.at(i).shadmaskbl = mods.locallab.spots.at(i).shadmaskbl;
+        }
+
+        if (locallab.spots.at(i).shadmaskblsha) {
+            toEdit.locallab.spots.at(i).shadmaskblsha = mods.locallab.spots.at(i).shadmaskblsha;
         }
 
         if (locallab.spots.at(i).strumaskbl) {
@@ -6055,6 +6065,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensiden(v),
     detailthr(v),
     locwavcurveden(v),
+    showmaskblMethodtyp(v),
     CCmaskblcurve(v),
     LLmaskblcurve(v),
     HHmaskblcurve(v),
@@ -6068,6 +6079,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     slomaskbl(v),
     lapmaskbl(v),
     shadmaskbl(v),
+    shadmaskblsha(v),
     strumaskbl(v),
     Lmaskblcurve(v),
     LLmaskblcurvewav(v),
@@ -6509,6 +6521,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensiden = v;
     detailthr = v;
     locwavcurveden = v;
+    showmaskblMethodtyp = v;
     CCmaskblcurve = v;
     LLmaskblcurve = v;
     HHmaskblcurve = v;
@@ -6522,6 +6535,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     slomaskbl = v;
     lapmaskbl = v;
     shadmaskbl = v;
+    shadmaskblsha = v;
     strumaskbl = v;
     Lmaskblcurve = v;
     LLmaskblcurvewav = v;
