@@ -5339,7 +5339,7 @@ LocallabBlur::LocallabBlur():
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskblMethod->append(M("TP_LOCALLAB_SHOWREF"));
+//    showmaskblMethod->append(M("TP_LOCALLAB_SHOWREF"));
     showmaskblMethod->set_active(0);
     showmaskblMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskblMethodConn = showmaskblMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::showmaskblMethodChanged));
