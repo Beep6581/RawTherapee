@@ -14603,7 +14603,7 @@ void ImProcFunctions::Lab_Local(
                         HH = xatan2f(bb, aa);
                     }
 
-                    const float Chprov1 = std::sqrt(SQR(aa) + SQR(bb)) / 327.68f;
+                    float Chprov1 = std::sqrt(SQR(aa) + SQR(bb)) / 327.68f;
 
                     if (Chprov1 == 0.0f) {
                         sincosval.y = 1.f;
