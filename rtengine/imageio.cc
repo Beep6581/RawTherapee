@@ -1483,6 +1483,19 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
     TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_ADOBE_DEFLATE);
     TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, (bps == 16 || bps == 32) && isFloat ? SAMPLEFORMAT_IEEEFP : SAMPLEFORMAT_UINT);
 
+    [out]()
+    {
+        const std::vector<rtexif::Tag*> default_tags = rtexif::ExifManager::getDefaultTIFFTags(nullptr);
+
+        TIFFSetField (out, TIFFTAG_XRESOLUTION, default_tags[2]->toDouble());
+        TIFFSetField (out, TIFFTAG_YRESOLUTION, default_tags[3]->toDouble());
+        TIFFSetField (out, TIFFTAG_RESOLUTIONUNIT, default_tags[4]->toInt());
+
+        for (auto default_tag : default_tags) {
+            delete default_tag;
+        }
+    }();
+
     if (!uncompressed) {
         TIFFSetField (out, TIFFTAG_PREDICTOR, (bps == 16 || bps == 32) && isFloat ? PREDICTOR_FLOATINGPOINT : PREDICTOR_HORIZONTAL);
     }
