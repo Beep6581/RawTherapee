@@ -43,7 +43,6 @@
 #include "procparams.h"
 #include "rt_math.h"
 #include "sleef.h"
-
 #include "../rtgui/threadutils.h"
 #include "../rtgui/options.h"
 
@@ -483,11 +482,9 @@ enum nrquality {QUALITY_STANDARD, QUALITY_HIGH};
 void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &nresi, float &highresi)
 {
 BENCHFUN
-//#ifdef _DEBUG
     MyTime t1e, t2e;
     t1e.set();
 
-//#endif
     if (dnparams.luma == 0 && dnparams.chroma == 0  && !dnparams.median && !noiseLCurve && !noiseCCurve) {
         //nothing to do; copy src to dst or do nothing in case src == dst
         if (src != dst) {
@@ -2020,14 +2017,10 @@ BENCHFUN
         delete[] ccalc;
     }
 
-//#ifdef _DEBUG
     if (settings->verbose) {
         t2e.set();
         printf("Denoise performed in %d usec:\n", t2e.etime(t1e));
     }
-
-//#endif
-
 }//end of main RGB_denoise
 
 

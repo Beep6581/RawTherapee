@@ -117,7 +117,9 @@ set(RTENGINESOURCEFILES
     impulse_denoise.cc
     init.cc
     ipdehaze.cc
+    ipgrain.cc
     iplab2rgb.cc
+    iplocallab.cc
     iplabregions.cc
     iplocalcontrast.cc
     ipresize.cc

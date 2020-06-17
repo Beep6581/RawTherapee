@@ -24,9 +24,12 @@
 namespace rtengine
 {
 
-LabImage::LabImage (int w, int h) : W(w), H(h)
+LabImage::LabImage (int w, int h, bool initZero, bool multiThread) : W(w), H(h)
 {
     allocLab(w, h);
+    if (initZero) {
+        clear(multiThread);
+    }
 }
 
 LabImage::~LabImage ()
@@ -34,9 +37,21 @@ LabImage::~LabImage ()
     deleteLab();
 }
 
-void LabImage::CopyFrom(LabImage *Img)
+void LabImage::CopyFrom(LabImage *Img, bool multiThread)
 {
+#ifdef _OPENMP
+    #pragma omp parallel sections if(multiThread)
+    {
+        #pragma omp section
+        memcpy(L[0], Img->L[0], static_cast<std::size_t>(W) * H * sizeof(float));
+        #pragma omp section
+        memcpy(a[0], Img->a[0], static_cast<std::size_t>(W) * H * sizeof(float));
+        #pragma omp section
+        memcpy(b[0], Img->b[0], static_cast<std::size_t>(W) * H * sizeof(float));
+    }
+#else
     memcpy(data, Img->data, static_cast<std::size_t>(W) * H * 3 * sizeof(float));
+#endif
 }
 
 void LabImage::getPipetteData (float &v1, float &v2, float &v3, int posX, int posY, int squareSize)
@@ -102,4 +117,12 @@ void LabImage::reallocLab()
     allocLab(W, H);
 }
 
+void LabImage::clear(bool multiThread) {
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
+        for(size_t i = 0; i < static_cast<size_t>(H) * W * 3; ++i) {
+            data[i] = 0.f;
+        }
+    }
 }

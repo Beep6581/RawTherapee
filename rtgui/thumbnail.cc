@@ -39,6 +39,7 @@
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
+#include "md5helper.h"
 #include "pathutils.h"
 #include "paramsedited.h"
 #include "procparamchangers.h"
@@ -450,6 +451,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
     const bool needsReprocessing =
            resetToDefault
         || pparams->toneCurve != pp.toneCurve
+        || pparams->locallab != pp.locallab
         || pparams->labCurve != pp.labCurve
         || pparams->localContrast != pp.localContrast
         || pparams->rgbCurves != pp.rgbCurves
@@ -993,7 +995,7 @@ void Thumbnail::setFileName (const Glib::ustring &fn)
 {
 
     fname = fn;
-    cfs.md5 = cachemgr->getMD5 (fname);
+    cfs.md5 = ::getMD5 (fname);
 }
 
 int Thumbnail::getRank  () const

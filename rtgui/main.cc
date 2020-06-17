@@ -121,6 +121,7 @@ static void myGdkLockLeave()
  *  -1 if there is an error in parameters
  *  -2 if an error occurred during processing
  *  -3 if at least one required procparam file was not found */
+//int processLineParams ( int argc, char **argv );
 int processLineParams ( int argc, char **argv )
 {
     int ret = 1;
