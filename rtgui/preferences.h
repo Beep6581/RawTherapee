@@ -146,6 +146,8 @@ class Preferences final :
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
 
+    Gtk::ComboBoxText* complexitylocal;
+
     Gtk::ComboBoxText* themeCBT;
     Gtk::FontButton* mainFontFB;
     Gtk::FontButton* colorPickerFontFB;
@@ -208,6 +210,7 @@ class Preferences final :
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
     Gtk::CheckButton* ckbShowFilmStripToolBar;
     Gtk::CheckButton* ckbHideTPVScrollbar;
+    Gtk::CheckButton* ckbshowtooltiplocallab;
 
     Gtk::CheckButton* ckbAutoSaveTpOpen;
     Gtk::Button* btnSaveTpOpenNow;

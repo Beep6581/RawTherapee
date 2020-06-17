@@ -109,7 +109,7 @@ void ToolBar::setTool (ToolMode tool)
     ConnectionBlocker cropBlocker(cropConn);
     ConnectionBlocker wbWasBlocked(wbTool, wbConn), cpWasBlocked(colPickerTool, cpConn);
 
-    stopEdit = tool == TMHand && handTool->get_active() && editingMode;
+    stopEdit = tool == TMHand && handTool->get_active() && editingMode && !blockEdit;
 
     handTool->set_active (false);
 
@@ -206,7 +206,7 @@ void ToolBar::hand_pressed ()
     ConnectionBlocker cropBlocker(cropConn);
     ConnectionBlocker wbWasBlocked(wbTool, wbConn), cpWasBlocked(colPickerTool, cpConn);
 
-    if (editingMode) {
+    if (editingMode && !blockEdit) {
         stopEditMode();
         if (listener) {
             listener->editModeSwitchedOff ();
@@ -291,7 +291,7 @@ void ToolBar::colPicker_pressed (GdkEventButton* event)
 
         if (current != TMColorPicker) {
             // Disabling all other tools, enabling the Picker tool and entering the "visible pickers" mode
-            if (editingMode) {
+            if (editingMode && !blockEdit) {
                 stopEditMode();
                 if (listener) {
                     listener->editModeSwitchedOff ();

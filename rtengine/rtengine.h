@@ -35,6 +35,7 @@
 
 #include "../rtgui/threadutils.h"
 
+
 /**
  * @file
  * This file contains the main functionality of the RawTherapee engine.
@@ -375,6 +376,32 @@ public:
     virtual void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) = 0;
 };
 
+class LocallabListener
+{
+public:
+    struct locallabRef {
+        double huer;
+        double lumar;
+        double chromar;
+    };
+
+    struct locallabRetiMinMax {
+        double cdma;
+        double cdmin;
+        double mini;
+        double maxi;
+        double Tmean;
+        double Tsigma;
+        double Tmin;
+        double Tmax;
+    };
+
+    virtual ~LocallabListener() = default;
+    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
+    virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
+    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float targetg) = 0;
+};
+
 class AutoColorTonListener
 {
 public:
@@ -522,6 +549,8 @@ public:
 
     virtual void        updateUnLock() = 0;
 
+    virtual void        setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask) = 0;
+
     /** Creates and returns a Crop instance that acts as a window on the image
       * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber
       * @return a pointer to the Crop object that handles the image data trough its own pipeline */
@@ -558,6 +587,7 @@ public:
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
     virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;
+    virtual void        setLocallabListener     (LocallabListener* l) = 0;
     virtual void        setFilmNegListener      (FilmNegListener* l) = 0;
 
     virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;

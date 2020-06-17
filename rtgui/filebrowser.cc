@@ -29,6 +29,7 @@
 #include "clipboard.h"
 #include "multilangmgr.h"
 #include "options.h"
+#include "paramsedited.h"
 #include "profilestorecombobox.h"
 #include "procparamchangers.h"
 #include "rtimage.h"
@@ -1066,6 +1067,8 @@ void FileBrowser::partPasteProfile ()
         auto toplevel = static_cast<Gtk::Window*> (get_toplevel ());
         PartialPasteDlg partialPasteDlg (M("PARTIALPASTE_DIALOGLABEL"), toplevel);
 
+        partialPasteDlg.updateSpotWidget(clipboard.getPartialProfile().pparams);
+
         int i = partialPasteDlg.run ();
 
         if (i == Gtk::RESPONSE_OK) {
@@ -1392,6 +1395,8 @@ void FileBrowser::applyPartialMenuItemActivated (ProfileStoreLabel *label)
         auto toplevel = static_cast<Gtk::Window*> (get_toplevel ());
         PartialPasteDlg partialPasteDlg (M("PARTIALPASTE_DIALOGLABEL"), toplevel);
 
+        partialPasteDlg.updateSpotWidget(srcProfiles->pparams);
+
         if (partialPasteDlg.run() == Gtk::RESPONSE_OK) {
 
             MYREADERLOCK(l, entryRW);
@@ -1406,6 +1411,7 @@ void FileBrowser::applyPartialMenuItemActivated (ProfileStoreLabel *label)
                 rtengine::procparams::PartialProfile dstProfile(true);
                 *dstProfile.pparams = (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getProcParams ();
                 dstProfile.set(true);
+                dstProfile.pedited->locallab.spots.resize(dstProfile.pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
                 partialPasteDlg.applyPaste (dstProfile.pparams, dstProfile.pedited, srcProfiles->pparams, srcProfiles->pedited);
                 (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*dstProfile.pparams, dstProfile.pedited, FILEBROWSER);
                 dstProfile.deleteInstance();
