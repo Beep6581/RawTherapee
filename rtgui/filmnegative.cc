@@ -84,10 +84,10 @@ FilmNegative::FilmNegative() :
     spotbutton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
 
     filmBaseSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_FILMBASE_TOOLTIP"));
-//    setExpandAlignProperties(filmBaseValuesLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     setExpandAlignProperties(filmBaseLabel, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     filmBaseLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    filmBaseLabel->set_line_wrap(true);
 
     // TODO make spot size configurable ?
 
@@ -182,7 +182,7 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
 
     filmBaseGreenValue = pp->filmNegative.greenBase;
 
-    if (filmBaseGreenValue == -1) {
+    if (pp->filmNegative.enabled && filmBaseGreenValue == -1) {
 
         filmBaseLabel->set_markup(batchMode
             ? M("TP_FILMNEGATIVE_UPGRADE_LABEL_BATCH")

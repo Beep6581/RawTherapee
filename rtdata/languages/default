@@ -1717,9 +1717,9 @@ TP_FILMNEGATIVE_PICK;Pick neutral spots
 TP_FILMNEGATIVE_RED;Red ratio
 TP_FILMNEGATIVE_REDBALANCE;Red balance
 TP_FILMNEGATIVE_UPGRADE_BUTTON;Upgrade to new method
-TP_FILMNEGATIVE_UPGRADE_LABEL;<b>* Using legacy inversion method *</b>\nPlease upgrade by clicking the\nbutton below (re-adjustment needed).
+TP_FILMNEGATIVE_UPGRADE_LABEL;<b>   ** Using legacy inversion method **</b>\n<b>WARNING:</b> some parameters will need to be adjusted. Please refer to the manual for full instructions.
 TP_FILMNEGATIVE_UPGRADE_LABEL_BATCH;<b>* Using legacy inversion method *</b>\nPlease click the "Upgrade" button\n(not available in batch mode).
-TP_FILMNEGATIVE_UPGRADE_TOOLTIP;Click to upgrade to the new inversion method. Be aware that:\n- white balance must be set to the <b>backlight</b> color temperature, do not spot-wb on a gray part of the image.\n- after setting white balance, use "Pick neutral spots" above to re-set color balance and exponents.
+TP_FILMNEGATIVE_UPGRADE_TOOLTIP;Click to upgrade to the new inversion method. Be aware that:\n- white balance must be set to the <b>backlight</b> color temperature.\n- after setting white balance, use "Pick neutral spots" above to re-set color balance and exponents.\nPlease refer to the manual for more info.
 TP_FILMSIMULATION_LABEL;Film Simulation
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 TP_FILMSIMULATION_STRENGTH;Strength
