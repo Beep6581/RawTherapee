@@ -2098,7 +2098,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
 #ifdef __SSE2__
     int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
+#ifdef _OPENMP
     #pragma omp parallel if (multiThread)
+#endif
     {
 #ifdef __SSE2__
         // one line buffer per channel and thread
@@ -2109,7 +2111,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
         float Mbuffer[bufferLength] ALIGNED16;
         float sbuffer[bufferLength] ALIGNED16;
 #endif
+#ifdef _OPENMP
         #pragma omp for schedule(dynamic, 16)
+#endif
         for (int i = 0; i < height; i++) {
 #ifdef __SSE2__
             // vectorized conversion from Lab to jchqms
@@ -2943,6 +2947,8 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
 
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:sumab) if(multiThread)
+#else
+        static_cast<void>(multiThread);
 #endif
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
@@ -7046,7 +7052,9 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 if (loclevwavCurve && loclevwavutili) {
 
                     float klev = 0.25f * (loclevwavCurve[level * 55.5f]);
+#ifdef _OPENMP
                     #pragma omp parallel if (multiThread)
+#endif
                     {
                         gaussianBlur(templevel[dir - 1][level], templevel[dir - 1][level], W_L, H_L, radlevblur * klev * chromablu);
                     }
@@ -12188,7 +12196,9 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
 
+#ifdef _OPENMP
                             #pragma omp parallel if (multiThread)
+#endif
                             {
                                 gaussianBlur(bufa, bufa, W_La, H_La, radblur);
                             }

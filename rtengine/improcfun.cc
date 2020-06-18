@@ -5194,8 +5194,9 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
         maxL = 1.f;
     }
     
+#ifdef _OPENMP
     #pragma omp parallel for
-
+#endif
     for (i = 0; i < N; i++)
     {
         L[i] = (L[i] - minL) / maxL;
