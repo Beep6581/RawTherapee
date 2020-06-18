@@ -6846,69 +6846,104 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
 
     float exponent;
 
-    // printf("maxp=%f maxn=%f\n", maxp, maxn);
     if (detailattenuator > 0.f && detailattenuator < 0.05f) {
-        float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f; //0.69315 = log(2)
+        const float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f; //0.69315 = log(2)
         exponent = 1.2f * xlogf(-betemp);
         exponent /= 20.f;
     } else if (detailattenuator >= 0.05f && detailattenuator < 0.25f) {
-        float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f;
+        const float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f;
         exponent = 1.2f * xlogf(-betemp);
         exponent /= (-75.f * detailattenuator + 23.75f);
     } else if (detailattenuator >= 0.25f) {
-        float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f;
+        const float betemp = expf(-(2.f - detailattenuator + 0.693147f)) - 1.f;
         exponent = 1.2f * xlogf(-betemp);
         exponent /= (-2.f * detailattenuator + 5.5f);
     } else {
         exponent = (compression - 1.0f) / 20.f;
     }
 
-    exponent += 1.f;
-
-
     float ap = (thres - 1.f) / (maxp - mean);
     float bp = 1.f - ap * mean;
+    ap *= exponent;
+    bp *= exponent;
 
     float a0 = (1.33f * thres - 1.f) / (1.f - mean);
     float b0 = 1.f - a0 * mean;
+    a0 *= exponent;
+    b0 *= exponent;
 
     float apn = (thres - 1.f) / (maxN - meanN);
     float bpn = 1.f - apn * meanN;
+    apn *= -exponent;
+    bpn *= exponent;
 
     float a0n = (1.33f * thres - 1.f) / (1.f - meanN);
     float b0n = 1.f - a0n * meanN;
+    a0n *= -exponent;
+    b0n *= exponent;
 
-
+    madL *= 0.05f;
 #ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
+    #pragma omp parallel if (multiThread)
 #endif
-    for (int y = 0; y < H_L; y++) {
-        for (int x = 0; x < W_L; x++) {
-            float expone = 1.f;
+    {
+#ifdef __SSE2__
+        const vfloat apv = F2V(ap);
+        const vfloat bpv = F2V(bp);
+        const vfloat a0v = F2V(a0);
+        const vfloat b0v = F2V(b0);
+        const vfloat apnv = F2V(apn);
+        const vfloat bpnv = F2V(bpn);
+        const vfloat a0nv = F2V(a0n);
+        const vfloat b0nv = F2V(b0n);
+        const vfloat madLv = F2V(madL);
+        const vfloat meanv = F2V(mean);
+        const vfloat onev = F2V(1.f);
+#endif
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
+        for (int y = 0; y < H_L; y++) {
+            int x = 0;
+#ifdef __SSE2__
+            for (; x < W_L - 3; x += 4) {
+                vfloat exponev = onev;
+                vfloat valv = LVFU(Source[y][x]);
+                const vmask mask1v = vmaskf_ge(valv, ZEROV);
+                const vmask mask2v = vmaskf_gt(vself(mask1v, valv, -valv), meanv);
+                const vfloat av = vself(mask2v, vself(mask1v, apv, apnv), vself(mask1v, a0v, a0nv));
+                const vfloat bv = vself(mask2v, vself(mask1v, bpv, bpnv), vself(mask1v, b0v, b0nv));
+                exponev += av * valv + bv;
+                valv = vself(mask1v, valv, -valv);
+                const vfloat multv = vself(mask1v, onev, -onev);
+                const vfloat resultv = multv * xexpf(xlogf(valv + madLv) * exponev);
+                STVFU(Source[y][x], resultv);
+            }
+#endif
+            for (; x < W_L; x++) {
+                float expone = 1.f;
 
-            if (Source[y][x] >= 0.f) {
+                if (Source[y][x] >= 0.f) {
+                    if (Source[y][x] > mean) {
+                        expone += ap * Source[y][x] + bp;
+                    } else {
+                        expone += a0 * Source[y][x] + b0;
+                    }
 
-                if (Source[y][x] > mean) {
-                    expone = 1.f + (exponent - 1.f) * (ap * Source[y][x] + bp);
+                    Source[y][x] = xexpf(xlogf(Source[y][x] + madL) * expone);
                 } else {
-                    expone = 1.f + (exponent - 1.f) * (a0 * Source[y][x] + b0);
-                }
+                    if (-Source[y][x] > mean) {
+                        expone += apn * Source[y][x] + bpn;
+                    } else {
+                        expone += a0n * Source[y][x] + b0n;
+                    }
 
-                Source[y][x] = xexpf(xlogf(Source[y][x] + 0.05f * madL) * expone);
-            } else {
-                if (-Source[y][x] > mean) {
-                    expone = 1.f + (exponent - 1.f) * (apn * -Source[y][x] + bpn);
-                } else {
-                    expone = 1.f + (exponent - 1.f) * (a0n * -Source[y][x] + b0n);
+                    Source[y][x] = -xexpf(xlogf(-Source[y][x] + madL) * expone);
                 }
-
-                Source[y][x] = -xexpf(xlogf(-Source[y][x] + 0.05f * madL) * expone);
             }
         }
     }
-
 }
-
 
 void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavelet_decomposition& wdspot, float ****templevel, int level_bl, int maxlvl,
                               const LocwavCurve & loclevwavCurve, bool loclevwavutili,
@@ -6916,6 +6951,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                               const LocwavCurve & loccomprewavCurve, bool loccomprewavutili,
                               float radlevblur, int process, float chromablu, float thres,  float sigmadc, float deltad)
 {
+    BENCHFUN
     float madL[10][3];
     int W_L = wdspot.level_W(0);
     int H_L = wdspot.level_H(0);
