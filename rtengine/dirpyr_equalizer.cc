@@ -604,13 +604,17 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
         array2D<float> residbuff(srcwidth, srcheight);
         array2D<float> resid5(srcwidth, srcheight);
         
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
                 residbuff[i][j] = 0.f;
             }
 
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
                 residbuff[i][j] = dirpyrlo[lastlevel - 1][i][j];
@@ -622,7 +626,9 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     if(contres != 0.f) {
         int ng = 0;
         
+#ifdef _OPENMP
         #pragma omp parallel for reduction(+:avg, ng)
+#endif
         for (int i = 0; i < srcheight; i++) {
             for (int j = 0; j < srcwidth; j++) {
                 avg += residbuff[i][j];
@@ -643,7 +649,9 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
         });
 
     if(contres != 0.f) {
-    #pragma omp parallel for
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
                 float buf = LIM01(residbuff[i][j] / 32768.f);
@@ -664,11 +672,14 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     array2D<float> loct(srcwidth, srcheight);
+#ifdef _OPENMP
     #pragma omp parallel for
-        for (int i = 0; i < srcheight; i++)
-            for (int j = 0; j < srcwidth; j++) {
-                loct[i][j] = LIM(residbuff[i][j],0.f,32768.f);  // TODO: Really a clip necessary?
-            }
+#endif
+    for (int i = 0; i < srcheight; i++) {
+        for (int j = 0; j < srcwidth; j++) {
+            loct[i][j] = LIM(residbuff[i][j],0.f,32768.f);  // TODO: Really a clip necessary?
+        }
+    }
 
     float clar = 0.01f * mergeL;
 
@@ -679,17 +690,23 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
 //    printf("clar=%f \n", clar);
 */
     if(clar > 0.f) {
-    #pragma omp parallel for
-        for (int i = 0; i < srcheight; i++)
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int i = 0; i < srcheight; i++) {
             for (int j = 0; j < srcwidth; j++) {
                  loctemp[i][j] = LIM((1.f + clar) * loct[i][j] - clar * resid5[i][j],0.f,32768.f);
-           }
+            }
+        }
     } else {
-    #pragma omp parallel for
-         for (int i = 0; i < srcheight; i++)
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int i = 0; i < srcheight; i++) {
             for (int j = 0; j < srcwidth; j++) {
                 loctemp[i][j] = LIM(loct[i][j],0.f,32768.f);
             }
+        }
     }
 }
 

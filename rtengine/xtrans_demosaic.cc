@@ -45,7 +45,9 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
     if (!rgb) {
         static bool cbrtinit = false;
         if(!cbrtinit) {
-        #pragma omp parallel for
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
             for (int i = 0; i < 0x14000; i++) {
                 double r = i / 65535.0;
                 cbrt[i] = r > Color::eps ? std::cbrt(r) : (Color::kappa * r + 16.0) / 116.0;

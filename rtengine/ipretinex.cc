@@ -81,15 +81,17 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
     const double mul = 1.0 + g_a[4];
 
     if (gamm2 < 1.) {
+#ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 1024)
-
+#endif
         for (int i = 0; i < 65536; i++) {
             const double x = rtengine::Color::igammareti(i / 65535.0, gamm, start, ts, mul, add);
             gammaLut[i] = 0.5 * rtengine::CLIP(x * 65535.0);  // CLIP avoid in some case extra values
         }
     } else {
+#ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 1024)
-
+#endif
         for (int i = 0; i < 65536; i++) {
             const double x = rtengine::Color::gammareti(i / 65535.0, gamm, start, ts, mul, add);
             gammaLut[i] = 0.5 * rtengine::CLIP(x * 65535.0);  // CLIP avoid in some case extra values
