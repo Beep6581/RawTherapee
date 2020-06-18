@@ -1,11 +1,13 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 347
+#define PPVERSION 348
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   348  2018-09-25
+        Added Locallab tool parameters 	
    347  2019-11-17
         added special values in filmNegative for backwards compatibility with previous channel scaling method
    346  2019-01-01

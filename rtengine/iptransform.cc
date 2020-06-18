@@ -817,7 +817,7 @@ static void calcGradientParams (int oW, int oH, const GradientParams& gradient, 
     }
 }
 
-static float calcGradientFactor (const struct grad_params& gp, int x, int y)
+float ImProcFunctions::calcGradientFactor (const struct grad_params& gp, int x, int y)
 {
     if (gp.angle_is_zero) {
         int gy = gp.transpose ? x : y;

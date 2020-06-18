@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #pragma once
@@ -27,5 +27,9 @@ namespace rtengine
 
 
 void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling=0);
+
+void guidedFilterLog(float base, array2D<float> &chan, int r, float eps, bool multithread, int subsampling=0);
+
+void guidedFilterLog(const array2D<float> &guide, float base, array2D<float> &chan, int r, float eps, bool multithread, int subsampling=0);
 
 } // namespace rtengine

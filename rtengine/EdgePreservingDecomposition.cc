@@ -916,7 +916,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
     float temp;
 
     if(DetailBoost > 0.f) {
-        float betemp = expf(-(2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
+        float betemp = expf(-(2.f - DetailBoost + 0.693147f)) - 1.f; //0.694 = log(2)
         temp = 1.2f * xlogf( -betemp);
     } else {
         temp = CompressionExponent - 1.0f;
@@ -939,7 +939,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
             cev = xexpf(LVFU(Source[i]) + LVFU(u[i]) * (tempv)) - epsv;
             uev = xexpf(LVFU(u[i])) - epsv;
             sourcev = xexpf(LVFU(Source[i])) - epsv;
-            _mm_storeu_ps( &Source[i], cev + DetailBoostv * (sourcev - uev) );
+            _mm_storeu_ps( &Source[i], cev + DetailBoostv * (sourcev - uev));
         }
     }
 

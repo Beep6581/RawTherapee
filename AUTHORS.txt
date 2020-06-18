@@ -7,6 +7,7 @@ Development contributors, in last name alphabetical order:
 
   Roel Baars
   Martin Burri
+  Pierre Cabrera
   Javier Celaya
   Jacques Desmis
   Pavlov Dmitry
@@ -36,8 +37,9 @@ Development contributors, in last name alphabetical order:
   Ingo Weyrich
   Makoto Yoshida
 
-Other contributors (profiles, ideas, mockups, testing, forum activity, translations, etc.), in last name alphabetical order:
+Other contributors (profiles, ideas, mockups, testing, forum activity, translations, tutorials etc.), in last name alphabetical order:
 
+  Andy Astbury
   Marcin Bajor
   Javier Bartol
   Thorsten Bartolomäus

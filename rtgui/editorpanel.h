@@ -79,6 +79,7 @@ public:
 
     void writeOptions();
     void writeToolExpandedStatus (std::vector<int> &tpOpen);
+    void updateShowtooltipVisibility (bool showtooltip);
 
     void showTopPanel (bool show);
     bool isRealized()

@@ -370,7 +370,6 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     if (transform) {
         hTransform = transform;
     } else {
-
         double pwr = 1.0 / gampos;
         double ts = slpos;
         int five = mul;

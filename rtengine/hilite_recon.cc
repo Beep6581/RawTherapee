@@ -394,7 +394,9 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     int miny = height - 1;
     int maxy = 0;
 
+#ifdef _OPENMP
     #pragma omp parallel for reduction(min:minx,miny) reduction(max:maxx,maxy) schedule(dynamic, 16)
+#endif
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j< width; ++j) {
             if (red[i][j] >= max_f[0] || green[i][j] >= max_f[1] || blue[i][j] >= max_f[2]) {
