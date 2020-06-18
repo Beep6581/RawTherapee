@@ -4131,7 +4131,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && radmasklc == other.radmasklc
         && chromasklc == other.chromasklc
         && Lmasklccurve == other.Lmasklccurve
-        // Constrast by detail levels
+        // Contrast by detail levels
         && visicbdl == other.visicbdl
         && expcbdl == other.expcbdl
         && complexcbdl == other.complexcbdl

@@ -65,7 +65,7 @@ protected:
     ToolMode current;
     bool allowNoTool;
     bool editingMode;  // true if the cursor is being used to remotely edit tool's values
-    bool blockEdit; // true if edit tool shoudn't be disabled when pressing hand button or h/H key
+    bool blockEdit; // true if edit tool shouldn't be disabled when pressing hand button or h/H key
     sigc::connection  handConn;
     sigc::connection  wbConn;
     sigc::connection  cpConn;

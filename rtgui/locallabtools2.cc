@@ -2068,7 +2068,7 @@ void LocallabSharp::showmasksharMethodChanged()
 LocallabContrast::LocallabContrast():
     LocallabTool(this, M("TP_LOCALLAB_LC_TOOLNAME"), M("TP_LOCALLAB_LOC_CONTRAST"), true),
 
-    // Local constrast specific widgets
+    // Local contrast specific widgets
     localcontMethod(Gtk::manage(new MyComboBoxText())),
     lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 10, 100, 1, 80))),
     lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),

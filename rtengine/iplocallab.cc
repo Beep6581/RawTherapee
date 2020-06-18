@@ -188,7 +188,7 @@ float calcLocalFactor(const float lox, const float loy, const float lcx, const f
     const float kelip = dx / dy;
     const float belip = rtengine::max(0.0001f, std::sqrt((rtengine::SQR((lox - lcx) / kelip) + rtengine::SQR(loy - lcy)))); //determine position ellipse ==> a and b
 
-    //gradient allows differenciation between transition x and y
+    //gradient allows differentiation between transition x and y
     const float rapy = std::fabs((loy - lcy) / belip);
     const float aelip = belip * kelip;
     const float degrad = aelip / dx;
@@ -206,7 +206,7 @@ float calcLocalFactorrect(const float lox, const float loy, const float lcx, con
     const float ky = loy - lcy;
 
     float ref;
-    //gradient allows differenciation between transition x and y
+    //gradient allows differentiation between transition x and y
     if (std::fabs(kx / (ky + eps)) < krap) {
         ref = std::sqrt(rtengine::SQR(dy) * (1.f + rtengine::SQR(kx / (ky + eps))));
     } else {
@@ -1455,7 +1455,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 }
 
 // Copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
-//J.Desmis 12 2019 - I will try to port a raw process in local adjustements
+//J.Desmis 12 2019 - I will try to port a raw process in local adjustments
 // I choose this one because, it is "new"
 // Perhaps - probably no result, but perhaps ??
 
@@ -1523,7 +1523,7 @@ float find_gray(float source_gray, float target_gray)
 void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp, bool multiThread, int bfw, int bfh)
 {
     /* J.Desmis 12 2019
-        small adaptations to local adjustements
+        small adaptations to local adjustments
         replace log2 by log(lp.baselog) allows diferentiation between low and high lights
     */
     BENCHFUN
@@ -1679,7 +1679,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
 void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     BENCHFUN
-//adpatation to local adjustements Jacques Desmis 12 2019
+//adpatation to local adjustments Jacques Desmis 12 2019
     const PreviewProps pp(0, 0, fw, fh, SCALE);
 
     Imagefloat img(int(fw / SCALE + 0.5), int(fh / SCALE + 0.5));
@@ -1793,7 +1793,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 // adapted from the tone equalizer of darktable
 /*
     Copyright 2019 Alberto Griggio <alberto.griggio@gmail.com>
-    Small adaptation to Local Adjustement 10 2019 Jacques Desmis <jdesmis@gmail.com>
+    Small adaptation to Local Adjustment 10 2019 Jacques Desmis <jdesmis@gmail.com>
     This file is part of darktable,
     copyright (c) 2018 Aurelien Pierre.
 
@@ -2019,7 +2019,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
 {
-    //be carefull quasi duplicate with branch cat02wb
+    //be careful quasi duplicate with branch cat02wb
     BENCHFUN
 
     int width = lab->W, height = lab->H;
@@ -5902,13 +5902,13 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
 
                 const float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
-                if (blshow && lp.colorde < 0) { //show modifications whith use "b"
+                if (blshow && lp.colorde < 0) { //show modifications with use "b"
                     //  (origshow && lp.colorde < 0) { //original Retinex
                     transformed->a[y][x] = 0.f;
                     transformed->b[y][x] = ampli * 8.f * difL * reducdE;
                     transformed->L[y][x] = CLIP(12000.f + 0.5f * ampli * difL);
 
-                } else if (blshow && lp.colorde > 0) {//show modifications whithout use "b"
+                } else if (blshow && lp.colorde > 0) {//show modifications without use "b"
                     if (difL < 1000.f) {//if too low to be view use ab
                         difL += 0.5f * maxdifab;
                     }
@@ -5939,7 +5939,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
 
 void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
-    //initialize coordonates
+    //initialize coordinates
     int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
     int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
     int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -6157,7 +6157,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                 float localFactor = 1.f;
                 const float achm = lp.trans / 100.f;
 
-                //claculate transition
+                //calculate transition
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, achm, lp, zone, localFactor);
                 } else /*if (lp.shapmet == 1)*/ {
@@ -6173,7 +6173,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 
                 float rsob = 0.f;
 
-                //claculate additive sobel to deltaE
+                //calculate additive sobel to deltaE
                 if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || ((senstype == 0) && lp.struco > 0.f))) {
                     const float csob = xlogf(1.f + rtengine::min(blend2[y][x] / 100.f, 60.f) + 0.001f);
 
@@ -6233,13 +6233,13 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     const float difb = factorx * realstrbdE;
                     float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
-                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow) && lp.colorde < 0) { //show modifications whith use "b"
+                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow) && lp.colorde < 0) { //show modifications with use "b"
                         //  (origshow && lp.colorde < 0) { //original Retinex
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
 
-                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow) && lp.colorde > 0) {//show modifications whithout use "b"
+                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow) && lp.colorde > 0) {//show modifications without use "b"
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
@@ -6348,19 +6348,19 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
     /*
         ** Jacques Desmis june 2019 - inspired by Copyright 2013 IPOL Image Processing On Line http://www.ipol.im/
         ** when I read documentation on various FFT blur we found 2 possibilities
-        ** 0) kernel gauss is used with "normal" datas
+        ** 0) kernel gauss is used with "normal" data
         ** 1) kernel gauss is used with FFT
         ** fftkern allows to change 0) or 1) and test  It seems the good solution is with 0, but I keep the code in case of ??
 
-        ** input real datas to blur
-        ** output real datas blurred with radius
+        ** input real data to blur
+        ** output real data blurred with radius
         ** bfw bfh width and high area
         ** radius = sigma for kernel
         ** n_x n_y relative width and high for kernel
         ** Gaussian blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2)
-        ** its traduction in Fourier transform is G(x,y) =  exp((-sigma)*(PI * x2 + PI * y2)), for some authors it is not sigma but sigma^2..I have tried...huge diffrences with Gaussianblur
+        ** its traduction in Fourier transform is G(x,y) =  exp((-sigma)*(PI * x2 + PI * y2)), for some authors it is not sigma but sigma^2..I have tried...huge differences with Gaussianblur
         ** after several test the only result that works very well is with fftkern = 0 and algo = 0, and as there is differences with Gaussianblur, I put an empirical correction in Ipretinex and Iplocalcontrast
-        ** you can enabled or disabled this function with rtsettings.fftwsigma in options. By defaut empirical formula is disabled
+        ** you can enabled or disabled this function with rtsettings.fftwsigma in options. By default empirical formula is disabled
         ** in fact no importance....if it is this function (for sigma) or another... we are not in research :)
     */
     BENCHFUN
@@ -6373,22 +6373,22 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 #endif
 
 
-    float *out; //for FFT datas
+    float *out; //for FFT data
     float *kern = nullptr;//for kernel gauss
     float *outkern = nullptr;//for FFT kernel
     fftwf_plan p;
     fftwf_plan pkern;//plan for FFT
     int image_size, image_sizechange;
     float n_x = 1.f;
-    float n_y = 1.f;//relative coordonates for kernel Gauss
+    float n_y = 1.f;//relative coordinates for kernel Gauss
     float radsig = 1.f;
 
-    out = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
+    out = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real data for FFT
 
     if (fftkern == 1) { //allocate memory FFT if kernel fft = 1
         // kern = new float[bfw * bfh];
-        kern = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
-        outkern = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
+        kern = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real data for FFT
+        outkern = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real data for FFT
     }
 
     /*compute the Fourier transform of the input data*/
@@ -6441,7 +6441,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
             int index = j * bfw;
 
             for (int i = 0; i < bfw; i++) {
-                out[i + index] *= outkern[i + index];    //apply Gauss kernel whith FFT
+                out[i + index] *= outkern[i + index];    //apply Gauss kernel with FFT
             }
         }
 
@@ -6450,7 +6450,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 
         //   delete [] kern;
 
-    } else if (fftkern == 0) {//whithout FFT kernel
+    } else if (fftkern == 0) {//without FFT kernel
         if (algo == 0) {
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
@@ -6459,7 +6459,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
                 int index = j * bfw;
 
                 for (int i = 0; i < bfw; i++) {
-                    out[i + index] *= exp((float)(-radius) * (n_x * i * i + n_y * j * j));    //apply Gauss kernel whithout FFT - some authors says radius*radius but differences with Gaussianblur
+                    out[i + index] *= exp((float)(-radius) * (n_x * i * i + n_y * j * j));    //apply Gauss kernel without FFT - some authors says radius*radius but differences with Gaussianblur
                 }
             }
         } else if (algo == 1) {
@@ -6482,7 +6482,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
-    for (int index = 0; index < image_size; index++) { //restore datas
+    for (int index = 0; index < image_size; index++) { //restore data
         output[index] /= image_sizechange;
     }
 
@@ -8393,8 +8393,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 //local denoise
     //all these variables are to prevent use of denoise when non necessary
     // but with qualmet = 2 (default for best quality) we must denoise chroma with little values to prevent artifacts due to variations of Hue
-    // but if user select volontary denoise, it is that choice the good (prioritary)
-    bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0); // only if one slider ore more is engaged
+    // but if user select voluntary denoise, it is that choice the good (prioritary)
+    bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0); // only if one slider or more is engaged
     bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f || lp.mulloc[5] != 1.f) ;//only if user want cbdl
     bool execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib && lp.past != 0.f));
     bool execmaskden = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.smasktyp != 0;
@@ -10292,8 +10292,8 @@ void ImProcFunctions::Lab_Local(
 
             const std::unique_ptr<LabImage> bufgbi(new LabImage(GW, GH));
 
-            //here mask is used with plein image for normal and inverse
-            //if it is possible to optimze with maskcalccol(), I don't to preserv lisibility
+            //here mask is used with plain image for normal and inverse
+            //if it is possible to optimize with maskcalccol(), I don't to preserve visibility
             if (lp.showmaskblmet == 0 || lp.showmaskblmet == 1  || lp.showmaskblmet == 2 || lp.showmaskblmet == 4 || lp.enablMask) {
 
                 if (lp.blurmet == 0) {
@@ -11415,7 +11415,7 @@ void ImProcFunctions::Lab_Local(
                                     maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                                    );
 
-                        if (lp.showmasktmmet == 3) {//dispaly mask
+                        if (lp.showmasktmmet == 3) {//display mask
                             showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, tmp1.get(), transformed, bufmaskorigtm.get(), 0);
 
                             return;
@@ -12068,7 +12068,7 @@ void ImProcFunctions::Lab_Local(
 
                     }
                 } else if (lp.locmet == 1) { //wavelet && sk ==1
-                    int wavelet_level = 1 + params->locallab.spots.at(sp).csthreshold.getBottomRight();//retriev with +1 maximum wavelet_level
+                    int wavelet_level = 1 + params->locallab.spots.at(sp).csthreshold.getBottomRight();//retrieve with +1 maximum wavelet_level
                     float mL = params->locallab.spots.at(sp).clarilres / 100.f;
                     float mC = params->locallab.spots.at(sp).claricres / 100.f;
                     float softr = params->locallab.spots.at(sp).clarisoft;
@@ -12336,7 +12336,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            //sharpen only square area instaed of all image
+            //sharpen only square area instead of all image
             ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
         } else { //call from dcrop.cc
             ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, sk);
@@ -12627,7 +12627,7 @@ void ImProcFunctions::Lab_Local(
 
                 float divchro = maxChro;
 
-                //first step change saturation whithout Retinex ==> gain of time and memory
+                //first step change saturation without Retinex ==> gain of time and memory
                 float satreal = lp.str * params->locallab.spots.at(sp).chrrt / 100.f;
 
                 if (params->locallab.spots.at(sp).chrrt <= 0.2f) {
@@ -12954,7 +12954,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                //first step change saturation whithout Retinex ==> gain of time and memory
+                //first step change saturation without Retinex ==> gain of time and memory
                 float satreal = lp.str * params->locallab.spots.at(sp).chrrt / 100.f;
 
                 if (params->locallab.spots.at(sp).chrrt <= 0.2f) {
@@ -14604,7 +14604,7 @@ void ImProcFunctions::Lab_Local(
         }
     }
 
-// Gamut and Munsell control - very important do not desactivated to avoid crash
+// Gamut and Munsell control - very important do not deactivated to avoid crash
     if (params->locallab.spots.at(sp).avoid) {
         const float ach = lp.trans / 100.f;
 

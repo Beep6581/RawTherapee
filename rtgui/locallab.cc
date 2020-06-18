@@ -943,7 +943,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams* defParams, co
     // Set default values in spot panel control
     expsettings->setDefaults(defParams, pedited);
 
-    // Set defaut values in Locallab tools
+    // Set default values in Locallab tools
     for (auto tool : locallabTools) {
         tool->setDefaults(defParams, pedited);
     }
