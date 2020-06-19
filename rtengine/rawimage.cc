@@ -84,6 +84,29 @@ eSensorType RawImage::getSensorType() const
  */
 void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_, bool forceAutoWB)
 {
+    if (!pre_mul_ && !scale_mul_ && !forceAutoWB) {
+        // only black levels
+        if (isXtrans()) {
+            // for xtrans files dcraw stores black levels in cblack[6] .. cblack[41], but all are equal, so we just use cblack[6]
+            for (int c = 0; c < 4; c++) {
+                cblack_[c] = (float) this->get_cblack(6);
+            }
+        } else if ((this->get_cblack(4) + 1) / 2 == 1 && (this->get_cblack(5) + 1) / 2 == 1) {
+            for (int c = 0; c < 4; c++) {
+                cblack_[c] = this->get_cblack(c);
+            }
+
+            for (int c = 0; c < 4; c++) {
+                cblack_[FC(c / 2, c % 2)] = this->get_cblack(6 + c / 2 % this->get_cblack(4) * this->get_cblack(5) + c % 2 % this->get_cblack(5));
+            }
+        } else {
+            for (int c = 0; c < 4; c++) {
+                cblack_[c] = (float) this->get_cblack(c);
+            }
+        }
+        return;
+    }
+
     unsigned sum[8], c;
     unsigned W = this->get_width();
     unsigned H = this->get_height();

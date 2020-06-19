@@ -2397,10 +2397,11 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData )
 {
-    const float black[4] = {
-                     static_cast<float>(ri->get_cblack(0)), static_cast<float>(ri->get_cblack(1)),
-                     static_cast<float>(ri->get_cblack(2)), static_cast<float>(ri->get_cblack(3))
-                     };
+    const auto tmpfilters = ri->get_filters();
+    ri->set_filters(ri->prefilters); // we need 4 blacks for bayer processing
+    float black[4];
+    ri->get_colorsCoeff(nullptr, nullptr, black, false);
+    ri->set_filters(tmpfilters);
 
     if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) {
         if (!rawData) {
