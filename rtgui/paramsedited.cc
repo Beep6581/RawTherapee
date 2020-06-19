@@ -530,6 +530,7 @@ void ParamsEdited::set(bool v)
     wavelet.sigma = v;
     wavelet.offset = v;
     wavelet.lowthr = v;
+    wavelet.rescon = v;
     wavelet.resconH = v;
     wavelet.reschro = v;
     wavelet.resblur = v;

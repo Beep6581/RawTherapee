@@ -227,7 +227,7 @@ void LocallabTool::removeLocallabTool(bool raiseEvent)
         disableListener();
         exp->setEnabled(false);
         enableListener();
-        // Note: Mask views are all resetted when removing tool (in toolpanelcoord.cc)
+        // Note: Mask views are all reset when removing tool (in toolpanelcoord.cc)
 
         // Raise event if required refreshing image
         if (raiseEvent && listener) {
@@ -1892,7 +1892,7 @@ void LocallabColor::inversChanged()
 {
     updateColorGUI1(); // Update GUI according to invers button state
 
-    // This event is called to transmit potentially resetted mask state
+    // This event is called to transmit potentially reset mask state
     if (listener) {
         listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
@@ -3105,7 +3105,7 @@ void LocallabExposure::inversexChanged()
     // Update exposure GUI according to inversex button state
     updateExposureGUI3();
 
-    // This event is called to transmit potentially resetted mask state
+    // This event is called to transmit potentially reset mask state
     if (listener) {
         listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
@@ -4002,7 +4002,7 @@ void LocallabShadow::inversshChanged()
     // Update shadow highlight GUI according to inverssh button state
     updateShadowGUI1();
 
-    // This event is called to transmit potentially resetted mask state
+    // This event is called to transmit potentially reset mask state
     if (listener) {
         listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
@@ -5136,7 +5136,7 @@ void LocallabSoft::softMethodChanged()
     // Update soft light GUI according to softMethod combobox
     updateSoftGUI();
 
-    // This event is called to transmit potentially resetted mask state
+    // This event is called to transmit potentially reset mask state
     if (listener) {
         listener->panelChanged(EvlocallabshowmaskMethod, "");
     }

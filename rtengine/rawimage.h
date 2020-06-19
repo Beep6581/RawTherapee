@@ -259,6 +259,10 @@ public:
     {
         return float_raw_image;
     }
+    void set_filters(unsigned f)
+    {
+        filters = f;
+    }
 
 public:
     // dcraw functions

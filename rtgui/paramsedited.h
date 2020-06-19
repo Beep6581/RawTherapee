@@ -1080,7 +1080,6 @@ struct WaveletParamsEdited {
     bool labgridBLow;
     bool labgridAHigh;
     bool labgridBHigh;
-    
 };
 
 struct DirPyrEqualizerParamsEdited {

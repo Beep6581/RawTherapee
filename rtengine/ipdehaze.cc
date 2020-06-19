@@ -464,7 +464,7 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
 
 void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParams)
 {
-    //J.Desmis 12 2019 - this version derived from ART, is slower than the main from maximimum 10% - probably use of SSE
+    //J.Desmis 12 2019 - this version derived from ART, is slower than the main from maximum 10% - probably use of SSE
     //Probably Ingo could solved this problem in some times
    BENCHFUN 
     if (!dehazeParams.enabled || dehazeParams.strength == 0.0) {

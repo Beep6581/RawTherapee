@@ -1245,7 +1245,7 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
 
         for (int scale = scal - 1; scale >= 0; --scale) {
             //    printf("retscale=%f scale=%i \n", mulradiusfftw * RetinexScales[scale], scale);
-            //emprical adjustement between FFTW radius and Gaussainblur
+            //emprical adjustment between FFTW radius and Gaussainblur
             //under 50 ==> 10.f
             // 400 ==> 1.f
             float sigm = 1.f;
@@ -1589,7 +1589,7 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
                         }
 
                         //but we don't update mean stddv for display only...
-                        copylum[i][j] = gan * luminance[i][j];//update datas for display
+                        copylum[i][j] = gan * luminance[i][j];//update data for display
                         float cd = gan * cdfactor * luminance[i][j] + offse;
 
                         cdmax = cd > cdmax ? cd : cdmax;
@@ -1649,7 +1649,7 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
                           );
         }
 
-        //mask does not interfered with datas displayed
+        //mask does not interfered with data displayed
 
         Tmean = mean;
         Tsigma = stddv;

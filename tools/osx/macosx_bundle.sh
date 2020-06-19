@@ -106,7 +106,7 @@ __EOS__
 
 minimum_macos_version=${MINIMUM_SYSTEM_VERSION}
 
-# Retreive cached values from cmake
+# Retrieve cached values from cmake
 
 #In: LOCAL_PREFIX:STRING=/opt
 #Out: /opt

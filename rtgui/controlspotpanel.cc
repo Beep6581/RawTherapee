@@ -723,7 +723,7 @@ bool ControlSpotPanel::blockTreeviewSearch(GdkEventKey* event)
         }
     }
 
-    // Otherwise key action is transfered to treeview widget
+    // Otherwise key action is transferred to treeview widget
     return false;
 }
 
@@ -734,7 +734,7 @@ bool ControlSpotPanel::onSpotSelectionEvent(GdkEventButton* event)
         return true;
     }
 
-    // Otherwise selection action is transfered to treeview widget
+    // Otherwise selection action is transferred to treeview widget
     return false;
 }
 

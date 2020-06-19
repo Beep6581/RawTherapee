@@ -214,7 +214,7 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
     std::array<float, 3> denseVals;
 
     // Get channel averages in the two spots, sampling from the original ri->data buffer.
-    // NOTE: rawData values might be affected by CA corection, FlatField, etc, so:
+    // NOTE: rawData values might be affected by CA correction, FlatField, etc, so:
     //   rawData[y][x] == (ri->data[y][x] - cblacksom[c]) * scale_mul[c]
     // is not always true. To calculate exponents on the exact values, we should keep
     // a copy of the rawData buffer after preprocessing. Worth the memory waste?
@@ -330,7 +330,7 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     // If film base values are set in params, use those
     if (filmBaseValues[0] <= 0.f) {
         // ...otherwise, the film negative tool might have just been enabled on this image,
-        // whithout any previous setting. So, estimate film base values from channel medians
+        // without any previous setting. So, estimate film base values from channel medians
 
         std::array<float, 3> medians;
 
