@@ -864,8 +864,21 @@ struct LensProfParamsEdited {
 };
 
 struct PerspectiveParamsEdited {
+    bool method;
     bool horizontal;
     bool vertical;
+    bool camera_crop_factor;
+    bool camera_focal_length;
+    bool camera_pitch;
+    bool camera_roll;
+    bool camera_shift_horiz;
+    bool camera_shift_vert;
+    bool camera_yaw;
+    bool projection_pitch;
+    bool projection_rotate;
+    bool projection_shift_horiz;
+    bool projection_shift_vert;
+    bool projection_yaw;
 };
 
 struct GradientParamsEdited {

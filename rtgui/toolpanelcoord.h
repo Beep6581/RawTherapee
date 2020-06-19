@@ -313,6 +313,7 @@ public:
     // rotatelistener interface
     void straightenRequested () override;
     void autoCropRequested () override;
+    void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw) override;
     double autoDistorRequested () override;
 
     // spotwblistener interface

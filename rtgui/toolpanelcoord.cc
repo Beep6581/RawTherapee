@@ -26,6 +26,7 @@
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include "../rtengine/improcfun.h"
+#include "../rtengine/perspectivecorrection.h"
 #include "../rtengine/procevents.h"
 #include "../rtengine/refreshmap.h"
 
@@ -280,6 +281,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     flatfield->setFFProvider(this);
     lensgeom->setLensGeomListener(this);
     rotate->setLensGeomListener(this);
+    perspective->setLensGeomListener(this);
     distortion->setLensGeomListener(this);
     crop->setCropPanelListener(this);
     icm->setICMPanelListener(this);
@@ -732,6 +734,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
 
         icm->setRawMeta(raw, (const rtengine::FramesData*)pMetaData);
         lensProf->setRawMeta(raw, pMetaData);
+        perspective->setMetadata(pMetaData);
     }
 
 
@@ -981,6 +984,26 @@ void ToolPanelCoordinator::straightenRequested()
     }
 
     toolBar->setTool(TMStraighten);
+}
+
+void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw)
+{
+    if (!(ipc && (corr_pitch || corr_yaw))) {
+        return;
+    }
+
+    rtengine::ImageSource *src = dynamic_cast<rtengine::ImageSource *>(ipc->getInitialImage());
+    if (!src) {
+        return;
+    }
+
+    rtengine::procparams::ProcParams params;
+    ipc->getParams(&params);
+
+    auto res = rtengine::PerspectiveCorrection::autocompute(src, corr_pitch, corr_yaw, &params, src->getMetaData());
+    rot = res.angle;
+    pitch = res.pitch;
+    yaw = res.yaw;
 }
 
 double ToolPanelCoordinator::autoDistorRequested()
