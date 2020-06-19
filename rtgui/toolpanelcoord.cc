@@ -519,7 +519,7 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
     /*
      * Manage Locallab mask visibility:
      * - Mask preview is updated when choosing a mask preview method
-     * - Mask preview is also updated when modifying (to avoid hidding a potentially visible mask combobox):
+     * - Mask preview is also updated when modifying (to avoid hiding a potentially visible mask combobox):
      *   - Color&Light invers
      *   - Exposure inversex
      *   - Shadow Highlight inverssh

@@ -602,8 +602,8 @@ void Options::setDefaults()
     rtSettings.reduchigh = 0.85;//transition for luminance in scope
     rtSettings.reduclow = 0.85;//transition for luminance out scope
     rtSettings.detectshape = true;//experimental new detection shape
-    rtSettings.previewselection = 5;//betwen 1 to 40
-    rtSettings.cbdlsensi = 1.0;//betwen 0.001 to 1
+    rtSettings.previewselection = 5;//between 1 to 40
+    rtSettings.cbdlsensi = 1.0;//between 0.001 to 1
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 
     rtSettings.itcwb_thres = 34;//between 10 to 55

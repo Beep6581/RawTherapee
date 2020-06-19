@@ -861,11 +861,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                 if (exblurL) {
                     if (cp.mul[0] == 0.f) {
-                        cp.mul[0] = 0.01f;//to always enable WaveletcontAllL if no contrast is nead
+                        cp.mul[0] = 0.01f;//to always enable WaveletcontAllL if no contrast is needed
                     }
                 }
 
-                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.tonemap && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
+                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.tonemap && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
                     while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
                         levwavL--;
                     }
@@ -2515,7 +2515,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
                 int jj = i - ii * W_L;
                 float LL = (labco->L[ii * 2][jj * 2]) / 327.68f; //I use labco but I can use also WavCoeffs_L0 (more exact but more memory)
 
-                float sca = 1.f; //amplifer - reducter...about 1, but perhaps 0.6 or 1.3
+                float sca = 1.f; //amplifier - reducter...about 1, but perhaps 0.6 or 1.3
 
                 if (useChannelA) { //green red (little magenta)
                     //transition to avoid artifacts with 6 between 30 to 36 and  63 to 69
