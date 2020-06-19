@@ -142,6 +142,7 @@ set(RTENGINESOURCEFILES
     myfile.cc
     panasonic_decoders.cc
     pdaflinesfilter.cc
+    perspectivecorrection.cc
     PF_correct_RT.cc
     pipettebuffer.cc
     pixelshift.cc

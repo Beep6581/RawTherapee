@@ -21,6 +21,7 @@ Development contributors, in last name alphabetical order:
   Steve Herrell
   Philippe Hupé
   Wolfgang Kuehnel
+  Lawrence Lee
   Guokai Ma
   Emil Martinec
   Wyatt Olson

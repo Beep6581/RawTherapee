@@ -152,7 +152,7 @@ void BatchToolPanelCoordinator::initSession ()
             rotate->setAdjusterBehavior (false);
             resize->setAdjusterBehavior (false);
             distortion->setAdjusterBehavior (false);
-            perspective->setAdjusterBehavior (false);
+            perspective->setAdjusterBehavior (false, false, false, false, false, false, false);
             gradient->setAdjusterBehavior (false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
@@ -197,7 +197,7 @@ void BatchToolPanelCoordinator::initSession ()
             rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
             resize->setAdjusterBehavior (options.baBehav[ADDSET_RESIZE_SCALE]);
             distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
-            perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
+            perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE], options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH], options.baBehav[ADDSET_PERSP_CAM_SHIFT], options.baBehav[ADDSET_PERSP_CAM_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_SHIFT], options.baBehav[ADDSET_PERSP_PROJ_ROTATE]);
             gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
             pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);
             cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
@@ -309,6 +309,12 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_RESIZE_SCALE]) { pparams.resize.scale = 0; }
             if (options.baBehav[ADDSET_DIST_AMOUNT]) { pparams.distortion.amount = 0; }
             if (options.baBehav[ADDSET_PERSPECTIVE]) { pparams.perspective.horizontal = pparams.perspective.vertical = 0; }
+            if (options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH]) { pparams.perspective.camera_focal_length = pparams.perspective.camera_crop_factor = 0; }
+            if (options.baBehav[ADDSET_PERSP_CAM_SHIFT]) { pparams.perspective.camera_shift_horiz = pparams.perspective.camera_shift_vert = 0; }
+            if (options.baBehav[ADDSET_PERSP_CAM_ANGLE]) { pparams.perspective.camera_yaw = pparams.perspective.camera_pitch = 0; }
+            if (options.baBehav[ADDSET_PERSP_PROJ_ANGLE]) { pparams.perspective.projection_yaw = pparams.perspective.projection_pitch = 0; }
+            if (options.baBehav[ADDSET_PERSP_PROJ_SHIFT]) { pparams.perspective.projection_shift_horiz = pparams.perspective.projection_shift_vert = 0; }
+            if (options.baBehav[ADDSET_PERSP_PROJ_ROTATE]) { pparams.perspective.projection_rotate = 0; }
             if (options.baBehav[ADDSET_GRADIENT_DEGREE]) { pparams.gradient.degree = 0; }
             if (options.baBehav[ADDSET_GRADIENT_FEATHER]) { pparams.gradient.feather = 0; }
             if (options.baBehav[ADDSET_GRADIENT_STRENGTH]) { pparams.gradient.strength = 0; }
