@@ -217,6 +217,8 @@ ControlSpotPanel::ControlSpotPanel():
 
     sensiexclu_->setAdjusterListener(this);
     structexclu_->setAdjusterListener(this);
+    structexclu_->setLogScale(10, 0);
+    
     excluBox->pack_start(*sensiexclu_);
     excluBox->pack_start(*structexclu_);
     excluFrame->add(*excluBox);
