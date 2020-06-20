@@ -86,6 +86,11 @@ ControlSpotPanel::ControlSpotPanel():
     shortc_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SHORTC")))),
     savrest_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SAVREST")))),
 
+    expTransGrad_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_TRANSIT")))),
+    expShapeDetect_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_ARTIF")))),
+    expSpecCases_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SPECCASE")))),
+    expMaskMerge_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_MASFRAME")))),
+
     preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
 
     controlPanelListener(nullptr),
@@ -217,6 +222,8 @@ ControlSpotPanel::ControlSpotPanel():
 
     sensiexclu_->setAdjusterListener(this);
     structexclu_->setAdjusterListener(this);
+    structexclu_->setLogScale(10, 0);
+    
     excluBox->pack_start(*sensiexclu_);
     excluBox->pack_start(*structexclu_);
     excluFrame->add(*excluBox);
@@ -283,11 +290,8 @@ ControlSpotPanel::ControlSpotPanel():
     ctboxqualitymethod->pack_start(*qualityMethod_);
 //    pack_start(*ctboxqualitymethod);
 
-    Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
-    transitFrame->set_label_align(0.025, 0.5);
-
     if (showtooltip) {
-        transitFrame->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+        expTransGrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
     }
 
     ToolParamBlock* const transitBox = Gtk::manage(new ToolParamBlock());
@@ -321,14 +325,11 @@ ControlSpotPanel::ControlSpotPanel():
     transitBox->pack_start(*transitweak_);
     transitBox->pack_start(*transitgrad_);
     transitBox->pack_start(*feather_);
-    transitFrame->add(*transitBox);
-    pack_start(*transitFrame);
-
-    Gtk::Frame* const artifFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ARTIF")));
-    artifFrame->set_label_align(0.025, 0.5);
+    expTransGrad_->add(*transitBox, false);
+    pack_start(*expTransGrad_, false, false);
 
     if (showtooltip) {
-        artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
+        expShapeDetect_->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
     }
 
     ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
@@ -361,12 +362,14 @@ ControlSpotPanel::ControlSpotPanel():
     artifBox->pack_start(*colorde_);
     artifBox->pack_start(*preview_);
     artifBox->pack_start(*colorscope_);
-    artifFrame->add(*artifBox);
-    pack_start(*artifFrame);
+    expShapeDetect_->add(*artifBox, false);
+    pack_start(*expShapeDetect_, false, false);
+
+    ToolParamBlock* const specCaseBox = Gtk::manage(new ToolParamBlock());
 
     avoidConn_  = avoid_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
-    pack_start(*avoid_);
+    specCaseBox->pack_start(*avoid_);
 
     blwhConn_  = blwh_->signal_toggled().connect(
                      sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
@@ -375,7 +378,7 @@ ControlSpotPanel::ControlSpotPanel():
         blwh_->set_tooltip_text(M("TP_LOCALLAB_BLWH_TOOLTIP"));
     }
 
-    pack_start(*blwh_);
+    specCaseBox->pack_start(*blwh_);
 
     recursConn_  = recurs_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::recursChanged));
@@ -385,13 +388,12 @@ ControlSpotPanel::ControlSpotPanel():
         avoid_->set_tooltip_text(M("TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP"));
     }
 
-    pack_start(*recurs_);
-
-    Gtk::Frame* const maskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MASFRAME")));
-    maskFrame->set_label_align(0.025, 0.5);
+    specCaseBox->pack_start(*recurs_);
+    expSpecCases_->add(*specCaseBox, false);
+    pack_start(*expSpecCases_, false, false);
 
     if (showtooltip) {
-        maskFrame->set_tooltip_text(M("TP_LOCALLAB_MASFRAME_TOOLTIP"));
+        expMaskMerge_->set_tooltip_text(M("TP_LOCALLAB_MASFRAME_TOOLTIP"));
     }
 
     ToolParamBlock* const maskBox = Gtk::manage(new ToolParamBlock());
@@ -422,8 +424,8 @@ ControlSpotPanel::ControlSpotPanel():
     // maskBox->pack_start(*shortc_);
     maskBox->pack_start(*lumask_);
     // maskBox->pack_start(*savrest_);
-    maskFrame->add(*maskBox);
-    pack_start(*maskFrame);
+    expMaskMerge_->add(*maskBox, false);
+    pack_start(*expMaskMerge_, false, false);
 
     Gtk::HSeparator *separatormet = Gtk::manage(new  Gtk::HSeparator());
     pack_start(*separatormet, Gtk::PACK_SHRINK, 2);
@@ -1579,6 +1581,14 @@ void ControlSpotPanel::setParamEditable(bool cond)
     savrest_->set_sensitive(cond);
     complexMethod_->set_sensitive(cond);
     wavMethod_->set_sensitive(cond);
+}
+
+void ControlSpotPanel::setDefaultExpanderVisibility()
+{
+    expTransGrad_->set_expanded(false);
+    expShapeDetect_->set_expanded(false);
+    expSpecCases_->set_expanded(false);
+    expMaskMerge_->set_expanded(false);
 }
 
 void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row& row)

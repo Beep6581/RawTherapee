@@ -2753,6 +2753,7 @@ TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission ma
 TP_LOCALLAB_SOURCE_GRAY;Value
 TP_LOCALLAB_SPECIAL;Special use of RGB curves
 TP_LOCALLAB_SPECIAL_TOOLTIP;Only for this RGB curve, disabled (or reduce effects) of Scope, mask...for example, if you want to have a negative effect.
+TP_LOCALLAB_SPECCASE; Specific cases
 TP_LOCALLAB_SPOTNAME;Control Spot #
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Strength

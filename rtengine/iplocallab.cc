@@ -9820,9 +9820,14 @@ void ImProcFunctions::Lab_Local(
                 guid[ir][jr] /= 32768.f;
             }
 
-        const float blur = 25 / sk * (10.f + 0.8f * lp.struexp);
 
-        rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiThread);
+        const float blur = 25 / sk * (2.f + 2.5f * lp.struexp);
+
+        rtengine::guidedFilter(guid, ble, ble, blur, 0.0001, multiThread);
+
+//        const float blur = 25 / sk * (10.f + 0.8f * lp.struexp);
+
+//        rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiThread);
 
         double sombel = 0.f;
         const int ncsobel = bfh * bfw;
