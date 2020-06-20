@@ -7173,15 +7173,14 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 int H_L = wdspot.level_H(level);
 
                 if (dir == 3 && level + 1 == maxlvl) {
-                    float effect = lp.sigmadr;
-                    float offs = 1.f;
+                    const float effect = lp.sigmadr;
+                    constexpr float offs = 1.f;
                     float mea[10];
-
                     calceffect(level, mean, sigma, mea, effect, offs);
-                    auto WavL = wdspot.level_coeffs(level);
 
+                    const auto WavL = wdspot.level_coeffs(level)[dir];
                     for (int co = 0; co < H_L * W_L; co++) {
-                        const float WavCL = std::fabs(WavL[dir][co]);
+                        const float WavCL = std::fabs(WavL[co]);
 
                         if (WavCL < mea[0]) {
                             beta[co] = 0.05f;
@@ -7209,33 +7208,21 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                     }
                 }
 
-
                 if (loccomprewavCurve && loccomprewavutili) {
                     float klev = (loccomprewavCurve[level * 55.5f] - 0.75f);
-
                     if (klev < 0.f) {
                         klev *= 2.6666f;//compression increase contraste
                     } else {
                         klev *= 4.f;//dilatation reduce contraste - detailattenuator
                     }
-
-                    float compression = expf(-klev);
-                    float  detailattenuator = klev;
-
-                    if (klev < 0.0f) {
-                        detailattenuator = 0.0f;
-                    }
-
-                    //  float thresref = mean[level];
-                    //  float thresreal = 0.1f * thres * thresref;//small values to take into account noise and artifacts
-                    //printf("mean=%f level=%i\n", mean[level], level);
+                    const float compression = expf(-klev);
+                    const float detailattenuator = std::max(klev, 0.f);
 
                     Compresslevels(templevel[dir - 1][level], W_L, H_L, compression, detailattenuator, thres,  mean[level], MaxP[level], meanN[level], MaxN[level], madL[level][dir - 1]);
                 }
             }
         }
     }
-
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
