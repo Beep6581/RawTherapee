@@ -7171,38 +7171,41 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
                 int H_L = wdspot.level_H(level);
-                float effect = lp.sigmadr;
-                float offs = 1.f;
-                float mea[10];
 
-                calceffect(level, mean, sigma, mea, effect, offs);
-                auto WavL = wdspot.level_coeffs(level);
+                if (dir == 3 && level + 1 == maxlvl) {
+                    float effect = lp.sigmadr;
+                    float offs = 1.f;
+                    float mea[10];
 
-                for (int co = 0; co < H_L * W_L; co++) {
-                    const float WavCL = std::fabs(WavL[dir][co]);
+                    calceffect(level, mean, sigma, mea, effect, offs);
+                    auto WavL = wdspot.level_coeffs(level);
 
-                    if (WavCL < mea[0]) {
-                        beta[co] = 0.05f;
-                    } else if (WavCL < mea[1]) {
-                        beta[co] = 0.2f;
-                    } else if (WavCL < mea[2]) {
-                        beta[co] = 0.7f;
-                    } else if (WavCL < mea[3]) {
-                        beta[co] = 1.f;    //standard
-                    } else if (WavCL < mea[4]) {
-                        beta[co] = 1.f;
-                    } else if (WavCL < mea[5]) {
-                        beta[co] = 0.8f;    //+sigma
-                    } else if (WavCL < mea[6]) {
-                        beta[co] = 0.65f;
-                    } else if (WavCL < mea[7]) {
-                        beta[co] = 0.5f;
-                    } else if (WavCL < mea[8]) {
-                        beta[co] = 0.4f;    // + 2 sigma
-                    } else if (WavCL < mea[9]) {
-                        beta[co] = 0.25f;
-                    } else {
-                        beta[co] = 0.1f;
+                    for (int co = 0; co < H_L * W_L; co++) {
+                        const float WavCL = std::fabs(WavL[dir][co]);
+
+                        if (WavCL < mea[0]) {
+                            beta[co] = 0.05f;
+                        } else if (WavCL < mea[1]) {
+                            beta[co] = 0.2f;
+                        } else if (WavCL < mea[2]) {
+                            beta[co] = 0.7f;
+                        } else if (WavCL < mea[3]) {
+                            beta[co] = 1.f;    //standard
+                        } else if (WavCL < mea[4]) {
+                            beta[co] = 1.f;
+                        } else if (WavCL < mea[5]) {
+                            beta[co] = 0.8f;    //+sigma
+                        } else if (WavCL < mea[6]) {
+                            beta[co] = 0.65f;
+                        } else if (WavCL < mea[7]) {
+                            beta[co] = 0.5f;
+                        } else if (WavCL < mea[8]) {
+                            beta[co] = 0.4f;    // + 2 sigma
+                        } else if (WavCL < mea[9]) {
+                            beta[co] = 0.25f;
+                        } else {
+                            beta[co] = 0.1f;
+                        }
                     }
                 }
 
