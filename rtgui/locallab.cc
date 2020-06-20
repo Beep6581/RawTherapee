@@ -1097,6 +1097,9 @@ void Locallab::foldAllButOne(LocallabTool* except)
 
 void Locallab::openAllTools()
 {
+    // Set default visibility for settings panel sub-expanders
+    expsettings->setDefaultExpanderVisibility();
+
     for (auto tool : locallabTools) {
         tool->setExpanded(true);
 

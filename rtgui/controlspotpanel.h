@@ -205,6 +205,10 @@ public:
      * @param cond Condition to enable interactions
      */
     void setParamEditable(bool cond);
+    /**
+     * Reset expander collapse state to default one
+     */
+    void setDefaultExpanderVisibility();
 
     // Batch mode management
     // Note: Batch mode is deactivated for Locallab
@@ -395,6 +399,11 @@ private:
     sigc::connection shortcConn_;
     Gtk::CheckButton* const savrest_;
     sigc::connection savrestConn_;
+
+    MyExpander* const expTransGrad_;
+    MyExpander* const expShapeDetect_;
+    MyExpander* const expSpecCases_;
+    MyExpander* const expMaskMerge_;
 
     Gtk::ToggleButton* const preview_;
     sigc::connection previewConn_;
