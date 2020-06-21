@@ -430,6 +430,7 @@ Camera constants:
 
     { // Quality B, some intermediate ISO samples missing, LENR samples missing so White Levels not properly indicated, some aperture scaling missing
         "make_model": "Canon EOS 5D Mark IV",
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 6446,-366,-864,-4436,12204,2513,-952,2496,6348 ], // DNG_V9.7 D65
         "raw_crop": [ 136, 42, 6740, 4500 ], // full size 6880x4544, official crop 148,54,6867,4533
         "masked_areas": [ 54, 4, 4534, 132 ],
