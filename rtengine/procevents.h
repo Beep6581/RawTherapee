@@ -953,6 +953,7 @@ enum ProcEventCode {
     EvLocenamask = 927,
     Evlocallabsensimask = 928,
     Evlocallabblendmask = 929,
+    EvlocallabshowmaskmaskMethod = 930,
     NUMOFEVENTS
 };
 

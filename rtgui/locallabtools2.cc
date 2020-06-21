@@ -266,7 +266,7 @@ void LocallabTone::resetMaskView()
     showmasktmMethodConn.block(false);
 }
 
-void LocallabTone::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
+void LocallabTone::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
 {
     tmMask = showmasktmMethod->get_active_row_number();
 }
@@ -1011,7 +1011,7 @@ void LocallabRetinex::resetMaskView()
     showmaskretiMethodConn.block(false);
 }
 
-void LocallabRetinex::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
+void LocallabRetinex::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
 {
     retiMask = showmaskretiMethod->get_active_row_number();
 }
@@ -1820,7 +1820,7 @@ void LocallabSharp::resetMaskView()
     showmasksharMethodConn.block(false);
 }
 
-void LocallabSharp::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
+void LocallabSharp::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
 {
     sharMask = showmasksharMethod->get_active_row_number();
 }
@@ -2563,7 +2563,7 @@ void LocallabContrast::resetMaskView()
     showmasklcMethodConn.block(false);
 }
 
-void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
+void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
 {
     lcMask = showmasklcMethod->get_active_row_number();
 }
@@ -3892,7 +3892,7 @@ void LocallabCBDL::resetMaskView()
     showmaskcbMethodConn.block(false);
 }
 
-void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask)
+void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
 {
     cbMask = showmaskcbMethod->get_active_row_number();
 }
@@ -4729,16 +4729,45 @@ void LocallabLog::updateLogGUI()
 LocallabMask::LocallabMask():
     LocallabTool(this, M("TP_LOCALLAB_MASKCOM_TOOLNAME"), M("TP_LOCALLAB_MASKCOM"), false, false),
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
-    blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0)))
+    blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+    showmaskMethod(Gtk::manage(new MyComboBoxText()))
 
 {
     // Parameter Mask common specific widgets
         sensimask->setAdjusterListener(this);
         blendmask->setAdjusterListener(this);
+        showmaskMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
+        showmaskMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
+        showmaskMethod->append(M("TP_LOCALLAB_SHOWMASK"));
+        showmaskMethod->append(M("TP_LOCALLAB_SHOWREF"));
+        showmaskMethod->set_active(0);
+        showmaskMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
+        showmaskMethodConn  = showmaskMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabMask::showmaskMethodChanged));
         
         pack_start(*sensimask, Gtk::PACK_SHRINK, 0);
         pack_start(*blendmask, Gtk::PACK_SHRINK, 0);
+        pack_start(*showmaskMethod, Gtk::PACK_SHRINK, 4);
 
+}
+
+bool LocallabMask::isMaskViewActive()
+{
+    return ((showmaskMethod->get_active_row_number() != 0));
+}
+
+
+void LocallabMask::resetMaskView()
+{
+    showmaskMethodConn.block(true);
+
+    showmaskMethod->set_active(0);
+
+    showmaskMethodConn.block(false);
+}
+
+void LocallabMask::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+{
+    colorMask = showmaskMethod->get_active_row_number();
 }
 
 void LocallabMask::updateAdviceTooltips(const bool showTooltips)
@@ -4758,14 +4787,30 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
 void LocallabMask::disableListener()
 {
     LocallabTool::disableListener();
+    showmaskMethodConn.block(true);
 
 }
 
 void LocallabMask::enableListener()
 {
     LocallabTool::enableListener();
+    showmaskMethodConn.block(false);
 
 }
+
+void LocallabMask::showmaskMethodChanged()
+{
+
+    // If mask preview is activated, deactivate all other tool mask preview
+    if (locToolListener) {
+        locToolListener->resetOtherMaskView(this);
+    }
+
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskmaskMethod, "");
+    }
+}
+
 
 void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
