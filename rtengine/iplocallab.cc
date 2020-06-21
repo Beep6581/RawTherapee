@@ -6951,7 +6951,7 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
     }
 }
 
-void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavelet_decomposition& wdspot, float ****templevel, int level_bl, int maxlvl,
+void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavelet_decomposition& wdspot, int level_bl, int maxlvl,
                               const LocwavCurve & loclevwavCurve, bool loclevwavutili,
                               const LocwavCurve & loccompwavCurve, bool loccompwavutili,
                               const LocwavCurve & loccomprewavCurve, bool loccomprewavutili,
@@ -6963,7 +6963,11 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
     const int H_L = wdspot.level_H(0);
 
     const std::unique_ptr<float[]> beta(new float[W_L * H_L]);
+    array2D<float> templevel;
 
+    if (process == 1 || process == 3) {
+        templevel(W_L, H_L);
+    }
 #ifdef _OPENMP
     const int numThreads = omp_get_max_threads();
 #else
@@ -6979,47 +6983,45 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
         float MaxN[10];
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
 
-        for (int dir = 3; dir >= 1; --dir) {
-            for (int level = maxlvl - 1; level >= level_bl; --level) {
+        for (int dir = 1; dir < 4; ++dir) {
+            for (int level = level_bl; level < maxlvl; ++level) {
                 const int W_L = wdspot.level_W(level);
                 const int H_L = wdspot.level_H(level);
 
                 const auto WavL = wdspot.level_coeffs(level)[dir];
-                if (dir == 3 && level + 1 == maxlvl) {
-                    const float effect = lp.sigmabl;
-                    constexpr float offs = 1.f;
-                    float mea[10];
-                    calceffect(level, mean, sigma, mea, effect, offs);
+                const float effect = lp.sigmabl;
+                constexpr float offs = 1.f;
+                float mea[10];
+                calceffect(level, mean, sigma, mea, effect, offs);
 
 #ifdef _OPENMP
-                    #pragma omp parallel for if (multiThread)
+                #pragma omp parallel for if (multiThread)
 #endif
-                    for (int co = 0; co < H_L * W_L; co++) {
-                        const float WavCL = std::fabs(WavL[co]);
+                for (int co = 0; co < H_L * W_L; co++) {
+                    const float WavCL = std::fabs(WavL[co]);
 
-                        if (WavCL < mea[0]) {
-                            beta[co] = 0.05f;
-                        } else if (WavCL < mea[1]) {
-                            beta[co] = 0.2f;
-                        } else if (WavCL < mea[2]) {
-                            beta[co] = 0.7f;
-                        } else if (WavCL < mea[3]) {
-                            beta[co] = 1.f;    //standard
-                        } else if (WavCL < mea[4]) {
-                            beta[co] = 1.f;
-                        } else if (WavCL < mea[5]) {
-                            beta[co] = 0.8f;    //+sigma
-                        } else if (WavCL < mea[6]) {
-                            beta[co] = 0.5f;
-                        } else if (WavCL < mea[7]) {
-                            beta[co] = 0.3f;
-                        } else if (WavCL < mea[8]) {
-                            beta[co] = 0.2f;    // + 2 sigma
-                        } else if (WavCL < mea[9]) {
-                            beta[co] = 0.1f;
-                        } else {
-                            beta[co] = 0.05f;
-                        }
+                    if (WavCL < mea[0]) {
+                        beta[co] = 0.05f;
+                    } else if (WavCL < mea[1]) {
+                        beta[co] = 0.2f;
+                    } else if (WavCL < mea[2]) {
+                        beta[co] = 0.7f;
+                    } else if (WavCL < mea[3]) {
+                        beta[co] = 1.f;    //standard
+                    } else if (WavCL < mea[4]) {
+                        beta[co] = 1.f;
+                    } else if (WavCL < mea[5]) {
+                        beta[co] = 0.8f;    //+sigma
+                    } else if (WavCL < mea[6]) {
+                        beta[co] = 0.5f;
+                    } else if (WavCL < mea[7]) {
+                        beta[co] = 0.3f;
+                    } else if (WavCL < mea[8]) {
+                        beta[co] = 0.2f;    // + 2 sigma
+                    } else if (WavCL < mea[9]) {
+                        beta[co] = 0.1f;
+                    } else {
+                        beta[co] = 0.05f;
                     }
                 }
 
@@ -7032,7 +7034,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 #pragma omp parallel if (multiThread)
 #endif
                 {
-                    gaussianBlur(src, templevel[0][0], W_L, H_L, radlevblur * klev * chromablu);
+                    gaussianBlur(src, templevel, W_L, H_L, radlevblur * klev * chromablu);
                 }
 
 #ifdef _OPENMP
@@ -7041,28 +7043,12 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 for (int y = 0; y < H_L; y++) {
                     for (int x = 0; x < W_L; x++) {
                         int j = y * W_L + x;
-                        WavL[j] = intp(beta[j], templevel[0][0][y][x], WavL[j]);
+                        WavL[j] = intp(beta[j], templevel[y][x], WavL[j]);
                     }
                 }
             }
         }
     } else if (process == 2) { //Directional contrast
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
-#endif
-        for (int dir = 1; dir < 4; dir++) {
-            for (int level = level_bl; level < maxlvl; ++level) {
-                const int W_L = wdspot.level_W(level);
-                const int H_L = wdspot.level_H(level);
-                const auto wav_L = wdspot.level_coeffs(level)[dir];
-                for (int y = 0; y < H_L; y++) {
-                    for (int x = 0; x < W_L; x++) {
-                        float val  = wav_L[y * W_L + x];
-                        templevel[dir - 1][level][y][x] = val;
-                    }
-                }
-            }
-        }
         float mean[10];
         float meanN[10];
         float sigma[10];
@@ -7071,21 +7057,21 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
         float MaxN[10];
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
     
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
-#endif
-        for (int dir = 1; dir < 4; dir++) {
+        for (int dir = 1; dir < 4; ++dir) {
             for (int level = level_bl; level < maxlvl; ++level) {
-                int W_L = wdspot.level_W(level);
-                int H_L = wdspot.level_H(level);
-                float effect = sigmadc;
-                float offs = 1.f;
+                const int W_L = wdspot.level_W(level);
+                const int H_L = wdspot.level_H(level);
+                auto WavL = wdspot.level_coeffs(level)[dir];
+
+                const float effect = sigmadc;
+                constexpr float offs = 1.f;
                 float mea[10];
                 calceffect(level, mean, sigma, mea, effect, offs);
-                auto WavL = wdspot.level_coeffs(level);
-
+#ifdef _OPENMP
+                #pragma omp parallel for if (multiThread)
+#endif
                 for (int co = 0; co < H_L * W_L; co++) {
-                    const float WavCL = std::fabs(WavL[dir][co]);
+                    const float WavCL = std::fabs(WavL[co]);
 
                     if (WavCL < mea[0]) {
                         beta[co] = 0.05f;
@@ -7112,10 +7098,10 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                     }
                 }
 
-                int iteration = deltad;
-                int itplus = 7 + iteration;
-                int itmoins = 7 - iteration;
-                int med = maxlvl / 2;
+                const int iteration = deltad;
+                const int itplus = 7 + iteration;
+                const int itmoins = 7 - iteration;
+                const int med = maxlvl / 2;
                 int it;
 
                 if (level < med) {
@@ -7125,44 +7111,18 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 } else {
                     it = itplus;
                 }
+
                 if (loccompwavCurve && loccompwavutili) {
-
-                    for (int j = 0; j < it; j++) {
-                        float kba = 1.f;
-
-                        for (int i = 0; i < W_L * H_L; i++) {
-                            int ii = i / W_L;
-                            int jj = i - ii * W_L;
-                            float LL100 = tmp[ii * 2][jj * 2] / 327.68f;
-                            float k1 = 0.3f * (loccompwavCurve[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
-                            float k2 = k1 * 2.f;
-
-                            if (dir < 3) {
-                                kba = 1.f + k1;
-                            }
-
-                            if (dir == 3) {
-                                kba = 1.f - k2;
-                            }
-                            templevel[dir - 1][level][ii][jj] *= (1.f + (kba - 1.f) * beta[i]);
-                        }
-                    }
-                }
-            }
-        }
+                    const float itf = it;
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
+                    #pragma omp parallel for if (multiThread)
 #endif
-        for (int dir = 1; dir < 4; dir++) {
-            for (int level = level_bl; level < maxlvl; ++level) {
-                const int W_L = wdspot.level_W(level);
-                const int H_L = wdspot.level_H(level);
-                const auto wav_L = wdspot.level_coeffs(level)[dir];
-
-                for (int y = 0; y < H_L; y++) {
-                    for (int x = 0; x < W_L; x++) {
-                        int j = y * W_L + x;
-                        wav_L[j] = templevel[dir - 1][level][y][x];
+                    for (int i = 0; i < H_L; ++i) {
+                        for (int j = 0; j < W_L; ++j) {
+                            const float LL100 = tmp[i * 2][j * 2] / 327.68f;
+                            const float kba = (dir < 3 ? 0.3f : -0.6f) * (loccompwavCurve[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
+                            WavL[i * W_L + j] *= pow_F(1.f + kba * beta[i * W_L + j], itf);
+                        }
                     }
                 }
             }
@@ -7188,47 +7148,45 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
         float MaxN[10];
         Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
 
-        for (int dir = 3; dir >= 1; --dir) {
-            for (int level = maxlvl - 1; level >= level_bl; --level) {
+        for (int dir = 1; dir < 4; ++dir) {
+            for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot.level_W(level);
                 int H_L = wdspot.level_H(level);
 
-                if (dir == 3 && level + 1 == maxlvl) {
-                    const float effect = lp.sigmadr;
-                    constexpr float offs = 1.f;
-                    float mea[10];
-                    calceffect(level, mean, sigma, mea, effect, offs);
+                const float effect = lp.sigmadr;
+                constexpr float offs = 1.f;
+                float mea[10];
+                calceffect(level, mean, sigma, mea, effect, offs);
 
-                    const auto WavL = wdspot.level_coeffs(level)[dir];
+                const auto WavL = wdspot.level_coeffs(level)[dir];
 #ifdef _OPENMP
-                    #pragma omp parallel for if (multiThread)
+                #pragma omp parallel for if (multiThread)
 #endif
-                    for (int co = 0; co < H_L * W_L; co++) {
-                        const float WavCL = std::fabs(WavL[co]);
+                for (int co = 0; co < H_L * W_L; co++) {
+                    const float WavCL = std::fabs(WavL[co]);
 
-                        if (WavCL < mea[0]) {
-                            beta[co] = 0.05f;
-                        } else if (WavCL < mea[1]) {
-                            beta[co] = 0.2f;
-                        } else if (WavCL < mea[2]) {
-                            beta[co] = 0.7f;
-                        } else if (WavCL < mea[3]) {
-                            beta[co] = 1.f;    //standard
-                        } else if (WavCL < mea[4]) {
-                            beta[co] = 1.f;
-                        } else if (WavCL < mea[5]) {
-                            beta[co] = 0.8f;    //+sigma
-                        } else if (WavCL < mea[6]) {
-                            beta[co] = 0.65f;
-                        } else if (WavCL < mea[7]) {
-                            beta[co] = 0.5f;
-                        } else if (WavCL < mea[8]) {
-                            beta[co] = 0.4f;    // + 2 sigma
-                        } else if (WavCL < mea[9]) {
-                            beta[co] = 0.25f;
-                        } else {
-                            beta[co] = 0.1f;
-                        }
+                    if (WavCL < mea[0]) {
+                        beta[co] = 0.05f;
+                    } else if (WavCL < mea[1]) {
+                        beta[co] = 0.2f;
+                    } else if (WavCL < mea[2]) {
+                        beta[co] = 0.7f;
+                    } else if (WavCL < mea[3]) {
+                        beta[co] = 1.f;    //standard
+                    } else if (WavCL < mea[4]) {
+                        beta[co] = 1.f;
+                    } else if (WavCL < mea[5]) {
+                        beta[co] = 0.8f;    //+sigma
+                    } else if (WavCL < mea[6]) {
+                        beta[co] = 0.65f;
+                    } else if (WavCL < mea[7]) {
+                        beta[co] = 0.5f;
+                    } else if (WavCL < mea[8]) {
+                        beta[co] = 0.4f;    // + 2 sigma
+                    } else if (WavCL < mea[9]) {
+                        beta[co] = 0.25f;
+                    } else {
+                        beta[co] = 0.1f;
                     }
                 }
 
@@ -7249,18 +7207,18 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 for (int y = 0; y < H_L; y++) {
                     for (int x = 0; x < W_L; x++) {
                         int j = y * W_L + x;
-                        templevel[0][0][y][x] = wav_L[j];
+                        templevel[y][x] = wav_L[j];
                     }
                 }
 
-                Compresslevels(templevel[0][0], W_L, H_L, compression, detailattenuator, thres, mean[level], MaxP[level], meanN[level], MaxN[level], madL[level][dir - 1]);
+                Compresslevels(templevel, W_L, H_L, compression, detailattenuator, thres, mean[level], MaxP[level], meanN[level], MaxN[level], madL[level][dir - 1]);
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
                 for (int y = 0; y < H_L; y++) {
                     for (int x = 0; x < W_L; x++) {
                         int j = y * W_L + x;
-                        wav_L[j] = intp(beta[j], templevel[0][0][y][x], wav_L[j]);
+                        wav_L[j] = intp(beta[j], templevel[y][x], wav_L[j]);
                     }
                 }
             }
@@ -7562,84 +7520,17 @@ BENCHFUN
         bhigh =  -ahigh * level_br;
     }
 
-    int dir = 3;
-    int leve = maxlvl;
-    float ****templevel = nullptr;
-
-    float ****templevela = nullptr;
-
-    float ****templevelb = nullptr;
-
-
     if (wavcurvelev  || wavcurvecomp  || wavcurvecompre) {//compress dynamic and blur
-        /*
-                float mean[10];
-                float meanN[10];
-                float sigma[10];
-                float sigmaN[10];
-                float MaxP[10];
-                float MaxN[10];
-                Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-        */
-       // fatParams.enabled = wavcurvecomp;
-
-        templevel = new float***[dir];
-
-        //allocate memory for 3 DIR n levels, H_L, W_L
-        for (int d = 0; d < dir; d++) {
-            templevel[d] = new float**[leve];
-
-            for (int k = 0; k < leve; k++) {
-                templevel[d][k] = new float*[H_L];
-
-                for (int i = 0; i < H_L; i++) {
-                    templevel[d][k][i] = new float[W_L];
-                }
-            }
-        }
-
-        if (templevel == nullptr) {
-            fprintf(stderr, "allocation error\n");
-            return;
-        }
-
         if (wavcurvelev && radlevblur > 0.f && blurena) {
-            wavcont(lp, tmp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, 1.f, 0.f, 0.f, 0.f);
+            wavcont(lp, tmp, *wdspot, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, 1.f, 0.f, 0.f, 0.f);
         }
 
         if (wavcurvecomp && comprena) {
-            wavcont(lp, tmp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 2, 1.f, 0.f, sigmadc, deltad);
+            wavcont(lp, tmp, *wdspot, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 2, 1.f, 0.f, sigmadc, deltad);
         }
 
         if (wavcurvecompre && compreena) {
-            wavcont(lp, tmp, *wdspot, templevel, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 3, 1.f, thres, 0.f, 0.f);
-        }
-
-        //free memory templevel
-        if (wavcurvelev  || wavcurvecomp || wavcurvecompre) {
-
-
-            for (int i = 0; i < dir; i++) {
-                for (int j = 0; j < leve; j++) {
-                    for (int l = 0; l < H_L; l++) {
-                        delete [] templevel[i][j][l];
-                    }
-                }
-            }
-
-            for (int i = 0; i < dir; i++) {
-                for (int j = 0; j < leve; j++) {
-                    delete [] templevel[i][j];
-                }
-            }
-
-            for (int i = 0; i < dir; i++) {
-                delete [] templevel[i];
-            }
-
-            delete [] templevel;
-
-
+            wavcont(lp, tmp, *wdspot, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 3, 1.f, thres, 0.f, 0.f);
         }
     }
 
@@ -8071,52 +7962,12 @@ BENCHFUN
                 return;
             }
 
-            templevela = new float***[dir];
-
-            for (int d = 0; d < dir; d++) {
-                templevela[d] = new float**[leve];
-
-                for (int k = 0; k < leve; k++) {
-                    templevela[d][k] = new float*[H_L];
-
-                    for (int i = 0; i < H_L; i++) {
-                        templevela[d][k][i] = new float[W_L];
-                    }
-                }
-            }
-
-            if (templevela == nullptr) {
-                fprintf(stderr, "allocation error\n");
-                return;
-            }
-
             if (radlevblur > 0.f && chromablu > 0.f) {
-                wavcont(lp, tmp, *wdspota, templevela, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
+                wavcont(lp, tmp, *wdspota, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
             }
 
             wdspota->reconstruct(tmpa[0], 1.f);
             delete wdspota;
-
-            for (int i = 0; i < dir; i++) {
-                for (int j = 0; j < leve; j++) {
-                    for (int l = 0; l < H_L; l++) {
-                        delete [] templevela[i][j][l];
-                    }
-                }
-            }
-
-            for (int i = 0; i < dir; i++) {
-                for (int j = 0; j < leve; j++) {
-                    delete [] templevela[i][j];
-                }
-            }
-
-            for (int i = 0; i < dir; i++) {
-                delete [] templevela[i];
-            }
-
-            delete [] templevela;
-
 
             //b
             wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
@@ -8125,54 +7976,12 @@ BENCHFUN
                 return;
             }
 
-
-            templevelb = new float***[dir];
-
-            for (int d = 0; d < dir; d++) {
-                templevelb[d] = new float**[leve];
-
-                for (int k = 0; k < leve; k++) {
-                    templevelb[d][k] = new float*[H_L];
-
-                    for (int i = 0; i < H_L; i++) {
-                        templevelb[d][k][i] = new float[W_L];
-                    }
-                }
-            }
-
-            if (templevelb == nullptr) {
-                fprintf(stderr, "allocation error\n");
-                return;
-            }
-
             if (radlevblur > 0.f && chromablu > 0.f) {
-                wavcont(lp, tmp, *wdspotb, templevelb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
+                wavcont(lp, tmp, *wdspotb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
             }
 
             wdspotb->reconstruct(tmpb[0], 1.f);
             delete wdspotb;
-
-            for (int i = 0; i < dir; i++) {
-                for (int j = 0; j < leve; j++) {
-                    for (int l = 0; l < H_L; l++) {
-                        delete [] templevelb[i][j][l];
-                    }
-                }
-            }
-
-            for (int i = 0; i < dir; i++) {
-                for (int j = 0; j < leve; j++) {
-                    delete [] templevelb[i][j];
-                }
-            }
-
-            for (int i = 0; i < dir; i++) {
-                delete [] templevelb[i];
-            }
-
-            delete [] templevelb;
-
-
         }
     }
 
@@ -8427,7 +8236,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 }
 
-void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv,  struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
 //local denoise
