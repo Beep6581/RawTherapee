@@ -7243,22 +7243,18 @@ BENCHFUN
     int H_Lm = wdspot->level_H(maxlvl - 1);
 
     if (lp.strwav != 0.f && lp.wavgradl) {
+StopWatch Stop1("test");
         array2D<float> factorwav(W_Lm, H_Lm);
         calclocalGradientParams(lp, gpwav, 0, 0, W_Lm, H_Lm, 10);
-
-
+        const float mult = lp.strwav < 0.f ? -1.f : 1.f;
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
         for (int y = 0; y < H_Lm; y++) {
             for (int x = 0; x < W_Lm; x++) {
-                float factor = ImProcFunctions::calcGradientFactor(gpwav, x, y);
-                factorwav[y][x] = factor;
-                factorwav[y][x] = 1.f - factorwav[y][x];
-
-                if (lp.strwav < 0.f) {
-                    factorwav[y][x] *= -1.f;
-                }
+                factorwav[y][x] = mult * (1.f - ImProcFunctions::calcGradientFactor(gpwav, x, y));
             }
         }
-
         float mean[10];
         float meanN[10];
         float sigma[10];
@@ -7287,7 +7283,7 @@ BENCHFUN
                 if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                     const int W_L = wdspot->level_W(level);
                     const int H_L = wdspot->level_H(level);
-                    float* const* wav_L = wdspot->level_coeffs(level);
+                    auto wav_L = wdspot->level_coeffs(level)[dir];
                     const float effect = lp.sigmalc2;
                     constexpr float offset = 1.f;
                     float mea[10];
@@ -7301,14 +7297,29 @@ BENCHFUN
                     const float asig = 0.166f / (sigma[level] * lp.sigmalc2);
                     const float bsig = 0.5f - asig * mean[level];
                     const float amean = 0.5f / mean[level];
+                    float klev = 1.f;
+
+                    if (level_hl != level_bl) {
+                        if (level >= level_bl && level < level_hl) {
+                            klev = alowg * level + blowg;
+                        }
+                    }
+
+                    if (level_hr != level_br) {
+                        if (level > level_hr && level <= level_br) {
+                            klev = ahighg * level + bhighg;
+                        }
+                    }
+                    klev *= 0.8f;
+                    const float threshold = mean[level] + lp.sigmalc2 * sigma[level];
 
 #ifdef _OPENMP
-                    #pragma omp parallel for if (multiThread)
+                    #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
 #endif
 
                     for (int y = 0; y < H_L; y++) {
                         for (int x = 0; x < W_L; x++) {
-                            const float WavCL = std::fabs(wav_L[dir][y * W_L + x]);
+                            const float WavCL = std::fabs(wav_L[y * W_L + x]);
                             float beta;
 
                             if (WavCL < mea[0]) {
@@ -7336,37 +7347,20 @@ BENCHFUN
                             }
 
                             float absciss;
-                            float &val = wav_L[dir][y * W_L + x];
-
-                            if (std::fabs(val) >= (mean[level] + lp.sigmalc2 * sigma[level])) { //for max
-                                const float valc = xlogf(std::fabs(val)) - logmax;
-                                absciss = xexpf(valc * rap);
-                            } else if (std::fabs(val) >= mean[level]) {
-                                absciss = asig * std::fabs(val) + bsig;
+                            if (WavCL >= threshold) { //for max
+                                absciss = pow_F(WavCL - logmax, rap);
+                            } else if (WavCL >= mean[level]) {
+                                absciss = asig * WavCL + bsig;
                             } else {
-                                absciss = amean * std::fabs(val);
+                                absciss = amean * WavCL;
                             }
 
-                            float klev = 1.f;
-
-                            if (level_hl != level_bl) {
-                                if (level >= level_bl && level < level_hl) {
-                                    klev = alowg * level + blowg;
-                                }
-                            }
-
-                            if (level_hr != level_br) {
-                                if (level > level_hr && level <= level_br) {
-                                    klev = ahighg * level + bhighg;
-                                }
-                            }
-
-                            const float kc = 0.8f * klev * factorwav[y][x] * absciss;
+                            const float kc = klev * factorwav[y][x] * absciss;
                             const float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
 
                             float kinterm = 1.f + reduceeffect * kc;
                             kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-                            val *= (1.f + (kinterm - 1.f) * beta);
+                            wav_L[y * W_L + x] *= (1.f + (kinterm - 1.f) * beta);
                         }
                     }
                 }
