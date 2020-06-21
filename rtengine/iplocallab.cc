@@ -7048,7 +7048,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 }
             }
         }
-    } else if (process == 2) { //Directional contrast
+    } else if (process == 2 && loccompwavCurve && loccompwavutili) { //Directional contrast
         float mean[10];
         float meanN[10];
         float sigma[10];
@@ -7061,7 +7061,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
             for (int level = level_bl; level < maxlvl; ++level) {
                 const int W_L = wdspot.level_W(level);
                 const int H_L = wdspot.level_H(level);
-                auto WavL = wdspot.level_coeffs(level)[dir];
+                const auto WavL = wdspot.level_coeffs(level)[dir];
 
                 const float effect = sigmadc;
                 constexpr float offs = 1.f;
@@ -7112,15 +7112,33 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                     it = itplus;
                 }
 
-                if (loccompwavCurve && loccompwavutili) {
-                    const float itf = it;
+                const float itf = it;
+                const float factor = dir < 3 ? 0.3f : -0.6f;
 #ifdef _OPENMP
-                    #pragma omp parallel for if (multiThread)
+                #pragma omp parallel if (multiThread)
+#endif
+                {
+                    const vfloat c327d68v = F2V(327.68f);
+                    const vfloat factorv = F2V(factor);
+                    const vfloat sixv = F2V(6.f);
+                    const vfloat zd5v = F2V(0.5f);
+                    const vfloat onev = F2V(1.f);
+                    const vfloat itfv = F2V(itf);
+#ifdef _OPENMP
+                    #pragma omp for
 #endif
                     for (int i = 0; i < H_L; ++i) {
-                        for (int j = 0; j < W_L; ++j) {
+                        int j = 0;
+#ifdef __SSE2__
+                        for (; j < W_L - 3; j += 4) {
+                            const vfloat LL100v = LC2VFU(tmp[i * 2][j * 2]) / c327d68v;
+                            const vfloat kbav = factorv * (loccompwavCurve[sixv * LL100v] - zd5v); //k1 between 0 and 0.5    0.5==> 1/6=0.16
+                            STVFU(WavL[i * W_L + j], LVFU(WavL[i * W_L + j]) * pow_F(onev + kbav * LVFU(beta[i * W_L + j]), itfv));
+                        }
+#endif
+                        for (; j < W_L; ++j) {
                             const float LL100 = tmp[i * 2][j * 2] / 327.68f;
-                            const float kba = (dir < 3 ? 0.3f : -0.6f) * (loccompwavCurve[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
+                            const float kba = factor * (loccompwavCurve[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
                             WavL[i * W_L + j] *= pow_F(1.f + kba * beta[i * W_L + j], itf);
                         }
                     }
