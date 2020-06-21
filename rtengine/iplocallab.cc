@@ -7118,12 +7118,14 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 #pragma omp parallel if (multiThread)
 #endif
                 {
+#ifdef __SSE2__
                     const vfloat c327d68v = F2V(327.68f);
                     const vfloat factorv = F2V(factor);
                     const vfloat sixv = F2V(6.f);
                     const vfloat zd5v = F2V(0.5f);
                     const vfloat onev = F2V(1.f);
                     const vfloat itfv = F2V(itf);
+#endif
 #ifdef _OPENMP
                     #pragma omp for
 #endif
