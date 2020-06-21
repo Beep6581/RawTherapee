@@ -4730,7 +4730,8 @@ LocallabMask::LocallabMask():
     LocallabTool(this, M("TP_LOCALLAB_MASKCOM_TOOLNAME"), M("TP_LOCALLAB_MASKCOM"), false, false),
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    showmaskMethod(Gtk::manage(new MyComboBoxText()))
+    showmaskMethod(Gtk::manage(new MyComboBoxText())),
+    enamask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK"))))
 
 {
     // Parameter Mask common specific widgets
@@ -4743,10 +4744,12 @@ LocallabMask::LocallabMask():
         showmaskMethod->set_active(0);
         showmaskMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
         showmaskMethodConn  = showmaskMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabMask::showmaskMethodChanged));
+        enamaskConn = enamask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabMask::enamaskChanged));
         
         pack_start(*sensimask, Gtk::PACK_SHRINK, 0);
         pack_start(*blendmask, Gtk::PACK_SHRINK, 0);
         pack_start(*showmaskMethod, Gtk::PACK_SHRINK, 4);
+        pack_start(*enamask, Gtk::PACK_SHRINK, 0);
 
 }
 
@@ -4788,6 +4791,7 @@ void LocallabMask::disableListener()
 {
     LocallabTool::disableListener();
     showmaskMethodConn.block(true);
+    enamaskConn.block(true);
 
 }
 
@@ -4795,6 +4799,7 @@ void LocallabMask::enableListener()
 {
     LocallabTool::enableListener();
     showmaskMethodConn.block(false);
+    enamaskConn.block(false);
 
 }
 
@@ -4831,6 +4836,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         
         sensimask->setValue(spot.sensimask);
         blendmask->setValue(spot.blendmask);
+        enamask->set_active(spot.enamask);
 
     }
 
@@ -4855,11 +4861,29 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         
         spot.sensimask = sensimask->getIntValue();
         spot.blendmask = blendmask->getIntValue();
+        spot.enamask = enamask->get_active();
 
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
+
+void LocallabMask::enamaskChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (enamask->get_active()) {
+                listener->panelChanged(EvLocallabEnaMask,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(EvLocallabEnaMask,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
+
 
 void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {

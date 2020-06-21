@@ -1168,6 +1168,7 @@ HISTORY_MSG_927;Local - Shadow mask
 HISTORY_MSG_928;Local - Common color mask
 HISTORY_MSG_929;Local - Mask common scope
 HISTORY_MSG_930;Local - Mask Common blend
+HISTORY_MSG_932;Local - Mask Common enable
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction

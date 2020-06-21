@@ -1482,6 +1482,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expmask = locallab.spots.at(j).expmask && pSpot.expmask == otherSpot.expmask;
                 locallab.spots.at(j).sensimask = locallab.spots.at(j).sensimask && pSpot.sensimask == otherSpot.sensimask;
                 locallab.spots.at(j).blendmask = locallab.spots.at(j).blendmask && pSpot.blendmask == otherSpot.blendmask;
+                locallab.spots.at(j).enamask = locallab.spots.at(j).enamask && pSpot.enamask == otherSpot.enamask;
             }
         }
 
@@ -4804,6 +4805,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).blendmask = mods.locallab.spots.at(i).blendmask;
         }
 
+        if (locallab.spots.at(i).enamask) {
+            toEdit.locallab.spots.at(i).enamask = mods.locallab.spots.at(i).enamask;
+        }
+
     }
 
     if (pcvignette.enabled) {
@@ -6377,8 +6382,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     visimask(v),
     expmask(v),
     sensimask(v),
-    blendmask(v)
-    
+    blendmask(v),
+    enamask(v)
 {
 }
 
@@ -6844,6 +6849,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expmask = v;
     sensimask = v;
     blendmask = v;
+    enamask = v;
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

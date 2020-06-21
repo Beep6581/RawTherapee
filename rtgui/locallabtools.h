@@ -1206,8 +1206,9 @@ private:
     Adjuster* const sensimask;
     Adjuster* const blendmask;
     MyComboBoxText* const showmaskMethod;
+    Gtk::CheckButton* const enamask;
 
-    sigc::connection showmaskMethodConn;
+    sigc::connection showmaskMethodConn, enamaskConn;
 
 public:
     LocallabMask();
@@ -1230,6 +1231,7 @@ public:
 private:
     void enabledChanged() override;
     void showmaskMethodChanged();
+    void enamaskChanged();
     
     /*
     void autocomputeToggled();
