@@ -1427,6 +1427,8 @@ struct LocallabParams {
         int sensimask;
         int blendmask;
         bool enamask;
+        double radmask;
+        double lapmask;
 
         LocallabSpot();
 

@@ -3738,8 +3738,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expmask(false),
     sensimask(60),
     blendmask(0),
-    enamask(false)
-    
+    enamask(false),
+    radmask(0.0),
+    lapmask(0.0)
+
 {
 }
 
@@ -4215,7 +4217,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && expmask == other.expmask
         && sensimask == other.sensimask
         && blendmask == other.blendmask
-        && enamask == other.enamask;
+        && enamask == other.enamask
+        && radmask == other.radmask
+        && lapmask == other.lapmask;
 
 }
 
@@ -5716,6 +5720,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sensimask, "Locallab", "Sensimask_" + index_str, spot.sensimask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blendmask, "Locallab", "Blendmaskmask_" + index_str, spot.blendmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enamask, "Locallab", "Enamask_" + index_str, spot.enamask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->radmask, "Locallab", "Radmask_" + index_str, spot.radmask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lapmask, "Locallab", "Lapmask_" + index_str, spot.lapmask, keyFile);
                 }
             }
         }
@@ -7435,6 +7441,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensimask_" + index_str, pedited, spot.sensimask, spotEdited.sensimask);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskmask_" + index_str, pedited, spot.blendmask, spotEdited.blendmask);
                 assignFromKeyfile(keyFile, "Locallab", "Enamask_" + index_str, pedited, spot.enamask, spotEdited.enamask);
+                assignFromKeyfile(keyFile, "Locallab", "Radmask_" + index_str, pedited, spot.radmask, spotEdited.radmask);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmask_" + index_str, pedited, spot.lapmask, spotEdited.lapmask);
 
                 if (spot.visimask) {
                     spotEdited.visimask = true;

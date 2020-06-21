@@ -841,6 +841,8 @@ public:
         bool sensimask;
         bool blendmask;
         bool enamask;
+        bool radmask;
+        bool lapmask;
 
         LocallabSpotEdited(bool v);
 

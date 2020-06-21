@@ -1207,6 +1207,8 @@ private:
     Adjuster* const blendmask;
     MyComboBoxText* const showmaskMethod;
     Gtk::CheckButton* const enamask;
+    Adjuster* const radmask;
+    Adjuster* const lapmask;
 
     sigc::connection showmaskMethodConn, enamaskConn;
 

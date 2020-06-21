@@ -4731,7 +4731,9 @@ LocallabMask::LocallabMask():
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     showmaskMethod(Gtk::manage(new MyComboBoxText())),
-    enamask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK"))))
+    enamask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+    radmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 1000.0, 0.1, 0.))),
+    lapmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.)))
 
 {
     // Parameter Mask common specific widgets
@@ -4745,11 +4747,15 @@ LocallabMask::LocallabMask():
         showmaskMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
         showmaskMethodConn  = showmaskMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabMask::showmaskMethodChanged));
         enamaskConn = enamask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabMask::enamaskChanged));
+        radmask->setAdjusterListener(this);
+        lapmask->setAdjusterListener(this);
         
         pack_start(*sensimask, Gtk::PACK_SHRINK, 0);
         pack_start(*blendmask, Gtk::PACK_SHRINK, 0);
         pack_start(*showmaskMethod, Gtk::PACK_SHRINK, 4);
         pack_start(*enamask, Gtk::PACK_SHRINK, 0);
+        pack_start(*radmask, Gtk::PACK_SHRINK, 0);
+        pack_start(*lapmask, Gtk::PACK_SHRINK, 0);
 
 }
 
@@ -4837,6 +4843,8 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         sensimask->setValue(spot.sensimask);
         blendmask->setValue(spot.blendmask);
         enamask->set_active(spot.enamask);
+        radmask->setValue(spot.radmask);
+        lapmask->setValue(spot.lapmask);
 
     }
 
@@ -4862,6 +4870,8 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.sensimask = sensimask->getIntValue();
         spot.blendmask = blendmask->getIntValue();
         spot.enamask = enamask->get_active();
+        spot.radmask = radmask->getValue();
+        spot.lapmask = lapmask->getValue();
 
     }
 
@@ -4895,6 +4905,8 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         // Set default value for adjuster widgets
         sensimask->setDefault((double)defSpot.sensimask);
         blendmask->setDefault((double)defSpot.blendmask);
+        radmask->setDefault(defSpot.radmask);
+        lapmask->setDefault(defSpot.lapmask);
 
     }
 
@@ -4917,6 +4929,20 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabblendmask,
                                        blendmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == radmask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradmask,
+                                       radmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lapmask) {
+            if (listener) {
+                listener->panelChanged(Evlocallablapmask,
+                                       lapmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
