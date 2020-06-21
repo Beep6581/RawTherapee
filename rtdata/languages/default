@@ -1165,6 +1165,9 @@ HISTORY_MSG_924;Local - Tool complexity mode
 HISTORY_MSG_925;Local - Scope color tools
 HISTORY_MSG_926;Local - Show mask type
 HISTORY_MSG_927;Local - Shadow mask
+HISTORY_MSG_928;Local - Common color mask
+HISTORY_MSG_929;Local - Mask common scope
+HISTORY_MSG_930;Local - Mask Common blend
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
@@ -2554,7 +2557,9 @@ TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Luminance Background Mask
 TP_LOCALLAB_LUMASK_TOOLTIP;Adjust the gray of the mask background in Show Mask (Mask and modifications)
 TP_LOCALLAB_LUMAWHITESEST;Whiteest
-TP_LOCALLAB_LUMONLY;Luminance only 
+TP_LOCALLAB_LUMONLY;Luminance only
+TP_LOCALLAB_MASKCOM;Common Color Mask
+TP_LOCALLAB_MASKCOM_TOOLTIP;These masks works as all tools, they take into account scope color.\nThey are different from others masks which complete a tool (Color and Light, Exposure...)
 TP_LOCALLAB_MASFRAME;Mask and Merge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and curves contrast , levels contrasts, and mask blur, structure(if enabled tool) are used.\nDisabled in Inverse
 TP_LOCALLAB_MASK2;Contrast curve mask
@@ -2819,6 +2824,7 @@ TP_LOCALLAB_SHARP_TOOLNAME;Sharpening - 8
 TP_LOCALLAB_LC_TOOLNAME;Local Constrast & Wavelet (Defects) - 7
 TP_LOCALLAB_CBDL_TOOLNAME;CBDL (Defects) - 2
 TP_LOCALLAB_LOG_TOOLNAME;Encoding log - 0
+TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask  - 13
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.

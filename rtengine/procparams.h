@@ -1424,6 +1424,8 @@ struct LocallabParams {
         // mask
         bool visimask;
         bool expmask;
+        int sensimask;
+        int blendmask;
 
         LocallabSpot();
 

@@ -838,6 +838,8 @@ public:
         //mask
         bool visimask;
         bool expmask;
+        bool sensimask;
+        bool blendmask;
 
         LocallabSpotEdited(bool v);
 

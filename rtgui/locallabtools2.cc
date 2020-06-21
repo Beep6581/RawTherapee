@@ -4727,18 +4727,31 @@ void LocallabLog::updateLogGUI()
 
 /* ==== LocallabMask ==== */
 LocallabMask::LocallabMask():
-    LocallabTool(this, M("TP_LOCALLAB_MASK_TOOLNAME"), M("TP_LOCALLAB_MASK"), false, false)
+    LocallabTool(this, M("TP_LOCALLAB_MASKCOM_TOOLNAME"), M("TP_LOCALLAB_MASKCOM"), false, false),
+    sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0)))
 
 {
-    // Parameter Mask encoding specific widgets
+    // Parameter Mask common specific widgets
+        sensimask->setAdjusterListener(this);
+        blendmask->setAdjusterListener(this);
+        
+        pack_start(*sensimask, Gtk::PACK_SHRINK, 0);
+        pack_start(*blendmask, Gtk::PACK_SHRINK, 0);
+
 }
 
 void LocallabMask::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
-        exp->set_tooltip_text(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        exp->set_tooltip_text(M("TP_LOCALLAB_MASKCOM_TOOLTIP"));
+        sensimask->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        blendmask->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text(M(""));
+        sensimask->set_tooltip_text(M(""));
+        blendmask->set_tooltip_text(M(""));
     }
 }
 
@@ -4769,6 +4782,10 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
 
         exp->set_visible(spot.visimask);
         exp->setEnabled(spot.expmask);
+        
+        
+        sensimask->setValue(spot.sensimask);
+        blendmask->setValue(spot.blendmask);
 
     }
 
@@ -4790,6 +4807,9 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
         spot.expmask = exp->getEnabled();
         spot.visimask = exp->get_visible();
+        
+        spot.sensimask = sensimask->getIntValue();
+        spot.blendmask = blendmask->getIntValue();
 
     }
 
@@ -4804,6 +4824,9 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default value for adjuster widgets
+        sensimask->setDefault((double)defSpot.sensimask);
+        blendmask->setDefault((double)defSpot.blendmask);
+
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -4812,6 +4835,22 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
 void LocallabMask::adjusterChanged(Adjuster* a, double newval)
 {
     if (isLocActivated && exp->getEnabled()) {
+
+        if (a == sensimask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensimask,
+                                       sensimask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+
+        if (a == blendmask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblendmask,
+                                       blendmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
     }
 }
 

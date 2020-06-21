@@ -1203,6 +1203,9 @@ class LocallabMask:
     public LocallabTool
 {
 private:
+    Adjuster* const sensimask;
+    Adjuster* const blendmask;
+
 /*
     Gtk::ToggleButton* const autocompute;
     Gtk::Frame* const logPFrame;
