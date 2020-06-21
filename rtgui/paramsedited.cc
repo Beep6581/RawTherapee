@@ -1477,6 +1477,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).baselog = locallab.spots.at(j).baselog && pSpot.baselog == otherSpot.baselog;
                 locallab.spots.at(j).strlog = locallab.spots.at(j).strlog && pSpot.strlog == otherSpot.strlog;
                 locallab.spots.at(j).anglog = locallab.spots.at(j).anglog && pSpot.anglog == otherSpot.anglog;
+                //mask
+                locallab.spots.at(j).visimask = locallab.spots.at(j).visimask && pSpot.visimask == otherSpot.visimask;
+                locallab.spots.at(j).expmask = locallab.spots.at(j).expmask && pSpot.expmask == otherSpot.expmask;
+                
             }
         }
 
@@ -4781,6 +4785,16 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         if (locallab.spots.at(i).anglog) {
             toEdit.locallab.spots.at(i).anglog   = mods.locallab.spots.at(i).anglog;
         }
+        
+        // mask
+        if (locallab.spots.at(i).visimask) {
+            toEdit.locallab.spots.at(i).visimask = mods.locallab.spots.at(i).visimask;
+        }
+
+        if (locallab.spots.at(i).explog) {
+            toEdit.locallab.spots.at(i).expmask = mods.locallab.spots.at(i).expmask;
+        }
+        
     }
 
     if (pcvignette.enabled) {
@@ -6349,7 +6363,11 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensilog(v),
     baselog(v),
     strlog(v),
-    anglog(v)
+    anglog(v),
+    // mask
+    visimask(v),
+    expmask(v)
+    
 {
 }
 
@@ -6810,6 +6828,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     baselog = v;
     strlog = v;
     anglog = v;
+    // mask
+    visimask = v;
+    expmask = v;
+    
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

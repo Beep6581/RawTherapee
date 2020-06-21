@@ -1196,4 +1196,53 @@ private:
     void updateLogGUI();
 };
 
+
+/* ==== LocallabMask ==== */
+class LocallabMask:
+    public Gtk::VBox,
+    public LocallabTool
+{
+private:
+/*
+    Gtk::ToggleButton* const autocompute;
+    Gtk::Frame* const logPFrame;
+    Adjuster* const blackEv;
+    Adjuster* const whiteEv;
+    Gtk::CheckButton* const fullimage;
+    Gtk::CheckButton* const Autogray;
+    Adjuster* const sourceGray;
+    Adjuster* const targetGray;
+    Adjuster* const detail;
+    Adjuster* const baselog;
+    Adjuster* const sensilog;
+    Adjuster* const strlog;
+    Adjuster* const anglog;
+
+    sigc::connection autoconn, fullimageConn, AutograyConn;
+*/
+public:
+    LocallabMask();
+    void updateAdviceTooltips(const bool showTooltips) override;
+
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+
+//    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float targetg);
+
+private:
+    void enabledChanged() override;
+    /*
+    void autocomputeToggled();
+    void fullimageChanged();
+    void AutograyChanged();
+
+    void updateLogGUI();
+    */
+};
+
+
 #endif

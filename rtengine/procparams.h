@@ -1421,6 +1421,9 @@ struct LocallabParams {
         double baselog;
         double strlog;
         double anglog;
+        // mask
+        bool visimask;
+        bool expmask;
 
         LocallabSpot();
 

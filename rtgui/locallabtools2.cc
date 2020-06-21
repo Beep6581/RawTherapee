@@ -4723,3 +4723,128 @@ void LocallabLog::updateLogGUI()
      //   targetGray->set_sensitive(true);
     }
 }
+
+
+/* ==== LocallabMask ==== */
+LocallabMask::LocallabMask():
+    LocallabTool(this, M("TP_LOCALLAB_MASK_TOOLNAME"), M("TP_LOCALLAB_MASK"), false, false)
+
+{
+    // Parameter Mask encoding specific widgets
+}
+
+void LocallabMask::updateAdviceTooltips(const bool showTooltips)
+{
+    if (showTooltips) {
+        exp->set_tooltip_text(M("TP_LOCALLAB_MASK_TOOLTIP"));
+    } else {
+        exp->set_tooltip_text(M(""));
+    }
+}
+
+void LocallabMask::disableListener()
+{
+    LocallabTool::disableListener();
+
+}
+
+void LocallabMask::enableListener()
+{
+    LocallabTool::enableListener();
+
+}
+
+void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
+{
+    // Disable all listeners
+    disableListener();
+
+    // Update GUI to selected spot value
+    const int index = pp->locallab.selspot;
+
+    if (index < (int)pp->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+
+        spotName = spot.name; // Update spot name according to selected spot
+
+        exp->set_visible(spot.visimask);
+        exp->setEnabled(spot.expmask);
+
+    }
+
+    // Enable all listeners
+    enableListener();
+
+    // Update Log Encoding GUI according to autocompute button state
+//    updateLogGUI();
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
+}
+
+void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
+{
+    const int index = pp->locallab.selspot;
+
+    if (index < (int)pp->locallab.spots.size()) {
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+
+        spot.expmask = exp->getEnabled();
+        spot.visimask = exp->get_visible();
+
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
+}
+
+void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+{
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
+
+        // Set default value for adjuster widgets
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
+}
+
+void LocallabMask::adjusterChanged(Adjuster* a, double newval)
+{
+    if (isLocActivated && exp->getEnabled()) {
+    }
+}
+
+
+void LocallabMask::enabledChanged()
+{
+    if (isLocActivated) {
+        if (listener) {
+            if (exp->getEnabled()) {
+                listener->panelChanged(EvLocenamask,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(EvLocenamask,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
+
+/*
+void LocallabLog::updateLogGUI()
+{
+    if (autocompute->get_active()) {
+        blackEv->set_sensitive(false);
+        whiteEv->set_sensitive(false);
+        sourceGray->set_sensitive(false);
+     //   targetGray->set_sensitive(true);
+    } else {
+        blackEv->set_sensitive(true);
+        whiteEv->set_sensitive(true);
+        sourceGray->set_sensitive(true);
+     //   targetGray->set_sensitive(true);
+    }
+}
+*/

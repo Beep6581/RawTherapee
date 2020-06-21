@@ -162,6 +162,7 @@ Locallab::Locallab():
     expcontrast(Gtk::manage(new LocallabContrast())),
     expcbdl(Gtk::manage(new LocallabCBDL())),
     explog(Gtk::manage(new LocallabLog())),
+    expmask(Gtk::manage(new LocallabMask())),
 
     // Other widgets
     resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
@@ -198,6 +199,7 @@ Locallab::Locallab():
     addTool(toolpanel, expcontrast);
     addTool(toolpanel, expcbdl);
     addTool(toolpanel, explog);
+    addTool(toolpanel, expmask);
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator

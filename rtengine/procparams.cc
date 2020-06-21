@@ -3732,7 +3732,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensilog(60),
     baselog(2.),
     strlog(0.0),
-    anglog(0.0)
+    anglog(0.0),
+    // mask
+    visimask(false),
+    expmask(false)
+    
 {
 }
 
@@ -4202,7 +4206,11 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensilog == other.sensilog
         && baselog == other.baselog
         && strlog == other.strlog
-        && anglog == other.anglog;
+        && anglog == other.anglog
+        // mask
+        && visimask == other.visimask
+        && expmask == other.expmask;
+        
 }
 
 bool LocallabParams::LocallabSpot::operator !=(const LocallabSpot& other) const
@@ -5695,6 +5703,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->baselog, "Locallab", "Baselog_" + index_str, spot.baselog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strlog, "Locallab", "Strlog_" + index_str, spot.strlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->anglog, "Locallab", "Anglog_" + index_str, spot.anglog, keyFile);
+                }
+                //mask
+                if ((!pedited || spot_edited->visimask) && spot.visimask) {
+                    saveToKeyfile(!pedited || spot_edited->expmask, "Locallab", "Expmask_" + index_str, spot.expmask, keyFile);
                 }
             }
         }
@@ -7409,6 +7421,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Baselog_" + index_str, pedited, spot.baselog, spotEdited.baselog);
                 assignFromKeyfile(keyFile, "Locallab", "Strlog_" + index_str, pedited, spot.strlog, spotEdited.strlog);
                 assignFromKeyfile(keyFile, "Locallab", "Anglog_" + index_str, pedited, spot.anglog, spotEdited.anglog);
+                // mask
+                spot.visimask = assignFromKeyfile(keyFile, "Locallab", "Expmask_" + index_str, pedited, spot.expmask, spotEdited.expmask);
+
+                if (spot.visimask) {
+                    spotEdited.visimask = true;
+                }
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

@@ -835,6 +835,9 @@ public:
         bool baselog;
         bool strlog;
         bool anglog;
+        //mask
+        bool visimask;
+        bool expmask;
 
         LocallabSpotEdited(bool v);
 
