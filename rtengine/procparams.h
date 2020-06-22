@@ -1431,6 +1431,8 @@ struct LocallabParams {
         std::vector<double> CCmask_curve;
         std::vector<double> LLmask_curve;
         std::vector<double> HHmask_curve;
+        double strumaskmask;
+        bool toolmask;
         double radmask;
         double lapmask;
         double chromask;

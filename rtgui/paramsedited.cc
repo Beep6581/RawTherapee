@@ -1487,6 +1487,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).CCmask_curve = locallab.spots.at(j).CCmask_curve && pSpot.CCmask_curve == otherSpot.CCmask_curve;
                 locallab.spots.at(j).LLmask_curve = locallab.spots.at(j).LLmask_curve && pSpot.LLmask_curve == otherSpot.LLmask_curve;
                 locallab.spots.at(j).HHmask_curve = locallab.spots.at(j).HHmask_curve && pSpot.HHmask_curve == otherSpot.HHmask_curve;
+                locallab.spots.at(j).strumaskmask = locallab.spots.at(j).strumaskmask && pSpot.strumaskmask == otherSpot.strumaskmask;
+                locallab.spots.at(j).toolmask = locallab.spots.at(j).toolmask && pSpot.toolmask == otherSpot.toolmask;
                 locallab.spots.at(j).radmask = locallab.spots.at(j).radmask && pSpot.radmask == otherSpot.radmask;
                 locallab.spots.at(j).lapmask = locallab.spots.at(j).lapmask && pSpot.lapmask == otherSpot.lapmask;
                 locallab.spots.at(j).chromask = locallab.spots.at(j).chromask && pSpot.chromask == otherSpot.chromask;
@@ -4834,6 +4836,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).HHmask_curve = mods.locallab.spots.at(i).HHmask_curve;
         }
 
+        if (locallab.spots.at(i).strumaskmask) {
+            toEdit.locallab.spots.at(i).strumaskmask = mods.locallab.spots.at(i).strumaskmask;
+        }
+
+        if (locallab.spots.at(i).toolmask) {
+            toEdit.locallab.spots.at(i).toolmask = mods.locallab.spots.at(i).toolmask;
+        }
+
         if (locallab.spots.at(i).radmask) {
             toEdit.locallab.spots.at(i).radmask = mods.locallab.spots.at(i).radmask;
         }
@@ -6433,6 +6443,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     CCmask_curve(v),
     LLmask_curve(v),
     HHmask_curve(v),
+    strumaskmask(v),
+    toolmask(v),
     radmask(v),
     lapmask(v),
     chromask(v),
@@ -6909,6 +6921,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     CCmask_curve = v;
     LLmask_curve = v;
     HHmask_curve = v;
+    strumaskmask = v;
+    toolmask = v;
     radmask = v;
     lapmask = v;
     chromask = v;

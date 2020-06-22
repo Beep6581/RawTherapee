@@ -950,7 +950,7 @@ enum ProcEventCode {
     EvLocallabSpotcolorscope = 924,
     EvlocallabshowmasktypMethod = 925,
     Evlocallabshadmaskblsha = 926,
-    EvLocenamask = 927,
+    EvLocena_mask = 927,
     Evlocallabsensimask = 928,
     Evlocallabblendmask = 929,
     EvlocallabshowmaskmaskMethod = 930,
@@ -963,6 +963,8 @@ enum ProcEventCode {
     EvlocallabCCmask_shape = 937,
     EvlocallabLLmask_shape = 938,
     EvlocallabHHmask_shape = 939,
+    EvLocallabtoolmask = 940,
+    Evlocallabstrumaskmask = 941,
     NUMOFEVENTS
 };
 

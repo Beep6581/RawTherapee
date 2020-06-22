@@ -845,6 +845,8 @@ public:
         bool CCmask_curve;
         bool LLmask_curve;
         bool HHmask_curve;
+        bool strumaskmask;
+        bool toolmask;
         bool radmask;
         bool lapmask;
         bool chromask;

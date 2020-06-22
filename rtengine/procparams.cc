@@ -3785,6 +3785,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
+    strumaskmask(0.),
+    toolmask(true),
     radmask(0.0),
     lapmask(0.0),
     chromask(0.0),
@@ -4271,6 +4273,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && CCmask_curve == other.CCmask_curve
         && LLmask_curve == other.LLmask_curve
         && HHmask_curve == other.HHmask_curve
+        && strumaskmask == other.strumaskmask
+        && toolmask == other.toolmask
         && radmask == other.radmask
         && lapmask == other.lapmask
         && chromask == other.chromask
@@ -5780,6 +5784,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->CCmask_curve, "Locallab", "CCmask_Curve_" + index_str, spot.CCmask_curve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmask_curve, "Locallab", "LLmask_Curve_" + index_str, spot.LLmask_curve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHmask_curve, "Locallab", "HHmask_Curve_" + index_str, spot.HHmask_curve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->strumaskmask, "Locallab", "Strumaskmask_" + index_str, spot.strumaskmask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->toolmask, "Locallab", "Toolmask_" + index_str, spot.toolmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->radmask, "Locallab", "Radmask_" + index_str, spot.radmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lapmask, "Locallab", "Lapmask_" + index_str, spot.lapmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromask, "Locallab", "Chromask_" + index_str, spot.chromask, keyFile);
@@ -7508,6 +7514,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "CCmask_Curve_" + index_str, pedited, spot.CCmask_curve, spotEdited.CCmask_curve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmask_Curve_" + index_str, pedited, spot.LLmask_curve, spotEdited.LLmask_curve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmask_Curve_" + index_str, pedited, spot.HHmask_curve, spotEdited.HHmask_curve);
+                assignFromKeyfile(keyFile, "Locallab", "Strumaskmask_" + index_str, pedited, spot.strumaskmask, spotEdited.strumaskmask);
+                assignFromKeyfile(keyFile, "Locallab", "Toolmask_" + index_str, pedited, spot.toolmask, spotEdited.toolmask);
                 assignFromKeyfile(keyFile, "Locallab", "Radmask_" + index_str, pedited, spot.radmask, spotEdited.radmask);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmask_" + index_str, pedited, spot.lapmask, spotEdited.lapmask);
                 assignFromKeyfile(keyFile, "Locallab", "Chromask_" + index_str, pedited, spot.chromask, spotEdited.chromask);
