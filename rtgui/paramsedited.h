@@ -843,6 +843,9 @@ public:
         bool enamask;
         bool radmask;
         bool lapmask;
+        bool chromask;
+        bool gammask;
+        bool slopmask;
 
         LocallabSpotEdited(bool v);
 

@@ -3740,7 +3740,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blendmask(0),
     enamask(false),
     radmask(0.0),
-    lapmask(0.0)
+    lapmask(0.0),
+    chromask(0.0),
+    gammask(1.0),
+    slopmask(0.0)
 
 {
 }
@@ -4219,7 +4222,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blendmask == other.blendmask
         && enamask == other.enamask
         && radmask == other.radmask
-        && lapmask == other.lapmask;
+        && lapmask == other.lapmask
+        && chromask == other.chromask
+        && gammask == other.gammask
+        && slopmask == other.slopmask;
 
 }
 
@@ -5722,6 +5728,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->enamask, "Locallab", "Enamask_" + index_str, spot.enamask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->radmask, "Locallab", "Radmask_" + index_str, spot.radmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lapmask, "Locallab", "Lapmask_" + index_str, spot.lapmask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->chromask, "Locallab", "Chromask_" + index_str, spot.chromask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->gammask, "Locallab", "Gammask_" + index_str, spot.gammask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slopmask, "Locallab", "Slopmask_" + index_str, spot.slopmask, keyFile);
                 }
             }
         }
@@ -7443,6 +7452,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Enamask_" + index_str, pedited, spot.enamask, spotEdited.enamask);
                 assignFromKeyfile(keyFile, "Locallab", "Radmask_" + index_str, pedited, spot.radmask, spotEdited.radmask);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmask_" + index_str, pedited, spot.lapmask, spotEdited.lapmask);
+                assignFromKeyfile(keyFile, "Locallab", "Chromask_" + index_str, pedited, spot.chromask, spotEdited.chromask);
+                assignFromKeyfile(keyFile, "Locallab", "Gammask_" + index_str, pedited, spot.gammask, spotEdited.gammask);
+                assignFromKeyfile(keyFile, "Locallab", "Slopmask_" + index_str, pedited, spot.slopmask, spotEdited.slopmask);
 
                 if (spot.visimask) {
                     spotEdited.visimask = true;

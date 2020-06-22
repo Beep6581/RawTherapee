@@ -1209,6 +1209,9 @@ private:
     Gtk::CheckButton* const enamask;
     Adjuster* const radmask;
     Adjuster* const lapmask;
+    Adjuster* const chromask;
+    Adjuster* const gammask;
+    Adjuster* const slopmask;
 
     sigc::connection showmaskMethodConn, enamaskConn;
 

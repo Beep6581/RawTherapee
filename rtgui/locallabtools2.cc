@@ -4733,7 +4733,10 @@ LocallabMask::LocallabMask():
     showmaskMethod(Gtk::manage(new MyComboBoxText())),
     enamask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     radmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 1000.0, 0.1, 0.))),
-    lapmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.)))
+    lapmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+    chromask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+    gammask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
+    slopmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.)))
 
 {
     // Parameter Mask common specific widgets
@@ -4749,6 +4752,9 @@ LocallabMask::LocallabMask():
         enamaskConn = enamask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabMask::enamaskChanged));
         radmask->setAdjusterListener(this);
         lapmask->setAdjusterListener(this);
+        chromask->setAdjusterListener(this);
+        gammask->setAdjusterListener(this);
+        slopmask->setAdjusterListener(this);
         
         pack_start(*sensimask, Gtk::PACK_SHRINK, 0);
         pack_start(*blendmask, Gtk::PACK_SHRINK, 0);
@@ -4756,6 +4762,9 @@ LocallabMask::LocallabMask():
         pack_start(*enamask, Gtk::PACK_SHRINK, 0);
         pack_start(*radmask, Gtk::PACK_SHRINK, 0);
         pack_start(*lapmask, Gtk::PACK_SHRINK, 0);
+        pack_start(*chromask, Gtk::PACK_SHRINK, 0);
+        pack_start(*gammask, Gtk::PACK_SHRINK, 0);
+        pack_start(*slopmask, Gtk::PACK_SHRINK, 0);
 
 }
 
@@ -4845,6 +4854,9 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         enamask->set_active(spot.enamask);
         radmask->setValue(spot.radmask);
         lapmask->setValue(spot.lapmask);
+        chromask->setValue(spot.chromask);
+        gammask->setValue(spot.gammask);
+        slopmask->setValue(spot.slopmask);
 
     }
 
@@ -4872,6 +4884,9 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.enamask = enamask->get_active();
         spot.radmask = radmask->getValue();
         spot.lapmask = lapmask->getValue();
+        spot.chromask = chromask->getValue();
+        spot.gammask = gammask->getValue();
+        spot.slopmask = slopmask->getValue();
 
     }
 
@@ -4907,6 +4922,9 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         blendmask->setDefault((double)defSpot.blendmask);
         radmask->setDefault(defSpot.radmask);
         lapmask->setDefault(defSpot.lapmask);
+        chromask->setDefault(defSpot.chromask);
+        lapmask->setDefault(defSpot.lapmask);
+        slopmask->setDefault(defSpot.slopmask);
 
     }
 
@@ -4943,6 +4961,27 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablapmask,
                                        lapmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == chromask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromask,
+                                       chromask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == gammask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgammask,
+                                       gammask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == slopmask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopmask,
+                                       slopmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

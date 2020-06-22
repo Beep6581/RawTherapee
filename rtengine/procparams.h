@@ -1429,6 +1429,9 @@ struct LocallabParams {
         bool enamask;
         double radmask;
         double lapmask;
+        double chromask;
+        double gammask;
+        double slopmask;
 
         LocallabSpot();
 
