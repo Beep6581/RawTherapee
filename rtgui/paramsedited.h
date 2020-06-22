@@ -843,6 +843,8 @@ public:
         bool blendmask;
         bool enamask;
         bool fftmask;
+        bool blurmask;
+        bool contmask;
         bool CCmask_curve;
         bool LLmask_curve;
         bool HHmask_curve;

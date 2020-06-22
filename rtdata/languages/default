@@ -1181,6 +1181,8 @@ HISTORY_MSG_941;Local - Mask Common structure as tool
 HISTORY_MSG_942;Local - Mask Common structure strength
 HISTORY_MSG_943;Local - Mask Common H(H) curve
 HISTORY_MSG_944;Local - Mask Common FFT
+HISTORY_MSG_945;Local - Mask Common Blur radius
+HISTORY_MSG_946;Local - Mask Common contrast threshold
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction

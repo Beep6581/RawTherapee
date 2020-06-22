@@ -1217,6 +1217,8 @@ private:
     Gtk::CheckButton* const toolmask;
     Gtk::Frame* const blurFrame;
     Gtk::CheckButton* const fftmask;
+    Adjuster* const contmask;
+    Adjuster* const blurmask;
     
     Adjuster* const radmask;
     Adjuster* const lapmask;

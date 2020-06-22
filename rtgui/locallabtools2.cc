@@ -4744,6 +4744,8 @@ LocallabMask::LocallabMask():
     toolmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
     blurFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABBLURM")))),
     fftmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTCOL_MASK")))),
+    contmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTCOL"), 0., 200., 0.5, 0.))),
+    blurmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 100., 0.5, 0.2))),
   
     radmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 1000.0, 0.1, 0.))),
     lapmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -4793,6 +4795,9 @@ LocallabMask::LocallabMask():
         blurFrame->set_label_align(0.025, 0.5);
 
         fftmaskConn = fftmask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabMask::fftmaskChanged));
+        contmask->setAdjusterListener(this);
+
+        blurmask->setAdjusterListener(this);
 
         radmask->setAdjusterListener(this);
         lapmask->setAdjusterListener(this);
@@ -4826,6 +4831,8 @@ LocallabMask::LocallabMask():
 
         ToolParamBlock* const blurmBox = Gtk::manage(new ToolParamBlock());
         blurmBox->pack_start(*fftmask, Gtk::PACK_SHRINK, 0);
+        blurmBox->pack_start(*contmask);
+        blurmBox->pack_start(*blurmask);
         blurFrame->add(*blurmBox);
         maskmaskBox->pack_start(*blurFrame, Gtk::PACK_SHRINK, 0);
 
@@ -4951,7 +4958,9 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
 
 
         sensimask->setValue(spot.sensimask);
+        contmask->setValue(spot.contmask);
         updatemaskGUI3();
+        blurmask->setValue(spot.blurmask);
         
         blendmask->setValue(spot.blendmask);
         enamask->set_active(spot.enamask);
@@ -5008,6 +5017,8 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.slopmask = slopmask->getValue();
         spot.HHhmask_curve = HHhmask_shape->getCurve();
         spot.fftmask = fftmask->get_active();
+        spot.contmask = contmask->getValue();
+        spot.blurmask = blurmask->getValue();
 
     }
 
@@ -5049,6 +5060,8 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         lapmask->setDefault(defSpot.lapmask);
         slopmask->setDefault(defSpot.slopmask);
         HHhmask_shape->setCurve(defSpot.HHhmask_curve);
+        contmask->setDefault(defSpot.contmask);
+        blurmask->setDefault(defSpot.blurmask);
 
     }
 
@@ -5064,6 +5077,8 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         slopmask->hide();
         struFrame->hide();
         blurFrame->hide();
+        mask_HCurveEditorG->hide();
+        
     } else {
         // Advanced widgets are shown in Expert mode
         lapmask->show();
@@ -5071,6 +5086,8 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         slopmask->show();
         struFrame->show();
         blurFrame->show();
+        mask_HCurveEditorG->show();
+        
     }
 }
 
@@ -5088,6 +5105,9 @@ void LocallabMask::convertParamToNormal()
     strumaskmask->setValue(defSpot.strumaskmask);
     toolmask->set_active(defSpot.toolmask);
     fftmask->set_active(defSpot.fftmask);
+    blurmask->setValue(defSpot.blurmask);
+    contmask->setValue(defSpot.contmask);
+    HHhmask_shape->setCurve(defSpot.HHhmask_curve);
 
     // Enable all listeners
     enableListener();
@@ -5095,17 +5115,17 @@ void LocallabMask::convertParamToNormal()
 }
 
 void LocallabMask::updatemaskGUI3()
-{ /*
-    const double temp = blurcol->getValue();
+{ 
+    const double temp = blurmask->getValue();
 
-    if (fftColorMask->get_active()) {
-        blurcol->setLimits(0.2, 1000., 0.5, 0.2);
+    if (fftmask->get_active()) {
+        blurmask->setLimits(0.2, 1000., 0.5, 0.2);
     } else {
-        blurcol->setLimits(0.2, 100., 0.5, 0.2);
+        blurmask->setLimits(0.2, 100., 0.5, 0.2);
     }
 
-    blurcol->setValue(temp);
-    */
+    blurmask->setValue(temp);
+    
 }
 
 
@@ -5182,6 +5202,21 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
                                        strumaskmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
+
+        if (a == contmask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontmask,
+                                       contmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == blurmask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblurmask,
+                                       blurmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
 
         if (a == blendmask) {
             if (listener) {

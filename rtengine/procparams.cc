@@ -3741,6 +3741,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blendmask(0),
     enamask(false),
     fftmask(true),
+    blurmask(0.2),
+    contmask(0.),
     CCmask_curve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -4287,6 +4289,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blendmask == other.blendmask
         && enamask == other.enamask
         && fftmask == other.fftmask
+        && blurmask == other.blurmask
+        && contmask == other.contmask
         && CCmask_curve == other.CCmask_curve
         && LLmask_curve == other.LLmask_curve
         && HHmask_curve == other.HHmask_curve
@@ -5800,6 +5804,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->blendmask, "Locallab", "Blendmaskmask_" + index_str, spot.blendmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enamask, "Locallab", "Enamask_" + index_str, spot.enamask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fftmask, "Locallab", "Fftmask_" + index_str, spot.fftmask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blurmask, "Locallab", "Blurmask_" + index_str, spot.blurmask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contmask, "Locallab", "Contmask_" + index_str, spot.contmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmask_curve, "Locallab", "CCmask_Curve_" + index_str, spot.CCmask_curve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmask_curve, "Locallab", "LLmask_Curve_" + index_str, spot.LLmask_curve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHmask_curve, "Locallab", "HHmask_Curve_" + index_str, spot.HHmask_curve, keyFile);
@@ -7532,6 +7538,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskmask_" + index_str, pedited, spot.blendmask, spotEdited.blendmask);
                 assignFromKeyfile(keyFile, "Locallab", "Enamask_" + index_str, pedited, spot.enamask, spotEdited.enamask);
                 assignFromKeyfile(keyFile, "Locallab", "Fftmask_" + index_str, pedited, spot.fftmask, spotEdited.fftmask);
+                assignFromKeyfile(keyFile, "Locallab", "Blurmask_" + index_str, pedited, spot.blurmask, spotEdited.blurmask);
+                assignFromKeyfile(keyFile, "Locallab", "Contmask_" + index_str, pedited, spot.contmask, spotEdited.contmask);
                 assignFromKeyfile(keyFile, "Locallab", "CCmask_Curve_" + index_str, pedited, spot.CCmask_curve, spotEdited.CCmask_curve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmask_Curve_" + index_str, pedited, spot.LLmask_curve, spotEdited.LLmask_curve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmask_Curve_" + index_str, pedited, spot.HHmask_curve, spotEdited.HHmask_curve);
