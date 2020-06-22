@@ -47,7 +47,7 @@
 #include "cplx_wavelet_dec.h"
 #include "ciecam02.h"
 
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
 
@@ -4601,10 +4601,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
                     const bool isZone0x = lox > (lp.xc + lp.lx - 1) || lox < lp.xc - lp.lxL; // -1 fix issue 5554
 
                     if (isZone0x) { // outside selection and outside transition zone => no effect, keep original values
-                        for (int x = 0; x < transformed->W; x++) {
-                            transformed->L[y][x] = original->L[y][x];
-                        }
-
+                        transformed->L[y][x] = original->L[y][x];
                         continue;
                     }
 
