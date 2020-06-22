@@ -837,6 +837,7 @@ public:
         bool anglog;
         //mask
         bool visimask;
+        bool complexmask;
         bool expmask;
         bool sensimask;
         bool blendmask;

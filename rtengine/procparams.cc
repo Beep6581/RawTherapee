@@ -3735,6 +3735,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     anglog(0.0),
     // mask
     visimask(false),
+    complexmask(0),
     expmask(false),
     sensimask(60),
     blendmask(0),
@@ -4217,6 +4218,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && anglog == other.anglog
         // mask
         && visimask == other.visimask
+        && complexmask == other.complexmask
         && expmask == other.expmask
         && sensimask == other.sensimask
         && blendmask == other.blendmask
@@ -5723,6 +5725,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 //mask
                 if ((!pedited || spot_edited->visimask) && spot.visimask) {
                     saveToKeyfile(!pedited || spot_edited->expmask, "Locallab", "Expmask_" + index_str, spot.expmask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->complexmask, "Locallab", "Complexmask_" + index_str, spot.complexmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensimask, "Locallab", "Sensimask_" + index_str, spot.sensimask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blendmask, "Locallab", "Blendmaskmask_" + index_str, spot.blendmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enamask, "Locallab", "Enamask_" + index_str, spot.enamask, keyFile);
@@ -7447,6 +7450,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Anglog_" + index_str, pedited, spot.anglog, spotEdited.anglog);
                 // mask
                 spot.visimask = assignFromKeyfile(keyFile, "Locallab", "Expmask_" + index_str, pedited, spot.expmask, spotEdited.expmask);
+                assignFromKeyfile(keyFile, "Locallab", "Complexmask_" + index_str, pedited, spot.complexmask, spotEdited.complexmask);
                 assignFromKeyfile(keyFile, "Locallab", "Sensimask_" + index_str, pedited, spot.sensimask, spotEdited.sensimask);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskmask_" + index_str, pedited, spot.blendmask, spotEdited.blendmask);
                 assignFromKeyfile(keyFile, "Locallab", "Enamask_" + index_str, pedited, spot.enamask, spotEdited.enamask);

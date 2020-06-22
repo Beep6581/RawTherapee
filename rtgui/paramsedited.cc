@@ -1479,6 +1479,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).anglog = locallab.spots.at(j).anglog && pSpot.anglog == otherSpot.anglog;
                 //mask
                 locallab.spots.at(j).visimask = locallab.spots.at(j).visimask && pSpot.visimask == otherSpot.visimask;
+                locallab.spots.at(j).complexmask = locallab.spots.at(j).complexmask && pSpot.complexmask == otherSpot.complexmask;
                 locallab.spots.at(j).expmask = locallab.spots.at(j).expmask && pSpot.expmask == otherSpot.expmask;
                 locallab.spots.at(j).sensimask = locallab.spots.at(j).sensimask && pSpot.sensimask == otherSpot.sensimask;
                 locallab.spots.at(j).blendmask = locallab.spots.at(j).blendmask && pSpot.blendmask == otherSpot.blendmask;
@@ -4798,6 +4799,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).visimask = mods.locallab.spots.at(i).visimask;
         }
 
+        if (locallab.spots.at(i).complexmask) {
+            toEdit.locallab.spots.at(i).complexmask = mods.locallab.spots.at(i).complexmask;
+        }
+
         if (locallab.spots.at(i).expmask) {
             toEdit.locallab.spots.at(i).expmask = mods.locallab.spots.at(i).expmask;
         }
@@ -6405,6 +6410,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     anglog(v),
     // mask
     visimask(v),
+    complexmask(v),
     expmask(v),
     sensimask(v),
     blendmask(v),
@@ -6877,6 +6883,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     anglog = v;
     // mask
     visimask = v;
+    complexmask = v;
     expmask = v;
     sensimask = v;
     blendmask = v;

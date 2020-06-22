@@ -1237,6 +1237,8 @@ private:
     void enabledChanged() override;
     void showmaskMethodChanged();
     void enamaskChanged();
+    void convertParamToNormal() override;
+    void updateGUIToMode(const modeType new_type) override;
     
     /*
     void autocomputeToggled();

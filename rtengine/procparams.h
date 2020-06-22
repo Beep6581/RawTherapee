@@ -1423,6 +1423,7 @@ struct LocallabParams {
         double anglog;
         // mask
         bool visimask;
+        int complexmask;
         bool expmask;
         int sensimask;
         int blendmask;

@@ -4727,7 +4727,9 @@ void LocallabLog::updateLogGUI()
 
 /* ==== LocallabMask ==== */
 LocallabMask::LocallabMask():
-    LocallabTool(this, M("TP_LOCALLAB_MASKCOM_TOOLNAME"), M("TP_LOCALLAB_MASKCOM"), false, false),
+    LocallabTool(this, M("TP_LOCALLAB_MASKCOM_TOOLNAME"), M("TP_LOCALLAB_MASKCOM"), false),
+
+    // Comon mask specific widgets
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     showmaskMethod(Gtk::manage(new MyComboBoxText())),
@@ -4847,6 +4849,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
 
         exp->set_visible(spot.visimask);
         exp->setEnabled(spot.expmask);
+        complexity->set_active(spot.complexmask);
         
         
         sensimask->setValue(spot.sensimask);
@@ -4863,6 +4866,9 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
     // Enable all listeners
     enableListener();
 
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+
     // Update Log Encoding GUI according to autocompute button state
 //    updateLogGUI();
 
@@ -4878,6 +4884,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
         spot.expmask = exp->getEnabled();
         spot.visimask = exp->get_visible();
+        spot.complexmask = complexity->get_active_row_number();
         
         spot.sensimask = sensimask->getIntValue();
         spot.blendmask = blendmask->getIntValue();
@@ -4929,6 +4936,38 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
+}
+
+void LocallabMask::updateGUIToMode(const modeType new_type)
+{
+    if (new_type == Normal) {
+        // Advanced widgets are hidden in Normal mode
+        lapmask->hide();
+        gammask->hide();
+        slopmask->hide();
+    } else {
+        // Advanced widgets are shown in Expert mode
+        lapmask->show();
+        gammask->show();
+        slopmask->show();
+    }
+}
+
+void LocallabMask::convertParamToNormal()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+
+
+    lapmask->setValue(defSpot.lapmask);
+    gammask->setValue(defSpot.gammask);
+    slopmask->setValue(defSpot.slopmask);
+
+    // Enable all listeners
+    enableListener();
+
 }
 
 void LocallabMask::adjusterChanged(Adjuster* a, double newval)
