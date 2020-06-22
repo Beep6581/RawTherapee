@@ -119,6 +119,7 @@ public:
     void updateHistogramPosition (int oldPosition, int newPosition);
     void updateFBQueryTB (bool singleRow);
     void updateFBToolBarVisibility (bool showFilmStripToolBar);
+    void updateShowtooltipVisibility (bool showtooltip);
     bool getIsFullscreen()
     {
         return is_fullscreen;
