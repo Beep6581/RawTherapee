@@ -858,6 +858,7 @@ public:
         bool shadmask;
         bool HHhmask_curve;
         bool Lmask_curve;
+        bool LLmask_curvewav;
 
         LocallabSpotEdited(bool v);
 

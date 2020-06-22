@@ -4757,7 +4757,9 @@ LocallabMask::LocallabMask():
     mask_HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKH"))),
     HHhmask_shape(static_cast<FlatCurveEditor *>(mask_HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
     mask2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
-    Lmask_shape(static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)")))
+    Lmask_shape(static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    mask2CurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
+    LLmask_shapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false)))
 
 {
     // Parameter Mask common specific widgets
@@ -4826,6 +4828,14 @@ LocallabMask::LocallabMask():
 
         mask2CurveEditorG->curveListComplete();
 
+        mask2CurveEditorGwav->setCurveListener(this);
+
+        LLmask_shapewav->setIdentityValue(0.);
+        LLmask_shapewav->setResetCurve(FlatCurveType(defSpot.LLmask_curvewav.at(0)), defSpot.LLmask_curvewav);
+        LLmask_shapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+        mask2CurveEditorGwav->curveListComplete();
+
         pack_start(*sensimask, Gtk::PACK_SHRINK, 0);
         pack_start(*blendmask, Gtk::PACK_SHRINK, 0);
         
@@ -4860,6 +4870,7 @@ LocallabMask::LocallabMask():
         toolmaskBox->pack_start(*shadmask, Gtk::PACK_SHRINK, 0);
         toolmaskBox->pack_start(*mask_HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         toolmaskBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+        toolmaskBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         toolmaskFrame->add(*toolmaskBox);
         maskmaskBox->pack_start(*toolmaskFrame);
         pack_start(*maskmaskBox);
@@ -4900,6 +4911,8 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
         lapmask->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         mask2CurveEditorG->set_tooltip_text(M("TP_LOCALLAB_WAVMASK_TOOLTIP"));
         Lmask_shape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        mask2CurveEditorGwav->set_tooltip_text(M("TP_LOCALLAB_WAVMASK_TOOLTIP"));
+        LLmask_shapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
 
     } else {
         exp->set_tooltip_text(M(""));
@@ -4914,6 +4927,8 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
         lapmask->set_tooltip_text(M(""));
         mask2CurveEditorG->set_tooltip_text(M(""));
         Lmask_shape->setTooltip(M(""));
+        mask2CurveEditorGwav->set_tooltip_text(M(""));
+        LLmask_shapewav->setTooltip(M(""));
     }
 }
 
@@ -4922,6 +4937,7 @@ LocallabMask::~LocallabMask()
     delete mask_CurveEditorG;
     delete mask_HCurveEditorG;
     delete mask2CurveEditorG;
+    delete mask2CurveEditorGwav;
 }
 
 void LocallabMask::disableListener()
@@ -4997,6 +5013,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         HHhmask_shape->setCurve(spot.HHhmask_curve);
         fftmask->set_active(spot.fftmask);
         Lmask_shape->setCurve(spot.Lmask_curve);
+        LLmask_shapewav->setCurve(spot.LLmask_curvewav);
 
     }
 
@@ -5042,6 +5059,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.contmask = contmask->getValue();
         spot.blurmask = blurmask->getValue();
         spot.Lmask_curve = Lmask_shape->getCurve();
+        spot.LLmask_curvewav = LLmask_shapewav->getCurve();
 
     }
 
@@ -5104,7 +5122,8 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         blurFrame->hide();
         mask_HCurveEditorG->hide();
 //        mask2CurveEditorG->hide();
-        
+        mask2CurveEditorGwav->hide();
+
     } else {
         // Advanced widgets are shown in Expert mode
         lapmask->show();
@@ -5115,7 +5134,8 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         blurFrame->show();
         mask_HCurveEditorG->show();
 //        mask2CurveEditorG->show();
-        
+        mask2CurveEditorGwav->show();
+
     }
 }
 
@@ -5138,6 +5158,7 @@ void LocallabMask::convertParamToNormal()
     contmask->setValue(defSpot.contmask);
     HHhmask_shape->setCurve(defSpot.HHhmask_curve);
 //    Lmask_shape->setCurve(defSpot.Lmask_curve);
+    LLmask_shapewav->setCurve(defSpot.LLmask_curvewav);
 
     // Enable all listeners
     enableListener();
@@ -5229,6 +5250,13 @@ void LocallabMask::curveChanged(CurveEditor* ce)
         if (ce == Lmask_shape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmask_shape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (ce == LLmask_shapewav) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLLmask_shapewav,
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
             }
         }

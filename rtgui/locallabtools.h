@@ -1230,6 +1230,8 @@ private:
     FlatCurveEditor* const HHhmask_shape;
     CurveEditorGroup* const mask2CurveEditorG;
     DiagonalCurveEditor* const Lmask_shape;
+    CurveEditorGroup* const mask2CurveEditorGwav;
+    FlatCurveEditor* const LLmask_shapewav;
 
     sigc::connection showmaskMethodConn, enamaskConn, toolmaskConn, fftmaskConn;
 

@@ -3817,6 +3817,17 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.0,
         1.0,
         1.0
+    },
+    LLmask_curvewav{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.5,
+        0.35,
+        0.35,
+        1.,
+        0.5,
+        0.35,
+        0.35
     }
     
 
@@ -4312,7 +4323,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slopmask == other.slopmask
         && shadmask == other.shadmask
         && HHhmask_curve == other.HHhmask_curve
-        && Lmask_curve == other.Lmask_curve;
+        && Lmask_curve == other.Lmask_curve
+        && LLmask_curvewav == other.LLmask_curvewav;
 
 }
 
@@ -5830,6 +5842,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->shadmask, "Locallab", "Shadmask_" + index_str, spot.shadmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHhmask_curve, "Locallab", "HHhmask_Curve_" + index_str, spot.HHhmask_curve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmask_curve, "Locallab", "Lmask_Curve_" + index_str, spot.Lmask_curve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->LLmask_curvewav, "Locallab", "LLmask_Curvewav_" + index_str, spot.LLmask_curvewav, keyFile);
                 }
             }
         }
@@ -7566,6 +7579,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Shadmask_" + index_str, pedited, spot.shadmask, spotEdited.shadmask);
                 assignFromKeyfile(keyFile, "Locallab", "HHhmask_Curve_" + index_str, pedited, spot.HHhmask_curve, spotEdited.HHhmask_curve);
                 assignFromKeyfile(keyFile, "Locallab", "Lmask_Curve_" + index_str, pedited, spot.Lmask_curve, spotEdited.Lmask_curve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmask_Curvewav_" + index_str, pedited, spot.LLmask_curvewav, spotEdited.LLmask_curvewav);
 
                 if (spot.visimask) {
                     spotEdited.visimask = true;
