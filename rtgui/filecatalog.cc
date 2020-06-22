@@ -2446,6 +2446,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
         case GDK_KEY_underscore:
             zoomOut();
             return true;
+        default: // do nothing, avoids a cppcheck false positive
+            break;
         }
     }
 

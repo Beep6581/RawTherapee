@@ -19,5 +19,7 @@
 #pragma once
 
 enum eGaussType {GAUSS_STANDARD, GAUSS_MULT, GAUSS_DIV};
+static constexpr auto GAUSS_SKIP = 0.25;
+
 
 void gaussianBlur(float** src, float** dst, const int W, const int H, const double sigma, bool useBoxBlur = false, eGaussType gausstype = GAUSS_STANDARD, float** buffer2 = nullptr);

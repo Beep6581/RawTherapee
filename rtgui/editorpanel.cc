@@ -957,6 +957,13 @@ void EditorPanel::writeToolExpandedStatus (std::vector<int> &tpOpen)
     }
 }
 
+void EditorPanel::updateShowtooltipVisibility (bool showtooltip)
+{
+    if (tpc) {
+        tpc->updateShowtooltipVisibility (showtooltip);
+    }
+}
+
 void EditorPanel::showTopPanel (bool show)
 {
     if (tbTopPanel_1->get_active() != show) {
@@ -1674,6 +1681,11 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 case GDK_KEY_F5:
                     openThm->openDefaultViewer (3);
                     return true;
+
+                case GDK_KEY_f:
+                case GDK_KEY_F:
+                    // No action is performed to avoid Gtk-CRITICAL due to Locallab treeview when treeview isn't focused
+                    return true;
             }
         } //if (!ctrl)
     } //if (!alt)
@@ -1735,6 +1747,7 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt)
         PartialProfile pp (true);
         pp.set (true);
         * (pp.pparams) = openThm->getProcParams();
+        pp.pedited->locallab.spots.resize(pp.pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
         tpc->profileChange (&pp, rtengine::EvProfileChangeNotification, M ("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
         pp.deleteInstance();
     }

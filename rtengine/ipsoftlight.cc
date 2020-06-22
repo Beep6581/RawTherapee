@@ -26,7 +26,11 @@
 
 #include "procparams.h"
 
-namespace {
+namespace rtengine
+{
+
+namespace
+{
 
 inline float sl(float blend, float x)
 {
@@ -43,8 +47,10 @@ inline float sl(float blend, float x)
         // using optimized formula (heckflosse67@gmx.de)
         return rtengine::intp(blend, rtengine::Color::igamma_srgb(v * v * (3.f - 2.f * v) * rtengine::MAXVALF), x);
     }
+
     return x;
 }
+} // namespace
 
 #ifdef __SSE2__
 inline vfloat sl(vfloat blend, vfloat x)
@@ -54,11 +60,11 @@ inline vfloat sl(vfloat blend, vfloat x)
 }
 #endif
 
-} // namespace
+//} // namespace
 
-void rtengine::ImProcFunctions::softLight(LabImage *lab)
+void ImProcFunctions::softLight(LabImage *lab, const rtengine::procparams::SoftLightParams &softLightParams)
 {
-    if (!params->softlight.enabled || !params->softlight.strength) {
+    if (!softLightParams.enabled || !softLightParams.strength) {
         return;
     }
 
@@ -94,30 +100,35 @@ void rtengine::ImProcFunctions::softLight(LabImage *lab)
     #pragma omp parallel
 #endif
     {
-        const float blend = params->softlight.strength / 100.f;
+        const float blend = softLightParams.strength / 100.f;
 #ifdef __SSE2__
         const vfloat blendv = F2V(blend);
 #endif
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int i = 0; i < lab->H; ++i) {
             int j = 0;
 #ifdef __SSE2__
+
             for (; j < lab->W - 3; j += 4) {
                 vfloat Xv, Yv, Zv;
                 vfloat Rv, Gv, Bv;
-                Color::Lab2XYZ(LVFU(lab->L[i][j]),LVFU (lab->a[i][j]),LVFU (lab->b[i][j]), Xv, Yv, Zv);
+                Color::Lab2XYZ(LVFU(lab->L[i][j]), LVFU(lab->a[i][j]), LVFU(lab->b[i][j]), Xv, Yv, Zv);
                 Color::xyz2rgb(Xv, Yv, Zv, Rv, Gv, Bv, wipv);
                 Rv = sl(blendv, Rv);
                 Gv = sl(blendv, Gv);
                 Bv = sl(blendv, Bv);
                 Color::rgbxyz(Rv, Gv, Bv, Xv, Yv, Zv, wpv);
+
                 for (int k = 0; k < 4; ++k) {
-                    Color::XYZ2Lab(Xv[k], Yv[k], Zv[k], lab->L[i][j + k], lab->a[i][j + k], lab->b[i][j+ k]);
+                    Color::XYZ2Lab(Xv[k], Yv[k], Zv[k], lab->L[i][j + k], lab->a[i][j + k], lab->b[i][j + k]);
                 }
             }
+
 #endif
+
             for (; j < lab->W; j++) {
                 float X, Y, Z;
                 float R, G, B;
@@ -131,4 +142,5 @@ void rtengine::ImProcFunctions::softLight(LabImage *lab)
             }
         }
     }
+}
 }

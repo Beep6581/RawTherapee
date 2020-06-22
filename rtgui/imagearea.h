@@ -148,6 +148,8 @@ public:
     void subscribe(EditSubscriber *subscriber) override;
     void unsubscribe() override;
     void getImageSize (int &w, int&h) override;
+    void getPreviewCenterPos(int &x, int &y) override;
+    void getPreviewSize(int &w, int &h) override;
 
     // CropWindowListener interface
     void cropPositionChanged   (CropWindow* cw) override;

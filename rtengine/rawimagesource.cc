@@ -2261,15 +2261,8 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
                     }
 
                     float R, G, B;
-#ifdef _DEBUG
-                    bool neg = false;
-                    bool more_rgb = false;
-                    //gamut control : Lab values are in gamut
-                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
-#else
                     //gamut control : Lab values are in gamut
                     Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
-#endif
 
 
 
@@ -2410,10 +2403,11 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData)
 {
-    const float black[4] = {
-                     static_cast<float>(ri->get_cblack(0)), static_cast<float>(ri->get_cblack(1)),
-                     static_cast<float>(ri->get_cblack(2)), static_cast<float>(ri->get_cblack(3))
-                     };
+    const auto tmpfilters = ri->get_filters();
+    ri->set_filters(ri->prefilters); // we need 4 blacks for bayer processing
+    float black[4];
+    ri->get_colorsCoeff(nullptr, nullptr, black, false);
+    ri->set_filters(tmpfilters);
 
     if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) {
         if (!rawData) {
@@ -4433,17 +4427,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     1) for the current raw file we create a table for each temp of RGB multipliers
     2) then, I choose the "camera temp" to initialize calculation (why not)
-    3) for this temp, I calculated XYZ values for the 201 spectral datas
+    3) for this temp, I calculated XYZ values for the 201 spectral data
     4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964 (default))
-    5) for each pixel (in fact to accelerate only 1/5 for and 1/5 for y), I determine for each couple xy, the number of occurences, can be change by Itcwb_precis to 3 or 9
+    5) for each pixel (in fact to accelerate only 1/5 for and 1/5 for y), I determine for each couple xy, the number of occurrences, can be change by Itcwb_precis to 3 or 9
     6) I sort this result in ascending order
     7) in option we can sort in another manner to take into account chroma : chromax = x - white point x, chromay = y - white point y
-    8) then I compare this result, with spectral datas found above in 3) with deltaE (limited to chroma)
-    9) at this point we have xyY values that match Camera temp, and spectral datas associated
+    8) then I compare this result, with spectral data found above in 3) with deltaE (limited to chroma)
+    9) at this point we have xyY values that match Camera temp, and spectral data associated
     10) then I recalculate RGB values from xyY histogram
     11) after, I vary temp, between 2000K to 12000K
     12) RGB values are recalculated from 10) with RGB multipliers, and then xyY are calculated for each temp
-    13) spectral datas choose are recalculated with temp between 2000K to 12000K with matrix spectral calculation, that leads to xyY values
+    13) spectral data choose are recalculated with temp between 2000K to 12000K with matrix spectral calculation, that leads to xyY values
     14) I calculated for each couple xy, Student correlation (without Snedecor test)
     15) the good result, is the best correlation
     16) we have found the best temperature where color image and color references are correlate
@@ -5000,7 +4994,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     chrom wbchro[sizcu4];
     const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
-    const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordiantes
+    const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
     const float ywpr = 1.f / swpr;
 
     for (int i = 0; i < sizcu4; ++i) { //take the max values
@@ -5031,7 +5025,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
-    const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correllation
+    const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
 
@@ -5045,7 +5039,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    //calculate deltaE xx to find best values of spectrals datas - limited to chroma values
+    //calculate deltaE xx to find best values of spectrals data - limited to chroma values
     int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
 
     if (settings->itcwb_thres > 55) {
@@ -5213,8 +5207,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         reff_spect_xxyy[2 * kkg + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
                     }
                 }
-                //now we have good spectral datas
-                //claculate student correlation
+                //now we have good spectral data
+                //calculate student correlation
                 const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
 
                 if (abstudgr < minstudgr) {  // find the minimum Student
