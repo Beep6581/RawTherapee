@@ -1484,6 +1484,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensimask = locallab.spots.at(j).sensimask && pSpot.sensimask == otherSpot.sensimask;
                 locallab.spots.at(j).blendmask = locallab.spots.at(j).blendmask && pSpot.blendmask == otherSpot.blendmask;
                 locallab.spots.at(j).enamask = locallab.spots.at(j).enamask && pSpot.enamask == otherSpot.enamask;
+                locallab.spots.at(j).CCmask_curve = locallab.spots.at(j).CCmask_curve && pSpot.CCmask_curve == otherSpot.CCmask_curve;
+                locallab.spots.at(j).LLmask_curve = locallab.spots.at(j).LLmask_curve && pSpot.LLmask_curve == otherSpot.LLmask_curve;
+                locallab.spots.at(j).HHmask_curve = locallab.spots.at(j).HHmask_curve && pSpot.HHmask_curve == otherSpot.HHmask_curve;
                 locallab.spots.at(j).radmask = locallab.spots.at(j).radmask && pSpot.radmask == otherSpot.radmask;
                 locallab.spots.at(j).lapmask = locallab.spots.at(j).lapmask && pSpot.lapmask == otherSpot.lapmask;
                 locallab.spots.at(j).chromask = locallab.spots.at(j).chromask && pSpot.chromask == otherSpot.chromask;
@@ -4819,6 +4822,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).enamask = mods.locallab.spots.at(i).enamask;
         }
 
+        if (locallab.spots.at(i).CCmask_curve) {
+            toEdit.locallab.spots.at(i).CCmask_curve = mods.locallab.spots.at(i).CCmask_curve;
+        }
+
+        if (locallab.spots.at(i).LLmask_curve) {
+            toEdit.locallab.spots.at(i).LLmask_curve = mods.locallab.spots.at(i).LLmask_curve;
+        }
+
+        if (locallab.spots.at(i).HHmask_curve) {
+            toEdit.locallab.spots.at(i).HHmask_curve = mods.locallab.spots.at(i).HHmask_curve;
+        }
+
         if (locallab.spots.at(i).radmask) {
             toEdit.locallab.spots.at(i).radmask = mods.locallab.spots.at(i).radmask;
         }
@@ -6415,6 +6430,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensimask(v),
     blendmask(v),
     enamask(v),
+    CCmask_curve(v),
+    LLmask_curve(v),
+    HHmask_curve(v),
     radmask(v),
     lapmask(v),
     chromask(v),
@@ -6888,6 +6906,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensimask = v;
     blendmask = v;
     enamask = v;
+    CCmask_curve = v;
+    LLmask_curve = v;
+    HHmask_curve = v;
     radmask = v;
     lapmask = v;
     chromask = v;
