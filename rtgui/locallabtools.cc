@@ -1769,6 +1769,7 @@ void LocallabColor::convertParamToNormal()
     toolcol->set_active(defSpot.toolcol);
     fftColorMask->set_active(defSpot.fftColorMask);
     contcol->setValue(defSpot.contcol);
+    blurcol->setValue(defSpot.blurcol);
     lapmaskcol->setValue(defSpot.lapmaskcol);
     gammaskcol->setValue(defSpot.gammaskcol);
     slomaskcol->setValue(defSpot.slomaskcol);

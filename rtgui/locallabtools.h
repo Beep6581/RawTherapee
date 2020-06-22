@@ -1225,6 +1225,7 @@ private:
     Adjuster* const chromask;
     Adjuster* const gammask;
     Adjuster* const slopmask;
+    Adjuster* const shadmask;
     CurveEditorGroup* const mask_HCurveEditorG;
     FlatCurveEditor* const HHhmask_shape;
 

@@ -4752,6 +4752,7 @@ LocallabMask::LocallabMask():
     chromask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slopmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    shadmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
 
     mask_HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKH"))),
     HHhmask_shape(static_cast<FlatCurveEditor *>(mask_HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true)))
@@ -4804,6 +4805,7 @@ LocallabMask::LocallabMask():
         chromask->setAdjusterListener(this);
         gammask->setAdjusterListener(this);
         slopmask->setAdjusterListener(this);
+        shadmask->setAdjusterListener(this);
 
         mask_HCurveEditorG->setCurveListener(this);
 
@@ -4845,6 +4847,7 @@ LocallabMask::LocallabMask():
         toolmaskBox->pack_start(*chromask, Gtk::PACK_SHRINK, 0);
         toolmaskBox->pack_start(*gammask, Gtk::PACK_SHRINK, 0);
         toolmaskBox->pack_start(*slopmask, Gtk::PACK_SHRINK, 0);
+        toolmaskBox->pack_start(*shadmask, Gtk::PACK_SHRINK, 0);
         toolmaskBox->pack_start(*mask_HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         toolmaskFrame->add(*toolmaskBox);
         maskmaskBox->pack_start(*toolmaskFrame);
@@ -4974,6 +4977,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         chromask->setValue(spot.chromask);
         gammask->setValue(spot.gammask);
         slopmask->setValue(spot.slopmask);
+        shadmask->setValue(spot.shadmask);
         HHhmask_shape->setCurve(spot.HHhmask_curve);
         fftmask->set_active(spot.fftmask);
 
@@ -5015,6 +5019,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.chromask = chromask->getValue();
         spot.gammask = gammask->getValue();
         spot.slopmask = slopmask->getValue();
+        spot.shadmask = shadmask->getValue();
         spot.HHhmask_curve = HHhmask_shape->getCurve();
         spot.fftmask = fftmask->get_active();
         spot.contmask = contmask->getValue();
@@ -5059,6 +5064,7 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         chromask->setDefault(defSpot.chromask);
         lapmask->setDefault(defSpot.lapmask);
         slopmask->setDefault(defSpot.slopmask);
+        shadmask->setDefault(defSpot.shadmask);
         HHhmask_shape->setCurve(defSpot.HHhmask_curve);
         contmask->setDefault(defSpot.contmask);
         blurmask->setDefault(defSpot.blurmask);
@@ -5075,6 +5081,7 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         lapmask->hide();
         gammask->hide();
         slopmask->hide();
+        shadmask->hide();
         struFrame->hide();
         blurFrame->hide();
         mask_HCurveEditorG->hide();
@@ -5084,6 +5091,7 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         lapmask->show();
         gammask->show();
         slopmask->show();
+        shadmask->show();
         struFrame->show();
         blurFrame->show();
         mask_HCurveEditorG->show();
@@ -5102,6 +5110,7 @@ void LocallabMask::convertParamToNormal()
     lapmask->setValue(defSpot.lapmask);
     gammask->setValue(defSpot.gammask);
     slopmask->setValue(defSpot.slopmask);
+    shadmask->setValue(defSpot.shadmask);
     strumaskmask->setValue(defSpot.strumaskmask);
     toolmask->set_active(defSpot.toolmask);
     fftmask->set_active(defSpot.fftmask);
@@ -5257,6 +5266,13 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabslopmask,
                                        slopmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == shadmask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshadmask,
+                                       shadmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

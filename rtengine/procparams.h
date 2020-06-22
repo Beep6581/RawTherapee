@@ -1441,6 +1441,7 @@ struct LocallabParams {
         double chromask;
         double gammask;
         double slopmask;
+        double shadmask;
         std::vector<double> HHhmask_curve;
 
         LocallabSpot();

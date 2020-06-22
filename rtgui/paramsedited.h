@@ -855,6 +855,7 @@ public:
         bool chromask;
         bool gammask;
         bool slopmask;
+        bool shadmask;
         bool HHhmask_curve;
 
         LocallabSpotEdited(bool v);
