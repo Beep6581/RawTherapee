@@ -1365,6 +1365,14 @@ public:
     {
         return lutLocwavCurve[index];
     }
+
+#ifdef __SSE2__
+    vfloat operator[](vfloat index) const
+    {
+        return lutLocwavCurve[index];
+    }
+#endif
+
     operator bool (void) const
     {
         return lutLocwavCurve;
