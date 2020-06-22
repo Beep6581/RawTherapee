@@ -1221,6 +1221,8 @@ private:
     Adjuster* const chromask;
     Adjuster* const gammask;
     Adjuster* const slopmask;
+    CurveEditorGroup* const mask_HCurveEditorG;
+    FlatCurveEditor* const HHhmask_shape;
 
     sigc::connection showmaskMethodConn, enamaskConn, toolmaskConn;
 

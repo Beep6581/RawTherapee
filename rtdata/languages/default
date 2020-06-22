@@ -1177,6 +1177,9 @@ HISTORY_MSG_937;Local - Mask Common slope
 HISTORY_MSG_938;Local - Mask Common curve C(C)
 HISTORY_MSG_939;Local - Mask Common curve L(L)
 HISTORY_MSG_940;Local - Mask Common curve LC(H)
+HISTORY_MSG_941;Local - Mask Common structure as tool
+HISTORY_MSG_942;Local - Mask Common structure strength
+HISTORY_MSG_943;Local - Mask Common H(H) curve
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction

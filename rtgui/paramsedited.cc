@@ -1494,6 +1494,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chromask = locallab.spots.at(j).chromask && pSpot.chromask == otherSpot.chromask;
                 locallab.spots.at(j).gammask = locallab.spots.at(j).gammask && pSpot.gammask == otherSpot.gammask;
                 locallab.spots.at(j).slopmask = locallab.spots.at(j).slopmask && pSpot.slopmask == otherSpot.slopmask;
+                locallab.spots.at(j).HHhmask_curve = locallab.spots.at(j).HHhmask_curve && pSpot.HHhmask_curve == otherSpot.HHhmask_curve;
             }
         }
 
@@ -4864,6 +4865,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slopmask = mods.locallab.spots.at(i).slopmask;
         }
 
+        if (locallab.spots.at(i).HHhmask_curve) {
+            toEdit.locallab.spots.at(i).HHhmask_curve = mods.locallab.spots.at(i).HHhmask_curve;
+        }
+
     }
 
     if (pcvignette.enabled) {
@@ -6449,7 +6454,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lapmask(v),
     chromask(v),
     gammask(v),
-    slopmask(v)
+    slopmask(v),
+    HHhmask_curve(v)
 
 {
 }
@@ -6928,6 +6934,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromask = v;
     gammask = v;
     slopmask = v;
+    HHhmask_curve =(v);
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

@@ -3791,7 +3791,22 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lapmask(0.0),
     chromask(0.0),
     gammask(1.0),
-    slopmask(0.0)
+    slopmask(0.0),
+    HHhmask_curve{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.5,
+        0.35,
+        0.35,
+        0.50,
+        0.5,
+        0.35,
+        0.35,
+        1.00,
+        0.5,
+        0.35,
+        0.35
+    }
 
 {
 }
@@ -4279,7 +4294,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lapmask == other.lapmask
         && chromask == other.chromask
         && gammask == other.gammask
-        && slopmask == other.slopmask;
+        && slopmask == other.slopmask
+        && HHhmask_curve == other.HHhmask_curve;
 
 }
 
@@ -5791,6 +5807,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->chromask, "Locallab", "Chromask_" + index_str, spot.chromask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->gammask, "Locallab", "Gammask_" + index_str, spot.gammask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopmask, "Locallab", "Slopmask_" + index_str, spot.slopmask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->HHhmask_curve, "Locallab", "HHhmask_Curve_" + index_str, spot.HHhmask_curve, keyFile);
                 }
             }
         }
@@ -7521,6 +7538,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chromask_" + index_str, pedited, spot.chromask, spotEdited.chromask);
                 assignFromKeyfile(keyFile, "Locallab", "Gammask_" + index_str, pedited, spot.gammask, spotEdited.gammask);
                 assignFromKeyfile(keyFile, "Locallab", "Slopmask_" + index_str, pedited, spot.slopmask, spotEdited.slopmask);
+                assignFromKeyfile(keyFile, "Locallab", "HHhmask_Curve_" + index_str, pedited, spot.HHhmask_curve, spotEdited.HHhmask_curve);
 
                 if (spot.visimask) {
                     spotEdited.visimask = true;

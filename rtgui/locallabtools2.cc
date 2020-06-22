@@ -4747,7 +4747,10 @@ LocallabMask::LocallabMask():
     lapmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
-    slopmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.)))
+    slopmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+
+    mask_HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKH"))),
+    HHhmask_shape(static_cast<FlatCurveEditor *>(mask_HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true)))
 
 {
     // Parameter Mask common specific widgets
@@ -4791,7 +4794,16 @@ LocallabMask::LocallabMask():
         chromask->setAdjusterListener(this);
         gammask->setAdjusterListener(this);
         slopmask->setAdjusterListener(this);
-        
+
+        mask_HCurveEditorG->setCurveListener(this);
+
+        HHhmask_shape->setIdentityValue(0.);
+        HHhmask_shape->setResetCurve(FlatCurveType(defSpot.HHhmask_curve.at(0)), defSpot.HHhmask_curve);
+        HHhmask_shape->setCurveColorProvider(this, 2);
+        HHhmask_shape->setBottomBarColorProvider(this, 2);
+
+        mask_HCurveEditorG->curveListComplete();
+
         pack_start(*sensimask, Gtk::PACK_SHRINK, 0);
         pack_start(*blendmask, Gtk::PACK_SHRINK, 0);
         
@@ -4816,6 +4828,7 @@ LocallabMask::LocallabMask():
         toolmaskBox->pack_start(*chromask, Gtk::PACK_SHRINK, 0);
         toolmaskBox->pack_start(*gammask, Gtk::PACK_SHRINK, 0);
         toolmaskBox->pack_start(*slopmask, Gtk::PACK_SHRINK, 0);
+        toolmaskBox->pack_start(*mask_HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         toolmaskFrame->add(*toolmaskBox);
         maskmaskBox->pack_start(*toolmaskFrame);
         pack_start(*maskmaskBox);
@@ -4851,6 +4864,9 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
         LLmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         HHmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         struFrame->set_tooltip_text(M("TP_LOCALLAB_STRUMASK_TOOLTIP"));
+        mask_HCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
+        radmask->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        lapmask->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
 
     } else {
         exp->set_tooltip_text(M(""));
@@ -4860,12 +4876,16 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
         LLmask_shape->setTooltip(M(""));
         HHmask_shape->setTooltip(M(""));
         struFrame->set_tooltip_text(M(""));
+        mask_HCurveEditorG->set_tooltip_text(M(""));
+        radmask->set_tooltip_text(M(""));
+        lapmask->set_tooltip_text(M(""));
     }
 }
 
 LocallabMask::~LocallabMask()
 {
     delete mask_CurveEditorG;
+    delete mask_HCurveEditorG;
 }
 
 void LocallabMask::disableListener()
@@ -4931,6 +4951,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         chromask->setValue(spot.chromask);
         gammask->setValue(spot.gammask);
         slopmask->setValue(spot.slopmask);
+        HHhmask_shape->setCurve(spot.HHhmask_curve);
 
     }
 
@@ -4970,6 +4991,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.chromask = chromask->getValue();
         spot.gammask = gammask->getValue();
         spot.slopmask = slopmask->getValue();
+        spot.HHhmask_curve = HHhmask_shape->getCurve();
 
     }
 
@@ -5010,6 +5032,7 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         chromask->setDefault(defSpot.chromask);
         lapmask->setDefault(defSpot.lapmask);
         slopmask->setDefault(defSpot.slopmask);
+        HHhmask_shape->setCurve(defSpot.HHhmask_curve);
 
     }
 
@@ -5077,6 +5100,12 @@ void LocallabMask::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == HHhmask_shape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHhmask_shape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
 
     }
 }
