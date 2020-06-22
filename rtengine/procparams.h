@@ -1428,6 +1428,7 @@ struct LocallabParams {
         int sensimask;
         int blendmask;
         bool enamask;
+        bool fftmask;
         std::vector<double> CCmask_curve;
         std::vector<double> LLmask_curve;
         std::vector<double> HHmask_curve;

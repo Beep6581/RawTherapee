@@ -1215,6 +1215,8 @@ private:
     Gtk::Frame* const struFrame;
     Adjuster* const strumaskmask;
     Gtk::CheckButton* const toolmask;
+    Gtk::Frame* const blurFrame;
+    Gtk::CheckButton* const fftmask;
     
     Adjuster* const radmask;
     Adjuster* const lapmask;
@@ -1224,7 +1226,7 @@ private:
     CurveEditorGroup* const mask_HCurveEditorG;
     FlatCurveEditor* const HHhmask_shape;
 
-    sigc::connection showmaskMethodConn, enamaskConn, toolmaskConn;
+    sigc::connection showmaskMethodConn, enamaskConn, toolmaskConn, fftmaskConn;
 
 public:
     LocallabMask();
@@ -1253,6 +1255,8 @@ private:
     void toolmaskChanged();
     void convertParamToNormal() override;
     void updateGUIToMode(const modeType new_type) override;
+    void fftmaskChanged();
+    void updatemaskGUI3();
     
     /*
     void autocomputeToggled();

@@ -1484,6 +1484,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensimask = locallab.spots.at(j).sensimask && pSpot.sensimask == otherSpot.sensimask;
                 locallab.spots.at(j).blendmask = locallab.spots.at(j).blendmask && pSpot.blendmask == otherSpot.blendmask;
                 locallab.spots.at(j).enamask = locallab.spots.at(j).enamask && pSpot.enamask == otherSpot.enamask;
+                locallab.spots.at(j).fftmask = locallab.spots.at(j).fftmask && pSpot.fftmask == otherSpot.fftmask;
                 locallab.spots.at(j).CCmask_curve = locallab.spots.at(j).CCmask_curve && pSpot.CCmask_curve == otherSpot.CCmask_curve;
                 locallab.spots.at(j).LLmask_curve = locallab.spots.at(j).LLmask_curve && pSpot.LLmask_curve == otherSpot.LLmask_curve;
                 locallab.spots.at(j).HHmask_curve = locallab.spots.at(j).HHmask_curve && pSpot.HHmask_curve == otherSpot.HHmask_curve;
@@ -4825,6 +4826,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).enamask = mods.locallab.spots.at(i).enamask;
         }
 
+        if (locallab.spots.at(i).fftmask) {
+            toEdit.locallab.spots.at(i).fftmask = mods.locallab.spots.at(i).fftmask;
+        }
+
         if (locallab.spots.at(i).CCmask_curve) {
             toEdit.locallab.spots.at(i).CCmask_curve = mods.locallab.spots.at(i).CCmask_curve;
         }
@@ -6445,6 +6450,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensimask(v),
     blendmask(v),
     enamask(v),
+    fftmask(v),
     CCmask_curve(v),
     LLmask_curve(v),
     HHmask_curve(v),
@@ -6924,6 +6930,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensimask = v;
     blendmask = v;
     enamask = v;
+    fftmask = v;
     CCmask_curve = v;
     LLmask_curve = v;
     HHmask_curve = v;

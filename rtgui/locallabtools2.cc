@@ -4742,7 +4742,9 @@ LocallabMask::LocallabMask():
     struFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABSTRUM")))),
     strumaskmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     toolmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
-   
+    blurFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABBLURM")))),
+    fftmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTCOL_MASK")))),
+  
     radmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), -10.0, 1000.0, 0.1, 0.))),
     lapmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -4788,6 +4790,9 @@ LocallabMask::LocallabMask():
         strumaskmask->setAdjusterListener(this);
 
         toolmaskConn  = toolmask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabMask::toolmaskChanged));
+        blurFrame->set_label_align(0.025, 0.5);
+
+        fftmaskConn = fftmask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabMask::fftmaskChanged));
 
         radmask->setAdjusterListener(this);
         lapmask->setAdjusterListener(this);
@@ -4818,6 +4823,11 @@ LocallabMask::LocallabMask():
         
         struFrame->add(*strumBox);
         maskmaskBox->pack_start(*struFrame, Gtk::PACK_SHRINK, 0);
+
+        ToolParamBlock* const blurmBox = Gtk::manage(new ToolParamBlock());
+        blurmBox->pack_start(*fftmask, Gtk::PACK_SHRINK, 0);
+        blurFrame->add(*blurmBox);
+        maskmaskBox->pack_start(*blurFrame, Gtk::PACK_SHRINK, 0);
 
         Gtk::Frame* const toolmaskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")));
         toolmaskFrame->set_label_align(0.025, 0.5);
@@ -4894,6 +4904,7 @@ void LocallabMask::disableListener()
     showmaskMethodConn.block(true);
     enamaskConn.block(true);
     toolmaskConn.block(true);
+    fftmaskConn.block(true);
 
 }
 
@@ -4903,6 +4914,7 @@ void LocallabMask::enableListener()
     showmaskMethodConn.block(false);
     enamaskConn.block(false);
     toolmaskConn.block(false);
+    fftmaskConn.block(false);
 
 }
 
@@ -4936,9 +4948,11 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         exp->set_visible(spot.visimask);
         exp->setEnabled(spot.expmask);
         complexity->set_active(spot.complexmask);
-        
-        
+
+
         sensimask->setValue(spot.sensimask);
+        updatemaskGUI3();
+        
         blendmask->setValue(spot.blendmask);
         enamask->set_active(spot.enamask);
         CCmask_shape->setCurve(spot.CCmask_curve);
@@ -4952,6 +4966,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         gammask->setValue(spot.gammask);
         slopmask->setValue(spot.slopmask);
         HHhmask_shape->setCurve(spot.HHhmask_curve);
+        fftmask->set_active(spot.fftmask);
 
     }
 
@@ -4992,6 +5007,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.gammask = gammask->getValue();
         spot.slopmask = slopmask->getValue();
         spot.HHhmask_curve = HHhmask_shape->getCurve();
+        spot.fftmask = fftmask->get_active();
 
     }
 
@@ -5047,12 +5063,14 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         gammask->hide();
         slopmask->hide();
         struFrame->hide();
+        blurFrame->hide();
     } else {
         // Advanced widgets are shown in Expert mode
         lapmask->show();
         gammask->show();
         slopmask->show();
         struFrame->show();
+        blurFrame->show();
     }
 }
 
@@ -5069,11 +5087,46 @@ void LocallabMask::convertParamToNormal()
     slopmask->setValue(defSpot.slopmask);
     strumaskmask->setValue(defSpot.strumaskmask);
     toolmask->set_active(defSpot.toolmask);
+    fftmask->set_active(defSpot.fftmask);
 
     // Enable all listeners
     enableListener();
 
 }
+
+void LocallabMask::updatemaskGUI3()
+{ /*
+    const double temp = blurcol->getValue();
+
+    if (fftColorMask->get_active()) {
+        blurcol->setLimits(0.2, 1000., 0.5, 0.2);
+    } else {
+        blurcol->setLimits(0.2, 100., 0.5, 0.2);
+    }
+
+    blurcol->setValue(temp);
+    */
+}
+
+
+
+void LocallabMask::fftmaskChanged()
+{
+    updatemaskGUI3(); // Update GUI according to fftmask button state
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (fftmask->get_active()) {
+                listener->panelChanged(EvLocallabfftmask,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(EvLocallabfftmask,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
 
 void LocallabMask::curveChanged(CurveEditor* ce)
 {

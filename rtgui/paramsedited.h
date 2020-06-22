@@ -842,6 +842,7 @@ public:
         bool sensimask;
         bool blendmask;
         bool enamask;
+        bool fftmask;
         bool CCmask_curve;
         bool LLmask_curve;
         bool HHmask_curve;
