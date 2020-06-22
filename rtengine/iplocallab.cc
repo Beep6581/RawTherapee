@@ -7227,7 +7227,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                    float sigm, float offs, int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres)
 {
 BENCHFUN
-    wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
+    std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
 
     //first decomposition for compress dynamic range positive values and other process
     if (wdspot->memory_allocation_failed()) {
@@ -7367,10 +7367,6 @@ StopWatch Stop1("test");
             }
         }
     }
-
-    //declare a and b if need
-    wavelet_decomposition *wdspota = nullptr;
-    wavelet_decomposition *wdspotb = nullptr;
 
     int W_L = wdspot->level_W(0);
     int H_L = wdspot->level_H(0);
@@ -7886,16 +7882,16 @@ StopWatch Stop1("test");
                     #pragma omp parallel for schedule(dynamic, 16 * W_L) if (multiThread)
 #endif
                     for (int i = 0; i < W_L * H_L; i++) {
-                        const float val = wav_L[dir][i];
+                        const float val = std::fabs(wav_L[dir][i]);
 
                         float absciss;
-                        if (std::fabs(val) >= limit1) { //for max
-                            const float valcour = xlogf(std::fabs(val));
+                        if (val >= limit1) { //for max
+                            const float valcour = xlogf(val);
                             absciss = xexpf((valcour - logmax) * rap);
-                        } else if (std::fabs(val) >= limit2) {
-                            absciss = asig * std::fabs(val) + bsig;
+                        } else if (val >= limit2) {
+                            absciss = asig * val + bsig;
                         } else {
-                            absciss = amean * std::fabs(val);
+                            absciss = amean * val;
                         }
 
                         const float kc = klev * (locwavCurve[absciss * 500.f] - 0.5f);
@@ -7910,66 +7906,60 @@ StopWatch Stop1("test");
             }
         }
     }
-
     //reconstruct all for L
     wdspot->reconstruct(tmp[0], 1.f);
-    delete wdspot;
 
-    if (wavcurvecon && (chromalev != 1.f) && levelena) { // a and b if need ) {//contrast  by levels for chroma a and b
-        wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
-
-        if (wdspota->memory_allocation_failed()) {
+    bool reconstruct = false;
+    if (wavcurvecon && (chromalev != 1.f) && levelena) { // a if need ) {//contrast by levels for chroma a
+        // a
+        wdspot.reset(new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+        if (wdspot->memory_allocation_failed()) {
             return;
         }
+        wavcbd(*wdspot, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, chromalev, sk);
+        reconstruct = true;
+    }
+    if (wavcurvelev && radlevblur > 0.f && blurena && chromablu > 0.f && !blurlc) {//chroma blur if need
+        // a
+        if (!reconstruct) {
+            wdspot.reset(new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+            if (wdspot->memory_allocation_failed()) {
+                return;
+            }
+        }
+        wavcont(lp, tmp, *wdspot, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
+        reconstruct = true;
+    }
+    if (reconstruct) {
+        wdspot->reconstruct(tmpa[0], 1.f);
+    }
 
-        wavcbd(*wdspota, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, chromalev, sk);
-        wdspota->reconstruct(tmpa[0], 1.f);
-        delete wdspota;
-
-        wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
-
-        if (wdspotb->memory_allocation_failed()) {
+    reconstruct = false;
+    if (wavcurvecon && (chromalev != 1.f) && levelena) { // b if need ) {//contrast by levels for chroma b
+        //b
+        wdspot.reset(new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+        if (wdspot->memory_allocation_failed()) {
             return;
         }
-
-        wavcbd(*wdspotb, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, chromalev, sk);
-        wdspotb->reconstruct(tmpb[0], 1.f);
-        delete wdspotb;
-
+        //b
+        wavcbd(*wdspot, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, chromalev, sk);
+        reconstruct = true;
     }
 
-    if (wavcurvelev && radlevblur > 0.f && blurena) {//chroma blur if need
-        if (!blurlc) {
-            // a
-            wdspota = new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
-
-            if (wdspota->memory_allocation_failed()) {
+    if (wavcurvelev && radlevblur > 0.f && blurena && chromablu > 0.f && !blurlc) {//chroma blur if need
+        //b
+        if (!reconstruct) {
+            wdspot.reset(new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+            if (wdspot->memory_allocation_failed()) {
                 return;
             }
-
-            if (radlevblur > 0.f && chromablu > 0.f) {
-                wavcont(lp, tmp, *wdspota, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
-            }
-
-            wdspota->reconstruct(tmpa[0], 1.f);
-            delete wdspota;
-
-            //b
-            wdspotb = new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
-
-            if (wdspotb->memory_allocation_failed()) {
-                return;
-            }
-
-            if (radlevblur > 0.f && chromablu > 0.f) {
-                wavcont(lp, tmp, *wdspotb, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
-            }
-
-            wdspotb->reconstruct(tmpb[0], 1.f);
-            delete wdspotb;
         }
+        wavcont(lp, tmp, *wdspot, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
+        reconstruct = true;
     }
-
+    if (reconstruct) {
+        wdspot->reconstruct(tmpb[0], 1.f);
+    }
 }
 
 
