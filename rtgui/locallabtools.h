@@ -1228,6 +1228,8 @@ private:
     Adjuster* const shadmask;
     CurveEditorGroup* const mask_HCurveEditorG;
     FlatCurveEditor* const HHhmask_shape;
+    CurveEditorGroup* const mask2CurveEditorG;
+    DiagonalCurveEditor* const Lmask_shape;
 
     sigc::connection showmaskMethodConn, enamaskConn, toolmaskConn, fftmaskConn;
 
@@ -1260,14 +1262,7 @@ private:
     void updateGUIToMode(const modeType new_type) override;
     void fftmaskChanged();
     void updatemaskGUI3();
-    
-    /*
-    void autocomputeToggled();
-    void fullimageChanged();
-    void AutograyChanged();
-
-    void updateLogGUI();
-    */
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 };
 
 

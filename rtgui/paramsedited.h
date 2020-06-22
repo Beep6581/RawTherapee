@@ -857,6 +857,7 @@ public:
         bool slopmask;
         bool shadmask;
         bool HHhmask_curve;
+        bool Lmask_curve;
 
         LocallabSpotEdited(bool v);
 

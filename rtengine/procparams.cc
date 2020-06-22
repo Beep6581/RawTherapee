@@ -3810,7 +3810,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.5,
         0.35,
         0.35
+    },
+    Lmask_curve{
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        0.0,
+        1.0,
+        1.0
     }
+    
 
 {
 }
@@ -4303,7 +4311,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gammask == other.gammask
         && slopmask == other.slopmask
         && shadmask == other.shadmask
-        && HHhmask_curve == other.HHhmask_curve;
+        && HHhmask_curve == other.HHhmask_curve
+        && Lmask_curve == other.Lmask_curve;
 
 }
 
@@ -5820,6 +5829,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->slopmask, "Locallab", "Slopmask_" + index_str, spot.slopmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shadmask, "Locallab", "Shadmask_" + index_str, spot.shadmask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHhmask_curve, "Locallab", "HHhmask_Curve_" + index_str, spot.HHhmask_curve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->Lmask_curve, "Locallab", "Lmask_Curve_" + index_str, spot.Lmask_curve, keyFile);
                 }
             }
         }
@@ -7555,6 +7565,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Slopmask_" + index_str, pedited, spot.slopmask, spotEdited.slopmask);
                 assignFromKeyfile(keyFile, "Locallab", "Shadmask_" + index_str, pedited, spot.shadmask, spotEdited.shadmask);
                 assignFromKeyfile(keyFile, "Locallab", "HHhmask_Curve_" + index_str, pedited, spot.HHhmask_curve, spotEdited.HHhmask_curve);
+                assignFromKeyfile(keyFile, "Locallab", "Lmask_Curve_" + index_str, pedited, spot.Lmask_curve, spotEdited.Lmask_curve);
 
                 if (spot.visimask) {
                     spotEdited.visimask = true;
