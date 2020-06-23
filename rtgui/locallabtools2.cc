@@ -4732,7 +4732,7 @@ LocallabMask::LocallabMask():
     // Comon mask specific widgets
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    showmaskMethod(Gtk::manage(new MyComboBoxText())),
+    showmask_Method(Gtk::manage(new MyComboBoxText())),
     enamask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     mask_CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
     CCmask_shape(static_cast<FlatCurveEditor*>(mask_CurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
@@ -4768,13 +4768,13 @@ LocallabMask::LocallabMask():
     
         sensimask->setAdjusterListener(this);
         blendmask->setAdjusterListener(this);
-        showmaskMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
-        showmaskMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
-        showmaskMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-        showmaskMethod->append(M("TP_LOCALLAB_SHOWREF"));
-        showmaskMethod->set_active(0);
-        showmaskMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
-        showmaskMethodConn  = showmaskMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabMask::showmaskMethodChanged));
+        showmask_Method->append(M("TP_LOCALLAB_SHOWMNONE"));
+        showmask_Method->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
+        showmask_Method->append(M("TP_LOCALLAB_SHOWMASK"));
+        showmask_Method->append(M("TP_LOCALLAB_SHOWREF"));
+        showmask_Method->set_active(0);
+        showmask_Method->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
+        showmask_MethodConn  = showmask_Method->signal_changed().connect(sigc::mem_fun(*this, &LocallabMask::showmask_MethodChanged));
         enamaskConn = enamask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabMask::enamaskChanged));
         mask_CurveEditorG->setCurveListener(this);
 
@@ -4843,7 +4843,7 @@ LocallabMask::LocallabMask():
         pack_start(*blendmask, Gtk::PACK_SHRINK, 0);
         
         ToolParamBlock* const maskmaskBox = Gtk::manage(new ToolParamBlock());
-        maskmaskBox->pack_start(*showmaskMethod, Gtk::PACK_SHRINK, 4);
+        maskmaskBox->pack_start(*showmask_Method, Gtk::PACK_SHRINK, 4);
         maskmaskBox->pack_start(*mask_CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         maskmaskBox->pack_start(*enamask, Gtk::PACK_SHRINK, 0);
 
@@ -4882,22 +4882,22 @@ LocallabMask::LocallabMask():
 
 bool LocallabMask::isMaskViewActive()
 {
-    return ((showmaskMethod->get_active_row_number() != 0));
+    return ((showmask_Method->get_active_row_number() != 0));
 }
 
 
 void LocallabMask::resetMaskView()
 {
-    showmaskMethodConn.block(true);
+    showmask_MethodConn.block(true);
 
-    showmaskMethod->set_active(0);
+    showmask_Method->set_active(0);
 
-    showmaskMethodConn.block(false);
+    showmask_MethodConn.block(false);
 }
 
 void LocallabMask::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
 {
-    colorMask = showmaskMethod->get_active_row_number();
+    maskMask = showmask_Method->get_active_row_number();
 }
 
 void LocallabMask::updateAdviceTooltips(const bool showTooltips)
@@ -4947,7 +4947,7 @@ LocallabMask::~LocallabMask()
 void LocallabMask::disableListener()
 {
     LocallabTool::disableListener();
-    showmaskMethodConn.block(true);
+    showmask_MethodConn.block(true);
     enamaskConn.block(true);
     toolmaskConn.block(true);
     fftmaskConn.block(true);
@@ -4957,14 +4957,14 @@ void LocallabMask::disableListener()
 void LocallabMask::enableListener()
 {
     LocallabTool::enableListener();
-    showmaskMethodConn.block(false);
+    showmask_MethodConn.block(false);
     enamaskConn.block(false);
     toolmaskConn.block(false);
     fftmaskConn.block(false);
 
 }
 
-void LocallabMask::showmaskMethodChanged()
+void LocallabMask::showmask_MethodChanged()
 {
 
     // If mask preview is activated, deactivate all other tool mask preview
@@ -4973,7 +4973,7 @@ void LocallabMask::showmaskMethodChanged()
     }
 
     if (listener) {
-        listener->panelChanged(EvlocallabshowmaskmaskMethod, "");
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
 }
 

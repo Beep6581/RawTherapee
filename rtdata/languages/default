@@ -1168,25 +1168,25 @@ HISTORY_MSG_927;Local - Shadow mask
 HISTORY_MSG_928;Local - Common color mask
 HISTORY_MSG_929;Local - Mask common scope
 HISTORY_MSG_930;Local - Mask Common blend
-HISTORY_MSG_932;Local - Mask Common enable
-HISTORY_MSG_933;Local - Mask Common radius soft
-HISTORY_MSG_934;Local - Mask Common laplacian
-HISTORY_MSG_935;Local - Mask Common chroma
-HISTORY_MSG_936;Local - Mask Common gamma
-HISTORY_MSG_937;Local - Mask Common slope
-HISTORY_MSG_938;Local - Mask Common curve C(C)
-HISTORY_MSG_939;Local - Mask Common curve L(L)
-HISTORY_MSG_940;Local - Mask Common curve LC(H)
-HISTORY_MSG_941;Local - Mask Common structure as tool
-HISTORY_MSG_942;Local - Mask Common structure strength
-HISTORY_MSG_943;Local - Mask Common H(H) curve
-HISTORY_MSG_944;Local - Mask Common FFT
-HISTORY_MSG_945;Local - Mask Common Blur radius
-HISTORY_MSG_946;Local - Mask Common contrast threshold
-HISTORY_MSG_947;Local - Mask Common shadows
-HISTORY_MSG_948;Local - Mask Common Contrast curve
-HISTORY_MSG_949;Local - Mask Common Wavelet curve
-HISTORY_MSG_950;Local - Mask Common Threshold levels
+HISTORY_MSG_931;Local - Mask Common enable
+HISTORY_MSG_932;Local - Mask Common radius soft
+HISTORY_MSG_933;Local - Mask Common laplacian
+HISTORY_MSG_934;Local - Mask Common chroma
+HISTORY_MSG_935;Local - Mask Common gamma
+HISTORY_MSG_936;Local - Mask Common slope
+HISTORY_MSG_937;Local - Mask Common curve C(C)
+HISTORY_MSG_938;Local - Mask Common curve L(L)
+HISTORY_MSG_939;Local - Mask Common curve LC(H)
+HISTORY_MSG_940;Local - Mask Common structure as tool
+HISTORY_MSG_941;Local - Mask Common structure strength
+HISTORY_MSG_942;Local - Mask Common H(H) curve
+HISTORY_MSG_943;Local - Mask Common FFT
+HISTORY_MSG_944;Local - Mask Common Blur radius
+HISTORY_MSG_945;Local - Mask Common contrast threshold
+HISTORY_MSG_946;Local - Mask Common shadows
+HISTORY_MSG_947;Local - Mask Common Contrast curve
+HISTORY_MSG_948;Local - Mask Common Wavelet curve
+HISTORY_MSG_949;Local - Mask Common Threshold levels
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction

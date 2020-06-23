@@ -305,6 +305,7 @@ ImProcCoordinator::ImProcCoordinator() :
     localltmMask(0),
     locallblMask(0),
     locallsharMask(0),
+    locall_Mask(0),
     retistrsav(nullptr)
 {
 }
@@ -1348,7 +1349,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   locedgwavCurve, locedgwavutili,
                                   loclmasCurve_wav, lmasutili_wav,
                                   LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                   minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                     lastorigimp->CopyFrom(nprevl);

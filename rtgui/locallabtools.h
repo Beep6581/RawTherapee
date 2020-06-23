@@ -1206,7 +1206,7 @@ class LocallabMask:
 private:
     Adjuster* const sensimask;
     Adjuster* const blendmask;
-    MyComboBoxText* const showmaskMethod;
+    MyComboBoxText* const showmask_Method;
     Gtk::CheckButton* const enamask;
     CurveEditorGroup* const mask_CurveEditorG;
     FlatCurveEditor* const CCmask_shape;
@@ -1234,7 +1234,7 @@ private:
     FlatCurveEditor* const LLmask_shapewav;
     ThresholdAdjuster* const csThresholdmask;
 
-    sigc::connection showmaskMethodConn, enamaskConn, toolmaskConn, fftmaskConn;
+    sigc::connection showmask_MethodConn, enamaskConn, toolmaskConn, fftmaskConn;
 
 public:
     LocallabMask();
@@ -1262,7 +1262,7 @@ public:
 
 private:
     void enabledChanged() override;
-    void showmaskMethodChanged();
+    void showmask_MethodChanged();
     void enamaskChanged();
     void toolmaskChanged();
     void convertParamToNormal() override;
