@@ -1264,10 +1264,10 @@ private:
                 locccmasblCurve.Set(params.locallab.spots.at(sp).CCmaskblcurve, lcmasblutili);
                 locllmasblCurve.Set(params.locallab.spots.at(sp).LLmaskblcurve, llmasblutili);
                 lochhmasblCurve.Set(params.locallab.spots.at(sp).HHmaskblcurve, lhmasblutili);
-                locccmas_Curve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmas_utili);
-                locllmas_Curve.Set(params.locallab.spots.at(sp).LLmaskcurve, llmas_utili);
-                lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmaskcurve, lhmas_utili);
-                lochhhmas_Curve.Set(params.locallab.spots.at(sp).HHhmaskcurve, lhhmas_utili);
+                locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve, lcmas_utili);
+                locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve, llmas_utili);
+                lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmask_curve, lhmas_utili);
+                lochhhmas_Curve.Set(params.locallab.spots.at(sp).HHhmask_curve, lhhmas_utili);
                 
                 loclmasCurveblwav.Set(params.locallab.spots.at(sp).LLmaskblcurvewav, lmasutiliblwav);
                 loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav, lmasutilicolwav);

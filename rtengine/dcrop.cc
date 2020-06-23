@@ -1045,10 +1045,10 @@ void Crop::update(int todo)
                 locccmaslcCurve.Set(params.locallab.spots.at(sp).CCmasklccurve, lcmaslcutili);
                 locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve, llmaslcutili);
                 lochhmaslcCurve.Set(params.locallab.spots.at(sp).HHmasklccurve, lhmaslcutili);
-                locccmas_Curve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmas_utili);
-                locllmas_Curve.Set(params.locallab.spots.at(sp).LLmaskcurve, llmas_utili);
-                lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmaskcurve, lhmas_utili);
-                lochhhmas_Curve.Set(params.locallab.spots.at(sp).HHhmaskcurve, lhhmas_utili);
+                locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve, lcmas_utili);
+                locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve, llmas_utili);
+                lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmask_curve, lhmas_utili);
+                lochhhmas_Curve.Set(params.locallab.spots.at(sp).HHhmask_curve, lhhmas_utili);
                 loclmasCurve_wav.Set(params.locallab.spots.at(sp).LLmask_curvewav, lmasutili_wav);
 
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
