@@ -191,6 +191,7 @@ Locallab::Locallab():
     addTool(toolpanel, expexpose);
     addTool(toolpanel, expshadhigh);
     addTool(toolpanel, expvibrance);
+    addTool(toolpanel, expmask);
     addTool(toolpanel, expsoft);
     addTool(toolpanel, expblur);
     addTool(toolpanel, exptonemap);
@@ -199,7 +200,6 @@ Locallab::Locallab():
     addTool(toolpanel, expcontrast);
     addTool(toolpanel, expcbdl);
     addTool(toolpanel, explog);
-    addTool(toolpanel, expmask);
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator
