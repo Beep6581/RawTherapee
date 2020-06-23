@@ -1125,8 +1125,14 @@ private:
             LocCCmaskCurve locccmasblCurve;
             LocLLmaskCurve locllmasblCurve;
             LocHHmaskCurve lochhmasblCurve;
+            LocCCmaskCurve locccmas_Curve;
+            LocLLmaskCurve locllmas_Curve;
+            LocHHmaskCurve lochhmas_Curve;
+            LocHHmaskCurve lochhhmas_Curve;
+            
             LocwavCurve loclmasCurveblwav;
             LocwavCurve loclmasCurvecolwav;
+            LocwavCurve loclmasCurve_wav;
             LocwavCurve locwavCurve;
             LocwavCurve loclevwavCurve;
             LocwavCurve locconwavCurve;
@@ -1153,6 +1159,7 @@ private:
             LUTf lmaskcblocalcurve(65536, 0);
             LUTf lmaskbllocalcurve(65536, 0);
             LUTf lmasklclocalcurve(65536, 0);
+            LUTf lmasklocal_curve(65536, 0);
 
            // int maxspot = 1;
             float** shbuffer = nullptr;
@@ -1188,6 +1195,7 @@ private:
                 bool localmaskcbutili = false;
                 bool localmaskblutili = false;
                 bool localmasklcutili = false;
+                bool localmask_utili = false;
                 bool lcmasexputili = false;
                 bool lhmasexputili = false;
                 bool llmasexputili = false;
@@ -1212,6 +1220,11 @@ private:
                 bool lcmasblutili = false;
                 bool lhmasblutili = false;
                 bool llmasblutili = false;
+                bool llmas_utili = false;
+                bool lhmas_utili = false;
+                bool lcmas_utili = false;
+                bool lhhmas_utili = false;
+                
                 bool locwavutili = false;
                 bool locwavdenutili = false;
                 bool loclevwavutili = false;
@@ -1221,6 +1234,7 @@ private:
                 bool locedgwavutili = false;
                 bool lmasutiliblwav = false;
                 bool lmasutilicolwav = false;
+                bool lmasutili_wav = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
@@ -1250,8 +1264,14 @@ private:
                 locccmasblCurve.Set(params.locallab.spots.at(sp).CCmaskblcurve, lcmasblutili);
                 locllmasblCurve.Set(params.locallab.spots.at(sp).LLmaskblcurve, llmasblutili);
                 lochhmasblCurve.Set(params.locallab.spots.at(sp).HHmaskblcurve, lhmasblutili);
+                locccmas_Curve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmas_utili);
+                locllmas_Curve.Set(params.locallab.spots.at(sp).LLmaskcurve, llmas_utili);
+                lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmaskcurve, lhmas_utili);
+                lochhhmas_Curve.Set(params.locallab.spots.at(sp).HHhmaskcurve, lhhmas_utili);
+                
                 loclmasCurveblwav.Set(params.locallab.spots.at(sp).LLmaskblcurvewav, lmasutiliblwav);
                 loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav, lmasutilicolwav);
+                loclmasCurve_wav.Set(params.locallab.spots.at(sp).LLmask_curvewav, lmasutili_wav);
 
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
                 locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden, locwavdenutili);
@@ -1275,6 +1295,7 @@ private:
                 CurveFactory::curvemaskLocal(localmaskcbutili, params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskblutili, params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmasklcutili, params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
+                CurveFactory::curvemaskLocal(localmask_utili, params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
                 double black = params.locallab.spots.at(sp).black;
@@ -1323,6 +1344,8 @@ private:
                         lmaskcblocalcurve, localmaskcbutili,
                         lmaskbllocalcurve, localmaskblutili,
                         lmasklclocalcurve, localmasklcutili,
+                        lmasklocal_curve, localmask_utili,
+                        
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                         locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
@@ -1331,6 +1354,8 @@ private:
                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                         locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                         locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
+                        locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
+                        lochhhmas_Curve, lhhmas_utili,
                         loclmasCurveblwav,lmasutiliblwav,
                         loclmasCurvecolwav,lmasutilicolwav,
                         locwavCurve, locwavutili,
@@ -1340,6 +1365,7 @@ private:
                         loccomprewavCurve, loccomprewavutili,
                         locwavCurveden, locwavdenutili,
                         locedgwavCurve, locedgwavutili,
+                        loclmasCurve_wav,lmasutili_wav,
                         LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
