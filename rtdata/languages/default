@@ -2334,6 +2334,7 @@ TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLACK_EV;Black Ev
 TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLENDMASK_TOOLTIP;If blend = 0 only shape detection is improved.\nIf blend > 0 the mask is added to the image. If blend < 0 the mask is subtracted from the image
+TP_LOCALLAB_BLENDMASKMASK_TOOLTIP;If blend = 0 no action.\nAdd or subtract the mask from the original image
 TP_LOCALLAB_BLGUID;Guided Filter
 TP_LOCALLAB_BLINV;Inverse
 TP_LOCALLAB_BLCO;Chrominance only
@@ -2412,6 +2413,7 @@ TP_LOCALLAB_CSTHRESHOLDBLUR;Ψ Mask Wavelet level
 TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance "Super"
 TP_LOCALLAB_CURVCURR;Normal
 TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves at the top, mask is completely black no transformation is made by the mask on the image.\nAs you go down the curve, the mask gradually more colorful and brilliant, the image is changing more and more.\n\nIt is recommended (not required) to position the top of the curves on the gray transition line which represents the references (chroma, luma, hue).
+TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If curves at the top, mask is completely black no transformation is made by the mask on the image.\nAs you go down the curve, the mask gradually more colorful and brilliant, the image is changing more and more.\n\nThe gray transition line which represents the references (chroma, luma, hue).\nYou can choose or not to position the top of the curves on this transition.
 TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must enable combobox 'Curves type'
 TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light
@@ -2715,6 +2717,7 @@ TP_LOCALLAB_SENSILOG;Scope
 TP_LOCALLAB_SENSIS;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
+TP_LOCALLAB_SENSIMASK_TOOLTIP;Adjust scope of action for this common mask tool.\nActs on the gap between the original image and the mask.\nThe references (luma, chroma, hue) are those of the center of the RT-spot
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer

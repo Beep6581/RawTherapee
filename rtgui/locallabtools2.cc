@@ -4904,11 +4904,11 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_MASKCOM_TOOLTIP"));
-        sensimask->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
-        blendmask->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
-        CCmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-        LLmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-        HHmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        sensimask->set_tooltip_text(M("TP_LOCALLAB_SENSIMASK_TOOLTIP"));
+        blendmask->set_tooltip_text(M("TP_LOCALLAB_BLENDMASKMASK_TOOLTIP"));
+        CCmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP"));
+        LLmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP"));
+        HHmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP"));
         struFrame->set_tooltip_text(M("TP_LOCALLAB_STRUMASK_TOOLTIP"));
         mask_HCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
         radmask->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
@@ -5028,8 +5028,6 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
     // Update GUI according to complexity mode
     updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
-    // Update Log Encoding GUI according to autocompute button state
-//    updateLogGUI();
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
@@ -5044,7 +5042,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.expmask = exp->getEnabled();
         spot.visimask = exp->get_visible();
         spot.complexmask = complexity->get_active_row_number();
-        
+
         spot.sensimask = sensimask->getIntValue();
         spot.blendmask = blendmask->getIntValue();
         spot.enamask = enamask->get_active();
@@ -5404,21 +5402,3 @@ void LocallabMask::toolmaskChanged()
         }
     }
 }
-
-
-/*
-void LocallabLog::updateLogGUI()
-{
-    if (autocompute->get_active()) {
-        blackEv->set_sensitive(false);
-        whiteEv->set_sensitive(false);
-        sourceGray->set_sensitive(false);
-     //   targetGray->set_sensitive(true);
-    } else {
-        blackEv->set_sensitive(true);
-        whiteEv->set_sensitive(true);
-        sourceGray->set_sensitive(true);
-     //   targetGray->set_sensitive(true);
-    }
-}
-*/
