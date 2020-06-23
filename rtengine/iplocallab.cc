@@ -638,6 +638,9 @@ struct local_params {
     float residhi;
     float residhithr;
     bool blwh;
+    bool fftma;
+    float blurma;
+    float contma;
 
 };
 
@@ -1295,6 +1298,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.rewe = rewe;
     lp.senstm = local_sensitm;
     lp.amo = amo;
+    lp.blurma = (float) locallab.spots.at(sp).blurmask;
+    lp.fftma = locallab.spots.at(sp).fftmask;
+    lp.contma = (float) locallab.spots.at(sp).contmask;
 
     for (int y = 0; y < 6; y++) {
         lp.mulloc[y] = LIM(multi[y], 0.f, 4.f);//to prevent crash with old pp3 integer
@@ -3755,7 +3761,21 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         JaggedArray<float> blendstru(bfw, bfh);
 
-        if (lp.blurcolmask >= 0.25f && strumask == 0.f) {
+        float blu_ma = 0.f;
+        float cont_ma = 0.f;
+        bool fftt = false;
+
+        if(lp.colorena) {
+            blu_ma = lp.blurcolmask;
+            cont_ma = lp.contcolmask;
+            fftt = lp.fftColorMask;
+        } else if(lp.maskena) {
+            blu_ma = lp.blurma;
+            cont_ma = lp.contma;
+            fftt = lp.fftma;
+        }
+        
+        if (blu_ma >= 0.25f && strumask == 0.f) {
             strumask = 0.1f; // to enable a small mask make FFT good ...why ??
         }
 
@@ -3781,15 +3801,15 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         JaggedArray<float> blur(bfw, bfh);
 
-        if (lp.contcolmask > 0.f) {
-            float contra = lp.contcolmask;
+        if (cont_ma > 0.f) {
+            float contra = cont_ma;
             buildBlendMask(bufcolorig->L, blendblur, bfw, bfh, contra);
 
 
             float radblur = 0.25f + 0.002f * std::fabs(rad);//empirical value
             float rm = radblur / sk;
 
-            if (lp.fftColorMask) {
+            if (fftt) {
                 if (rm < 0.3f) {
                     rm = 0.3f;
                 }
@@ -3805,16 +3825,16 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 }
             }
 
-            if (lp.blurcolmask >= 0.25f) {
-                if (!lp.fftColorMask) { // || (lp.fftColorMask && call != 2)) {
+            if (blu_ma >= 0.25f) {
+                if (!fftt) { // || (lp.fftColorMask && call != 2)) {
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
                     {
-                        gaussianBlur(bufcolorig->L, blur, bfw, bfh, lp.blurcolmask / sk);
+                        gaussianBlur(bufcolorig->L, blur, bfw, bfh, blu_ma / sk);
                     }
                 } else {
-                    ImProcFunctions::fftw_convol_blur2(bufcolorig->L, blur, bfw, bfh, lp.blurcolmask / sk, 0, 0);
+                    ImProcFunctions::fftw_convol_blur2(bufcolorig->L, blur, bfw, bfh, blu_ma / sk, 0, 0);
                 }
 
                 for (int i = 0; i < bfh; i++) {
@@ -3875,9 +3895,9 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                         kmasstru = bufcolorig->L[ir][jr] * blendstru[ir][jr];
                     }
 
-                    if (lp.contcolmask > 0.f) {
+                    if (cont_ma > 0.f) {
 
-                        if (lp.blurcolmask >= 0.25f) {
+                        if (blu_ma >= 0.25f) {
 
                             float prov = intp(blendstru[ir][jr], bufcolorig->L[ir][jr], rtengine::max(blur[ir][jr], 0.0f));
                             kmasblur = bufcolorig->L[ir][jr] - prov ;
@@ -14481,10 +14501,8 @@ void ImProcFunctions::Lab_Local(
         int bfh = yend - ystart;
         int bfw = xend - xstart;
         if (bfw >= mSP && bfh >= mSP) {
-            float blurma = params->locallab.spots.at(sp).blurmask;
-            bool fftma = params->locallab.spots.at(sp).fftmask;
 
-            if (blurma >= 0.25f && fftma && call == 2) {
+            if (lp.blurma >= 0.25f && lp.fftma && call == 2) {
                 optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
             }
 
