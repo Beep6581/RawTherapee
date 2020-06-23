@@ -4759,7 +4759,8 @@ LocallabMask::LocallabMask():
     mask2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmask_shape(static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     mask2CurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
-    LLmask_shapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false)))
+    LLmask_shapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    csThresholdmask(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 
 {
     // Parameter Mask common specific widgets
@@ -4830,6 +4831,8 @@ LocallabMask::LocallabMask():
 
         mask2CurveEditorGwav->setCurveListener(this);
 
+        csThresholdmask->setAdjusterListener(this);
+
         LLmask_shapewav->setIdentityValue(0.);
         LLmask_shapewav->setResetCurve(FlatCurveType(defSpot.LLmask_curvewav.at(0)), defSpot.LLmask_curvewav);
         LLmask_shapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
@@ -4871,6 +4874,7 @@ LocallabMask::LocallabMask():
         toolmaskBox->pack_start(*mask_HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         toolmaskBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         toolmaskBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+        toolmaskBox->pack_start(*csThresholdmask, Gtk::PACK_SHRINK, 0);
         toolmaskFrame->add(*toolmaskBox);
         maskmaskBox->pack_start(*toolmaskFrame);
         pack_start(*maskmaskBox);
@@ -5014,6 +5018,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         fftmask->set_active(spot.fftmask);
         Lmask_shape->setCurve(spot.Lmask_curve);
         LLmask_shapewav->setCurve(spot.LLmask_curvewav);
+        csThresholdmask->setValue<int>(spot.csthresholdmask);
 
     }
 
@@ -5060,6 +5065,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.blurmask = blurmask->getValue();
         spot.Lmask_curve = Lmask_shape->getCurve();
         spot.LLmask_curvewav = LLmask_shapewav->getCurve();
+        spot.csthresholdmask = csThresholdmask->getValue<int>();
 
     }
 
@@ -5104,6 +5110,7 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         HHhmask_shape->setCurve(defSpot.HHhmask_curve);
         contmask->setDefault(defSpot.contmask);
         blurmask->setDefault(defSpot.blurmask);
+        csThresholdmask->setDefault<int>(defSpot.csthresholdmask);
 
     }
 
@@ -5123,6 +5130,7 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         mask_HCurveEditorG->hide();
 //        mask2CurveEditorG->hide();
         mask2CurveEditorGwav->hide();
+        csThresholdmask->hide();
 
     } else {
         // Advanced widgets are shown in Expert mode
@@ -5135,6 +5143,7 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         mask_HCurveEditorG->show();
 //        mask2CurveEditorG->show();
         mask2CurveEditorGwav->show();
+        csThresholdmask->show();
 
     }
 }
@@ -5159,6 +5168,7 @@ void LocallabMask::convertParamToNormal()
     HHhmask_shape->setCurve(defSpot.HHhmask_curve);
 //    Lmask_shape->setCurve(defSpot.Lmask_curve);
     LLmask_shapewav->setCurve(defSpot.LLmask_curvewav);
+    csThresholdmask->setValue<int>(defSpot.csthresholdmask);
 
     // Enable all listeners
     enableListener();
@@ -5213,6 +5223,8 @@ void LocallabMask::fftmaskChanged()
         }
     }
 }
+
+
 
 
 void LocallabMask::curveChanged(CurveEditor* ce)
@@ -5351,6 +5363,17 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+void LocallabMask::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (a == csThresholdmask) {
+            if (listener) {
+                listener->panelChanged(EvlocallabcsThresholdmask,
+                                       csThresholdmask->getHistoryString() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
 
 void LocallabMask::enabledChanged()
 {

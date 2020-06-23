@@ -1501,6 +1501,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).HHhmask_curve = locallab.spots.at(j).HHhmask_curve && pSpot.HHhmask_curve == otherSpot.HHhmask_curve;
                 locallab.spots.at(j).Lmask_curve = locallab.spots.at(j).Lmask_curve && pSpot.Lmask_curve == otherSpot.Lmask_curve;
                 locallab.spots.at(j).LLmask_curvewav = locallab.spots.at(j).LLmask_curvewav && pSpot.LLmask_curvewav == otherSpot.LLmask_curvewav;
+                locallab.spots.at(j).csthresholdmask = locallab.spots.at(j).csthresholdmask && pSpot.csthresholdmask == otherSpot.csthresholdmask;
             }
         }
 
@@ -4899,6 +4900,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).LLmask_curvewav = mods.locallab.spots.at(i).LLmask_curvewav;
         }
 
+        if (locallab.spots.at(i).csthresholdmask) {
+            toEdit.locallab.spots.at(i).csthresholdmask = mods.locallab.spots.at(i).csthresholdmask;
+        }
+
     }
 
     if (pcvignette.enabled) {
@@ -6491,7 +6496,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     shadmask(v),
     HHhmask_curve(v),
     Lmask_curve(v),
-    LLmask_curvewav(v)
+    LLmask_curvewav(v),
+    csthresholdmask(v)
 
 {
 }
@@ -6977,6 +6983,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     HHhmask_curve =(v);
     Lmask_curve =(v);
     LLmask_curvewav =(v);
+    csthresholdmask = v;
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

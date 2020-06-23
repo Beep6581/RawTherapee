@@ -1200,8 +1200,8 @@ private:
 /* ==== LocallabMask ==== */
 class LocallabMask:
     public Gtk::VBox,
-    public LocallabTool
-
+    public LocallabTool,
+    public ThresholdAdjusterListener
 {
 private:
     Adjuster* const sensimask;
@@ -1232,6 +1232,7 @@ private:
     DiagonalCurveEditor* const Lmask_shape;
     CurveEditorGroup* const mask2CurveEditorGwav;
     FlatCurveEditor* const LLmask_shapewav;
+    ThresholdAdjuster* const csThresholdmask;
 
     sigc::connection showmaskMethodConn, enamaskConn, toolmaskConn, fftmaskConn;
 
@@ -1251,9 +1252,13 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void curveChanged(CurveEditor* ce) override;
 
-//    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float targetg);
 
 private:
     void enabledChanged() override;

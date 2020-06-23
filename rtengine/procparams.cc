@@ -3828,8 +3828,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.5,
         0.35,
         0.35
-    }
-    
+    },
+    csthresholdmask(0, 0, 6, 5, false)
 
 {
 }
@@ -4324,7 +4324,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && shadmask == other.shadmask
         && HHhmask_curve == other.HHhmask_curve
         && Lmask_curve == other.Lmask_curve
-        && LLmask_curvewav == other.LLmask_curvewav;
+        && LLmask_curvewav == other.LLmask_curvewav
+        && csthresholdmask == other.csthresholdmask;
 
 }
 
@@ -5843,6 +5844,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->HHhmask_curve, "Locallab", "HHhmask_Curve_" + index_str, spot.HHhmask_curve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmask_curve, "Locallab", "Lmask_Curve_" + index_str, spot.Lmask_curve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmask_curvewav, "Locallab", "LLmask_Curvewav_" + index_str, spot.LLmask_curvewav, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->csthresholdmask, "Locallab", "CSThresholdmask_" + index_str, spot.csthresholdmask.toVector(), keyFile);
                 }
             }
         }
@@ -7580,6 +7582,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "HHhmask_Curve_" + index_str, pedited, spot.HHhmask_curve, spotEdited.HHhmask_curve);
                 assignFromKeyfile(keyFile, "Locallab", "Lmask_Curve_" + index_str, pedited, spot.Lmask_curve, spotEdited.Lmask_curve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmask_Curvewav_" + index_str, pedited, spot.LLmask_curvewav, spotEdited.LLmask_curvewav);
+
+                if (keyFile.has_key("Locallab", "CSThresholdmask_" + index_str)) {
+                    const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdmask_" + index_str);
+
+                    if (thresh.size() >= 4) {
+                        spot.csthresholdmask.setValues(thresh[0], thresh[1], min(thresh[2], 10), min(thresh[3], 10));
+                    }
+
+                    spotEdited.csthresholdmask = true;
+                }
 
                 if (spot.visimask) {
                     spotEdited.visimask = true;

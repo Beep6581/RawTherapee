@@ -859,6 +859,7 @@ public:
         bool HHhmask_curve;
         bool Lmask_curve;
         bool LLmask_curvewav;
+        bool csthresholdmask;
 
         LocallabSpotEdited(bool v);
 
