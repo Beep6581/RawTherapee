@@ -517,6 +517,11 @@ void PerspCorrection::methodChanged (void)
         } else if (method->get_active_row_number() == 1) {
             pack_start (*camera_based);
         }
+
+        // If no longer in camera-based mode and control lines are being edited.
+        if (method->get_active_row_number() != 1 && lines_button_edit->get_active()) {
+            lines_button_edit->set_active(false);
+        }
     }
 
     if (listener) {
@@ -705,7 +710,10 @@ void PerspCorrection::linesEditButtonPressed(void)
         }
         lines_button_h->set_active(false);
         lines_button_v->set_active(false);
-        applyControlLines();
+        if (method->get_active_row_number() == 1) {
+            // Calculate perspective distortion if in camera-based mode.
+            applyControlLines();
+        }
     }
 }
 
