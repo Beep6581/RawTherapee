@@ -14511,7 +14511,6 @@ void ImProcFunctions::Lab_Local(
             std::unique_ptr<LabImage> bufmaskblurcol;
             std::unique_ptr<LabImage> originalmaskcol;
             std::unique_ptr<LabImage> bufcolreserv;
-            std::unique_ptr<LabImage> buftemp;
             
             int wo = original->W;
             int ho = original->H;
@@ -14522,7 +14521,6 @@ void ImProcFunctions::Lab_Local(
             if (call <= 3) {
                 bufcolorig.reset(new LabImage(bfw, bfh));
                 bufcolfin.reset(new LabImage(bfw, bfh));
-                buftemp.reset(new LabImage(bfw, bfh));
                 bufcolorigsav.reset(new LabImage(bfw, bfh));
 
                 if (lp.showmask_met == 1  || lp.ena_Mask || lp.showmask_met == 2 || lp.showmask_met == 3) {
@@ -14545,9 +14543,6 @@ void ImProcFunctions::Lab_Local(
                         bufcolfin->L[y][x] = original->L[y + ystart][x + xstart];
                         bufcolfin->a[y][x] = original->a[y + ystart][x + xstart];
                         bufcolfin->b[y][x] = original->b[y + ystart][x + xstart];
-                        buftemp->L[y][x] = original->L[y + ystart][x + xstart];
-                        buftemp->a[y][x] = original->a[y + ystart][x + xstart];
-                        buftemp->b[y][x] = original->b[y + ystart][x + xstart];
                     }
                 }
                 const int inv = 0;
@@ -14605,10 +14600,9 @@ void ImProcFunctions::Lab_Local(
                         bufcolfin->b[y][x] = bufcolorig->b[y][x];
                     }
                 }
-                    array2D<float> blend2;
-                    blend2(bfw, bfh);
+                //perhaps we can put here a softproc to reduce artifacts between bufcolorigsav and bufcolfin, just a slider... ?? but is it necessary with this type of change ??
                     float meansob = 0.f;
-                    transit_shapedetect2(call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, origsav, transformed, cx, cy, sk);
+                    transit_shapedetect2(call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, cx, cy, sk);
                     delete origsav;
                     origsav    = NULL;
                     
