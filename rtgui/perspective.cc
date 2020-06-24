@@ -451,9 +451,9 @@ void PerspCorrection::applyControlLines(void)
 
     auto control_lines = lines->toControlLines();
     int h_count = 0, v_count = 0;
-    double rot = 0;
-    double pitch = 0;
-    double yaw = 0;
+    double rot = camera_roll->getValue();
+    double pitch = camera_pitch->getValue();
+    double yaw = camera_yaw->getValue();
 
     for (unsigned int i = 0; i < lines->size(); i++) {
         if (control_lines[i].type == rtengine::ControlLine::HORIZONTAL) {
