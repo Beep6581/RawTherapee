@@ -14568,6 +14568,7 @@ void ImProcFunctions::Lab_Local(
                 const int shortcu = lp.mergemet; //params->locallab.spots.at(sp).shortc;
                 const int lumask = params->locallab.spots.at(sp).lumask;
                 const float strumask = 0.02f * params->locallab.spots.at(sp).strumaskmask;
+                const float softr = params->locallab.spots.at(sp).softradiusmask;
 
                 const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                 const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
@@ -14601,6 +14602,10 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
                 //perhaps we can put here a softproc to reduce artifacts between bufcolorigsav and bufcolfin, just a slider... ?? but is it necessary with this type of change ??
+                if (softr > 0.f) {
+                  softproc(bufcolorigsav.get(), bufcolfin.get(), softr, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
+                }
+
                     float meansob = 0.f;
                     transit_shapedetect2(call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, cx, cy, sk);
                     delete origsav;

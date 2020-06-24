@@ -1206,6 +1206,8 @@ class LocallabMask:
 private:
     Adjuster* const sensimask;
     Adjuster* const blendmask;
+    Adjuster* const softradiusmask;
+
     MyComboBoxText* const showmask_Method;
     Gtk::CheckButton* const enamask;
     CurveEditorGroup* const mask_CurveEditorG;
