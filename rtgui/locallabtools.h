@@ -1233,6 +1233,9 @@ private:
     CurveEditorGroup* const mask2CurveEditorGwav;
     FlatCurveEditor* const LLmask_shapewav;
     ThresholdAdjuster* const csThresholdmask;
+    Gtk::Frame* const gradFramemask;
+    Adjuster* const str_mask;
+    Adjuster* const ang_mask;
 
     sigc::connection showmask_MethodConn, enamaskConn, toolmaskConn, fftmaskConn;
 

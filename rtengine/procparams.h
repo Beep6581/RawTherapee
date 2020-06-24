@@ -1442,6 +1442,8 @@ struct LocallabParams {
         double gammask;
         double slopmask;
         double shadmask;
+        int str_mask;
+        int ang_mask;
         std::vector<double> HHhmask_curve;
         std::vector<double> Lmask_curve;
         std::vector<double> LLmask_curvewav;

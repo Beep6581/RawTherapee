@@ -4760,7 +4760,10 @@ LocallabMask::LocallabMask():
     Lmask_shape(static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     mask2CurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
     LLmask_shapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    csThresholdmask(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
+    csThresholdmask(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
+    gradFramemask(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
+    str_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
+    ang_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.)))
 
 {
     // Parameter Mask common specific widgets
@@ -4861,6 +4864,18 @@ LocallabMask::LocallabMask():
         blurFrame->add(*blurmBox);
         maskmaskBox->pack_start(*blurFrame, Gtk::PACK_SHRINK, 0);
 
+
+        gradFramemask->set_label_align(0.025, 0.5);
+
+        str_mask->setAdjusterListener(this);
+
+        ang_mask->setAdjusterListener(this);
+        ang_mask->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+        ToolParamBlock* const gradmaskBox = Gtk::manage(new ToolParamBlock());
+        gradmaskBox->pack_start(*str_mask);
+        gradmaskBox->pack_start(*ang_mask);
+        gradFramemask->add(*gradmaskBox);
+
         Gtk::Frame* const toolmaskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")));
         toolmaskFrame->set_label_align(0.025, 0.5);
         ToolParamBlock* const toolmaskBox = Gtk::manage(new ToolParamBlock());
@@ -4875,6 +4890,7 @@ LocallabMask::LocallabMask():
         toolmaskBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         toolmaskBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
         toolmaskBox->pack_start(*csThresholdmask, Gtk::PACK_SHRINK, 0);
+        toolmaskBox->pack_start(*gradFramemask, Gtk::PACK_SHRINK, 0);
         toolmaskFrame->add(*toolmaskBox);
         maskmaskBox->pack_start(*toolmaskFrame);
         pack_start(*maskmaskBox);
@@ -5014,6 +5030,8 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         gammask->setValue(spot.gammask);
         slopmask->setValue(spot.slopmask);
         shadmask->setValue(spot.shadmask);
+        str_mask->setValue(spot.str_mask);
+        ang_mask->setValue(spot.ang_mask);
         HHhmask_shape->setCurve(spot.HHhmask_curve);
         fftmask->set_active(spot.fftmask);
         Lmask_shape->setCurve(spot.Lmask_curve);
@@ -5057,6 +5075,8 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.gammask = gammask->getValue();
         spot.slopmask = slopmask->getValue();
         spot.shadmask = shadmask->getValue();
+        spot.str_mask = str_mask->getIntValue();
+        spot.ang_mask = ang_mask->getIntValue();
         spot.HHhmask_curve = HHhmask_shape->getCurve();
         spot.fftmask = fftmask->get_active();
         spot.contmask = contmask->getValue();
@@ -5105,6 +5125,8 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         lapmask->setDefault(defSpot.lapmask);
         slopmask->setDefault(defSpot.slopmask);
         shadmask->setDefault(defSpot.shadmask);
+        str_mask->setDefault(defSpot.str_mask);
+        ang_mask->setDefault(defSpot.ang_mask);
         HHhmask_shape->setCurve(defSpot.HHhmask_curve);
         contmask->setDefault(defSpot.contmask);
         blurmask->setDefault(defSpot.blurmask);
@@ -5123,8 +5145,11 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         gammask->hide();
         slopmask->hide();
         shadmask->hide();
+        str_mask->hide();
+        ang_mask->hide();
         struFrame->hide();
         blurFrame->hide();
+        gradFramemask->hide();
         mask_HCurveEditorG->hide();
 //        mask2CurveEditorG->hide();
         mask2CurveEditorGwav->hide();
@@ -5136,8 +5161,11 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         gammask->show();
         slopmask->show();
         shadmask->show();
+        str_mask->show();
+        ang_mask->show();
         struFrame->show();
         blurFrame->show();
+        gradFramemask->show();
         mask_HCurveEditorG->show();
 //        mask2CurveEditorG->show();
         mask2CurveEditorGwav->show();
@@ -5158,6 +5186,8 @@ void LocallabMask::convertParamToNormal()
     gammask->setValue(defSpot.gammask);
     slopmask->setValue(defSpot.slopmask);
     shadmask->setValue(defSpot.shadmask);
+    str_mask->setValue(defSpot.str_mask);
+    ang_mask->setValue(defSpot.ang_mask);
     strumaskmask->setValue(defSpot.strumaskmask);
     toolmask->set_active(defSpot.toolmask);
     fftmask->set_active(defSpot.fftmask);
@@ -5355,6 +5385,20 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabshadmask,
                                        shadmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == str_mask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstr_mask,
+                                       str_mask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == ang_mask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabang_mask,
+                                       ang_mask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

@@ -856,6 +856,8 @@ public:
         bool gammask;
         bool slopmask;
         bool shadmask;
+        bool str_mask;
+        bool ang_mask;
         bool HHhmask_curve;
         bool Lmask_curve;
         bool LLmask_curvewav;
