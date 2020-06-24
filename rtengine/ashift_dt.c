@@ -2111,7 +2111,7 @@ static double model_fitness(double *params, void *data)
 }
 
 // setup all data structures for fitting and call NM simplex
-static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_params_t *p, dt_iop_ashift_fitaxis_t dir)
+static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_params_t *p, dt_iop_ashift_fitaxis_t dir, int min_line_count)
 {
   dt_iop_ashift_gui_data_t *g = (dt_iop_ashift_gui_data_t *)module->gui_data;
 
@@ -2227,7 +2227,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
     // we use vertical lines for fitting
     fit.linetype |= ASHIFT_LINE_DIRVERT;
     fit.weight += g->vertical_weight;
-    enough_lines = enough_lines && (g->vertical_count >= MINIMUM_FITLINES);
+    enough_lines = enough_lines && (g->vertical_count >= min_line_count);
   }
 
   if(mdir & ASHIFT_FIT_LINES_HOR)
@@ -2235,7 +2235,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
     // we use horizontal lines for fitting
     fit.linetype |= 0;
     fit.weight += g->horizontal_weight;
-    enough_lines = enough_lines && (g->horizontal_count >= MINIMUM_FITLINES);
+    enough_lines = enough_lines && (g->horizontal_count >= min_line_count);
   }
 
   // this needs to come after ASHIFT_FIT_LINES_VERT and ASHIFT_FIT_LINES_HOR
@@ -2905,7 +2905,7 @@ static int do_clean_structure(dt_iop_module_t *module, dt_iop_ashift_params_t *p
 //-----------------------------------------------------------------------------
 
 // helper function to start parameter fit and report about errors
-static int do_fit(dt_iop_module_t *module, dt_iop_ashift_params_t *p, dt_iop_ashift_fitaxis_t dir)
+static int do_fit(dt_iop_module_t *module, dt_iop_ashift_params_t *p, dt_iop_ashift_fitaxis_t dir, int min_line_count = MINIMUM_FITLINES)
 {
   dt_iop_ashift_gui_data_t *g = (dt_iop_ashift_gui_data_t *)module->gui_data;
   dt_iop_ashift_nmsresult_t res;
@@ -2918,7 +2918,7 @@ static int do_fit(dt_iop_module_t *module, dt_iop_ashift_params_t *p, dt_iop_ash
 
   g->fitting = 1;
 
-  res = nmsfit(module, p, dir);
+  res = nmsfit(module, p, dir, min_line_count);
 
   switch(res)
   {
@@ -3815,8 +3815,10 @@ void gui_post_expose(struct dt_iop_module_t *self, cairo_t *cr, int32_t width, i
 
   cairo_restore(cr);
 }
+#endif // if 0
+//-----------------------------------------------------------------------------
 
-update the number of selected vertical and horizontal lines
+// update the number of selected vertical and horizontal lines
 static void update_lines_count(const dt_iop_ashift_line_t *lines, const int lines_count,
                         int *vertical_count, int *horizontal_count)
 {
@@ -3835,6 +3837,9 @@ static void update_lines_count(const dt_iop_ashift_line_t *lines, const int line
   *horizontal_count = hlines;
 }
 
+//-----------------------------------------------------------------------------
+// RT: BEGIN COMMENT
+#if 0
 int mouse_moved(struct dt_iop_module_t *self, double x, double y, double pressure, int which)
 {
   dt_iop_ashift_gui_data_t *g = (dt_iop_ashift_gui_data_t *)self->gui_data;

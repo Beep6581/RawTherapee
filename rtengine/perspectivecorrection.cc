@@ -356,10 +356,8 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
         g->lines = toAshiftLines(control_lines, control_lines_count);
         g->lines_in_height = fh;
         g->lines_in_width = fw;
-        // A hack.
-        g->horizontal_count = 4;
-        g->vertical_count = 4;
-        res = do_fit(&module, &p, fitaxis);
+        update_lines_count(g->lines, g->lines_count, &(g->vertical_count), &(g->horizontal_count));
+        res = do_fit(&module, &p, fitaxis, 2);
     }
     Params retval = {
         .angle = p.rotation,
