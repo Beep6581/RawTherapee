@@ -2717,7 +2717,7 @@ TP_LOCALLAB_SENSILOG;Scope
 TP_LOCALLAB_SENSIS;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
-TP_LOCALLAB_SENSIMASK_TOOLTIP;Adjust scope of action for this common mask tool.\nActs on the gap between the original image and the mask.\nThe references (luma, chroma, hue) are those of the center of the RT-spot
+TP_LOCALLAB_SENSIMASK_TOOLTIP;Adjust scope of action for this common mask tool.\nActs on the gap between the original image and the mask.\nThe references (luma, chroma, hue) are those of the center of the RT-spot\n\nYou can also act on deltaE internal to the mask with 'Scope Mask deltaE image' in 'Settings'
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
