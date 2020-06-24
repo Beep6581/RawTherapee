@@ -47,7 +47,7 @@
 #include "cplx_wavelet_dec.h"
 #include "ciecam02.h"
 
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
 
@@ -14611,6 +14611,13 @@ void ImProcFunctions::Lab_Local(
                     transit_shapedetect2(call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, origsav, transformed, cx, cy, sk);
                     delete origsav;
                     origsav    = NULL;
+                    
+                if (params->locallab.spots.at(sp).recurs) {
+                    original->CopyFrom(transformed, multiThread);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
+                }
+                    
             }
         }
     }
