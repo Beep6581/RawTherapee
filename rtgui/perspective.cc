@@ -31,6 +31,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
 {
 
     auto mapper = ProcEventMapper::getInstance();
+    // Normal events.
     EvPerspCamAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_ANGLE");
     EvPerspCamFocalLength = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_FL");
     EvPerspCamShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_SHIFT");
@@ -39,6 +40,15 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspProjRotate = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ROTATE");
     EvPerspProjShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     EvPerspRender = mapper->newEvent(TRANSFORM);
+    // Void events.
+    EvPerspCamAngleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_ANGLE");
+    EvPerspCamFocalLengthVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_FL");
+    EvPerspCamShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_SHIFT");
+    EvPerspProjAngleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ANGLE");
+    EvPerspProjRotateVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ROTATE");
+    EvPerspProjShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_SHIFT");
+    setCamBasedEventsActive();
+
     lens_geom_listener = nullptr;
 
     Gtk::Image* ipers_draw_horiz = Gtk::manage (new RTImage ("draw-horizontal.png"));
@@ -402,21 +412,21 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
                         M("TP_PERSPECTIVE_VERTICAL"),
                         vert->getValue()));
         } else if (a == camera_focal_length || a == camera_crop_factor) {
-            listener->panelChanged (EvPerspCamFocalLength,
+            listener->panelChanged (*event_persp_cam_focal_length,
                     Glib::ustring::compose("%1=%2\n%3=%4",
                         M("TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH"),
                         camera_focal_length->getValue(),
                         M("TP_PERSPECTIVE_CAMERA_CROP_FACTOR"),
                         camera_crop_factor->getValue()));
         } else if (a == camera_shift_horiz || a == camera_shift_vert) {
-            listener->panelChanged (EvPerspCamShift,
+            listener->panelChanged (*event_persp_cam_shift,
                     Glib::ustring::compose("%1=%2\n%3=%4",
                         M("TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL"),
                         camera_shift_horiz->getValue(),
                         M("TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL"),
                         camera_shift_vert->getValue()));
         } else if (a == camera_pitch || a == camera_roll|| a == camera_yaw) {
-            listener->panelChanged (EvPerspCamAngle,
+            listener->panelChanged (*event_persp_cam_angle,
                     Glib::ustring::compose("%1=%2\n%3=%4\n%5=%6",
                         M("TP_PERSPECTIVE_CAMERA_ROLL"),
                         camera_roll->getValue(),
@@ -425,17 +435,17 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
                         M("TP_PERSPECTIVE_CAMERA_PITCH"),
                         camera_pitch->getValue()));
         } else if (a == projection_shift_horiz || a == projection_shift_vert) {
-            listener->panelChanged (EvPerspProjShift,
+            listener->panelChanged (*event_persp_proj_shift,
                     Glib::ustring::compose("%1=%2\n%3=%4",
                         M("TP_PERSPECTIVE_PROJECTION_SHIFT_HORIZONTAL"),
                         projection_shift_horiz->getValue(),
                         M("TP_PERSPECTIVE_PROJECTION_SHIFT_VERTICAL"),
                         projection_shift_vert->getValue()));
         } else if (a == projection_rotate) {
-            listener->panelChanged (EvPerspProjRotate,
+            listener->panelChanged (*event_persp_proj_rotate,
                     Glib::ustring::format(projection_rotate->getValue()));
         } else if (a == projection_pitch || a == projection_yaw) {
-            listener->panelChanged (EvPerspProjAngle,
+            listener->panelChanged (*event_persp_proj_angle,
                     Glib::ustring::compose("%1=%2\n%3=%4",
                         M("TP_PERSPECTIVE_PROJECTION_PITCH"),
                         projection_pitch->getValue(),
@@ -700,7 +710,9 @@ void PerspCorrection::linesEditButtonPressed(void)
             lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, false);
         }
         lines_button_erase->set_sensitive(true);
+        setCamBasedEventsActive(false);
     } else { // Leave edit mode.
+        setCamBasedEventsActive(true);
         lines_button_erase->set_sensitive(false);
         render = true;
         lines->setDrawMode(false);
@@ -720,6 +732,25 @@ void PerspCorrection::linesEditButtonPressed(void)
 void PerspCorrection::linesEraseButtonPressed(void)
 {
     lines->removeAll();
+}
+
+void PerspCorrection::setCamBasedEventsActive(bool active)
+{
+    if (active) {
+        event_persp_cam_focal_length = &EvPerspCamFocalLength;
+        event_persp_cam_shift = &EvPerspCamShift;
+        event_persp_cam_angle = &EvPerspCamAngle;
+        event_persp_proj_shift = &EvPerspProjShift;
+        event_persp_proj_rotate = &EvPerspProjRotate;
+        event_persp_proj_angle = &EvPerspProjAngle;
+    } else {
+        event_persp_cam_focal_length = &EvPerspCamFocalLengthVoid;
+        event_persp_cam_shift = &EvPerspCamShiftVoid;
+        event_persp_cam_angle = &EvPerspCamAngleVoid;
+        event_persp_proj_shift = &EvPerspProjShiftVoid;
+        event_persp_proj_rotate = &EvPerspProjRotateVoid;
+        event_persp_proj_angle = &EvPerspProjAngleVoid;
+    }
 }
 
 ControlLineManager::ControlLineManager():

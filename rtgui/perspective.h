@@ -145,10 +145,23 @@ protected:
     rtengine::ProcEvent EvPerspProjRotate;
     rtengine::ProcEvent EvPerspProjAngle;
     rtengine::ProcEvent EvPerspRender;
+    rtengine::ProcEvent EvPerspCamFocalLengthVoid;
+    rtengine::ProcEvent EvPerspCamShiftVoid;
+    rtengine::ProcEvent EvPerspCamAngleVoid;
+    rtengine::ProcEvent EvPerspProjShiftVoid;
+    rtengine::ProcEvent EvPerspProjRotateVoid;
+    rtengine::ProcEvent EvPerspProjAngleVoid;
+    rtengine::ProcEvent* event_persp_cam_focal_length;
+    rtengine::ProcEvent* event_persp_cam_shift;
+    rtengine::ProcEvent* event_persp_cam_angle;
+    rtengine::ProcEvent* event_persp_proj_shift;
+    rtengine::ProcEvent* event_persp_proj_rotate;
+    rtengine::ProcEvent* event_persp_proj_angle;
     LensGeomListener* lens_geom_listener;
     const rtengine::FramesMetaData* metadata;
 
     void applyControlLines (void);
+    void setCamBasedEventsActive (bool active = true);
     void setFocalLengthValue (const rtengine::procparams::ProcParams* pparams, const rtengine::FramesMetaData* metadata);
 
 public:
