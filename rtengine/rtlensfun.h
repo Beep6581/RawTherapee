@@ -53,7 +53,7 @@ public:
 
     explicit operator bool() const;
 
-    void correctDistortion(double &x, double &y, int cx, int cy, double scale) const override;
+    void correctDistortion(double &x, double &y, int cx, int cy) const override;
     bool isCACorrectionAvailable() const override;
     void correctCA(double &x, double &y, int cx, int cy, int channel) const override;
     void processVignette(int width, int height, float** rawData) const override;
