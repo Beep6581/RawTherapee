@@ -47,7 +47,7 @@
 #include "cplx_wavelet_dec.h"
 #include "ciecam02.h"
 
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
 
@@ -2300,7 +2300,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
 
 void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, float epsilmax, float epsilmin, float thres, int sk, bool multiThread, int flag)
 {
-    if (rad > 0.f) {
+    if (rad != 0.f) {
         array2D<float> ble(bfw, bfh);
         array2D<float> guid(bfw, bfh);
         if (flag == 0) {
@@ -2315,9 +2315,10 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
                 }
             }
 
-            const float aepsil = (epsilmax - epsilmin) / 90.f;
-            const float bepsil = epsilmax - 100.f * aepsil;
-            const float epsil = aepsil * 0.1f * rad + bepsil;
+            const float aepsil = (epsilmax - epsilmin) / 1000.f;
+            const float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
+           // const float epsil = aepsil * 0.1f * rad + bepsil;
+            const float epsil = aepsil * rad + bepsil;
             const float blur = 10.f / sk * (thres + 0.8f * rad);
 
             rtengine::guidedFilter(guid, ble, ble, blur, epsil, multiThread, 4);
@@ -2360,6 +2361,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
         }
     }
 }
+
 
 void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &buflight, float rad, int bfh, int bfw, double epsilmax, double epsilmin,  float thres, int sk, bool multiThread)
 {
@@ -14504,6 +14506,10 @@ void ImProcFunctions::Lab_Local(
             if (lp.blurma >= 0.25f && lp.fftma && call == 2) {
                 optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
             }
+            array2D<float> blechro(bfw, bfh);
+            array2D<float> ble(bfw, bfh);
+            array2D<float> hue(bfw, bfh);
+            array2D<float> guid(bfw, bfh);
 
             std::unique_ptr<LabImage> bufcolorigsav;
             std::unique_ptr<LabImage> bufcolorig;
@@ -14599,17 +14605,48 @@ void ImProcFunctions::Lab_Local(
                         bufcolfin->L[y][x] = bufcolorig->L[y][x];
                         bufcolfin->a[y][x] = bufcolorig->a[y][x];
                         bufcolfin->b[y][x] = bufcolorig->b[y][x];
+                        hue[y][x] = xatan2f(bufcolfin->b[y][x], bufcolfin->a[y][x]);
+                        const float chromah = std::sqrt(SQR(bufcolfin->b[y][x]) + SQR(bufcolfin->a[y][x]));
+                        ble[y][x] = bufcolfin->L[y][x] / 32768.f;
+                        blechro[y][x] = chromah / 32768.f;
+                        guid[y][x] = bufcolorigsav->L[y][x] / 32768.f;
                     }
                 }
-                //perhaps we can put here a softproc to reduce artifacts between bufcolorigsav and bufcolfin, just a slider... ?? but is it necessary with this type of change ??
-                if (softr > 0.f) {
-                  softproc(bufcolorigsav.get(), bufcolfin.get(), softr, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
-                }
+                if (softr != 0.f) {//soft for L a b because we change color...
+                    float rad = softr;
+                    const float tmpblur = rad < 0.f ? -1.f / rad : 1.f + rad;
+                    const int r1 = rtengine::max<int>(4 / sk * tmpblur + 0.5, 1);
+                    const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.5, 1);
 
-                    float meansob = 0.f;
-                    transit_shapedetect2(call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, cx, cy, sk);
-                    delete origsav;
-                    origsav    = NULL;
+                    constexpr float epsilmax = 0.0008f;
+                    constexpr float epsilmin = 0.00001f;
+
+                    constexpr float aepsil = (epsilmax - epsilmin) / 1000.f;
+                    constexpr float bepsil = epsilmin;
+                    const float epsil = rad < 0.f ? 0.001f : aepsil * rad + bepsil;
+
+                    rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
+                    rtengine::guidedFilter(guid, ble, ble, r2, 0.2f * epsil, multiThread);
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            float2 sincosval = xsincosf(hue[y][x]);
+                            bufcolfin->L[y][x] = 32768.f * ble[y][x];
+                            bufcolfin->a[y][x] = 32768.f * blechro[y][x] * sincosval.y;
+                            bufcolfin->b[y][x] = 32768.f * blechro[y][x] * sincosval.x;
+                        }
+                    }
+                }
+                
+
+
+                float meansob = 0.f;
+                transit_shapedetect2(call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, cx, cy, sk);
+                delete origsav;
+                origsav    = NULL;
                     
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed, multiThread);

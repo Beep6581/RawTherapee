@@ -4732,7 +4732,7 @@ LocallabMask::LocallabMask():
     // Comon mask specific widgets
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    softradiusmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 1000.0, 0.5, 0.))),
+    softradiusmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), -10.0, 1000.0, 0.5, 0.))),
 
     showmask_Method(Gtk::manage(new MyComboBoxText())),
     enamask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -4773,6 +4773,7 @@ LocallabMask::LocallabMask():
     
         sensimask->setAdjusterListener(this);
         blendmask->setAdjusterListener(this);
+        softradiusmask->setLogScale(10, -10);
         softradiusmask->setAdjusterListener(this);
         showmask_Method->append(M("TP_LOCALLAB_SHOWMNONE"));
         showmask_Method->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
