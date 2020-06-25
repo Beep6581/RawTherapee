@@ -2342,9 +2342,9 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
                     guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
                 }
 
-            const float aepsil = (epsilmax - epsilmin) / 90.f;
-            const float bepsil = epsilmax - 100.f * aepsil;
-            const float epsil = rad < 0.f ? 0.0001f : aepsil * 0.1f * rad + bepsil;
+            const float aepsil = (epsilmax - epsilmin) / 1000.f;
+            const float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
+            const float epsil = rad < 0.f ? 0.0001f : aepsil * rad + bepsil;
             const float blur = rad < 0.f ? -1.f / rad : 1.f + rad;
             const int r2 = rtengine::max(int(25 / sk * blur + 0.5f), 1);
 
@@ -4002,12 +4002,12 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             const int r1 = rtengine::max<int>(4 / sk * tmpblur + 0.5, 1);
             const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.5, 1);
 
-            constexpr float epsilmax = 0.0005f;
+            constexpr float epsilmax = 0.005f;
             constexpr float epsilmin = 0.00001f;
 
-            constexpr float aepsil = (epsilmax - epsilmin) / 90.f;
-            constexpr float bepsil = epsilmax - 100.f * aepsil;
-            const float epsil = rad < 0.f ? 0.001f : aepsil * 0.1f * rad + bepsil;
+            constexpr float aepsil = (epsilmax - epsilmin) / 1000.f;
+            constexpr float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
+            const float epsil = rad < 0.f ? 0.001f : aepsil * rad + bepsil;
 
             rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
             rtengine::guidedFilter(guid, ble, ble, r2, 0.2f * epsil, multiThread);
@@ -9880,11 +9880,11 @@ void ImProcFunctions::Lab_Local(
                 const int r1 = rtengine::max<int>(4 / sk * blur + 0.5f, 1);
                 const int r2 = rtengine::max<int>(25 / sk * blur + 0.5f, 1);
 
-                constexpr float epsilmax = 0.0005f;
+                constexpr float epsilmax = 0.005f;
                 constexpr float epsilmin = 0.00001f;
 
-                const float aepsil = (epsilmax - epsilmin) / 90.f;
-                const float bepsil = epsilmax - 100.f * aepsil;
+                const float aepsil = (epsilmax - epsilmin) / 1000.f;
+                const float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
                 const float epsil = lp.radmabl < 0.f ? 0.001f : aepsil * lp.radmabl + bepsil;
 
                 rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
@@ -10851,7 +10851,7 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
                     if (lp.softradiuscb > 0.f) {
-                        softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
+                        softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                     }
 
                 }
@@ -12173,7 +12173,7 @@ void ImProcFunctions::Lab_Local(
                             }
 
                         if (softr != 0.f && (compreena || locwavCurve || comprena || blurena || levelena || lp.wavgradl || lp.edgwena || std::fabs(mL) > 0.001f)) {
-                            softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
+                            softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.001, 0.00001, thr, sk, multiThread, flag);
                         }
                     }
                 }
@@ -13259,7 +13259,7 @@ void ImProcFunctions::Lab_Local(
                     }
                     
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
-                        softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
+                        softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                     }
                     float meansob = 0.f;
                     transit_shapedetect2(call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
@@ -14306,7 +14306,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
                         if (lp.softradiuscol > 0.f) {
-                            softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
+                            softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                         }
                         float meansob = 0.f;
                         transit_shapedetect2(call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
@@ -14379,7 +14379,7 @@ void ImProcFunctions::Lab_Local(
 
 
                         if (lp.softradiuscol > 0.f) {
-                            softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 1);
+                            softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                         }
                         float meansob = 0.f;
                         transit_shapedetect2(call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
@@ -14618,7 +14618,7 @@ void ImProcFunctions::Lab_Local(
                     const int r1 = rtengine::max<int>(4 / sk * tmpblur + 0.5, 1);
                     const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.5, 1);
 
-                    constexpr float epsilmax = 0.0008f;
+                    constexpr float epsilmax = 0.005f;
                     constexpr float epsilmin = 0.00001f;
 
                     constexpr float aepsil = (epsilmax - epsilmin) / 1000.f;
