@@ -194,7 +194,7 @@ public:
     );
 
 
-    void correctDistortion(double &x, double &y, int cx, int cy) const override;  // MUST be the first stage
+    void correctDistortion(double &x, double &y, int cx, int cy) const override;
     bool isCACorrectionAvailable() const override;
     void correctCA(double& x, double& y, int cx, int cy, int channel) const override;
     void processVignette(int width, int height, float** rawData) const override;

@@ -1089,7 +1089,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             }
 
             if (enableLCPDist) {
-                pLCPMap->correctDistortion(x_d, y_d, w2, h2); // must be first transform
+                pLCPMap->correctDistortion(x_d, y_d, w2, h2);
             }
 
             // rotate
