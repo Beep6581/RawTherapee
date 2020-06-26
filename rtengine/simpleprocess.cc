@@ -1296,26 +1296,6 @@ private:
                 } else {
                     ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
-
-                // Clear local curves
-                lllocalcurve.clear();
-                lclocalcurve.clear();
-                cllocalcurve.clear();
-                cclocalcurve.clear();
-                rgblocalcurve.clear();
-                exlocalcurve.clear();
-                hltonecurveloc.clear();
-                lmasklocalcurve.clear();
-                lmaskexplocalcurve.clear();
-                lmaskSHlocalcurve.clear();
-                lmaskviblocalcurve.clear();
-                lmasktmlocalcurve.clear();
-                lmaskretilocalcurve.clear();
-                lmaskcblocalcurve.clear();
-                lmaskbllocalcurve.clear();
-                shtonecurveloc.clear();
-                tonecurveloc.clear();
-                lightCurveloc.clear();
             }
 
             t2.set();

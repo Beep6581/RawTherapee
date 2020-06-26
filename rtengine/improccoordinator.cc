@@ -1214,7 +1214,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                   minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
-                    lastorigimp->CopyFrom(nprevl);
+                    if (sp + 1u < params->locallab.spots.size()) {
+                        // do not copy for last spot as it is not needed anymore
+                        lastorigimp->CopyFrom(nprevl);
+                    }
 
                     // Save Locallab Retinex min/max for current spot
                     LocallabListener::locallabRetiMinMax retiMinMax;
@@ -1241,74 +1244,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallref.at(sp).lumar = lumar;
                         locallref.at(sp).huer = huer;
                     }
-
-                    /*
-                    //very bad idea : it's the story of the cat biting its tail
-                    // brings big bugs..
-                                    //restore ref values
-                                    huerefs[sp] = huer;
-                                    chromarefs[sp] = chromar;
-                                    lumarefs[sp] = lumar ;
-                                    sobelrefs[sp] = sobeler;
-                    */
-                    lllocalcurve.clear();
-                    lclocalcurve.clear();
-                    cllocalcurve.clear();
-                    lightCurveloc.clear();
-                    cclocalcurve.clear();
-                    rgblocalcurve.clear();
-                    exlocalcurve.clear();
-                    lmasklocalcurve.clear();
-                    lmaskexplocalcurve.clear();
-                    lmaskSHlocalcurve.clear();
-                    lmaskviblocalcurve.clear();
-                    lmasktmlocalcurve.clear();
-                    lmaskretilocalcurve.clear();
-                    lmaskcblocalcurve.clear();
-                    lmaskbllocalcurve.clear();
-                    lmasklclocalcurve.clear();
-                    hltonecurveloc.clear();
-                    shtonecurveloc.clear();
-                    tonecurveloc.clear();
-                    locRETgainCurve.Reset();
-                    locRETtransCurve.Reset();
-                    loclhCurve.Reset();
-                    lochhCurve.Reset();
-                    locccmasCurve.Reset();
-                    locllmasCurve.Reset();
-                    lochhmasCurve.Reset();
-                    lochhhmasCurve.Reset();
-                    locllmasexpCurve.Reset();
-                    locccmasexpCurve.Reset();
-                    lochhmasexpCurve.Reset();
-                    locllmasSHCurve.Reset();
-                    locccmasSHCurve.Reset();
-                    lochhmasSHCurve.Reset();
-                    locllmasvibCurve.Reset();
-                    locccmasvibCurve.Reset();
-                    lochhmasvibCurve.Reset();
-                    locllmascbCurve.Reset();
-                    locccmascbCurve.Reset();
-                    lochhmascbCurve.Reset();
-                    locllmasretiCurve.Reset();
-                    locccmasretiCurve.Reset();
-                    lochhmasretiCurve.Reset();
-                    locllmastmCurve.Reset();
-                    locccmastmCurve.Reset();
-                    lochhmastmCurve.Reset();
-                    locllmasblCurve.Reset();
-                    locccmasblCurve.Reset();
-                    lochhmasblCurve.Reset();
-                    locllmaslcCurve.Reset();
-                    locccmaslcCurve.Reset();
-                    lochhmaslcCurve.Reset();
-                    locwavCurve.Reset();
-                    loclevwavCurve.Reset();
-                    locconwavCurve.Reset();
-                    locwavCurveden.Reset();
-                    locwavCurve.Reset();
-                    loclmasCurveblwav.Reset();
-                    loclmasCurvecolwav.Reset();
                 }
 
                 // Transmit Locallab reference values and Locallab Retinex min/max to LocallabListener

@@ -1100,65 +1100,8 @@ void Crop::update(int todo)
                 }
 
                 if (sp + 1u < params.locallab.spots.size()) {
-                    // do not do this for last spot as it is not needed anymore
+                    // do not copy for last spot as it is not needed anymore
                     lastorigCrop->CopyFrom(labnCrop);
-                    lllocalcurve2.clear();
-                    lclocalcurve2.clear();
-                    cllocalcurve2.clear();
-                    lightCurveloc2.clear();
-                    rgblocalcurve2.clear();
-                    cclocalcurve2.clear();
-                    exlocalcurve2.clear();
-                    lmasklocalcurve2.clear();
-                    lmaskexplocalcurve2.clear();
-                    lmaskSHlocalcurve2.clear();
-                    lmaskviblocalcurve2.clear();
-                    lmasktmlocalcurve2.clear();
-                    lmaskretilocalcurve2.clear();
-                    lmaskcblocalcurve2.clear();
-                    lmaskbllocalcurve2.clear();
-                    hltonecurveloc2.clear();
-                    shtonecurveloc2.clear();
-                    tonecurveloc2.clear();
-                    locRETgainCurve.Reset();
-                    locRETtransCurve.Reset();
-                    loclhCurve.Reset();
-                    lochhCurve.Reset();
-                    locccmasCurve.Reset();
-                    locllmasCurve.Reset();
-                    lochhmasCurve.Reset();
-                    lochhhmasCurve.Reset();
-                    locllmasexpCurve.Reset();
-                    locccmasexpCurve.Reset();
-                    lochhmasexpCurve.Reset();
-                    locllmasSHCurve.Reset();
-                    locccmasSHCurve.Reset();
-                    lochhmasSHCurve.Reset();
-                    locllmasvibCurve.Reset();
-                    locccmasvibCurve.Reset();
-                    lochhmasvibCurve.Reset();
-                    locllmascbCurve.Reset();
-                    locccmascbCurve.Reset();
-                    lochhmascbCurve.Reset();
-                    locllmasretiCurve.Reset();
-                    locccmasretiCurve.Reset();
-                    lochhmasretiCurve.Reset();
-                    locllmastmCurve.Reset();
-                    locccmastmCurve.Reset();
-                    lochhmastmCurve.Reset();
-                    locllmasblCurve.Reset();
-                    locccmasblCurve.Reset();
-                    lochhmasblCurve.Reset();
-                    locllmaslcCurve.Reset();
-                    locccmaslcCurve.Reset();
-                    lochhmaslcCurve.Reset();
-                    locwavCurve.Reset();
-                    loclevwavCurve.Reset();
-                    locconwavCurve.Reset();
-                    locconwavCurve.Reset();
-                    locwavCurveden.Reset();
-                    loclmasCurveblwav.Reset();
-                    loclmasCurvecolwav.Reset();
                 }
 
                 if (skip <= 2) {
