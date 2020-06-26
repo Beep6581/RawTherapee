@@ -5148,7 +5148,7 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
 //        mask2CurveEditorG->hide();
         mask2CurveEditorGwav->hide();
         csThresholdmask->hide();
-
+        softradiusmask->hide();
     } else {
         // Advanced widgets are shown in Expert mode
         lapmask->show();
@@ -5164,6 +5164,7 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
 //        mask2CurveEditorG->show();
         mask2CurveEditorGwav->show();
         csThresholdmask->show();
+        softradiusmask->show();
 
     }
 }
@@ -5175,7 +5176,7 @@ void LocallabMask::convertParamToNormal()
     // Disable all listeners
     disableListener();
 
-
+    softradiusmask->setValue(defSpot.softradiusmask);
     lapmask->setValue(defSpot.lapmask);
     gammask->setValue(defSpot.gammask);
     slopmask->setValue(defSpot.slopmask);
