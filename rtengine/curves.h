@@ -375,11 +375,8 @@ public:
 
     static void curveToning(const std::vector<double>& curvePoints, LUTf & ToningCurve, int skip);
 
-    static void curveLocal(bool & locallutili, const std::vector<double>& curvePoints, LUTf & LocalLCurve, int skip);
-    static void curveCCLocal(bool & localcutili, const std::vector<double>& curvePoints, LUTf & LocalCCurve, int skip);
+    static bool curveLocal(const std::vector<double>& curvePoints, LUTf& LocalCurve, int skip);
     static void curveskLocal(bool & localskutili, const std::vector<double>& curvePoints, LUTf & LocalskCurve, int skip);
-    static void curveexLocal(bool & localexutili, const std::vector<double>& curvePoints, LUTf & LocalexCurve, int skip);
-    static void curvemaskLocal(bool & localmaskutili, const std::vector<double>& curvePoints, LUTf & LocalmaskCurve, int skip);
 
     static void complexsgnCurve(bool & autili,  bool & butili, bool & ccutili, bool & clcutili, const std::vector<double>& acurvePoints,
                                 const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
@@ -632,7 +629,7 @@ public:
     virtual ~LocLHCurve() {};
     LocLHCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints, bool &LHutili);
+    bool Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
@@ -1184,7 +1181,7 @@ public:
     virtual ~LocHHmaskCurve() {};
     LocHHmaskCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints, bool & lhmasutili);
+    bool Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
@@ -1213,7 +1210,7 @@ public:
     virtual ~LocCCmaskCurve() {};
     LocCCmaskCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints, bool & lcmasutili);
+    bool Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
@@ -1241,7 +1238,7 @@ public:
     virtual ~LocLLmaskCurve() {};
     LocLLmaskCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints, bool & llmasutili);
+    bool Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
@@ -1270,7 +1267,7 @@ public:
     virtual ~LocHHCurve() {};
     LocHHCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints, bool &HHutili);
+    bool Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
@@ -1355,7 +1352,7 @@ public:
     virtual ~LocwavCurve() {};
     LocwavCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints, bool &lcwavutili);
+    bool Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
