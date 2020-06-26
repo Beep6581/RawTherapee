@@ -3739,7 +3739,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expmask(false),
     sensimask(60),
     blendmask(-10),
-    softradiusmask(0.0),
+    softradiusmask(1.0),
     enamask(false),
     fftmask(true),
     blurmask(0.2),
