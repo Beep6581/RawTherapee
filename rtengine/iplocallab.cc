@@ -2315,7 +2315,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
                 }
             }
 
-            const float aepsil = (epsilmax - epsilmin) / 1000.f;
+            const float aepsil = (epsilmax - epsilmin) / 100.f;
             const float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
            // const float epsil = aepsil * 0.1f * rad + bepsil;
             const float epsil = aepsil * rad + bepsil;
@@ -4005,7 +4005,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             constexpr float epsilmax = 0.005f;
             constexpr float epsilmin = 0.00001f;
 
-            constexpr float aepsil = (epsilmax - epsilmin) / 1000.f;
+            constexpr float aepsil = (epsilmax - epsilmin) / 100.f;
             constexpr float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
             const float epsil = rad < 0.f ? 0.001f : aepsil * rad + bepsil;
 
@@ -9883,7 +9883,7 @@ void ImProcFunctions::Lab_Local(
                 constexpr float epsilmax = 0.005f;
                 constexpr float epsilmin = 0.00001f;
 
-                const float aepsil = (epsilmax - epsilmin) / 1000.f;
+                const float aepsil = (epsilmax - epsilmin) / 100.f;
                 const float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
                 const float epsil = lp.radmabl < 0.f ? 0.001f : aepsil * lp.radmabl + bepsil;
 
@@ -14621,7 +14621,7 @@ void ImProcFunctions::Lab_Local(
                     constexpr float epsilmax = 0.005f;
                     constexpr float epsilmin = 0.00001f;
 
-                    constexpr float aepsil = (epsilmax - epsilmin) / 1000.f;
+                    constexpr float aepsil = (epsilmax - epsilmin) / 100.f;
                     constexpr float bepsil = epsilmin;
                     const float epsil = rad < 0.f ? 0.001f : aepsil * rad + bepsil;
 

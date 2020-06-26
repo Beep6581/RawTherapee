@@ -923,7 +923,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
             double epsilmax = 0.005;
             double epsilmin = 0.00001;
 
-            double aepsil = (epsilmax - epsilmin) / 1000.f;
+            double aepsil = (epsilmax - epsilmin) / 100.f;
             double bepsil = epsilmin; //epsilmax - 100.f * aepsil;
             double epsil = aepsil * rad + bepsil;
             if (rad < 0.f) {

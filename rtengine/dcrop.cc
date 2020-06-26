@@ -1476,11 +1476,11 @@ void Crop::update(int todo)
                         }
                     double epsilmax = 0.0001;
                     double epsilmin = 0.00001;
-                    double aepsil = (epsilmax - epsilmin) / 90.f;
-                    double bepsil = epsilmax - 100.f * aepsil;
+                    double aepsil = (epsilmax - epsilmin) / 100.f;
+                    double bepsil = epsilmin; //epsilmax - 100.f * aepsil;
                     double epsil = aepsil * WaveParams.softrad + bepsil;
                     
-                    float blur = 10.f / skip * (0.0001f + 0.8f * WaveParams.softrad);
+                    float blur = 10.f / skip * (0.5f + 0.8f * WaveParams.softrad);
                     rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
 
 

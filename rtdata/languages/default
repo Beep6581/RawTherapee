@@ -2336,6 +2336,7 @@ TP_LOCALLAB_BASELOG;Logarithm base
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLACK_EV;Black Ev
 TP_LOCALLAB_BLENDMASKCOL;Blend
+TP_LOCALLAB_BLENDMASKMAK;Add / substract mask
 TP_LOCALLAB_BLENDMASK_TOOLTIP;If blend = 0 only shape detection is improved.\nIf blend > 0 the mask is added to the image. If blend < 0 the mask is subtracted from the image
 TP_LOCALLAB_BLENDMASKMASK_TOOLTIP;If blend = 0 no action.\nAdd or subtract the mask from the original image
 TP_LOCALLAB_BLGUID;Guided Filter
