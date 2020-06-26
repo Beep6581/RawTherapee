@@ -434,10 +434,15 @@ public:
             case LONG:
                 return (double) ((int)sget4 (t->getValue() + ofs, t->getOrder()));
 
-            case SRATIONAL:
-            case RATIONAL: {
+            case SRATIONAL: {
                 const double dividend = (int)sget4 (t->getValue() + ofs, t->getOrder());
                 const double divisor = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
+                return divisor == 0. ? 0. : dividend / divisor;
+            }
+
+            case RATIONAL: {
+                const double dividend = (uint32_t)sget4 (t->getValue() + ofs, t->getOrder());
+                const double divisor = (uint32_t)sget4 (t->getValue() + ofs + 4, t->getOrder());
                 return divisor == 0. ? 0. : dividend / divisor;
             }
 
@@ -454,8 +459,6 @@ public:
     // Get the value as an int
     virtual int toInt (const Tag* t, int ofs = 0, TagType astype = INVALID)
     {
-        int a;
-
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();
         }
@@ -480,10 +483,15 @@ public:
             case LONG:
                 return (int)sget4 (t->getValue() + ofs, t->getOrder());
 
-            case SRATIONAL:
-            case RATIONAL:
-                a = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
+            case SRATIONAL: {
+                int a = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
                 return a == 0 ? 0 : (int)sget4 (t->getValue() + ofs, t->getOrder()) / a;
+            }
+
+            case RATIONAL: {
+                uint32_t a = (uint32_t)sget4 (t->getValue() + ofs + 4, t->getOrder());
+                return a == 0 ? 0 : (uint32_t)sget4 (t->getValue() + ofs, t->getOrder()) / a;
+            }
 
             case FLOAT:
                 return (int)toDouble (t, ofs);

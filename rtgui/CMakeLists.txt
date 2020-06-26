@@ -34,6 +34,7 @@ set(NONCLISOURCEFILES
     colorappearance.cc
     coloredbar.cc
     colortoning.cc
+    controlspotpanel.cc
     coordinateadjuster.cc
     crop.cc
     crophandler.cc
@@ -90,6 +91,9 @@ set(NONCLISOURCEFILES
     lensgeom.cc
     lensprofile.cc
     localcontrast.cc
+    locallab.cc
+    locallabtools.cc
+    locallabtools2.cc
     lockablecolorpicker.cc
     lwbutton.cc
     lwbuttonset.cc
@@ -113,6 +117,7 @@ set(NONCLISOURCEFILES
     popuptogglebutton.cc
     preferences.cc
     preprocess.cc
+    preprocesswb.cc
     previewhandler.cc
     previewloader.cc
     previewmodepanel.cc

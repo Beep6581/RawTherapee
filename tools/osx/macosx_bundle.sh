@@ -106,7 +106,7 @@ __EOS__
 
 minimum_macos_version=${MINIMUM_SYSTEM_VERSION}
 
-# Retreive cached values from cmake
+# Retrieve cached values from cmake
 
 #In: LOCAL_PREFIX:STRING=/opt
 #Out: /opt
@@ -236,6 +236,11 @@ ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "${LOCAL_PREFIX}/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
 ditto "${LOCAL_PREFIX}/local/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
 
+# fix libfreetype install name
+for lib in "${LIB}"/*; do
+    install_name_tool -change libfreetype.6.dylib "${LIB}"/libfreetype.6.dylib "${lib}"
+done
+
 # pixbuf loaders & immodules
 msg "Build GTK3 databases:"
 "${LOCAL_PREFIX}"/local/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
@@ -259,11 +264,11 @@ ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/cliInfo.plist.in" "${LIB}/Info.plist"
 sed -i "" -e "s|@version@|${PROJECT_FULL_VERSION}|
 s|@shortVersion@|${PROJECT_VERSION}|
 s|@arch@|${arch}|" \
 "${CONTENTS}/Info.plist"
-plutil -convert binary1 "${CONTENTS}/Info.plist"
 update-mime-database -V  "${RESOURCES}/share/mime"
 
 msg "Build glib database:"
@@ -279,23 +284,25 @@ ModifyInstallNames
 
 # fix @rpath in Frameworks
 msg "Registering @rpath in Frameworks folder."
-for frameworklibs in "${LIB}"/*{dylib,so}; do
+for frameworklibs in "${LIB}"/*{dylib,so,cli}; do
     install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib "${frameworklibs}"
     install_name_tool -add_rpath /Applications/"${LIB}" "${frameworklibs}"
 done
 install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli
-install_name_tool -add_rpath @executable_path "${EXECUTABLE}"-cli
+install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli
+ditto "${EXECUTABLE}"-cli "${APP}"/..
 
 # Codesign the app
 if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
-    install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements
-    plutil -convert binary1 "${CMAKE_BUILD_TYPE}"/rt.entitlements
+    iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements > "${CMAKE_BUILD_TYPE}"/rt.entitlements
+        iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt-cli.entitlements > "${CMAKE_BUILD_TYPE}"/rt-cli.entitlements
     mv "${EXECUTABLE}"-cli "${LIB}"
-    for frameworklibs in "${LIB}"/*; do
-        codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp "${frameworklibs}"
+    for frameworklibs in "${LIB}"/*{dylib,so}; do
+        codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${frameworklibs}"
     done
-    codesign --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements  "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
+    codesign --force -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt-cli.entitlements "${LIB}"/rawtherapee-cli
+    codesign --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
     spctl -a -vvvv "${APP}"
 fi
 
@@ -345,7 +352,7 @@ function CreateDmg {
     CreateWebloc    'Report Bug' 'https://github.com/Beep6581/RawTherapee/issues/new'
     
     # Disk image name
-    dmg_name="${PROJECT_NAME// /_}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}"
+    dmg_name="${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}"
     lower_build_type="$(tr '[:upper:]' '[:lower:]' <<< "$CMAKE_BUILD_TYPE")"
     if [[ $lower_build_type != release ]]; then
         dmg_name="${dmg_name}_${lower_build_type}"
@@ -390,6 +397,7 @@ function CreateDmg {
                 xcrun stapler staple "${dmg_name}.dmg"   #  staple the ticket
                 xcrun stapler validate -v "${dmg_name}.dmg"
                 echo "dmg Notarization success"
+                rm *dmg.zip
                 break
                 elif [[ $status1 = "in" ]]; then
                 echo "dmg Notarization still in progress, sleeping for 15 seconds and trying again"
@@ -404,10 +412,12 @@ function CreateDmg {
     
     # Zip disk image for redistribution
     msg "Zipping disk image for redistribution:"
-    zip "${dmg_name}.zip" "${dmg_name}.dmg"
-    rm "${dmg_name}.dmg"
-    msg "Removing disk image caches:"
-    rm -rf "${srcDir}"
+    mkdir "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder"
+        ditto {"${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}.dmg","rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder"
+    zip -r "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder/"
+    # rm "${dmg_name}.dmg"
+    # msg "Removing disk image caches:"
+    # rm -rf "${srcDir}"
 }
 CreateDmg
 msg "Finishing build:"

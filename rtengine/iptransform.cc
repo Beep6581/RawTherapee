@@ -491,15 +491,8 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     for (size_t i = 0; i < src.size(); i++) {
         double x_d = src[i].x, y_d = src[i].y;
 
-        if (pLCPMap && params->lensProf.useDist) {
-            pLCPMap->correctDistortion(x_d, y_d, 0, 0, ascale);
-        } else {
-            x_d *= ascale;
-            y_d *= ascale;
-        }
-
-        x_d += ascale * (0 - w2);     // centering x coord & scale
-        y_d += ascale * (0 - h2);     // centering y coord & scale
+        y_d = ascale * (y_d - h2);     // centering x coord & scale
+        x_d = ascale * (x_d - w2);     // centering x coord & scale
 
         switch (perspectiveType) {
             case PerspType::NONE:
@@ -520,6 +513,10 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
                 x_d = xw / w;
                 y_d = yw / w;
                 break;
+        }
+
+        if (pLCPMap && params->lensProf.useDist) {
+            pLCPMap->correctDistortion(x_d, y_d, 0, 0);
         }
 
         // rotate
@@ -817,7 +814,7 @@ static void calcGradientParams (int oW, int oH, const GradientParams& gradient, 
     }
 }
 
-static float calcGradientFactor (const struct grad_params& gp, int x, int y)
+float ImProcFunctions::calcGradientFactor (const struct grad_params& gp, int x, int y)
 {
     if (gp.angle_is_zero) {
         int gy = gp.transpose ? x : y;
@@ -1219,15 +1216,8 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             double x_d = x;
             double y_d = y;
 
-            if (enableLCPDist) {
-                pLCPMap->correctDistortion(x_d, y_d, cx, cy, ascale); // must be first transform
-            } else {
-                x_d *= ascale;
-                y_d *= ascale;
-            }
-
-            x_d += ascale * centerFactorx; // centering x coord & scale
-            y_d += ascale * centerFactory; // centering y coord & scale
+            x_d = ascale * (x_d + centerFactorx);     // centering x coord & scale
+            y_d = ascale * (y_d + centerFactory);     // centering y coord & scale
 
             switch (perspectiveType) {
                 case PerspType::NONE:
@@ -1248,6 +1238,10 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     x_d = xw / w;
                     y_d = yw / w;
                     break;
+            }
+
+            if (enableLCPDist) {
+                pLCPMap->correctDistortion(x_d, y_d, w2, h2);
             }
 
             // rotate

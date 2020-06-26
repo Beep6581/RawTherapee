@@ -50,6 +50,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     setCamBasedEventsActive();
 
     lens_geom_listener = nullptr;
+    metadata = nullptr;
 
     Gtk::Image* ipers_draw_horiz = Gtk::manage (new RTImage ("draw-horizontal.png"));
     Gtk::Image* ipers_draw_vert = Gtk::manage (new RTImage ("draw-vertical.png"));

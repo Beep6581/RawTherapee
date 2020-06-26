@@ -274,6 +274,7 @@ void CurveEditorGroup::curveTypeToggled(CurveEditor* ce)
 
         if (ct < ce->subGroup->valUnchanged) {
             ce->subGroup->restoreDisplayedHistogram();
+            ce->subGroup->restoreLocallabBackground();
         }
     } else {
         // The button is now released, so we have to hide this CurveEditor
