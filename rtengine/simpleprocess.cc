@@ -971,8 +971,6 @@ private:
         }
 
         labView = new LabImage(fw, fh);
-        reservView = new LabImage(fw, fh);
-        lastorigView = new LabImage(fw, fh);
 
         if (params.blackwhite.enabled) {
             CurveFactory::curveBW(params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
@@ -1080,15 +1078,13 @@ private:
                                       params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
 
-        //     bool locallutili = false;
-        //     bool localcutili = false;
-        reservView->CopyFrom(labView);
-        lastorigView->CopyFrom(labView);
-
         if (params.locallab.enabled) {
             MyTime t1, t2;
             t1.set();
-
+            const std::unique_ptr<LabImage> reservView(new LabImage(fw, fh));
+            reservView->CopyFrom(labView);
+            const std::unique_ptr<LabImage> lastorigView(new LabImage(fw, fh));
+            lastorigView->CopyFrom(labView);
             LUTf huerefs(500, -10000.f);
             LUTf sobelrefs(500, -10000.f);
             LUTi centerx(500, -10000);
@@ -1313,7 +1309,7 @@ private:
                 int lastsav;
                 float avge;
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                    ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
                     ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
@@ -1330,7 +1326,7 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, lastorigView, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
+                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
                         lllocalcurve, locallutili, 
                         cllocalcurve, localclutili,
                         lclocalcurve, locallcutili,
@@ -1373,7 +1369,7 @@ private:
                 lastorigView->CopyFrom(labView);
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                    ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
                     ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
@@ -1416,11 +1412,6 @@ private:
             }
 
         }
-
-        delete reservView;
-        reservView = nullptr;
-        delete lastorigView;
-        lastorigView = nullptr;
 
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
@@ -1768,10 +1759,6 @@ private:
         delete labView;
         labView = nullptr;
 
-//       delete reservView;
-//       reservView = nullptr;
-
-
         if (bwonly) { //force BW r=g=b
             if (settings->verbose) {
                 printf("Force BW\n");
@@ -2046,8 +2033,6 @@ private:
     ColorTemp currWB;
     Imagefloat *baseImg;
     LabImage* labView;
-    LabImage* reservView;
-    LabImage* lastorigView;
 
     LUTu hist16;
 
