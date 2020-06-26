@@ -1161,8 +1161,6 @@ private:
             for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
 
                 // Set local curves of current spot to LUT
-                bool lcmaslcutili = false;
-                bool llmaslcutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
                 const bool LHutili = loclhCurve.Set(params.locallab.spots.at(sp).LHcurve);
@@ -1195,7 +1193,8 @@ private:
                 const bool lhmasblutili = lochhmasblCurve.Set(params.locallab.spots.at(sp).HHmaskblcurve);
                 const bool lmasutiliblwav = loclmasCurveblwav.Set(params.locallab.spots.at(sp).LLmaskblcurvewav);
                 const bool lmasutilicolwav = loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav);
-
+                const bool lcmaslcutili = locccmaslcCurve.Set(params.locallab.spots.at(sp).CCmasklccurve);
+                const bool llmaslcutili = locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve);
                 const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
                 const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
                 const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
