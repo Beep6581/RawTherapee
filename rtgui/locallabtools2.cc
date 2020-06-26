@@ -4940,19 +4940,6 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
 
     } else {
         exp->set_tooltip_text(M(""));
-        sensimask->set_tooltip_text(M(""));
-        blendmask->set_tooltip_text(M(""));
-        CCmask_shape->setTooltip(M(""));
-        LLmask_shape->setTooltip(M(""));
-        HHmask_shape->setTooltip(M(""));
-        struFrame->set_tooltip_text(M(""));
-        mask_HCurveEditorG->set_tooltip_text(M(""));
-        radmask->set_tooltip_text(M(""));
-        lapmask->set_tooltip_text(M(""));
-        mask2CurveEditorG->set_tooltip_text(M(""));
-        Lmask_shape->setTooltip(M(""));
-        mask2CurveEditorGwav->set_tooltip_text(M(""));
-        LLmask_shapewav->setTooltip(M(""));
     }
 }
 
@@ -5204,7 +5191,7 @@ void LocallabMask::convertParamToNormal()
 //    Lmask_shape->setCurve(defSpot.Lmask_curve);
     LLmask_shapewav->setCurve(defSpot.LLmask_curvewav);
     csThresholdmask->setValue<int>(defSpot.csthresholdmask);
-
+    updatemaskGUI3();
     // Enable all listeners
     enableListener();
 
