@@ -841,6 +841,7 @@ public:
         bool expmask;
         bool sensimask;
         bool blendmask;
+        bool blendmaskab;
         bool softradiusmask;
         bool enamask;
         bool fftmask;

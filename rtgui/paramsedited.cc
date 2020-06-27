@@ -1483,6 +1483,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expmask = locallab.spots.at(j).expmask && pSpot.expmask == otherSpot.expmask;
                 locallab.spots.at(j).sensimask = locallab.spots.at(j).sensimask && pSpot.sensimask == otherSpot.sensimask;
                 locallab.spots.at(j).blendmask = locallab.spots.at(j).blendmask && pSpot.blendmask == otherSpot.blendmask;
+                locallab.spots.at(j).blendmaskab = locallab.spots.at(j).blendmaskab && pSpot.blendmaskab == otherSpot.blendmaskab;
                 locallab.spots.at(j).softradiusmask = locallab.spots.at(j).softradiusmask && pSpot.softradiusmask == otherSpot.softradiusmask;
                 locallab.spots.at(j).enamask = locallab.spots.at(j).enamask && pSpot.enamask == otherSpot.enamask;
                 locallab.spots.at(j).fftmask = locallab.spots.at(j).fftmask && pSpot.fftmask == otherSpot.fftmask;
@@ -4831,6 +4832,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).blendmask = mods.locallab.spots.at(i).blendmask;
         }
 
+        if (locallab.spots.at(i).blendmaskab) {
+            toEdit.locallab.spots.at(i).blendmaskab = mods.locallab.spots.at(i).blendmaskab;
+        }
+
         if (locallab.spots.at(i).softradiusmask) {
             toEdit.locallab.spots.at(i).softradiusmask = mods.locallab.spots.at(i).softradiusmask;
         }
@@ -6494,6 +6499,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     expmask(v),
     sensimask(v),
     blendmask(v),
+    blendmaskab(v),
     softradiusmask(v),
     enamask(v),
     fftmask(v),
@@ -6983,6 +6989,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expmask = v;
     sensimask = v;
     blendmask = v;
+    blendmaskab = v;
     softradiusmask = v;
     enamask = v;
     fftmask = v;

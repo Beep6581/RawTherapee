@@ -1167,7 +1167,7 @@ HISTORY_MSG_926;Local - Show mask type
 HISTORY_MSG_927;Local - Shadow mask
 HISTORY_MSG_928;Local - Common color mask
 HISTORY_MSG_929;Local - Mask common scope
-HISTORY_MSG_930;Local - Mask Common blend
+HISTORY_MSG_930;Local - Mask Common blend luma
 HISTORY_MSG_931;Local - Mask Common enable
 HISTORY_MSG_932;Local - Mask Common radius soft
 HISTORY_MSG_933;Local - Mask Common laplacian
@@ -1190,6 +1190,7 @@ HISTORY_MSG_949;Local - Mask Common Threshold levels
 HISTORY_MSG_950;Local - Mask Common GF strength
 HISTORY_MSG_951;Local - Mask Common GF angle
 HISTORY_MSG_952;Local - Mask Common soft radius
+HISTORY_MSG_953;Local - Mask Common blend chroma
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
@@ -2336,7 +2337,8 @@ TP_LOCALLAB_BASELOG;Logarithm base
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLACK_EV;Black Ev
 TP_LOCALLAB_BLENDMASKCOL;Blend
-TP_LOCALLAB_BLENDMASKMAK;Add / substract mask
+TP_LOCALLAB_BLENDMASKMASK;Add / substract mask Luminance
+TP_LOCALLAB_BLENDMASKMASKAB;Add / substract mask Chrominance
 TP_LOCALLAB_BLENDMASK_TOOLTIP;If blend = 0 only shape detection is improved.\nIf blend > 0 the mask is added to the image. If blend < 0 the mask is subtracted from the image
 TP_LOCALLAB_BLENDMASKMASK_TOOLTIP;If this slider = 0 no action.\nAdd or subtract the mask from the original image
 TP_LOCALLAB_BLGUID;Guided Filter

@@ -4731,7 +4731,8 @@ LocallabMask::LocallabMask():
 
     // Comon mask specific widgets
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
-    blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMAK"), -100, 100, 1, -10))),
+    blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASK"), -100, 100, 1, -10))),
+    blendmaskab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASKAB"), -100, 100, 1, -10))),
     softradiusmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 1.))),
 
     showmask_Method(Gtk::manage(new MyComboBoxText())),
@@ -4773,6 +4774,7 @@ LocallabMask::LocallabMask():
     
         sensimask->setAdjusterListener(this);
         blendmask->setAdjusterListener(this);
+        blendmaskab->setAdjusterListener(this);
        // softradiusmask->setLogScale(10, -10);
         softradiusmask->setAdjusterListener(this);
         showmask_Method->append(M("TP_LOCALLAB_SHOWMNONE"));
@@ -4848,6 +4850,7 @@ LocallabMask::LocallabMask():
 
         pack_start(*sensimask, Gtk::PACK_SHRINK, 0);
         pack_start(*blendmask, Gtk::PACK_SHRINK, 0);
+        pack_start(*blendmaskab, Gtk::PACK_SHRINK, 0);
         pack_start(*softradiusmask, Gtk::PACK_SHRINK, 0);
         ToolParamBlock* const maskmaskBox = Gtk::manage(new ToolParamBlock());
         maskmaskBox->pack_start(*showmask_Method, Gtk::PACK_SHRINK, 4);
@@ -4926,6 +4929,7 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text(M("TP_LOCALLAB_MASKCOM_TOOLTIP"));
         sensimask->set_tooltip_text(M("TP_LOCALLAB_SENSIMASK_TOOLTIP"));
         blendmask->set_tooltip_text(M("TP_LOCALLAB_BLENDMASKMASK_TOOLTIP"));
+        blendmaskab->set_tooltip_text(M("TP_LOCALLAB_BLENDMASKMASK_TOOLTIP"));
         CCmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP"));
         LLmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP"));
         HHmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP"));
@@ -5009,6 +5013,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         blurmask->setValue(spot.blurmask);
         
         blendmask->setValue(spot.blendmask);
+        blendmaskab->setValue(spot.blendmaskab);
         softradiusmask->setValue(spot.softradiusmask); 
         enamask->set_active(spot.enamask);
         CCmask_shape->setCurve(spot.CCmask_curve);
@@ -5055,6 +5060,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
         spot.sensimask = sensimask->getIntValue();
         spot.blendmask = blendmask->getIntValue();
+        spot.blendmaskab = blendmaskab->getIntValue();
         spot.softradiusmask = softradiusmask->getValue();
         spot.enamask = enamask->get_active();
         spot.CCmask_curve = CCmask_shape->getCurve();
@@ -5112,6 +5118,7 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         strumaskmask->setDefault(defSpot.strumaskmask);
         toolmask->set_active(defSpot.toolmask);
         blendmask->setDefault((double)defSpot.blendmask);
+        blendmaskab->setDefault((double)defSpot.blendmaskab);
         softradiusmask->setDefault((double)defSpot.softradiusmask);
         radmask->setDefault(defSpot.radmask);
         lapmask->setDefault(defSpot.lapmask);
@@ -5338,6 +5345,13 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabblendmask,
                                        blendmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == blendmaskab) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblendmaskab,
+                                       blendmaskab->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

@@ -1206,6 +1206,7 @@ class LocallabMask:
 private:
     Adjuster* const sensimask;
     Adjuster* const blendmask;
+    Adjuster* const blendmaskab;
     Adjuster* const softradiusmask;
 
     MyComboBoxText* const showmask_Method;

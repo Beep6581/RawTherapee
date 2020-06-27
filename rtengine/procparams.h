@@ -1427,6 +1427,7 @@ struct LocallabParams {
         bool expmask;
         int sensimask;
         int blendmask;
+        int blendmaskab;
         double softradiusmask;
         bool enamask;
         bool fftmask;
