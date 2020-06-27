@@ -2858,7 +2858,6 @@ TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance - Warm & Cool
 TP_LOCALLAB_VIB_TOOLNAME;Vibrance - Warm & Cool - 3
-<<<<<<< HEAD
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
 TP_LOCALLAB_BLUR_TOOLNAME;Smooth Blur Gain & Denoise - 1
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
@@ -2868,9 +2867,7 @@ TP_LOCALLAB_LC_TOOLNAME;Local Constrast & Wavelet (Defects) - 7
 TP_LOCALLAB_CBDL_TOOLNAME;CBDL (Defects) - 2
 TP_LOCALLAB_LOG_TOOLNAME;Encoding log - 0
 TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask  - 13
-=======
 TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctrl</b>+<b>click</b> to show/hide all Control Spot.
->>>>>>> dev
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
