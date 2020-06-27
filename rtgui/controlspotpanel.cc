@@ -360,11 +360,15 @@ ControlSpotPanel::ControlSpotPanel():
     artifBox->pack_start(*balan_);
     artifBox->pack_start(*balanh_);
     artifBox->pack_start(*colorde_);
-    artifBox->pack_start(*preview_);
-    artifBox->pack_start(*colorscope_);
+//    artifBox->pack_start(*preview_);
+//    artifBox->pack_start(*colorscope_);
     expShapeDetect_->add(*artifBox, false);
     pack_start(*expShapeDetect_, false, false);
-
+    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
+    
+    artifBox2->pack_start(*preview_);
+    artifBox2->pack_start(*colorscope_);
+    pack_start(*artifBox2);
     ToolParamBlock* const specCaseBox = Gtk::manage(new ToolParamBlock());
 
     avoidConn_  = avoid_->signal_toggled().connect(
@@ -389,6 +393,29 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     specCaseBox->pack_start(*recurs_);
+    specCaseBox->pack_start(*ctboxshapemethod);
+
+    Gtk::HBox* const ctboxwavmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labelwavmethod = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUBLOCAL") + ":"));
+    ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
+
+    if (showtooltip) {
+        ctboxwavmethod->set_tooltip_markup(M("TP_WAVELET_DAUB_TOOLTIP"));
+    }
+
+    wavMethod_->append(M("TP_WAVELET_DAUB2"));
+    wavMethod_->append(M("TP_WAVELET_DAUB4"));
+    wavMethod_->append(M("TP_WAVELET_DAUB6"));
+    wavMethod_->append(M("TP_WAVELET_DAUB10"));
+    wavMethod_->append(M("TP_WAVELET_DAUB14"));
+    wavMethod_->set_active(1);
+    wavMethodconn_ = wavMethod_->signal_changed().connect(
+                         sigc::mem_fun(
+                             *this, &ControlSpotPanel::wavMethodChanged));
+    ctboxwavmethod->pack_start(*wavMethod_);
+    specCaseBox->pack_start(*ctboxwavmethod);
+
+    
     expSpecCases_->add(*specCaseBox, false);
     pack_start(*expSpecCases_, false, false);
 
@@ -452,7 +479,7 @@ ControlSpotPanel::ControlSpotPanel():
                                  *this, &ControlSpotPanel::complexMethodChanged));
     ctboxcomplexmethod->pack_start(*complexMethod_);
     // pack_start(*ctboxcomplexmethod);
-
+/*
     Gtk::HBox* const ctboxwavmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelwavmethod = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUBLOCAL") + ":"));
     ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
@@ -472,7 +499,7 @@ ControlSpotPanel::ControlSpotPanel():
                              *this, &ControlSpotPanel::wavMethodChanged));
     ctboxwavmethod->pack_start(*wavMethod_);
     pack_start(*ctboxwavmethod);
-
+*/
     show_all();
 
     // Define row background color

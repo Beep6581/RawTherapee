@@ -1421,6 +1421,35 @@ struct LocallabParams {
         double baselog;
         double strlog;
         double anglog;
+        // mask
+        bool visimask;
+        int complexmask;
+        bool expmask;
+        int sensimask;
+        double blendmask;
+        double blendmaskab;
+        double softradiusmask;
+        bool enamask;
+        bool fftmask;
+        double blurmask;
+        double contmask;
+        std::vector<double> CCmask_curve;
+        std::vector<double> LLmask_curve;
+        std::vector<double> HHmask_curve;
+        double strumaskmask;
+        bool toolmask;
+        double radmask;
+        double lapmask;
+        double chromask;
+        double gammask;
+        double slopmask;
+        double shadmask;
+        int str_mask;
+        int ang_mask;
+        std::vector<double> HHhmask_curve;
+        std::vector<double> Lmask_curve;
+        std::vector<double> LLmask_curvewav;
+        Threshold<int> csthresholdmask;
 
         LocallabSpot();
 

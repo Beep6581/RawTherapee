@@ -115,6 +115,7 @@ private:
     LocallabContrast* const expcontrast;
     LocallabCBDL* const expcbdl;
     LocallabLog* const explog;
+    LocallabMask* const expmask;
 
     std::vector<LocallabTool*> locallabTools;
 
@@ -162,6 +163,7 @@ public:
         int sharMask;
         int lcMask;
         int cbMask;
+        int maskMask;
     };
 
     void resetMaskVisibility();
