@@ -1150,16 +1150,15 @@ private:
             LUTf lmaskbllocalcurve(65536, 0);
             LUTf lmasklclocalcurve(65536, 0);
 
-            bool needsShBuffer = false;
+            array2D<float> shbuffer;
             for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
                 if (params.locallab.spots.at(sp).inverssha) {
-                    needsShBuffer = true;
+                    shbuffer(fw, fh);
                     break;
                 }
             }
-            std::unique_ptr<array2D<float>> shbuffer(needsShBuffer ? new array2D<float>(fw, fh) : nullptr);
-            for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
 
+            for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
@@ -1251,7 +1250,7 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, *shbuffer.get(), labView, labView, reservView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
+                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
                         lllocalcurve, locallutili, 
                         cllocalcurve, localclutili,
                         lclocalcurve, locallcutili,
