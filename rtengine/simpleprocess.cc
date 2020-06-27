@@ -1081,10 +1081,8 @@ private:
         if (params.locallab.enabled && params.locallab.spots.size() > 0) {
             MyTime t1, t2;
             t1.set();
-            const std::unique_ptr<LabImage> reservView(new LabImage(fw, fh));
-            reservView->CopyFrom(labView);
-            const std::unique_ptr<LabImage> lastorigView(new LabImage(fw, fh));
-            lastorigView->CopyFrom(labView);
+            const std::unique_ptr<LabImage> reservView(new LabImage(*labView, true));
+            const std::unique_ptr<LabImage> lastorigView(new LabImage(*labView, true));
             LocretigainCurve locRETgainCurve;
             LocretitransCurve locRETtransCurve;
             LocLHCurve loclhCurve;
@@ -1370,8 +1368,7 @@ private:
             }
 */
             if (WaveParams.softrad > 0.f) {
-                provradius = new LabImage(fw, fh);
-                provradius->CopyFrom(labView);
+                provradius = new LabImage(*labView, true);
             }
 
             params.wavelet.getCurves(wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
@@ -1379,11 +1376,10 @@ private:
             CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
-                unshar = new LabImage(fw, fh);
                 provis = params.wavelet.CLmethod;
                 params.wavelet.CLmethod = "all";
                 ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
-                unshar->CopyFrom(labView);
+                unshar = new LabImage(*labView, true);
                 params.wavelet.CLmethod = provis;
 
                 WaveParams.expcontrast = false;

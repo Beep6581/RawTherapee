@@ -1040,10 +1040,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                  *  2017 2018 Jacques Desmis <jdesmis@gmail.com>
                  *  2019 Pierre Cabrera <pierre.cab@gmail.com>
                  */
-                const std::unique_ptr<LabImage> reserv(new LabImage(oprevl->W, oprevl->H));
-                reserv->CopyFrom(oprevl);
-                const std::unique_ptr<LabImage> lastorigimp(new LabImage(oprevl->W, oprevl->H));
-                lastorigimp->CopyFrom(oprevl);
+                const std::unique_ptr<LabImage> reserv(new LabImage(*oprevl, true));
+                const std::unique_ptr<LabImage> lastorigimp(new LabImage(*oprevl, true));
                 float **shbuffer = nullptr;
                 int sca = 1;
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
@@ -1287,20 +1285,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 if (WaveParams.softrad > 0.f) {
-                    provradius = new LabImage(pW, pH);
-                    provradius->CopyFrom(nprevl);
+                    provradius = new LabImage(*nprevl, true);
                 }
 
-
-
-
                 if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
-                    unshar = new LabImage(pW, pH);
                     provis = params->wavelet.CLmethod;
                     params->wavelet.CLmethod = "all";
                     ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
-
-                    unshar->CopyFrom(nprevl);
+                    unshar = new LabImage(*nprevl, true);
 
                     params->wavelet.CLmethod = provis;
 

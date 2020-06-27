@@ -856,10 +856,8 @@ void Crop::update(int todo)
         labnCrop->CopyFrom(laboCrop);
 
         if (params.locallab.enabled && !params.locallab.spots.empty()) {
-            const std::unique_ptr<LabImage> reservCrop(new LabImage(laboCrop->W, laboCrop->H));
-            reservCrop->CopyFrom(laboCrop);
-            const std::unique_ptr<LabImage> lastorigCrop(new LabImage(laboCrop->W, laboCrop->H));
-            lastorigCrop->CopyFrom(laboCrop);
+            const std::unique_ptr<LabImage> reservCrop(new LabImage(*laboCrop, true));
+            const std::unique_ptr<LabImage> lastorigCrop(new LabImage(*laboCrop, true));
             auto& lllocalcurve2 = parent->lllocalcurve;
             auto& cllocalcurve2 = parent->cllocalcurve;
             auto& lclocalcurve2 = parent->lclocalcurve;
@@ -1235,19 +1233,17 @@ void Crop::update(int todo)
 
 
             if (WaveParams.softrad > 0.f) {
-                provradius = new LabImage(labnCrop->W, labnCrop->H);
-                provradius->CopyFrom(labnCrop);
+                provradius = new LabImage(*labnCrop, true);
             }
 
 
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
 
-                unshar = new LabImage(labnCrop->W, labnCrop->H);
                 provis = params.wavelet.CLmethod;
                 params.wavelet.CLmethod = "all";
                 parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
-                unshar->CopyFrom(labnCrop);
+                unshar = new LabImage(*labnCrop, true);
 
                 params.wavelet.CLmethod = provis;
 
