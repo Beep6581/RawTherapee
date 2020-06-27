@@ -851,23 +851,11 @@ void Crop::update(int todo)
     }*/
 
     // apply luminance operations
-    //bool tutu = true;
     if (todo & (M_LUMINANCE + M_COLOR)) { //
-        //if (tutu) { //
         //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
         labnCrop->CopyFrom(laboCrop);
 
-        //parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
-        bool utili = parent->utili;
-        bool autili = parent->autili;
-        bool butili = parent->butili;
-        bool ccutili = parent->ccutili;
-        bool clcutili = parent->clcutili;
-        bool cclutili = parent->cclutili;
-
-
-        bool needslocal = params.locallab.enabled && !params.locallab.spots.empty();
-        if (needslocal) {
+        if (params.locallab.enabled && !params.locallab.spots.empty()) {
             const std::unique_ptr<LabImage> reservCrop(new LabImage(laboCrop->W, laboCrop->H));
             reservCrop->CopyFrom(laboCrop);
             const std::unique_ptr<LabImage> lastorigCrop(new LabImage(laboCrop->W, laboCrop->H));
@@ -1012,8 +1000,6 @@ void Crop::update(int todo)
                 sobelre = parent->sobelrefs[sp];
                 const float avge = parent->avgs[sp];
                 
-                int lastsav = parent->lastsavrests[sp];
-                
                 float minCD;
                 float maxCD;
                 float mini;
@@ -1022,6 +1008,7 @@ void Crop::update(int todo)
                 float Tsigma;
                 float Tmin;
                 float Tmax;
+                int lastsav;
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumare,
                                                 hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, avge,
                                                 skip);
@@ -1109,6 +1096,13 @@ void Crop::update(int todo)
                 }
             }
         }
+
+        bool utili = parent->utili;
+        bool autili = parent->autili;
+        bool butili = parent->butili;
+        bool ccutili = parent->ccutili;
+        bool clcutili = parent->clcutili;
+        bool cclutili = parent->cclutili;
 
         LUTu dummy;
         parent->ipf.chromiLuminanceCurve(this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);

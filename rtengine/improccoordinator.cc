@@ -187,7 +187,6 @@ ImProcCoordinator::ImProcCoordinator() :
 
     // Locallab
     locallListener(nullptr),
-    coordX(0), coordY(0), localX(0), localY(0),
     lllocalcurve(65536, 0),
     cllocalcurve(65536, 0),
     lclocalcurve(65536, 0),
@@ -207,24 +206,6 @@ ImProcCoordinator::ImProcCoordinator() :
     lmaskcblocalcurve(65536, 0),
     lmaskbllocalcurve(65536, 0),
     lmasklclocalcurve(65536, 0),
-    lastsavrests(500, -10000),
-    huerefs(500, -100000.f),
-    huerefblurs(500, -100000.f),
-    chromarefblurs(500, -100000.f),
-    lumarefblurs(500, -100000.f),
-    chromarefs(500, -100000.f),
-    lumarefs(500, -100000.f),
-    sobelrefs(500, -100000.f),
-    avgs(500, -100000.f),
-    huer(0),
-    huerblu(0),
-    chromarblu(0),
-    lumarblu(0),
-    chromar(0),
-    lumar(0),
-    sobeler(0),
-    lastsav(0),
-    avg(0),
     lastspotdup(false),
     previewDeltaE(false),
     locallColorMask(0),
@@ -1069,6 +1050,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float avge;
                 std::vector<LocallabListener::locallabRef> locallref;
                 std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
+                huerefs.resize(params->locallab.spots.size());
+                huerefblurs.resize(params->locallab.spots.size());
+                chromarefblurs.resize(params->locallab.spots.size());
+                lumarefblurs.resize(params->locallab.spots.size());
+                chromarefs.resize(params->locallab.spots.size());
+                lumarefs.resize(params->locallab.spots.size());
+                sobelrefs.resize(params->locallab.spots.size());
+                avgs.resize(params->locallab.spots.size());
 
                 for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
                     // Set local curves of current spot to LUT
@@ -1147,14 +1136,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                     }
 
-                    huerblu = huerefblurs[sp] = huerefblu;
-                    chromarblu = chromarefblurs[sp] = chromarefblu;
-                    lumarblu = lumarefblurs[sp] = lumarefblu;
-                    huer = huerefs[sp] = huere;
-                    chromar = chromarefs[sp] = chromare;
-                    lumar = lumarefs[sp] = lumare ;
-                    sobeler = sobelrefs[sp] = sobelre;
-                    avg = avgs[sp] = avge;
+                    double huerblu = huerefblurs[sp] = huerefblu;
+                    double chromarblu = chromarefblurs[sp] = chromarefblu;
+                    double lumarblu = lumarefblurs[sp] = lumarefblu;
+                    double huer = huerefs[sp] = huere;
+                    double chromar = chromarefs[sp] = chromare;
+                    double lumar = lumarefs[sp] = lumare ;
+                    double sobeler = sobelrefs[sp] = sobelre;
+                    float avg = avgs[sp] = avge;
                     CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumar,
                                                     hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                     sca);
@@ -1179,6 +1168,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float Tsigma;
                     float Tmin;
                     float Tmax;
+                    int lastsav;
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), lastorigimp.get(), 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                                   lllocalcurve, locallutili,
                                   cllocalcurve, localclutili,

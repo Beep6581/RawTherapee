@@ -235,7 +235,6 @@ protected:
     
     //locallab
     LocallabListener* locallListener;
-    int coordX, coordY, localX, localY;
     LUTf lllocalcurve;
     LUTf cllocalcurve;
     LUTf lclocalcurve;
@@ -255,7 +254,6 @@ protected:
     LUTf lmaskcblocalcurve;
     LUTf lmaskbllocalcurve;
     LUTf lmasklclocalcurve;
-//    LUTu lhist16loc;
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;
     LocretigainCurverab locRETgainCurverab;
@@ -299,18 +297,14 @@ protected:
     LocwavCurve locwavCurveden;
     LocwavCurve locedgwavCurve;
 
-    LUTu lastsavrests;
-    LUTf huerefs;
-    LUTf huerefblurs;
-    LUTf chromarefblurs;
-    LUTf lumarefblurs;
-    LUTf chromarefs;
-    LUTf lumarefs;
-    LUTf sobelrefs;
-    LUTf avgs;
-    double huer, huerblu, chromarblu, lumarblu, chromar, lumar, sobeler;
-    int lastsav;
-    float avg;
+    std::vector<float> huerefs;
+    std::vector<float> huerefblurs;
+    std::vector<float> chromarefblurs;
+    std::vector<float> lumarefblurs;
+    std::vector<float> chromarefs;
+    std::vector<float> lumarefs;
+    std::vector<float> sobelrefs;
+    std::vector<float> avgs;
     bool lastspotdup;
     bool previewDeltaE;
     int locallColorMask;

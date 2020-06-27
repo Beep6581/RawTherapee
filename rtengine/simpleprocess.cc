@@ -1085,10 +1085,6 @@ private:
             reservView->CopyFrom(labView);
             const std::unique_ptr<LabImage> lastorigView(new LabImage(fw, fh));
             lastorigView->CopyFrom(labView);
-            LUTf huerefs(500, -10000.f);
-            LUTf sobelrefs(500, -10000.f);
-            LUTi centerx(500, -10000);
-            LUTi centery(500, -10000);
             LocretigainCurve locRETgainCurve;
             LocretitransCurve locRETtransCurve;
             LocLHCurve loclhCurve;
