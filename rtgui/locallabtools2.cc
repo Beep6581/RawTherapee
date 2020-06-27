@@ -4731,8 +4731,8 @@ LocallabMask::LocallabMask():
 
     // Comon mask specific widgets
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
-    blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASK"), -100, 100, 1, -10))),
-    blendmaskab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASKAB"), -100, 100, 1, -10))),
+    blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASK"), -100., 100., 0.1, -10.))),
+    blendmaskab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASKAB"), -100., 100., 0.1, -10.))),
     softradiusmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 1.))),
 
     showmask_Method(Gtk::manage(new MyComboBoxText())),
@@ -5059,8 +5059,8 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.complexmask = complexity->get_active_row_number();
 
         spot.sensimask = sensimask->getIntValue();
-        spot.blendmask = blendmask->getIntValue();
-        spot.blendmaskab = blendmaskab->getIntValue();
+        spot.blendmask = blendmask->getValue();
+        spot.blendmaskab = blendmaskab->getValue();
         spot.softradiusmask = softradiusmask->getValue();
         spot.enamask = enamask->get_active();
         spot.CCmask_curve = CCmask_shape->getCurve();
@@ -5117,8 +5117,8 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         sensimask->setDefault((double)defSpot.sensimask);
         strumaskmask->setDefault(defSpot.strumaskmask);
         toolmask->set_active(defSpot.toolmask);
-        blendmask->setDefault((double)defSpot.blendmask);
-        blendmaskab->setDefault((double)defSpot.blendmaskab);
+        blendmask->setDefault(defSpot.blendmask);
+        blendmaskab->setDefault(defSpot.blendmaskab);
         softradiusmask->setDefault((double)defSpot.softradiusmask);
         radmask->setDefault(defSpot.radmask);
         lapmask->setDefault(defSpot.lapmask);
