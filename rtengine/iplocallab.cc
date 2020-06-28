@@ -249,20 +249,20 @@ float calcreducdE(float dE, float maxdE, float mindE, float maxdElim, float mind
 void deltaEforLaplace(float *dE, const float lap, int bfw, int bfh, rtengine::LabImage* bufexporig, const float hueref, const float chromaref, const float lumaref)
 {
 
-    const float refa = chromaref * cos(hueref);
-    const float refb = chromaref * sin(hueref);
+    const float refa = chromaref * std::cos(hueref);
+    const float refb = chromaref * std::sin(hueref);
     const float refL = lumaref;
     float maxdE = 5.f + MAXSCOPE * lap;
 
-    std::unique_ptr<float[]> dEforLaplace(new float [bfw * bfh]);
     float maxC = std::sqrt((rtengine::SQR(refa - bufexporig->a[0][0]) + rtengine::SQR(refb - bufexporig->b[0][0])) + rtengine::SQR(refL - bufexporig->L[0][0])) / 327.68f;
 #ifdef _OPENMP
     #pragma omp parallel for reduction(max:maxC)
 #endif
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
-            dEforLaplace[y * bfw + x] = std::sqrt((rtengine::SQR(refa - bufexporig->a[y][x]) + rtengine::SQR(refb - bufexporig->b[y][x])) + rtengine::SQR(refL - bufexporig->L[y][x])) / 327.68f;
-            maxC = rtengine::max(maxC, dEforLaplace[y * bfw + x]);
+            const float val = std::sqrt((rtengine::SQR(refa - bufexporig->a[y][x]) + rtengine::SQR(refb - bufexporig->b[y][x])) + rtengine::SQR(refL - bufexporig->L[y][x])) / 327.68f;
+            dE[y * bfw + x] = val;
+            maxC = rtengine::max(maxC, val);
         }
     }
 
@@ -278,7 +278,7 @@ void deltaEforLaplace(float *dE, const float lap, int bfw, int bfh, rtengine::La
 #endif
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
-            dE[y * bfw + x] = dEforLaplace[y * bfw + x] >= maxdE ? ade * dEforLaplace[y * bfw + x] + bde : 1.f;
+            dE[y * bfw + x] = dE[y * bfw + x] >= maxdE ? ade * dE[y * bfw + x] + bde : 1.f;
         }
     }
 }
