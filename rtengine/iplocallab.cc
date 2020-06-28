@@ -246,7 +246,7 @@ float calcreducdE(float dE, float maxdE, float mindE, float maxdElim, float mind
     }
 }
 
-void deltaEforLaplace(float *dE, const float lap, int bfw, int bfh, rtengine::LabImage* bufexporig, const float hueref, const float chromaref, const float lumaref)
+void deltaEforLaplace(float *dE, const float lap, int bfw, int bfh, const rtengine::LabImage* bufexporig, const float hueref, const float chromaref, const float lumaref)
 {
 
     const float refa = chromaref * std::cos(hueref);
@@ -2562,24 +2562,14 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
     const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
     const float radius = 3.f / sk;
 
-    if (usemaskbl) {
+    LabImage* blurSource = usemaskbl ? originalmask : original;
 #ifdef _OPENMP
-        #pragma omp parallel if (multiThread)
+    #pragma omp parallel if (multiThread)
 #endif
-        {
-            gaussianBlur(originalmask->L, origblur->L, GW, GH, radius);
-            gaussianBlur(originalmask->a, origblur->a, GW, GH, radius);
-            gaussianBlur(originalmask->b, origblur->b, GW, GH, radius);
-        }
-    } else {
-#ifdef _OPENMP
-        #pragma omp parallel if (multiThread)
-#endif
-        {
-            gaussianBlur(original->L, origblur->L, GW, GH, radius);
-            gaussianBlur(original->a, origblur->a, GW, GH, radius);
-            gaussianBlur(original->b, origblur->b, GW, GH, radius);
-        }
+    {
+        gaussianBlur(blurSource->L, origblur->L, GW, GH, radius);
+        gaussianBlur(blurSource->a, origblur->a, GW, GH, radius);
+        gaussianBlur(blurSource->b, origblur->b, GW, GH, radius);
     }
 
     const int begx = lp.xc - lp.lxL;
@@ -3993,8 +3983,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         std::unique_ptr<LabImage> bufprov;
         if (delt) {
-            bufprov.reset(new LabImage(bfw, bfh));
-            bufprov->CopyFrom(bufmaskblurcol, multiThread);
+            bufprov.reset(new LabImage(*bufmaskblurcol, multiThread));
         }
 
         if (rad != 0.f) {
@@ -9678,7 +9667,6 @@ void ImProcFunctions::Lab_Local(
 
         if (bfh >= mSP && bfw >= mSP) {
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
-            const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if(multiThread)
@@ -9691,10 +9679,10 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            bufexpfin->CopyFrom(bufexporig.get(), multiThread);
             std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
-            lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+            lab2rgb(*bufexporig, *tmpImage, params->icm.workingProfile);
             log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
+            const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
             rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
             tmpImage.reset();
 
@@ -9850,9 +9838,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            const std::unique_ptr<LabImage> bufprov(new LabImage(GW, GH));
-
-            bufprov->CopyFrom(bufmaskblurbl.get(), multiThread);
+            const std::unique_ptr<LabImage> bufprov(new LabImage(*bufmaskblurbl.get(), multiThread));
 
             if (lp.radmabl != 0.f) {
                 float blur = lp.radmabl;
@@ -10659,8 +10645,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
         } else {//dcrop.cc
-            bufwv.reset(new LabImage(transformed->W, transformed->H));
-            bufwv->CopyFrom(original, multiThread);
+            bufwv.reset(new LabImage(*original, multiThread));
         } //end dcrop
 
         const double threshold = lp.bilat / 20.0;
@@ -10926,7 +10911,6 @@ void ImProcFunctions::Lab_Local(
 
             if (bfw >= mSP && bfh >= mSP) {
                 const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-                const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskorigvib;
                 std::unique_ptr<LabImage> bufmaskblurvib;
                 std::unique_ptr<LabImage> originalmaskvib;
@@ -11039,8 +11023,7 @@ void ImProcFunctions::Lab_Local(
                     vibranceParams.pastsattog = params->locallab.spots.at(sp).pastsattog;
                     vibranceParams.skintonescurve = params->locallab.spots.at(sp).skintonescurve;
 
-
-                    bufexpfin->CopyFrom(bufexporig.get(), multiThread);
+                    const std::unique_ptr<LabImage> bufexpfin(new LabImage(*bufexporig.get(), multiThread));
 
                     if (lp.strvibh != 0.f) {
                         struct grad_params gph;
@@ -11149,7 +11132,6 @@ void ImProcFunctions::Lab_Local(
                 std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
                 const std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
                 const std::unique_ptr<LabImage> bufgbm(new LabImage(bfw, bfh));
-                const std::unique_ptr<LabImage> tmp1m(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskorigtm;
                 std::unique_ptr<LabImage> bufmaskblurtm;
                 std::unique_ptr<LabImage> originalmasktm;
@@ -11243,7 +11225,6 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.showmasktmmet == 3) {
                         showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufgbm.get(), transformed, bufmaskorigtm.get(), 0);
-
                         return;
                     }
                 }
@@ -11252,27 +11233,26 @@ void ImProcFunctions::Lab_Local(
                     constexpr int itera = 0;
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
 
-                    tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result
-                    bool enatmMasktmap = params->locallab.spots.at(sp).enatmMaskaft;
+                    const bool enatmMasktmap = params->locallab.spots.at(sp).enatmMaskaft;
 
                     if (enatmMasktmap) {
+                        const std::unique_ptr<LabImage> tmp1m(new LabImage(*tmp1.get(), multiThread));
                         //calculate new values for original, originalmasktm, bufmaskorigtm...in function of tmp1
                         LocwavCurve dummy;
-                        bool lmasutilicolwav = false;
-                        bool delt = params->locallab.spots.at(sp).deltae;
-                        int sco = params->locallab.spots.at(sp).scopemask;
-                        int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
-                        int lumask = params->locallab.spots.at(sp).lumask;
+                        constexpr bool lmasutilicolwav = false;
+                        const bool delt = params->locallab.spots.at(sp).deltae;
+                        const int sco = params->locallab.spots.at(sp).scopemask;
+                        constexpr int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
 
                         const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                         const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
                         const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-                        int shado = 0;
-                        float amountcd = 0.f;
-                        float anchorcd = 50.f;
+                        constexpr int shado = 0;
+                        constexpr float amountcd = 0.f;
+                        constexpr float anchorcd = 50.f;
                         LocHHmaskCurve lochhhmasCurve;
-                        bool lhhmasutili = false;
+                        constexpr bool lhhmasutili = false;
 
                         maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, tmp1.get(), bufmaskorigtm.get(), originalmasktm.get(), original, reserved, inv, lp,
                                     0.f, false,
@@ -11283,15 +11263,12 @@ void ImProcFunctions::Lab_Local(
                                    );
 
                         if (lp.showmasktmmet == 3) {//display mask
+                            const int lumask = params->locallab.spots.at(sp).lumask;
                             showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, tmp1.get(), transformed, bufmaskorigtm.get(), 0);
-
                             return;
                         }
-
+                        tmp1->CopyFrom(tmp1m.get(), multiThread); //restore current result
                     }
-
-                    tmp1->CopyFrom(tmp1m.get(), multiThread); //restore current result
-
 
                     float minL = tmp1->L[0][0] - bufgb->L[0][0];
                     float maxL = minL;
@@ -11652,7 +11629,6 @@ void ImProcFunctions::Lab_Local(
             }
 
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-            const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -11665,15 +11641,14 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            bufexpfin->CopyFrom(bufexporig.get(), multiThread);
             SoftLightParams softLightParams;
             softLightParams.enabled = true;
             softLightParams.strength = lp.strng;
 
+            const std::unique_ptr<LabImage> bufexpfin(new LabImage(*bufexporig.get(), multiThread));
             if (lp.softmet == 0) {
                 ImProcFunctions::softLight(bufexpfin.get(), softLightParams);
             } else if (lp.softmet == 1) {
-
                 const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
                 const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
                 const std::unique_ptr<float[]> dE(new float[bfwr * bfhr]);
@@ -11825,60 +11800,34 @@ void ImProcFunctions::Lab_Local(
             }
 
             int inv = 0;
-            bool showmaske = false;
-            bool enaMask = false;
-            bool deltaE = false;
-            bool modmask = false;
-            bool zero = false;
-            bool modif = false;
+            const bool showmaske = lp.showmasklcmet == 3;
+            const bool enaMask = lp.enalcMask;
+            const bool deltaE = lp.showmasklcmet == 4;
+            const bool modmask = lp.showmasklcmet == 2;
+            const bool zero = lp.showmasklcmet == 0;
+            const bool modif = lp.showmasklcmet == 1;
 
-            if (lp.showmasklcmet == 3) {
-                showmaske = true;
-            }
-
-            if (lp.enalcMask) {
-                enaMask = true;
-            }
-
-            if (lp.showmasklcmet == 4) {
-                deltaE = true;
-            }
-
-            if (lp.showmasklcmet == 2) {
-                modmask = true;
-            }
-
-            if (lp.showmasklcmet == 1) {
-                modif = true;
-            }
-
-            if (lp.showmasklcmet == 0) {
-                zero = true;
-            }
-
-
-            float chrom = lp.chromalc;
-            float rad = lp.radmalc;
-            float blendm = lp.blendmalc;
-            float gamma = 1.f;
-            float slope = 0.f;
-            float lap = 0.f; //params->locallab.spots.at(sp).lapmaskexp;
-            bool pde = false; //params->locallab.spots.at(sp).laplac;
+            const float chrom = lp.chromalc;
+            const float rad = lp.radmalc;
+            const float blendm = lp.blendmalc;
+            constexpr float gamma = 1.f;
+            constexpr float slope = 0.f;
+            constexpr float lap = 0.f; //params->locallab.spots.at(sp).lapmaskexp;
+            constexpr bool pde = false; //params->locallab.spots.at(sp).laplac;
             LocwavCurve dummy;
-            bool lmasutilicolwav = false;
-            bool delt = params->locallab.spots.at(sp).deltae;
-            int sco = params->locallab.spots.at(sp).scopemask;
-            int shado = 0;
-            int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
+            constexpr bool lmasutilicolwav = false;
+            const bool delt = params->locallab.spots.at(sp).deltae;
+            const int sco = params->locallab.spots.at(sp).scopemask;
+            constexpr int shado = 0;
+            constexpr int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
             const float mindE = 2.f + MINSCOPE * sco * lp.thr;
             const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-            float amountcd = 0.f;
-            float anchorcd = 50.f;
-            int lumask = params->locallab.spots.at(sp).lumask;
+            constexpr float amountcd = 0.f;
+            constexpr float anchorcd = 50.f;
             LocHHmaskCurve lochhhmasCurve;
-            bool lhhmasutili = false;
+            constexpr bool lhhmasutili = false;
             maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufgb.get(), bufmaskoriglc.get(), originalmasklc.get(), original, reserved, inv, lp,
                         0.f, false,
                         locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili, lochhhmasCurve, lhhmasutili, multiThread,
@@ -11888,13 +11837,13 @@ void ImProcFunctions::Lab_Local(
                        );
 
             if (lp.showmasklcmet == 3) {
+                const int lumask = params->locallab.spots.at(sp).lumask;
                 showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufgb.get(), transformed, bufmaskoriglc.get(), 0);
 
                 return;
             }
 
             if (lp.showmasklcmet == 0 || lp.showmasklcmet == 1  || lp.showmasklcmet == 2 || lp.showmasklcmet == 4 || lp.enalcMask) {
-
                 if (lp.locmet == 0) {
                     LocalContrastParams localContrastParams;
                     LocallabParams locallabparams;
@@ -11903,48 +11852,17 @@ void ImProcFunctions::Lab_Local(
                     localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
                     localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
                     localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
-                    bool fftwlc = false;
 
-                    if (!lp.ftwlc) { // || (lp.ftwlc && call != 2)) {
-                        ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, fftwlc, sk);
-                    } else {
-                        const std::unique_ptr<LabImage> tmpfftw(new LabImage(bfwr, bfhr));
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-                        for (int y = 0; y < bfhr; y++) {
-                            for (int x = 0; x < bfwr; x++) {
-                                tmpfftw->L[y][x] = tmp1->L[y][x];
-                                tmpfftw->a[y][x] = tmp1->a[y][x];
-                                tmpfftw->b[y][x] = tmp1->b[y][x];
-                            }
-                        }
-
-                        fftwlc = true;
-                        ImProcFunctions::localContrast(tmpfftw.get(), tmpfftw->L, localContrastParams, fftwlc, sk);
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-                        for (int y = 0; y < bfhr; y++) {
-                            for (int x = 0; x < bfwr; x++) {
-                                tmp1->L[y][x] = tmpfftw->L[y][x];
-                                tmp1->a[y][x] = tmpfftw->a[y][x];
-                                tmp1->b[y][x] = tmpfftw->b[y][x];
-                            }
-                        }
-
-                    }
+                    ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, !lp.ftwlc, sk);
                 } else if (lp.locmet == 1) { //wavelet && sk ==1
                     int wavelet_level = 1 + params->locallab.spots.at(sp).csthreshold.getBottomRight();//retrieve with +1 maximum wavelet_level
                     float mL = params->locallab.spots.at(sp).clarilres / 100.f;
                     float mC = params->locallab.spots.at(sp).claricres / 100.f;
-                    float softr = params->locallab.spots.at(sp).clarisoft;
-                    float mL0 = 0.f;
-                    float mC0 = 0.f;
+                    const float softr = params->locallab.spots.at(sp).clarisoft;
 #ifdef _OPENMP
                     const int numThreads = omp_get_max_threads();
 #else
-                    const int numThreads = 1;
+                    constexpr int numThreads = 1;
 
 #endif
                     // adap maximum level wavelet to size of RT-spot
@@ -11956,10 +11874,7 @@ void ImProcFunctions::Lab_Local(
                         --maxlevelspot ;
                     }
 
-                    // printf("minwin=%i maxlevelavant=%i  maxlespot=%i\n", minwin, wavelet_level, maxlevelspot);
-
                     wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
-                    //    printf("maxlevel=%i\n", wavelet_level);
                     bool exec = false;
                     bool origlc = params->locallab.spots.at(sp).origlc;
 
@@ -12121,21 +12036,21 @@ void ImProcFunctions::Lab_Local(
                         clarimerge(lp, mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
                     }
 
-                    float thr = 0.001f;
+                    constexpr float thr = 1.f;
                     int flag = 0;
+                    float mL0;
+                    float mC0;
 
                     if (maxlvl <= 4) {
                         mL0 = 0.f;
                         mC0 = 0.f;
                         mL = -1.5f * mL;//increase only for sharpen
                         mC = -mC;
-                        thr = 1.f;
                         flag = 0;
 
                     } else {
                         mL0 = mL;
                         mC0 = mC;
-                        thr = 1.f;
                         flag = 1;
                     }
 
