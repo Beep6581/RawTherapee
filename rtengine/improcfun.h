@@ -110,12 +110,6 @@ class ImProcFunctions
     double scale;
     bool multiThread;
 
-    bool lastcutpast;
-    int lastcxbuf;
-    int lastcybuf;
-    int lastcount;
-    LabImage *spotbuffer;
-
     void calcVignettingParams(int oW, int oH, const procparams::VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul);
 
     void transformLuminanceOnly(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH);

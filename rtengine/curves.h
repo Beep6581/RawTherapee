@@ -485,7 +485,7 @@ protected:
     void NURBS_set();
 
 public:
-    DiagonalCurve(const std::vector<double>& points, int ppn = CURVES_MIN_POLY_POINTS);
+    explicit DiagonalCurve(const std::vector<double>& points, int ppn = CURVES_MIN_POLY_POINTS);
     ~DiagonalCurve() override;
 
     double getVal(double t) const override;
@@ -510,7 +510,7 @@ private:
 
 public:
 
-    FlatCurve(const std::vector<double>& points, bool isPeriodic = true, int ppn = CURVES_MIN_POLY_POINTS);
+    explicit FlatCurve(const std::vector<double>& points, bool isPeriodic = true, int ppn = CURVES_MIN_POLY_POINTS);
     ~FlatCurve() override;
 
     double getVal(double t) const override;

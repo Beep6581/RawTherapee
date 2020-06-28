@@ -1226,14 +1226,14 @@ private:
 
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
-                double black = params.locallab.spots.at(sp).black;
-                double hlcompr = params.locallab.spots.at(sp).hlcompr;
-                double hlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
+                double lblack = params.locallab.spots.at(sp).black;
+                double lhlcompr = params.locallab.spots.at(sp).hlcompr;
+                double lhlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
                 double shcompr = params.locallab.spots.at(sp).shcompr;
                 double br = params.locallab.spots.at(sp).lightness;
                 double cont = params.locallab.spots.at(sp).contrast;
-                if(black < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
-                    black *= 1.5;
+                if (lblack < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
+                    lblack *= 1.5;
                 }
 
                 // Reference parameters computation
@@ -1245,7 +1245,7 @@ private:
                 } else {
                     ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumare,
+                CurveFactory::complexCurvelocal(ecomp, lblack / 65535., lhlcompr, lhlcomprthresh, shcompr, br, cont, lumare,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avge,
                                                 1);
                 float minCD;
