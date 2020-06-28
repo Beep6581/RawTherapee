@@ -7276,7 +7276,6 @@ BENCHFUN
     int H_Lm = wdspot->level_H(maxlvl - 1);
 
     if (lp.strwav != 0.f && lp.wavgradl) {
-StopWatch Stop1("test");
         array2D<float> factorwav(W_Lm, H_Lm);
         calclocalGradientParams(lp, gpwav, 0, 0, W_Lm, H_Lm, 10);
         const float mult = lp.strwav < 0.f ? -1.f : 1.f;
