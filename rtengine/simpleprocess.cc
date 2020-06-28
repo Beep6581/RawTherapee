@@ -1115,8 +1115,14 @@ private:
             LocCCmaskCurve locccmasblCurve;
             LocLLmaskCurve locllmasblCurve;
             LocHHmaskCurve lochhmasblCurve;
+            LocCCmaskCurve locccmas_Curve;
+            LocLLmaskCurve locllmas_Curve;
+            LocHHmaskCurve lochhmas_Curve;
+            LocHHmaskCurve lochhhmas_Curve;
+            
             LocwavCurve loclmasCurveblwav;
             LocwavCurve loclmasCurvecolwav;
+            LocwavCurve loclmasCurve_wav;
             LocwavCurve locwavCurve;
             LocwavCurve loclevwavCurve;
             LocwavCurve locconwavCurve;
@@ -1143,6 +1149,7 @@ private:
             LUTf lmaskcblocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmaskbllocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmasklclocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmasklocal_curve(65536, LUT_CLIP_OFF);
 
             array2D<float> shbuffer;
             for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
@@ -1184,10 +1191,15 @@ private:
                 const bool lcmasblutili = locccmasblCurve.Set(params.locallab.spots.at(sp).CCmaskblcurve);
                 const bool llmasblutili = locllmasblCurve.Set(params.locallab.spots.at(sp).LLmaskblcurve);
                 const bool lhmasblutili = lochhmasblCurve.Set(params.locallab.spots.at(sp).HHmaskblcurve);
+                const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
+                const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);
+                const bool lhmas_utili = lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmask_curve);
+                const bool lhhmas_utili = lochhhmas_Curve.Set(params.locallab.spots.at(sp).HHhmask_curve);
                 const bool lmasutiliblwav = loclmasCurveblwav.Set(params.locallab.spots.at(sp).LLmaskblcurvewav);
                 const bool lmasutilicolwav = loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav);
                 const bool lcmaslcutili = locccmaslcCurve.Set(params.locallab.spots.at(sp).CCmasklccurve);
                 const bool llmaslcutili = locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve);
+                const bool lmasutili_wav = loclmasCurve_wav.Set(params.locallab.spots.at(sp).LLmask_curvewav);
                 const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
                 const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
                 const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
@@ -1210,6 +1222,8 @@ private:
                 const bool localmaskcbutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, 1);
                 const bool localmaskblutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, 1);
                 const bool localmasklcutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
+                const bool localmask_utili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
+
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
                 double black = params.locallab.spots.at(sp).black;
@@ -1258,6 +1272,8 @@ private:
                         lmaskcblocalcurve, localmaskcbutili,
                         lmaskbllocalcurve, localmaskblutili,
                         lmasklclocalcurve, localmasklcutili,
+                        lmasklocal_curve, localmask_utili,
+                        
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                         locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
@@ -1266,6 +1282,8 @@ private:
                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                         locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                         locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
+                        locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
+                        lochhhmas_Curve, lhhmas_utili,
                         loclmasCurveblwav,lmasutiliblwav,
                         loclmasCurvecolwav,lmasutilicolwav,
                         locwavCurve, locwavutili,
@@ -1275,8 +1293,9 @@ private:
                         loccomprewavCurve, loccomprewavutili,
                         locwavCurveden, locwavdenutili,
                         locedgwavCurve, locedgwavutili,
+                        loclmasCurve_wav,lmasutili_wav,
                         LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                 if (sp + 1u < params.locallab.spots.size()) {
@@ -1429,11 +1448,11 @@ private:
                         }
                     double epsilmax = 0.0001;
                     double epsilmin = 0.00001;
-                    double aepsil = (epsilmax - epsilmin) / 90.f;
-                    double bepsil = epsilmax - 100.f * aepsil;
+                    double aepsil = (epsilmax - epsilmin) / 100.f;
+                    double bepsil = epsilmin; //epsilmax - 100.f * aepsil;
                     double epsil = aepsil * WaveParams.softrad + bepsil;
 
-                    float blur = 10.f / 1 * (0.0001f + 0.8f * WaveParams.softrad);
+                    float blur = 10.f / 1 * (0.5f + 0.8f * WaveParams.softrad);
                     // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
                     rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
 

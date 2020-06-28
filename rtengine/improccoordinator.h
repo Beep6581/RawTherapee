@@ -254,6 +254,8 @@ protected:
     LUTf lmaskcblocalcurve;
     LUTf lmaskbllocalcurve;
     LUTf lmasklclocalcurve;
+    LUTf lmasklocal_curve;
+    
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;
     LocretigainCurverab locRETgainCurverab;
@@ -287,6 +289,11 @@ protected:
     LocCCmaskCurve locccmasblCurve;
     LocLLmaskCurve locllmasblCurve;
     LocHHmaskCurve lochhmasblCurve;
+    LocCCmaskCurve locccmas_Curve;
+    LocLLmaskCurve locllmas_Curve;
+    LocHHmaskCurve lochhmas_Curve;
+    LocHHmaskCurve lochhhmas_Curve;
+    
     LocwavCurve locwavCurve;
     LocwavCurve loclmasCurveblwav;
     LocwavCurve loclmasCurvecolwav;
@@ -296,6 +303,7 @@ protected:
     LocwavCurve loccomprewavCurve;
     LocwavCurve locwavCurveden;
     LocwavCurve locedgwavCurve;
+    LocwavCurve loclmasCurve_wav;
 
     std::vector<float> huerefs;
     std::vector<float> huerefblurs;
@@ -321,6 +329,7 @@ protected:
     int localltmMask;
     int locallblMask;
     int locallsharMask;
+    int locall_Mask;
 
 public:
 
@@ -391,7 +400,7 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask) override
+    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int locall_Mask) override
     {
         this->previewDeltaE = previewDeltaE;
         this->locallColorMask = locallColorMask;
@@ -408,6 +417,7 @@ public:
         this->locallsharMask = locallsharMask;
         this->localllcMask = localllcMask;
         this->locallcbMask = locallcbMask;
+        this->locall_Mask = locall_Mask;
     }
 
     void setProgressListener (ProgressListener* pl) override

@@ -206,6 +206,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lmaskcblocalcurve(65536, LUT_CLIP_OFF),
     lmaskbllocalcurve(65536, LUT_CLIP_OFF),
     lmasklclocalcurve(65536, LUT_CLIP_OFF),
+    lmasklocal_curve(65536, LUT_CLIP_OFF),
     lastspotdup(false),
     previewDeltaE(false),
     locallColorMask(0),
@@ -222,6 +223,7 @@ ImProcCoordinator::ImProcCoordinator() :
     localltmMask(0),
     locallblMask(0),
     locallsharMask(0),
+    locall_Mask(0),
     retistrsav(nullptr)
 {
 }
@@ -1091,6 +1093,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     const bool llmasblutili = locllmasblCurve.Set(params->locallab.spots.at(sp).LLmaskblcurve);
                     const bool lcmasblutili = locccmasblCurve.Set(params->locallab.spots.at(sp).CCmaskblcurve);
                     const bool lhmasblutili = lochhmasblCurve.Set(params->locallab.spots.at(sp).HHmaskblcurve);
+                    const bool lcmas_utili = locccmas_Curve.Set(params->locallab.spots.at(sp).CCmask_curve);
+                    const bool llmas_utili = locllmas_Curve.Set(params->locallab.spots.at(sp).LLmask_curve);
+                    const bool lhmas_utili = lochhmas_Curve.Set(params->locallab.spots.at(sp).HHmask_curve);
+                    const bool lhhmas_utili = lochhhmas_Curve.Set(params->locallab.spots.at(sp).HHhmask_curve);
                     const bool lmasutiliblwav = loclmasCurveblwav.Set(params->locallab.spots.at(sp).LLmaskblcurvewav);
                     const bool lmasutilicolwav = loclmasCurvecolwav.Set(params->locallab.spots.at(sp).LLmaskcolcurvewav);
                     const bool locwavutili = locwavCurve.Set(params->locallab.spots.at(sp).locwavcurve);
@@ -1100,6 +1106,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     const bool loccomprewavutili = loccomprewavCurve.Set(params->locallab.spots.at(sp).loccomprewavcurve);
                     const bool locwavdenutili = locwavCurveden.Set(params->locallab.spots.at(sp).locwavcurveden);
                     const bool locedgwavutili = locedgwavCurve.Set(params->locallab.spots.at(sp).locedgwavcurve);
+                    const bool lmasutili_wav = loclmasCurve_wav.Set(params->locallab.spots.at(sp).LLmask_curvewav);
                     const bool locallutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
                     const bool localclutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).clcurve, cllocalcurve, sca);
                     const bool locallcutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).lccurve, lclocalcurve, sca);
@@ -1115,6 +1122,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     const bool localmaskcbutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, sca);
                     const bool localmaskblutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, sca);
                     const bool localmasklcutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, sca);
+                    const bool localmask_utili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, sca);
                     double ecomp = params->locallab.spots.at(sp).expcomp;
                     double black = params->locallab.spots.at(sp).black;
                     double hlcompr = params->locallab.spots.at(sp).hlcompr;
@@ -1181,6 +1189,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   lmaskcblocalcurve, localmaskcbutili,
                                   lmaskbllocalcurve, localmaskblutili,
                                   lmasklclocalcurve, localmasklcutili,
+                                  lmasklocal_curve, localmask_utili,
+
                                   locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                   locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                   locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
@@ -1189,6 +1199,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                                   locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                                   locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
+                                  locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
+                                  lochhhmas_Curve, lhhmas_utili,
                                   loclmasCurveblwav, lmasutiliblwav,
                                   loclmasCurvecolwav, lmasutilicolwav,
                                   locwavCurve, locwavutili,
@@ -1198,8 +1210,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   loccomprewavCurve, loccomprewavutili,
                                   locwavCurveden, locwavdenutili,
                                   locedgwavCurve, locedgwavutili,
+                                  loclmasCurve_wav, lmasutili_wav,
                                   LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                   minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                     if (sp + 1u < params->locallab.spots.size()) {
@@ -1347,11 +1360,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
     
                         double epsilmax = 0.0001;
                         double epsilmin = 0.00001;
-                        double aepsil = (epsilmax - epsilmin) / 90.f;
-                        double bepsil = epsilmax - 100.f * aepsil;
+                        double aepsil = (epsilmax - epsilmin) / 100.f;
+                        double bepsil = epsilmin; //epsilmax - 100.f * aepsil;
                         double epsil = aepsil * WaveParams.softrad + bepsil;
 
-                        float blur = 10.f / scale * (0.0001f + 0.8f * WaveParams.softrad);
+                        float blur = 10.f / scale * (0.5f + 0.8f * WaveParams.softrad);
                         // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
                         rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
 
