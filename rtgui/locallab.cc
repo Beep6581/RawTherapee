@@ -162,6 +162,7 @@ Locallab::Locallab():
     expcontrast(Gtk::manage(new LocallabContrast())),
     expcbdl(Gtk::manage(new LocallabCBDL())),
     explog(Gtk::manage(new LocallabLog())),
+    expmask(Gtk::manage(new LocallabMask())),
 
     // Other widgets
     resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
@@ -190,6 +191,7 @@ Locallab::Locallab():
     addTool(toolpanel, expexpose);
     addTool(toolpanel, expshadhigh);
     addTool(toolpanel, expvibrance);
+    addTool(toolpanel, expmask);
     addTool(toolpanel, expsoft);
     addTool(toolpanel, expblur);
     addTool(toolpanel, exptonemap);
@@ -1025,20 +1027,20 @@ Locallab::llMaskVisibility Locallab::getMaskVisibility() const
     const bool prevDeltaE = expsettings->isDeltaEPrevActive();
 
     // Get mask preview from Locallab tools
-    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask;
+    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, maskMask;
 
     for (auto tool : locallabTools) {
-        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask);
+        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, maskMask);
     }
 
     // Indicate to spot control panel if one mask preview is active
     const bool isMaskActive = (colorMask == 0) || (colorMaskinv == 0) || (expMask == 0) || (expMaskinv == 0) ||
                               (shMask == 0) || (shMaskinv == 0) || (vibMask == 0) || (softMask == 0) ||
                               (blMask == 0) || (tmMask == 0) || (retiMask == 0) || (sharMask == 0) ||
-                              (lcMask == 0) || (cbMask == 0);
+                              (lcMask == 0) || (cbMask == 0) || (maskMask == 0);
     expsettings->setMaskPrevActive(isMaskActive);
 
-    return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask};
+    return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, maskMask};
 }
 
 void Locallab::resetshowPressed()

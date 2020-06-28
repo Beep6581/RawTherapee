@@ -187,100 +187,26 @@ ImProcCoordinator::ImProcCoordinator() :
 
     // Locallab
     locallListener(nullptr),
-    reserv(nullptr),
-    lastorigimp(nullptr),
-    coordX(0), coordY(0), localX(0), localY(0),
-    lllocalcurve(65536, 0),
-    cllocalcurve(65536, 0),
-    lclocalcurve(65536, 0),
-    cclocalcurve(65536, 0),
-    rgblocalcurve(65536, 0),
-    exlocalcurve(65536, 0),
-    hltonecurveloc(65536, 0), //32768
-    shtonecurveloc(65536, 0),
-    tonecurveloc(65536, 0),
-    lightCurveloc(32770, 0),
-    lmasklocalcurve(65536, 0),
-    lmaskexplocalcurve(65536, 0),
-    lmaskSHlocalcurve(65536, 0),
-    lmaskviblocalcurve(65536, 0),
-    lmasktmlocalcurve(65536, 0),
-    lmaskretilocalcurve(65536, 0),
-    lmaskcblocalcurve(65536, 0),
-    lmaskbllocalcurve(65536, 0),
-    lmasklclocalcurve(65536, 0),
-    locallutili(false),
-    localclutili(false),
-    locallcutili(false),
-    localcutili(false),
-    localrgbutili(false),
-    localexutili(false),
-    llmasutili(false),
-    lhmasutili(false),
-    lhhmasutili(false),
-    lcmasutili(false),
-    localmaskutili(false),
-    localmaskexputili(false),
-    localmaskSHutili(false),
-    localmaskvibutili(false),
-    localmasktmutili(false),
-    localmaskretiutili(false),
-    localmaskcbutili(false),
-    localmaskblutili(false),
-    localmasklcutili(false),
-    lcmasexputili(false),
-    lhmasexputili(false),
-    llmasexputili(false),
-    lcmasSHutili(false),
-    lhmasSHutili(false),
-    llmasSHutili(false),
-    lcmasvibutili(false),
-    lhmasvibutili(false),
-    llmasvibutili(false),
-    lcmaslcutili(false),
-    lhmaslcutili(false),
-    llmaslcutili(false),
-    lcmascbutili(false),
-    lhmascbutili(false),
-    llmascbutili(false),
-    lcmasretiutili(false),
-    lhmasretiutili(false),
-    llmasretiutili(false),
-    lcmastmutili(false),
-    lhmastmutili(false),
-    llmastmutili(false),
-    lcmasblutili(false),
-    lhmasblutili(false),
-    llmasblutili(false),
-    locwavutili(false),
-    locwavdenutili(false),
-    loclevwavutili(false),
-    locconwavutili(false),
-    loccompwavutili(false),
-    loccomprewavutili(false),
-    locedgwavutili(false),
-    lmasutiliblwav(false),
-    lmasutilicolwav(false),
-    LHutili(false),
-    HHutili(false),
-    lastsavrests(500, -10000),
-    huerefs(500, -100000.f),
-    huerefblurs(500, -100000.f),
-    chromarefblurs(500, -100000.f),
-    lumarefblurs(500, -100000.f),
-    chromarefs(500, -100000.f),
-    lumarefs(500, -100000.f),
-    sobelrefs(500, -100000.f),
-    avgs(500, -100000.f),
-    huer(0),
-    huerblu(0),
-    chromarblu(0),
-    lumarblu(0),
-    chromar(0),
-    lumar(0),
-    sobeler(0),
-    lastsav(0),
-    avg(0),
+    lllocalcurve(65536, LUT_CLIP_OFF),
+    cllocalcurve(65536, LUT_CLIP_OFF),
+    lclocalcurve(65536, LUT_CLIP_OFF),
+    cclocalcurve(65536, LUT_CLIP_OFF),
+    rgblocalcurve(65536, LUT_CLIP_OFF),
+    exlocalcurve(65536, LUT_CLIP_OFF),
+    hltonecurveloc(65536, LUT_CLIP_OFF), //32768
+    shtonecurveloc(65536, LUT_CLIP_OFF),
+    tonecurveloc(65536, LUT_CLIP_OFF),
+    lightCurveloc(32770, LUT_CLIP_OFF),
+    lmasklocalcurve(65536, LUT_CLIP_OFF),
+    lmaskexplocalcurve(65536, LUT_CLIP_OFF),
+    lmaskSHlocalcurve(65536, LUT_CLIP_OFF),
+    lmaskviblocalcurve(65536, LUT_CLIP_OFF),
+    lmasktmlocalcurve(65536, LUT_CLIP_OFF),
+    lmaskretilocalcurve(65536, LUT_CLIP_OFF),
+    lmaskcblocalcurve(65536, LUT_CLIP_OFF),
+    lmaskbllocalcurve(65536, LUT_CLIP_OFF),
+    lmasklclocalcurve(65536, LUT_CLIP_OFF),
+    lmasklocal_curve(65536, LUT_CLIP_OFF),
     lastspotdup(false),
     previewDeltaE(false),
     locallColorMask(0),
@@ -297,6 +223,7 @@ ImProcCoordinator::ImProcCoordinator() :
     localltmMask(0),
     locallblMask(0),
     locallsharMask(0),
+    locall_Mask(0),
     retistrsav(nullptr)
 {
 }
@@ -796,7 +723,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             // Encoding log with locallab
-            if (params->locallab.enabled) {
+            if (params->locallab.enabled && !params->locallab.spots.empty()) {
                 const int sizespot = (int)params->locallab.spots.size();
 
                 float *sourceg = nullptr;
@@ -1088,15 +1015,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if ((todo & (M_LUMINANCE + M_COLOR)) || (todo & M_AUTOEXP)) {
             nprevl->CopyFrom(oprevl);
-            reserv->CopyFrom(oprevl);
-            lastorigimp->CopyFrom(oprevl);
 
             //  int maxspot = 1;
             //*************************************************************
             // locallab
             //*************************************************************
 
-            if (params->locallab.enabled) {
+            if (params->locallab.enabled && !params->locallab.spots.empty()) {
                 /*
                  *  This file is part of RawTherapee.
                  *
@@ -1117,127 +1042,87 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                  *  2017 2018 Jacques Desmis <jdesmis@gmail.com>
                  *  2019 Pierre Cabrera <pierre.cab@gmail.com>
                  */
-
+                const std::unique_ptr<LabImage> reserv(new LabImage(*oprevl, true));
+                const std::unique_ptr<LabImage> lastorigimp(new LabImage(*oprevl, true));
                 float **shbuffer = nullptr;
                 int sca = 1;
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
                 float avge;
                 std::vector<LocallabListener::locallabRef> locallref;
                 std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
+                huerefs.resize(params->locallab.spots.size());
+                huerefblurs.resize(params->locallab.spots.size());
+                chromarefblurs.resize(params->locallab.spots.size());
+                lumarefblurs.resize(params->locallab.spots.size());
+                chromarefs.resize(params->locallab.spots.size());
+                lumarefs.resize(params->locallab.spots.size());
+                sobelrefs.resize(params->locallab.spots.size());
+                avgs.resize(params->locallab.spots.size());
 
                 for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
                     // Set local curves of current spot to LUT
-                    LHutili = false;
-                    HHutili = false;
-                    locallutili = false;
-                    localclutili = false;
-                    locallcutili = false;
-                    localexutili = false;
-                    localrgbutili = false;
-                    localcutili = false;
-                    llmasutili = false;
-                    lhmasutili = false;
-                    lhhmasutili = false;
-                    lcmasutili = false;
-                    localmaskutili = false;
-                    lcmasexputili = false;
-                    lhmasexputili = false;
-                    llmasexputili = false;
-                    localmaskexputili = false;
-                    localmaskSHutili = false;
-                    localmaskvibutili = false;
-                    localmasktmutili = false;
-                    localmaskretiutili = false;
-                    localmaskcbutili = false;
-                    localmaskblutili = false;
-                    localmasklcutili = false;
-                    lcmasSHutili = false;
-                    lhmasSHutili = false;
-                    llmasSHutili = false;
-                    lcmasvibutili = false;
-                    lhmasvibutili = false;
-                    llmasvibutili = false;
-                    lcmascbutili = false;
-                    lhmascbutili = false;
-                    llmascbutili = false;
-                    lcmaslcutili = false;
-                    lhmaslcutili = false;
-                    llmaslcutili = false;
-                    lcmasretiutili = false;
-                    lhmasretiutili = false;
-                    llmasretiutili = false;
-                    lcmastmutili = false;
-                    lhmastmutili = false;
-                    llmastmutili = false;
-                    lcmasblutili = false;
-                    lhmasblutili = false;
-                    llmasblutili = false;
-                    lcmasutili = false;
-                    locwavutili = false;
-                    locwavdenutili = false;
-                    loclevwavutili = false;
-                    locconwavutili = false;
-                    loccompwavutili = false;
-                    loccomprewavutili = false;
-                    locedgwavutili = false;
-                    lmasutiliblwav = false;
-                    lmasutilicolwav = false;
                     locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                     locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
-                    loclhCurve.Set(params->locallab.spots.at(sp).LHcurve, LHutili);
-                    lochhCurve.Set(params->locallab.spots.at(sp).HHcurve, HHutili);
-                    locccmasCurve.Set(params->locallab.spots.at(sp).CCmaskcurve, lcmasutili);
-                    locllmasCurve.Set(params->locallab.spots.at(sp).LLmaskcurve, llmasutili);
-                    lochhmasCurve.Set(params->locallab.spots.at(sp).HHmaskcurve, lhmasutili);
-                    lochhhmasCurve.Set(params->locallab.spots.at(sp).HHhmaskcurve, lhhmasutili);
-                    locllmasexpCurve.Set(params->locallab.spots.at(sp).LLmaskexpcurve, llmasexputili);
-                    locccmasexpCurve.Set(params->locallab.spots.at(sp).CCmaskexpcurve, lcmasexputili);
-                    lochhmasexpCurve.Set(params->locallab.spots.at(sp).HHmaskexpcurve, lhmasexputili);
-                    locllmasSHCurve.Set(params->locallab.spots.at(sp).LLmaskSHcurve, llmasSHutili);
-                    locccmasSHCurve.Set(params->locallab.spots.at(sp).CCmaskSHcurve, lcmasSHutili);
-                    lochhmasSHCurve.Set(params->locallab.spots.at(sp).HHmaskSHcurve, lhmasSHutili);
-                    locllmasvibCurve.Set(params->locallab.spots.at(sp).LLmaskvibcurve, llmasvibutili);
-                    locccmasvibCurve.Set(params->locallab.spots.at(sp).CCmaskvibcurve, lcmasvibutili);
-                    lochhmasvibCurve.Set(params->locallab.spots.at(sp).HHmaskvibcurve, lhmasvibutili);
-                    locllmascbCurve.Set(params->locallab.spots.at(sp).LLmaskcbcurve, llmascbutili);
-                    locccmascbCurve.Set(params->locallab.spots.at(sp).CCmaskcbcurve, lcmascbutili);
-                    lochhmascbCurve.Set(params->locallab.spots.at(sp).HHmaskcbcurve, lhmascbutili);
-                    locllmaslcCurve.Set(params->locallab.spots.at(sp).LLmasklccurve, llmaslcutili);
-                    locccmaslcCurve.Set(params->locallab.spots.at(sp).CCmasklccurve, lcmaslcutili);
-                    lochhmaslcCurve.Set(params->locallab.spots.at(sp).HHmasklccurve, lhmaslcutili);
-                    locllmasretiCurve.Set(params->locallab.spots.at(sp).LLmaskreticurve, llmasretiutili);
-                    locccmasretiCurve.Set(params->locallab.spots.at(sp).CCmaskreticurve, lcmasretiutili);
-                    lochhmasretiCurve.Set(params->locallab.spots.at(sp).HHmaskreticurve, lhmasretiutili);
-                    locllmastmCurve.Set(params->locallab.spots.at(sp).LLmasktmcurve, llmastmutili);
-                    locccmastmCurve.Set(params->locallab.spots.at(sp).CCmasktmcurve, lcmastmutili);
-                    lochhmastmCurve.Set(params->locallab.spots.at(sp).HHmasktmcurve, lhmastmutili);
-                    locllmasblCurve.Set(params->locallab.spots.at(sp).LLmaskblcurve, llmasblutili);
-                    locccmasblCurve.Set(params->locallab.spots.at(sp).CCmaskblcurve, lcmasblutili);
-                    lochhmasblCurve.Set(params->locallab.spots.at(sp).HHmaskblcurve, lhmasblutili);
-                    loclmasCurveblwav.Set(params->locallab.spots.at(sp).LLmaskblcurvewav, lmasutiliblwav);
-                    loclmasCurvecolwav.Set(params->locallab.spots.at(sp).LLmaskcolcurvewav, lmasutilicolwav);
-                    locwavCurve.Set(params->locallab.spots.at(sp).locwavcurve, locwavutili);
-                    loclevwavCurve.Set(params->locallab.spots.at(sp).loclevwavcurve, loclevwavutili);
-                    locconwavCurve.Set(params->locallab.spots.at(sp).locconwavcurve, locconwavutili);
-                    loccompwavCurve.Set(params->locallab.spots.at(sp).loccompwavcurve, loccompwavutili);
-                    loccomprewavCurve.Set(params->locallab.spots.at(sp).loccomprewavcurve, loccomprewavutili);
-                    locwavCurveden.Set(params->locallab.spots.at(sp).locwavcurveden, locwavdenutili);
-                    locedgwavCurve.Set(params->locallab.spots.at(sp).locedgwavcurve, locedgwavutili);
-                    CurveFactory::curveLocal(locallutili, params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
-                    CurveFactory::curveLocal(localclutili, params->locallab.spots.at(sp).clcurve, cllocalcurve, sca);
-                    CurveFactory::curveLocal(locallcutili, params->locallab.spots.at(sp).lccurve, lclocalcurve, sca);
-                    CurveFactory::curveCCLocal(localcutili, params->locallab.spots.at(sp).cccurve, cclocalcurve, sca);
-                    CurveFactory::curveLocal(localrgbutili, params->locallab.spots.at(sp).rgbcurve, rgblocalcurve, sca);
-                    CurveFactory::curveexLocal(localexutili, params->locallab.spots.at(sp).excurve, exlocalcurve, sca);
-                    CurveFactory::curvemaskLocal(localmaskutili, params->locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, sca);
-                    CurveFactory::curvemaskLocal(localmaskexputili, params->locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, sca);
-                    CurveFactory::curvemaskLocal(localmaskSHutili, params->locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, sca);
-                    CurveFactory::curvemaskLocal(localmaskvibutili, params->locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, sca);
-                    CurveFactory::curvemaskLocal(localmasktmutili, params->locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, sca);
-                    CurveFactory::curvemaskLocal(localmaskretiutili, params->locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, sca);
-                    CurveFactory::curvemaskLocal(localmaskcbutili, params->locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, sca);
-                    CurveFactory::curvemaskLocal(localmaskblutili, params->locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, sca);
-                    CurveFactory::curvemaskLocal(localmasklcutili, params->locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, sca);
+                    const bool LHutili = loclhCurve.Set(params->locallab.spots.at(sp).LHcurve);
+                    const bool HHutili = lochhCurve.Set(params->locallab.spots.at(sp).HHcurve);
+                    const bool lcmasutili = locccmasCurve.Set(params->locallab.spots.at(sp).CCmaskcurve);
+                    const bool llmasutili = locllmasCurve.Set(params->locallab.spots.at(sp).LLmaskcurve);
+                    const bool lhmasutili = lochhmasCurve.Set(params->locallab.spots.at(sp).HHmaskcurve);
+                    const bool lhhmasutili = lochhhmasCurve.Set(params->locallab.spots.at(sp).HHhmaskcurve);
+                    const bool llmasexputili = locllmasexpCurve.Set(params->locallab.spots.at(sp).LLmaskexpcurve);
+                    const bool lcmasexputili = locccmasexpCurve.Set(params->locallab.spots.at(sp).CCmaskexpcurve);
+                    const bool lhmasexputili = lochhmasexpCurve.Set(params->locallab.spots.at(sp).HHmaskexpcurve);
+                    const bool llmasSHutili = locllmasSHCurve.Set(params->locallab.spots.at(sp).LLmaskSHcurve);
+                    const bool lcmasSHutili = locccmasSHCurve.Set(params->locallab.spots.at(sp).CCmaskSHcurve);
+                    const bool lhmasSHutili = lochhmasSHCurve.Set(params->locallab.spots.at(sp).HHmaskSHcurve);
+                    const bool llmasvibutili = locllmasvibCurve.Set(params->locallab.spots.at(sp).LLmaskvibcurve);
+                    const bool lcmasvibutili = locccmasvibCurve.Set(params->locallab.spots.at(sp).CCmaskvibcurve);
+                    const bool lhmasvibutili = lochhmasvibCurve.Set(params->locallab.spots.at(sp).HHmaskvibcurve);
+                    const bool llmascbutili = locllmascbCurve.Set(params->locallab.spots.at(sp).LLmaskcbcurve);
+                    const bool lcmascbutili = locccmascbCurve.Set(params->locallab.spots.at(sp).CCmaskcbcurve);
+                    const bool lhmascbutili = lochhmascbCurve.Set(params->locallab.spots.at(sp).HHmaskcbcurve);
+                    const bool llmaslcutili = locllmaslcCurve.Set(params->locallab.spots.at(sp).LLmasklccurve);
+                    const bool lcmaslcutili = locccmaslcCurve.Set(params->locallab.spots.at(sp).CCmasklccurve);
+                    const bool lhmaslcutili = lochhmaslcCurve.Set(params->locallab.spots.at(sp).HHmasklccurve);
+                    const bool llmasretiutili = locllmasretiCurve.Set(params->locallab.spots.at(sp).LLmaskreticurve);
+                    const bool lcmasretiutili = locccmasretiCurve.Set(params->locallab.spots.at(sp).CCmaskreticurve);
+                    const bool lhmasretiutili = lochhmasretiCurve.Set(params->locallab.spots.at(sp).HHmaskreticurve);
+                    const bool llmastmutili = locllmastmCurve.Set(params->locallab.spots.at(sp).LLmasktmcurve);
+                    const bool lcmastmutili = locccmastmCurve.Set(params->locallab.spots.at(sp).CCmasktmcurve);
+                    const bool lhmastmutili = lochhmastmCurve.Set(params->locallab.spots.at(sp).HHmasktmcurve);
+                    const bool llmasblutili = locllmasblCurve.Set(params->locallab.spots.at(sp).LLmaskblcurve);
+                    const bool lcmasblutili = locccmasblCurve.Set(params->locallab.spots.at(sp).CCmaskblcurve);
+                    const bool lhmasblutili = lochhmasblCurve.Set(params->locallab.spots.at(sp).HHmaskblcurve);
+                    const bool lcmas_utili = locccmas_Curve.Set(params->locallab.spots.at(sp).CCmask_curve);
+                    const bool llmas_utili = locllmas_Curve.Set(params->locallab.spots.at(sp).LLmask_curve);
+                    const bool lhmas_utili = lochhmas_Curve.Set(params->locallab.spots.at(sp).HHmask_curve);
+                    const bool lhhmas_utili = lochhhmas_Curve.Set(params->locallab.spots.at(sp).HHhmask_curve);
+                    const bool lmasutiliblwav = loclmasCurveblwav.Set(params->locallab.spots.at(sp).LLmaskblcurvewav);
+                    const bool lmasutilicolwav = loclmasCurvecolwav.Set(params->locallab.spots.at(sp).LLmaskcolcurvewav);
+                    const bool locwavutili = locwavCurve.Set(params->locallab.spots.at(sp).locwavcurve);
+                    const bool loclevwavutili = loclevwavCurve.Set(params->locallab.spots.at(sp).loclevwavcurve);
+                    const bool locconwavutili = locconwavCurve.Set(params->locallab.spots.at(sp).locconwavcurve);
+                    const bool loccompwavutili = loccompwavCurve.Set(params->locallab.spots.at(sp).loccompwavcurve);
+                    const bool loccomprewavutili = loccomprewavCurve.Set(params->locallab.spots.at(sp).loccomprewavcurve);
+                    const bool locwavdenutili = locwavCurveden.Set(params->locallab.spots.at(sp).locwavcurveden);
+                    const bool locedgwavutili = locedgwavCurve.Set(params->locallab.spots.at(sp).locedgwavcurve);
+                    const bool lmasutili_wav = loclmasCurve_wav.Set(params->locallab.spots.at(sp).LLmask_curvewav);
+                    const bool locallutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
+                    const bool localclutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).clcurve, cllocalcurve, sca);
+                    const bool locallcutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).lccurve, lclocalcurve, sca);
+                    const bool localcutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).cccurve, cclocalcurve, sca);
+                    const bool localrgbutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).rgbcurve, rgblocalcurve, sca);
+                    const bool localexutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).excurve, exlocalcurve, sca);
+                    const bool localmaskutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, sca);
+                    const bool localmaskexputili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, sca);
+                    const bool localmaskSHutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, sca);
+                    const bool localmaskvibutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, sca);
+                    const bool localmasktmutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, sca);
+                    const bool localmaskretiutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, sca);
+                    const bool localmaskcbutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, sca);
+                    const bool localmaskblutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, sca);
+                    const bool localmasklcutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, sca);
+                    const bool localmask_utili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, sca);
                     double ecomp = params->locallab.spots.at(sp).expcomp;
                     double black = params->locallab.spots.at(sp).black;
                     double hlcompr = params->locallab.spots.at(sp).hlcompr;
@@ -1252,19 +1137,19 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     // Reference parameters computation
                     if (params->locallab.spots.at(sp).spotMethod == "exc") {
-                        ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                        ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                     } else {
                         ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                     }
 
-                    huerblu = huerefblurs[sp] = huerefblu;
-                    chromarblu = chromarefblurs[sp] = chromarefblu;
-                    lumarblu = lumarefblurs[sp] = lumarefblu;
-                    huer = huerefs[sp] = huere;
-                    chromar = chromarefs[sp] = chromare;
-                    lumar = lumarefs[sp] = lumare ;
-                    sobeler = sobelrefs[sp] = sobelre;
-                    avg = avgs[sp] = avge;
+                    double huerblu = huerefblurs[sp] = huerefblu;
+                    double chromarblu = chromarefblurs[sp] = chromarefblu;
+                    double lumarblu = lumarefblurs[sp] = lumarefblu;
+                    double huer = huerefs[sp] = huere;
+                    double chromar = chromarefs[sp] = chromare;
+                    double lumar = lumarefs[sp] = lumare ;
+                    double sobeler = sobelrefs[sp] = sobelre;
+                    float avg = avgs[sp] = avge;
                     CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumar,
                                                     hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                     sca);
@@ -1289,7 +1174,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float Tsigma;
                     float Tmin;
                     float Tmax;
-                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, lastorigimp, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
+                    int lastsav;
+                    ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), lastorigimp.get(), 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                                   lllocalcurve, locallutili,
                                   cllocalcurve, localclutili,
                                   lclocalcurve, locallcutili,
@@ -1303,6 +1189,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   lmaskcblocalcurve, localmaskcbutili,
                                   lmaskbllocalcurve, localmaskblutili,
                                   lmasklclocalcurve, localmasklcutili,
+                                  lmasklocal_curve, localmask_utili,
+
                                   locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                   locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                   locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
@@ -1311,6 +1199,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                                   locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                                   locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
+                                  locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
+                                  lochhhmas_Curve, lhhmas_utili,
                                   loclmasCurveblwav, lmasutiliblwav,
                                   loclmasCurvecolwav, lmasutilicolwav,
                                   locwavCurve, locwavutili,
@@ -1320,11 +1210,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   loccomprewavCurve, loccomprewavutili,
                                   locwavCurveden, locwavdenutili,
                                   locedgwavCurve, locedgwavutili,
+                                  loclmasCurve_wav, lmasutili_wav,
                                   LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                  huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                   minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
-                    lastorigimp->CopyFrom(nprevl);
+                    if (sp + 1u < params->locallab.spots.size()) {
+                        // do not copy for last spot as it is not needed anymore
+                        lastorigimp->CopyFrom(nprevl);
+                    }
 
                     // Save Locallab Retinex min/max for current spot
                     LocallabListener::locallabRetiMinMax retiMinMax;
@@ -1340,7 +1234,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     // Recalculate references after
                     if (params->locallab.spots.at(sp).spotMethod == "exc") {
-                        ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
+                        ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
                     } else {
                         ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
                     }
@@ -1351,74 +1245,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallref.at(sp).lumar = lumar;
                         locallref.at(sp).huer = huer;
                     }
-
-                    /*
-                    //very bad idea : it's the story of the cat biting its tail
-                    // brings big bugs..
-                                    //restore ref values
-                                    huerefs[sp] = huer;
-                                    chromarefs[sp] = chromar;
-                                    lumarefs[sp] = lumar ;
-                                    sobelrefs[sp] = sobeler;
-                    */
-                    lllocalcurve.clear();
-                    lclocalcurve.clear();
-                    cllocalcurve.clear();
-                    lightCurveloc.clear();
-                    cclocalcurve.clear();
-                    rgblocalcurve.clear();
-                    exlocalcurve.clear();
-                    lmasklocalcurve.clear();
-                    lmaskexplocalcurve.clear();
-                    lmaskSHlocalcurve.clear();
-                    lmaskviblocalcurve.clear();
-                    lmasktmlocalcurve.clear();
-                    lmaskretilocalcurve.clear();
-                    lmaskcblocalcurve.clear();
-                    lmaskbllocalcurve.clear();
-                    lmasklclocalcurve.clear();
-                    hltonecurveloc.clear();
-                    shtonecurveloc.clear();
-                    tonecurveloc.clear();
-                    locRETgainCurve.Reset();
-                    locRETtransCurve.Reset();
-                    loclhCurve.Reset();
-                    lochhCurve.Reset();
-                    locccmasCurve.Reset();
-                    locllmasCurve.Reset();
-                    lochhmasCurve.Reset();
-                    lochhhmasCurve.Reset();
-                    locllmasexpCurve.Reset();
-                    locccmasexpCurve.Reset();
-                    lochhmasexpCurve.Reset();
-                    locllmasSHCurve.Reset();
-                    locccmasSHCurve.Reset();
-                    lochhmasSHCurve.Reset();
-                    locllmasvibCurve.Reset();
-                    locccmasvibCurve.Reset();
-                    lochhmasvibCurve.Reset();
-                    locllmascbCurve.Reset();
-                    locccmascbCurve.Reset();
-                    lochhmascbCurve.Reset();
-                    locllmasretiCurve.Reset();
-                    locccmasretiCurve.Reset();
-                    lochhmasretiCurve.Reset();
-                    locllmastmCurve.Reset();
-                    locccmastmCurve.Reset();
-                    lochhmastmCurve.Reset();
-                    locllmasblCurve.Reset();
-                    locccmasblCurve.Reset();
-                    lochhmasblCurve.Reset();
-                    locllmaslcCurve.Reset();
-                    locccmaslcCurve.Reset();
-                    lochhmaslcCurve.Reset();
-                    locwavCurve.Reset();
-                    loclevwavCurve.Reset();
-                    locconwavCurve.Reset();
-                    locwavCurveden.Reset();
-                    locwavCurve.Reset();
-                    loclmasCurveblwav.Reset();
-                    loclmasCurvecolwav.Reset();
                 }
 
                 // Transmit Locallab reference values and Locallab Retinex min/max to LocallabListener
@@ -1472,20 +1298,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 if (WaveParams.softrad > 0.f) {
-                    provradius = new LabImage(pW, pH);
-                    provradius->CopyFrom(nprevl);
+                    provradius = new LabImage(*nprevl, true);
                 }
 
-
-
-
                 if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
-                    unshar = new LabImage(pW, pH);
                     provis = params->wavelet.CLmethod;
                     params->wavelet.CLmethod = "all";
                     ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
-
-                    unshar->CopyFrom(nprevl);
+                    unshar = new LabImage(*nprevl, true);
 
                     params->wavelet.CLmethod = provis;
 
@@ -1540,11 +1360,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
     
                         double epsilmax = 0.0001;
                         double epsilmin = 0.00001;
-                        double aepsil = (epsilmax - epsilmin) / 90.f;
-                        double bepsil = epsilmax - 100.f * aepsil;
+                        double aepsil = (epsilmax - epsilmin) / 100.f;
+                        double bepsil = epsilmin; //epsilmax - 100.f * aepsil;
                         double epsil = aepsil * WaveParams.softrad + bepsil;
 
-                        float blur = 10.f / scale * (0.0001f + 0.8f * WaveParams.softrad);
+                        float blur = 10.f / scale * (0.5f + 0.8f * WaveParams.softrad);
                         // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
                         rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
 
@@ -1848,10 +1668,6 @@ void ImProcCoordinator::freeAll()
         oprevl    = nullptr;
         delete nprevl;
         nprevl    = nullptr;
-        delete reserv;
-        reserv    = nullptr;
-        delete lastorigimp;
-        lastorigimp = nullptr;
 
         if (ncie) {
             delete ncie;
@@ -1905,10 +1721,7 @@ void ImProcCoordinator::setScale(int prevscale)
         oprevi = orig_prev;
         oprevl = new LabImage(pW, pH);
         nprevl = new LabImage(pW, pH);
-        reserv = new LabImage(pW, pH);
-        lastorigimp = new LabImage(pW, pH);
 
-        //  nprevloc = new LabImage (pW, pH);
         //ncie is only used in ImProcCoordinator::updatePreviewImage, it will be allocated on first use and deleted if not used anymore
         previmg = new Image8(pW, pH);
         workimg = new Image8(pW, pH);

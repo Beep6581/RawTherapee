@@ -8,6 +8,7 @@
 #08 2012-12-22 a3novy
 #09 2013-04-01 a3novy
 #10 2013-04-19 a3novy
+#11 2020-06-24 Yz2house
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -25,7 +26,7 @@ CURVEEDITOR_CURVE;カーブ
 CURVEEDITOR_CURVES;カーブ
 CURVEEDITOR_CUSTOM;カスタム
 CURVEEDITOR_DARKS;ダーク
-CURVEEDITOR_EDITPOINT_HINT;ボタンを押すと数値で入出力を編集出来ます\n\n編集したいカーブ上のポイントを右クリックします\n編集を無効にする場合はポイント以外の部分で右クリックします
+CURVEEDITOR_EDITPOINT_HINT;ボタンを押すと数値で入出力値を変えられるようになります\n\nカーブ上で目標ポイントを右クリックし、カーブ下に表示されるI（入力値）或いはO（出力値）\n編集するポイントを変更する場合はポイント以外の部分で右クリックします
 CURVEEDITOR_HIGHLIGHTS;ハイライト
 CURVEEDITOR_LIGHTS;ライト
 CURVEEDITOR_LINEAR;リニア
@@ -103,14 +104,14 @@ EXPORT_BYPASS_SHARPENEDGE;エッジ・シャープニングを迂回
 EXPORT_BYPASS_SHARPENING;シャープニングを迂回
 EXPORT_BYPASS_SHARPENMICRO;マイクロコントラストを迂回
 EXPORT_FASTEXPORTOPTIONS;<b>高速書き出しオプション</b>
-EXPORT_INSTRUCTIONS;現像の設定に要する時間と手間を省くために、高速書き出しを優先させるオプションです。処理速度が優先される場合や、既定の現像パラメータを変えずに何枚ものリサイズ画像が要求される場合に奨められる方法で、低解像度画像を迅速に生成します。
+EXPORT_INSTRUCTIONS;出力設定に要する時間と手間を省くために、高速書き出しを優先させるオプションです。処理速度が優先される場合や、既定の出力パラメータを変えずに何枚ものリサイズ画像が要求される場合に奨められる方法で、低解像度画像を迅速に生成します。
 EXPORT_MAXHEIGHT;最大高:
 EXPORT_MAXWIDTH;最大幅:
 EXPORT_PIPELINE;高速書き出しの方法
 EXPORT_PUTTOQUEUEFAST; 高速書き出しのキューに追加
 EXPORT_RAW_DMETHOD;デモザイクの方式
 EXPORT_USE_FAST_PIPELINE;処理速度優先(リサイズした画像に調整を全て行う)
-EXPORT_USE_FAST_PIPELINE_TIP;処理速度を優先すると、処理は速くなりますが、画像の質は落ちます。通常、画像のリサイズは全現像処理工程の最後で行われますが、ここでは処理工程の初めの方でリサイズが行われます。処理速度は著しく上がりますが、現像処理された画像にアーティファクトが発生したり、全体的な質が低下したりします。
+EXPORT_USE_FAST_PIPELINE_TIP;処理速度を優先すると、処理は速くなりますが、画像の質は落ちます。通常、画像のリサイズは全処理工程の最後で行われますが、ここでは処理工程の初めの方でリサイズが行われます。処理速度は著しく上がりますが、処理された画像にアーティファクトが発生したり、全体的な質が低下したりします。
 EXPORT_USE_NORMAL_PIPELINE;標準(リサイズ処理は最後、幾つかの処理を迂回)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;キュー処理
@@ -232,6 +233,7 @@ GENERAL_DISABLED;無効
 GENERAL_ENABLE;有効
 GENERAL_ENABLED;有効
 GENERAL_FILE;ファイル
+GENERAL_HELP;ヘルプ
 GENERAL_LANDSCAPE;横
 GENERAL_NA;n/a
 GENERAL_NO;No
@@ -262,7 +264,7 @@ HISTORY_MSG_1;写真を読み込みました
 HISTORY_MSG_2;PP3を読み込みました
 HISTORY_MSG_3;PP3を変更しました
 HISTORY_MSG_4;履歴ブラウジング
-HISTORY_MSG_5;明度
+HISTORY_MSG_5;明るさ
 HISTORY_MSG_6;コントラスト
 HISTORY_MSG_7;黒
 HISTORY_MSG_8;露光量補正
@@ -431,16 +433,16 @@ HISTORY_MSG_171;L*a*b* LC カーブ
 HISTORY_MSG_172;LCの適用をレッドと肌色トーンだけに制限
 HISTORY_MSG_173;ノイズ低減 - 細部の復元
 HISTORY_MSG_174;CIE色の見えモデル2002
-HISTORY_MSG_175;CAM02 - 色順応量
-HISTORY_MSG_176;CAM02 - 観視の暗い周囲環境
-HISTORY_MSG_177;CAM02 - 撮影環境の順応輝度
-HISTORY_MSG_178;CAM02 - 観視の順応輝度
-HISTORY_MSG_179;CAM02 - モデル
+HISTORY_MSG_175;CAM02 - CAT02
+HISTORY_MSG_176;CAM02 - 観視環境
+HISTORY_MSG_177;CAM02 - 画像の輝度
+HISTORY_MSG_178;CAM02 - 観視の輝度
+HISTORY_MSG_179;CAM02 - ホワイトポイントモデル
 HISTORY_MSG_180;CAM02 - 明度 (J)
 HISTORY_MSG_181;CAM02 - 色度 (C)
 HISTORY_MSG_182;CAM02 - 自動 CAT02
 HISTORY_MSG_183;CAM02 - コントラスト (J)
-HISTORY_MSG_184;CAM02 - 暗い周囲環境を伴う撮影環境
+HISTORY_MSG_184;CAM02 - 画像の周辺環境
 HISTORY_MSG_185;CAM02 - 色域制御
 HISTORY_MSG_186;CAM02 - アルゴリズム
 HISTORY_MSG_187;CAM02 - レッドと肌色トーンを保護
@@ -455,8 +457,8 @@ HISTORY_MSG_195;CAM02 - トーンカーブ 1
 HISTORY_MSG_196;CAM02 - トーンカーブ 2
 HISTORY_MSG_197;CAM02 - カラー・カーブ
 HISTORY_MSG_198;CAM02 - カラー・カーブ
-HISTORY_MSG_199;CAM02 - カーブでCIECAM02出力のヒストグラムを表示
-HISTORY_MSG_200;CAM02 - CIECAM02 Q でトーンマッピング
+HISTORY_MSG_199;CAM02 - 出力のヒストグラムを表示
+HISTORY_MSG_200;CAM02 - トーンマッピング
 HISTORY_MSG_201;色差 レッド／グリーン
 HISTORY_MSG_202;色差 ブルー／イエロー
 HISTORY_MSG_203;ノイズ低減 - 方式
@@ -592,7 +594,7 @@ HISTORY_MSG_333;W- 残差　シャドウ
 HISTORY_MSG_334;W- 残差　色度
 HISTORY_MSG_335;W- 残差　ハイライト
 HISTORY_MSG_336;W- 残差　ハイライトのしきい値
-HISTORY_MSG_337;W- 残差　青空の色相
+HISTORY_MSG_337;W- 残差　色相の目標/保護
 HISTORY_MSG_338;W- ES 半径
 HISTORY_MSG_339;W- ES 強さ
 HISTORY_MSG_340;W- 強さ
@@ -667,7 +669,7 @@ HISTORY_MSG_408;レティネックス - 半径
 HISTORY_MSG_409;レティネックス - コントラスト
 HISTORY_MSG_410;レティネックス - 明るさ
 HISTORY_MSG_411;レティネックス - 強さ
-HISTORY_MSG_412;レティネックス - ガウス暈しのグラデーション
+HISTORY_MSG_412;レティネックス - ガウスフィルタの勾配
 HISTORY_MSG_413;レティネックス - 差異
 HISTORY_MSG_414;レティネックス - ヒストグラム - Lab
 HISTORY_MSG_415;レティネックス - 透過
@@ -685,8 +687,8 @@ HISTORY_MSG_426;レティネックス - 色相イコライザ
 HISTORY_MSG_427;出力レンダリングの意図
 HISTORY_MSG_428;モニターレンダリングの意図
 HISTORY_MSG_429;レティネックス - 繰り返し
-HISTORY_MSG_430;レティネックス - 透過のグラデーション
-HISTORY_MSG_431;レティネックス - 強さのグラデーション
+HISTORY_MSG_430;レティネックス - 透過マップの勾配
+HISTORY_MSG_431;レティネックス - 強さの勾配
 HISTORY_MSG_432;レティネックス - M - ハイライト
 HISTORY_MSG_433;レティネックス - M - ハイライト TW
 HISTORY_MSG_434;レティネックス - M - シャドウ
@@ -695,21 +697,37 @@ HISTORY_MSG_436;レティネックス - M - 半径
 HISTORY_MSG_437;レティネックス - M - 方式
 HISTORY_MSG_438;レティネックス - M - イコライザ
 HISTORY_MSG_439;レティネックス - プロセス
-HISTORY_MSG_440;詳細レベルコントラスト - 適用
+HISTORY_MSG_440;詳細レベルコントラスト - 処理の順番
 HISTORY_MSG_441;レティネックス - 透過率の増加
 HISTORY_MSG_442;レティネックス - スケール
 HISTORY_MSG_443;出力のブラックポイント補正
 HISTORY_MSG_444;WB - 色温度のバイアス
 HISTORY_MSG_445;Raw サブイメージ
+HISTORY_MSG_446;EvPixelShiftMotion
+HISTORY_MSG_447;EvPixelShiftMotionCorrection
+HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
 HISTORY_MSG_449;PS - ISOへの適合
+HISTORY_MSG_450;EvPixelShiftNreadIso
+HISTORY_MSG_451;EvPixelShiftPrnu
 HISTORY_MSG_452;PS - モーションを表示
 HISTORY_MSG_453;PS - マスクだけを表示
+HISTORY_MSG_454;EvPixelShiftAutomatic
+HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
+HISTORY_MSG_456;EvPixelShiftNonGreenVertical
 HISTORY_MSG_457;PS - レッド／ブルーを確認
+HISTORY_MSG_458;EvPixelShiftStddevFactorRed
+HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
+HISTORY_MSG_460;EvPixelShiftGreenAmaze
+HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
 HISTORY_MSG_462;PS - グリーンを確認
+HISTORY_MSG_463;EvPixelShiftRedBlueWeight
 HISTORY_MSG_464;PS - モーションマスクをぼかす
 HISTORY_MSG_465;PS - ぼかしの半径
+HISTORY_MSG_466;EvPixelShiftSum
+HISTORY_MSG_467;EvPixelShiftExp0
 HISTORY_MSG_468;PS - 穴を埋める
 HISTORY_MSG_469;PS - メディアン
+HISTORY_MSG_470;EvPixelShiftMedian3
 HISTORY_MSG_471;PS - 振れの補正
 HISTORY_MSG_472;PS - 境界を滑らかにする
 HISTORY_MSG_473;PS - LMMSEを使う
@@ -732,8 +750,434 @@ HISTORY_MSG_489;DRC - CbDL
 HISTORY_MSG_490;DRC - 量
 HISTORY_MSG_491;ホワイトバランス
 HISTORY_MSG_492;RGBカーブ
-HISTORY_MSG_493;L*a*b*調整
+HISTORY_MSG_493;ローカル調整
 HISTORY_MSG_494;キャプチャーシャープニング
+HISTORY_MSG_496;ローカル スポット 削除
+HISTORY_MSG_497;ローカル スポット 選択
+HISTORY_MSG_498;ローカル スポット 名前
+HISTORY_MSG_499;ローカル スポット 表示
+HISTORY_MSG_500;ローカル スポット 形状
+HISTORY_MSG_501;ローカル スポット 方法
+HISTORY_MSG_502;ローカル スポット 形状の方式
+HISTORY_MSG_503;ローカル スポット 右の垂直線
+HISTORY_MSG_504;ローカル スポット 左の垂直線
+HISTORY_MSG_505;ローカル スポット 下の水平線
+HISTORY_MSG_506;ローカル スポット 上の水平線
+HISTORY_MSG_507;ローカル スポット 中心
+HISTORY_MSG_508;ローカル スポット 大きさ
+HISTORY_MSG_509;ローカル スポット 質の種類
+HISTORY_MSG_510;ローカル スポット 境界
+HISTORY_MSG_511;ローカル スポット しきい値
+HISTORY_MSG_512;ローカル スポット ΔEの減衰
+HISTORY_MSG_513;ローカル スポット スコープ
+HISTORY_MSG_514;ローカル スポット 構造
+HISTORY_MSG_515;ローカル調整
+HISTORY_MSG_516;ローカル - 色と明るさ
+HISTORY_MSG_517;ローカル - 強力を有効にする
+HISTORY_MSG_518;ローカル - 明るさ
+HISTORY_MSG_519;ローカル - コントラスト
+HISTORY_MSG_520;ローカル - 色度
+HISTORY_MSG_521;ローカル - スコープ
+HISTORY_MSG_522;ローカル - カーブの方式
+HISTORY_MSG_523;ローカル - LL カーブ
+HISTORY_MSG_524;ローカル - CC カーブ
+HISTORY_MSG_525;ローカル - LH カーブ
+HISTORY_MSG_526;ローカル - H カーブ
+HISTORY_MSG_527;ローカル - 反対色
+HISTORY_MSG_528;ローカル - 露光補正
+HISTORY_MSG_529;ローカル - Exp 露光量補正
+HISTORY_MSG_530;ローカル - Exp ハイライト圧縮
+HISTORY_MSG_531;ローカル - Exp ハイライト圧縮のしきい値
+HISTORY_MSG_532;ローカル - Exp 黒レベル
+HISTORY_MSG_533;ローカル - Exp 黒レベルの圧縮
+HISTORY_MSG_534;ローカル - ウォームとクール
+HISTORY_MSG_535;ローカル - Exp スコープ
+HISTORY_MSG_536;ローカル - Exp コントラストカーブ
+HISTORY_MSG_537;ローカル - 自然な彩度
+HISTORY_MSG_538;ローカル - Vib 純色
+HISTORY_MSG_539;ローカル - Vib パステル
+HISTORY_MSG_540;ローカル - Vib しきい値
+HISTORY_MSG_541;ローカル - Vib 肌色の保護
+HISTORY_MSG_542;ローカル - Vib 色ずれの回避
+HISTORY_MSG_543;ローカル - Vib リンク
+HISTORY_MSG_544;ローカル - Vib スコープ
+HISTORY_MSG_545;ローカル - Vib H カーブ
+HISTORY_MSG_546;ローカル - ぼかしとノイズ
+HISTORY_MSG_547;ローカル - 半径
+HISTORY_MSG_548;ローカル - ノイズ
+HISTORY_MSG_549;ローカル - ぼかしのスコープ
+HISTORY_MSG_550;ローカル - ぼかしの方式
+HISTORY_MSG_551;ローカル - ぼかし　輝度だけ
+HISTORY_MSG_552;ローカル - トーンマッピング
+HISTORY_MSG_553;ローカル - TM 強さ
+HISTORY_MSG_554;ローカル - TM ガンマ
+HISTORY_MSG_555;ローカル - TM エッジ停止
+HISTORY_MSG_556;ローカル - TM スケール
+HISTORY_MSG_557;ローカル - TM 再加重
+HISTORY_MSG_558;ローカル - TM スコープ
+HISTORY_MSG_559;ローカル - レティネックス
+HISTORY_MSG_560;ローカル - レティネックス 方式
+HISTORY_MSG_561;ローカル - レティネックス 強さ
+HISTORY_MSG_562;ローカル - レティネックス 色度
+HISTORY_MSG_563;ローカル - レティネックス 半径
+HISTORY_MSG_564;ローカル - レティネックス コントラスト
+HISTORY_MSG_565;ローカル - スコープ
+HISTORY_MSG_566;ローカル - レティネックス ゲインのカーブ
+HISTORY_MSG_567;ローカル - レティネックス 反対処理
+HISTORY_MSG_568;ローカル - シャープニング
+HISTORY_MSG_569;ローカル - Sh 半径
+HISTORY_MSG_570;ローカル - Sh 量
+HISTORY_MSG_571;ローカル - Sh 減衰
+HISTORY_MSG_572;ローカル - Sh 繰り返し
+HISTORY_MSG_573;ローカル - Sh スコープ
+HISTORY_MSG_574;ローカル - Sh 反対処理
+HISTORY_MSG_575;ローカル - 詳細レベルによるコントラスト調整
+HISTORY_MSG_576;ローカル - CbDL 複数のレベル
+HISTORY_MSG_577;ローカル - CbDL 色度
+HISTORY_MSG_578;ローカル - CbDL しきい値
+HISTORY_MSG_579;ローカル - CbDL スコープ
+HISTORY_MSG_580;ローカル - ノイズ除去
+HISTORY_MSG_581;ローカル - ノイズ除去 輝度　細かい1
+HISTORY_MSG_582;ローカル - ノイズ除去 輝度　祖い
+HISTORY_MSG_583;ローカル - ノイズ除去 細部の回復
+HISTORY_MSG_584;ローカル - ノイズ除去 イコライザ 白黒
+HISTORY_MSG_585;ローカル - ノイズ除去 色度　細かい
+HISTORY_MSG_586;ローカル - ノイズ除去 色度　粗い
+HISTORY_MSG_587;ローカル - ノイズ除去 色度の回復
+HISTORY_MSG_588;ローカル - ノイズ除去 イコライザ ブルー-レッド
+HISTORY_MSG_589;ローカル - ノイズ除去 平滑化フィルタ
+HISTORY_MSG_590;ローカル - ノイズ除去 スコープ
+HISTORY_MSG_591;ローカル - 色ずれの回避
+HISTORY_MSG_592;ローカル - Sh コントラスト
+HISTORY_MSG_593;ローカル - ローカルコントラスト
+HISTORY_MSG_594;ローカル - ローカルコントラスト 半径
+HISTORY_MSG_595;ローカル - ローカルコントラスト 量
+HISTORY_MSG_596;ローカル - ローカルコントラスト 暗さ
+HISTORY_MSG_597;ローカル - ローカルコントラスト 明るさ
+HISTORY_MSG_598;ローカル - ローカルコントラスト スコープ
+HISTORY_MSG_599;ローカル - レティネックス 霞除去
+HISTORY_MSG_600;ローカル - ソフトライト 有効
+HISTORY_MSG_601;ローカル - ソフトライト 強さ
+HISTORY_MSG_602;ローカル - ソフトライト スコープ
+HISTORY_MSG_603;ローカル - Sh ぼかしの半径
+HISTORY_MSG_605;ローカル - 色と明るさの変更
+HISTORY_MSG_606;ローカル - 露光の変更
+HISTORY_MSG_607;ローカル - 色と明るさ　マスク　C
+HISTORY_MSG_608;ローカル - 色と明るさ　マスク　L
+HISTORY_MSG_609;ローカル - 露光補正　マスク C
+HISTORY_MSG_610;ローカル - 露光補正　マスク L
+HISTORY_MSG_611;ローカル - 色と明るさ　マスク　H
+HISTORY_MSG_612;ローカル - 色と明るさ　構造
+HISTORY_MSG_613;ローカル - 露光補正 構造
+HISTORY_MSG_614;ローカル - 露光補正　マスク H
+HISTORY_MSG_615;ローカル - 色と明るさ　ブレンド
+HISTORY_MSG_616;ローカル - 露光補正　ブレンド
+HISTORY_MSG_617;ローカル - 露光補正　ぼかし
+HISTORY_MSG_618;ローカル - 色と明るさ　マスクを使う
+HISTORY_MSG_619;ローカル - 露光補正　マスクを使う
+HISTORY_MSG_620;ローカル - 色と明るさ　ぼかし
+HISTORY_MSG_621;ローカル - 露光補正　反対処理
+HISTORY_MSG_622;ローカル - 構造の除外
+HISTORY_MSG_623;ローカル - 露光補正　色の補間
+HISTORY_MSG_624;ローカル - 色と明るさ　補正グリッド
+HISTORY_MSG_625;ローカル - 色と明るさ　補正の強さ
+HISTORY_MSG_626;ローカル - 色と明るさ　補正の方式
+HISTORY_MSG_627;ローカル - シャドウ/ハイライト
+HISTORY_MSG_628;ローカル - SH ハイライト
+HISTORY_MSG_629;ローカル - SH ハイライトトーンの幅
+HISTORY_MSG_630;ローカル - SH シャドウ
+HISTORY_MSG_631;ローカル - SH シャドウトーンの幅
+HISTORY_MSG_632;ローカル - SH 半径
+HISTORY_MSG_633;ローカル - SH スコープ
+HISTORY_MSG_634;ローカル - 色と明るさ　半径
+HISTORY_MSG_635;ローカル - 露光補正　半径
+HISTORY_MSG_636;ローカル - 追加された機能
+HISTORY_MSG_637;ローカル - SH　マスク C
+HISTORY_MSG_638;ローカル - SH　マスク L
+HISTORY_MSG_639;ローカル - SH　マスク H
+HISTORY_MSG_640;ローカル - SH　ブレンド
+HISTORY_MSG_641;ローカル - SH　マスクを使用
+HISTORY_MSG_642;ローカル - SH　半径
+HISTORY_MSG_643;ローカル - SH　ぼかし
+HISTORY_MSG_644;ローカル - SH　反対処理
+HISTORY_MSG_645;ローカル - 色差のバランス　ab-L
+HISTORY_MSG_646;ローカル - 露光補正　色度のマスク
+HISTORY_MSG_647;ローカル - 露光補正　ガンマのマスク
+HISTORY_MSG_648;ローカル - 露光補正　スロープのマスク
+HISTORY_MSG_649;ローカル - 露光補正 ソフトな半径
+HISTORY_MSG_650;ローカル - 色と明るさ　色度のマスク
+HISTORY_MSG_651;ローカル - 色と明るさ　ガンマのマスク
+HISTORY_MSG_652;ローカル - 色と明るさ　スロープのマスク
+HISTORY_MSG_653;ローカル - SH　色度のマスク
+HISTORY_MSG_654;ローカル - SH　ガンマのマスク
+HISTORY_MSG_655;ローカル - SH　スロープのマスク
+HISTORY_MSG_656;ローカル - 色と明るさ ソフトな半径
+HISTORY_MSG_657;ローカル - レティネックス　アーティファクトの軽減
+HISTORY_MSG_658;ローカル - CbDL ソフトな半径
+HISTORY_MSG_659;ローカル スポット 境界値の減衰
+HISTORY_MSG_660;ローカル - CbDL 明瞭
+HISTORY_MSG_661;ローカル - CbDL 残差のコントラスト
+HISTORY_MSG_662;ローカル - deNoise 輝度　細かい0
+HISTORY_MSG_663;ローカル - deNoise 輝度　細かい2
+HISTORY_MSG_664;ローカル - CbDL ぼかし
+HISTORY_MSG_665;ローカル - CbDL　ブレンドのマスク
+HISTORY_MSG_666;ローカル - CbDL　半径のマスク
+HISTORY_MSG_667;ローカル - CbDL　色度のマスク
+HISTORY_MSG_668;ローカル - CbDL　ガンマのマスク
+HISTORY_MSG_669;ローカル - CbDL　スロープのマスク
+HISTORY_MSG_670;ローカル - CbDL　マスク C
+HISTORY_MSG_671;ローカル - CbDL　マスク L
+HISTORY_MSG_672;ローカル - CbDL　マスク CL
+HISTORY_MSG_673;ローカル - CbDL マスクを使う
+HISTORY_MSG_674;ローカル - 削除された機能
+HISTORY_MSG_675;ローカル - TM ソフトな半径
+HISTORY_MSG_676;ローカル スポット　境界の差異
+HISTORY_MSG_677;ローカル - TM 量
+HISTORY_MSG_678;ローカル - TM 彩度
+HISTORY_MSG_679;ローカル - レティネックス　マスク C
+HISTORY_MSG_680;ローカル - レティネックス　マスク L
+HISTORY_MSG_681;ローカル - レティネックス　マスク CL
+HISTORY_MSG_682;ローカル - レティネックス　マスク
+HISTORY_MSG_683;ローカル - レティネックス　ブレンドのマスク
+HISTORY_MSG_684;ローカル - レティネックス　半径のマスク
+HISTORY_MSG_685;ローカル - レティネックス　色度のマスク
+HISTORY_MSG_686;ローカル - レティネックス　ガンマのマスク
+HISTORY_MSG_687;ローカル - レティネックス　スロープのマスク
+HISTORY_MSG_688;ローカル - 削除された機能
+HISTORY_MSG_689;ローカル - レティネックス　透過マップのマスク
+HISTORY_MSG_690;ローカル - レティネックス スケール
+HISTORY_MSG_691;ローカル - レティネックス 暗さ
+HISTORY_MSG_692;ローカル - レティネックス 明るさ
+HISTORY_MSG_693;ローカル - レティネックス しきい値
+HISTORY_MSG_694;ローカル - レティネックス ラプラシアンのしきい値
+HISTORY_MSG_695;ローカル - ソフトの方式
+HISTORY_MSG_696;ローカル - レティネックス 標準化
+HISTORY_MSG_697;ローカル - TM 標準化
+HISTORY_MSG_698;ローカル - ローカルコントラスト 高速フーリエ変換
+HISTORY_MSG_699;ローカル - レティネックス　高速フーリエ変換
+HISTORY_MSG_701;ローカル - Exp シャドウ
+HISTORY_MSG_702;ローカル - Exp 方式
+HISTORY_MSG_703;ローカル - Exp ラプラシアンのしきい値
+HISTORY_MSG_704;ローカル - Exp PDEのバランス
+HISTORY_MSG_705;ローカル - Exp 線形
+HISTORY_MSG_706;ローカル - TM　マスク C
+HISTORY_MSG_707;ローカル - TM　マスク L
+HISTORY_MSG_708;ローカル - TM　マスク CL
+HISTORY_MSG_709;ローカル - TM　マスク マスク
+HISTORY_MSG_710;ローカル - TM　ブレンドのマスク
+HISTORY_MSG_711;ローカル - TM　半径のマスク
+HISTORY_MSG_712;ローカル - TM　色度のマスク
+HISTORY_MSG_713;ローカル - TM　ガンマのマスク
+HISTORY_MSG_714;ローカル - TM　スロープのマスク
+HISTORY_MSG_716;ローカル - ローカル 方式
+HISTORY_MSG_717;ローカル - ローカルコントラスト
+HISTORY_MSG_718;ローカル - ローカルコントラストのレベル
+HISTORY_MSG_719;ローカル - ローカルコントラスト　残差L
+HISTORY_MSG_720;ローカル - ぼかし　マスク　C
+HISTORY_MSG_721;ローカル - ぼかし　マスク L
+HISTORY_MSG_722;ローカル - ぼかし　マスク CL
+HISTORY_MSG_723;ローカル - ぼかし　マスクを使う
+HISTORY_MSG_725;ローカル - ぼかし　ブレンドのマスク
+HISTORY_MSG_726;ローカル - ぼかし　半径のマスク
+HISTORY_MSG_727;ローカル - ぼかし　色度のマスク
+HISTORY_MSG_728;ローカル - ぼかし　ガンマのマスク
+HISTORY_MSG_729;ローカル - ぼかし　スロープのマスク
+HISTORY_MSG_730;ローカル - ぼかしの方式
+HISTORY_MSG_731;ローカル - メディアンの方式
+HISTORY_MSG_732;ローカル - メディアン 繰り返し
+HISTORY_MSG_733;ローカル - ソフトな半径
+HISTORY_MSG_734;ローカル - ディテール
+HISTORY_MSG_738;ローカル - ローカルコントラスト　Lを統合
+HISTORY_MSG_739;ローカル - ローカルコントラスト　ソフトな半径
+HISTORY_MSG_740;ローカル - ローカルコントラスト　Cを統合
+HISTORY_MSG_741;ローカル - ローカルコントラスト　残差C
+HISTORY_MSG_742;ローカル - Exp ラプラシアンのガンマ
+HISTORY_MSG_743;ローカル - Exp Fattal　量
+HISTORY_MSG_744;ローカル - Exp Fattal　ディテール
+HISTORY_MSG_745;ローカル - Exp Fattal　オフセット
+HISTORY_MSG_746;ローカル - Exp Fattal　シグマ
+HISTORY_MSG_747;ローカル 作成されたスポット
+HISTORY_MSG_748;ローカル - Exp ノイズ除去
+HISTORY_MSG_749;ローカル - Reti 深度
+HISTORY_MSG_750;ローカル - Reti モード 対数 - 線形
+HISTORY_MSG_751;ローカル - Reti 霞除去　輝度だけ
+HISTORY_MSG_752;ローカル - Reti オフセット
+HISTORY_MSG_753;ローカル - Reti 透過マップ
+HISTORY_MSG_754;ローカル - Reti クリップ
+HISTORY_MSG_755;ローカル - TM マスクを使う
+HISTORY_MSG_756;ローカル - Exp 露光補正マスクのアルゴリズムを使う
+HISTORY_MSG_757;ローカル - Exp ラプラシアンマスク
+HISTORY_MSG_758;ローカル - Reti ラプラシアンマスク
+HISTORY_MSG_759;ローカル - Exp ラプラシアンマスク
+HISTORY_MSG_760;ローカル - Color ラプラシアンマスク
+HISTORY_MSG_761;ローカル - SH ラプラシアンマスク
+HISTORY_MSG_762;ローカル - cbdl ラプラシアンマスク
+HISTORY_MSG_763;ローカル - Blur ラプラシアンマスク
+HISTORY_MSG_764;ローカル - Solve PDE ラプラシアンマスク
+HISTORY_MSG_765;ローカル - deNoise ディテールのしきい値
+HISTORY_MSG_766;ローカル - Blur 高速フーリエ変換
+HISTORY_MSG_767;ローカル - Grain ISO
+HISTORY_MSG_768;ローカル - Grain 強さ
+HISTORY_MSG_769;ローカル - Grain スケール
+HISTORY_MSG_770;ローカル - Color コントラストカーブのマスク
+HISTORY_MSG_771;ローカル - Exp コントラストカーブのマスク
+HISTORY_MSG_772;ローカル - SH コントラストカーブのマスク
+HISTORY_MSG_773;ローカル - TM コントラストカーブのマスク
+HISTORY_MSG_774;ローカル - Reti コントラストカーブのマスク
+HISTORY_MSG_775;ローカル - CBDL コントラストカーブのマスク
+HISTORY_MSG_776;ローカル - Blur Denoise コントラストカーブのマスク
+HISTORY_MSG_777;ローカル - Blur ローカルコントラストカーブのマスク
+HISTORY_MSG_778;ローカル - ハイライトのマスク
+HISTORY_MSG_779;ローカル - 色と明るさ　ローカルコントラストカーブのマスク
+HISTORY_MSG_780;ローカル - 色と明るさ　シャドウのマスク
+HISTORY_MSG_781;ローカル - コントラスト　ウェーブレットのレベルのマスク
+HISTORY_MSG_782;ローカル - Blur Denoise ウェーブレットのレベルのマスク
+HISTORY_MSG_783;ローカル - 色と明るさ　ウェーブレットのレベル
+HISTORY_MSG_784;ローカル - ΔEのマスク
+HISTORY_MSG_785;ローカル - ΔEのスコープのマスク
+HISTORY_MSG_786;ローカル - SH 方式
+HISTORY_MSG_787;ローカル - イコライザの乗数
+HISTORY_MSG_788;ローカル - イコライザのディテール
+HISTORY_MSG_789;ローカル - SH マスクの量
+HISTORY_MSG_790;ローカル - SH マスクのアンカー
+HISTORY_MSG_791;ローカル - マスク　ショートLカーブ
+HISTORY_MSG_792;ローカル - マスク　背景輝度
+HISTORY_MSG_793;ローカル - SH TRCのガンマ
+HISTORY_MSG_794;ローカル - SH TRCのスロープ
+HISTORY_MSG_795;ローカル - マスク　復元したイメージの保存
+HISTORY_MSG_796;ローカル - 参考値の繰り返し
+HISTORY_MSG_797;ローカル - オリジナルとの融合方式
+HISTORY_MSG_798;ローカル - 不透明度
+HISTORY_MSG_799;ローカル - Color RGB トーンカーブ
+HISTORY_MSG_800;ローカル - Color トーンカーブの方式
+HISTORY_MSG_801;ローカル - Color 特殊なトーンカーブ
+HISTORY_MSG_802;ローカル - コントラストしきい値
+HISTORY_MSG_803;ローカル - 色と明るさ　融合
+HISTORY_MSG_804;ローカル - 色と明るさ　マスクの構造
+HISTORY_MSG_805;ローカル - ぼかしとノイズ　マスクの構造
+HISTORY_MSG_806;ローカル - 色と明るさ　機能としてのマスクの構造
+HISTORY_MSG_807;ローカル - ぼかしとノイズ　機能としてのマスクの構造
+HISTORY_MSG_808;ローカル - 色と明るさ　マスクカーブ H(H)
+HISTORY_MSG_809;ローカル - Vib カーブのマスク　C(C)
+HISTORY_MSG_810;ローカル - Vib カーブのマスク　L(L)
+HISTORY_MSG_811;ローカル - Vib カーブのマスク　LC(H)
+HISTORY_MSG_813;ローカル - 自然な彩度　マスクを使う
+HISTORY_MSG_814;ローカル - Vib ブレンドのマスク
+HISTORY_MSG_815;ローカル - Vib 半径のマスク
+HISTORY_MSG_816;ローカル - Vib 色度のマスク
+HISTORY_MSG_817;ローカル - Vib ガンマのマスク
+HISTORY_MSG_818;ローカル - Vib 勾配のマスク
+HISTORY_MSG_819;ローカル - Vib ラプラシアンのマスク
+HISTORY_MSG_820;ローカル - Vib コントラストカーブのマスク
+HISTORY_MSG_821;ローカル - 色と明るさ　背景のグリッド
+HISTORY_MSG_822;ローカル - 色と明るさ　背景の融合
+HISTORY_MSG_823;ローカル - 色と明るさ　背景の融合　輝度だけ
+HISTORY_MSG_824;ローカル - Exp 減光マスクの強さ
+HISTORY_MSG_825;ローカル - Exp 減光マスクの角度
+HISTORY_MSG_826;ローカル - Exp 減光の強さ
+HISTORY_MSG_827;ローカル - Exp 減光の角度
+HISTORY_MSG_828;ローカル - SH 階調　強さ
+HISTORY_MSG_829;ローカル - SH 階調　角度
+HISTORY_MSG_830;ローカル - 色と明るさ 階調　Lの強さ
+HISTORY_MSG_831;ローカル - 色と明るさ 階調　角度
+HISTORY_MSG_832;ローカル - 色と明るさ 階調　Cの強さ
+HISTORY_MSG_833;ローカル - 減光のフェザー処理
+HISTORY_MSG_834;ローカル - 色と明るさ 減光の強さ　H
+HISTORY_MSG_835;ローカル - Vib 諧調　Lの強さ
+HISTORY_MSG_836;ローカル - Vib 階調　角度
+HISTORY_MSG_837;ローカル - Vib 階調　Cの強さ
+HISTORY_MSG_838;ローカル - Vib 階調　Hの強さ
+HISTORY_MSG_839;ローカル - ソフトウェアの難易度
+HISTORY_MSG_840;ローカル - CL カーブ
+HISTORY_MSG_841;ローカル - LC カーブ
+HISTORY_MSG_842;ローカル - マスクぼかしのコントラストしきい値
+HISTORY_MSG_843;ローカル - マスクぼかしの半径
+HISTORY_MSG_844;ローカル - 色と明るさ　マスク　FTTW
+HISTORY_MSG_845;ローカル - 対数符号化
+HISTORY_MSG_846;ローカル - 符号化　自動
+HISTORY_MSG_847;ローカル - グレーポイントの源泉
+HISTORY_MSG_848;ローカル - グレーポイントの源泉　自動
+HISTORY_MSG_849;ローカル - グレーポイントの自動選択
+HISTORY_MSG_850;ローカル - ブラックEv
+HISTORY_MSG_851;ローカル - ホワイトEv
+HISTORY_MSG_852;ローカル - グレーポイントの目標
+HISTORY_MSG_853;ローカル - ローカルコントラスト
+HISTORY_MSG_854;ローカル - 対数符号化のスコープ
+HISTORY_MSG_855;ローカル - 画像全体
+HISTORY_MSG_856;ローカル - 対数の基数
+HISTORY_MSG_857;ローカル - Contrast 残差のぼかし
+HISTORY_MSG_858;ローカル - Contrast 輝度だけ 
+HISTORY_MSG_859;ローカル - Contrast 最大値　ぼかしレベル
+HISTORY_MSG_860;ローカル - Contrast カーブ　ぼかすレベル
+HISTORY_MSG_861;ローカル - Contrast カーブ　コントラストレベル
+HISTORY_MSG_862;ローカル - Contrast シグマ　輝度
+HISTORY_MSG_863;ローカル - Contrast 元画像との融合
+HISTORY_MSG_864;ローカル - Contrast ディテール
+HISTORY_MSG_865;ローカル - Contrast アンカー
+HISTORY_MSG_866;ローカル - Contrast カーブの圧縮
+HISTORY_MSG_867;ローカル - Contrast 残差の量
+HISTORY_MSG_868;ローカル - ΔEのバランス　C-H
+HISTORY_MSG_869;ローカル - ノイズ除去カーブ　輝度
+HISTORY_MSG_870;ローカル - LC カーブのマスク LC(H)
+HISTORY_MSG_871;ローカル - LC カーブのマスク C(C)
+HISTORY_MSG_872;ローカル - LC カーブのマスク L(L)
+HISTORY_MSG_873;ローカル - LC マスク 有効
+HISTORY_MSG_875;ローカル - LC マスク ブレンド
+HISTORY_MSG_876;ローカル - LC マスク 半径
+HISTORY_MSG_877;ローカル - LC マスク 色度
+HISTORY_MSG_878;ローカル - LC カーブのマスク コントラスト
+HISTORY_MSG_879;ローカル - LC 色度　レベル
+HISTORY_MSG_880;ローカル - LC 色度のぼかし　レベル
+HISTORY_MSG_881;ローカル - Contrast オフセット　輝度
+HISTORY_MSG_882;ローカル - Contrast ぼかし
+HISTORY_MSG_883;ローカル - Contrast レベルごと
+HISTORY_MSG_884;ローカル - Contrast ダイナミックレンジ　ラプラシアン
+HISTORY_MSG_885;ローカル - Contrast ダイナミックレンジ　ウェーブレット
+HISTORY_MSG_886;ローカル - Contrast ウェーブレット カーブの圧縮
+HISTORY_MSG_887;ローカル - Contrast ウェーブレット 残差の圧縮
+HISTORY_MSG_888;ローカル - Contrast ウェーブレット バランスのしきい値
+HISTORY_MSG_889;ローカル - Contrast ウェーブレット 階調の強さ
+HISTORY_MSG_890;ローカル - Contrast ウェーブレット 階調の角度
+HISTORY_MSG_891;ローカル - Contrast ウェーブレット 階調フィルタ
+HISTORY_MSG_892;ローカル - 対数符号化 階調の強さ
+HISTORY_MSG_893;ローカル - 対数符号化 階調の角度
+HISTORY_MSG_894;ローカル - 色と明るさ　色差のプレビュー
+HISTORY_MSG_897;ローカル - Contrast ウェーブレット ES 強さ
+HISTORY_MSG_898;ローカル - Contrast ウェーブレット ES 半径
+HISTORY_MSG_899;ローカル - Contrast ウェーブレット ES ディテール
+HISTORY_MSG_900;ローカル - Contrast ウェーブレット ES 勾配
+HISTORY_MSG_901;ローカル - Contrast ウェーブレット ES しきい値 低
+HISTORY_MSG_902;ローカル - Contrast ウェーブレット ES しきい値 高
+HISTORY_MSG_903;ローカル - Contrast ウェーブレット ES ローカルコントラスト
+HISTORY_MSG_904;ローカル - Contrast ウェーブレット ES 最初のレベル
+HISTORY_MSG_905;ローカル - Contrast ウェーブレット エッジシャープネス
+HISTORY_MSG_906;ローカル - Contrast ウェーブレット ES 感度
+HISTORY_MSG_907;ローカル - Contrast ウェーブレット ES 増幅
+HISTORY_MSG_908;ローカル - Contrast ウェーブレット ES 隣接
+HISTORY_MSG_909;ローカル - Contrast ウェーブレット ES 表示
+HISTORY_MSG_910;ローカル - ウェーブレット　エッジ検出の効果
+HISTORY_MSG_911;ローカル - ぼかし 色度 輝度
+HISTORY_MSG_912;ローカル - ガイド付きフィルターの強さのぼかし
+HISTORY_MSG_913;ローカル - Contrast Wavelet Sigma DR
+HISTORY_MSG_914;ローカル - ウェーブレットのぼかし シグマ BL
+HISTORY_MSG_915;ローカル - ウェーブレットのエッジ シグマ ED
+HISTORY_MSG_916;ローカル - ウェーブレットの残差画像 シャドウ
+HISTORY_MSG_917;ローカル - ウェーブレットの残差画像　シャドウのしきい値
+HISTORY_MSG_918;ローカル - ウェーブレットの残差画像 ハイライト
+HISTORY_MSG_919;ローカル - ウェーブレットの残差画像 ハイライトのしきい値
+HISTORY_MSG_920;ローカル - ウェーブレット シグマ LC
+HISTORY_MSG_921;ローカル - ウェーブレット　階調のシグマ LC2
+HISTORY_MSG_922;ローカル - 白黒での変更
+HISTORY_MSG_923;ローカル - 機能の複雑度モード
+HISTORY_MSG_924;ローカル - 機能の複雑度モード
+HISTORY_MSG_925;Local - カラー機能のスコープ
+HISTORY_MSG_926;Local - マスクのタイプを表示
+HISTORY_MSG_927;Local - シャドウマスク
+HISTORY_MSG_BLSHAPE;詳細レベルによるぼかし
+HISTORY_MSG_BLURCWAV;色度のぼかし
+HISTORY_MSG_BLURWAV;輝度のぼかし
+HISTORY_MSG_BLUWAV;減衰応答
+HISTORY_MSG_CAT02PRESET;Cat02 自動プリセット
 HISTORY_MSG_CLAMPOOG;色域外の色を切り取る
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - カラー補正
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - 色の補正
@@ -756,7 +1200,9 @@ HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;霞除去 - 深度マップの表示
 HISTORY_MSG_DEHAZE_STRENGTH;霞除去 - 強さ
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;デュアルデモザイク - 自動しきい値
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - コントラストのしきい値
+HISTORY_MSG_EDGEFFECT;エッジの効果調整
 HISTORY_MSG_FILMNEGATIVE_ENABLED;ネガフィルム
+HISTORY_MSG_FILMNEGATIVE_FILMBASE;フィルムのベースカラー
 HISTORY_MSG_FILMNEGATIVE_VALUES;ネガフィルムの値
 HISTORY_MSG_HISTMATCHING;トーンカーブの自動調節
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;出力 - プライマリ
@@ -765,6 +1211,7 @@ HISTORY_MSG_ICM_OUTPUT_TYPE;出力 - タイプ
 HISTORY_MSG_ICM_WORKING_GAMMA;作業色空間 - ガンマ
 HISTORY_MSG_ICM_WORKING_SLOPE;作業色空間 - 勾配
 HISTORY_MSG_ICM_WORKING_TRC_METHOD;作業色空間 - TRCの方式
+HISTORY_MSG_ILLUM;輝度
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;ローカルコントラスト - 量
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;ローカルコントラスト - 暗い部分
 HISTORY_MSG_LOCALCONTRAST_ENABLED;ローカルコントラスト
@@ -779,10 +1226,20 @@ HISTORY_MSG_PDSHARPEN_CONTRAST;CS - コントラストのしきい値
 HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - 繰り返し
 HISTORY_MSG_PDSHARPEN_RADIUS;CS - シグマ
 HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - 周辺のシグマを増やす
+HISTORY_MSG_PERSP_CAM_ANGLE;パースペクティブ - カメラ
+HISTORY_MSG_PERSP_CAM_FL;パースペクティブ - カメラ
+HISTORY_MSG_PERSP_CAM_SHIFT;パースペクティブ - カメラ
+HISTORY_MSG_PERSP_METHOD;パースペクティブ - 方法
+HISTORY_MSG_PERSP_PROJ_ANGLE;パースペクティブ - 回復
+HISTORY_MSG_PERSP_PROJ_ROTATE;パースペクティブ - PCA 回転
+HISTORY_MSG_PERSP_PROJ_SHIFT;パースペクティブ - PCA
 HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - 振れに対するデモザイクの方式
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;ラインノイズフィルタの方向
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
+HISTORY_MSG_PREPROCWB_MODE;ホワイトバランスモードの前処理
+HISTORY_MSG_PROTAB;保護
 HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - コントラストのしきい値
+HISTORY_MSG_RANGEAB;abの範囲
 HISTORY_MSG_RAWCACORR_AUTOIT;Rawの色収差補正 - 繰り返し
 HISTORY_MSG_RAWCACORR_COLORSHIFT;Rawの色収差補正 - 色ずれを回避
 HISTORY_MSG_RAW_BORDER;Rawの境界
@@ -790,9 +1247,35 @@ HISTORY_MSG_RESIZE_ALLOWUPSCALING;リサイズ - アップスケーリングを�
 HISTORY_MSG_SHARPENING_BLUR;シャープニング - ぼかしの半径
 HISTORY_MSG_SHARPENING_CONTRAST;シャープニング - コントラストのしきい値
 HISTORY_MSG_SH_COLORSPACE;S/H - 色空間
+HISTORY_MSG_SIGMACOL;色度の効果調整
+HISTORY_MSG_SIGMADIR;Dirの効果調整
+HISTORY_MSG_SIGMAFIN;最終的なコントラストの効果調整
+HISTORY_MSG_SIGMATON;トーンの効果調整
 HISTORY_MSG_SOFTLIGHT_ENABLED;ソフトライト
 HISTORY_MSG_SOFTLIGHT_STRENGTH;ソフトライト - 強さ
+HISTORY_MSG_TEMPOUT;CAM02 自動色温度設定
+HISTORY_MSG_THRESWAV;バランスのしきい値
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - アンカー
+HISTORY_MSG_TRANS_Method;ジオメトリ - 方式
+HISTORY_MSG_WAVBALCHROM;イコライザ　色度
+HISTORY_MSG_WAVBALLUM;イコライザ　輝度
+HISTORY_MSG_WAVBL;レベルのぼかし
+HISTORY_MSG_WAVCHROMCO;粗い部分の色度
+HISTORY_MSG_WAVCHROMFI;細部の色度
+HISTORY_MSG_WAVCLARI;明瞭
+HISTORY_MSG_WAVEDGS;エッジ停止
+HISTORY_MSG_WAVLOWTHR;最小コントラストのしきい値
+HISTORY_MSG_WAVMERGEC;色度の融合
+HISTORY_MSG_WAVMERGEL;輝度の融合
+HISTORY_MSG_WAVOFFSET;オフセット
+HISTORY_MSG_WAVOLDSH;古いアルゴリズムを使う
+HISTORY_MSG_WAVRADIUS;シャドウ/ハイライトの半径
+HISTORY_MSG_WAVSCALE;スケール
+HISTORY_MSG_WAVSHOWMASK;ウェーブレットのマスクを表示
+HISTORY_MSG_WAVSIGMA;シグマ
+HISTORY_MSG_WAVSOFTRAD;明瞭のソフトな半径
+HISTORY_MSG_WAVSOFTRADEND;最終画像のソフトな半径
+HISTORY_MSG_WAVUSHAMET;明瞭の方式
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOT;スナップショット
@@ -880,7 +1363,6 @@ IPTCPANEL_TITLE;タイトル
 IPTCPANEL_TITLEHINT;画像を短く表す言葉や撮影者名、或いは画像のタイトルでもよい
 IPTCPANEL_TRANSREFERENCE;作業のID
 IPTCPANEL_TRANSREFERENCEHINT;作業工程の管理やトラッキングのための画像の数字或いは識別
-LENSPROFILE_LENS_WARNING;注意:レンズプロファイルに関する切り抜きの因数がカメラの因数より大きいと、誤った結果になるかもしれません
 MAIN_BUTTON_FULLSCREEN;フルスクリーン
 MAIN_BUTTON_ICCPROFCREATOR;ICCプロファイルクリエーター
 MAIN_BUTTON_NAVNEXT_TOOLTIP;エディタで開いている画像に対応する次の画像に移動します\nショートカット: <b>Shift-F4</b>\n\nファイルブラウザで選択したサムネイルに対応する次の画像に移動するには\nショートカット: <b>F4</b>
@@ -921,7 +1403,7 @@ MAIN_TAB_ADVANCED;高度な機能
 MAIN_TAB_ADVANCED_TOOLTIP;ショートカット: <b>Alt</b>-<b>a</b>
 MAIN_TAB_COLOR;カラー
 MAIN_TAB_COLOR_TOOLTIP;ショートカット: <b>Alt-c</b>
-MAIN_TAB_DETAIL;CbDL
+MAIN_TAB_DETAIL;ディテール
 MAIN_TAB_DETAIL_TOOLTIP;ショートカット: <b>Alt-d</b>
 MAIN_TAB_DEVELOP;一括編集
 MAIN_TAB_EXIF;Exif
@@ -933,6 +1415,8 @@ MAIN_TAB_FAVORITES_TOOLTIP;ショートカット: <b>Alt-u</b>
 MAIN_TAB_FILTER;絞り込み
 MAIN_TAB_INSPECT;カメラ出しJPEG
 MAIN_TAB_IPTC;IPTC
+MAIN_TAB_LOCALLAB;ローカル調整
+MAIN_TAB_LOCALLAB_TOOLTIP;ショートカット <b>Alt-o</b>
 MAIN_TAB_METADATA;メタデータ
 MAIN_TAB_METADATA_TOOLTIP;ショートカット: <b>Alt-m</b>
 MAIN_TAB_RAW;raw
@@ -1012,20 +1496,24 @@ PARTIALPASTE_GRADIENT;減光フィルター
 PARTIALPASTE_HSVEQUALIZER;HSV イコライザ
 PARTIALPASTE_ICMSETTINGS;ICM 設定
 PARTIALPASTE_IMPULSEDENOISE;インパルス・ノイズ低減
-PARTIALPASTE_IPTCINFO;IPTC 情報
+PARTIALPASTE_IPTCINFO;IPTC
 PARTIALPASTE_LABCURVE;L*a*b* 調整
-PARTIALPASTE_LENSGROUP;レンズ設定
+PARTIALPASTE_LENSGROUP;レンズ関係の設定
 PARTIALPASTE_LENSPROFILE;レンズ補正プロファイル
 PARTIALPASTE_LOCALCONTRAST;ローカルコントラスト
+PARTIALPASTE_LOCALLAB;ローカル調整
+PARTIALPASTE_LOCALLABGROUP;ローカル調整の設定
+PARTIALPASTE_LOCGROUP;ローカル
 PARTIALPASTE_METADATA;メタデータモード
 PARTIALPASTE_METAGROUP;メタデータ
 PARTIALPASTE_PCVIGNETTE;ビネットフィルター
 PARTIALPASTE_PERSPECTIVE;パースペクティブの補正
 PARTIALPASTE_PREPROCESS_DEADPIXFILT;デッドピクセルフィルターを適用
 PARTIALPASTE_PREPROCESS_GREENEQUIL;グリーン 平衡化
-PARTIALPASTE_PREPROCESS_HOTPIXFILT;ホットピクセルフィルターを適用
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;ホットピクセルフィルター
 PARTIALPASTE_PREPROCESS_LINEDENOISE;ラインノイズ フィルタ
 PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF ラインフィルタ
+PARTIALPASTE_PREPROCWB;ホワイトバランスの前処理
 PARTIALPASTE_PRSHARPENING;リサイズ後のシャープニング
 PARTIALPASTE_RAWCACORR_AUTO;自動色収差補正
 PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA 色ずれを回避
@@ -1049,7 +1537,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;シャドウ/ハイライト
 PARTIALPASTE_SHARPENEDGE;エッジ
 PARTIALPASTE_SHARPENING;シャープニング (USM/RL)
 PARTIALPASTE_SHARPENMICRO;マイクロコントラスト
-PARTIALPASTE_SOFTLIGHT;ソフトな明るさ
+PARTIALPASTE_SOFTLIGHT;ソフトライト
 PARTIALPASTE_TM_FATTAL;ダイナミックレンジ圧縮
 PARTIALPASTE_VIBRANCE;自然な彩度
 PARTIALPASTE_VIGNETTING;周辺光量補正
@@ -1090,6 +1578,9 @@ PREFERENCES_CLUTSCACHE;HaldCLUT cache
 PREFERENCES_CLUTSCACHE_LABEL;cacheに入れるHaldCLUTの最大数
 PREFERENCES_CLUTSDIR;HaldCLUTのディレクトリー
 PREFERENCES_CMMBPC;ブラックポイントの補正
+PREFERENCES_COMPLEXITYLOC;ローカル調整のデフォルトの複雑度
+PREFERENCES_COMPLEXITY_EXP;エキスパート
+PREFERENCES_COMPLEXITY_NORM;通常
 PREFERENCES_CROP;切り抜き画像の編集
 PREFERENCES_CROP_AUTO_FIT;切り抜き画像を自動的に拡大します
 PREFERENCES_CROP_GUIDES;切り抜き画像が編集されていない時はガイドを表示します
@@ -1155,7 +1646,7 @@ PREFERENCES_MENUGROUPLABEL;"カラーラベル"のグループ
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;"処理プロファイル操作"のグループ
 PREFERENCES_MENUGROUPRANK;"ランキング"のグループ
 PREFERENCES_MENUOPTIONS;メニューオプションの状況
-PREFERENCES_MONINTENT;デフォルトのモニターインテント
+PREFERENCES_MONINTENT;デフォルトのレンダリングの目標
 PREFERENCES_MONITOR;モニター
 PREFERENCES_MONPROFILE;デフォルトのモニタープロファイル
 PREFERENCES_MONPROFILE_WARNOSX;MacのOSの制約により、サポート出来るのはsRGBだけです
@@ -1206,6 +1697,7 @@ PREFERENCES_SHOWBASICEXIF;基本Exif情報を表示
 PREFERENCES_SHOWDATETIME;日付表示
 PREFERENCES_SHOWEXPOSURECOMPENSATION;露光補正追加
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;画像スライドにツールバーを表示する
+PREFERENCES_SHOWTOOLTIP;ローカル調整の機能のヒントを表示
 PREFERENCES_SHTHRESHOLD;シャドウ・クリッピング領域のしきい値
 PREFERENCES_SINGLETAB;シングルタブモードモード
 PREFERENCES_SINGLETABVERTAB;シングル編集タブモード, 垂直タブ
@@ -1413,7 +1905,7 @@ TP_COLORAPP_CHROMA_M_TOOLTIP;CIECAM02の鮮やかさは L*a*b*やRGBの鮮やか
 TP_COLORAPP_CHROMA_S;彩度 (S)
 TP_COLORAPP_CHROMA_S_TOOLTIP;CIECAM02の彩度は L*a*b*やRGBの彩度とは異なります
 TP_COLORAPP_CHROMA_TOOLTIP;CIECAM02の色度は L*a*b*やRGBの色度とは異なります
-TP_COLORAPP_CIECAT_DEGREE;CAT02に適応
+TP_COLORAPP_CIECAT_DEGREE;CAT02
 TP_COLORAPP_CONTRAST;コントラスト (J)
 TP_COLORAPP_CONTRAST_Q;コントラスト (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;CIECAM02のコントラスト(明るさQ)スライダーは L*a*b*やRGBとは異なります
@@ -1424,17 +1916,27 @@ TP_COLORAPP_CURVEEDITOR2;トーンカーブ2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;2番目の露光トーンカーブも同じ使い方です
 TP_COLORAPP_CURVEEDITOR3;カラーカーブ
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;色度、彩度、鮮やかさのいずれかを調整します\n\nCIECAM02調整前の色度(L*a*b*)のヒストグラムを表示します\nチェックボックスの"カーブにCIECAM02出力のヒストグラムを表示" が有効の場合、CIECAM02調整後のC,sまたはMのヒストグラムを表示します\n\nC, sとMは、メインのヒストグラム・パネルには表示されません\n最終出力は、メインのヒストグラム・パネルを参照してください
-TP_COLORAPP_DATACIE;カーブにCIECAM02出力のヒストグラムを表示
+TP_COLORAPP_DATACIE;カーブでCIECAM02出力のヒストグラムを表示
 TP_COLORAPP_DATACIE_TOOLTIP;有効の場合、CIECAM02カーブのヒストグラムは、JかQ、CIECAM02調整後のCかs、またはMの値/範囲の近似値を表示します\nこの選択はメイン・ヒストグラムパネルには影響を与えません\n\n無効の場合、CIECAM02カーブのヒストグラムは、CIECAM調整前のL*a*b*値を表示します
-TP_COLORAPP_FREE;任意の色温度+グリーン + CAT02 + [出力]
+TP_COLORAPP_FREE;任意の色温度と色偏差 + CAT02 + [出力]
 TP_COLORAPP_GAMUT;色域制御 (L*a*b*)
-TP_COLORAPP_GAMUT_TOOLTIP;L*a*b*モードの色域制御を許可
+TP_COLORAPP_GAMUT_TOOLTIP;L*a*b*モードの色域制御を可能にします
 TP_COLORAPP_HUE;色相 (h)
 TP_COLORAPP_HUE_TOOLTIP;色相 (h) - 0° から 360°の角度
+TP_COLORAPP_IL41;D41
+TP_COLORAPP_IL50;D50
+TP_COLORAPP_IL55;D55
+TP_COLORAPP_IL60;D60
+TP_COLORAPP_IL65;D65
+TP_COLORAPP_IL75;D75
+TP_COLORAPP_ILA;白熱灯標準A 2856K
+TP_COLORAPP_ILFREE;フリー
+TP_COLORAPP_ILLUM;光源
+TP_COLORAPP_ILLUM_TOOLTIP;撮影条件に最も近い条件を選択します\n一般的にはD50 ですが、時間と緯度に応じて変えます
 TP_COLORAPP_LABEL;CIE色の見えモデル2002
 TP_COLORAPP_LABEL_CAM02;画像の調整
-TP_COLORAPP_LABEL_SCENE;撮影環境条件
-TP_COLORAPP_LABEL_VIEWING;観視条件
+TP_COLORAPP_LABEL_SCENE;撮影環境
+TP_COLORAPP_LABEL_VIEWING;観視環境
 TP_COLORAPP_LIGHT;明度 (J)
 TP_COLORAPP_LIGHT_TOOLTIP;CIECAM02の明度は L*a*b*やRGBの明度とは異なります
 TP_COLORAPP_MEANLUMINANCE;中間輝度 (Yb%)
@@ -1442,6 +1944,8 @@ TP_COLORAPP_MODEL;ホワイトポイント・モデル
 TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [出力]:</b>\nRTのホワイトバランスは、撮影環境に使用されます。CIECAM02はD50の設定, 出力デバイスのホワイトバランスは「環境設定」の「カラーマネジメント」の設定\n\n<b>WB [RT+CAT02] + [出力]:</b>\nRTのホワイトバランス設定は、CAT02で使用され、出力デバイスのホワイトバランスは環境設定の値を使用します
 TP_COLORAPP_NEUTRAL;リセット
 TP_COLORAPP_NEUTRAL_TIP;全てのスライダーチェックボックスとカーブをデフォルトにリセットします
+TP_COLORAPP_PRESETCAT02;cat02の自動プリセット
+TP_COLORAPP_PRESETCAT02_TIP;これを有効にすると、スライダー、色温度、色偏差がCAT02自動に合わせて設定されます\n撮影環境の輝度は変えることが出来ます\n必要であれば、CAT02の観視環境を変更します\n必要に応じて観視環境の色温度、色偏差、を変更します
 TP_COLORAPP_RSTPRO;レッドと肌色トーンを保護
 TP_COLORAPP_RSTPRO_TOOLTIP;レッドと肌色トーンを保護はスライダーとカーブの両方に影響します
 TP_COLORAPP_SURROUND;周囲環境
@@ -1458,6 +1962,8 @@ TP_COLORAPP_TCMODE_LABEL2;カーブ・モード2
 TP_COLORAPP_TCMODE_LABEL3;カーブ・色度モード
 TP_COLORAPP_TCMODE_LIGHTNESS;明度
 TP_COLORAPP_TCMODE_SATUR;彩度
+TP_COLORAPP_TEMP2_TOOLTIP;シンメトリカルモードの場合は色温度 = White balance.\n色偏差は常に1.0\n\nA光源　色温度=2856\nD41 色温度=4100\nD50 色温度=5003\nD55 色温度=5503\nD60 色温度=6000\nD65 色温度=6504\nD75 色温度=7504
+TP_COLORAPP_TEMPOUT_TOOLTIP;色温度と色偏差を変えるために無効にします
 TP_COLORAPP_TEMP_TOOLTIP;選択した光源に関し色偏差は常に1が使われます\n\n色温度=2856\nD50 色温度=5003\nD55 色温度=5503\nD65 色温度=6504\nD75 色温度=7504
 TP_COLORAPP_TONECIE;CIECAM02 明るさ(Q)を使用してトーンマッピング
 TP_COLORAPP_TONECIE_TOOLTIP;このオプションが無効になっている場合、トーンマッピングはL*a*b*空間を使用します\nこのオプションが有効になっている場合、トーンマッピングは、CIECAM02を使用します\nトーンマッピング（L*a*b*/CIECAM02）ツールを有効にするには、この設定を有効にする必要があります
@@ -1538,8 +2044,8 @@ TP_CROP_PPI;PPI
 TP_CROP_RESETCROP;リセット
 TP_CROP_SELECTCROP;セレクト
 TP_CROP_W;W 幅
-TP_CROP_X;X
-TP_CROP_Y;Y
+TP_CROP_X;左
+TP_CROP_Y;上部
 TP_DARKFRAME_AUTOSELECT;自動選択
 TP_DARKFRAME_LABEL;ダークフレーム
 TP_DEFRINGE_LABEL;フリンジ低減
@@ -1552,7 +2058,7 @@ TP_DEHAZE_SHOW_DEPTH_MAP;深度マップの表示
 TP_DEHAZE_STRENGTH;強さ
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;自動（多分割方式）
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;自動（分割方式）
-TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;色差 ブルー/イエロー
+TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;ブルー/イエロー
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;色ノイズ低減のカーブ
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;クロミナンススライダー全ての値を増幅します\n色度をベースにこのカーブで色ノイズ低減の強さを加減します。例えば彩度の低い部分で作用を強める、或いは色度の高い部分で作用を弱めるように使います
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;色ノイズ
@@ -1568,7 +2074,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;プレビュー画像のサイズ=%1, 
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;プレビュー画像のノイズ: 平均値=%1  最大値=%2
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;プレビュー画像のノイズ: 平均値= -   最大値= -
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
-TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;色差 レッド/グリーン
+TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;レッド/グリーン
 TP_DIRPYRDENOISE_LABEL;ノイズ低減
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;輝度ノイズの調整法
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;輝度カーブ
@@ -1585,7 +2091,7 @@ TP_DIRPYRDENOISE_MAIN_MODE;モード
 TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;積極的
 TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;控えめ
 TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;”控えめ”モードは低周波の色度パターンが維持されますが、”積極的”モードではそれらも取り除かれます
-TP_DIRPYRDENOISE_MEDIAN_METHOD;方式
+TP_DIRPYRDENOISE_MEDIAN_METHOD;メディアンの方式
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;色ノイズだけ
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;メディアンフィルター
@@ -1609,7 +2115,7 @@ TP_DIRPYREQUALIZER_ARTIF;アーティファクトを軽減
 TP_DIRPYREQUALIZER_HUESKIN;肌色の色相
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;このカーブは上部ほど、アルゴリズムが効率良く働くことを示しています。\n下部ほど、色相の遷移が見られる部分です。\nコントロールポイントを左右に大きく動かす必要が生じたり、アーティファクトが生じたりする場合は、<b>ホワイトバランスが妥当ではない</b>時です。\n他の色への影響を避けるには、調整範囲を少し減らします
 TP_DIRPYREQUALIZER_LABEL;詳細レベルによるコントラスト調整
-TP_DIRPYREQUALIZER_LUMACOARSEST;粗い
+TP_DIRPYREQUALIZER_LUMACOARSEST;大まか
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;コントラスト-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;コントラスト+
 TP_DIRPYREQUALIZER_LUMAFINEST;細かい
@@ -1628,12 +2134,12 @@ TP_EPD_REWEIGHTINGITERATES;再加重反復
 TP_EPD_SCALE;スケール
 TP_EPD_STRENGTH;強さ
 TP_EXPOSURE_AUTOLEVELS;自動露光補正
-TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定します
+TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し、露光補正を自動で行います\n必要に応じてハイライト復元を有効にします
 TP_EXPOSURE_BLACKLEVEL;黒レベル
-TP_EXPOSURE_BRIGHTNESS;明度
+TP_EXPOSURE_BRIGHTNESS;明るさ
 TP_EXPOSURE_CLAMPOOG;色域から外れた色を切り取る
 TP_EXPOSURE_CLIP;クリップ　％
-TP_EXPOSURE_CLIP_TIP;自動露光補正によるハイライトとシャドウ部分での飽和ピクセルの割合制限
+TP_EXPOSURE_CLIP_TIP;自動露光補正で使う飽和ピクセルの割合
 TP_EXPOSURE_COMPRHIGHLIGHTS;ハイライト圧縮
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;ハイライト圧縮 しきい値
 TP_EXPOSURE_COMPRSHADOWS;シャドウ圧縮
@@ -1657,6 +2163,9 @@ TP_EXPOSURE_TCMODE_WEIGHTEDSTD;加重平均
 TP_EXPOS_BLACKPOINT_LABEL;raw ブラック・ポイント
 TP_EXPOS_WHITEPOINT_LABEL;raw ホワイト・ポイント
 TP_FILMNEGATIVE_BLUE;ブルーの比率
+TP_FILMNEGATIVE_FILMBASE_PICK;フィルのベースカラーをピック
+TP_FILMNEGATIVE_FILMBASE_TOOLTIP;実際のフィルムのベースカラーを取得して、処理プロファイルに保存するために未露光のスポットをピック(例 フレームの境）\nこの方が、同じフィルムロールからの複数の画像をバッチ処理する際に、一貫性のあるカラーバランスを取り易いです\n変換する画像が極端に暗い、明るい、色のバランスが悪い場合に使えます。
+TP_FILMNEGATIVE_FILMBASE_VALUES;フィルムをベースにしたRGB:
 TP_FILMNEGATIVE_GREEN;参考指数(コントラスト)
 TP_FILMNEGATIVE_GUESS_TOOLTIP;原画像の中で色相がニュートラルな部分2か所をピックすることでレッドとブルーの比率を自動で設定します。明るさが異なる2か所をピックします。その後、ホワイトバランスを設定します。
 TP_FILMNEGATIVE_LABEL;ネガフィルム
@@ -1734,7 +2243,7 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;入力プロファイルが適用される前のリ
 TP_ICM_TONECURVE;DCPトーンカーブ使用
 TP_ICM_TONECURVE_TOOLTIP;DCPのプロファイルに含まれているトーンカーブを使用することができます
 TP_ICM_WORKINGPROFILE;作業プロファイル
-TP_ICM_WORKING_TRC;トーン再現カーブ:
+TP_ICM_WORKING_TRC;TRC:
 TP_ICM_WORKING_TRC_CUSTOM;カスタム
 TP_ICM_WORKING_TRC_GAMMA;ガンマ
 TP_ICM_WORKING_TRC_NONE;なし
@@ -1782,6 +2291,8 @@ TP_LABCURVE_RSTPRO_TOOLTIP;色度スライダーとCCカーブを使用するこ
 TP_LENSGEOM_AUTOCROP;自動的に切り抜き選択
 TP_LENSGEOM_FILL;オートフィル
 TP_LENSGEOM_LABEL;レンズ / ジオメトリ
+TP_LENSGEOM_LIN;線形
+TP_LENSGEOM_LOG;対数
 TP_LENSPROFILE_CORRECTION_AUTOMATCH;自動で選択
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCPファイル
 TP_LENSPROFILE_CORRECTION_MANUAL;手動で選択
@@ -1797,6 +2308,561 @@ TP_LOCALCONTRAST_DARKNESS;暗い部分のレベル
 TP_LOCALCONTRAST_LABEL;ローカルコントラスト
 TP_LOCALCONTRAST_LIGHTNESS;明るい部分のレベル
 TP_LOCALCONTRAST_RADIUS;半径
+TP_LOCALLAB_ACTIV;輝度だけ
+TP_LOCALLAB_ADJ;イコライザ ブルー/イエロー　レッド/グリーン
+TP_LOCALLAB_ALL;全ての種類
+TP_LOCALLAB_AMOUNT;量
+TP_LOCALLAB_ARTIF;形状検出
+TP_LOCALLAB_ARTIF_TOOLTIP;色差の軽減を強めることで形状検出を向上させますが、形状の検出の範囲が狭まることがあります\n画像の形状のしきい値が画像のベタな部分のレベルを考慮します
+TP_LOCALLAB_AUTOGRAY;自動
+TP_LOCALLAB_AVOID;色ずれの回避
+TP_LOCALLAB_BALAN;ΔEのバランス　ab-L
+TP_LOCALLAB_BALANEXP;ΔØ　PDE バランス
+TP_LOCALLAB_BALANH;ΔEのバランス　C-H
+TP_LOCALLAB_BALAN_TOOLTIP;色差のアルゴリズムのパラメータを変えます。\nab-L、C - Hを増減させます\nノイズ除去は変わりません
+TP_LOCALLAB_BASELOG;対数の基数
+TP_LOCALLAB_BILATERAL;平滑化フィルタ
+TP_LOCALLAB_BLACK_EV;ブラックEv
+TP_LOCALLAB_BLCO;色度だけ
+TP_LOCALLAB_BLENDMASKCOL;ブレンド
+TP_LOCALLAB_BLENDMASK_TOOLTIP;ブレンド=0の場合は、形状検出だけが改善します\nブレンドが0より大きい場合は、画像にマスクが追加されます。 ブレンドが0より小さい場合は、画像からマスクが除かれます。
+TP_LOCALLAB_BLGUID;ガイド付きフィルタ
+TP_LOCALLAB_BLINV;インバース
+TP_LOCALLAB_BLLC;輝度と色度
+TP_LOCALLAB_BLLO;輝度だけ
+TP_LOCALLAB_BLMED;メディアン
+TP_LOCALLAB_BLMETHOD_TOOLTIP;通常-全ての設定に対し、直接的なぼかしとノイズ\n反対‐スコープと拡張アルゴリズムを除いた設定で、ぼかしとノイズの反対処理\nシンメトリック‐全ての設定でぼかしとノイズの反対処理（予期せぬ結果になることが有り）
+TP_LOCALLAB_BLNOI_EXP;ぼかし & ノイズ
+TP_LOCALLAB_BLNORM;通常
+TP_LOCALLAB_BLSYM;シンメトリック
+TP_LOCALLAB_BLUFR;平滑化 - ぼかし - 質感 - ノイズ除去
+TP_LOCALLAB_BLUMETHOD_TOOLTIP;背景をぼかし、前景を分離するために:\n*RT-スポットが画像全体をカバーできるようにして（スコープと境界を高くする）背景をぼかします-通常或いはリバースモード\n*使用したい機能で一つ以上の除外RT-スポットを追加し（スコープを大きくします）、前景を分離します、マスクを使うことで効果を増幅出来ます
+TP_LOCALLAB_BLUR;ガウスぼかし - ノイズ - ノイズ除去
+TP_LOCALLAB_BLURCBDL;ぼかしのレベル 0-1-2-3-4
+TP_LOCALLAB_BLURCOL;マスクぼかしの半径
+TP_LOCALLAB_BLURDE;形状検出のぼかし
+TP_LOCALLAB_BLURLC;輝度だけ
+TP_LOCALLAB_BLURLEVELFRA;レベルのぼかし
+TP_LOCALLAB_BLURMASK_TOOLTIP;コントラストのしきい値と構造を考慮したマスクぼかしのスライダーでぼかしマスクを生成します。
+TP_LOCALLAB_BLURRESIDFRA;残差のぼかし
+TP_LOCALLAB_BLUR_TOOLNAME;平滑化ぼかし　質感 & ノイズ除去 - 1
+TP_LOCALLAB_BLWH;全ての変更を強制的に白黒にする
+TP_LOCALLAB_BLWH_TOOLTIP;色の構成要素、"a"と"b"の値を強制的にゼロにします 
+TP_LOCALLAB_BUTTON_ADD;追加
+TP_LOCALLAB_BUTTON_DEL;削除
+TP_LOCALLAB_BUTTON_DUPL;複製
+TP_LOCALLAB_BUTTON_REN;名前の変更
+TP_LOCALLAB_BUTTON_VIS;表示/非表示
+TP_LOCALLAB_CBDL;詳細レベルによるコントラスト調整 - 不良の補正
+TP_LOCALLAB_CBDLCLARI_TOOLTIP;中間トーンを強化します
+TP_LOCALLAB_CBDL_ADJ_TOOLTIP;ウェーブレット機能のように作用します\n最初のレベル(0)は2x2ピクセルで解析します\n最後のレベル(5)は64x64ピクセルで解析します
+TP_LOCALLAB_CBDL_THRES_TOOLTIP;ノイズが先鋭化するのを避けます
+TP_LOCALLAB_CBDL_TOOLNAME;詳細レベルによるコントラスト調整 (不良部分の補正) - 2
+TP_LOCALLAB_CENTER_X;センターX
+TP_LOCALLAB_CENTER_Y;センターY
+TP_LOCALLAB_CH;カーブ CL - LC
+TP_LOCALLAB_CHROMA;色度
+TP_LOCALLAB_CHROMABLU;色度のレベル
+TP_LOCALLAB_CHROMABLU_TOOLTIP;輝度のスライダーと比べて増幅と減衰の作用の働きをします\n1以下で減衰、1以上で増幅の作用となります
+TP_LOCALLAB_CHROMACBDL;色度
+TP_LOCALLAB_CHROMACB_TOOLTIP;輝度のスライダーと比べて増幅と減衰の作用の働きをします\n100以下で減衰、100以上で増幅の作用となります
+TP_LOCALLAB_CHROMALEV;色度のレベル
+TP_LOCALLAB_CHROMASKCOL;色度のマスク
+TP_LOCALLAB_CHROMASK_TOOLTIP;このスライダーを使って背景の彩度を下げることが出来ます(インバースマスクで言う0に近いカーブ).\n色度に対するマスクの作用を強めることも出来ます。
+TP_LOCALLAB_CHRRT;色度
+TP_LOCALLAB_CIRCRADIUS;スポットサイズ
+TP_LOCALLAB_CIRCRAD_TOOLTIP;RT-スポットの参考値を含んでいるので、形状検出（色相、輝度、色度、Sobel）に有利です\n小さい値は花びらの補正などに便利です\n大きな値は肌などの補正に便利です
+TP_LOCALLAB_CLARICRES;色度を融合
+TP_LOCALLAB_CLARIFRA;明瞭とシャープマスク - ブレンド & ソフトイメージ
+TP_LOCALLAB_CLARILRES;輝度の融合
+TP_LOCALLAB_CLARISOFT;ソフトな半径
+TP_LOCALLAB_CLARISOFT_TOOLTIP;輝度の融合が0以外の場合に明瞭とシャープマスクが有効となります。\n\nウェーブレットピラミッドモジュールの全てが有効となります\nソフトな半径が0の場合は無効となります
+TP_LOCALLAB_CLARITYML;明瞭
+TP_LOCALLAB_CLARI_TOOLTIP;ウェーブレットのレベルが4以下の場合は、’シャープマスク’が有効となります。\n5以上のレベルでは’明瞭化’が有効となります。
+TP_LOCALLAB_CLIPTM;復元されたデータの切り取り(ゲイン)
+TP_LOCALLAB_COFR;色と明るさ - 小さな不良
+TP_LOCALLAB_COLORDE;プレビューのカラー選択 ΔE - 強さ
+TP_LOCALLAB_COLORDEPREV_TOOLTIP;有効になっている機能が1つだけの時は、設定のパネル（拡張する）のΔEのプレビューボタンを使います。\n複数の機能が有効になっている時は、各機能に備わっているマスクと調節の中のΔEのプレビューを使います。
+TP_LOCALLAB_COLORDE_TOOLTIP;設定値がマイナスの場合は色差（ΔE）のプレビューの色をブルーで表示、プラスの場合はグリーンで表示\n\nマスクと調節（マスクなしで調節を表示）：プラスであれば、実際の変更を表示、マイナスであれば、強化した調節（輝度のみ）をブルーとイエローで表示
+TP_LOCALLAB_COLORSCOPE;カラー機能のスコープ
+TP_LOCALLAB_COLORSCOPE_TOOLTIP;色と明るさ、露光補正（標準）、シャドウ/ハイライト、自然な彩度は共通したスコープを使います。\n他の機能に関しては、それぞれ特定のスコープを使います。
+TP_LOCALLAB_COLOR_TOOLNAME;色＆&明るさ (不良部分の補正) - 11
+TP_LOCALLAB_COL_NAME;名前
+TP_LOCALLAB_COL_VIS;ステータス
+TP_LOCALLAB_COMPFRA;詳細レベルの方向によるコントラスト
+TP_LOCALLAB_COMPFRAME_TOOLTIP;特殊な効果を付けるために使います。アーティファクトを軽減するためには'明瞭 & シャープマスク、ブレンド & ソフトイメージ'を使います\n処理時間が大きく増えます
+TP_LOCALLAB_COMPLEX_METHOD;ソフトウェアの複雑度
+TP_LOCALLAB_COMPLEX_TOOLTIP; ローカル調整の扱いの複雑度を選択出来ます
+TP_LOCALLAB_COMPREFRA;ウェーブレットを使ったレベルのダイナミックレンジ（非）圧縮
+TP_LOCALLAB_COMPRESS_TOOLTIP;アーティファクトを軽減するため必要に応じて'明瞭 & シャープマスク、ブレンド & ソフトイメージ'の'ソフトな半径'使います
+TP_LOCALLAB_CONTCOL;マスクぼかしのコントラストしきい値
+TP_LOCALLAB_CONTFRA;レベルによるコントラスト調整
+TP_LOCALLAB_CONTRAST;コントラスト
+TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;メインのマスクのコントラストをコントロール
+TP_LOCALLAB_CONTRESID;コントラスト
+TP_LOCALLAB_CONTTHR;コントラストのしきい値
+TP_LOCALLAB_CSTHRESHOLD;Ψ　ウェーブレットのレベル
+TP_LOCALLAB_CSTHRESHOLDBLUR;Ψ　ウェーブレットレベルのマスク
+TP_LOCALLAB_CURV;明るさ - コントラスト - 色度 "強力"
+TP_LOCALLAB_CURVCURR;通常
+TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;カーブが最上部に位置している時は、マスクが完全に黒く表示され、マスクの作用がない状態\nカーブを下に下げるにつれ、マスクの色が変わり、合わせて画像の状態も変わる 
+TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;使うためには'カーブを有効にする'に✔を入れる
+TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;トーンカーブ
+TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), 色と明るさでL(H)との併用可
+TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'通常', L=f(L)カーブはスライダーと同じアルゴリズムを使っています\n'強力' L=f(L)カーブで作用を強めた新しいアルゴリズムを使っていますが、場合によってアーティファクトが出ることがあります
+TP_LOCALLAB_CURVENCONTRAST;強力+コントラストのしきい値（試験的）
+TP_LOCALLAB_CURVENH;強力
+TP_LOCALLAB_CURVENHSU;色相と色度の組み合わせ(試験的)
+TP_LOCALLAB_CURVENSOB2;色相と色度の組み合わせ+コントラストのしきい値（試験的）
+TP_LOCALLAB_CURVNONE;カーブを無効
+TP_LOCALLAB_DARKRETI;暗さ
+TP_LOCALLAB_DEHAFRA;霞除去
+TP_LOCALLAB_DEHAZ;強さ
+TP_LOCALLAB_DEHAZ_TOOLTIP;マイナス値にすると霞が増えます
+TP_LOCALLAB_DELTAD;色差のバランス
+TP_LOCALLAB_DELTAEC;ΔE画像のマスク
+TP_LOCALLAB_DENOIS;Ψ ノイズ除去
+TP_LOCALLAB_DENOI_EXP;ノイズ除去
+TP_LOCALLAB_DENOI_TOOLTIP;このモジュール（処理工程の後の方に位置）だけで使うことも、メインのノイズ低減（処理工程の最初の方に位置）と併用することも出来ます\nスコープは色（ΔE）に応じてノイズ除去の作用に違いを持たせます。\n”メディアン”と”ガイド付きフィルタ”（平滑化ぼかし）も使えば、ノイズ除去のパフォーマンスが良くなります。\n”レベルのぼかし”や”ウェーブレットピラミッド”の併用で更にノイズ除去のパフォーマンスが上がります。 
+TP_LOCALLAB_DEPTH;深度
+TP_LOCALLAB_DETAIL;ローカルコントラスト
+TP_LOCALLAB_DETAILSH;ディテール
+TP_LOCALLAB_DETAILTHR;細部の色の明るさのしきい値 (DCT)
+TP_LOCALLAB_DUPLSPOTNAME;コピー
+TP_LOCALLAB_EDGFRA;エッジシャープネス
+TP_LOCALLAB_EDGSHOW;全ての機能を表示
+TP_LOCALLAB_ELI;楕円
+TP_LOCALLAB_ENABLE_AFTER_MASK;トーンマッピングを使う
+TP_LOCALLAB_ENABLE_MASK;マスクを有効にする
+TP_LOCALLAB_ENABLE_MASKAFT;露光補正の全てのアルゴリズムを使う
+TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP;元のデータの代わりに透過マップを使った後は、有効にしたマスクは保持されているデータを使います。
+TP_LOCALLAB_ENH;強化
+TP_LOCALLAB_ENHDEN;強化 + 色ノイズの軽減
+TP_LOCALLAB_EPSBL;ディテール
+TP_LOCALLAB_EQUIL;輝度の標準化
+TP_LOCALLAB_EQUILTM_TOOLTIP;出力画像の輝度の平均と分散が元画像のそれらと同じになるように輝度を回復するオプションです
+TP_LOCALLAB_ESTOP;エッジ停止
+TP_LOCALLAB_EV_DUPL;のコピー
+TP_LOCALLAB_EV_NVIS;非表示
+TP_LOCALLAB_EV_NVIS_ALL;全て非表示
+TP_LOCALLAB_EV_VIS;表示
+TP_LOCALLAB_EV_VIS_ALL;全て表示
+TP_LOCALLAB_EXCLUF;除外
+TP_LOCALLAB_EXCLUF_TOOLTIP;スコープを動かして色を拡張するような場合、データの一部を除外する場合に使います\nRT-スポットに対する全ての設定で適用できます。
+TP_LOCALLAB_EXCLUTYPE;スポットのタイプ
+TP_LOCALLAB_EXCLUTYPE_TOOLTIP;通常方式は、スポットのデータを繰り返して使います\n例外方式は元のデータに戻して使う方式です
+TP_LOCALLAB_EXECLU;除外スポット
+TP_LOCALLAB_EXNORM;通常スポット
+TP_LOCALLAB_EXPCBDL_TOOLTIP;センサーの汚れに起因する不良で、それらが画像の大切な部分にある、或いは複数個所にそれらある場合\n\na) RT-スポットをその部分に作成（必要であれば大きさを調節); b) または複数個所をカバーするスポットを作成; c) 比較的大きな境界の調整を設定; d) レベル3と4のスライダー、場合によっては2の値も100以下にします。必要に応じて色度のスライダーも使います。
+TP_LOCALLAB_EXPCHROMA;色度の補間
+TP_LOCALLAB_EXPCHROMA_TOOLTIP;この機能は露光量補正とPDE　IPOLだけに関わります\n色が褪せるのを避けます
+TP_LOCALLAB_EXPCOLOR_TOOLTIP;不良個所か小さい場合：\n\n赤目 : 中心円を赤い部分に合わせ、RT-スポットの範囲を眼の大きさ程度にします。スコープの値を小さくし、"明るさ" -100, "色" -100にします\n\n赤外線センサーのスポット:中心円を不良個所に合わせます、 RT-スポットの範囲はデフォルトに近い大きさで構いません - "色"を減らし、場合によっては"スコープ"を使って作用の及ぶ範囲を調節します\n\nセンサーの汚れ（小）:中心円を不良部分に合わせます(スポットサイズも調整します)、RT-スポットの範囲が不良個所にあまり近づかないようにします（境界部分が目立たないようにする） a) "境界の調節"は小さくします; b) "輝度"、場合によっては"色" を使って不良個所のレンダリングを正常な部分のレンダリングに近づけます; c) "スコープ"を適度に使って作用の及ぶ範囲を調節します
+TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;ウェーブレットのレベル或いはノイズ除去の説明を参照して下さい。\n但し、幾つか変更されている部分もあります:より多くの機能がノイズ除去に関する詳細が多くなっています。\nウェーブレットのレベルのトーンマッピング
+TP_LOCALLAB_EXPCONTRAST_TOOLTIP;大きさが50x50ピクセルより小さいスポットを使うのは避けます\n代わりに、境界値を低く、境界の減衰値とスコープ値を高く設定して小さなRT-スポットを真似ます\nアーティストを軽減するために、必要であれば’ソフトな半径’を調整しながら’明瞭 & シャープマスクとイメージのブレンド’モジュールを使います
+TP_LOCALLAB_EXPCURV;カーブ
+TP_LOCALLAB_EXPGRAD;階調フィルタ
+TP_LOCALLAB_EXPLAPBAL_TOOLTIP;元画像とラプラス変換の間のバランスをとります
+TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;ラプラス変換の適用前後でガンマを適用します
+TP_LOCALLAB_EXPLAPLIN_TOOLTIP;ラプラス変換の適用前に、露光補正の線形要素を追加します
+TP_LOCALLAB_EXPLAP_TOOLTIP;しきい値のスライダーを増やすほど、コントラストの減衰作用が強くなります
+TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;画像を融合するために複数の機能が使えます（Photoshopのレイヤーのように）：差分、積算、ソフトライト、オーバーレイ+不透明度。。。\n元画像 : 現在のRT-スポットを元画像と融合.\n前のスポット : 現在のRT-スポットを前のRT-スポットと融合 – スポットが一つだけの場合は元画像との融合になります\n背景：現在のRT-スポットを背景の色と輝度と融合します
+TP_LOCALLAB_EXPMETHOD_TOOLTIP;標準:メインの露光補正と類似したアルゴリズムを使いますが、 L*a*b*で作業するため色差を考慮します\n\nラプラスとポアソン方程式:色差を考慮する別なアルゴリズムですが、フーリエ空間でのラプラスの欠点を解決すためポアソン方程式（PDE）を使います\nPDEを使ったアルゴリズムは結果が大きく異なるため、標準とは異なる設定が必要でしょう\n露出不足の画像に有効かもしれません\nPDEはアーティファクトとノイズを軽減します
+TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;アーティファクト（ノイズ）の発生を避けるため、ラプラス変換の前にメディアンを適用します
+TP_LOCALLAB_EXPOSE;露光補正-PDEアルゴリズム
+TP_LOCALLAB_EXPOSURE_TOOLTIP;シャドウ部分が強いような場合は、”シャドウ/ハイライト”のモジュールが使えます
+TP_LOCALLAB_EXPRETITOOLS;高度なレティネックス機能
+TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-スポットの大きさが最低でも39x39ピクセル必要です\nスポットが小さい場合は、低い境界値、高い減衰値、高いスコープ値を設定します
+TP_LOCALLAB_EXPTOOL;露光補正の機能
+TP_LOCALLAB_EXPTRC;トーンリプロダクションカーブ - TRC
+TP_LOCALLAB_EXP_TOOLNAME;露光補正 - ダイナミックレンジ圧縮 - 10
+TP_LOCALLAB_FATAMOUNT;量
+TP_LOCALLAB_FATANCHOR;アンカー
+TP_LOCALLAB_FATANCHORA;オフセット
+TP_LOCALLAB_FATDETAIL;ディテール
+TP_LOCALLAB_FATFRA;ダイナミックレンジ圧縮 f
+TP_LOCALLAB_FATFRAME_TOOLTIP;ここではFattalトーンマッピングアルゴリズムを使います\nアンカーで画像の露出不足・過多に応じた選択が出来ます\n現在のスポットに近く、マスクを使用する2番目のスポットの輝度を増やすのに便利です
+TP_LOCALLAB_FATLEVEL;シグマ
+TP_LOCALLAB_FATRES;残差画像の量
+TP_LOCALLAB_FATSHFRA;マスクのダイナミックレンジ圧縮のマスク f
+TP_LOCALLAB_FEATH_TOOLTIP;スポットの対角線に対する減光フィルタの幅の割合\n..
+TP_LOCALLAB_FEATVALUE;フェザー処理（階調フィルタ)
+TP_LOCALLAB_FFTCOL_MASK;FFTW f
+TP_LOCALLAB_FFTW;f 高速フーリエ変換を使う
+TP_LOCALLAB_FFTW2;f 高速フーリエ変換を使う(TIF, JPG,..)
+TP_LOCALLAB_FFTWBLUR;ƒ - 常に高速フーリエ変換を使う
+TP_LOCALLAB_FULLIMAGE;画像全体のブラックEvとホワイトEvを計算
+TP_LOCALLAB_GAM;ガンマ
+TP_LOCALLAB_GAMFRA;トーンリプロダクションカーブ(TRC)
+TP_LOCALLAB_GAMM;ガンマ
+TP_LOCALLAB_GAMMASKCOL;ガンマのマスク
+TP_LOCALLAB_GAMSH;ガンマ
+TP_LOCALLAB_GRADANG;階調フィルタの角度
+TP_LOCALLAB_GRADANG_TOOLTIP;-180度から+180度の間で角度を調整
+TP_LOCALLAB_GRADFRA;階調フィルタ
+TP_LOCALLAB_GRADGEN_TOOLTIP;階調フィルタの機能は”色と明るさ”と、”露光”、”シャドウ/ハイライト”、”自然な彩度”に備わっています\n\n自然な彩度、色と明るさには輝度、色調、色相の階調フィルタが使えます\nフェザー処理は設定の中にあります 
+TP_LOCALLAB_GRADLOGFRA;階調フィルタ　輝度
+TP_LOCALLAB_GRADSTR;階調フィルタ　強さ
+TP_LOCALLAB_GRADSTRAB_TOOLTIP;色度の階調の強さを調整します
+TP_LOCALLAB_GRADSTRCHRO;色調の階調の強さ
+TP_LOCALLAB_GRADSTRHUE;色相の階調の強さ(融合されたファイル)
+TP_LOCALLAB_GRADSTRHUE2;色相の階調の強さ
+TP_LOCALLAB_GRADSTRHUE_TOOLTIP;色相の階調の強さを調整します
+TP_LOCALLAB_GRADSTRLUM;輝度の階調の強さ
+TP_LOCALLAB_GRADSTR_TOOLTIP;露出度の階調の強さを調整します
+TP_LOCALLAB_GRAINFRA;フィルムの質感  1:1
+TP_LOCALLAB_GRALWFRA;階調フィルタ　ローカルコントラスト
+TP_LOCALLAB_GRIDFRAME_TOOLTIP;スポットは均一な画像部分にある方が望ましいです\n\n通常モードの場合だけに使えます。融合された背景による色相、彩度、色、輝度が関係します。
+TP_LOCALLAB_GRIDONE;カラートーン調整
+TP_LOCALLAB_GRIDTWO;直接
+TP_LOCALLAB_GUIDBL;ソフトな半径
+TP_LOCALLAB_GUIDFILTER;ガイド付きフィルタの半径
+TP_LOCALLAB_GUIDFILTER_TOOLTIP;画像に応じて値を決めます - 画像が霞んでいなければ値を低く取ります 
+TP_LOCALLAB_HHMASK_TOOLTIP;例えば肌の微妙な色相調整に使います
+TP_LOCALLAB_HIGHMASKCOL;ハイライトマスク
+TP_LOCALLAB_HLH;カーブ　H
+TP_LOCALLAB_IND;独立 (マウス)
+TP_LOCALLAB_INDSL;独立 (マウス + スライダー)
+TP_LOCALLAB_INVERS;反対
+TP_LOCALLAB_INVERS_TOOLTIP;反対を選択すると調整の多様性が失われます\n\n代わりの方法\n初めのスポット：\n画像全体 –境界線をプレビュー画像の外側にセットします\n スポットの形状は矩形、境界値は100\n\n2番目のスポットを作成し除外スポットにします
+TP_LOCALLAB_ISOGR;粗さ (ISO)
+TP_LOCALLAB_LABBLURM;マスクぼかし
+TP_LOCALLAB_LABEL;ローカル調整
+TP_LOCALLAB_LABGRID;カラー補正グリッド
+TP_LOCALLAB_LABGRIDMERG;背景
+TP_LOCALLAB_LABGRID_VALUES;高(a)=%1 高(b)=%2\n低(a)=%3 低(b)=%4
+TP_LOCALLAB_LABSTRUM;マスクの構造
+TP_LOCALLAB_LAPLACC;ΔØ ラプラシアンマスク　PDEの境界条件あり
+TP_LOCALLAB_LAPLACE;Δ ラプラシアンのしきい値　ΔE
+TP_LOCALLAB_LAPLACEXP;Δ ラプラシアンのしきい値
+TP_LOCALLAB_LAPMASKCOL;Δ ラプラシアンのしきい値マスク
+TP_LOCALLAB_LAPRAD_TOOLTIP;半径とラプラス変換のしきい値を同時に使うことを避けます。
+TP_LOCALLAB_LAP_MASK_TOOLTIP;全てのラプラシアンマスクのポアソン方程式の解を求めます\nラプラシアンのしきい値マスクを有効にするとアーティファクトが軽減され、スムーズな効果が得られます\n無効の場合は線形的な応答となります 
+TP_LOCALLAB_LC_FFTW_TOOLTIP;高速フーリエ変換は画像の質を改善し、大きな半径を使えるようにします\n処理する領域の大きさに応じて処理時間が増えます\n大きな半径で使うことを奨めます\n\nFFTWの最適化を図るために領域を数ピクセル削ります
+TP_LOCALLAB_LC_TOOLNAME;ローカルコントラスト & ウェーブレット (不良部分の補正) - 7
+TP_LOCALLAB_LEVELBLUR;ぼかしを施すレベルの最大値
+TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP;横軸はローカルコントラスト（輝度に近い）を表し、縦軸はローカルコントラストの増減を表します
+TP_LOCALLAB_LEVELWAV;Ψ ウェーブレットのレベル
+TP_LOCALLAB_LEVELWAV_TOOLTIP;詳細レベルの数はスポットとプレビューのサイズに応じて自動で決まります\n最大512ピクセルで解析するレベル8から最大4ピクセルで解析するレベル1まで
+TP_LOCALLAB_LIGHTNESS;明るさ
+TP_LOCALLAB_LIGHTN_TOOLTIP;反対モードで明るさを-100にすると輝度が0になります
+TP_LOCALLAB_LIGHTRETI;明るさ
+TP_LOCALLAB_LINEAR;線形性
+TP_LOCALLAB_LIST_NAME;現在のスポットに機能を追加
+TP_LOCALLAB_LIST_TOOLTIP;機能を選んだ後、その複雑度、”通常”或いは”エキスパート”を選択します\n付随する番号は各RT-スポットの処理の中の機能がある場所をしましています
+TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;選択したウェーブレットのレベルによって、中間トーンとハイライトへの作用を優先します
+TP_LOCALLAB_LMASK_LL_TOOLTIP;中間トーンとハイライトへの作用を優先します
+TP_LOCALLAB_LOCCONT;アンシャープマスク
+TP_LOCALLAB_LOC_CONTRAST;ローカルコントラスト-ウェーブレット-欠損/汚れの補正
+TP_LOCALLAB_LOC_CONTRASTPYR;Ψ ピラミッド1:
+TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ ピラミッド2:
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB;レベルによるコントラスト調整- トーンマッピング(s)
+TP_LOCALLAB_LOC_CONTRASTPYRLAB;階調フィルタ - エッジシャープネス - ぼかし
+TP_LOCALLAB_LOC_RESIDPYR;残差画像　メイン
+TP_LOCALLAB_LOG;対数符号化
+TP_LOCALLAB_LOGAUTO;自動
+TP_LOCALLAB_LOGAUTO_TOOLTIP;このボタンを押すことで、ダイナミックレンジとグレーポイントの源泉の推定値が得られます(グレーポイントの源泉で"自動"が有効になっている場合）\n自動計算による値を仕上げるためには、もう一度ボタンを押します
+TP_LOCALLAB_LOGBASE_TOOLTIP;デフォルト値は2です\n2以下にするとアルゴリズムの作用が減少します。シャドウ部分がより暗く、ハイライト部分がより明るくなります\n2以上にするとアルゴリズムの作用が変わります。シャドウ部分は灰色がかり、ハイライト部分の色がさめた印象になります
+TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;ダイナミックレンジの推定値 - ブラックEvとホワイトEv
+TP_LOCALLAB_LOGENCOD_TOOLTIP;対数符号化（ACES）を使ってトーンマッピングを行います\n露出不足やハイダイナミックレンジの画像の補正に便利です\n\n処理は : 1) ダイナミックレンジを計算、2) 好みに応じて調節
+TP_LOCALLAB_LOGFRA;グレーポイントの源泉
+TP_LOCALLAB_LOGFRAME_TOOLTIP;処理の初期段階で画像の露光レベルを計算する、或いはそのまま使用します：\n前者はブラックEv,　ホワイトEv、グレーポイントの源泉から計算\n後者はメインの露光量補正の値を使います
+TP_LOCALLAB_LOGLIN;対数モード
+TP_LOCALLAB_LOGPFRA;相対的な露光レベル
+TP_LOCALLAB_LOGSRCGREY_TOOLTIP;画像のグレーポイントの推定値、処理行程の前の方
+TP_LOCALLAB_LOGTARGGREY_TOOLTIP;好みに合わせて適用する値を変えられます
+TP_LOCALLAB_LOG_TOOLNAME;対数符号化 - 0
+TP_LOCALLAB_LUM;カーブ　LL - CC
+TP_LOCALLAB_LUMADARKEST;最も暗い部分
+TP_LOCALLAB_LUMASK;マスクの背景輝度
+TP_LOCALLAB_LUMASK_TOOLTIP;マスクの表示（マスクと調節）で、背景のグレーを調節します
+TP_LOCALLAB_LUMAWHITESEST;最も明るい部分
+TP_LOCALLAB_LUMONLY;輝度だけ
+TP_LOCALLAB_MASFRAME;マスクと融合
+TP_LOCALLAB_MASFRAME_TOOLTIP;全てのマスクに共通する\nガンマ、スロープ、色度、コントラストカーブ、詳細レベルのコントラストカーブのマスクが使われる時は、選択領域のレタッチを避けるために色差イメージを考慮する。
+TP_LOCALLAB_MASK;マスク
+TP_LOCALLAB_MASK2;コントラストカーブのマスク
+TP_LOCALLAB_MASKCOL;カーブマスク
+TP_LOCALLAB_MASKH;色相のカーブマスク
+TP_LOCALLAB_MASK_TOOLTIP;使いたい一つの機能で複数のマスクを有効に出来ますが、そのためには別の機能を有効にする必要があります（但し、その機能自体を使う必要はありません、例えば、スライダーが0でも構いません)\nこの特性を有するマスクには’＋’のマークがあります\n追加的な機能を持つマスクには’*’のマークが付いています\n数字が示すのはマスクの使用の順番です\n\nインバースマスクがある機能に関するマスクは組み合わせることが可能です\nこの場合、マスクに関連する新しい機能はインバースの中で選択します;その機能を使う際は値を非常に小さくしなければなりません(例えば、露光0.01)
+TP_LOCALLAB_MED;中間
+TP_LOCALLAB_MEDIAN;メディアン　低
+TP_LOCALLAB_MEDNONE;なし
+TP_LOCALLAB_MERCOL;色
+TP_LOCALLAB_MERDCOL;背景の融合(ΔE)
+TP_LOCALLAB_MERELE;明るくするだけ
+TP_LOCALLAB_MERFIV;追加
+TP_LOCALLAB_MERFOR;色の覆い焼き
+TP_LOCALLAB_MERFOU;乗算
+TP_LOCALLAB_MERGE1COLFRA;オリジナル或いは前のイメージと融合
+TP_LOCALLAB_MERGECOLFRA;マスク: LCHと構造
+TP_LOCALLAB_MERGEFIV;前のスポット(マスク7) + LCHマスク
+TP_LOCALLAB_MERGEFOU;前のスポット(マスク7)
+TP_LOCALLAB_MERGEMER_TOOLTIP;融合画像に対しΔEを計算に入れます(この方法はスコープの作用と同等です）
+TP_LOCALLAB_MERGENONE;なし
+TP_LOCALLAB_MERGEONE;ショートカーブ'L'のマスク
+TP_LOCALLAB_MERGEOPA_TOOLTIP;オリジナル或いは前のスポットと現在のスポットとの融合する際の不透明度の % \nコントラストのしきい値:オリジナルコントラストの機能の結果を調整
+TP_LOCALLAB_MERGETHR;オリジナル(マスク7) + LCHマスク
+TP_LOCALLAB_MERGETWO;オリジナル(マスク7)
+TP_LOCALLAB_MERGETYPE;イメージとマスクの融合
+TP_LOCALLAB_MERGETYPE_TOOLTIP;なしの場合、LCHモードの全てのマスクを使います\nショートカーブ 'L'マスクの場合、マスク2、3、4、6、7はスキップします\nオリジナルマスク7の場合、現在のイメージと元のイメージを融合します
+TP_LOCALLAB_MERHEI;重ね合わせ
+TP_LOCALLAB_MERHUE;色相
+TP_LOCALLAB_MERLUCOL;輝度
+TP_LOCALLAB_MERLUM;光度
+TP_LOCALLAB_MERNIN;スクリーン
+TP_LOCALLAB_MERONE;標準
+TP_LOCALLAB_MERSAT;彩度
+TP_LOCALLAB_MERSEV;ソフトライト　Photoshop 
+TP_LOCALLAB_MERSEV0;ソフトライト　イリュージョン
+TP_LOCALLAB_MERSEV1;ソフトライト W3C
+TP_LOCALLAB_MERSEV2;ハードライト
+TP_LOCALLAB_MERSIX;分割
+TP_LOCALLAB_MERTEN;暗くするだけ
+TP_LOCALLAB_MERTHI;色の焼き込み
+TP_LOCALLAB_MERTHR;差異
+TP_LOCALLAB_MERTWE;除外
+TP_LOCALLAB_MERTWO;減算
+TP_LOCALLAB_METHOD_TOOLTIP;'強化 + 色ノイズ低減'を選ぶと処理時間が著しく増加します\nしかし、アーティファクトは軽減されます 
+TP_LOCALLAB_MLABEL;復元されたデータ 最小値=%1 最大値=%2 (クリップ - オフセット)
+TP_LOCALLAB_MLABEL_TOOLTIP;最低値=0、最大値=32768の近くになるよう調整します\n標準化を行うため‘保持されたデータを切り取る’と‘オフセット’を使えます\n\n混成のない画像に戻します
+TP_LOCALLAB_MODE_EXPERT;エキスパート
+TP_LOCALLAB_MODE_NORMAL;通常
+TP_LOCALLAB_MRFIV;背景
+TP_LOCALLAB_MRFOU;前のスポット
+TP_LOCALLAB_MRONE;なし
+TP_LOCALLAB_MRTHR;元のイメージ
+TP_LOCALLAB_MRTWO;ショートカーブ 'L'マスク
+TP_LOCALLAB_MULTIPL_TOOLTIP;非常に広範囲（-18EV～+4EV）でトーンのレタッチが出来ます。初めのスライダーは-18EV～-6EVの非常に暗い部分に作用します。最後のスライダーは4EVまでの明るい部分に作用します  
+TP_LOCALLAB_NEIGH;半径
+TP_LOCALLAB_NOISECHROCOARSE;色度　粗い (ウェーブレット）
+TP_LOCALLAB_NOISECHROC_TOOLTIP;0より大きい値で効果の高いアルゴリズムが働き始めます\n大まかなスライダーの場合は2以上からです
+TP_LOCALLAB_NOISECHRODETAIL;色度　細部の回復 (DCT)
+TP_LOCALLAB_NOISECHROFINE;色度　細かい　（ウェーブレット）
+TP_LOCALLAB_NOISEDETAIL_TOOLTIP;スライダー値が100になると無効
+TP_LOCALLAB_NOISELEQUAL;イコライザ 白黒
+TP_LOCALLAB_NOISELUMCOARSE;輝度　大まか(ウェーブレット)
+TP_LOCALLAB_NOISELUMDETAIL;輝度　細部の回復　(DCT)
+TP_LOCALLAB_NOISELUMFINE;輝度　詳細レベル2(ウェーブレット)
+TP_LOCALLAB_NOISELUMFINETWO;輝度　詳細レベル3(ウェーブレット)
+TP_LOCALLAB_NOISELUMFINEZERO;輝度　詳細レベル1(ウェーブレット)
+TP_LOCALLAB_NOISEMETH;ノイズ低減
+TP_LOCALLAB_NONENOISE;なし
+TP_LOCALLAB_OFFS;オフセット
+TP_LOCALLAB_OFFSETWAV;オフセット
+TP_LOCALLAB_OPACOL;不透明度
+TP_LOCALLAB_ORIGLC;元画像だけと融合
+TP_LOCALLAB_ORRETILAP_TOOLTIP;2次ラプラシアンのしきい値に作用します。作用に差をつけるため、特に背景に対する作用、ΔEを計算に入れます（スコープの作用と異なります）
+TP_LOCALLAB_ORRETISTREN_TOOLTIP;1次ラプラシアンのしきい値に作用します。設定値を高くするほど、コントラストの違いが減少します
+TP_LOCALLAB_PASTELS2;自然な彩度
+TP_LOCALLAB_PDE;ΔØ ラプラシアン PDE - ダイナミックレンジ圧縮 + 標準
+TP_LOCALLAB_PDEFRA;PDE IPOL - コントラスト減衰
+TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - IPOLから取り入れ、独自にRawtherapee用にアレンジしたアルゴリズム:非常に異なる効果が出るので設定を変える必要があります。標準的にはブラックをマイナス値、ガンマを1以下にするなど\n露出の低い画像に便利だと思われます\n
+TP_LOCALLAB_PREVIEW;ΔEのプレビュー
+TP_LOCALLAB_PROXI;ΔEの減衰
+TP_LOCALLAB_QUALCURV_METHOD;カーブのタイプ
+TP_LOCALLAB_QUAL_METHOD;全体の質
+TP_LOCALLAB_RADIUS;半径
+TP_LOCALLAB_RADIUS_TOOLTIP;半径の値が30より大きい場合は、高速フーリエ変換を使います
+TP_LOCALLAB_RADMASKCOL;半径のマスクを滑らかにする
+TP_LOCALLAB_RECT;長方形
+TP_LOCALLAB_RECURS;参考値の繰り返し
+TP_LOCALLAB_RECURS_TOOLTIP;新しいモジュール使用とRT-スポットが作成される度に、色相、輝度、色度の参考値が再計算されます。\nマスクを使った作業に便利です。
+TP_LOCALLAB_REFLABEL;参照 (0..1) 色度=%1 輝度=%2 色相=%3
+TP_LOCALLAB_REN_DIALOG_LAB;新しいコントロールスポットの名前を入力
+TP_LOCALLAB_REN_DIALOG_NAME;コントロールスポットの名前変更
+TP_LOCALLAB_RESETSHOW;全ての表示変更をリセット
+TP_LOCALLAB_RESID;残差画像
+TP_LOCALLAB_RESIDBLUR;残差画像をぼかす
+TP_LOCALLAB_RESIDCHRO;残差画像の色度
+TP_LOCALLAB_RESIDCOMP;残差画像の圧縮
+TP_LOCALLAB_RESIDCONT;残差画像のコントラスト
+TP_LOCALLAB_RESIDHI;ハイライト
+TP_LOCALLAB_RESIDHITHR;ハイライトのしきい値
+TP_LOCALLAB_RESIDSHA;シャドウ
+TP_LOCALLAB_RESIDSHATHR;シャドウのしきい値
+TP_LOCALLAB_RETI;霞除去 - レティネックス　強いコントラスト
+TP_LOCALLAB_RETIFRA;レティネックス
+TP_LOCALLAB_RETIM;独自のレティネックス
+TP_LOCALLAB_RETITOOLFRA;レティネックスの機能
+TP_LOCALLAB_RETI_FFTW_TOOLTIP;高速フーリエ変換は質を向上させ大きな半径の使用が可能になります\n処理時間は編集する領域の大きさに応じて変わります　\n大きな半径を扱う場合に適用するのがいいでしょう\n\n処理領域を数ピクセル減らすことでFFTWの最適化を図ることが出来ます　\n但し、RT-スポットの境界線（縦或いは横）が画像からはみ出している場合は最適化を図れません
+TP_LOCALLAB_RETI_LIGHTDARK_TOOLTIP;Have no effect when the value "Lightness = 1" or "Darkness =2" is chosen.\nIn other cases, the last step of "Multiple scale Retinex" is applied an algorithm close to "local contrast", these 2 cursors, associated with "Strength" will allow to play upstream on the local contrast.
+TP_LOCALLAB_RETI_LIMDOFFS_TOOLTIP;Play on internal parameters to optimize response.\nLook at the "restored datas" indicators "near" min=0 and max=32768 (log mode), but others values are possible. 
+TP_LOCALLAB_RETI_LOGLIN_TOOLTIP;Logarithm allows differenciation for haze or normal.\nLogarithm brings more contrast but will generate more halo.
+TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;画像に応じてこれらの値を適用します - 霧のかかった画像の場合で、調整したいのが前景或いは背景なのかに応じて。
+TP_LOCALLAB_RETI_SCALE_TOOLTIP;If scale=1, retinex behaves like local contrast with many more possibilities.\nThe greater the scale, the more intense the recursive action, the longer the calculation times
+TP_LOCALLAB_RET_TOOLNAME;霞除去 & レティネックス - 9
+TP_LOCALLAB_REWEI;再加重平均の繰り返し
+TP_LOCALLAB_RGB;RGB トーンカーブ
+TP_LOCALLAB_ROW_NVIS;非表示
+TP_LOCALLAB_ROW_VIS;表示
+TP_LOCALLAB_SATUR;彩度
+TP_LOCALLAB_SAVREST;保存 - 元に戻した現在のイメージ
+TP_LOCALLAB_SCALEGR;スケール
+TP_LOCALLAB_SCALERETI;スケール
+TP_LOCALLAB_SCALTM;スケール
+TP_LOCALLAB_SCOPEMASK;ΔE画像のスコープマスク
+TP_LOCALLAB_SCOPEMASK_TOOLTIP;色差画像のマスクを有効にすると使えます\n低い値にすると選択した領域の調整が行われません
+TP_LOCALLAB_SENSI;スコープ
+TP_LOCALLAB_SENSIBN;スコープ
+TP_LOCALLAB_SENSICB;スコープ
+TP_LOCALLAB_SENSIDEN;スコープ
+TP_LOCALLAB_SENSIEXCLU;スコープ
+TP_LOCALLAB_SENSIEXCLU_TOOLTIP;除外モードに含まれている色も調整
+TP_LOCALLAB_SENSIH;スコープ
+TP_LOCALLAB_SENSIH_TOOLTIP;スコープの作用を調整します:\n小さい値を設定すると調整領域の色の変化は中心円に近いものに制限されます\n高い値を設定すると色の変化の範囲が広がります。\n20以下の設定がアルゴリズムの働きにとっていいでしょう
+TP_LOCALLAB_SENSILOG;スコープ
+TP_LOCALLAB_SENSIS;スコープ
+TP_LOCALLAB_SENSIS_TOOLTIP;スコープの作用を調整します:\n小さい値を設定すると調整領域の色の変化は中心円に近いものに制限されます\n高い値を設定すると色の変化の範囲が広がります。\n20以下の設定がアルゴリズムの働きにとっていいでしょう
+TP_LOCALLAB_SENSI_TOOLTIP;スコープの作用を調整します:\n小さい値を設定すると調整領域の色の変化は中心円に近いものに制限されます\n高い値を設定すると色の変化の範囲が広がります。\n20以下の設定がアルゴリズムの働きにとっていいでしょう
+TP_LOCALLAB_SETTINGS;設定
+TP_LOCALLAB_SH1;シャドウ/ハイライト
+TP_LOCALLAB_SH2;イコライザ
+TP_LOCALLAB_SHADEX;シャドウ
+TP_LOCALLAB_SHADEXCOMP;シャドウの圧縮とトーンの幅
+TP_LOCALLAB_SHADHIGH;シャドウ/ハイライト-階調-トーンイコライザ-TRC
+TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;露光モジュールだけでは処理が困難な場合に、代わりに使う、或いは補間に使います。\nノイズ低減の使用が必要かもしれません:シャドウを明るく
+TP_LOCALLAB_SHAMASKCOL;シャドウのマスク
+TP_LOCALLAB_SHAPETYPE;RT-スポット領域の形状
+TP_LOCALLAB_SHAPE_TOOLTIP;長方形は通常モードのみ
+TP_LOCALLAB_SHARAMOUNT;量
+TP_LOCALLAB_SHARBLUR;半径のぼかし
+TP_LOCALLAB_SHARDAMPING;減衰
+TP_LOCALLAB_SHARFRAME;変更
+TP_LOCALLAB_SHARITER;繰り返し
+TP_LOCALLAB_SHARP;シャープニング
+TP_LOCALLAB_SHARP_TOOLNAME;シャープニング - 8
+TP_LOCALLAB_SHARRADIUS;半径
+TP_LOCALLAB_SHORTC;ショートカーブ'L'マスク
+TP_LOCALLAB_SHORTCMASK_TOOLTIP;L(L)とL(H)2つのカーブをつスキップします。\nマスクの作用によって調整された現在のイメージと元イメージを融合します\n但し、これが使えるのは2, 3, 4, 6, 7のマスクです
+TP_LOCALLAB_SHOWC;マスクと調節
+TP_LOCALLAB_SHOWC1;ファイルの融合
+TP_LOCALLAB_SHOWCB;マスクと調節
+TP_LOCALLAB_SHOWDCT;フーリエの処理を表示
+TP_LOCALLAB_SHOWE;マスクと調節
+TP_LOCALLAB_SHOWFOURIER;フーリエ (DCT)
+TP_LOCALLAB_SHOWLAPLACE;Δ ラプラシアン (最初)
+TP_LOCALLAB_SHOWLC;マスクと調節
+TP_LOCALLAB_SHOWMASK;マスクの表示
+TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;調整具合を表示させます\n但し、見られる表示は1度に1種類(色と明るさ、或いは露光のセクション)だけです\n'マスクと調整'のドロップダウンボックスで、'なし' 或いは マスクを表示できるものを選択します\n\nマスクの処理はは形状検出の前に行われます  
+TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;フーリエによる処理を表示します:\n処理の異なる段階を表示\nラプラス - しきい値に応じた2次微分を行う（最初のステップ）\nフーリエ -変換したラプラスをDCTで表示\nポアソン - ポアソンDCEの解を表示\n標準化 - 輝度の標準化なしに結果を表示
+TP_LOCALLAB_SHOWMASKTYP1;ぼかしとノイズ
+TP_LOCALLAB_SHOWMASKTYP2;ノイズ除去
+TP_LOCALLAB_SHOWMASKTYP3;ぼかしとノイズ  + ノイズ除去
+TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;マスクと調節を選択出来ます\nぼかしとノイズ:この場合は、'ノイズ除去'は使えません\nノイズ除去:この場合は、'ぼかしとノイズ'は使えません\n\nぼかしとノイズ+ノイズ除去:マスクを共用しますが、'調節を表示'と'スコープ'の扱いには注意が必要です
+TP_LOCALLAB_SHOWMNONE;なし
+TP_LOCALLAB_SHOWMODIF;マスクなしで変更を表示
+TP_LOCALLAB_SHOWMODIFMASK;マスクと共に変更を表示
+TP_LOCALLAB_SHOWNORMAL;輝度の標準化(なし)
+TP_LOCALLAB_SHOWPLUS;マスクと調節- 平滑化によるぼかしとノイズ低減
+TP_LOCALLAB_SHOWPOISSON;ポアソン (pde f)
+TP_LOCALLAB_SHOWR;マスクと調節
+TP_LOCALLAB_SHOWREF;ΔEのプレビュー
+TP_LOCALLAB_SHOWS;マスクと調節
+TP_LOCALLAB_SHOWSTRUC;構造スポットを表示
+TP_LOCALLAB_SHOWSTRUCEX;構造スポットを表示 - "通常"では不可
+TP_LOCALLAB_SHOWT;マスクと調節
+TP_LOCALLAB_SHOWVI;マスクと調節
+TP_LOCALLAB_SHRESFRA;シャドウ/ハイライト
+TP_LOCALLAB_SHTRC_TOOLTIP;TRC（諧調再現カーブ）を使って画像のトーンを調節します。\nガンマは主に明るいトーンに作用します\n勾配は主に暗いトーンに作用します
+TP_LOCALLAB_SH_TOOLNAME;シャドウ/ハイライト & トーンイコライザ - 5
+TP_LOCALLAB_SIGMAWAV;減衰応答
+TP_LOCALLAB_SIM;シンプル
+TP_LOCALLAB_SLOMASKCOL;スロープのマスク
+TP_LOCALLAB_SLOSH;スロープ
+TP_LOCALLAB_SOFT;ソフトライトと独自のレティネックス
+TP_LOCALLAB_SOFTM;ソフトライト
+TP_LOCALLAB_SOFTMETHOD_TOOLTIP;独自のレティネックスは他のレティネックス方式とは大きく異なります\nグレーと輝度のバランスに作用します
+TP_LOCALLAB_SOFTRADIUSCOL;ソフトな半径
+TP_LOCALLAB_SOFTRETI;アーティファクトの軽減　ΔE
+TP_LOCALLAB_SOFTRETI_TOOLTIP;透過マップを向上させるため色差を考慮します。
+TP_LOCALLAB_SOFT_TOOLNAME;ソフトライト & 独自のレティネックス - 6
+TP_LOCALLAB_SOURCE_GRAY;値
+TP_LOCALLAB_SPECCASE;特定のケース
+TP_LOCALLAB_SPECIAL;RGBカーブの特殊な利用
+TP_LOCALLAB_SPECIAL_TOOLTIP;Only for this RGB curve, disabled (or reduce effects) of Scope, mask...for example, if you want to have a negative effect.
+TP_LOCALLAB_SPOTNAME;新しいスポット
+TP_LOCALLAB_STD;標準
+TP_LOCALLAB_STR;強さ
+TP_LOCALLAB_STRBL;強さ
+TP_LOCALLAB_STREN;圧縮の強さ
+TP_LOCALLAB_STRENG;強さ
+TP_LOCALLAB_STRENGR;強さ
+TP_LOCALLAB_STRENGTH;ノイズ
+TP_LOCALLAB_STRGRID;強さ
+TP_LOCALLAB_STRRETI_TOOLTIP;レティネックスの強さが0.2より小さい場合は霞除去だけが有効となります。\nレティネックスの強さが0.1以上の場合、霞除去の作用は輝度だけです。
+TP_LOCALLAB_STRUC;構造
+TP_LOCALLAB_STRUCCOL;構造
+TP_LOCALLAB_STRUCCOL1;構造のスポット
+TP_LOCALLAB_STRUCT_TOOLTIP;形状検出で構造を計算に入れるため、Sobelアルゴリズムを使います。\n“マスクと調節の構造スポットを表示”を有効にすればプレビューを見ることが出来ます。
+TP_LOCALLAB_STRUMASKCOL;構造マスクの強さ
+TP_LOCALLAB_STRUMASK_TOOLTIP;Generate a structure mask with difference between surface areas and reliefs.\nIf structure mask as tool is enabled, this mask is used in addition to the other tools (gamma, slope, contrast curve ...)
+TP_LOCALLAB_STYPE;形状の方式
+TP_LOCALLAB_STYPE_TOOLTIP;2つのタイプから選びます:\nシンメトリックは左と右の境界線、上部と底部の境界線がリンクしています\n独立は全ての境界線を独立で動かすことが出来ます
+TP_LOCALLAB_SYM;シンメトリック(マウス)
+TP_LOCALLAB_SYMSL;シンメトリック(マウス + スライダー)
+TP_LOCALLAB_TARGET_GRAY;グレーポイントの目標
+TP_LOCALLAB_THRES;構造のしきい値
+TP_LOCALLAB_THRESDELTAE;ΔE-スコープのしきい値
+TP_LOCALLAB_THRESRETI;しきい値
+TP_LOCALLAB_THRESWAV;バランスのしきい値
+TP_LOCALLAB_TLABEL;TM データ 最小値=%1 最大値=%2 平均値=%3 標準偏差=%4 (しきい値)
+TP_LOCALLAB_TLABEL2;TM 効果 Tm=%1 TM=%2
+TP_LOCALLAB_TLABEL_TOOLTIP;これは透過マップの結果を示しています。\n最小値と最大値は分散に使われます。\nTm、TMはそれぞれ透過マップの最小値と最大値です。\nしきい値を調整して標準化できます。
+TP_LOCALLAB_TM;トーンマッピング - 質感
+TP_LOCALLAB_TM_MASK;透過マップを使う
+TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;エッジ停止を増やす - 或いは再加重平均の繰り返しを増やすと処理時間も増えます - 但し、その分効果が増します
+TP_LOCALLAB_TONEMAPGAM_TOOLTIP;Gamma moves the action of tone-mapping to shadows or highlights.
+TP_LOCALLAB_TONEMAPREWEI_TOOLTIP;In some cases tone mapping may result in a cartoonish appearance, and in some rare cases soft but wide halos may appear.\n Increasing the number of reweighting iterates will help fight some of these problems.
+TP_LOCALLAB_TONEMAP_TOOLTIP;トーンマッピング - メインメニューの同じ機能は必ず無効にする
+TP_LOCALLAB_TONEMASCALE_TOOLTIP;This control gives meaning to the difference between "local" and "global" contrast.\nThe greater it is the larger a detail needs to be in order to be boosted
+TP_LOCALLAB_TONE_TOOLNAME;トーンマッピング - 4
+TP_LOCALLAB_TOOLCOL;機能としての構造マスク
+TP_LOCALLAB_TOOLMASK;機能
+TP_LOCALLAB_TRANSIT;境界の階調調整
+TP_LOCALLAB_TRANSITGRAD;境界の差異　XY
+TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Y軸方向の境界に対するX軸方向の境界の割合を変える 
+TP_LOCALLAB_TRANSITVALUE;境界値
+TP_LOCALLAB_TRANSITWEAK;境界値の減衰
+TP_LOCALLAB_TRANSITWEAK_TOOLTIP;境界値の減衰を調節 : 処理の滑らかさを変える - 1 線形 - 2 パラボリック - 3 3乗  
+TP_LOCALLAB_TRANSIT_TOOLTIP;作用が及ぶ部分と及ばない部分の境界の平滑化を調整します
+TP_LOCALLAB_TRANSMISSIONGAIN;透過のゲイン
+TP_LOCALLAB_TRANSMISSIONMAP;透過マップ
+TP_LOCALLAB_TRANSMISSION_TOOLTIP;透過に応じて透過を決めるカーブです\n横軸はマイナス値（最小）から平均値、プラス値（最大）まであります\n\nこのカーブを使って透過を変え、アーティファクトを軽減できます
+TP_LOCALLAB_USEMASK;マスクの使う
+TP_LOCALLAB_VART;分散（コントラスト）
+TP_LOCALLAB_VIBRANCE;自然な彩度 - ウォーム & クール
+TP_LOCALLAB_VIB_TOOLNAME;自然な彩度 - ウォーム & クール - 3
+TP_LOCALLAB_VIS_TOOLTIP;選択したコントロールスポットを表示・非表示するためには<b>クリック</b>します\n全てのコントロールスポットを表示・非表示するためには<b>Ctrl</b>を押しながら<b>クリック</b>します
+TP_LOCALLAB_WAMASKCOL;Ψ ウェーブレットレベルのマスク
+TP_LOCALLAB_WARM;ウォーム & -クールと偽色
+TP_LOCALLAB_WARM_TOOLTIP;このスライダーはホワイトバランスのようなCIECAMのアルゴリズムを使っています、選択したエリアの印象を暖かくしたり、冷たくしたりします。\n場合によっては、色のアーティファクトを軽減できます
+TP_LOCALLAB_WASDEN_TOOLTIP;最初の3つの細かいレベルのノイズを軽減\n３より粗いレベルのノイズを軽減
+TP_LOCALLAB_WAV;レベルによるローカルコントラスト調整
+TP_LOCALLAB_WAVBLUR_TOOLTIP;残差画像を含め、分解された各詳細レベルに対してぼかしを実行します
+TP_LOCALLAB_WAVCOMP;レベルごとの圧縮
+TP_LOCALLAB_WAVCOMPRE;レベルごとの（非）圧縮
+TP_LOCALLAB_WAVCOMPRE_TOOLTIP;トーンマッピング或いはレベルごとのローカルコントラストが軽減出来ます\n横軸がレベルの番手を表しています
+TP_LOCALLAB_WAVCOMP_TOOLTIP;ウェーブレットによる分解の方向（水平、垂直、斜め）に応じたローカルコントラストを調整できます
+TP_LOCALLAB_WAVCON;レベルによるコントラスト調整
+TP_LOCALLAB_WAVCONTF_TOOLTIP;詳細レベルによるコントラスト調整と似ています：横軸がレベルを表しています
+TP_LOCALLAB_WAVDEN;レベルによる輝度ノイズの軽減(0 1 2  + 3、それ以上)
+TP_LOCALLAB_WAVE;Ψ ウェーブレット
+TP_LOCALLAB_WAVEDG;ローカルコントラスト
+TP_LOCALLAB_WAVEEDG_TOOLTIP;少なくとも最初の4つのレベルが使える必要があります
+TP_LOCALLAB_WAVGRAD_TOOLTIP;ローカルコントラストの”輝度”に関する諧調調整
+TP_LOCALLAB_WAVHIGH;Ψ ウェーブレット　高
+TP_LOCALLAB_WAVLEV;レベルごとのぼかし
+TP_LOCALLAB_WAVLOW;Ψ ウェーブレット　低
+TP_LOCALLAB_WAVMASK;Ψ ローカルコントラストのレベルのマスク
+TP_LOCALLAB_WAVMASK_TOOLTIP;Allows fine work on mask levels contrasts (structure)
+TP_LOCALLAB_WAVMED;Ψ　ウェーブレット　普通
+TP_LOCALLAB_WEDIANHI;メディアン　高
+TP_LOCALLAB_WHITE_EV;ホワイトEv
+TP_LOCAL_HEIGHT;ボトム
+TP_LOCAL_HEIGHT_T;トップ
+TP_LOCAL_WIDTH;右
+TP_LOCAL_WIDTH_L;左
+TP_LOCRETI_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\n
 TP_METADATA_EDIT;変更を適用
 TP_METADATA_MODE;メタデータ コピーモード
 TP_METADATA_STRIP;メタデータを全て取り除く
@@ -1811,8 +2877,26 @@ TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;形状：　0=長方形、50=楕円形、100=円
 TP_PCVIGNETTE_STRENGTH;強さ
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;終点位置でのフィルターの強さ（四隅）
 TP_PDSHARPENING_LABEL;キャプチャーシャープニング
+TP_PERSPECTIVE_CAMERA_CROP_FACTOR;クロップ・ファクター
+TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH;焦点距離
+TP_PERSPECTIVE_CAMERA_FRAME;補正
+TP_PERSPECTIVE_CAMERA_PITCH;垂直
+TP_PERSPECTIVE_CAMERA_ROLL;回転
+TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL;水平移動
+TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL;垂直移動
+TP_PERSPECTIVE_CAMERA_YAW;水平
 TP_PERSPECTIVE_HORIZONTAL;水平
 TP_PERSPECTIVE_LABEL;パースペクティブ
+TP_PERSPECTIVE_METHOD;方式
+TP_PERSPECTIVE_METHOD_CAMERA_BASED;カメラベース
+TP_PERSPECTIVE_METHOD_SIMPLE;シンプル
+TP_PERSPECTIVE_POST_CORRECTION_ADJUSTMENT_FRAME;補正後の調整
+TP_PERSPECTIVE_PROJECTION_PITCH;垂直
+TP_PERSPECTIVE_PROJECTION_ROTATE;回転
+TP_PERSPECTIVE_PROJECTION_SHIFT_HORIZONTAL;水平移動
+TP_PERSPECTIVE_PROJECTION_SHIFT_VERTICAL;垂直移動
+TP_PERSPECTIVE_PROJECTION_YAW;水平
+TP_PERSPECTIVE_RECOVERY_FRAME;回復
 TP_PERSPECTIVE_VERTICAL;垂直
 TP_PFCURVE_CURVEEDITOR_CH;色相
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;デフリンジの強さをコントロールします。値が高いと効果が強まり、低いと弱まります
@@ -1830,6 +2914,10 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;PDAFの場合は水平方向だ�
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;垂直方向
 TP_PREPROCESS_NO_FOUND;未検出
 TP_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
+TP_PREPROCWB_LABEL;ホワイトバランスの前処理
+TP_PREPROCWB_MODE;モード
+TP_PREPROCWB_MODE_AUTO;自動
+TP_PREPROCWB_MODE_CAMERA;カメラ
 TP_PRSHARPENING_LABEL;リサイズ後のシャープニング
 TP_PRSHARPENING_TOOLTIP;リサイズ後の画像をシャープニングします。但し、リサイズの方式がランチョスの場合に限ります。プレビュー画面でこの機能の効果を見ることは出来ません。使用法に関してはRawPediaを参照して下さい。
 TP_RAWCACORR_AUTO;自動補正
@@ -1934,8 +3022,8 @@ TP_RESIZE_SCALE;スケール
 TP_RESIZE_SPECIFY;条件指定:
 TP_RESIZE_W;幅:
 TP_RESIZE_WIDTH;幅
-TP_RETINEX_CONTEDIT_HSL;ヒストグラムイコライザ HSL
-TP_RETINEX_CONTEDIT_LAB;ヒストグラムイコライザ L*a*b*
+TP_RETINEX_CONTEDIT_HSL;HSLヒストグラム
+TP_RETINEX_CONTEDIT_LAB;L*a*b*ヒストグラム
 TP_RETINEX_CONTEDIT_LH;色相イコライザ
 TP_RETINEX_CONTEDIT_MAP;イコライザ
 TP_RETINEX_CURVEEDITOR_CD;輝度=f(輝度)
@@ -1947,8 +3035,8 @@ TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;このカーブは単独で使うことも、
 TP_RETINEX_EQUAL;イコライザ
 TP_RETINEX_FREEGAMMA;フリーガンマ
 TP_RETINEX_GAIN;ゲイン
-TP_RETINEX_GAINOFFS;ゲインとオフセット(明るさ)
-TP_RETINEX_GAINTRANSMISSION;ゲインの透過
+TP_RETINEX_GAINOFFS;透過マップのゲインとオフセット
+TP_RETINEX_GAINTRANSMISSION;ゲイン
 TP_RETINEX_GAINTRANSMISSION_TOOLTIP;目標とする輝度を得るために、透過マップ増幅したり減衰させたりします。\n横軸：左から最小、平均、最大となります。\n縦軸：ゲイン
 TP_RETINEX_GAMMA;ガンマ
 TP_RETINEX_GAMMA_FREE;フリー
@@ -1957,8 +3045,8 @@ TP_RETINEX_GAMMA_LOW;低
 TP_RETINEX_GAMMA_MID;中間
 TP_RETINEX_GAMMA_NONE;なし
 TP_RETINEX_GAMMA_TOOLTIP;レティネックス機能の前後のガンマで画像のトーンを修復します。レティネックスのカーブや他のカーブ（Lab調整、露光補正などのカーブ）とは異なるカーブです。
-TP_RETINEX_GRAD;透過のグラデーション
-TP_RETINEX_GRADS;強さのグラデーション
+TP_RETINEX_GRAD;透過マップの勾配
+TP_RETINEX_GRADS;強さの勾配
 TP_RETINEX_GRADS_TOOLTIP;スライダー値が0の場合、全ての繰り返しは同じになります\n0より大きい場合は、繰り返しが増加すると強さが減ります。0より小さい場合はその逆です
 TP_RETINEX_GRAD_TOOLTIP;スライダー値が0の場合、全ての繰り返しが同じになります\n0より大きい場合は、繰り返しが増加すると差異としきい値が減ります。0より小さい場合はその逆です
 TP_RETINEX_HIGH;高
@@ -1978,25 +3066,25 @@ TP_RETINEX_MAP;方式
 TP_RETINEX_MAP_GAUS;ガウシアンマスク
 TP_RETINEX_MAP_MAPP;シャープマスク (一部ウェーブレット)
 TP_RETINEX_MAP_MAPT;シャープマスク (全てウェーブレット)
-TP_RETINEX_MAP_METHOD_TOOLTIP;ガウス関数を利用して生成したマスクをハロやアーティファクトを減らすために使う方法です\n\nカーブだけ:マスクにコントラストカーブを適用します\nアーティファクト発生に注意\n\nガウシアンマスク:元画像に対しガウス暈しでマスクを生成し、それを使います\n処理時間短い\n\nシャープマスク:元画像に対しウェーブレットでマスクを生成し、それを使います\n処理時間が長い
+TP_RETINEX_MAP_METHOD_TOOLTIP;ガウス関数（半径や方式）で生成されたマスクを利用してハロやアーティファクトを減らします\n\nカーブだけ:マスクにコントラストカーブを適用します\nアーティファクト発生に注意\n\nガウシアンマスク:元画像に対しガウス暈しでマスクを生成し、それを使います\n処理時間短い\n\nシャープマスク:元画像に対しウェーブレットでマスクを生成し、それを使います\n処理時間が長い
 TP_RETINEX_MAP_NONE;なし
 TP_RETINEX_MEDIAN;透過のメディアンフィルター
 TP_RETINEX_METHOD;方法
-TP_RETINEX_METHOD_TOOLTIP;高=明瞭な部分のレンダリングを補正します\n均等=明瞭な部分と不明瞭な部分をバランスよく補正します\n低=不明瞭な部分を重点的に補正します\nハイライト=ハイライト部分のマゼンタ被りを補正します
+TP_RETINEX_METHOD_TOOLTIP;高=光度の高い部分のレンダリングを補正します\n均等=光度の高い部分と低い部分を均等に補正します\n低=光度の低い部分を重点的に補正します\nハイライト=ハイライト部分のマゼンタ被りを補正します
 TP_RETINEX_MLABEL;霞のない画像に修復 最小値=%1 最大値=%2
 TP_RETINEX_MLABEL_TOOLTIP;最小値=0 最大値=32768に近づける\nバランスの良い霞のない画像
 TP_RETINEX_NEIGHBOR;半径
 TP_RETINEX_NEUTRAL;リセット
 TP_RETINEX_NEUTRAL_TIP;全てのスライダー値とカーブをデフォルトの状態に戻します
-TP_RETINEX_OFFSET;オフセット（明るさ）
-TP_RETINEX_SCALES;ガウス暈しのグラデーション
+TP_RETINEX_OFFSET;オフセット
+TP_RETINEX_SCALES;ガウスフィルタの勾配
 TP_RETINEX_SCALES_TOOLTIP;スライダー値が0の場合、同一の作業を繰り返します\n0より大きい値を設定すると、繰り返し作業を増やした時に、スケールと隣接するピクセルに対する作用は減ります。0より小さい場合は、その逆です
 TP_RETINEX_SETTINGS;設定
 TP_RETINEX_SKAL;スケール
-TP_RETINEX_SLOPE;フリーなガンマの勾配
+TP_RETINEX_SLOPE;フリーガンマの勾配
 TP_RETINEX_STRENGTH;強さ
 TP_RETINEX_THRESHOLD;しきい値
-TP_RETINEX_THRESHOLD_TOOLTIP;インとアウトの制限を意味します\nイン=原画像\nアウト=ガウス暈しを施した原画像
+TP_RETINEX_THRESHOLD_TOOLTIP;インとアウトの制限を意味します\nイン=原画像\nアウト=ガウスフィルタを施した原画像
 TP_RETINEX_TLABEL;透過　差異の最小値=%1 最大値=%2 平均=%3 標準偏差=%4
 TP_RETINEX_TLABEL2;透過 最小値=%1 最大値=%2
 TP_RETINEX_TLABEL_TOOLTIP;透過マップの結果を表示しています\n差異の最小値と最大値です\n平均と標準偏差\n透過マップの最小値と最大値です
@@ -2024,11 +3112,11 @@ TP_ROTATE_DEGREE;角度
 TP_ROTATE_LABEL;回転
 TP_ROTATE_SELECTLINE;直線選択・角度補正ツール
 TP_SAVEDIALOG_OK_TIP;ショートカット <b>Ctrl-Enter</b>
-TP_SHADOWSHLIGHTS_HIGHLIGHTS;ハイライトを暗く
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;ハイライト
 TP_SHADOWSHLIGHTS_HLTONALW;ハイライトトーンの幅
 TP_SHADOWSHLIGHTS_LABEL;シャドウ/ハイライト
 TP_SHADOWSHLIGHTS_RADIUS;半径
-TP_SHADOWSHLIGHTS_SHADOWS;シャドウを明るく
+TP_SHADOWSHLIGHTS_SHADOWS;シャドウ
 TP_SHADOWSHLIGHTS_SHTONALW;シャドウトーンの幅
 TP_SHARPENEDGE_AMOUNT;適用量
 TP_SHARPENEDGE_LABEL;エッジ
@@ -2105,14 +3193,20 @@ TP_WAVELET_B2;残差
 TP_WAVELET_BACKGROUND;背景
 TP_WAVELET_BACUR;カーブ
 TP_WAVELET_BALANCE;コントラストバランス　斜め/垂直-水平
-TP_WAVELET_BALANCE_TOOLTIP;ウェーブレットの方向で垂直-水平と斜めのバランスを変えます\nコントラスト、色度、或いは残差画像のトーンマッピングが有効の場合、バランスにより効果が増幅されます
+TP_WAVELET_BALANCE_TOOLTIP;ウェーブレットの解析方向の垂直-水平と斜めのバランスを変えます\nコントラスト、色度、或いは残差画像のトーンマッピングが有効の場合、バランスにより効果が増幅されます
 TP_WAVELET_BALCHRO;色度のバランス
+TP_WAVELET_BALCHROM;色ノイズ除去のイコライザ　ブルー/イエロー　レッド/グリーン
 TP_WAVELET_BALCHRO_TOOLTIP;有効にすると、’コントラストバランス’のカーブやスライダーも色度のバランスに影響します
+TP_WAVELET_BALLUM;輝度ノイズ除去のイコライザ　白黒
 TP_WAVELET_BANONE;なし
 TP_WAVELET_BASLI;スライダー
-TP_WAVELET_BATYPE;バランス方式
+TP_WAVELET_BATYPE;コントラストバランス方式
+TP_WAVELET_BL;ぼかしのレベル
+TP_WAVELET_BLCURVE;詳細レベルによるぼかし
+TP_WAVELET_BLURFRAME;ぼかし
+TP_WAVELET_BLUWAV;減衰応答
 TP_WAVELET_CBENAB;カラートーンとカラーバランス
-TP_WAVELET_CB_TOOLTIP;高い値は、’カラートーン’と併用するか、或いはカラートーンは使わないで単独で使います。\n低い値の場合は前景の色合いを変えずに背景(sky, ...) のホワイトバランスを変えるような効果を得られます。一般的にはコントラストが高くなる印象があります。
+TP_WAVELET_CB_TOOLTIP;高い値は、’カラートーン’と併用するか、或いはカラートーンは使わないで単独で使います。\n低い値の場合は前景の色合いを変えずに背景(空 ...) のホワイトバランスを変えるような効果を得られます。一般的にはコントラストが高くなる印象があります。
 TP_WAVELET_CCURVE;ローカルコントラスト
 TP_WAVELET_CH1;全ての色
 TP_WAVELET_CH2;明清色 - 純色
@@ -2120,22 +3214,32 @@ TP_WAVELET_CH3;コントラストのレベルとリンク
 TP_WAVELET_CHCU;カーブ
 TP_WAVELET_CHR;色度とコントラストのリンクの強さ
 TP_WAVELET_CHRO;純色 - 明清色のしきい値
+TP_WAVELET_CHROFRAME;色ノイズの除去
+TP_WAVELET_CHROMAFRAME;色度
+TP_WAVELET_CHROMCO;番手の高いレベルの色度
+TP_WAVELET_CHROMFI;番手の低いレベルの色度
 TP_WAVELET_CHRO_TOOLTIP;どのレベルで明清色と純色を調整するか決めます\n1-x：純色を調整するレベルの範囲\nx-9：明清色を調整するレベルの範囲\n\n但し、値がレベルの総数より多い場合は機能が無効となります
+TP_WAVELET_CHRWAV;色度のぼかし
 TP_WAVELET_CHR_TOOLTIP;色度を”コントラストレベル”と”色度とコントラストのリンクの強さ”の相関関係で調整します
 TP_WAVELET_CHSL;スライダー
 TP_WAVELET_CHTYPE;調整の方法
+TP_WAVELET_CLA;明瞭
+TP_WAVELET_CLARI;シャープマスクと明瞭
 TP_WAVELET_COLORT;レッド/グリーンの不透明度
 TP_WAVELET_COMPCONT;コントラスト
 TP_WAVELET_COMPGAMMA;ガンマの圧縮
 TP_WAVELET_COMPGAMMA_TOOLTIP;残差画像のガンマを調整することで、画像データとヒストグラムの均衡を図ります。
 TP_WAVELET_COMPTM;トーンマッピング
 TP_WAVELET_CONTEDIT;'後の' コントラストカーブ
+TP_WAVELET_CONTFRAME;コントラスト - 圧縮
 TP_WAVELET_CONTR;色域
 TP_WAVELET_CONTRA;コントラスト
+TP_WAVELET_CONTRASTEDIT;細かい～大まか　レベルの指定
 TP_WAVELET_CONTRAST_MINUS;コントラスト -
 TP_WAVELET_CONTRAST_PLUS;コントラスト +
 TP_WAVELET_CONTRA_TOOLTIP;残差画像のコントラストを変えます
 TP_WAVELET_CTYPE;色の制御
+TP_WAVELET_CURVEEDITOR_BL_TOOLTIP;拡大率が300％より上になると無効になります
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;元画像のローカルコントラストに応じてローカルコントラストを調節します\n横軸の低い部分は細かいローカルコントラストを表しています（実質値10~20）\n50%はローカルコントラストの平均（実質値100~300）を表しています\n66%はローカルコントラストの標準偏差（実質値300~800）を表しています\n100%はローカルコントラストの最大値を表しています（実質値3000~8000）
 TP_WAVELET_CURVEEDITOR_CH;コントラストレベル=f(色相)
 TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;色相に応じて各レベルのコントラストを調節します\n色域抑制のカーブ調整と重複しないように注意します\nウェーブレットのコントラストレベルスライダー値が0の場合は効果はありません
@@ -2150,11 +3254,15 @@ TP_WAVELET_DAUB4;D4 - 標準
 TP_WAVELET_DAUB6;D6 - 標準プラス
 TP_WAVELET_DAUB10;D10 - やや高い
 TP_WAVELET_DAUB14;D14 - 高い
+TP_WAVELET_DAUBLOCAL;ウェーブレット　エッジ検出の効果
 TP_WAVELET_DAUB_TOOLTIP;ドブシー関数の係数を変更します\nD4=標準的なエッジ検出の効果\nD14=通常はエッジ検出の効果が高いが、処理時間が約10%増加\n\n初めのレベルの質だけでなくエッジ検出にも影響します。但し、レベル質は厳格に係数の種類に比例している訳ではありません。画像や使い方にも影響されます。
+TP_WAVELET_DIRFRAME;方向によるコントラスト
 TP_WAVELET_DONE;垂直
 TP_WAVELET_DTHR;対角線
 TP_WAVELET_DTWO;水平
 TP_WAVELET_EDCU;カーブ
+TP_WAVELET_EDEFFECT;減衰応答
+TP_WAVELET_EDEFFECT_TOOLTIP;このスライダーは機能の最大効果を受けるコントラスト値の範囲を調整するものです。最大値（2.5）を設定すると機能の効果が無効となります。
 TP_WAVELET_EDGCONT;ローカルコントラスト
 TP_WAVELET_EDGCONT_TOOLTIP;スライダーを左に動かすとコントラストが減り、右に動かすと増えます\n底部の左、天井部の左、底部の右、天井部の右は、それぞれ低いコントラスト、平均的コントラスト、平均+1標準偏差のコントラスト、最も高いコントラストを示しています
 TP_WAVELET_EDGE;エッジのシャープネス
@@ -2174,10 +3282,11 @@ TP_WAVELET_EDSL;しきい値スライダー
 TP_WAVELET_EDTYPE;ローカルコントラストの方式
 TP_WAVELET_EDVAL;強さ
 TP_WAVELET_FINAL;最終調整
+TP_WAVELET_FINCFRAME;最終的なローカルコントラスト
 TP_WAVELET_FINEST;最も細かい
-TP_WAVELET_HIGHLIGHT;ハイライトの輝度範囲
+TP_WAVELET_HIGHLIGHT;細かいレベルの輝度調整範囲
 TP_WAVELET_HS1;全輝度範囲
-TP_WAVELET_HS2;シャドウ-ハイライト
+TP_WAVELET_HS2;指定した輝度範囲
 TP_WAVELET_HUESKIN;肌色の色相
 TP_WAVELET_HUESKIN_TOOLTIP;底部の2つのポイントは、色相変化が始まる部分に設定されています、天井部の2つのポイントは変化が終わる所で、色相調整の効果が最も高い部分です\n\n設定ポイントを著しく動かす必要がある場合、或いはアーティファクトが発生するようであれば、<b>ホワイトバランスが不適切</b>と考えられます
 TP_WAVELET_HUESKY;色相の範囲（デフォルト：青空）
@@ -2185,7 +3294,7 @@ TP_WAVELET_HUESKY_TOOLTIP;底部の2つのポイントは、色相変化が始�
 TP_WAVELET_ITER;デルタバランスのレベル
 TP_WAVELET_ITER_TOOLTIP;スライダーを左に動かすと、低いレベルのデルタが増え、高いレベルのデルタが減ります\n右に動かすとその逆です
 TP_WAVELET_LABEL;ウェーブレット
-TP_WAVELET_LARGEST;最も粗い
+TP_WAVELET_LARGEST;最も大まか
 TP_WAVELET_LEVCH;色度
 TP_WAVELET_LEVDIR_ALL;全てのレベルと方向を合わせた画像
 TP_WAVELET_LEVDIR_INF;選択したレベル以下を合わせた画像
@@ -2201,57 +3310,89 @@ TP_WAVELET_LEVTWO;レベル3
 TP_WAVELET_LEVZERO;レベル1
 TP_WAVELET_LINKEDG;エッジのシャープネスの強さとリンク
 TP_WAVELET_LIPST;高度なアルゴリズム
-TP_WAVELET_LOWLIGHT;シャドウの輝度範囲
+TP_WAVELET_LOWLIGHT;大まかなレベルの輝度調整範囲
+TP_WAVELET_LOWTHR_TOOLTIP;詳細とノイズの増幅を避けます
 TP_WAVELET_MEDGREINF;最初のレベル
 TP_WAVELET_MEDI;青空のアーティファクトを軽減
 TP_WAVELET_MEDILEV;エッジ検出
 TP_WAVELET_MEDILEV_TOOLTIP;エッジの検出を有効にした際には、次の操作が奨められます：\n- アーティファクト発生を避けるため低いレベルのコントラストを使わない\n- グラデーション感度では高い値を使う\n\n効果を和らげるには、ノイズ低減とリファインの’リファイン’を下げる
+TP_WAVELET_MERGEC;色度を融合
+TP_WAVELET_MERGEL;輝度を融合
 TP_WAVELET_NEUTRAL;ニュートラル
 TP_WAVELET_NOIS;ノイズ低減
 TP_WAVELET_NOISE;ノイズ低減とリファイン
+TP_WAVELET_NOISE_TOOLTIP;詳細レベル4の輝度ノイズ除去が20以上の時にはアグレッシブモードが使われます\n色ノイズ除去で、大まかなレベルの値が20以上の時は、アグレッシブモードが使われます
 TP_WAVELET_NPHIGH;高い
 TP_WAVELET_NPLOW;低い
 TP_WAVELET_NPNONE;なし
 TP_WAVELET_NPTYPE;隣接するピクセルに対する効果
 TP_WAVELET_NPTYPE_TOOLTIP;このアルゴリズムは近傍する8つのピクセルを使って比較します。違いが少ない場合に、エッジを強化します。
+TP_WAVELET_OFFSET_TOOLTIP;オフセットはシャドウとハイライトのバランスを調整する機能です\n 高い値を設定するとシャドウ部分のコントラスト強化が増幅されます。最小コントラストのしきい値と合わせて使えば、コントラストを高くしたい部分の見極めに役立つでしょう
+TP_WAVELET_OLDSH;マイナス値が使えるアルゴリズム
 TP_WAVELET_OPACITY;ブルー/イエローの不透明度
 TP_WAVELET_OPACITYW;コントラストバランス　d/v-hカーブ
 TP_WAVELET_OPACITYWL;最終的なローカルコントラスト
 TP_WAVELET_OPACITYWL_TOOLTIP;ウェーブレット処理の最後で最終的なローカルコントラストを調整します\n\nイコライザは左から右に向かって、最も細かいローカルコントラストから大きいローカルコントラストを表しています
 TP_WAVELET_PASTEL;明清色の色度
 TP_WAVELET_PROC;プロセス
+TP_WAVELET_PROTAB;保護
+TP_WAVELET_RADIUS;シャドウ/ハイライトの半径
+TP_WAVELET_RANGEAB;aとbの範囲 %
 TP_WAVELET_RE1;強める
 TP_WAVELET_RE2;変えない
 TP_WAVELET_RE3;弱める
-TP_WAVELET_RESCHRO;色度
+TP_WAVELET_RESBLUR;輝度のぼかし
+TP_WAVELET_RESBLURC;色度のぼかし
+TP_WAVELET_RESBLUR_TOOLTIP;拡大率が500％以上の場合は作用が無効となります
+TP_WAVELET_RESCHRO;強さ
 TP_WAVELET_RESCON;シャドウ
 TP_WAVELET_RESCONH;ハイライト
 TP_WAVELET_RESID;残差画像
 TP_WAVELET_SAT;純色の色度
 TP_WAVELET_SETTINGS;ウェーブレットの設定
-TP_WAVELET_SKIN;色相-トーン (肌色) の目標/保護
+TP_WAVELET_SHA;シャープマスク
+TP_WAVELET_SHFRAME;シャドウ/ハイライト
+TP_WAVELET_SHOWMASK;ウェーブレットの'マスク'を表示
+TP_WAVELET_SIGMA;減衰応答
+TP_WAVELET_SIGMAFIN;減衰応答
+TP_WAVELET_SIGMA_TOOLTIP;コントラストスライダーの調整効果は、中間的なマイクロコントラストは強く、低い、或いは高いマイクロコントラストはそうでもありません。\n減衰応答は、この調整作用を極端なコントラスト値に向けて、どれだけ素早く減衰させるかコントロールするスライダーです。\n高い値を設定すると、減衰が強く作用するマイクロコントラストの領域が広がりますが、アーティファクトが発生することがあります。\n低い値を設定すると、減衰が強く作用するマイクロコントラストの領域が狭くなるので、よりピンポイントに効果が表れます。
+TP_WAVELET_SKIN;肌色の目標/保護
 TP_WAVELET_SKIN_TOOLTIP;－100にすると肌色のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると肌色のトーンは保護され、他のカラートーンが調整されます
-TP_WAVELET_SKY;色相-トーン（青空）の目標/保護
+TP_WAVELET_SKY;色相の目標/保護
 TP_WAVELET_SKY_TOOLTIP;－100にすると青空のトーンだけが調整の対象になります\n0にすると全てのカラートーンが調整されます\n＋100にすると青空のトーンは保護され、他のカラートーンが調整されます
+TP_WAVELET_SOFTRAD;ソフトな半径
 TP_WAVELET_STREN;強さ
 TP_WAVELET_STRENGTH;強さ
 TP_WAVELET_SUPE;エキストラ
 TP_WAVELET_THR;シャドウのしきい値
-TP_WAVELET_THRESHOLD;ハイライトを調整するレベル
-TP_WAVELET_THRESHOLD2;シャドウを調整するレベル
-TP_WAVELET_THRESHOLD2_TOOLTIP;レベル9と（9-設定値）のレベルの間でシャドウの輝度が調整されます。他のレベルは輝度範囲全体で調整されます。
-TP_WAVELET_THRESHOLD_TOOLTIP;設定値以上のレベルだけが、ハイライトの輝度で調整されます。他のレベルは輝度範囲全体で調整されます。選べる設定値の最大数はシャドウレベルの設定に左右されます。
+TP_WAVELET_THRESHOLD;調整するレベル　細かい
+TP_WAVELET_THRESHOLD2;調整するレベル　大まか
+TP_WAVELET_THRESHOLD2_TOOLTIP;設定値より上の詳細レベルだけが、大まかなレベルの輝度範囲で設定された条件で調整されます。
+TP_WAVELET_THRESHOLD_TOOLTIP;設定値以下の詳細レベルだけが、細かいレベルの輝度範囲で設定された条件で調整されます。
+TP_WAVELET_THRESWAV;バランスのしきい値
 TP_WAVELET_THRH;ハイライトのしきい値
 TP_WAVELET_TILESBIG;大きいタイル
 TP_WAVELET_TILESFULL;画像全体
 TP_WAVELET_TILESIZE;タイルのサイズ
 TP_WAVELET_TILESLIT;小さいタイル
 TP_WAVELET_TILES_TOOLTIP;画像全体を処理する方が良い結果をもたらすので、推奨される選択です。タイルによる処理はRAMの容量が小さいユーザー向けです。必要なメモリー容量に関してはRawPediaを参照して下さい。
-TP_WAVELET_TMSTRENGTH;残差の効力を圧縮
+TP_WAVELET_TMEDGS;エッジ停止
+TP_WAVELET_TMSCALE;スケール
+TP_WAVELET_TMSTRENGTH;圧縮の強さ
 TP_WAVELET_TMSTRENGTH_TOOLTIP;トーンマッピングの強さや残差画像のコントラストの圧縮を加減します。値が0以外の場合、露光補正パネルのトーンマッピングでは、強さとガンマのスライダー無効となります
 TP_WAVELET_TMTYPE;圧縮の方法
 TP_WAVELET_TON;カラートーン
+TP_WAVELET_TONFRAME;除外されたカラー
+TP_WAVELET_USH;なし
+TP_WAVELET_USHARP;明瞭の方式
+TP_WAVELET_USHARP_TOOLTIP;オリジン : ウェーブレットによる調整を含まないソースファイル\nウェーブレット : ウェーブレットによる調整を含むソースファイル
+TP_WAVELET_USH_TOOLTIP;シャープマスクを選択すると、ウェーブレットの設定が次の様に自動的に行われます:\n背景=ブラック、処理=レベル3以下...レベルは1～4の間で変えられます\n\n明瞭を選択すると、ウェーブレットの設定が次の様に自動的に行われます:\n背景=残差画像、処理=レベル7以上　レベルは5～10の間で変えられます
+TP_WAVELET_WAVLOWTHR;最小コントラストのしきい値
+TP_WAVELET_WAVOFFSET;オフセット
 TP_WBALANCE_AUTO;自動補正
+TP_WBALANCE_AUTOITCGREEN;色温度の相関関係を繰り返し解析する
+TP_WBALANCE_AUTOOLD;RGBグレーを使う
+TP_WBALANCE_AUTO_HEADER;自動
 TP_WBALANCE_CAMERA;カメラ
 TP_WBALANCE_CLOUDY;曇天
 TP_WBALANCE_CUSTOM;カスタム
@@ -2284,7 +3425,7 @@ TP_WBALANCE_LAMP_HEADER;ランプ
 TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
 TP_WBALANCE_LED_HEADER;LED
 TP_WBALANCE_LED_LSI;LSI Lumelex 2040
-TP_WBALANCE_METHOD;モード
+TP_WBALANCE_METHOD;方式
 TP_WBALANCE_PICKER;ピック
 TP_WBALANCE_SHADE;日陰
 TP_WBALANCE_SIZE;サイズ:
@@ -2292,7 +3433,9 @@ TP_WBALANCE_SOLUX35;Solux 3500K
 TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
-TP_WBALANCE_SPOTWB;スポットWB
+TP_WBALANCE_SPOTWB;ピペットを使ってプレビュー画像のニュートラルな部分をピックアップ
+TP_WBALANCE_STUDLABEL;t検定 Itcwb: %1
+TP_WBALANCE_STUDLABEL_TOOLTIP;t検定の結果を表示\n低い値ほど相関関係が良いことになります\n値が0.002以下はエクセレント\n0.005以下は非常に良い\n0.01以下は良い\n0.05以下は十分\n0.5以上は悪い\n光源が標準的ではない場合は、t検定が良好であってもホワイトバラスが良いことにはなりません\nt検定結果が1000と表示された場合は反復解析が行われなかったことを意味します。良い結果と想定される前の計算結果が使われます 
 TP_WBALANCE_TEMPBIAS;自動ホワイトバランス　色温度のバイアス
 TP_WBALANCE_TEMPBIAS_TOOLTIP;”自動ホワイトバランスの計算に変更を加えます”\n色温度を変えることで画像の暖かみを増やしたり、冷たさを増やしたりします。\n偏向の度合いは色温度の割合で表示されます\n従って計算値は "算出した色温度 + 算出した色温度 * 偏向"で計算したものです
 TP_WBALANCE_TEMPERATURE;色温度
@@ -2300,7 +3443,6 @@ TP_WBALANCE_TUNGSTEN;タングステン
 TP_WBALANCE_WATER1;水中 1
 TP_WBALANCE_WATER2;水中 2
 TP_WBALANCE_WATER_HEADER;水中
-The last update by firefly 2019-12-21
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;新規ディテール ウィンドウを開く
 ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>z</b>
@@ -2313,7 +3455,4 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!GENERAL_HELP;Help
-!HISTORY_MSG_TRANS_Method;Geometry - Method
-!TP_LENSGEOM_LIN;Linear
-!TP_LENSGEOM_LOG;Logarithmic
+!TP_WAVELET_FINCOAR_TOOLTIP;The left (positive) part of the curve acts on the finer levels (increase).\nThe 2 points on the abscissa represent the respective action limits of finer and coarser levels 5 and 6 (default).\nThe right (negative) part of the curve acts on the coarser levels (increase).\nAvoid moving the left part of the curve with negative values. Avoid moving the right part of the curve with positives values

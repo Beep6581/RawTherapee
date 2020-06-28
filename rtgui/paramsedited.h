@@ -835,6 +835,35 @@ public:
         bool baselog;
         bool strlog;
         bool anglog;
+        //mask
+        bool visimask;
+        bool complexmask;
+        bool expmask;
+        bool sensimask;
+        bool blendmask;
+        bool blendmaskab;
+        bool softradiusmask;
+        bool enamask;
+        bool fftmask;
+        bool blurmask;
+        bool contmask;
+        bool CCmask_curve;
+        bool LLmask_curve;
+        bool HHmask_curve;
+        bool strumaskmask;
+        bool toolmask;
+        bool radmask;
+        bool lapmask;
+        bool chromask;
+        bool gammask;
+        bool slopmask;
+        bool shadmask;
+        bool str_mask;
+        bool ang_mask;
+        bool HHhmask_curve;
+        bool Lmask_curve;
+        bool LLmask_curvewav;
+        bool csthresholdmask;
 
         LocallabSpotEdited(bool v);
 
