@@ -2420,7 +2420,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
     const float hlcompthr = lp.hlcompthr / 200.f;
     const float hlcomp = lp.hlcomp / 100.f;
     if (lp.linear > 0.f && lp.expcomp == 0.f) {
-            lp.expcomp = 0.01f;
+            lp.expcomp = 0.001f;
     }
 
     if (lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {
@@ -12920,7 +12920,7 @@ void ImProcFunctions::Lab_Local(
         enablefat = true;;
     }
 
-    bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.blac != 0 || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || lp.prevdE || (exlocalcurve && localexutili)));
+    bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.blac != 0 || lp.shadex > 0 || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || lp.prevdE || (exlocalcurve && localexutili)));
 
     if (!lp.invex && execex) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -13085,7 +13085,7 @@ void ImProcFunctions::Lab_Local(
                             }
 
                         if (lp.expcomp == 0.f) {
-                            lp.expcomp = 0.011f;    // to enabled
+                            lp.expcomp = 0.001f;    // to enabled
                         }
 
                         ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
@@ -13211,16 +13211,21 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
+                    if (lp.shadex > 0) {
+                        if (lp.expcomp == 0.f) {
+                            lp.expcomp = 0.001f;    // to enabled
+                        }
+                    }
 
                     //shadows with ipshadowshighlight
-                    if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili)) {
+                    if ((lp.expcomp > 0.f) || (exlocalcurve && localexutili)) {
                         if (lp.shadex > 0) {
                             ImProcFunctions::shadowsHighlights(bufexpfin.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
                         }
                     }
 
                     if (lp.expchroma != 0.f) {
-                        if ((lp.expcomp != 0.f && lp.expcomp != 0.01f) || (exlocalcurve && localexutili) || lp.laplacexp > 0.1f) {
+                        if ((lp.expcomp != 0.f && lp.expcomp != 0.001f) || (exlocalcurve && localexutili) || lp.laplacexp > 0.1f) {
                             constexpr float ampli = 70.f;
                             const float ch = (1.f + 0.02f * lp.expchroma);
                             const float chprosl = ch <= 1.f ? 99.f * ch - 99.f : clipChro(ampli * ch - ampli);

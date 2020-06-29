@@ -2189,7 +2189,7 @@ LocallabExposure::LocallabExposure():
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exptoolexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPTOOL")))),
-    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), MINEXP, MAXEXP, 0.02, 0.))), 
+    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), MINEXP, MAXEXP, 0.01, 0.))), 
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 10, 0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0))),
