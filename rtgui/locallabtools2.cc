@@ -4773,6 +4773,8 @@ LocallabMask::LocallabMask():
         const LocallabParams::LocallabSpot defSpot;
     
         sensimask->setAdjusterListener(this);
+        blendmask->setLogScale(10, 0);
+        blendmaskab->setLogScale(10, 0);
         blendmask->setAdjusterListener(this);
         blendmaskab->setAdjusterListener(this);
        // softradiusmask->setLogScale(10, -10);
