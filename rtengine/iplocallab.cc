@@ -12920,7 +12920,7 @@ void ImProcFunctions::Lab_Local(
         enablefat = true;;
     }
 
-    bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.blac != 0 || lp.shadex > 0 || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || lp.prevdE || (exlocalcurve && localexutili)));
+    bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.blac != 0 || lp.shadex > 0 || lp.hlcomp > 0.f || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || lp.prevdE || (exlocalcurve && localexutili)));
 
     if (!lp.invex && execex) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -12942,6 +12942,7 @@ void ImProcFunctions::Lab_Local(
 
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> buforig(new LabImage(bfw, bfh));
 
             std::unique_ptr<LabImage> bufmaskblurexp;
             std::unique_ptr<LabImage> originalmaskexp;
@@ -12960,6 +12961,7 @@ void ImProcFunctions::Lab_Local(
                 for (int y = ystart; y < yend; y++) {
                     for (int x = xstart; x < xend; x++) {
                         bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
+                        buforig->L[y - ystart][x - xstart] = original->L[y][x];
                     }
                 }
 
@@ -13217,6 +13219,12 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
+                    if (lp.hlcomp > 0.f) {
+                        if (lp.expcomp == 0.f) {
+                            lp.expcomp = 0.001f;    // to enabled
+                        }
+                    }
+                    
                     //shadows with ipshadowshighlight
                     if ((lp.expcomp != 0.f) || (exlocalcurve && localexutili)) {
                         if (lp.shadex > 0) {
@@ -13244,7 +13252,7 @@ void ImProcFunctions::Lab_Local(
                     }
                     
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
-                        softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
+                        softproc(buforig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.1, 0.001, 0.5f, sk, multiThread, 1);
                     }
                     float meansob = 0.f;
                     transit_shapedetect2(call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
