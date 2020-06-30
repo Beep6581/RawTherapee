@@ -61,6 +61,7 @@
 #include <cstring>
 #include <cstdint>
 #include <cassert>
+#include <vector>
 
 #ifndef NDEBUG
 #include <fstream>
@@ -138,6 +139,38 @@ public:
             clear();
         }
     }
+
+    LUT(const std::vector<T> input, int flags = LUT_CLIP_BELOW | LUT_CLIP_ABOVE)
+    {
+#ifndef NDEBUG
+
+        if (input.size() <= 0) {
+            printf("s<=0!\n");
+        }
+
+        assert (input.size() > 0);
+#endif
+        dirty = true;
+        clip = flags;
+        // Add a few extra elements so [](vfloat) won't access out-of-bounds memory.
+        // The routine would still produce the right answer, but might cause issues
+        // with address/heap checking programs.
+        data = new T[input.size() + 3];
+        owner = 1;
+        size = input.size();
+        upperBound = size - 1;
+        maxs = size - 2;
+        maxsf = (float)maxs;
+#ifdef __SSE2__
+        maxsv =  F2V( maxs );
+        sizeiv =  _mm_set1_epi32( (int)(size - 1) );
+        sizev = F2V( size - 1 );
+#endif
+        for (size_t i = 0; i < input.size(); ++i) {
+            data[i] = input[i];
+        }
+    }
+
     void operator ()(int s, int flags = LUT_CLIP_BELOW | LUT_CLIP_ABOVE, bool initZero = false)
     {
 #ifndef NDEBUG

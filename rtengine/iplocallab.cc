@@ -7010,6 +7010,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
     Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
 
     if (process == 1 && loclevwavCurve && loclevwavutili) { //blur
+        StopWatch Stop1("blur");
         array2D<float> templevel(W_L, H_L);
         for (int dir = 1; dir < 4; ++dir) {
             for (int level = level_bl; level < maxlvl; ++level) {
@@ -7018,36 +7019,13 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 constexpr float offs = 1.f;
                 float mea[10];
                 calceffect(level, mean, sigma, mea, effect, offs);
-
+                LUTf meaLut({0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.5f, 0.3f, 0.2f, 0.1f, 0.05f});
+                const float lutFactor = (meaLut.getSize() - 1) / mea[9];
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
                 for (int co = 0; co < H_L * W_L; co++) {
-                    const float WavCL = std::fabs(WavL[co]);
-
-                    if (WavCL < mea[0]) {
-                        beta[co] = 0.05f;
-                    } else if (WavCL < mea[1]) {
-                        beta[co] = 0.2f;
-                    } else if (WavCL < mea[2]) {
-                        beta[co] = 0.7f;
-                    } else if (WavCL < mea[3]) {
-                        beta[co] = 1.f;    //standard
-                    } else if (WavCL < mea[4]) {
-                        beta[co] = 1.f;
-                    } else if (WavCL < mea[5]) {
-                        beta[co] = 0.8f;    //+sigma
-                    } else if (WavCL < mea[6]) {
-                        beta[co] = 0.5f;
-                    } else if (WavCL < mea[7]) {
-                        beta[co] = 0.3f;
-                    } else if (WavCL < mea[8]) {
-                        beta[co] = 0.2f;    // + 2 sigma
-                    } else if (WavCL < mea[9]) {
-                        beta[co] = 0.1f;
-                    } else {
-                        beta[co] = 0.05f;
-                    }
+                    beta[co] = meaLut[std::fabs(WavL[co]) * lutFactor];
                 }
 
                 const float klev = 0.25f * loclevwavCurve[level * 55.5f];
