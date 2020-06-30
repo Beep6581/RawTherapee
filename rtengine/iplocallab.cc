@@ -13218,7 +13218,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     //shadows with ipshadowshighlight
-                    if ((lp.expcomp > 0.f) || (exlocalcurve && localexutili)) {
+                    if ((lp.expcomp != 0.f) || (exlocalcurve && localexutili)) {
                         if (lp.shadex > 0) {
                             ImProcFunctions::shadowsHighlights(bufexpfin.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
                         }
