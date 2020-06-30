@@ -2266,6 +2266,8 @@ LocallabExposure::LocallabExposure():
 
     setExpandAlignProperties(exptoolexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+   // expcomp->setLogScale(10, 0);
+
     expcomp->setAdjusterListener(this);
 
     black->setAdjusterListener(this);
@@ -2467,6 +2469,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPOSURE_TOOLTIP"));
+        expcomp->set_tooltip_text(M("TP_LOCALLAB_EXPCOMP_TOOLTIP"));
         expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
         structexp->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
         pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
@@ -2492,29 +2495,6 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         expchroma->set_tooltip_text(M("TP_LOCALLAB_EXPCHROMA_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
-        expMethod->set_tooltip_text("");
-        structexp->set_tooltip_text("");
-        pdeFrame->set_tooltip_text("");
-        exnoiseMethod->set_tooltip_text("");
-        laplacexp->set_tooltip_text(M(""));
-        balanexp->set_tooltip_text(M(""));
-        gamm->set_tooltip_text(M(""));
-        linear->set_tooltip_text(M(""));
-        fatFrame->set_tooltip_text("");
-        sensiex->set_tooltip_text("");
-        shapeexpos->setTooltip("");
-        strexp->set_tooltip_text("");
-        expmaskexp->set_tooltip_text("");
-        CCmaskexpshape->setTooltip("");
-        LLmaskexpshape->setTooltip("");
-        HHmaskexpshape->setTooltip("");
-        radmaskexp->set_tooltip_text("");
-        lapmaskexp->set_tooltip_text("");
-        strmaskexp->set_tooltip_text("");
-        Lmaskexpshape->setTooltip("");
-        blendmaskexp->set_tooltip_text(M(""));
-        mask2expCurveEditorG->set_tooltip_text(M(""));
-        expchroma->set_tooltip_text(M(""));
     }
 }
 
@@ -3231,7 +3211,8 @@ void LocallabExposure::updateExposureGUI3()
         }
 
         structexp->hide();
-        shadex->hide();
+       // shadex->hide();
+        shadex->show();
         softradiusexp->hide();
         expgradexp->hide();
         showmaskexpMethod->hide();

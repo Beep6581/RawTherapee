@@ -1351,7 +1351,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float proexp = lp.expcomp;
     if (std::fabs(proexp) < 0.6f) {
         float interm = std::fabs(proexp) / 0.6f;
-        interm = SQR(interm);
+        interm = pow(interm, 3.f);
         lp.expcomp = proexp * interm;
     }
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
@@ -5264,6 +5264,12 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                     const float lh = 0.5f * exlocalcurve[2.f * temp->L[y][x]]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
                     temp->L[y][x] = lh;
                 }
+            }
+        }
+
+        if ((lp.expcomp != 0.f) || (exlocalcurve)) {
+            if (lp.shadex > 0) {
+                ImProcFunctions::shadowsHighlights(temp.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
             }
         }
 
@@ -13268,7 +13274,7 @@ void ImProcFunctions::Lab_Local(
     }
 //inverse
 
-    else if (lp.invex && (lp.expcomp != 0.0  || lp.laplacexp > 0.1f || params->locallab.spots.at(sp).fatamount > 1.f || (exlocalcurve && localexutili) || lp.enaExpMaskinv || lp.showmaskexpmetinv == 1) && lp.exposena) {
+    else if (lp.invex && (lp.expcomp != 0.0  || lp.laplacexp > 0.1f || lp.blac != 0 || lp.hlcomp > 0.f || lp.shadex > 0 || params->locallab.spots.at(sp).fatamount > 1.f || (exlocalcurve && localexutili) || lp.enaExpMaskinv || lp.showmaskexpmetinv == 1) && lp.exposena) {
         constexpr float adjustr = 2.f;
         std::unique_ptr<LabImage> bufmaskblurexp;
         std::unique_ptr<LabImage> originalmaskexp;
@@ -13331,6 +13337,19 @@ void ImProcFunctions::Lab_Local(
         if (lp.showmaskexpmetinv == 1) {
             showmask(lumask, lp, 0, 0, cx, cy, GW, GH, bufexporig.get(), transformed, bufmaskblurexp.get(), inv);
             return;
+        }
+
+        if (lp.shadex > 0) {
+            if (lp.expcomp == 0.f) {
+                lp.expcomp = 0.001f;    // to enabled
+            }
+        }
+
+
+        if (lp.hlcomp > 0.f) {
+            if (lp.expcomp == 0.f) {
+                lp.expcomp = 0.001f;    // to enabled
+            }
         }
 
         InverseColorLight_Local(false, false, sp, 1, lp, originalmaskexp.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
