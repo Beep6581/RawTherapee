@@ -7049,7 +7049,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                     }
                 }
                 const LUTf meaLut(lutVals);
-                const float lutFactor = 1.f / lutDiff;
+                constexpr float lutFactor = 1.f / lutDiff;
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
