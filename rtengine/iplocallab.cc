@@ -68,6 +68,41 @@ constexpr int TS = 64; // Tile size
 constexpr float epsilonw = 0.001f / (TS * TS); //tolerance
 constexpr int offset = 25; // shift between tiles
 
+std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float &lutFactor) {
+
+    constexpr int lutSize = 100;
+    const float lutMax = ceil(mea[9]);
+    const float lutDiff = lutMax / lutSize;
+    std::vector<float> lutVals(lutSize);
+    int jStart = 1;
+    for (int i = 0; i < 100; ++i) {
+        const float val = i * lutDiff;
+        if (val < mea[0]) {
+            // still < first value => no interpolation
+            lutVals[i] = inVals[0];
+        } else {
+            for (int j = jStart; j < 10; ++j) {
+                if (val == mea[j]) {
+                    // exact match => no interpolation
+                    lutVals[i] = inVals[j];
+                    ++jStart;
+                    break;
+                } else if (val < mea[j]) {
+                    // interpolate
+                    const float dist = (val - mea[j - 1]) / (mea[j] - mea[j - 1]);
+                    lutVals[i] = rtengine::intp(dist, inVals[j], inVals[j - 1]);
+                    break;
+                } else {
+                    lutVals[i] = inVals[10];
+                }
+            }
+        }
+    }
+    lutFactor = 1.f / lutDiff;
+    return std::unique_ptr<LUTf>(new LUTf(lutVals));
+
+}
+
 constexpr float clipLoc(float x) {
     return rtengine::LIM(x, 0.f, 32767.f);
 }
@@ -7019,43 +7054,9 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 constexpr float offs = 1.f;
                 float mea[10];
                 calceffect(level, mean, sigma, mea, effect, offs);
-                constexpr int lutSize = 100;
-                const float lutMax = ceil(mea[9]);
-                const float lutDiff = lutMax / lutSize;
-                std::vector<float> lutVals(lutSize);
-                std::vector<float> inVals({0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.5f, 0.3f, 0.2f, 0.1f, 0.05f});
-                int jStart = 1;
-                for (int i = 0; i < 100; ++i) {
-                    const float val = i * lutDiff;
-                    if (val < mea[0]) {
-                        // still < first value => no interpolation
-                        lutVals[i] = inVals[0];
-                    } else {
-                        for (int j = jStart; j < 10; ++j) {
-                            if (val == mea[j]) {
-                                // exact match => no interpolation
-                                lutVals[i] = inVals[j];
-                                ++jStart;
-                                break;
-                            } else if (val < mea[j]) {
-                                // interpolate
-                                const float dist = (val - mea[j - 1]) / (mea[j] - mea[j - 1]);
-                                lutVals[i] = intp(dist, inVals[j], inVals[j - 1]);
-                                break;
-                            } else {
-                                lutVals[i] = inVals[10];
-                            }
-                        }
-                    }
-                }
-                const LUTf meaLut(lutVals);
-                const float lutFactor = 1.f / lutDiff;
-#ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
-#endif
-                for (int co = 0; co < H_L * W_L; co++) {
-                    beta[co] = meaLut[std::fabs(WavL[co]) * lutFactor];
-                }
+                float lutFactor;
+                const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.5f, 0.3f, 0.2f, 0.1f, 0.05f};
+                const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
 
                 const float klev = 0.25f * loclevwavCurve[level * 55.5f];
                 float* src[H_L];
@@ -7075,7 +7076,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 for (int y = 0; y < H_L; y++) {
                     for (int x = 0; x < W_L; x++) {
                         int j = y * W_L + x;
-                        WavL[j] = intp(beta[j], templevel[y][x], WavL[j]);
+                        WavL[j] = intp((*meaLut)[std::fabs(WavL[j]) * lutFactor], templevel[y][x], WavL[j]);
                     }
                 }
             }
