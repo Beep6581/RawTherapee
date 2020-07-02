@@ -1797,7 +1797,45 @@ TP_LOCALLAB_BLWH_TOOLTIP;Force le changement de la  composante "a" et  "b" à z�
 TP_LOCALLAB_BUTTON_ADD;Ajout
 TP_LOCALLAB_BUTTON_DEL;Efface
 TP_LOCALLAB_BUTTON_DUPL;Duplique
-TP_LOCALLAB_BUTTON_REN;Renomme 
+TP_LOCALLAB_BUTTON_REN;Renomme
+TP_LOCALLAB_BUTTON_VIS;Montre/Cache
+TP_LOCALLAB_CBDL;Contraste par niveaux de détail - Défauts
+TP_LOCALLAB_CBDLCLARI_TOOLTIP;Ajuste les tons moyens et les réhausse.
+TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Agit comme un outil ondelettes.\nLe premier niveau (0) agit sur des détails de 2x2.\nLe dernier niveau (5) agit sur des détails de 64x64.
+TP_LOCALLAB_CBDL_THRES_TOOLTIP;Empêche d'augmenter le bruit
+TP_LOCALLAB_CBDL_TOOLNAME;CBDL (Defauts) - 2
+TP_LOCALLAB_CENTER_X;Centre X
+TP_LOCALLAB_CENTER_Y;Centre Y
+TP_LOCALLAB_CH;Courbes CL - LC
+TP_LOCALLAB_CHROMA;Chrominance
+TP_LOCALLAB_CHROMABLU;Niveaux Chroma
+TP_LOCALLAB_CHROMABLU_TOOLTIP;Agit comme un amplificateur-reducteur d'action en comparant aux réglages de luma.\nEn dessous de 1 reduit, au dessus de 1 amplifie
+TP_LOCALLAB_CHROMACBDL;Chroma
+TP_LOCALLAB_CHROMACB_TOOLTIP;Agit comme un amplificateur-reducteur d'action en comparant aux curseurs de luminance.\nEn dessous de 100 reduit, au dessus de 100 amplifie
+TP_LOCALLAB_CHROMALEV;Niveaux de Chroma
+TP_LOCALLAB_CHROMASKCOL;Masque Chroma
+TP_LOCALLAB_CHROMASK_TOOLTIP;Vous pouvez utiliser ce curseur pour désaturer l'arrière plan (inverse masque - courbe proche de 0).\nEgalement pour atténier ou accroître l'action du masque sur la chroma
+TP_LOCALLAB_CHRRT;Chroma
+TP_LOCALLAB_CIRCRADIUS;Taille Spot
+TP_LOCALLAB_CIRCRAD_TOOLTIP;Contient les références du RT-spot, utile pour la détection de forme (couleur, luma, chroma, Sobel).\nLes faibles valeurs peuvent être utiles pour les feuillages.\nLes valeurs élevées peuvent être utile pour la peau
+TP_LOCALLAB_CLARICRES;Fusion Chroma
+TP_LOCALLAB_CLARIFRA;Clarté & Masque de betteté - Fusion & adoucir images 
+TP_LOCALLAB_CLARILRES;Fusion Luma
+TP_LOCALLAB_CLARISOFT;rayon adoucir
+TP_LOCALLAB_CLARISOFT_TOOLTIP;Actif pour Clarté et Masque de netteté si différent de zéro.\n\nActif pour toutes les pyramides ondelettes.\nInactif si rayon = 0
+TP_LOCALLAB_CLARITYML;Claté
+TP_LOCALLAB_CLARI_TOOLTIP;En dessous ou égal à 4, 'Masque netteté' est actif.\nAu dessus du niveau ondelettes 5 'Clarté' est actif.\nUtilesu=i vous utilisez 'Compression dynamique des niveaux'
+TP_LOCALLAB_CLIPTM;Clip Recupère données (gain)
+TP_LOCALLAB_COFR;Couleur & Lumière - Petits défauts
+TP_LOCALLAB_COLORDE;Coleurr previsualisation sélection ΔE - Intensité
+TP_LOCALLAB_COLORDEPREV_TOOLTIP;Bouton Previsualisation ΔE a besoin qu'un seul outil soit activé (expander).\nPour pouvoir avoir une Previsualisation ΔE avec plusieurs outils activés utiliser Masque et modifications - Prévisualisation ΔE
+TP_LOCALLAB_COLORDE_TOOLTIP;Affiche la prévisualisation ΔE en bleu si négatif et en vert si positif.\n\nMasque et modifications (montre modifications sans masque): montre les modifications réelles si positf, montre les modifications améliorées (luminance seule) en bleu et jaune si négatif.
+TP_LOCALLAB_COLORSCOPE;Outils Etendue Couleur
+TP_LOCALLAB_COLORSCOPE_TOOLTIP;Utilise une étendue commune pour Couleur et lumière, Exposition (Standard), Ombres Lumières, Vibrance.\nLes autres outils ont leur étendue spécifique.
+TP_LOCALLAB_COLOR_TOOLNAME;Couleur&Lumière (Défauts) - 11
+
+
+
 TP_METADATA_EDIT;Appliquer les modifications
 TP_METADATA_MODE;Mode de copie des métadonnées
 TP_METADATA_STRIP;Retirer toutes les métadonnées
