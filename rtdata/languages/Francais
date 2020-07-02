@@ -1756,13 +1756,13 @@ TP_LOCALLAB_ADJ;Egalisateur Bleu-jaune Rouge-vert
 TP_LOCALLAB_ALL;Toutes les rubriques
 TP_LOCALLAB_AMOUNT;Quantité
 TP_LOCALLAB_ARTIF;Détection de forme
-TP_LOCALLAB_ARTIF_TOOLTIP;Le seuil deltaE-étendue accroit la plage of étendue-deltaE - les valeurs élévées sont pour les images à gamut élévé.\nAugmenter l'affaiblissement  deltaE améliore la détection de forme, mais peu réduire la capacité de détection.
+TP_LOCALLAB_ARTIF_TOOLTIP;Le seuil deltaE étendue accroit la plage of étendue-deltaE - les valeurs élévées sont pour les images à gamut élévé.\nAugmenter l'affaiblissement  deltaE améliore la détection de forme, mais peu réduire la capacité de détection.
 TP_LOCALLAB_AUTOGRAY;Automatique
 TP_LOCALLAB_AVOID;Evite les dérives de couleurs
 TP_LOCALLAB_BALAN;Balance ΔE ab-L
 TP_LOCALLAB_BALANEXP;ΔØ EPD balance
 TP_LOCALLAB_BALANH;Balance ΔE C-H
-TP_LOCALLAB_BALAN_TOOLTIP;Change l'algorithme des paramètres ΔE.\nPlus ou moins ab-L, plus ou moins C - H.\nPas  pour le Debruitage
+TP_LOCALLAB_BALAN_TOOLTIP;Change l'algorithme des paramètres ΔE.\nPlus ou moins ab-L, plus ou moins C-H.\nPas pour le Debruitage
 TP_LOCALLAB_BASELOG;Base Logarithme
 TP_LOCALLAB_BILATERAL;Filtre Bilateral
 TP_LOCALLAB_BLACK_EV;Noir Ev
@@ -1819,7 +1819,7 @@ TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Taille Spot
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contient les références du RT-spot, utile pour la détection de forme (couleur, luma, chroma, Sobel).\nLes faibles valeurs peuvent être utiles pour les feuillages.\nLes valeurs élevées peuvent être utile pour la peau
 TP_LOCALLAB_CLARICRES;Fusion Chroma
-TP_LOCALLAB_CLARIFRA;Clarté & Masque de betteté - Fusion & adoucir images 
+TP_LOCALLAB_CLARIFRA;Clarté & Masque de netteté - Fusion & adoucir images 
 TP_LOCALLAB_CLARILRES;Fusion Luma
 TP_LOCALLAB_CLARISOFT;Rayon adoucir
 TP_LOCALLAB_CLARISOFT_TOOLTIP;Actif pour Clarté et Masque de netteté si différent de zéro.\n\nActif pour toutes les pyramides ondelettes.\nInactif si rayon = 0
@@ -1863,13 +1863,43 @@ TP_LOCALLAB_CURVENHSU;Combined HueChroma (experimental)
 TP_LOCALLAB_CURVENSOB2;Combined HueChroma + Contrast threshold (experimental)
 TP_LOCALLAB_CURVNONE;Désactive courbes
 TP_LOCALLAB_DARKRETI;Obscuirité
-TP_LOCALLAB_DEHAFRA;Désembuer
+TP_LOCALLAB_DEHAFRA;Elimination de la brume
 TP_LOCALLAB_DEHAZ;Force
-TP_LOCALLAB_DEHAZ_TOOLTIP;Valeurs Négatives ajoute de la brûme
+TP_LOCALLAB_DEHAZ_TOOLTIP;Valeurs Négatives ajoute de la brume
 TP_LOCALLAB_DELTAD;Delta balance
 TP_LOCALLAB_DELTAEC;Masque ΔE Image
-TP_LOCALLAB_DENOIS;Ψ Débruitage
-TP_LOCALLAB_DENOI_EXP;Débruitage
+TP_LOCALLAB_DENOIS;Ψ Réduction du bruit
+TP_LOCALLAB_DENOI_EXP;Réduction du bruit
+TP_LOCALLAB_DENOI_TOOLTIP;Ce module peut être utilisé seul (à la fin du processus), ou en complément de Réduction du bruit (au début).\nEtendue(deltaE)permet de différencier l'action.\nVous pouvez compléter avec  "median" ou "Filtre guidé" (Adoucir Flou...).\nVous pouvez compléter l'action avec "Flou niveaux" "Ondelette pyramide" 
+TP_LOCALLAB_DEPTH;Profondeur
+TP_LOCALLAB_DETAIL;Contrast local
+TP_LOCALLAB_DETAILSH;Details
+TP_LOCALLAB_DETAILTHR;Seuil Detail Luminance Chroma (DCT ƒ)
+TP_LOCALLAB_DUPLSPOTNAME;Copier
+TP_LOCALLAB_EDGFRA;Netteté des bords
+TP_LOCALLAB_EDGSHOW;Montre tous les outils
+TP_LOCALLAB_ELI;Ellipse
+TP_LOCALLAB_ENABLE_AFTER_MASK;Utilise Tone Mapping
+TP_LOCALLAB_ENABLE_MASK;Active masque
+TP_LOCALLAB_ENABLE_MASKAFT;Utilise tous les algorithmes Exposition
+TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP;Si activé, le Masque utilise les données recupérées après 'Transmission Map' au lieu des données originales
+TP_LOCALLAB_ENH;Amélioré
+TP_LOCALLAB_ENHDEN;Amélioré + chroma réduction bruit
+TP_LOCALLAB_EPSBL;Detail
+TP_LOCALLAB_EQUIL;Normalise Luminance
+TP_LOCALLAB_EQUILTM_TOOLTIP;Reconstruit la luminance de telle manière que la moyenne et la variance de l'image traitée soient identiques à celle d'origine
+TP_LOCALLAB_ESTOP;Arrêt des bords
+TP_LOCALLAB_EV_DUPL;Copier de
+TP_LOCALLAB_EV_NVIS;Cacher
+TP_LOCALLAB_EV_NVIS_ALL;Cacher tout
+TP_LOCALLAB_EV_VIS;Montrer
+TP_LOCALLAB_EV_VIS_ALL;Montrer tout
+TP_LOCALLAB_EXCLUF;Exclure
+TP_LOCALLAB_EXCLUF_TOOLTIP;Peut être utilsé pour exclure une partie des données - agir sur Etendue pour prendre en compte plus de couleurs.\n Vous pouvez utiliser tous les réglages pour ce type de RT-spot.
+TP_LOCALLAB_EXCLUTYPE;Spot méthode
+TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Spot Normal utilise les données récursives.\n\nSpot exclusion réinitialise les données d'origine.\nPeut être utilsé pour annuler totalement ou partiellement une action précédente ou pour  réaliser un mode inverse
+TP_LOCALLAB_EXECLU;Spot Exclusion
+TP_LOCALLAB_EXNORM;Spot Normal
 
 
 
