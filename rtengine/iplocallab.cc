@@ -57,6 +57,7 @@
 
 namespace
 {
+
 constexpr int limscope = 80;
 constexpr int mSPsharp = 39; //minimum size Spot Sharp due to buildblendmask
 constexpr int mSPwav = 32; //minimum size Spot Wavelet
@@ -68,14 +69,16 @@ constexpr int TS = 64; // Tile size
 constexpr float epsilonw = 0.001f / (TS * TS); //tolerance
 constexpr int offset = 25; // shift between tiles
 
-std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float &lutFactor) {
-
+std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float& lutFactor)
+{
     constexpr int lutSize = 100;
-    const float lutMax = ceil(mea[9]);
+
+    const float lutMax = std::ceil(mea[9]);
     const float lutDiff = lutMax / lutSize;
+
     std::vector<float> lutVals(lutSize);
     int jStart = 1;
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < lutSize; ++i) {
         const float val = i * lutDiff;
         if (val < mea[0]) {
             // still < first value => no interpolation
@@ -87,35 +90,38 @@ std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], f
                     lutVals[i] = inVals[j];
                     ++jStart;
                     break;
-                } else if (val < mea[j]) {
+                }
+                if (val < mea[j]) {
                     // interpolate
                     const float dist = (val - mea[j - 1]) / (mea[j] - mea[j - 1]);
                     lutVals[i] = rtengine::intp(dist, inVals[j], inVals[j - 1]);
                     break;
-                } else {
-                    lutVals[i] = inVals[10];
                 }
+                lutVals[i] = inVals[10];
             }
         }
     }
     lutFactor = 1.f / lutDiff;
     return std::unique_ptr<LUTf>(new LUTf(lutVals));
-
 }
 
-constexpr float clipLoc(float x) {
+constexpr float clipLoc(float x)
+{
     return rtengine::LIM(x, 0.f, 32767.f);
 }
 
-constexpr float clipDE(float x) {
+constexpr float clipDE(float x)
+{
     return rtengine::LIM(x, 0.3f, 1.f);
 }
 
-constexpr float clipC(float x) {
+constexpr float clipC(float x)
+{
     return rtengine::LIM(x, -42000.f, 42000.f);
 }
 
-constexpr float clipChro(float x) {
+constexpr float clipChro(float x)
+{
     return rtengine::LIM(x, 0.f, 140.f);
 }
 
