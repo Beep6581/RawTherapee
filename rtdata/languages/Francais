@@ -1821,7 +1821,7 @@ TP_LOCALLAB_CIRCRAD_TOOLTIP;Contient les références du RT-spot, utile pour la 
 TP_LOCALLAB_CLARICRES;Fusion Chroma
 TP_LOCALLAB_CLARIFRA;Clarté & Masque de betteté - Fusion & adoucir images 
 TP_LOCALLAB_CLARILRES;Fusion Luma
-TP_LOCALLAB_CLARISOFT;rayon adoucir
+TP_LOCALLAB_CLARISOFT;Rayon adoucir
 TP_LOCALLAB_CLARISOFT_TOOLTIP;Actif pour Clarté et Masque de netteté si différent de zéro.\n\nActif pour toutes les pyramides ondelettes.\nInactif si rayon = 0
 TP_LOCALLAB_CLARITYML;Claté
 TP_LOCALLAB_CLARI_TOOLTIP;En dessous ou égal à 4, 'Masque netteté' est actif.\nAu dessus du niveau ondelettes 5 'Clarté' est actif.\nUtilesu=i vous utilisez 'Compression dynamique des niveaux'
@@ -1833,6 +1833,43 @@ TP_LOCALLAB_COLORDE_TOOLTIP;Affiche la prévisualisation ΔE en bleu si négatif
 TP_LOCALLAB_COLORSCOPE;Outils Etendue Couleur
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Utilise une étendue commune pour Couleur et lumière, Exposition (Standard), Ombres Lumières, Vibrance.\nLes autres outils ont leur étendue spécifique.
 TP_LOCALLAB_COLOR_TOOLNAME;Couleur&Lumière (Défauts) - 11
+TP_LOCALLAB_COL_NAME;Nom
+TP_LOCALLAB_COL_VIS;Statut
+TP_LOCALLAB_COMPFRA;Niveaux Contraste directionnel
+TP_LOCALLAB_COMPFRAME_TOOLTIP;Autorise des effets spéciaux. Vous pouvez réduire les artéfacts avec 'Clarté & Masque netteté - Fusion & Images douces".\nUtilise des ressources
+TP_LOCALLAB_COMPLEX_METHOD;Complexitée logicielle
+TP_LOCALLAB_COMPLEX_TOOLTIP; Autorise l'utilisateur à sélectionner des rubriques Ajustements locaux.
+TP_LOCALLAB_COMPREFRA;Niveaux de (de)compression dynamique
+TP_LOCALLAB_COMPRESS_TOOLTIP;Utilisesi nécessaire le module 'Clarté & Masque de netteté - Fusion  & Images douces' en ajustant 'Rayon doux' pour réduire les artéfacts.
+TP_LOCALLAB_CONTCOL;Seuil de Contraste Masque flou
+TP_LOCALLAB_CONTFRA;Contraste par niveau
+TP_LOCALLAB_CONTRAST;Contraste
+TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Contrôle de contraste du masque.
+TP_LOCALLAB_CONTRESID;Contraste
+TP_LOCALLAB_CONTTHR;Seuil contraste
+TP_LOCALLAB_CSTHRESHOLD;Ψ Ondelettes niveaux 
+TP_LOCALLAB_CSTHRESHOLDBLUR;Ψ Masque Ondelettes niveau
+TP_LOCALLAB_CURV;Luminosité - Contraste - Chrominance "Super"
+TP_LOCALLAB_CURVCURR;Normal
+TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;Si la courbe est au sommet, le masque est compétement noir aucune transformation n'est réalisée par le masque sur l'image.\nQuand vous descendez la courbe, progressivement le masque va se colorer et s'éclaicir, l'image change de plus en plus.\n\nIl est recommendé (pas obligatoire) de positionner le sommet des courbes curves sur la ligne de transition grise qui représnte les références (chroma, luma, couleur).
+TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;Si la courbe est au sommet,le masque est compétement noir aucune transformation n'est réalisée par le masque sur l'image.\nQuand vous descendez la courbe, progressivement le masque va se colorer et s'éclaicir, l'image change de plus en plus.\nVous pouvez choisir ou non de positionner le sommet de la courbe sur la transition.
+TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;Pour être actif, vous devez activer la combobox 'Curves type'
+TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Curve tonale
+TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), peut être utilisée avec L(H) dans Couleur et lumière
+TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', la courbe L=f(L) a le même algorithme que le curseur luminosité.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
+TP_LOCALLAB_CURVENCONTRAST;Super+Contrast threshold (experimental)
+TP_LOCALLAB_CURVENH;Super
+TP_LOCALLAB_CURVENHSU;Combined HueChroma (experimental)
+TP_LOCALLAB_CURVENSOB2;Combined HueChroma + Contrast threshold (experimental)
+TP_LOCALLAB_CURVNONE;Désactive courbes
+TP_LOCALLAB_DARKRETI;Obscuirité
+TP_LOCALLAB_DEHAFRA;Désembuer
+TP_LOCALLAB_DEHAZ;Force
+TP_LOCALLAB_DEHAZ_TOOLTIP;Valeurs Négatives ajoute de la brûme
+TP_LOCALLAB_DELTAD;Delta balance
+TP_LOCALLAB_DELTAEC;Masque ΔE Image
+TP_LOCALLAB_DENOIS;Ψ Débruitage
+TP_LOCALLAB_DENOI_EXP;Débruitage
 
 
 
