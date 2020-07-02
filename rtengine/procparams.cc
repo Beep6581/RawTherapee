@@ -2964,7 +2964,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     visishadhigh(false),
     expshadhigh(false),
     complexshadhigh(0),
-    shMethod("std"),
+    shMethod("tone"),
     multsh{0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),

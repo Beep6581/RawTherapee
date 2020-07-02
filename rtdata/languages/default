@@ -761,7 +761,7 @@ HISTORY_MSG_508;Local Spot circrad
 HISTORY_MSG_509;Local Spot quality method
 HISTORY_MSG_510;Local Spot transition
 HISTORY_MSG_511;Local Spot thresh
-HISTORY_MSG_512;Local Spot ΔE -weakening
+HISTORY_MSG_512;Local Spot ΔE -decay
 HISTORY_MSG_513;Local Spot scope
 HISTORY_MSG_514;Local Spot structure
 HISTORY_MSG_515;Local Adjustments
@@ -907,7 +907,7 @@ HISTORY_MSG_655;Local - SH mask slope
 HISTORY_MSG_656;Local - Color soft radius
 HISTORY_MSG_657;Local - Retinex Reduce artifacts
 HISTORY_MSG_658;Local - CBDL soft radius
-HISTORY_MSG_659;Local Spot transition-weakening
+HISTORY_MSG_659;Local Spot transition-decay
 HISTORY_MSG_660;Local - cbdl clarity
 HISTORY_MSG_661;Local - cbdl contrast residual
 HISTORY_MSG_662;Local - deNoise lum f 0
@@ -2332,7 +2332,7 @@ TP_LOCALLAB_ADJ;Equalizer Blue-yellow Red-green
 TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
-TP_LOCALLAB_ARTIF_TOOLTIP;Threshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nIncrease deltaE Weakening improve shape detection, but can reduce the scope of detection.
+TP_LOCALLAB_ARTIF_TOOLTIP;Threshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nIncrease deltaE decay improve shape detection, but can reduce the scope of detection.
 TP_LOCALLAB_AUTOGRAY;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance ΔE ab-L
@@ -2476,13 +2476,13 @@ TP_LOCALLAB_EXCLUTYPE;Spot method
 TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot use recursive data.\n\nExcluding spot reinitialize data to origin.\nCan be used to totally or partially cancel a previous action or to perform a inverse mode
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXNORM;Normal spot
-TP_LOCALLAB_EXPCBDL_TOOLTIP;In the case of contaminated sensor (type "grease"), and when the area is important or for a series of small defects.\n\na) Put the selection spot on a pronounced default (adapting its size if necessary), use a large spot enough to allow wavelet; b) choose a wide selection area to cover most of the area affected by the defects; c) Select a transition value (low) and transition weakening (high value); d) act on levels 2, 3, 4 or 5 or lower by reducing the contrast (values below 100) and by acting on the chroma slider if necessary. e)possibly act on "scope" to reduce the extent of the action.\n\nYou can also complete with Blur levels and Gaussian blur (Smooth Blur and noise)
+TP_LOCALLAB_EXPCBDL_TOOLTIP;In the case of contaminated sensor (type "grease"), and when the area is important or for a series of small defects.\n\na) Put the selection spot on a pronounced default (adapting its size if necessary), use a large spot enough to allow wavelet; b) choose a wide selection area to cover most of the area affected by the defects; c) Select a transition value (low) and transition decay (high value); d) act on levels 2, 3, 4 or 5 or lower by reducing the contrast (values below 100) and by acting on the chroma slider if necessary. e)possibly act on "scope" to reduce the extent of the action.\n\nYou can also complete with Blur levels and Gaussian blur (Smooth Blur and noise)
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;Only in association with exposure compensation and PDE Ipol.\nAvoids desaturation of colors
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;In the case of small defects.\n\nRed-eyes : red-centered circular selector, spot delimiters close to the eye, weak scope, "lightness" -100, "chrominance" -100.\n\nSpotIR :Circular selector centered on the defect, spot delimiters close to the default - reduce "chrominance", possibly act on "scope" to reduce the extent of the action.\n\nDust - grease (small) :Circular selector centered on the defect (adapt the size of the spot), spot delimiters not too close to the defect to allow an inconspicuous transition. a) "Transition" (low values) and "Transition weak" (high values); b) act on "lightness" and possibly on "chrominance" or "Color correction grid - direct" to approach the rendering of the polluted zone to that of the healthy zone; c) act moderately on "scope" to modulate the desired action.\n\nYou can also complete with Gaussian blur (Smooth Blur and noise)
-TP_LOCALLAB_EXPCOMP_TOOLTIP;For portrait or images with low color gradient, you can change "Shape detection" in "settings":\n\nIncrease 'Threshold ΔE scope'\nReduce 'ΔE weakening'\nIncrease 'Balance ΔE ab-L' 
+TP_LOCALLAB_EXPCOMP_TOOLTIP;For portrait or images with low color gradient, you can change "Shape detection" in "settings":\n\nIncrease 'Threshold ΔE scope'\nReduce 'ΔE decay'\nIncrease 'Balance ΔE ab-L' 
 TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation of wavelet levels.\nHowever there are some differences: more tools and closer to the details.\nEx: Tone mapping for wavelet levels. 
-TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 32x32 pixels).\nUse low transition values and high weakening transition values and scope to simulate small RT-spot and deal wth defects.\nUse if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
+TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 32x32 pixels).\nUse low transition values and high decay transition values and scope to simulate small RT-spot and deal wth defects.\nUse if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_EXPCURV;Curves
 TP_LOCALLAB_EXPGRAD;Graduated Filter
 TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Balances the action between the original image and the Laplace transform.
@@ -2495,7 +2495,7 @@ TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Apply a median before Laplace transform to pr
 TP_LOCALLAB_EXPOSE;Exposure - PDE algorithms
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use others modules "Shadows Highlights", "Tone equalizer", "TRC", "Encoding Log"...
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
-TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high weakening transition values and scope to simulate small RT-spot.
+TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high decay transition values and scope to simulate small RT-spot.
 TP_LOCALLAB_EXPTOOL;Tools exposure
 TP_LOCALLAB_EXPTRC;Tone Response Curve - TRC
 TP_LOCALLAB_EXP_TOOLNAME;Exposure - Dynamic Range Compression - 10
@@ -2535,7 +2535,7 @@ TP_LOCALLAB_GRADSTRLUM;Gradient strength Luminance
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
 TP_LOCALLAB_GRAINFRA;Film Grain   1:1
 TP_LOCALLAB_GRALWFRA;Graduated Filter Local contrast
-TP_LOCALLAB_GRIDFRAME_TOOLTIP;You can use this tool as a brush. Use small spot and adapt transition and transition weakening\nOnly mode NORMAL and eventually Hue, Saturation, Color, Luminosity are concerned by Merge background (ΔE)
+TP_LOCALLAB_GRIDFRAME_TOOLTIP;You can use this tool as a brush. Use small spot and adapt transition and transition decay\nOnly mode NORMAL and eventually Hue, Saturation, Color, Luminosity are concerned by Merge background (ΔE)
 TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
 TP_LOCALLAB_GUIDBL;Soft radius
@@ -2684,7 +2684,7 @@ TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Dynamic Range compression + Standard
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure or high dynamic range.\n
 TP_LOCALLAB_PREVIEW;Preview ΔE
-TP_LOCALLAB_PROXI;ΔE weakening
+TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_RADIUS;Radius
@@ -2849,8 +2849,8 @@ TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that of the ordinate 
 TP_LOCALLAB_TRANSITVALUE;Transition value
-TP_LOCALLAB_TRANSITWEAK;Transition weakening
-TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition weakening : change smoothness process - 1 linear - 2 parabolic - 3 cubic - ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelet, Color & Light)
+TP_LOCALLAB_TRANSITWEAK;Transition decay (linear-log)
+TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay : change smoothness process - 1 linear - 2 parabolic - 3 cubic - ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelet, Color & Light)
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas, as a percentage of the "radius" 
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
@@ -3186,7 +3186,7 @@ TP_SOFTLIGHT_LABEL;Soft Light
 TP_SOFTLIGHT_STRENGTH;Strength
 TP_TM_FATTAL_AMOUNT;Amount
 TP_TM_FATTAL_ANCHOR;Anchor
-TP_TM_FATTAL_LABEL;Dynamic Range Compression ƒ
+TP_TM_FATTAL_LABEL;Dynamic Range Compression
 TP_TM_FATTAL_THRESHOLD;Detail
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
