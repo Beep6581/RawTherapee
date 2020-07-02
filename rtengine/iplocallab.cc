@@ -7043,7 +7043,6 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
     Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
 
     if (process == 1 && loclevwavCurve && loclevwavutili) { //blur
-        StopWatch Stop1("blur");
         array2D<float> templevel(W_L, H_L);
         for (int dir = 1; dir < 4; ++dir) {
             for (int level = level_bl; level < maxlvl; ++level) {
@@ -7067,14 +7066,28 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 {
                     gaussianBlur(src, templevel, W_L, H_L, radlevblur * klev * chromablu);
                 }
-
 #ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
+                #pragma omp parallel if (multiThread)
 #endif
-                for (int y = 0; y < H_L; y++) {
-                    for (int x = 0; x < W_L; x++) {
-                        int j = y * W_L + x;
-                        WavL[j] = intp((*meaLut)[std::fabs(WavL[j]) * lutFactor], templevel[y][x], WavL[j]);
+                {
+#ifdef __SSE2__
+                    const vfloat lutFactorv = F2V(lutFactor);
+#endif
+#ifdef _OPENMP
+                    #pragma omp for
+#endif
+                    for (int y = 0; y < H_L; y++) {
+                        int x = 0;
+                        int j = y * W_L;
+#ifdef __SSE2__
+                        for (; x < W_L - 3; x += 4, j += 4) {
+                            const vfloat valv = LVFU(WavL[j]);
+                            STVFU(WavL[j], intp((*meaLut)[vabsf(valv) * lutFactorv], LVFU(templevel[y][x]), valv));
+                        }
+#endif
+                        for (; x < W_L; x++, j++) {
+                            WavL[j] = intp((*meaLut)[std::fabs(WavL[j]) * lutFactor], templevel[y][x], WavL[j]);
+                        }
                     }
                 }
             }
@@ -7129,13 +7142,13 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                             const vfloat LL100v = LC2VFU(tmp[i * 2][j * 2]) / c327d68v;
                             const vfloat kbav = factorv * (loccompwavCurve[sixv * LL100v] - zd5v); //k1 between 0 and 0.5    0.5==> 1/6=0.16
                             const vfloat valv = LVFU(WavL[i * W_L + j]);
-                            STVFU(WavL[i * W_L + j], valv * pow_F(onev + kbav * (*meaLut)[valv * lutFactorv], itfv));
+                            STVFU(WavL[i * W_L + j], valv * pow_F(onev + kbav * (*meaLut)[vabsf(valv) * lutFactorv], itfv));
                         }
 #endif
                         for (; j < W_L; ++j) {
                             const float LL100 = tmp[i * 2][j * 2] / 327.68f;
                             const float kba = factor * (loccompwavCurve[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
-                            WavL[i * W_L + j] *= pow_F(1.f + kba * (*meaLut)[WavL[i * W_L + j] * lutFactor], itf);
+                            WavL[i * W_L + j] *= pow_F(1.f + kba * (*meaLut)[std::fabs(WavL[i * W_L + j]) * lutFactor], itf);
                         }
                     }
                 }
@@ -7194,7 +7207,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 for (int y = 0; y < H_L; y++) {
                     for (int x = 0; x < W_L; x++) {
                         int j = y * W_L + x;
-                        wav_L[j] = intp((*meaLut)[wav_L[j]], templevel[y][x], wav_L[j]);
+                        wav_L[j] = intp((*meaLut)[std::fabs(wav_L[j]) * lutFactor], templevel[y][x], wav_L[j]);
                     }
                 }
             }
