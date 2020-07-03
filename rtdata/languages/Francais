@@ -1906,7 +1906,7 @@ TP_LOCALLAB_EXPCHROMA_TOOLTIP;Seulement en association avec compensation d'expos
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;Dans le cas de petits défauts.\n\nYeux-rouges : sélecteur centré sur la partie rouge, délimiteurs du spot près de l'oeil, adaptez Etendue, "luminosité" -100, "chrominance" -100.\n\nSpotIR :sélection Circulaire centrée sur le défaut, délimiteurs du spot proches du default - reduire "chrominance", possibilté d'agir sur Etendue pour réduire la zone de l'action.\n\nPoussières - graisse (petit) :Sélection circulaire centrée sur le défaut (adapter la taille du spot), délimiteurs du spot pas trop près du défaut pour permettre une transition quasi invisible. a) "Transition" (faibles valeurs) and "Transition affaiblissement" (hautes valeurs); b) agir sur "luminosité" et aussi sur "chrominance" ou sur "Grille de correction couleur - direct" de telle manière que le rendu de la zone polluée soit proche de celui de la zone saine; c) agir modérement  sur "Etendue" pour moduler l'action.\n\nVous pouvez aussi compléter avec Flouter Gaussien (Adoucir Flouter et bruit)
 TP_LOCALLAB_EXPCOMP_TOOLTIP;Pour les portraits et les images à faible gradient, vous pouvez changer "Détection de forme" dans "Réglages":\n\nAugmentez 'Seuil ΔE Etendue'\nRéduire 'ΔE affaiblissement'\nAugmenter 'Balance ΔE ab-L' 
 TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;Voir la documentation de ondelettes niveaux.\nCependant il y a des différences: plus d'outils et plus proches des détails .\nEx: Tone mapping pour ondelettes. 
-TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Evitez les spots trop petitssmall(< 32x32 pixels).\nUtilisez de faibles valeurs de transition et de hautes valeurs de transition affaiblissement et d'Etendue pour simuler un petit RT-spot et s'adapter aux défauts.\nUtimiser si nécessaire le module 'Clarté & Maqsue netteté' et 'Fusion d'images' en ajustant 'Rayon adoucir' pour réduire les artéfacts.
+TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Evitez les spots trop petits(< 32x32 pixels).\nUtilisez de faibles valeurs de transition et de hautes valeurs de transition affaiblissement et d'Etendue pour simuler un petit RT-spot et s'adapter aux défauts.\nUtimiser si nécessaire le module 'Clarté & Maqsue netteté' et 'Fusion d'images' en ajustant 'Rayon adoucir' pour réduire les artéfacts.
 TP_LOCALLAB_EXPCURV;Courbes
 TP_LOCALLAB_EXPGRAD;Filtre gradué
 TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Balance l'action entre l'iamge originale image et la transformée de Laplace.
@@ -1915,7 +1915,7 @@ TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Ajoute une exposition linéaire avant l'applicatio
 TP_LOCALLAB_EXPLAP_TOOLTIP;Plus vous agissez sur ce curseur de seuil, plus grande sera l'action de reduire le contraste.
 TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Autorise de nombreuses possibilités de fusionner les images (comme les calques dans Photosshop) : difference, multiply, soft light, overlay...avec opacité...\nOriginale Image : fusionne le RT-spot en cours avec Originale.\nSpot Précédent : fusionne le RT-spot en cours avec le précédent - si il n'y a qu'un spot précédent = original.\nArrière plan : fusionne le RT-spot en cours avec la couleur et la luminance de l'arrière plan (moins de possibilités)  
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : utilise un algorithme similaire à Exposure principal mais en L*a*b* et en prenant en compte le deltaE.\n\nLaplacian & PDE : utilise un autre algorithme aussi avec deltaE et avec l'équation de Poisson pour résoudre le Laplacien dans l'espace de  Fourier.\nPDE IPOL, PDE Fattal et Standard peuvent être combinés.\nFFTW La transformée de Fourier est optimisée en taille pour réduire les temps de traitement.\nPDE reduit les artéfacts et le bruit.
-TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Apply a median before Laplace transform to prevent artifacts (noise).\nYou can also use "Denoise" tool.
+TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applique un median avant la transformée de Laplace pour éviter les artéfacts (bruit).\nVous pouvez aussi utiliser l'outil  "Réduction du bruit".
 TP_LOCALLAB_EXPOSE;Exposition - PDE algorithmes
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Dans certains cases (fortes ombres ..) vous pouvez utiliser le module "Shadows Highlights", "Tone equalizer", "TRC", "Encoding Log"...
 TP_LOCALLAB_EXPRETITOOLS;Outils Retinex avancés
@@ -1964,6 +1964,45 @@ TP_LOCALLAB_GRIDONE;Virage partiel
 TP_LOCALLAB_GRIDTWO;Direct
 TP_LOCALLAB_GUIDBL;Rayon adoucir
 TP_LOCALLAB_GUIDFILTER;Rayon Filtre Guidé
+TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapter cette valeur en fonction des images - peut réduire ou accroître les artéfacts.
+TP_LOCALLAB_HHMASK_TOOLTIP;Ajustements fin de la teinte par exemple pour la peau.
+TP_LOCALLAB_HIGHMASKCOL;Hautes lumières masque
+TP_LOCALLAB_HLH;Courbes H
+TP_LOCALLAB_IND;Independant (souris)
+TP_LOCALLAB_INDSL;Independant (souris + curseurs)
+TP_LOCALLAB_INVERS;Inverse
+TP_LOCALLAB_INVERS_TOOLTIP;Si sélectionné (inverse) moins de possibilités.\n\nAlternative\nPremier Spot:\n image entière - delimiteurs en dehors de la prévisualisation\n RT-spot forme sélection : rectangle. Transition 100\n\nDeuxième spot : Spot Exclusion
+TP_LOCALLAB_ISOGR;Plus gros (ISO)
+TP_LOCALLAB_LABBLURM;Masque Flouter
+TP_LOCALLAB_LABEL;Ajustements Locaux
+TP_LOCALLAB_LABGRID;Grille correction couleurs
+TP_LOCALLAB_LABGRIDMERG;Arrière plan
+TP_LOCALLAB_LABGRID_VALUES;Haut(a)=%1 Haut(b)=%2\nBas(a)=%3 Bas(b)=%4
+TP_LOCALLAB_LABSTRUM;Masque Structure
+TP_LOCALLAB_LAPLACC;ΔØ Masque Laplacien résoud PDE
+TP_LOCALLAB_LAPLACE;Δ - Laplacien seuil ΔE
+TP_LOCALLAB_LAPLACEXP;∆ - Laplacian seuil
+TP_LOCALLAB_LAPMASKCOL;∆ - Laplacian seuil masque
+TP_LOCALLAB_LAPRAD_TOOLTIP;Eviter d'utiliser Radius and Laplace Seuil en même temps.\nLaplacien seuil reduit le contraste, artéfacts, adoucit le résultat (si PDE réglages activé).
+TP_LOCALLAB_LAP_MASK_TOOLTIP;Résoud PDE (Equation aux dérivées partielles) pour tous les masques Laplacien.\nSi activé Laplacien masque seuil reduit les artéfacts et adoucit les résultats.\nSi désactivé réponse linaire. 
+TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT améliore la qualité et autorise de grands rayons, mais accroît les temps de traitement.\nCe temps dépends de la surface devant être traitée.\nA utiliser de préférences pour de grands rayons.\n\nLes Dimensions peuvent être réduites de quelques pixels pour optimiser FFTW.\nCette optimisation peut réduire le temps de traitement d'un facteur de 1.5 à 10.\n
+TP_LOCALLAB_LC_TOOLNAME;Constrast Local & Ondelettes (Défauts) - 7
+TP_LOCALLAB_LEVELBLUR;Maximum Flouter
+TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP;En abscisse le contraste local (proche du concept de luminance). En ordonnée, amplification ou reduction du contraste local.
+TP_LOCALLAB_LEVELWAV;Ψ Ondelettes Niveaux
+TP_LOCALLAB_LEVELWAV_TOOLTIP;Le niveau est automatiquement adapté à la taille du spot et de la prévisualisation.\nDu niveau 9 taille max 512 jusqu'au niveau 1 taille max = 4
+TP_LOCALLAB_LIGHTNESS;Luminosité
+TP_LOCALLAB_LIGHTN_TOOLTIP;En mode inverse: selection = -100 force la luminance à zero
+TP_LOCALLAB_LIGHTRETI;Luminosité
+TP_LOCALLAB_LINEAR;Linéarité
+TP_LOCALLAB_LIST_NAME;Ajoute un outil au spot courant...
+TP_LOCALLAB_LIST_TOOLTIP;Choisir un outil et ensuite son niveau de complexité "Normal" ou "Expert".\nLe nombre traduit la place de l'outil dans le processus de chaque RT-Spot
+TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Donne priorité à l'action sur les tons moyens et hautes lumières en choisissant les niveaux concernés d'ondelettes
+TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
+TP_LOCALLAB_LOCCONT;Masque Flou
+TP_LOCALLAB_LOC_CONTRAST;Contraste Local -Ondelettes- défauts
+TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramide 1:
+TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramide 2:
 
 
 
