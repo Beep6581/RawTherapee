@@ -2000,12 +2000,12 @@ TP_LOCALLAB_LIST_TOOLTIP;Choisir un outil et ensuite son niveau de complexité "
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Donne priorité à l'action sur les tons moyens et hautes lumières en choisissant les niveaux concernés d'ondelettes
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Masque Flou
-TP_LOCALLAB_LOC_CONTRAST;Contraste Local -Ondelettes- défauts
+TP_LOCALLAB_LOC_CONTRAST;Contraste Local-Ondelettes-défauts
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramide 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramide 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contraste par niveaux- Tone Mapping - Contraste Dir.
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Filtre Gradué - Netteté bords - Flouter
-TP_LOCALLAB_LOC_RESIDPYR;Image Residuelle principale
+TP_LOCALLAB_LOC_RESIDPYR;Image Residuelle
 TP_LOCALLAB_LOG;Codage log
 TP_LOCALLAB_LOGAUTO;Automatique
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Presser ce bouton va amner une évaluation an evaluation de l'amplitude dynamique et du point gris "source" (Si "Automatique" Source gris activé).\nPour être autorisé à retoucher les valeurs automatiques, presser le bouton à nouveau
@@ -2041,6 +2041,99 @@ TP_LOCALLAB_MERCOL;Couleur
 TP_LOCALLAB_MERDCOL;Fusion arrière plan (ΔE)
 TP_LOCALLAB_MERELE;Eclaicit seulement
 TP_LOCALLAB_MERFIV;Addition
+TP_LOCALLAB_MERFOR;Couleur esquiver
+TP_LOCALLAB_MERFOU;Multiplier
+TP_LOCALLAB_MERGE1COLFRA;Fusion avec Original ou Précédent ou arrière plan
+TP_LOCALLAB_MERGECOLFRA;Masque: LCH & Structure
+TP_LOCALLAB_MERGEFIV;Previous Spot(Mask 7) + Mask LCH
+TP_LOCALLAB_MERGEFOU;Previous Spot(Mask 7)
+TP_LOCALLAB_MERGEMER_TOOLTIP;Prend en compte ΔE pour fusionner les fichiers (équivalent de Etendue pour cet usage)
+TP_LOCALLAB_MERGENONE;Rien
+TP_LOCALLAB_MERGEONE;Short Curves 'L' Mask
+TP_LOCALLAB_MERGEOPA_TOOLTIP;Opacité fusion % Spot courant avec original ou Spot précédent.\nContraste seuil : ajuste le résulat en fonction du contraste original
+TP_LOCALLAB_MERGETHR;Original(Mask 7) + Mask LCH
+TP_LOCALLAB_MERGETWO;Original(Mask 7)
+TP_LOCALLAB_MERGETYPE;Fusion image et masque
+TP_LOCALLAB_MERGETYPE_TOOLTIP;Rien, use all mask in LCH mode.\nShort curves 'L' mask, use a short circuit for mask 2, 3, 4, 6, 7.\nOriginal mask 8, blend current image with original
+TP_LOCALLAB_MERHEI;Overlay
+TP_LOCALLAB_MERHUE;Teite
+TP_LOCALLAB_MERLUCOL;Luminance
+TP_LOCALLAB_MERLUM;Luminosité
+TP_LOCALLAB_MERNIN;Ecran
+TP_LOCALLAB_MERONE;Normal
+TP_LOCALLAB_MERSAT;Saturation
+TP_LOCALLAB_MERSEV;Soft Light Photshop
+TP_LOCALLAB_MERSEV0;Soft Light Illusion
+TP_LOCALLAB_MERSEV1;Soft Light W3C
+TP_LOCALLAB_MERSEV2;Lumière dure
+TP_LOCALLAB_MERSIX;Divise
+TP_LOCALLAB_MERTEN;Assombrit seulement
+TP_LOCALLAB_MERTHI;Couleur Brûlé
+TP_LOCALLAB_MERTHR;Difference
+TP_LOCALLAB_MERTWE;Exclusion
+TP_LOCALLAB_MERTWO;Soustrait
+TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+TP_LOCALLAB_MLABEL;Récupère les données  Min=%1 Max=%2 (Clip - décalage)
+TP_LOCALLAB_MLABEL_TOOLTIP;'Doit être' près de min=0 max=32768 (log mode) mais d'autres valeurs sont possibles.\nVous pouvez agir sur les données récupérées (CLIP) et décalage pour normaliser.\n\nRécupère les données image sans mélange.
+TP_LOCALLAB_MODE_EXPERT;Expert
+TP_LOCALLAB_MODE_NORMAL;Normal
+TP_LOCALLAB_MRFIV;Arrière plan
+TP_LOCALLAB_MRFOU;Spot précédent
+TP_LOCALLAB_MRONE;Rien
+TP_LOCALLAB_MRTHR;Image Originale
+TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
+TP_LOCALLAB_MULTIPL_TOOLTIP;Autorise la retouche des tons sur une large plage : -18EV +4EV. Le remier curseur agit sur -18EV and -6EV. Le dernier curseur agit sur les tons au-dessus de 4EV  
+TP_LOCALLAB_NEIGH;Rayon
+TP_LOCALLAB_NOISECHROCOARSE;Chroma gros (Ond)
+TP_LOCALLAB_NOISECHROC_TOOLTIP;Si supérieur à zéro, algorithme haute qualité est activé.\nGros est sélectionné si curseur >=0.2
+TP_LOCALLAB_NOISECHRODETAIL;Récupération des détails Chroma (DCT ƒ)
+TP_LOCALLAB_NOISECHROFINE;Chroma fin (Ond)
+TP_LOCALLAB_NOISEDETAIL_TOOLTIP;Désactivé si curseur = 100
+TP_LOCALLAB_NOISELEQUAL;Egalisateurs balnc-noir
+TP_LOCALLAB_NOISELUMCOARSE;Luminance gros (ond)
+TP_LOCALLAB_NOISELUMDETAIL;Récupération Luminance fin(DCT ƒ)
+TP_LOCALLAB_NOISELUMFINE;Luminance fin 1 (ond)
+TP_LOCALLAB_NOISELUMFINETWO;Luminance fin 2 (ond)
+TP_LOCALLAB_NOISELUMFINEZERO;Luminance fin 0 (ond)
+TP_LOCALLAB_NOISEMETH;Réduction du bruit
+TP_LOCALLAB_NONENOISE;Rien
+TP_LOCALLAB_OFFS;Décalage
+TP_LOCALLAB_OFFSETWAV;Décalage
+TP_LOCALLAB_OPACOL;Opacité
+TP_LOCALLAB_ORIGLC;Fusion seulement avec image originale
+TP_LOCALLAB_ORRETILAP_TOOLTIP;Agit sur un deuxième seuil Laplacien, pour prendre en compte ΔE pour différencier l'action nottament avec l'arrière plan (différent de Etendue)
+TP_LOCALLAB_ORRETISTREN_TOOLTIP;Aagit sur un seuil Laplacien, plus grande est l'action, plus les différences de contraste seront réduites
+TP_LOCALLAB_PASTELS2;Vibrance
+TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Compression dynamique + Standard
+TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuation ƒ
+TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - algorithme personnel adapté de IPOL à Rawtherapee: conduit à des résultats très variés et a besoin de différents réglages que Standard (Noir négatif, gamma < 1,...)\nPeut être utils pour des iamges sous-exposées ou avec une étendue dynamique importante.\n
+TP_LOCALLAB_PREVIEW;Previsualisation ΔE
+TP_LOCALLAB_PROXI;ΔE Affaiblissement
+TP_LOCALLAB_QUALCURV_METHOD;Types de Courbes
+TP_LOCALLAB_QUAL_METHOD;Qualité globale
+TP_LOCALLAB_RADIUS;Rayon
+TP_LOCALLAB_RADIUS_TOOLTIP;Above Radius 30 Use Fast Fourier Transform
+TP_LOCALLAB_RADMASKCOL;Smooth Radius Mask
+TP_LOCALLAB_RECT;Rectangle
+TP_LOCALLAB_RECURS;Réferences Récursives 
+TP_LOCALLAB_RECURS_TOOLTIP;Recalcule les références pour  teinte, luma, chroma après chaque module et après chaque RT-spot.\nAussi utile pour le travail avec les masques.
+TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 teinte=%3
+TP_LOCALLAB_REN_DIALOG_LAB;Entrer le nouveau nom de Spot
+TP_LOCALLAB_REN_DIALOG_NAME;Renomme le Controle Spot
+TP_LOCALLAB_RESETSHOW;Annuler Montrer Toutes les Modifications
+TP_LOCALLAB_RESID;Image Résiduelle
+TP_LOCALLAB_RESIDBLUR;Flouter Image Résiduelle
+TP_LOCALLAB_RESIDCHRO;Image Résiduelle Chroma
+TP_LOCALLAB_RESIDCOMP;Image Résiduelle Compression
+TP_LOCALLAB_RESIDCONT;Image Résiduelle Contraste
+TP_LOCALLAB_RESIDHI;Hautes lumières
+TP_LOCALLAB_RESIDHITHR;Hautes lumières seuil
+TP_LOCALLAB_RESIDSHA;Ombres
+TP_LOCALLAB_RESIDSHATHR;Ombres seuil
+TP_LOCALLAB_RETI;De-brume - Retinex Fort contraste
+TP_LOCALLAB_RETIFRA;Retinex
+TP_LOCALLAB_RETIM;Original Retinex
+TP_LOCALLAB_RETITOOLFRA;Retinex Outils
 
 
 
