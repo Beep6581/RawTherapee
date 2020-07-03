@@ -2003,6 +2003,44 @@ TP_LOCALLAB_LOCCONT;Masque Flou
 TP_LOCALLAB_LOC_CONTRAST;Contraste Local -Ondelettes- défauts
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramide 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramide 2:
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contraste par niveaux- Tone Mapping - Contraste Dir.
+TP_LOCALLAB_LOC_CONTRASTPYRLAB; Filtre Gradué - Netteté bords - Flouter
+TP_LOCALLAB_LOC_RESIDPYR;Image Residuelle principale
+TP_LOCALLAB_LOG;Codage log
+TP_LOCALLAB_LOGAUTO;Automatique
+TP_LOCALLAB_LOGAUTO_TOOLTIP;Presser ce bouton va amner une évaluation an evaluation de l'amplitude dynamique et du point gris "source" (Si "Automatique" Source gris activé).\nPour être autorisé à retoucher les valeurs automatiques, presser le bouton à nouveau
+TP_LOCALLAB_LOGBASE_TOOLTIP;Défaut = 2.\nValeurs inférieures à 2 réduisent l'action de l'algorithme, les ombres sont plus sombres, les hautes lumières plus brillantes.\nValeurs supérieures à 2 changent l'action de l'algorithme, les ombres sont plus grises, les hautes lumières lavées
+TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Valeurs estimées de la plage Dynamique - Noir Ev et Blanc Ev
+TP_LOCALLAB_LOGENCOD_TOOLTIP;Autorise 'Tone Mapping' avec codage Logarithmique (ACES).\nUtile pour images ous-exposées, ou avec une plage dynamique élévée.\n\nDeux étapes dans le processus : 1) Calculer Plage Dynamique 2) Adaptation par utilisateur
+TP_LOCALLAB_LOGFRA;Point gris source
+TP_LOCALLAB_LOGFRAME_TOOLTIP;Calcule ou utilise le niveau d'Exposition de l'image tôt dans le processus:\n Noir Ev, Blanc Ev et Point gris source.\n Prend en compte la compensation d'exposition principale.
+TP_LOCALLAB_LOGLIN;Logarithme mode
+TP_LOCALLAB_LOGPFRA;Niveaux d'Exposition relatif
+TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estime la valeur du point gris de l'image, tôt dans le processus
+TP_LOCALLAB_LOGTARGGREY_TOOLTIP;Vous pouvez changer cette valeur pour l'adapter à votre goût.
+TP_LOCALLAB_LOG_TOOLNAME;Codage log - 0
+TP_LOCALLAB_LUM;Courbes LL - CC
+TP_LOCALLAB_LUMADARKEST;Plus Sombre
+TP_LOCALLAB_LUMASK;Maqsue Luminance arrière plan
+TP_LOCALLAB_LUMASK_TOOLTIP;Ajuste le gris de l'arrière plan du masque dans Montrer Masque (Masque et modifications)
+TP_LOCALLAB_LUMAWHITESEST;Plus blanc
+TP_LOCALLAB_LUMONLY;Luminance seulemnt
+TP_LOCALLAB_MASKCOM;Masque couleur Commun
+TP_LOCALLAB_MASKCOM_TOOLTIP;Ces masques travaillent comme les autres outils, ils prennet en compte Etendue.\nIls sont différents des autres masques qui complètent un outil (Couleur et Lumière, Exposition...)
+TP_LOCALLAB_MASFRAME;Masque et Fusion
+TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and curves contrast , levels contrasts, and mask blur, structure(if enabled tool) are used.\nDisabled in Inverse
+TP_LOCALLAB_MASK;Masque
+TP_LOCALLAB_MASK2;Courbe de Contraste masque
+TP_LOCALLAB_MASKCOL;Masque Courbes
+TP_LOCALLAB_MASKH;Courbe teinte masque
+TP_LOCALLAB_MASK_TOOLTIP;Vous pouvez activer plusieurs masques pour un simple outil, ceci nécessite d'activer un autre outil (mais sans utilser l'outil : curseurs à 0,...)où est le masque que vous souhaitez activer.\n\nVous pouvez aussi dupliquer le RT-spot et le placer juste à côté de l'autre,les variations de références autorisent un travail fin sur les images. 
+TP_LOCALLAB_MED;Medium
+TP_LOCALLAB_MEDIAN;Median Bas
+TP_LOCALLAB_MEDNONE;Rien
+TP_LOCALLAB_MERCOL;Couleur
+TP_LOCALLAB_MERDCOL;Fusion arrière plan (ΔE)
+TP_LOCALLAB_MERELE;Eclaicit seulement
+TP_LOCALLAB_MERFIV;Addition
 
 
 
