@@ -2134,6 +2134,66 @@ TP_LOCALLAB_RETI;De-brume - Retinex Fort contraste
 TP_LOCALLAB_RETIFRA;Retinex
 TP_LOCALLAB_RETIM;Original Retinex
 TP_LOCALLAB_RETITOOLFRA;Retinex Outils
+TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT améliore la qualité et autorise de grands rayons, mais accroît les temps de traitement.\nCe temps dépends de la surface traitée\nLe temps de traitements dépend de "scale" (échelle) (soyez prudent avec les hautes valeurs ).\nA utiliser de préférence avec de grand rayons.\n\nLes Dimensions peuvent être réduites de quelques pixels pour optimiser FFTW.\nCette optimisation peut réduire le temps de traitement d'un facteur de 1.5 à 10.\nOptimisation pas utilsée en prévisualisation
+TP_LOCALLAB_RETI_LIGHTDARK_TOOLTIP;Have no effect when the value "Lightness = 1" or "Darkness =2" is chosen.\nIn other cases, the last step of "Multiple scale Retinex" is applied an algorithm close to "local contrast", these 2 cursors, associated with "Strength" will allow to play upstream on the local contrast.
+TP_LOCALLAB_RETI_LIMDOFFS_TOOLTIP;Play on internal parameters to optimize response.\nLook at the "restored datas" indicators "near" min=0 and max=32768 (log mode), but others values are possible. 
+TP_LOCALLAB_RETI_LOGLIN_TOOLTIP;Logarithm allows differenciation for haze or normal.\nLogarithm brings more contrast but will generate more halo.
+TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;Adapt these values according to images - if misty images and depending on whether you want to act on the front or the background
+TP_LOCALLAB_RETI_SCALE_TOOLTIP;If scale=1, retinex behaves like local contrast with many more possibilities.\nThe greater the scale, the more intense the recursive action, the longer the calculation times
+TP_LOCALLAB_RET_TOOLNAME;De-brume & Retinex - 9
+TP_LOCALLAB_REWEI;Repondération iterations
+TP_LOCALLAB_RGB;RGB Courbe de tonalité
+TP_LOCALLAB_ROW_NVIS;Pas visible
+TP_LOCALLAB_ROW_VIS;Visible
+TP_LOCALLAB_SATUR;Saturation
+TP_LOCALLAB_SAVREST;Sauve - Récupère Image Courante
+TP_LOCALLAB_SCALEGR;Echelle
+TP_LOCALLAB_SCALERETI;Echelle
+TP_LOCALLAB_SCALTM;Echelle
+TP_LOCALLAB_SCOPEMASK;Etendue Masque ΔE Image
+TP_LOCALLAB_SCOPEMASK_TOOLTIP;Actif si Masque DeltaE Image est activé.\nLes faibles valeurs évitent de retoucher l'aire sélectionnée
+TP_LOCALLAB_SENSI;Etendue
+TP_LOCALLAB_SENSIBN;Etendue
+TP_LOCALLAB_SENSICB;Etendue
+TP_LOCALLAB_SENSIDEN;Etendue
+TP_LOCALLAB_SENSIEXCLU;Etendue
+TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Ajuste les couleurs pour les inclure dans exclusion!
+TP_LOCALLAB_SENSIH;Etendue
+TP_LOCALLAB_SENSIH_TOOLTIP;Ajuste Etendue de l'action:\nLes petites valeurs limitent l'action aux couleurs très similaires à celles sous le centre du spot.\nHautes valeurs laissent l'outil agir sur une large plage de couleurs.
+TP_LOCALLAB_SENSILOG;Etendue
+TP_LOCALLAB_SENSIS;Etendue
+TP_LOCALLAB_SENSIS_TOOLTIP;Ajuste Etendue de l'action:\nLes petites valeurs limitent l'action aux couleurs très similaires à celles sous le centre du spot.\nHautes valeurs laissent l'outil agir sur une large plage de couleurs.\nValeurs inférieures à 20 conduisent à un meilleur algorithme.
+TP_LOCALLAB_SENSI_TOOLTIP;Ajuste Etendue de l'action:\nLes petites valeurs limitent l'action aux couleurs très similaires à celles sous le centre du spot.\nHautes valeurs laissent l'outil agir sur une large plage de couleurs.\nValeurs inférieures à 20 conduisent à un meilleur algorithme.
+TP_LOCALLAB_SENSIMASK_TOOLTIP;Ajuste Etendue pour ce masque commun.\nAgit sur l'écart entre l'image originale et le masque.\nLes références (luma, chroma, teinte) sont celles du centre du RT-spot\n\nVous pouvez aussi agir sur le deltaE interne au masque avec 'Etendue Masque deltaE image' dans 'Réglages'
+TP_LOCALLAB_SETTINGS;Réglages
+TP_LOCALLAB_SH1;Ombres Lumières
+TP_LOCALLAB_SH2;Egaliseur
+TP_LOCALLAB_SHADEX;Ombres
+TP_LOCALLAB_SHADEXCOMP;Compression ombres & profondeur tonale
+TP_LOCALLAB_SHADHIGH;OmbresLumières - Egaliseur tonal
+TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Peut être utilisé - ou en complement - du module Exposition dans les cas difficiles.\nUtiliser réduction du bruit Denoise peut être nécessaire : éclaicir les ombres.\n\nPeut être utilisé comme  un filtre gradué (augmenter Etendue)
+TP_LOCALLAB_SHAMASKCOL;masque ombres
+TP_LOCALLAB_SHAPETYPE;Forme aire RT-spot
+TP_LOCALLAB_SHAPE_TOOLTIP;Ellipse est le mode normal.\nRectangle peut être utilé dans certains cas, par exemple pour travailler en image complète en conjonction avec les délimiteurs en dehors de la prévisualisation, transition = 100.\n\nPolygone - Beziers sont en attente de GUI...
+TP_LOCALLAB_SHARAMOUNT;Quantité
+TP_LOCALLAB_SHARBLUR;Rayon flouter
+TP_LOCALLAB_SHARDAMPING;Amortissement
+TP_LOCALLAB_SHARFRAME;Modifications
+TP_LOCALLAB_SHARITER;Iterations
+TP_LOCALLAB_SHARP;Netteté
+TP_LOCALLAB_SHARP_TOOLNAME;Netteté - 8
+TP_LOCALLAB_SHARRADIUS;Rayon
+TP_LOCALLAB_SHORTC;Short Curves 'L' Mask
+TP_LOCALLAB_SHORTCMASK_TOOLTIP;Short circuit the 2 curves L(L) and L(H).\nAllows you to mix the current image with the original image modified by the mask job.\nUsable with masks 2, 3, 4, 6, 7
+TP_LOCALLAB_SHOWC;Masque et modifications
+TP_LOCALLAB_SHOWC1;Fusion fichier
+TP_LOCALLAB_SHOWCB;Masque et modifications
+TP_LOCALLAB_SHOWDCT;Montrer processus Fourier ƒ
+TP_LOCALLAB_SHOWE;Masque et modifications
+TP_LOCALLAB_SHOWFOURIER;Fourier ƒ(dct)
+TP_LOCALLAB_SHOWLAPLACE;∆ Laplacien (premier)
+TP_LOCALLAB_SHOWLC;Masque et modifications
+TP_LOCALLAB_SHOWMASK;Montrer masque
 
 
 
