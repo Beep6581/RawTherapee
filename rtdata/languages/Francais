@@ -1830,7 +1830,7 @@ TP_LOCALLAB_COFR;Couleur & Lumière - Petits défauts
 TP_LOCALLAB_COLORDE;Coleurr previsualisation sélection ΔE - Intensité
 TP_LOCALLAB_COLORDEPREV_TOOLTIP;Bouton Previsualisation ΔE a besoin qu'un seul outil soit activé (expander).\nPour pouvoir avoir une Previsualisation ΔE avec plusieurs outils activés utiliser Masque et modifications - Prévisualisation ΔE
 TP_LOCALLAB_COLORDE_TOOLTIP;Affiche la prévisualisation ΔE en bleu si négatif et en vert si positif.\n\nMasque et modifications (montre modifications sans masque): montre les modifications réelles si positf, montre les modifications améliorées (luminance seule) en bleu et jaune si négatif.
-TP_LOCALLAB_COLORSCOPE;Outils Etendue Couleur
+TP_LOCALLAB_COLORSCOPE;Etendue Outils Couleur
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Utilise une étendue commune pour Couleur et lumière, Exposition (Standard), Ombres Lumières, Vibrance.\nLes autres outils ont leur étendue spécifique.
 TP_LOCALLAB_COLOR_TOOLNAME;Couleur&Lumière (Défauts) - 11
 TP_LOCALLAB_COL_NAME;Nom
@@ -2194,6 +2194,39 @@ TP_LOCALLAB_SHOWFOURIER;Fourier ƒ(dct)
 TP_LOCALLAB_SHOWLAPLACE;∆ Laplacien (premier)
 TP_LOCALLAB_SHOWLC;Masque et modifications
 TP_LOCALLAB_SHOWMASK;Montrer masque
+TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Affiche masque modifications.\nAttention, vous ne pouvez voir qu'un seul masque à la fois.\n\nNote: Utilisation du Masque est avant l'algorihtme de détection de forme.
+TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Montre le processus Fourier:\nMontre les différentes étapes du processus.\nLaplace - construit la dérivée seconde the second dérivée associée au seuil (Premiére étape).\nFourier -montre la transformée de Laplace avec DCT.\nPoisson - montre la solution de Poisson DCE.\nNormalise - montre le résultat sans normalisation de la luminance.
+TP_LOCALLAB_SHOWMASKTYP1;Flouter & Bruit
+TP_LOCALLAB_SHOWMASKTYP2;Réduction du bruit
+TP_LOCALLAB_SHOWMASKTYP3;Flouter & Bruit  + De-bruite
+TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Masque et modifications peuvent être choisis.\nFlouter et bruit: dans ce cas il n'est pas utilisé pour 'Réduction du bruit'.\nRéduction du bruit : dans ce cas il n'est pas utilisé pour 'flouter et bruit'.\n\nFlouter et bruit + Réduction du bruit : le masque est partagé, faire attention à 'montrer modifications' et 'Etendue'
+TP_LOCALLAB_SHOWMNONE;Rien
+TP_LOCALLAB_SHOWMODIF;Montrer modifications sans masque
+TP_LOCALLAB_SHOWMODIFMASK;Montrer modifications avec masque
+TP_LOCALLAB_SHOWNORMAL;Normalise luminance (non)
+TP_LOCALLAB_SHOWPLUS;Masque et modifications - Adoucir-flouter & De-bruite
+TP_LOCALLAB_SHOWPOISSON;Poisson (pde ƒ)
+TP_LOCALLAB_SHOWR;Masque et modifications
+TP_LOCALLAB_SHOWREF;Prévisualisation ΔE
+TP_LOCALLAB_SHOWS;Masque et modifications
+TP_LOCALLAB_SHOWSTRUC;Montrer Spot structure
+TP_LOCALLAB_SHOWSTRUCEX;Montrer Spot structure
+TP_LOCALLAB_SHOWT;Masque et modifications
+TP_LOCALLAB_SHOWVI;Masque et modifications
+TP_LOCALLAB_SHRESFRA;Ombres/Lumières
+TP_LOCALLAB_SHTRC_TOOLTIP;Modifie les tons de l'image en agissant sur la TRC (Tone Response Curve).\nGamma agit principalement sur les tons lumineux.\nSlope (pente) agit principalement sur les tons sombres.
+TP_LOCALLAB_SH_TOOLNAME;Ombres-lumières & Egaliser tonal - 5
+TP_LOCALLAB_SIGMAWAV;Attenuation Réponse
+TP_LOCALLAB_SIM;Simple
+TP_LOCALLAB_SLOMASKCOL;Pente (slope) masque
+TP_LOCALLAB_SLOSH;Pente
+TP_LOCALLAB_SOFT;Lumière douce - Original Retinex
+TP_LOCALLAB_SOFTM;Lumière douce (soft light)
+TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex est très différent des autres méthodes Retinex.\nIl agit sur les gris et équilibre la luminance.\nC'est une émulation de "Dodge" and "Burn"
+TP_LOCALLAB_SOFTRADIUSCOL;Radius adoucir
+TP_LOCALLAB_SOFTRETI;Reduire artefact ΔE
+TP_LOCALLAB_SOFTRETI_TOOLTIP;Prend en compte ΔE pour améliorer Transmission map
+TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
 
 
 
