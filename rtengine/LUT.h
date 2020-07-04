@@ -99,8 +99,8 @@ protected:
     unsigned int size;
     unsigned int upperBound;  // always equals size-1, parameter created for performance reason
 private:
-#ifdef __SSE2__
     unsigned int owner;
+#ifdef __SSE2__
     alignas(16) vfloat maxsv;
     alignas(16) vfloat sizev;
     alignas(16) vint sizeiv;

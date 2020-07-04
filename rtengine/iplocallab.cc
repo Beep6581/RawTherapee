@@ -7184,16 +7184,6 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 float lutFactor;
                 const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.65f, 0.5f, 0.4f, 0.25f, 0.1f};
                 const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
-
-                float klev = (loccomprewavCurve[level * 55.5f] - 0.75f);
-                if (klev < 0.f) {
-                    klev *= 2.6666f;//compression increase contraste
-                } else {
-                    klev *= 4.f;//dilatation reduce contraste - detailattenuator
-                }
-                const float compression = expf(-klev);
-                const float detailattenuator = std::max(klev, 0.f);
-
                 const auto wav_L = wdspot.level_coeffs(level)[dir];
 
 #ifdef _OPENMP
@@ -7206,14 +7196,38 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                     }
                 }
 
+                float klev = (loccomprewavCurve[level * 55.5f] - 0.75f);
+                if (klev < 0.f) {
+                    klev *= 2.6666f;//compression increase contraste
+                } else {
+                    klev *= 4.f;//dilatation reduce contraste - detailattenuator
+                }
+                const float compression = expf(-klev);
+                const float detailattenuator = std::max(klev, 0.f);
+
                 Compresslevels(templevel, W_L, H_L, compression, detailattenuator, thres, mean[level], MaxP[level], meanN[level], MaxN[level], madL[level][dir - 1]);
 #ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
+                #pragma omp parallel if (multiThread)
 #endif
-                for (int y = 0; y < H_L; y++) {
-                    for (int x = 0; x < W_L; x++) {
-                        int j = y * W_L + x;
-                        wav_L[j] = intp((*meaLut)[std::fabs(wav_L[j]) * lutFactor], templevel[y][x], wav_L[j]);
+                {
+#ifdef __SSE2__
+                    const vfloat lutFactorv = F2V(lutFactor);
+#endif
+#ifdef _OPENMP
+                    #pragma omp for
+#endif
+                    for (int y = 0; y < H_L; y++) {
+                        int x = 0;
+                        int j = y * W_L;
+#ifdef __SSE2__
+                        for (; x < W_L - 3; x += 4, j += 4) {
+                            const vfloat valv = LVFU(wav_L[j]);
+                            STVFU(wav_L[j], intp((*meaLut)[vabsf(valv) * lutFactorv], LVFU(templevel[y][x]), valv));
+                        }
+#endif
+                        for (; x < W_L; x++, j++) {
+                            wav_L[j] = intp((*meaLut)[std::fabs(wav_L[j]) * lutFactor], templevel[y][x], wav_L[j]);
+                        }
                     }
                 }
             }
