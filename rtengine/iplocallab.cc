@@ -1392,7 +1392,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float proexp = lp.expcomp;
     if (std::fabs(proexp) < 0.6f) {
         float interm = std::fabs(proexp) / 0.6f;
-        interm = SQR(interm);
+        interm = pow(interm, 3.f);
         lp.expcomp = proexp * interm;
     }
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
@@ -5305,6 +5305,12 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                     const float lh = 0.5f * exlocalcurve[2.f * temp->L[y][x]]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
                     temp->L[y][x] = lh;
                 }
+            }
+        }
+
+        if ((lp.expcomp != 0.f) || (exlocalcurve)) {
+            if (lp.shadex > 0) {
+                ImProcFunctions::shadowsHighlights(temp.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
             }
         }
 
@@ -12905,7 +12911,7 @@ void ImProcFunctions::Lab_Local(
         enablefat = true;;
     }
 
-    bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.blac != 0 || lp.shadex > 0 || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || lp.prevdE || (exlocalcurve && localexutili)));
+    bool execex = (lp.exposena && (lp.expcomp != 0.f || lp.blac != 0 || lp.shadex > 0 || lp.hlcomp > 0.f || lp.laplacexp > 0.1f || lp.strexp != 0.f || enablefat || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || lp.prevdE || (exlocalcurve && localexutili)));
 
     if (!lp.invex && execex) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -12927,6 +12933,7 @@ void ImProcFunctions::Lab_Local(
 
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+            const std::unique_ptr<LabImage> buforig(new LabImage(bfw, bfh));
 
             std::unique_ptr<LabImage> bufmaskblurexp;
             std::unique_ptr<LabImage> originalmaskexp;
@@ -12945,6 +12952,7 @@ void ImProcFunctions::Lab_Local(
                 for (int y = ystart; y < yend; y++) {
                     for (int x = xstart; x < xend; x++) {
                         bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
+                        buforig->L[y - ystart][x - xstart] = original->L[y][x];
                     }
                 }
 
@@ -13202,6 +13210,12 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
+                    if (lp.hlcomp > 0.f) {
+                        if (lp.expcomp == 0.f) {
+                            lp.expcomp = 0.001f;    // to enabled
+                        }
+                    }
+                    
                     //shadows with ipshadowshighlight
                     if ((lp.expcomp != 0.f) || (exlocalcurve && localexutili)) {
                         if (lp.shadex > 0) {
@@ -13229,7 +13243,7 @@ void ImProcFunctions::Lab_Local(
                     }
                     
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
-                        softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
+                        softproc(buforig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.1, 0.001, 0.5f, sk, multiThread, 1);
                     }
                     float meansob = 0.f;
                     transit_shapedetect2(call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
@@ -13245,7 +13259,7 @@ void ImProcFunctions::Lab_Local(
     }
 //inverse
 
-    else if (lp.invex && (lp.expcomp != 0.0  || lp.laplacexp > 0.1f || params->locallab.spots.at(sp).fatamount > 1.f || (exlocalcurve && localexutili) || lp.enaExpMaskinv || lp.showmaskexpmetinv == 1) && lp.exposena) {
+    else if (lp.invex && (lp.expcomp != 0.0  || lp.laplacexp > 0.1f || lp.blac != 0 || lp.hlcomp > 0.f || lp.shadex > 0 || params->locallab.spots.at(sp).fatamount > 1.f || (exlocalcurve && localexutili) || lp.enaExpMaskinv || lp.showmaskexpmetinv == 1) && lp.exposena) {
         constexpr float adjustr = 2.f;
         std::unique_ptr<LabImage> bufmaskblurexp;
         std::unique_ptr<LabImage> originalmaskexp;
@@ -13308,6 +13322,19 @@ void ImProcFunctions::Lab_Local(
         if (lp.showmaskexpmetinv == 1) {
             showmask(lumask, lp, 0, 0, cx, cy, GW, GH, bufexporig.get(), transformed, bufmaskblurexp.get(), inv);
             return;
+        }
+
+        if (lp.shadex > 0) {
+            if (lp.expcomp == 0.f) {
+                lp.expcomp = 0.001f;    // to enabled
+            }
+        }
+
+
+        if (lp.hlcomp > 0.f) {
+            if (lp.expcomp == 0.f) {
+                lp.expcomp = 0.001f;    // to enabled
+            }
         }
 
         InverseColorLight_Local(false, false, sp, 1, lp, originalmaskexp.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);

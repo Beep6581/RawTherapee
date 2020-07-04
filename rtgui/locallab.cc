@@ -188,9 +188,10 @@ Locallab::Locallab():
     ToolVBox* const toolpanel = Gtk::manage(new ToolVBox());
     toolpanel->set_name("LocallabToolPanel");
     addTool(toolpanel, expcolor);
-    addTool(toolpanel, expexpose);
     addTool(toolpanel, expshadhigh);
     addTool(toolpanel, expvibrance);
+    addTool(toolpanel, explog);
+    addTool(toolpanel, expexpose);
     addTool(toolpanel, expmask);
     addTool(toolpanel, expsoft);
     addTool(toolpanel, expblur);
@@ -199,7 +200,6 @@ Locallab::Locallab():
     addTool(toolpanel, expsharp);
     addTool(toolpanel, expcontrast);
     addTool(toolpanel, expcbdl);
-    addTool(toolpanel, explog);
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator

@@ -1641,8 +1641,11 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
     int orW, orH;
     parent->imgsrc->getSize(cp, orW, orH);
 
-    trafx = orx;
-    trafy = ory;
+    if (trafx != orx || trafy != ory) {
+        trafx = orx;
+        trafy = ory;
+        changed = true;
+    }
 
     int cw = skips(bw, skip);
     int ch = skips(bh, skip);
