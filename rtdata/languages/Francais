@@ -1799,7 +1799,7 @@ TP_LOCALLAB_BUTTON_DEL;Effacer
 TP_LOCALLAB_BUTTON_DUPL;Dupliquer
 TP_LOCALLAB_BUTTON_REN;Renommer
 TP_LOCALLAB_BUTTON_VIS;Montrer/Cacher
-TP_LOCALLAB_CBDL;Contraste par niveaux détail-Défauts
+TP_LOCALLAB_CBDL;Contraste niveaux détail-Défauts
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Ajuste les tons moyens et les réhausse.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Agit comme un outil ondelettes.\nLe premier niveau (0) agit sur des détails de 2x2.\nLe dernier niveau (5) agit sur des détails de 64x64.
 TP_LOCALLAB_CBDL_THRES_TOOLTIP;Empêche d'augmenter le bruit
@@ -2000,7 +2000,7 @@ TP_LOCALLAB_LIST_TOOLTIP;Choisir un outil et ensuite son niveau de complexité "
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Donne priorité à l'action sur les tons moyens et hautes lumières en choisissant les niveaux concernés d'ondelettes
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Masque Flou
-TP_LOCALLAB_LOC_CONTRAST;Contraste Local-Ondelettes-défauts
+TP_LOCALLAB_LOC_CONTRAST;Contraste Local-Ondelettes-déf.
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramide 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramide 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contraste par niveaux- Tone Mapping - Contraste Dir.
@@ -2170,7 +2170,7 @@ TP_LOCALLAB_SH1;Ombres Lumières
 TP_LOCALLAB_SH2;Egaliseur
 TP_LOCALLAB_SHADEX;Ombres
 TP_LOCALLAB_SHADEXCOMP;Compression ombres & profondeur tonale
-TP_LOCALLAB_SHADHIGH;OmbresLumières - Egaliseur tonal
+TP_LOCALLAB_SHADHIGH;Ombres/Lumières - Egaliseur tonal
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Peut être utilisé - ou en complement - du module Exposition dans les cas difficiles.\nUtiliser réduction du bruit Denoise peut être nécessaire : éclaicir les ombres.\n\nPeut être utilisé comme  un filtre gradué (augmenter Etendue)
 TP_LOCALLAB_SHAMASKCOL;masque ombres
 TP_LOCALLAB_SHAPETYPE;Forme aire RT-spot
