@@ -7335,6 +7335,9 @@ BENCHFUN
                     }
                     klev *= 0.8f;
                     const float threshold = mean[level] + lp.sigmalc2 * sigma[level];
+                    float lutFactor;
+                    const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.6f, 0.5f, 0.4f, 0.3f, 0.1f};
+                    const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
@@ -7343,31 +7346,6 @@ BENCHFUN
                     for (int y = 0; y < H_L; y++) {
                         for (int x = 0; x < W_L; x++) {
                             const float WavCL = std::fabs(wav_L[y * W_L + x]);
-                            float beta;
-
-                            if (WavCL < mea[0]) {
-                                beta = 0.05f;
-                            } else if (WavCL < mea[1]) {
-                                beta = 0.2f;
-                            } else if (WavCL < mea[2]) {
-                                beta = 0.7f;
-                            } else if (WavCL < mea[3]) {
-                                beta = 1.f;    //standard
-                            } else if (WavCL < mea[4]) {
-                                beta = 1.f;
-                            } else if (WavCL < mea[5]) {
-                                beta = 0.8f;    //+sigma
-                            } else if (WavCL < mea[6]) {
-                                beta = 0.6f;
-                            } else if (WavCL < mea[7]) {
-                                beta = 0.5f;
-                            } else if (WavCL < mea[8]) {
-                                beta = 0.4f;    // + 2 sigma
-                            } else if (WavCL < mea[9]) {
-                                beta = 0.3f;
-                            } else {
-                                beta = 0.1f;
-                            }
 
                             float absciss;
                             if (WavCL >= threshold) { //for max
@@ -7383,7 +7361,7 @@ BENCHFUN
 
                             float kinterm = 1.f + reduceeffect * kc;
                             kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-                            wav_L[y * W_L + x] *= (1.f + (kinterm - 1.f) * beta);
+                            wav_L[y * W_L + x] *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);
                         }
                     }
                 }
@@ -7396,44 +7374,24 @@ BENCHFUN
     float *wav_L0 = wdspot->get_coeff0();
 
     if (radblur > 0.f && blurena) {
-        array2D<float> bufl(W_L, H_L);
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-        for (int y = 0; y < H_L; y++) {
-            for (int x = 0; x < W_L; x++) {
-                bufl[y][x]  = wav_L0[y * W_L + x];
-            }
+        float* src[H_L];
+        for (int i = 0; i < H_L; ++i) {
+            src[i] = &wav_L0[i * W_L];
         }
 
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
         {
-            gaussianBlur(bufl, bufl, W_L, H_L, radblur);
-        }
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-        for (int y = 0; y < H_L; y++) {
-            for (int x = 0; x < W_L; x++) {
-                wav_L0[y * W_L + x] = bufl[y][x];
-            }
+            gaussianBlur(src, src, W_L, H_L, radblur);
         }
     }
 
     if (compress != 0.f && compreena) {
-
-        float Compression = expf(-compress);
-        float DetailBoost = compress;
-
-        if (compress < 0.0f) {
-            DetailBoost = 0.0f;
-        }
+        const float Compression = expf(-compress);
+        const float DetailBoost = std::max(compress, 0.f);
 
         CompressDR(wav_L0, W_L, H_L, Compression, DetailBoost);
-
     }
 
     if ((lp.residsha != 0.f || lp.residhi != 0.f)) {
@@ -7474,7 +7432,6 @@ BENCHFUN
     }
 
     if (contrast != 0.) {
-
         double avedbl = 0.0; // use double precision for large summations
 
 #ifdef _OPENMP
@@ -7484,10 +7441,7 @@ BENCHFUN
             avedbl += wav_L0[i];
         }
 
-        float ave = avedbl / double(W_L * H_L);
-
-        float avg = ave / 32768.f;
-        avg = LIM01(avg);
+        const float avg = LIM01(avedbl / (32768.f * W_L * H_L));
         double contreal = 0.6 * contrast;
         DiagonalCurve resid_contrast({
             DCT_NURBS,
@@ -7500,12 +7454,8 @@ BENCHFUN
         #pragma omp parallel for if (multiThread)
 #endif
         for (int i = 0; i < W_L * H_L; i++) {
-            float buf = LIM01(wav_L0[i] / 32768.f);
-            buf = resid_contrast.getVal(buf);
-            buf *= 32768.f;
-            wav_L0[i] = buf;
+            wav_L0[i] = resid_contrast.getVal(LIM01(wav_L0[i] / 32768.f)) * 32768.f;
         }
-
     }
 
     float alow = 1.f;
