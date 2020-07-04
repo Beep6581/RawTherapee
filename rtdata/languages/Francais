@@ -1799,11 +1799,11 @@ TP_LOCALLAB_BUTTON_DEL;Effacer
 TP_LOCALLAB_BUTTON_DUPL;Dupliquer
 TP_LOCALLAB_BUTTON_REN;Renommer
 TP_LOCALLAB_BUTTON_VIS;Montrer/Cacher
-TP_LOCALLAB_CBDL;Contraste par niveaux de détail - Défauts
+TP_LOCALLAB_CBDL;Contraste par niveaux détail-Défauts
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Ajuste les tons moyens et les réhausse.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Agit comme un outil ondelettes.\nLe premier niveau (0) agit sur des détails de 2x2.\nLe dernier niveau (5) agit sur des détails de 64x64.
 TP_LOCALLAB_CBDL_THRES_TOOLTIP;Empêche d'augmenter le bruit
-TP_LOCALLAB_CBDL_TOOLNAME;CBDL (Defauts) - 2
+TP_LOCALLAB_CBDL_TOOLNAME;Contraste par niveaux de détails(Défauts) - 2
 TP_LOCALLAB_CENTER_X;Centre X
 TP_LOCALLAB_CENTER_Y;Centre Y
 TP_LOCALLAB_CH;Courbes CL - LC
@@ -2131,7 +2131,7 @@ TP_LOCALLAB_RESIDHITHR;Hautes lumières seuil
 TP_LOCALLAB_RESIDSHA;Ombres
 TP_LOCALLAB_RESIDSHATHR;Ombres seuil
 TP_LOCALLAB_RETI;De-brume - Retinex Fort contraste
-TP_LOCALLAB_RETIFRA;Retinex
+TP_LOCALLAB_RETIFRA;Retinexfr
 TP_LOCALLAB_RETIM;Original Retinex
 TP_LOCALLAB_RETITOOLFRA;Retinex Outils
 TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT améliore la qualité et autorise de grands rayons, mais accroît les temps de traitement.\nCe temps dépends de la surface traitée\nLe temps de traitements dépend de "scale" (échelle) (soyez prudent avec les hautes valeurs ).\nA utiliser de préférence avec de grand rayons.\n\nLes Dimensions peuvent être réduites de quelques pixels pour optimiser FFTW.\nCette optimisation peut réduire le temps de traitement d'un facteur de 1.5 à 10.\nOptimisation pas utilsée en prévisualisation
@@ -2226,7 +2226,7 @@ TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex est très différent des autres 
 TP_LOCALLAB_SOFTRADIUSCOL;Rayon adoucir
 TP_LOCALLAB_SOFTRETI;Reduire artefact ΔE
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Prend en compte ΔE pour améliorer Transmission map
-TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
+TP_LOCALLAB_SOFT_TOOLNAME;Lumière douce & Original Retinex - 6
 TP_LOCALLAB_SOURCE_GRAY;Valeur
 TP_LOCALLAB_SPECCASE; Cas spécifiques
 TP_LOCALLAB_SPECIAL;Usage Special des courbes RGB
