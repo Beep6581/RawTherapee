@@ -1380,9 +1380,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sens = lp.senscolor;
     lp.sensv = lp.senscolor;
     lp.senshs = lp.senscolor;
-    if(lp.expmet == 0){
-//        lp.sensex = lp.senscolor;
-    }
 }
 
 static void calcTransitionrect(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
@@ -2411,45 +2408,41 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
     //exposure local
 
     constexpr float maxran = 65536.f;
-    const float cexp_scale = std::pow(2.f, lp.expcomp);
-    const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
-    const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
-    const float chlrange = maxran - cshoulder;
     const float linear = lp.linear;
-    constexpr float kl = 1.f;
-    const float hlcompthr = lp.hlcompthr / 200.f;
-    const float hlcomp = lp.hlcomp / 100.f;
-    if (lp.linear > 0.f && lp.expcomp == 0.f) {
-            lp.expcomp = 0.001f;
+    if (linear > 0.f && lp.expcomp == 0.f) {
+        lp.expcomp = 0.001f;
     }
-    bool exec = (lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex);
-
-    //Laplacian PDE before exposure to smooth L, algorithm exposure leads to increase L differences
-    const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
-    const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
-    const std::unique_ptr<float[]> dE(new float[bfwr * bfhr]);
-
+    const bool exec = (lp.expmet == 1 && linear > 0.f && lp.laplacexp > 0.1f && !lp.invex);
 
     if(!exec) {
-        float diffde = 100.f - lp.sensex;//the more scope, the less take into account dE for Laplace
-        deltaEforLaplace(dE.get(), diffde, bfwr, bfhr, bufexporig, hueref, chromaref, lumaref);
-        float lap = 1.f;
-        float alap = 600.f;
-        float blap = 100.f;
+        //Laplacian PDE before exposure to smooth L, algorithm exposure leads to increase L differences
+        const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
+        const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
+        const std::unique_ptr<float[]> dE(new float[bfwr * bfhr]);
+        const float cexp_scale = std::pow(2.f, lp.expcomp);
+        const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
+        const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
+        const float chlrange = maxran - cshoulder;
+        const float diffde = 100.f - lp.sensex;//the more scope, the less take into account dE for Laplace
 
-        if(diffde > 80.f) {
+        deltaEforLaplace(dE.get(), diffde, bfwr, bfhr, bufexporig, hueref, chromaref, lumaref);
+
+        constexpr float alap = 600.f;
+        constexpr float blap = 100.f;
+        constexpr float aa = (alap - blap) / 50.f;
+        constexpr float bb = 100.f - 30.f * aa;
+
+        float lap;
+        if (diffde > 80.f) {
             lap = alap;
-        }
-        if(diffde < 30.f) {
+        } else if (diffde < 30.f) {
             lap = blap;
-        }
-        float aa = (alap - blap) / 50.f;
-        float bb = 100.f - 30.f * aa;
-        if(diffde >= 30.f && diffde <= 80.f) {
+        } else {
             lap = aa * diffde + bb;
         }
+
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
         for (int y = 0; y < bfhr; y++) {
             for (int x = 0; x < bfwr; x++) {
@@ -2460,42 +2453,13 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
         MyMutex::MyLock lock(*fftwMutex);
         ImProcFunctions::retinex_pde(datain.get(), dataout.get(), bfwr, bfhr, lap, 1.f, dE.get(), 0, 1, 1);//350 arbitrary value about 45% strength Laplacian
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
         for (int y = 0; y < bfhr; y++) {
             for (int x = 0; x < bfwr; x++) {
                 bufexporig->L[y][x] = dataout[y * bfwr + x];
             }
         }
-    }
-
-
-
-    if (exec) {
-
-#ifdef _OPENMP
-        #pragma omp parallel for if (multiThread)
-#endif
-        for (int ir = 0; ir < bfh; ir++) {
-            for (int jr = 0; jr < bfw; jr++) {
-                float L = bufexporig->L[ir][jr];
-                const float Llin = LIM01(L / 32768.f);
-                const float addcomp = linear * (-kl * Llin + kl);//maximum about 1 . IL
-                const float exp_scale = pow_F(2.0, (lp.expcomp + addcomp));
-                const float shoulder = ((maxran / rtengine::max(1.0f, exp_scale)) * hlcompthr) + 0.1f;
-                const float comp = (rtengine::max(0.f, (lp.expcomp + addcomp)) + 1.f) * hlcomp;
-                const float hlrange = maxran - shoulder;
-
-                //highlight
-                const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
-                L *= hlfactor * pow_F(2.f, addcomp);//approximation but pretty good with Laplacian and L < mean, hl aren't call
-                //shadow tone curve
-                L *= shtonecurve[2 * L];
-                //tonecurve
-                lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
-            }
-        }
-    } else {
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
@@ -2511,9 +2475,35 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
                 lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
             }
         }
+    } else {
+        constexpr float kl = 1.f;
+        const float hlcompthr = lp.hlcompthr / 200.f;
+        const float hlcomp = lp.hlcomp / 100.f;
+
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+        for (int ir = 0; ir < bfh; ir++) {
+            for (int jr = 0; jr < bfw; jr++) {
+                float L = bufexporig->L[ir][jr];
+                const float Llin = LIM01(L / 32768.f);
+                const float addcomp = linear * (-kl * Llin + kl);//maximum about 1 . IL
+                const float exp_scale = pow_F(2.f, lp.expcomp + addcomp);
+                const float shoulder = (maxran / rtengine::max(1.0f, exp_scale)) * hlcompthr + 0.1f;
+                const float comp = (rtengine::max(0.f, (lp.expcomp + addcomp)) + 1.f) * hlcomp;
+                const float hlrange = maxran - shoulder;
+
+                //highlight
+                const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
+                L *= hlfactor * pow_F(2.f, addcomp);//approximation but pretty good with Laplacian and L < mean, hl aren't call
+                //shadow tone curve
+                L *= shtonecurve[2 * L];
+                //tonecurve
+                lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
+            }
+        }
     }
 }
-
 
 void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk)
 {
