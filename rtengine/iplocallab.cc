@@ -57,6 +57,7 @@
 
 namespace
 {
+
 constexpr int limscope = 80;
 constexpr int mSPsharp = 39; //minimum size Spot Sharp due to buildblendmask
 constexpr int mSPwav = 32; //minimum size Spot Wavelet
@@ -68,19 +69,59 @@ constexpr int TS = 64; // Tile size
 constexpr float epsilonw = 0.001f / (TS * TS); //tolerance
 constexpr int offset = 25; // shift between tiles
 
-constexpr float clipLoc(float x) {
+std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float& lutFactor)
+{
+    constexpr int lutSize = 100;
+
+    const float lutMax = std::ceil(mea[9]);
+    const float lutDiff = lutMax / lutSize;
+
+    std::vector<float> lutVals(lutSize);
+    int jStart = 1;
+    for (int i = 0; i < lutSize; ++i) {
+        const float val = i * lutDiff;
+        if (val < mea[0]) {
+            // still < first value => no interpolation
+            lutVals[i] = inVals[0];
+        } else {
+            for (int j = jStart; j < 10; ++j) {
+                if (val == mea[j]) {
+                    // exact match => no interpolation
+                    lutVals[i] = inVals[j];
+                    ++jStart;
+                    break;
+                }
+                if (val < mea[j]) {
+                    // interpolate
+                    const float dist = (val - mea[j - 1]) / (mea[j] - mea[j - 1]);
+                    lutVals[i] = rtengine::intp(dist, inVals[j], inVals[j - 1]);
+                    break;
+                }
+                lutVals[i] = inVals[10];
+            }
+        }
+    }
+    lutFactor = 1.f / lutDiff;
+    return std::unique_ptr<LUTf>(new LUTf(lutVals));
+}
+
+constexpr float clipLoc(float x)
+{
     return rtengine::LIM(x, 0.f, 32767.f);
 }
 
-constexpr float clipDE(float x) {
+constexpr float clipDE(float x)
+{
     return rtengine::LIM(x, 0.3f, 1.f);
 }
 
-constexpr float clipC(float x) {
+constexpr float clipC(float x)
+{
     return rtengine::LIM(x, -42000.f, 42000.f);
 }
 
-constexpr float clipChro(float x) {
+constexpr float clipChro(float x)
+{
     return rtengine::LIM(x, 0.f, 140.f);
 }
 
@@ -7035,8 +7076,6 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
     const int W_L = wdspot.level_W(0);
     const int H_L = wdspot.level_H(0);
 
-    const std::unique_ptr<float[]> beta(new float[W_L * H_L]);
-
 #ifdef _OPENMP
     const int numThreads = omp_get_max_threads();
 #else
@@ -7059,37 +7098,9 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 constexpr float offs = 1.f;
                 float mea[10];
                 calceffect(level, mean, sigma, mea, effect, offs);
-
-#ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
-#endif
-                for (int co = 0; co < H_L * W_L; co++) {
-                    const float WavCL = std::fabs(WavL[co]);
-
-                    if (WavCL < mea[0]) {
-                        beta[co] = 0.05f;
-                    } else if (WavCL < mea[1]) {
-                        beta[co] = 0.2f;
-                    } else if (WavCL < mea[2]) {
-                        beta[co] = 0.7f;
-                    } else if (WavCL < mea[3]) {
-                        beta[co] = 1.f;    //standard
-                    } else if (WavCL < mea[4]) {
-                        beta[co] = 1.f;
-                    } else if (WavCL < mea[5]) {
-                        beta[co] = 0.8f;    //+sigma
-                    } else if (WavCL < mea[6]) {
-                        beta[co] = 0.5f;
-                    } else if (WavCL < mea[7]) {
-                        beta[co] = 0.3f;
-                    } else if (WavCL < mea[8]) {
-                        beta[co] = 0.2f;    // + 2 sigma
-                    } else if (WavCL < mea[9]) {
-                        beta[co] = 0.1f;
-                    } else {
-                        beta[co] = 0.05f;
-                    }
-                }
+                float lutFactor;
+                const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.5f, 0.3f, 0.2f, 0.1f, 0.05f};
+                const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
 
                 const float klev = 0.25f * loclevwavCurve[level * 55.5f];
                 float* src[H_L];
@@ -7102,14 +7113,28 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 {
                     gaussianBlur(src, templevel, W_L, H_L, radlevblur * klev * chromablu);
                 }
-
 #ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
+                #pragma omp parallel if (multiThread)
 #endif
-                for (int y = 0; y < H_L; y++) {
-                    for (int x = 0; x < W_L; x++) {
-                        int j = y * W_L + x;
-                        WavL[j] = intp(beta[j], templevel[y][x], WavL[j]);
+                {
+#ifdef __SSE2__
+                    const vfloat lutFactorv = F2V(lutFactor);
+#endif
+#ifdef _OPENMP
+                    #pragma omp for
+#endif
+                    for (int y = 0; y < H_L; y++) {
+                        int x = 0;
+                        int j = y * W_L;
+#ifdef __SSE2__
+                        for (; x < W_L - 3; x += 4, j += 4) {
+                            const vfloat valv = LVFU(WavL[j]);
+                            STVFU(WavL[j], intp((*meaLut)[vabsf(valv) * lutFactorv], LVFU(templevel[y][x]), valv));
+                        }
+#endif
+                        for (; x < W_L; x++, j++) {
+                            WavL[j] = intp((*meaLut)[std::fabs(WavL[j]) * lutFactor], templevel[y][x], WavL[j]);
+                        }
                     }
                 }
             }
@@ -7122,37 +7147,9 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 constexpr float offs = 1.f;
                 float mea[10];
                 calceffect(level, mean, sigma, mea, effect, offs);
-#ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
-#endif
-                for (int co = 0; co < H_L * W_L; co++) {
-                    const float WavCL = std::fabs(WavL[co]);
-
-                    if (WavCL < mea[0]) {
-                        beta[co] = 0.05f;
-                    } else if (WavCL < mea[1]) {
-                        beta[co] = 0.2f;
-                    } else if (WavCL < mea[2]) {
-                        beta[co] = 0.7f;
-                    } else if (WavCL < mea[3]) {
-                        beta[co] = 1.f;    //standard
-                    } else if (WavCL < mea[4]) {
-                        beta[co] = 1.f;
-                    } else if (WavCL < mea[5]) {
-                        beta[co] = 0.8f;    //+sigma
-                    } else if (WavCL < mea[6]) {
-                        beta[co] = 0.7f;
-                    } else if (WavCL < mea[7]) {
-                        beta[co] = 0.5f;
-                    } else if (WavCL < mea[8]) {
-                        beta[co] = 0.3f;    // + 2 sigma
-                    } else if (WavCL < mea[9]) {
-                        beta[co] = 0.2f;
-                    } else {
-                        beta[co] = 0.1f;
-                    }
-                }
-
+                float lutFactor;
+                const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.7f, 0.5f, 0.3f, 0.2f, 0.1f};
+                const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
                 const int iteration = deltad;
                 const int itplus = 7 + iteration;
                 const int itmoins = 7 - iteration;
@@ -7180,6 +7177,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                     const vfloat zd5v = F2V(0.5f);
                     const vfloat onev = F2V(1.f);
                     const vfloat itfv = F2V(itf);
+                    const vfloat lutFactorv = F2V(lutFactor);
 #endif
 #ifdef _OPENMP
                     #pragma omp for
@@ -7190,13 +7188,14 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                         for (; j < W_L - 3; j += 4) {
                             const vfloat LL100v = LC2VFU(tmp[i * 2][j * 2]) / c327d68v;
                             const vfloat kbav = factorv * (loccompwavCurve[sixv * LL100v] - zd5v); //k1 between 0 and 0.5    0.5==> 1/6=0.16
-                            STVFU(WavL[i * W_L + j], LVFU(WavL[i * W_L + j]) * pow_F(onev + kbav * LVFU(beta[i * W_L + j]), itfv));
+                            const vfloat valv = LVFU(WavL[i * W_L + j]);
+                            STVFU(WavL[i * W_L + j], valv * pow_F(onev + kbav * (*meaLut)[vabsf(valv) * lutFactorv], itfv));
                         }
 #endif
                         for (; j < W_L; ++j) {
                             const float LL100 = tmp[i * 2][j * 2] / 327.68f;
                             const float kba = factor * (loccompwavCurve[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
-                            WavL[i * W_L + j] *= pow_F(1.f + kba * beta[i * W_L + j], itf);
+                            WavL[i * W_L + j] *= pow_F(1.f + kba * (*meaLut)[std::fabs(WavL[i * W_L + j]) * lutFactor], itf);
                         }
                     }
                 }
@@ -7219,51 +7218,13 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 
         for (int dir = 1; dir < 4; ++dir) {
             for (int level = level_bl; level < maxlvl; ++level) {
-                const auto WavL = wdspot.level_coeffs(level)[dir];
                 const float effect = lp.sigmadr;
                 constexpr float offs = 1.f;
                 float mea[10];
                 calceffect(level, mean, sigma, mea, effect, offs);
-#ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
-#endif
-                for (int co = 0; co < H_L * W_L; co++) {
-                    const float WavCL = std::fabs(WavL[co]);
-
-                    if (WavCL < mea[0]) {
-                        beta[co] = 0.05f;
-                    } else if (WavCL < mea[1]) {
-                        beta[co] = 0.2f;
-                    } else if (WavCL < mea[2]) {
-                        beta[co] = 0.7f;
-                    } else if (WavCL < mea[3]) {
-                        beta[co] = 1.f;    //standard
-                    } else if (WavCL < mea[4]) {
-                        beta[co] = 1.f;
-                    } else if (WavCL < mea[5]) {
-                        beta[co] = 0.8f;    //+sigma
-                    } else if (WavCL < mea[6]) {
-                        beta[co] = 0.65f;
-                    } else if (WavCL < mea[7]) {
-                        beta[co] = 0.5f;
-                    } else if (WavCL < mea[8]) {
-                        beta[co] = 0.4f;    // + 2 sigma
-                    } else if (WavCL < mea[9]) {
-                        beta[co] = 0.25f;
-                    } else {
-                        beta[co] = 0.1f;
-                    }
-                }
-
-                float klev = (loccomprewavCurve[level * 55.5f] - 0.75f);
-                if (klev < 0.f) {
-                    klev *= 2.6666f;//compression increase contraste
-                } else {
-                    klev *= 4.f;//dilatation reduce contraste - detailattenuator
-                }
-                const float compression = expf(-klev);
-                const float detailattenuator = std::max(klev, 0.f);
-
+                float lutFactor;
+                const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.65f, 0.5f, 0.4f, 0.25f, 0.1f};
+                const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
                 const auto wav_L = wdspot.level_coeffs(level)[dir];
 
 #ifdef _OPENMP
@@ -7276,14 +7237,38 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                     }
                 }
 
+                float klev = (loccomprewavCurve[level * 55.5f] - 0.75f);
+                if (klev < 0.f) {
+                    klev *= 2.6666f;//compression increase contraste
+                } else {
+                    klev *= 4.f;//dilatation reduce contraste - detailattenuator
+                }
+                const float compression = expf(-klev);
+                const float detailattenuator = std::max(klev, 0.f);
+
                 Compresslevels(templevel, W_L, H_L, compression, detailattenuator, thres, mean[level], MaxP[level], meanN[level], MaxN[level], madL[level][dir - 1]);
 #ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
+                #pragma omp parallel if (multiThread)
 #endif
-                for (int y = 0; y < H_L; y++) {
-                    for (int x = 0; x < W_L; x++) {
-                        int j = y * W_L + x;
-                        wav_L[j] = intp(beta[j], templevel[y][x], wav_L[j]);
+                {
+#ifdef __SSE2__
+                    const vfloat lutFactorv = F2V(lutFactor);
+#endif
+#ifdef _OPENMP
+                    #pragma omp for
+#endif
+                    for (int y = 0; y < H_L; y++) {
+                        int x = 0;
+                        int j = y * W_L;
+#ifdef __SSE2__
+                        for (; x < W_L - 3; x += 4, j += 4) {
+                            const vfloat valv = LVFU(wav_L[j]);
+                            STVFU(wav_L[j], intp((*meaLut)[vabsf(valv) * lutFactorv], LVFU(templevel[y][x]), valv));
+                        }
+#endif
+                        for (; x < W_L; x++, j++) {
+                            wav_L[j] = intp((*meaLut)[std::fabs(wav_L[j]) * lutFactor], templevel[y][x], wav_L[j]);
+                        }
                     }
                 }
             }
@@ -7385,6 +7370,9 @@ BENCHFUN
                     }
                     klev *= 0.8f;
                     const float threshold = mean[level] + lp.sigmalc2 * sigma[level];
+                    float lutFactor;
+                    const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.6f, 0.5f, 0.4f, 0.3f, 0.1f};
+                    const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
@@ -7393,31 +7381,6 @@ BENCHFUN
                     for (int y = 0; y < H_L; y++) {
                         for (int x = 0; x < W_L; x++) {
                             const float WavCL = std::fabs(wav_L[y * W_L + x]);
-                            float beta;
-
-                            if (WavCL < mea[0]) {
-                                beta = 0.05f;
-                            } else if (WavCL < mea[1]) {
-                                beta = 0.2f;
-                            } else if (WavCL < mea[2]) {
-                                beta = 0.7f;
-                            } else if (WavCL < mea[3]) {
-                                beta = 1.f;    //standard
-                            } else if (WavCL < mea[4]) {
-                                beta = 1.f;
-                            } else if (WavCL < mea[5]) {
-                                beta = 0.8f;    //+sigma
-                            } else if (WavCL < mea[6]) {
-                                beta = 0.6f;
-                            } else if (WavCL < mea[7]) {
-                                beta = 0.5f;
-                            } else if (WavCL < mea[8]) {
-                                beta = 0.4f;    // + 2 sigma
-                            } else if (WavCL < mea[9]) {
-                                beta = 0.3f;
-                            } else {
-                                beta = 0.1f;
-                            }
 
                             float absciss;
                             if (WavCL >= threshold) { //for max
@@ -7433,7 +7396,7 @@ BENCHFUN
 
                             float kinterm = 1.f + reduceeffect * kc;
                             kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-                            wav_L[y * W_L + x] *= (1.f + (kinterm - 1.f) * beta);
+                            wav_L[y * W_L + x] *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);
                         }
                     }
                 }
@@ -7446,44 +7409,24 @@ BENCHFUN
     float *wav_L0 = wdspot->get_coeff0();
 
     if (radblur > 0.f && blurena) {
-        array2D<float> bufl(W_L, H_L);
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-        for (int y = 0; y < H_L; y++) {
-            for (int x = 0; x < W_L; x++) {
-                bufl[y][x]  = wav_L0[y * W_L + x];
-            }
+        float* src[H_L];
+        for (int i = 0; i < H_L; ++i) {
+            src[i] = &wav_L0[i * W_L];
         }
 
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
         {
-            gaussianBlur(bufl, bufl, W_L, H_L, radblur);
-        }
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-        for (int y = 0; y < H_L; y++) {
-            for (int x = 0; x < W_L; x++) {
-                wav_L0[y * W_L + x] = bufl[y][x];
-            }
+            gaussianBlur(src, src, W_L, H_L, radblur);
         }
     }
 
     if (compress != 0.f && compreena) {
-
-        float Compression = expf(-compress);
-        float DetailBoost = compress;
-
-        if (compress < 0.0f) {
-            DetailBoost = 0.0f;
-        }
+        const float Compression = expf(-compress);
+        const float DetailBoost = std::max(compress, 0.f);
 
         CompressDR(wav_L0, W_L, H_L, Compression, DetailBoost);
-
     }
 
     if ((lp.residsha != 0.f || lp.residhi != 0.f)) {
@@ -7524,7 +7467,6 @@ BENCHFUN
     }
 
     if (contrast != 0.) {
-
         double avedbl = 0.0; // use double precision for large summations
 
 #ifdef _OPENMP
@@ -7534,10 +7476,7 @@ BENCHFUN
             avedbl += wav_L0[i];
         }
 
-        float ave = avedbl / double(W_L * H_L);
-
-        float avg = ave / 32768.f;
-        avg = LIM01(avg);
+        const float avg = LIM01(avedbl / (32768.f * W_L * H_L));
         double contreal = 0.6 * contrast;
         DiagonalCurve resid_contrast({
             DCT_NURBS,
@@ -7550,12 +7489,8 @@ BENCHFUN
         #pragma omp parallel for if (multiThread)
 #endif
         for (int i = 0; i < W_L * H_L; i++) {
-            float buf = LIM01(wav_L0[i] / 32768.f);
-            buf = resid_contrast.getVal(buf);
-            buf *= 32768.f;
-            wav_L0[i] = buf;
+            wav_L0[i] = resid_contrast.getVal(LIM01(wav_L0[i] / 32768.f)) * 32768.f;
         }
-
     }
 
     float alow = 1.f;
