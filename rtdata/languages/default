@@ -2407,7 +2407,7 @@ TP_LOCALLAB_COLORDE;Color preview selection ΔE - Intensity
 TP_LOCALLAB_COLORDEPREV_TOOLTIP;Button Preview ΔE needs that only one tool is enabled (expander).\nTo be able to have an Preview ΔE with several enable tools use Mask and modifications - Preview ΔE
 TP_LOCALLAB_COLORDE_TOOLTIP;Show preview selection ΔE in blue if negative and in green if positive.\n\nMask and modifications (show modifications without mask): show real modifications if positive, show enhanced modifications (only luminance) with blue and yellow if negative.
 TP_LOCALLAB_COLORSCOPE;Scope Color Tools
-TP_LOCALLAB_COLORSCOPE_TOOLTIP;Use a common Scope for Color and light, Exposure (Standard), Shadows highlight, Vibrance.\nOthers tools have their specific scope.
+TP_LOCALLAB_COLORSCOPE_TOOLTIP;Use a common Scope for Color and light, Shadows highlight, Vibrance.\nOthers tools have their specific scope.
 TP_LOCALLAB_COLOR_TOOLNAME;Color&Light (Defects) - 11
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status

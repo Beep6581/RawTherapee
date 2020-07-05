@@ -1376,12 +1376,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.residhithr = locallab.spots.at(sp).residhithr;
     lp.blwh = locallab.spots.at(sp).blwh;
     lp.senscolor = (int) locallab.spots.at(sp).colorscope;
-    //replace scope color exposure vibrance shadows
+    //replace scope color vibrance shadows
     lp.sens = lp.senscolor;
     lp.sensv = lp.senscolor;
     lp.senshs = lp.senscolor;
     if(lp.expmet == 0){
-        lp.sensex = lp.senscolor;
+//        lp.sensex = lp.senscolor;
     }
 }
 

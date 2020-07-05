@@ -3185,7 +3185,7 @@ void LocallabExposure::updateExposureGUI2()
         pdeFrame->hide();
         fatFrame->hide();
         softradiusexp->set_sensitive(true);
-        sensiex->set_sensitive(false);
+        sensiex->set_sensitive(true);
     } else if (expMethod->get_active_row_number() == 1) {
         pdeFrame->show();
         fatFrame->show();
