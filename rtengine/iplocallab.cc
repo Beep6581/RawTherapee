@@ -2433,7 +2433,21 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
     if(!exec) {
         float diffde = 100.f - lp.sensex;//the more scope, the less take into account dE for Laplace
         deltaEforLaplace(dE.get(), diffde, bfwr, bfhr, bufexporig, hueref, chromaref, lumaref);
+        float lap = 1.f;
+        float alap = 600.f;
+        float blap = 100.f;
 
+        if(diffde > 80.f) {
+            lap = alap;
+        }
+        if(diffde < 30.f) {
+            lap = blap;
+        }
+        float aa = (alap - blap) / 50.f;
+        float bb = 100.f - 30.f * aa;
+        if(diffde >= 30.f && diffde <= 80.f) {
+            lap = aa * diffde + bb;
+        }
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -2444,7 +2458,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
         }
 
         MyMutex::MyLock lock(*fftwMutex);
-        ImProcFunctions::retinex_pde(datain.get(), dataout.get(), bfwr, bfhr, 360.f, 1.f, dE.get(), 0, 1, 1);//350 arbitrary value about 45% strength Laplacian
+        ImProcFunctions::retinex_pde(datain.get(), dataout.get(), bfwr, bfhr, lap, 1.f, dE.get(), 0, 1, 1);//350 arbitrary value about 45% strength Laplacian
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
