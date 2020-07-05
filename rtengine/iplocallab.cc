@@ -2405,7 +2405,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     }
 }
 
-void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve)
+void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, int bfwr, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve, const float hueref, const float lumaref, const float chromaref)
 {
     BENCHFUN
     //exposure local
@@ -2422,8 +2422,42 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
     if (lp.linear > 0.f && lp.expcomp == 0.f) {
             lp.expcomp = 0.001f;
     }
+    bool exec = (lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex);
 
-    if (lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {
+    //Laplacian PDE before exposure to smooth L, algorithm exposure leads to increase L differences
+    const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
+    const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
+    const std::unique_ptr<float[]> dE(new float[bfwr * bfhr]);
+
+
+    if(!exec) {
+        float diffde = 100.f - lp.sensex;//the more scope, the less take into account dE for Laplace
+        deltaEforLaplace(dE.get(), diffde, bfwr, bfhr, bufexporig, hueref, chromaref, lumaref);
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+        for (int y = 0; y < bfhr; y++) {
+            for (int x = 0; x < bfwr; x++) {
+                datain[y * bfwr + x] = bufexporig->L[y][x];
+            }
+        }
+
+        MyMutex::MyLock lock(*fftwMutex);
+        ImProcFunctions::retinex_pde(datain.get(), dataout.get(), bfwr, bfhr, 360.f, 1.f, dE.get(), 0, 1, 1);//350 arbitrary value about 45% strength Laplacian
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+        for (int y = 0; y < bfhr; y++) {
+            for (int x = 0; x < bfwr; x++) {
+                bufexporig->L[y][x] = dataout[y * bfwr + x];
+            }
+        }
+    }
+
+
+
+    if (exec) {
 
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
@@ -2432,7 +2466,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
             for (int jr = 0; jr < bfw; jr++) {
                 float L = bufexporig->L[ir][jr];
                 const float Llin = LIM01(L / 32768.f);
-                const float addcomp = linear * (-kl * Llin + kl);//maximum about 1. IL
+                const float addcomp = linear * (-kl * Llin + kl);//maximum about 1 . IL
                 const float exp_scale = pow_F(2.0, (lp.expcomp + addcomp));
                 const float shoulder = ((maxran / rtengine::max(1.0f, exp_scale)) * hlcompthr) + 0.1f;
                 const float comp = (rtengine::max(0.f, (lp.expcomp + addcomp)) + 1.f) * hlcomp;
@@ -2451,8 +2485,8 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-        for (int ir = 0; ir < bfh; ir++) {
-            for (int jr = 0; jr < bfw; jr++) {
+        for (int ir = 0; ir < bfhr; ir++) {
+            for (int jr = 0; jr < bfwr; jr++) {
                 float L = bufexporig->L[ir][jr];
                 //highlight
                 const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(cexp_scale, ccomp, chlrange, 2 * L));
@@ -5253,7 +5287,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
         }
 
     } else if (senstype == 1) { //exposure
-        ImProcFunctions::exlabLocal(lp, GH, GW, original, temp.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
+        ImProcFunctions::exlabLocal(lp, GH, GW, GW, GH, original, temp.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
 
         if (exlocalcurve) {
 #ifdef _OPENMP
@@ -12942,7 +12976,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSP && bfh >= mSP) {
 
-            if (lp.expmet == 1) {
+            if (lp.expmet == 1  || lp.expmet == 0) {
                 optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
             }
 
@@ -13096,12 +13130,12 @@ void ImProcFunctions::Lab_Local(
                             lp.expcomp = 0.001f;    // to enabled
                         }
 
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
+                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
 
 
                     } else {
 
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
+                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
                     }
 
 //gradient
