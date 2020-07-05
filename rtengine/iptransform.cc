@@ -516,7 +516,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         }
 
         if (pLCPMap && params->lensProf.useDist) {
-            pLCPMap->correctDistortion(x_d, y_d, 0, 0);
+            pLCPMap->correctDistortion(x_d, y_d, w2, h2);
         }
 
         // rotate
