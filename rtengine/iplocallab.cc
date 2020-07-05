@@ -1376,13 +1376,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.residhithr = locallab.spots.at(sp).residhithr;
     lp.blwh = locallab.spots.at(sp).blwh;
     lp.senscolor = (int) locallab.spots.at(sp).colorscope;
-    //replace scope color exposure vibrance shadows
+    //replace scope color vibrance shadows
     lp.sens = lp.senscolor;
     lp.sensv = lp.senscolor;
     lp.senshs = lp.senscolor;
-    if(lp.expmet == 0){
-        lp.sensex = lp.senscolor;
-    }
 }
 
 static void calcTransitionrect(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
@@ -2405,25 +2402,83 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     }
 }
 
-void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve)
+void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, int bfwr, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve, const float hueref, const float lumaref, const float chromaref)
 {
     BENCHFUN
     //exposure local
 
     constexpr float maxran = 65536.f;
-    const float cexp_scale = std::pow(2.f, lp.expcomp);
-    const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
-    const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
-    const float chlrange = maxran - cshoulder;
     const float linear = lp.linear;
-    constexpr float kl = 1.f;
-    const float hlcompthr = lp.hlcompthr / 200.f;
-    const float hlcomp = lp.hlcomp / 100.f;
-    if (lp.linear > 0.f && lp.expcomp == 0.f) {
-            lp.expcomp = 0.001f;
+    if (linear > 0.f && lp.expcomp == 0.f) {
+        lp.expcomp = 0.001f;
     }
+    const bool exec = (lp.expmet == 1 && linear > 0.f && lp.laplacexp > 0.1f && !lp.invex);
 
-    if (lp.expmet == 1 && lp.linear > 0.f && lp.laplacexp > 0.1f && !lp.invex) {
+    if(!exec) {
+        //Laplacian PDE before exposure to smooth L, algorithm exposure leads to increase L differences
+        const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
+        const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
+        const std::unique_ptr<float[]> dE(new float[bfwr * bfhr]);
+        const float cexp_scale = std::pow(2.f, lp.expcomp);
+        const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
+        const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
+        const float chlrange = maxran - cshoulder;
+        const float diffde = 100.f - lp.sensex;//the more scope, the less take into account dE for Laplace
+
+        deltaEforLaplace(dE.get(), diffde, bfwr, bfhr, bufexporig, hueref, chromaref, lumaref);
+
+        constexpr float alap = 600.f;
+        constexpr float blap = 100.f;
+        constexpr float aa = (alap - blap) / 50.f;
+        constexpr float bb = 100.f - 30.f * aa;
+
+        float lap;
+        if (diffde > 80.f) {
+            lap = alap;
+        } else if (diffde < 30.f) {
+            lap = blap;
+        } else {
+            lap = aa * diffde + bb;
+        }
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+        for (int y = 0; y < bfhr; y++) {
+            for (int x = 0; x < bfwr; x++) {
+                datain[y * bfwr + x] = bufexporig->L[y][x];
+            }
+        }
+
+        MyMutex::MyLock lock(*fftwMutex);
+        ImProcFunctions::retinex_pde(datain.get(), dataout.get(), bfwr, bfhr, lap, 1.f, dE.get(), 0, 1, 1);//350 arbitrary value about 45% strength Laplacian
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+        for (int y = 0; y < bfhr; y++) {
+            for (int x = 0; x < bfwr; x++) {
+                bufexporig->L[y][x] = dataout[y * bfwr + x];
+            }
+        }
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+        for (int ir = 0; ir < bfhr; ir++) {
+            for (int jr = 0; jr < bfwr; jr++) {
+                float L = bufexporig->L[ir][jr];
+                //highlight
+                const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(cexp_scale, ccomp, chlrange, 2 * L));
+                L *= hlfactor;//approximation but pretty good with Laplacian and L < mean, hl aren't call
+                //shadow tone curve
+                L *= shtonecurve[2 * L];
+                //tonecurve
+                lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
+            }
+        }
+    } else {
+        constexpr float kl = 1.f;
+        const float hlcompthr = lp.hlcompthr / 200.f;
+        const float hlcomp = lp.hlcomp / 100.f;
 
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
@@ -2432,9 +2487,9 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
             for (int jr = 0; jr < bfw; jr++) {
                 float L = bufexporig->L[ir][jr];
                 const float Llin = LIM01(L / 32768.f);
-                const float addcomp = linear * (-kl * Llin + kl);//maximum about 1. IL
-                const float exp_scale = pow_F(2.0, (lp.expcomp + addcomp));
-                const float shoulder = ((maxran / rtengine::max(1.0f, exp_scale)) * hlcompthr) + 0.1f;
+                const float addcomp = linear * (-kl * Llin + kl);//maximum about 1 . IL
+                const float exp_scale = pow_F(2.f, lp.expcomp + addcomp);
+                const float shoulder = (maxran / rtengine::max(1.0f, exp_scale)) * hlcompthr + 0.1f;
                 const float comp = (rtengine::max(0.f, (lp.expcomp + addcomp)) + 1.f) * hlcomp;
                 const float hlrange = maxran - shoulder;
 
@@ -2447,25 +2502,8 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* b
                 lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
             }
         }
-    } else {
-#ifdef _OPENMP
-        #pragma omp parallel for if (multiThread)
-#endif
-        for (int ir = 0; ir < bfh; ir++) {
-            for (int jr = 0; jr < bfw; jr++) {
-                float L = bufexporig->L[ir][jr];
-                //highlight
-                const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(cexp_scale, ccomp, chlrange, 2 * L));
-                L *= hlfactor;//approximation but pretty good with Laplacian and L < mean, hl aren't call
-                //shadow tone curve
-                L *= shtonecurve[2 * L];
-                //tonecurve
-                lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
-            }
-        }
     }
 }
-
 
 void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk)
 {
@@ -3594,30 +3632,27 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
         fftwf_plan_with_nthreads(omp_get_max_threads());
     }
 #endif
-    float *data_fft, *data_fft04, *data_tmp, *data, *data_tmp04;
-    float *datashow = nullptr;
 
+    float *datashow = nullptr;
     if (show != 0) {
-        if (NULL == (datashow = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+        datashow = (float *) fftwf_malloc(sizeof(float) * bfw * bfh);
+        if (!datashow) {
             fprintf(stderr, "allocation error\n");
             abort();
         }
     }
 
-    if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
-        fprintf(stderr, "allocation error\n");
-        abort();
-    }
-
-    if (NULL == (data_tmp04 = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+    float *data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh);
+    if (!data_tmp) {
         fprintf(stderr, "allocation error\n");
         abort();
     }
 
     //first call to laplacian with plein strength
-    ImProcFunctions::discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
+    discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
 
-    if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+    float *data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh);
+    if (!data_fft) {
         fprintf(stderr, "allocation error\n");
         abort();
     }
@@ -3625,74 +3660,100 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     if (show == 1) {
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
-                datashow[y * bfw + x]   = data_tmp[y * bfw + x];
+                datashow[y * bfw + x] = data_tmp[y * bfw + x];
             }
         }
-    }
-
-    //second call to laplacian with 40% strength ==> reduce effect if we are far from ref (deltaE)
-    ImProcFunctions::discrete_laplacian_threshold(data_tmp04, datain, bfw, bfh, 0.4f * thresh);
-
-    if (NULL == (data_fft04 = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
-        fprintf(stderr, "allocation error\n");
-        abort();
-    }
-
-    if (NULL == (data = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
-        fprintf(stderr, "allocation error\n");
-        abort();
     }
 
     //execute first
     const auto dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_fw);
+    fftwf_destroy_plan(dct_fw);
 
     //execute second
     if (dEenable == 1) {
+        float* data_fft04 = (float *)fftwf_malloc(sizeof(float) * bfw * bfh);
+        float* data_tmp04 = (float *)fftwf_malloc(sizeof(float) * bfw * bfh);
+        if (!data_fft04 || !data_tmp04) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+        //second call to laplacian with 40% strength ==> reduce effect if we are far from ref (deltaE)
+        discrete_laplacian_threshold(data_tmp04, datain, bfw, bfh, 0.4f * thresh);
         const auto dct_fw04 = fftwf_plan_r2r_2d(bfh, bfw, data_tmp04, data_fft04, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
         fftwf_execute(dct_fw04);
         fftwf_destroy_plan(dct_fw04);
+        constexpr float exponent = 4.5f;
 
 #ifdef _OPENMP
-        #pragma omp parallel for if (multiThread)
+        #pragma omp parallel if (multiThread)
 #endif
-        for (int y = 0; y < bfh ; y++) {//mix two fftw Laplacian : plein if dE near ref
-            for (int x = 0; x < bfw; x++) {
-                float prov = pow(dE[y * bfw + x], 4.5f);
-                data_fft[y * bfw + x] = prov * data_fft[y * bfw + x] + (1.f - prov) * data_fft04[y * bfw + x];
+        {
+#ifdef __SSE2__
+            const vfloat exponentv = F2V(exponent);
+#endif
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+            for (int y = 0; y < bfh ; y++) {//mix two fftw Laplacian : plein if dE near ref
+                int x = 0;
+#ifdef __SSE2__
+                for (; x < bfw - 3; x += 4) {
+                    STVFU(data_fft[y * bfw + x], intp(pow_F(LVFU(dE[y * bfw + x]), exponentv), LVFU(data_fft[y * bfw + x]), LVFU(data_fft04[y * bfw + x])));
+                }
+#endif
+                for (; x < bfw; x++) {
+                    data_fft[y * bfw + x] = intp(pow_F(dE[y * bfw + x], exponent), data_fft[y * bfw + x], data_fft04[y * bfw + x]);
+                }
             }
         }
+        fftwf_free(data_fft04);
+        fftwf_free(data_tmp04);
     }
-
-    if (show == 2) {
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw; x++) {
-                datashow[y * bfw + x]   = data_fft[y * bfw + x];
-            }
-        }
-    }
-
-    fftwf_free(data_fft04);
-    fftwf_free(data_tmp);
-    fftwf_free(data_tmp04);
 
     /* solve the Poisson PDE in Fourier space */
     /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
-    ImProcFunctions::rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
+    rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
 
     if (show == 3) {
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
-                datashow[y * bfw + x]   = data_fft[y * bfw + x];
+                datashow[y * bfw + x] = data_fft[y * bfw + x];
             }
         }
     }
 
-    const auto dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+    const auto dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data_tmp, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_bw);
-    fftwf_destroy_plan(dct_fw);
     fftwf_destroy_plan(dct_bw);
     fftwf_free(data_fft);
+
+    if (show != 4 && normalize == 1) {
+        normalize_mean_dt(data_tmp, datain, bfw * bfh, 1.f, 1.f);
+    }
+
+    if (show == 0 || show == 4) {
+
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                dataout[y * bfw + x] = clipLoc(multy * data_tmp[y * bfw + x]);
+            }
+        }
+    } else if (show == 1 || show == 2 || show == 3) {
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                dataout[y * bfw + x] = clipLoc(multy * datashow[y * bfw + x]);
+            }
+        }
+    }
+
+    fftwf_free(data_tmp);
+    if (datashow) {
+        fftwf_free(datashow);
+    }
     fftwf_cleanup();
 
 #ifdef RT_FFTW3F_OMP
@@ -3700,32 +3761,6 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
         fftwf_cleanup_threads();
     }
 #endif
-    if (show != 4 && normalize == 1) {
-        normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f);
-    }
-
-    if (show == 0  || show == 4) {
-
-#ifdef _OPENMP
-        #pragma omp parallel for if (multiThread)
-#endif
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw; x++) {
-                dataout[y * bfw + x]   = clipLoc(multy * data[y * bfw + x]);
-            }
-        }
-    } else if (show == 1 || show == 2 || show == 3) {
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw; x++) {
-                dataout[y * bfw + x]   = clipLoc(multy * datashow[y * bfw + x]);
-            }
-        }
-
-        fftwf_free(datashow);
-    }
-
-    fftwf_free(data);
-
 }
 
 void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, LabImage* reserved, int inv, struct local_params & lp,
@@ -5253,7 +5288,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
         }
 
     } else if (senstype == 1) { //exposure
-        ImProcFunctions::exlabLocal(lp, GH, GW, original, temp.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
+        ImProcFunctions::exlabLocal(lp, GH, GW, GW, GH, original, temp.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
 
         if (exlocalcurve) {
 #ifdef _OPENMP
@@ -12942,7 +12977,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSP && bfh >= mSP) {
 
-            if (lp.expmet == 1) {
+            if (lp.expmet == 1  || lp.expmet == 0) {
                 optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
             }
 
@@ -13096,12 +13131,12 @@ void ImProcFunctions::Lab_Local(
                             lp.expcomp = 0.001f;    // to enabled
                         }
 
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
+                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
 
 
                     } else {
 
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
+                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
                     }
 
 //gradient
