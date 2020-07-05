@@ -2869,7 +2869,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expexpose(false),
     complexexpose(0),
     expcomp(0.0),
-    hlcompr(0),
+    hlcompr(20),
     hlcomprthresh(0),
     black(0),
     shadex(0),
