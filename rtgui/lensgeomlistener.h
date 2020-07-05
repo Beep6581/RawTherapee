@@ -19,6 +19,7 @@
 #pragma once
 
 #include <cstddef>
+#include <vector>
 
 namespace rtengine
 {
@@ -33,6 +34,6 @@ public:
     virtual void straightenRequested () = 0;
     virtual void autoCropRequested   () = 0;
     virtual double autoDistorRequested () = 0;
-    virtual void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const rtengine::ControlLine *lines = nullptr, size_t line_count = 0) = 0;
+    virtual void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const std::vector<rtengine::ControlLine> *lines = nullptr) = 0;
     virtual void updateTransformPreviewRequested (rtengine::ProcEvent event, bool render_perspective) = 0;
 };

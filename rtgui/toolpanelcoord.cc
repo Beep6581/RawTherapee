@@ -986,7 +986,7 @@ void ToolPanelCoordinator::straightenRequested()
     toolBar->setTool(TMStraighten);
 }
 
-void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const rtengine::ControlLine *lines, size_t line_count)
+void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const std::vector<rtengine::ControlLine> *lines)
 {
     if (!(ipc && (corr_pitch || corr_yaw))) {
         return;
@@ -1000,7 +1000,7 @@ void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, d
     rtengine::procparams::ProcParams params;
     ipc->getParams(&params);
 
-    auto res = rtengine::PerspectiveCorrection::autocompute(src, corr_pitch, corr_yaw, &params, src->getMetaData(), lines, line_count);
+    auto res = rtengine::PerspectiveCorrection::autocompute(src, corr_pitch, corr_yaw, &params, src->getMetaData(), lines);
     rot = res.angle;
     pitch = res.pitch;
     yaw = res.yaw;

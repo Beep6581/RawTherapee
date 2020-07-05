@@ -30,10 +30,10 @@
 struct ControlLine
 {
     static constexpr int OBJ_COUNT = 4;
-    Line* line;
-    OPIcon* icon;
-    OPIcon *icon_h, *icon_v;
-    Circle *begin, *end;
+    std::unique_ptr<Line> line;
+    std::shared_ptr<OPIcon> icon;
+    std::shared_ptr<OPIcon> icon_h, icon_v;
+    std::unique_ptr<Circle> begin, end;
     rtengine::ControlLine::Type type;
 };
 
@@ -44,9 +44,9 @@ protected:
     /** Determine how horizontal and vertical lines are displayed. */
     bool active_h, active_v;
     /** Hidden object for capturing mouse events. */
-    Rectangle* canvas_area;
+    std::unique_ptr<Rectangle> canvas_area;
     rtengine::Coord drag_delta;
-    std::vector<ControlLine*> control_lines;
+    std::vector<std::unique_ptr<ControlLine>> control_lines;
     CursorShape cursor;
     bool draw_mode;
     Cairo::RefPtr<RTSurface> line_icon_h, line_icon_v;
@@ -68,12 +68,11 @@ public:
     };
 
     /** Callbacks to invoke. */
-    Callbacks* callbacks;
+    std::shared_ptr<Callbacks> callbacks;
     /** Type of line for newly drawn lines. */
     rtengine::ControlLine::Type draw_line_type;
 
     ControlLineManager();
-    ~ControlLineManager();
 
     void removeAll (void);
     /** Sets whether or not the lines are visible and interact-able. */
@@ -88,7 +87,7 @@ public:
     /**
      * Allocates a new array and populates it with copies of the control lines.
      */
-    rtengine::ControlLine* toControlLines (void) const;
+    void toControlLines (std::vector<rtengine::ControlLine>& converted) const;
 
     // EditSubscriber overrides
     bool button1Pressed (int modifierKey) override;
@@ -125,9 +124,9 @@ protected:
     Adjuster* camera_shift_horiz;
     Adjuster* camera_shift_vert;
     Adjuster* camera_yaw;
-    Gtk::Image* img_ctrl_lines_edit;
-    Gtk::Image* img_ctrl_lines_apply;
-    ControlLineManager* lines;
+    std::unique_ptr<Gtk::Image> img_ctrl_lines_edit;
+    std::unique_ptr<Gtk::Image> img_ctrl_lines_apply;
+    std::unique_ptr<ControlLineManager> lines;
     Gtk::ToggleButton* lines_button_edit;
     Gtk::Button* lines_button_erase;
     Gtk::ToggleButton* lines_button_h;
@@ -167,7 +166,6 @@ protected:
 public:
 
     PerspCorrection ();
-    ~PerspCorrection ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
@@ -187,18 +185,16 @@ public:
         lens_geom_listener = listener;
     }
     void setMetadata (const rtengine::FramesMetaData* metadata);
-    void switchOffEditMode (ControlLineManager* lines);
+    void switchOffEditMode (void);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };
 
 class LinesCallbacks: public ControlLineManager::Callbacks
 {
 protected:
-    ControlLineManager* lines;
     PerspCorrection* tool;
 
 public:
-    LinesCallbacks(PerspCorrection* tool, ControlLineManager* lines);
-    ~LinesCallbacks();
+    LinesCallbacks(PerspCorrection* tool);
     void switchOffEditMode (void) override;
 };

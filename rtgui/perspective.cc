@@ -54,7 +54,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
 
     Gtk::Image* ipers_draw_horiz = Gtk::manage (new RTImage ("draw-horizontal.png"));
     Gtk::Image* ipers_draw_vert = Gtk::manage (new RTImage ("draw-vertical.png"));
-    Gtk::Image* ipers_draw = new RTImage ("draw.png");
+    std::unique_ptr<Gtk::Image> ipers_draw(new RTImage ("draw.png"));
     Gtk::Image* ipers_trash = Gtk::manage (new RTImage ("trash-empty.png"));
 
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
@@ -147,11 +147,11 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     lines_button_erase->signal_pressed().connect(sigc::mem_fun(
             *this, &::PerspCorrection::linesEraseButtonPressed));
 
-    lines = new ControlLineManager();
-    lines->callbacks = new LinesCallbacks(this, lines);
+    lines = std::unique_ptr<ControlLineManager>(new ControlLineManager());
+    lines->callbacks = std::make_shared<LinesCallbacks>(this);
 
-    img_ctrl_lines_apply = new RTImage ("tick.png");
-    img_ctrl_lines_edit = ipers_draw;
+    img_ctrl_lines_apply = std::unique_ptr<Gtk::Image>(new RTImage ("tick.png"));
+    img_ctrl_lines_edit = std::move(ipers_draw);
 
     Gtk::HBox* control_lines_box = Gtk::manage (new Gtk::HBox());
     control_lines_box->set_tooltip_text( M("TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP") );
@@ -249,14 +249,6 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     method->signal_changed().connect(sigc::mem_fun(*this, &PerspCorrection::methodChanged));
 
     show_all();
-}
-
-PerspCorrection::~PerspCorrection()
-{
-    delete lines->callbacks;
-    delete lines;
-    delete img_ctrl_lines_apply;
-    delete img_ctrl_lines_edit;
 }
 
 void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -462,11 +454,13 @@ void PerspCorrection::applyControlLines(void)
         return;
     }
 
-    auto control_lines = lines->toControlLines();
+    std::vector<rtengine::ControlLine> control_lines;
     int h_count = 0, v_count = 0;
     double rot = camera_roll->getValue();
     double pitch = camera_pitch->getValue();
     double yaw = camera_yaw->getValue();
+
+    lines->toControlLines(control_lines);
 
     for (unsigned int i = 0; i < lines->size(); i++) {
         if (control_lines[i].type == rtengine::ControlLine::HORIZONTAL) {
@@ -476,9 +470,7 @@ void PerspCorrection::applyControlLines(void)
         }
     }
     lens_geom_listener->autoPerspRequested(v_count > 1, h_count > 1, rot, pitch,
-            yaw, control_lines, lines->size());
-
-    free(control_lines);
+            yaw, &control_lines);
 
     disableListener();
     camera_pitch->setValue(pitch);
@@ -659,7 +651,7 @@ void PerspCorrection::setFocalLengthValue (const ProcParams* pparams, const Fram
     }
 }
 
-void PerspCorrection::switchOffEditMode(ControlLineManager* lines)
+void PerspCorrection::switchOffEditMode(void)
 {
     lines_button_h->set_active(false);
     lines_button_v->set_active(false);
@@ -760,28 +752,15 @@ ControlLineManager::ControlLineManager():
     prev_obj(-1),
     selected_object(-1)
 {
-    canvas_area = new Rectangle();
+    canvas_area = std::unique_ptr<Rectangle>(new Rectangle());
     canvas_area->filled = true;
     canvas_area->topLeft = Coord(0, 0);
-    mouseOverGeometry.push_back(canvas_area);
+    mouseOverGeometry.push_back(canvas_area.get());
 
     line_icon_h = Cairo::RefPtr<RTSurface>(new RTSurface("bidirectional-arrow-horizontal-hicontrast.png"));
     line_icon_v = Cairo::RefPtr<RTSurface>(new RTSurface("bidirectional-arrow-vertical-hicontrast.png"));
     line_icon_h_prelight = Cairo::RefPtr<RTSurface>(new RTSurface("bidirectional-arrow-horizontal-prelight.png"));
     line_icon_v_prelight = Cairo::RefPtr<RTSurface>(new RTSurface("bidirectional-arrow-vertical-prelight.png"));
-}
-
-ControlLineManager::~ControlLineManager()
-{
-    delete canvas_area;
-    for (auto i = control_lines.begin(); i != control_lines.end(); i++) {
-        delete (*i)->begin;
-        delete (*i)->end;
-        delete (*i)->line;
-        delete (*i)->icon_h;
-        delete (*i)->icon_v;
-        delete *i;
-    }
 }
 
 Geometry::State ControlLineManager::calcLineState(const ::ControlLine& line) const
@@ -903,22 +882,22 @@ bool ControlLineManager::pick1(bool picked)
 
     // Change line type.
     int object_id = provider->getObject();
-    auto line = control_lines[(object_id - 1) / ::ControlLine::OBJ_COUNT];
+    ::ControlLine& line = *control_lines[(object_id - 1) / ::ControlLine::OBJ_COUNT];
 
-    if (line->type == rtengine::ControlLine::HORIZONTAL) {
-        line->icon = line->icon_v;
-        line->type = rtengine::ControlLine::VERTICAL;
-    } else if (line->type == rtengine::ControlLine::VERTICAL) {
-        line->icon = line->icon_h;
-        line->type = rtengine::ControlLine::HORIZONTAL;
+    if (line.type == rtengine::ControlLine::HORIZONTAL) {
+        line.icon = line.icon_v;
+        line.type = rtengine::ControlLine::VERTICAL;
+    } else if (line.type == rtengine::ControlLine::VERTICAL) {
+        line.icon = line.icon_h;
+        line.type = rtengine::ControlLine::HORIZONTAL;
     }
 
-    visibleGeometry[object_id - 1] = line->icon;
+    visibleGeometry[object_id - 1] = line.icon.get();
 
-    auto state = calcLineState(*line);
-    line->begin->state = state;
-    line->end->state = state;
-    line->line->state = state;
+    auto state = calcLineState(line);
+    line.begin->state = state;
+    line.end->state = state;
+    line.line->state = state;
 
     return true;
 }
@@ -938,6 +917,8 @@ bool ControlLineManager::pick3(bool picked)
     }
 
     removeLine((provider->getObject() - 1) / ::ControlLine::OBJ_COUNT);
+    prev_obj = -1;
+    selected_object = -1;
     return false;
 }
 
@@ -949,7 +930,7 @@ bool ControlLineManager::drag1(int modifierKey)
         return false;
     }
 
-    ::ControlLine* control_line = control_lines[(selected_object - 1) / ::ControlLine::OBJ_COUNT];
+    ::ControlLine& control_line = *control_lines[(selected_object - 1) / ::ControlLine::OBJ_COUNT];
     int component = selected_object % ::ControlLine::OBJ_COUNT; // 0 == end, 1 == line, 2 == icon, 3 == begin
     Coord mouse = provider->posImage + provider->deltaImage;
     Coord delta = provider->deltaImage - drag_delta;
@@ -958,41 +939,41 @@ bool ControlLineManager::drag1(int modifierKey)
 
     switch (component) {
         case (0): // end
-            control_line->end->center = mouse;
-            control_line->end->center.clip(iw, ih);
-            control_line->line->end = control_line->end->center;
-            control_line->end->state = Geometry::DRAGGED;
+            control_line.end->center = mouse;
+            control_line.end->center.clip(iw, ih);
+            control_line.line->end = control_line.end->center;
+            control_line.end->state = Geometry::DRAGGED;
             break;
         case (1): { // line
             // Constrain delta so the end stays above the image.
-            Coord new_delta = control_line->end->center + delta;
+            Coord new_delta = control_line.end->center + delta;
             new_delta.clip(iw, ih);
-            new_delta -= control_line->end->center;
+            new_delta -= control_line.end->center;
             // Constrain delta so the beginning stays above the image.
-            new_delta += control_line->begin->center;
+            new_delta += control_line.begin->center;
             new_delta.clip(iw, ih);
-            new_delta -= control_line->begin->center;
+            new_delta -= control_line.begin->center;
             // Move all objects in the control line.
-            control_line->end->center += new_delta;
-            control_line->begin->center += new_delta;
-            control_line->line->end = control_line->end->center;
-            control_line->line->begin = control_line->begin->center;
+            control_line.end->center += new_delta;
+            control_line.begin->center += new_delta;
+            control_line.line->end = control_line.end->center;
+            control_line.line->begin = control_line.begin->center;
             drag_delta += new_delta;
-            control_line->line->state = Geometry::DRAGGED;
+            control_line.line->state = Geometry::DRAGGED;
             break;
         }
         case (3): // begin
-            control_line->begin->center = mouse;
-            control_line->begin->center.clip(iw, ih);
-            control_line->line->begin = control_line->begin->center;
-            control_line->begin->state = Geometry::DRAGGED;
+            control_line.begin->center = mouse;
+            control_line.begin->center.clip(iw, ih);
+            control_line.line->begin = control_line.begin->center;
+            control_line.begin->state = Geometry::DRAGGED;
             break;
     }
 
-    control_line->icon_h->position.x = (control_line->begin->center.x + control_line->end->center.x) / 2;
-    control_line->icon_h->position.y = (control_line->begin->center.y + control_line->end->center.y) / 2;
-    control_line->icon_v->position.x = control_line->icon_h->position.x;
-    control_line->icon_v->position.y = control_line->icon_h->position.y;
+    control_line.icon_h->position.x = (control_line.begin->center.x + control_line.end->center.x) / 2;
+    control_line.icon_h->position.y = (control_line.begin->center.y + control_line.end->center.y) / 2;
+    control_line.icon_v->position.x = control_line.icon_h->position.x;
+    control_line.icon_v->position.y = control_line.icon_h->position.y;
 
 
     return false;
@@ -1055,11 +1036,11 @@ void ControlLineManager::addLine(Coord begin, Coord end)
 {
     constexpr int line_width = 2;
     constexpr int handle_radius = 6;
-    Line* line;
-    OPIcon *icon_h, *icon_v;
-    Circle *begin_c, *end_c;
+    std::unique_ptr<Line> line;
+    std::shared_ptr<OPIcon> icon_h, icon_v;
+    std::unique_ptr<Circle> begin_c, end_c;
 
-    line = new Line();
+    line = std::unique_ptr<Line>(new Line());
     line->datum = Geometry::IMAGE;
     line->innerLineWidth = line_width;
     line->begin = begin;
@@ -1067,29 +1048,29 @@ void ControlLineManager::addLine(Coord begin, Coord end)
 
     const Cairo::RefPtr<RTSurface> null_surface = Cairo::RefPtr<RTSurface>(nullptr);
 
-    icon_h = new OPIcon(line_icon_h, null_surface, line_icon_h_prelight,
+    icon_h = std::make_shared<OPIcon>(line_icon_h, null_surface, line_icon_h_prelight,
             null_surface, null_surface, Geometry::DP_CENTERCENTER);
     icon_h->position = Coord((begin.x + end.x) / 2, (begin.y + end.y) / 2);
 
-    icon_v = new OPIcon(line_icon_v, null_surface, line_icon_v_prelight,
+    icon_v = std::make_shared<OPIcon>(line_icon_v, null_surface, line_icon_v_prelight,
             null_surface, null_surface, Geometry::DP_CENTERCENTER);
     icon_v->position = Coord((begin.x + end.x) / 2, (begin.y + end.y) / 2);
 
-    begin_c = new Circle();
+    begin_c = std::unique_ptr<Circle>(new Circle());
     begin_c->datum = Geometry::IMAGE;
     begin_c->filled = true;
     begin_c->radius = handle_radius;
     begin_c->center = begin;
 
-    end_c = new Circle();
+    end_c = std::unique_ptr<Circle>(new Circle());
     end_c->datum = Geometry::IMAGE;
     end_c->filled = true;
     end_c->radius = handle_radius;
     end_c->center = begin;
 
-    ::ControlLine* control_line = new ::ControlLine();
-    control_line->begin = begin_c;
-    control_line->end = end_c;
+    std::unique_ptr<::ControlLine> control_line(new ::ControlLine());
+    control_line->begin = std::move(begin_c);
+    control_line->end = std::move(end_c);
     control_line->icon_h = icon_h;
     control_line->icon_v = icon_v;
     if (draw_line_type == rtengine::ControlLine::HORIZONTAL) {
@@ -1097,34 +1078,29 @@ void ControlLineManager::addLine(Coord begin, Coord end)
     } else if (draw_line_type == rtengine::ControlLine::VERTICAL) {
         control_line->icon = icon_v;
     }
-    control_line->line = line;
+    control_line->line = std::move(line);
     control_line->type = draw_line_type;
-    control_lines.push_back(control_line);
 
-    EditSubscriber::visibleGeometry.push_back(line);
-    EditSubscriber::visibleGeometry.push_back(control_line->icon);
-    EditSubscriber::visibleGeometry.push_back(begin_c);
-    EditSubscriber::visibleGeometry.push_back(end_c);
+    EditSubscriber::visibleGeometry.push_back(control_line->line.get());
+    EditSubscriber::visibleGeometry.push_back(control_line->icon.get());
+    EditSubscriber::visibleGeometry.push_back(control_line->begin.get());
+    EditSubscriber::visibleGeometry.push_back(control_line->end.get());
 
-    EditSubscriber::mouseOverGeometry.push_back(line);
-    EditSubscriber::mouseOverGeometry.push_back(control_line->icon);
-    EditSubscriber::mouseOverGeometry.push_back(begin_c);
-    EditSubscriber::mouseOverGeometry.push_back(end_c);
+    EditSubscriber::mouseOverGeometry.push_back(control_line->line.get());
+    EditSubscriber::mouseOverGeometry.push_back(control_line->icon.get());
+    EditSubscriber::mouseOverGeometry.push_back(control_line->begin.get());
+    EditSubscriber::mouseOverGeometry.push_back(control_line->end.get());
+
+    control_lines.push_back(std::move(control_line));
 }
 
 void ControlLineManager::removeAll(void)
 {
-    for (unsigned int i = 0; i < control_lines.size(); i++) {
-        delete control_lines[i]->begin;
-        delete control_lines[i]->end;
-        delete control_lines[i]->line;
-        delete control_lines[i]->icon_h;
-        delete control_lines[i]->icon_v;
-        delete control_lines[i];
-    }
-    control_lines.clear();
     visibleGeometry.clear();
     mouseOverGeometry.erase(mouseOverGeometry.begin() + 1, mouseOverGeometry.end());
+    control_lines.clear();
+    prev_obj = -1;
+    selected_object = -1;
 }
 
 void ControlLineManager::removeLine(size_t line_id)
@@ -1133,48 +1109,35 @@ void ControlLineManager::removeLine(size_t line_id)
         return;
     }
 
-    ::ControlLine* line = control_lines[line_id];
-    delete line->begin;
-    delete line->end;
-    delete line->line;
-    delete line->icon_h;
-    delete line->icon_v;
-    delete line;
-    control_lines.erase(control_lines.begin() + line_id);
     visibleGeometry.erase(visibleGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id,
             visibleGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + ::ControlLine::OBJ_COUNT);
     mouseOverGeometry.erase(mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + 1,
             mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + ::ControlLine::OBJ_COUNT + 1);
+    control_lines.erase(control_lines.begin() + line_id);
 }
 
-rtengine::ControlLine* ControlLineManager::toControlLines(void) const
+void ControlLineManager::toControlLines(std::vector<rtengine::ControlLine>& converted) const
 {
-    auto retval = (rtengine::ControlLine*)malloc(control_lines.size() * sizeof(rtengine::ControlLine));
+    converted.clear();
+    converted.resize(control_lines.size());
 
     for (unsigned int i = 0; i < control_lines.size(); i++) {
-        retval[i].x1 = control_lines[i]->begin->center.x;
-        retval[i].y1 = control_lines[i]->begin->center.y;
-        retval[i].x2 = control_lines[i]->end->center.x;
-        retval[i].y2 = control_lines[i]->end->center.y;
-        retval[i].type = control_lines[i]->type;
+        converted[i].x1 = control_lines[i]->begin->center.x;
+        converted[i].y1 = control_lines[i]->begin->center.y;
+        converted[i].x2 = control_lines[i]->end->center.x;
+        converted[i].y2 = control_lines[i]->end->center.y;
+        converted[i].type = control_lines[i]->type;
     }
-
-    return retval;
 }
 
-LinesCallbacks::LinesCallbacks(PerspCorrection* tool, ControlLineManager* lines):
-    lines(lines),
+LinesCallbacks::LinesCallbacks(PerspCorrection* tool):
     tool(tool)
-{
-}
-
-LinesCallbacks::~LinesCallbacks()
 {
 }
 
 void LinesCallbacks::switchOffEditMode(void)
 {
     if (tool) {
-        tool->switchOffEditMode(lines);
+        tool->switchOffEditMode();
     }
 }

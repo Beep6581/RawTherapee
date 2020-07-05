@@ -229,15 +229,15 @@ void get_view_size(int w, int h, const procparams::PerspectiveParams &params, do
  * Allocates a new array and populates it with ashift lines corresponding to the
  * provided control lines.
  */
-dt_iop_ashift_line_t* toAshiftLines(const ControlLine *lines, size_t count)
+std::unique_ptr<dt_iop_ashift_line_t[]> toAshiftLines(const std::vector<ControlLine> *lines)
 {
-    auto retval = (dt_iop_ashift_line_t*)malloc(count * sizeof(dt_iop_ashift_line_t));
+    std::unique_ptr<dt_iop_ashift_line_t[]> retval(new dt_iop_ashift_line_t[lines->size()]);
 
-    for (size_t i = 0; i < count; i++) {
-        const float x1 = lines[i].x1;
-        const float y1 = lines[i].y1;
-        const float x2 = lines[i].x2;
-        const float y2 = lines[i].y2;
+    for (size_t i = 0; i < lines->size(); i++) {
+        const float x1 = (*lines)[i].x1;
+        const float y1 = (*lines)[i].y1;
+        const float x2 = (*lines)[i].x2;
+        const float y2 = (*lines)[i].y2;
         retval[i].p1[0] = x1;
         retval[i].p1[1] = y1;
         retval[i].p1[2] = 1.0f;
@@ -247,9 +247,9 @@ dt_iop_ashift_line_t* toAshiftLines(const ControlLine *lines, size_t count)
         retval[i].length = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
         retval[i].width = 1.0f;
         retval[i].weight = retval[i].length;
-        if (lines[i].type == ControlLine::HORIZONTAL) {
+        if ((*lines)[i].type == ControlLine::HORIZONTAL) {
             retval[i].type = ASHIFT_LINE_HORIZONTAL_SELECTED;
-        } else if (lines[i].type == ControlLine::VERTICAL) {
+        } else if ((*lines)[i].type == ControlLine::VERTICAL) {
             retval[i].type = ASHIFT_LINE_VERTICAL_SELECTED;
         } else {
             retval[i].type = ASHIFT_LINE_IRRELEVANT;
@@ -262,7 +262,7 @@ dt_iop_ashift_line_t* toAshiftLines(const ControlLine *lines, size_t count)
 } // namespace
 
 
-PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *src, bool corr_pitch, bool corr_yaw, const procparams::ProcParams *pparams, const FramesMetaData *metadata, const ControlLine *control_lines, size_t control_lines_count)
+PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *src, bool corr_pitch, bool corr_yaw, const procparams::ProcParams *pparams, const FramesMetaData *metadata, const std::vector<ControlLine> *control_lines)
 {
     auto pcp = procparams::PerspectiveParams(pparams->perspective);
     procparams::PerspectiveParams dflt;
@@ -351,13 +351,15 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
     if (control_lines == nullptr) {
         res = do_get_structure(&module, &p, ASHIFT_ENHANCE_EDGES) && do_fit(&module, &p, fitaxis);
     } else {
+        std::unique_ptr<dt_iop_ashift_line_t[]> ashift_lines = toAshiftLines(control_lines);
         dt_iop_ashift_gui_data_t *g = module.gui_data;
-        g->lines_count = control_lines_count;
-        g->lines = toAshiftLines(control_lines, control_lines_count);
+        g->lines_count = control_lines->size();
+        g->lines = ashift_lines.get();
         g->lines_in_height = fh;
         g->lines_in_width = fw;
         update_lines_count(g->lines, g->lines_count, &(g->vertical_count), &(g->horizontal_count));
         res = do_fit(&module, &p, fitaxis, 2);
+        g->lines = nullptr;
     }
     Params retval = {
         .angle = p.rotation,
