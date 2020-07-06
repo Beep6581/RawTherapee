@@ -261,6 +261,12 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->shape = 1;
         }
 
+        if (pp->locallab.spots.at(i).prevMethod == "hide") {
+            r->prevMethod = 0;
+        } else {
+            r->prevMethod = 1;
+        }
+
         if (pp->locallab.spots.at(i).spotMethod == "norm") {
             r->spotMethod = 0;
         } else {
@@ -408,6 +414,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             } else {
                 r->shape = 1;
             }
+
+            if (newSpot->prevMethod == "hide") {
+                r->prevMethod = 0;
+            } else {
+                r->prevMethod = 1;
+            }
+
 
             if (newSpot->spotMethod == "norm") {
                 r->spotMethod = 0;
@@ -686,6 +699,12 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->shape = 1;
             }
 
+            if (newSpot->prevMethod == "hide") {
+                r->prevMethod = 0;
+            } else {
+                r->prevMethod = 1;
+            }
+
             if (newSpot->spotMethod == "norm") {
                 r->spotMethod = 0;
             } else {
@@ -844,6 +863,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).shape = "RECT";
                     }
+
+                    if (r->prevMethod == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).prevMethod = "hide";
+                    } else {
+                        pp->locallab.spots.at(pp->locallab.selspot).prevMethod = "show";
+                    }
+
 
                     if (r->spotMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "norm";

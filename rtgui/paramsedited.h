@@ -390,6 +390,7 @@ public:
         // Control spot settings
         bool name;
         bool isvisible;
+        bool prevMethod;
         bool shape;
         bool spotMethod;
         bool wavMethod;

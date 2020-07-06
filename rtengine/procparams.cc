@@ -2615,6 +2615,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Control spot settings
     name(""),
     isvisible(true),
+    prevMethod("hide"),
     shape("ELI"),
     spotMethod("norm"),
     wavMethod("D4"),
@@ -3844,6 +3845,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         // Control spot settings
         name == other.name
         && isvisible == other.isvisible
+        && prevMethod == other.prevMethod
         && shape == other.shape
         && spotMethod == other.spotMethod
         && wavMethod == other.wavMethod
@@ -5364,6 +5366,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 // Control spot settings
                 saveToKeyfile(!pedited || spot_edited->name, "Locallab", "Name_" + index_str, spot.name, keyFile);
                 saveToKeyfile(!pedited || spot_edited->isvisible, "Locallab", "Isvisible_" + index_str, spot.isvisible, keyFile);
+                saveToKeyfile(!pedited || spot_edited->prevMethod, "Locallab", "PrevMethod_" + index_str, spot.prevMethod, keyFile);
                 saveToKeyfile(!pedited || spot_edited->shape, "Locallab", "Shape_" + index_str, spot.shape, keyFile);
                 saveToKeyfile(!pedited || spot_edited->spotMethod, "Locallab", "SpotMethod_" + index_str, spot.spotMethod, keyFile);
                 saveToKeyfile(!pedited || spot_edited->wavMethod, "Locallab", "WavMethod_" + index_str, spot.wavMethod, keyFile);
@@ -7029,6 +7032,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                 // Control spot settings
                 assignFromKeyfile(keyFile, "Locallab", "Isvisible_" + index_str, pedited, spot.isvisible, spotEdited.isvisible);
+                assignFromKeyfile(keyFile, "Locallab", "PrevMethod_" + index_str, pedited, spot.prevMethod, spotEdited.prevMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Shape_" + index_str, pedited, spot.shape, spotEdited.shape);
                 assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + index_str, pedited, spot.spotMethod, spotEdited.spotMethod);
                 assignFromKeyfile(keyFile, "Locallab", "wavMethod_" + index_str, pedited, spot.wavMethod, spotEdited.wavMethod);

@@ -1024,6 +1024,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Control spot settings
                 locallab.spots.at(j).name = locallab.spots.at(j).name && pSpot.name == otherSpot.name;
                 locallab.spots.at(j).isvisible = locallab.spots.at(j).isvisible && pSpot.isvisible == otherSpot.isvisible;
+                locallab.spots.at(j).prevMethod = locallab.spots.at(j).prevMethod && pSpot.prevMethod == otherSpot.prevMethod;
                 locallab.spots.at(j).shape = locallab.spots.at(j).shape && pSpot.shape == otherSpot.shape;
                 locallab.spots.at(j).spotMethod = locallab.spots.at(j).spotMethod && pSpot.spotMethod == otherSpot.spotMethod;
                 locallab.spots.at(j).wavMethod = locallab.spots.at(j).wavMethod && pSpot.wavMethod == otherSpot.wavMethod;
@@ -3060,6 +3061,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).isvisible) {
             toEdit.locallab.spots.at(i).isvisible = mods.locallab.spots.at(i).isvisible;
+        }
+
+        if (locallab.spots.at(i).prevMethod) {
+            toEdit.locallab.spots.at(i).prevMethod = mods.locallab.spots.at(i).prevMethod;
         }
 
         if (locallab.spots.at(i).shape) {
@@ -6048,6 +6053,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Control spot settings
     name(v),
     isvisible(v),
+    prevMethod(v),
     shape(v),
     spotMethod(v),
     wavMethod(v),
@@ -6530,6 +6536,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
 {
     name = v;
     isvisible = v;
+    prevMethod = v;
     shape = v;
     spotMethod = v;
     wavMethod = v;

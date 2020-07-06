@@ -48,6 +48,7 @@ ControlSpotPanel::ControlSpotPanel():
     button_rename_(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_BUTTON_REN")))),
     button_visibility_(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_BUTTON_VIS")))),
 
+    prevMethod_(Gtk::manage(new MyComboBoxText())),
     shape_(Gtk::manage(new MyComboBoxText())),
     spotMethod_(Gtk::manage(new MyComboBoxText())),
     shapeMethod_(Gtk::manage(new MyComboBoxText())),
@@ -92,6 +93,7 @@ ControlSpotPanel::ControlSpotPanel():
     expMaskMerge_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_MASFRAME")))),
 
     preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    ctboxshape(Gtk::manage(new Gtk::HBox())),
 
     controlPanelListener(nullptr),
     lastObject_(-1),
@@ -104,6 +106,18 @@ ControlSpotPanel::ControlSpotPanel():
     maskPrevActive(false)
 {
     const bool showtooltip = options.showtooltip;
+
+    Gtk::HBox* const ctboxprevmethod = Gtk::manage(new Gtk::HBox());
+    prevMethod_->append(M("TP_LOCALLAB_PREVHIDE"));
+    prevMethod_->append(M("TP_LOCALLAB_PREVSHOW"));
+    prevMethod_->set_active(0);
+    prevMethodconn_ = prevMethod_->signal_changed().connect(
+                          sigc::mem_fun(
+                              *this, &ControlSpotPanel::prevMethodChanged));
+    
+    ctboxprevmethod->pack_start(*prevMethod_);
+    pack_start(*ctboxprevmethod);
+
 
     Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
     buttonaddconn_ = button_add_->signal_clicked().connect(
@@ -176,7 +190,8 @@ ControlSpotPanel::ControlSpotPanel():
     scrolledwindow_->set_min_content_height(150);
     pack_start(*scrolledwindow_);
 
-    Gtk::HBox* const ctboxshape = Gtk::manage(new Gtk::HBox());
+//    Gtk::HBox* const ctboxshape = Gtk::manage(new Gtk::HBox());
+
     Gtk::Label* const labelshape = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHAPETYPE") + ":"));
     ctboxshape->pack_start(*labelshape, Gtk::PACK_SHRINK, 4);
     shape_->append(M("TP_LOCALLAB_ELI"));
@@ -207,6 +222,7 @@ ControlSpotPanel::ControlSpotPanel():
                               *this, &ControlSpotPanel::spotMethodChanged));
     ctboxspotmethod->pack_start(*spotMethod_);
     pack_start(*ctboxspotmethod);
+
 
     excluFrame->set_label_align(0.025, 0.5);
 
@@ -782,6 +798,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     const Gtk::TreeModel::Row row = *iter;
 
     // Load param in selected control spot
+    prevMethod_->set_active(row[spots_.prevMethod]);
     shape_->set_active(row[spots_.shape]);
     spotMethod_->set_active(row[spots_.spotMethod]);
     sensiexclu_->setValue((double)row[spots_.sensiexclu]);
@@ -868,6 +885,55 @@ void ControlSpotPanel::shapeChanged()
         listener->panelChanged(EvLocallabSpotShape, shape_->get_active_text());
     }
 }
+
+void ControlSpotPanel::prevMethodChanged()
+{
+    // printf("prevMethodChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    row[spots_.prevMethod] = prevMethod_->get_active_row_number();
+
+    // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
+    if (multiImage && prevMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
+        expTransGrad_->show();
+        expShapeDetect_->show();
+        expSpecCases_->show();
+        expMaskMerge_->show();
+        circrad_->show();
+        ctboxshape->show();
+    } else if (prevMethod_->get_active_row_number() == 0) { // Normal case
+        expTransGrad_->hide();
+        expShapeDetect_->hide();
+        expSpecCases_->hide();
+        expMaskMerge_->hide();
+        circrad_->hide();
+        ctboxshape->hide();
+
+    } else { // Excluding case
+        expTransGrad_->show();
+        expShapeDetect_->show();
+        expSpecCases_->show();
+        expMaskMerge_->show();
+        circrad_->show();
+        ctboxshape->show();
+    }
+
+    // Raise event
+    if (listener) {
+        listener->panelChanged(EvLocallabSpotprevMethod, prevMethod_->get_active_text());
+    }
+}
+
+
 
 void ControlSpotPanel::spotMethodChanged()
 {
@@ -1113,6 +1179,32 @@ void ControlSpotPanel::updateParamVisibility()
     } else { // Excluding case
         excluFrame->show();
     }
+
+
+    if (multiImage && prevMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
+        expTransGrad_->show();
+        expShapeDetect_->show();
+        expSpecCases_->show();
+        expMaskMerge_->show();
+        circrad_->show();
+        ctboxshape->show();
+    } else if (prevMethod_->get_active_row_number() == 0) { // Normal case
+        expTransGrad_->hide();
+        expShapeDetect_->hide();
+        expSpecCases_->hide();
+        expMaskMerge_->hide();
+        circrad_->hide();
+        ctboxshape->hide();
+    } else { // Excluding case
+        expTransGrad_->show();
+        expShapeDetect_->show();
+        expSpecCases_->show();
+        expMaskMerge_->show();
+        circrad_->show();
+        ctboxshape->show();
+    }
+
+    
 }
 
 void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
@@ -1341,6 +1433,9 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+
+
+
 void ControlSpotPanel::avoidChanged()
 {
     // printf("avoidChanged\n");
@@ -1532,6 +1627,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     buttonduplicateconn_.block(cond);
     buttonrenameconn_.block(cond);
     buttonvisibilityconn_.block(cond);
+    prevMethodconn_.block(cond);
     shapeconn_.block(cond);
     spotMethodconn_.block(cond);
     sensiexclu_->block(cond);
@@ -1573,6 +1669,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
 {
     // printf("setParamEditable: %d\n", cond);
 
+    prevMethod_->set_sensitive(cond);
     shape_->set_sensitive(cond);
     spotMethod_->set_sensitive(cond);
     sensiexclu_->set_sensitive(cond);
@@ -2229,6 +2326,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
         if (i == index) {
             r->name = row[spots_.name];
             r->isvisible = row[spots_.isvisible];
+            r->prevMethod = row[spots_.prevMethod];
             r->shape = row[spots_.shape];
             r->spotMethod = row[spots_.spotMethod];
 //           r->mergeMethod = row[spots_.mergeMethod];
@@ -2361,6 +2459,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.name] = newSpot->name;
     row[spots_.isvisible] = newSpot->isvisible;
     row[spots_.curveid] = 0; // No associated curve
+    row[spots_.prevMethod] = newSpot->prevMethod;
     row[spots_.shape] = newSpot->shape;
     row[spots_.spotMethod] = newSpot->spotMethod;
     row[spots_.sensiexclu] = newSpot->sensiexclu;
@@ -2473,6 +2572,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(name);
     add(isvisible);
     add(curveid);
+    add(prevMethod);
     add(shape);
     add(spotMethod);
     add(sensiexclu);

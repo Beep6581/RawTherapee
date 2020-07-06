@@ -50,6 +50,7 @@ public:
     struct SpotRow {
         Glib::ustring name;
         bool isvisible;
+        int prevMethod; // 0 = Normal, 1 = Excluding
         int shape; // 0 = Ellipse, 1 = Rectangle
         int spotMethod; // 0 = Normal, 1 = Excluding
         int sensiexclu;
@@ -231,6 +232,7 @@ private:
 
     void controlspotChanged();
 
+    void prevMethodChanged();
     void shapeChanged();
     void spotMethodChanged();
     void shapeMethodChanged();
@@ -276,6 +278,7 @@ private:
         Gtk::TreeModelColumn<Glib::ustring> name;
         Gtk::TreeModelColumn<bool> isvisible;
         Gtk::TreeModelColumn<int> curveid; // Associated curve id
+        Gtk::TreeModelColumn<int> prevMethod; // 0 = hide, 1 = show
         Gtk::TreeModelColumn<int> shape; // 0 = Ellipse, 1 = Rectangle
         Gtk::TreeModelColumn<int> spotMethod; // 0 = Normal, 1 = Excluding
         Gtk::TreeModelColumn<int> sensiexclu;
@@ -349,6 +352,8 @@ private:
     Gtk::Button* const button_visibility_;
     sigc::connection buttonvisibilityconn_;
 
+    MyComboBoxText* const prevMethod_;
+    sigc::connection prevMethodconn_;
     MyComboBoxText* const shape_;
     sigc::connection shapeconn_;
     MyComboBoxText* const spotMethod_;
@@ -407,6 +412,8 @@ private:
 
     Gtk::ToggleButton* const preview_;
     sigc::connection previewConn_;
+
+    Gtk::HBox* const ctboxshape;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;
