@@ -2108,6 +2108,8 @@ TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Compression dynamique + Standard
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuation ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - algorithme personnel adapté de IPOL à Rawtherapee: conduit à des résultats très variés et a besoin de différents réglages que Standard (Noir négatif, gamma < 1,...)\nPeut être utils pour des iamges sous-exposées ou avec une étendue dynamique importante.\n
 TP_LOCALLAB_PREVIEW;Prévisualisation ΔE
+TP_LOCALLAB_PREVHIDE;Cacher tous les outils
+TP_LOCALLAB_PREVSHOW;Montrer tous les outils
 TP_LOCALLAB_PROXI;ΔE Affaiblissement
 TP_LOCALLAB_QUALCURV_METHOD;Types de Courbes
 TP_LOCALLAB_QUAL_METHOD;Qualité globale
