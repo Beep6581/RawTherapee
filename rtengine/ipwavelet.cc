@@ -50,6 +50,8 @@
 #endif
 
 #include "cplx_wavelet_dec.h"
+#define BENCHMARK
+#include "StopWatch.h"
 
 namespace rtengine
 {
@@ -162,6 +164,41 @@ struct cont_params {
 
 int wavNestedLevels = 1;
 
+std::unique_ptr<LUTf> ImProcFunctions::buildMeaLut(const float inVals[11], const float mea[10], float& lutFactor)
+{
+    constexpr int lutSize = 100;
+
+    const float lutMax = std::ceil(mea[9]);
+    const float lutDiff = lutMax / lutSize;
+
+    std::vector<float> lutVals(lutSize);
+    int jStart = 1;
+    for (int i = 0; i < lutSize; ++i) {
+        const float val = i * lutDiff;
+        if (val < mea[0]) {
+            // still < first value => no interpolation
+            lutVals[i] = inVals[0];
+        } else {
+            for (int j = jStart; j < 10; ++j) {
+                if (val == mea[j]) {
+                    // exact match => no interpolation
+                    lutVals[i] = inVals[j];
+                    ++jStart;
+                    break;
+                }
+                if (val < mea[j]) {
+                    // interpolate
+                    const float dist = (val - mea[j - 1]) / (mea[j] - mea[j - 1]);
+                    lutVals[i] = rtengine::intp(dist, inVals[j], inVals[j - 1]);
+                    break;
+                }
+                lutVals[i] = inVals[10];
+            }
+        }
+    }
+    lutFactor = 1.f / lutDiff;
+    return std::unique_ptr<LUTf>(new LUTf(lutVals));
+}
 
 void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const Wavblcurve & wavblcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveSH & waOpacityCurveSH, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, const LUTf &wavclCurve, int skip)
 
@@ -1974,6 +2011,7 @@ void ImProcFunctions::WaveletcontAllLfinal(wavelet_decomposition& WaveletCoeffs_
 void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float **varchrom, wavelet_decomposition& WaveletCoeffs_L, const Wavblcurve & wavblcurve,
      struct cont_params &cp, int skip, float *mean, float *sigma, float *MaxP, float *MaxN, const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveSH & waOpacityCurveSH, FlatCurve* ChCurve, bool Chutili)
 {
+    BENCHFUN
     const int maxlvl = WaveletCoeffs_L.maxlevel();
     const int W_L = WaveletCoeffs_L.level_W(0);
     const int H_L = WaveletCoeffs_L.level_H(0);
@@ -2129,10 +2167,6 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         }
     }
 
-//
-    int n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n32;
-    n0 = n1 = n2 = n3 = n4 = n5 = n6 = n7 = n8 = n9 = n10 = n32 = 0;
-
     float *koeLi[12];
 
     const std::unique_ptr<float[]> koeLibuffer(new float[12 * H_L * W_L]());
@@ -2281,13 +2315,14 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             for (int i = 0; i < 500; i++) {
                 if (wavblcurve[i] != 0.) {
                     wavcurvecomp = true;
+                    break;
                 }
             }
         }
 
+        std::unique_ptr<float[]> aft;
 #ifdef _OPENMP
-        //  #pragma omp for schedule(dynamic) collapse(2)
-        #pragma omp for reduction(+:n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n32) schedule(dynamic) collapse(2)
+        #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
         for (int dir = 1; dir < 4; dir++) {
@@ -2299,85 +2334,37 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                 float* const* WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 
                 ContAllL(koeLi, maxkoeLi[lvl * 3 + dir - 1], true, maxlvl, labco,  varhue, varchrom, WavCoeffs_L, WavCoeffs_L0, lvl, dir, cp, Wlvl_L, Hlvl_L, skip, mean, sigma, MaxP, MaxN, wavCLVCcurve, waOpacityCurveW, waOpacityCurveSH, ChCurve, Chutili);
-                int minWL = min(Wlvl_L, Hlvl_L);
 
-                if(minWL > 180) {
+                if (std::min(Wlvl_L, Hlvl_L) > 180) {
                     if (wavblcurve && wavcurvecomp && cp.blena) {
                         // printf("Blur level L\n");
                         float mea[10];
                         const float effect = cp.bluwav;
                         constexpr float offs = 1.f;
-                        float * beta = new float[Wlvl_L * Hlvl_L];
-
                         calceffect(lvl, mean, sigma, mea, effect, offs);
-
-                        float * bef = new float[Wlvl_L * Hlvl_L];
-                        float * aft = new float[Wlvl_L * Hlvl_L];
-
-                        for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
-                            bef[co] = WavCoeffs_L[dir][co];
-                            float WavCL = std::fabs(WavCoeffs_L[dir][co]);
-
-                            if (WavCL < mea[0]) {
-                                beta[co] = 0.05f;
-                                n0++;
-
-                                if (WavCL < 32.7) {
-                                    n32++;
-                                }
-                            } else if (WavCL < mea[1]) {
-                                beta[co] = 0.2f;
-                                n1++;
-                            } else if (WavCL < mea[2]) {
-                                beta[co] = 0.7f;
-                                n2++;
-                            } else if (WavCL < mea[3]) {
-                                beta[co] = 1.f;    //standard
-                                n3++;
-                            } else if (WavCL < mea[4]) {
-                                beta[co] = 1.f;
-                                n4++;
-                            } else if (WavCL < mea[5]) {
-                                beta[co] = 0.8f;    //+sigma
-                                n5++;
-                            } else if (WavCL < mea[6]) {
-                                beta[co] = 0.6f;
-                                n6++;
-                            } else if (WavCL < mea[7]) {
-                                beta[co] = 0.4f;
-                                n7++;
-                            } else if (WavCL < mea[8]) {
-                                beta[co] = 0.2f;    // + 2 sigma
-                                n8++;
-                            } else if (WavCL < mea[9]) {
-                                beta[co] = 0.1f;
-                                n9++;
-                            } else {
-                                beta[co] = 0.01f;
-                                n10++;
-                            }
-
-
+                        float lutFactor;
+                        const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.6f, 0.4f, 0.2f, 0.1f, 0.01f};
+                        const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
+                        if (!aft.get()) {
+                            aft.reset(new float[Wlvl_L * Hlvl_L]);
                         }
 
-                        if (settings->verbose) {
-                            printf("lvl=%i n0=%i n32=%i n1=%i n2=%i n3=%i n4=%i n5=%i n6=%i n7=%i n8=%i n9=%i n10=%i\n", lvl, n0, n0 - n32, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10);
+                        //blur level
+                        const float klev = wavblcurve[lvl * 55.5f] * 80.f / skip;
+                        auto WavL = WavCoeffs_L[dir];
+                        boxblur(WavL, aft.get(), klev, Wlvl_L, Hlvl_L, false);
+
+                        int co = 0;
+#ifdef __SSE2__
+                        const vfloat lutFactorv = F2V(lutFactor);
+                        for (; co < Hlvl_L * Wlvl_L - 3; co += 4) {
+                            const vfloat valv = LVFU(WavL[co]);
+                            STVFU(WavL[co], intp((*meaLut)[vabsf(valv) * lutFactorv], LVFU(aft[co]), valv));
                         }
-
-                        float klev = (wavblcurve[lvl * 55.5f]);
-
-                    //blur level
-                        klev *= 80.f / skip;
-                        boxblur(bef, aft, klev, Wlvl_L, Hlvl_L, false);
-
-                        for (int co = 0; co < Hlvl_L * Wlvl_L; co++) {
-                            aft[co] = bef[co] * (1.f - beta[co]) + aft[co] * beta[co];
-                            WavCoeffs_L[dir][co] = aft[co];
+#endif
+                        for (; co < Hlvl_L * Wlvl_L; co++) {
+                            WavL[co] = intp((*meaLut)[std::fabs(WavL[co]) * lutFactor], aft[co], WavL[co]);
                         }
-
-                        delete[] bef;
-                        delete[] aft;
-                        delete[] beta;
                     }
                 }
             }
