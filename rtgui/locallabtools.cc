@@ -1680,6 +1680,7 @@ void LocallabColor::convertParamToNormal()
 
     // Set hidden GUI widgets in Normal mode to default spot values
     blurcolde->setValue((double)defSpot.blurcolde);
+    structcol->setValue((double)defSpot.structcol);
   //  softradiuscol->setValue(defSpot.softradiuscol);
     strcolab->setValue(defSpot.strcolab);
     strcolh->setValue(defSpot.strcolh);
@@ -1811,9 +1812,11 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
         maskHCurveEditorG->hide();
         mask2CurveEditorGwav->hide();
         csThresholdcol->hide();
+        structcol->hide();
     } else {
         // Advanced widgets are shown in Expert mode
         blurcolde->show();
+        structcol->show();
 
         if (!invers->get_active()) { // Keep widget hidden when invers is toggled
             softradiuscol->show();
@@ -2077,6 +2080,7 @@ void LocallabColor::updateColorGUI1()
 
         if (mode == Normal) { // Keep widget hidden in Normal mode
             softradiuscol->show();
+            structcol->hide();
         }
 
         expgradcol->show();
@@ -3012,6 +3016,8 @@ void LocallabExposure::convertParamToNormal()
     slomaskexp->setValue(defSpot.slomaskexp);
     strmaskexp->setValue(defSpot.strmaskexp);
     angmaskexp->setValue(defSpot.angmaskexp);
+    structexp->setValue((double)defSpot.structexp);
+
  //   laplacexp->setValue(defSpot.laplacexp);
   //  linear->setValue(defSpot.linear);
   //  balanexp->setValue(defSpot.balanexp);
@@ -3030,6 +3036,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
         slomaskexp->hide();
         gradFramemask->hide();
         blurexpde->hide();
+        structexp->hide();
      //   pdeFrame->hide();
     } else {
         // Advanced widgets are shown in Expert mode
@@ -3038,6 +3045,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
         slomaskexp->show();
         gradFramemask->show();
         blurexpde->show();
+        structexp->show();
       //  pdeFrame->show();
     }
 }
@@ -3210,7 +3218,7 @@ void LocallabExposure::updateExposureGUI3()
             updateExposureGUI2();
         }
 
-        structexp->hide();
+        //structexp->hide();
        // shadex->hide();
         shadex->show();
         softradiusexp->hide();
@@ -3223,7 +3231,7 @@ void LocallabExposure::updateExposureGUI3()
         showmaskexpMethodinv->show();
     } else {
         expMethod->show();
-        structexp->show();
+        //structexp->show();
         shadex->show();
         softradiusexp->show();
         expgradexp->show();
