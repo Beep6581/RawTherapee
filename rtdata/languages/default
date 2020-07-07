@@ -2456,7 +2456,7 @@ TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Detail threshold Luminance Chroma (DCT ƒ)
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge Sharpness
-TP_LOCALLAB_EDGSHOW;Show all tools
+TP_LOCALLAB_EDGSHOW;Show all tolls
 TP_LOCALLAB_ELI;Elipse
 TP_LOCALLAB_ENABLE_AFTER_MASK;Use Tone Mapping
 TP_LOCALLAB_ENABLE_MASK;Enable mask
@@ -2687,8 +2687,8 @@ TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Dynamic Range compression + Standard
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure or high dynamic range.\n
 TP_LOCALLAB_PREVIEW;Preview ΔE
-TP_LOCALLAB_PREVHIDE;Hide all tools
-TP_LOCALLAB_PREVSHOW;Show all tools
+TP_LOCALLAB_PREVHIDE;Hide all settings
+TP_LOCALLAB_PREVSHOW;Show all settings
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_QUAL_METHOD;Global quality
