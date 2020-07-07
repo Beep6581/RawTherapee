@@ -2441,7 +2441,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition& WaveletCoeffs_a, 
 void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float **varchrom, wavelet_decomposition& WaveletCoeffs_ab, const Wavblcurve & wavblcurve, const WavOpacityCurveW & waOpacityCurveW,
           struct cont_params &cp, const bool useChannelA, int skip, float *meanab, float *sigmaab)
 {
-
+BENCHFUN
     int maxlvl = WaveletCoeffs_ab.maxlevel();
     int W_L = WaveletCoeffs_ab.level_W(0);
     int H_L = WaveletCoeffs_ab.level_H(0);
@@ -2581,10 +2581,12 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
             for (int i = 0; i < 500; i++) {
                 if (wavblcurve[i] != 0.) {
                     wavcurvecomp = true;
+                    break;
                 }
             }
         }
 
+        std::unique_ptr<float[]> aft;
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
 #endif
@@ -2597,85 +2599,44 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 
                 float* const* WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
                 ContAllAB(labco, maxlvl, varhue, varchrom, WavCoeffs_ab, WavCoeffs_ab0, lvl, dir, waOpacityCurveW, cp, Wlvl_ab, Hlvl_ab, useChannelA, meanab, sigmaab);
-                int minWL = min(Wlvl_ab, Hlvl_ab);
                 
-                if(minWL > 180) {
+                if(std::min(Wlvl_ab, Hlvl_ab) > 180) {
                     if (wavblcurve && wavcurvecomp && cp.blena && cp.chrwav > 0.f) {
-
                         float mea[10];
-                        float effect = cp.bluwav;
-                        float offs = 1.f;
-                        float * beta = new float[Wlvl_ab * Hlvl_ab];
-
-                        for (int co = 0; co < Wlvl_ab * Hlvl_ab; co++) {
-                            beta[co] = 1.f;
-                        }
-
+                        const float effect = cp.bluwav;
+                        constexpr float offs = 1.f;
                         calceffect(lvl, meanab, sigmaab, mea, effect, offs);
+                        float lutFactor;
+                        const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.6f, 0.4f, 0.2f, 0.1f, 0.00f};
+                        const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
 
-                        float * bef = new float[Wlvl_ab * Hlvl_ab];
-                        float * aft = new float[Wlvl_ab * Hlvl_ab];
-                        float klev;
-
-                        for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
-                            bef[co] = WavCoeffs_ab[dir][co];
-                            float WavCab = std::fabs(WavCoeffs_ab[dir][co]);
-
-                            if (WavCab < mea[0]) {
-                                beta[co] = 0.05f;
-                            } else if (WavCab < mea[1]) {
-                                beta[co] = 0.2f;
-                            } else if (WavCab < mea[2]) {
-                                beta[co] = 0.7f;
-                            } else if (WavCab < mea[3]) {
-                                beta[co] = 1.f;    //standard
-                            } else if (WavCab < mea[4]) {
-                                beta[co] = 1.f;
-                            } else if (WavCab < mea[5]) {
-                                beta[co] = 0.8f;    //+sigma
-                            } else if (WavCab < mea[6]) {
-                                beta[co] = 0.6f;
-                            } else if (WavCab < mea[7]) {
-                                beta[co] = 0.4f;
-                            } else if (WavCab < mea[8]) {
-                                beta[co] = 0.2f;    // + 2 sigma
-                            } else if (WavCab < mea[9]) {
-                                beta[co] = 0.1f;
-                            } else {
-                                beta[co] = 0.0f;
-                            }
-
-
+                        if (!aft.get()) {
+                            aft.reset(new float[Wlvl_ab * Hlvl_ab]);
                         }
 
-                        klev = (wavblcurve[lvl * 55.5f]);
+                        //blur level
+                        const float klev = wavblcurve[lvl * 55.5f] * 80.f / skip;
+                        boxblur(WavCoeffs_ab[dir], aft.get(), klev, Wlvl_ab, Hlvl_ab, false);
 
-                        klev *=  cp.chrwav * 80.f / skip;
-
-                        boxblur(bef, aft, klev, Wlvl_ab, Hlvl_ab, false);
-
-                        for (int co = 0; co < Hlvl_ab * Wlvl_ab; co++) {
-                            aft[co] = bef[co] * (1.f - beta[co]) + aft[co] * beta[co];
-                            WavCoeffs_ab[dir][co] = aft[co];
+                        auto WavAb = WavCoeffs_ab[dir];
+                        int co = 0;
+#ifdef __SSE2__
+                        const vfloat lutFactorv = F2V(lutFactor);
+                        for (; co < Hlvl_ab * Wlvl_ab - 3; co += 4) {
+                            const vfloat valv = LVFU(WavAb[co]);
+                            STVFU(WavAb[co], intp((*meaLut)[vabsf(valv) * lutFactorv], LVFU(aft[co]), valv));
                         }
-
-                        delete[] bef;
-                        delete[] aft;
-                        delete[] beta;
+#endif
+                        for (; co < Hlvl_ab * Wlvl_ab; co++) {
+                            WavAb[co] = intp((*meaLut)[std::fabs(WavAb[co]) * lutFactor], aft[co], WavAb[co]);
+                        }
                     }
                 }
-
             }
         }
-
-
     }
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-//void ImProcFunctions::calckoe(float ** WavCoeffs_LL, const cont_params& cp, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float *maxkoeLi, float **tmC)
 void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, float tloww, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC)
 {
     int borderL = 2;
