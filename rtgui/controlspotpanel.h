@@ -75,6 +75,7 @@ public:
         double balanh;
         double colorde;
         double colorscope;
+        bool activ;
         bool avoid;
         bool blwh;
         bool recurs;
@@ -244,6 +245,7 @@ private:
 
     void adjusterChanged(Adjuster* a, double newval) override;
 
+    void activChanged();
     void avoidChanged();
     void blwhChanged();
     void recursChanged();
@@ -303,6 +305,7 @@ private:
         Gtk::TreeModelColumn<double> balanh;
         Gtk::TreeModelColumn<double> colorde;
         Gtk::TreeModelColumn<double> colorscope;
+        Gtk::TreeModelColumn<bool> activ;
         Gtk::TreeModelColumn<bool> avoid;
         Gtk::TreeModelColumn<bool> blwh;
         Gtk::TreeModelColumn<bool> recurs;
@@ -390,6 +393,8 @@ private:
     Adjuster* const scopemask_;
     Adjuster* const lumask_;
 
+    Gtk::CheckButton* const activ_;
+    sigc::connection activConn_;
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;
     Gtk::CheckButton* const blwh_;

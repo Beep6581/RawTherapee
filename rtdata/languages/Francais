@@ -1752,6 +1752,7 @@ TP_LOCALCONTRAST_LABEL;Contraste Local
 TP_LOCALCONTRAST_LIGHTNESS;Niveau des hautes-lumières
 TP_LOCALCONTRAST_RADIUS;Rayon
 TP_LOCALLAB_ACTIV;Luminosité seulement
+TP_LOCALLAB_ACTIVSPOT;Activer le Spot
 TP_LOCALLAB_ADJ;Egalisateur Bleu-jaune Rouge-vert
 TP_LOCALLAB_ALL;Toutes les rubriques
 TP_LOCALLAB_AMOUNT;Quantité

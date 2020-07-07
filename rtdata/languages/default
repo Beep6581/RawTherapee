@@ -1193,6 +1193,7 @@ HISTORY_MSG_951;Local - Mask Common GF angle
 HISTORY_MSG_952;Local - Mask Common soft radius
 HISTORY_MSG_953;Local - Mask Common blend chroma
 HISTORY_MSG_954;Local - Show-hide tools
+HISTORY_MSG_955;Local - Enable Spot
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2329,6 +2330,7 @@ TP_LOCALCONTRAST_LABEL;Local Contrast
 TP_LOCALCONTRAST_LIGHTNESS;Lightness level
 TP_LOCALCONTRAST_RADIUS;Radius
 TP_LOCALLAB_ACTIV;Luminance only
+TP_LOCALLAB_ACTIVSPOT;Enable Spot
 TP_LOCALLAB_ADJ;Equalizer Blue-yellow Red-green
 TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount

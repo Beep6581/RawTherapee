@@ -414,6 +414,7 @@ public:
         bool colorscope;
         bool transitweak;
         bool transitgrad;
+        bool activ;
         bool avoid;
         bool blwh;
         bool recurs;
