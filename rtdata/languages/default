@@ -2378,7 +2378,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
-TP_LOCALLAB_CBDL;Contrast by detail levels - Defects
+TP_LOCALLAB_CBDL;Contrast by detail levels-Defects
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Takes the midtones and enhance them.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Acts as a wavelet tools.\nThe first level (0) acts on 2x2 details.\nThe last level (5) acts on 64x64 details.
 TP_LOCALLAB_CBDL_THRES_TOOLTIP;Prevent the sharpening of noise
@@ -2579,11 +2579,11 @@ TP_LOCALLAB_LIST_TOOLTIP;Choose a tool and then its level of complexity "Normal"
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
-TP_LOCALLAB_LOC_CONTRAST;Local contrast -Wavelet - defects
+TP_LOCALLAB_LOC_CONTRAST;Local contrast -Wavelet-defects
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
-TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by Levels- Tone Mapping - Dir. Contrast
-TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB;Contrast by Levels- Tone Mapping - Dir.Contrast
+TP_LOCALLAB_LOC_CONTRASTPYRLAB;Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual Image Main
 TP_LOCALLAB_LOG;Encoding log
 TP_LOCALLAB_LOGAUTO;Automatic
@@ -2683,7 +2683,7 @@ TP_LOCALLAB_ORIGLC;Merge only with original image
 TP_LOCALLAB_ORRETILAP_TOOLTIP;Acts on a second Laplacian threshold, to take into account ΔE to differentiate the action especially with the background (different from Scope)
 TP_LOCALLAB_ORRETISTREN_TOOLTIP;Acts on the Laplacian threshold, the greater the action, the more the differences in contrast will be reduced
 TP_LOCALLAB_PASTELS2;Vibrance
-TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Dynamic Range compression + Standard
+TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Dynamic Range compression
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure or high dynamic range.\n
 TP_LOCALLAB_PREVIEW;Preview ΔE
@@ -2886,7 +2886,7 @@ TP_LOCALLAB_WAVCOMPRE_TOOLTIP;Achieve a Tone-mapping or reduction local contrast
 TP_LOCALLAB_WAVCOMP_TOOLTIP;Achive local contrast in function of the direction wavelet decomposition : horizontal, vertical, diagonal
 TP_LOCALLAB_WAVCON;Contrast by Level
 TP_LOCALLAB_WAVCONTF_TOOLTIP;Similar to Contrast By Detail Levels : on abscissa levels.
-TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2  + 3 and more)
+TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2 +3 and more)
 TP_LOCALLAB_WAVE;Ψ Wavelet
 TP_LOCALLAB_WAVEDG;Local contrast
 TP_LOCALLAB_WAVEEDG_TOOLTIP;Achieves a sharpness taking into account the notion of edges wavelet.\nRequires that at least the first 4 levels are usable
