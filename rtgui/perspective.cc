@@ -52,10 +52,9 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     lens_geom_listener = nullptr;
     metadata = nullptr;
 
-    Gtk::Image* ipers_draw_horiz = Gtk::manage (new RTImage ("draw-horizontal.png"));
-    Gtk::Image* ipers_draw_vert = Gtk::manage (new RTImage ("draw-vertical.png"));
-    std::unique_ptr<Gtk::Image> ipers_draw(new RTImage ("draw.png"));
+    Gtk::Image* ipers_draw(new RTImage ("draw.png"));
     Gtk::Image* ipers_trash = Gtk::manage (new RTImage ("trash-empty.png"));
+    Gtk::Image* ipers_apply = Gtk::manage (new RTImage ("tick.png"));
 
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
     Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
@@ -126,15 +125,11 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     camera_yaw->setAdjusterListener (this);
 
     // Begin control lines interface.
-    lines_button_h = Gtk::manage (new Gtk::ToggleButton());
-    lines_button_h->set_image(*ipers_draw_horiz);
-    lines_button_h->signal_toggled().connect(sigc::bind(sigc::mem_fun(
-            *this, &::PerspCorrection::linesButtonPressed), lines_button_h));
-
-    lines_button_v = Gtk::manage (new Gtk::ToggleButton());
-    lines_button_v->set_image(*ipers_draw_vert);
-    lines_button_v->signal_toggled().connect(sigc::bind(sigc::mem_fun(
-            *this, &::PerspCorrection::linesButtonPressed), lines_button_v));
+    lines_button_apply = Gtk::manage (new Gtk::Button());
+    lines_button_apply->set_image(*ipers_apply);
+    lines_button_apply->set_sensitive(false);
+    lines_button_apply->signal_pressed().connect(sigc::mem_fun(
+            *this, &::PerspCorrection::linesApplyButtonPressed));
 
     lines_button_edit = Gtk::manage (new Gtk::ToggleButton());
     lines_button_edit->set_image(*ipers_draw);
@@ -150,16 +145,12 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     lines = std::unique_ptr<ControlLineManager>(new ControlLineManager());
     lines->callbacks = std::make_shared<LinesCallbacks>(this);
 
-    img_ctrl_lines_apply = std::unique_ptr<Gtk::Image>(new RTImage ("tick.png"));
-    img_ctrl_lines_edit = std::move(ipers_draw);
-
     Gtk::HBox* control_lines_box = Gtk::manage (new Gtk::HBox());
     control_lines_box->set_tooltip_text( M("TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP") );
     Gtk::Label* control_lines_label = Gtk::manage (new Gtk::Label (M("TP_PERSPECTIVE_CONTROL_LINES") + ": "));
     control_lines_box->pack_start(*control_lines_label, Gtk::PACK_SHRINK);
-    control_lines_box->pack_start(*lines_button_v);
-    control_lines_box->pack_start(*lines_button_h);
     control_lines_box->pack_start(*lines_button_edit);
+    control_lines_box->pack_start(*lines_button_apply);
     control_lines_box->pack_start(*lines_button_erase);
     // End control lines interface.
 
@@ -595,8 +586,6 @@ void PerspCorrection::setBatchMode (bool batchMode)
     projection_shift_vert->showEditedCB ();
     projection_yaw->showEditedCB ();
 
-    lines_button_h->set_sensitive(false);
-    lines_button_v->set_sensitive(false);
     lines_button_edit->set_sensitive(false);
     auto_pitch->set_sensitive(false);
     auto_yaw->set_sensitive(false);
@@ -653,8 +642,6 @@ void PerspCorrection::setFocalLengthValue (const ProcParams* pparams, const Fram
 
 void PerspCorrection::switchOffEditMode(void)
 {
-    lines_button_h->set_active(false);
-    lines_button_v->set_active(false);
     lines_button_edit->set_active(false);
 }
 
@@ -663,62 +650,37 @@ void PerspCorrection::setEditProvider(EditDataProvider* provider)
     lines->setEditProvider(provider);
 }
 
-void PerspCorrection::linesButtonPressed(Gtk::ToggleButton* button)
+void PerspCorrection::linesApplyButtonPressed(void)
 {
-    lines->setLinesState(lines_button_h->get_active(), lines_button_v->get_active());
-
-    if (!button->get_active()) {
-        return;
+    if (method->get_active_row_number() == 1) {
+        // Calculate perspective distortion if in camera-based mode.
+        applyControlLines();
     }
-
-    if (button == lines_button_h) {
-        lines->draw_line_type = rtengine::ControlLine::HORIZONTAL;
-        if (lines_button_v->get_active()) {
-            lines_button_v->set_active(false);
-        }
-    } else if (button == lines_button_v) {
-        lines->draw_line_type = rtengine::ControlLine::VERTICAL;
-        if (lines_button_h->get_active()) {
-            lines_button_h->set_active(false);
-        }
-    }
-
-    if (!lines_button_edit->get_active()) {
-        lines_button_edit->set_active(true);
-    }
-
-    lines->setDrawMode(true);
+    lines_button_edit->set_active(false);
 }
 
 void PerspCorrection::linesEditButtonPressed(void)
 {
     if (lines_button_edit->get_active()) { // Enter edit mode.
         lines->setActive(true);
-        if (img_ctrl_lines_apply) {
-            lines_button_edit->set_image(*img_ctrl_lines_apply);
-        }
+        lines->setDrawMode(true);
         render = false;
-        lines->setLinesState(lines_button_h->get_active(), lines_button_v->get_active());
         if (lens_geom_listener) {
             lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, false);
         }
+        lines_button_apply->set_sensitive(true);
         lines_button_erase->set_sensitive(true);
         setCamBasedEventsActive(false);
     } else { // Leave edit mode.
         setCamBasedEventsActive(true);
+        lines_button_apply->set_sensitive(false);
         lines_button_erase->set_sensitive(false);
         render = true;
+        if (lens_geom_listener) {
+            lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, true);
+        }
         lines->setDrawMode(false);
         lines->setActive(false);
-        if (img_ctrl_lines_edit) {
-            lines_button_edit->set_image(*img_ctrl_lines_edit);
-        }
-        lines_button_h->set_active(false);
-        lines_button_v->set_active(false);
-        if (method->get_active_row_number() == 1) {
-            // Calculate perspective distortion if in camera-based mode.
-            applyControlLines();
-        }
     }
 }
 
@@ -763,16 +725,6 @@ ControlLineManager::ControlLineManager():
     line_icon_v_prelight = Cairo::RefPtr<RTSurface>(new RTSurface("bidirectional-arrow-vertical-prelight.png"));
 }
 
-Geometry::State ControlLineManager::calcLineState(const ::ControlLine& line) const
-{
-    if (line.type == rtengine::ControlLine::HORIZONTAL && active_h) {
-        return Geometry::NORMAL;
-    } else if (line.type == rtengine::ControlLine::VERTICAL && active_v) {
-        return Geometry::NORMAL;
-    }
-    return Geometry::INSENSITIVE;
-}
-
 void ControlLineManager::setActive(bool active)
 {
     EditDataProvider* provider = getEditProvider();
@@ -795,19 +747,6 @@ void ControlLineManager::setActive(bool active)
 void ControlLineManager::setDrawMode(bool draw)
 {
     draw_mode = draw;
-}
-
-void ControlLineManager::setLinesState(bool horiz_active, bool vert_active)
-{
-    active_h = horiz_active;
-    active_v = vert_active;
-
-    for (auto line = control_lines.begin(); line != control_lines.end(); line++) {
-        auto state = calcLineState(**line);
-        (*line)->begin->state = state;
-        (*line)->end->state = state;
-        (*line)->line->state = state;
-    }
 }
 
 size_t ControlLineManager::size(void) const
@@ -835,6 +774,7 @@ bool ControlLineManager::button1Pressed(int modifierKey)
         }
     } else if (draw_mode && (modifierKey & GDK_CONTROL_MASK)) { // Add new line.
         addLine(dataProvider->posImage, dataProvider->posImage);
+        drawing_line = true;
         selected_object = mouseOverGeometry.size() - 1; // Select endpoint.
         action = Action::DRAGGING;
     }
@@ -848,6 +788,7 @@ bool ControlLineManager::button1Released(void)
     if (selected_object > 0) {
         mouseOverGeometry[selected_object]->state = Geometry::NORMAL;
     }
+    drawing_line = false;
     selected_object = -1;
     return false;
 }
@@ -893,11 +834,6 @@ bool ControlLineManager::pick1(bool picked)
     }
 
     visibleGeometry[object_id - 1] = line.icon.get();
-
-    auto state = calcLineState(line);
-    line.begin->state = state;
-    line.end->state = state;
-    line.line->state = state;
 
     return true;
 }
@@ -975,6 +911,9 @@ bool ControlLineManager::drag1(int modifierKey)
     control_line.icon_v->position.x = control_line.icon_h->position.x;
     control_line.icon_v->position.y = control_line.icon_h->position.y;
 
+    if (drawing_line) {
+        autoSetLineType(selected_object);
+    }
 
     return false;
 }
@@ -1011,10 +950,8 @@ bool ControlLineManager::mouseOver(int modifierKey)
     }
 
     if (prev_obj != cur_obj && prev_obj > 0) {
-        auto state = calcLineState(*control_lines[(prev_obj - 1) / ::ControlLine::OBJ_COUNT]);
-        visibleGeometry[prev_obj - 1]->state = state;
+        visibleGeometry[prev_obj - 1]->state = Geometry::NORMAL;
     }
-
     prev_obj = cur_obj;
 
     return true;
@@ -1073,13 +1010,9 @@ void ControlLineManager::addLine(Coord begin, Coord end)
     control_line->end = std::move(end_c);
     control_line->icon_h = icon_h;
     control_line->icon_v = icon_v;
-    if (draw_line_type == rtengine::ControlLine::HORIZONTAL) {
-        control_line->icon = icon_h;
-    } else if (draw_line_type == rtengine::ControlLine::VERTICAL) {
-        control_line->icon = icon_v;
-    }
+    control_line->icon = icon_v;
     control_line->line = std::move(line);
-    control_line->type = draw_line_type;
+    control_line->type = rtengine::ControlLine::VERTICAL;
 
     EditSubscriber::visibleGeometry.push_back(control_line->line.get());
     EditSubscriber::visibleGeometry.push_back(control_line->icon.get());
@@ -1092,6 +1025,39 @@ void ControlLineManager::addLine(Coord begin, Coord end)
     EditSubscriber::mouseOverGeometry.push_back(control_line->end.get());
 
     control_lines.push_back(std::move(control_line));
+}
+
+void ControlLineManager::autoSetLineType(int object_id)
+{
+    int line_id = (object_id - 1) / ::ControlLine::OBJ_COUNT;
+    ::ControlLine& line = *control_lines[line_id];
+
+    int dx = line.begin->center.x - line.end->center.x;
+    int dy = line.begin->center.y - line.end->center.y;
+
+    if (dx < 0) {
+        dx = -dx;
+    }
+    if (dy < 0) {
+        dy = -dy;
+    }
+
+    rtengine::ControlLine::Type type;
+    std::shared_ptr<OPIcon> icon;
+
+    if (dx > dy) { // More horizontal than vertical.
+        type = rtengine::ControlLine::HORIZONTAL;
+        icon = line.icon_h;
+    } else {
+        type = rtengine::ControlLine::VERTICAL;
+        icon = line.icon_v;
+    }
+
+    if (type != line.type) { // Need to update line type.
+        line.type = type;
+        line.icon = icon;
+        visibleGeometry[line_id * ::ControlLine::OBJ_COUNT + 1] = line.icon.get();
+    }
 }
 
 void ControlLineManager::removeAll(void)

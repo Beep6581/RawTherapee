@@ -41,21 +41,27 @@ class ControlLineManager: EditSubscriber
 {
 
 protected:
-    /** Determine how horizontal and vertical lines are displayed. */
-    bool active_h, active_v;
     /** Hidden object for capturing mouse events. */
     std::unique_ptr<Rectangle> canvas_area;
     rtengine::Coord drag_delta;
     std::vector<std::unique_ptr<ControlLine>> control_lines;
     CursorShape cursor;
     bool draw_mode;
+    bool drawing_line = false;
     Cairo::RefPtr<RTSurface> line_icon_h, line_icon_v;
     Cairo::RefPtr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
     int prev_obj;
     int selected_object;
 
     void addLine (rtengine::Coord begin, rtengine::Coord end);
-    Geometry::State calcLineState(const ControlLine& line) const;
+    /**
+     * Set the line type of the line containing the object according to the
+     * line's angle.
+     *
+     * If the line is within 45 degrees of a perfectly vertical
+     * line, inclusive, the line type is set to vertical. Otherwise, horizontal.
+     */
+    void autoSetLineType(int object_id);
     void removeLine (size_t line_id);
 
 public:
@@ -69,8 +75,6 @@ public:
 
     /** Callbacks to invoke. */
     std::shared_ptr<Callbacks> callbacks;
-    /** Type of line for newly drawn lines. */
-    rtengine::ControlLine::Type draw_line_type;
 
     ControlLineManager();
 
@@ -80,8 +84,6 @@ public:
     /** Set whether or not lines can be drawn and deleted. */
     void setDrawMode (bool draw);
     void setEditProvider (EditDataProvider* provider);
-    /** Determines how each line type is displayed. */
-    void setLinesState (bool horiz_active, bool vert_active);
     /** Returns the number of lines. */
     size_t size (void) const;
     /**
@@ -124,13 +126,10 @@ protected:
     Adjuster* camera_shift_horiz;
     Adjuster* camera_shift_vert;
     Adjuster* camera_yaw;
-    std::unique_ptr<Gtk::Image> img_ctrl_lines_edit;
-    std::unique_ptr<Gtk::Image> img_ctrl_lines_apply;
     std::unique_ptr<ControlLineManager> lines;
+    Gtk::Button* lines_button_apply;
     Gtk::ToggleButton* lines_button_edit;
     Gtk::Button* lines_button_erase;
-    Gtk::ToggleButton* lines_button_h;
-    Gtk::ToggleButton* lines_button_v;
     Adjuster* projection_pitch;
     Adjuster* projection_rotate;
     Adjuster* projection_shift_horiz;
@@ -174,7 +173,7 @@ public:
 
     void adjusterChanged (Adjuster* a, double newval) override;
     void autoCorrectionPressed (Gtk::Button* b);
-    void linesButtonPressed (Gtk::ToggleButton* button);
+    void linesApplyButtonPressed (void);
     void linesEditButtonPressed (void);
     void linesEraseButtonPressed (void);
     void methodChanged (void);
