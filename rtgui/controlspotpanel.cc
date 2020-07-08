@@ -469,7 +469,7 @@ ControlSpotPanel::ControlSpotPanel():
         laplac_->set_tooltip_text(M("TP_LOCALLAB_LAP_MASK_TOOLTIP"));
     }
 
-    maskBox->pack_start(*laplac_);
+//    maskBox->pack_start(*laplac_);
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
     // maskBox->pack_start(*shortc_);
@@ -835,7 +835,8 @@ void ControlSpotPanel::load_ControlSpot_param()
     avoid_->set_active(row[spots_.avoid]);
     blwh_->set_active(row[spots_.blwh]);
     recurs_->set_active(row[spots_.recurs]);
-    laplac_->set_active(row[spots_.laplac]);
+   // laplac_->set_active(row[spots_.laplac]);
+    laplac_->set_active(true);
     deltae_->set_active(row[spots_.deltae]);
     scopemask_->setValue((double)row[spots_.scopemask]);
     shortc_->set_active(row[spots_.shortc]);

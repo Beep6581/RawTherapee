@@ -315,7 +315,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->avoid = pp->locallab.spots.at(i).avoid;
         r->blwh = pp->locallab.spots.at(i).blwh;
         r->recurs = pp->locallab.spots.at(i).recurs;
-        r->laplac = pp->locallab.spots.at(i).laplac;
+        r->laplac = true; //pp->locallab.spots.at(i).laplac;
         r->deltae = pp->locallab.spots.at(i).deltae;
         r->scopemask = pp->locallab.spots.at(i).scopemask;
         r->shortc = pp->locallab.spots.at(i).shortc;
