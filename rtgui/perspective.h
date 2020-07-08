@@ -47,7 +47,7 @@ protected:
     std::vector<std::unique_ptr<ControlLine>> control_lines;
     CursorShape cursor;
     bool draw_mode;
-    bool drawing_line = false;
+    bool drawing_line;
     Cairo::RefPtr<RTSurface> line_icon_h, line_icon_v;
     Cairo::RefPtr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
     int prev_obj;
@@ -194,6 +194,6 @@ protected:
     PerspCorrection* tool;
 
 public:
-    LinesCallbacks(PerspCorrection* tool);
+    explicit LinesCallbacks(PerspCorrection* tool);
     void switchOffEditMode (void) override;
 };

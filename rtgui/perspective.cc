@@ -710,11 +710,13 @@ void PerspCorrection::setCamBasedEventsActive(bool active)
 
 ControlLineManager::ControlLineManager():
     EditSubscriber(ET_OBJECTS),
+    canvas_area(new Rectangle()),
     cursor(CSCrosshair),
+    draw_mode(false),
+    drawing_line(false),
     prev_obj(-1),
     selected_object(-1)
 {
-    canvas_area = std::unique_ptr<Rectangle>(new Rectangle());
     canvas_area->filled = true;
     canvas_area->topLeft = Coord(0, 0);
     mouseOverGeometry.push_back(canvas_area.get());
