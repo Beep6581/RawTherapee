@@ -3380,31 +3380,25 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
         }
     }
 
-
     if (!cp.link && cp.noiseena)   { //used both with denoise 1 2 3
         float refine = 0.f;
+        if (level == 0) {
+            refine = cp.lev0s / 40.f;
+        } else if (level == 1) {
+            refine = cp.lev1s / 40.f;
+        } else if (level == 2) {
+            refine = cp.lev2s / 40.f;
+        } else if (level == 3) {
+            refine = cp.lev3s / 40.f;
+        }
 
-        for (int i = 0; i < W_L * H_L; i++) {
-            if (level == 0) {
-                refine = cp.lev0s / 40.f;
+        if (refine != 0.f) {
+            refine += 1.f;
+            for (int i = 0; i < W_L * H_L; i++) {
+                WavCoeffs_L[dir][i] *= refine;
             }
-
-            if (level == 1) {
-                refine = cp.lev1s / 40.f;
-            }
-
-            if (level == 2) {
-                refine = cp.lev2s / 40.f;
-            }
-
-            if (level == 3) {
-                refine = cp.lev3s / 40.f;
-            }
-
-            WavCoeffs_L[dir][i] *= (1.f + refine);
         }
     }
-
 
     float cpMul = cp.mul[level];
 
