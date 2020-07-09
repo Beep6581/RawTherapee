@@ -1344,11 +1344,19 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": [ "FUJIFILM X-T1", "FUJIFILM X-T10", "FUJIFILM X-E2" ],
+        "make_model": [ "FUJIFILM X-T10", "FUJIFILM X-E2" ],
         "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
         //"dcraw_matrix": [ 9289,-3279,-632,-3539,11137,2758,-1049,1950,6544 ], // X-RITE D55
-        //"raw_crop": [ 4, 0, 4936, 3296 ], // full raw 4992,3296, fuji official 4936,3296 - experimental crop
+        //"raw_crop": [ 4, 0, 4936, 3296 ], // full raw 4992,3296, fuji official 4936,3296
         "ranges": { "white": 16100 }
+    },
+    
+    { // Quality B, samples provided by Claes
+        "make_model": "FUJIFILM X-T1",
+        "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
+        "raw_crop": [ 4, 0, 4936, 3296 ], // full raw 4992,3296, fuji official 4936,3296
+        "ranges": { "white": [ 16202, 16277, 16232 ] } // LENR on from ISO4000+ negligibly underestimates white level
+        // No aperture scaling data provided, but likely negligible
     },
 
     { // Quality C
