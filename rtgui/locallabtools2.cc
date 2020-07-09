@@ -3668,6 +3668,7 @@ void LocallabContrast::updateContrastGUI1()
         lcamount->show();
         lcdarkness->show();
         lclightness->show();
+        contFrame->hide();
         sigmalc->hide();
         LocalcurveEditorwav->hide();
         levelwav->hide();
@@ -3682,6 +3683,7 @@ void LocallabContrast::updateContrastGUI1()
         lcamount->hide();
         lcdarkness->hide();
         lclightness->hide();
+        contFrame->show();
         sigmalc->show();
         LocalcurveEditorwav->show();
         levelwav->show();

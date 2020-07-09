@@ -1848,6 +1848,7 @@ TP_LOCALLAB_CONTRAST;Contraste
 TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Contrôle de contraste du masque.
 TP_LOCALLAB_CONTRESID;Contraste
 TP_LOCALLAB_CONTTHR;Seuil contraste
+TP_LOCALLAB_CONTWFRA;Contrast Local
 TP_LOCALLAB_CSTHRESHOLD;Ψ Ondelettes niveaux 
 TP_LOCALLAB_CSTHRESHOLDBLUR;Ψ Masque Ondelettes niveau
 TP_LOCALLAB_CURV;Luminosité - Contraste - Chrominance "Super"
