@@ -912,35 +912,6 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         special->set_tooltip_text(M("TP_LOCALLAB_SPECIAL_TOOLTIP"));
         } else {
         exp->set_tooltip_text("");
-        lumFrame->set_tooltip_text(M(""));
-        lightness->set_tooltip_text("");
-        contrast->set_tooltip_text(M(""));
-        chroma->set_tooltip_text(M(""));
-        structcol->set_tooltip_text("");
-        sensi->set_tooltip_text("");
-        angcol->set_tooltip_text(M(""));
-        strcol->set_tooltip_text("");
-        qualitycurveMethod->set_tooltip_text("");
-        mercol->set_tooltip_text("");
-        opacol->set_tooltip_text("");
-        conthrcol->set_tooltip_text("");
-        gridmerFrame->set_tooltip_text("");
-        expmaskcol->set_tooltip_text("");
-        CCmaskshape->setTooltip("");
-        LLmaskshape->setTooltip("");
-        HHmaskshape->setTooltip("");
-        radmaskcol->set_tooltip_text("");
-        lapmaskcol->set_tooltip_text("");
-        Lmaskshape->setTooltip("");
-        LLmaskcolshapewav->setTooltip("");
-        expmaskcol1->set_tooltip_text(M(""));
-        blendmaskcol->set_tooltip_text(M(""));
-        struFrame->set_tooltip_text(M(""));
-        blurFrame->set_tooltip_text(M(""));
-        maskHCurveEditorG->set_tooltip_text(M(""));
-        mask2CurveEditorGwav->set_tooltip_text(M(""));
-        mask2CurveEditorG->set_tooltip_text(M(""));
-        special->set_tooltip_text(M(""));
     }
 }
 
@@ -3519,21 +3490,6 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         mask2SHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
-        strSH->set_tooltip_text("");
-        expmasksh->set_tooltip_text("");
-        CCmaskSHshape->setTooltip("");
-        LLmaskSHshape->setTooltip("");
-        HHmaskSHshape->setTooltip("");
-        radmaskSH->set_tooltip_text("");
-        lapmaskSH->set_tooltip_text("");
-        LmaskSHshape->setTooltip("");
-        for (unsigned int i = 0; i < multipliersh.size(); i++) {
-            multipliersh[i]->set_tooltip_text(M(""));
-        }
-        gamSH->set_tooltip_text(M(""));
-        sloSH->set_tooltip_text(M(""));
-        blendmaskSH->set_tooltip_text(M(""));
-        mask2SHCurveEditorG->set_tooltip_text(M(""));
     }
 }
 
@@ -4331,15 +4287,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         blendmaskvib->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         mask2vibCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         } else {
-        warm->set_tooltip_text("");
-        strvib->set_tooltip_text("");
-        expmaskvib->set_tooltip_text("");
-        CCmaskvibshape->setTooltip("");
-        LLmaskvibshape->setTooltip("");
-        HHmaskvibshape->setTooltip("");
-        Lmaskvibshape->setTooltip("");
-        blendmaskvib->set_tooltip_text(M(""));
-        mask2vibCurveEditorG->set_tooltip_text(M(""));
+        exp->set_tooltip_text("");
     }
 }
 
@@ -4953,11 +4901,7 @@ void LocallabSoft::updateAdviceTooltips(const bool showTooltips)
         streng->set_tooltip_text(M("TP_LOCALLAB_ORRETISTREN_TOOLTIP"));
         laplace->set_tooltip_text(M("TP_LOCALLAB_ORRETILAP_TOOLTIP"));
     } else {
-        softMethod->set_tooltip_markup(M(""));
-       // ctboxsoftmethod->set_tooltip_markup(M(""));
-        showmasksoftMethod->set_tooltip_markup(M(""));
-        streng->set_tooltip_text(M(""));
-        laplace->set_tooltip_text(M(""));
+        exp->set_tooltip_text("");
     }
 }
 
@@ -5526,23 +5470,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         blendmaskbl->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
     } else {
-        expblnoise->set_tooltip_text("");
-        radius->set_tooltip_text("");
-        sensibn->set_tooltip_text("");
-        blurMethod->set_tooltip_text("");
-        expdenoise->set_tooltip_text("");
-        wavshapeden->setTooltip("");
-        noiselumc->set_tooltip_text("");
-        expmaskbl->set_tooltip_text("");
-        CCmaskblshape->setTooltip("");
-        LLmaskblshape->setTooltip("");
-        HHmaskblshape->setTooltip("");
-        radmaskbl->set_tooltip_text("");
-        lapmaskbl->set_tooltip_text("");
-        Lmaskblshape->setTooltip("");
-        LLmaskblshapewav->setTooltip("");
-        blendmaskbl->set_tooltip_text(M(""));
-        showmaskblMethodtyp->set_tooltip_markup(M(""));
+        exp->set_tooltip_text("");
     }
 }
 
