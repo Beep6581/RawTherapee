@@ -388,6 +388,7 @@ LocallabColor::LocallabColor():
     LocallabTool(this, M("TP_LOCALLAB_COLOR_TOOLNAME"), M("TP_LOCALLAB_COFR"), false),
 
     // Color & Light specific widgets
+    lumFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LUMFRA")))),
     curvactiv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CURV")))),
     lightness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTNESS"), -100, 500, 1, 0))),
     contrast(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
@@ -477,6 +478,7 @@ LocallabColor::LocallabColor():
 
     // Parameter Color & Light specific widgets
     curvactivConn = curvactiv->signal_toggled().connect(sigc::mem_fun(*this, &LocallabColor::curvactivChanged));
+    lumFrame->set_label_align(0.025, 0.5);
 
     lightness->setAdjusterListener(this);
 
@@ -730,10 +732,14 @@ LocallabColor::LocallabColor():
     Gtk::Frame* const superFrame = Gtk::manage(new Gtk::Frame());
     superFrame->set_label_align(0.025, 0.5);
     // superFrame->set_label_widget(*curvactiv);
+    ToolParamBlock* const lumBox = Gtk::manage(new ToolParamBlock());
+    lumBox->pack_start(*lightness);
+    lumBox->pack_start(*contrast);
+    lumBox->pack_start(*chroma);
+    lumFrame->add(*lumBox);
+    pack_start(*lumFrame);
     ToolParamBlock* const superBox = Gtk::manage(new ToolParamBlock());
-    superBox->pack_start(*lightness);
-    superBox->pack_start(*contrast);
-    superBox->pack_start(*chroma);
+    
     ToolParamBlock* const gridBox = Gtk::manage(new ToolParamBlock());
     gridBox->pack_start(*labgrid);
     gridBox->pack_start(*gridMethod);
@@ -875,7 +881,7 @@ void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask,
 void LocallabColor::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
-        exp->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
+        lumFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
         lightness->set_tooltip_text(M("TP_LOCALLAB_LIGHTN_TOOLTIP"));
         structcol->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
         sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
@@ -904,6 +910,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         special->set_tooltip_text(M("TP_LOCALLAB_SPECIAL_TOOLTIP"));
         } else {
         exp->set_tooltip_text("");
+        lumFrame->set_tooltip_text(M(""));
         lightness->set_tooltip_text("");
         structcol->set_tooltip_text("");
         sensi->set_tooltip_text("");

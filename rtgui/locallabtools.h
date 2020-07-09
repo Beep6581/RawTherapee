@@ -174,6 +174,7 @@ class LocallabColor:
 {
 private:
     // Color & Light specific widgets
+    Gtk::Frame* const lumFrame;
     Gtk::CheckButton* const curvactiv;
     Adjuster* const lightness;
     Adjuster* const contrast;
