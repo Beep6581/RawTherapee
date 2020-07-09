@@ -1370,12 +1370,20 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": [ "FUJIFILM X-T2", "FUJIFILM X-T20", "FUJIFILM X-E3", "FUJIFILM X100F", "FUJIFILM X-PRO2", "FUJIFILM X-H1" ],
+        "make_model": [ "FUJIFILM X-T2", "FUJIFILM X-T20", "FUJIFILM X-E3", "FUJIFILM X100F", "FUJIFILM X-H1" ],
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
         // "raw_crop": [ 0, 5, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - for lossless compressed files
         // "raw_crop": [ 0, 0, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - for uncompressed files
         "raw_crop": [ 0, 5, 6032, 4026 ], // full raw 6160,4032, Usable 6032,4026 - for uncompressed and lossless compressed files (but reduces height by 6 pixels)
         "ranges": { "white": 16100 }
+    },
+    
+    { // Quality B, samples provided by Claes
+        "make_model": "FUJIFILM X-PRO2",
+        "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
+        "raw_crop": [ 0, 5, 6032, 4026 ], // see X-T2
+        "ranges": { "white": [ 16105, 16270, 16082 ] } // These values are the lowest pixel values >16000 for all ISOs. LENR has a negligble effect.
+        // No aperture scaling data provided, but likely negligible
     },
 
     { // Quality C, only raw crop
