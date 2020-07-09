@@ -1088,6 +1088,7 @@ class LocallabCBDL:
 {
 private:
     const std::array<Adjuster*, 6> multiplier;
+    Gtk::Frame* const levFrame;
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const blurcbdl;

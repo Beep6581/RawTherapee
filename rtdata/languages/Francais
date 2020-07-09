@@ -1993,6 +1993,7 @@ TP_LOCALLAB_LEVELBLUR;Maximum Flouter
 TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP;En abscisse le contraste local (proche du concept de luminance). En ordonnée, amplification ou reduction du contraste local.
 TP_LOCALLAB_LEVELWAV;Ψ Ondelettes Niveaux
 TP_LOCALLAB_LEVELWAV_TOOLTIP;Le niveau est automatiquement adapté à la taille du spot et de la prévisualisation.\nDu niveau 9 taille max 512 jusqu'au niveau 1 taille max = 4
+TP_LOCALLAB_LEVFRA;Niveaux
 TP_LOCALLAB_LIGHTNESS;Luminosité
 TP_LOCALLAB_LIGHTN_TOOLTIP;En mode inverse: selection = -100 force la luminance à zero
 TP_LOCALLAB_LIGHTRETI;Luminosité

@@ -2571,6 +2571,7 @@ TP_LOCALLAB_LEVELBLUR;Maximum Blur levels
 TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP;On the abscissa local contrast (near concept luminance). On the ordinate, amplification or reduction local contrast.
 TP_LOCALLAB_LEVELWAV;Ψ Wavelets Levels
 TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 9 size max 512 to level 1 size max = 4
+TP_LOCALLAB_LEVFRA;Levels
 TP_LOCALLAB_LIGHTNESS;Lightness
 TP_LOCALLAB_LIGHTN_TOOLTIP;In inverse mode: selection = -100 force luminance to zero
 TP_LOCALLAB_LIGHTRETI;Lightness
