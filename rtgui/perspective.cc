@@ -27,6 +27,63 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+namespace
+{
+
+void controlLinesToValues(const std::vector<rtengine::ControlLine>& lines,
+        std::vector<int>& values, std::vector<int>& types)
+{
+    values.clear();
+    types.clear();
+
+    for (auto&& line : lines) {
+        values.push_back(line.x1);
+        values.push_back(line.y1);
+        values.push_back(line.x2);
+        values.push_back(line.y2);
+
+        int type = -1;
+        switch (line.type) {
+            case rtengine::ControlLine::VERTICAL:
+                type = 0;
+                break;
+            case rtengine::ControlLine::HORIZONTAL:
+                type = 1;
+                break;
+        }
+        types.push_back(type);
+    }
+}
+
+std::vector<rtengine::ControlLine> valuesToControlLines(
+        const std::vector<int>& values, const std::vector<int>& types)
+{
+    int line_count = min(values.size() / 4, types.size());
+    std::vector<rtengine::ControlLine> lines(line_count);
+
+    auto values_iter = values.begin();
+    auto types_iter = types.begin();
+    for (auto&& line : lines) {
+        line.x1 = *(values_iter++);
+        line.y1 = *(values_iter++);
+        line.x2 = *(values_iter++);
+        line.y2 = *(values_iter++);
+
+        switch (*(types_iter++)) {
+            case 0:
+                line.type = rtengine::ControlLine::VERTICAL;
+                break;
+            case 1:
+                line.type = rtengine::ControlLine::HORIZONTAL;
+                break;
+        }
+    }
+
+    return lines;
+}
+
+}
+
 PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("TP_PERSPECTIVE_LABEL"))
 {
 
@@ -48,6 +105,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspProjRotateVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ROTATE");
     EvPerspProjShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     setCamBasedEventsActive();
+    EvPerspControlLines = mapper->newEvent(M_VOID);
 
     lens_geom_listener = nullptr;
     metadata = nullptr;
@@ -262,6 +320,7 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
         projection_shift_horiz->setEditedState (pedited->perspective.projection_shift_horiz ? Edited : UnEdited);
         projection_shift_vert->setEditedState (pedited->perspective.projection_shift_vert ? Edited : UnEdited);
         projection_yaw->setEditedState (pedited->perspective.projection_yaw ? Edited : UnEdited);
+        lines->setEdited (pedited->perspective.control_lines);
     }
 
     horiz->setValue (pp->perspective.horizontal);
@@ -277,6 +336,8 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
     projection_shift_horiz->setValue (pp->perspective.projection_shift_horiz);
     projection_shift_vert->setValue (pp->perspective.projection_shift_vert);
     projection_yaw->setValue (pp->perspective.projection_yaw);
+    lines->setLines(valuesToControlLines(pp->perspective.control_line_values,
+            pp->perspective.control_line_types));
 
     if (pedited && !pedited->perspective.method) {
         method->set_active (2);
@@ -309,6 +370,11 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
     pp->perspective.projection_shift_vert = projection_shift_vert->getValue ();
     pp->perspective.projection_yaw = projection_yaw->getValue ();
 
+    std::vector<rtengine::ControlLine> control_lines;
+    lines->toControlLines(control_lines);
+    controlLinesToValues(control_lines, pp->perspective.control_line_values,
+            pp->perspective.control_line_types);
+
     if (method->get_active_row_number() == 0) {
         pp->perspective.method = "simple";
     } else if (method->get_active_row_number() == 1) {
@@ -331,6 +397,7 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->perspective.projection_shift_horiz = projection_shift_horiz->getEditedState();
         pedited->perspective.projection_shift_vert = projection_shift_vert->getEditedState();
         pedited->perspective.projection_yaw = projection_yaw->getEditedState();
+        pedited->perspective.control_lines = lines->getEdited();
     }
 }
 
@@ -650,6 +717,13 @@ void PerspCorrection::setEditProvider(EditDataProvider* provider)
     lines->setEditProvider(provider);
 }
 
+void PerspCorrection::lineChanged(void)
+{
+    if (listener) {
+        listener->panelChanged(EvPerspControlLines, "");
+    }
+}
+
 void PerspCorrection::linesApplyButtonPressed(void)
 {
     if (method->get_active_row_number() == 1) {
@@ -714,6 +788,7 @@ ControlLineManager::ControlLineManager():
     cursor(CSCrosshair),
     draw_mode(false),
     drawing_line(false),
+    edited(false),
     prev_obj(-1),
     selected_object(-1)
 {
@@ -790,6 +865,8 @@ bool ControlLineManager::button1Released(void)
     if (selected_object > 0) {
         mouseOverGeometry[selected_object]->state = Geometry::NORMAL;
     }
+    edited = true;
+    callbacks->lineChanged();
     drawing_line = false;
     selected_object = -1;
     return false;
@@ -836,6 +913,9 @@ bool ControlLineManager::pick1(bool picked)
     }
 
     visibleGeometry[object_id - 1] = line.icon.get();
+
+    edited = true;
+    callbacks->lineChanged();
 
     return true;
 }
@@ -920,6 +1000,11 @@ bool ControlLineManager::drag1(int modifierKey)
     return false;
 }
 
+bool ControlLineManager::getEdited(void) const
+{
+    return edited;
+}
+
 CursorShape ControlLineManager::getCursor(int objectID) const
 {
     return cursor;
@@ -966,12 +1051,27 @@ void ControlLineManager::switchOffEditMode(void)
     }
 }
 
+void ControlLineManager::setEdited(bool edited)
+{
+    this->edited = edited;
+}
+
 void ControlLineManager::setEditProvider(EditDataProvider* provider)
 {
     EditSubscriber::setEditProvider(provider);
 }
 
-void ControlLineManager::addLine(Coord begin, Coord end)
+void ControlLineManager::setLines(const std::vector<rtengine::ControlLine>& lines)
+{
+    removeAll();
+    for (auto&& line : lines) {
+        Coord start(line.x1, line.y1);
+        Coord end(line.x2, line.y2);
+        addLine(start, end, line.type);
+    }
+}
+
+void ControlLineManager::addLine(Coord begin, Coord end, rtengine::ControlLine::Type type)
 {
     constexpr int line_width = 2;
     constexpr int handle_radius = 6;
@@ -1005,16 +1105,20 @@ void ControlLineManager::addLine(Coord begin, Coord end)
     end_c->datum = Geometry::IMAGE;
     end_c->filled = true;
     end_c->radius = handle_radius;
-    end_c->center = begin;
+    end_c->center = end;
 
     std::unique_ptr<::ControlLine> control_line(new ::ControlLine());
     control_line->begin = std::move(begin_c);
     control_line->end = std::move(end_c);
     control_line->icon_h = icon_h;
     control_line->icon_v = icon_v;
-    control_line->icon = icon_v;
+    if (type == rtengine::ControlLine::HORIZONTAL) {
+        control_line->icon = icon_h;
+    } else {
+        control_line->icon = icon_v;
+    }
     control_line->line = std::move(line);
-    control_line->type = rtengine::ControlLine::VERTICAL;
+    control_line->type = type;
 
     EditSubscriber::visibleGeometry.push_back(control_line->line.get());
     EditSubscriber::visibleGeometry.push_back(control_line->icon.get());
@@ -1069,6 +1173,8 @@ void ControlLineManager::removeAll(void)
     control_lines.clear();
     prev_obj = -1;
     selected_object = -1;
+    edited = true;
+    callbacks->lineChanged();
 }
 
 void ControlLineManager::removeLine(size_t line_id)
@@ -1082,6 +1188,9 @@ void ControlLineManager::removeLine(size_t line_id)
     mouseOverGeometry.erase(mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + 1,
             mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + ::ControlLine::OBJ_COUNT + 1);
     control_lines.erase(control_lines.begin() + line_id);
+
+    edited = true;
+    callbacks->lineChanged();
 }
 
 void ControlLineManager::toControlLines(std::vector<rtengine::ControlLine>& converted) const
@@ -1101,6 +1210,13 @@ void ControlLineManager::toControlLines(std::vector<rtengine::ControlLine>& conv
 LinesCallbacks::LinesCallbacks(PerspCorrection* tool):
     tool(tool)
 {
+}
+
+void LinesCallbacks::lineChanged(void)
+{
+    if (tool) {
+        tool->lineChanged();
+    }
 }
 
 void LinesCallbacks::switchOffEditMode(void)

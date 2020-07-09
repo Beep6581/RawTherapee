@@ -945,6 +945,10 @@ struct PerspectiveParams {
     double  projection_shift_horiz;
     double  projection_shift_vert;
     double  projection_yaw;
+    /** A line is stored as 4 integers in this order: x1, y1, x2, y2 */
+    std::vector<int> control_line_values;
+    /** 0 is vertical, 1 is horizontal, undefined otherwise. */
+    std::vector<int> control_line_types;
 
     PerspectiveParams();
 

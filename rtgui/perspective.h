@@ -48,12 +48,14 @@ protected:
     CursorShape cursor;
     bool draw_mode;
     bool drawing_line;
+    bool edited;
     Cairo::RefPtr<RTSurface> line_icon_h, line_icon_v;
     Cairo::RefPtr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
     int prev_obj;
     int selected_object;
 
-    void addLine (rtengine::Coord begin, rtengine::Coord end);
+    void addLine (rtengine::Coord begin, rtengine::Coord end,
+            rtengine::ControlLine::Type type = rtengine::ControlLine::VERTICAL);
     /**
      * Set the line type of the line containing the object according to the
      * line's angle.
@@ -69,6 +71,8 @@ public:
     {
     public:
         virtual ~Callbacks() {};
+        /** Called when a line changed (added, removed, moved, etc.). */
+        virtual void lineChanged (void) {};
         /** Called when the EditSubscriber's switchOffEditMode is called. */
         virtual void switchOffEditMode (void) {};
     };
@@ -78,12 +82,15 @@ public:
 
     ControlLineManager();
 
+    bool getEdited (void) const;
     void removeAll (void);
     /** Sets whether or not the lines are visible and interact-able. */
     void setActive (bool active);
     /** Set whether or not lines can be drawn and deleted. */
     void setDrawMode (bool draw);
+    void setEdited (bool edited);
     void setEditProvider (EditDataProvider* provider);
+    void setLines (const std::vector<rtengine::ControlLine>& lines);
     /** Returns the number of lines. */
     size_t size (void) const;
     /**
@@ -138,6 +145,7 @@ protected:
     rtengine::ProcEvent EvPerspCamFocalLength;
     rtengine::ProcEvent EvPerspCamShift;
     rtengine::ProcEvent EvPerspCamAngle;
+    rtengine::ProcEvent EvPerspControlLines;
     rtengine::ProcEvent EvPerspMethod;
     rtengine::ProcEvent EvPerspProjShift;
     rtengine::ProcEvent EvPerspProjRotate;
@@ -173,6 +181,7 @@ public:
 
     void adjusterChanged (Adjuster* a, double newval) override;
     void autoCorrectionPressed (Gtk::Button* b);
+    void lineChanged (void);
     void linesApplyButtonPressed (void);
     void linesEditButtonPressed (void);
     void linesEraseButtonPressed (void);
@@ -195,5 +204,6 @@ protected:
 
 public:
     explicit LinesCallbacks(PerspCorrection* tool);
+    void lineChanged (void) override;
     void switchOffEditMode (void) override;
 };
