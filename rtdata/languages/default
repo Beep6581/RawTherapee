@@ -2426,6 +2426,7 @@ TP_LOCALLAB_CONTRAST;Contrast
 TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Main mask contrast control.
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_CONTTHR;Contrast Threshold
+TP_LOCALLAB_CONTWFRA;Local contrast
 TP_LOCALLAB_CSTHRESHOLD;Ψ Wavelets Levels 
 TP_LOCALLAB_CSTHRESHOLDBLUR;Ψ Mask Wavelet level
 TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance "Super"

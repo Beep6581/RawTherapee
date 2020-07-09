@@ -2074,6 +2074,7 @@ LocallabContrast::LocallabContrast():
     lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
     lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
     lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
+    contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTWFRA")))),
     sigmalc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     LocalcurveEditorwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
     wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
@@ -2169,6 +2170,9 @@ LocallabContrast::LocallabContrast():
     lcdarkness->setAdjusterListener(this);
 
     lclightness->setAdjusterListener(this);
+
+    contFrame->set_label_align(0.025, 0.5);
+
     sigmalc->setAdjusterListener(this);
 
     LocalcurveEditorwav->setCurveListener(this);
@@ -2396,15 +2400,23 @@ LocallabContrast::LocallabContrast():
     mask2lcCurveEditorG->curveListComplete();
 
     // Add Local contrast specific widgets to GUI
+    ToolParamBlock* const coBox = Gtk::manage(new ToolParamBlock());
+    coBox->pack_start(*sigmalc);
+    coBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    // pack_start(*levelwav);
+    coBox->pack_start(*csThreshold);
+    contFrame->add(*coBox);
+    
     pack_start(*localcontMethod);
     pack_start(*lcradius);
     pack_start(*lcamount);
     pack_start(*lcdarkness);
     pack_start(*lclightness);
-    pack_start(*sigmalc);
-    pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    pack_start(*contFrame);    
+//    pack_start(*sigmalc);
+//    pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // pack_start(*levelwav);
-    pack_start(*csThreshold);
+//    pack_start(*csThreshold);
     Gtk::Frame* const shresFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHRESFRA")));
     shresFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const resiBox = Gtk::manage(new ToolParamBlock());
@@ -2571,7 +2583,7 @@ void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
 void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
-        exp->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
+        contFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
         levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
         LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP"));
         wavgradl->set_tooltip_text(M("TP_LOCALLAB_WAVGRAD_TOOLTIP"));
@@ -2596,6 +2608,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         mask2lcCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         } else {
         exp->set_tooltip_text("");
+        contFrame->set_tooltip_text(M(""));
         levelwav->set_tooltip_text("");
         LocalcurveEditorwav->set_tooltip_markup(M(""));
         wavgradl->set_tooltip_text("");

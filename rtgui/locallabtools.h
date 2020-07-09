@@ -946,6 +946,7 @@ private:
     Adjuster* const lcamount;
     Adjuster* const lcdarkness;
     Adjuster* const lclightness;
+    Gtk::Frame* const contFrame;
     Adjuster* const sigmalc;
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;

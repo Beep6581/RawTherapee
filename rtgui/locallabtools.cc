@@ -883,6 +883,8 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         lumFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
         lightness->set_tooltip_text(M("TP_LOCALLAB_LIGHTN_TOOLTIP"));
+        contrast->set_tooltip_text(M(" "));
+        chroma->set_tooltip_text(M(" "));
         structcol->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
         sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         strcol->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
@@ -912,6 +914,8 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text("");
         lumFrame->set_tooltip_text(M(""));
         lightness->set_tooltip_text("");
+        contrast->set_tooltip_text(M(""));
+        chroma->set_tooltip_text(M(""));
         structcol->set_tooltip_text("");
         sensi->set_tooltip_text("");
         angcol->set_tooltip_text(M(""));
