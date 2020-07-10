@@ -2496,7 +2496,7 @@ TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Apply a gamma before and after Laplace transform
 TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Add linear exposure component before application Laplace transform
 TP_LOCALLAB_EXPLAP_TOOLTIP;The more you act on this threshold slider, the greater the action of reducing contrast.
 TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows various possibilities to blend image (as layers in Photosshop) : difference, multiply, soft light, overlay...with opacity...\nOriginal Image : merge current RT-spot with Original.\nPrevious spot : merge current Rt-spot with previous - if there is only one spot previous = original.\nBackground : merge current RT-spot with a color and luminance background (less possibilties)  
-TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE IPOL, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
+TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nContrast attenuator : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nContrast attenuator, Dynamic range compression and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nReduce artifacts and noise.
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Apply a median before Laplace transform to prevent artifacts (noise).\nYou can also use "Denoise" tool.
 TP_LOCALLAB_EXPOSE;Dynamic Range Compr. & Exposure
 //TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use others modules "Shadows Highlights", "Tone equalizer", "TRC", "Encoding Log"...
@@ -2505,7 +2505,7 @@ TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high decay transition values and scope to simulate small RT-spot.
 TP_LOCALLAB_EXPTOOL;Tools exposure
 TP_LOCALLAB_EXPTRC;Tone Response Curve - TRC
-TP_LOCALLAB_EXP_TOOLNAME;Laplacian PDE -Dynamic Range Compression & Exposure- 10
+TP_LOCALLAB_EXP_TOOLNAME;Contrast attenuator -Dynamic Range Compression & Exposure- 10
 TP_LOCALLAB_FATAMOUNT;Amount
 TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATANCHORA;Offset
@@ -2689,8 +2689,8 @@ TP_LOCALLAB_ORIGLC;Merge only with original image
 TP_LOCALLAB_ORRETILAP_TOOLTIP;Acts on a second Laplacian threshold, to take into account ΔE to differentiate the action especially with the background (different from Scope)
 TP_LOCALLAB_ORRETISTREN_TOOLTIP;Acts on the Laplacian threshold, the greater the action, the more the differences in contrast will be reduced
 TP_LOCALLAB_PASTELS2;Vibrance
-TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Dynamic Range compression
-TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator ƒ
+TP_LOCALLAB_PDE;Contrast attenuator - Dynamic Range compression
+TP_LOCALLAB_PDEFRA;Contrast attenuator ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure or high dynamic range.\n
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVHIDE;Hide all settings
