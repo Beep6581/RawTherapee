@@ -1031,9 +1031,9 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         Lmaskretishape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         blendmaskreti->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         mask2retiCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
-        } else {
+     } else {
             exp->set_tooltip_text("");
-        }
+     }
 }
 
 void LocallabRetinex::setDefaultExpanderVisibility()
@@ -1792,7 +1792,6 @@ void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
         sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
-        sensisha->set_tooltip_text("");
     }
 }
 
@@ -2566,9 +2565,9 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         expcontrastpyr2->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP"));
         blendmasklc->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         mask2lcCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
-        } else {
+    } else {
         exp->set_tooltip_text("");
-        }
+    }
 }
 
 void LocallabContrast::setDefaultExpanderVisibility()
@@ -4872,7 +4871,6 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
         Lmask_shape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         mask2CurveEditorGwav->set_tooltip_text(M("TP_LOCALLAB_WAVMASK_TOOLTIP"));
         LLmask_shapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
-
     } else {
         exp->set_tooltip_text(M(""));
     }

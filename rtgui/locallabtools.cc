@@ -910,7 +910,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         mask2CurveEditorGwav->set_tooltip_text(M("TP_LOCALLAB_WAVMASK_TOOLTIP"));
         mask2CurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         special->set_tooltip_text(M("TP_LOCALLAB_SPECIAL_TOOLTIP"));
-        } else {
+    } else {
         exp->set_tooltip_text("");
     }
 }
@@ -4286,7 +4286,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         Lmaskvibshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         blendmaskvib->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         mask2vibCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
-        } else {
+    } else {
         exp->set_tooltip_text("");
     }
 }
