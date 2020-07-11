@@ -203,7 +203,6 @@ const double CurveFactory::sRGBGammaCurve = 2.4;
 void fillCurveArray(DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool needed)
 {
     if (needed) {
-
         for (int i = 0; i <= 0xffff; i += i < 0xffff - skip ? skip : 1) {
             // change to [0,1] range
             float val = (float)i / 65535.f;
@@ -441,41 +440,21 @@ void CurveFactory::curveToning(const std::vector<double>& curvePoints, LUTf & To
     fillCurveArray(dCurve.get(), ToningCurve, skip, needed);
 }
 
-void CurveFactory::curveLocal(bool & locallutili, const std::vector<double>& curvePoints, LUTf & LocalLCurve, int skip)
+bool CurveFactory::curveLocal(const std::vector<double>& curvePoints, LUTf& LocalCurve, int skip)
 {
     bool needed = false;
     std::unique_ptr<DiagonalCurve> dCurve;
 
     if (!curvePoints.empty() && curvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
+        dCurve.reset(new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (dCurve && !dCurve->isIdentity()) {
             needed = true;
-            locallutili = true;
         }
     }
 
-    fillCurveArray(dCurve.get(), LocalLCurve, skip, needed);
-    //LocalLCurve.dump("wav");
-
-}
-
-void CurveFactory::curveCCLocal(bool & localcutili, const std::vector<double>& curvePoints, LUTf & LocalCCurve, int skip)
-{
-    bool needed = false;
-    std::unique_ptr<DiagonalCurve> dCurve;
-
-    if (!curvePoints.empty() && curvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
-
-        if (dCurve && !dCurve->isIdentity()) {
-            needed = true;
-            localcutili = true;
-        }
-    }
-
-    fillCurveArray(dCurve.get(), LocalCCurve, skip, needed);
-    //LocalLCurve.dump("wav");
+    fillCurveArray(dCurve.get(), LocalCurve, skip, needed);
+    return needed;
 
 }
 
@@ -497,46 +476,6 @@ void CurveFactory::curveskLocal(bool & localskutili, const std::vector<double>& 
     fillCurveArray(dCurve.get(), LocalskCurve, skip, needed);
 
 }
-
-void CurveFactory::curveexLocal(bool & localexutili, const std::vector<double>& curvePoints, LUTf & LocalexCurve, int skip)
-{
-    bool needed = false;
-    std::unique_ptr<DiagonalCurve> dCurve;
-
-//    if (localexutili && !curvePoints.empty() && curvePoints[0] != 0) {
-    if (!curvePoints.empty() && curvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
-
-        if (dCurve && !dCurve->isIdentity()) {
-            needed = true;
-            localexutili = true;
-        }
-    }
-
-    fillCurveArray(dCurve.get(), LocalexCurve, skip, needed);
-
-}
-
-void CurveFactory::curvemaskLocal(bool & localmaskutili, const std::vector<double>& curvePoints, LUTf & LocalmaskCurve, int skip)
-{
-    bool needed = false;
-    std::unique_ptr<DiagonalCurve> dCurve;
-
-//    if (localexutili && !curvePoints.empty() && curvePoints[0] != 0) {
-    if (!curvePoints.empty() && curvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
-
-        if (dCurve && !dCurve->isIdentity()) {
-            needed = true;
-            localmaskutili = true;
-        }
-    }
-
-    fillCurveArray(dCurve.get(), LocalmaskCurve, skip, needed);
-
-}
-
-
 
 void CurveFactory::localLCurve(double br, double contr,  /*const std::vector<double>& curvePoints,*/
                                LUTu & histogram, LUTf & outCurve,
@@ -2548,16 +2487,17 @@ void LocHHmaskCurve::Set(const Curve &pCurve)
 
 
 
-void LocHHmaskCurve::Set(const std::vector<double> &curvePoints, bool & lhmasutili)
+bool LocHHmaskCurve::Set(const std::vector<double> &curvePoints)
 {
     //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
-        lhmasutili = true;
         Set(ttcurve);
+        return true;
     } else {
         Reset();
+        return false;
     }
 }
 
@@ -2598,16 +2538,17 @@ void LocCCmaskCurve::Set(const Curve &pCurve)
 
 
 
-void LocCCmaskCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasutili)
+bool LocCCmaskCurve::Set(const std::vector<double> &curvePoints)
 {
     //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
-        lcmasutili = true;
         Set(ttcurve);
+        return true;
     } else {
         Reset();
+        return false;
     }
 }
 
@@ -2644,16 +2585,17 @@ void LocLLmaskCurve::Set(const Curve &pCurve)
 
 
 
-void LocLLmaskCurve::Set(const std::vector<double> &curvePoints, bool & llmasutili)
+bool LocLLmaskCurve::Set(const std::vector<double> &curvePoints)
 {
     //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
-        llmasutili = true;
         Set(ttcurve);
+        return true;
     } else {
         Reset();
+        return false;
     }
 }
 
@@ -2692,16 +2634,17 @@ void LocHHCurve::Set(const Curve &pCurve)
 
 
 
-void LocHHCurve::Set(const std::vector<double> &curvePoints, bool &HHutili)
+bool LocHHCurve::Set(const std::vector<double> &curvePoints)
 {
     //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
-        HHutili = true;
+        return true;
     } else {
         Reset();
+        return false;
     }
 }
 
@@ -2740,7 +2683,7 @@ void LocLHCurve::Set(const Curve &pCurve)
 
 
 
-void LocLHCurve::Set(const std::vector<double> &curvePoints, bool &LHutili)
+bool LocLHCurve::Set(const std::vector<double> &curvePoints)
 {
 
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
@@ -2748,9 +2691,10 @@ void LocLHCurve::Set(const std::vector<double> &curvePoints, bool &LHutili)
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
-        LHutili = true;
+        return true;
     } else {
         Reset();
+        return false;
     }
 }
 
@@ -2784,16 +2728,17 @@ void LocwavCurve::Set(const Curve &pCurve)
 
     //lutLocCurve.dump("wav");
 }
-void LocwavCurve::Set(const std::vector<double> &curvePoints, bool & lcwavutili)
+bool LocwavCurve::Set(const std::vector<double> &curvePoints)
 {
 
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
-        lcwavutili = true;
         Set(tcurve);
+        return true;
     } else {
         Reset();
+        return false;
     }
 }
 

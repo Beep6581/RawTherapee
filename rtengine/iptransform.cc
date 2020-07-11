@@ -516,7 +516,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         }
 
         if (pLCPMap && params->lensProf.useDist) {
-            pLCPMap->correctDistortion(x_d, y_d, 0, 0);
+            pLCPMap->correctDistortion(x_d, y_d, w2, h2);
         }
 
         // rotate
@@ -695,7 +695,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
             // steps, using an intermediate temporary image. There's room for
             // optimization of course...
             if (pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable()) {
-                tmpimg.reset(new Imagefloat(original->getWidth(), original->getHeight()));
+                tmpimg.reset(new Imagefloat(transformed->getWidth(), transformed->getHeight()));
                 dest = tmpimg.get();
             }
         }
