@@ -105,7 +105,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspProjRotateVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ROTATE");
     EvPerspProjShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     setCamBasedEventsActive();
-    EvPerspControlLines = mapper->newEvent(M_VOID);
+    EvPerspControlLines = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CTRL_LINE");
 
     lens_geom_listener = nullptr;
     metadata = nullptr;
@@ -720,7 +720,7 @@ void PerspCorrection::setEditProvider(EditDataProvider* provider)
 void PerspCorrection::lineChanged(void)
 {
     if (listener) {
-        listener->panelChanged(EvPerspControlLines, "");
+        listener->panelChanged(EvPerspControlLines, M("HISTORY_CHANGED"));
     }
 }
 

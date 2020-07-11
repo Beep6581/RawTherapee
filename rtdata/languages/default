@@ -1216,6 +1216,7 @@ HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 HISTORY_MSG_PERSP_CAM_ANGLE;Perspective - Camera
 HISTORY_MSG_PERSP_CAM_FL;Perspective - Camera
 HISTORY_MSG_PERSP_CAM_SHIFT;Perspective - Camera
+HISTORY_MSG_PERSP_CTRL_LINE;Perspective - Control lines
 HISTORY_MSG_PERSP_METHOD;Perspective - Method
 HISTORY_MSG_PERSP_PROJ_ANGLE;Perspective - Recovery
 HISTORY_MSG_PERSP_PROJ_ROTATE;Perspective - PCA rotation
