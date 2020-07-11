@@ -32,12 +32,18 @@ LabImage::LabImage (int w, int h, bool initZero, bool multiThread) : W(w), H(h)
     }
 }
 
+LabImage::LabImage (const LabImage& source, bool multiThread) : W(source.W), H(source.H)
+{
+    allocLab(W, H);
+    CopyFrom(&source, multiThread);
+}
+
 LabImage::~LabImage ()
 {
     deleteLab();
 }
 
-void LabImage::CopyFrom(LabImage *Img, bool multiThread)
+void LabImage::CopyFrom(const LabImage *Img, bool multiThread)
 {
 #ifdef _OPENMP
     #pragma omp parallel sections if(multiThread)
@@ -54,7 +60,7 @@ void LabImage::CopyFrom(LabImage *Img, bool multiThread)
 #endif
 }
 
-void LabImage::getPipetteData (float &v1, float &v2, float &v3, int posX, int posY, int squareSize)
+void LabImage::getPipetteData (float &v1, float &v2, float &v3, int posX, int posY, int squareSize) const
 {
     float accumulator_L = 0.f;
     float accumulator_a = 0.f;
