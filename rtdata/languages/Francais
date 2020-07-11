@@ -1800,7 +1800,7 @@ TP_LOCALLAB_BUTTON_DEL;Effacer
 TP_LOCALLAB_BUTTON_DUPL;Dupliquer
 TP_LOCALLAB_BUTTON_REN;Renommer
 TP_LOCALLAB_BUTTON_VIS;Montrer/Cacher
-TP_LOCALLAB_CBDL;Contraste niveaux détail-Défauts
+TP_LOCALLAB_CBDL;Contraste niveaux détail
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Ajuste les tons moyens et les réhausse.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Agit comme un outil ondelettes.\nLe premier niveau (0) agit sur des détails de 2x2.\nLe dernier niveau (5) agit sur des détails de 64x64.
 TP_LOCALLAB_CBDL_THRES_TOOLTIP;Empêche d'augmenter le bruit
@@ -1827,7 +1827,7 @@ TP_LOCALLAB_CLARISOFT_TOOLTIP;Actif pour Clarté et Masque de netteté si diffé
 TP_LOCALLAB_CLARITYML;Clarté
 TP_LOCALLAB_CLARI_TOOLTIP;En dessous ou égal à 4, 'Masque netteté' est actif.\nAu dessus du niveau ondelettes 5 'Clarté' est actif.\nUtilesu=i vous utilisez 'Compression dynamique des niveaux'
 TP_LOCALLAB_CLIPTM;Clip Recupère données (gain)
-TP_LOCALLAB_COFR;Couleur & Lumière - Petits défauts
+TP_LOCALLAB_COFR;Couleur & Lumière
 TP_LOCALLAB_COLORDE;Couleur prévisualisation sélection ΔE - Intensité
 TP_LOCALLAB_COLORDEPREV_TOOLTIP;Bouton Prévisualisation ΔE a besoin qu'un seul outil soit activé (expander).\nPour pouvoir avoir une Prévisualisation ΔE avec plusieurs outils activés utiliser Masque et modifications - Prévisualisation ΔE
 TP_LOCALLAB_COLORDE_TOOLTIP;Affiche la prévisualisation ΔE en bleu si négatif et en vert si positif.\n\nMasque et modifications (montre modifications sans masque): montre les modifications réelles si positf, montre les modifications améliorées (luminance seule) en bleu et jaune si négatif.
@@ -1902,10 +1902,12 @@ TP_LOCALLAB_EXCLUTYPE;Spot méthode
 TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Spot Normal utilise les données récursives.\n\nSpot exclusion réinitialise les données d'origine.\nPeut être utilsé pour annuler totalement ou partiellement une action précédente ou pour  réaliser un mode inverse
 TP_LOCALLAB_EXECLU;Spot Exclusion
 TP_LOCALLAB_EXNORM;Spot Normal
-TP_LOCALLAB_EXPCBDL_TOOLTIP;Dans le cas d'un capteur contaminé ("graisse"), et qaund la surface est importante ou pourune série de petits défauts.\n\na) Mettre la sélection du spot sur un défaut prononcé (adapter la taille si nécessaire), utilise run spot suffisament grand qui autorise les ondelettes; b) choisir une aire suffisament grande pour couvrir largement la zone affectée par les défauts; c) Choisir une valeur de transition (basse) et une transition affaiblissement (haute); d) agir sur les niveaux 2, 3, 4 or 5 ou^plus bas en réduisant le  the contrast (valeurs en dessous de 100) agir sur le curseur chroma si nécessaire. e)possibilité d'agir sur "Etendue" pour réduire la zone d'action.\n\nVous pouvez aussi compléter avec "Flou niveaux" et Flouu Gaussien (Adoucir Flou et bruit)
+//TP_LOCALLAB_EXPCBDL_TOOLTIP;Dans le cas d'un capteur contaminé ("graisse"), et qaund la surface est importante ou pourune série de petits défauts.\n\na) Mettre la sélection du spot sur un défaut prononcé (adapter la taille si nécessaire), utilise run spot suffisament grand qui autorise les ondelettes; b) choisir une aire suffisament grande pour couvrir largement la zone affectée par les défauts; c) Choisir une valeur de transition (basse) et une transition affaiblissement (haute); d) agir sur les niveaux 2, 3, 4 or 5 ou^plus bas en réduisant le  the contrast (valeurs en dessous de 100) agir sur le curseur chroma si nécessaire. e)possibilité d'agir sur "Etendue" pour réduire la zone d'action.\n\nVous pouvez aussi compléter avec "Flou niveaux" et Flouu Gaussien (Adoucir Flou et bruit)
+TP_LOCALLAB_EXPCBDL_TOOLTIP;Peut être utilisé pour retirer les marques sur le capteur ou la lentille.
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;Seulement en association avec compensation d'exposition et PDE Ipol.\nEvite la desaturation des couleurs
-TP_LOCALLAB_EXPCOLOR_TOOLTIP;Dans le cas de petits défauts.\n\nYeux-rouges : sélecteur centré sur la partie rouge, délimiteurs du spot près de l'oeil, adaptez Etendue, "luminosité" -100, "chrominance" -100.\n\nSpotIR :sélection Circulaire centrée sur le défaut, délimiteurs du spot proches du default - reduire "chrominance", possibilté d'agir sur Etendue pour réduire la zone de l'action.\n\nPoussières - graisse (petit) :Sélection circulaire centrée sur le défaut (adapter la taille du spot), délimiteurs du spot pas trop près du défaut pour permettre une transition quasi invisible. a) "Transition" (faibles valeurs) and "Transition affaiblissement" (hautes valeurs); b) agir sur "luminosité" et aussi sur "chrominance" ou sur "Grille de correction couleur - direct" de telle manière que le rendu de la zone polluée soit proche de celui de la zone saine; c) agir modérement  sur "Etendue" pour moduler l'action.\n\nVous pouvez aussi compléter avec Flouter Gaussien (Adoucir Flouter et bruit)
+//TP_LOCALLAB_EXPCOLOR_TOOLTIP;Dans le cas de petits défauts.\n\nYeux-rouges : sélecteur centré sur la partie rouge, délimiteurs du spot près de l'oeil, adaptez Etendue, "luminosité" -100, "chrominance" -100.\n\nSpotIR :sélection Circulaire centrée sur le défaut, délimiteurs du spot proches du default - reduire "chrominance", possibilté d'agir sur Etendue pour réduire la zone de l'action.\n\nPoussières - graisse (petit) :Sélection circulaire centrée sur le défaut (adapter la taille du spot), délimiteurs du spot pas trop près du défaut pour permettre une transition quasi invisible. a) "Transition" (faibles valeurs) and "Transition affaiblissement" (hautes valeurs); b) agir sur "luminosité" et aussi sur "chrominance" ou sur "Grille de correction couleur - direct" de telle manière que le rendu de la zone polluée soit proche de celui de la zone saine; c) agir modérement  sur "Etendue" pour moduler l'action.\n\nVous pouvez aussi compléter avec Flouter Gaussien (Adoucir Flouter et bruit)
+TP_LOCALLAB_EXPCOLOR_TOOLTIP;Ajuste les couleurs, la luminosité, le contrast et corrige les petits défauts tels que teux-rouges, poussières sur le capteur, etc.
 TP_LOCALLAB_EXPCOMP_TOOLTIP;Pour les portraits et les images à faible gradient, vous pouvez changer "Détection de forme" dans "Réglages":\n\nAugmentez 'Seuil ΔE Etendue'\nRéduire 'ΔE affaiblissement'\nAugmenter 'Balance ΔE ab-L' 
 TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;Voir la documentation de ondelettes niveaux.\nCependant il y a des différences: plus d'outils et plus proches des détails .\nEx: Tone mapping pour ondelettes. 
 TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Evitez les spots trop petits(< 32x32 pixels).\nUtilisez de faibles valeurs de transition et de hautes valeurs de transition affaiblissement et d'Etendue pour simuler un petit RT-spot et s'adapter aux défauts.\nUtimiser si nécessaire le module 'Clarté & Maqsue netteté' et 'Fusion d'images' en ajustant 'Rayon adoucir' pour réduire les artéfacts.
@@ -1916,15 +1918,16 @@ TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Applique un gamma avant et après la transformée
 TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Ajoute une exposition linéaire avant l'application de la transformée de Laplace
 TP_LOCALLAB_EXPLAP_TOOLTIP;Plus vous agissez sur ce curseur de seuil, plus grande sera l'action de reduire le contraste.
 TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Autorise de nombreuses possibilités de fusionner les images (comme les calques dans Photosshop) : difference, multiply, soft light, overlay...avec opacité...\nOriginale Image : fusionne le RT-spot en cours avec Originale.\nSpot Précédent : fusionne le RT-spot en cours avec le précédent - si il n'y a qu'un spot précédent = original.\nArrière plan : fusionne le RT-spot en cours avec la couleur et la luminance de l'arrière plan (moins de possibilités)  
-TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : utilise un algorithme similaire à Exposure principal mais en L*a*b* et en prenant en compte le deltaE.\n\nLaplacian & PDE : utilise un autre algorithme aussi avec deltaE et avec l'équation de Poisson pour résoudre le Laplacien dans l'espace de  Fourier.\nPDE IPOL, PDE Fattal et Standard peuvent être combinés.\nFFTW La transformée de Fourier est optimisée en taille pour réduire les temps de traitement.\nPDE reduit les artéfacts et le bruit.
+TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : utilise un algorithme similaire à Exposure principal mais en L*a*b* et en prenant en compte le deltaE.\n\nCompression dynamique et atténuateur de contraste : utilise un autre algorithme aussi avec deltaE et avec l'équation de Poisson pour résoudre le Laplacien dans l'espace de  Fourier.\nAtténuateur, Compression dynamqiue et Standard peuvent être combinés.\nFFTW La transformée de Fourier est optimisée en taille pour réduire les temps de traitement.\nRéduit les artéfacts et le bruit.
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applique un median avant la transformée de Laplace pour éviter les artéfacts (bruit).\nVous pouvez aussi utiliser l'outil  "Réduction du bruit".
-TP_LOCALLAB_EXPOSE;PDE algorithmes - Exposition
-TP_LOCALLAB_EXPOSURE_TOOLTIP;Dans certains cases (fortes ombres ..) vous pouvez utiliser le module "Shadows Highlights", "Tone equalizer", "TRC", "Encoding Log"...
+TP_LOCALLAB_EXPOSE;Compression dynamique - Exposition
+//TP_LOCALLAB_EXPOSURE_TOOLTIP;Dans certains cases (fortes ombres ..) vous pouvez utiliser le module "Shadows Highlights", "Tone equalizer", "TRC", "Encoding Log"...
+TP_LOCALLAB_EXPOSURE_TOOLTIP;Modifie l'exposition dans l'espace L*a*b* en utilisant un Laplacien et les algorithmes PDE en prenant en compte dE, minimise les artéfacts.
 TP_LOCALLAB_EXPRETITOOLS;Outils Retinex avancés
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUtiliser de basses valeurs de transition et de hautes valeurs de transition affaiblissement et Etendue pour simuler un petit RT-spot.
 TP_LOCALLAB_EXPTOOL;Outils exposition
 TP_LOCALLAB_EXPTRC;Courbe de réponse Tonale - TRC
-TP_LOCALLAB_EXP_TOOLNAME;Laplacien PDE -Compression Dynamique & Exposition- 10
+TP_LOCALLAB_EXP_TOOLNAME;Atténuation contraste -Compression Dynamique & Exposition- 10
 TP_LOCALLAB_FATAMOUNT;Quantité
 TP_LOCALLAB_FATANCHOR;Ancre
 TP_LOCALLAB_FATANCHORA;Décalage
@@ -2108,7 +2111,7 @@ TP_LOCALLAB_ORRETILAP_TOOLTIP;Agit sur un deuxième seuil Laplacien, pour prendr
 TP_LOCALLAB_ORRETISTREN_TOOLTIP;Aagit sur un seuil Laplacien, plus grande est l'action, plus les différences de contraste seront réduites
 TP_LOCALLAB_PASTELS2;Vibrance
 TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Compression dynamique + Standard
-TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuation ƒ
+TP_LOCALLAB_PDEFRA;Contrast atténuation ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - algorithme personnel adapté de IPOL à Rawtherapee: conduit à des résultats très variés et a besoin de différents réglages que Standard (Noir négatif, gamma < 1,...)\nPeut être utils pour des iamges sous-exposées ou avec une étendue dynamique importante.\n
 TP_LOCALLAB_PREVIEW;Prévisualisation ΔE
 TP_LOCALLAB_PREVHIDE;Cacher tous les réglages
@@ -2227,7 +2230,8 @@ TP_LOCALLAB_SLOMASKCOL;Pente (slope) masque
 TP_LOCALLAB_SLOSH;Pente
 TP_LOCALLAB_SOFT;Lumière douce - Original Retinex
 TP_LOCALLAB_SOFTM;Lumière douce (soft light)
-TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex est très différent des autres méthodes Retinex.\nIl agit sur les gris et équilibre la luminance.\nC'est une émulation de "Dodge" and "Burn"
+//TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex est très différent des autres méthodes Retinex.\nIl agit sur les gris et équilibre la luminance.\nC'est une émulation de "Dodge" and "Burn"
+TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Applique un mélange Lumière douce. Effectue une émulation de "dodge and burn" en utilisant l'algorithme original de retinex.
 TP_LOCALLAB_SOFTRADIUSCOL;Rayon adoucir
 TP_LOCALLAB_SOFTRETI;Reduire artefact ΔE
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Prend en compte ΔE pour améliorer Transmission map

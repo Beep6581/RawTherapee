@@ -4895,7 +4895,8 @@ void LocallabSoft::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
 void LocallabSoft::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
-        softMethod->set_tooltip_markup(M("TP_LOCALLAB_SOFTMETHOD_TOOLTIP"));
+        exp->set_tooltip_markup(M("TP_LOCALLAB_SOFTMETHOD_TOOLTIP"));        
+        //softMethod->set_tooltip_markup(M("TP_LOCALLAB_SOFTMETHOD_TOOLTIP"));
        // ctboxsoftmethod->set_tooltip_markup(M("TP_LOCALLAB_ORRETISTEP_TOOLTIP"));
         showmasksoftMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP"));
         streng->set_tooltip_text(M("TP_LOCALLAB_ORRETISTREN_TOOLTIP"));

@@ -2809,7 +2809,8 @@ TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_SOFT;Soft Light - Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
-TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Retinex method.\nIts acts on grey and balance luminance.\nIt is an emulation of "Dodge" and "Burn"
+//TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Retinex method.\nIts acts on grey and balance luminance.\nIt is an emulation of "Dodge" and "Burn"
+TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Apply a Soft-light blend (identical to the global adjustment). Carry out dodge and burn using the original Retinex algorithm.
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
 TP_LOCALLAB_SOFTRETI;Reduce artifact ΔE
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission map
