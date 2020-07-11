@@ -1378,12 +1378,20 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": [ "FUJIFILM X-T2", "FUJIFILM X-T20", "FUJIFILM X-E3", "FUJIFILM X100F", "FUJIFILM X-H1" ],
+        "make_model": [ "FUJIFILM X-T20", "FUJIFILM X-E3", "FUJIFILM X100F", "FUJIFILM X-H1" ],
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
         // "raw_crop": [ 0, 5, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - for lossless compressed files
         // "raw_crop": [ 0, 0, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - for uncompressed files
         "raw_crop": [ 0, 5, 6032, 4026 ], // full raw 6160,4032, Usable 6032,4026 - for uncompressed and lossless compressed files (but reduces height by 6 pixels)
         "ranges": { "white": 16100 }
+    },
+    
+    { // Quality B, samples provided by Daniel Catalina #5824
+        "make_model": "FUJIFILM X-T2",
+        "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
+        "raw_crop": [ 0, 5, 6032, 4026 ], // xee X-T20
+        "ranges": { "white": [ 16195, 16270, 16195 ] } // With LENR on and ISO4000+ starts to overestimate white level, more realistic would be 16090
+        // Negligible aperture scaling effect
     },
     
     { // Quality B, samples provided by Claes
