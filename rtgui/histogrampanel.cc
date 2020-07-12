@@ -519,14 +519,6 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                 if (needLuma) {
                     // Luma
                     cc->set_source_rgb(1.0, 1.0, 1.0);
-                    /*if (options.histogramDrawMode < 2) {
-                        cc->move_to(static_cast<double>(Lab_L) * (winw - 3. * s) / 100.0 + 0.5 * s, 0);
-                        cc->line_to(static_cast<double>(Lab_L) * (winw - 3. * s) / 100.0 + 0.5 * s, winh - 0);
-                    } else {
-                        cc->move_to(HistogramScaling::log(100, Lab_L) * (winw - 1.) / 100.0 + 0.5 * s, 0);
-                        cc->line_to(HistogramScaling::log(100, Lab_L) * (winw - 1.) / 100.0 + 0.5 * s, winh - 0);
-                    }
-                    cc->stroke();*/
                     if (options.histogramDrawMode < 2) {
                         xpos = padding + static_cast<double>(Lab_L) * (winw - padding * 2.0) / 100.0 + 0.5*s;
                     } else {
@@ -540,16 +532,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                 if (needChroma) {
                     // Chroma
                     double chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
-                    //  float chromaval = sqrt(Lab_a*Lab_a + Lab_b*Lab_b);
                     cc->set_source_rgb(0.9, 0.9, 0.0);
-                    /*if (options.histogramDrawMode < 2) {
-                        cc->move_to(chromaval * (winw - 1.) / 100.0 + 0.5 * s, 0);
-                        cc->line_to(chromaval * (winw - 1.) / 100.0 + 0.5 * s, winh - 0);
-                    } else {
-                        cc->move_to(HistogramScaling::log(100, chromaval) * (winw - 1.) / 100.0 + 0.5 * s, 0);
-                        cc->line_to(HistogramScaling::log(100, chromaval) * (winw - 1.) / 100.0 + 0.5 * s, winh - 0);
-                    }
-                    cc->stroke();*/
                     if (options.histogramDrawMode < 2) {
                         xpos = padding + chromaval * (winw - padding * 2.0) / 100.0 + 0.5*s;
                     } else {
