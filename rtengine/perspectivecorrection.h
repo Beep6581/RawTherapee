@@ -20,11 +20,19 @@
 
 #pragma once
 
-#include "coord2d.h"
-#include "procparams.h"
-#include "imagesource.h"
+#include <vector>
 
 namespace rtengine {
+
+namespace procparams
+{
+
+class ProcParams;
+
+}
+
+class ImageSource;
+class FramesMetaData;
 
 class ControlLine
 {
