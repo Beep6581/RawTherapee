@@ -29,8 +29,7 @@ class OPIcon;
 class Rectangle;
 class RTSurface;
 
-struct ControlLine
-{
+struct ControlLine {
     static constexpr int OBJ_COUNT = 4;
     std::unique_ptr<Line> line;
     std::shared_ptr<OPIcon> icon;
@@ -58,8 +57,8 @@ protected:
     int prev_obj;
     int selected_object;
 
-    void addLine (rtengine::Coord begin, rtengine::Coord end,
-            rtengine::ControlLine::Type type = rtengine::ControlLine::VERTICAL);
+    void addLine(rtengine::Coord begin, rtengine::Coord end,
+                 rtengine::ControlLine::Type type = rtengine::ControlLine::VERTICAL);
     /**
      * Set the line type of the line containing the object according to the
      * line's angle.
@@ -68,7 +67,7 @@ protected:
      * line, inclusive, the line type is set to vertical. Otherwise, horizontal.
      */
     void autoSetLineType(int object_id);
-    void removeLine (size_t line_id);
+    void removeLine(size_t line_id);
 
 public:
     class Callbacks
@@ -76,9 +75,9 @@ public:
     public:
         virtual ~Callbacks() {};
         /** Called when a line changed (added, removed, moved, etc.). */
-        virtual void lineChanged (void) {};
+        virtual void lineChanged(void) {};
         /** Called when the EditSubscriber's switchOffEditMode is called. */
-        virtual void switchOffEditMode (void) {};
+        virtual void switchOffEditMode(void) {};
     };
 
     /** Callbacks to invoke. */
@@ -87,30 +86,30 @@ public:
     ControlLineManager();
     ~ControlLineManager();
 
-    bool getEdited (void) const;
-    void removeAll (void);
+    bool getEdited(void) const;
+    void removeAll(void);
     /** Sets whether or not the lines are visible and interact-able. */
-    void setActive (bool active);
+    void setActive(bool active);
     /** Set whether or not lines can be drawn and deleted. */
-    void setDrawMode (bool draw);
-    void setEdited (bool edited);
-    void setEditProvider (EditDataProvider* provider);
-    void setLines (const std::vector<rtengine::ControlLine>& lines);
+    void setDrawMode(bool draw);
+    void setEdited(bool edited);
+    void setEditProvider(EditDataProvider* provider);
+    void setLines(const std::vector<rtengine::ControlLine>& lines);
     /** Returns the number of lines. */
-    size_t size (void) const;
+    size_t size(void) const;
     /**
      * Allocates a new array and populates it with copies of the control lines.
      */
-    void toControlLines (std::vector<rtengine::ControlLine>& converted) const;
+    void toControlLines(std::vector<rtengine::ControlLine>& converted) const;
 
     // EditSubscriber overrides
-    bool button1Pressed (int modifierKey) override;
-    bool button1Released (void) override;
-    bool button3Pressed (int modifierKey) override;
-    bool pick1 (bool picked) override;
-    bool pick3 (bool picked) override;
-    bool drag1 (int modifierKey) override;
-    CursorShape getCursor (int objectID) const override;
-    bool mouseOver (int modifierKey) override;
-    void switchOffEditMode (void) override;
+    bool button1Pressed(int modifierKey) override;
+    bool button1Released(void) override;
+    bool button3Pressed(int modifierKey) override;
+    bool pick1(bool picked) override;
+    bool pick3(bool picked) override;
+    bool drag1(int modifierKey) override;
+    CursorShape getCursor(int objectID) const override;
+    bool mouseOver(int modifierKey) override;
+    void switchOffEditMode(void) override;
 };

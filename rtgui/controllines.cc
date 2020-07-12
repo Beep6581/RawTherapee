@@ -43,10 +43,14 @@ ControlLineManager::ControlLineManager():
     canvas_area->topLeft = Coord(0, 0);
     mouseOverGeometry.push_back(canvas_area.get());
 
-    line_icon_h = Cairo::RefPtr<RTSurface>(new RTSurface("bidirectional-arrow-horizontal-hicontrast.png"));
-    line_icon_v = Cairo::RefPtr<RTSurface>(new RTSurface("bidirectional-arrow-vertical-hicontrast.png"));
-    line_icon_h_prelight = Cairo::RefPtr<RTSurface>(new RTSurface("bidirectional-arrow-horizontal-prelight.png"));
-    line_icon_v_prelight = Cairo::RefPtr<RTSurface>(new RTSurface("bidirectional-arrow-vertical-prelight.png"));
+    line_icon_h = Cairo::RefPtr<RTSurface>(new RTSurface(
+            "bidirectional-arrow-horizontal-hicontrast.png"));
+    line_icon_v = Cairo::RefPtr<RTSurface>(new RTSurface(
+            "bidirectional-arrow-vertical-hicontrast.png"));
+    line_icon_h_prelight = Cairo::RefPtr<RTSurface>(new RTSurface(
+                               "bidirectional-arrow-horizontal-prelight.png"));
+    line_icon_v_prelight = Cairo::RefPtr<RTSurface>(new RTSurface(
+                               "bidirectional-arrow-vertical-prelight.png"));
 }
 
 ControlLineManager::~ControlLineManager() = default;
@@ -91,6 +95,7 @@ bool ControlLineManager::button1Pressed(int modifierKey)
     drag_delta = Coord(0, 0);
 
     const int object = dataProvider->getObject();
+
     if (object > 0) { // A control line.
         if (object % ::ControlLine::OBJ_COUNT == 2) { // Icon.
             action = Action::PICKING;
@@ -111,9 +116,11 @@ bool ControlLineManager::button1Pressed(int modifierKey)
 bool ControlLineManager::button1Released(void)
 {
     action = Action::NONE;
+
     if (selected_object > 0) {
         mouseOverGeometry[selected_object]->state = Geometry::NORMAL;
     }
+
     edited = true;
     callbacks->lineChanged();
     drawing_line = false;
@@ -151,7 +158,8 @@ bool ControlLineManager::pick1(bool picked)
 
     // Change line type.
     int object_id = provider->getObject();
-    ::ControlLine& line = *control_lines[(object_id - 1) / ::ControlLine::OBJ_COUNT];
+    ::ControlLine& line =
+        *control_lines[(object_id - 1) / ::ControlLine::OBJ_COUNT];
 
     if (line.type == rtengine::ControlLine::HORIZONTAL) {
         line.icon = line.icon_v;
@@ -197,8 +205,10 @@ bool ControlLineManager::drag1(int modifierKey)
         return false;
     }
 
-    ::ControlLine& control_line = *control_lines[(selected_object - 1) / ::ControlLine::OBJ_COUNT];
-    int component = selected_object % ::ControlLine::OBJ_COUNT; // 0 == end, 1 == line, 2 == icon, 3 == begin
+    ::ControlLine& control_line =
+        *control_lines[(selected_object - 1) / ::ControlLine::OBJ_COUNT];
+    // 0 == end, 1 == line, 2 == icon, 3 == begin
+    int component = selected_object % ::ControlLine::OBJ_COUNT;
     Coord mouse = provider->posImage + provider->deltaImage;
     Coord delta = provider->deltaImage - drag_delta;
     int ih, iw;
@@ -211,6 +221,7 @@ bool ControlLineManager::drag1(int modifierKey)
             control_line.line->end = control_line.end->center;
             control_line.end->state = Geometry::DRAGGED;
             break;
+
         case (1): { // line
             // Constrain delta so the end stays above the image.
             Coord new_delta = control_line.end->center + delta;
@@ -229,6 +240,7 @@ bool ControlLineManager::drag1(int modifierKey)
             control_line.line->state = Geometry::DRAGGED;
             break;
         }
+
         case (3): // begin
             control_line.begin->center = mouse;
             control_line.begin->center.clip(iw, ih);
@@ -237,8 +249,10 @@ bool ControlLineManager::drag1(int modifierKey)
             break;
     }
 
-    control_line.icon_h->position.x = (control_line.begin->center.x + control_line.end->center.x) / 2;
-    control_line.icon_h->position.y = (control_line.begin->center.y + control_line.end->center.y) / 2;
+    control_line.icon_h->position.x = (control_line.begin->center.x +
+                                       control_line.end->center.x) / 2;
+    control_line.icon_h->position.y = (control_line.begin->center.y +
+                                       control_line.end->center.y) / 2;
     control_line.icon_v->position.x = control_line.icon_h->position.x;
     control_line.icon_v->position.y = control_line.icon_h->position.y;
 
@@ -288,6 +302,7 @@ bool ControlLineManager::mouseOver(int modifierKey)
     if (prev_obj != cur_obj && prev_obj > 0) {
         visibleGeometry[prev_obj - 1]->state = Geometry::NORMAL;
     }
+
     prev_obj = cur_obj;
 
     return true;
@@ -310,9 +325,11 @@ void ControlLineManager::setEditProvider(EditDataProvider* provider)
     EditSubscriber::setEditProvider(provider);
 }
 
-void ControlLineManager::setLines(const std::vector<rtengine::ControlLine>& lines)
+void ControlLineManager::setLines(const std::vector<rtengine::ControlLine>&
+                                  lines)
 {
     removeAll();
+
     for (auto&& line : lines) {
         Coord start(line.x1, line.y1);
         Coord end(line.x2, line.y2);
@@ -320,7 +337,8 @@ void ControlLineManager::setLines(const std::vector<rtengine::ControlLine>& line
     }
 }
 
-void ControlLineManager::addLine(Coord begin, Coord end, rtengine::ControlLine::Type type)
+void ControlLineManager::addLine(Coord begin, Coord end,
+                                 rtengine::ControlLine::Type type)
 {
     constexpr int line_width = 2;
     constexpr int handle_radius = 6;
@@ -334,14 +352,19 @@ void ControlLineManager::addLine(Coord begin, Coord end, rtengine::ControlLine::
     line->begin = begin;
     line->end = end;
 
-    const Cairo::RefPtr<RTSurface> null_surface = Cairo::RefPtr<RTSurface>(nullptr);
+    const Cairo::RefPtr<RTSurface> null_surface =
+        Cairo::RefPtr<RTSurface>(nullptr);
 
-    icon_h = std::make_shared<OPIcon>(line_icon_h, null_surface, line_icon_h_prelight,
-            null_surface, null_surface, Geometry::DP_CENTERCENTER);
+    icon_h = std::make_shared<OPIcon>(line_icon_h, null_surface,
+                                      line_icon_h_prelight,
+                                      null_surface, null_surface,
+                                      Geometry::DP_CENTERCENTER);
     icon_h->position = Coord((begin.x + end.x) / 2, (begin.y + end.y) / 2);
 
-    icon_v = std::make_shared<OPIcon>(line_icon_v, null_surface, line_icon_v_prelight,
-            null_surface, null_surface, Geometry::DP_CENTERCENTER);
+    icon_v = std::make_shared<OPIcon>(line_icon_v, null_surface,
+                                      line_icon_v_prelight,
+                                      null_surface, null_surface,
+                                      Geometry::DP_CENTERCENTER);
     icon_v->position = Coord((begin.x + end.x) / 2, (begin.y + end.y) / 2);
 
     begin_c = std::unique_ptr<Circle>(new Circle());
@@ -361,11 +384,13 @@ void ControlLineManager::addLine(Coord begin, Coord end, rtengine::ControlLine::
     control_line->end = std::move(end_c);
     control_line->icon_h = icon_h;
     control_line->icon_v = icon_v;
+
     if (type == rtengine::ControlLine::HORIZONTAL) {
         control_line->icon = icon_h;
     } else {
         control_line->icon = icon_v;
     }
+
     control_line->line = std::move(line);
     control_line->type = type;
 
@@ -393,6 +418,7 @@ void ControlLineManager::autoSetLineType(int object_id)
     if (dx < 0) {
         dx = -dx;
     }
+
     if (dy < 0) {
         dy = -dy;
     }
@@ -411,14 +437,16 @@ void ControlLineManager::autoSetLineType(int object_id)
     if (type != line.type) { // Need to update line type.
         line.type = type;
         line.icon = icon;
-        visibleGeometry[line_id * ::ControlLine::OBJ_COUNT + 1] = line.icon.get();
+        visibleGeometry[line_id * ::ControlLine::OBJ_COUNT + 1] =
+            line.icon.get();
     }
 }
 
 void ControlLineManager::removeAll(void)
 {
     visibleGeometry.clear();
-    mouseOverGeometry.erase(mouseOverGeometry.begin() + 1, mouseOverGeometry.end());
+    mouseOverGeometry.erase(mouseOverGeometry.begin() + 1,
+                            mouseOverGeometry.end());
     control_lines.clear();
     prev_obj = -1;
     selected_object = -1;
@@ -432,17 +460,24 @@ void ControlLineManager::removeLine(size_t line_id)
         return;
     }
 
-    visibleGeometry.erase(visibleGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id,
-            visibleGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + ::ControlLine::OBJ_COUNT);
-    mouseOverGeometry.erase(mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + 1,
-            mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + ::ControlLine::OBJ_COUNT + 1);
+    visibleGeometry.erase(
+        visibleGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id,
+        visibleGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id
+        + ::ControlLine::OBJ_COUNT
+    );
+    mouseOverGeometry.erase(
+        mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + 1,
+        mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id
+        + ::ControlLine::OBJ_COUNT + 1
+    );
     control_lines.erase(control_lines.begin() + line_id);
 
     edited = true;
     callbacks->lineChanged();
 }
 
-void ControlLineManager::toControlLines(std::vector<rtengine::ControlLine>& converted) const
+void ControlLineManager::toControlLines(std::vector<rtengine::ControlLine>&
+                                        converted) const
 {
     converted.clear();
     converted.resize(control_lines.size());
