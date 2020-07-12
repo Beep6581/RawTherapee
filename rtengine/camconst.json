@@ -1556,10 +1556,14 @@ Camera constants:
         }
     },
 
-    { // Quality B
+    { // Quality A, samples provided by dimonoid (#5842)
         "make_model": "NIKON COOLPIX P1000",
         "dcraw_matrix": [ 14294, -6116, -1333, -1628, 10219, 1637, -14, 1158, 5022 ], // ColorMatrix2 from Adobe DNG Converter 11.4
-        "ranges": { "black": 200, "white": 4087 }
+        "ranges": { 
+            "black": 200,
+            "white": [ 4000, 4050, 3950 ] // Typical values without LENR: 4009, 4093, 3963
+        } // No significant influence of ISO
+        // No aperture scaling reported
     },
 
     { // Quality B, no LENR samples
