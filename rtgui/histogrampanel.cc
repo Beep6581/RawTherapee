@@ -826,31 +826,29 @@ void HistogramArea::updateBackBuffer ()
     int nrOfVGridPartitions = 8; // always show 8 stops (lines at 1,3,7,15,31,63,127)
 
     // draw vertical gridlines
-    if (options.histogramDrawMode < 2) {
-        for (int i = 1; i < nrOfVGridPartitions; i++) {
-            cr->move_to ((pow(2.0,i) - 1) / 255.0 * w + 0.5, 0.);
-            cr->line_to ((pow(2.0,i) - 1) / 255.0 * w + 0.5, h);
-            cr->stroke ();
+    for (int i = 0; i <= nrOfVGridPartitions; i++) {
+        double xpos = padding + 0.5;
+        if (options.histogramDrawMode < 2) {
+            xpos += (pow(2.0,i) - 1) * (w - padding * 2.0) / 255.0;
+        } else {
+            xpos += HistogramScaling::log (255, pow(2.0,i) - 1) * (w - padding * 2.0) / 255.0;
         }
-    } else {
-        for (int i = 1; i < nrOfVGridPartitions; i++) {
-            cr->move_to (HistogramScaling::log (255, pow(2.0,i) - 1) / 255.0 * w + 0.5, 0.);
-            cr->line_to (HistogramScaling::log (255, pow(2.0,i) - 1) / 255.0 * w + 0.5, h);
-            cr->stroke ();
-        }
+        cr->move_to (xpos, 0.);
+        cr->line_to (xpos, h);
+        cr->stroke ();
     }
 
     // draw horizontal gridlines
     if (options.histogramDrawMode == 0) {
-        for (int i = 1; i < nrOfHGridPartitions; i++) {
-            cr->move_to (0., i * (double)h / nrOfHGridPartitions + 0.5);
-            cr->line_to (w, i * (double)h / nrOfHGridPartitions + 0.5);
+        for (int i = 1; i < nrOfHGridPartitions; i++) {            
+            cr->move_to (padding, i * (double)h / nrOfHGridPartitions + 0.5);
+            cr->line_to (w - padding, i * (double)h / nrOfHGridPartitions + 0.5);
             cr->stroke ();
         }
     } else {
         for (int i = 1; i < nrOfHGridPartitions; i++) {
-            cr->move_to (0., h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5*s);
-            cr->line_to (w, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5*s);
+            cr->move_to (padding, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5);
+            cr->line_to (w - padding, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5);
             cr->stroke ();
         }
     }
@@ -988,7 +986,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
     double s = RTScalable::getScale();
 
     cr->set_line_width(s);
-    cr->move_to (0, vsize - 1);
+    cr->move_to (padding, vsize - 1);
     scale = scale <= 0.0 ? 0.001 : scale; // avoid division by zero and negative values
 
     for (int i = 0; i < 256; i++) {
@@ -1003,13 +1001,13 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
             iscaled = HistogramScaling::log (255.0, (double)i);
         }
 
-        double posX = (iscaled / 255.0) * (hsize - 1);
+        double posX = padding + iscaled * (hsize - padding * 2.0) / 255.0;
         double posY = vsize - 2 + val * (4 - vsize) / vsize;
 
         cr->line_to (posX, posY);
     }
 
-    cr->line_to (hsize - 1, vsize - 1);
+    cr->line_to (hsize - padding, vsize - 1);
 }
 
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
@@ -1018,11 +1016,11 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
     int s = 8 * RTScalable::getScale();
 
     if(data[0] > scale) {
-        cr->rectangle(0, (ui++)*s, s, s);
+        cr->rectangle(padding, (ui++)*s, s, s);
     }
 
     if(data[255] > scale) {
-        cr->rectangle(hsize - s, (oi++)*s, s, s);
+        cr->rectangle(hsize - s - padding, (oi++)*s, s, s);
     }
 
     cr->fill();

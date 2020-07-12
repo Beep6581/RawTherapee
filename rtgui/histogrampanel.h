@@ -138,6 +138,8 @@ protected:
     bool rawMode;
     bool isPressed;
     double movingPosition;
+    
+    double padding = 5.0;
 
     HistogramAreaIdleHelper* haih;
 
