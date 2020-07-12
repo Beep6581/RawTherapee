@@ -204,8 +204,8 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     lines->callbacks = std::make_shared<LinesCallbacks>(this);
 
     Gtk::HBox* control_lines_box = Gtk::manage (new Gtk::HBox());
-    control_lines_box->set_tooltip_text( M("TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP") );
     Gtk::Label* control_lines_label = Gtk::manage (new Gtk::Label (M("TP_PERSPECTIVE_CONTROL_LINES") + ": "));
+    control_lines_label->set_tooltip_markup( M("TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP") );
     control_lines_box->pack_start(*control_lines_label, Gtk::PACK_SHRINK);
     control_lines_box->pack_start(*lines_button_edit);
     control_lines_box->pack_start(*lines_button_apply);
