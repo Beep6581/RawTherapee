@@ -69,42 +69,6 @@ constexpr int TS = 64; // Tile size
 constexpr float epsilonw = 0.001f / (TS * TS); //tolerance
 constexpr int offset = 25; // shift between tiles
 
-std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float& lutFactor)
-{
-    constexpr int lutSize = 100;
-
-    const float lutMax = std::ceil(mea[9]);
-    const float lutDiff = lutMax / lutSize;
-
-    std::vector<float> lutVals(lutSize);
-    int jStart = 1;
-    for (int i = 0; i < lutSize; ++i) {
-        const float val = i * lutDiff;
-        if (val < mea[0]) {
-            // still < first value => no interpolation
-            lutVals[i] = inVals[0];
-        } else {
-            for (int j = jStart; j < 10; ++j) {
-                if (val == mea[j]) {
-                    // exact match => no interpolation
-                    lutVals[i] = inVals[j];
-                    ++jStart;
-                    break;
-                }
-                if (val < mea[j]) {
-                    // interpolate
-                    const float dist = (val - mea[j - 1]) / (mea[j] - mea[j - 1]);
-                    lutVals[i] = rtengine::intp(dist, inVals[j], inVals[j - 1]);
-                    break;
-                }
-                lutVals[i] = inVals[10];
-            }
-        }
-    }
-    lutFactor = 1.f / lutDiff;
-    return std::unique_ptr<LUTf>(new LUTf(lutVals));
-}
-
 constexpr float clipLoc(float x)
 {
     return rtengine::LIM(x, 0.f, 32767.f);
