@@ -965,9 +965,9 @@ private:
             };
             params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, opautili);
             clToningcurve(65536, 0);
-            CurveFactory::curveToning(params.colorToning.clcurve, clToningcurve, 1);
+            CurveFactory::diagonalCurve2Lut(params.colorToning.clcurve, clToningcurve, 1);
             cl2Toningcurve(65536, 0);
-            CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, 1);
+            CurveFactory::diagonalCurve2Lut(params.colorToning.cl2curve, cl2Toningcurve, 1);
         }
 
         labView = new LabImage(fw, fh);
@@ -1070,8 +1070,7 @@ private:
         bool utili;
         CurveFactory::complexLCurve(params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, lumacurve, dummy, 1, utili);
 
-        bool clcutili;
-        CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, 1);
+        const bool clcutili = CurveFactory::diagonalCurve2Lut(params.labCurve.clcurve, clcurve, 1);
 
         bool ccutili, cclutili;
         CurveFactory::complexsgnCurve(autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
@@ -1207,22 +1206,22 @@ private:
                 const bool loccompwavutili = loccompwavCurve.Set(params.locallab.spots.at(sp).loccompwavcurve);
                 const bool loccomprewavutili = loccomprewavCurve.Set(params.locallab.spots.at(sp).loccomprewavcurve);
                 const bool locedgwavutili = locedgwavCurve.Set(params.locallab.spots.at(sp).locedgwavcurve);
-                const bool locallutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
-                const bool localclutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).clcurve, cllocalcurve, 1);
-                const bool locallcutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).lccurve, lclocalcurve, 1);
-                const bool localcutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
-                const bool localrgbutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).rgbcurve, rgblocalcurve, 1);
-                const bool localexutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
-                const bool localmaskutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, 1);
-                const bool localmaskexputili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, 1);
-                const bool localmaskSHutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, 1);
-                const bool localmaskvibutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, 1);
-                const bool localmasktmutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, 1);
-                const bool localmaskretiutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, 1);
-                const bool localmaskcbutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, 1);
-                const bool localmaskblutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, 1);
-                const bool localmasklcutili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
-                const bool localmask_utili = CurveFactory::curveLocal(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
+                const bool locallutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
+                const bool localclutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).clcurve, cllocalcurve, 1);
+                const bool locallcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).lccurve, lclocalcurve, 1);
+                const bool localcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
+                const bool localrgbutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).rgbcurve, rgblocalcurve, 1);
+                const bool localexutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
+                const bool localmaskutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, 1);
+                const bool localmaskexputili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, 1);
+                const bool localmaskSHutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, 1);
+                const bool localmaskvibutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, 1);
+                const bool localmasktmutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, 1);
+                const bool localmaskretiutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, 1);
+                const bool localmaskcbutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, 1);
+                const bool localmaskblutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, 1);
+                const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
+                const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
 
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
@@ -1361,9 +1360,6 @@ private:
 
         if ((params.wavelet.enabled)) {
             LabImage *unshar = nullptr;
-            Glib::ustring provis;
-
-            bool wavcontlutili = false;
             WaveletParams WaveParams = params.wavelet;
             WavCurve wavCLVCurve;
             Wavblcurve wavblcurve;
@@ -1392,10 +1388,10 @@ private:
 
             params.wavelet.getCurves(wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
-            CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
+            CurveFactory::diagonalCurve2Lut(params.wavelet.wavclCurve, wavclCurve, 1);
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
-                provis = params.wavelet.CLmethod;
+                const Glib::ustring provis = params.wavelet.CLmethod;
                 params.wavelet.CLmethod = "all";
                 ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
                 unshar = new LabImage(*labView, true);
