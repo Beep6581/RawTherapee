@@ -1101,11 +1101,7 @@ void CurveFactory::complexLCurve(double br, double contr, const std::vector<doub
         }
     }
 
-    if (tcurve && tcurve->isIdentity()) {
-        tcurve.reset();
-    }
-
-    if (tcurve) {
+    if (tcurve && !tcurve->isIdentity()) {
         utili = true; //if active
 
         // L values go up to 32767, last stop is for highlight overflow
@@ -1121,7 +1117,7 @@ void CurveFactory::complexLCurve(double br, double contr, const std::vector<doub
             // apply custom/parametric/NURBS curve, if any
             val = tcurve->getVal(outCurve[i]);
 
-            outCurve[i] = (32767.f * val);
+            outCurve[i] = 32767.f * val;
         }
     } else {
 
@@ -1136,7 +1132,7 @@ void CurveFactory::complexLCurve(double br, double contr, const std::vector<doub
     }
 
     for (int i = 32768; i < 32770; i++) { // set last two elements of lut to 32768 and 32769 to allow linear interpolation
-        outCurve[i] = (float)i;
+        outCurve[i] = i;
     }
 
 }
@@ -1151,11 +1147,7 @@ void CurveFactory::RGBCurve(const std::vector<double>& curvePoints, LUTf & outCu
         tcurve.reset(new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
     }
 
-    if (tcurve && tcurve->isIdentity()) {
-        tcurve.reset();
-    }
-
-    if (tcurve) {
+    if (tcurve && !tcurve->isIdentity()) {
         if (!outCurve) {
             outCurve(65536, 0);
         }
@@ -1171,7 +1163,6 @@ void CurveFactory::RGBCurve(const std::vector<double>& curvePoints, LUTf & outCu
         outCurve.reset();
     }
 }
-
 
 LocretigainCurverab::LocretigainCurverab() : sum(0.f) {};
 
