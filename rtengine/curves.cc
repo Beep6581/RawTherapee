@@ -340,7 +340,7 @@ bool CurveFactory::diagonalCurve2Lut(const std::vector<double>& curvePoints, LUT
     bool histNeeded = false;
 
     if (!curvePoints.empty() && curvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
+        dCurve.reset(new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (outBeforeCurveHistogram) {
             histNeeded = true;
