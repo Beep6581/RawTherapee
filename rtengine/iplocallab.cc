@@ -13754,6 +13754,15 @@ void ImProcFunctions::Lab_Local(
 
                             }
 
+
+                            if (locchCurve && CHutili && lp.qualcurvemet != 0) {//C=f(H) curve
+                                const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
+                                const float valparam = locchCurve[500.f * Color::huelab_to_huehsv2(rhue)] - 0.5f;  //get valp=f(H)
+                                float chromaChfactor = 1.0f + valparam;
+                                bufcolcalca *= chromaChfactor;//apply C=f(H)
+                                bufcolcalcb *= chromaChfactor;
+                            }
+
                             if (ctoning) {//color toning and direct change color
                                 if (lp.gridmet == 0) {
                                     bufcolcalca += kd * bufcolcalcL * a_scale + a_base;
