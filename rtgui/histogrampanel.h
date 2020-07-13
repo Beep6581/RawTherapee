@@ -78,6 +78,8 @@ protected:
     bool barDisplayed;
 
     Gtk::Grid* parent;
+    
+    double padding = 5.0;
 
     HistogramRGBAreaIdleHelper* harih;
 
@@ -138,6 +140,8 @@ protected:
     bool rawMode;
     bool isPressed;
     double movingPosition;
+    
+    double padding = 5.0;
 
     HistogramAreaIdleHelper* haih;
 

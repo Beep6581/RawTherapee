@@ -976,6 +976,7 @@ struct LocallabParams {
         // Control spot settings
         Glib::ustring name;
         bool isvisible;
+        Glib::ustring prevMethod; // show, hide
         Glib::ustring shape; // ELI, RECT
         Glib::ustring spotMethod; // norm, exc
         Glib::ustring wavMethod; // D2, D4, D6, D10, D14
@@ -999,6 +1000,7 @@ struct LocallabParams {
         double colorscope;
         double transitweak;
         double transitgrad;
+        bool activ;
         bool avoid;
         bool blwh;
         bool recurs;

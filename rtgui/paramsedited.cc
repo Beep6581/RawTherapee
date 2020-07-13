@@ -1024,6 +1024,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Control spot settings
                 locallab.spots.at(j).name = locallab.spots.at(j).name && pSpot.name == otherSpot.name;
                 locallab.spots.at(j).isvisible = locallab.spots.at(j).isvisible && pSpot.isvisible == otherSpot.isvisible;
+                locallab.spots.at(j).prevMethod = locallab.spots.at(j).prevMethod && pSpot.prevMethod == otherSpot.prevMethod;
                 locallab.spots.at(j).shape = locallab.spots.at(j).shape && pSpot.shape == otherSpot.shape;
                 locallab.spots.at(j).spotMethod = locallab.spots.at(j).spotMethod && pSpot.spotMethod == otherSpot.spotMethod;
                 locallab.spots.at(j).wavMethod = locallab.spots.at(j).wavMethod && pSpot.wavMethod == otherSpot.wavMethod;
@@ -1047,6 +1048,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).colorscope = locallab.spots.at(j).colorscope && pSpot.colorscope == otherSpot.colorscope;
                 locallab.spots.at(j).transitweak = locallab.spots.at(j).transitweak && pSpot.transitweak == otherSpot.transitweak;
                 locallab.spots.at(j).transitgrad = locallab.spots.at(j).transitgrad && pSpot.transitgrad == otherSpot.transitgrad;
+                locallab.spots.at(j).activ = locallab.spots.at(j).activ && pSpot.activ == otherSpot.activ;
                 locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
                 locallab.spots.at(j).blwh = locallab.spots.at(j).blwh && pSpot.blwh == otherSpot.blwh;
                 locallab.spots.at(j).recurs = locallab.spots.at(j).recurs && pSpot.recurs == otherSpot.recurs;
@@ -3062,6 +3064,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).isvisible = mods.locallab.spots.at(i).isvisible;
         }
 
+        if (locallab.spots.at(i).prevMethod) {
+            toEdit.locallab.spots.at(i).prevMethod = mods.locallab.spots.at(i).prevMethod;
+        }
+
         if (locallab.spots.at(i).shape) {
             toEdit.locallab.spots.at(i).shape = mods.locallab.spots.at(i).shape;
         }
@@ -3152,6 +3158,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).transitgrad) {
             toEdit.locallab.spots.at(i).transitgrad = mods.locallab.spots.at(i).transitgrad;
+        }
+
+        if (locallab.spots.at(i).activ) {
+            toEdit.locallab.spots.at(i).activ = mods.locallab.spots.at(i).activ;
         }
 
         if (locallab.spots.at(i).avoid) {
@@ -6048,6 +6058,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Control spot settings
     name(v),
     isvisible(v),
+    prevMethod(v),
     shape(v),
     spotMethod(v),
     wavMethod(v),
@@ -6071,6 +6082,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     colorscope(v),
     transitweak(v),
     transitgrad(v),
+    activ(v),
     avoid(v),
     blwh(v),
     recurs(v),
@@ -6530,6 +6542,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
 {
     name = v;
     isvisible = v;
+    prevMethod = v;
     shape = v;
     spotMethod = v;
     wavMethod = v;
@@ -6553,6 +6566,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     colorscope = v;
     transitweak = v;
     transitgrad = v;
+    activ = v;
     avoid = v;
     blwh = v;
     recurs = v;

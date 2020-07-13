@@ -390,6 +390,7 @@ public:
         // Control spot settings
         bool name;
         bool isvisible;
+        bool prevMethod;
         bool shape;
         bool spotMethod;
         bool wavMethod;
@@ -413,6 +414,7 @@ public:
         bool colorscope;
         bool transitweak;
         bool transitgrad;
+        bool activ;
         bool avoid;
         bool blwh;
         bool recurs;

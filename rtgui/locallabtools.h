@@ -174,6 +174,7 @@ class LocallabColor:
 {
 private:
     // Color & Light specific widgets
+    Gtk::Frame* const lumFrame;
     Gtk::CheckButton* const curvactiv;
     Adjuster* const lightness;
     Adjuster* const contrast;
@@ -945,6 +946,7 @@ private:
     Adjuster* const lcamount;
     Adjuster* const lcdarkness;
     Adjuster* const lclightness;
+    Gtk::Frame* const contFrame;
     Adjuster* const sigmalc;
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;
@@ -1086,6 +1088,7 @@ class LocallabCBDL:
 {
 private:
     const std::array<Adjuster*, 6> multiplier;
+    Gtk::Frame* const levFrame;
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const blurcbdl;

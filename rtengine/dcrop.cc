@@ -1278,7 +1278,7 @@ void Crop::update(int todo)
                 WaveParams.expnoise = false; 
             }
 
-        parent->ipf.softLight(labnCrop, params.softlight);
+
         
 //        parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, wavblcurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
         
@@ -1407,6 +1407,8 @@ void Crop::update(int todo)
 
 
         }
+        
+        parent->ipf.softLight(labnCrop, params.softlight);
 
         if (params.colorappearance.enabled) {
             float fnum = parent->imgsrc->getMetaData()->getFNumber();          // F number

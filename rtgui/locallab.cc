@@ -261,6 +261,12 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->shape = 1;
         }
 
+        if (pp->locallab.spots.at(i).prevMethod == "hide") {
+            r->prevMethod = 0;
+        } else {
+            r->prevMethod = 1;
+        }
+
         if (pp->locallab.spots.at(i).spotMethod == "norm") {
             r->spotMethod = 0;
         } else {
@@ -305,10 +311,11 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->balanh = pp->locallab.spots.at(i).balanh;
         r->colorde = pp->locallab.spots.at(i).colorde;
         r->colorscope = pp->locallab.spots.at(i).colorscope;
+        r->activ = pp->locallab.spots.at(i).activ;
         r->avoid = pp->locallab.spots.at(i).avoid;
         r->blwh = pp->locallab.spots.at(i).blwh;
         r->recurs = pp->locallab.spots.at(i).recurs;
-        r->laplac = pp->locallab.spots.at(i).laplac;
+        r->laplac = true; //pp->locallab.spots.at(i).laplac;
         r->deltae = pp->locallab.spots.at(i).deltae;
         r->scopemask = pp->locallab.spots.at(i).scopemask;
         r->shortc = pp->locallab.spots.at(i).shortc;
@@ -409,6 +416,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->shape = 1;
             }
 
+            if (newSpot->prevMethod == "hide") {
+                r->prevMethod = 0;
+            } else {
+                r->prevMethod = 1;
+            }
+
+
             if (newSpot->spotMethod == "norm") {
                 r->spotMethod = 0;
             } else {
@@ -472,6 +486,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balanh = newSpot->balanh;
             r->colorde = newSpot->colorde;
             r->colorscope = newSpot->colorscope;
+            r->activ = newSpot->activ;
             r->avoid = newSpot->avoid;
             r->blwh = newSpot->blwh;
             r->recurs = newSpot->recurs;
@@ -686,6 +701,12 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->shape = 1;
             }
 
+            if (newSpot->prevMethod == "hide") {
+                r->prevMethod = 0;
+            } else {
+                r->prevMethod = 1;
+            }
+
             if (newSpot->spotMethod == "norm") {
                 r->spotMethod = 0;
             } else {
@@ -749,6 +770,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balanh = newSpot->balanh;
             r->colorde = newSpot->colorde;
             r->colorscope = newSpot->colorscope;
+            r->activ = newSpot->activ;
             r->avoid = newSpot->avoid;
             r->blwh = newSpot->blwh;
             r->recurs = newSpot->recurs;
@@ -845,6 +867,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).shape = "RECT";
                     }
 
+                    if (r->prevMethod == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).prevMethod = "hide";
+                    } else {
+                        pp->locallab.spots.at(pp->locallab.selspot).prevMethod = "show";
+                    }
+
+
                     if (r->spotMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "norm";
                     } else {
@@ -889,6 +918,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).balanh = r->balanh;
                     pp->locallab.spots.at(pp->locallab.selspot).colorde = r->colorde;
                     pp->locallab.spots.at(pp->locallab.selspot).colorscope = r->colorscope;
+                    pp->locallab.spots.at(pp->locallab.selspot).activ = r->activ;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
                     pp->locallab.spots.at(pp->locallab.selspot).blwh = r->blwh;
                     pp->locallab.spots.at(pp->locallab.selspot).recurs = r->recurs;
