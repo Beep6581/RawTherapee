@@ -206,6 +206,8 @@ private:
     FlatCurveEditor* const LHshape;
     CurveEditorGroup* const H2CurveEditorG;
     FlatCurveEditor* const HHshape;
+    CurveEditorGroup* const H3CurveEditorG;
+    FlatCurveEditor* const CHshape;
     CurveEditorGroup* const rgbCurveEditorG;
     MyComboBoxText* const toneMethod;
     DiagonalCurveEditor* const rgbshape;

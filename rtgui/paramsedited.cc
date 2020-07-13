@@ -1104,6 +1104,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).rgbcurve = locallab.spots.at(j).rgbcurve && pSpot.rgbcurve == otherSpot.rgbcurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
                 locallab.spots.at(j).HHcurve = locallab.spots.at(j).HHcurve && pSpot.HHcurve == otherSpot.HHcurve;
+                locallab.spots.at(j).CHcurve = locallab.spots.at(j).CHcurve && pSpot.CHcurve == otherSpot.CHcurve;
                 locallab.spots.at(j).invers = locallab.spots.at(j).invers && pSpot.invers == otherSpot.invers;
                 locallab.spots.at(j).special = locallab.spots.at(j).special && pSpot.special == otherSpot.special;
                 locallab.spots.at(j).toolcol = locallab.spots.at(j).toolcol && pSpot.toolcol == otherSpot.toolcol;
@@ -3379,6 +3380,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).HHcurve) {
             toEdit.locallab.spots.at(i).HHcurve = mods.locallab.spots.at(i).HHcurve;
+        }
+
+        if (locallab.spots.at(i).CHcurve) {
+            toEdit.locallab.spots.at(i).CHcurve = mods.locallab.spots.at(i).CHcurve;
         }
 
         if (locallab.spots.at(i).invers) {
@@ -6138,6 +6143,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     rgbcurve(v),
     LHcurve(v),
     HHcurve(v),
+    CHcurve(v),
     invers(v),
     special(v),
     toolcol(v),
@@ -6622,6 +6628,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     rgbcurve = v;
     LHcurve = v;
     HHcurve = v;
+    CHcurve = v;
     invers = v;
     special = v;
     toolcol = v;

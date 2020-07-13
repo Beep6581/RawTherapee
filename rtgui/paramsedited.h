@@ -470,6 +470,7 @@ public:
         bool rgbcurve;
         bool LHcurve;
         bool HHcurve;
+        bool CHcurve;
         bool invers;
         bool special;
         bool toolcol;
