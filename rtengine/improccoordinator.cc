@@ -1065,6 +1065,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
                     const bool LHutili = loclhCurve.Set(params->locallab.spots.at(sp).LHcurve);
                     const bool HHutili = lochhCurve.Set(params->locallab.spots.at(sp).HHcurve);
+                    const bool CHutili = locchCurve.Set(params->locallab.spots.at(sp).CHcurve);
                     const bool lcmasutili = locccmasCurve.Set(params->locallab.spots.at(sp).CCmaskcurve);
                     const bool llmasutili = locllmasCurve.Set(params->locallab.spots.at(sp).LLmaskcurve);
                     const bool lhmasutili = lochhmasCurve.Set(params->locallab.spots.at(sp).HHmaskcurve);
@@ -1179,7 +1180,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   lllocalcurve, locallutili,
                                   cllocalcurve, localclutili,
                                   lclocalcurve, locallcutili,
-                                  loclhCurve,  lochhCurve,
+                                  loclhCurve,  lochhCurve, locchCurve,
                                   lmasklocalcurve, localmaskutili,
                                   lmaskexplocalcurve, localmaskexputili,
                                   lmaskSHlocalcurve, localmaskSHutili,
@@ -1211,7 +1212,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   locwavCurveden, locwavdenutili,
                                   locedgwavCurve, locedgwavutili,
                                   loclmasCurve_wav, lmasutili_wav,
-                                  LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                                  LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                   huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                   minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
