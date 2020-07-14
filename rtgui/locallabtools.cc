@@ -780,8 +780,8 @@ LocallabColor::LocallabColor():
     curvBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*clCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    curvBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*H3CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    curvBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*special);
     expcurvcol->add(*curvBox, false);
@@ -2203,7 +2203,7 @@ LocallabExposure::LocallabExposure():
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exptoolexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPTOOL")))),
-    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), MINEXP, MAXEXP, 0.01, 0.))), 
+    expcomp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EXPCOMP"), MINEXP, MAXEXP, 0.01, 0.))), 
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 10, 0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 20))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0))),
@@ -3108,7 +3108,12 @@ void LocallabExposure::inversexChanged()
     if (listener) {
         listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
-
+    if (inversex->get_active()) {
+        expcomp->setLabel(M("TP_LOCALLAB_EXPCOMPINV"));
+    } else {
+        expcomp->setLabel(M("TP_LOCALLAB_EXPCOMP"));
+    }
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (inversex->get_active()) {
@@ -3217,6 +3222,7 @@ void LocallabExposure::updateExposureGUI3()
     // Update exposure GUI according to inversex button state
     if (inversex->get_active()) {
         expMethod->hide();
+        expcomp->setLabel(M("TP_LOCALLAB_EXPCOMPINV"));
 
         // Manage specific case where expMethod is different from 0
         if (expMethod->get_active_row_number() > 0) {
@@ -3242,6 +3248,7 @@ void LocallabExposure::updateExposureGUI3()
     } else {
         expMethod->show();
         //structexp->show();
+        expcomp->setLabel(M("TP_LOCALLAB_EXPCOMP"));
         shadex->show();
         softradiusexp->show();
         expgradexp->show();
