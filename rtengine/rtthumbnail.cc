@@ -1327,10 +1327,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, opautili);
 
         clToningcurve (65536);
-        CurveFactory::curveToning (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
+        CurveFactory::diagonalCurve2Lut (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
 
         cl2Toningcurve (65536);
-        CurveFactory::curveToning (params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
+        CurveFactory::diagonalCurve2Lut (params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
     }
 
     if (params.blackwhite.enabled) {
@@ -1406,8 +1406,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,
                                  hist16, lumacurve, dummy, 16, utili);
 
-    bool clcutili;
-    CurveFactory::curveCL (clcutili, params.labCurve.clcurve, clcurve, 16);
+    const bool clcutili = CurveFactory::diagonalCurve2Lut(params.labCurve.clcurve, clcurve, 16);
 
     bool autili, butili, ccutili, cclutili;
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,

@@ -387,7 +387,7 @@ public:
     void Eval2(const float* const* WavCoeffs_L, int level, int W_L, int H_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, int numThreads);
 
     void calceffect(int level, float *mean, float *sigma, float *mea, float effect, float offs);
-
+    std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float& lutFactor);
     void Aver(const float* HH_Coeffs, int datalen, float &averagePlus, float &averageNeg, float &max, float &min, int numThreads);
     void Sigma(const float* HH_Coeffs, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg, int numThreads);
     void calckoe(const float* const* WavCoeffs_LL, float gradw, float tloww, float ** koeLi, int level, int dir, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC = nullptr);

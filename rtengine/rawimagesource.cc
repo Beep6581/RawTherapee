@@ -1948,12 +1948,12 @@ void RawImageSource::retinexPrepareCurves(const RetinexParams &retinexParams, LU
     useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
 
     if (useHsl) {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdHcurve, cdcurve, 1, lhist16RETI, histLRETI);
+        retinexcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.cdHcurve, cdcurve, 1, lhist16RETI, histLRETI);
     } else {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
+        retinexcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
     }
 
-    CurveFactory::mapcurve(mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
+    mapcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
     mapcurve *= 0.5f;
     retinexParams.getCurves(retinextransmissionCurve, retinexgaintransmissionCurve);
 }
