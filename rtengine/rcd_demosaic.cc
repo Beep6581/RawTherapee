@@ -48,6 +48,18 @@ namespace rtengine
 // Tiled version by Ingo Weyrich (heckflosse67@gmx.de)
 void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 {
+    // Test for RGB cfa
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            if (FC(i, j) == 3) {
+                // avoid crash
+                std::cout << "rcd_demosaic supports only RGB Colour filter arrays. Falling back to igv_interpolate" << std::endl;
+                igv_interpolate(W, H);
+                return;
+            }
+        }
+    }
+
     std::unique_ptr<StopWatch> stop;
 
     if (measure) {
