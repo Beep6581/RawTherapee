@@ -2777,6 +2777,33 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
+    CHcurve{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        0.166,
+        0.50,
+        0.35,
+        0.35,
+        0.333,
+        0.50,
+        0.35,
+        0.35,
+        0.50,
+        0.50,
+        0.35,
+        0.35,
+        0.666,
+        0.50,
+        0.35,
+        0.35,
+        0.833,
+        0.50,
+        0.35,
+        0.35
+    },
     invers(false),
     special(false),
     toolcol(true),
@@ -3926,6 +3953,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && rgbcurve == other.rgbcurve
         && LHcurve == other.LHcurve
         && HHcurve == other.HHcurve
+        && CHcurve == other.CHcurve
         && invers == other.invers
         && special == other.special
         && toolcol == other.toolcol
@@ -5448,6 +5476,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->rgbcurve, "Locallab", "RGBCurve_" + index_str, spot.rgbcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LHcurve, "Locallab", "LHCurve_" + index_str, spot.LHcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHcurve, "Locallab", "HHCurve_" + index_str, spot.HHcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->CHcurve, "Locallab", "CHCurve_" + index_str, spot.CHcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->invers, "Locallab", "Invers_" + index_str, spot.invers, keyFile);
                     saveToKeyfile(!pedited || spot_edited->special, "Locallab", "Special_" + index_str, spot.special, keyFile);
                     saveToKeyfile(!pedited || spot_edited->toolcol, "Locallab", "Toolcol_" + index_str, spot.toolcol, keyFile);
@@ -7119,6 +7148,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "RGBCurve_" + index_str, pedited, spot.rgbcurve, spotEdited.rgbcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LHCurve_" + index_str, pedited, spot.LHcurve, spotEdited.LHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHCurve_" + index_str, pedited, spot.HHcurve, spotEdited.HHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "CHCurve_" + index_str, pedited, spot.CHcurve, spotEdited.CHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "Invers_" + index_str, pedited, spot.invers, spotEdited.invers);
                 assignFromKeyfile(keyFile, "Locallab", "Special_" + index_str, pedited, spot.special, spotEdited.special);
                 assignFromKeyfile(keyFile, "Locallab", "Toolcol_" + index_str, pedited, spot.toolcol, spotEdited.toolcol);

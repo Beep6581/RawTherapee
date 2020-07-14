@@ -1273,6 +1273,35 @@ public:
     }
 };
 
+
+class LocCHCurve
+{
+private:
+    LUTf lutLocCHCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocCHCurve() {};
+    LocCHCurve();
+    void Reset();
+    bool Set(const std::vector<double> &curvePoints);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocCHCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocCHCurve;
+    }
+};
+
 class LocretigainCurve
 {
 private:

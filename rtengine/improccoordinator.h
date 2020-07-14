@@ -261,6 +261,7 @@ protected:
     LocretigainCurverab locRETgainCurverab;
     LocLHCurve loclhCurve;
     LocHHCurve lochhCurve;
+    LocCHCurve locchCurve;
     LocCCmaskCurve locccmasCurve;
     LocLLmaskCurve locllmasCurve;
     LocHHmaskCurve lochhmasCurve;
