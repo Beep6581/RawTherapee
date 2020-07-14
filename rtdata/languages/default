@@ -2340,7 +2340,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;Threshold deltaE-scope increase the range of scope-del
 TP_LOCALLAB_AUTOGRAY;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance ΔE ab-L
-TP_LOCALLAB_BALANEXP;ΔØ PDE balance
+TP_LOCALLAB_BALANEXP;Laplacian balance
 TP_LOCALLAB_BALANH;Balance ΔE C-H
 TP_LOCALLAB_BALAN_TOOLTIP;Change algorithm ΔE parameter.\nMore or less ab-L, more or less C - H.\nNot for Denoise
 TP_LOCALLAB_BASELOG;Logarithm base
