@@ -3078,7 +3078,7 @@ void LocallabExposure::updateMaskBackground(const double normChromar, const doub
         CCmaskexpshape->updateLocallabBackground(normChromar);
         LLmaskexpshape->updateLocallabBackground(normLumar);
         HHmaskexpshape->updateLocallabBackground(normHuer);
-
+        shapeexpos->updateLocallabBackground(normLumar);
         return false;
     }
     );
