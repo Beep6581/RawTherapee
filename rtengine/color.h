@@ -1805,7 +1805,7 @@ public:
     * @param Z Z channel input value and corrected output value [0 ; 65535]
     * @param p working profile
     */
-    static void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
+    static void gamutmap(float &X, float Y, float &Z, const double p[3][3]);
 
 
     /**
