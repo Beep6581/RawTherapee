@@ -1873,6 +1873,11 @@ void LocallabColor::updateMaskBackground(const double normChromar, const double 
         HHshape->updateLocallabBackground(normHuer);
         CHshape->updateLocallabBackground(normHuer);
         LHshape->updateLocallabBackground(normHuer);
+        llshape->updateLocallabBackground(normLumar);
+        ccshape->updateLocallabBackground(normChromar);
+        clshape->updateLocallabBackground(normLumar);
+        lcshape->updateLocallabBackground(normChromar);
+        
         return false;
     }
     );
