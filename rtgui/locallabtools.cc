@@ -1864,12 +1864,15 @@ void LocallabColor::updateMaskBackground(const double normChromar, const double 
     [this, normHuer, normLumar, normChromar]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
-        // Update mask background
+        // Update mask background and H curves
         CCmaskshape->updateLocallabBackground(normChromar);
         LLmaskshape->updateLocallabBackground(normLumar);
         HHmaskshape->updateLocallabBackground(normHuer);
         HHhmaskshape->updateLocallabBackground(normHuer);
-
+        //H curves
+        HHshape->updateLocallabBackground(normHuer);
+        CHshape->updateLocallabBackground(normHuer);
+        LHshape->updateLocallabBackground(normHuer);
         return false;
     }
     );
