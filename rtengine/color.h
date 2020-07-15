@@ -1839,7 +1839,6 @@ public:
         } else if (HH >= -0.1f     && HH < 0.f     ) {
             hr = 0.1    * double(HH) + 0.93;    //hr 0.92  0.93    red
         }
-
         // in case of !
         if     (hr < 0.0) {
             hr += 1.0;

@@ -253,7 +253,7 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
     // Hue reference normalization (between 0 and 1)
     double normHuer = huer;
     float h = Color::huelab_to_huehsv2(normHuer);
-    h += 1.f / 6.f;
+   // h += 1.f / 6.f;
 
     if (h > 1.f) {
         h -= 1.f;
