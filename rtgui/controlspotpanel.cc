@@ -309,7 +309,6 @@ ControlSpotPanel::ControlSpotPanel():
                              sigc::mem_fun(
                                  *this, &ControlSpotPanel::qualityMethodChanged));
     ctboxqualitymethod->pack_start(*qualityMethod_);
-//    pack_start(*ctboxqualitymethod);
 
     if (showtooltip) {
         expTransGrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
@@ -319,21 +318,9 @@ ControlSpotPanel::ControlSpotPanel():
 
     if (showtooltip) {
         transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         feather_->set_tooltip_text(M("TP_LOCALLAB_FEATH_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         scopemask_->set_tooltip_text(M("TP_LOCALLAB_SCOPEMASK_TOOLTIP"));
     }
 

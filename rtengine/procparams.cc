@@ -3686,7 +3686,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensicb(60),
     clarityml(0.1),
     contresid(0),
-    blurcbdl(0.),
     softradiuscb(0.0),
     enacbMask(false),
     CCmaskcbcurve{
@@ -4309,7 +4308,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensicb == other.sensicb
         && clarityml == other.clarityml
         && contresid == other.contresid
-        && blurcbdl == other.blurcbdl
         && softradiuscb == other.softradiuscb
         && enacbMask == other.enacbMask
         && CCmaskcbcurve == other.CCmaskcbcurve
@@ -5833,7 +5831,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sensicb, "Locallab", "Sensicb_" + index_str, spot.sensicb, keyFile);
                     saveToKeyfile(!pedited || spot_edited->clarityml, "Locallab", "Clarityml_" + index_str, spot.clarityml, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contresid, "Locallab", "Contresid_" + index_str, spot.contresid, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->blurcbdl, "Locallab", "Blurcbdl_" + index_str, spot.blurcbdl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->softradiuscb, "Locallab", "Softradiuscb_" + index_str, spot.softradiuscb, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enacbMask, "Locallab", "EnacbMask_" + index_str, spot.enacbMask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskcbcurve, "Locallab", "CCmaskcbCurve_" + index_str, spot.CCmaskcbcurve, keyFile);
@@ -7577,7 +7574,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensicb_" + index_str, pedited, spot.sensicb, spotEdited.sensicb);
                 assignFromKeyfile(keyFile, "Locallab", "Clarityml_" + index_str, pedited, spot.clarityml, spotEdited.clarityml);
                 assignFromKeyfile(keyFile, "Locallab", "Contresid_" + index_str, pedited, spot.contresid, spotEdited.contresid);
-                assignFromKeyfile(keyFile, "Locallab", "Blurcbdl_" + index_str, pedited, spot.blurcbdl, spotEdited.blurcbdl);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscb_" + index_str, pedited, spot.softradiuscb, spotEdited.softradiuscb);
                 assignFromKeyfile(keyFile, "Locallab", "EnacbMask_" + index_str, pedited, spot.enacbMask, spotEdited.enacbMask);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskcbCurve_" + index_str, pedited, spot.CCmaskcbcurve, spotEdited.CCmaskcbcurve);

@@ -1093,7 +1093,6 @@ private:
     Gtk::Frame* const levFrame;
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
-    Adjuster* const blurcbdl;
     Adjuster* const clarityml;
     Adjuster* const contresid;
     Adjuster* const softradiuscb;

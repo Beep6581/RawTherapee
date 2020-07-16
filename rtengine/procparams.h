@@ -1397,7 +1397,6 @@ struct LocallabParams {
         int sensicb;
         double clarityml;
         int contresid;
-        double blurcbdl;
         double softradiuscb;
         bool enacbMask;
         std::vector<double> CCmaskcbcurve;
