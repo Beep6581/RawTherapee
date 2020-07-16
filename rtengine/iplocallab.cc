@@ -161,7 +161,7 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
         std::swap(pwr, gamm);
     }
 
-    rtengine::Color::calcGamma(pwr, ts, 0, g_a); // call to calcGamma with selected gamma and slope
+    rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
     const double start = gamm2 < 1. ? g_a[2] : g_a[3];
     const double add = g_a[4];

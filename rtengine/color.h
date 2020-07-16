@@ -1006,8 +1006,6 @@ public:
     * @brief Get the gamma curves' parameters used by LCMS2
     * @param pwr gamma value [>1]
     * @param ts slope [0 ; 20]
-    * @param mode [always 0]
-    * @imax imax [always 0]
     * @param gamma a pointer to an array of 6 double gamma values:
     *        gamma0 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
     *        gamma1 used in ip2Lab2rgb [0 ; 20], can be superior to 20, but it's quite unusual(return value)
@@ -1016,7 +1014,7 @@ public:
     *        gamma4 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
     *        gamma5 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
     */
-    static void calcGamma (double pwr, double ts, int mode, GammaValues &gamma);
+    static void calcGamma (double pwr, double ts, GammaValues &gamma);
 
 
     /**
@@ -1468,9 +1466,7 @@ public:
 
     static void scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale, float &scaleext);
     static void transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor);
-    static void skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s);
     static void skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s);
-//  static void scaleredcdbl ( float skinprot, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext);
 
     static inline void pregamutlab(float lum, float hue, float &chr) //big approximation to limit gamut (Prophoto) before good gamut procedure for locallab chroma, to avoid crash
     {
@@ -1801,7 +1797,7 @@ public:
     /**
     * @brief Gamut correction in the XYZ color space
     * @param X X channel input value and corrected output value [0 ; 65535]
-    * @param Y Y channel input value and corrected output value [0 ; 65535]
+    * @param Y Y channel input value[0 ; 65535]
     * @param Z Z channel input value and corrected output value [0 ; 65535]
     * @param p working profile
     */

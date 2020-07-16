@@ -1282,7 +1282,7 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
             koymcp += (prM + pgM + pbM);
         }
 
-        if(mixerCyan != 33.f) {
+        if (mixerCyan != 33.f) {
             float cgM = 0.f;
             if (algo == "SP") {
                 cgM = fcompl * (-0.134f * mixerCyan + 4.422f) / 100.f;
@@ -1460,7 +1460,7 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
                                  const float xl, const float yl, const float zl, const float x2, const float y2, const float z2,
                                  const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
 {
-    float L1 = 0.f, a_1 = 0.f, b_1 = 0.f, a_2 = 0.f, b_2 = 0.f, a_L, b_L;
+    float L1 = 0.f, a_1 = 0.f, b_1 = 0.f, a_2 = 0.f, b_2 = 0.f, a_L = 0.f, b_L = 0.f;
 
     if (algm == 1) {//use H interpolate
         // converting color 1 to Lab  (image)
@@ -1529,10 +1529,10 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
     Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);// ro go bo in gamut
 }
 
-void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
+void Color::calcGamma (double pwr, double ts, GammaValues &gamma)
 {
     //from Dcraw (D.Coffin)
-    double g[6], bnd[2] = {0., 0.};
+    double g[6], bnd[2] = {};
 
     g[0] = pwr;
     g[1] = ts;
@@ -1563,16 +1563,13 @@ void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
         g[5] = 1. / (g[1] * SQR(g[3]) / 2. + 1. - g[2] - g[3] - g[2] * g[3] * (log(g[3]) - 1.)) - 1.;
     }
 
-    if (!mode) {
-        gamma[0] = g[0];
-        gamma[1] = g[1];
-        gamma[2] = g[2];
-        gamma[3] = g[3];
-        gamma[4] = g[4];
-        gamma[5] = g[5];
-        gamma[6] = 0.;
-        return;
-    }
+    gamma[0] = g[0];
+    gamma[1] = g[1];
+    gamma[2] = g[2];
+    gamma[3] = g[3];
+    gamma[4] = g[4];
+    gamma[5] = g[5];
+    gamma[6] = 0.;
 }
 void Color::gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
 {
@@ -2018,96 +2015,33 @@ void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
     Z = (12 - 3 * u - 20 * v) * Y / (4 * v);
 }
 
-void Color::skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s)
-{
-
-    float HH;
-    bool doskin = false;
-    //rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
-    if ((float)h > 8.6f  && (float)h <= 74.f ) {
-        HH = (1.15f / 65.4f) * (float)h - 0.0012f;     //H > 0.15   H<1.3
-        doskin = true;
-    } else if((float)h > 0.f   && (float)h <= 8.6f ) {
-        HH = (0.19f / 8.6f ) * (float)h - 0.04f;       //H>-0.04 H < 0.15
-        doskin = true;
-    } else if((float)h > 355.f && (float)h <= 360.f) {
-        HH = (0.11f / 5.0f ) * (float)h - 7.96f;       //H>-0.15 <-0.04
-        doskin = true;
-    } else if((float)h > 74.f  && (float)h < 95.f  ) {
-        HH = (0.30f / 21.0f) * (float)h + 0.24285f;    //H>1.3  H<1.6
-        doskin = true;
-    }
-
-    if(doskin) {
-        float scale = 100.0f / 100.1f; //reduction in normal zone
-        float scaleext = 1.0f; //reduction in transition zone
-        float factorskin;
-        float chromapro = sres / Sp;
-
-        if(sk == 1) { //in C mode to adapt dred to J
-            if     (J < 16.0) {
-                dred = 40.0f;
-            } else if(J < 22.0) {
-                dred = 2.5f * (float)J;
-            } else if(J < 60.0) {
-                dred = 55.0f;
-            } else if(J < 70.0) {
-                dred = -1.5f * (float)J + 145.0f;
-            } else {
-                dred = 40.0f;
-            }
-        }
-
-        constexpr float deltaHH = 0.3f; //HH value transition : I have choice 0.3 radians
-        if(chromapro > 0.f) {
-            Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);    //Scale factor
-        }
-
-        float factorskinext;
-        if(chromapro > 1.f) {
-            const float interm = (chromapro - 1.0f) * 100.0f;
-            factorskin = 1.0f + (interm * scale) / 100.0f;
-            factorskinext = 1.0f + (interm * scaleext) / 100.0f;
-        } else {
-            factorskin = chromapro ;
-            factorskinext = chromapro ;
-        }
-
-        float factor = chromapro;
-        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, chromapro, factor);   //transition
-        s *= factor;
-    } else {
-        s = ko * sres;
-    }
-
-}
 void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)
 {
     float HH;
     bool doskin = false;
 
     //rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
-    if     ((float)h > 8.6f  && (float)h <= 74.f ) {
-        HH = (1.15f / 65.4f) * (float)h - 0.0012f;     //H > 0.15   H<1.3
+    if (h > 8.6f  && h <= 74.f) {
+        HH = (1.15f / 65.4f) * h - 0.0012f;     //H > 0.15   H<1.3
         doskin = true;
-    } else if((float)h > 0.f   && (float)h <= 8.6f ) {
-        HH = (0.19f / 8.6f ) * (float)h - 0.04f;       //H>-0.04 H < 0.15
+    } else if(h > 0.f && h <= 8.6f) {
+        HH = (0.19f / 8.6f) * h - 0.04f;       //H>-0.04 H < 0.15
         doskin = true;
-    } else if((float)h > 355.f && (float)h <= 360.f) {
-        HH = (0.11f / 5.0f ) * (float)h - 7.96f;       //H>-0.15 <-0.04
+    } else if(h > 355.f && h <= 360.f) {
+        HH = (0.11f / 5.0f) * h - 7.96f;       //H>-0.15 <-0.04
         doskin = true;
-    } else if((float)h > 74.f  && (float)h < 95.f  ) {
-        HH = (0.30f / 21.0f) * (float)h + 0.24285f;    //H>1.3  H<1.6
+    } else if(h > 74.f && h < 95.f  ) {
+        HH = (0.30f / 21.0f) * h + 0.24285f;    //H>1.3  H<1.6
         doskin = true;
     }
 
     if(doskin) {
-        float factorskin, factorsat, factor, factorskinext;
+        float factorskin, factor, factorskinext;
         float deltaHH = 0.3f; //HH value transition : I have choice 0.3 radians
         float chromapro = sres / Sp;
 
         if(sk == 1) { //in C mode to adapt dred to J
-            if     (J < 16.f) {
+            if (J < 16.f) {
                 dred = 40.f;
             } else if(J < 22.f) {
                 dred = 2.5f * J;
@@ -2124,7 +2058,7 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
             float scale = 0.999000999f;  // 100.0f/100.1f; reduction in normal zone
             float scaleext = 1.0f; //reduction in transition zone
             Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//Scale factor
-            float interm = (chromapro - 1.0f);
+            const float interm = chromapro - 1.0f;
             factorskin = 1.0f + (interm * scale);
             factorskinext = 1.0f + (interm * scaleext);
         } else {
@@ -2132,20 +2066,13 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
             factorskinext = chromapro ;
         }
 
-        factorsat = chromapro;
-        factor = factorsat;
-        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);   //transition
+        factor = chromapro;
+        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, chromapro, factor);   //transition
         s *= factor;
     } else {
         s = ko * sres;
     }
-
 }
-
-
-
-
-
 
 void Color::scalered ( const float rstprotection, const float param, const float limit, const float HH, const float deltaHH, float &scale, float &scaleext)
 {

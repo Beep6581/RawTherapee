@@ -881,8 +881,7 @@ void ICCProfileCreator::savePressed()
         double ts = slope;
         double slope2 = slope == 0 ? eps : slope;
 
-        int mode = 0;
-        rtengine::Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+        rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
         ga[4] = g_a[3] * ts;
         //printf("g_a.gamma0=%f g_a.gamma1=%f g_a.gamma2=%f g_a.gamma3=%f g_a.gamma4=%f\n", g_a.gamma0,g_a.gamma1,g_a.gamma2,g_a.gamma3,g_a.gamma4);
         ga[0] = gamma;
