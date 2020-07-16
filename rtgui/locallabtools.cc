@@ -1869,6 +1869,7 @@ void LocallabColor::updateMaskBackground(const double normChromar, const double 
         LLmaskshape->updateLocallabBackground(normLumar);
         HHmaskshape->updateLocallabBackground(normHuer);
         HHhmaskshape->updateLocallabBackground(normHuer);
+        Lmaskshape->updateLocallabBackground(normLumar);
         //H curves
         HHshape->updateLocallabBackground(normHuer);
         CHshape->updateLocallabBackground(normHuer);
@@ -3079,6 +3080,7 @@ void LocallabExposure::updateMaskBackground(const double normChromar, const doub
         LLmaskexpshape->updateLocallabBackground(normLumar);
         HHmaskexpshape->updateLocallabBackground(normHuer);
         shapeexpos->updateLocallabBackground(normLumar);
+        Lmaskexpshape->updateLocallabBackground(normLumar);
         return false;
     }
     );
@@ -3977,6 +3979,7 @@ void LocallabShadow::updateMaskBackground(const double normChromar, const double
         CCmaskSHshape->updateLocallabBackground(normChromar);
         LLmaskSHshape->updateLocallabBackground(normLumar);
         HHmaskSHshape->updateLocallabBackground(normHuer);
+        LmaskSHshape->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -4777,6 +4780,7 @@ void LocallabVibrance::updateMaskBackground(const double normChromar, const doub
         CCmaskvibshape->updateLocallabBackground(normChromar);
         LLmaskvibshape->updateLocallabBackground(normLumar);
         HHmaskvibshape->updateLocallabBackground(normHuer);
+        Lmaskvibshape->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -6193,6 +6197,7 @@ void LocallabBlur::updateMaskBackground(const double normChromar, const double n
         CCmaskblshape->updateLocallabBackground(normChromar);
         LLmaskblshape->updateLocallabBackground(normLumar);
         HHmaskblshape->updateLocallabBackground(normHuer);
+        Lmaskblshape->updateLocallabBackground(normLumar);
 
         return false;
     }

@@ -644,6 +644,7 @@ void LocallabTone::updateMaskBackground(const double normChromar, const double n
         CCmasktmshape->updateLocallabBackground(normChromar);
         LLmasktmshape->updateLocallabBackground(normLumar);
         HHmasktmshape->updateLocallabBackground(normHuer);
+        Lmasktmshape->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -1541,6 +1542,7 @@ void LocallabRetinex::updateMaskBackground(const double normChromar, const doubl
         CCmaskretishape->updateLocallabBackground(normChromar);
         LLmaskretishape->updateLocallabBackground(normLumar);
         HHmaskretishape->updateLocallabBackground(normHuer);
+        Lmaskretishape->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -3374,6 +3376,7 @@ void LocallabContrast::updateMaskBackground(const double normChromar, const doub
         CCmasklcshape->updateLocallabBackground(normChromar);
         LLmasklcshape->updateLocallabBackground(normLumar);
         HHmasklcshape->updateLocallabBackground(normHuer);
+        Lmasklcshape->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -4217,6 +4220,7 @@ void LocallabCBDL::updateMaskBackground(const double normChromar, const double n
         CCmaskcbshape->updateLocallabBackground(normChromar);
         LLmaskcbshape->updateLocallabBackground(normLumar);
         HHmaskcbshape->updateLocallabBackground(normHuer);
+        Lmaskcbshape->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -5159,6 +5163,7 @@ void LocallabMask::updateMaskBackground(const double normChromar, const double n
         LLmask_shape->updateLocallabBackground(normLumar);
         HHmask_shape->updateLocallabBackground(normHuer);
         HHhmask_shape->updateLocallabBackground(normHuer);
+        Lmask_shape->updateLocallabBackground(normLumar);
 
         return false;
     }
