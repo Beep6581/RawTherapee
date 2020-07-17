@@ -1354,22 +1354,7 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
     }
 
     if (scal == 1) {//only if user select scal = 1
-
-        float kval = 1.f;
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-
-        for (int y = 0; y < H_L; ++y) {
-            for (int x = 0; x < W_L; ++x) {
-                float threslow = threslum * 163.f;
-
-                if (src[y][x] < threslow) {
-                    kval = src[y][x] / threslow;
-                }
-            }
-        }
-
+        const float threslow = threslum * 163.f;
 
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -1377,9 +1362,11 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
 
         for (int y = 0; y < H_L; ++y) {
             for (int x = 0; x < W_L; ++x) {
-                float buf = (src[y][x] - out[y][x]) * value_1;
+                const float srcVal = src[y][x];
+                const float kval = rtengine::min(srcVal / threslow, 1.f);
+                float buf = (srcVal - out[y][x]) * value_1;
                 buf *= (buf > 0.f) ? lig : dar;
-                luminance[y][x] = LIM(src[y][x] + (1.f + kval) * buf, -32768.f, 32768.f);
+                luminance[y][x] = LIM(srcVal + (1.f + kval) * buf, -32768.f, 32768.f);
             }
         }
 
