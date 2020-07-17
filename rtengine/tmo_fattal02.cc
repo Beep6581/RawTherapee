@@ -1180,7 +1180,6 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
         scale = (oldMedian == 0.f || newMedian == 0.f) ? 65535.f : (oldMedian / newMedian); // avoid Nan
     } else {
 
-        scale = 65535.f;
         {
             float ratio = 0.f;
             int ww, hh;

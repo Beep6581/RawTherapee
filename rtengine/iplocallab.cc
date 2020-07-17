@@ -161,7 +161,7 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
         std::swap(pwr, gamm);
     }
 
-    rtengine::Color::calcGamma(pwr, ts, 0, g_a); // call to calcGamma with selected gamma and slope
+    rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
     const double start = gamm2 < 1. ? g_a[2] : g_a[3];
     const double add = g_a[4];
@@ -392,7 +392,6 @@ struct local_params {
     int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf, senshs, senscolor;
     float clarityml;
     float contresid;
-    float blurcbdl;
     bool deltaem;
     float struco;
     float strengrid;
@@ -988,7 +987,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensicb = locallab.spots.at(sp).sensicb;
     float local_clarityml = (float) locallab.spots.at(sp).clarityml;
     float local_contresid = (float) locallab.spots.at(sp).contresid;
-    int local_blurcbdl = 0; //(float) locallab.spots.at(sp).blurcbdl;
     int local_contrast = locallab.spots.at(sp).contrast;
     float local_lightness = (float) locallab.spots.at(sp).lightness;
     float labgridALowloc = locallab.spots.at(sp).labgridALow;
@@ -1238,7 +1236,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senscb = local_sensicb;
     lp.clarityml = local_clarityml;
     lp.contresid = local_contresid;
-    lp.blurcbdl = local_blurcbdl;
     lp.cont = local_contrast;
     lp.ligh = local_lightness;
     lp.lowA = labgridALowloc;
@@ -10780,7 +10777,7 @@ void ImProcFunctions::Lab_Local(
                         lp.mulloc[5] = 1.001f;
                     }
 
-                    ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
+                    ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
                     if (lp.softradiuscb > 0.f) {
                         softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
@@ -10819,7 +10816,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     choice = 1;
-                    ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, multc, rtengine::max(lp.chromacb, 1.f), lp.threshol, clarich, 0.f, lp.blurcbdl, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk, multiThread);
+                    ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, multc, rtengine::max(lp.chromacb, 1.f), lp.threshol, clarich, 0.f, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
 
                     float minC = loctemp->L[0][0] - std::sqrt(SQR(loctemp->a[0][0]) + SQR(loctemp->b[0][0]));

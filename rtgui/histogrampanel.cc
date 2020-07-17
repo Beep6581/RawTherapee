@@ -469,10 +469,9 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
 
         cc->set_antialias(Cairo::ANTIALIAS_NONE);
         cc->set_line_width (1.0 * s);
-        
-        double xpos;
 
         if ( r != -1 && g != -1 && b != -1 ) {
+            double xpos;
             if (needRed) {
                 // Red
                 cc->set_source_rgb(1.0, 0.0, 0.0);

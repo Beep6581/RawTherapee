@@ -254,9 +254,9 @@ public:
     void fftw_tile_blur(int GW, int GH, int tilssize , int max_numblox_W, int min_numblox_W, float **tmp1, int numThreads, double radius);
 
     void maskforretinex(int sp, int before, float ** luminance, float ** out, int W_L, int H_L, int skip,
-         const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
+         const LocCCmaskCurve & locccmasretiCurve, bool lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool lhmasretiutili,
          int llretiMask, bool retiMasktmap, bool retiMask, float rad, float lap, bool pde, float gamm, float slop, float chro, float blend,
-         LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
+         const LUTf & lmaskretilocalcurve, bool localmaskretiutili,
          LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread,
          bool delt, const float hueref, const float chromaref, const float lumaref,
          float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask);
@@ -269,8 +269,8 @@ public:
     void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, const float* const *originalLuminance,
         const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
         const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
-        const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask,
-        LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
+        const LocCCmaskCurve & locccmasretiCurve, bool lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool lhmasretiutili, int llretiMask,
+        const LUTf & lmaskretilocalcurve, bool localmaskretiutili,
         LabImage * transformed, bool retiMasktmap, bool retiMask,
         bool delt, const float hueref, const float chromaref, const float lumaref,
         float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask);
@@ -424,7 +424,7 @@ public:
     float MadRgb(const float * DataList, int datalen);
 
     // pyramid wavelet
-    void cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const float mergeL, const float contres, const float blurcb, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale, bool multiThread);
+    void cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const float mergeL, const float contres, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale, bool multiThread);
     void dirpyr_equalizer(const float * const * src, float ** dst, int srcwidth, int srcheight, const float * const * l_a, const float * const * l_b, const double * mult, double dirpyrThreshold, double skinprot, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet
     void dirpyr_equalizercam(const CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, const float * const * h_p, const float * const * C_p,  const double * mult, const double dirpyrThreshold, const double skinprot, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet
     void defringe(LabImage* lab);

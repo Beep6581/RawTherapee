@@ -1770,10 +1770,10 @@ static void region_grow( int x, int y, image_double angles, struct point * reg,
   int xx,yy,i;
 
   /* check parameters */
-  if( x < 0 || y < 0 || x >= (int) angles->xsize || y >= (int) angles->ysize )
-    error("region_grow: (x,y) out of the image.");
   if( angles == NULL || angles->data == NULL )
     error("region_grow: invalid image 'angles'.");
+  if( x < 0 || y < 0 || x >= (int) angles->xsize || y >= (int) angles->ysize )
+    error("region_grow: (x,y) out of the image.");
   if( reg == NULL ) error("region_grow: invalid 'reg'.");
   if( reg_size == NULL ) error("region_grow: invalid pointer 'reg_size'.");
   if( reg_angle == NULL ) error("region_grow: invalid pointer 'reg_angle'.");
