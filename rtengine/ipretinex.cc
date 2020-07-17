@@ -1384,20 +1384,18 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
         }
 
         double avg = 0.f;
-        int ng = 0;
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for reduction(+:avg)
 #endif
 
         for (int i = 0; i < H_L; i++) {
             for (int j = 0; j < W_L; j++) {
                 avg += luminance[i][j];
-                ng++;
             }
         }
 
-        avg /= ng;
+        avg /= H_L * W_L;
         avg /= 32768.f;
         avg = LIM01(avg);
         float contreal = 0.5f * vart;
