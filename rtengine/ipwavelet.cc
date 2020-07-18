@@ -2781,6 +2781,7 @@ void ImProcFunctions::finalContAllL(float* const* WavCoeffs_L, float * WavCoeffs
     if (cp.diagcurv  && cp.finena && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
         float insigma = 0.666f; //SD
         float epsil = 0.0001f;
+        float epsil2 = 1.1f;
         float logmax = log(MaxP[level] + epsil); //log Max
         float rapX = (mean[level] + cp.sigmafin * sigma[level]) / (MaxP[level] + epsil); //rapport between sD / max
         float inx = log(insigma);
@@ -2798,7 +2799,7 @@ void ImProcFunctions::finalContAllL(float* const* WavCoeffs_L, float * WavCoeffs
             float absciss;
 
             if (std::fabs(WavCoeffs_L[dir][i]) >= (mean[level] + cp.sigmafin * sigma[level])) { //for max
-                float valcour = xlogf(std::fabs(WavCoeffs_L[dir][i]) + epsil);
+                float valcour = xlogf(std::fabs(WavCoeffs_L[dir][i]) + epsil2);
                 float valc = valcour - logmax;
                 float vald = valc * rap;
                 absciss = xexpf(vald);
@@ -3159,6 +3160,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
             //  if (exa) {//curve
             float insigma = 0.666f; //SD
             float epsil = 0.0001f;
+            float epsil2 = 1.1f;
             float logmax = log(MaxP[level] + epsil); //log Max
             float rapX = (mean[level] + sigma[level]) / (MaxP[level] + epsil); //rapport between sD / max
             float inx = log(insigma);
@@ -3198,7 +3200,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
 
                     if (cp.edgcurv) {
                         if (std::fabs(WavCoeffs_L[dir][k]) >= (mean[level] + sigma[level])) { //for max
-                            float valcour = xlogf(epsil + std::fabs(WavCoeffs_L[dir][k]));
+                            float valcour = xlogf(epsil2 + std::fabs(WavCoeffs_L[dir][k]));
                             float valc = valcour - logmax;
                             float vald = valc * rap;
                             absciss = exp(vald);
