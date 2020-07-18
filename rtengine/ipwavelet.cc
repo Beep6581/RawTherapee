@@ -2208,9 +2208,11 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             for (int lvl = 0; lvl < 4; lvl++) {
                 for (int dir = 1; dir < 4; dir++) {
                     const float* const* WavCoeffs_LL = WaveletCoeffs_L.level_coeffs(lvl);
-                    float tempkoeli;
+                    float tempkoeli = 0.f;
+                   //float eps = 0.01f;
                     calckoe (WavCoeffs_LL, gradw, tloww, koeLi, lvl , dir, W_L, H_L, edd, tempkoeli, tmC);
-                    maxkoeLi[lvl * 3 + dir - 1] = tempkoeli;
+                    maxkoeLi[lvl * 3 + dir - 1] = tempkoeli + 0.01f;//eps in case of
+                   // printf("tempkoe=%f\n", tempkoeli + eps);
                     // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
                 }
             }
@@ -2766,7 +2768,7 @@ void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, fl
             if (koeLi[level * 3 + dir - 1][i * W_L + j] > maxkoeLi) {
                 maxkoeLi = koeLi[level * 3 + dir - 1][i * W_L + j];
             }
-
+            maxkoeLi += 0.01f;//epsil value in case of
             float diff = maxkoeLi - koeLi[level * 3 + dir - 1][i * W_L + j];
             diff *= diffFactor;
             koeLi[level * 3 + dir - 1][i * W_L + j] = maxkoeLi - diff;
