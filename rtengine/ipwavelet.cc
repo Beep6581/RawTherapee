@@ -1579,10 +1579,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                             if (numtiles > 1) {
                                 float factor = Vmask[i1] * Hmask[j1];
+                                if(L <= 0.f) L= 1.f;
+                                
                                 dsttmp->L[i][j] += factor * L;
                                 dsttmp->a[i][j] += factor * a;
                                 dsttmp->b[i][j] += factor * b;
                             } else {
+                                if(L <= 0.f) L= 1.f;
+
                                 dsttmp->L[i][j] = L;
                                 dsttmp->a[i][j] = a;
                                 dsttmp->b[i][j] = b;
@@ -3062,7 +3066,6 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
                         koe[i * W_L + j] = rtengine::min(thr2, std::fabs(tmC[i][j] / temp));
 
                         maxkoe = rtengine::max(maxkoe, koe[i * W_L + j]);
-
                         float diff = maxkoe - koe[i * W_L + j];
                         diff *= (cp.eddet / 100.f);
                         float interm = maxkoe - diff;
