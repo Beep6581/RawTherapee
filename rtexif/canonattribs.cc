@@ -917,10 +917,11 @@ public:
             {253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"},
             {253, "Canon EF 70-200mm f/2.8L IS III USM + 2x"},
             {254, "Canon EF 100mm f/2.8L Macro IS USM"},
-            {255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"},
+            {255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Lens"},
             {255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"},
+            {255, "Tamron SP 70-200mm f/2.8 Di VC USD"},
             {368, "Sigma 14-24mm f/2.8 DG HSM | A or other Sigma Lens"},
-            {368, "Sigma 20mm f/1.4 DG HSM | A"},
+            {368, "Sigma 35mm f/1.4 DG HSM | A"},
             {368, "Sigma 50mm f/1.4 DG HSM | A"},
             {368, "Sigma 40mm f/1.4 DG HSM | A"},
             {368, "Sigma 60-600mm f/4.5-6.3 DG OS HSM | S"},
@@ -966,13 +967,14 @@ public:
             {749, "Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 2x"},
             {750, "Canon EF 35mm f/1.4L II USM or Tamron Lens"},
             {750, "Tamron SP 85mm f/1.8 Di VC USD (F016)"},
+            {750, "Tamron SP 45mm f/1.8 Di VC USD (F013)"},
             {751, "Canon EF 16-35mm f/2.8L III USM"},
             {752, "Canon EF 24-105mm f/4L IS II USM"},
             {753, "Canon EF 85mm f/1.4L IS USM"},
             {754, "Canon EF 70-200mm f/4L IS II USM"},
             {757, "Canon EF 400mm f/2.8L IS III USM"},
             {758, "Canon EF 600mm f/4L IS III USM"},
-            {1136, "Sigma 24-70mm f/2.8 DG OS HSM | Art 017"},
+            {1136, "Sigma 24-70mm f/2.8 DG OS HSM | A"},
             {4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"},
             {4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"},
             {4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
@@ -1901,6 +1903,7 @@ public:
         choices[2147484712] = "EOS-1D X Mark III";
         choices[2147484722] = "EOS Rebel T7 / 2000D / 1500D / Kiss X90";
         choices[2147484723] = "EOS RP";
+        choices[2147484725] = "EOS Rebel T8i / 850D / X10i";
         choices[2147484726] = "EOS SL3 / 250D / Kiss X10";
         choices[2147484727] = "EOS 90D";
         choices[2147484960] = "EOS D2000C";
