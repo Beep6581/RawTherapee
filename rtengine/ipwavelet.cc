@@ -2780,14 +2780,15 @@ void ImProcFunctions::finalContAllL(float* const* WavCoeffs_L, float * WavCoeffs
 {
     if (cp.diagcurv  && cp.finena && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
         float insigma = 0.666f; //SD
-        float logmax = log(MaxP[level]); //log Max
-        float rapX = (mean[level] + cp.sigmafin * sigma[level]) / MaxP[level]; //rapport between sD / max
+        float epsil = 0.0001f;
+        float logmax = log(MaxP[level] + epsil); //log Max
+        float rapX = (mean[level] + cp.sigmafin * sigma[level]) / (MaxP[level] + epsil); //rapport between sD / max
         float inx = log(insigma);
-        float iny = log(rapX);
+        float iny = log(rapX + epsil);
         float rap = inx / iny; //koef
-        float asig = 0.166f / (sigma[level] * cp.sigmafin);
+        float asig = 0.166f / (epsil + sigma[level] * cp.sigmafin);
         float bsig = 0.5f - asig * mean[level];
-        float amean = 0.5f / mean[level];
+        float amean = 0.5f / (epsil + mean[level]);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, W_L * 16) num_threads(wavNestedLevels) if (wavNestedLevels>1)
@@ -2797,7 +2798,7 @@ void ImProcFunctions::finalContAllL(float* const* WavCoeffs_L, float * WavCoeffs
             float absciss;
 
             if (std::fabs(WavCoeffs_L[dir][i]) >= (mean[level] + cp.sigmafin * sigma[level])) { //for max
-                float valcour = xlogf(std::fabs(WavCoeffs_L[dir][i]));
+                float valcour = xlogf(std::fabs(WavCoeffs_L[dir][i]) + epsil);
                 float valc = valcour - logmax;
                 float vald = valc * rap;
                 absciss = xexpf(vald);
@@ -3157,14 +3158,15 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
         if (cp.EDmet == 2 && MaxP[level] > 0.f) { //curve
             //  if (exa) {//curve
             float insigma = 0.666f; //SD
-            float logmax = log(MaxP[level]); //log Max
-            float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+            float epsil = 0.0001f;
+            float logmax = log(MaxP[level] + epsil); //log Max
+            float rapX = (mean[level] + sigma[level]) / (MaxP[level] + epsil); //rapport between sD / max
             float inx = log(insigma);
-            float iny = log(rapX);
+            float iny = log(rapX + epsil);
             float rap = inx / iny; //koef
-            float asig = 0.166f / sigma[level];
+            float asig = 0.166f / (sigma[level] + epsil);
             float bsig = 0.5f - asig * mean[level];
-            float amean = 0.5f / mean[level];
+            float amean = 0.5f / (mean[level] + epsil);
             float absciss = 0.f;
             float kinterm;
             float kmul;
@@ -3196,7 +3198,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
 
                     if (cp.edgcurv) {
                         if (std::fabs(WavCoeffs_L[dir][k]) >= (mean[level] + sigma[level])) { //for max
-                            float valcour = xlogf(std::fabs(WavCoeffs_L[dir][k]));
+                            float valcour = xlogf(epsil + std::fabs(WavCoeffs_L[dir][k]));
                             float valc = valcour - logmax;
                             float vald = valc * rap;
                             absciss = exp(vald);
