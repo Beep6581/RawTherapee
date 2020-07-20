@@ -32,7 +32,7 @@ using namespace rtengine;
 ControlLineManager::ControlLineManager():
     EditSubscriber(ET_OBJECTS),
     canvas_area(new Rectangle()),
-    cursor(CSCrosshair),
+    cursor(CSHandOpen),
     draw_mode(false),
     drawing_line(false),
     edited(false),
@@ -285,9 +285,9 @@ bool ControlLineManager::mouseOver(int modifierKey)
 
     if (cur_obj == 0) { // Canvas
         if (draw_mode && modifierKey & GDK_CONTROL_MASK) {
-            cursor = CSPlus;
-        } else {
             cursor = CSCrosshair;
+        } else {
+            cursor = CSHandOpen;
         }
     } else if (cur_obj < 0) { // Nothing
         cursor = CSArrow;
