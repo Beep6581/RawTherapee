@@ -1579,10 +1579,16 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                             if (numtiles > 1) {
                                 float factor = Vmask[i1] * Hmask[j1];
+                                if(L <= 0.f) {
+                                    L= 1.f;
+                                }
                                 dsttmp->L[i][j] += factor * L;
                                 dsttmp->a[i][j] += factor * a;
                                 dsttmp->b[i][j] += factor * b;
                             } else {
+                                if(L <= 0.f) {
+                                    L= 1.f;
+                                }
                                 dsttmp->L[i][j] = L;
                                 dsttmp->a[i][j] = a;
                                 dsttmp->b[i][j] = b;
@@ -2208,9 +2214,9 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             for (int lvl = 0; lvl < 4; lvl++) {
                 for (int dir = 1; dir < 4; dir++) {
                     const float* const* WavCoeffs_LL = WaveletCoeffs_L.level_coeffs(lvl);
-                    float tempkoeli;
+                    float tempkoeli = 0.f;
                     calckoe (WavCoeffs_LL, gradw, tloww, koeLi, lvl , dir, W_L, H_L, edd, tempkoeli, tmC);
-                    maxkoeLi[lvl * 3 + dir - 1] = tempkoeli;
+                    maxkoeLi[lvl * 3 + dir - 1] = tempkoeli ;
                     // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
                 }
             }
@@ -2766,7 +2772,6 @@ void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, fl
             if (koeLi[level * 3 + dir - 1][i * W_L + j] > maxkoeLi) {
                 maxkoeLi = koeLi[level * 3 + dir - 1][i * W_L + j];
             }
-
             float diff = maxkoeLi - koeLi[level * 3 + dir - 1][i * W_L + j];
             diff *= diffFactor;
             koeLi[level * 3 + dir - 1][i * W_L + j] = maxkoeLi - diff;
@@ -2781,13 +2786,13 @@ void ImProcFunctions::finalContAllL(float* const* WavCoeffs_L, float * WavCoeffs
     if (cp.diagcurv  && cp.finena && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
         float insigma = 0.666f; //SD
         float logmax = log(MaxP[level]); //log Max
-        float rapX = (mean[level] + cp.sigmafin * sigma[level]) / MaxP[level]; //rapport between sD / max
+        float rapX = (mean[level] + cp.sigmafin * sigma[level]) / (MaxP[level]); //rapport between sD / max
         float inx = log(insigma);
         float iny = log(rapX);
         float rap = inx / iny; //koef
         float asig = 0.166f / (sigma[level] * cp.sigmafin);
         float bsig = 0.5f - asig * mean[level];
-        float amean = 0.5f / mean[level];
+        float amean = 0.5f / (mean[level]);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, W_L * 16) num_threads(wavNestedLevels) if (wavNestedLevels>1)
@@ -3058,7 +3063,6 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
                         koe[i * W_L + j] = rtengine::min(thr2, std::fabs(tmC[i][j] / temp));
 
                         maxkoe = rtengine::max(maxkoe, koe[i * W_L + j]);
-
                         float diff = maxkoe - koe[i * W_L + j];
                         diff *= (cp.eddet / 100.f);
                         float interm = maxkoe - diff;
@@ -3158,13 +3162,13 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
             //  if (exa) {//curve
             float insigma = 0.666f; //SD
             float logmax = log(MaxP[level]); //log Max
-            float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+            float rapX = (mean[level] + sigma[level]) / (MaxP[level]); //rapport between sD / max
             float inx = log(insigma);
             float iny = log(rapX);
             float rap = inx / iny; //koef
-            float asig = 0.166f / sigma[level];
+            float asig = 0.166f / (sigma[level]);
             float bsig = 0.5f - asig * mean[level];
-            float amean = 0.5f / mean[level];
+            float amean = 0.5f / (mean[level]);
             float absciss = 0.f;
             float kinterm;
             float kmul;
