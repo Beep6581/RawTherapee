@@ -185,17 +185,20 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     // Begin control lines interface.
     lines_button_apply = Gtk::manage (new Gtk::Button());
     lines_button_apply->set_image(*ipers_apply);
+    lines_button_apply->set_tooltip_text(M("GENERAL_APPLY"));
     lines_button_apply->set_sensitive(false);
     lines_button_apply->signal_pressed().connect(sigc::mem_fun(
             *this, &::PerspCorrection::linesApplyButtonPressed));
 
     lines_button_edit = Gtk::manage (new Gtk::ToggleButton());
     lines_button_edit->set_image(*ipers_draw);
+    lines_button_edit->set_tooltip_text(M("GENERAL_EDIT"));
     lines_button_edit->signal_toggled().connect(sigc::mem_fun(
             *this, &::PerspCorrection::linesEditButtonPressed));
 
     lines_button_erase = Gtk::manage (new Gtk::Button());
     lines_button_erase->set_image(*ipers_trash);
+    lines_button_erase->set_tooltip_text(M("GENERAL_DELETE_ALL"));
     lines_button_erase->set_sensitive(false);
     lines_button_erase->signal_pressed().connect(sigc::mem_fun(
             *this, &::PerspCorrection::linesEraseButtonPressed));
