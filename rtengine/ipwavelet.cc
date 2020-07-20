@@ -3093,10 +3093,13 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
             float atten01234 = 0.80f;
             value *= (atten01234 * scaleskip[1]);    //for zoom < 100% reduce strength...I choose level 1...but!!
         }
-
+        float edghig = settings->edghi;//increase or reduce "reinforce"
+        float edglow = settings->edglo;//increase or reduce "reduce"
+        float limrad = settings->limrad;//threshold action in function radius (rad)
+        printf("edghi=%f edglo=%f limrad=%f\n", edghig, edglow, limrad); 
         // value *= beta;
         float edge = 1.f;
-        float lim0 = 20.f; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
+        float lim0 = limrad; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
         float lev = float (level);
         float repart = (float)cp.til;
 
@@ -3104,15 +3107,14 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
         if (cp.reinforce != 2) {
             const float brepart =
                 cp.reinforce == 1
-                ? 3.f
-                : 0.5f;
+                ? edghig
+                : edglow;
             const float arepart = -(brepart - 1.f) / (lim0 / 60.f);
 
-            if (rad < lim0 / 60.f) {
+            if (rad < (lim0 / 60.f)) {
                 repart *= (arepart * rad + brepart);    //linear repartition of repart
             }
         }
-
         float al0 = 1.f + (repart) / 50.f;
         float al10 = 1.0f; //arbitrary value ==> less = take into account high levels
         //  float ak =-(al0-al10)/10.f;//10 = maximum levels
@@ -3120,15 +3122,16 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
         float bk = al0;
         float koef = ak * level + bk; //modulate for levels : more levels high, more koef low ==> concentrated action on low levels, without or near for high levels
         float expkoef = -std::pow(std::fabs(rad - lev), koef); //reduce effect for high levels
+        printf("repart=%f\n", repart);
 
         if (cp.reinforce == 3) {
-            if (rad < lim0 / 60.f && level == 0) {
+            if (rad < (lim0 / 60.f) && level == 0) {
                 expkoef *= abs(repart);    //reduce effect for low values of rad and level=0==> quasi only level 1 is effective
             }
         }
 
         if (cp.reinforce == 1) {
-            if (rad < lim0 / 60.f && level == 1) {
+            if (rad < (lim0 / 60.f) && level == 1) {
                 expkoef /= repart;    //increase effect for low values of rad and level=1==> quasi only level 0 is effective
             }
         }
