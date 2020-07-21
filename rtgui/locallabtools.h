@@ -1228,6 +1228,7 @@ private:
     FlatCurveEditor* const LLmask_shape;
     FlatCurveEditor* const HHmask_shape;
     Gtk::Frame* const struFrame;
+    Gtk::Frame* const toolmaskFrame;
     Adjuster* const strumaskmask;
     Gtk::CheckButton* const toolmask;
     Gtk::Frame* const blurFrame;
@@ -1284,6 +1285,7 @@ private:
     void enamaskChanged();
     void toolmaskChanged();
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
     void fftmaskChanged();
     void updatemaskGUI3();

@@ -4565,6 +4565,7 @@ LocallabMask::LocallabMask():
     HHmask_shape(static_cast<FlatCurveEditor *>(mask_CurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
 
     struFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABSTRUM")))),
+    toolmaskFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
     strumaskmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     toolmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
     blurFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABBLURM")))),
@@ -4707,7 +4708,7 @@ LocallabMask::LocallabMask():
         gradmaskBox->pack_start(*ang_mask);
         gradFramemask->add(*gradmaskBox);
 
-        Gtk::Frame* const toolmaskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")));
+       // Gtk::Frame* const toolmaskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")));
         toolmaskFrame->set_label_align(0.025, 0.5);
         ToolParamBlock* const toolmaskBox = Gtk::manage(new ToolParamBlock());
         
@@ -4979,7 +4980,25 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         mask2CurveEditorGwav->hide();
         csThresholdmask->hide();
         softradiusmask->hide();
-    } else {
+        toolmaskFrame->show();
+    } else if (new_type == Simple) {
+        lapmask->hide();
+        gammask->hide();
+        slopmask->hide();
+        shadmask->hide();
+        str_mask->hide();
+        ang_mask->hide();
+        struFrame->hide();
+        blurFrame->hide();
+        gradFramemask->hide();
+        mask_HCurveEditorG->hide();
+//        mask2CurveEditorG->hide();
+        mask2CurveEditorGwav->hide();
+        csThresholdmask->hide();
+        softradiusmask->hide();
+        toolmaskFrame->hide();
+
+    } else if (new_type == Expert) {
         // Advanced widgets are shown in Expert mode
         lapmask->show();
         gammask->show();
@@ -4995,9 +5014,26 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
         mask2CurveEditorGwav->show();
         csThresholdmask->show();
         softradiusmask->show();
+        toolmaskFrame->show();
 
     }
 }
+
+void LocallabMask::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    radmask->setValue(defSpot.radmask);
+    chromask->setValue(defSpot.chromask);
+    Lmask_shape->setCurve(defSpot.Lmask_curve);
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+}
+
+
 
 void LocallabMask::convertParamToNormal()
 {
