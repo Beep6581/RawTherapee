@@ -1604,7 +1604,7 @@ PREFERENCES_CMMBPC;Black point compensation
 PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustments
 PREFERENCES_COMPLEXITY_EXP;Expert
 PREFERENCES_COMPLEXITY_NORM;Normal
-PREFERENCES_COMPLEXITY_SIMP;Simple
+PREFERENCES_COMPLEXITY_SIMP;Basic
 PREFERENCES_CROP;Crop Editing
 PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
@@ -2585,7 +2585,7 @@ TP_LOCALLAB_LIGHTN_TOOLTIP;In inverse mode: selection = -100 force luminance to 
 TP_LOCALLAB_LIGHTRETI;Lightness
 TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LIST_NAME;Add tool to current spot...
-TP_LOCALLAB_LIST_TOOLTIP;Choose a tool and then its level of complexity "Normal" or "Expert".\nThe number reflects the place of the tool in the process of each RT-Spot
+TP_LOCALLAB_LIST_TOOLTIP;Choose a tool and then its level of complexity "Basic, "Normal" or "Expert".\nThe number reflects the place of the tool in the process of each RT-Spot
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
@@ -2667,7 +2667,7 @@ TP_LOCALLAB_MLABEL;Restored datas Min=%1 Max=%2 (Clip - Offset)
 TP_LOCALLAB_MLABEL_TOOLTIP;'Should be' near min=0 max=32768 (log mode) but others values are possible.\nYou can act on Clip Restored datas and Offset to normalize.\n\nRestored image with no mixture.
 TP_LOCALLAB_MODE_EXPERT;Expert
 TP_LOCALLAB_MODE_NORMAL;Normal
-TP_LOCALLAB_MODE_SIMPLE;Simple
+TP_LOCALLAB_MODE_SIMPLE;Basic
 TP_LOCALLAB_MRFIV;Background
 TP_LOCALLAB_MRFOU;Previous Spot
 TP_LOCALLAB_MRONE;None
@@ -2699,8 +2699,8 @@ TP_LOCALLAB_PDE;Contrast attenuator - Dynamic Range compression
 TP_LOCALLAB_PDEFRA;Contrast attenuator ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure or high dynamic range.\n
 TP_LOCALLAB_PREVIEW;Preview ΔE
-TP_LOCALLAB_PREVHIDE;Hide all settings
-TP_LOCALLAB_PREVSHOW;Show all settings
+TP_LOCALLAB_PREVHIDE;Hide additional settings
+TP_LOCALLAB_PREVSHOW;Show additional settings
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_QUAL_METHOD;Global quality
