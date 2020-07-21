@@ -52,7 +52,8 @@ protected:
     // LocallabTool mode enumeration
     enum modeType {
         Expert = 0,
-        Normal = 1
+        Normal = 1,
+        Simple = 2
     };
 
     // LocallabTool parameters
@@ -163,6 +164,7 @@ private:
     // To be implemented
     virtual void enabledChanged() {};
     virtual void convertParamToNormal() {}; // Only necessary when using mode
+    virtual void convertParamToSimple() {}; // Only necessary when using mode
     virtual void updateGUIToMode(const modeType new_type) {}; // Only necessary when using mode
 };
 
@@ -283,6 +285,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;

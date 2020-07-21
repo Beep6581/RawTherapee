@@ -1195,6 +1195,7 @@ HISTORY_MSG_953;Local - Mask Common blend chroma
 HISTORY_MSG_954;Local - Show-hide tools
 HISTORY_MSG_955;Local - Enable Spot
 HISTORY_MSG_956;Local - CH Curve
+HISTORY_MSG_957;Local - Tool complexity mode
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -1603,6 +1604,7 @@ PREFERENCES_CMMBPC;Black point compensation
 PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustments
 PREFERENCES_COMPLEXITY_EXP;Expert
 PREFERENCES_COMPLEXITY_NORM;Normal
+PREFERENCES_COMPLEXITY_SIMP;Simple
 PREFERENCES_CROP;Crop Editing
 PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
@@ -2665,6 +2667,7 @@ TP_LOCALLAB_MLABEL;Restored datas Min=%1 Max=%2 (Clip - Offset)
 TP_LOCALLAB_MLABEL_TOOLTIP;'Should be' near min=0 max=32768 (log mode) but others values are possible.\nYou can act on Clip Restored datas and Offset to normalize.\n\nRestored image with no mixture.
 TP_LOCALLAB_MODE_EXPERT;Expert
 TP_LOCALLAB_MODE_NORMAL;Normal
+TP_LOCALLAB_MODE_SIMPLE;Simple
 TP_LOCALLAB_MRFIV;Background
 TP_LOCALLAB_MRFOU;Previous Spot
 TP_LOCALLAB_MRONE;None

@@ -2652,7 +2652,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Color & Light
     visicolor(false),
     expcolor(false),
-    complexcolor(0),
+    complexcolor(2),
     curvactiv(false),
     lightness(0),
     contrast(0),

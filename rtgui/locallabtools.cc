@@ -149,7 +149,8 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
     if (needMode) {
         complexity->append(M("TP_LOCALLAB_MODE_EXPERT"));
         complexity->append(M("TP_LOCALLAB_MODE_NORMAL"));
-        complexity->set_active(0);
+        complexity->append(M("TP_LOCALLAB_MODE_SIMPLE"));
+        complexity->set_active(2);
         complexity->setPreferredWidth(100, -1);
         complexityConn = complexity->signal_changed().connect(sigc::mem_fun(*this, &LocallabTool::complexityModeChanged));
         titleBox->pack_end(*complexity, Gtk::PACK_SHRINK, 2);
@@ -201,9 +202,13 @@ void LocallabTool::addLocallabTool(bool raiseEvent)
             if (complexity->get_active_row_number() == Normal) {
                 convertParamToNormal();
                 updateGUIToMode(Normal);
-            } else {
+            } else if (complexity->get_active_row_number() == Expert){
                 updateGUIToMode(Expert);
+            } else if (complexity->get_active_row_number() == Simple){
+                updateGUIToMode(Simple);
+                convertParamToSimple();
             }
+                
         }
 
         if (listener) {
@@ -368,10 +373,10 @@ void LocallabTool::complexityModeChanged()
 
         // Raise event with refreshing
         if (listener) {
-            listener->panelChanged(EvlocallabcomplexityWithRefresh,
+            listener->panelChanged(EvlocallabcomplexityWithRefreshnorm,
                                    M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(spotName) + ")");
         }
-    } else { // New selected mode is Expert one
+    } else if (complexity->get_active_row_number() == Expert) { // New selected mode is Expert one
         // Update GUI based on new mode
         updateGUIToMode(Expert);
 
@@ -380,6 +385,15 @@ void LocallabTool::complexityModeChanged()
             listener->panelChanged(EvlocallabcomplexityWithoutRefresh,
                                    M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(spotName) + ")");
         }
+    } else if (complexity->get_active_row_number() == Simple) { // New selected mode is Simple one
+            convertParamToNormal();
+            convertParamToSimple();
+            updateGUIToMode(Simple);
+        if (listener) {//as normal
+            listener->panelChanged(EvlocallabcomplexityWithRefresh,
+                                   M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(spotName) + ")");
+        }
+
     }
 }
 
@@ -1676,6 +1690,27 @@ void LocallabColor::enabledChanged()
     }
 }
 
+void LocallabColor::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    llshape->setCurve(defSpot.llcurve);
+    ccshape->setCurve(defSpot.cccurve);
+    enaColorMask->set_active(defSpot.enaColorMask);
+    strcol->setValue(defSpot.strcol);
+    softradiuscol->setValue(defSpot.softradiuscol);
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+    // - Update GUI according to merMethod combobox state
+    updateColorGUI2();
+    // - Update GUI according to fftColorMash button state
+    updateColorGUI3();
+}
+
+
 void LocallabColor::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -1820,11 +1855,43 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
         mask2CurveEditorGwav->hide();
         csThresholdcol->hide();
         structcol->hide();
-    } else {
+        expgradcol->show();
+        expcurvcol->show();
+        expcurvcol->show();
+        expmaskcol->show();
+    } else if (new_type == Simple){
+        blurcolde->hide();
+        softradiuscol->hide();
+        strcolab->hide();
+        strcolh->hide();
+        clCurveEditorG->hide();
+        HCurveEditorG->hide();
+        H2CurveEditorG->hide();
+        H3CurveEditorG->hide();
+        rgbCurveEditorG->hide();
+        special->hide();
+        expmaskcol1->hide();
+        struFrame->hide();
+        blurFrame->hide();
+        lapmaskcol->hide();
+        gammaskcol->hide();
+        slomaskcol->hide();
+        shadmaskcol->hide();
+        maskHCurveEditorG->hide();
+        mask2CurveEditorGwav->hide();
+        csThresholdcol->hide();
+        structcol->hide();
+        expgradcol->hide();
+        expcurvcol->hide();
+        expmaskcol->hide();
+
+    } else if (new_type == Expert){
         // Advanced widgets are shown in Expert mode
         blurcolde->show();
         structcol->show();
-
+        expgradcol->show();
+        expcurvcol->show();
+        expmaskcol->show();
         if (!invers->get_active()) { // Keep widget hidden when invers is toggled
             softradiuscol->show();
         }
