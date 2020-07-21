@@ -3295,6 +3295,19 @@ void LocallabContrast::enabledChanged()
     }
 }
 
+void LocallabContrast::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    enalcMask->set_active(defSpot.enalcMask);
+    enableListener();
+
+}
+
+
+
 void LocallabContrast::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -3327,10 +3340,17 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
         // Advanced widgets are hidden in Normal mode
         localcontMethod->hide();
         fftwlc->hide();
-    } else {
+        expmasklc->show();
+        
+    } else if (new_type == Simple){
+        localcontMethod->hide();
+        fftwlc->hide();
+        expmasklc->hide();
+    } else if (new_type == Expert){
         // Advanced widgets are shown in Expert mode
         localcontMethod->show();
         fftwlc->show();
+        expmasklc->show();
     }
 }
 
@@ -4139,6 +4159,19 @@ void LocallabCBDL::enabledChanged()
     }
 }
 
+void LocallabCBDL::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    enacbMask->set_active(defSpot.enacbMask);
+    softradiuscb->setValue(defSpot.softradiuscb);
+    enableListener();
+
+}
+
+
 void LocallabCBDL::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -4158,9 +4191,17 @@ void LocallabCBDL::updateGUIToMode(const modeType new_type)
     if (new_type == Normal) {
         // Advanced widgets are hidden in Normal mode
         lapmaskcb->hide();
-    } else {
+        expmaskcb->show();
+        softradiuscb->show();
+    } else if(new_type == Simple){
+        lapmaskcb->hide();
+        expmaskcb->hide();
+        softradiuscb->hide();
+    } else if(new_type == Expert){
         // Advanced widgets are shown in Expert mode
         lapmaskcb->show();
+        expmaskcb->show();
+        softradiuscb->show();
     }
 }
 
