@@ -5260,6 +5260,19 @@ void LocallabSoft::enabledChanged()
     }
 }
 
+void LocallabSoft::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+}
+
+
+
 void LocallabSoft::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -5287,7 +5300,9 @@ void LocallabSoft::updateGUIToMode(const modeType new_type)
     if (new_type == Normal) {
         // Advanced widgets are hidden in Normal mode
         softMethod->hide();
-    } else {
+    } else if(new_type == Simple){
+        softMethod->hide();
+    } else if(new_type == Expert){
         // Advanced widgets are shown in Expert mode
         softMethod->show();
     }
@@ -5326,7 +5341,7 @@ void LocallabSoft::showmasksoftMethodChanged()
 void LocallabSoft::updateSoftGUI()
 {
     // Update soft light GUI according to softMethod combobox
-    if (softMethod->get_active_row_number() == 0) {
+    if (softMethod->get_active_row_number() ==  0) {
         ctboxsoftmethod->hide();
         // Reset hidden mask combobox
         showmasksoftMethodConn.block(true);
@@ -6301,6 +6316,19 @@ void LocallabBlur::enabledChanged()
     }
 }
 
+void LocallabBlur::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    enablMask->set_active(defSpot.enablMask);
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+}
+
+
 void LocallabBlur::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -6338,7 +6366,20 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
         shadmaskblsha->hide();
         mask2blCurveEditorGwav->hide();
         csThresholdblur->hide();
-    } else {
+        expmaskbl->show();
+    } else if (new_type == Simple) {
+        fftwbl->hide();
+        strumaskbl->hide();
+        toolbl->hide();
+        lapmaskbl->hide();
+        gammaskbl->show();
+        slomaskbl->show();
+        shadmaskbl->hide();
+        shadmaskblsha->hide();
+        mask2blCurveEditorGwav->hide();
+        csThresholdblur->hide();
+        expmaskbl->hide();
+    } else if (new_type == Expert) {
         // Advanced widgets are shown in Expert mode
         if (blMethod->get_active_row_number() == 0) { // Keep widget hidden when blMethod is > 0
             fftwbl->show();
@@ -6353,6 +6394,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
         shadmaskblsha->show();
         mask2blCurveEditorGwav->show();
         csThresholdblur->show();
+        expmaskbl->show();
     }
 }
 
