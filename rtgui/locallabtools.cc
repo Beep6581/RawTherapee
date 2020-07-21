@@ -205,8 +205,10 @@ void LocallabTool::addLocallabTool(bool raiseEvent)
             } else if (complexity->get_active_row_number() == Expert){
                 updateGUIToMode(Expert);
             } else if (complexity->get_active_row_number() == Simple){
-                updateGUIToMode(Simple);
+                convertParamToNormal();
+                updateGUIToMode(Normal);
                 convertParamToSimple();
+                updateGUIToMode(Simple);
             }
                 
         }
@@ -388,6 +390,7 @@ void LocallabTool::complexityModeChanged()
     } else if (complexity->get_active_row_number() == Simple) { // New selected mode is Simple one
             convertParamToNormal();
             convertParamToSimple();
+            updateGUIToMode(Normal);
             updateGUIToMode(Simple);
         if (listener) {//as normal
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
@@ -3088,6 +3091,23 @@ void LocallabExposure::enabledChanged()
     }
 }
 
+void LocallabExposure::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    shapeexpos->setCurve(defSpot.excurve);
+    enaExpMask->set_active(defSpot.enaExpMask);
+    strexp->setValue(defSpot.strexp);
+    softradiusexp->setValue(defSpot.softradiusexp);
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+}
+
+
+
 void LocallabExposure::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -3123,8 +3143,23 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
         gradFramemask->hide();
         blurexpde->hide();
         structexp->hide();
+        expmaskexp->show();
+        expgradexp->show();
+        softradiusexp->show();
+        
      //   pdeFrame->hide();
-    } else {
+    } else if (new_type == Simple){
+        lapmaskexp->hide();
+        gammaskexp->hide();
+        slomaskexp->hide();
+        gradFramemask->hide();
+        blurexpde->hide();
+        structexp->hide();
+        expmaskexp->hide();
+        expgradexp->hide();
+        softradiusexp->hide();
+     
+    } else if (new_type == Expert){
         // Advanced widgets are shown in Expert mode
         lapmaskexp->show();
         gammaskexp->show();
@@ -3133,6 +3168,9 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
         blurexpde->show();
         structexp->show();
       //  pdeFrame->show();
+        expmaskexp->show();
+        expgradexp->show();
+        softradiusexp->show();
     }
 }
 

@@ -391,6 +391,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
