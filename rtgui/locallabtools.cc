@@ -4036,6 +4036,21 @@ void LocallabShadow::enabledChanged()
     }
 }
 
+void LocallabShadow::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    enaSHMask->set_active(defSpot.enaSHMask);
+    strSH->setValue(defSpot.strSH);
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+    // - Update GUI according to merMethod combobox state
+}
+
+
 void LocallabShadow::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -4064,13 +4079,28 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
         gammaskSH->hide();
         slomaskSH->hide();
         fatSHFrame->hide();
-    } else {
+        expmasksh->show();
+        expgradsh->show();
+        strSH->show();
+    } else if (new_type == Simple) {
+        blurSHde->hide();
+        lapmaskSH->hide();
+        gammaskSH->hide();
+        slomaskSH->hide();
+        fatSHFrame->hide();
+        expmasksh->hide();
+        expgradsh->hide();
+        strSH->hide();
+    } else if (new_type == Expert) {
         // Advanced widgets are shown in Expert mode
         blurSHde->show();
         lapmaskSH->show();
         gammaskSH->show();
         slomaskSH->show();
         fatSHFrame->show();
+        expmasksh->show();
+        expgradsh->show();
+        strSH->show();
     }
 }
 
@@ -4814,6 +4844,20 @@ void LocallabVibrance::enabledChanged()
     }
 }
 
+void LocallabVibrance::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    enavibMask->set_active(defSpot.enavibMask);
+    strvib->setValue(defSpot.strvib);
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+}
+
+
 void LocallabVibrance::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -4858,7 +4902,25 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
         lapmaskvib->hide();
         gammaskvib->hide();
         slomaskvib->hide();
-    } else {
+        expmaskvib->show();
+        expgradvib->show();
+    } else if (new_type == Simple) {
+        saturated->hide();
+        pastels->setLabel(M("TP_LOCALLAB_PASTELS2"));
+        psThreshold->hide();
+        protectSkins->hide();
+        avoidColorShift->hide();
+        pastSatTog->hide();
+        curveEditorGG->hide();
+        strvibab->hide();
+        strvibh->hide();
+        lapmaskvib->hide();
+        gammaskvib->hide();
+        slomaskvib->hide();
+        expmaskvib->hide();
+        expgradvib->hide();
+        
+    } else if (new_type == Expert) {
         // Advanced widgets are shown in Expert mode
         saturated->show();
         pastels->setLabel(M("TP_VIBRANCE_PASTELS"));
@@ -4872,6 +4934,8 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
         lapmaskvib->show();
         gammaskvib->show();
         slomaskvib->show();
+        expmaskvib->show();
+        expgradvib->show();
     }
 }
 
