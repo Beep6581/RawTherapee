@@ -498,6 +498,21 @@ void LocallabTone::enabledChanged()
     }
 }
 
+void LocallabTone::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    enatmMask->set_active(defSpot.enatmMask);
+    enatmMaskaft->set_active(defSpot.enatmMaskaft);
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+}
+
+
+
 void LocallabTone::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -527,7 +542,17 @@ void LocallabTone::updateGUIToMode(const modeType new_type)
         lapmasktm->hide();
         gammasktm->hide();
         slomasktm->hide();
-    } else {
+        expmasktm->show();
+    } else if (new_type == Simple){
+        gamma->hide();
+        satur->hide();
+        rewei->hide();
+        lapmasktm->hide();
+        gammasktm->hide();
+        slomasktm->hide();
+        expmasktm->hide();
+        
+    } else if (new_type == Expert){
         // Advanced widgets are shown in Expert mode
         gamma->show();
         satur->show();
@@ -535,6 +560,7 @@ void LocallabTone::updateGUIToMode(const modeType new_type)
         lapmasktm->show();
         gammasktm->show();
         slomasktm->show();
+        expmasktm->show();
     }
 }
 
@@ -1364,6 +1390,16 @@ void LocallabRetinex::enabledChanged()
     }
 }
 
+void LocallabRetinex::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    enableListener();
+
+}
+
 void LocallabRetinex::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -1429,7 +1465,10 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
         // Advanced widgets are hidden in Normal mode
         retiFrame->hide();
         retitoolFrame->hide();
-    } else {
+    } else if (new_type == Simple){
+        retiFrame->hide();
+        retitoolFrame->hide();
+    } else if (new_type == Expert){
         // Advanced widgets are shown in Expert mode
         retiFrame->show();
         retitoolFrame->show();
@@ -1631,6 +1670,7 @@ LocallabSharp::LocallabSharp():
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
     sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 40))),
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+    sharFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")))),
     showmasksharMethod(Gtk::manage(new MyComboBoxText()))
 {
     // Parameter Sharpening specific widgets
@@ -1666,7 +1706,7 @@ LocallabSharp::LocallabSharp():
     pack_start(*shariter);
     pack_start(*sensisha);
     pack_start(*inverssha);
-    Gtk::Frame* const sharFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")));
+//    Gtk::Frame* const sharFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")));
     sharFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sharfBox = Gtk::manage(new ToolParamBlock());
     sharfBox->pack_start(*showmasksharMethod);
@@ -1866,6 +1906,20 @@ void LocallabSharp::enabledChanged()
     }
 }
 
+void LocallabSharp::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    showmasksharMethod->set_active(0);
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+}
+
+
+
 void LocallabSharp::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -1892,13 +1946,23 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
         sharblur->hide();
         sharcontrast->hide();
         sharamount->hide();
-    } else {
+        sharFrame->show();
+    } else if (new_type == Simple) {
+        shardamping->hide();
+        shariter->hide();
+        sharblur->hide();
+        sharcontrast->hide();
+        sharamount->hide();
+        sharFrame->hide();
+        
+    } else if (new_type == Expert) {
         // Advanced widgets are shown in Expert mode
         shardamping->show();
         shariter->show();
         sharblur->hide();
         sharcontrast->hide();
         sharamount->show();
+        sharFrame->show();
     }
 }
 
