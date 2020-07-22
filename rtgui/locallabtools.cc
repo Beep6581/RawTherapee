@@ -2165,15 +2165,19 @@ void LocallabColor::updateColorGUI1()
     } else {
         gridFrame->show();
         structcol->show();
+        softradiuscol->show();
+        structcol->show();
 
         if (mode == Normal) { // Keep widget hidden in Normal mode
-            softradiuscol->show();
             structcol->hide();
         }
 
         expgradcol->show();
         labqualcurv->show();
         qualitycurveMethod->show();
+        expcurvcol->show();
+        expmaskcol->show();
+        llCurveEditorG->show();
 
         if (mode == Normal) { // Keep widgets hidden in Normal mode
             clCurveEditorG->show();
@@ -2181,6 +2185,7 @@ void LocallabColor::updateColorGUI1()
             H3CurveEditorG->show();
             expmaskcol1->show();
         }
+
 
         showmaskcolMethod->show();
         showmaskcolMethodinv->hide();
@@ -2190,6 +2195,16 @@ void LocallabColor::updateColorGUI1()
         showmaskcolMethodConninv.block(false);
         contcol->show();
         blurcol->show();
+
+        if (mode == Simple) {
+            llCurveEditorG->hide();
+            expgradcol->hide();
+            expcurvcol->hide();
+            expmaskcol->hide();
+            softradiuscol->hide();
+            structcol->hide();
+        }
+        
     }
 }
 
@@ -3334,6 +3349,8 @@ void LocallabExposure::updateExposureGUI2()
 
 void LocallabExposure::updateExposureGUI3()
 {
+    const int mode = complexity->get_active_row_number();
+    
     // Update exposure GUI according to inversex button state
     if (inversex->get_active()) {
         expMethod->hide();
@@ -3373,6 +3390,19 @@ void LocallabExposure::updateExposureGUI3()
         showmaskexpMethodinv->set_active(0);
         showmaskexpMethodConninv.block(false);
         showmaskexpMethod->show();
+        
+        expgradexp->show();
+        expmaskexp->show();
+        softradiusexp->show();
+        structexp->show();
+        
+        if (mode == Simple) {
+            expgradexp->hide();
+            expmaskexp->hide();
+            softradiusexp->hide();
+            structexp->hide();
+        }
+        
     }
 }
 
