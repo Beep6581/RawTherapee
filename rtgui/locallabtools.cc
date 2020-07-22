@@ -4239,6 +4239,8 @@ void LocallabShadow::enaSHMaskChanged()
 
 void LocallabShadow::updateShadowGUI1()
 {
+    const int mode = complexity->get_active_row_number();
+    
     // Update shadow highlight GUI according to inverssh button state
     if (inverssh->get_active()) {
         expgradsh->hide();
@@ -4256,6 +4258,14 @@ void LocallabShadow::updateShadowGUI1()
         showmaskSHMethodConninv.block(true);
         showmaskSHMethodinv->set_active(0);
         showmaskSHMethodConninv.block(false);
+        expgradsh->show();
+        expmasksh->show();
+        
+        if (mode == Simple) {
+            expgradsh->hide();
+            expmasksh->hide();
+        }
+        
     }
 }
 
