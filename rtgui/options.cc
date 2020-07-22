@@ -450,6 +450,7 @@ void Options::setDefaults()
     histogramBar = true;
     histogramHeight = 200;
     histogramDrawMode = 0;
+    histogramScopeType = 0;
     curvebboxpos = 1;
     complexity = 1;
     prevdemo = PD_Sidecar;
@@ -1426,6 +1427,10 @@ void Options::readFromFile(Glib::ustring fname)
                     histogramDrawMode = keyFile.get_integer("GUI", "HistogramDrawMode");
                 }
 
+                if (keyFile.has_key("GUI", "HistogramScopeType")) {
+                    histogramScopeType = keyFile.get_integer("GUI", "HistogramScopeType");
+                }
+
                 if (keyFile.has_key("GUI", "NavigatorRGBUnit")) {
                     navRGBUnit = (NavigatorUnit)keyFile.get_integer("GUI", "NavigatorRGBUnit");
                 }
@@ -2233,6 +2238,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "HistogramBar", histogramBar);
         keyFile.set_integer("GUI", "HistogramHeight", histogramHeight);
         keyFile.set_integer("GUI", "HistogramDrawMode", histogramDrawMode);
+        keyFile.set_integer("GUI", "HistogramScopeType", histogramScopeType);
         keyFile.set_integer("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
         keyFile.set_integer("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
         keyFile.set_boolean("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);

@@ -130,10 +130,14 @@ private:
 protected:
     LUTu rhist, ghist, bhist, lhist, chist;
     LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
+    int waveform_scale;
+    int waveform_width;
+    std::unique_ptr<int[][256]> rwave, gwave, bwave;
 
     bool valid;
     int drawMode;
     DrawModeListener *myDrawModeListener;
+    int scopeType;
     int oldwidth, oldheight;
 
     bool needRed, needGreen, needBlue, needLuma, needChroma;
@@ -158,9 +162,14 @@ public:
         const LUTu& histChroma,
         const LUTu& histRedRaw,
         const LUTu& histGreenRaw,
-        const LUTu& histBlueRaw
+        const LUTu& histBlueRaw,
+        int waveformScale,
+        int waveformWidth,
+        const int waveformRed[][256],
+        const int waveformGreen[][256],
+        const int waveformBlue[][256]
     );
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode);
+    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type);
     void on_realize() override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     bool on_button_press_event (GdkEventButton* event) override;
@@ -171,6 +180,7 @@ public:
 private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int vsize);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int & ui, int & oi);
+    void drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
@@ -195,6 +205,7 @@ protected:
     Gtk::ToggleButton* showBAR;
     Gtk::ToggleButton* showChro;
     Gtk::Button* showMode;
+    Gtk::Button* scopeType;
 
     Gtk::Image *redImage;
     Gtk::Image *greenImage;
@@ -232,9 +243,15 @@ public:
         const LUTu& histChroma,
         const LUTu& histRedRaw,
         const LUTu& histGreenRaw,
-        const LUTu& histBlueRaw)
+        const LUTu& histBlueRaw,
+        int waveformScale,
+        int waveformWidth,
+        const int waveformRed[][256],
+        const int waveformGreen[][256],
+        const int waveformBlue[][256]
+    )
     {
-        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
+        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;
@@ -251,6 +268,8 @@ public:
     void chro_toggled ();
     void bar_toggled ();
     void mode_released ();
+    void type_pressed ();
+    void type_changed ();
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 

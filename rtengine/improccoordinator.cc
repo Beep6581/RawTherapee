@@ -129,6 +129,8 @@ ImProcCoordinator::ImProcCoordinator() :
 
     histLRETI(256),
 
+    waveformWidth(0),
+
     CAMBrightCurveJ(), CAMBrightCurveQ(),
 
     rCurve(),
@@ -1639,7 +1641,30 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (hListener) {
             updateLRGBHistograms();
-            hListener->histogramChanged(histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma, histLRETI);
+            updateWaveforms();
+            hListener->histogramChanged(
+                histRed,
+                histGreen,
+                histBlue,
+                histLuma,
+                histToneCurve,
+                histLCurve,
+                histCCurve,
+                /*histCLurve,
+                 * histLLCurve,*/
+                histLCAM,
+                histCCAM,
+                histRedRaw,
+                histGreenRaw,
+                histBlueRaw,
+                histChroma,
+                histLRETI,
+                waveformScale,
+                waveformWidth,
+                waveformRed.get(),
+                waveformGreen.get(),
+                waveformBlue.get()
+            );
         }
     }
 
@@ -1799,6 +1824,43 @@ void ImProcCoordinator::updateLRGBHistograms()
         }
     }
 
+}
+
+void ImProcCoordinator::updateWaveforms()
+{
+    if (!workimg) {
+        waveformWidth = 0;
+        return;
+    }
+
+    if (waveformWidth != workimg->getWidth()) {
+        // Resize waveform arrays.
+        waveformWidth = workimg->getWidth();
+        waveformRed.reset(new int[waveformWidth][256]);
+        waveformGreen.reset(new int[waveformWidth][256]);
+        waveformBlue.reset(new int[waveformWidth][256]);
+    }
+
+    int (*red)[256] = waveformRed.get();
+    int (*green)[256] = waveformGreen.get();
+    int (*blue)[256] = waveformBlue.get();
+
+    // Start with zero.
+    const int waveformSize = 256 * waveformWidth;
+    memset(waveformRed.get(), 0, waveformSize * sizeof(red[0][0]));
+    memset(waveformGreen.get(), 0, waveformSize * sizeof(green[0][0]));
+    memset(waveformBlue.get(), 0, waveformSize * sizeof(blue[0][0]));
+
+    const int img_height = workimg->getHeight();
+    for (int col = 0; col < waveformWidth; col++) {
+        for (int row = 0; row < img_height; row++) {
+            red[col][workimg->r(row, col)]++;
+            green[col][workimg->g(row, col)]++;
+            blue[col][workimg->b(row, col)]++;
+        }
+    }
+
+    waveformScale = img_height;
 }
 
 bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, double tempBias)

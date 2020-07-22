@@ -126,6 +126,12 @@ protected:
     LUTu histBlue, histBlueRaw;
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
+    /// Waveform's intensity. Same as height of reference image.
+    int waveformScale;
+    int waveformWidth;
+    std::unique_ptr<int[][256]> waveformRed, waveformRedRaw;
+    std::unique_ptr<int[][256]> waveformGreen, waveformGreenRaw;
+    std::unique_ptr<int[][256]> waveformBlue, waveformBlueRaw;
 
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 
@@ -195,6 +201,7 @@ protected:
 
     void reallocAll();
     void updateLRGBHistograms();
+    void updateWaveforms();
     void setScale(int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);
 

@@ -126,7 +126,12 @@ public:
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
         const LUTu& histChroma,
-        const LUTu& histLRETI
+        const LUTu& histLRETI,
+        int waveformScale,
+        int waveformWidth,
+        const int waveformRed[][256],
+        const int waveformGreen[][256],
+        const int waveformBlue[][256]
     ) override;
 
     // event handlers
