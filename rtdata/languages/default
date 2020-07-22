@@ -2373,7 +2373,7 @@ TP_LOCALLAB_BLURLC;Luminance Only
 TP_LOCALLAB_BLURLEVELFRA;Blur Levels 
 TP_LOCALLAB_BLURMASK_TOOLTIP;Generate a blur mask, take into account the structure with the contrast threshold Mask Blur slider.
 TP_LOCALLAB_BLURRESIDFRA;Blur Residual
-TP_LOCALLAB_BLUR_TOOLNAME;Blur Gain & Denoise - 1
+TP_LOCALLAB_BLUR_TOOLNAME;Blur Grain & Denoise - 1
 TP_LOCALLAB_BLWH;All changes forced in Black and White
 TP_LOCALLAB_BLWH_TOOLTIP;Force color change composante "a" and "b" to zero.\nUsefull when the user chooses black and white processes, or film. 
 TP_LOCALLAB_BUTTON_ADD;Add
@@ -2385,7 +2385,7 @@ TP_LOCALLAB_CBDL;Contrast by detail levels
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Takes the midtones and enhance them.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Acts as a wavelet tools.\nThe first level (0) acts on 2x2 details.\nThe last level (5) acts on 64x64 details.
 TP_LOCALLAB_CBDL_THRES_TOOLTIP;Prevent the sharpening of noise
-TP_LOCALLAB_CBDL_TOOLNAME;CBDL (Defects) - 2
+TP_LOCALLAB_CBDL_TOOLNAME;CBDL - 2
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
 TP_LOCALLAB_CH;Curves CL - LC
@@ -2414,7 +2414,7 @@ TP_LOCALLAB_COLORDEPREV_TOOLTIP;Button Preview ΔE needs that only one tool is e
 TP_LOCALLAB_COLORDE_TOOLTIP;Show preview selection ΔE in blue if negative and in green if positive.\n\nMask and modifications (show modifications without mask): show real modifications if positive, show enhanced modifications (only luminance) with blue and yellow if negative.
 TP_LOCALLAB_COLORSCOPE;Scope Color Tools
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Use a common Scope for Color and light, Shadows highlight, Vibrance.\nOthers tools have their specific scope.
-TP_LOCALLAB_COLOR_TOOLNAME;Color & Light (Defects) - 11
+TP_LOCALLAB_COLOR_TOOLNAME;Color & Light  - 11
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPFRA;Levels Directional Contrast
@@ -2878,12 +2878,12 @@ TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance - Warm & Cool
 TP_LOCALLAB_VIB_TOOLNAME;Vibrance - Warm & Cool - 3
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
-TP_LOCALLAB_BLUR_TOOLNAME;Smooth Blur Gain & Denoise - 1
+TP_LOCALLAB_BLUR_TOOLNAME;Smooth Blur Grain & Denoise - 1
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_RET_TOOLNAME;Dehaze & Retinex - 9
 TP_LOCALLAB_SHARP_TOOLNAME;Sharpening - 8
-TP_LOCALLAB_LC_TOOLNAME;Local Constrast & Wavelet (Defects) - 7
-TP_LOCALLAB_CBDL_TOOLNAME;CBDL (Defects) - 2
+TP_LOCALLAB_LC_TOOLNAME;Local Constrast & Wavelet - 7
+TP_LOCALLAB_CBDL_TOOLNAME;CBDL - 2
 TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
 TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask  - 13
 TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctrl</b>+<b>click</b> to show/hide all Control Spot.
