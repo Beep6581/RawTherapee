@@ -2777,6 +2777,33 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
+    CHcurve{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        0.166,
+        0.50,
+        0.35,
+        0.35,
+        0.333,
+        0.50,
+        0.35,
+        0.35,
+        0.50,
+        0.50,
+        0.35,
+        0.35,
+        0.666,
+        0.50,
+        0.35,
+        0.35,
+        0.833,
+        0.50,
+        0.35,
+        0.35
+    },
     invers(false),
     special(false),
     toolcol(true),
@@ -3659,7 +3686,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensicb(60),
     clarityml(0.1),
     contresid(0),
-    blurcbdl(0.),
     softradiuscb(0.0),
     enacbMask(false),
     CCmaskcbcurve{
@@ -3926,6 +3952,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && rgbcurve == other.rgbcurve
         && LHcurve == other.LHcurve
         && HHcurve == other.HHcurve
+        && CHcurve == other.CHcurve
         && invers == other.invers
         && special == other.special
         && toolcol == other.toolcol
@@ -4281,7 +4308,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensicb == other.sensicb
         && clarityml == other.clarityml
         && contresid == other.contresid
-        && blurcbdl == other.blurcbdl
         && softradiuscb == other.softradiuscb
         && enacbMask == other.enacbMask
         && CCmaskcbcurve == other.CCmaskcbcurve
@@ -5448,6 +5474,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->rgbcurve, "Locallab", "RGBCurve_" + index_str, spot.rgbcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LHcurve, "Locallab", "LHCurve_" + index_str, spot.LHcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHcurve, "Locallab", "HHCurve_" + index_str, spot.HHcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->CHcurve, "Locallab", "CHCurve_" + index_str, spot.CHcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->invers, "Locallab", "Invers_" + index_str, spot.invers, keyFile);
                     saveToKeyfile(!pedited || spot_edited->special, "Locallab", "Special_" + index_str, spot.special, keyFile);
                     saveToKeyfile(!pedited || spot_edited->toolcol, "Locallab", "Toolcol_" + index_str, spot.toolcol, keyFile);
@@ -5804,7 +5831,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sensicb, "Locallab", "Sensicb_" + index_str, spot.sensicb, keyFile);
                     saveToKeyfile(!pedited || spot_edited->clarityml, "Locallab", "Clarityml_" + index_str, spot.clarityml, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contresid, "Locallab", "Contresid_" + index_str, spot.contresid, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->blurcbdl, "Locallab", "Blurcbdl_" + index_str, spot.blurcbdl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->softradiuscb, "Locallab", "Softradiuscb_" + index_str, spot.softradiuscb, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enacbMask, "Locallab", "EnacbMask_" + index_str, spot.enacbMask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskcbcurve, "Locallab", "CCmaskcbCurve_" + index_str, spot.CCmaskcbcurve, keyFile);
@@ -7119,6 +7145,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "RGBCurve_" + index_str, pedited, spot.rgbcurve, spotEdited.rgbcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LHCurve_" + index_str, pedited, spot.LHcurve, spotEdited.LHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHCurve_" + index_str, pedited, spot.HHcurve, spotEdited.HHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "CHCurve_" + index_str, pedited, spot.CHcurve, spotEdited.CHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "Invers_" + index_str, pedited, spot.invers, spotEdited.invers);
                 assignFromKeyfile(keyFile, "Locallab", "Special_" + index_str, pedited, spot.special, spotEdited.special);
                 assignFromKeyfile(keyFile, "Locallab", "Toolcol_" + index_str, pedited, spot.toolcol, spotEdited.toolcol);
@@ -7547,7 +7574,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensicb_" + index_str, pedited, spot.sensicb, spotEdited.sensicb);
                 assignFromKeyfile(keyFile, "Locallab", "Clarityml_" + index_str, pedited, spot.clarityml, spotEdited.clarityml);
                 assignFromKeyfile(keyFile, "Locallab", "Contresid_" + index_str, pedited, spot.contresid, spotEdited.contresid);
-                assignFromKeyfile(keyFile, "Locallab", "Blurcbdl_" + index_str, pedited, spot.blurcbdl, spotEdited.blurcbdl);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscb_" + index_str, pedited, spot.softradiuscb, spotEdited.softradiuscb);
                 assignFromKeyfile(keyFile, "Locallab", "EnacbMask_" + index_str, pedited, spot.enacbMask, spotEdited.enacbMask);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskcbCurve_" + index_str, pedited, spot.CCmaskcbcurve, spotEdited.CCmaskcbcurve);

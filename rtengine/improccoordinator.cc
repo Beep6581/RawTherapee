@@ -876,8 +876,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     {wprof[2][0], wprof[2][1], wprof[2][2]}
                 };
                 params->colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, opautili);
-                CurveFactory::curveToning(params->colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
-                CurveFactory::curveToning(params->colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
+                CurveFactory::diagonalCurve2Lut(params->colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
+                CurveFactory::diagonalCurve2Lut(params->colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
             }
 
             if (params->blackwhite.enabled) {
@@ -1005,7 +1005,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (todo & M_LUMACURVE) {
 
-            CurveFactory::curveCL(clcutili, params->labCurve.clcurve, clcurve, scale == 1 ? 1 : 16);
+            clcutili = CurveFactory::diagonalCurve2Lut(params->labCurve.clcurve, clcurve, scale == 1 ? 1 : 16);
 
             CurveFactory::complexsgnCurve(autili, butili, ccutili, cclutili, params->labCurve.acurve, params->labCurve.bcurve, params->labCurve.cccurve,
                                           params->labCurve.lccurve, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, scale == 1 ? 1 : 16);
@@ -1065,6 +1065,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
                     const bool LHutili = loclhCurve.Set(params->locallab.spots.at(sp).LHcurve);
                     const bool HHutili = lochhCurve.Set(params->locallab.spots.at(sp).HHcurve);
+                    const bool CHutili = locchCurve.Set(params->locallab.spots.at(sp).CHcurve);
                     const bool lcmasutili = locccmasCurve.Set(params->locallab.spots.at(sp).CCmaskcurve);
                     const bool llmasutili = locllmasCurve.Set(params->locallab.spots.at(sp).LLmaskcurve);
                     const bool lhmasutili = lochhmasCurve.Set(params->locallab.spots.at(sp).HHmaskcurve);
@@ -1107,22 +1108,22 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     const bool locwavdenutili = locwavCurveden.Set(params->locallab.spots.at(sp).locwavcurveden);
                     const bool locedgwavutili = locedgwavCurve.Set(params->locallab.spots.at(sp).locedgwavcurve);
                     const bool lmasutili_wav = loclmasCurve_wav.Set(params->locallab.spots.at(sp).LLmask_curvewav);
-                    const bool locallutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
-                    const bool localclutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).clcurve, cllocalcurve, sca);
-                    const bool locallcutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).lccurve, lclocalcurve, sca);
-                    const bool localcutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).cccurve, cclocalcurve, sca);
-                    const bool localrgbutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).rgbcurve, rgblocalcurve, sca);
-                    const bool localexutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).excurve, exlocalcurve, sca);
-                    const bool localmaskutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, sca);
-                    const bool localmaskexputili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, sca);
-                    const bool localmaskSHutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, sca);
-                    const bool localmaskvibutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, sca);
-                    const bool localmasktmutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, sca);
-                    const bool localmaskretiutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, sca);
-                    const bool localmaskcbutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, sca);
-                    const bool localmaskblutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, sca);
-                    const bool localmasklcutili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, sca);
-                    const bool localmask_utili = CurveFactory::curveLocal(params->locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, sca);
+                    const bool locallutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
+                    const bool localclutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).clcurve, cllocalcurve, sca);
+                    const bool locallcutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).lccurve, lclocalcurve, sca);
+                    const bool localcutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).cccurve, cclocalcurve, sca);
+                    const bool localrgbutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).rgbcurve, rgblocalcurve, sca);
+                    const bool localexutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).excurve, exlocalcurve, sca);
+                    const bool localmaskutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, sca);
+                    const bool localmaskexputili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, sca);
+                    const bool localmaskSHutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, sca);
+                    const bool localmaskvibutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, sca);
+                    const bool localmasktmutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, sca);
+                    const bool localmaskretiutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, sca);
+                    const bool localmaskcbutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, sca);
+                    const bool localmaskblutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, sca);
+                    const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, sca);
+                    const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, sca);
                     double ecomp = params->locallab.spots.at(sp).expcomp;
                     double black = params->locallab.spots.at(sp).black;
                     double hlcompr = params->locallab.spots.at(sp).hlcompr;
@@ -1179,7 +1180,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   lllocalcurve, locallutili,
                                   cllocalcurve, localclutili,
                                   lclocalcurve, locallcutili,
-                                  loclhCurve,  lochhCurve,
+                                  loclhCurve,  lochhCurve, locchCurve,
                                   lmasklocalcurve, localmaskutili,
                                   lmaskexplocalcurve, localmaskexputili,
                                   lmaskSHlocalcurve, localmaskSHutili,
@@ -1211,7 +1212,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   locwavCurveden, locwavdenutili,
                                   locedgwavCurve, locedgwavutili,
                                   loclmasCurve_wav, lmasutili_wav,
-                                  LHutili, HHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                                  LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                   huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                   minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
@@ -1274,9 +1275,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
             }
 
-
-            wavcontlutili = false;
-            CurveFactory::curveWavContL(wavcontlutili, params->wavelet.wavclCurve, wavclCurve, scale == 1 ? 1 : 16);
+            wavcontlutili = CurveFactory::diagonalCurve2Lut(params->wavelet.wavclCurve, wavclCurve, scale == 1 ? 1 : 16);
 
             if ((params->wavelet.enabled)) {
                 WaveletParams WaveParams = params->wavelet;

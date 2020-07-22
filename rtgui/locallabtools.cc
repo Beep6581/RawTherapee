@@ -253,7 +253,7 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
     // Hue reference normalization (between 0 and 1)
     double normHuer = huer;
     float h = Color::huelab_to_huehsv2(normHuer);
-    h += 1.f / 6.f;
+   // h += 1.f / 6.f;
 
     if (h > 1.f) {
         h -= 1.f;
@@ -420,6 +420,8 @@ LocallabColor::LocallabColor():
     LHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true))),
     H2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     HHshape(static_cast<FlatCurveEditor*>(H2CurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
+    H3CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
+    CHshape(static_cast<FlatCurveEditor*>(H3CurveEditorG->addCurve(CT_Flat, "C(H)", nullptr, false, true))),
     rgbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_RGB"))),
     toneMethod(Gtk::manage(new MyComboBoxText())),
     rgbshape(static_cast<DiagonalCurveEditor*>(rgbCurveEditorG->addCurve(CT_Diagonal, "", toneMethod))),
@@ -573,6 +575,16 @@ LocallabColor::LocallabColor():
     HHshape->setBottomBarBgGradient(six_shape);
 
     H2CurveEditorG->curveListComplete();
+
+    H3CurveEditorG->setCurveListener(this);
+
+    CHshape->setIdentityValue(0.);
+    CHshape->setResetCurve(FlatCurveType(defSpot.CHcurve.at(0)), defSpot.CHcurve);
+    CHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    CHshape->setCurveColorProvider(this, 3);
+    CHshape->setBottomBarBgGradient(six_shape);
+
+    H3CurveEditorG->curveListComplete();
 
     rgbCurveEditorG->setCurveListener(this);
 
@@ -768,6 +780,7 @@ LocallabColor::LocallabColor():
     curvBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*clCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    curvBox->pack_start(*H3CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*H2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*rgbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     curvBox->pack_start(*special);
@@ -840,6 +853,7 @@ LocallabColor::~LocallabColor()
     delete clCurveEditorG;
     delete HCurveEditorG;
     delete H2CurveEditorG;
+    delete H3CurveEditorG;
     delete rgbCurveEditorG;
     delete maskCurveEditorG;
     delete maskHCurveEditorG;
@@ -1017,6 +1031,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         lcshape->setCurve(spot.lccurve);
         LHshape->setCurve(spot.LHcurve);
         HHshape->setCurve(spot.HHcurve);
+        CHshape->setCurve(spot.CHcurve);
 
         if (spot.toneMethod == "one") {
             toneMethod->set_active(0);
@@ -1188,6 +1203,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.lccurve = lcshape->getCurve();
         spot.LHcurve = LHshape->getCurve();
         spot.HHcurve = HHshape->getCurve();
+        spot.CHcurve = CHshape->getCurve();
 
         if (toneMethod->get_active_row_number() == 0) {
             spot.toneMethod = "one";
@@ -1580,6 +1596,13 @@ void LocallabColor::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == CHshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabCHshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (ce == HHshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHshape,
@@ -1670,6 +1693,7 @@ void LocallabColor::convertParamToNormal()
     lcshape->setCurve(defSpot.lccurve);
     LHshape->setCurve(defSpot.LHcurve);
     HHshape->setCurve(defSpot.HHcurve);
+    CHshape->setCurve(defSpot.CHcurve);
 
     if (defSpot.toneMethod == "one") {
         toneMethod->set_active(0);
@@ -1782,6 +1806,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
         clCurveEditorG->hide();
         HCurveEditorG->hide();
         H2CurveEditorG->hide();
+        H3CurveEditorG->hide();
         rgbCurveEditorG->hide();
         special->hide();
         expmaskcol1->hide();
@@ -1810,6 +1835,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
         if (!invers->get_active()) { // Keep widgets hidden when invers is toggled
             clCurveEditorG->show();
             HCurveEditorG->show();
+            H3CurveEditorG->show();
         }
 
         H2CurveEditorG->show();
@@ -1838,12 +1864,21 @@ void LocallabColor::updateMaskBackground(const double normChromar, const double 
     [this, normHuer, normLumar, normChromar]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
-        // Update mask background
+        // Update mask background and H curves
         CCmaskshape->updateLocallabBackground(normChromar);
         LLmaskshape->updateLocallabBackground(normLumar);
         HHmaskshape->updateLocallabBackground(normHuer);
         HHhmaskshape->updateLocallabBackground(normHuer);
-
+        Lmaskshape->updateLocallabBackground(normLumar);
+        //H curves
+        HHshape->updateLocallabBackground(normHuer);
+        CHshape->updateLocallabBackground(normHuer);
+        LHshape->updateLocallabBackground(normHuer);
+        llshape->updateLocallabBackground(normLumar);
+        ccshape->updateLocallabBackground(normChromar);
+        clshape->updateLocallabBackground(normLumar);
+        lcshape->updateLocallabBackground(normChromar);
+        
         return false;
     }
     );
@@ -2047,6 +2082,7 @@ void LocallabColor::updateColorGUI1()
         qualitycurveMethod->hide();
         clCurveEditorG->hide();
         HCurveEditorG->hide();
+        H3CurveEditorG->hide();
         expmaskcol1->hide();
         showmaskcolMethod->hide();
         // Reset hidden mask combobox
@@ -2072,6 +2108,7 @@ void LocallabColor::updateColorGUI1()
         if (mode == Normal) { // Keep widgets hidden in Normal mode
             clCurveEditorG->show();
             HCurveEditorG->show();
+            H3CurveEditorG->show();
             expmaskcol1->show();
         }
 
@@ -2175,7 +2212,7 @@ LocallabExposure::LocallabExposure():
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exptoolexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPTOOL")))),
-    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), MINEXP, MAXEXP, 0.01, 0.))), 
+    expcomp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EXPCOMP"), MINEXP, MAXEXP, 0.01, 0.))), 
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 10, 0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 20))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0))),
@@ -3042,7 +3079,8 @@ void LocallabExposure::updateMaskBackground(const double normChromar, const doub
         CCmaskexpshape->updateLocallabBackground(normChromar);
         LLmaskexpshape->updateLocallabBackground(normLumar);
         HHmaskexpshape->updateLocallabBackground(normHuer);
-
+        shapeexpos->updateLocallabBackground(normLumar);
+        Lmaskexpshape->updateLocallabBackground(normLumar);
         return false;
     }
     );
@@ -3080,7 +3118,12 @@ void LocallabExposure::inversexChanged()
     if (listener) {
         listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
-
+    if (inversex->get_active()) {
+        expcomp->setLabel(M("TP_LOCALLAB_EXPCOMPINV"));
+    } else {
+        expcomp->setLabel(M("TP_LOCALLAB_EXPCOMP"));
+    }
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (inversex->get_active()) {
@@ -3189,6 +3232,7 @@ void LocallabExposure::updateExposureGUI3()
     // Update exposure GUI according to inversex button state
     if (inversex->get_active()) {
         expMethod->hide();
+        expcomp->setLabel(M("TP_LOCALLAB_EXPCOMPINV"));
 
         // Manage specific case where expMethod is different from 0
         if (expMethod->get_active_row_number() > 0) {
@@ -3214,6 +3258,7 @@ void LocallabExposure::updateExposureGUI3()
     } else {
         expMethod->show();
         //structexp->show();
+        expcomp->setLabel(M("TP_LOCALLAB_EXPCOMP"));
         shadex->show();
         softradiusexp->show();
         expgradexp->show();
@@ -3934,6 +3979,7 @@ void LocallabShadow::updateMaskBackground(const double normChromar, const double
         CCmaskSHshape->updateLocallabBackground(normChromar);
         LLmaskSHshape->updateLocallabBackground(normLumar);
         HHmaskSHshape->updateLocallabBackground(normHuer);
+        LmaskSHshape->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -4734,6 +4780,7 @@ void LocallabVibrance::updateMaskBackground(const double normChromar, const doub
         CCmaskvibshape->updateLocallabBackground(normChromar);
         LLmaskvibshape->updateLocallabBackground(normLumar);
         HHmaskvibshape->updateLocallabBackground(normHuer);
+        Lmaskvibshape->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -6150,6 +6197,7 @@ void LocallabBlur::updateMaskBackground(const double normChromar, const double n
         CCmaskblshape->updateLocallabBackground(normChromar);
         LLmaskblshape->updateLocallabBackground(normLumar);
         HHmaskblshape->updateLocallabBackground(normHuer);
+        Lmaskblshape->updateLocallabBackground(normLumar);
 
         return false;
     }

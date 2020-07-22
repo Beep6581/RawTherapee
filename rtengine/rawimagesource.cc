@@ -1717,10 +1717,8 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
             std::swap(pwr, gamm);
         }
 
-        int mode = 0;
-        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
-   //        printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         double start;
         double add;
 
@@ -1948,12 +1946,12 @@ void RawImageSource::retinexPrepareCurves(const RetinexParams &retinexParams, LU
     useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
 
     if (useHsl) {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdHcurve, cdcurve, 1, lhist16RETI, histLRETI);
+        retinexcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.cdHcurve, cdcurve, 1, lhist16RETI, histLRETI);
     } else {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
+        retinexcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
     }
 
-    CurveFactory::mapcurve(mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
+    mapcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
     mapcurve *= 0.5f;
     retinexParams.getCurves(retinextransmissionCurve, retinexgaintransmissionCurve);
 }
@@ -1984,13 +1982,12 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
         double gamm = deh.gam;
         double gamm2 = gamm;
         double ts = deh.slope;
-        int mode = 0;
 
         if (gamm2 < 1.) {
             std::swap(pwr, gamm);
         }
 
-        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
         double mul = 1. + g_a[4];
         double add;

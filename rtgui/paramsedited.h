@@ -470,6 +470,7 @@ public:
         bool rgbcurve;
         bool LHcurve;
         bool HHcurve;
+        bool CHcurve;
         bool invers;
         bool special;
         bool toolcol;
@@ -809,7 +810,6 @@ public:
         bool sensicb;
         bool clarityml;
         bool contresid;
-        bool blurcbdl;
         bool softradiuscb;
         bool enacbMask;
         bool CCmaskcbcurve;

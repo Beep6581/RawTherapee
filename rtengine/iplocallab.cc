@@ -69,42 +69,6 @@ constexpr int TS = 64; // Tile size
 constexpr float epsilonw = 0.001f / (TS * TS); //tolerance
 constexpr int offset = 25; // shift between tiles
 
-std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float& lutFactor)
-{
-    constexpr int lutSize = 100;
-
-    const float lutMax = std::ceil(mea[9]);
-    const float lutDiff = lutMax / lutSize;
-
-    std::vector<float> lutVals(lutSize);
-    int jStart = 1;
-    for (int i = 0; i < lutSize; ++i) {
-        const float val = i * lutDiff;
-        if (val < mea[0]) {
-            // still < first value => no interpolation
-            lutVals[i] = inVals[0];
-        } else {
-            for (int j = jStart; j < 10; ++j) {
-                if (val == mea[j]) {
-                    // exact match => no interpolation
-                    lutVals[i] = inVals[j];
-                    ++jStart;
-                    break;
-                }
-                if (val < mea[j]) {
-                    // interpolate
-                    const float dist = (val - mea[j - 1]) / (mea[j] - mea[j - 1]);
-                    lutVals[i] = rtengine::intp(dist, inVals[j], inVals[j - 1]);
-                    break;
-                }
-                lutVals[i] = inVals[10];
-            }
-        }
-    }
-    lutFactor = 1.f / lutDiff;
-    return std::unique_ptr<LUTf>(new LUTf(lutVals));
-}
-
 constexpr float clipLoc(float x)
 {
     return rtengine::LIM(x, 0.f, 32767.f);
@@ -197,7 +161,7 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
         std::swap(pwr, gamm);
     }
 
-    rtengine::Color::calcGamma(pwr, ts, 0, g_a); // call to calcGamma with selected gamma and slope
+    rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
     const double start = gamm2 < 1. ? g_a[2] : g_a[3];
     const double add = g_a[4];
@@ -428,7 +392,6 @@ struct local_params {
     int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf, senshs, senscolor;
     float clarityml;
     float contresid;
-    float blurcbdl;
     bool deltaem;
     float struco;
     float strengrid;
@@ -1024,7 +987,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensicb = locallab.spots.at(sp).sensicb;
     float local_clarityml = (float) locallab.spots.at(sp).clarityml;
     float local_contresid = (float) locallab.spots.at(sp).contresid;
-    int local_blurcbdl = 0; //(float) locallab.spots.at(sp).blurcbdl;
     int local_contrast = locallab.spots.at(sp).contrast;
     float local_lightness = (float) locallab.spots.at(sp).lightness;
     float labgridALowloc = locallab.spots.at(sp).labgridALow;
@@ -1274,7 +1236,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senscb = local_sensicb;
     lp.clarityml = local_clarityml;
     lp.contresid = local_contresid;
-    lp.blurcbdl = local_blurcbdl;
     lp.cont = local_contrast;
     lp.ligh = local_lightness;
     lp.lowA = labgridALowloc;
@@ -2453,62 +2414,71 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
 
     constexpr float maxran = 65536.f;
     const float linear = lp.linear;
+    int bw = bfw;
+    int bh = bfh;
     if (linear > 0.f && lp.expcomp == 0.f) {
         lp.expcomp = 0.001f;
     }
-    const bool exec = (lp.expmet == 1 && linear > 0.f && lp.laplacexp > 0.1f && !lp.invex);
+    const bool exec = (lp.expmet == 1 && linear > 0.f && lp.laplacexp > 0.1f);
 
-    if(!exec) {
-        //Laplacian PDE before exposure to smooth L, algorithm exposure leads to increase L differences
-        const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
-        const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
-        const std::unique_ptr<float[]> dE(new float[bfwr * bfhr]);
+    if(!exec) {//for standard exposure
         const float cexp_scale = std::pow(2.f, lp.expcomp);
         const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
         const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
         const float chlrange = maxran - cshoulder;
         const float diffde = 100.f - lp.sensex;//the more scope, the less take into account dE for Laplace
+        if(!lp.invex) {// Laplacian not in inverse
+            bw = bfwr;
+            bh = bfhr;
 
-        deltaEforLaplace(dE.get(), diffde, bfwr, bfhr, bufexporig, hueref, chromaref, lumaref);
+            //Laplacian PDE before exposure to smooth L, algorithm exposure leads to increase L differences
+            const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
+            const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
+            const std::unique_ptr<float[]> dE(new float[bfwr * bfhr]);
 
-        constexpr float alap = 600.f;
-        constexpr float blap = 100.f;
-        constexpr float aa = (alap - blap) / 50.f;
-        constexpr float bb = 100.f - 30.f * aa;
+            deltaEforLaplace(dE.get(), diffde, bfwr, bfhr, bufexporig, hueref, chromaref, lumaref);
 
-        float lap;
-        if (diffde > 80.f) {
-            lap = alap;
-        } else if (diffde < 30.f) {
-            lap = blap;
-        } else {
-            lap = aa * diffde + bb;
-        }
+            constexpr float alap = 600.f;
+            constexpr float blap = 100.f;
+            constexpr float aa = (alap - blap) / 50.f;
+            constexpr float bb = 100.f - 30.f * aa;
+
+            float lap;
+            if (diffde > 80.f) {
+                lap = alap;
+            } else if (diffde < 30.f) {
+                lap = blap;
+            } else {
+                lap = aa * diffde + bb;
+            }
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-        for (int y = 0; y < bfhr; y++) {
-            for (int x = 0; x < bfwr; x++) {
-                datain[y * bfwr + x] = bufexporig->L[y][x];
+            for (int y = 0; y < bfhr; y++) {
+                for (int x = 0; x < bfwr; x++) {
+                    datain[y * bfwr + x] = bufexporig->L[y][x];
+                }
             }
-        }
 
-        MyMutex::MyLock lock(*fftwMutex);
-        ImProcFunctions::retinex_pde(datain.get(), dataout.get(), bfwr, bfhr, lap, 1.f, dE.get(), 0, 1, 1);//350 arbitrary value about 45% strength Laplacian
+            MyMutex::MyLock lock(*fftwMutex);
+            ImProcFunctions::retinex_pde(datain.get(), dataout.get(), bfwr, bfhr, lap, 1.f, dE.get(), 0, 1, 1);//350 arbitrary value about 45% strength Laplacian
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-        for (int y = 0; y < bfhr; y++) {
-            for (int x = 0; x < bfwr; x++) {
-                bufexporig->L[y][x] = dataout[y * bfwr + x];
+            for (int y = 0; y < bfhr; y++) {
+                for (int x = 0; x < bfwr; x++) {
+                    bufexporig->L[y][x] = dataout[y * bfwr + x];
+                }
             }
+        
         }
+ 
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-        for (int ir = 0; ir < bfhr; ir++) {
-            for (int jr = 0; jr < bfwr; jr++) {
+        for (int ir = 0; ir < bh; ir++) {//for standard with Laplacian in normal and without in inverse 
+            for (int jr = 0; jr < bw; jr++) {
                 float L = bufexporig->L[ir][jr];
                 //highlight
                 const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(cexp_scale, ccomp, chlrange, 2 * L));
@@ -2519,7 +2489,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
                 lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
             }
         }
-    } else {
+    } else if(!lp.invex) {//for PDE algorithms
         constexpr float kl = 1.f;
         const float hlcompthr = lp.hlcompthr / 200.f;
         const float hlcomp = lp.hlcomp / 100.f;
@@ -9512,7 +9482,7 @@ void ImProcFunctions::Lab_Local(
     const LUTf& lllocalcurve, bool locallutili,
     const LUTf& cllocalcurve, bool localclutili,
     const LUTf& lclocalcurve, bool locallcutili,
-    const LocLHCurve& loclhCurve,  const LocHHCurve& lochhCurve,
+    const LocLHCurve& loclhCurve,  const LocHHCurve& lochhCurve, const LocCHCurve& locchCurve,
     const LUTf& lmasklocalcurve, bool localmaskutili,
     const LUTf& lmaskexplocalcurve, bool localmaskexputili,
     const LUTf& lmaskSHlocalcurve, bool localmaskSHutili,
@@ -9546,7 +9516,7 @@ void ImProcFunctions::Lab_Local(
     const LocwavCurve& locedgwavCurve, bool locedgwavutili,
     const LocwavCurve& loclmasCurve_wav, bool lmasutili_wav,
     
-    bool LHutili, bool HHutili, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
+    bool LHutili, bool HHutili, bool CHutili, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int ll_Mask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax
@@ -10807,7 +10777,7 @@ void ImProcFunctions::Lab_Local(
                         lp.mulloc[5] = 1.001f;
                     }
 
-                    ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
+                    ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
                     if (lp.softradiuscb > 0.f) {
                         softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
@@ -10846,7 +10816,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     choice = 1;
-                    ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, multc, rtengine::max(lp.chromacb, 1.f), lp.threshol, clarich, 0.f, lp.blurcbdl, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk, multiThread);
+                    ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, multc, rtengine::max(lp.chromacb, 1.f), lp.threshol, clarich, 0.f, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
 
                     float minC = loctemp->L[0][0] - std::sqrt(SQR(loctemp->a[0][0]) + SQR(loctemp->b[0][0]));
@@ -13752,6 +13722,15 @@ void ImProcFunctions::Lab_Local(
 
                                 bufcolcalcL = l_r * 32768.f;
 
+                            }
+
+
+                            if (locchCurve && CHutili && lp.qualcurvemet != 0) {//C=f(H) curve
+                                const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
+                                const float valparam = locchCurve[500.f * Color::huelab_to_huehsv2(rhue)] - 0.5f;  //get valp=f(H)
+                                float chromaChfactor = 1.0f + valparam;
+                                bufcolcalca *= chromaChfactor;//apply C=f(H)
+                                bufcolcalcb *= chromaChfactor;
                             }
 
                             if (ctoning) {//color toning and direct change color

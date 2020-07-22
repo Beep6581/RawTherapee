@@ -2108,17 +2108,17 @@ float ImProcFunctions::Mad(const float * DataList, const int datalen)
     }
 
     //find median of histogram
-    int median = 0, count = 0;
+    int lmedian = 0, count = 0;
 
     while (count < datalen / 2) {
-        count += histo[median];
-        ++median;
+        count += histo[lmedian];
+        ++lmedian;
     }
 
-    int count_ = count - histo[median - 1];
+    int count_ = count - histo[lmedian - 1];
 
     // interpolate
-    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f);
+    return ((lmedian - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f;
 }
 
 float ImProcFunctions::MadRgb(const float * DataList, const int datalen)
@@ -2141,18 +2141,18 @@ float ImProcFunctions::MadRgb(const float * DataList, const int datalen)
     }
 
     //find median of histogram
-    int median = 0, count = 0;
+    int lmedian = 0, count = 0;
 
     while (count < datalen / 2) {
-        count += histo[median];
-        ++median;
+        count += histo[lmedian];
+        ++lmedian;
     }
 
-    int count_ = count - histo[median - 1];
+    int count_ = count - histo[lmedian - 1];
 
     // interpolate
     delete[] histo;
-    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f);
+    return ((lmedian - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f;
 }
 
 

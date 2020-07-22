@@ -351,7 +351,7 @@ cmsHPROFILE rtengine::ProfileContent::toProfile() const
                 double slope = slopetag == 0 ? eps : slopetag;
 
                 GammaValues g_b; //gamma parameters
-                Color::calcGamma(pwr, ts, 0, g_b); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+                Color::calcGamma(pwr, ts, g_b); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
                 cmsFloat64Number gammaParams[7]; //gamma parameters
                 gammaParams[4] = g_b[3] * ts;
                 gammaParams[0] = gammatag;

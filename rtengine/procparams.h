@@ -50,6 +50,7 @@ class LocretigainCurve;
 class LocretigainCurverab;
 class LocLHCurve;
 class LocHHCurve;
+class LocCHCurve;
 class LocLLmaskCurve;
 class LocCCmaskCurve;
 class LocHHmaskCurve;
@@ -1056,6 +1057,7 @@ struct LocallabParams {
         std::vector<double> rgbcurve;
         std::vector<double> LHcurve;
         std::vector<double> HHcurve;
+        std::vector<double> CHcurve;
         bool invers;
         bool special;
         bool toolcol;
@@ -1395,7 +1397,6 @@ struct LocallabParams {
         int sensicb;
         double clarityml;
         int contresid;
-        double blurcbdl;
         double softradiuscb;
         bool enacbMask;
         std::vector<double> CCmaskcbcurve;

@@ -1761,7 +1761,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;Le seuil deltaE étendue accroit la plage of étendue-
 TP_LOCALLAB_AUTOGRAY;Automatique
 TP_LOCALLAB_AVOID;Evite les dérives de couleurs
 TP_LOCALLAB_BALAN;Balance ΔE ab-L
-TP_LOCALLAB_BALANEXP;ΔØ EPD balance
+TP_LOCALLAB_BALANEXP;Balance Laplacien
 TP_LOCALLAB_BALANH;Balance ΔE C-H
 TP_LOCALLAB_BALAN_TOOLTIP;Change l'algorithme des paramètres ΔE.\nPlus ou moins ab-L, plus ou moins C-H.\nPas pour le Debruitage
 TP_LOCALLAB_BASELOG;Base Logarithme
@@ -1908,6 +1908,8 @@ TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;Seulement en association avec compensation d'exposition et PDE Ipol.\nEvite la desaturation des couleurs
 //TP_LOCALLAB_EXPCOLOR_TOOLTIP;Dans le cas de petits défauts.\n\nYeux-rouges : sélecteur centré sur la partie rouge, délimiteurs du spot près de l'oeil, adaptez Etendue, "luminosité" -100, "chrominance" -100.\n\nSpotIR :sélection Circulaire centrée sur le défaut, délimiteurs du spot proches du default - reduire "chrominance", possibilté d'agir sur Etendue pour réduire la zone de l'action.\n\nPoussières - graisse (petit) :Sélection circulaire centrée sur le défaut (adapter la taille du spot), délimiteurs du spot pas trop près du défaut pour permettre une transition quasi invisible. a) "Transition" (faibles valeurs) and "Transition affaiblissement" (hautes valeurs); b) agir sur "luminosité" et aussi sur "chrominance" ou sur "Grille de correction couleur - direct" de telle manière que le rendu de la zone polluée soit proche de celui de la zone saine; c) agir modérement  sur "Etendue" pour moduler l'action.\n\nVous pouvez aussi compléter avec Flouter Gaussien (Adoucir Flouter et bruit)
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;Ajuste les couleurs, la luminosité, le contrast et corrige les petits défauts tels que teux-rouges, poussières sur le capteur, etc.
+TP_LOCALLAB_EXPCOMP;Compensation d'exposition ƒ
+TP_LOCALLAB_EXPCOMPINV;Compensation d'exposition
 TP_LOCALLAB_EXPCOMP_TOOLTIP;Pour les portraits et les images à faible gradient, vous pouvez changer "Détection de forme" dans "Réglages":\n\nAugmentez 'Seuil ΔE Etendue'\nRéduire 'ΔE affaiblissement'\nAugmenter 'Balance ΔE ab-L' 
 TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;Voir la documentation de ondelettes niveaux.\nCependant il y a des différences: plus d'outils et plus proches des détails .\nEx: Tone mapping pour ondelettes. 
 TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Evitez les spots trop petits(< 32x32 pixels).\nUtilisez de faibles valeurs de transition et de hautes valeurs de transition affaiblissement et d'Etendue pour simuler un petit RT-spot et s'adapter aux défauts.\nUtimiser si nécessaire le module 'Clarté & Maqsue netteté' et 'Fusion d'images' en ajustant 'Rayon adoucir' pour réduire les artéfacts.
@@ -2110,8 +2112,8 @@ TP_LOCALLAB_ORIGLC;Fusion seulement avec image originale
 TP_LOCALLAB_ORRETILAP_TOOLTIP;Agit sur un deuxième seuil Laplacien, pour prendre en compte ΔE pour différencier l'action nottament avec l'arrière plan (différent de Etendue)
 TP_LOCALLAB_ORRETISTREN_TOOLTIP;Aagit sur un seuil Laplacien, plus grande est l'action, plus les différences de contraste seront réduites
 TP_LOCALLAB_PASTELS2;Vibrance
-TP_LOCALLAB_PDE;ΔØ Laplacian PDE - Compression dynamique + Standard
-TP_LOCALLAB_PDEFRA;Contrast atténuation ƒ
+TP_LOCALLAB_PDE;Atténuation de contraste - Compression dynamique
+TP_LOCALLAB_PDEFRA;Contraste atténuation ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - algorithme personnel adapté de IPOL à Rawtherapee: conduit à des résultats très variés et a besoin de différents réglages que Standard (Noir négatif, gamma < 1,...)\nPeut être utils pour des iamges sous-exposées ou avec une étendue dynamique importante.\n
 TP_LOCALLAB_PREVIEW;Prévisualisation ΔE
 TP_LOCALLAB_PREVHIDE;Cacher tous les réglages

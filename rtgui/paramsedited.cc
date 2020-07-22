@@ -1104,6 +1104,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).rgbcurve = locallab.spots.at(j).rgbcurve && pSpot.rgbcurve == otherSpot.rgbcurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
                 locallab.spots.at(j).HHcurve = locallab.spots.at(j).HHcurve && pSpot.HHcurve == otherSpot.HHcurve;
+                locallab.spots.at(j).CHcurve = locallab.spots.at(j).CHcurve && pSpot.CHcurve == otherSpot.CHcurve;
                 locallab.spots.at(j).invers = locallab.spots.at(j).invers && pSpot.invers == otherSpot.invers;
                 locallab.spots.at(j).special = locallab.spots.at(j).special && pSpot.special == otherSpot.special;
                 locallab.spots.at(j).toolcol = locallab.spots.at(j).toolcol && pSpot.toolcol == otherSpot.toolcol;
@@ -1451,7 +1452,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensicb = locallab.spots.at(j).sensicb && pSpot.sensicb == otherSpot.sensicb;
                 locallab.spots.at(j).clarityml = locallab.spots.at(j).clarityml && pSpot.clarityml == otherSpot.clarityml;
                 locallab.spots.at(j).contresid = locallab.spots.at(j).contresid && pSpot.contresid == otherSpot.contresid;
-                locallab.spots.at(j).blurcbdl = locallab.spots.at(j).blurcbdl && pSpot.blurcbdl == otherSpot.blurcbdl;
                 locallab.spots.at(j).softradiuscb = locallab.spots.at(j).softradiuscb && pSpot.softradiuscb == otherSpot.softradiuscb;
                 locallab.spots.at(j).enacbMask = locallab.spots.at(j).enacbMask && pSpot.enacbMask == otherSpot.enacbMask;
                 locallab.spots.at(j).CCmaskcbcurve = locallab.spots.at(j).CCmaskcbcurve && pSpot.CCmaskcbcurve == otherSpot.CCmaskcbcurve;
@@ -3381,6 +3381,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).HHcurve = mods.locallab.spots.at(i).HHcurve;
         }
 
+        if (locallab.spots.at(i).CHcurve) {
+            toEdit.locallab.spots.at(i).CHcurve = mods.locallab.spots.at(i).CHcurve;
+        }
+
         if (locallab.spots.at(i).invers) {
             toEdit.locallab.spots.at(i).invers = mods.locallab.spots.at(i).invers;
         }
@@ -4710,10 +4714,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).contresid) {
             toEdit.locallab.spots.at(i).contresid = mods.locallab.spots.at(i).contresid;
-        }
-
-        if (locallab.spots.at(i).blurcbdl) {
-            toEdit.locallab.spots.at(i).blurcbdl = mods.locallab.spots.at(i).blurcbdl;
         }
 
         if (locallab.spots.at(i).softradiuscb) {
@@ -6138,6 +6138,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     rgbcurve(v),
     LHcurve(v),
     HHcurve(v),
+    CHcurve(v),
     invers(v),
     special(v),
     toolcol(v),
@@ -6477,7 +6478,6 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensicb(v),
     clarityml(v),
     contresid(v),
-    blurcbdl(v),
     softradiuscb(v),
     enacbMask(v),
     CCmaskcbcurve(v),
@@ -6622,6 +6622,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     rgbcurve = v;
     LHcurve = v;
     HHcurve = v;
+    CHcurve = v;
     invers = v;
     special = v;
     toolcol = v;
@@ -6974,7 +6975,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     CCmaskcbcurve = v;
     LLmaskcbcurve = v;
     HHmaskcbcurve = v;
-    blurcbdl = v;
     blendmaskcb = v;
     radmaskcb = v;
     chromaskcb = v;
