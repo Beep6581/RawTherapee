@@ -2585,7 +2585,7 @@ TP_LOCALLAB_LIGHTN_TOOLTIP;In inverse mode: selection = -100 force luminance to 
 TP_LOCALLAB_LIGHTRETI;Lightness
 TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LIST_NAME;Add tool to current spot...
-TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Basic, Normal & Expert.\n The default setting for all tools is Basic but this can be changed in the Preferences window.\n You can also change the level of complexity on a per-tool basis while you are editing
+TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Basic, Normal & Expert.\nThe default setting for all tools is Basic but this can be changed in the Preferences window.\nYou can also change the level of complexity on a per-tool basis while you are editing
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
