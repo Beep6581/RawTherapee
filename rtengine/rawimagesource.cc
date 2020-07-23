@@ -2439,28 +2439,75 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
                 }
             }
 // poor man dehaze test
-            float minVals[3] = {100000.f, 100000.f, 100000.f};
+            float minVals[3] = {std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max()};
             if (getSensorType() == ST_FUJI_XTRANS) {
+                    StopWatch Stop1("test");
 #ifdef _OPENMP
                 #pragma omp parallel for reduction (min:minVals)
 #endif
                 for (int row = 0; row < H; row++) {
-                    for (int col = 0; col < W; col++) {
-                        if(rawData[row][col] > 0.f) {
-                            minVals[ri->XTRANSFC(row,col)] = rtengine::min(minVals[ri->XTRANSFC(row,col)], rawData[row][col] - c_black[ri->XTRANSFC(row,col)]);
-                        }
+                    const int c0 = ri->XTRANSFC(row, 0);
+                    const int c1 = ri->XTRANSFC(row, 1);
+                    const int c2 = ri->XTRANSFC(row, 2);
+                    const int c3 = ri->XTRANSFC(row, 3);
+                    const int c4 = ri->XTRANSFC(row, 4);
+                    const int c5 = ri->XTRANSFC(row, 5);
+                    const float cb0 = c_black[c0];
+                    const float cb1 = c_black[c1];
+                    const float cb2 = c_black[c2];
+                    const float cb3 = c_black[c3];
+                    const float cb4 = c_black[c4];
+                    const float cb5 = c_black[c5];
+                    float m0 = minVals[c0];
+                    float m1 = minVals[c1];
+                    float m2 = minVals[c2];
+                    float m3 = minVals[c3];
+                    float m4 = minVals[c4];
+                    float m5 = minVals[c5];
+                    int col = 0;
+                    for (; col < W - 5; col += 6) {
+                        m0 = rtengine::min(m0, rawData[row][col] - cb0);
+                        m1 = rtengine::min(m1, rawData[row][col + 1] - cb1);
+                        m2 = rtengine::min(m2, rawData[row][col + 2] - cb2);
+                        m3 = rtengine::min(m3, rawData[row][col + 3] - cb3);
+                        m4 = rtengine::min(m4, rawData[row][col + 4] - cb4);
+                        m5 = rtengine::min(m5, rawData[row][col + 5] - cb5);
                     }
+                    for (; col < W; ++col) {
+                        const int c = ri->XTRANSFC(row,col);
+                        minVals[c] = rtengine::min(minVals[c], rawData[row][col] - c_black[c]);
+                    }
+                    minVals[c0] = rtengine::min(m0, minVals[c0]);
+                    minVals[c1] = rtengine::min(m1, minVals[c1]);
+                    minVals[c2] = rtengine::min(m2, minVals[c2]);
+                    minVals[c3] = rtengine::min(m3, minVals[c3]);
+                    minVals[c4] = rtengine::min(m4, minVals[c4]);
+                    minVals[c5] = rtengine::min(m5, minVals[c5]);
                 }
             } else {
+                    StopWatch Stop1("test");
                 if (!ri->zeroIsBad()) {
 #ifdef _OPENMP
                     #pragma omp parallel for reduction (min:minVals)
 #endif
 
                     for (int row = 0; row < H; row++) {
-                        for (int col = 0; col < W; col++) {
-                            minVals[FC(row,col)] = rtengine::min(minVals[FC(row,col)], rawData[row][col] - c_black[FC(row,col)]);
+                        const int c0 = FC(row, 0);
+                        const int c1 = FC(row, 1);
+                        const float cb0 = c_black[c0];
+                        const float cb1 = c_black[c1];
+                        float m0 = minVals[c0];
+                        float m1 = minVals[c1];
+                        int col = 0;
+                        for (; col < W - 1; col += 2) {
+                            m0 = rtengine::min(m0, rawData[row][col] - cb0);
+                            m1 = rtengine::min(m1, rawData[row][col + 1] - cb1);
                         }
+                        if (col < W) {
+                            m0 = rtengine::min(m0, rawData[row][col] - cb0);
+                        }
+                        minVals[c0] = m0;
+                        minVals[c1] = m1;
                     }
                 } else {
 #ifdef _OPENMP
@@ -2468,11 +2515,28 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 #endif
 
                     for (int row = 0; row < H; row++) {
-                        for (int col = 0; col < W; col++) {
+                        const int c0 = FC(row, 0);
+                        const int c1 = FC(row, 1);
+                        const float cb0 = c_black[c0];
+                        const float cb1 = c_black[c1];
+                        float m0 = minVals[c0];
+                        float m1 = minVals[c1];
+                        int col = 0;
+                        for (; col < W - 1; col += 2) {
                             if(rawData[row][col] > 0.f) {
-                                minVals[FC(row,col)] = rtengine::min(minVals[FC(row,col)], rawData[row][col] - c_black[FC(row,col)]);
+                                m0 = rtengine::min(m0, rawData[row][col] - cb0);
+                            }
+                            if(rawData[row][col + 1] > 0.f) {
+                                m1 = rtengine::min(m1, rawData[row][col + 1] - cb1);
                             }
                         }
+                        if (col < W) {
+                            if(rawData[row][col] > 0.f) {
+                                m0 = rtengine::min(m0, rawData[row][col] - cb0);
+                            }
+                        }
+                        minVals[c0] = m0;
+                        minVals[c1] = m1;
                     }
                 }
             }
