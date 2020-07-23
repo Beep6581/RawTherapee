@@ -4498,6 +4498,7 @@ void LocallabVibrance::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
 void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
+        exp->set_tooltip_text(M("TP_LOCALLAB_VIBRA_TOOLTIP"));
         warm->set_tooltip_text(M("TP_LOCALLAB_WARM_TOOLTIP"));
         strvib->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         expmaskvib->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
