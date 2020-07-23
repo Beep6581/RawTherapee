@@ -394,7 +394,7 @@ void LocallabTool::complexityModeChanged()
             updateGUIToMode(Simple);
         if (listener) {//as normal
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_SIMPLE") + " (" + escapeHtmlChars(spotName) + ")");
         }
 
     }
@@ -5303,11 +5303,11 @@ void LocallabSoft::enabledChanged()
 
 void LocallabSoft::convertParamToSimple()
 {
-    const LocallabParams::LocallabSpot defSpot;
+ //   const LocallabParams::LocallabSpot defSpot;
 
     // Disable all listeners
-    disableListener();
-    enableListener();
+//    disableListener();
+//    enableListener();
 
     // Update GUI based on converted widget parameters:
 }

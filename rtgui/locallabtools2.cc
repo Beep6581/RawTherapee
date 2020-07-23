@@ -1392,11 +1392,11 @@ void LocallabRetinex::enabledChanged()
 
 void LocallabRetinex::convertParamToSimple()
 {
-    const LocallabParams::LocallabSpot defSpot;
+//    const LocallabParams::LocallabSpot defSpot;
 
     // Disable all listeners
-    disableListener();
-    enableListener();
+//    disableListener();
+//    enableListener();
 
 }
 

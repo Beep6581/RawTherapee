@@ -3724,6 +3724,13 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
         fftwf_free(data_fft04);
         fftwf_free(data_tmp04);
     }
+    if (show == 2) {
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                datashow[y * bfw + x] = data_fft[y * bfw + x];
+            }
+        }
+    }
 
     /* solve the Poisson PDE in Fourier space */
     /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
