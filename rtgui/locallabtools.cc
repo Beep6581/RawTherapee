@@ -369,30 +369,25 @@ void LocallabTool::complexityModeChanged()
     if (complexity->get_active_row_number() == Normal) { // New selected mode is Normal one
         // Convert tool widget parameters
         convertParamToNormal();
-
         // Update GUI based on new mode
         updateGUIToMode(Normal);
-
-        // Raise event with refreshing
-        if (listener) {
-            listener->panelChanged(EvlocallabcomplexityWithRefreshnorm,
+        if (listener && isLocActivated) {
+            listener->panelChanged(EvlocallabcomplexityWithRefresh,
                                    M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(spotName) + ")");
         }
     } else if (complexity->get_active_row_number() == Expert) { // New selected mode is Expert one
         // Update GUI based on new mode
         updateGUIToMode(Expert);
-
-        // Raise event without refreshing
-        if (listener) {
-            listener->panelChanged(EvlocallabcomplexityWithoutRefresh,
+        if (listener && isLocActivated) {
+            listener->panelChanged(EvlocallabcomplexityWithRefresh,
                                    M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(spotName) + ")");
         }
     } else if (complexity->get_active_row_number() == Simple) { // New selected mode is Simple one
-            convertParamToNormal();
-            convertParamToSimple();
-            updateGUIToMode(Normal);
-            updateGUIToMode(Simple);
-        if (listener) {//as normal
+        convertParamToNormal();
+        convertParamToSimple();
+        updateGUIToMode(Normal);
+        updateGUIToMode(Simple);
+        if (listener && isLocActivated) {//as normal
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
                                    M("TP_LOCALLAB_MODE_SIMPLE") + " (" + escapeHtmlChars(spotName) + ")");
         }

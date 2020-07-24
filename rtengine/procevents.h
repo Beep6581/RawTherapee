@@ -946,7 +946,7 @@ enum ProcEventCode {
     Evlocallabsigmalc2 = 920,
     Evlocallabblwh = 921,
     EvlocallabcomplexityWithRefresh = 922,
-    EvlocallabcomplexityWithoutRefresh = 923,
+    // EvlocallabcomplexityWithoutRefresh = 923,
     EvLocallabSpotcolorscope = 924,
     EvlocallabshowmasktypMethod = 925,
     Evlocallabshadmaskblsha = 926,
@@ -979,7 +979,6 @@ enum ProcEventCode {
     EvLocallabSpotprevMethod = 953,
     Evlocallabactiv = 954,
     EvlocallabCHshape = 955,
-    EvlocallabcomplexityWithRefreshnorm = 956,
     NUMOFEVENTS
 };
 
