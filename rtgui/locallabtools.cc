@@ -5298,11 +5298,17 @@ void LocallabSoft::enabledChanged()
 
 void LocallabSoft::convertParamToSimple()
 {
- //   const LocallabParams::LocallabSpot defSpot;
+    const LocallabParams::LocallabSpot defSpot;
 
     // Disable all listeners
-//    disableListener();
-//    enableListener();
+    disableListener();
+    if (defSpot.softMethod == "soft") {
+        softMethod->set_active(0);
+    } else if (defSpot.softMethod == "reti") {
+        softMethod->set_active(1);
+    }
+    enableListener();
+    updateSoftGUI();
 
     // Update GUI based on converted widget parameters:
 }
@@ -5315,15 +5321,12 @@ void LocallabSoft::convertParamToNormal()
 
     // Disable all listeners
     disableListener();
-
-    // Set hidden GUI widgets in Normal mode to default spot values
     if (defSpot.softMethod == "soft") {
         softMethod->set_active(0);
     } else if (defSpot.softMethod == "reti") {
         softMethod->set_active(1);
     }
-
-    // Enable all listeners
+    
     enableListener();
 
     // Update GUI based on converted widget parameters:
@@ -5335,13 +5338,16 @@ void LocallabSoft::updateGUIToMode(const modeType new_type)
 {
     if (new_type == Normal) {
         // Advanced widgets are hidden in Normal mode
-        softMethod->hide();
+        softMethod->show();
+        ctboxsoftmethod->hide();
     } else if(new_type == Simple){
         softMethod->hide();
+        ctboxsoftmethod->hide();
     } else if(new_type == Expert){
         // Advanced widgets are shown in Expert mode
         softMethod->show();
-    }
+        ctboxsoftmethod->show();
+}
 }
 
 void LocallabSoft::softMethodChanged()
@@ -5377,7 +5383,10 @@ void LocallabSoft::showmasksoftMethodChanged()
 void LocallabSoft::updateSoftGUI()
 {
     // Update soft light GUI according to softMethod combobox
+    int comp = complexity->get_active_row_number();
+
     if (softMethod->get_active_row_number() ==  0) {
+        
         ctboxsoftmethod->hide();
         // Reset hidden mask combobox
         showmasksoftMethodConn.block(true);
@@ -5385,7 +5394,14 @@ void LocallabSoft::updateSoftGUI()
         showmasksoftMethodConn.block(false);
         laplace->hide();
     } else {
-        ctboxsoftmethod->show();
+        if(comp == Normal) {
+            ctboxsoftmethod->hide();
+            showmasksoftMethodConn.block(true);
+            showmasksoftMethod->set_active(0);
+            showmasksoftMethodConn.block(false);
+        } else if (comp == Expert) {
+            ctboxsoftmethod->show();
+        }
         laplace->show();
     }
 }

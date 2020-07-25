@@ -1392,11 +1392,12 @@ void LocallabRetinex::enabledChanged()
 
 void LocallabRetinex::convertParamToSimple()
 {
-//    const LocallabParams::LocallabSpot defSpot;
+    const LocallabParams::LocallabSpot defSpot;
 
     // Disable all listeners
-//    disableListener();
-//    enableListener();
+    disableListener();
+    lumonly->set_active(defSpot.lumonly);
+    enableListener();
 
 }
 
@@ -1465,13 +1466,16 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
         // Advanced widgets are hidden in Normal mode
         retiFrame->hide();
         retitoolFrame->hide();
+        lumonly->show();
     } else if (new_type == Simple){
         retiFrame->hide();
         retitoolFrame->hide();
+        lumonly->hide();
     } else if (new_type == Expert){
         // Advanced widgets are shown in Expert mode
         retiFrame->show();
         retitoolFrame->show();
+        lumonly->show();
     }
 }
 
