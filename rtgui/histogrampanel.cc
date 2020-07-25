@@ -40,22 +40,33 @@ HistogramPanel::HistogramPanel ()
     histogramArea = Gtk::manage (new HistogramArea (this));
     setExpandAlignProperties(histogramArea, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
-    setExpandAlignProperties(histogramRGBArea, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
-    histogramRGBArea->show();
+    histogramRGBAreaHori.reset(new HistogramRGBAreaHori());
+    setExpandAlignProperties(histogramRGBAreaHori.get(), true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    histogramRGBAreaHori->show();
+
+    histogramRGBAreaVert.reset(new HistogramRGBAreaVert());
+    setExpandAlignProperties(histogramRGBAreaVert.get(), false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+    histogramRGBAreaVert->show();
+
+    if (options.histogramScopeType == 1) {
+        histogramRGBArea = histogramRGBAreaVert.get();
+    } else {
+        histogramRGBArea = histogramRGBAreaHori.get();
+    }
 
     // connecting the two childs
-    histogramArea->signal_factor_changed().connect( sigc::mem_fun(*histogramRGBArea, &HistogramRGBArea::factorChanged) );
+    histogramArea->signal_factor_changed().connect( sigc::mem_fun(*histogramRGBAreaHori, &HistogramRGBArea::factorChanged) );
+    histogramArea->signal_factor_changed().connect( sigc::mem_fun(*histogramRGBAreaVert, &HistogramRGBArea::factorChanged) );
 
     gfxGrid = Gtk::manage (new Gtk::Grid ());
-    gfxGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
     gfxGrid->set_row_spacing(1);
     gfxGrid->set_column_spacing(1);
-    histogramRGBArea->setParent(gfxGrid);
+    histogramRGBAreaHori->setParent(gfxGrid);
+    histogramRGBAreaVert->setParent(gfxGrid);
     gfxGrid->add(*histogramArea);
 
     if (options.histogramBar) {
-        gfxGrid->add (*histogramRGBArea);
+        showRGBBar();
     }
 
     redImage   = new RTImage ("histogram-red-on-small.png");
@@ -227,6 +238,25 @@ HistogramPanel::~HistogramPanel ()
 
 }
 
+void HistogramPanel::showRGBBar()
+{
+    Gtk::PositionType pos;
+
+    if (histogramRGBArea == histogramRGBAreaHori.get()) {
+        pos = Gtk::POS_BOTTOM;
+    } else {
+        if (options.histogramPosition == 1) {
+            pos = Gtk::POS_RIGHT;
+        } else {
+            pos = Gtk::POS_LEFT;
+        }
+    }
+
+    gfxGrid->attach_next_to(*histogramRGBArea, *histogramArea, pos);
+    setHistRGBInvalid();
+    histogramRGBArea->setShow(true);
+}
+
 void HistogramPanel::resized (Gtk::Allocation& req)
 {
 
@@ -314,16 +344,27 @@ void HistogramPanel::type_pressed()
 
 void HistogramPanel::type_changed()
 {
+    if (showBAR->get_active()) {
+        histogramRGBArea->setShow(false);
+        gfxGrid->remove(*histogramRGBArea);
+    }
+
     if (options.histogramScopeType == 0) {
         showValue->set_sensitive(!showRAW->get_active());
         showChro->set_sensitive(!showRAW->get_active());
         showRAW->set_sensitive();
         showMode->set_sensitive();
+        histogramRGBArea = histogramRGBAreaHori.get();
     } else {
         showValue->set_sensitive(false);
         showChro->set_sensitive(false);
         showRAW->set_sensitive(false);
         showMode->set_sensitive(false);
+        histogramRGBArea = histogramRGBAreaVert.get();
+    }
+
+    if (showBAR->get_active()) {
+        showRGBBar();
     }
 }
 
@@ -331,6 +372,12 @@ void HistogramPanel::bar_toggled ()
 {
     showBAR->set_image(showBAR->get_active() ? *barImage : *barImage_g);
     rgbv_toggled();
+
+    if (showBAR->get_active()) {
+        showRGBBar();
+    } else {
+        gfxGrid->remove(*histogramRGBArea);
+    }
 }
 
 void HistogramPanel::rgbv_toggled ()
@@ -436,46 +483,41 @@ HistogramRGBArea::~HistogramRGBArea ()
 }
 
 
-Gtk::SizeRequestMode HistogramRGBArea::get_request_mode_vfunc () const
+void HistogramRGBArea::getPreferredThickness(int& min_thickness, int& natural_thickness) const
 {
-    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+    int minimumLength = 0;
+    int naturalLength = 0;
+    getPreferredLength(minimumLength, naturalLength);
+    getPreferredThicknessForLength(minimumLength, min_thickness, natural_thickness);
 }
 
-void HistogramRGBArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
-{
-    int minimumWidth = 0;
-    int naturalWidth = 0;
-    get_preferred_width_vfunc(minimumWidth, naturalWidth);
-    get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
-}
-
-void HistogramRGBArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+void HistogramRGBArea::getPreferredLength(int& min_length, int& natural_length) const
 {
     int s = RTScalable::getScale();
-    minimum_width = 60 * s;
-    natural_width = 200 * s;
+    min_length = 60 * s;
+    natural_length = 200 * s;
 }
 
-void HistogramRGBArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+void HistogramRGBArea::getPreferredThicknessForLength(int length, int& min_thickness, int& natural_thickness) const
 {
-    int bHeight = width / 30;
+    int bThickness = length / 30;
 
     int s = RTScalable::getScale();
 
-    if (bHeight > (10 * s)) {
-        bHeight = 10 * s;
-    } else if (bHeight < (5 * s)) {
-        bHeight = 5 * s;
+    if (bThickness > (10 * s)) {
+        bThickness = 10 * s;
+    } else if (bThickness < (5 * s)) {
+        bThickness = 5 * s;
     }
 
-    minimum_height = bHeight;
-    natural_height = bHeight;
+    min_thickness = bThickness;
+    natural_thickness = bThickness;
 }
 
 // unused?
-void HistogramRGBArea::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+void HistogramRGBArea::getPreferredLengthForThickness(int thickness, int& min_length, int& natural_length) const
 {
-    get_preferred_width_vfunc (minimum_width, natural_width);
+    getPreferredLength(min_length, natural_length);
 }
 
 bool HistogramRGBArea::getShow()
@@ -483,9 +525,14 @@ bool HistogramRGBArea::getShow()
     return(showMode);
 }
 
+void HistogramRGBArea::setShow(bool show)
+{
+    showMode = show;
+}
+
 void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
-    if (!get_realized () || !showMode || rawMode || options.histogramScopeType == 1) {
+    if (!get_realized () || !showMode || rawMode) {
         return;
     }
 
@@ -513,75 +560,39 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
         cc->set_line_width (1.0 * s);
 
         if ( r != -1 && g != -1 && b != -1 ) {
-            double xpos;
             if (needRed) {
                 // Red
                 cc->set_source_rgb(1.0, 0.0, 0.0);
-                if (options.histogramDrawMode < 2) {
-                    xpos = padding + r * (winw - padding * 2.0) / 255.0 + 0.5*s;
-                } else {
-                    xpos = padding + HistogramScaling::log (255, r) * (winw - padding * 2.0) / 255.0 + 0.5*s;
-                }
-                cc->move_to(xpos, 0.0);
-                cc->line_to(xpos, winh - 0.0);
-                cc->stroke();
+                drawBar(cc, r, 255.0, winw, winh, s);
             }
 
             if (needGreen) {
                 // Green
                 cc->set_source_rgb(0.0, 1.0, 0.0);
-                if (options.histogramDrawMode < 2) {
-                    xpos = padding + g * (winw - padding * 2.0) / 255.0 + 0.5*s;
-                } else {
-                    xpos = padding + HistogramScaling::log (255, g) * (winw - padding * 2.0) / 255.0 + 0.5*s;
-                }
-                cc->move_to(xpos, 0.0);
-                cc->line_to(xpos, winh - 0.0);
-                cc->stroke();
+                drawBar(cc, g, 255.0, winw, winh, s);
             }
 
             if (needBlue) {
                 // Blue
                 cc->set_source_rgb(0.0, 0.4, 1.0);
-                if (options.histogramDrawMode < 2) {
-                    xpos = padding + b * (winw - padding * 2.0) / 255.0 + 0.5*s;
-                } else {
-                    xpos = padding + HistogramScaling::log (255, b) * (winw - padding * 2.0) / 255.0 + 0.5*s;
-                }
-                cc->move_to(xpos, 0.0);
-                cc->line_to(xpos, winh - 0.0);
-                cc->stroke();
+                drawBar(cc, b, 255.0, winw, winh, s);
             }
 
-            if(needLuma || needChroma) {
+            if((needLuma || needChroma) && options.histogramScopeType != 1) {
                 float Lab_L, Lab_a, Lab_b;
                 rtengine::Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, Lab_L, Lab_a, Lab_b, options.rtSettings.HistogramWorking);
 
                 if (needLuma) {
                     // Luma
                     cc->set_source_rgb(1.0, 1.0, 1.0);
-                    if (options.histogramDrawMode < 2) {
-                        xpos = padding + static_cast<double>(Lab_L) * (winw - padding * 2.0) / 100.0 + 0.5*s;
-                    } else {
-                        xpos = padding + HistogramScaling::log(100, Lab_L) * (winw - padding * 2.0) / 100.0 + 0.5*s;
-                    }
-                    cc->move_to(xpos, 0.0);
-                    cc->line_to(xpos, winh - 0.0);
-                    cc->stroke();
+                    drawBar(cc, Lab_L, 100.0, winw, winh, s);
                 }
 
                 if (needChroma) {
                     // Chroma
                     double chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
                     cc->set_source_rgb(0.9, 0.9, 0.0);
-                    if (options.histogramDrawMode < 2) {
-                        xpos = padding + chromaval * (winw - padding * 2.0) / 100.0 + 0.5*s;
-                    } else {
-                        xpos = padding + HistogramScaling::log(100, chromaval) * (winw - padding * 2.0) / 100.0 + 0.5*s;
-                    }
-                    cc->move_to(xpos, 0.0);
-                    cc->line_to(xpos, winh - 0.0);
-                    cc->stroke();
+                    drawBar(cc, chromaval, 100.0, winw, winh, s);
                 }
             }
         }
@@ -639,15 +650,6 @@ void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bo
     options.histogramRAW    = rawMode    = raw;
     options.histogramBar    = showMode   = bar;
 
-    // Show/hide the RGB bar widget
-    if (bar && !barDisplayed) {
-        parent->add(*this);
-        barDisplayed = true;
-    } else if (!bar && barDisplayed) {
-        removeIfThere(parent, this, false);
-        barDisplayed = false;
-    }
-
 }
 
 void HistogramRGBArea::on_realize ()
@@ -690,6 +692,82 @@ bool HistogramRGBArea::on_button_press_event (GdkEventButton* event)
 void HistogramRGBArea::factorChanged (double newFactor)
 {
     factor = newFactor;
+}
+
+void HistogramRGBAreaHori::drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale)
+{
+    double pos;
+    if (options.histogramDrawMode < 2) {
+        pos = padding + value * (winw - padding * 2.0) / max_value + 0.5 * scale;
+    } else {
+        pos = padding + HistogramScaling::log (max_value, value) * (winw - padding * 2.0) / max_value + 0.5 * scale;
+    }
+    cc->move_to(pos, 0.0);
+    cc->line_to(pos, winh - 0.0);
+    cc->stroke();
+}
+
+Gtk::SizeRequestMode HistogramRGBAreaHori::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+}
+
+void HistogramRGBAreaHori::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    getPreferredThickness(minimum_height, natural_height);
+}
+
+void HistogramRGBAreaHori::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    getPreferredLength(minimum_width, natural_width);
+}
+
+void HistogramRGBAreaHori::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    getPreferredThicknessForLength(width, minimum_height, natural_height);
+}
+
+void HistogramRGBAreaHori::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    getPreferredLengthForThickness(height, minimum_width, natural_width);
+}
+
+void HistogramRGBAreaVert::drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale)
+{
+    double pos;
+    if (options.histogramDrawMode < 2 || options.histogramScopeType == 1) {
+        pos = padding + value * (winh - padding * 2.0 - 1) / max_value + 0.5 * scale;
+    } else {
+        pos = padding + HistogramScaling::log (max_value, value) * (winh - padding * 2.0) / max_value + 0.5 * scale;
+    }
+    cc->move_to(0.0, winh - pos);
+    cc->line_to(winw, winh - pos);
+    cc->stroke();
+}
+
+Gtk::SizeRequestMode HistogramRGBAreaVert::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_WIDTH_FOR_HEIGHT;
+}
+
+void HistogramRGBAreaVert::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    getPreferredLength(minimum_height, natural_height);
+}
+
+void HistogramRGBAreaVert::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    getPreferredThickness(minimum_width, natural_width);
+}
+
+void HistogramRGBAreaVert::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    getPreferredLengthForThickness(width, minimum_height, natural_height);
+}
+
+void HistogramRGBAreaVert::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    getPreferredThicknessForLength(height, minimum_width, natural_width);
 }
 
 //

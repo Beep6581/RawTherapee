@@ -53,7 +53,7 @@ public:
     double log (double vsize, double val);
 };
 
-class HistogramRGBArea final : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling, public rtengine::NonCopyable
+class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer, protected HistogramScaling, public rtengine::NonCopyable
 {
 private:
     typedef const double (*TMatrix)[3];
@@ -83,12 +83,21 @@ protected:
 
     HistogramRGBAreaIdleHelper* harih;
 
+    /** Draw an indicator bar for the value. */
+    virtual void drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale) = 0;
+
+    void getPreferredThickness(int& min_thickness, int& natural_length) const;
+    void getPreferredLength(int& min_length, int& natural_length) const;
+    void getPreferredThicknessForLength(int length, int& min_thickness, int& natural_length) const;
+    void getPreferredLengthForThickness(int thickness, int& min_length, int& natural_length) const;
+
 public:
     HistogramRGBArea();
     ~HistogramRGBArea() override;
 
     void updateBackBuffer (int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
     bool getShow ();
+    void setShow(bool show);
     void setParent (Gtk::Grid* p)
     {
         parent = p;
@@ -102,13 +111,30 @@ public:
     bool on_button_press_event (GdkEventButton* event) override;
     void factorChanged (double newFactor);
 
+};
+
+class HistogramRGBAreaHori final : public HistogramRGBArea
+{
 private:
+    void drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale) override;
+
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
     void get_preferred_width_for_height_vfunc (int h, int &minimum_width, int &natural_width) const override;
+};
 
+class HistogramRGBAreaVert final : public HistogramRGBArea
+{
+private:
+    void drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale) override;
+
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int h, int &minimum_width, int &natural_width) const override;
 };
 
 class DrawModeListener
@@ -197,6 +223,8 @@ protected:
     Gtk::Grid* buttonGrid;
     HistogramArea* histogramArea;
     HistogramRGBArea* histogramRGBArea;
+    std::unique_ptr<HistogramRGBAreaHori> histogramRGBAreaHori;
+    std::unique_ptr<HistogramRGBAreaVert> histogramRGBAreaVert;
     Gtk::ToggleButton* showRed;
     Gtk::ToggleButton* showGreen;
     Gtk::ToggleButton* showBlue;
@@ -229,6 +257,7 @@ protected:
 
     sigc::connection rconn;
     void setHistInvalid ();
+    void showRGBBar();
 
 public:
 
