@@ -1857,6 +1857,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
         expcurvcol->show();
         expcurvcol->show();
         expmaskcol->show();
+        llCurveEditorG->show();
     } else if (new_type == Simple){
         blurcolde->hide();
         softradiuscol->hide();
@@ -1882,6 +1883,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
         expgradcol->hide();
         expcurvcol->hide();
         expmaskcol->hide();
+        llCurveEditorG->hide();
 
     } else if (new_type == Expert){
         // Advanced widgets are shown in Expert mode
@@ -1890,6 +1892,8 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
         expgradcol->show();
         expcurvcol->show();
         expmaskcol->show();
+        llCurveEditorG->show();
+
         if (!invers->get_active()) { // Keep widget hidden when invers is toggled
             softradiuscol->show();
         }
