@@ -906,9 +906,9 @@ void HistogramArea::updateBackBuffer ()
     // draw horizontal gridlines
     if (options.histogramScopeType == 1) {
         for (int i = 0; i <= nrOfVGridPartitions; i++) {
-            const double ypos = h - 1 - (pow(2.0,i) - 1) * (h - 1) / 255.0;
-            cr->move_to(padding, ypos);
-            cr->line_to(w - padding, ypos);
+            const double ypos = h - padding - (pow(2.0,i) - 1) * (h - 2 * padding - 1) / 255.0;
+            cr->move_to(0, ypos);
+            cr->line_to(w, ypos);
             cr->stroke();
         }
     } else if (options.histogramDrawMode == 0) {
@@ -1133,8 +1133,8 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
     Cairo::RefPtr<Cairo::ImageSurface> surface = Cairo::ImageSurface::create(
         buffer.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
     auto orig_matrix = cr->get_matrix();
-    cr->translate(padding, 0);
-    cr->scale(static_cast<double>(w - 2 * padding) / waveform_width, h / 256.0);
+    cr->translate(0, padding);
+    cr->scale(static_cast<double>(w) / waveform_width, (h - 2 * padding) / 256.0);
     cr->set_source(surface, 0, 0);
     cr->set_operator(Cairo::OPERATOR_OVER);
     cr->paint();
