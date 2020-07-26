@@ -54,7 +54,7 @@ class Crop;
   * but using this class' LUT and other precomputed parameters. The main preview area is displaying a non framed Crop object,
   * while detail windows are framed Crop objects.
   */
-class ImProcCoordinator final : public StagedImageProcessor
+class ImProcCoordinator final : public StagedImageProcessor, public HistogramObservable
 {
 
     friend class Crop;
@@ -199,6 +199,7 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
+    void notifyHistogramChanged();
     void reallocAll();
     void updateLRGBHistograms();
     void updateWaveforms();
@@ -454,7 +455,11 @@ public:
     }
     void setHistogramListener (HistogramListener *h) override
     {
+        if (hListener) {
+            hListener->setObservable(nullptr);
+        }
         hListener = h;
+        h->setObservable(this);
     }
     void setAutoCamListener  (AutoCamListener* acl) override
     {
@@ -555,6 +560,8 @@ public:
 
     } denoiseInfoStore;
 
+    void updateHistogram() override;
+    void updateWaveform() override;
 };
 
 }

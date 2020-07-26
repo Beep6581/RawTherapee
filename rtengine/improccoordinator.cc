@@ -1640,31 +1640,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
         if (hListener) {
-            updateLRGBHistograms();
-            updateWaveforms();
-            hListener->histogramChanged(
-                histRed,
-                histGreen,
-                histBlue,
-                histLuma,
-                histToneCurve,
-                histLCurve,
-                histCCurve,
-                /*histCLurve,
-                 * histLLCurve,*/
-                histLCAM,
-                histCCAM,
-                histRedRaw,
-                histGreenRaw,
-                histBlueRaw,
-                histChroma,
-                histLRETI,
-                waveformScale,
-                waveformWidth,
-                waveformRed.get(),
-                waveformGreen.get(),
-                waveformBlue.get()
-            );
+            if (hListener->updateHistogram()) {
+                updateLRGBHistograms();
+            }
+            if (hListener->updateWaveform()) {
+                updateWaveforms();
+            }
+            notifyHistogramChanged();
         }
     }
 
@@ -1764,6 +1746,33 @@ void ImProcCoordinator::setScale(int prevscale)
         }
 }
 
+
+void ImProcCoordinator::notifyHistogramChanged()
+{
+    if (hListener) {
+        hListener->histogramChanged(
+            histRed,
+            histGreen,
+            histBlue,
+            histLuma,
+            histToneCurve,
+            histLCurve,
+            histCCurve,
+            histLCAM,
+            histCCAM,
+            histRedRaw,
+            histGreenRaw,
+            histBlueRaw,
+            histChroma,
+            histLRETI,
+            waveformScale,
+            waveformWidth,
+            waveformRed.get(),
+            waveformGreen.get(),
+            waveformBlue.get()
+        );
+    }
+}
 
 void ImProcCoordinator::updateLRGBHistograms()
 {
@@ -2303,6 +2312,22 @@ bool ImProcCoordinator::getHighQualComputed()
 void ImProcCoordinator::setHighQualComputed()
 {
     highQualityComputed = true;
+}
+
+void ImProcCoordinator::updateWaveform()
+{
+    if (hListener) {
+        updateWaveforms();
+        notifyHistogramChanged();
+    }
+}
+
+void ImProcCoordinator::updateHistogram()
+{
+    if (hListener) {
+        updateLRGBHistograms();
+        notifyHistogramChanged();
+    }
 }
 
 }

@@ -470,7 +470,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
       iBeforeLockON (nullptr), iBeforeLockOFF (nullptr), previewHandler (nullptr), beforePreviewHandler (nullptr),
       beforeIarea (nullptr), beforeBox (nullptr), afterBox (nullptr), beforeLabel (nullptr), afterLabel (nullptr),
       beforeHeaderBox (nullptr), afterHeaderBox (nullptr), parent (nullptr), parentWindow (nullptr), openThm (nullptr),
-      selectedFrame(0), isrc (nullptr), ipc (nullptr), beforeIpc (nullptr), err (0), isProcessing (false)
+      selectedFrame(0), isrc (nullptr), ipc (nullptr), beforeIpc (nullptr), err (0), isProcessing (false),
+      histogram_observable(nullptr), histogram_scope_type(HistogramPanelListener::NONE)
 {
 
     epih = new EditorPanelIdleHelper;
@@ -2260,6 +2261,40 @@ void EditorPanel::histogramChanged(
     tpc->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
 }
 
+void EditorPanel::setObservable(rtengine::HistogramObservable* observable)
+{
+    histogram_observable = observable;
+}
+
+bool EditorPanel::updateHistogram(void)
+{
+    return histogram_scope_type == HistogramPanelListener::HISTOGRAM
+        || histogram_scope_type == HistogramPanelListener::NONE;
+}
+
+bool EditorPanel::updateWaveform(void)
+{
+    return histogram_scope_type == HistogramPanelListener::WAVEFORM
+        || histogram_scope_type == HistogramPanelListener::NONE;
+}
+
+void EditorPanel::scopeTypeChanged(ScopeType new_type)
+{
+    histogram_scope_type = new_type;
+
+    if (!histogram_observable) {
+        return;
+    }
+
+    // Make sure the new scope is updated since we only actively update the
+    // current scope.
+    if (new_type == HistogramPanelListener::HISTOGRAM) {
+        histogram_observable->updateHistogram();
+    } else if (new_type == HistogramPanelListener::WAVEFORM) {
+        histogram_observable->updateWaveform();
+    }
+}
+
 bool EditorPanel::CheckSidePanelsVisibility()
 {
     if (tbTopPanel_1) {
@@ -2374,6 +2409,10 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             vboxright->set_position(options.histogramHeight);
             histogramPanel->reorder (Gtk::POS_RIGHT);
             break;
+    }
+
+    if (histogramPanel) {
+        histogramPanel->setPanelListener(this);
     }
 
     iareapanel->imageArea->setPointerMotionHListener (histogramPanel);

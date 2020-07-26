@@ -302,6 +302,8 @@ public:
     virtual void sizeChanged(int w, int h, int ow, int oh) = 0;
 };
 
+class HistogramObservable;
+
 /** This listener is used when the histogram of the final image has changed. */
 class HistogramListener
 {
@@ -334,6 +336,21 @@ public:
         const int waveformGreen[][256],
         const int waveformBlue[][256]
     ) = 0;
+    /** Tells which observable is notifying the listener. */
+    virtual void setObservable(HistogramObservable* observable) = 0;
+    /** Returns if the listener wants the histogram to be updated. */
+    virtual bool updateHistogram(void) = 0;
+    /** Returns if the listener wants the waveform to be updated. */
+    virtual bool updateWaveform(void) = 0;
+};
+
+class HistogramObservable
+{
+public:
+    /** Tells the observable to update the histogram data. */
+    virtual void updateHistogram() = 0;
+    /** Tells the observable to update the waveform data. */
+    virtual void updateWaveform() = 0;
 };
 
 /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */

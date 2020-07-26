@@ -55,6 +55,7 @@ class EditorPanel final :
     public ThumbnailListener,
     public HistoryBeforeLineListener,
     public rtengine::HistogramListener,
+    public HistogramPanelListener,
     public rtengine::NonCopyable
 {
 public:
@@ -133,6 +134,12 @@ public:
         const int waveformGreen[][256],
         const int waveformBlue[][256]
     ) override;
+    void setObservable(rtengine::HistogramObservable* observable) override;
+    bool updateHistogram(void) override;
+    bool updateWaveform(void) override;
+
+    // HistogramPanelListener
+    void scopeTypeChanged(ScopeType new_type) override;
 
     // event handlers
     void info_toggled ();
@@ -265,4 +272,7 @@ private:
     bool isProcessing;
 
     IdleRegister idle_register;
+
+    rtengine::HistogramObservable* histogram_observable;
+    ScopeType histogram_scope_type;
 };

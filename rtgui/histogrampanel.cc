@@ -32,7 +32,7 @@ using namespace rtengine;
 //
 //
 // HistogramPanel
-HistogramPanel::HistogramPanel ()
+HistogramPanel::HistogramPanel () : panel_listener(nullptr)
 {
     setExpandAlignProperties(this, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     set_name("HistogramPanel");
@@ -355,12 +355,20 @@ void HistogramPanel::type_changed()
         showRAW->set_sensitive();
         showMode->set_sensitive();
         histogramRGBArea = histogramRGBAreaHori.get();
+        if (panel_listener) {
+            updateHistAreaOptions();
+            panel_listener->scopeTypeChanged(HistogramPanelListener::HISTOGRAM);
+        }
     } else {
         showValue->set_sensitive(false);
         showChro->set_sensitive(false);
         showRAW->set_sensitive(false);
         showMode->set_sensitive(false);
         histogramRGBArea = histogramRGBAreaVert.get();
+        if (panel_listener) {
+            updateHistAreaOptions();
+            panel_listener->scopeTypeChanged(HistogramPanelListener::WAVEFORM);
+        }
     }
 
     if (showBAR->get_active()) {
@@ -383,7 +391,8 @@ void HistogramPanel::bar_toggled ()
 void HistogramPanel::rgbv_toggled ()
 {
     // Update Display
-    histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showChro->get_active(), showRAW->get_active(), options.histogramDrawMode, options.histogramScopeType);
+    updateHistAreaOptions();
+    histogramArea->updateBackBuffer ();
     histogramArea->queue_draw ();
 
     histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showChro->get_active(), showRAW->get_active(), showBAR->get_active());
@@ -439,6 +448,35 @@ void HistogramPanel::toggleButtonMode ()
         showMode->set_image(*mode1Image);
     else
         showMode->set_image(*mode2Image);
+}
+
+void HistogramPanel::setPanelListener(HistogramPanelListener* listener)
+{
+    panel_listener = listener;
+
+    if (listener) {
+        HistogramPanelListener::ScopeType type;
+        if (options.histogramScopeType == 0) {
+            type = HistogramPanelListener::HISTOGRAM;
+        } else {
+            type = HistogramPanelListener::WAVEFORM;
+        }
+        listener->scopeTypeChanged(type);
+    }
+}
+
+void HistogramPanel::updateHistAreaOptions()
+{
+    histogramArea->updateOptions(
+        showRed->get_active(),
+        showGreen->get_active(),
+        showBlue->get_active(),
+        showValue->get_active(),
+        showChro->get_active(),
+        showRAW->get_active(),
+        options.histogramDrawMode,
+        options.histogramScopeType
+    );
 }
 
 //
@@ -775,7 +813,7 @@ void HistogramRGBAreaVert::get_preferred_width_for_height_vfunc (int height, int
 //
 // HistogramArea
 HistogramArea::HistogramArea (DrawModeListener *fml) :
-    waveform_width(0),
+    waveform_width(0), wave_buffer_dirty(true),
     valid(false), drawMode(options.histogramDrawMode), myDrawModeListener(fml),
     scopeType(options.histogramScopeType),
     oldwidth(-1), oldheight(-1),
@@ -854,7 +892,7 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool 
     options.histogramDrawMode = drawMode   = mode;
     options.histogramScopeType = scopeType = type;
 
-    updateBackBuffer ();
+    wave_buffer_dirty = true;
 }
 
 void HistogramArea::update(
@@ -874,27 +912,31 @@ void HistogramArea::update(
 )
 {
     if (histRed) {
-        rhist = histRed;
-        ghist = histGreen;
-        bhist = histBlue;
-        lhist = histLuma;
-        chist = histChroma;
-        rhistRaw = histRedRaw;
-        ghistRaw = histGreenRaw;
-        bhistRaw = histBlueRaw;
-        waveform_scale = waveformScale;
-        if (waveform_width != waveformWidth) {
-            waveform_width = waveformWidth;
-            rwave.reset(new int[waveformWidth][256]);
-            gwave.reset(new int[waveformWidth][256]);
-            bwave.reset(new int[waveformWidth][256]);
+        if (scopeType == 0) {
+            rhist = histRed;
+            ghist = histGreen;
+            bhist = histBlue;
+            lhist = histLuma;
+            chist = histChroma;
+            rhistRaw = histRedRaw;
+            ghistRaw = histGreenRaw;
+            bhistRaw = histBlueRaw;
+        } else if (scopeType == 1) {
+            waveform_scale = waveformScale;
+            if (waveform_width != waveformWidth) {
+                waveform_width = waveformWidth;
+                rwave.reset(new int[waveformWidth][256]);
+                gwave.reset(new int[waveformWidth][256]);
+                bwave.reset(new int[waveformWidth][256]);
+            }
+            int (* const rw)[256] = rwave.get();
+            int (* const gw)[256] = gwave.get();
+            int (* const bw)[256] = bwave.get();
+            memcpy(rw, waveformRed, 256 * waveformWidth * sizeof(rw[0][0]));
+            memcpy(gw, waveformGreen, 256 * waveformWidth * sizeof(gw[0][0]));
+            memcpy(bw, waveformBlue, 256 * waveformWidth * sizeof(bw[0][0]));
+            wave_buffer_dirty = true;
         }
-        int (* const rw)[256] = rwave.get();
-        int (* const gw)[256] = gwave.get();
-        int (* const bw)[256] = bwave.get();
-        memcpy(rw, waveformRed, 256 * waveformWidth * sizeof(rw[0][0]));
-        memcpy(gw, waveformGreen, 256 * waveformWidth * sizeof(gw[0][0]));
-        memcpy(bw, waveformBlue, 256 * waveformWidth * sizeof(bw[0][0]));
         valid = true;
     } else {
         valid = false;
@@ -1185,31 +1227,35 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
 
     // See Cairo documentation on stride.
     const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, waveform_width);
-    std::unique_ptr<unsigned char[]> buffer(new unsigned char[256 * cairo_stride]);
 
-    // Clear waveform.
-    memset(buffer.get(), 0, 256 * cairo_stride);
+    if (wave_buffer_dirty) {
+        wave_buffer.reset(new unsigned char[256 * cairo_stride]);
 
-    // TODO: Optimize.
-    for (int col = 0; col < waveform_width; col++) {
-        for (int val = 0; val < 256; val++) {
-            const float r = needRed ? scale * rwave[col][255 - val] : 0.f;
-            const float g = needGreen ? scale * gwave[col][255 - val] : 0.f;
-            const float b = needBlue ? scale * bwave[col][255 - val] : 0.f;
-            const float value = (r > g && r > b) ? r : ((g > b) ? g : b);
-            if (value <= 0) {
-                buffer[val * cairo_stride + col * 4 + 3] = 0;
-            } else {
-                buffer[val * cairo_stride + col * 4 + 3] = value;
-                buffer[val * cairo_stride + col * 4 + 2] = r;
-                buffer[val * cairo_stride + col * 4 + 1] = g;
-                buffer[val * cairo_stride + col * 4] = b;
+        // Clear waveform.
+        memset(wave_buffer.get(), 0, 256 * cairo_stride);
+
+        // TODO: Optimize.
+        for (int col = 0; col < waveform_width; col++) {
+            for (int val = 0; val < 256; val++) {
+                const unsigned char r = needRed ? scale * rwave[col][val] : 0;
+                const unsigned char g = needGreen ? scale * gwave[col][val] : 0;
+                const unsigned char b = needBlue ? scale * bwave[col][val] : 0;
+                const unsigned char value = (r > g && r > b) ? r : ((g > b) ? g : b);
+                if (value <= 0) {
+                    *(uint32_t*)&(wave_buffer[(255 - val) * cairo_stride + col * 4]) = 0;
+                } else {
+                    // Speedup with one memory access instead of four.
+                    *(uint32_t*)&(wave_buffer[(255 - val) * cairo_stride + col * 4]) =
+                        b | (g << 8) | (r << 16) | (value << 24);
+                }
             }
         }
+
+        wave_buffer_dirty = false;
     }
 
     Cairo::RefPtr<Cairo::ImageSurface> surface = Cairo::ImageSurface::create(
-        buffer.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
+        wave_buffer.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
     auto orig_matrix = cr->get_matrix();
     cr->translate(0, padding);
     cr->scale(static_cast<double>(w) / waveform_width, (h - 2 * padding) / 256.0);

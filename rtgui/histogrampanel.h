@@ -159,6 +159,8 @@ protected:
     int waveform_scale;
     int waveform_width;
     std::unique_ptr<int[][256]> rwave, gwave, bwave;
+    std::unique_ptr<unsigned char[]> wave_buffer;
+    bool wave_buffer_dirty;
 
     bool valid;
     int drawMode;
@@ -214,6 +216,14 @@ private:
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 };
 
+class HistogramPanelListener
+{
+public:
+    enum ScopeType {HISTOGRAM, WAVEFORM, NONE};
+
+    virtual void scopeTypeChanged(ScopeType new_type) = 0;
+};
+
 class HistogramPanel final : public Gtk::Grid, public PointerMotionListener, public DrawModeListener, public rtengine::NonCopyable
 {
 
@@ -255,9 +265,12 @@ protected:
     Gtk::Image *mode1Image;
     Gtk::Image *mode2Image;
 
+    HistogramPanelListener* panel_listener;
+
     sigc::connection rconn;
     void setHistInvalid ();
     void showRGBBar();
+    void updateHistAreaOptions();
 
 public:
 
@@ -304,4 +317,6 @@ public:
 
     // drawModeListener interface
     void toggleButtonMode () override;
+
+    void setPanelListener(HistogramPanelListener* listener);
 };
