@@ -323,14 +323,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     }
 
     cp.CHSLmet = 1;
-    cp.EDmet = 1;
-
+    cp.EDmet = 2;
+/*
     if (params->wavelet.EDmethod == "SL") {
         cp.EDmet = 1;
     } else if (params->wavelet.EDmethod == "CU") {
         cp.EDmet = 2;
     }
-
+*/
     cp.cbena = params->wavelet.cbenab;
     cp.blhigh = (float)params->wavelet.bluehigh;
     cp.grhigh = (float)params->wavelet.greenhigh;

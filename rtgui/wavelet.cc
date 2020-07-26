@@ -674,7 +674,7 @@ Wavelet::Wavelet() :
     EDmethod->append(M("TP_WAVELET_EDCU"));
     EDmethodconn = EDmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::EDmethodChanged));
     ctboxED->pack_start(*EDmethod);
-    edgBox->pack_start(*ctboxED);
+  //  edgBox->pack_start(*ctboxED);
 
     edgcont->setAdjusterListener(this);
     edgcont->setBgGradient(milestones2);
