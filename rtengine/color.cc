@@ -1772,7 +1772,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
     }
 }
 
-void Color::RGB2L(float *R, float *G, float *B, float *L, const float wp[3][3], int width)
+void Color::RGB2L(const float *R, const float *G, const float *B, float *L, const float wp[3][3], int width)
 {
 
 #ifdef __SSE2__
