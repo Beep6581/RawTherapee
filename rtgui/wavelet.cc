@@ -158,6 +158,7 @@ Wavelet::Wavelet() :
     HSmethod(Gtk::manage(new MyComboBoxText())),
     CLmethod(Gtk::manage(new MyComboBoxText())),
     Backmethod(Gtk::manage(new MyComboBoxText())),
+    complexmethod(Gtk::manage(new MyComboBoxText())),
     Tilesmethod(Gtk::manage(new MyComboBoxText())),
     daubcoeffmethod(Gtk::manage(new MyComboBoxText())),
     Dirmethod(Gtk::manage(new MyComboBoxText())),
@@ -190,7 +191,9 @@ Wavelet::Wavelet() :
     expclari(Gtk::manage(new MyExpander(true, M("TP_WAVELET_CLARI")))),
     expbl(Gtk::manage(new MyExpander(true, M("TP_WAVELET_BL")))),
     neutrHBox(Gtk::manage(new Gtk::HBox())),
-    usharpHBox(Gtk::manage(new Gtk::HBox()))
+    usharpHBox(Gtk::manage(new Gtk::HBox())),
+    ctboxch(Gtk::manage(new Gtk::HBox()))
+
 {
     CurveListener::setMulti(true);
     auto m = ProcEventMapper::getInstance();
@@ -227,6 +230,7 @@ Wavelet::Wavelet() :
     EvWavrangeab = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_RANGEAB");
     EvWavprotab = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_PROTAB");
     EvWavlevelshc = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_LEVELSHC");
+    EvWavcomplexmet = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_COMPLEX");
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -268,6 +272,16 @@ Wavelet::Wavelet() :
 
     thres->set_tooltip_text(M("TP_WAVELET_LEVELS_TOOLTIP"));
     thres->setAdjusterListener(this);
+
+    complexmethod->append(M("TP_WAVELET_COMPNORMAL"));
+    complexmethod->append(M("TP_WAVELET_COMPEXPERT"));
+    complexmethodconn = complexmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::complexmethodChanged));
+    complexmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
+    Gtk::HBox* const complexHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const complexLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_COMPLEXLAB") + ":"));
+    complexHBox->pack_start(*complexLabel, Gtk::PACK_SHRINK, 4);
+    complexHBox->pack_start(*complexmethod);
+
 
     Tilesmethod->append(M("TP_WAVELET_TILESFULL"));
     Tilesmethod->append(M("TP_WAVELET_TILESBIG"));
@@ -335,6 +349,7 @@ Wavelet::Wavelet() :
     levdirSubHBox->pack_start(*Lmethod);
     levdirSubHBox->pack_start(*Dirmethod, Gtk::PACK_EXPAND_WIDGET, 2); // same, but 2 not 4?
 
+    settingsBox->pack_start(*complexHBox);
     settingsBox->pack_start(*strength);
     settingsBox->pack_start(*thres);
     settingsBox->pack_start(*tilesizeHBox);
@@ -452,7 +467,7 @@ Wavelet::Wavelet() :
     ToolParamBlock* const chBox = Gtk::manage(new ToolParamBlock());
 
     Gtk::Label* const labmch = Gtk::manage(new Gtk::Label(M("TP_WAVELET_CHTYPE") + ":"));
-    Gtk::HBox* const ctboxch = Gtk::manage(new Gtk::HBox());
+//    Gtk::HBox* const ctboxch = Gtk::manage(new Gtk::HBox());
     ctboxch->pack_start(*labmch, Gtk::PACK_SHRINK, 1);
 
     CHmethod->append(M("TP_WAVELET_CH1"));
@@ -1236,6 +1251,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     CLmethodconn.block(true);
     Backmethodconn.block(true);
     Tilesmethodconn.block(true);
+    complexmethodconn.block(true);
     daubcoeffmethodconn.block(true);
     Dirmethodconn.block(true);
     CHmethodconn.block(true);
@@ -1357,6 +1373,12 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     } else if (pp->wavelet.CLmethod == "all") {
         CLmethod->set_active(3);
     }
+    if (pp->wavelet.complexmethod == "normal") {
+        complexmethod->set_active(0);
+    } else if (pp->wavelet.complexmethod == "expert") {
+        complexmethod->set_active(1);
+    }
+
 
     //Tilesmethod->set_active (2);
     if (pp->wavelet.Tilesmethod == "full") {
@@ -1557,6 +1579,11 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->wavelet.Backmethod) {
             Backmethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
+
+        if (!pedited->wavelet.complexmethod) {
+            complexmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
 
         if (!pedited->wavelet.Tilesmethod) {
             Tilesmethod->set_active_text(M("GENERAL_UNCHANGED"));
@@ -1774,6 +1801,15 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             sup->hide();
         }
+        
+    if (complexmethod->get_active_row_number() == 0) {
+        updateGUIToMode(0);
+        convertParamToNormal();
+
+    } else {
+        updateGUIToMode(1);
+    }
+        
     }
 
     /*****************************************************************************************************
@@ -1786,6 +1822,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     CLmethodconn.block(false);
     Backmethodconn.block(false);
     Tilesmethodconn.block(false);
+    complexmethodconn.block(false);
     daubcoeffmethodconn.block(false);
     CHmethodconn.block(false);
     CHSLmethodconn.block(false);
@@ -1965,6 +2002,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.CLmethod        = CLmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.Backmethod      = Backmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.Tilesmethod     = Tilesmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->wavelet.complexmethod   = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.daubcoeffmethod = daubcoeffmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.CHmethod        = CHmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.CHSLmethod      = CHSLmethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -2166,6 +2204,12 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.Tilesmethod = "big";
 //    } else if (Tilesmethod->get_active_row_number() == 2) {
 //        pp->wavelet.Tilesmethod = "lit";
+    }
+
+    if (complexmethod->get_active_row_number() == 0) {
+        pp->wavelet.complexmethod = "normal";
+    } else if (complexmethod->get_active_row_number() == 1) {
+        pp->wavelet.complexmethod = "expert";
     }
 
     if (daubcoeffmethod->get_active_row_number() == 0) {
@@ -2835,6 +2879,79 @@ void Wavelet::ushamethodChanged()
 }
 
 
+
+void Wavelet::convertParamToNormal()
+{
+    const WaveletParams def_params;
+    disableListener();
+    //contrast
+    offset->setValue(def_params.offset);
+    //chroma
+    expchroma->setEnabled(def_params.expchroma);
+    CHmethod->set_active(2);
+    //denoise
+    chromfi->setValue(def_params.chromfi);
+    chromco->setValue(def_params.chromco);
+    //toning
+    exptoning->setEnabled(def_params.exptoning);
+    //gamut
+    median->set_active(def_params.median);
+    avoid->set_active(def_params.avoid);
+    hueskin->setValue(def_params.hueskin);
+    skinprotect->setValue(def_params.skinprotect);
+    //blur
+    expbl->setEnabled(def_params.expbl);
+    //edge sharpness
+    lipst->set_active(def_params.lipst);
+    lipstUpdateUI();
+    edgesensi->setValue(def_params.edgesensi);
+    edgeampli->setValue(def_params.edgeampli);
+    NPmethod->set_active(0);
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+}
+
+void Wavelet::updateGUIToMode(int mode)
+{
+    if(mode ==0) {
+        offset->hide();
+        ctboxch->hide();
+        expgamut->hide();
+        exptoning->hide();
+        chroFrame->hide();
+        expbl->hide();
+        lipst->hide();
+    } else {
+        offset->show();
+        ctboxch->show();
+        expgamut->show();
+        exptoning->show();
+        chroFrame->show();
+        expbl->show();
+        lipst->show();
+    }
+
+}
+
+
+void Wavelet::complexmethodChanged()
+{    
+    if (complexmethod->get_active_row_number() == 0) {
+        updateGUIToMode(0);
+        convertParamToNormal();
+
+    } else {
+        updateGUIToMode(1);
+    }
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvWavcomplexmet, complexmethod->get_active_text());
+    }
+}
+
+
+
 void Wavelet::TilesmethodChanged()
 {
     //TilesmethodUpdateUI();
@@ -2916,6 +3033,7 @@ void Wavelet::setBatchMode(bool batchMode)
     CLmethod->append(M("GENERAL_UNCHANGED"));
     Backmethod->append(M("GENERAL_UNCHANGED"));
     Tilesmethod->append(M("GENERAL_UNCHANGED"));
+    complexmethod->append(M("GENERAL_UNCHANGED"));
     daubcoeffmethod->append(M("GENERAL_UNCHANGED"));
     CHmethod->append(M("GENERAL_UNCHANGED"));
     Medgreinf->append(M("GENERAL_UNCHANGED"));
