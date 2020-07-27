@@ -2079,7 +2079,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         ContrastResid(WavCoeffs_L0, cp, W_L, H_L, maxp);
     }
 
-    if ((cp.conres >= 0.f || cp.conresH >= 0.f) && cp.resena && !cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+ //   if ((cp.conres >= 0.f || cp.conresH >= 0.f) && cp.resena && !cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+    if ((cp.conres >= 0.f || cp.conresH >= 0.f) && cp.resena) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
         const std::unique_ptr<LabImage> temp(new LabImage(W_L, H_L));
 #ifdef _OPENMP
         #pragma omp parallel for num_threads(wavNestedLevels) if (wavNestedLevels>1)
@@ -2104,7 +2105,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         }
     }
 
-    if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena && cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+  //  if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena && cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+    if ((cp.conres < 0.f || cp.conresH < 0.f) && cp.resena) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif

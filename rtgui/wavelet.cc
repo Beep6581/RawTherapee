@@ -854,7 +854,7 @@ Wavelet::Wavelet() :
     thrH->setAdjusterListener(this);
 
     radius->setAdjusterListener(this);
-    radius->hide();
+//    radius->hide();
 
     shFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const shBox = Gtk::manage(new ToolParamBlock());
@@ -2887,8 +2887,11 @@ void Wavelet::convertParamToNormal()
     disableListener();
     //contrast
     offset->setValue(def_params.offset);
+    sigma->setValue(def_params.sigma);
+    lowthr->setValue(def_params.lowthr);
     //chroma
     expchroma->setEnabled(def_params.expchroma);
+    sigmacol->setValue(def_params.sigmacol);
     CHmethod->set_active(2);
     //denoise
     chromfi->setValue(def_params.chromfi);
@@ -2909,7 +2912,8 @@ void Wavelet::convertParamToNormal()
     edgeampli->setValue(def_params.edgeampli);
     NPmethod->set_active(0);
     //resid
-    oldsh->set_active(true);
+ //   oldsh->set_active(true);
+    radius->setValue(def_params.radius);
     resblur->setValue(def_params.resblur);
     resblurc->setValue(def_params.resblurc);
     cbenab->set_active(false);
@@ -2925,7 +2929,10 @@ void Wavelet::updateGUIToMode(int mode)
 {
     if(mode ==0) {
         offset->hide();
+        sigma->hide();
+        lowthr->hide();
         ctboxch->hide();
+        sigmacol->hide();
         expgamut->hide();
         exptoning->hide();
         chroFrame->hide();
@@ -2933,18 +2940,23 @@ void Wavelet::updateGUIToMode(int mode)
         lipst->hide();
         dirFrame->hide();
         oldsh->hide();
+        radius->hide();
         blurFrame->hide();
         cbenab->hide();
     } else {
         offset->show();
+        sigma->show();
+        lowthr->show();
         ctboxch->show();
+        sigmacol->show();
         expgamut->show();
         exptoning->show();
         chroFrame->show();
         expbl->show();
         lipst->show();
         dirFrame->show();
-        oldsh->show();
+        oldsh->hide();
+        radius->show();
         blurFrame->show();
         cbenab->show();
     }
