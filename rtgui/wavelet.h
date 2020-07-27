@@ -343,6 +343,7 @@ private:
     Gtk::HBox* const neutrHBox;
     Gtk::HBox* const usharpHBox;
     Gtk::HBox* const ctboxch;
+    Gtk::VBox* const ctboxBA;// = Gtk::manage(new Gtk::VBox());
 
     sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enabletmConn, enableFinalConn, enableclariConn;
     sigc::connection enableNoiseConn, enableResidConn, enableToningConn;

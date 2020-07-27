@@ -192,7 +192,8 @@ Wavelet::Wavelet() :
     expbl(Gtk::manage(new MyExpander(true, M("TP_WAVELET_BL")))),
     neutrHBox(Gtk::manage(new Gtk::HBox())),
     usharpHBox(Gtk::manage(new Gtk::HBox())),
-    ctboxch(Gtk::manage(new Gtk::HBox()))
+    ctboxch(Gtk::manage(new Gtk::HBox())),
+    ctboxBA(Gtk::manage(new Gtk::VBox()))
 
 {
     CurveListener::setMulti(true);
@@ -1022,7 +1023,7 @@ Wavelet::Wavelet() :
     resBox->pack_start(*neutrHBox);
 
 // Final Touchup
-    Gtk::VBox* const ctboxBA = Gtk::manage(new Gtk::VBox());
+ //   Gtk::VBox* const ctboxBA = Gtk::manage(new Gtk::VBox());
 
     ctboxBA->set_spacing(2);
 
@@ -2907,6 +2908,14 @@ void Wavelet::convertParamToNormal()
     edgesensi->setValue(def_params.edgesensi);
     edgeampli->setValue(def_params.edgeampli);
     NPmethod->set_active(0);
+    //resid
+    oldsh->set_active(true);
+    resblur->setValue(def_params.resblur);
+    resblurc->setValue(def_params.resblurc);
+    cbenab->set_active(false);
+
+    //final touchup
+    BAmethod->set_active(0);    
     enableListener();
 
     // Update GUI based on converted widget parameters:
@@ -2922,6 +2931,10 @@ void Wavelet::updateGUIToMode(int mode)
         chroFrame->hide();
         expbl->hide();
         lipst->hide();
+        dirFrame->hide();
+        oldsh->hide();
+        blurFrame->hide();
+        cbenab->hide();
     } else {
         offset->show();
         ctboxch->show();
@@ -2930,6 +2943,10 @@ void Wavelet::updateGUIToMode(int mode)
         chroFrame->show();
         expbl->show();
         lipst->show();
+        dirFrame->show();
+        oldsh->show();
+        blurFrame->show();
+        cbenab->show();
     }
 
 }
