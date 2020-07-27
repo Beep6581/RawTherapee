@@ -212,7 +212,7 @@ public:
     }
 
     // use with indices
-    T * operator[](int index) const
+    T * operator[](int index)
     {
         assert((index >= 0) && (index < y));
         return ptr[index];
@@ -225,7 +225,7 @@ public:
     }
 
     // use as pointer to T**
-    operator const T* const *()
+    operator const T* const *() const
     {
         return ptr;
     }
