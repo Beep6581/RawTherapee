@@ -115,9 +115,9 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     Gtk::Label* devLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_DEVELOP")) );
     devLab->set_name ("LabelRightNotebook");
     devLab->set_angle (90);
-    Gtk::Label* inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
-    inspectLab->set_name ("LabelRightNotebook");
-    inspectLab->set_angle (90);
+    //Gtk::Label* inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
+    //inspectLab->set_name ("LabelRightNotebook");
+    //inspectLab->set_angle (90);
     Gtk::Label* filtLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_FILTER")) );
     filtLab->set_name ("LabelRightNotebook");
     filtLab->set_angle (90);
@@ -132,7 +132,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     tpcPaned->pack2 (*history, true, false);
 
     rightNotebook->append_page (*sFilterPanel, *filtLab);
-    rightNotebook->append_page (*inspectorPanel, *inspectLab);
+    //rightNotebook->append_page (*inspectorPanel, *inspectLab);
     rightNotebook->append_page (*tpcPaned, *devLab);
     //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
     rightNotebook->append_page (*sExportPanel, *exportLab);
