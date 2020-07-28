@@ -7523,15 +7523,15 @@ BENCHFUN
         int W_L = wdspot->level_W(0);//provisory W_L H_L
         int H_L = wdspot->level_H(0);
 
-        float *betalev[12];
+        float *betalev[33];//3*10 levels + 3 dir
 
-        float *betalevbuffer = new float[12 * H_L * W_L]; //12
+        float *betalevbuffer = new float[33 * H_L * W_L]; //12
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 33 ; i++) {
             betalev[i] = &betalevbuffer[i * W_L * H_L];
         }
 
-        for (int j = 0; j < 12; j++) {
+        for (int j = 0; j < 33; j++) {
             for (int i = 0; i < W_L * H_L; i++) {
                 betalev[j][i] = 0.f;
             }
@@ -7557,7 +7557,7 @@ BENCHFUN
         float gradw = lp.gradw;
         float tloww = lp.tloww;
 //StopWatch Stop1("test");
-        for (int lvl = 0; lvl < 4; lvl++) {
+        for (int lvl = 0; lvl < maxlvl; lvl++) {
             for (int dir = 1; dir < 4; dir++) {
                 const int W_L = wdspot->level_W(lvl);
                 const int H_L = wdspot->level_H(lvl);
@@ -7570,9 +7570,8 @@ BENCHFUN
 #ifdef _OPENMP
                     #pragma omp parallel for if(multiThread)
 #endif
-                 //   for (int co = 0; co < H_L * W_L; co++) {
-                    for (int i = 1; i < H_L - 1; i++) {
-                        for (int j = 1; j < W_L - 1; j++) {
+                    for (int i = 1; i < H_L; i++) {
+                        for (int j = 1; j < W_L; j++) {
                             int co = i * W_L + j;
                             const float WavCL = std::fabs(wav_L[dir][co]);
 
@@ -7601,7 +7600,9 @@ BENCHFUN
                             }
                         }
                     }
-                    calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC);
+                    if (lvl < 4) {
+                        calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC);
+                    }
                     // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
             }
         }
@@ -7825,10 +7826,10 @@ BENCHFUN
 
                             edge = std::max(edge * kinterm, 1.f);
                          //   wav_L[dir][k] *= 1.f + (edge - 1.f) * beta[k];
-                            if(lvl < 4) {
+                            if(lvl < maxlvl) {
                                 wav_L[dir][k] *= 1.f + (edge - 1.f) * betalev[lvl * 3 + dir - 1][k];
                             } else {
-                                wav_L[dir][k] *= 1.f + (edge - 1.f)* betalev[3 * 3 + dir - 1][k];//if level >= 4 take level 3
+                                wav_L[dir][k] *= 1.f + (edge - 1.f)* betalev[9 * 3 + dir - 1][k];//if level >= 9 take level 9 in case of...
                             }
                         }
                     }
