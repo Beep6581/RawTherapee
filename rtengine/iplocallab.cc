@@ -7522,9 +7522,23 @@ BENCHFUN
         float eddlipampl = 1.f + lp.basew / 50.f;
         int W_L = wdspot->level_W(0);//provisory W_L H_L
         int H_L = wdspot->level_H(0);
+
+        float *betalev[12];
+
+        float *betalevbuffer = new float[12 * H_L * W_L]; //12
+
+        for (int i = 0; i < 12; i++) {
+            betalev[i] = &betalevbuffer[i * W_L * H_L];
+        }
+
+        for (int j = 0; j < 12; j++) {
+            for (int i = 0; i < W_L * H_L; i++) {
+                betalev[j][i] = 0.f;
+            }
+        }
+
         float *koeLi[12];
         float maxkoeLi[12] = {0.f};
-        float *beta = new float[W_L * H_L];
 
         float *koeLibuffer = new float[12 * H_L * W_L]; //12
 
@@ -7548,7 +7562,6 @@ BENCHFUN
                 const int W_L = wdspot->level_W(lvl);
                 const int H_L = wdspot->level_H(lvl);
                 float* const* wav_L = wdspot->level_coeffs(lvl);
-                if (lvl == 3 && dir == 3) {
                     const float effect = lp.sigmaed;
                     constexpr float offset = 1.f;
                     float mea[10];
@@ -7557,38 +7570,42 @@ BENCHFUN
 #ifdef _OPENMP
                     #pragma omp parallel for if(multiThread)
 #endif
-                    for (int co = 0; co < H_L * W_L; co++) {
-                        const float WavCL = std::fabs(wav_L[dir][co]);
+                 //   for (int co = 0; co < H_L * W_L; co++) {
+                    for (int i = 1; i < H_L - 1; i++) {
+                        for (int j = 1; j < W_L - 1; j++) {
+                            int co = i * W_L + j;
+                            const float WavCL = std::fabs(wav_L[dir][co]);
 
-                        if (WavCL < mea[0]) {
-                            beta[co] = 0.05f;
-                        } else if (WavCL < mea[1]) {
-                            beta[co] = 0.2f;
-                        } else if (WavCL < mea[2]) {
-                            beta[co] = 0.7f;
-                        } else if (WavCL < mea[3]) {
-                            beta[co] = 1.f;    //standard
-                        } else if (WavCL < mea[4]) {
-                            beta[co] = 1.f;
-                        } else if (WavCL < mea[5]) {
-                            beta[co] = 0.8f;    //+sigma
-                        } else if (WavCL < mea[6]) {
-                            beta[co] = 0.5f;
-                        } else if (WavCL < mea[7]) {
-                            beta[co] = 0.3f;
-                        } else if (WavCL < mea[8]) {
-                            beta[co] = 0.2f;    // + 2 sigma
-                        } else if (WavCL < mea[9]) {
-                            beta[co] = 0.1f;
-                        } else {
-                            beta[co] = 0.05f;
+                            if (WavCL < mea[0]) {
+                                betalev[lvl * 3 + dir - 1][co] = 0.05f;
+                            } else if (WavCL < mea[1]) {
+                                betalev[lvl * 3 + dir - 1][co] = 0.2f;
+                            } else if (WavCL < mea[2]) {
+                                betalev[lvl * 3 + dir - 1][co] = 0.7f;
+                            } else if (WavCL < mea[3]) {
+                                betalev[lvl * 3 + dir - 1][co] = 1.f;
+                            } else if (WavCL < mea[4]) {
+                                betalev[lvl * 3 + dir - 1][co] = 1.f;
+                            } else if (WavCL < mea[5]) {
+                                betalev[lvl * 3 + dir - 1][co] = 0.8f;
+                            } else if (WavCL < mea[6]) {
+                                betalev[lvl * 3 + dir - 1][co] = 0.5f;
+                            } else if (WavCL < mea[7]) {
+                                betalev[lvl * 3 + dir - 1][co] = 0.3f;
+                            } else if (WavCL < mea[8]) {
+                                betalev[lvl * 3 + dir - 1][co] = 0.2f;
+                            } else if (WavCL < mea[9]) {
+                                betalev[lvl * 3 + dir - 1][co] = 0.1f;
+                            } else {
+                                betalev[lvl * 3 + dir - 1][co] = 0.05f;
+                            }
                         }
                     }
-                }
-                calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC);
-                // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
+                    calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC);
+                    // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
             }
         }
+        
         tmC.free();
 //Stop1.stop();
         float aamp = 1.f + lp.thigw / 100.f;
@@ -7807,7 +7824,12 @@ BENCHFUN
                             }
 
                             edge = std::max(edge * kinterm, 1.f);
-                            wav_L[dir][k] *= 1.f + (edge - 1.f) * beta[k];
+                         //   wav_L[dir][k] *= 1.f + (edge - 1.f) * beta[k];
+                            if(lvl < 4) {
+                                wav_L[dir][k] *= 1.f + (edge - 1.f) * betalev[lvl * 3 + dir - 1][k];
+                            } else {
+                                wav_L[dir][k] *= 1.f + (edge - 1.f)* betalev[3 * 3 + dir - 1][k];//if level >= 4 take level 3
+                            }
                         }
                     }
                 }
@@ -7818,7 +7840,10 @@ BENCHFUN
             delete [] koeLibuffer;
         }
 
-        delete[] beta; 
+        if (betalevbuffer) {
+            delete [] betalevbuffer;
+        }
+
     }
 
 //edge sharpness end
