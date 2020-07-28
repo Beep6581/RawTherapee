@@ -14,6 +14,7 @@ Development contributors, in last name alphabetical order:
   Maciek Dworak
   Michael Ezra
   Flössie
+  Rüdiger Franke
   Jean-Christophe Frisch
   Ilias Giarimis
   Alberto Griggio
