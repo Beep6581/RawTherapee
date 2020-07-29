@@ -2653,6 +2653,7 @@ TP_WAVELET_CHR_TOOLTIP;Ajuste le chroma en fonction des "niveaux de contraste" e
 TP_WAVELET_CHSL;Curseurs
 TP_WAVELET_CHTYPE;Méthode de chrominance
 TP_WAVELET_COLORT;Opacité Rouge-Vert
+TP_WAVELET_COMPLEX_TOOLTIP;Standard: l’application dispose du nécessaire pour assurer les opérations courantes, l’interface graphique est simplifiée.\nAvancé: toutes les fonctionnalités sont présentes, certaines nécessitent un apprentissage important
 TP_WAVELET_COMPEXPERT;Avancé
 TP_WAVELET_COMPCONT;Contraste
 TP_WAVELET_COMPGAMMA;Compression gamma
