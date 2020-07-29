@@ -2921,6 +2921,7 @@ void Wavelet::convertParamToNormal()
     //final touchup
     BAmethod->set_active(0);    
     enableListener();
+    sigmafin->setValue(def_params.sigmafin);
 
     // Update GUI based on converted widget parameters:
 }
@@ -2943,6 +2944,7 @@ void Wavelet::updateGUIToMode(int mode)
         radius->hide();
         blurFrame->hide();
         cbenab->hide();
+        sigmafin->hide();
     } else {
         offset->show();
         sigma->show();
@@ -2959,6 +2961,7 @@ void Wavelet::updateGUIToMode(int mode)
         radius->show();
         blurFrame->show();
         cbenab->show();
+        sigmafin->show();
     }
 
 }
