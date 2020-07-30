@@ -146,8 +146,8 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
 #ifdef _OPENMP
 #               pragma omp parallel for if (multithread)
 #endif
-                for (int y = 0; y < s.getHeight(); ++y) {
-                    for (int x = 0; x < s.getWidth(); ++x) {
+                for (size_t y = 0; y < s.getHeight(); ++y) {
+                    for (size_t x = 0; x < s.getWidth(); ++x) {
                         d[y][x] = s[y][x];
                     }
                 }
@@ -164,9 +164,10 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     const auto f_mean =
         [multithread](array2D<float> &d, array2D<float> &s, int rad) -> void
         {
-            rad = LIM(rad, 0, (min(s.getWidth(), s.getHeight()) - 1) / 2 - 1);
-           // boxblur(s, d, rad, s.getWidth(), s.getHeight(), multithread);
-            boxblur(static_cast<float**>(s), static_cast<float**>(d), rad, s.getWidth(), s.getHeight(), multithread);
+            if (rtengine::min(s.getWidth(), s.getHeight()) > 1) {
+                rad = LIM<size_t>(rad, 0, (rtengine::min(s.getWidth(), s.getHeight()) - 1) / 2 - 1);
+                boxblur(static_cast<float**>(s), static_cast<float**>(d), rad, s.getWidth(), s.getHeight(), multithread);
+            }
         };
 
     array2D<float> I1(w, h);
@@ -249,8 +250,8 @@ void guidedFilterLog(const array2D<float> &guide, float base, array2D<float> &ch
 #ifdef _OPENMP
 #    pragma omp parallel for if (multithread)
 #endif
-    for (int y = 0; y < chan.getHeight(); ++y) {
-        for (int x = 0; x < chan.getWidth(); ++x) {
+    for (size_t y = 0; y < chan.getHeight(); ++y) {
+        for (size_t x = 0; x < chan.getWidth(); ++x) {
             chan[y][x] = xlin2log(max(chan[y][x], 0.f), base);
         }
     }
@@ -260,8 +261,8 @@ void guidedFilterLog(const array2D<float> &guide, float base, array2D<float> &ch
 #ifdef _OPENMP
 #    pragma omp parallel for if (multithread)
 #endif
-    for (int y = 0; y < chan.getHeight(); ++y) {
-        for (int x = 0; x < chan.getWidth(); ++x) {
+    for (size_t y = 0; y < chan.getHeight(); ++y) {
+        for (size_t x = 0; x < chan.getWidth(); ++x) {
             chan[y][x] = xlog2lin(max(chan[y][x], 0.f), base);
         }
     }
