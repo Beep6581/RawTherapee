@@ -67,10 +67,10 @@ class array2D :
 {
 
 private:
-    size_t width, height;
+    ssize_t width, height;
     T** rows;
     T* data;
-    void ar_realloc(size_t w, size_t h, int offset = 0)
+    void ar_realloc(ssize_t w, ssize_t h, int offset = 0)
     {
         if (rows && (h > height || 4 * h < height)) {
             delete[] rows;
@@ -92,7 +92,7 @@ private:
             data = new T[height * width + offset];
         }
 
-        for (size_t i = 0; i < height; i++) {
+        for (ssize_t i = 0; i < height; i++) {
             rows[i] = data + offset + width * i;
         }
     }
@@ -105,13 +105,13 @@ public:
     { }
 
     // creator type1
-    array2D(size_t w, size_t h, unsigned int flags = 0) :
+    array2D(int w, int h, unsigned int flags = 0) :
         width(w), height(h)
     {
         data = new T[height * width];
         rows = new T*[height];
 
-        for (size_t i = 0; i < height; ++i) {
+        for (ssize_t i = 0; i < height; ++i) {
             rows[i] = data + i * width;
         }
 
@@ -121,7 +121,7 @@ public:
     }
 
     // creator type 2
-    array2D(size_t w, size_t h, T ** source, unsigned int flags = 0) :
+    array2D(int w, int h, T ** source, unsigned int flags = 0) :
         width(w), height(h)
     {
         const bool owner = !(flags & ARRAY2D_BYREFERENCE);
@@ -133,10 +133,10 @@ public:
 
         rows = new T*[height];
 
-        for (size_t i = 0; i < height; ++i) {
+        for (ssize_t i = 0; i < height; ++i) {
             if (owner) {
                 rows[i] = data + i * width;
-                for (size_t j = 0; j < width; ++j) {
+                for (ssize_t j = 0; j < width; ++j) {
                     rows[i][j] = source[i][j];
                 }
             } else {
@@ -157,7 +157,7 @@ public:
 #ifdef _OPENMP
         #pragma omp parallel for if(multiThread)
 #endif
-        for (size_t i = 0; i < width * height; ++i) {
+        for (ssize_t i = 0; i < width * height; ++i) {
             data[i] = val;
         }
     }
@@ -172,13 +172,13 @@ public:
     }
 
     // use with indices
-    T * operator[](size_t index)
+    T * operator[](int index)
     {
         assert((index >= 0) && (index < height));
         return rows[index];
     }
 
-    const T * operator[](size_t index) const
+    const T * operator[](int index) const
     {
         assert((index >= 0) && (index < height));
         return rows[index];
@@ -212,7 +212,7 @@ public:
 
     // useful within init of parent object
     // or use as resize of 2D array
-    void operator()(size_t w, size_t h, unsigned int flags = 0, int offset = 0)
+    void operator()(int w, int h, unsigned int flags = 0, int offset = 0)
     {
         ar_realloc(w, h, offset);
 
@@ -221,11 +221,11 @@ public:
         }
     }
 
-    size_t getWidth() const
+    int getWidth() const
     {
         return width;
     }
-    size_t getHeight() const
+    int getHeight() const
     {
         return height;
     }
@@ -243,7 +243,7 @@ private:
     array2D<T> list[num];
 
 public:
-    multi_array2D(size_t width, size_t height, int flags = 0, int offset = 0)
+    multi_array2D(int width, int height, int flags = 0, int offset = 0)
     {
         for (size_t i = 0; i < num; ++i) {
             list[i](width, height, flags, (i + 1) * offset);
