@@ -54,6 +54,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <sys/types.h>
 #include "noncopyable.h"
 
 // flags for use
