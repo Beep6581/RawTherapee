@@ -3306,6 +3306,13 @@ void LocallabContrast::convertParamToSimple()
     // Disable all listeners
     disableListener();
     enalcMask->set_active(defSpot.enalcMask);
+    // Set hidden GUI widgets in Normal mode to default spot values
+    if (defSpot.localcontMethod == "loc") {
+        localcontMethod->set_active(0);
+    } else if (defSpot.localcontMethod == "wav") {
+        localcontMethod->set_active(1);
+    }
+    
     enableListener();
 
 }
@@ -3325,6 +3332,15 @@ void LocallabContrast::convertParamToNormal()
     } else if (defSpot.localcontMethod == "wav") {
         localcontMethod->set_active(1);
     }
+    origlc->set_active(defSpot.origlc);
+    wavgradl->set_active(defSpot.wavgradl);
+    wavedg->set_active(defSpot.wavedg);
+    waveshow->set_active(defSpot.waveshow);
+    wavblur->set_active(defSpot.wavblur);
+    blurlc->set_active(defSpot.blurlc);
+    wavcont->set_active(defSpot.wavcont);
+    wavcompre->set_active(defSpot.wavcompre);
+    wavcomp->set_active(defSpot.wavcomp);
 
     fftwlc->set_active(defSpot.fftwlc);
 
@@ -3342,19 +3358,27 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
 {
     if (new_type == Normal) {
         // Advanced widgets are hidden in Normal mode
-        localcontMethod->hide();
+        localcontMethod->show();
         fftwlc->hide();
         expmasklc->show();
-        
+        expcontrastpyr->hide();
+        expcontrastpyr2->hide();
+        origlc->hide();
     } else if (new_type == Simple){
         localcontMethod->hide();
         fftwlc->hide();
         expmasklc->hide();
+        expcontrastpyr->hide();
+        expcontrastpyr2->hide();
+        origlc->hide();
     } else if (new_type == Expert){
         // Advanced widgets are shown in Expert mode
         localcontMethod->show();
         fftwlc->show();
         expmasklc->show();
+        expcontrastpyr->show();
+        expcontrastpyr2->show();
+        origlc->show();
     }
 }
 
@@ -3593,6 +3617,8 @@ void LocallabContrast::enalcMaskChanged()
 
 void LocallabContrast::updateContrastGUI1()
 {
+    int mode = complexity->get_active_row_number();
+
     // Update Local contrast GUI according to localcontMethod combobox value
     if (localcontMethod->get_active_row_number() == 0) {
         lcradius->show();
@@ -3621,12 +3647,16 @@ void LocallabContrast::updateContrastGUI1()
         csThreshold->show();
         expresidpyr->show();
         clariFrame->show();
-        expcontrastpyr->show();
-        expcontrastpyr2->show();
+        if(mode == 0) {
+            expcontrastpyr->show();
+            expcontrastpyr2->show();
+        } else {
+            expcontrastpyr->hide();
+            expcontrastpyr2->hide();
+        }
         fftwlc->hide();
     }
 }
-
 void LocallabContrast::updateContrastGUI2()
 {
     // Update Local contrast GUI according to waveshow button state

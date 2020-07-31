@@ -4073,6 +4073,8 @@ void LocallabShadow::convertParamToSimple()
     disableListener();
     enaSHMask->set_active(defSpot.enaSHMask);
     strSH->setValue(defSpot.strSH);
+    gamSH->setValue(defSpot.gamSH);
+    sloSH->setValue(defSpot.sloSH);
     enableListener();
 
     // Update GUI based on converted widget parameters:
@@ -4094,7 +4096,6 @@ void LocallabShadow::convertParamToNormal()
     slomaskSH->setValue(defSpot.slomaskSH);
     fatamountSH->setValue(defSpot.fatamountSH);
     fatanchorSH->setValue(defSpot.fatanchorSH);
-
     // Enable all listeners
     enableListener();
 }
@@ -4111,6 +4112,11 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
         expmasksh->show();
         expgradsh->show();
         strSH->show();
+        if (shMethod->get_active_row_number() == 0){
+            gamFrame->hide();
+        } else {
+            gamFrame->show();
+        }
     } else if (new_type == Simple) {
         blurSHde->hide();
         lapmaskSH->hide();
@@ -4120,6 +4126,7 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
         expmasksh->hide();
         expgradsh->hide();
         strSH->hide();
+        gamFrame->hide();
     } else if (new_type == Expert) {
         // Advanced widgets are shown in Expert mode
         blurSHde->show();
@@ -4130,6 +4137,12 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
         expmasksh->show();
         expgradsh->show();
         strSH->show();
+        if (shMethod->get_active_row_number() == 0){
+            gamFrame->hide();
+        } else {
+            gamFrame->show();
+        }
+       
     }
 }
 
@@ -4271,6 +4284,8 @@ void LocallabShadow::updateShadowGUI1()
 void LocallabShadow::updateShadowGUI2()
 {
     // Update shadow highlight GUI according to shMethod combobox state
+    int mode = complexity->get_active_row_number();
+    
     if (shMethod->get_active_row_number() == 0) {
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->hide();
@@ -4286,7 +4301,11 @@ void LocallabShadow::updateShadowGUI2()
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->show();
         }
-        gamFrame->show();
+        if(mode == 0) {
+            gamFrame->show();
+        } else {
+            gamFrame->hide();
+        }
 
         detailSH->show();
         highlights->hide();

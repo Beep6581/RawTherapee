@@ -1602,8 +1602,8 @@ PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMMBPC;Black point compensation
 PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustments
-PREFERENCES_COMPLEXITY_EXP;Expert
-PREFERENCES_COMPLEXITY_NORM;Normal
+PREFERENCES_COMPLEXITY_EXP;Advanced
+PREFERENCES_COMPLEXITY_NORM;Standard
 PREFERENCES_COMPLEXITY_SIMP;Basic
 PREFERENCES_CROP;Crop Editing
 PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
@@ -2568,10 +2568,10 @@ TP_LOCALLAB_LABGRIDMERG;Background
 TP_LOCALLAB_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
 TP_LOCALLAB_LABSTRUM;Mask Structure
 TP_LOCALLAB_LAPLACC;ΔØ Mask Laplacian solve PDE
-TP_LOCALLAB_LAPLACE;Δ - Laplacian threshold ΔE
-TP_LOCALLAB_LAPLACEXP;∆ - Laplacian threshold
-TP_LOCALLAB_LAPMASKCOL;∆ - Laplacian threshold mask
-TP_LOCALLAB_LAPRAD_TOOLTIP;Avoid using Radius and Laplace Threshold (expert) simultaneously.\nLaplacian threshold reduce contrast, artifacts, smooth result.
+TP_LOCALLAB_LAPLACE;Laplacian threshold ΔE
+TP_LOCALLAB_LAPLACEXP;Laplacian threshold
+TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
+TP_LOCALLAB_LAPRAD_TOOLTIP;Avoid using Radius and Laplace Threshold (advanced) simultaneously.\nLaplacian threshold reduce contrast, artifacts, smooth result.
 TP_LOCALLAB_LAP_MASK_TOOLTIP;Solve PDE for all Laplacian masks.\nIf enabled Laplacian threshold mask reduce artifacts and smooth result.\nIf disabled linear response. 
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\n
 TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets - 7
@@ -2585,7 +2585,7 @@ TP_LOCALLAB_LIGHTN_TOOLTIP;In inverse mode: selection = -100 force luminance to 
 TP_LOCALLAB_LIGHTRETI;Lightness
 TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LIST_NAME;Add tool to current spot...
-TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Basic, Normal & Expert.\nThe default setting for all tools is Basic but this can be changed in the Preferences window.\nYou can also change the level of complexity on a per-tool basis while you are editing
+TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Basic, Standard & Advanced.\nThe default setting for all tools is Basic but this can be changed in the Preferences window.\nYou can also change the level of complexity on a per-tool basis while you are editing
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Unsharp Mask
@@ -2594,7 +2594,7 @@ TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB;Contrast by Levels- Tone Mapping - Dir.Contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB;Graduated Filter - Edge Sharpness - Blur
-TP_LOCALLAB_LOC_RESIDPYR;Residual Image Main
+TP_LOCALLAB_LOC_RESIDPYR;Residual Image (Main)
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will bring an evaluation of dynamic range and Source Gray point (if "Automatic" Source gray enabled).\nTo be able to touch up the automatic values, press the button again
@@ -2666,8 +2666,8 @@ TP_LOCALLAB_MERTWO;Substract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_MLABEL;Restored datas Min=%1 Max=%2 (Clip - Offset)
 TP_LOCALLAB_MLABEL_TOOLTIP;'Should be' near min=0 max=32768 (log mode) but others values are possible.\nYou can act on Clip Restored datas and Offset to normalize.\n\nRestored image with no mixture.
-TP_LOCALLAB_MODE_EXPERT;Expert
-TP_LOCALLAB_MODE_NORMAL;Normal
+TP_LOCALLAB_MODE_EXPERT;Advanced
+TP_LOCALLAB_MODE_NORMAL;Standard
 TP_LOCALLAB_MODE_SIMPLE;Basic
 TP_LOCALLAB_MRFIV;Background
 TP_LOCALLAB_MRFOU;Previous Spot
@@ -2724,7 +2724,7 @@ TP_LOCALLAB_RESIDHI;Highlights
 TP_LOCALLAB_RESIDHITHR;Highlights threshold
 TP_LOCALLAB_RESIDSHA;Shadows
 TP_LOCALLAB_RESIDSHATHR;Shadows threshold
-TP_LOCALLAB_RETI;Dehaze - Retinex Strong contrast
+TP_LOCALLAB_RETI;Dehaze - Retinex
 TP_LOCALLAB_RETIFRA;Retinex
 TP_LOCALLAB_RETIM;Original Retinex
 TP_LOCALLAB_RETITOOLFRA;Retinex Tools
@@ -2804,8 +2804,8 @@ TP_LOCALLAB_SHOWPOISSON;Poisson (pde ƒ)
 TP_LOCALLAB_SHOWR;Mask and modifications
 TP_LOCALLAB_SHOWREF;Preview ΔE
 TP_LOCALLAB_SHOWS;Mask and modifications
-TP_LOCALLAB_SHOWSTRUC;Show structure Spot(expert)
-TP_LOCALLAB_SHOWSTRUCEX;Show structure Spot(expert)
+TP_LOCALLAB_SHOWSTRUC;Show structure Spot(advanced)
+TP_LOCALLAB_SHOWSTRUCEX;Show structure Spot(advanced)
 TP_LOCALLAB_SHOWT;Mask and modifications
 TP_LOCALLAB_SHOWVI;Mask and modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights
@@ -2840,7 +2840,7 @@ TP_LOCALLAB_STRRETI_TOOLTIP;if Strength Retinex < 0.2 only Dehaze is enabled.\ni
 TP_LOCALLAB_STRUC;Structure
 TP_LOCALLAB_STRUCCOL;Structure
 TP_LOCALLAB_STRUCCOL1;Structure Spot
-TP_LOCALLAB_STRUCT_TOOLTIP;Use Sobel algorithm to take into account structure in shape detection.\nyou can have a preview by activating "mask and modifications - Show structure spot".\n\nCan be used in conjunction with masks (expert) structure, blur, wavelet to improve edge detection.\n\nNeeds maskless adjustments to be activated (lightness, exposure...)
+TP_LOCALLAB_STRUCT_TOOLTIP;Use Sobel algorithm to take into account structure in shape detection.\nyou can have a preview by activating "mask and modifications - Show structure spot".\n\nCan be used in conjunction with masks (advanced) structure, blur, wavelet to improve edge detection.\n\nNeeds maskless adjustments to be activated (lightness, exposure...)
 TP_LOCALLAB_STRUMASKCOL;Structure mask strength
 TP_LOCALLAB_STRUMASK_TOOLTIP;Generate a structure mask with difference between surface areas and reliefs.\nIf structure mask as tool is enabled, this mask is used in addition to the other tools (gamma, slope, contrast curve ...)
 TP_LOCALLAB_STYPE;Shape method

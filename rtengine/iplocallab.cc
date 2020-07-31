@@ -7409,7 +7409,7 @@ BENCHFUN
         CompressDR(wav_L0, W_L, H_L, Compression, DetailBoost);
     }
 
-    if ((lp.residsha != 0.f || lp.residhi != 0.f)) {
+    if ((lp.residsha < 0.f || lp.residhi < 0.f)) {
         float tran = 5.f;//transition shadow
 
         if (lp.residshathr > (100.f - tran)) {
@@ -7442,6 +7442,31 @@ BENCHFUN
                 wav_L0[i] *= (1.f + lp.residhi / 200.f);
             } else if (LL100 > (lp.residhithr - tranh)) {
                 wav_L0[i] *= (1.f + (LL100 * athH + bthH) / 200.f);
+            }
+        }
+    }
+
+    if ((lp.residsha > 0.f || lp.residhi > 0.f)) {
+        const std::unique_ptr<LabImage> temp(new LabImage(W_L, H_L));
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+
+        for (int i = 0; i < H_L; i++) {
+            for (int j = 0; j < W_L; j++) {
+                temp->L[i][j] = wav_L0[i * W_L + j];
+            }
+        }
+
+        ImProcFunctions::shadowsHighlights(temp.get(), true, 1, lp.residhi, lp.residsha , 40, sk, lp.residhithr, lp.residshathr);
+
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+
+        for (int i = 0; i < H_L; i++) {
+            for (int j = 0; j < W_L; j++) {
+                wav_L0[i * W_L + j] = temp->L[i][j];
             }
         }
     }
