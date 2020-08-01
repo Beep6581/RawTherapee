@@ -55,6 +55,7 @@
 #include <cassert>
 #include <cstring>
 #include <sys/types.h>
+#include <vector>
 #include "noncopyable.h"
 
 // flags for use
@@ -68,75 +69,59 @@ class array2D :
 {
 
 private:
-    ssize_t width, height;
-    T** rows;
-    T* data;
+    ssize_t width;
+    std::vector<T*> rows;
+    std::vector<T> buffer;
+
+    void initRows(ssize_t h, int offset = 0)
+    {
+        rows.resize(h);
+        T* start = buffer.data();
+        for (ssize_t i = 0; i < h; i++) {
+            rows[i] = start + offset + width * i;
+        }
+    }
+
     void ar_realloc(ssize_t w, ssize_t h, int offset = 0)
     {
-        if (rows && (h > height || 4 * h < height)) {
-            delete[] rows;
-            rows = nullptr;
-        }
-        if (!rows) {
-            rows = new T*[h];
-        }
-
-        if (data && ((h * w > width * height) || (h * w < (width * height / 4)))) {
-            delete[] data;
-            data = nullptr;
-        }
-
         width = w;
-        height = h;
-
-        if (!data) {
-            data = new T[height * width + offset];
-        }
-
-        for (ssize_t i = 0; i < height; i++) {
-            rows[i] = data + offset + width * i;
-        }
+        buffer.resize(h * width + offset);
+        initRows(h, offset);
     }
 public:
 
     // use as empty declaration, resize before use!
     // very useful as a member object
-    array2D() :
-        width(0), height(0), rows(nullptr), data(nullptr)
-    { }
+    array2D() : width(0) {}
 
     // creator type1
-    array2D(int w, int h, unsigned int flags = 0) :
-        width(w), height(h)
+    array2D(int w, int h, unsigned int flags = 0) : width(w)
     {
-        data = new T[height * width];
-        rows = new T*[height];
-
-        for (ssize_t i = 0; i < height; ++i) {
-            rows[i] = data + i * width;
-        }
-
         if (flags & ARRAY2D_CLEAR_DATA) {
-            memset(data, 0, width * height * sizeof(T));
+            buffer.resize(h * width, 0);
+        } else {
+            buffer.resize(h * width);
         }
+        initRows(h);
     }
 
     // creator type 2
     array2D(int w, int h, T ** source, unsigned int flags = 0) :
-        width(w), height(h)
+        width(w)
     {
         const bool owner = !(flags & ARRAY2D_BYREFERENCE);
         if (owner) {
-            data = new T[height * width];
+            buffer.resize(h * width);
         } else {
-            data = nullptr;
+            buffer.clear();
         }
 
-        rows = new T*[height];
+        rows.resize(h);
 
-        for (ssize_t i = 0; i < height; ++i) {
+        T* start = buffer.data();
+        for (ssize_t i = 0; i < h; ++i) {
             if (owner) {
-                rows[i] = data + i * width;
+                rows[i] = start + i * width;
                 for (ssize_t j = 0; j < width; ++j) {
                     rows[i][j] = source[i][j];
                 }
@@ -146,68 +131,59 @@ public:
         }
     }
 
-    // destructor
-    ~array2D()
-    {
-        delete[] data;
-        delete[] rows;
-    }
-
     void fill(const T val, bool multiThread = false)
     {
+        const ssize_t height = rows.size();
 #ifdef _OPENMP
         #pragma omp parallel for if(multiThread)
 #endif
         for (ssize_t i = 0; i < width * height; ++i) {
-            data[i] = val;
+            buffer[i] = val;
         }
     }
 
     void free()
     {
-        delete[] data;
-        data = nullptr;
-
-        delete [] rows;
-        rows = nullptr;
+        buffer.clear();
+        rows.clear();
     }
 
     // use with indices
     T * operator[](int index)
     {
-        assert((index >= 0) && (index < height));
+        assert((index >= 0) && (index < rows.size()));
         return rows[index];
     }
 
     const T * operator[](int index) const
     {
-        assert((index >= 0) && (index < height));
+        assert((index >= 0) && (index < rows.size()));
         return rows[index];
     }
 
     // use as pointer to T**
     operator T**()
     {
-        return rows;
+        return rows.data();
     }
 
     // use as pointer to T**
     operator const T* const *() const
     {
-        return rows;
+        return rows.data();
     }
 
-    // use as pointer to data
+    // use as pointer to buffer
     operator T*()
     {
         // only if owner this will return a valid pointer
-        return data;
+        return buffer.data();
     }
 
     operator const T*() const
     {
         // only if owner this will return a valid pointer
-        return data;
+        return buffer.data();
     }
 
 
@@ -218,7 +194,7 @@ public:
         ar_realloc(w, h, offset);
 
         if (flags & ARRAY2D_CLEAR_DATA) {
-            memset(data + offset, 0, width * height * sizeof(T));
+            fill(0);
         }
     }
 
@@ -228,12 +204,12 @@ public:
     }
     int getHeight() const
     {
-        return height;
+        return rows.size();
     }
 
     operator bool()
     {
-        return (width > 0 && height > 0);
+        return (width > 0 && !rows.empty());
     }
 
 };
