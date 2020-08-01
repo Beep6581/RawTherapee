@@ -108,6 +108,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspControlLines = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CTRL_LINE");
 
     lens_geom_listener = nullptr;
+    panel_listener = nullptr;
     metadata = nullptr;
 
     Gtk::Image* ipers_draw(new RTImage ("draw.png"));
@@ -613,6 +614,17 @@ void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_a
     projection_yaw->setAddMode(projection_angle_add);
 }
 
+void PerspCorrection::setControlLineEditMode(bool active)
+{
+    // Only camera-based mode supports control lines, so the mode must be
+    // switched if not in camera-based mode.
+    if (method->get_active_row_number() != 1) {
+        method->set_active(1);
+    }
+
+    lines_button_edit->set_active(active);
+}
+
 void PerspCorrection::setMetadata (const rtengine::FramesMetaData* metadata)
 {
     this->metadata = metadata;
@@ -748,6 +760,9 @@ void PerspCorrection::linesEditButtonPressed(void)
         lines_button_apply->set_sensitive(true);
         lines_button_erase->set_sensitive(true);
         setCamBasedEventsActive(false);
+        if (panel_listener) {
+            panel_listener->controlLineEditModeChanged(true);
+        }
     } else { // Leave edit mode.
         setCamBasedEventsActive(true);
         lines_button_apply->set_sensitive(false);
@@ -758,12 +773,22 @@ void PerspCorrection::linesEditButtonPressed(void)
         }
         lines->setDrawMode(false);
         lines->setActive(false);
+        if (panel_listener) {
+            panel_listener->controlLineEditModeChanged(false);
+        }
     }
 }
 
 void PerspCorrection::linesEraseButtonPressed(void)
 {
     lines->removeAll();
+}
+
+void PerspCorrection::requestApplyControlLines(void)
+{
+    if (lines_button_apply->is_sensitive()) {
+        linesApplyButtonPressed();
+    }
 }
 
 void PerspCorrection::setCamBasedEventsActive(bool active)

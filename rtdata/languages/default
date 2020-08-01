@@ -1807,6 +1807,7 @@ THRESHOLDSELECTOR_TR;Top-right
 TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>Ctrl</b>+<b>Shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b> outside any picker.
 TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>\nMove the crop using <b>Shift</b>+<b>mouse drag</b>.
 TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
+TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspective Correction</b>\n\nEdit control lines to correct perspective distortion. Click this button again to apply correction.
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
 TOOLBAR_TOOLTIP_WB;Spot white balance.\nShortcut: <b>w</b>
 TP_BWMIX_ALGO;Algorithm OYCPM

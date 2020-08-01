@@ -282,6 +282,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     lensgeom->setLensGeomListener(this);
     rotate->setLensGeomListener(this);
     perspective->setLensGeomListener(this);
+    perspective->setPerspCorrectionPanelListener(this);
     distortion->setLensGeomListener(this);
     crop->setCropPanelListener(this);
     icm->setICMPanelListener(this);
@@ -1045,6 +1046,17 @@ void ToolPanelCoordinator::cropSelectRequested()
     toolBar->setTool(TMCropSelect);
 }
 
+void ToolPanelCoordinator::controlLineEditModeChanged(bool active)
+{
+    if (!ipc) {
+        return;
+    }
+
+    if (active) {
+        toolBar->setTool(TMPerspective);
+    }
+}
+
 void ToolPanelCoordinator::saveInputICCReference(const Glib::ustring& fname, bool apply_wb)
 {
     if (ipc) {
@@ -1172,6 +1184,13 @@ void ToolPanelCoordinator::updateTPVScrollbar(bool hide)
     updateVScrollbars(hide);
 }
 
+void ToolPanelCoordinator::toolDeselected(ToolMode tool)
+{
+    if (tool == TMPerspective) {
+        perspective->requestApplyControlLines();
+    }
+}
+
 void ToolPanelCoordinator::toolSelected(ToolMode tool)
 {
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
@@ -1207,6 +1226,20 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
             toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
             rotate->setExpanded(true);
             bool isFavorite = checkFavorite(rotate);
+            if (!isFavorite) {
+                isFavorite = checkFavorite(lensgeom);
+                lensgeom->setExpanded(true);
+            }
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(isFavorite ? *favoritePanelSW : *transformPanelSW));
+            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
+            break;
+        }
+
+        case TMPerspective: {
+            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
+            perspective->setControlLineEditMode(true);
+            perspective->setExpanded(true);
+            bool isFavorite = checkFavorite(perspective);
             if (!isFavorite) {
                 isFavorite = checkFavorite(lensgeom);
                 lensgeom->setExpanded(true);

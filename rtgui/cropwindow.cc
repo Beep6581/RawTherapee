@@ -414,7 +414,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             action_y = 0;
                             needRedraw = true;
                         }
-                    } else if (iarea->getToolMode () == TMHand
+                    } else if ((iarea->getToolMode () == TMHand
+                                || iarea->getToolMode() == TMPerspective)
                                && editSubscriber
                                && cropgl
                                && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y)
@@ -429,7 +430,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                                 state = SEditPick1;
                                 pickedObject = iarea->getObject();
                                 pickModifierKey = bstate;
-                            } else {
+                            } else if (iarea->getToolMode() == TMPerspective) {
                                 state = SCropImgMove;
                             }
                             press_x = x;
@@ -594,7 +595,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
             }
         }
     } else if (button == 3) {
-        if (iarea->getToolMode () == TMHand) {
+        if (iarea->getToolMode () == TMHand || iarea->getToolMode() == TMPerspective) {
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
             if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
                 needRedraw = editSubscriber->button3Pressed(bstate);

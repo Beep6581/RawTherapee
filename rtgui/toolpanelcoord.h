@@ -102,6 +102,7 @@ class ToolPanelCoordinator :
     public LensGeomListener,
     public SpotWBListener,
     public CropPanelListener,
+    public PerspCorrectionPanelListener,
     public ICMPanelListener,
     public ImageAreaToolListener,
     public rtengine::ImageTypeListener,
@@ -323,6 +324,9 @@ public:
     // croppanellistener interface
     void cropSelectRequested () override;
 
+    // PerspCorrectionPanelListener interface
+    void controlLineEditModeChanged(bool active) override;
+
     // icmpanellistener interface
     void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) override;
 
@@ -339,6 +343,7 @@ public:
     bool handleShortcutKey(GdkEventKey* event);
 
     // ToolBarListener interface
+    void toolDeselected(ToolMode tool) override;
     void toolSelected (ToolMode tool) override;
     void editModeSwitchedOff () final;
 

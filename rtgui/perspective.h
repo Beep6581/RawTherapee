@@ -25,6 +25,14 @@
 #include "lensgeomlistener.h"
 #include "toolpanel.h"
 
+class PerspCorrectionPanelListener
+{
+public:
+    virtual ~PerspCorrectionPanelListener() = default;
+
+    virtual void controlLineEditModeChanged(bool active) = 0;
+};
+
 class PerspCorrection final :
     public ToolParamBlock,
     public AdjusterListener,
@@ -79,6 +87,7 @@ protected:
     rtengine::ProcEvent* event_persp_proj_rotate;
     rtengine::ProcEvent* event_persp_proj_angle;
     LensGeomListener* lens_geom_listener;
+    PerspCorrectionPanelListener* panel_listener;
     const rtengine::FramesMetaData* metadata;
 
     void applyControlLines (void);
@@ -101,11 +110,17 @@ public:
     void linesEditButtonPressed (void);
     void linesEraseButtonPressed (void);
     void methodChanged (void);
+    void requestApplyControlLines(void);
     void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add);
+    void setControlLineEditMode(bool active);
     void setEditProvider (EditDataProvider* provider) override;
     void setLensGeomListener (LensGeomListener* listener)
     {
         lens_geom_listener = listener;
+    }
+    void setPerspCorrectionPanelListener(PerspCorrectionPanelListener* listener)
+    {
+        panel_listener = listener;
     }
     void setMetadata (const rtengine::FramesMetaData* metadata);
     void switchOffEditMode (void);
