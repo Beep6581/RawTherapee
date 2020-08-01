@@ -76,9 +76,9 @@ private:
     void initRows(ssize_t h, int offset = 0)
     {
         rows.resize(h);
-        T* start = buffer.data();
-        for (ssize_t i = 0; i < h; i++) {
-            rows[i] = start + offset + width * i;
+        T* start = buffer.data() + offset;
+        for (ssize_t i = 0; i < h; ++i) {
+            rows[i] = start + width * i;
         }
     }
 
@@ -106,26 +106,20 @@ public:
     }
 
     // creator type 2
-    array2D(int w, int h, T ** source, unsigned int flags = 0) :
-        width(w)
+    array2D(int w, int h, T ** source, unsigned int flags = 0) : width(w)
     {
-        const bool owner = !(flags & ARRAY2D_BYREFERENCE);
-        if (owner) {
-            buffer.resize(h * width);
-        } else {
-            buffer.clear();
-        }
-
         rows.resize(h);
-
-        T* start = buffer.data();
-        for (ssize_t i = 0; i < h; ++i) {
-            if (owner) {
+        if (!(flags & ARRAY2D_BYREFERENCE)) {
+            buffer.resize(h * width);
+            T* start = buffer.data();
+            for (ssize_t i = 0; i < h; ++i) {
                 rows[i] = start + i * width;
                 for (ssize_t j = 0; j < width; ++j) {
                     rows[i][j] = source[i][j];
                 }
-            } else {
+            }
+        } else {
+            for (ssize_t i = 0; i < h; ++i) {
                 rows[i] = source[i];
             }
         }
