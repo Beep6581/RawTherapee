@@ -19,6 +19,7 @@
 #pragma once
 
 #include "editedstate.h"
+#include "delayedconnection.h"
 #include "guiutils.h"
 
 class Adjuster;
@@ -46,9 +47,8 @@ protected:
     Gtk::Button* reset;
     Gtk::CheckButton* automatic;
     AdjusterListener* adjusterListener;
-    sigc::connection delayConnection;
-    sigc::connection spinChange;
-    sigc::connection sliderChange;
+    DelayedConnection<> spinChange;
+    DelayedConnection<> sliderChange;
     sigc::connection editedChange;
     sigc::connection autoChange;
     sigc::connection buttonReleaseSlider;
@@ -62,7 +62,6 @@ protected:
     bool afterReset;
     bool blocked;
     bool addMode;
-    bool eventPending;
     double vMin;
     double vMax;
     double vStep;
