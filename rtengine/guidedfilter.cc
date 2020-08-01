@@ -82,8 +82,8 @@ int calculate_subsampling(int w, int h, int r)
 void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling)
 {
 
-    const int W = src.width();
-    const int H = src.height();
+    const int W = src.getWidth();
+    const int H = src.getHeight();
 
     if (subsampling <= 0) {
         subsampling = calculate_subsampling(W, H, r);
@@ -94,8 +94,8 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     const auto apply =
         [=](Op op, array2D<float> &res, const array2D<float> &a, const array2D<float> &b, const array2D<float> &c=array2D<float>()) -> void
         {
-            const int w = res.width();
-            const int h = res.height();
+            const int w = res.getWidth();
+            const int h = res.getHeight();
             
 #ifdef _OPENMP
             #pragma omp parallel for if (multithread)
@@ -142,12 +142,12 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     const auto f_subsample =
         [=](array2D<float> &d, const array2D<float> &s) -> void
         {
-            if (d.width() == s.width() && d.height() == s.height()) {
+            if (d.getWidth() == s.getWidth() && d.getHeight() == s.getHeight()) {
 #ifdef _OPENMP
 #               pragma omp parallel for if (multithread)
 #endif
-                for (int y = 0; y < s.height(); ++y) {
-                    for (int x = 0; x < s.width(); ++x) {
+                for (int y = 0; y < s.getHeight(); ++y) {
+                    for (int x = 0; x < s.getWidth(); ++x) {
                         d[y][x] = s[y][x];
                     }
                 }
@@ -164,9 +164,9 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     const auto f_mean =
         [multithread](array2D<float> &d, array2D<float> &s, int rad) -> void
         {
-            rad = LIM(rad, 0, (min(s.width(), s.height()) - 1) / 2 - 1);
-           // boxblur(s, d, rad, s.width(), s.height(), multithread);
-            boxblur(static_cast<float**>(s), static_cast<float**>(d), rad, s.width(), s.height(), multithread);
+            rad = LIM(rad, 0, (min(s.getWidth(), s.getHeight()) - 1) / 2 - 1);
+           // boxblur(s, d, rad, s.getWidth(), s.getHeight(), multithread);
+            boxblur(static_cast<float**>(s), static_cast<float**>(d), rad, s.getWidth(), s.getHeight(), multithread);
         };
 
     array2D<float> I1(w, h);
@@ -225,10 +225,10 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     DEBUG_DUMP(meanb);
 
     // speedup by heckflosse67
-    const int Ws = meana.width();
-    const int Hs = meana.height();
-    const int Wd = q.width();
-    const int Hd = q.height();
+    const int Ws = meana.getWidth();
+    const int Hs = meana.getHeight();
+    const int Wd = q.getWidth();
+    const int Hd = q.getHeight();
     const float col_scale = float(Ws) / float(Wd);
     const float row_scale = float(Hs) / float(Hd);
 
@@ -249,8 +249,8 @@ void guidedFilterLog(const array2D<float> &guide, float base, array2D<float> &ch
 #ifdef _OPENMP
 #    pragma omp parallel for if (multithread)
 #endif
-    for (int y = 0; y < chan.height(); ++y) {
-        for (int x = 0; x < chan.width(); ++x) {
+    for (int y = 0; y < chan.getHeight(); ++y) {
+        for (int x = 0; x < chan.getWidth(); ++x) {
             chan[y][x] = xlin2log(max(chan[y][x], 0.f), base);
         }
     }
@@ -260,8 +260,8 @@ void guidedFilterLog(const array2D<float> &guide, float base, array2D<float> &ch
 #ifdef _OPENMP
 #    pragma omp parallel for if (multithread)
 #endif
-    for (int y = 0; y < chan.height(); ++y) {
-        for (int x = 0; x < chan.width(); ++x) {
+    for (int y = 0; y < chan.getHeight(); ++y) {
+        for (int x = 0; x < chan.getWidth(); ++x) {
             chan[y][x] = xlog2lin(max(chan[y][x], 0.f), base);
         }
     }
