@@ -323,14 +323,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     }
 
     cp.CHSLmet = 1;
-    cp.EDmet = 1;
-
+    cp.EDmet = 2;
+/*
     if (params->wavelet.EDmethod == "SL") {
         cp.EDmet = 1;
     } else if (params->wavelet.EDmethod == "CU") {
         cp.EDmet = 2;
     }
-
+*/
     cp.cbena = params->wavelet.cbenab;
     cp.blhigh = (float)params->wavelet.bluehigh;
     cp.grhigh = (float)params->wavelet.greenhigh;
@@ -2079,7 +2079,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         ContrastResid(WavCoeffs_L0, cp, W_L, H_L, maxp);
     }
 
-    if ((cp.conres >= 0.f || cp.conresH >= 0.f) && cp.resena && !cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+ //   if ((cp.conres >= 0.f || cp.conresH >= 0.f) && cp.resena && !cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+    if ((cp.conres >= 0.f || cp.conresH >= 0.f) && cp.resena) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
         const std::unique_ptr<LabImage> temp(new LabImage(W_L, H_L));
 #ifdef _OPENMP
         #pragma omp parallel for num_threads(wavNestedLevels) if (wavNestedLevels>1)
@@ -2104,7 +2105,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         }
     }
 
-    if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena && cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+  //  if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena && cp.oldsh) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+    if ((cp.conres < 0.f || cp.conresH < 0.f) && cp.resena) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -3118,10 +3120,13 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
             float atten01234 = 0.80f;
             value *= (atten01234 * scaleskip[1]);    //for zoom < 100% reduce strength...I choose level 1...but!!
         }
-
+        float edghig = settings->edghi;//increase or reduce "reinforce"
+        float edglow = settings->edglo;//increase or reduce "reduce"
+        float limrad = settings->limrad;//threshold action in function radius (rad)
+        printf("edghi=%f edglo=%f limrad=%f\n", edghig, edglow, limrad); 
         // value *= beta;
         float edge = 1.f;
-        float lim0 = 20.f; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
+        float lim0 = limrad; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
         float lev = float (level);
         float repart = (float)cp.til;
 
@@ -3129,15 +3134,14 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
         if (cp.reinforce != 2) {
             const float brepart =
                 cp.reinforce == 1
-                ? 3.f
-                : 0.5f;
+                ? edghig
+                : edglow;
             const float arepart = -(brepart - 1.f) / (lim0 / 60.f);
 
-            if (rad < lim0 / 60.f) {
+            if (rad < (lim0 / 60.f)) {
                 repart *= (arepart * rad + brepart);    //linear repartition of repart
             }
         }
-
         float al0 = 1.f + (repart) / 50.f;
         float al10 = 1.0f; //arbitrary value ==> less = take into account high levels
         //  float ak =-(al0-al10)/10.f;//10 = maximum levels
@@ -3145,15 +3149,16 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
         float bk = al0;
         float koef = ak * level + bk; //modulate for levels : more levels high, more koef low ==> concentrated action on low levels, without or near for high levels
         float expkoef = -std::pow(std::fabs(rad - lev), koef); //reduce effect for high levels
+        printf("repart=%f\n", repart);
 
         if (cp.reinforce == 3) {
-            if (rad < lim0 / 60.f && level == 0) {
+            if (rad < (lim0 / 60.f) && level == 0) {
                 expkoef *= abs(repart);    //reduce effect for low values of rad and level=0==> quasi only level 1 is effective
             }
         }
 
         if (cp.reinforce == 1) {
-            if (rad < lim0 / 60.f && level == 1) {
+            if (rad < (lim0 / 60.f) && level == 1) {
                 expkoef /= repart;    //increase effect for low values of rad and level=1==> quasi only level 0 is effective
             }
         }
