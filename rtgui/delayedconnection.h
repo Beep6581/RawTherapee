@@ -62,6 +62,15 @@ public:
         max_timeout.disconnect();
     }
 
+    void setDelay(unsigned int min_delay_ms, unsigned int max_delay_ms = 0)
+    {
+        this->min_delay_ms = min_delay_ms;
+        this->max_delay_ms = max_delay_ms;
+
+        min_timeout.disconnect();
+        max_timeout.disconnect();
+    }
+
 private:
     void onSignal(Ts... ts)
     {
@@ -133,8 +142,8 @@ private:
         apply_impl(t, f, make_index_sequence<std::tuple_size<T>{}>{});
     }
 
-    const unsigned int min_delay_ms;
-    const unsigned int max_delay_ms;
+    unsigned int min_delay_ms;
+    unsigned int max_delay_ms;
 
     sigc::connection signal;
     sigc::connection min_timeout;

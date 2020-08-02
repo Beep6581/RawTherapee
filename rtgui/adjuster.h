@@ -36,7 +36,6 @@ typedef double(*double2double_fun)(double val);
 
 class Adjuster final : public Gtk::Grid
 {
-
 protected:
     Glib::ustring adjustmentName;
     Gtk::Grid* grid;
@@ -77,11 +76,18 @@ protected:
     void setSliderValue(double val);
 
 public:
-
-    int delay;
-
-    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1 = nullptr, Gtk::Image *imgIcon2 = nullptr, double2double_fun slider2value = nullptr, double2double_fun value2slider = nullptr);
-    ~Adjuster () override;
+    Adjuster(
+        Glib::ustring vlabel,
+        double vmin,
+        double vmax,
+        double vstep,
+        double vdefault,
+        Gtk::Image *imgIcon1 = nullptr,
+        Gtk::Image *imgIcon2 = nullptr,
+        double2double_fun slider2value = nullptr,
+        double2double_fun value2slider = nullptr
+    );
+    ~Adjuster() override;
 
     // Add an "Automatic" checkbox next to the reset button.
     void addAutoButton(const Glib::ustring &tooltip = "");
@@ -126,4 +132,5 @@ public:
     void trimValue (float &val) const;
     void trimValue (int &val) const;
     void setLogScale(double base, double pivot, bool anchorMiddle = false);
+    void setDelay(unsigned int min_delay_ms, unsigned int max_delay_ms = 0);
 };

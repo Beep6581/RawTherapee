@@ -36,7 +36,7 @@ double one2one(double val)
 }
 }
 
-Adjuster::Adjuster (
+Adjuster::Adjuster(
     Glib::ustring vlabel,
     double vmin,
     double vmax,
@@ -45,10 +45,8 @@ Adjuster::Adjuster (
     Gtk::Image *imgIcon1,
     Gtk::Image *imgIcon2,
     double2double_fun slider2value,
-    double2double_fun value2slider)
-
-    :
-
+    double2double_fun value2slider
+) :
     adjustmentName(std::move(vlabel)),
     grid(nullptr),
     label(nullptr),
@@ -68,8 +66,7 @@ Adjuster::Adjuster (
     logPivot(0),
     logAnchorMiddle(false),
     value2slider(value2slider ? value2slider : &one2one),
-    slider2value(slider2value ? slider2value : &one2one),
-    delay(options.adjusterMinDelay)
+    slider2value(slider2value ? slider2value : &one2one)
 
 {
     set_hexpand(true);
@@ -265,7 +262,7 @@ void Adjuster::sliderReleased (GdkEventButton* event)
 void Adjuster::spinReleased (GdkEventButton* event)
 {
 
-    if ((event != nullptr) && delay == 0) {
+    if (event) {
         spinChange.cancel();
 
         notifyListener();
@@ -321,7 +318,7 @@ double Adjuster::shapeValue (double a) const
 void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefault)
 {
     sliderChange.block(true);
-    spinChange.block();
+    spinChange.block(true);
 
     double pow10 = vstep;
     for (digits = 0; std::fabs(pow10 - floor(pow10)) > 0.000000000001; digits++, pow10 *= 10.0);
@@ -339,7 +336,7 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
     setSliderValue(addMode ? shapeVal : value2slider(shapeVal));
 
     sliderChange.block(false);
-    spinChange.unblock();
+    spinChange.block(false);
 }
 
 void Adjuster::setAddMode(bool addM)
@@ -364,7 +361,7 @@ void Adjuster::setAddMode(bool addM)
     }
 }
 
-void Adjuster::spinChanged ()
+void Adjuster::spinChanged()
 {
     if (adjusterListener && !blocked) {
         if (!buttonReleaseSlider.connected() || afterReset) {
@@ -610,7 +607,7 @@ void Adjuster::setSliderValue(double val)
 
 void Adjuster::setLogScale(double base, double pivot, bool anchorMiddle)
 {
-    spinChange.block();
+    spinChange.block(true);
     sliderChange.block(true);
 
     const double cur = getSliderValue();
@@ -620,7 +617,7 @@ void Adjuster::setLogScale(double base, double pivot, bool anchorMiddle)
     setSliderValue(cur);
     
     sliderChange.block(false);
-    spinChange.unblock();
+    spinChange.block(false);
 }
 
 bool Adjuster::getAutoValue() const
@@ -679,4 +676,10 @@ bool Adjuster::block(bool isBlocked)
 bool Adjuster::getAddMode() const
 {
     return addMode;
+}
+
+void Adjuster::setDelay(unsigned int min_delay_ms, unsigned int max_delay_ms)
+{
+    spinChange.setDelay(min_delay_ms, max_delay_ms);
+    sliderChange.setDelay(min_delay_ms, max_delay_ms);
 }
