@@ -42,6 +42,7 @@
 #include "pathutils.h"
 #include "thumbnail.h"
 #include "toolbar.h"
+#include "inspector.h"
 
 using namespace std;
 
@@ -2504,6 +2505,15 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
             }
 
             refreshHeight();
+            return true;
+        }
+    }
+
+    if (!ctrl && !alt) {
+        switch (event->keyval) {
+        case GDK_KEY_f:
+        case GDK_KEY_F:
+            fileBrowser->getInspector()->showWindow(!shift);
             return true;
         }
     }

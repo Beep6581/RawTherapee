@@ -1840,8 +1840,8 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 {
     BENCHFUN
 
-    const int W = R.width();
-    const int H = R.height();
+    const int W = R.getWidth();
+    const int H = R.getHeight();
     array2D<float> Y(W, H);
 
     const auto log2 =
