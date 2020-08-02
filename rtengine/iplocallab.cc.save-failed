@@ -7534,6 +7534,7 @@ BENCHFUN
 
 //edge sharpness begin
     if (lp.edgwena && level_bl == 0 && level_br >= 3 && locedgwavCurve && locedgwavutili && lp.strengthw > 0) { //needs the first levels to work!
+StopWatch Stop1("my test");
         float mean[10];
         float meanN[10];
         float sigma[10];
@@ -7567,19 +7568,21 @@ BENCHFUN
 
         float gradw = lp.gradw;
         float tloww = lp.tloww;
-        for (int lvl = 0; lvl < 4; lvl++) {
+//StopWatch Stop1("test");
+        for (int lvl = 0; lvl < maxlvl; lvl++) {
             for (int dir = 1; dir < 4; dir++) {
                 const int W_L = wdspot->level_W(lvl);
                 const int H_L = wdspot->level_H(lvl);
                 float* const* wav_L = wdspot->level_coeffs(lvl);
                 if (lvl < 4) {
-                    calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC, true);
+                    calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC);
                 }
                     // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
             }
         }
         
         tmC.free();
+//Stop1.stop();
         float aamp = 1.f + lp.thigw / 100.f;
 
         const float alipinfl = (eddlipampl - 1.f) / (1.f - eddlipinfl);

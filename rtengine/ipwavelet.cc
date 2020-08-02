@@ -2643,7 +2643,7 @@ BENCHFUN
     }
 }
 
-void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, float tloww, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC)
+void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, float tloww, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC, bool multiThread)
 {
     int borderL = 2;
 
@@ -2661,6 +2661,9 @@ void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, fl
         //I could also use Gauss.h for 3x3
         // If necessary I can put a 7x7 matrix
         */
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
         for (int i = 1; i < H_L - 1; i++) { //sigma=0.55
             for (int j = 1; j < W_L - 1; j++) {
                 tmC[i][j] = (8.94f * WavCoeffs_LL[dir][i * W_L + j] + 1.71f * (WavCoeffs_LL[dir][(i - 1) * W_L + j] + 1.71f * WavCoeffs_LL[dir][(i + 1) * W_L + j]
@@ -2674,6 +2677,9 @@ void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, fl
     } else if (tloww < 50.f) {
         borderL = 1;
 
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
         for (int i = 1; i < H_L - 1; i++) { //sigma=0.85
             for (int j = 1; j < W_L - 1; j++) {
                 tmC[i][j] = (4.0091f * WavCoeffs_LL[dir][i * W_L + j] + 2.0068f * (WavCoeffs_LL[dir][(i - 1) * W_L + j] + 2.0068f * WavCoeffs_LL[dir][(i + 1) * W_L + j]
@@ -2690,6 +2696,9 @@ void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, fl
     else if (tloww < 75.f) {
         borderL = 1;
 
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
         for (int i = 1; i < H_L - 1; i++) {
             for (int j = 1; j < W_L - 1; j++) { //sigma=1.1
                 tmC[i][j] = (3.025f * WavCoeffs_LL[dir][i * W_L + j] + 2.001f * (WavCoeffs_LL[dir][(i - 1) * W_L + j] + 2.001f * WavCoeffs_LL[dir][(i + 1) * W_L + j]
@@ -2703,6 +2712,9 @@ void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, fl
         borderL = 2;
 
         if (level > 1) { // do not activate 5x5 if level 0 or 1
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
             for (int i = 2; i < H_L - 2; i++) {
                 for (int j = 2; j < W_L - 2; j++) {
                     // Gaussian 1.1
@@ -2750,16 +2762,29 @@ void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, fl
 
     }
 
-    float thr = 40.f; //avoid artifact eg. noise...to test
-    float thr2 = 1.5f * edd; //edd can be modified in option ed_detect
-    thr2 += gradw / 30.f; //to test
-    float diffFactor = (gradw / 100.f);
-
-    for (int i = 0; i < H_L; i++) {
+    int ii = 0;
+    for (; ii < borderL; ii++) {
         for (int j = 0; j < W_L; j++) {
-            koeLi[level * 3 + dir - 1][i * W_L + j] = 1.f;
+            koeLi[level * 3 + dir - 1][ii * W_L + j] = 1.f;
         }
     }
+    for (; ii < H_L - borderL; ii++) {
+        for (int j = 0; j < borderL; j++) {
+            koeLi[level * 3 + dir - 1][ii * W_L + j] = 1.f;
+        }
+        for (int j = W_L - borderL; j < W_L; j++) {
+            koeLi[level * 3 + dir - 1][ii * W_L + j] = 1.f;
+        }
+    }
+    for (; ii < H_L; ii++) {
+        for (int j = 0; j < W_L; j++) {
+            koeLi[level * 3 + dir - 1][ii * W_L + j] = 1.f;
+        }
+    }
+
+    constexpr float thr = 40.f; //avoid artifact eg. noise...to test
+    const float thr2 = 1.5f * edd + gradw / 30.f; //edd can be modified in option ed_detect
+    const float diffFactor = gradw / 100.f;
 
     for (int i = borderL; i < H_L - borderL; i++) {
         for (int j = borderL; j < W_L - borderL; j++) {
