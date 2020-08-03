@@ -2217,7 +2217,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                 for (int dir = 1; dir < 4; dir++) {
                     const float* const* WavCoeffs_LL = WaveletCoeffs_L.level_coeffs(lvl);
                     float tempkoeli = 0.f;
-                    calckoe (WavCoeffs_LL, gradw, tloww, koeLi, lvl , dir, W_L, H_L, edd, tempkoeli, tmC);
+                    calckoe (WavCoeffs_LL[dir], gradw, tloww, koeLi[lvl * 3 + dir - 1], lvl, W_L, H_L, edd, tempkoeli, tmC);
                     maxkoeLi[lvl * 3 + dir - 1] = tempkoeli ;
                     // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
                 }
@@ -2645,13 +2645,11 @@ BENCHFUN
     }
 }
 
-void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, float tloww, float *koeLi[12], int level, int dir, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC, bool multiThread)
+void ImProcFunctions::calckoe (const float* WavCoeffs, float gradw, float tloww, float *koeLi, int level, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC, bool multiThread)
 {
-    int borderL = 2;
+    const int borderL = tloww < 75.f ? 1 : 2;
 
-    if (tloww < 30.f) {
-        borderL = 1;
-
+    if (tloww < 75.f) {
         // I calculate coefficients with r size matrix 3x3 r=1 ; 5x5 r=2; 7x7 r=3
         /*
         float k[2*r][2*r];
@@ -2663,124 +2661,98 @@ void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, fl
         //I could also use Gauss.h for 3x3
         // If necessary I can put a 7x7 matrix
         */
+        float c0, c1, c2, mult;
+        if (tloww < 30.f) { //sigma=0.55
+            c0 = 8.94f;
+            c1 = 1.71f;
+            c2 = 0.33f;
+            mult = 0.0584795f;
+        } else if (tloww < 50.f) { //sigma=0.85
+            c0 = 4.0091f;
+            c1 = 2.0068f;
+            c2 = 1.0045f;
+            mult = 0.062288f;
+        } else { //sigma=1.1
+            c0 = 3.025f;
+            c1 = 2.001f;
+            c2 = 1.323f;
+            mult = 0.06127f;
+        }
+        c0 *= mult;
+        c1 *= mult;
+        c2 *= mult;
 #ifdef _OPENMP
-            #pragma omp parallel for if(multiThread)
+        #pragma omp parallel for if(multiThread)
 #endif
         for (int i = 1; i < H_L - 1; i++) { //sigma=0.55
             for (int j = 1; j < W_L - 1; j++) {
-                tmC[i][j] = (8.94f * WavCoeffs_LL[dir][i * W_L + j] + 1.71f * (WavCoeffs_LL[dir][(i - 1) * W_L + j] + 1.71f * WavCoeffs_LL[dir][(i + 1) * W_L + j]
-                             + 1.71f * WavCoeffs_LL[dir][i * W_L + j + 1] + 1.71f * WavCoeffs_LL[dir][i * W_L + j - 1]) + 0.33f * WavCoeffs_LL[dir][(i - 1) * W_L + j - 1]
-                             + 0.33f * WavCoeffs_LL[dir][(i - 1) * W_L + j + 1] + 0.33f * WavCoeffs_LL[dir][(i + 1) * W_L + j - 1] + 0.33f * WavCoeffs_LL[dir][(i + 1) * W_L + j + 1]) * 0.0584795f;
-                // apply to each direction Wavelet level : horizontal / vertiacle / diagonal
-
-
+                tmC[i][j] = c0 * WavCoeffs[i * W_L + j] +
+                            c1 * ((WavCoeffs[(i - 1) * W_L + j] + WavCoeffs[(i + 1) * W_L + j]) + (WavCoeffs[i * W_L + j + 1] + WavCoeffs[i * W_L + j - 1])) +
+                            c2 * ((WavCoeffs[(i - 1) * W_L + j - 1] + WavCoeffs[(i - 1) * W_L + j + 1]) + (WavCoeffs[(i + 1) * W_L + j - 1] + WavCoeffs[(i + 1) * W_L + j + 1]));
+                // apply to each direction Wavelet level : horizontal / vertical / diagonal
             }
         }
-    } else if (tloww < 50.f) {
-        borderL = 1;
-
+    } else if (level > 1) { // do not activate 5x5 if level 0 or 1
 #ifdef _OPENMP
-            #pragma omp parallel for if(multiThread)
+        #pragma omp parallel for if(multiThread)
 #endif
-        for (int i = 1; i < H_L - 1; i++) { //sigma=0.85
-            for (int j = 1; j < W_L - 1; j++) {
-                tmC[i][j] = (4.0091f * WavCoeffs_LL[dir][i * W_L + j] + 2.0068f * (WavCoeffs_LL[dir][(i - 1) * W_L + j] + 2.0068f * WavCoeffs_LL[dir][(i + 1) * W_L + j]
-                             + 2.0068f * WavCoeffs_LL[dir][i * W_L + j + 1] + 2.0068f * WavCoeffs_LL[dir][i * W_L + j - 1]) + 1.0045f * WavCoeffs_LL[dir][(i - 1) * W_L + j - 1]
-                             + 1.0045f * WavCoeffs_LL[dir][(i - 1) * W_L + j + 1] + 1.0045f * WavCoeffs_LL[dir][(i + 1) * W_L + j - 1] + 1.0045f * WavCoeffs_LL[dir][(i + 1) * W_L + j + 1]) * 0.062288f;
-                // apply to each direction Wavelet level : horizontal / vertiacle / diagonal
+        for (int i = 2; i < H_L - 2; i++) {
+            for (int j = 2; j < W_L - 2; j++) {
+                // Gaussian 1.1
+                // 0.5 2 3 2 0.5
+                // 2 7 10 7 2
+                // 3 10 15 10 3
+                // 2 7 10 7 2
+                // 0.5 2 3 2 0.5
+                // divi 113
+                //Gaussian 1.4
+                // 2 4 5 4 2
+                // 4 9 12 9 4
+                // 5 12 15 12 5
+                // 4 9 12 9 4
+                // 2 4 5 4 2
+                // divi 159
+                if (tloww < 85.f) { //sigma=1.1
+                    tmC[i][j] = (15.f * WavCoeffs[i * W_L + j]  + 10.f * WavCoeffs[(i - 1) * W_L + j] + 10.f * WavCoeffs[(i + 1) * W_L + j]
+                                 + 10.f * WavCoeffs[i * W_L + j + 1] + 10.f * WavCoeffs[i * W_L + j - 1] + 7.f * WavCoeffs[(i - 1) * W_L + j - 1]
+                                 + 7.f * WavCoeffs[(i - 1) * W_L + j + 1] + 7.f * WavCoeffs[(i + 1) * W_L + j - 1] + 7.f * WavCoeffs[(i + 1) * W_L + j + 1]
+                                 + 3.f * WavCoeffs[(i - 2) * W_L + j] + 3.f * WavCoeffs[(i + 2) * W_L + j] + 3.f * WavCoeffs[i * W_L + j - 2] + 3.f * WavCoeffs[i * W_L + j + 2]
+                                 + 2.f * WavCoeffs[(i - 2) * W_L + j - 1] + 2.f * WavCoeffs[(i - 2) * W_L + j + 1] + 2.f * WavCoeffs[(i + 2) * W_L + j + 1] + 2.f * WavCoeffs[(i + 2) * W_L + j - 1]
+                                 + 2.f * WavCoeffs[(i - 1) * W_L + j - 2] + 2.f * WavCoeffs[(i - 1) * W_L + j + 2] + 2.f * WavCoeffs[(i + 1) * W_L + j + 2] + 2.f * WavCoeffs[(i + 1) * W_L + j - 2]
+                                 + 0.5f * WavCoeffs[(i - 2) * W_L + j - 2] + 0.5f * WavCoeffs[(i - 2) * W_L + j + 2] + 0.5f * WavCoeffs[(i + 2) * W_L + j - 2] + 0.5f * WavCoeffs[(i + 2) * W_L + j + 2]
+                                ) * 0.0088495f;
 
-
-            }
-        }
-    }
-
-
-    else if (tloww < 75.f) {
-        borderL = 1;
-
-#ifdef _OPENMP
-            #pragma omp parallel for if(multiThread)
-#endif
-        for (int i = 1; i < H_L - 1; i++) {
-            for (int j = 1; j < W_L - 1; j++) { //sigma=1.1
-                tmC[i][j] = (3.025f * WavCoeffs_LL[dir][i * W_L + j] + 2.001f * (WavCoeffs_LL[dir][(i - 1) * W_L + j] + 2.001f * WavCoeffs_LL[dir][(i + 1) * W_L + j]
-                             + 2.001f * WavCoeffs_LL[dir][i * W_L + j + 1] + 2.001f * WavCoeffs_LL[dir][i * W_L + j - 1]) + 1.323f * WavCoeffs_LL[dir][(i - 1) * W_L + j - 1]
-                             + 1.323f * WavCoeffs_LL[dir][(i - 1) * W_L + j + 1] + 1.323f * WavCoeffs_LL[dir][(i + 1) * W_L + j - 1] + 1.323f * WavCoeffs_LL[dir][(i + 1) * W_L + j + 1]) * 0.06127f;
-            }
-        }
-    }
-
-    else if (tloww >= 75.f) {
-        borderL = 2;
-
-        if (level > 1) { // do not activate 5x5 if level 0 or 1
-#ifdef _OPENMP
-            #pragma omp parallel for if(multiThread)
-#endif
-            for (int i = 2; i < H_L - 2; i++) {
-                for (int j = 2; j < W_L - 2; j++) {
-                    // Gaussian 1.1
-                    // 0.5 2 3 2 0.5
-                    // 2 7 10 7 2
-                    // 3 10 15 10 3
-                    // 2 7 10 7 2
-                    // 0.5 2 3 2 0.5
-                    // divi 113
-                    //Gaussian 1.4
-                    // 2 4 5 4 2
-                    // 4 9 12 9 4
-                    // 5 12 15 12 5
-                    // 4 9 12 9 4
-                    // 2 4 5 4 2
-                    // divi 159
-                    if (tloww < 85.f) { //sigma=1.1
-                        tmC[i][j] = (15.f * WavCoeffs_LL[dir][i * W_L + j]  + 10.f * WavCoeffs_LL[dir][(i - 1) * W_L + j] + 10.f * WavCoeffs_LL[dir][(i + 1) * W_L + j]
-                                     + 10.f * WavCoeffs_LL[dir][i * W_L + j + 1] + 10.f * WavCoeffs_LL[dir][i * W_L + j - 1] + 7.f * WavCoeffs_LL[dir][(i - 1) * W_L + j - 1]
-                                     + 7.f * WavCoeffs_LL[dir][(i - 1) * W_L + j + 1] + 7.f * WavCoeffs_LL[dir][(i + 1) * W_L + j - 1] + 7.f * WavCoeffs_LL[dir][(i + 1) * W_L + j + 1]
-                                     + 3.f * WavCoeffs_LL[dir][(i - 2) * W_L + j] + 3.f * WavCoeffs_LL[dir][(i + 2) * W_L + j] + 3.f * WavCoeffs_LL[dir][i * W_L + j - 2] + 3.f * WavCoeffs_LL[dir][i * W_L + j + 2]
-                                     + 2.f * WavCoeffs_LL[dir][(i - 2) * W_L + j - 1] + 2.f * WavCoeffs_LL[dir][(i - 2) * W_L + j + 1] + 2.f * WavCoeffs_LL[dir][(i + 2) * W_L + j + 1] + 2.f * WavCoeffs_LL[dir][(i + 2) * W_L + j - 1]
-                                     + 2.f * WavCoeffs_LL[dir][(i - 1) * W_L + j - 2] + 2.f * WavCoeffs_LL[dir][(i - 1) * W_L + j + 2] + 2.f * WavCoeffs_LL[dir][(i + 1) * W_L + j + 2] + 2.f * WavCoeffs_LL[dir][(i + 1) * W_L + j - 2]
-                                     + 0.5f * WavCoeffs_LL[dir][(i - 2) * W_L + j - 2] + 0.5f * WavCoeffs_LL[dir][(i - 2) * W_L + j + 2] + 0.5f * WavCoeffs_LL[dir][(i + 2) * W_L + j - 2] + 0.5f * WavCoeffs_LL[dir][(i + 2) * W_L + j + 2]
-                                    ) * 0.0088495f;
-
-                    }
-
-                    else {//sigma=1.4
-                        tmC[i][j] = (15.f * WavCoeffs_LL[dir][i * W_L + j] + 12.f * WavCoeffs_LL[dir][(i - 1) * W_L + j] + 12.f * WavCoeffs_LL[dir][(i + 1) * W_L + j]
-                                     + 12.f * WavCoeffs_LL[dir][i * W_L + j + 1] + 12.f * WavCoeffs_LL[dir][i * W_L + j - 1] + 9.f * WavCoeffs_LL[dir][(i - 1) * W_L + j - 1]
-                                     + 9.f * WavCoeffs_LL[dir][(i - 1) * W_L + j + 1] + 9.f * WavCoeffs_LL[dir][(i + 1) * W_L + j - 1] + 9.f * WavCoeffs_LL[dir][(i + 1) * W_L + j + 1]
-                                     + 5.f * WavCoeffs_LL[dir][(i - 2) * W_L + j] + 5.f * WavCoeffs_LL[dir][(i + 2) * W_L + j] + 5.f * WavCoeffs_LL[dir][i * W_L + j - 2] + 5.f * WavCoeffs_LL[dir][i * W_L + j + 2]
-                                     + 4.f * WavCoeffs_LL[dir][(i - 2) * W_L + j - 1] + 4.f * WavCoeffs_LL[dir][(i - 2) * W_L + j + 1] + 4.f * WavCoeffs_LL[dir][(i + 2) * W_L + j + 1] + 4.f * WavCoeffs_LL[dir][(i + 2) * W_L + j - 1]
-                                     + 4.f * WavCoeffs_LL[dir][(i - 1) * W_L + j - 2] + 4.f * WavCoeffs_LL[dir][(i - 1) * W_L + j + 2] + 4.f * WavCoeffs_LL[dir][(i + 1) * W_L + j + 2] + 4.f * WavCoeffs_LL[dir][(i + 1) * W_L + j - 2]
-                                     + 2.f * WavCoeffs_LL[dir][(i - 2) * W_L + j - 2] + 2.f * WavCoeffs_LL[dir][(i - 2) * W_L + j + 2] + 2.f * WavCoeffs_LL[dir][(i + 2) * W_L + j - 2] + 2.f * WavCoeffs_LL[dir][(i + 2) * W_L + j + 2]
-                                    ) * 0.0062893f;
-                    }
-
-
-                    // apply to each direction Wavelet level : horizontal / vertiacle / diagonal
+                } else {//sigma=1.4
+                    tmC[i][j] = (15.f * WavCoeffs[i * W_L + j] + 12.f * WavCoeffs[(i - 1) * W_L + j] + 12.f * WavCoeffs[(i + 1) * W_L + j]
+                                 + 12.f * WavCoeffs[i * W_L + j + 1] + 12.f * WavCoeffs[i * W_L + j - 1] + 9.f * WavCoeffs[(i - 1) * W_L + j - 1]
+                                 + 9.f * WavCoeffs[(i - 1) * W_L + j + 1] + 9.f * WavCoeffs[(i + 1) * W_L + j - 1] + 9.f * WavCoeffs[(i + 1) * W_L + j + 1]
+                                 + 5.f * WavCoeffs[(i - 2) * W_L + j] + 5.f * WavCoeffs[(i + 2) * W_L + j] + 5.f * WavCoeffs[i * W_L + j - 2] + 5.f * WavCoeffs[i * W_L + j + 2]
+                                 + 4.f * WavCoeffs[(i - 2) * W_L + j - 1] + 4.f * WavCoeffs[(i - 2) * W_L + j + 1] + 4.f * WavCoeffs[(i + 2) * W_L + j + 1] + 4.f * WavCoeffs[(i + 2) * W_L + j - 1]
+                                 + 4.f * WavCoeffs[(i - 1) * W_L + j - 2] + 4.f * WavCoeffs[(i - 1) * W_L + j + 2] + 4.f * WavCoeffs[(i + 1) * W_L + j + 2] + 4.f * WavCoeffs[(i + 1) * W_L + j - 2]
+                                 + 2.f * WavCoeffs[(i - 2) * W_L + j - 2] + 2.f * WavCoeffs[(i - 2) * W_L + j + 2] + 2.f * WavCoeffs[(i + 2) * W_L + j - 2] + 2.f * WavCoeffs[(i + 2) * W_L + j + 2]
+                                ) * 0.0062893f;
                 }
             }
         }
-
     }
 
     int ii = 0;
     for (; ii < borderL; ii++) {
         for (int j = 0; j < W_L; j++) {
-            koeLi[level * 3 + dir - 1][ii * W_L + j] = 1.f;
+            koeLi[ii * W_L + j] = 1.f;
         }
     }
     for (; ii < H_L - borderL; ii++) {
         for (int j = 0; j < borderL; j++) {
-            koeLi[level * 3 + dir - 1][ii * W_L + j] = 1.f;
+            koeLi[ii * W_L + j] = 1.f;
         }
         for (int j = W_L - borderL; j < W_L; j++) {
-            koeLi[level * 3 + dir - 1][ii * W_L + j] = 1.f;
+            koeLi[ii * W_L + j] = 1.f;
         }
     }
     for (; ii < H_L; ii++) {
         for (int j = 0; j < W_L; j++) {
-            koeLi[level * 3 + dir - 1][ii * W_L + j] = 1.f;
+            koeLi[ii * W_L + j] = 1.f;
         }
     }
 
@@ -2792,19 +2764,18 @@ void ImProcFunctions::calckoe (const float* const* WavCoeffs_LL, float gradw, fl
         for (int j = borderL; j < W_L - borderL; j++) {
             // my own algo : probably a little false, but simpler as Lipschitz !
             // Thr2 = maximum of the function ==> Lipsitch says = probably edge
-            float temp = rtengine::max(std::fabs(WavCoeffs_LL[dir][i * W_L + j]), thr);
-            koeLi[level * 3 + dir - 1][i * W_L + j] = rtengine::min(thr2, std::fabs(tmC[i][j] / temp)); // limit maxi
+            float temp = rtengine::max(std::fabs(WavCoeffs[i * W_L + j]), thr);
+            koeLi[i * W_L + j] = rtengine::min(thr2, std::fabs(tmC[i][j] / temp)); // limit maxi
 
             //it will be more complicated to calculate both Wh and Wv, but we have also Wd==> pseudo Lipschitz
-            if (koeLi[level * 3 + dir - 1][i * W_L + j] > maxkoeLi) {
-                maxkoeLi = koeLi[level * 3 + dir - 1][i * W_L + j];
+            if (koeLi[i * W_L + j] > maxkoeLi) {
+                maxkoeLi = koeLi[i * W_L + j];
             }
-            float diff = maxkoeLi - koeLi[level * 3 + dir - 1][i * W_L + j];
+            float diff = maxkoeLi - koeLi[i * W_L + j];
             diff *= diffFactor;
-            koeLi[level * 3 + dir - 1][i * W_L + j] = maxkoeLi - diff;
+            koeLi[i * W_L + j] = maxkoeLi - diff;
         }
     }
-
 }
 
 void ImProcFunctions::finalContAllL(float* const* WavCoeffs_L, float * WavCoeffs_L0, int level, int dir, const cont_params &cp,

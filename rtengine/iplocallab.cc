@@ -7557,12 +7557,6 @@ BENCHFUN
             koeLi[i] = &koeLibuffer[i * W_L * H_L];
         }
 
-        for (int j = 0; j < 12; j++) {
-            for (int i = 0; i < W_L * H_L; i++) {
-                koeLi[j][i] = 0.f;
-            }
-        }
-
         array2D<float> tmC(W_L, H_L);
 
         float gradw = lp.gradw;
@@ -7572,10 +7566,8 @@ BENCHFUN
                 const int W_L = wdspot->level_W(lvl);
                 const int H_L = wdspot->level_H(lvl);
                 float* const* wav_L = wdspot->level_coeffs(lvl);
-                if (lvl < 4) {
-                    calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC, true);
-                }
-                    // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
+                calckoe(wav_L[dir], gradw, tloww, koeLi[lvl * 3 + dir - 1], lvl, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC, true);
+                // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
             }
         }
         
