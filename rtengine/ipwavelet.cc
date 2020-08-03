@@ -2691,58 +2691,70 @@ void ImProcFunctions::calckoe (const float* WavCoeffs, float gradw, float tloww,
                             c2 * ((WavCoeffs[(i - 1) * W_L + j - 1] + WavCoeffs[(i - 1) * W_L + j + 1]) + (WavCoeffs[(i + 1) * W_L + j - 1] + WavCoeffs[(i + 1) * W_L + j + 1]));
             }
         }
-    } else if (level > 1) { // do not activate 5x5 if level 0 or 1
-        // Gaussian 1.1
-        // 0.5 2 3 2 0.5
-        // 2 7 10 7 2
-        // 3 10 15 10 3
-        // 2 7 10 7 2
-        // 0.5 2 3 2 0.5
-        // divi 113
-        //Gaussian 1.4
-        // 2 4 5 4 2
-        // 4 9 12 9 4
-        // 5 12 15 12 5
-        // 4 9 12 9 4
-        // 2 4 5 4 2
-        // divi 159
-        float c0, c1, c2, c3, c4, c5, mult;
-        if (tloww < 85.f) { //sigma=1.1
-            c0 = 15.f;
-            c1 = 10.f;
-            c2 = 7.f;
-            c3 = 3.f;
-            c4 = 2.f;
-            c5 = 0.5f;
-            mult = 0.0088495f;
-        } else { //sigma=1.4
-            c0 = 15.f;
-            c1 = 12.f;
-            c2 = 9.f;
-            c3 = 5.f;
-            c4 = 4.f;
-            c5 = 2.f;
-            mult = 0.0062893f;
-        }
-        c0 *= mult;
-        c1 *= mult;
-        c2 *= mult;
-        c3 *= mult;
-        c4 *= mult;
-        c5 *= mult;
-#ifdef _OPENMP
-        #pragma omp parallel for if(multiThread)
-#endif
-        for (int i = 2; i < H_L - 2; i++) {
-            for (int j = 2; j < W_L - 2; j++) {
-                tmC[i][j] = c0 * WavCoeffs[i * W_L + j] +
-                            c1 * ((WavCoeffs[(i - 1) * W_L + j] + WavCoeffs[(i + 1) * W_L + j]) + (WavCoeffs[i * W_L + j + 1] + WavCoeffs[i * W_L + j - 1])) +
-                            c2 * ((WavCoeffs[(i - 1) * W_L + j - 1] + WavCoeffs[(i - 1) * W_L + j + 1]) + (WavCoeffs[(i + 1) * W_L + j - 1] + WavCoeffs[(i + 1) * W_L + j + 1])) +
-                            c3 * ((WavCoeffs[(i - 2) * W_L + j] + WavCoeffs[(i + 2) * W_L + j]) + (WavCoeffs[i * W_L + j - 2] + WavCoeffs[i * W_L + j + 2])) +
-                            c4 * ((WavCoeffs[(i - 2) * W_L + j - 1] + WavCoeffs[(i - 2) * W_L + j + 1]) + (WavCoeffs[(i + 2) * W_L + j + 1] + WavCoeffs[(i + 2) * W_L + j - 1]) +
-                                  (WavCoeffs[(i - 1) * W_L + j - 2] + WavCoeffs[(i - 1) * W_L + j + 2]) + (WavCoeffs[(i + 1) * W_L + j + 2] + WavCoeffs[(i + 1) * W_L + j - 2])) +
-                            c5 * ((WavCoeffs[(i - 2) * W_L + j - 2] + WavCoeffs[(i - 2) * W_L + j + 2]) + (WavCoeffs[(i + 2) * W_L + j - 2] + WavCoeffs[(i + 2) * W_L + j + 2]));
+    } else {
+        if (level > 1) { // do not activate 5x5 if level 0 or 1
+            // Gaussian 1.1
+            // 0.5 2 3 2 0.5
+            // 2 7 10 7 2
+            // 3 10 15 10 3
+            // 2 7 10 7 2
+            // 0.5 2 3 2 0.5
+            // divi 113
+            //Gaussian 1.4
+            // 2 4 5 4 2
+            // 4 9 12 9 4
+            // 5 12 15 12 5
+            // 4 9 12 9 4
+            // 2 4 5 4 2
+            // divi 159
+            float c0, c1, c2, c3, c4, c5, mult;
+            if (tloww < 85.f) { //sigma=1.1
+                c0 = 15.f;
+                c1 = 10.f;
+                c2 = 7.f;
+                c3 = 3.f;
+                c4 = 2.f;
+                c5 = 0.5f;
+                mult = 0.0088495f;
+            } else { //sigma=1.4
+                c0 = 15.f;
+                c1 = 12.f;
+                c2 = 9.f;
+                c3 = 5.f;
+                c4 = 4.f;
+                c5 = 2.f;
+                mult = 0.0062893f;
             }
+            c0 *= mult;
+            c1 *= mult;
+            c2 *= mult;
+            c3 *= mult;
+            c4 *= mult;
+            c5 *= mult;
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+            for (int i = 2; i < H_L - 2; i++) {
+                for (int j = 2; j < W_L - 2; j++) {
+                    tmC[i][j] = c0 * WavCoeffs[i * W_L + j] +
+                                c1 * ((WavCoeffs[(i - 1) * W_L + j] + WavCoeffs[(i + 1) * W_L + j]) + (WavCoeffs[i * W_L + j + 1] + WavCoeffs[i * W_L + j - 1])) +
+                                c2 * ((WavCoeffs[(i - 1) * W_L + j - 1] + WavCoeffs[(i - 1) * W_L + j + 1]) + (WavCoeffs[(i + 1) * W_L + j - 1] + WavCoeffs[(i + 1) * W_L + j + 1])) +
+                                c3 * ((WavCoeffs[(i - 2) * W_L + j] + WavCoeffs[(i + 2) * W_L + j]) + (WavCoeffs[i * W_L + j - 2] + WavCoeffs[i * W_L + j + 2])) +
+                                c4 * ((WavCoeffs[(i - 2) * W_L + j - 1] + WavCoeffs[(i - 2) * W_L + j + 1]) + (WavCoeffs[(i + 2) * W_L + j + 1] + WavCoeffs[(i + 2) * W_L + j - 1]) +
+                                      (WavCoeffs[(i - 1) * W_L + j - 2] + WavCoeffs[(i - 1) * W_L + j + 2]) + (WavCoeffs[(i + 1) * W_L + j + 2] + WavCoeffs[(i + 1) * W_L + j - 2])) +
+                                c5 * ((WavCoeffs[(i - 2) * W_L + j - 2] + WavCoeffs[(i - 2) * W_L + j + 2]) + (WavCoeffs[(i + 2) * W_L + j - 2] + WavCoeffs[(i + 2) * W_L + j + 2]));
+                }
+            }
+        } else {
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+            for (int i = 0; i < H_L; i++) {
+                for (int j = 0; j < W_L; j++) {
+                    koeLi[i * W_L + j] = 0.f;
+                }
+            }
+            return;
         }
     }
 
