@@ -2920,8 +2920,8 @@ void Wavelet::convertParamToNormal()
 
     //final touchup
     BAmethod->set_active(0);    
-    enableListener();
     sigmafin->setValue(def_params.sigmafin);
+    enableListener();
 
     // Update GUI based on converted widget parameters:
 }
