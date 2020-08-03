@@ -642,12 +642,14 @@ void Retinex::neutral_pressed ()
     limd->resetValue (false);
     highl->resetValue (false);
     gam->resetValue (false);
+    skal->resetValue (false);
     slope->resetValue (false);
     highlights->resetValue (false);
     h_tonalwidth->resetValue (false);
     shadows->resetValue (false);
     s_tonalwidth->resetValue (false);
     radius->resetValue (false);
+    medianmap->set_active (false);
     mapMethod->set_active (0);
     viewMethod->set_active (0);
     retinexMethod->set_active (2);
