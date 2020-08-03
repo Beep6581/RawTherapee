@@ -123,12 +123,12 @@ public:
 
     int getRows() const
     {
-        return const_cast<Array2Df &>(*this).height();
+        return const_cast<Array2Df &>(*this).getHeight();
     }
 
     int getCols() const
     {
-        return const_cast<Array2Df &>(*this).width();
+        return const_cast<Array2Df &>(*this).getWidth();
     }
 
     float *data()
