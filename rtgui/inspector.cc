@@ -225,15 +225,19 @@ bool Inspector::on_scroll_event(GdkEventScroll *event)
         break;
     case GDK_SCROLL_DOWN:
         delta_y = step_y * deviceScale * imH / 100;
+        alt = true; // zoom for non smooth scroll events (scroll wheel)
         break;
     case GDK_SCROLL_UP:
         delta_y = -step_y * deviceScale * imH / 100;
+        alt = true; // zoom for non smooth scroll events (scroll wheel)
         break;
     case GDK_SCROLL_LEFT:
         delta_x = step_x * deviceScale * imW / 100;
+        alt = true; // zoom for non smooth scroll events (scroll wheel)
         break;
     case GDK_SCROLL_RIGHT:
         delta_x = -step_x * deviceScale * imW / 100;
+        alt = true; // zoom for non smooth scroll events (scroll wheel)
         break;
     }
 
