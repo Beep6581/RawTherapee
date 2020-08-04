@@ -2758,7 +2758,7 @@ Camera constants:
     { // Quality B
         "make_model": ["HASSELBLAD NEX-7", "SONY NEX-7"], // Hasselblad NEX-7 also known as Hasselblad Lunar
         "dcraw_matrix": [ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 ], // adobe DNGv12.2 d65
-        "ranges": { "black": 512 }
+        "ranges": { "black": 512, "white": 16372 } // Typical white level (samples provided by @ggc on Pixls, influence from LENR unknown
     },
 
     { // Quality A for tested CFV, the other models have the same sensor (16 megapixel square sensor)
