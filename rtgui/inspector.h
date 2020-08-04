@@ -57,6 +57,7 @@ private:
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;
+    rtengine::Coord2D next_image_pos;
 
     Gtk::Window window;
     bool on_key_release(GdkEventKey *event);

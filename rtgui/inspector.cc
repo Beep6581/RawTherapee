@@ -114,6 +114,10 @@ void Inspector::showWindow(bool scaled)
     window.fullscreen();
     window.set_visible(true);
     pinned = false;
+
+    // update content when becoming visible
+    switchImage(next_image_path);
+    mouseMove(next_image_pos, 0);
 }
 
 bool Inspector::on_key_release(GdkEventKey *event)
@@ -423,6 +427,12 @@ void Inspector::mouseMove (rtengine::Coord2D pos, int transform)
         return;
     }
 
+    next_image_pos = pos;
+
+    // skip actual update of content when not visible
+    if (!window.get_visible())
+        return;
+
     if (currImage) {
         center.set(int(rtengine::LIM01(pos.x)*double(currImage->imgBuffer.getWidth())), int(rtengine::LIM01(pos.y)*double(currImage->imgBuffer.getHeight())));
     } else {
@@ -443,6 +453,11 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
     }
 
     next_image_path = fullPath;
+
+    // skip actual update of content when not visible
+    if (!window.get_visible())
+        return;
+
     if (!options.inspectorDelay) {
         doSwitchImage();
     } else {
