@@ -2247,6 +2247,8 @@ void EditorPanel::histogramChanged(
     const LUTu& histBlueRaw,
     const LUTu& histChroma,
     const LUTu& histLRETI,
+    int vectorscopeScale,
+    const int vectorscope[HistogramListener::vectorscope_size][HistogramListener::vectorscope_size],
     int waveformScale,
     int waveformWidth,
     const int waveformRed[][256],
@@ -2255,7 +2257,7 @@ void EditorPanel::histogramChanged(
 )
 {
     if (histogramPanel) {
-        histogramPanel->histogramChanged(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue);
+        histogramPanel->histogramChanged(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue);
     }
 
     tpc->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
@@ -2272,10 +2274,30 @@ bool EditorPanel::updateHistogram(void)
         || histogram_scope_type == HistogramPanelListener::NONE;
 }
 
+bool EditorPanel::updateVectorscope(void)
+{
+    return
+        histogram_scope_type == HistogramPanelListener::VECTORSCOPE_HS
+        || histogram_scope_type == HistogramPanelListener::VECTORSCOPE_CH
+        || histogram_scope_type == HistogramPanelListener::NONE;
+}
+
 bool EditorPanel::updateWaveform(void)
 {
     return histogram_scope_type == HistogramPanelListener::WAVEFORM
         || histogram_scope_type == HistogramPanelListener::NONE;
+}
+
+int EditorPanel::vectorscopeType(void)
+{
+    switch (histogram_scope_type) {
+        case HistogramPanelListener::VECTORSCOPE_HS:
+            return 0;
+        case HistogramPanelListener::VECTORSCOPE_CH:
+            return 1;
+        default:
+            return -1;
+    }
 }
 
 void EditorPanel::scopeTypeChanged(ScopeType new_type)
@@ -2289,9 +2311,13 @@ void EditorPanel::scopeTypeChanged(ScopeType new_type)
     // Make sure the new scope is updated since we only actively update the
     // current scope.
     if (new_type == HistogramPanelListener::HISTOGRAM) {
-        histogram_observable->updateHistogram();
+        histogram_observable->requestUpdateHistogram();
+    } else if (new_type == HistogramPanelListener::VECTORSCOPE_HS) {
+        histogram_observable->requestUpdateVectorscope();
+    } else if (new_type == HistogramPanelListener::VECTORSCOPE_CH) {
+        histogram_observable->requestUpdateVectorscope();
     } else if (new_type == HistogramPanelListener::WAVEFORM) {
-        histogram_observable->updateWaveform();
+        histogram_observable->requestUpdateWaveform();
     }
 }
 

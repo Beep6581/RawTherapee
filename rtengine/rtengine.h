@@ -308,6 +308,8 @@ class HistogramObservable;
 class HistogramListener
 {
 public:
+    static constexpr int vectorscope_size = 128;
+
     virtual ~HistogramListener() = default;
     /** This member function is called when the histogram of the final image has changed.
       * @param histRed is the array of size 256 containing the histogram of the red channel
@@ -330,6 +332,8 @@ public:
         const LUTu& histBlueRaw,
         const LUTu& histChroma,
         const LUTu& histLRETI,
+        int vectorscopeScale,
+        const int vectorscope[vectorscope_size][vectorscope_size],
         int waveformScale,
         int waveformWidth,
         const int waveformRed[][256],
@@ -340,17 +344,23 @@ public:
     virtual void setObservable(HistogramObservable* observable) = 0;
     /** Returns if the listener wants the histogram to be updated. */
     virtual bool updateHistogram(void) = 0;
+    /** Returns if the listener wants the vectorscope to be updated. */
+    virtual bool updateVectorscope(void) = 0;
     /** Returns if the listener wants the waveform to be updated. */
     virtual bool updateWaveform(void) = 0;
+    /** Returns the vectorscope type: 0 for H-S and 1 for H-C. */
+    virtual int vectorscopeType(void) = 0;
 };
 
 class HistogramObservable
 {
 public:
     /** Tells the observable to update the histogram data. */
-    virtual void updateHistogram() = 0;
+    virtual void requestUpdateHistogram() = 0;
+    /** Tells the observable to update the vectorscope data. */
+    virtual void requestUpdateVectorscope() = 0;
     /** Tells the observable to update the waveform data. */
-    virtual void updateWaveform() = 0;
+    virtual void requestUpdateWaveform() = 0;
 };
 
 /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */

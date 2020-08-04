@@ -126,6 +126,8 @@ protected:
     LUTu histBlue, histBlueRaw;
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
+    int vectorscopeScale;
+    int vectorscope[HistogramListener::vectorscope_size][HistogramListener::vectorscope_size];
     /// Waveform's intensity. Same as height of reference image.
     int waveformScale;
     int waveformWidth;
@@ -202,6 +204,7 @@ protected:
     void notifyHistogramChanged();
     void reallocAll();
     void updateLRGBHistograms();
+    void updateVectorscope();
     void updateWaveforms();
     void setScale(int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);
@@ -560,8 +563,9 @@ public:
 
     } denoiseInfoStore;
 
-    void updateHistogram() override;
-    void updateWaveform() override;
+    void requestUpdateHistogram() override;
+    void requestUpdateVectorscope() override;
+    void requestUpdateWaveform() override;
 };
 
 }

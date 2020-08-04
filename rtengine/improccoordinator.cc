@@ -1643,6 +1643,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             if (hListener->updateHistogram()) {
                 updateLRGBHistograms();
             }
+            if (hListener->updateVectorscope()) {
+                updateVectorscope();
+            }
             if (hListener->updateWaveform()) {
                 updateWaveforms();
             }
@@ -1765,6 +1768,8 @@ void ImProcCoordinator::notifyHistogramChanged()
             histBlueRaw,
             histChroma,
             histLRETI,
+            vectorscopeScale,
+            vectorscope,
             waveformScale,
             waveformWidth,
             waveformRed.get(),
@@ -1833,6 +1838,55 @@ void ImProcCoordinator::updateLRGBHistograms()
         }
     }
 
+}
+
+void ImProcCoordinator::updateVectorscope()
+{
+    if (!workimg) {
+        return;
+    }
+
+    int x1, y1, x2, y2;
+    params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
+
+    constexpr int size = HistogramListener::vectorscope_size;
+    memset(vectorscope, 0, size * size * sizeof(vectorscope[0][0]));
+
+    for (int i = y1; i < y2; i++) {
+        int ofs = (i * pW + x1) * 3;
+
+        for (int j = x1; j < x2; j++) {
+            switch (hListener->vectorscopeType()) {
+                case 0: {
+                    // HS
+                    int r = 256 * workimg->data[ofs++];
+                    int g = 256 * workimg->data[ofs++];
+                    int b = 256 * workimg->data[ofs++];
+                    float h, s, l;
+                    Color::rgb2hsl(r, g, b, h, s, l);
+                    const int col = s * cos(2 * RT_PI * h) * (size / 2) + size / 2;
+                    const int row = s * sin(2 * RT_PI * h) * (size / 2) + size / 2;
+                    if (col >= 0 && col < size && row >= 0 && row < size) {
+                        vectorscope[row][col]++;
+                    }
+                    break;
+                }
+
+                case 1: {
+                    // CH
+                    const int col = (size / 96000.0) * nprevl->a[i][j] + size / 2;
+                    const int row = (size / 96000.0) * nprevl->b[i][j] + size / 2;
+
+                    if (col >= 0 && col < size && row >= 0 && row < size) {
+                        vectorscope[row][col]++;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    vectorscopeScale = workimg->getWidth() * workimg->getHeight();
 }
 
 void ImProcCoordinator::updateWaveforms()
@@ -2314,7 +2368,7 @@ void ImProcCoordinator::setHighQualComputed()
     highQualityComputed = true;
 }
 
-void ImProcCoordinator::updateWaveform()
+void ImProcCoordinator::requestUpdateWaveform()
 {
     if (hListener) {
         updateWaveforms();
@@ -2322,10 +2376,18 @@ void ImProcCoordinator::updateWaveform()
     }
 }
 
-void ImProcCoordinator::updateHistogram()
+void ImProcCoordinator::requestUpdateHistogram()
 {
     if (hListener) {
         updateLRGBHistograms();
+        notifyHistogramChanged();
+    }
+}
+
+void ImProcCoordinator::requestUpdateVectorscope()
+{
+    if (hListener) {
+        updateVectorscope();
         notifyHistogramChanged();
     }
 }

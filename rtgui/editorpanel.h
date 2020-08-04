@@ -128,6 +128,8 @@ public:
         const LUTu& histBlueRaw,
         const LUTu& histChroma,
         const LUTu& histLRETI,
+        int vectorscopeScale,
+        const int vectorscope[HistogramListener::vectorscope_size][HistogramListener::vectorscope_size],
         int waveformScale,
         int waveformWidth,
         const int waveformRed[][256],
@@ -136,7 +138,9 @@ public:
     ) override;
     void setObservable(rtengine::HistogramObservable* observable) override;
     bool updateHistogram(void) override;
+    bool updateVectorscope(void) override;
     bool updateWaveform(void) override;
+    int vectorscopeType(void) override;
 
     // HistogramPanelListener
     void scopeTypeChanged(ScopeType new_type) override;

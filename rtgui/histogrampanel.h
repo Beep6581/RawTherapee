@@ -32,6 +32,11 @@
 
 class HistogramArea;
 
+namespace
+{
+constexpr int VECTORSCOPE_SIZE = 128;
+}
+
 struct HistogramAreaIdleHelper {
     HistogramArea* harea;
     bool destroyed;
@@ -156,6 +161,10 @@ private:
 protected:
     LUTu rhist, ghist, bhist, lhist, chist;
     LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
+    int vectorscope_scale;
+    int vect[VECTORSCOPE_SIZE][VECTORSCOPE_SIZE];
+    std::unique_ptr<unsigned char[]> vect_buffer;
+    bool vect_buffer_dirty;
     int waveform_scale;
     int waveform_width;
     std::unique_ptr<int[][256]> rwave, gwave, bwave;
@@ -191,6 +200,8 @@ public:
         const LUTu& histRedRaw,
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
+        int vectorscopeScale,
+        const int vectorscope[VECTORSCOPE_SIZE][VECTORSCOPE_SIZE],
         int waveformScale,
         int waveformWidth,
         const int waveformRed[][256],
@@ -208,6 +219,7 @@ public:
 private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int vsize);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int & ui, int & oi);
+    void drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
     void drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
@@ -219,7 +231,7 @@ private:
 class HistogramPanelListener
 {
 public:
-    enum ScopeType {HISTOGRAM, WAVEFORM, NONE};
+    enum ScopeType {HISTOGRAM, VECTORSCOPE_CH, VECTORSCOPE_HS, WAVEFORM, NONE};
 
     virtual void scopeTypeChanged(ScopeType new_type) = 0;
 };
@@ -286,6 +298,8 @@ public:
         const LUTu& histRedRaw,
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
+        int vectorscopeScale,
+        const int vectorscope[VECTORSCOPE_SIZE][VECTORSCOPE_SIZE],
         int waveformScale,
         int waveformWidth,
         const int waveformRed[][256],
@@ -293,7 +307,7 @@ public:
         const int waveformBlue[][256]
     )
     {
-        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue);
+        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;
