@@ -92,7 +92,7 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomSca
     window.signal_key_release_event().connect(sigc::mem_fun(*this, &Inspector::on_key_release));
     window.signal_key_press_event().connect(sigc::mem_fun(*this, &Inspector::on_key_press));
 
-    add_events(Gdk::BUTTON_PRESS_MASK | Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
+    add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
     gestureZoom = Gtk::GestureZoom::create(*this);
     gestureZoom->signal_begin().connect(sigc::mem_fun(*this, &Inspector::on_zoom_begin));
     gestureZoom->signal_scale_changed().connect(sigc::mem_fun(*this, &Inspector::on_zoom_scale_changed));
@@ -162,12 +162,32 @@ bool Inspector::on_key_press(GdkEventKey *event)
 bool Inspector::on_button_press_event(GdkEventButton *event)
 {
     if (event->type == GDK_BUTTON_PRESS) {
+        button_pos.set(event->x, event->y);
         if (!pinned)
             // pin window with mouse click
             pinned = true;
         return true;
     }
     return false;
+}
+
+bool Inspector::on_motion_notify_event(GdkEventMotion *event)
+{
+    int deviceScale = get_scale_factor();
+    int delta_x = (button_pos.x - event->x)*deviceScale;
+    int delta_y = (button_pos.y - event->y)*deviceScale;
+    int imW = currImage->imgBuffer.getWidth();
+    int imH = currImage->imgBuffer.getHeight();
+
+    moveCenter(delta_x, delta_y, imW, imH, deviceScale);
+    button_pos.set(event->x, event->y);
+
+    if (!dirty) {
+        dirty = true;
+        queue_draw();
+    }
+
+    return true;
 }
 
 bool Inspector::on_scroll_event(GdkEventScroll *event)

@@ -63,7 +63,10 @@ private:
     bool on_key_release(GdkEventKey *event);
     bool on_key_press(GdkEventKey *event);
 
+    rtengine::Coord button_pos;
     bool on_button_press_event(GdkEventButton *event) override;
+    bool on_motion_notify_event(GdkEventMotion *event) override;
+
     bool on_scroll_event(GdkEventScroll *event) override;
     void moveCenter(int delta_x, int delta_y, int imW, int imH, int deviceScale);
 
