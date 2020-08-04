@@ -1289,7 +1289,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         // TODO: Optimize.
         for (int u = 0; u < VECTORSCOPE_SIZE; u++) {
             for (int v = 0; v < VECTORSCOPE_SIZE; v++) {
-                const unsigned char value = LIM<float>(scale * vect[u][v], 0, 0xff);
+                const unsigned char value = min<float>(scale * vect[u][v], 0xff);
                 *(uint32_t*)&(vect_buffer[(VECTORSCOPE_SIZE - 1 - u) * cairo_stride + v * 4]) =
                     value | (value << 8) | (value << 16) | (value << 24);
             }
@@ -1394,9 +1394,9 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
         // TODO: Optimize.
         for (int col = 0; col < waveform_width; col++) {
             for (int val = 0; val < 256; val++) {
-                const unsigned char r = needRed ? scale * rwave[col][val] : 0;
-                const unsigned char g = needGreen ? scale * gwave[col][val] : 0;
-                const unsigned char b = needBlue ? scale * bwave[col][val] : 0;
+                const unsigned char r = needRed ? min<float>(scale * rwave[col][val], 0xff) : 0;
+                const unsigned char g = needGreen ? min<float>(scale * gwave[col][val], 0xff) : 0;
+                const unsigned char b = needBlue ? min<float>(scale * bwave[col][val], 0xff) : 0;
                 const unsigned char value = (r > g && r > b) ? r : ((g > b) ? g : b);
                 if (value <= 0) {
                     *(uint32_t*)&(wave_buffer[(255 - val) * cairo_stride + col * 4]) = 0;
