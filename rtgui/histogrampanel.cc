@@ -1432,14 +1432,10 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
         wave_buffer_dirty = false;
     }
 
-    Cairo::RefPtr<Cairo::ImageSurface> surface = Cairo::ImageSurface::create(
-        wave_buffer.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
+    Cairo::RefPtr<Cairo::ImageSurface> surface;
     auto orig_matrix = cr->get_matrix();
     cr->translate(0, padding);
     cr->scale(static_cast<double>(w) / waveform_width, (h - 2 * padding) / 256.0);
-    cr->set_source(surface, 0, 0);
-    cr->set_operator(Cairo::OPERATOR_OVER);
-    cr->paint();
     if (needLuma) {
         surface = Cairo::ImageSurface::create(
             wave_buffer_luma.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
@@ -1447,6 +1443,11 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
         cr->set_operator(Cairo::OPERATOR_OVER);
         cr->paint();
     }
+    surface = Cairo::ImageSurface::create(
+        wave_buffer.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
+    cr->set_source(surface, 0, 0);
+    cr->set_operator(Cairo::OPERATOR_OVER);
+    cr->paint();
     surface->finish();
     cr->set_matrix(orig_matrix);
 }
