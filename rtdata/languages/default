@@ -568,10 +568,10 @@ HISTORY_MSG_314;W - Gamut - Reduce artifacts
 HISTORY_MSG_315;W - Residual - Contrast
 HISTORY_MSG_316;W - Gamut - Skin tar/prot
 HISTORY_MSG_317;W - Gamut - Skin hue
-HISTORY_MSG_318;W - Contrast - Fine levels
-HISTORY_MSG_319;W - Contrast - Fine range
-HISTORY_MSG_320;W - Contrast - Coarse range
-HISTORY_MSG_321;W - Contrast - Coarse levels
+HISTORY_MSG_318;W - Contrast - Finer levels
+HISTORY_MSG_319;W - Contrast - Finer range
+HISTORY_MSG_320;W - Contrast - Coarser range
+HISTORY_MSG_321;W - Contrast - Coarser levels
 HISTORY_MSG_322;W - Gamut - Avoid color shift
 HISTORY_MSG_323;W - ES - Local contrast
 HISTORY_MSG_324;W - Chroma - Pastel
@@ -635,14 +635,14 @@ HISTORY_MSG_381;PRS RLD - Radius
 HISTORY_MSG_382;PRS RLD - Amount
 HISTORY_MSG_383;PRS RLD - Damping
 HISTORY_MSG_384;PRS RLD - Iterations
-HISTORY_MSG_385;W - Residual - Color Balance
+HISTORY_MSG_385;W - Residual - Color balance
 HISTORY_MSG_386;W - Residual - CB green high
 HISTORY_MSG_387;W - Residual - CB blue high
 HISTORY_MSG_388;W - Residual - CB green mid
 HISTORY_MSG_389;W - Residual - CB blue mid
 HISTORY_MSG_390;W - Residual - CB green low
 HISTORY_MSG_391;W - Residual - CB blue low
-HISTORY_MSG_392;W - Residual - Color Balance
+HISTORY_MSG_392;W - Residual - Color balance
 HISTORY_MSG_393;DCP - Look table
 HISTORY_MSG_394;DCP - Baseline exposure
 HISTORY_MSG_395;DCP - Base table
@@ -1198,7 +1198,7 @@ HISTORY_MSG_956;Local - CH Curve
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
-HISTORY_MSG_BLUWAV;Attenuation Response
+HISTORY_MSG_BLUWAV;Attenuation response
 HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
@@ -1224,7 +1224,7 @@ HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
-HISTORY_MSG_EDGEFFECT;Edge Attenuation Response
+HISTORY_MSG_EDGEFFECT;Edge Attenuation response
 HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 HISTORY_MSG_FILMNEGATIVE_FILMBASE;Film base color
 HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
@@ -1271,10 +1271,10 @@ HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
-HISTORY_MSG_SIGMACOL;Chroma Attenuation Response
-HISTORY_MSG_SIGMADIR;Dir Attenuation Response
-HISTORY_MSG_SIGMAFIN;Final contrast Attenuation Response
-HISTORY_MSG_SIGMATON;Toning Attenuation Response
+HISTORY_MSG_SIGMACOL;Chroma Attenuation response
+HISTORY_MSG_SIGMADIR;Dir Attenuation response
+HISTORY_MSG_SIGMAFIN;Final contrast Attenuation response
+HISTORY_MSG_SIGMATON;Toning Attenuation response
 HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
@@ -1294,11 +1294,11 @@ HISTORY_MSG_WAVMERGEC;Merge C
 HISTORY_MSG_WAVMERGEL;Merge L
 HISTORY_MSG_WAVOFFSET;Offset
 HISTORY_MSG_WAVOLDSH;Old algorithm
-HISTORY_MSG_WAVRADIUS;Radius Shadows-Highlight
+HISTORY_MSG_WAVRADIUS;Radius shadows-highlights
 HISTORY_MSG_WAVSCALE;Scale
 HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
+HISTORY_MSG_WAVSIGMA;Attenuation response
 HISTORY_MSG_WAVSIGM;Sigma
-HISTORY_MSG_WAVSIGMA;Attenuation Response
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVUSHAMET;Clarity method
@@ -3240,18 +3240,18 @@ TP_WAVELET_6;Level 6
 TP_WAVELET_7;Level 7
 TP_WAVELET_8;Level 8
 TP_WAVELET_9;Level 9
-TP_WAVELET_APPLYTO;Apply To
+TP_WAVELET_APPLYTO;Apply to
 TP_WAVELET_AVOID;Avoid color shift
 TP_WAVELET_B0;Black
-TP_WAVELET_B1;Grey
+TP_WAVELET_B1;Gray
 TP_WAVELET_B2;Residual
 TP_WAVELET_BACKGROUND;Background
 TP_WAVELET_BACUR;Curve
 TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
-TP_WAVELET_BALCHRO;Chrominance balance
-TP_WAVELET_BALCHROM;Denoise Equalizer  Blue-yellow Red-green
+TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the vertical, horizontal and diagonal wavelet directions: .\nActivating contrast, chroma or residual tone mapping amplifies the effect due to balance
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
+TP_WAVELET_BALCHROM;Denoise equalizer  blue-yellow red-green
 TP_WAVELET_BALLUM;Denoise Equalizer  White-Black
 TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider
@@ -3259,9 +3259,9 @@ TP_WAVELET_BATYPE;Contrast balance method
 TP_WAVELET_BL;Blur levels
 TP_WAVELET_BLCURVE;Blur by levels
 TP_WAVELET_BLURFRAME;Blur
-TP_WAVELET_BLUWAV;Attenuation Response
-TP_WAVELET_CBENAB;Toning and Color Balance
-TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
+TP_WAVELET_BLUWAV;Attenuation response
+TP_WAVELET_CBENAB;Toning and Color balance
+TP_WAVELET_CB_TOOLTIP;With high values you can create special effects, similar to those achieved with the Chroma Module, but focused on the residual image\nWith moderate values you can manually correct the white balance
 TP_WAVELET_CCURVE;Local contrast
 TP_WAVELET_CH1;Whole chroma range
 TP_WAVELET_CH2;Saturated/pastel
@@ -3269,7 +3269,7 @@ TP_WAVELET_CH3;Link contrast levels
 TP_WAVELET_CHCU;Curve
 TP_WAVELET_CHR;Chroma-contrast link strength
 TP_WAVELET_CHRO;Saturated/pastel threshold
-TP_WAVELET_CHROFRAME;Denoise Chrominance
+TP_WAVELET_CHROFRAME;Denoise chrominance
 TP_WAVELET_CHROMAFRAME;Chroma
 TP_WAVELET_CHROMCO;Chrominance Coarse
 TP_WAVELET_CHROMFI;Chrominance Fine
@@ -3280,7 +3280,7 @@ TP_WAVELET_CHSL;Sliders
 TP_WAVELET_CHTYPE;Chrominance method
 TP_WAVELET_CLA;Clarity
 TP_WAVELET_CLARI;Sharp-mask and Clarity
-TP_WAVELET_COLORT;Opacity Red-Green
+TP_WAVELET_COLORT;Opacity red-green
 TP_WAVELET_COMPCONT;Contrast
 TP_WAVELET_COMPGAMMA;Compression gamma
 TP_WAVELET_COMPGAMMA_TOOLTIP;Adjusting the gamma of the residual image allows you to equilibrate the data and histogram.
@@ -3296,16 +3296,16 @@ TP_WAVELET_CONTRA;Contrast
 TP_WAVELET_CONTRASTEDIT;Finer - Coarser levels
 TP_WAVELET_CONTRAST_MINUS;Contrast -
 TP_WAVELET_CONTRAST_PLUS;Contrast +
-TP_WAVELET_CONTRA_TOOLTIP;Changes contrast of the residual image.
+TP_WAVELET_CONTRA_TOOLTIP;Changes the residual image contrast.
 TP_WAVELET_CTYPE;Chrominance control
 TP_WAVELET_CURVEEDITOR_BL_TOOLTIP;Disabled if zoom > about 300%
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modifies local contrast as a function of the original local contrast (abscissa).\nLow abscissa values represent small local contrast (real values about 10..20).\n50% abscissa represents average local contrast (real value about 100..300).\n66% abscissa represents standard deviation of local contrast (real value about 300..800).\n100% abscissa represents maximum local contrast (real value about 3000..8000).
 TP_WAVELET_CURVEEDITOR_CH;Contrast levels=f(Hue)
 TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Modifies each level's contrast as a function of hue.\nTake care not to overwrite changes made with the Gamut sub-tool's hue controls.\nThe curve will only have an effect when wavelet contrast level sliders are non-zero.
 TP_WAVELET_CURVEEDITOR_CL;L
-TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Applies a final contrast luminance curve at the end of the wavelet treatment.
+TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Applies a final contrast-luminance curve at the end of the wavelet  processing.
 TP_WAVELET_CURVEEDITOR_HH;HH
-TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image's hue as a function of hue.
+TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Modifies the residual image hue as a function of hue.
 TP_WAVELET_DALL;All directions
 TP_WAVELET_DAUB;Edge performance
 TP_WAVELET_DAUB2;D2 - low
@@ -3314,35 +3314,35 @@ TP_WAVELET_DAUB6;D6 - standard plus
 TP_WAVELET_DAUB10;D10 - medium
 TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
-TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the firsts levels. However the quality is not strictly related to this coefficient and can vary with images and uses.
+TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the first levels. However the quality is not strictly related to this coefficient and can vary depending on image and use.
 TP_WAVELET_DENOISE;Local contrast
 TP_WAVELET_DIRFRAME;Directional contrast
 TP_WAVELET_DONE;Vertical
 TP_WAVELET_DTHR;Diagonal
 TP_WAVELET_DTWO;Horizontal
 TP_WAVELET_EDCU;Curve
-TP_WAVELET_EDEFFECT;Attenuation Response
-TP_WAVELET_EDEFFECT_TOOLTIP;This slider controls how wide the range of contrast values are that receive the maximum effect from the tool.\nMaximum value (2.5) disabled the tool
+TP_WAVELET_EDEFFECT;Attenuation response
+TP_WAVELET_EDEFFECT_TOOLTIP;This slider selects the range of contrast values that will receive the full effect of any adjustment
 TP_WAVELET_EDGCONT;Local contrast
-TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, top-left, top-right and bottom-right represent respectively local contrast for low values, mean, mean+stdev and maxima.
+TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, top-left, top-right and bottom-right represent respectively local contrast for low values, mean, mean+std. dev. and maxima.
 TP_WAVELET_EDGE;Edge Sharpness
 TP_WAVELET_EDGEAMPLI;Base amplification
 TP_WAVELET_EDGEDETECT;Gradient sensitivity
 TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
-TP_WAVELET_EDGEDETECTTHR2;Threshold high (detection)
-TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This adjuster lets you target edge detection for example to avoid applying edge sharpness to fine details, such as noise in the sky.
+TP_WAVELET_EDGEDETECTTHR2;Edge enhancement
+TP_WAVELET_EDGEDETECTTHR_TOOLTIP;This slider sets a threshold below which finer details won't be considered as an edge
 TP_WAVELET_EDGEDETECT_TOOLTIP;Moving the slider to the right increases edge sensitivity. This affects local contrast, edge settings and noise.
 TP_WAVELET_EDGESENSI;Edge sensitivity
 TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
 TP_WAVELET_EDGTHRESH;Detail
 TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others. The higher the threshold the more the action is centered on the first levels. Be careful with negative values, they increase the action of high levels and can introduce artifacts.
 TP_WAVELET_EDRAD;Radius
-TP_WAVELET_EDRAD_TOOLTIP;This radius adjustment is very different from those in other sharpening tools. Its value is compared to each level through a complex function. In this sense, a value of zero still has an effect.
-TP_WAVELET_EDSL;Threshold Sliders
+TP_WAVELET_EDRAD_TOOLTIP;This adjustment controls the local enhancement. A value of zero still has an effect
+TP_WAVELET_EDSL;Threshold sliders
 TP_WAVELET_EDTYPE;Local contrast method
 TP_WAVELET_EDVAL;Strength
 TP_WAVELET_FINAL;Final Touchup
-TP_WAVELET_FINCFRAME;Final Local Contrast
+TP_WAVELET_FINCFRAME;Final local contrast
 TP_WAVELET_FINCOAR_TOOLTIP;The left (positive) part of the curve acts on the finer levels (increase).\nThe 2 points on the abscissa represent the respective action limits of finer and coarser levels 5 and 6 (default).\nThe right (negative) part of the curve acts on the coarser levels (increase).\nAvoid moving the left part of the curve with negative values. Avoid moving the right part of the curve with positives values
 TP_WAVELET_FINEST;Finest
 TP_WAVELET_HIGHLIGHT;Finer levels luminance range
@@ -3350,7 +3350,7 @@ TP_WAVELET_HS1;Whole luminance range
 TP_WAVELET_HS2;Selective luminance range
 TP_WAVELET_HUESKIN;Skin hue
 TP_WAVELET_HUESKIN_TOOLTIP;The bottom points set the beginning of the transition zone, and the upper points the end of it, where the effect is at its maximum.\n\nIf you need to move the area significantly, or if there are artifacts, then the <b>white balance is incorrect</b>.
-TP_WAVELET_HUESKY;Sky hue
+TP_WAVELET_HUESKY;Hue range
 TP_WAVELET_HUESKY_TOOLTIP;The bottom points set the beginning of the transition zone, and the upper points the end of it, where the effect is at its maximum.\n\nIf you need to move the area significantly, or if there are artifacts, then the <b>white balance is incorrect</b>.
 TP_WAVELET_ITER;Delta balance levels
 TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
@@ -3358,18 +3358,18 @@ TP_WAVELET_LABEL;Wavelet Levels
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chroma
 TP_WAVELET_LEVDIR_ALL;All levels, in all directions
-TP_WAVELET_LEVDIR_INF;Finer details levels, with selected level
+TP_WAVELET_LEVDIR_INF;Finer detail levels, including selected level
 TP_WAVELET_LEVDIR_ONE;One level
-TP_WAVELET_LEVDIR_SUP;Coarser details levels, without selected level
+TP_WAVELET_LEVDIR_SUP;Coarser detail levels, excluding selected level
 TP_WAVELET_LEVELS;Wavelet levels
-TP_WAVELET_LEVELS_TOOLTIP;Choose the number of detail levels the image is to be decomposed into. More levels require more RAM and require a longer processing time.
+TP_WAVELET_LEVELS_TOOLTIP;Choose the number of wavelet decomposition levels for the image.\nMore levels require more RAM and require a longer processing time.
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVLABEL;Preview maximum possible levels = %1
 TP_WAVELET_LEVONE;Level 2
 TP_WAVELET_LEVTHRE;Level 4
 TP_WAVELET_LEVTWO;Level 3
 TP_WAVELET_LEVZERO;Level 1
-TP_WAVELET_LINKEDG;Link with Edge Sharpness' Strength
+TP_WAVELET_LINKEDG;Link to Edge Sharpness Strength
 TP_WAVELET_LIPST;Enhanced algoritm
 TP_WAVELET_LOWLIGHT;Coarser levels luminance range
 TP_WAVELET_LOWTHR_TOOLTIP;Prevents amplification of fine textures and noise
@@ -3377,7 +3377,7 @@ TP_WAVELET_MEDGREINF;First level
 TP_WAVELET_MEDI;Reduce artifacts in blue sky
 TP_WAVELET_MEDILEV;Edge detection
 TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
-TP_WAVELET_MERGEC;Merge Chroma
+TP_WAVELET_MERGEC;Merge chroma
 TP_WAVELET_MERGEL;Merge Luma
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOIS;Denoise
@@ -3388,24 +3388,24 @@ TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
 TP_WAVELET_NPTYPE;Neighboring pixels
 TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
-TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between shadows and highlights.\nHigh values here will amplify the contrast change of the highlights, whereas low values will amplify the contrast change of the shadows.\nAlong with a low Attenuation Response value you will able to select the contrasts that will be enhanced.
+TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between low contrast and high contrast details.\nHigh values will amplify contrast changes to the higher contrast details, whereas low values will amplify contrast changes to low contrast details.\nBy using a low Attenuation response value you can select which contrast values will be enhanced.
 TP_WAVELET_OLDSH;Algorithm using negatives values
-TP_WAVELET_OPACITY;Opacity Blue-Yellow
+TP_WAVELET_OPACITY;Opacity blue-yellow
 TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
 TP_WAVELET_OPACITYWL;Local contrast
 TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
 TP_WAVELET_PROTAB;Protection
-TP_WAVELET_RADIUS;Radius Shadows - Highlight
+TP_WAVELET_RADIUS;Radius shadows - highlight
 TP_WAVELET_RANGEAB;Range a and b %
 TP_WAVELET_RE1;Reinforced
 TP_WAVELET_RE2;Unchanged
 TP_WAVELET_RE3;Reduced
-TP_WAVELET_RESBLUR;Blur Luminance
-TP_WAVELET_RESBLURC;Blur Chroma
+TP_WAVELET_RESBLUR;Blur luminance
+TP_WAVELET_RESBLURC;Blur chroma
 TP_WAVELET_RESBLUR_TOOLTIP;Disabled if zoom > about 500%
-TP_WAVELET_RESCHRO;Intensity
+TP_WAVELET_RESCHRO;Strength
 TP_WAVELET_RESCON;Shadows
 TP_WAVELET_RESCONH;Highlights
 TP_WAVELET_RESID;Residual Image
@@ -3414,16 +3414,16 @@ TP_WAVELET_SETTINGS;Wavelet Settings
 TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
+TP_WAVELET_SIGMA;Attenuation response
 TP_WAVELET_SIGM;Sigma
-TP_WAVELET_SIGMA;Attenuation Response
-TP_WAVELET_SIGMAFIN;Attenuation Response
+TP_WAVELET_SIGMAFIN;Attenuation response
 TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n .The lower it is, the more the effect will be pinpointed towards a narrow range of contrast values
 TP_WAVELET_SKIN;Skin targetting/protection
 TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
-TP_WAVELET_SKY;Sky targetting/protection
-TP_WAVELET_SKY_TOOLTIP;At -100 sky-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 sky-tones are protected while all other tones are affected.
-TP_WAVELET_SOFTRAD;Soft Radius
-TP_WAVELET_STREN;Strength
+TP_WAVELET_SKY;Hue targetting/protection
+TP_WAVELET_SKY_TOOLTIP;Allows you to target or protect a range of hues.\nAt -100 selected hues are targetted.\nAt 0 all hues are treated equally.\nAt +100 selected hues are protected while all other hues are targetted.
+TP_WAVELET_SOFTRAD;Soft radius
+TP_WAVELET_STREN;Refine
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold
@@ -3431,7 +3431,7 @@ TP_WAVELET_THRESHOLD;Finer levels
 TP_WAVELET_THRESHOLD2;Coarser levels
 TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels from the chosen value to the selected number of ‘wavelet levels’ will be affected by the Shadow luminance range.
 TP_WAVELET_THRESHOLD_TOOLTIP;Only levels below and including the chosen value will be affected by the Highlight luminance range. 
-TP_WAVELET_THRESWAV;Balance Threshold
+TP_WAVELET_THRESWAV;Balance threshold
 TP_WAVELET_THRH;Highlights threshold
 TP_WAVELET_TILESBIG;Tiles
 TP_WAVELET_TILESFULL;Full image
@@ -3444,11 +3444,11 @@ TP_WAVELET_TMSTRENGTH;Compression strength
 TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image.
 TP_WAVELET_TMTYPE;Compression method
 TP_WAVELET_TON;Toning
-TP_WAVELET_TONFRAME;Excluded Colors
+TP_WAVELET_TONFRAME;Excluded colors
 TP_WAVELET_USH;None
 TP_WAVELET_USHARP;Clarity method
 TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\nWavelet : the source file is the file including wavelet threatment
-TP_WAVELET_USH_TOOLTIP;If you select Sharp-mask, wavelet settings will be automatically positioned :\nBackground=black, Process=below, level=3...you can change level between 1 and 4.\n\nIf you select Clarity, wavelet settings will be automatically positioned :\nBackground=residual, Process=above, level=7..you can change level between 5 and 10 and wavelet levels.
+TP_WAVELET_USH_TOOLTIP;If you select Sharp-mask, you can choose any level (in Settings) from 1 to 4 for processing.\nIf you select Clarity, you can choose any level (in Settings) between 5 and Extra.
 TP_WAVELET_WAVLOWTHR;Low contrast threshold
 TP_WAVELET_WAVOFFSET;Offset
 TP_WBALANCE_AUTO;Auto
