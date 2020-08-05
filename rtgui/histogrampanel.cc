@@ -617,7 +617,7 @@ void HistogramRGBArea::setShow(bool show)
 
 void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
-    if (!get_realized () || !showMode || rawMode) {
+    if (!get_realized () || !showMode || (rawMode && options.histogramScopeType != 1)) {
         return;
     }
 
