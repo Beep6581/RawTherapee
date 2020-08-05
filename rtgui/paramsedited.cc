@@ -515,6 +515,7 @@ void ParamsEdited::set(bool v)
     wavelet.bluelow = v;
     wavelet.lipst = v;
     wavelet.ballum = v;
+    wavelet.sigm = v;
     wavelet.balchrom = v;
     wavelet.chromfi = v;
     wavelet.chromco = v;
@@ -1666,6 +1667,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.lipst = wavelet.lipst && p.wavelet.lipst == other.wavelet.lipst;
         wavelet.bluehigh = wavelet.bluehigh && p.wavelet.bluehigh == other.wavelet.bluehigh;
         wavelet.ballum = wavelet.ballum && p.wavelet.ballum == other.wavelet.ballum;
+        wavelet.sigm = wavelet.sigm && p.wavelet.sigm == other.wavelet.sigm;
         wavelet.balchrom = wavelet.balchrom && p.wavelet.balchrom == other.wavelet.balchrom;
         wavelet.chromfi = wavelet.chromfi && p.wavelet.chromfi == other.wavelet.chromfi;
         wavelet.chromco = wavelet.chromco && p.wavelet.chromco == other.wavelet.chromco;
@@ -5508,6 +5510,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.ballum) {
         toEdit.wavelet.ballum   = mods.wavelet.ballum;
+    }
+
+    if (wavelet.sigm) {
+        toEdit.wavelet.sigm   = mods.wavelet.sigm;
     }
 
     if (wavelet.balchrom) {
