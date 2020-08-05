@@ -1774,7 +1774,8 @@ void ImProcCoordinator::notifyHistogramChanged()
             waveformWidth,
             waveformRed.get(),
             waveformGreen.get(),
-            waveformBlue.get()
+            waveformBlue.get(),
+            waveformLuma.get()
         );
     }
 }
@@ -1905,18 +1906,22 @@ void ImProcCoordinator::updateWaveforms()
         waveformRed.reset(new int[waveformWidth][256]);
         waveformGreen.reset(new int[waveformWidth][256]);
         waveformBlue.reset(new int[waveformWidth][256]);
+        waveformLuma.reset(new int[waveformWidth][256]);
     }
 
     int (*red)[256] = waveformRed.get();
     int (*green)[256] = waveformGreen.get();
     int (*blue)[256] = waveformBlue.get();
+    int (*luma)[256] = waveformLuma.get();
 
     // Start with zero.
     const int waveformSize = 256 * waveformWidth;
     memset(waveformRed.get(), 0, waveformSize * sizeof(red[0][0]));
     memset(waveformGreen.get(), 0, waveformSize * sizeof(green[0][0]));
     memset(waveformBlue.get(), 0, waveformSize * sizeof(blue[0][0]));
+    memset(waveformLuma.get(), 0, waveformSize * sizeof(luma[0][0]));
 
+    constexpr float luma_factor = 255.f / 32768.f;
     for (int i = y1; i < y2; i++) {
         int ofs = (i * pW + x1) * 3;
 
@@ -1924,6 +1929,7 @@ void ImProcCoordinator::updateWaveforms()
             red[j][workimg->data[ofs++]]++;
             green[j][workimg->data[ofs++]]++;
             blue[j][workimg->data[ofs++]]++;
+            luma[j][(int)(nprevl->L[i][j + x1] * luma_factor)]++;
         }
     }
 

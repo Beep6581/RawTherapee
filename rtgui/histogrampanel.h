@@ -167,8 +167,9 @@ protected:
     bool vect_buffer_dirty;
     int waveform_scale;
     int waveform_width;
-    std::unique_ptr<int[][256]> rwave, gwave, bwave;
+    std::unique_ptr<int[][256]> rwave, gwave, bwave, lwave;
     std::unique_ptr<unsigned char[]> wave_buffer;
+    std::unique_ptr<unsigned char[]> wave_buffer_luma;
     bool wave_buffer_dirty;
 
     bool valid;
@@ -206,7 +207,8 @@ public:
         int waveformWidth,
         const int waveformRed[][256],
         const int waveformGreen[][256],
-        const int waveformBlue[][256]
+        const int waveformBlue[][256],
+        const int waveformLuma[][256]
     );
     void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type);
     void on_realize() override;
@@ -309,10 +311,11 @@ public:
         int waveformWidth,
         const int waveformRed[][256],
         const int waveformGreen[][256],
-        const int waveformBlue[][256]
+        const int waveformBlue[][256],
+        const int waveformLuma[][256]
     )
     {
-        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue);
+        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue, waveformLuma);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;

@@ -379,7 +379,7 @@ void HistogramPanel::type_changed()
         showRed->set_sensitive();
         showGreen->set_sensitive();
         showBlue->set_sensitive();
-        showValue->set_sensitive(false);
+        showValue->set_sensitive();
         showChro->set_sensitive(false);
         showRAW->set_sensitive(false);
         showMode->set_sensitive(false);
@@ -663,7 +663,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                 drawBar(cc, b, 255.0, winw, winh, s);
             }
 
-            if((needLuma || needChroma) && options.histogramScopeType == 0) {
+            if((needLuma || needChroma) && options.histogramScopeType <= 1) {
                 float Lab_L, Lab_a, Lab_b;
                 rtengine::Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, Lab_L, Lab_a, Lab_b, options.rtSettings.HistogramWorking);
 
@@ -673,7 +673,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                     drawBar(cc, Lab_L, 100.0, winw, winh, s);
                 }
 
-                if (needChroma) {
+                if (needChroma && options.histogramScopeType == 0) {
                     // Chroma
                     double chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
                     cc->set_source_rgb(0.9, 0.9, 0.0);
@@ -960,7 +960,8 @@ void HistogramArea::update(
     int waveformWidth,
     const int waveformRed[][256],
     const int waveformGreen[][256],
-    const int waveformBlue[][256]
+    const int waveformBlue[][256],
+    const int waveformLuma[][256]
 )
 {
     if (histRed) {
@@ -980,13 +981,16 @@ void HistogramArea::update(
                 rwave.reset(new int[waveformWidth][256]);
                 gwave.reset(new int[waveformWidth][256]);
                 bwave.reset(new int[waveformWidth][256]);
+                lwave.reset(new int[waveformWidth][256]);
             }
             int (* const rw)[256] = rwave.get();
             int (* const gw)[256] = gwave.get();
             int (* const bw)[256] = bwave.get();
+            int (* const lw)[256] = lwave.get();
             memcpy(rw, waveformRed, 256 * waveformWidth * sizeof(rw[0][0]));
             memcpy(gw, waveformGreen, 256 * waveformWidth * sizeof(gw[0][0]));
             memcpy(bw, waveformBlue, 256 * waveformWidth * sizeof(bw[0][0]));
+            memcpy(lw, waveformLuma, 256 * waveformWidth * sizeof(lw[0][0]));
             wave_buffer_dirty = true;
         } else if (scopeType >= 2) {
             vectorscope_scale = vectorscopeScale;
@@ -1392,9 +1396,11 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
 
     if (wave_buffer_dirty) {
         wave_buffer.reset(new unsigned char[256 * cairo_stride]);
+        wave_buffer_luma.reset(new unsigned char[256 * cairo_stride]);
 
         // Clear waveform.
         memset(wave_buffer.get(), 0, 256 * cairo_stride);
+        memset(wave_buffer_luma.get(), 0, 256 * cairo_stride);
 
         // TODO: Optimize.
         for (int col = 0; col < waveform_width; col++) {
@@ -1413,6 +1419,16 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
             }
         }
 
+        if (needLuma) {
+            for (int col = 0; col < waveform_width; col++) {
+                for (int val = 0; val < 256; val++) {
+                    const unsigned char l = min<float>(scale * lwave[col][val], 0xff);
+                    *(uint32_t*)&(wave_buffer_luma[(255 - val) * cairo_stride + col * 4]) =
+                        l | (l << 8) | (l << 16) | (l << 24);
+                }
+            }
+        }
+
         wave_buffer_dirty = false;
     }
 
@@ -1424,6 +1440,13 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
     cr->set_source(surface, 0, 0);
     cr->set_operator(Cairo::OPERATOR_OVER);
     cr->paint();
+    if (needLuma) {
+        surface = Cairo::ImageSurface::create(
+            wave_buffer_luma.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
+        cr->set_source(surface, 0, 0);
+        cr->set_operator(Cairo::OPERATOR_OVER);
+        cr->paint();
+    }
     surface->finish();
     cr->set_matrix(orig_matrix);
 }

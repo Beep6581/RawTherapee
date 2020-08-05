@@ -338,7 +338,8 @@ public:
         int waveformWidth,
         const int waveformRed[][256],
         const int waveformGreen[][256],
-        const int waveformBlue[][256]
+        const int waveformBlue[][256],
+        const int waveformLuma[][256]
     ) = 0;
     /** Tells which observable is notifying the listener. */
     virtual void setObservable(HistogramObservable* observable) = 0;

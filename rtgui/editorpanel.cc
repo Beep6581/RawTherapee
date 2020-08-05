@@ -2253,11 +2253,12 @@ void EditorPanel::histogramChanged(
     int waveformWidth,
     const int waveformRed[][256],
     const int waveformGreen[][256],
-    const int waveformBlue[][256]
+    const int waveformBlue[][256],
+    const int waveformLuma[][256]
 )
 {
     if (histogramPanel) {
-        histogramPanel->histogramChanged(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue);
+        histogramPanel->histogramChanged(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue, waveformLuma);
     }
 
     tpc->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);

@@ -134,6 +134,7 @@ protected:
     std::unique_ptr<int[][256]> waveformRed, waveformRedRaw;
     std::unique_ptr<int[][256]> waveformGreen, waveformGreenRaw;
     std::unique_ptr<int[][256]> waveformBlue, waveformBlueRaw;
+    std::unique_ptr<int[][256]> waveformLuma;
 
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 

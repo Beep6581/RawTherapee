@@ -134,7 +134,8 @@ public:
         int waveformWidth,
         const int waveformRed[][256],
         const int waveformGreen[][256],
-        const int waveformBlue[][256]
+        const int waveformBlue[][256],
+        const int waveformLuma[][256]
     ) override;
     void setObservable(rtengine::HistogramObservable* observable) override;
     bool updateHistogram(void) override;
