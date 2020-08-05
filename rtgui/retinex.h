@@ -28,6 +28,7 @@ class Retinex final :
 {
 private:
     IdleRegister idle_register;
+    rtengine::ProcEvent EvReticomplex;
 
 protected:
     CurveEditorGroup* curveEditorGD;
@@ -72,6 +73,9 @@ protected:
     MyComboBoxText*   mapMethod;
     MyComboBoxText*   viewMethod;
     Gtk::CheckButton* medianmap;
+    MyComboBoxText* complexmethod;
+    sigc::connection  complexmethodconn;
+    
     double nextmin;
     double nextmax;
     double nextminiT;
@@ -87,6 +91,7 @@ protected:
     Gtk::Frame *gainFrame;
     Gtk::Frame *tranFrame;
     Gtk::Frame *iterFrame;
+    Gtk::Frame *maskFrame;
     Gtk::Frame *equalFrame;
 
     DiagonalCurveEditor* cdshape;
@@ -148,4 +153,7 @@ public:
 
 private:
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
+    void convertParamToNormal();
+    void updateGUIToMode(int mode);
+    void complexmethodChanged();
 };
