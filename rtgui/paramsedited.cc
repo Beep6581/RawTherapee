@@ -60,6 +60,7 @@ void ParamsEdited::set(bool v)
     retinex.mapcurve    = v;
     retinex.cdHcurve    = v;
     retinex.lhcurve    = v;
+    retinex.complexmethod    = v;
     retinex.retinexMethod    = v;
     retinex.mapMethod    = v;
     retinex.viewMethod    = v;
@@ -711,6 +712,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         retinex.lhcurve = retinex.lhcurve && p.retinex.lhcurve == other.retinex.lhcurve;
         retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
         retinex.gaintransmissionCurve = retinex.gaintransmissionCurve && p.retinex.gaintransmissionCurve == other.retinex.gaintransmissionCurve;
+        retinex.complexmethod = retinex.complexmethod && p.retinex.complexmethod == other.retinex.complexmethod;
         retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
         retinex.mapMethod = retinex.mapMethod && p.retinex.mapMethod == other.retinex.mapMethod;
         retinex.viewMethod = retinex.viewMethod && p.retinex.viewMethod == other.retinex.viewMethod;
@@ -1915,6 +1917,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (retinex.gaintransmissionCurve) {
         toEdit.retinex.gaintransmissionCurve = mods.retinex.gaintransmissionCurve;
+    }
+
+    if (retinex.complexmethod) {
+        toEdit.retinex.complexmethod = mods.retinex.complexmethod;
     }
 
     if (retinex.retinexMethod) {

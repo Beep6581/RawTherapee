@@ -73,6 +73,7 @@ struct RetinexParamsEdited {
     bool slope;
     bool neigh;
     bool offs;
+    bool complexmethod;
     bool retinexMethod;
     bool mapMethod;
     bool viewMethod;
