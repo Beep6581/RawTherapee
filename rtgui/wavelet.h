@@ -103,6 +103,7 @@ private:
     rtengine::ProcEvent EvWavlevelshc;
     rtengine::ProcEvent EvWavcomplexmet;
     rtengine::ProcEvent EvWavsigm;
+    rtengine::ProcEvent EvWavdenoise;
 
     LabGrid *labgrid;
 
@@ -184,6 +185,8 @@ private:
     FlatCurveEditor* opacityShapeRG;
     CurveEditorGroup* const opacityCurveEditorG;
     FlatCurveEditor* opacityShapeBY;
+    CurveEditorGroup* const CurveEditorwavnoise;
+    FlatCurveEditor* wavdenoise;
     CurveEditorGroup* const opacityCurveEditorW;
     CurveEditorGroup* const opacityCurveEditorWL;
     FlatCurveEditor* opacityShape;
