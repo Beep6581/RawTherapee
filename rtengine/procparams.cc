@@ -459,6 +459,7 @@ RetinexParams::RetinexParams() :
     shadows(0),
     stonalwidth(80),
     radius(40),
+    complexmethod("normal"),
     retinexMethod("high"),
     retinexcolorspace("Lab"),
     gammaretinex("none"),
@@ -496,6 +497,7 @@ bool RetinexParams::operator ==(const RetinexParams& other) const
         && shadows == other.shadows
         && stonalwidth == other.stonalwidth
         && radius == other.radius
+        && complexmethod == other.complexmethod
         && retinexMethod == other.retinexMethod
         && retinexcolorspace == other.retinexcolorspace
         && gammaretinex == other.gammaretinex
@@ -5027,6 +5029,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->retinex.limd, "Retinex", "Limd", retinex.limd, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.highl, "Retinex", "highl", retinex.highl, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.skal, "Retinex", "skal", retinex.skal, keyFile);
+        saveToKeyfile(!pedited || pedited->retinex.complexmethod, "Retinex", "complexMethod", retinex.complexmethod, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.retinexMethod, "Retinex", "RetinexMethod", retinex.retinexMethod, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.mapMethod, "Retinex", "mapMethod", retinex.mapMethod, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.viewMethod, "Retinex", "viewMethod", retinex.viewMethod, keyFile);
@@ -6497,6 +6500,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Retinex")) {
             assignFromKeyfile(keyFile, "Retinex", "Median", pedited, retinex.medianmap, pedited->retinex.medianmap);
+            assignFromKeyfile(keyFile, "Retinex", "complexMethod", pedited, retinex.complexmethod, pedited->retinex.complexmethod);
             assignFromKeyfile(keyFile, "Retinex", "RetinexMethod", pedited, retinex.retinexMethod, pedited->retinex.retinexMethod);
             assignFromKeyfile(keyFile, "Retinex", "mapMethod", pedited, retinex.mapMethod, pedited->retinex.mapMethod);
             assignFromKeyfile(keyFile, "Retinex", "viewMethod", pedited, retinex.viewMethod, pedited->retinex.viewMethod);
