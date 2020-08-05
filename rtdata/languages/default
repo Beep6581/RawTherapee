@@ -3419,7 +3419,7 @@ TP_WAVELET_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are tr
 TP_WAVELET_SKY;Hue targetting/protection
 TP_WAVELET_SKY_TOOLTIP;Allows you to target or protect a range of hues.\nAt -100 selected hues are targetted.\nAt 0 all hues are treated equally.\nAt +100 selected hues are protected while all other hues are targetted.
 TP_WAVELET_SOFTRAD;Soft radius
-TP_WAVELET_STREN;Strength
+TP_WAVELET_STREN;Refine
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold
