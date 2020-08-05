@@ -1886,7 +1886,7 @@ void ImProcCoordinator::updateVectorscope()
         }
     }
 
-    vectorscopeScale = workimg->getWidth() * workimg->getHeight();
+    vectorscopeScale = (x2 - x1) * (y2 - y1);
 }
 
 void ImProcCoordinator::updateWaveforms()
@@ -1896,9 +1896,12 @@ void ImProcCoordinator::updateWaveforms()
         return;
     }
 
-    if (waveformWidth != workimg->getWidth()) {
+    int x1, y1, x2, y2;
+    params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
+
+    if (waveformWidth != x2 - x1) {
         // Resize waveform arrays.
-        waveformWidth = workimg->getWidth();
+        waveformWidth = x2 - x1;
         waveformRed.reset(new int[waveformWidth][256]);
         waveformGreen.reset(new int[waveformWidth][256]);
         waveformBlue.reset(new int[waveformWidth][256]);
@@ -1914,16 +1917,17 @@ void ImProcCoordinator::updateWaveforms()
     memset(waveformGreen.get(), 0, waveformSize * sizeof(green[0][0]));
     memset(waveformBlue.get(), 0, waveformSize * sizeof(blue[0][0]));
 
-    const int img_height = workimg->getHeight();
-    for (int col = 0; col < waveformWidth; col++) {
-        for (int row = 0; row < img_height; row++) {
-            red[col][workimg->r(row, col)]++;
-            green[col][workimg->g(row, col)]++;
-            blue[col][workimg->b(row, col)]++;
+    for (int i = y1; i < y2; i++) {
+        int ofs = (i * pW + x1) * 3;
+
+        for (int j = 0; j < waveformWidth; j++) {
+            red[j][workimg->data[ofs++]]++;
+            green[j][workimg->data[ofs++]]++;
+            blue[j][workimg->data[ofs++]]++;
         }
     }
 
-    waveformScale = img_height;
+    waveformScale = y2 - y1;
 }
 
 bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, double tempBias)
