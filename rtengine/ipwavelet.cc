@@ -96,6 +96,7 @@ struct cont_params {
     bool opaRG;
     bool edgcurv;
     bool diagcurv;
+    bool denoicurv;
     int CHmet;
     int CHSLmet;
     int EDmet;
@@ -160,6 +161,7 @@ struct cont_params {
     float b_low;
     float rangeab;
     float protab;
+    float sigmm;
 };
 
 int wavNestedLevels = 1;
@@ -244,6 +246,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.sigmaton = params->wavelet.sigmaton;
     cp.sigmacol = params->wavelet.sigmacol;
     cp.sigmadir = params->wavelet.sigmadir;
+    cp.sigmm = params->wavelet.sigm;
 
     if (params->wavelet.TMmethod == "cont") {
         cp.contmet = 1;
@@ -341,6 +344,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.curv = false;
     cp.edgcurv = false;
     cp.diagcurv = false;
+    cp.denoicurv = false;
     cp.opaRG = false;
     cp.opaBY = false;
     cp.opaW = false;
@@ -423,6 +427,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     if (waOpacityCurveWL) {
         cp.diagcurv = true;
+    }
+
+    if (wavdenoise) {
+        for (int i = 0; i < 500; i++) {
+            if (wavdenoise[i] != 0.0) {
+                cp.denoicurv  = true;
+                break;
+            }
+        }
     }
 
     for (int m = 0; m < maxmul; m++) {
@@ -964,7 +977,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             }
                         }
 
-                        if (cp.val > 0 || ref || contr) { //edge
+                        if (cp.val > 0 || ref || contr || cp.denoicurv) { //edge
                             Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
                         }
 
@@ -1030,6 +1043,61 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvll[i];
                                     }
                                 }
+
+
+
+                            if(cp.denoicurv) {
+                                for (int dir = 1; dir < 4; dir++) {
+                                    for (int level = 0; level < 4; level++) {
+                                        int Wlvl_L = Ldecomp->level_W(level);
+                                        int Hlvl_L = Ldecomp->level_H(level);
+                                        float* const* WavCoeffs_L = Ldecomp->level_coeffs(level);
+                                       
+                                        if (cp.denoicurv && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
+                                            float insigma = 0.666f; //SD
+                                            float logmax = log(MaxP[level]); //log Max
+                                            float rapX = (mean[level] + cp.sigmm * sigma[level]) / (MaxP[level]); //rapport between sD / max
+                                            float inx = log(insigma);
+                                            float iny = log(rapX);
+                                            float rap = inx / iny; //koef
+                                            float asig = 0.166f / (sigma[level] * cp.sigmm);
+                                            float bsig = 0.5f - asig * mean[level];
+                                            float amean = 0.5f / (mean[level]);
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, Wlvl_L * 16) num_threads(wavNestedLevels) if (wavNestedLevels>1)
+#endif
+
+                                            for (int i = 0; i <  Wlvl_L * Hlvl_L; i++) {
+                                                float absciss;
+
+                                                if (std::fabs(WavCoeffs_L[dir][i]) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
+                                                    float valcour = xlogf(std::fabs(WavCoeffs_L[dir][i]));
+                                                    float valc = valcour - logmax;
+                                                    float vald = valc * rap;
+                                                    absciss = xexpf(vald);
+                                                } else if (std::fabs(WavCoeffs_L[dir][i]) >= mean[level]) {
+                                                    absciss = asig * std::fabs(WavCoeffs_L[dir][i]) + bsig;
+                                                } else {
+                                                    absciss = amean * std::fabs(WavCoeffs_L[dir][i]);
+                                                }
+
+                                                float kc = wavdenoise[absciss * 500.f] - 1.f;
+                                                float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
+
+                                                float kinterm = 1.f + reduceeffect * kc;
+                                               // kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+
+                                                WavCoeffs_L[dir][i] *=  kinterm;
+                                            }
+                                        }
+                                       
+                                       
+                                       
+                                    }
+                                }
+                            }
+
 
                             if (cp.lev3n < 20.f) {
                                 WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);

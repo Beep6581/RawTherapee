@@ -1287,6 +1287,7 @@ HISTORY_MSG_WAVBL;Blur levels
 HISTORY_MSG_WAVCHROMCO;Chroma coarse
 HISTORY_MSG_WAVCHROMFI;Chroma fine
 HISTORY_MSG_WAVCLARI;Clarity
+HISTORY_MSG_WAVDENOISE;Local contrast
 HISTORY_MSG_WAVEDGS;Edge stopping
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
 HISTORY_MSG_WAVMERGEC;Merge C
@@ -1296,6 +1297,7 @@ HISTORY_MSG_WAVOLDSH;Old algorithm
 HISTORY_MSG_WAVRADIUS;Radius Shadows-Highlight
 HISTORY_MSG_WAVSCALE;Scale
 HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
+HISTORY_MSG_WAVSIGM;Sigma
 HISTORY_MSG_WAVSIGMA;Attenuation Response
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
@@ -3313,6 +3315,7 @@ TP_WAVELET_DAUB10;D10 - medium
 TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the firsts levels. However the quality is not strictly related to this coefficient and can vary with images and uses.
+TP_WAVELET_DENOISE;Local contrast
 TP_WAVELET_DIRFRAME;Directional contrast
 TP_WAVELET_DONE;Vertical
 TP_WAVELET_DTHR;Diagonal
@@ -3411,6 +3414,7 @@ TP_WAVELET_SETTINGS;Wavelet Settings
 TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
+TP_WAVELET_SIGM;Sigma
 TP_WAVELET_SIGMA;Attenuation Response
 TP_WAVELET_SIGMAFIN;Attenuation Response
 TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n .The lower it is, the more the effect will be pinpointed towards a narrow range of contrast values
