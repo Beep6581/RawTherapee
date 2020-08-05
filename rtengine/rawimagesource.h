@@ -106,6 +106,7 @@ protected:
 
     std::vector<double> histMatchingCache;
     const std::unique_ptr<procparams::ColorManagementParams> histMatchingParams;
+    float minVals[3];
 
     void processFalseColorCorrectionThread(Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to);
     void hlRecovery(const std::string &method, float* red, float* green, float* blue, int width, float* hlmax);
@@ -304,6 +305,8 @@ protected:
     void    vflip       (Imagefloat* im);
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
     void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) override;
+    void getMinValsXtrans();
+    void getMinValsBayer(bool zeroIsBad);
 };
 
 }
