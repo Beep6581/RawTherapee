@@ -273,6 +273,11 @@ protected:
     Gtk::Image *barImage_g;
     Gtk::Image *chroImage_g;
 
+    std::unique_ptr<Gtk::Image> histImage;
+    std::unique_ptr<Gtk::Image> waveImage;
+    std::unique_ptr<Gtk::Image> vectHcImage;
+    std::unique_ptr<Gtk::Image> vectHsImage;
+
     Gtk::Image *mode0Image;
     Gtk::Image *mode1Image;
     Gtk::Image *mode2Image;

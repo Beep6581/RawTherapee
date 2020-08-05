@@ -89,6 +89,11 @@ HistogramPanel::HistogramPanel () : panel_listener(nullptr)
     mode1Image  = new RTImage ("histogram-mode-logx-small.png");
     mode2Image  = new RTImage ("histogram-mode-logxy-small.png");
 
+    histImage.reset(new RTImage("histogram-type-histogram-small.png"));
+    waveImage.reset(new RTImage("histogram-type-waveform-small.png"));
+    vectHcImage.reset(new RTImage("histogram-type-vectorscope-hc-small.png"));
+    vectHsImage.reset(new RTImage("histogram-type-vectorscope-hs-small.png"));
+
     showRed   = Gtk::manage (new Gtk::ToggleButton ());
     showGreen = Gtk::manage (new Gtk::ToggleButton ());
     showBlue  = Gtk::manage (new Gtk::ToggleButton ());
@@ -162,13 +167,13 @@ HistogramPanel::HistogramPanel () : panel_listener(nullptr)
     else
         showMode->set_image(*mode2Image);
     if (options.histogramScopeType == 0) {
-        // TODO: scopeType->set_image(*histImage);
+        scopeType->set_image(*histImage);
     } else if (options.histogramScopeType == 1) {
-        // TODO: scopeType->set_image(*waveImage);
+        scopeType->set_image(*waveImage);
     } else if (options.histogramScopeType == 2) {
-        // TODO: scopeType->set_image(*vectHsImage);
+        scopeType->set_image(*vectHsImage);
     } else if (options.histogramScopeType == 3) {
-        // TODO: scopeType->set_image(*vectHcImage);
+        scopeType->set_image(*vectHcImage);
     }
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
     
@@ -338,13 +343,13 @@ void HistogramPanel::type_pressed()
     constexpr int TYPE_COUNT = 4; // Histogram, waveform, and 2 vectorscopes.
     options.histogramScopeType = (options.histogramScopeType + 1) % TYPE_COUNT;
     if (options.histogramScopeType == 0) {
-        // TODO: showMode->set_image(*histImage);
+        scopeType->set_image(*histImage);
     } else if (options.histogramScopeType == 1) {
-        // TODO: showMode->set_image(*waveImage);
+        scopeType->set_image(*waveImage);
     } else if (options.histogramScopeType == 2) {
-        // TODO: showMode->set_image(*vectHsImage);
+        scopeType->set_image(*vectHsImage);
     } else if (options.histogramScopeType == 3) {
-        // TODO: showMode->set_image(*vectHcImage);
+        scopeType->set_image(*vectHcImage);
     }
     type_changed();
     rgbv_toggled();
