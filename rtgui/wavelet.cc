@@ -166,6 +166,7 @@ Wavelet::Wavelet() :
     Dirmethod(Gtk::manage(new MyComboBoxText())),
     Medgreinf(Gtk::manage(new MyComboBoxText())),
     ushamethod(Gtk::manage(new MyComboBoxText())),
+    denmethod(Gtk::manage(new MyComboBoxText())),
     chanMixerHLFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_HIGHLIGHT")))),
     chanMixerMidFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_MIDTONES")))),
     chanMixerShadowsFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_SHADOWS")))),
@@ -236,6 +237,7 @@ Wavelet::Wavelet() :
     EvWavcomplexmet = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_COMPLEX");
     EvWavsigm = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSIGM");
     EvWavdenoise = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENOISE");
+    EvWavdenmethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENMET");
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -613,6 +615,17 @@ Wavelet::Wavelet() :
     sigm->setAdjusterListener(this);
     CurveEditorwavnoise->setCurveListener(this);
 
+    denmethod->append(M("TP_WAVELET_DENEQUAL"));
+    denmethod->append(M("TP_WAVELET_DEN14PLUS"));
+    denmethod->append(M("TP_WAVELET_DEN14LOW"));
+    denmethodconn = denmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::denmethodChanged));
+   // denmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
+    Gtk::HBox* const denHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const denLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENCONTRAST") + ":"));
+    denHBox->pack_start(*denLabel, Gtk::PACK_SHRINK, 4);
+    denHBox->pack_start(*denmethod);
+
+
     wavdenoise = static_cast<FlatCurveEditor*>(CurveEditorwavnoise->addCurve(CT_Flat, "", nullptr, false, false));
     wavdenoise->setIdentityValue(0.);
     wavdenoise->setResetCurve(FlatCurveType(default_params.wavdenoise.at(0)), default_params.wavdenoise);
@@ -625,6 +638,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*level1noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level2noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level3noise, Gtk::PACK_SHRINK, 0);
+    noiseBox->pack_start(*denHBox);
     noiseBox->pack_start(*sigm);
     noiseBox->pack_start(*CurveEditorwavnoise);
     
@@ -1270,6 +1284,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     Backmethodconn.block(true);
     Tilesmethodconn.block(true);
     complexmethodconn.block(true);
+    denmethodconn.block(true);
     daubcoeffmethodconn.block(true);
     Dirmethodconn.block(true);
     CHmethodconn.block(true);
@@ -1397,6 +1412,13 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         complexmethod->set_active(1);
     }
 
+    if (pp->wavelet.denmethod == "equ") {
+        denmethod->set_active(0);
+    } else if (pp->wavelet.denmethod == "high") {
+        denmethod->set_active(1);
+    } else if (pp->wavelet.denmethod == "low") {
+        denmethod->set_active(2);
+    }
 
     //Tilesmethod->set_active (2);
     if (pp->wavelet.Tilesmethod == "full") {
@@ -1604,6 +1626,9 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
             complexmethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->wavelet.denmethod) {
+            denmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
 
         if (!pedited->wavelet.Tilesmethod) {
             Tilesmethod->set_active_text(M("GENERAL_UNCHANGED"));
@@ -1845,6 +1870,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     Backmethodconn.block(false);
     Tilesmethodconn.block(false);
     complexmethodconn.block(false);
+    denmethodconn.block(false);
     daubcoeffmethodconn.block(false);
     CHmethodconn.block(false);
     CHSLmethodconn.block(false);
@@ -2028,6 +2054,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.Backmethod      = Backmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.Tilesmethod     = Tilesmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.complexmethod   = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->wavelet.denmethod       = denmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.daubcoeffmethod = daubcoeffmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.CHmethod        = CHmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.CHSLmethod      = CHSLmethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -2237,6 +2264,14 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.complexmethod = "normal";
     } else if (complexmethod->get_active_row_number() == 1) {
         pp->wavelet.complexmethod = "expert";
+    }
+
+    if (denmethod->get_active_row_number() == 0) {
+        pp->wavelet.denmethod = "equ";
+    } else if (denmethod->get_active_row_number() == 1) {
+        pp->wavelet.denmethod = "high";
+    } else if (denmethod->get_active_row_number() == 2) {
+        pp->wavelet.denmethod = "low";
     }
 
     if (daubcoeffmethod->get_active_row_number() == 0) {
@@ -3012,6 +3047,13 @@ void Wavelet::complexmethodChanged()
     }
 }
 
+void Wavelet::denmethodChanged()
+{    
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvWavdenmethod, denmethod->get_active_text());
+    }
+}
 
 
 void Wavelet::TilesmethodChanged()
@@ -3096,6 +3138,7 @@ void Wavelet::setBatchMode(bool batchMode)
     Backmethod->append(M("GENERAL_UNCHANGED"));
     Tilesmethod->append(M("GENERAL_UNCHANGED"));
     complexmethod->append(M("GENERAL_UNCHANGED"));
+    denmethod->append(M("GENERAL_UNCHANGED"));
     daubcoeffmethod->append(M("GENERAL_UNCHANGED"));
     CHmethod->append(M("GENERAL_UNCHANGED"));
     Medgreinf->append(M("GENERAL_UNCHANGED"));

@@ -104,6 +104,7 @@ private:
     rtengine::ProcEvent EvWavcomplexmet;
     rtengine::ProcEvent EvWavsigm;
     rtengine::ProcEvent EvWavdenoise;
+    rtengine::ProcEvent EvWavdenmethod;
 
     LabGrid *labgrid;
 
@@ -124,6 +125,7 @@ private:
     void MedgreinfChanged();
     void TMmethodChanged();
     void complexmethodChanged();
+    void denmethodChanged();
     void TilesmethodChanged();
     void avoidToggled();
     void showmaskToggled ();
@@ -316,6 +318,8 @@ private:
     sigc::connection  MedgreinfConn;
     MyComboBoxText* const ushamethod;
     sigc::connection  ushamethodconn;
+    MyComboBoxText* const denmethod;
+    sigc::connection  denmethodconn;
 
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
