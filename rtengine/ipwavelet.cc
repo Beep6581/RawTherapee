@@ -119,6 +119,7 @@ struct cont_params {
     float sigmaton;
     float sigmacol;
     float sigmadir;
+    int denmet;
     int ite;
     int contmet;
     bool opaW;
@@ -252,6 +253,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         cp.contmet = 1;
     } else if (params->wavelet.TMmethod == "tm") {
         cp.contmet = 2;
+    }
+
+
+    if (params->wavelet.denmethod == "equ") {
+        cp.denmet = 0;
+    } else if (params->wavelet.denmethod == "high") {
+        cp.denmet = 1;
+    } else if (params->wavelet.denmethod == "low") {
+        cp.denmet = 2;
     }
 
     if (params->wavelet.BAmethod != "none") {
@@ -1056,17 +1066,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
                                 }
 
-                                if (cp.denoicurv) {
+                                if (cp.denoicurv) {//only if curve enable
                                     for (int dir = 1; dir < 4; dir++) {
                                         for (int level = 0; level < 4; level++) {
                                             int Wlvl_L = Ldecomp->level_W(level);
                                             int Hlvl_L = Ldecomp->level_H(level);
-                                            float* const* WavCoeffs_L = Ldecomp->level_coeffs(level);
-                                            float* const* WavCoeffs_L2 = Ldecomp2->level_coeffs(level);
-                                        
+                                            float* const* WavCoeffs_L = Ldecomp->level_coeffs(level);//first decomp denoised
+                                            float* const* WavCoeffs_L2 = Ldecomp2->level_coeffs(level);//second decomp before denoise
+                                            //find local contrast with non denoise
                                             if (cp.denoicurv && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
                                                 float insigma = 0.666f; //SD
                                                 float logmax = log(MaxP[level]); //log Max
+                                                //cp;sigmm chnage the "wider" of sigma
                                                 float rapX = (mean[level] + cp.sigmm * sigma[level]) / (MaxP[level]); //rapport between sD / max
                                                 float inx = log(insigma);
                                                 float iny = log(rapX);
@@ -1094,12 +1105,23 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     }
 
                                                     float kc = wavdenoise[absciss * 500.f] - 0.5f;
-                                                    float reduceeffect = kc <= 0.f ? 1.f : 1.2f;
+                                                    //equalizer for levels 0 and 3...  1.25 and 0.8 arbitrary values
+                                                    if(cp.denmet == 1) {
+                                                        if(level == 0 || level == 3) {
+                                                            kc *= 1.25f;
+                                                        }
+                                                    } else if(cp.denmet == 2) {
+                                                        if(level == 0 || level == 3) {
+                                                            kc *= 0.8f;
+                                                        }
+                                                    }
+
+                                                    float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//1.2 allows to increase denoise
 
                                                     float kinterm = 1.f + reduceeffect * kc;
                                                     kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-
-                                                    WavCoeffs_L[dir][i] = WavCoeffs_L2[dir][i] + (WavCoeffs_L[dir][i] - WavCoeffs_L2[dir][i]) * kinterm;
+                                                    float prov = WavCoeffs_L2[dir][i];//save before denoise
+                                                    WavCoeffs_L[dir][i] = prov + (WavCoeffs_L[dir][i] - prov) * kinterm;//only apply local contrast on difference between denoise and normal
                                                 }
                                             }
                                         }
