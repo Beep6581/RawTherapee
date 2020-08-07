@@ -1442,6 +1442,7 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
         cr->set_source(surface, 0, 0);
         cr->set_operator(Cairo::OPERATOR_OVER);
         cr->paint();
+        surface->finish();
     }
     surface = Cairo::ImageSurface::create(
         wave_buffer.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
