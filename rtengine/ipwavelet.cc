@@ -441,7 +441,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     if (wavdenoise) {
         for (int i = 0; i < 500; i++) {
-            if (wavdenoise[i] != 0.5) {
+            if (wavdenoise[i] != 1.0) {
                 cp.denoicurv  = true;
                 break;
             }
