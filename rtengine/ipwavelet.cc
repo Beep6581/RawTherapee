@@ -1077,7 +1077,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             if (cp.denoicurv && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
                                                 float insigma = 0.666f; //SD
                                                 float logmax = log(MaxP[level]); //log Max
-                                                //cp;sigmm chnage the "wider" of sigma
+                                                //cp;sigmm change the "wider" of sigma
                                                 float rapX = (mean[level] + cp.sigmm * sigma[level]) / (MaxP[level]); //rapport between sD / max
                                                 float inx = log(insigma);
                                                 float iny = log(rapX);
@@ -1104,7 +1104,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                         absciss = amean * std::fabs(WavCoeffs_L2[dir][i]);
                                                     }
 
-                                                    float kc = wavdenoise[absciss * 500.f] - 0.5f;
+                                                    float kc = wavdenoise[absciss * 500.f] - 1.f;
                                                     //equalizer for levels 0 and 3...  1.25 and 0.8 arbitrary values
                                                     if(cp.denmet == 1) {
                                                         if(level == 0 || level == 3) {
