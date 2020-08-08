@@ -1111,6 +1111,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     }
 
                                                     float kc = wavdenoise[absciss * 500.f] - 1.f;
+                                                    if(kc < 0) {
+                                                        kc = -SQR(kc);//approximation to simulate sliders
+                                                    }
                                                     //equalizer for levels 0 and 3...  1.25 and 0.8 arbitrary values
                                                     if(cp.denmet == 1) {
                                                         if(level == 0 || level == 3) {
@@ -1129,7 +1132,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                             kc *= 0.8f;
                                                         }
                                                     }
-
+                                                                            
                                                     float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//1.2 allows to increase denoise
 
                                                     float kinterm = 1.f + reduceeffect * kc;
