@@ -48,10 +48,16 @@ HistogramPanel::HistogramPanel () : panel_listener(nullptr)
     setExpandAlignProperties(histogramRGBAreaVert.get(), false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
     histogramRGBAreaVert->show();
 
-    if (options.histogramScopeType == 1) {
-        histogramRGBArea = histogramRGBAreaVert.get();
-    } else {
-        histogramRGBArea = histogramRGBAreaHori.get();
+    switch (options.histogramScopeType) {
+        case 2:
+        case 3:
+            histogramRGBArea = nullptr;
+            break;
+        case 1:
+            histogramRGBArea = histogramRGBAreaVert.get();
+            break;
+        default:
+            histogramRGBArea = histogramRGBAreaHori.get();
     }
 
     // connecting the two childs
@@ -253,6 +259,8 @@ void HistogramPanel::showRGBBar()
 
     if (histogramRGBArea == histogramRGBAreaHori.get()) {
         pos = Gtk::POS_BOTTOM;
+    } else if (histogramRGBArea == nullptr) {
+        return;
     } else {
         if (options.histogramPosition == 1) {
             pos = Gtk::POS_RIGHT;
@@ -273,8 +281,10 @@ void HistogramPanel::resized (Gtk::Allocation& req)
     histogramArea->queue_draw ();
 
     // set histogramRGBArea invalid;
-    histogramRGBArea->updateBackBuffer(-1, -1, -1);
-    histogramRGBArea->queue_draw ();
+    if (histogramRGBArea) {
+        histogramRGBArea->updateBackBuffer(-1, -1, -1);
+        histogramRGBArea->queue_draw ();
+    }
 
     // Store current height of the histogram
     options.histogramHeight = get_height();
@@ -357,7 +367,7 @@ void HistogramPanel::type_pressed()
 
 void HistogramPanel::type_changed()
 {
-    if (showBAR->get_active()) {
+    if (showBAR->get_active() && histogramRGBArea) {
         histogramRGBArea->setShow(false);
         gfxGrid->remove(*histogramRGBArea);
     }
@@ -396,7 +406,7 @@ void HistogramPanel::type_changed()
         showChro->set_sensitive(false);
         showRAW->set_sensitive(false);
         showMode->set_sensitive(false);
-        histogramRGBArea = histogramRGBAreaHori.get();
+        histogramRGBArea = nullptr;
         if (panel_listener) {
             updateHistAreaOptions();
             HistogramPanelListener::ScopeType type;
@@ -424,7 +434,7 @@ void HistogramPanel::bar_toggled ()
 
     if (showBAR->get_active()) {
         showRGBBar();
-    } else {
+    } else if (histogramRGBArea) {
         gfxGrid->remove(*histogramRGBArea);
     }
 }
@@ -436,9 +446,11 @@ void HistogramPanel::rgbv_toggled ()
     histogramArea->updateBackBuffer ();
     histogramArea->queue_draw ();
 
-    histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showChro->get_active(), showRAW->get_active(), showBAR->get_active() && options.histogramScopeType < 2);
-    histogramRGBArea->updateBackBuffer (0, 0, 0);
-    histogramRGBArea->queue_draw ();
+    if (histogramRGBArea) {
+        histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showChro->get_active(), showRAW->get_active(), showBAR->get_active() && options.histogramScopeType < 2);
+        histogramRGBArea->updateBackBuffer (0, 0, 0);
+        histogramRGBArea->queue_draw ();
+    }
 }
 
 void HistogramPanel::setHistRGBInvalid ()
@@ -450,15 +462,27 @@ void HistogramPanel::setHistRGBInvalid ()
 
 void HistogramPanel::pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw)
 {
+    bool update_hist_area;
 
     if (!validPos) {
         // do something to un-show vertical bars
-        histogramRGBArea->updateBackBuffer(-1, -1, -1);
+        if (histogramRGBArea) {
+            histogramRGBArea->updateBackBuffer(-1, -1, -1);
+        }
+        update_hist_area = histogramArea->updatePointer(-1, -1, -1);
     } else {
         // do something to show vertical bars
-        histogramRGBArea->updateBackBuffer(r, g, b, profile, profileW);
+        if (histogramRGBArea) {
+            histogramRGBArea->updateBackBuffer(r, g, b, profile, profileW);
+        }
+        update_hist_area = histogramArea->updatePointer(r, g, b, profile, profileW);
     }
-    histogramRGBArea->queue_draw ();
+    if (histogramRGBArea) {
+        histogramRGBArea->queue_draw();
+    }
+    if (update_hist_area) {
+        histogramArea->queue_draw();
+    }
 }
 
 /*
@@ -522,7 +546,8 @@ void HistogramPanel::updateHistAreaOptions()
         showChro->get_active(),
         showRAW->get_active(),
         options.histogramDrawMode,
-        options.histogramScopeType
+        options.histogramScopeType,
+        showBAR->get_active()
     );
 }
 
@@ -866,7 +891,8 @@ HistogramArea::HistogramArea (DrawModeListener *fml) :
     oldwidth(-1), oldheight(-1),
     needRed(options.histogramRed), needGreen(options.histogramGreen), needBlue(options.histogramBlue),
     needLuma(options.histogramLuma), needChroma(options.histogramChroma), rawMode(options.histogramRAW),
-    isPressed(false), movingPosition(0.0)
+    isPressed(false), movingPosition(0.0),
+    pointer_red(-1), pointer_green(-1), pointer_blue(-1)
 {
 
     rhist(256);
@@ -930,7 +956,7 @@ void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minim
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
-void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type)
+void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type, bool pointer)
 {
 
     options.histogramRed      = needRed    = r;
@@ -941,6 +967,7 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool 
     options.histogramRAW      = rawMode    = raw;
     options.histogramDrawMode = drawMode   = mode;
     options.histogramScopeType = scopeType = type;
+    options.histogramBar = needPointer = pointer;
 
     wave_buffer_dirty = true;
 }
@@ -1232,6 +1259,24 @@ void HistogramArea::updateBackBuffer ()
     setDirty(false);
 }
 
+bool HistogramArea::updatePointer(int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
+{
+    if (!needPointer || scopeType < 2) {
+        return false;
+    }
+    if (pointer_red == r && pointer_green == g && pointer_blue == b) {
+        return false;
+    }
+
+    float L;
+    pointer_red = r;
+    pointer_green = g;
+    pointer_blue = b;
+    Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, L, pointer_a, pointer_b, options.rtSettings.HistogramWorking);
+    updateBackBuffer();
+    return true;
+}
+
 void HistogramArea::on_realize ()
 {
 
@@ -1383,6 +1428,25 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         cr->paint();
         surface->finish();
         cr->set_matrix(orig_matrix);
+
+        if (needPointer && pointer_red >= 0 && pointer_green >= 0 && pointer_blue >= 0) {
+            float cx, cy;
+            if (scopeType == 2) {
+                float H, S, L;
+                Color::rgb2hsl(pointer_red * 256.f, pointer_green * 256.f, pointer_blue * 256.f, H, S, L);
+                cx = (w + scope_size * S * cos(H * 2 * RT_PI)) / 2;
+                cy = (h - scope_size * S * sin(H * 2 * RT_PI)) / 2;
+            } else {
+                constexpr float ab_factor = 327.68f / 96000.f;
+                cx = w / 2.f + scope_size * pointer_a * ab_factor;
+                cy = h / 2.f - scope_size * pointer_b * ab_factor;
+            }
+            cr->arc(cx, cy, 2 * s, 0, 2 * RT_PI);
+            cr->set_source_rgb(0, 0, 0);
+            cr->fill_preserve();
+            cr->set_source_rgb(1, 1, 1);
+            cr->stroke();
+        }
     }
 }
 

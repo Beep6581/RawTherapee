@@ -182,16 +182,22 @@ protected:
     bool rawMode;
     bool isPressed;
     double movingPosition;
+    bool needPointer;
     
     double padding = 5.0;
 
     HistogramAreaIdleHelper* haih;
+
+    int pointer_red, pointer_green, pointer_blue;
+    float pointer_a, pointer_b;
 
 public:
     explicit HistogramArea(DrawModeListener *fml = nullptr);
     ~HistogramArea() override;
 
     void updateBackBuffer ();
+    /// Update pointer values. Returns true if widget needs redrawing.
+    bool updatePointer(int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
     void update(
         const LUTu& histRed,
         const LUTu& histGreen,
@@ -210,7 +216,7 @@ public:
         const int waveformBlue[][256],
         const int waveformLuma[][256]
     );
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type);
+    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type, bool pointer);
     void on_realize() override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     bool on_button_press_event (GdkEventButton* event) override;
