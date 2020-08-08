@@ -262,6 +262,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         cp.denmet = 1;
     } else if (params->wavelet.denmethod == "low") {
         cp.denmet = 2;
+    } else if (params->wavelet.denmethod == "12high") {
+        cp.denmet = 3;
+    } else if (params->wavelet.denmethod == "12low") {
+        cp.denmet = 4;
     }
 
     if (params->wavelet.BAmethod != "none") {
@@ -1102,6 +1106,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                         absciss = asig * std::fabs(WavCoeffs_L2[dir][i]) + bsig;
                                                     } else {
                                                         absciss = amean * std::fabs(WavCoeffs_L2[dir][i]);
+                                                        float abs = pow(2.f * absciss, (1.f / cp.sigmm));
+                                                        absciss = 0.5f * abs;
                                                     }
 
                                                     float kc = wavdenoise[absciss * 500.f] - 1.f;
@@ -1112,6 +1118,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                         }
                                                     } else if(cp.denmet == 2) {
                                                         if(level == 0 || level == 3) {
+                                                            kc *= 0.8f;
+                                                        }
+                                                    } else if(cp.denmet == 3) {
+                                                        if(level == 0 || level == 1) {
+                                                            kc *= 1.25f;
+                                                        }
+                                                    } else if(cp.denmet == 4) {
+                                                        if(level == 0 || level == 1) {
                                                             kc *= 0.8f;
                                                         }
                                                     }

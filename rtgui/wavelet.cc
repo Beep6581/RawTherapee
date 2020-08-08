@@ -196,6 +196,7 @@ Wavelet::Wavelet() :
     neutrHBox(Gtk::manage(new Gtk::HBox())),
     usharpHBox(Gtk::manage(new Gtk::HBox())),
     ctboxch(Gtk::manage(new Gtk::HBox())),
+    denHBox(Gtk::manage(new Gtk::HBox())),
     ctboxBA(Gtk::manage(new Gtk::VBox()))
 
 {
@@ -618,9 +619,11 @@ Wavelet::Wavelet() :
     denmethod->append(M("TP_WAVELET_DENEQUAL"));
     denmethod->append(M("TP_WAVELET_DEN14PLUS"));
     denmethod->append(M("TP_WAVELET_DEN14LOW"));
+    denmethod->append(M("TP_WAVELET_DEN12PLUS"));
+    denmethod->append(M("TP_WAVELET_DEN12LOW"));
     denmethodconn = denmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::denmethodChanged));
    // denmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
-    Gtk::HBox* const denHBox = Gtk::manage(new Gtk::HBox());
+//    Gtk::HBox* const denHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const denLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENCONTRAST") + ":"));
     denHBox->pack_start(*denLabel, Gtk::PACK_SHRINK, 4);
     denHBox->pack_start(*denmethod);
@@ -1418,6 +1421,10 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         denmethod->set_active(1);
     } else if (pp->wavelet.denmethod == "low") {
         denmethod->set_active(2);
+    } else if (pp->wavelet.denmethod == "12high") {
+        denmethod->set_active(3);
+    } else if (pp->wavelet.denmethod == "12low") {
+        denmethod->set_active(4);
     }
 
     //Tilesmethod->set_active (2);
@@ -2272,6 +2279,10 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.denmethod = "high";
     } else if (denmethod->get_active_row_number() == 2) {
         pp->wavelet.denmethod = "low";
+    } else if (denmethod->get_active_row_number() == 3) {
+        pp->wavelet.denmethod = "12high";
+    } else if (denmethod->get_active_row_number() == 4) {
+        pp->wavelet.denmethod = "12low";
     }
 
     if (daubcoeffmethod->get_active_row_number() == 0) {
@@ -2961,6 +2972,7 @@ void Wavelet::convertParamToNormal()
     //denoise
     chromfi->setValue(def_params.chromfi);
     chromco->setValue(def_params.chromco);
+    denmethod->set_active(0);
     //toning
     exptoning->setEnabled(def_params.exptoning);
     //gamut
@@ -3010,6 +3022,7 @@ void Wavelet::updateGUIToMode(int mode)
         blurFrame->hide();
         cbenab->hide();
         sigmafin->hide();
+        denHBox->hide();
     } else {
         offset->show();
         sigma->show();
@@ -3027,6 +3040,7 @@ void Wavelet::updateGUIToMode(int mode)
         blurFrame->show();
         cbenab->show();
         sigmafin->show();
+        denHBox->show();
     }
 
 }
