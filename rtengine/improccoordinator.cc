@@ -1853,6 +1853,13 @@ void ImProcCoordinator::updateVectorscope()
     constexpr int size = HistogramListener::vectorscope_size;
     memset(vectorscope, 0, size * size * sizeof(vectorscope[0][0]));
 
+    const int lab_img_size = (hListener->vectorscopeType() == 1) ? (x2 - x1) * (y2 - y1) : 0;
+    float L[lab_img_size], a[lab_img_size], b[lab_img_size];
+    if (lab_img_size) {
+        ipf.rgb2lab(*workimg, x1, y1, x2 - x1, y2 - y1, L, a, b, params->icm);
+    }
+
+    int ofs_lab = 0;
     for (int i = y1; i < y2; i++) {
         int ofs = (i * pW + x1) * 3;
 
@@ -1875,12 +1882,13 @@ void ImProcCoordinator::updateVectorscope()
 
                 case 1: {
                     // CH
-                    const int col = (size / 96000.0) * nprevl->a[i][j] + size / 2;
-                    const int row = (size / 96000.0) * nprevl->b[i][j] + size / 2;
+                    const int col = (size / 96000.0) * a[ofs_lab] + size / 2;
+                    const int row = (size / 96000.0) * b[ofs_lab] + size / 2;
 
                     if (col >= 0 && col < size && row >= 0 && row < size) {
                         vectorscope[row][col]++;
                     }
+                    ofs_lab++;
                     break;
                 }
             }
