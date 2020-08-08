@@ -19,7 +19,7 @@
 #pragma once
 
 #include "editedstate.h"
-#include "delayedconnection.h"
+#include "delayed.h"
 #include "guiutils.h"
 
 class Adjuster;
