@@ -1097,15 +1097,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                 for (int i = 0; i < Wlvl_L * Hlvl_L; i++) {
                                                     float absciss;
 
-                                                    if (std::fabs(WavCoeffs_L2[dir][i]) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
-                                                        float valcour = xlogf(std::fabs(WavCoeffs_L2[dir][i]));
+                                                    if (std::fabs(WavCoeffs_L[dir][i]) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
+                                                        float valcour = xlogf(std::fabs(WavCoeffs_L[dir][i]));
                                                         float valc = valcour - logmax;
                                                         float vald = valc * rap;
                                                         absciss = xexpf(vald);
-                                                    } else if (std::fabs(WavCoeffs_L2[dir][i]) >= mean[level]) {
-                                                        absciss = asig * std::fabs(WavCoeffs_L2[dir][i]) + bsig;
+                                                    } else if (std::fabs(WavCoeffs_L[dir][i]) >= mean[level]) {
+                                                        absciss = asig * std::fabs(WavCoeffs_L[dir][i]) + bsig;
                                                     } else {
-                                                        absciss = amean * std::fabs(WavCoeffs_L2[dir][i]);
+                                                        absciss = amean * std::fabs(WavCoeffs_L[dir][i]);
                                                         float k = cp.sigmm;
                                                         if(cp.sigmm > 1.f) {
                                                             k = SQR(cp.sigmm);
