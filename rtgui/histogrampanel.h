@@ -177,6 +177,8 @@ protected:
     DrawModeListener *myDrawModeListener;
     int scopeType;
     int oldwidth, oldheight;
+    /// Intensity of waveform and vectorscope trace.
+    float trace_brightness;
 
     bool needRed, needGreen, needBlue, needLuma, needChroma;
     bool rawMode;

@@ -889,6 +889,7 @@ HistogramArea::HistogramArea (DrawModeListener *fml) :
     valid(false), drawMode(options.histogramDrawMode), myDrawModeListener(fml),
     scopeType(options.histogramScopeType),
     oldwidth(-1), oldheight(-1),
+    trace_brightness(1.0),
     needRed(options.histogramRed), needGreen(options.histogramGreen), needBlue(options.histogramBlue),
     needLuma(options.histogramLuma), needChroma(options.histogramChroma), rawMode(options.histogramRAW),
     isPressed(false), movingPosition(0.0),
@@ -1334,7 +1335,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
 {
     // Arbitrary scale factor multiplied by vectorscope area and divided by
     // current scale.
-    const float scale = 16.f * VECTORSCOPE_SIZE * VECTORSCOPE_SIZE / vectorscope_scale;
+    const float scale = trace_brightness * 8.f * VECTORSCOPE_SIZE * VECTORSCOPE_SIZE / vectorscope_scale;
 
     // See Cairo documentation on stride.
     const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, VECTORSCOPE_SIZE);
@@ -1453,7 +1454,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
 void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
 {
     // Arbitrary scale factor divided by current scale.
-    const float scale = 32.f * 255.f / waveform_scale;
+    const float scale = trace_brightness * 32.f * 255.f / waveform_scale;
 
     // See Cairo documentation on stride.
     const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, waveform_width);
@@ -1561,12 +1562,15 @@ bool HistogramArea::on_button_release_event (GdkEventButton* event)
 
 bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
 {
-    if (drawMode == 0 || scopeType >= 1) {
+    if (drawMode == 0 && scopeType == 0) {
         return false;
     }
 
-    if (isPressed)
-    {
+    if (!isPressed) {
+        return true;
+    }
+
+    if (scopeType == 0) { // Adjust log scale.
         double mod = 1 + (event->x - movingPosition) / get_width();
 
         factor /= mod;
@@ -1579,6 +1583,20 @@ bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
 
         setDirty(true);
         queue_draw ();
+    } else if (scopeType >= 1 && scopeType <= 3) { // Adjust brightness.
+        constexpr float MIN_BRIGHT = 0.1;
+        constexpr float MAX_BRIGHT = 3;
+        constexpr float RANGE = MAX_BRIGHT / MIN_BRIGHT;
+        double dx = (event->x - movingPosition) / get_width();
+        float new_brightness = LIM<float>(trace_brightness * pow(RANGE, dx), MIN_BRIGHT, MAX_BRIGHT);
+        if (new_brightness != trace_brightness) {
+            wave_buffer_dirty = true;
+            vect_buffer_dirty = true;
+            trace_brightness = new_brightness;
+            setDirty(true);
+            queue_draw();
+        }
+        movingPosition = event->x;
     }
 
     return true;
