@@ -54,6 +54,7 @@ private:
     bool active;
     bool pinned;
     bool dirty;
+    bool fullscreen;  // window is shown in fullscreen mode
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;
@@ -87,7 +88,7 @@ public:
     /** @brief Show or hide window
      * @param scaled fit image into window
      */
-    void showWindow(bool scaled);
+    void showWindow(bool scaled, bool fullscreen = true);
 
     /** @brief Mouse movement to a new position
      * @param pos Location of the mouse, in percentage (i.e. [0;1] range) relative to the full size image ; -1,-1 == out of the image

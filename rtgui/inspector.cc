@@ -98,6 +98,7 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomSca
     gestureZoom->signal_scale_changed().connect(sigc::mem_fun(*this, &Inspector::on_zoom_scale_changed));
 
     window.add(*this);
+    window.set_size_request(400, 400);
     window.show_all();
     window.set_visible(false);
     active = true; // always track inspected thumbnails
@@ -108,10 +109,14 @@ Inspector::~Inspector()
     deleteBuffers();
 }
 
-void Inspector::showWindow(bool scaled)
+void Inspector::showWindow(bool scaled, bool fullscreen)
 {
     this->scaled = scaled;
-    window.fullscreen();
+    if (fullscreen)
+        window.fullscreen();
+    else
+        window.unfullscreen();
+    this->fullscreen = fullscreen;
     window.set_visible(true);
     pinned = false;
 
@@ -139,18 +144,29 @@ bool Inspector::on_key_press(GdkEventKey *event)
     switch (event->keyval) {
     case GDK_KEY_z:
     case GDK_KEY_F:
+        // show image unscaled in 100% view
         if (pinned || scaled)
             zoomScale = 1.0; // reset if not key hold
         scaled = false;
         queue_draw();
         return true;
     case GDK_KEY_f:
+        // show image scaled to window size
         if (pinned || !scaled)
             zoomScale = 1.0; // reset if not key hold
         scaled = true;
         queue_draw();
         return true;
+    case GDK_KEY_F11:
+        // toggle fullscreen
+        if (fullscreen)
+            window.unfullscreen();
+        else
+            window.fullscreen();
+        fullscreen = !fullscreen;
+        return true;
     case GDK_KEY_Escape:
+        // hide window
         zoomScale = 1.0;
         window.set_visible(false);
         return true;
@@ -173,6 +189,9 @@ bool Inspector::on_button_press_event(GdkEventButton *event)
 
 bool Inspector::on_motion_notify_event(GdkEventMotion *event)
 {
+    if (!currImage)
+        return false;
+
     int deviceScale = get_scale_factor();
     int delta_x = (button_pos.x - event->x)*deviceScale;
     int delta_y = (button_pos.y - event->y)*deviceScale;
@@ -273,6 +292,9 @@ void Inspector::moveCenter(int delta_x, int delta_y, int imW, int imH, int devic
 
 void Inspector::beginZoom(double x, double y)
 {
+    if (!currImage)
+        return;
+
     int deviceScale = get_scale_factor();
     int imW = currImage->imgBuffer.getWidth();
     int imH = currImage->imgBuffer.getHeight();
