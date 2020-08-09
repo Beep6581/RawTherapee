@@ -43,6 +43,9 @@
  */
 
 template<typename T>
+class array2D;
+
+template<typename T>
 class LUT;
 
 using LUTu = LUT<uint32_t>;
@@ -308,8 +311,6 @@ class HistogramObservable;
 class HistogramListener
 {
 public:
-    static constexpr int vectorscope_size = 128;
-
     virtual ~HistogramListener() = default;
     /** This member function is called when the histogram of the final image has changed.
       * @param histRed is the array of size 256 containing the histogram of the red channel
@@ -333,13 +334,12 @@ public:
         const LUTu& histChroma,
         const LUTu& histLRETI,
         int vectorscopeScale,
-        const int vectorscope[vectorscope_size][vectorscope_size],
+        const array2D<int>& vectorscope,
         int waveformScale,
-        int waveformWidth,
-        const int waveformRed[][256],
-        const int waveformGreen[][256],
-        const int waveformBlue[][256],
-        const int waveformLuma[][256]
+        const array2D<int>& waveformRed,
+        const array2D<int>& waveformGreen,
+        const array2D<int>& waveformBlue,
+        const array2D<int>& waveformLuma
     ) = 0;
     /** Tells which observable is notifying the listener. */
     virtual void setObservable(HistogramObservable* observable) = 0;

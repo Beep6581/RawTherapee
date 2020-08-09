@@ -27,15 +27,11 @@
 #include "guiutils.h"
 #include "pointermotionlistener.h"
 
+#include "../rtengine/array2D.h"
 #include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
 
 class HistogramArea;
-
-namespace
-{
-constexpr int VECTORSCOPE_SIZE = 128;
-}
 
 struct HistogramAreaIdleHelper {
     HistogramArea* harea;
@@ -162,12 +158,12 @@ protected:
     LUTu rhist, ghist, bhist, lhist, chist;
     LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
     int vectorscope_scale;
-    int vect[VECTORSCOPE_SIZE][VECTORSCOPE_SIZE];
+    array2D<int> vect;
     std::unique_ptr<unsigned char[]> vect_buffer;
     bool vect_buffer_dirty;
+    int vect_buffer_size;
     int waveform_scale;
-    int waveform_width;
-    std::unique_ptr<int[][256]> rwave, gwave, bwave, lwave;
+    array2D<int> rwave, gwave, bwave, lwave;
     std::unique_ptr<unsigned char[]> wave_buffer;
     std::unique_ptr<unsigned char[]> wave_buffer_luma;
     bool wave_buffer_dirty;
@@ -210,13 +206,12 @@ public:
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
         int vectorscopeScale,
-        const int vectorscope[VECTORSCOPE_SIZE][VECTORSCOPE_SIZE],
+        const array2D<int>& vectorscope,
         int waveformScale,
-        int waveformWidth,
-        const int waveformRed[][256],
-        const int waveformGreen[][256],
-        const int waveformBlue[][256],
-        const int waveformLuma[][256]
+        const array2D<int>& waveformRed,
+        const array2D<int>& waveformGreen,
+        const array2D<int>& waveformBlue,
+        const array2D<int>& waveformLuma
     );
     void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type, bool pointer);
     void on_realize() override;
@@ -314,16 +309,15 @@ public:
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
         int vectorscopeScale,
-        const int vectorscope[VECTORSCOPE_SIZE][VECTORSCOPE_SIZE],
+        const array2D<int>& vectorscope,
         int waveformScale,
-        int waveformWidth,
-        const int waveformRed[][256],
-        const int waveformGreen[][256],
-        const int waveformBlue[][256],
-        const int waveformLuma[][256]
+        const array2D<int>& waveformRed,
+        const array2D<int>& waveformGreen,
+        const array2D<int>& waveformBlue,
+        const array2D<int>& waveformLuma
     )
     {
-        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue, waveformLuma);
+        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;

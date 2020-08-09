@@ -127,14 +127,10 @@ protected:
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
     int vectorscopeScale;
-    int vectorscope[HistogramListener::vectorscope_size][HistogramListener::vectorscope_size];
+    array2D<int> vectorscope;
     /// Waveform's intensity. Same as height of reference image.
     int waveformScale;
-    int waveformWidth;
-    std::unique_ptr<int[][256]> waveformRed, waveformRedRaw;
-    std::unique_ptr<int[][256]> waveformGreen, waveformGreenRaw;
-    std::unique_ptr<int[][256]> waveformBlue, waveformBlueRaw;
-    std::unique_ptr<int[][256]> waveformLuma;
+    array2D<int> waveformRed, waveformGreen, waveformBlue, waveformLuma;
 
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 

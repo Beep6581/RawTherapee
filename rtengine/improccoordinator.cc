@@ -23,6 +23,7 @@
 
 #include "improccoordinator.h"
 
+#include "array2D.h"
 #include "cieimage.h"
 #include "color.h"
 #include "colortemp.h"
@@ -47,6 +48,9 @@
 
 namespace
 {
+
+constexpr int VECTORSCOPE_SIZE = 128;
+
 using rtengine::Coord2D;
 Coord2D translateCoord(const rtengine::ImProcFunctions& ipf, int fw, int fh, int x, int y) {
 
@@ -129,7 +133,11 @@ ImProcCoordinator::ImProcCoordinator() :
 
     histLRETI(256),
 
-    waveformWidth(0),
+    vectorscope(VECTORSCOPE_SIZE, VECTORSCOPE_SIZE),
+    waveformRed(0, 0),
+    waveformGreen(0, 0),
+    waveformBlue(0, 0),
+    waveformLuma(0, 0),
 
     CAMBrightCurveJ(), CAMBrightCurveQ(),
 
@@ -1771,11 +1779,10 @@ void ImProcCoordinator::notifyHistogramChanged()
             vectorscopeScale,
             vectorscope,
             waveformScale,
-            waveformWidth,
-            waveformRed.get(),
-            waveformGreen.get(),
-            waveformBlue.get(),
-            waveformLuma.get()
+            waveformRed,
+            waveformGreen,
+            waveformBlue,
+            waveformLuma
         );
     }
 }
@@ -1850,8 +1857,8 @@ void ImProcCoordinator::updateVectorscope()
     int x1, y1, x2, y2;
     params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
 
-    constexpr int size = HistogramListener::vectorscope_size;
-    memset(vectorscope, 0, size * size * sizeof(vectorscope[0][0]));
+    constexpr int size = VECTORSCOPE_SIZE;
+    memset((int*)vectorscope, 0, size * size * sizeof(vectorscope[0][0]));
 
     const int lab_img_size = (hListener->vectorscopeType() == 1) ? (x2 - x1) * (y2 - y1) : 0;
     float L[lab_img_size], a[lab_img_size], b[lab_img_size];
@@ -1901,43 +1908,44 @@ void ImProcCoordinator::updateVectorscope()
 void ImProcCoordinator::updateWaveforms()
 {
     if (!workimg) {
-        waveformWidth = 0;
+        // Resize to zero.
+        waveformRed(0, 0);
+        waveformGreen(0, 0);
+        waveformBlue(0, 0);
+        waveformLuma(0, 0);
         return;
     }
 
     int x1, y1, x2, y2;
     params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
+    int waveform_width = waveformRed.getWidth();
 
-    if (waveformWidth != x2 - x1) {
+    if (waveform_width != x2 - x1) {
         // Resize waveform arrays.
-        waveformWidth = x2 - x1;
-        waveformRed.reset(new int[waveformWidth][256]);
-        waveformGreen.reset(new int[waveformWidth][256]);
-        waveformBlue.reset(new int[waveformWidth][256]);
-        waveformLuma.reset(new int[waveformWidth][256]);
+        waveform_width = x2 - x1;
+        waveformRed(waveform_width, 256);
+        waveformGreen(waveform_width, 256);
+        waveformBlue(waveform_width, 256);
+        waveformLuma(waveform_width, 256);
     }
 
-    int (*red)[256] = waveformRed.get();
-    int (*green)[256] = waveformGreen.get();
-    int (*blue)[256] = waveformBlue.get();
-    int (*luma)[256] = waveformLuma.get();
-
     // Start with zero.
-    const int waveformSize = 256 * waveformWidth;
-    memset(waveformRed.get(), 0, waveformSize * sizeof(red[0][0]));
-    memset(waveformGreen.get(), 0, waveformSize * sizeof(green[0][0]));
-    memset(waveformBlue.get(), 0, waveformSize * sizeof(blue[0][0]));
-    memset(waveformLuma.get(), 0, waveformSize * sizeof(luma[0][0]));
+    const int waveformSize = 256 * waveform_width;
+    memset((int*)waveformRed, 0, waveformSize * sizeof(waveformRed[0][0]));
+    memset((int*)waveformGreen, 0, waveformSize * sizeof(waveformGreen[0][0]));
+    memset((int*)waveformBlue, 0, waveformSize * sizeof(waveformBlue[0][0]));
+    memset((int*)waveformLuma, 0, waveformSize * sizeof(waveformLuma[0][0]));
 
     constexpr float luma_factor = 255.f / 32768.f;
     for (int i = y1; i < y2; i++) {
         int ofs = (i * pW + x1) * 3;
+        float* L_row = nprevl->L[i] + x1;
 
-        for (int j = 0; j < waveformWidth; j++) {
-            red[j][workimg->data[ofs++]]++;
-            green[j][workimg->data[ofs++]]++;
-            blue[j][workimg->data[ofs++]]++;
-            luma[j][(int)(nprevl->L[i][j + x1] * luma_factor)]++;
+        for (int j = 0; j < waveform_width; j++) {
+            waveformRed[workimg->data[ofs++]][j]++;
+            waveformGreen[workimg->data[ofs++]][j]++;
+            waveformBlue[workimg->data[ofs++]][j]++;
+            waveformLuma[LIM<int>(L_row[j] * luma_factor, 0, 255)][j]++;
         }
     }
 

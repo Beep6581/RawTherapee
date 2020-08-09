@@ -22,6 +22,7 @@
 #include "options.h"
 #include <cstring>
 #include <cmath>
+#include "../rtengine/array2D.h"
 #include "../rtengine/LUT.h"
 #include "rtimage.h"
 #include "../rtengine/color.h"
@@ -885,7 +886,10 @@ void HistogramRGBAreaVert::get_preferred_width_for_height_vfunc (int height, int
 //
 // HistogramArea
 HistogramArea::HistogramArea (DrawModeListener *fml) :
-    waveform_width(0), wave_buffer_dirty(true),
+    vect(0, 0),
+    vect_buffer_dirty(true), vect_buffer_size(0),
+    rwave(0, 0), gwave(0, 0),bwave(0, 0), lwave(0, 0),
+    wave_buffer_dirty(true),
     valid(false), drawMode(options.histogramDrawMode), myDrawModeListener(fml),
     scopeType(options.histogramScopeType),
     oldwidth(-1), oldheight(-1),
@@ -901,9 +905,6 @@ HistogramArea::HistogramArea (DrawModeListener *fml) :
     bhist(256);
     lhist(256);
     chist(256);
-
-    const int vect_size = VECTORSCOPE_SIZE * Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, VECTORSCOPE_SIZE);
-    vect_buffer.reset(new unsigned char[vect_size]);
 
     get_style_context()->add_class("drawingarea");
     set_name("HistogramArea");
@@ -983,13 +984,12 @@ void HistogramArea::update(
     const LUTu& histGreenRaw,
     const LUTu& histBlueRaw,
     int vectorscopeScale,
-    const int vectorscope[VECTORSCOPE_SIZE][VECTORSCOPE_SIZE],
+    const array2D<int>& vectorscope,
     int waveformScale,
-    int waveformWidth,
-    const int waveformRed[][256],
-    const int waveformGreen[][256],
-    const int waveformBlue[][256],
-    const int waveformLuma[][256]
+    const array2D<int>& waveformRed,
+    const array2D<int>& waveformGreen,
+    const array2D<int>& waveformBlue,
+    const array2D<int>& waveformLuma
 )
 {
     if (histRed) {
@@ -1003,27 +1003,26 @@ void HistogramArea::update(
             ghistRaw = histGreenRaw;
             bhistRaw = histBlueRaw;
         } else if (scopeType == 1) {
+            const int wave_width = waveformRed.getWidth();
+            const int wave_height = waveformRed.getHeight();
             waveform_scale = waveformScale;
-            if (waveform_width != waveformWidth) {
-                waveform_width = waveformWidth;
-                rwave.reset(new int[waveformWidth][256]);
-                gwave.reset(new int[waveformWidth][256]);
-                bwave.reset(new int[waveformWidth][256]);
-                lwave.reset(new int[waveformWidth][256]);
+            if (wave_width != rwave.getWidth() || wave_height != rwave.getHeight()) {
+                rwave(wave_width, wave_height);
+                gwave(wave_width, wave_height);
+                bwave(wave_width, wave_height);
+                lwave(wave_width, wave_height);
             }
-            int (* const rw)[256] = rwave.get();
-            int (* const gw)[256] = gwave.get();
-            int (* const bw)[256] = bwave.get();
-            int (* const lw)[256] = lwave.get();
-            memcpy(rw, waveformRed, 256 * waveformWidth * sizeof(rw[0][0]));
-            memcpy(gw, waveformGreen, 256 * waveformWidth * sizeof(gw[0][0]));
-            memcpy(bw, waveformBlue, 256 * waveformWidth * sizeof(bw[0][0]));
-            memcpy(lw, waveformLuma, 256 * waveformWidth * sizeof(lw[0][0]));
+            memcpy((int*)rwave, (const int*)waveformRed, wave_height * wave_width * sizeof(rwave[0][0]));
+            memcpy((int*)gwave, (const int*)waveformGreen, wave_height * wave_width * sizeof(gwave[0][0]));
+            memcpy((int*)bwave, (const int*)waveformBlue, wave_height * wave_width * sizeof(bwave[0][0]));
+            memcpy((int*)lwave, (const int*)waveformLuma, wave_height * wave_width * sizeof(lwave[0][0]));
             wave_buffer_dirty = true;
         } else if (scopeType >= 2) {
             vectorscope_scale = vectorscopeScale;
-            memcpy(vect, vectorscope, VECTORSCOPE_SIZE * VECTORSCOPE_SIZE *
-                sizeof(vect[0][0]));
+            if (vect.getWidth() != vectorscope.getWidth() || vect.getHeight() != vectorscope.getHeight()) {
+                vect(vectorscope.getWidth(), vectorscope.getHeight());
+            }
+            memcpy((int*)vect, (const int*)vectorscope, vect.getHeight() * vect.getWidth() * sizeof(vect[0][0]));
             vect_buffer_dirty = true;
         }
         valid = true;
@@ -1245,7 +1244,7 @@ void HistogramArea::updateBackBuffer ()
             drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
 
-    } else if (scopeType == 1 && waveform_width > 0) {
+    } else if (scopeType == 1 && rwave.getWidth() > 0) {
         drawWaveform(cr, w, h);
     } else if (scopeType >= 2) {
         drawVectorscope(cr, w, h);
@@ -1333,29 +1332,42 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
 
 void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
 {
+    const int vect_width = vect.getWidth();
+    const int vect_height = vect.getHeight();
     // Arbitrary scale factor multiplied by vectorscope area and divided by
     // current scale.
-    const float scale = trace_brightness * 8.f * VECTORSCOPE_SIZE * VECTORSCOPE_SIZE / vectorscope_scale;
+    const float scale = trace_brightness * 8.f * vect_width * vect_height / vectorscope_scale;
 
     // See Cairo documentation on stride.
-    const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, VECTORSCOPE_SIZE);
+    const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, vect_width);
 
     if (vect_buffer_dirty && vectorscope_scale > 0) {
+        if (vect_buffer_size != cairo_stride * vect_height) {
+            vect_buffer_size = cairo_stride * vect_height;
+            vect_buffer.reset(new unsigned char[vect_buffer_size]);
+        }
+
         // TODO: Optimize.
-        for (int u = 0; u < VECTORSCOPE_SIZE; u++) {
-            for (int v = 0; v < VECTORSCOPE_SIZE; v++) {
-                const unsigned char value = min<float>(scale * vect[u][v], 0xff);
-                *(uint32_t*)&(vect_buffer[(VECTORSCOPE_SIZE - 1 - u) * cairo_stride + v * 4]) =
-                    value | (value << 8) | (value << 16) | (value << 24);
+        for (int y = 0; y < vect_height; y++) {
+            int* vect_row = vect[y];
+            uint32_t* buffer_row =
+                (uint32_t*)&(vect_buffer[(vect_height - 1 - y) * cairo_stride]);
+            for (int x = 0; x < vect_width; x++) {
+                const unsigned char value = min<float>(scale * vect_row[x], 0xff);
+                buffer_row[x] = value | (value << 8) | (value << 16) | (value << 24);
             }
         }
 
         vect_buffer_dirty = false;
     }
 
-    const float scope_size = min<float>(w, h) - 2 * padding;
-    const float o_x = (w - scope_size) / 2;
-    const float o_y = (h - scope_size) / 2;
+    const bool fit_width =
+        vect_width * (h - 2 * padding) > vect_height * (w - 2 * padding);
+    const float scope_scale = fit_width ?
+        (w - 2 * padding) / vect_width : (h - 2 * padding) / vect_height;
+    const float scope_size = scope_scale * max<float>(vect_width, vect_height);
+    const float o_x = (w - scope_scale * vect_width) / 2;
+    const float o_y = (h - scope_scale * vect_height) / 2;
     const double s = RTScalable::getScale();
     auto orig_matrix = cr->get_matrix();
     const double line_spacing = 4.0 * s;
@@ -1421,9 +1433,9 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
     // Vectorscope trace.
     if (vectorscope_scale > 0) {
         Cairo::RefPtr<Cairo::ImageSurface> surface = Cairo::ImageSurface::create(
-            vect_buffer.get(), Cairo::FORMAT_ARGB32, VECTORSCOPE_SIZE, VECTORSCOPE_SIZE, cairo_stride);
+            vect_buffer.get(), Cairo::FORMAT_ARGB32, vect_width, vect_height, cairo_stride);
         cr->translate(o_x, o_y);
-        cr->scale(scope_size / VECTORSCOPE_SIZE, scope_size / VECTORSCOPE_SIZE);
+        cr->scale(scope_scale, scope_scale);
         cr->set_source(surface, 0, 0);
         cr->set_operator(Cairo::OPERATOR_OVER);
         cr->paint();
@@ -1455,41 +1467,48 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
 {
     // Arbitrary scale factor divided by current scale.
     const float scale = trace_brightness * 32.f * 255.f / waveform_scale;
+    const int wave_width = rwave.getWidth();
+    const int wave_height = rwave.getHeight();
 
     // See Cairo documentation on stride.
-    const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, waveform_width);
+    const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, rwave.getWidth());
 
     if (wave_buffer_dirty) {
-        wave_buffer.reset(new unsigned char[256 * cairo_stride]);
-        wave_buffer_luma.reset(new unsigned char[256 * cairo_stride]);
+        wave_buffer.reset(new unsigned char[wave_height * cairo_stride]);
+        wave_buffer_luma.reset(new unsigned char[wave_height * cairo_stride]);
 
         // Clear waveform.
-        memset(wave_buffer.get(), 0, 256 * cairo_stride);
-        memset(wave_buffer_luma.get(), 0, 256 * cairo_stride);
+        memset(wave_buffer.get(), 0, wave_height * cairo_stride);
+        memset(wave_buffer_luma.get(), 0, wave_height * cairo_stride);
 
         // TODO: Optimize.
-        for (int col = 0; col < waveform_width; col++) {
-            for (int val = 0; val < 256; val++) {
-                const unsigned char r = needRed ? min<float>(scale * rwave[col][val], 0xff) : 0;
-                const unsigned char g = needGreen ? min<float>(scale * gwave[col][val], 0xff) : 0;
-                const unsigned char b = needBlue ? min<float>(scale * bwave[col][val], 0xff) : 0;
+        for (int val = 0; val < wave_height; val++) {
+            int* r_row = rwave[val];
+            int* g_row = gwave[val];
+            int* b_row = bwave[val];
+            uint32_t* buffer_row = (uint32_t*)&(wave_buffer[(255 - val) * cairo_stride]);
+            for (int col = 0; col < wave_width; col++) {
+                const unsigned char r = needRed ? min<float>(scale * r_row[col], 0xff) : 0;
+                const unsigned char g = needGreen ? min<float>(scale * g_row[col], 0xff) : 0;
+                const unsigned char b = needBlue ? min<float>(scale * b_row[col], 0xff) : 0;
                 const unsigned char value = (r > g && r > b) ? r : ((g > b) ? g : b);
                 if (value <= 0) {
-                    *(uint32_t*)&(wave_buffer[(255 - val) * cairo_stride + col * 4]) = 0;
+                    buffer_row[col] = 0;
                 } else {
                     // Speedup with one memory access instead of four.
-                    *(uint32_t*)&(wave_buffer[(255 - val) * cairo_stride + col * 4]) =
-                        b | (g << 8) | (r << 16) | (value << 24);
+                    buffer_row[col] = b | (g << 8) | (r << 16) | (value << 24);
                 }
             }
         }
 
         if (needLuma) {
-            for (int col = 0; col < waveform_width; col++) {
-                for (int val = 0; val < 256; val++) {
-                    const unsigned char l = min<float>(scale * lwave[col][val], 0xff);
-                    *(uint32_t*)&(wave_buffer_luma[(255 - val) * cairo_stride + col * 4]) =
-                        l | (l << 8) | (l << 16) | (l << 24);
+            for (int val = 0; val < wave_height; val++) {
+                int* l_row = lwave[val];
+                uint32_t* buffer_row =
+                    (uint32_t*)&(wave_buffer_luma[(255 - val) * cairo_stride]);
+                for (int col = 0; col < wave_width; col++) {
+                    const unsigned char l = min<float>(scale * l_row[col], 0xff);
+                    buffer_row[col] = l | (l << 8) | (l << 16) | (l << 24);
                 }
             }
         }
@@ -1500,17 +1519,17 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
     Cairo::RefPtr<Cairo::ImageSurface> surface;
     auto orig_matrix = cr->get_matrix();
     cr->translate(0, padding);
-    cr->scale(static_cast<double>(w) / waveform_width, (h - 2 * padding) / 256.0);
+    cr->scale(static_cast<double>(w) / wave_width, (h - 2 * padding) / wave_height);
     if (needLuma) {
         surface = Cairo::ImageSurface::create(
-            wave_buffer_luma.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
+            wave_buffer_luma.get(), Cairo::FORMAT_ARGB32, wave_width, wave_height, cairo_stride);
         cr->set_source(surface, 0, 0);
         cr->set_operator(Cairo::OPERATOR_OVER);
         cr->paint();
         surface->finish();
     }
     surface = Cairo::ImageSurface::create(
-        wave_buffer.get(), Cairo::FORMAT_ARGB32, waveform_width, 256, cairo_stride);
+        wave_buffer.get(), Cairo::FORMAT_ARGB32, wave_width, wave_height, cairo_stride);
     cr->set_source(surface, 0, 0);
     cr->set_operator(Cairo::OPERATOR_OVER);
     cr->paint();

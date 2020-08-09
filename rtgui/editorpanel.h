@@ -32,6 +32,12 @@
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
 
+namespace rtengine
+{
+template<typename T>
+class array2D;
+}
+
 class BatchQueueEntry;
 class EditorPanel;
 class FilePanel;
@@ -129,13 +135,12 @@ public:
         const LUTu& histChroma,
         const LUTu& histLRETI,
         int vectorscopeScale,
-        const int vectorscope[HistogramListener::vectorscope_size][HistogramListener::vectorscope_size],
+        const array2D<int>& vectorscope,
         int waveformScale,
-        int waveformWidth,
-        const int waveformRed[][256],
-        const int waveformGreen[][256],
-        const int waveformBlue[][256],
-        const int waveformLuma[][256]
+        const array2D<int>& waveformRed,
+        const array2D<int>& waveformGreen,
+        const array2D<int>& waveformBlue,
+        const array2D<int>& waveformLuma
     ) override;
     void setObservable(rtengine::HistogramObservable* observable) override;
     bool updateHistogram(void) override;

@@ -21,6 +21,7 @@
 
 #include <iostream>
 
+#include "../rtengine/array2D.h"
 #include "../rtengine/imagesource.h"
 #include "../rtengine/iccstore.h"
 #include "batchqueue.h"
@@ -2248,17 +2249,16 @@ void EditorPanel::histogramChanged(
     const LUTu& histChroma,
     const LUTu& histLRETI,
     int vectorscopeScale,
-    const int vectorscope[HistogramListener::vectorscope_size][HistogramListener::vectorscope_size],
+    const array2D<int>& vectorscope,
     int waveformScale,
-    int waveformWidth,
-    const int waveformRed[][256],
-    const int waveformGreen[][256],
-    const int waveformBlue[][256],
-    const int waveformLuma[][256]
+    const array2D<int>& waveformRed,
+    const array2D<int>& waveformGreen,
+    const array2D<int>& waveformBlue,
+    const array2D<int>& waveformLuma
 )
 {
     if (histogramPanel) {
-        histogramPanel->histogramChanged(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformWidth, waveformRed, waveformGreen, waveformBlue, waveformLuma);
+        histogramPanel->histogramChanged(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
     }
 
     tpc->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
