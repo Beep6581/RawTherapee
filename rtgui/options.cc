@@ -618,6 +618,12 @@ void Options::setDefaults()
     rtSettings.itcwb_precis = 5;//3  or 5 or 9
 // end locallab
 
+//wavelet
+    rtSettings.edghi = 3.0;//1.1 and 5.
+    rtSettings.edglo = 0.5;//0.1 and 0.95
+    rtSettings.limrad = 20.;//1 and 60
+    
+
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
     rtSettings.CRI_color = 0;
@@ -1709,6 +1715,22 @@ void Options::readFromFile(Glib::ustring fname)
 
             }
 
+            if (keyFile.has_group("Wavelet")) {
+                if (keyFile.has_key("Wavelet", "Edghi")) {
+                    rtSettings.edghi = keyFile.get_double("Wavelet", "Edghi");
+                }
+
+                if (keyFile.has_key("Wavelet", "Edglo")) {
+                    rtSettings.edglo = keyFile.get_double("Wavelet", "Edglo");
+                }
+
+                if (keyFile.has_key("Wavelet", "Limrad")) {
+                    rtSettings.limrad = keyFile.get_double("Wavelet", "Limrad");
+                }
+
+            }
+            
+            
             if (keyFile.has_group("ICC Profile Creator")) {
                 if (keyFile.has_key("ICC Profile Creator", "PimariesPreset")) {
                     ICCPC_primariesPreset = keyFile.get_string("ICC Profile Creator", "PimariesPreset");
@@ -2307,6 +2329,11 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "ClutsDirectory", clutsDir);
         keyFile.set_integer("Color Management", "Previewselection", rtSettings.previewselection);
         keyFile.set_double("Color Management", "Cbdlsensi", rtSettings.cbdlsensi);
+
+        keyFile.set_double("Wavelet", "Edghi", rtSettings.edghi);
+        keyFile.set_double("Wavelet", "Edglo", rtSettings.edglo);
+        keyFile.set_double("Wavelet", "Limrad", rtSettings.limrad);
+
 
         keyFile.set_string("ICC Profile Creator", "PimariesPreset", ICCPC_primariesPreset);
         keyFile.set_double("ICC Profile Creator", "RedPrimaryX", ICCPC_redPrimaryX);

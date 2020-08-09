@@ -73,6 +73,7 @@ struct RetinexParamsEdited {
     bool slope;
     bool neigh;
     bool offs;
+    bool complexmethod;
     bool retinexMethod;
     bool mapMethod;
     bool viewMethod;
@@ -1039,6 +1040,7 @@ struct WaveletParamsEdited {
     bool CLmethod;
     bool Backmethod;
     bool Tilesmethod;
+    bool complexmethod;
     bool daubcoeffmethod;
     bool Dirmethod;
     bool sigma;
