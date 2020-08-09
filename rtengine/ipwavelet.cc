@@ -992,7 +992,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             }
                         }
 
-                        if (cp.val > 0 || ref || contr || cp.denoicurv) { //edge
+                        if (cp.val > 0 || ref || contr || cp.denoicurv || cp.noiseena ) { //edge
                             Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
                         }
 
@@ -1106,34 +1106,38 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                         absciss = asig * std::fabs(WavCoeffs_L2[dir][i]) + bsig;
                                                     } else {
                                                         absciss = amean * std::fabs(WavCoeffs_L2[dir][i]);
-                                                        float abs = pow(2.f * absciss, (1.f / cp.sigmm));
+                                                        float k = cp.sigmm;
+                                                        if(cp.sigmm > 1.f) {
+                                                            k = SQR(cp.sigmm);
+                                                        }
+                                                        float abs = pow(2.f * absciss, (1.f / k));
                                                         absciss = 0.5f * abs;
                                                     }
 
                                                     float kc = wavdenoise[absciss * 500.f] - 1.f;
                                                     if(kc < 0) {
-                                                        kc = -SQR(kc);//approximation to simulate sliders
+                                                        kc = -SQR(kc);//approximation to simulate sliders denoise
                                                     }
-                                                    //equalizer for levels 0 and 3...  1.25 and 0.8 arbitrary values
+                                                    //equalizer for levels 0 1 and 3...  1.33 and 0.75 arbitrary values
                                                     if(cp.denmet == 1) {
                                                         if(level == 0 || level == 3) {
-                                                            kc *= 1.25f;
+                                                            kc *= 1.33f;
                                                         }
                                                     } else if(cp.denmet == 2) {
                                                         if(level == 0 || level == 3) {
-                                                            kc *= 0.8f;
+                                                            kc *= 0.75f;
                                                         }
                                                     } else if(cp.denmet == 3) {
                                                         if(level == 0 || level == 1) {
-                                                            kc *= 1.25f;
+                                                            kc *= 1.33f;
                                                         }
                                                     } else if(cp.denmet == 4) {
                                                         if(level == 0 || level == 1) {
-                                                            kc *= 0.8f;
+                                                            kc *= 0.75f;
                                                         }
                                                     }
                                                                             
-                                                    float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//1.2 allows to increase denoise
+                                                    float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//1.2 allows to increase denoise (not used)
 
                                                     float kinterm = 1.f + reduceeffect * kc;
                                                     kinterm = kinterm <= 0.f ? 0.01f : kinterm;
