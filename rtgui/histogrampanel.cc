@@ -886,8 +886,10 @@ void HistogramRGBAreaVert::get_preferred_width_for_height_vfunc (int height, int
 //
 // HistogramArea
 HistogramArea::HistogramArea (DrawModeListener *fml) :
+    vectorscope_scale(0),
     vect(0, 0),
     vect_buffer_dirty(true), vect_buffer_size(0),
+    waveform_scale(0),
     rwave(0, 0), gwave(0, 0),bwave(0, 0), lwave(0, 0),
     wave_buffer_dirty(true),
     valid(false), drawMode(options.histogramDrawMode), myDrawModeListener(fml),
@@ -1492,7 +1494,7 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
                 const unsigned char g = needGreen ? min<float>(scale * g_row[col], 0xff) : 0;
                 const unsigned char b = needBlue ? min<float>(scale * b_row[col], 0xff) : 0;
                 const unsigned char value = (r > g && r > b) ? r : ((g > b) ? g : b);
-                if (value <= 0) {
+                if (value == 0) {
                     buffer_row[col] = 0;
                 } else {
                     // Speedup with one memory access instead of four.

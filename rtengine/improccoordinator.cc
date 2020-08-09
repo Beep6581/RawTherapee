@@ -133,7 +133,9 @@ ImProcCoordinator::ImProcCoordinator() :
 
     histLRETI(256),
 
+    vectorscopeScale(0),
     vectorscope(VECTORSCOPE_SIZE, VECTORSCOPE_SIZE),
+    waveformScale(0),
     waveformRed(0, 0),
     waveformGreen(0, 0),
     waveformBlue(0, 0),
@@ -1861,8 +1863,9 @@ void ImProcCoordinator::updateVectorscope()
     memset((int*)vectorscope, 0, size * size * sizeof(vectorscope[0][0]));
 
     const int lab_img_size = (hListener->vectorscopeType() == 1) ? (x2 - x1) * (y2 - y1) : 0;
-    float L[lab_img_size], a[lab_img_size], b[lab_img_size];
+    float a[lab_img_size], b[lab_img_size];
     if (lab_img_size) {
+        float L[lab_img_size];
         ipf.rgb2lab(*workimg, x1, y1, x2 - x1, y2 - y1, L, a, b, params->icm);
     }
 
@@ -1874,11 +1877,11 @@ void ImProcCoordinator::updateVectorscope()
             switch (hListener->vectorscopeType()) {
                 case 0: {
                     // HS
-                    int r = 256 * workimg->data[ofs++];
-                    int g = 256 * workimg->data[ofs++];
-                    int b = 256 * workimg->data[ofs++];
+                    int red = 256 * workimg->data[ofs++];
+                    int green = 256 * workimg->data[ofs++];
+                    int blue = 256 * workimg->data[ofs++];
                     float h, s, l;
-                    Color::rgb2hsl(r, g, b, h, s, l);
+                    Color::rgb2hsl(red, green, blue, h, s, l);
                     const int col = s * cos(2 * RT_PI * h) * (size / 2) + size / 2;
                     const int row = s * sin(2 * RT_PI * h) * (size / 2) + size / 2;
                     if (col >= 0 && col < size && row >= 0 && row < size) {
