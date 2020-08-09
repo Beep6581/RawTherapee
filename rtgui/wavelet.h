@@ -47,7 +47,6 @@ class Wavelet final :
 public:
     Wavelet();
     ~Wavelet() override;
-
     bool wavComputed_();
     void adjusterChanged(Adjuster* a, double newval) override;
     void autoOpenCurve() override;
@@ -102,6 +101,7 @@ private:
     rtengine::ProcEvent EvWavrangeab;
     rtengine::ProcEvent EvWavprotab;
     rtengine::ProcEvent EvWavlevelshc;
+    rtengine::ProcEvent EvWavcomplexmet;
 
     LabGrid *labgrid;
 
@@ -121,6 +121,7 @@ private:
     void LmethodChanged();
     void MedgreinfChanged();
     void TMmethodChanged();
+    void complexmethodChanged();
     void TilesmethodChanged();
     void avoidToggled();
     void showmaskToggled ();
@@ -143,7 +144,8 @@ private:
     void ushamethodChanged();
     void updateGUI();
     void updateGUImaxlev();
-
+    void convertParamToNormal();
+    void updateGUIToMode(int mode);
     void HSmethodUpdateUI();
     void CHmethodUpdateUI();
 //  void CHSLmethodChangedUI();
@@ -297,6 +299,8 @@ private:
     sigc::connection  CLmethodconn;
     MyComboBoxText* const Backmethod;
     sigc::connection  Backmethodconn;
+    MyComboBoxText* const complexmethod;
+    sigc::connection  complexmethodconn;
     MyComboBoxText* const Tilesmethod;
     sigc::connection  Tilesmethodconn;
     MyComboBoxText* const daubcoeffmethod;
@@ -338,6 +342,8 @@ private:
 
     Gtk::HBox* const neutrHBox;
     Gtk::HBox* const usharpHBox;
+    Gtk::HBox* const ctboxch;
+    Gtk::VBox* const ctboxBA;// = Gtk::manage(new Gtk::VBox());
 
     sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enabletmConn, enableFinalConn, enableclariConn;
     sigc::connection enableNoiseConn, enableResidConn, enableToningConn;

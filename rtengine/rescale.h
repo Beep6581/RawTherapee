@@ -31,8 +31,8 @@ namespace rtengine
 
 inline float getBilinearValue(const array2D<float> &src, float x, float y)
 {
-    const int W = src.width();
-    const int H = src.height();
+    const int W = src.getWidth();
+    const int H = src.getHeight();
     
     // Get integer and fractional parts of numbers
     int xi = x;
@@ -57,10 +57,10 @@ inline float getBilinearValue(const array2D<float> &src, float x, float y)
 
 inline void rescaleBilinear(const array2D<float> &src, array2D<float> &dst, bool multithread)
 {
-    const int Ws = src.width();
-    const int Hs = src.height();
-    const int Wd = dst.width();
-    const int Hd = dst.height();
+    const int Ws = src.getWidth();
+    const int Hs = src.getHeight();
+    const int Wd = dst.getWidth();
+    const int Hd = dst.getHeight();
     
     float col_scale = float (Ws) / float (Wd);
     float row_scale = float (Hs) / float (Hd);
@@ -81,10 +81,10 @@ inline void rescaleBilinear(const array2D<float> &src, array2D<float> &dst, bool
 
 inline void rescaleNearest(const array2D<float> &src, array2D<float> &dst, bool multithread)
 {
-    const int width = src.width();
-    const int height = src.height();
-    const int nw = dst.width();
-    const int nh = dst.height();
+    const int width = src.getWidth();
+    const int height = src.getHeight();
+    const int nw = dst.getWidth();
+    const int nh = dst.getHeight();
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)

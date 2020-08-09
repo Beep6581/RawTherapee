@@ -390,7 +390,7 @@ public:
     std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float& lutFactor);
     void Aver(const float* HH_Coeffs, int datalen, float &averagePlus, float &averageNeg, float &max, float &min, int numThreads);
     void Sigma(const float* HH_Coeffs, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg, int numThreads);
-    void calckoe(const float* const* WavCoeffs_LL, float gradw, float tloww, float ** koeLi, int level, int dir, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC = nullptr);
+    void calckoe(const float* WavCoeffs_LL, float gradw, float tloww, float *koeLi, int level, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC, bool multiThread = false);
 
     void Median_Denoise(float **src, float **dst, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
     void Median_Denoise(float **src, float **dst, float upperBound, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
