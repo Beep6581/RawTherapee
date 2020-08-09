@@ -1730,6 +1730,17 @@ void ControlSpotPanel::setParamEditable(bool cond)
     savrest_->set_sensitive(cond);
     complexMethod_->set_sensitive(cond);
     wavMethod_->set_sensitive(cond);
+    preview_->set_sensitive(cond);
+
+    if (!cond) {
+        // Reset complex parameters visibility to default state
+        expTransGrad_->hide();
+        expShapeDetect_->hide();
+        expSpecCases_->hide();
+        expMaskMerge_->hide();
+        circrad_->hide();
+        ctboxshape->hide();
+    }
 }
 
 void ControlSpotPanel::setDefaultExpanderVisibility()
