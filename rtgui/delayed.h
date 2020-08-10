@@ -55,13 +55,13 @@ namespace delayed_helper
 
     // See https://aherrmann.github.io/programming/2016/02/28/unpacking-tuples-in-cpp14/
     template<typename F, typename T, size_t... Is>
-    constexpr void apply_impl(F f, T t, index_sequence<Is...>)
+    void apply_impl(F f, T t, index_sequence<Is...>)
     {
         f(std::get<Is>(t)...);
     }
 
     template <typename T, typename F>
-    constexpr void apply(F f, T t)
+    void apply(F f, T t)
     {
         apply_impl(f, t, make_index_sequence<std::tuple_size<T>{}>{});
     }
