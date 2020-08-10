@@ -1367,7 +1367,8 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         vect_width * (h - 2 * padding) > vect_height * (w - 2 * padding);
     const float scope_scale = fit_width ?
         (w - 2 * padding) / vect_width : (h - 2 * padding) / vect_height;
-    const float scope_size = scope_scale * max<float>(vect_width, vect_height);
+    const float scope_size = (vectorscope_scale > 0) ?
+        scope_scale * max<float>(vect_width, vect_height) : min<float>(w, h) - 2 * padding;
     const float o_x = (w - scope_scale * vect_width) / 2;
     const float o_y = (h - scope_scale * vect_height) / 2;
     const double s = RTScalable::getScale();
