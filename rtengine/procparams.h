@@ -1795,6 +1795,7 @@ struct WaveletParams {
     Glib::ustring Tilesmethod;
     Glib::ustring complexmethod;
     Glib::ustring denmethod;
+    Glib::ustring mixmethod;
     Glib::ustring daubcoeffmethod;
     Glib::ustring CHmethod;
     Glib::ustring Medgreinf;

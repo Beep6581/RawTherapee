@@ -167,6 +167,7 @@ Wavelet::Wavelet() :
     Medgreinf(Gtk::manage(new MyComboBoxText())),
     ushamethod(Gtk::manage(new MyComboBoxText())),
     denmethod(Gtk::manage(new MyComboBoxText())),
+    mixmethod(Gtk::manage(new MyComboBoxText())),
     chanMixerHLFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_HIGHLIGHT")))),
     chanMixerMidFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_MIDTONES")))),
     chanMixerShadowsFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_SHADOWS")))),
@@ -197,6 +198,7 @@ Wavelet::Wavelet() :
     usharpHBox(Gtk::manage(new Gtk::HBox())),
     ctboxch(Gtk::manage(new Gtk::HBox())),
     denHBox(Gtk::manage(new Gtk::HBox())),
+    mixHBox(Gtk::manage(new Gtk::HBox())),
     ctboxBA(Gtk::manage(new Gtk::VBox()))
 
 {
@@ -239,6 +241,7 @@ Wavelet::Wavelet() :
     EvWavsigm = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSIGM");
     EvWavdenoise = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENOISE");
     EvWavdenmethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENMET");
+    EvWavmixmethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVMIXMET");
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -628,6 +631,13 @@ Wavelet::Wavelet() :
     denHBox->pack_start(*denLabel, Gtk::PACK_SHRINK, 4);
     denHBox->pack_start(*denmethod);
 
+    mixmethod->append(M("TP_WAVELET_MIXNOISE"));
+    mixmethod->append(M("TP_WAVELET_MIXMIX"));
+    mixmethod->append(M("TP_WAVELET_MIXDENOISE"));
+    mixmethodconn = mixmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::mixmethodChanged));
+    Gtk::Label* const mixLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_MIXCONTRAST") + ":"));
+    mixHBox->pack_start(*mixLabel, Gtk::PACK_SHRINK, 4);
+    mixHBox->pack_start(*mixmethod);
 
     wavdenoise = static_cast<FlatCurveEditor*>(CurveEditorwavnoise->addCurve(CT_Flat, "", nullptr, false, false));
     wavdenoise->setIdentityValue(0.);
@@ -642,6 +652,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*level2noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level3noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*denHBox);
+    noiseBox->pack_start(*mixHBox);
     noiseBox->pack_start(*sigm);
     noiseBox->pack_start(*CurveEditorwavnoise);
     
@@ -1288,6 +1299,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     Tilesmethodconn.block(true);
     complexmethodconn.block(true);
     denmethodconn.block(true);
+    mixmethodconn.block(true);
     daubcoeffmethodconn.block(true);
     Dirmethodconn.block(true);
     CHmethodconn.block(true);
@@ -1425,6 +1437,14 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         denmethod->set_active(3);
     } else if (pp->wavelet.denmethod == "12low") {
         denmethod->set_active(4);
+    }
+
+    if (pp->wavelet.mixmethod == "nois") {
+        mixmethod->set_active(0);
+    } else if (pp->wavelet.mixmethod == "mix") {
+        mixmethod->set_active(1);
+    } else if (pp->wavelet.mixmethod == "den") {
+        mixmethod->set_active(2);
     }
 
     //Tilesmethod->set_active (2);
@@ -1635,6 +1655,10 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         if (!pedited->wavelet.denmethod) {
             denmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
+        if (!pedited->wavelet.mixmethod) {
+            mixmethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->wavelet.Tilesmethod) {
@@ -1878,6 +1902,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     Tilesmethodconn.block(false);
     complexmethodconn.block(false);
     denmethodconn.block(false);
+    mixmethodconn.block(false);
     daubcoeffmethodconn.block(false);
     CHmethodconn.block(false);
     CHSLmethodconn.block(false);
@@ -2062,6 +2087,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.Tilesmethod     = Tilesmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.complexmethod   = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.denmethod       = denmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->wavelet.mixmethod       = mixmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.daubcoeffmethod = daubcoeffmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.CHmethod        = CHmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.CHSLmethod      = CHSLmethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -2283,6 +2309,14 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.denmethod = "12high";
     } else if (denmethod->get_active_row_number() == 4) {
         pp->wavelet.denmethod = "12low";
+    }
+
+    if (mixmethod->get_active_row_number() == 0) {
+        pp->wavelet.mixmethod = "nois";
+    } else if (mixmethod->get_active_row_number() == 1) {
+        pp->wavelet.mixmethod = "mix";
+    } else if (mixmethod->get_active_row_number() == 2) {
+        pp->wavelet.mixmethod = "den";
     }
 
     if (daubcoeffmethod->get_active_row_number() == 0) {
@@ -2973,6 +3007,8 @@ void Wavelet::convertParamToNormal()
     chromfi->setValue(def_params.chromfi);
     chromco->setValue(def_params.chromco);
     denmethod->set_active(0);
+    mixmethod->set_active(1);
+    sigm->setValue(def_params.sigm);
     //toning
     exptoning->setEnabled(def_params.exptoning);
     //gamut
@@ -3023,6 +3059,8 @@ void Wavelet::updateGUIToMode(int mode)
         cbenab->hide();
         sigmafin->hide();
         denHBox->hide();
+        mixHBox->hide();
+        sigm->hide();
     } else {
         offset->show();
         sigma->show();
@@ -3041,6 +3079,8 @@ void Wavelet::updateGUIToMode(int mode)
         cbenab->show();
         sigmafin->show();
         denHBox->show();
+        mixHBox->show();
+        sigm->show();
     }
 
 }
@@ -3069,6 +3109,13 @@ void Wavelet::denmethodChanged()
     }
 }
 
+void Wavelet::mixmethodChanged()
+{    
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvWavmixmethod, mixmethod->get_active_text());
+    }
+}
 
 void Wavelet::TilesmethodChanged()
 {
@@ -3153,6 +3200,7 @@ void Wavelet::setBatchMode(bool batchMode)
     Tilesmethod->append(M("GENERAL_UNCHANGED"));
     complexmethod->append(M("GENERAL_UNCHANGED"));
     denmethod->append(M("GENERAL_UNCHANGED"));
+    mixmethod->append(M("GENERAL_UNCHANGED"));
     daubcoeffmethod->append(M("GENERAL_UNCHANGED"));
     CHmethod->append(M("GENERAL_UNCHANGED"));
     Medgreinf->append(M("GENERAL_UNCHANGED"));

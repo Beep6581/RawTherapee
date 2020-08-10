@@ -1042,6 +1042,7 @@ struct WaveletParamsEdited {
     bool Tilesmethod;
     bool complexmethod;
     bool denmethod;
+    bool mixmethod;
     bool daubcoeffmethod;
     bool Dirmethod;
     bool sigma;

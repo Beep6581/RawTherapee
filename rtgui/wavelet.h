@@ -105,6 +105,7 @@ private:
     rtengine::ProcEvent EvWavsigm;
     rtengine::ProcEvent EvWavdenoise;
     rtengine::ProcEvent EvWavdenmethod;
+    rtengine::ProcEvent EvWavmixmethod;
 
     LabGrid *labgrid;
 
@@ -126,6 +127,7 @@ private:
     void TMmethodChanged();
     void complexmethodChanged();
     void denmethodChanged();
+    void mixmethodChanged();
     void TilesmethodChanged();
     void avoidToggled();
     void showmaskToggled ();
@@ -320,6 +322,8 @@ private:
     sigc::connection  ushamethodconn;
     MyComboBoxText* const denmethod;
     sigc::connection  denmethodconn;
+    MyComboBoxText* const mixmethod;
+    sigc::connection  mixmethodconn;
 
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
@@ -353,6 +357,7 @@ private:
     Gtk::HBox* const usharpHBox;
     Gtk::HBox* const ctboxch;
     Gtk::HBox* const denHBox;
+    Gtk::HBox* const mixHBox;
     Gtk::VBox* const ctboxBA;// = Gtk::manage(new Gtk::VBox());
 
     sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enabletmConn, enableFinalConn, enableclariConn;
