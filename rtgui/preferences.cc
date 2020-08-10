@@ -947,7 +947,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_EXP"));
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_NORM"));
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_SIMP"));
-    complexitylocal->set_active(1);
+    complexitylocal->set_active(2);
     workflowGrid->attach_next_to(*complexityL, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*complexitylocal, *curveBBoxPosC, Gtk::POS_BOTTOM, 1, 1);
 
