@@ -95,6 +95,7 @@ ControlSpotPanel::ControlSpotPanel():
 
     preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     ctboxshape(Gtk::manage(new Gtk::HBox())),
+    ctboxshapemethod(Gtk::manage(new Gtk::HBox())),
 
     controlPanelListener(nullptr),
     lastObject_(-1),
@@ -250,7 +251,7 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*excluFrame);
 
 
-    Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
+//    Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshapemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"));
     ctboxshapemethod->pack_start(*labelshapemethod, Gtk::PACK_SHRINK, 4);
 
@@ -914,6 +915,7 @@ void ControlSpotPanel::prevMethodChanged()
         expMaskMerge_->hide();
         circrad_->hide();
         ctboxshape->hide();
+        shapeMethod_->set_active(0);
 
     } else { // Excluding case
         expTransGrad_->show();
@@ -1740,6 +1742,14 @@ void ControlSpotPanel::setParamEditable(bool cond)
         expMaskMerge_->hide();
         circrad_->hide();
         ctboxshape->hide();
+        excluFrame->hide();
+//        ctboxshapemethod->hide();
+        locX_->hide();
+        locXL_->hide();
+        locY_->hide();
+        locYT_->hide();
+        centerX_->hide();
+        centerY_->hide();
     }
 }
 
