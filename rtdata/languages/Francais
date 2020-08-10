@@ -1929,7 +1929,7 @@ TP_LOCALLAB_EXPRETITOOLS;Outils Retinex avancés
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUtiliser de basses valeurs de transition et de hautes valeurs de transition affaiblissement et Etendue pour simuler un petit RT-spot.
 TP_LOCALLAB_EXPTOOL;Outils exposition
 TP_LOCALLAB_EXPTRC;Courbe de réponse Tonale - TRC
-TP_LOCALLAB_EXP_TOOLNAME;Atténuation contraste -Compression Dynamique & Exposition- 10
+TP_LOCALLAB_EXP_TOOLNAME;Atténuation Contraste -Compression Dynamique & Exposition- 10
 TP_LOCALLAB_FATAMOUNT;Quantité
 TP_LOCALLAB_FATANCHOR;Ancre
 TP_LOCALLAB_FATANCHORA;Décalage
@@ -1987,10 +1987,10 @@ TP_LOCALLAB_LABGRIDMERG;Arrière plan
 TP_LOCALLAB_LABGRID_VALUES;Haut(a)=%1 Haut(b)=%2\nBas(a)=%3 Bas(b)=%4
 TP_LOCALLAB_LABSTRUM;Masque Structure
 TP_LOCALLAB_LAPLACC;ΔØ Masque Laplacien résoud PDE
-TP_LOCALLAB_LAPLACE;Δ - Laplacien seuil ΔE
-TP_LOCALLAB_LAPLACEXP;∆ - Laplacian seuil
-TP_LOCALLAB_LAPMASKCOL;∆ - Laplacian seuil masque
-TP_LOCALLAB_LAPRAD_TOOLTIP;Eviter d'utiliser Radius and Laplace Seuil en même temps.\nLaplacien seuil reduit le contraste, artéfacts, adoucit le résultat (si PDE réglages activé).
+TP_LOCALLAB_LAPLACE;Laplacien seuil ΔE
+TP_LOCALLAB_LAPLACEXP;Laplacien seuil
+TP_LOCALLAB_LAPMASKCOL;Laplacien seuil masque
+TP_LOCALLAB_LAPRAD_TOOLTIP;Eviter d'utiliser Radius and Laplace Seuil en même temps.\nLaplacien seuil reduit le contraste, artéfacts, adoucit le résultat.
 TP_LOCALLAB_LAP_MASK_TOOLTIP;Résoud PDE (Equation aux dérivées partielles) pour tous les masques Laplacien.\nSi activé Laplacien masque seuil reduit les artéfacts et adoucit les résultats.\nSi désactivé réponse linaire. 
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT améliore la qualité et autorise de grands rayons, mais accroît les temps de traitement.\nCe temps dépends de la surface devant être traitée.\nA utiliser de préférences pour de grands rayons.\n\nLes Dimensions peuvent être réduites de quelques pixels pour optimiser FFTW.\nCette optimisation peut réduire le temps de traitement d'un facteur de 1.5 à 10.\n
 TP_LOCALLAB_LC_TOOLNAME;Constrast Local & Ondelettes (Défauts) - 7
@@ -2004,7 +2004,7 @@ TP_LOCALLAB_LIGHTN_TOOLTIP;En mode inverse: selection = -100 force la luminance 
 TP_LOCALLAB_LIGHTRETI;Luminosité
 TP_LOCALLAB_LINEAR;Linéarité
 TP_LOCALLAB_LIST_NAME;Ajoute un outil au spot courant...
-TP_LOCALLAB_LIST_TOOLTIP;Choisir un outil et ensuite son niveau de complexité "Normal" ou "Expert".\nLe nombre traduit la place de l'outil dans le processus de chaque RT-Spot
+TP_LOCALLAB_LIST_TOOLTIP;Vous pouvez choisir 3 niveaux de complexité pour chaque outil: Basic, Normal & Avancé.\nLe réglage par défaut est Basic mais il peut être changé dans Préférences.\nVous pouvez aussi changer ce niveau pour chaque outil en cours.
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Donne priorité à l'action sur les tons moyens et hautes lumières en choisissant les niveaux concernés d'ondelettes
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Masque Flou
@@ -2083,8 +2083,8 @@ TP_LOCALLAB_MERTWO;Soustrait
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_MLABEL;Récupère les données  Min=%1 Max=%2 (Clip - décalage)
 TP_LOCALLAB_MLABEL_TOOLTIP;'Doit être' près de min=0 max=32768 (log mode) mais d'autres valeurs sont possibles.\nVous pouvez agir sur les données récupérées (CLIP) et décalage pour normaliser.\n\nRécupère les données image sans mélange.
-TP_LOCALLAB_MODE_EXPERT;Expert
-TP_LOCALLAB_MODE_NORMAL;Normal
+TP_LOCALLAB_MODE_EXPERT;Avancé
+TP_LOCALLAB_MODE_NORMAL;Standard
 TP_LOCALLAB_MRFIV;Arrière plan
 TP_LOCALLAB_MRFOU;Spot précédent
 TP_LOCALLAB_MRONE;Rien
@@ -2112,7 +2112,7 @@ TP_LOCALLAB_ORIGLC;Fusion seulement avec image originale
 TP_LOCALLAB_ORRETILAP_TOOLTIP;Agit sur un deuxième seuil Laplacien, pour prendre en compte ΔE pour différencier l'action nottament avec l'arrière plan (différent de Etendue)
 TP_LOCALLAB_ORRETISTREN_TOOLTIP;Aagit sur un seuil Laplacien, plus grande est l'action, plus les différences de contraste seront réduites
 TP_LOCALLAB_PASTELS2;Vibrance
-TP_LOCALLAB_PDE;Atténuation de contraste - Compression dynamique
+TP_LOCALLAB_PDE;Atténuation de Contraste - Compression dynamique
 TP_LOCALLAB_PDEFRA;Contraste atténuation ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - algorithme personnel adapté de IPOL à Rawtherapee: conduit à des résultats très variés et a besoin de différents réglages que Standard (Noir négatif, gamma < 1,...)\nPeut être utils pour des iamges sous-exposées ou avec une étendue dynamique importante.\n
 TP_LOCALLAB_PREVIEW;Prévisualisation ΔE
@@ -2219,8 +2219,8 @@ TP_LOCALLAB_SHOWPOISSON;Poisson (pde ƒ)
 TP_LOCALLAB_SHOWR;Masque et modifications
 TP_LOCALLAB_SHOWREF;Prévisualisation ΔE
 TP_LOCALLAB_SHOWS;Masque et modifications
-TP_LOCALLAB_SHOWSTRUC;Montrer Spot structure (expert)
-TP_LOCALLAB_SHOWSTRUCEX;Montrer Spot structure (expert)
+TP_LOCALLAB_SHOWSTRUC;Montrer Spot structure (avancé)
+TP_LOCALLAB_SHOWSTRUCEX;Montrer Spot structure (avancé)
 TP_LOCALLAB_SHOWT;Masque et modifications
 TP_LOCALLAB_SHOWVI;Masque et modifications
 TP_LOCALLAB_SHRESFRA;Ombres/Lumières
@@ -2255,7 +2255,7 @@ TP_LOCALLAB_STRRETI_TOOLTIP;Si force Retinex < 0.2 seul Dehaze est activé.\nSi 
 TP_LOCALLAB_STRUC;Structure
 TP_LOCALLAB_STRUCCOL;Structure
 TP_LOCALLAB_STRUCCOL1;Spot Structure 
-TP_LOCALLAB_STRUCT_TOOLTIP;Utilise l'algorithme de Sobel pour prendre en compte la structure dans la détection de forme.\nvous pouvez prévisualiser avec "masque et modifications - Montrer structure spot".\n\nPeut être utilisé avec masques (expert) structure, flouter, ondelettes pour améliorer la détection de bords.\n\nA besoin de réglages sans-masque pour êtrre activé (luminosité, exposition...)
+TP_LOCALLAB_STRUCT_TOOLTIP;Utilise l'algorithme de Sobel pour prendre en compte la structure dans la détection de forme.\nvous pouvez prévisualiser avec "masque et modifications - Montrer structure spot".\n\nPeut être utilisé avec masques (avancé) structure, flouter, ondelettes pour améliorer la détection de bords.\n\nA besoin de réglages sans-masque pour êtrre activé (luminosité, exposition...)
 TP_LOCALLAB_STRUMASKCOL;Structure masque force
 TP_LOCALLAB_STRUMASK_TOOLTIP;Génère un masque structure qui va différencier les aplats et reliefs.\nSi structure masque comme outil est activé, ce masque est untilisé en plus des autres outils (gamma, slope, courbe contraste ...)
 TP_LOCALLAB_STYPE;Forme méthode

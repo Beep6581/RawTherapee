@@ -2678,7 +2678,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Color & Light
     visicolor(false),
     expcolor(false),
-    complexcolor(0),
+    complexcolor(2),
     curvactiv(false),
     lightness(0),
     contrast(0),
@@ -3315,7 +3315,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     scaltm(1.0),
     rewei(0),
     satur(0.),
-    sensitm(30),
+    sensitm(60),
     softradiustm(0.0),
     amount(95.),
     equiltm(true),
