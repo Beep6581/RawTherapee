@@ -120,6 +120,7 @@ struct cont_params {
     float sigmacol;
     float sigmadir;
     int denmet;
+    int mixmet;
     int ite;
     int contmet;
     bool opaW;
@@ -266,6 +267,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         cp.denmet = 3;
     } else if (params->wavelet.denmethod == "12low") {
         cp.denmet = 4;
+    }
+
+    if (params->wavelet.mixmethod == "nois") {
+        cp.mixmet = 0;
+    } else if (params->wavelet.mixmethod == "mix") {
+        cp.mixmet = 1;
+    } else if (params->wavelet.mixmethod == "den") {
+        cp.mixmet = 2;
     }
 
     if (params->wavelet.BAmethod != "none") {
@@ -1071,6 +1080,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
 
                                 if (cp.denoicurv) {//only if curve enable
+                                    
                                     for (int dir = 1; dir < 4; dir++) {
                                         for (int level = 0; level < 4; level++) {
                                             int Wlvl_L = Ldecomp->level_W(level);
@@ -1096,16 +1106,25 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                                 for (int i = 0; i < Wlvl_L * Hlvl_L; i++) {
                                                     float absciss;
+                                                    float tempwav = 0.f;
+                                                    if(cp.mixmet == 0){
+                                                        tempwav = WavCoeffs_L2[dir][i];
+                                                    } else if(cp.mixmet == 1){
+                                                        tempwav = 0.5f * WavCoeffs_L[dir][i] + 0.5f * WavCoeffs_L2[dir][i];
+                                                    } else if(cp.mixmet == 2){
+                                                        tempwav = WavCoeffs_L[dir][i]; 
+                                                    }
 
-                                                    if (std::fabs(WavCoeffs_L[dir][i]) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
-                                                        float valcour = xlogf(std::fabs(WavCoeffs_L[dir][i]));
+                                                //    if (std::fabs(WavCoeffs_L[dir][i]) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
+                                                    if (std::fabs(tempwav) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
+                                                        float valcour = xlogf(std::fabs(tempwav));
                                                         float valc = valcour - logmax;
                                                         float vald = valc * rap;
                                                         absciss = xexpf(vald);
-                                                    } else if (std::fabs(WavCoeffs_L[dir][i]) >= mean[level]) {
-                                                        absciss = asig * std::fabs(WavCoeffs_L[dir][i]) + bsig;
+                                                    } else if (std::fabs(tempwav) >= mean[level]) {
+                                                        absciss = asig * std::fabs(tempwav) + bsig;
                                                     } else {
-                                                        absciss = amean * std::fabs(WavCoeffs_L[dir][i]);
+                                                        absciss = amean * std::fabs(tempwav);
                                                         float k = cp.sigmm;
                                                         if(cp.sigmm > 1.f) {
                                                             k = SQR(cp.sigmm);
