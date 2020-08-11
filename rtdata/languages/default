@@ -3398,7 +3398,8 @@ TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_MIXCONTRAST;Reference local contrast
 TP_WAVELET_MIXDENOISE;Denoise
 TP_WAVELET_MIXNOISE;Noise
-TP_WAVELET_MIXMIX;Mixed noise denoise
+TP_WAVELET_MIXMIX;Mixed 50% noise - 50% denoise
+TP_WAVELET_MIXMIX70;Mixed 30% noise - 70% denoise
 TP_WAVELET_NOIS;Denoise
 TP_WAVELET_NOISE;Denoise and Refine
 TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 20, mode Agressive is used.\nIf chrominance coarse superior to 20, mode Agressive is used.

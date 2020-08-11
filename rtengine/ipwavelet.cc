@@ -273,8 +273,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         cp.mixmet = 0;
     } else if (params->wavelet.mixmethod == "mix") {
         cp.mixmet = 1;
-    } else if (params->wavelet.mixmethod == "den") {
+    } else if (params->wavelet.mixmethod == "mix7") {
         cp.mixmet = 2;
+    } else if (params->wavelet.mixmethod == "den") {
+        cp.mixmet = 3;
     }
 
     if (params->wavelet.BAmethod != "none") {
@@ -750,6 +752,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         float sigmaN[10];
         float MaxP[10];
         float MaxN[10];
+        float meand[10];
+        float meanNd[10];
+        float sigmad[10];
+        float sigmaNd[10];
+        float MaxPd[10];
+        float MaxNd[10];
 
         float meanab[10];
         float meanNab[10];
@@ -1078,6 +1086,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                     WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
                                 }
+                            Evaluate2(*Ldecomp, meand, meanNd, sigmad, sigmaNd, MaxPd, MaxNd, wavNestedLevels);
 
                                 if (cp.denoicurv) {//only if curve enable
                                     
@@ -1088,17 +1097,39 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             float* const* WavCoeffs_L = Ldecomp->level_coeffs(level);//first decomp denoised
                                             float* const* WavCoeffs_L2 = Ldecomp2->level_coeffs(level);//second decomp before denoise
                                             //find local contrast with non denoise
+        //printf("level=%i mean=%f md=%f sigma=%f  sd=%f maxp=%f md=%f\n", level, mean[level], meand[level], sigma[level], sigmad[level],MaxP[level], MaxPd[level]);
+                                            float tempmean = 0.f;
+                                            float tempsig = 0.f;
+                                            float tempmax = 0.f;
+                                            if(cp.mixmet == 0){
+                                                tempmean = mean[level];
+                                                tempsig = sigma[level];
+                                                tempmax = MaxP[level];
+                                            } else if(cp.mixmet == 1){
+                                                tempmean = 0.5f * mean[level] + 0.5f * meand[level] ;
+                                                tempsig = 0.5f * sigma[level] + 0.5f * sigmad[level] ;
+                                                tempmax = 0.5f * MaxP[level] + 0.5f * MaxPd[level] ;
+                                            } else if(cp.mixmet == 2){
+                                                tempmean = 0.3f * mean[level] + 0.7f * meand[level] ;
+                                                tempsig = 0.3f * sigma[level] + 0.7f * sigmad[level] ;
+                                                tempmax = 0.3f * MaxP[level] + 0.7f * MaxPd[level] ;
+                                            } else if(cp.mixmet == 3){
+                                                tempmean = meand[level]; 
+                                                tempsig = sigmad[level]; 
+                                                tempmax = MaxPd[level];
+                                            }
+                                            
                                             if (cp.denoicurv && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
                                                 float insigma = 0.666f; //SD
-                                                float logmax = log(MaxP[level]); //log Max
+                                                float logmax = log(tempmax); //log Max
                                                 //cp;sigmm change the "wider" of sigma
-                                                float rapX = (mean[level] + cp.sigmm * sigma[level]) / (MaxP[level]); //rapport between sD / max
+                                                float rapX = (tempmean + cp.sigmm * tempsig) / (tempmax); //rapport between sD / max
                                                 float inx = log(insigma);
                                                 float iny = log(rapX);
                                                 float rap = inx / iny; //koef
-                                                float asig = 0.166f / (sigma[level] * cp.sigmm);
-                                                float bsig = 0.5f - asig * mean[level];
-                                                float amean = 0.5f / (mean[level]);
+                                                float asig = 0.166f / (tempsig * cp.sigmm);
+                                                float bsig = 0.5f - asig * tempmean;
+                                                float amean = 0.5f / (tempmean);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, Wlvl_L * 16) num_threads(wavNestedLevels) if (wavNestedLevels>1)
@@ -1112,16 +1143,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     } else if(cp.mixmet == 1){
                                                         tempwav = 0.5f * WavCoeffs_L[dir][i] + 0.5f * WavCoeffs_L2[dir][i];
                                                     } else if(cp.mixmet == 2){
+                                                        tempwav = 0.7f * WavCoeffs_L[dir][i] + 0.3f * WavCoeffs_L2[dir][i];
+                                                    } else if(cp.mixmet == 3){
                                                         tempwav = WavCoeffs_L[dir][i]; 
                                                     }
 
                                                 //    if (std::fabs(WavCoeffs_L[dir][i]) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
-                                                    if (std::fabs(tempwav) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
+                                                    if (std::fabs(tempwav) >= (tempmean + cp.sigmm * tempsig)) { //for max
                                                         float valcour = xlogf(std::fabs(tempwav));
                                                         float valc = valcour - logmax;
                                                         float vald = valc * rap;
                                                         absciss = xexpf(vald);
-                                                    } else if (std::fabs(tempwav) >= mean[level]) {
+                                                    } else if (std::fabs(tempwav) >= tempmean) {
                                                         absciss = asig * std::fabs(tempwav) + bsig;
                                                     } else {
                                                         absciss = amean * std::fabs(tempwav);

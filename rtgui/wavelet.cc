@@ -633,6 +633,7 @@ Wavelet::Wavelet() :
 
     mixmethod->append(M("TP_WAVELET_MIXNOISE"));
     mixmethod->append(M("TP_WAVELET_MIXMIX"));
+    mixmethod->append(M("TP_WAVELET_MIXMIX70"));
     mixmethod->append(M("TP_WAVELET_MIXDENOISE"));
     mixmethodconn = mixmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::mixmethodChanged));
     Gtk::Label* const mixLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_MIXCONTRAST") + ":"));
@@ -1443,8 +1444,10 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         mixmethod->set_active(0);
     } else if (pp->wavelet.mixmethod == "mix") {
         mixmethod->set_active(1);
-    } else if (pp->wavelet.mixmethod == "den") {
+    } else if (pp->wavelet.mixmethod == "mix7") {
         mixmethod->set_active(2);
+    } else if (pp->wavelet.mixmethod == "den") {
+        mixmethod->set_active(3);
     }
 
     //Tilesmethod->set_active (2);
@@ -2316,6 +2319,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (mixmethod->get_active_row_number() == 1) {
         pp->wavelet.mixmethod = "mix";
     } else if (mixmethod->get_active_row_number() == 2) {
+        pp->wavelet.mixmethod = "mix7";
+    } else if (mixmethod->get_active_row_number() == 3) {
         pp->wavelet.mixmethod = "den";
     }
 
@@ -3007,7 +3012,7 @@ void Wavelet::convertParamToNormal()
     chromfi->setValue(def_params.chromfi);
     chromco->setValue(def_params.chromco);
     denmethod->set_active(0);
-    mixmethod->set_active(1);
+    mixmethod->set_active(2);
     sigm->setValue(def_params.sigm);
     //toning
     exptoning->setEnabled(def_params.exptoning);
