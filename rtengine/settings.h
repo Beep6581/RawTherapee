@@ -99,6 +99,10 @@ public:
     int             itcwb_delta;
     bool            itcwb_stdobserver10;
     int             itcwb_precis;
+//wavelet levels
+    double          edghi;
+    double          edglo;
+    double          limrad;
 
 
     enum class ThumbnailInspectorMode {

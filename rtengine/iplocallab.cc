@@ -1840,8 +1840,8 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 {
     BENCHFUN
 
-    const int W = R.width();
-    const int H = R.height();
+    const int W = R.getWidth();
+    const int H = R.getHeight();
     array2D<float> Y(W, H);
 
     const auto log2 =
@@ -3723,6 +3723,13 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
         }
         fftwf_free(data_fft04);
         fftwf_free(data_tmp04);
+    }
+    if (show == 2) {
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                datashow[y * bfw + x] = data_fft[y * bfw + x];
+            }
+        }
     }
 
     /* solve the Poisson PDE in Fourier space */
@@ -7402,7 +7409,7 @@ BENCHFUN
         CompressDR(wav_L0, W_L, H_L, Compression, DetailBoost);
     }
 
-    if ((lp.residsha != 0.f || lp.residhi != 0.f)) {
+    if ((lp.residsha < 0.f || lp.residhi < 0.f)) {
         float tran = 5.f;//transition shadow
 
         if (lp.residshathr > (100.f - tran)) {
@@ -7435,6 +7442,31 @@ BENCHFUN
                 wav_L0[i] *= (1.f + lp.residhi / 200.f);
             } else if (LL100 > (lp.residhithr - tranh)) {
                 wav_L0[i] *= (1.f + (LL100 * athH + bthH) / 200.f);
+            }
+        }
+    }
+
+    if ((lp.residsha > 0.f || lp.residhi > 0.f)) {
+        const std::unique_ptr<LabImage> temp(new LabImage(W_L, H_L));
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+
+        for (int i = 0; i < H_L; i++) {
+            for (int j = 0; j < W_L; j++) {
+                temp->L[i][j] = wav_L0[i * W_L + j];
+            }
+        }
+
+        ImProcFunctions::shadowsHighlights(temp.get(), true, 1, lp.residhi, lp.residsha , 40, sk, lp.residhithr, lp.residshathr);
+
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+
+        for (int i = 0; i < H_L; i++) {
+            for (int j = 0; j < W_L; j++) {
+                wav_L0[i * W_L + j] = temp->L[i][j];
             }
         }
     }
@@ -7515,9 +7547,9 @@ BENCHFUN
         float eddlipampl = 1.f + lp.basew / 50.f;
         int W_L = wdspot->level_W(0);//provisory W_L H_L
         int H_L = wdspot->level_H(0);
+
         float *koeLi[12];
         float maxkoeLi[12] = {0.f};
-        float *beta = new float[W_L * H_L];
 
         float *koeLibuffer = new float[12 * H_L * W_L]; //12
 
@@ -7525,65 +7557,21 @@ BENCHFUN
             koeLi[i] = &koeLibuffer[i * W_L * H_L];
         }
 
-        for (int j = 0; j < 12; j++) {
-            for (int i = 0; i < W_L * H_L; i++) {
-                koeLi[j][i] = 0.f;
-            }
-        }
-
         array2D<float> tmC(W_L, H_L);
 
         float gradw = lp.gradw;
         float tloww = lp.tloww;
-//StopWatch Stop1("test");
         for (int lvl = 0; lvl < 4; lvl++) {
             for (int dir = 1; dir < 4; dir++) {
                 const int W_L = wdspot->level_W(lvl);
                 const int H_L = wdspot->level_H(lvl);
                 float* const* wav_L = wdspot->level_coeffs(lvl);
-                if (lvl == 3 && dir == 3) {
-                    const float effect = lp.sigmaed;
-                    constexpr float offset = 1.f;
-                    float mea[10];
-                    calceffect(lvl, mean, sigma, mea, effect, offset);
-
-#ifdef _OPENMP
-                    #pragma omp parallel for if(multiThread)
-#endif
-                    for (int co = 0; co < H_L * W_L; co++) {
-                        const float WavCL = std::fabs(wav_L[dir][co]);
-
-                        if (WavCL < mea[0]) {
-                            beta[co] = 0.05f;
-                        } else if (WavCL < mea[1]) {
-                            beta[co] = 0.2f;
-                        } else if (WavCL < mea[2]) {
-                            beta[co] = 0.7f;
-                        } else if (WavCL < mea[3]) {
-                            beta[co] = 1.f;    //standard
-                        } else if (WavCL < mea[4]) {
-                            beta[co] = 1.f;
-                        } else if (WavCL < mea[5]) {
-                            beta[co] = 0.8f;    //+sigma
-                        } else if (WavCL < mea[6]) {
-                            beta[co] = 0.5f;
-                        } else if (WavCL < mea[7]) {
-                            beta[co] = 0.3f;
-                        } else if (WavCL < mea[8]) {
-                            beta[co] = 0.2f;    // + 2 sigma
-                        } else if (WavCL < mea[9]) {
-                            beta[co] = 0.1f;
-                        } else {
-                            beta[co] = 0.05f;
-                        }
-                    }
-                }
-                calckoe(wav_L, gradw, tloww, koeLi, lvl, dir, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC);
+                calckoe(wav_L[dir], gradw, tloww, koeLi[lvl * 3 + dir - 1], lvl, W_L, H_L, edd, maxkoeLi[lvl * 3 + dir - 1], tmC, true);
                 // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
             }
         }
+        
         tmC.free();
-//Stop1.stop();
         float aamp = 1.f + lp.thigw / 100.f;
 
         const float alipinfl = (eddlipampl - 1.f) / (1.f - eddlipinfl);
@@ -7743,6 +7731,14 @@ BENCHFUN
                 constexpr float da_abssd = (maxampd - abssd) / 0.333f;
                 constexpr float db_abssd = maxampd - da_abssd;
                 constexpr float am = (abssd - bbssd) / 0.666f;
+                const float effect = lp.sigmaed;
+                constexpr float offset = 1.f;
+                float mea[10];
+                calceffect(lvl, mean, sigma, mea, effect, offset);
+                float lutFactor;
+                const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.5f, 0.3f, 0.2f, 0.1f, 0.05f};
+                const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
+
                 for (int dir = 1; dir < 4; dir++) {
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
@@ -7800,7 +7796,7 @@ BENCHFUN
                             }
 
                             edge = std::max(edge * kinterm, 1.f);
-                            wav_L[dir][k] *= 1.f + (edge - 1.f) * beta[k];
+                            wav_L[dir][k] *= 1.f + (edge - 1.f) * (*meaLut)[std::fabs(wav_L[dir][k]) * lutFactor];
                         }
                     }
                 }
@@ -7810,8 +7806,6 @@ BENCHFUN
         if (koeLibuffer) {
             delete [] koeLibuffer;
         }
-
-        delete[] beta; 
     }
 
 //edge sharpness end

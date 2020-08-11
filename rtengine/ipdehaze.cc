@@ -105,8 +105,8 @@ void restore(Imagefloat *rgb, float maxval, bool multithread)
 
 int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst, int patchsize, const float ambient[3], bool clip, bool multithread, float strength)
 {
-    const int W = R.width();
-    const int H = R.height();
+    const int W = R.getWidth();
+    const int H = R.getHeight();
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)
@@ -164,8 +164,8 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
 
 int get_dark_channel_downsized(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst, int patchsize, bool multithread)
 {
-    const int W = R.width();
-    const int H = R.height();
+    const int W = R.getWidth();
+    const int H = R.getHeight();
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)
@@ -195,8 +195,8 @@ int get_dark_channel_downsized(const array2D<float> &R, const array2D<float> &G,
 
 float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, const array2D<float> &dark, int patchsize, int npatches, float ambient[3])
 {
-    const int W = R.width();
-    const int H = R.height();
+    const int W = R.getWidth();
+    const int H = R.getHeight();
 
     float darklim = RT_INFINITY_F;
     {

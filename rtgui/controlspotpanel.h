@@ -419,6 +419,7 @@ private:
     sigc::connection previewConn_;
 
     Gtk::HBox* const ctboxshape;
+    Gtk::HBox* const ctboxshapemethod;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;

@@ -336,6 +336,7 @@ struct RetinexParams {
     int     stonalwidth;
     int     radius;
 
+    Glib::ustring complexmethod;
     Glib::ustring retinexMethod;
     Glib::ustring retinexcolorspace;
     Glib::ustring gammaretinex;
@@ -1790,6 +1791,7 @@ struct WaveletParams {
     Glib::ustring CLmethod;
     Glib::ustring Backmethod;
     Glib::ustring Tilesmethod;
+    Glib::ustring complexmethod;
     Glib::ustring daubcoeffmethod;
     Glib::ustring CHmethod;
     Glib::ustring Medgreinf;

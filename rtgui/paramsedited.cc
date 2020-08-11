@@ -60,6 +60,7 @@ void ParamsEdited::set(bool v)
     retinex.mapcurve    = v;
     retinex.cdHcurve    = v;
     retinex.lhcurve    = v;
+    retinex.complexmethod    = v;
     retinex.retinexMethod    = v;
     retinex.mapMethod    = v;
     retinex.viewMethod    = v;
@@ -531,6 +532,7 @@ void ParamsEdited::set(bool v)
     wavelet.CLmethod = v;
     wavelet.Backmethod = v;
     wavelet.Tilesmethod = v;
+    wavelet.complexmethod = v;
     wavelet.daubcoeffmethod = v;
     wavelet.CHmethod = v;
     wavelet.CHSLmethod = v;
@@ -710,6 +712,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         retinex.lhcurve = retinex.lhcurve && p.retinex.lhcurve == other.retinex.lhcurve;
         retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
         retinex.gaintransmissionCurve = retinex.gaintransmissionCurve && p.retinex.gaintransmissionCurve == other.retinex.gaintransmissionCurve;
+        retinex.complexmethod = retinex.complexmethod && p.retinex.complexmethod == other.retinex.complexmethod;
         retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
         retinex.mapMethod = retinex.mapMethod && p.retinex.mapMethod == other.retinex.mapMethod;
         retinex.viewMethod = retinex.viewMethod && p.retinex.viewMethod == other.retinex.viewMethod;
@@ -1679,6 +1682,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.CLmethod = wavelet.CLmethod && p.wavelet.CLmethod == other.wavelet.CLmethod;
         wavelet.Backmethod = wavelet.Backmethod && p.wavelet.Backmethod == other.wavelet.Backmethod;
         wavelet.Tilesmethod = wavelet.Tilesmethod && p.wavelet.Tilesmethod == other.wavelet.Tilesmethod;
+        wavelet.complexmethod = wavelet.complexmethod && p.wavelet.complexmethod == other.wavelet.complexmethod;
         wavelet.daubcoeffmethod = wavelet.daubcoeffmethod && p.wavelet.daubcoeffmethod == other.wavelet.daubcoeffmethod;
         wavelet.CHmethod = wavelet.CHmethod && p.wavelet.CHmethod == other.wavelet.CHmethod;
         wavelet.CHSLmethod = wavelet.CHSLmethod && p.wavelet.CHSLmethod == other.wavelet.CHSLmethod;
@@ -1913,6 +1917,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (retinex.gaintransmissionCurve) {
         toEdit.retinex.gaintransmissionCurve = mods.retinex.gaintransmissionCurve;
+    }
+
+    if (retinex.complexmethod) {
+        toEdit.retinex.complexmethod = mods.retinex.complexmethod;
     }
 
     if (retinex.retinexMethod) {
@@ -5572,6 +5580,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.Tilesmethod) {
         toEdit.wavelet.Tilesmethod = mods.wavelet.Tilesmethod;
+    }
+
+    if (wavelet.complexmethod) {
+        toEdit.wavelet.complexmethod = mods.wavelet.complexmethod;
     }
 
     if (wavelet.daubcoeffmethod) {

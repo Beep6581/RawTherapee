@@ -10,8 +10,8 @@
  *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
@@ -946,7 +946,8 @@ Gtk::Widget* Preferences::getGeneralPanel()
     setExpandAlignProperties(complexitylocal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_EXP"));
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_NORM"));
-    complexitylocal->set_active(1);
+    complexitylocal->append(M("PREFERENCES_COMPLEXITY_SIMP"));
+    complexitylocal->set_active(2);
     workflowGrid->attach_next_to(*complexityL, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*complexitylocal, *curveBBoxPosC, Gtk::POS_BOTTOM, 1, 1);
 
