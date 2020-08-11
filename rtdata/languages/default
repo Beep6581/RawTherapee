@@ -1604,6 +1604,8 @@ PREFERENCES_CMMBPC;Black point compensation
 PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustments
 PREFERENCES_COMPLEXITY_EXP;Expert
 PREFERENCES_COMPLEXITY_NORM;Normal
+PREFERENCES_INSPECTORWINDOW;Open inspector in own window or fullscreen
+PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
 PREFERENCES_CROP;Crop Editing
 PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop

@@ -153,8 +153,10 @@ FileBrowser::FileBrowser () :
     pmenu = new Gtk::Menu ();
     pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPEN"))), 0, 1, p, p + 1);
     p++;
-    pmenu->attach (*Gtk::manage(inspect = new Gtk::MenuItem (M("FILEBROWSER_POPUPINSPECT"))), 0, 1, p, p + 1);
-    p++;
+    if (options.inspectorWindow) {
+        pmenu->attach (*Gtk::manage(inspect = new Gtk::MenuItem (M("FILEBROWSER_POPUPINSPECT"))), 0, 1, p, p + 1);
+        p++;
+    }
     pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears.png")), 0, 1, p, p + 1);
     p++;
     pmenu->attach (*Gtk::manage(developfast = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROCESSFAST"))), 0, 1, p, p + 1);
@@ -408,7 +410,8 @@ FileBrowser::FileBrowser () :
     trash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     untrash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Delete, Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Return, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
-    inspect->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_F, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    if (options.inspectorWindow)
+        inspect->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_F, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     develop->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     developfast->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     copyprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_C, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
@@ -420,7 +423,9 @@ FileBrowser::FileBrowser () :
     // Bind to event handlers
     open->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), open));
 
-    inspect->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), inspect));
+    if (options.inspectorWindow) {
+        inspect->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), inspect));
+    }
 
     for (int i = 0; i < 6; i++) {
         rank[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rank[i]));
@@ -756,7 +761,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
 
     if (m == open) {
         openRequested(mselected);
-    } else if (m == inspect) {
+    } else if (options.inspectorWindow && m == inspect) {
         inspectRequested(mselected);
     } else if (m == remove) {
         tbl->deleteRequested (mselected, false, true);

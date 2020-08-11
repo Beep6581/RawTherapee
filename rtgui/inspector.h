@@ -54,13 +54,14 @@ private:
     bool active;
     bool pinned;
     bool dirty;
+    bool initialized;
     bool fullscreen;  // window is shown in fullscreen mode
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;
     rtengine::Coord2D next_image_pos;
 
-    Gtk::Window window;
+    Gtk::Window *window;
     bool on_key_release(GdkEventKey *event);
     bool on_key_press(GdkEventKey *event);
 
