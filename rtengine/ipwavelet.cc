@@ -990,7 +990,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
 
                                 if (settings->verbose) {
-                                    printf("noise estimate madL=%f lvl=%i dir=%i\n", madL[lvl][dir - 1], lvl, dir - 1);
+                                    printf("Luminance noise estimate (sqr) madL=%.0f lvl=%i dir=%i\n", madL[lvl][dir - 1], lvl, dir - 1);
                                 }
                             }
                         }
@@ -1105,7 +1105,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             float* const* WavCoeffs_L = Ldecomp->level_coeffs(level);//first decomp denoised
                                             float* const* WavCoeffs_L2 = Ldecomp2->level_coeffs(level);//second decomp before denoise
                                             if (settings->verbose) {
-                                                printf("level=%i mean=%f meanden=%f sigma=%f  sigmaden=%f Max=%f Maxden=%f\n", level, mean[level], meand[level], sigma[level], sigmad[level],MaxP[level], MaxPd[level]);
+                                                printf("level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meand[level], sigma[level], sigmad[level],MaxP[level], MaxPd[level]);
                                             }
 
                                             //find local contrast
