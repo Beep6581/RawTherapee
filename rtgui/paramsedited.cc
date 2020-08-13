@@ -536,6 +536,7 @@ void ParamsEdited::set(bool v)
     wavelet.complexmethod = v;
     wavelet.denmethod = v;
     wavelet.mixmethod = v;
+    wavelet.quamethod = v;
     wavelet.daubcoeffmethod = v;
     wavelet.CHmethod = v;
     wavelet.CHSLmethod = v;
@@ -1690,6 +1691,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.complexmethod = wavelet.complexmethod && p.wavelet.complexmethod == other.wavelet.complexmethod;
         wavelet.denmethod = wavelet.denmethod && p.wavelet.denmethod == other.wavelet.denmethod;
         wavelet.mixmethod = wavelet.mixmethod && p.wavelet.mixmethod == other.wavelet.mixmethod;
+        wavelet.quamethod = wavelet.quamethod && p.wavelet.quamethod == other.wavelet.quamethod;
         wavelet.daubcoeffmethod = wavelet.daubcoeffmethod && p.wavelet.daubcoeffmethod == other.wavelet.daubcoeffmethod;
         wavelet.CHmethod = wavelet.CHmethod && p.wavelet.CHmethod == other.wavelet.CHmethod;
         wavelet.CHSLmethod = wavelet.CHSLmethod && p.wavelet.CHSLmethod == other.wavelet.CHSLmethod;
@@ -5604,6 +5606,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.mixmethod) {
         toEdit.wavelet.mixmethod = mods.wavelet.mixmethod;
+    }
+
+    if (wavelet.quamethod) {
+        toEdit.wavelet.quamethod = mods.wavelet.quamethod;
     }
 
     if (wavelet.daubcoeffmethod) {

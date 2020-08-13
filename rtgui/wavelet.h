@@ -106,6 +106,7 @@ private:
     rtengine::ProcEvent EvWavdenoise;
     rtengine::ProcEvent EvWavdenmethod;
     rtengine::ProcEvent EvWavmixmethod;
+    rtengine::ProcEvent EvWavquamethod;
 
     LabGrid *labgrid;
 
@@ -128,6 +129,7 @@ private:
     void complexmethodChanged();
     void denmethodChanged();
     void mixmethodChanged();
+    void quamethodChanged();
     void TilesmethodChanged();
     void avoidToggled();
     void showmaskToggled ();
@@ -324,6 +326,8 @@ private:
     sigc::connection  denmethodconn;
     MyComboBoxText* const mixmethod;
     sigc::connection  mixmethodconn;
+    MyComboBoxText* const quamethod;
+    sigc::connection  quamethodconn;
 
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
@@ -356,6 +360,7 @@ private:
     Gtk::HBox* const neutrHBox;
     Gtk::HBox* const usharpHBox;
     Gtk::HBox* const ctboxch;
+    Gtk::HBox* const quaHBox;
     Gtk::HBox* const denHBox;
     Gtk::HBox* const mixHBox;
     Gtk::VBox* const ctboxBA;// = Gtk::manage(new Gtk::VBox());

@@ -168,6 +168,7 @@ Wavelet::Wavelet() :
     ushamethod(Gtk::manage(new MyComboBoxText())),
     denmethod(Gtk::manage(new MyComboBoxText())),
     mixmethod(Gtk::manage(new MyComboBoxText())),
+    quamethod(Gtk::manage(new MyComboBoxText())),
     chanMixerHLFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_HIGHLIGHT")))),
     chanMixerMidFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_MIDTONES")))),
     chanMixerShadowsFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_SHADOWS")))),
@@ -197,6 +198,7 @@ Wavelet::Wavelet() :
     neutrHBox(Gtk::manage(new Gtk::HBox())),
     usharpHBox(Gtk::manage(new Gtk::HBox())),
     ctboxch(Gtk::manage(new Gtk::HBox())),
+    quaHBox(Gtk::manage(new Gtk::HBox())),
     denHBox(Gtk::manage(new Gtk::HBox())),
     mixHBox(Gtk::manage(new Gtk::HBox())),
     ctboxBA(Gtk::manage(new Gtk::VBox()))
@@ -242,6 +244,7 @@ Wavelet::Wavelet() :
     EvWavdenoise = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENOISE");
     EvWavdenmethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENMET");
     EvWavmixmethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVMIXMET");
+    EvWavquamethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVQUAMET");
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -619,6 +622,16 @@ Wavelet::Wavelet() :
     sigm->setAdjusterListener(this);
     CurveEditorwavnoise->setCurveListener(this);
 
+    quamethod->append(M("TP_WAVELET_QUACONSER"));
+    quamethod->append(M("TP_WAVELET_QUAAGRES"));
+    quamethodconn = quamethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::quamethodChanged));
+    quamethod->set_tooltip_text(M("TP_WAVELET_DENQUA_TOOLTIP"));
+    Gtk::Label* const quaLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENQUA") + ":"));
+    quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
+    quaHBox->pack_start(*quamethod);
+
+
+
     denmethod->append(M("TP_WAVELET_DENEQUAL"));
     denmethod->append(M("TP_WAVELET_DEN14PLUS"));
     denmethod->append(M("TP_WAVELET_DEN14LOW"));
@@ -655,6 +668,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*level1noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level2noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level3noise, Gtk::PACK_SHRINK, 0);
+    noiseBox->pack_start(*quaHBox);
     noiseBox->pack_start(*denHBox);
     noiseBox->pack_start(*mixHBox);
     noiseBox->pack_start(*sigm);
@@ -1304,6 +1318,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     complexmethodconn.block(true);
     denmethodconn.block(true);
     mixmethodconn.block(true);
+    quamethodconn.block(true);
     daubcoeffmethodconn.block(true);
     Dirmethodconn.block(true);
     CHmethodconn.block(true);
@@ -1451,6 +1466,12 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         mixmethod->set_active(2);
     } else if (pp->wavelet.mixmethod == "den") {
         mixmethod->set_active(3);
+    }
+
+    if (pp->wavelet.quamethod == "cons") {
+        quamethod->set_active(0);
+    } else if (pp->wavelet.quamethod == "agre") {
+        quamethod->set_active(1);
     }
 
     //Tilesmethod->set_active (2);
@@ -1665,6 +1686,10 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         if (!pedited->wavelet.mixmethod) {
             mixmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
+        if (!pedited->wavelet.quamethod) {
+            quamethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->wavelet.Tilesmethod) {
@@ -1909,6 +1934,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     complexmethodconn.block(false);
     denmethodconn.block(false);
     mixmethodconn.block(false);
+    quamethodconn.block(false);
     daubcoeffmethodconn.block(false);
     CHmethodconn.block(false);
     CHSLmethodconn.block(false);
@@ -2094,6 +2120,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.complexmethod   = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.denmethod       = denmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.mixmethod       = mixmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->wavelet.quamethod       = quamethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.daubcoeffmethod = daubcoeffmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.CHmethod        = CHmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.CHSLmethod      = CHSLmethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -2325,6 +2352,12 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.mixmethod = "mix7";
     } else if (mixmethod->get_active_row_number() == 3) {
         pp->wavelet.mixmethod = "den";
+    }
+
+    if (quamethod->get_active_row_number() == 0) {
+        pp->wavelet.quamethod = "cons";
+    } else if (quamethod->get_active_row_number() == 1) {
+        pp->wavelet.quamethod = "agre";
     }
 
     if (daubcoeffmethod->get_active_row_number() == 0) {
@@ -3016,6 +3049,7 @@ void Wavelet::convertParamToNormal()
     chromco->setValue(def_params.chromco);
     denmethod->set_active(0);
     mixmethod->set_active(2);
+    quamethod->set_active(0);
     sigm->setValue(def_params.sigm);
     //toning
     exptoning->setEnabled(def_params.exptoning);
@@ -3125,6 +3159,14 @@ void Wavelet::mixmethodChanged()
     }
 }
 
+void Wavelet::quamethodChanged()
+{    
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvWavquamethod, quamethod->get_active_text());
+    }
+}
+
 void Wavelet::TilesmethodChanged()
 {
     //TilesmethodUpdateUI();
@@ -3209,6 +3251,7 @@ void Wavelet::setBatchMode(bool batchMode)
     complexmethod->append(M("GENERAL_UNCHANGED"));
     denmethod->append(M("GENERAL_UNCHANGED"));
     mixmethod->append(M("GENERAL_UNCHANGED"));
+    quamethod->append(M("GENERAL_UNCHANGED"));
     daubcoeffmethod->append(M("GENERAL_UNCHANGED"));
     CHmethod->append(M("GENERAL_UNCHANGED"));
     Medgreinf->append(M("GENERAL_UNCHANGED"));

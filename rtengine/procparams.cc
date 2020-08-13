@@ -2416,6 +2416,7 @@ WaveletParams::WaveletParams() :
     complexmethod("normal"),
     denmethod("equ"),
     mixmethod("mix"),
+    quamethod("cons"),
     daubcoeffmethod("4_"),
     CHmethod("without"),
     Medgreinf("less"),
@@ -2553,6 +2554,7 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && complexmethod == other.complexmethod
         && denmethod == other.denmethod
         && mixmethod == other.mixmethod
+        && quamethod == other.quamethod
         && daubcoeffmethod == other.daubcoeffmethod
         && CHmethod == other.CHmethod
         && Medgreinf == other.Medgreinf
@@ -6020,6 +6022,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.complexmethod, "Wavelet", "complexMethod", wavelet.complexmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.denmethod, "Wavelet", "denMethod", wavelet.denmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.mixmethod, "Wavelet", "mixMethod", wavelet.mixmethod, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.quamethod, "Wavelet", "quaMethod", wavelet.quamethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.daubcoeffmethod, "Wavelet", "DaubMethod", wavelet.daubcoeffmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.CLmethod, "Wavelet", "ChoiceLevMethod", wavelet.CLmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.Backmethod, "Wavelet", "BackMethod", wavelet.Backmethod, keyFile);
@@ -7897,6 +7900,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "complexMethod", pedited, wavelet.complexmethod, pedited->wavelet.complexmethod);
             assignFromKeyfile(keyFile, "Wavelet", "denMethod", pedited, wavelet.denmethod, pedited->wavelet.denmethod);
             assignFromKeyfile(keyFile, "Wavelet", "mixMethod", pedited, wavelet.mixmethod, pedited->wavelet.mixmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "quaMethod", pedited, wavelet.quamethod, pedited->wavelet.quamethod);
             assignFromKeyfile(keyFile, "Wavelet", "DaubMethod", pedited, wavelet.daubcoeffmethod, pedited->wavelet.daubcoeffmethod);
             assignFromKeyfile(keyFile, "Wavelet", "CHromaMethod", pedited, wavelet.CHmethod, pedited->wavelet.CHmethod);
             assignFromKeyfile(keyFile, "Wavelet", "Medgreinf", pedited, wavelet.Medgreinf, pedited->wavelet.Medgreinf);

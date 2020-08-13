@@ -2099,12 +2099,12 @@ float ImProcFunctions::Mad(const float * DataList, const int datalen)
     }
 
     //computes Median Absolute Deviation
-    //DataList values should mostly have abs val < 256 because we are in Lab mode
-    int histo[256] ALIGNED64 = {0};
+    //DataList values should mostly have abs val < 256 because we are in Lab mode (32768)
+    int histo[32768] ALIGNED64 = {0};
 
     //calculate histogram of absolute values of wavelet coeffs
     for (int i = 0; i < datalen; ++i) {
-        histo[static_cast<int>(rtengine::min(255.f, fabsf(DataList[i])))]++;
+        histo[static_cast<int>(rtengine::min(32768.f, fabsf(DataList[i])))]++;
     }
 
     //find median of histogram

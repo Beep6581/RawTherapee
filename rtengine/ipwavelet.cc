@@ -121,6 +121,7 @@ struct cont_params {
     float sigmadir;
     int denmet;
     int mixmet;
+    int quamet;
     int ite;
     int contmet;
     bool opaW;
@@ -277,6 +278,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         cp.mixmet = 2;
     } else if (params->wavelet.mixmethod == "den") {
         cp.mixmet = 3;
+    }
+
+    if (params->wavelet.quamethod == "cons") {
+        cp.quamet = 0;
+    } else if (params->wavelet.quamethod == "agre") {
+        cp.quamet = 1;
     }
 
     if (params->wavelet.BAmethod != "none") {
@@ -1080,7 +1087,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     }
 
 
-                                if (cp.lev3n < 50.f) {
+                              //  if (cp.lev3n < 50.f) {
+                                if(cp.quamet == 0) {
                                     if (settings->verbose) {
                                         printf("denoise standard\n");
                                     }
@@ -1494,7 +1502,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 const std::unique_ptr<wavelet_decomposition> adecomp(new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwava, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!adecomp->memory_allocation_failed()) {
-                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f )) {
+                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0 )) {
                                        WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                     } else if (cp.chromfi > 0.f && cp.chromco >= 2.f){
 
@@ -1531,7 +1539,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavb, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!bdecomp->memory_allocation_failed()) {
-                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f )) {
+                                  //  if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f )) {
+                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) &&  cp.quamet == 0)) {
+                                        
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     } else if (cp.chromfi > 0.f && cp.chromco >= 2.f){
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
@@ -1557,7 +1567,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavab, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!adecomp->memory_allocation_failed() && !bdecomp->memory_allocation_failed()) {
-                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f)) {
+                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0)) {
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                     } else if (cp.chromfi > 0.f && cp.chromco >= 2.f){
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
@@ -1566,7 +1576,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                     Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab, wavNestedLevels);
                                     WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve, waOpacityCurveW, cp, true, skip, meanab, sigmaab);
-                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f)) {
+                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0)) {
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     } else if (cp.chromfi > 0.f && cp.chromco >= 2.f){
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
