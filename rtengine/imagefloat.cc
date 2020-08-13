@@ -288,10 +288,10 @@ void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* imag
                         lineB[dst_x] = CLIP0(bm * btot);
                     } else {
                         // computing a special factor for this incomplete sub-region
-                        float area = src_sub_width * src_sub_height;
-                        lineR[dst_x] = CLIP0(rm2 * rtot / area);
-                        lineG[dst_x] = CLIP0(gm2 * gtot / area);
-                        lineB[dst_x] = CLIP0(bm2 * btot / area);
+                        float larea = src_sub_width * src_sub_height;
+                        lineR[dst_x] = CLIP0(rm2 * rtot / larea);
+                        lineG[dst_x] = CLIP0(gm2 * gtot / larea);
+                        lineB[dst_x] = CLIP0(bm2 * btot / larea);
                     }
                 }
             }
@@ -327,53 +327,15 @@ void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* imag
 #endif
 }
 
-Image8*
-Imagefloat::to8() const
-{
-    Image8* img8 = new Image8(width, height);
-#ifdef _OPENMP
-    #pragma omp parallel for schedule(static)
-#endif
-
-    for (int h = 0; h < height; ++h) {
-        for (int w = 0; w < width; ++w) {
-            img8->r(h, w) = uint16ToUint8Rounded(CLIP(r(h, w)));
-            img8->g(h, w) = uint16ToUint8Rounded(CLIP(g(h, w)));
-            img8->b(h, w) = uint16ToUint8Rounded(CLIP(b(h, w)));
-        }
-    }
-
-    return img8;
-}
-
-Image16*
-Imagefloat::to16() const
-{
-    Image16* img16 = new Image16(width, height);
-#ifdef _OPENMP
-    #pragma omp parallel for schedule(static)
-#endif
-
-    for (int h = 0; h < height; ++h) {
-        for (int w = 0; w < width; ++w) {
-            img16->r(h, w) = CLIP(r(h, w));
-            img16->g(h, w) = CLIP(g(h, w));
-            img16->b(h, w) = CLIP(b(h, w));
-        }
-    }
-
-    return img16;
-}
-
 void Imagefloat::normalizeFloat(float srcMinVal, float srcMaxVal)
 {
 
-    float scale = MAXVALF / (srcMaxVal - srcMinVal);
-    int w = width;
-    int h = height;
+    const float scale = MAXVALF / (srcMaxVal - srcMinVal);
+    const int w = width;
+    const int h = height;
 
 #ifdef _OPENMP
-    #pragma omp parallel for firstprivate(w, h, srcMinVal, scale) schedule(dynamic, 5)
+    #pragma omp parallel for schedule(dynamic, 5)
 #endif
 
     for (int y = 0; y < h; y++) {
@@ -389,11 +351,11 @@ void Imagefloat::normalizeFloat(float srcMinVal, float srcMaxVal)
 void Imagefloat::normalizeFloatTo1()
 {
 
-    int w = width;
-    int h = height;
+    const int w = width;
+    const int h = height;
 
 #ifdef _OPENMP
-    #pragma omp parallel for firstprivate(w, h) schedule(dynamic, 5)
+    #pragma omp parallel for schedule(dynamic, 5)
 #endif
 
     for (int y = 0; y < h; y++) {
@@ -409,11 +371,11 @@ void Imagefloat::normalizeFloatTo1()
 void Imagefloat::normalizeFloatTo65535()
 {
 
-    int w = width;
-    int h = height;
+    const int w = width;
+    const int h = height;
 
 #ifdef _OPENMP
-    #pragma omp parallel for firstprivate(w, h) schedule(dynamic, 5)
+    #pragma omp parallel for schedule(dynamic, 5)
 #endif
 
     for (int y = 0; y < h; y++) {
@@ -423,59 +385,6 @@ void Imagefloat::normalizeFloatTo65535()
             b(y, x) *= 65535.f;
         }
     }
-}
-
-void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist)
-{
-
-    hist.clear();
-
-    // Set up factors to calc the lightness
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.workingProfile);
-
-    float facRed   = wprof[1][0];
-    float facGreen = wprof[1][1];
-    float facBlue  = wprof[1][2];
-
-
-    // calc pixel size
-    int x1, x2, y1, y2;
-    params.crop.mapToResized(width, height, scale, x1, x2, y1, y2);
-
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        LUTu histThr(65536);
-        histThr.clear();
-#ifdef _OPENMP
-        #pragma omp for nowait
-#endif
-
-        for (int y = y1; y < y2; y++) {
-            for (int x = x1; x < x2; x++) {
-                int i = (int)(facRed * r(y, x) + facGreen * g(y, x) + facBlue * b(y, x));
-
-                if (i < 0) {
-                    i = 0;
-                } else if (i > 65535) {
-                    i = 65535;
-                }
-
-                histThr[i]++;
-            }
-        }
-
-#ifdef _OPENMP
-        #pragma omp critical
-#endif
-        {
-            for(int i = 0; i <= 0xffff; i++) {
-                hist[i] += histThr[i];
-            }
-        }
-    }
-
 }
 
 // Parallelized transformation; create transform with cmsFLAGS_NOCACHE!
