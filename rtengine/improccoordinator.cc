@@ -852,8 +852,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
         if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
-            //        if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
-
             //complexCurve also calculated pre-curves histogram depending on crop
             CurveFactory::complexCurve(params->toneCurve.expcomp, params->toneCurve.black / 65535.0,
                                        params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh,
