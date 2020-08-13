@@ -1833,7 +1833,6 @@ public:
     /** @brief Sets the progress listener if you want to follow the progress of the image saving operations (optional).
       * @param pl is the pointer to the class implementing the ProgressListener interface */
     virtual void setSaveProgressListener (ProgressListener* pl) = 0;
-    /** @brief Free the image */
 };
 
 /** @brief This class represents an image having a float pixel planar representation.
