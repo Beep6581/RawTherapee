@@ -625,7 +625,7 @@ Wavelet::Wavelet() :
     denmethod->append(M("TP_WAVELET_DEN12PLUS"));
     denmethod->append(M("TP_WAVELET_DEN12LOW"));
     denmethodconn = denmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::denmethodChanged));
-   // denmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
+    denmethod->set_tooltip_text(M("TP_WAVELET_DENEQUAL_TOOLTIP"));
 //    Gtk::HBox* const denHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const denLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENCONTRAST") + ":"));
     denHBox->pack_start(*denLabel, Gtk::PACK_SHRINK, 4);
@@ -636,6 +636,7 @@ Wavelet::Wavelet() :
     mixmethod->append(M("TP_WAVELET_MIXMIX70"));
     mixmethod->append(M("TP_WAVELET_MIXDENOISE"));
     mixmethodconn = mixmethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::mixmethodChanged));
+    mixmethod->set_tooltip_text(M("TP_WAVELET_DENMIX_TOOLTIP"));
     Gtk::Label* const mixLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_MIXCONTRAST") + ":"));
     mixHBox->pack_start(*mixLabel, Gtk::PACK_SHRINK, 4);
     mixHBox->pack_start(*mixmethod);
@@ -643,9 +644,11 @@ Wavelet::Wavelet() :
     wavdenoise = static_cast<FlatCurveEditor*>(CurveEditorwavnoise->addCurve(CT_Flat, "", nullptr, false, false));
     wavdenoise->setIdentityValue(0.);
     wavdenoise->setResetCurve(FlatCurveType(default_params.wavdenoise.at(0)), default_params.wavdenoise);
+    CurveEditorwavnoise->set_tooltip_text(M("TP_WAVELET_DENLOCAL_TOOLTIP"));
 
     CurveEditorwavnoise->curveListComplete();
     CurveEditorwavnoise->show();
+    sigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
 
     noiseBox->pack_start(*ballum);
     noiseBox->pack_start(*level0noise, Gtk::PACK_SHRINK, 0);

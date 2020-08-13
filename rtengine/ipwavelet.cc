@@ -1080,7 +1080,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     }
 
 
-                                if (cp.lev3n < 20.f) {
+                                if (cp.lev3n < 50.f) {
                                     if (settings->verbose) {
                                         printf("denoise standard\n");
                                     }

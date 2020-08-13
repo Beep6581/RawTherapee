@@ -3402,7 +3402,7 @@ TP_WAVELET_MIXMIX;Mixed 50% noise - 50% denoise
 TP_WAVELET_MIXMIX70;Mixed 30% noise - 70% denoise
 TP_WAVELET_NOIS;Denoise
 TP_WAVELET_NOISE;Denoise and Refine
-TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 20, mode Agressive is used.\nIf chrominance coarse superior to 20, mode Agressive is used.
+TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 50, mode Agressive is used.\nIf chrominance coarse superior to 20, mode Agressive is used.
 TP_WAVELET_NPHIGH;High
 TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
