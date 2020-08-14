@@ -273,11 +273,7 @@ void CLASS derror()
     if (feof(ifp))
       fprintf (stderr,_("Unexpected end of file\n"));
     else
-#ifdef WIN32
-      fprintf (stderr,_("Corrupt data near 0x%I64x\n"), (INT64) ftello(ifp));
-#else
       fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
-#endif
   }
   data_error++;
 /*RT Issue 2467  longjmp (failure, 1);*/
@@ -2050,9 +2046,8 @@ void CLASS phase_one_load_raw_c()
             } else if ((col & 7) == 0) {
                 for (int i = 0; i < 2; i++) {
                     int j;
-                    for (j = 0; j < 5 && !ph1_bits(1); j++)
-                        ;
-	                if (j--) {
+                    for (j = 0; j < 5 && !ph1_bits(1); j++) ;
+                    if (j--) {
                         len[i] = length[j * 2 + ph1_bits(1)];
 	                }
 	            }
@@ -6207,8 +6202,8 @@ void CLASS parse_exif (int base)
       case 36867:
       case 36868:  get_timestamp(0);			break;
       case 37377:  if ((expo = -getreal(type)) < 128)
-             tiff_ifd[tiff_nifds-1].shutter =
-		     shutter = pow (2, expo);		break;
+                     tiff_ifd[tiff_nifds-1].shutter = shutter = pow (2, expo);
+                   break;
       case 37378:  aperture = pow (2, getreal(type)/2);	break;
       case 37386:  focal_len = getreal(type);		break;
       case 37500:  parse_makernote (base, 0);		break;
@@ -7093,7 +7088,8 @@ void CLASS apply_tiff()
 	  load_flags = 24;
 	if (!strcmp(make,"SONY") && tiff_bps < 14 &&
 		tiff_ifd[raw].bytes == raw_width*raw_height*2)
-	    tiff_bps = 14;	if (tiff_ifd[raw].bytes*5 == raw_width*raw_height*8) {
+	    tiff_bps = 14;
+    if (tiff_ifd[raw].bytes*5 == raw_width*raw_height*8) {
 	  load_flags = 81;
 	  tiff_bps = 12;
 	} slr:
@@ -7166,7 +7162,8 @@ void CLASS apply_tiff()
 	    // load_raw = &CLASS packed_load_raw;
             load_raw = &CLASS nikon_14bit_load_raw;
 	} else
-	  load_raw = &CLASS nikon_load_raw;			break;
+	  load_raw = &CLASS nikon_load_raw;
+    break;
       case 65535:
 	load_raw = &CLASS pentax_load_raw;			break;
       case 65000:

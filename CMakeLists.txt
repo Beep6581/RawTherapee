@@ -637,14 +637,8 @@ else()
 endif()
 
 # Get compiler name and version.
-    get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
-    set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
-if(NOT APPLE)
-    execute_process(
-        COMMAND gcc -dumpversion
-        OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(COMPILER_INFO "gcc ${GCC_VERSION}")
-endif()
+get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
+set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
 
 # Get C++ and linker flags for rtengine (the GUI's C++ flags may have fewer
 # flags):
