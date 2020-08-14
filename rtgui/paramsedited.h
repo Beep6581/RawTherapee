@@ -1111,6 +1111,7 @@ struct WaveletParamsEdited {
     bool bluehigh;
     bool ballum;
     bool sigm;
+    bool levden;
     bool balchrom;
     bool chromfi;
     bool chromco;

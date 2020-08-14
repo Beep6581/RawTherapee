@@ -1291,6 +1291,7 @@ HISTORY_MSG_WAVCLARI;Clarity
 HISTORY_MSG_WAVDENOISE;Local contrast
 HISTORY_MSG_WAVDENMET;Local equalizer
 HISTORY_MSG_WAVEDGS;Edge stopping
+HISTORY_MSG_WAVLEVDEN;High level local contrast
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
 HISTORY_MSG_WAVMERGEC;Merge C
 HISTORY_MSG_WAVMERGEL;Merge L
@@ -3374,6 +3375,7 @@ TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight
 TP_WAVELET_LABEL;Wavelet Levels
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chroma
+TP_WAVELET_LEVDEN;High levels Local contrast
 TP_WAVELET_LEVDIR_ALL;All levels, in all directions
 TP_WAVELET_LEVDIR_INF;Finer detail levels, including selected level
 TP_WAVELET_LEVDIR_ONE;One level
@@ -3439,7 +3441,7 @@ TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
 TP_WAVELET_SIGMA;Attenuation response
-TP_WAVELET_SIGM;Sigma
+TP_WAVELET_SIGM;Radius
 TP_WAVELET_SIGMAFIN;Attenuation response
 TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n .The lower it is, the more the effect will be pinpointed towards a narrow range of contrast values
 TP_WAVELET_SKIN;Skin targetting/protection

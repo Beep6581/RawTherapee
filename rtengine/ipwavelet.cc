@@ -165,6 +165,7 @@ struct cont_params {
     float rangeab;
     float protab;
     float sigmm;
+    int levden;
 };
 
 int wavNestedLevels = 1;
@@ -250,6 +251,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.sigmacol = params->wavelet.sigmacol;
     cp.sigmadir = params->wavelet.sigmadir;
     cp.sigmm = params->wavelet.sigm;
+    cp.levden = params->wavelet.levden;
 
     if (params->wavelet.TMmethod == "cont") {
         cp.contmet = 1;
@@ -977,7 +979,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                 if (levwavL > 0) {
                     const std::unique_ptr<wavelet_decomposition> Ldecomp(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
-                    const std::unique_ptr<wavelet_decomposition> Ldecomp2(new wavelet_decomposition(labco->data, labco->W, labco->H, 4, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
+                 //   const std::unique_ptr<wavelet_decomposition> Ldecomp2(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                     if (!Ldecomp->memory_allocation_failed()) {
                         float madL[10][3];
@@ -1047,7 +1049,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             vari[2] = rtengine::max(0.000001f, vari[2]);
                             vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
                             
-                            const std::unique_ptr<wavelet_decomposition> Ldecomp2(new wavelet_decomposition(labco->data, labco->W, labco->H, 4, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
+                            const std::unique_ptr<wavelet_decomposition> Ldecomp2(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
                             if(!Ldecomp2->memory_allocation_failed()){
                                 if (settings->verbose) {
                                     printf("LUM var0=%f var1=%f var2=%f var3=%f\n", vari[0], vari[1], vari[2], vari[3]);
@@ -1191,19 +1193,19 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     //equalizer for levels 0 1 and 3...  1.33 and 0.75 arbitrary values
                                                     if(cp.denmet == 1) {
                                                         if(level == 0 || level == 3) {
-                                                            kc *= 1.33f;
+                                                            kc *= 1.7f;
                                                         }
                                                     } else if(cp.denmet == 2) {
                                                         if(level == 0 || level == 3) {
-                                                            kc *= 0.75f;
+                                                            kc *= 0.3f;
                                                         }
                                                     } else if(cp.denmet == 3) {
                                                         if(level == 0 || level == 1) {
-                                                            kc *= 1.33f;
+                                                            kc *= 1.7f;
                                                         }
                                                     } else if(cp.denmet == 4) {
                                                         if(level == 0 || level == 1) {
-                                                            kc *= 0.75f;
+                                                            kc *= 0.3f;
                                                         }
                                                     }
                                                                             
@@ -1216,6 +1218,73 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                 }
                                             }
                                         }
+                                    }
+                                    //now WavCoeffs_L denoised take into account local contrast 0123
+                                    if(cp.levden > 3) {
+                                        cp.levden = min(levwavL, cp.levden);
+                                       // printf("OK levden=%i\n", cp.levden);
+                                        
+                                    for (int dir = 1; dir < 4; dir++) {
+                                        for (int level = 0; level < cp.levden; level++) {
+                                            int W_L = Ldecomp->level_W(level);
+                                            int H_L = Ldecomp->level_H(level);
+                                            float* const* WavCoeffs_L3 = Ldecomp->level_coeffs(level);//denoise with all levels
+                                            auto WavL0 = Ldecomp->level_coeffs(0)[dir];
+                                            auto WavL1 = Ldecomp->level_coeffs(1)[dir];
+                                            auto WavL2 = Ldecomp->level_coeffs(2)[dir];
+                                            auto WavL3 = Ldecomp->level_coeffs(3)[dir];
+
+                                            auto WavL02 = Ldecomp2->level_coeffs(0)[dir];
+                                            auto WavL12 = Ldecomp2->level_coeffs(1)[dir];
+                                            auto WavL22 = Ldecomp2->level_coeffs(2)[dir];
+                                            auto WavL32 = Ldecomp2->level_coeffs(3)[dir];
+             
+                                            float insigma = 0.666f; //SD
+                                            float logmax = log(MaxP[level]); //log Max
+                                            float rapX = (mean[level] + cp.sigmafin * sigma[level]) / (MaxP[level]); //rapport between sD / max
+                                            float inx = log(insigma);
+                                            float iny = log(rapX);
+                                            float rap = inx / iny; //koef
+                                            float asig = 0.166f / (sigma[level] * cp.sigmafin);
+                                            float bsig = 0.5f - asig * mean[level];
+                                            float amean = 0.5f / (mean[level]);
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, W_L * 16) num_threads(wavNestedLevels) if (wavNestedLevels>1)
+#endif
+
+                                            for (int i = 0; i < W_L * H_L; i++) {
+                                                float absciss;
+
+                                                if (std::fabs(WavCoeffs_L3[dir][i]) >= (mean[level] + cp.sigmafin * sigma[level])) { //for max
+                                                    float valcour = xlogf(std::fabs(WavCoeffs_L3[dir][i]));
+                                                    float valc = valcour - logmax;
+                                                    float vald = valc * rap;
+                                                    absciss = xexpf(vald);
+                                                } else if (std::fabs(WavCoeffs_L3[dir][i]) >= mean[level]) {
+                                                    absciss = asig * std::fabs(WavCoeffs_L3[dir][i]) + bsig;
+                                                } else {
+                                                    absciss = amean * std::fabs(WavCoeffs_L3[dir][i]);
+                                                }
+
+                                                float kc = waOpacityCurveWL[absciss * 500.f] - 1.f;
+                                                    if(kc < 0) {
+                                                        kc = -SQR(kc);//approximation to simulate sliders denoise
+                                                    }
+                                                
+                                                float reduceeffect = kc <= 0.f ? 1.f : 1.2f;
+
+                                                float kinterm = 1.f + reduceeffect * kc;
+                                                kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+                                                if(level >= 4) {
+                                                    WavL0[i] = WavL02[i] + (WavL0[i] - WavL02[i]) * kinterm;
+                                                    WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kinterm;
+                                                    WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kinterm;
+                                                    WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kinterm;
+                                                }
+                                            }
+                                        }
+                                    }
                                     }
                                 }
                             }

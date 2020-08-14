@@ -133,6 +133,7 @@ Wavelet::Wavelet() :
     level2noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTWO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     level3noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTHRE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     sigm(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGM"), 0.025, 2.5, 0.01, 1.3))),
+    levden(Gtk::manage(new Adjuster(M("TP_WAVELET_LEVDEN"), 3, 10, 1, 3))),
     threshold(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD"), 1, 9, 1, 4))),
  //   threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 1, 9, 1, 4))),
     threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 3, 9, 1, 5))),
@@ -245,6 +246,7 @@ Wavelet::Wavelet() :
     EvWavdenmethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENMET");
     EvWavmixmethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVMIXMET");
     EvWavquamethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVQUAMET");
+    EvWavlevden = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVLEVDEN");
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -620,6 +622,7 @@ Wavelet::Wavelet() :
     level3noise->setUpdatePolicy(RTUP_DYNAMIC);
     ballum->setAdjusterListener(this);
     sigm->setAdjusterListener(this);
+    levden->setAdjusterListener(this);
     CurveEditorwavnoise->setCurveListener(this);
 
     quamethod->append(M("TP_WAVELET_QUACONSER"));
@@ -662,6 +665,7 @@ Wavelet::Wavelet() :
     CurveEditorwavnoise->curveListComplete();
     CurveEditorwavnoise->show();
     sigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
+    levden->set_tooltip_text(M("TP_WAVELET_DENLEV_TOOLTIP"));
 
     noiseBox->pack_start(*ballum);
     noiseBox->pack_start(*level0noise, Gtk::PACK_SHRINK, 0);
@@ -673,6 +677,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*mixHBox);
     noiseBox->pack_start(*sigm);
     noiseBox->pack_start(*CurveEditorwavnoise);
+    noiseBox->pack_start(*levden);
     
 
     balchrom->setAdjusterListener(this);
@@ -1631,6 +1636,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     labgrid->setParams(pp->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX, false);
 
     sigm->setValue(pp->wavelet.sigm);
+    levden->setValue(pp->wavelet.levden);
     ballum->setValue(pp->wavelet.ballum);
     balchrom->setValue(pp->wavelet.balchrom);
     chromfi->setValue(pp->wavelet.chromfi);
@@ -1812,6 +1818,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         softradend->setEditedState(pedited->wavelet.softradend ? Edited : UnEdited);
 
         sigm->setEditedState(pedited->wavelet.sigm ? Edited : UnEdited);
+        levden->setEditedState(pedited->wavelet.levden ? Edited : UnEdited);
         ballum->setEditedState(pedited->wavelet.ballum ? Edited : UnEdited);
         balchrom->setEditedState(pedited->wavelet.balchrom ? Edited : UnEdited);
         chromfi->setEditedState(pedited->wavelet.chromfi ? Edited : UnEdited);
@@ -2054,6 +2061,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.balance        = (int) balance->getValue();
     pp->wavelet.balchrom       = balchrom->getValue();
     pp->wavelet.sigm           = sigm->getValue();
+    pp->wavelet.levden         = levden->getIntValue();
     pp->wavelet.ballum         = ballum->getValue();
     pp->wavelet.chromfi        = chromfi->getValue();
     pp->wavelet.chromco        = chromco->getValue();
@@ -2194,6 +2202,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.greenhigh       = greenhigh->getEditedState();
         pedited->wavelet.bluehigh        = bluehigh->getEditedState();
         pedited->wavelet.sigm            = sigm->getEditedState();
+        pedited->wavelet.levden          = levden->getEditedState();
         pedited->wavelet.ballum          = ballum->getEditedState();
         pedited->wavelet.balchrom        = balchrom->getEditedState();
         pedited->wavelet.chromfi         = chromfi->getEditedState();
@@ -2481,6 +2490,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     level2noise->setDefault<double> (defParams->wavelet.level2noise);
     level3noise->setDefault<double> (defParams->wavelet.level3noise);
     sigm->setDefault(defParams->wavelet.sigm);
+    levden->setDefault(defParams->wavelet.levden);
     ballum->setDefault(defParams->wavelet.ballum);
     balchrom->setDefault(defParams->wavelet.balchrom);
     chromfi->setDefault(defParams->wavelet.chromfi);
@@ -2510,6 +2520,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         softrad->setDefaultEditedState(pedited->wavelet.softrad ? Edited : UnEdited);
         softradend->setDefaultEditedState(pedited->wavelet.softradend ? Edited : UnEdited);
         sigm->setDefaultEditedState(pedited->wavelet.sigm ? Edited : UnEdited);
+        levden->setDefaultEditedState(pedited->wavelet.levden ? Edited : UnEdited);
         ballum->setDefaultEditedState(pedited->wavelet.ballum ? Edited : UnEdited);
         balchrom->setDefaultEditedState(pedited->wavelet.balchrom ? Edited : UnEdited);
         chromfi->setDefaultEditedState(pedited->wavelet.chromfi ? Edited : UnEdited);
@@ -3498,6 +3509,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavballum, ballum->getTextValue());
         } else if (a == sigm) {
             listener->panelChanged(EvWavsigm, sigm->getTextValue());
+        } else if (a == levden) {
+            listener->panelChanged(EvWavlevden, levden->getTextValue());
         } else if (a == balchrom) {
             listener->panelChanged(EvWavbalchrom, balchrom->getTextValue());
         } else if (a == chromfi) {
