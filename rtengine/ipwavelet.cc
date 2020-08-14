@@ -1252,11 +1252,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
              
                                             float insigma = 0.666f; //SD
                                             float logmax = log(MaxP[level]); //log Max
-                                            float rapX = (mean[level] + cp.sigmafin * sigma[level]) / (MaxP[level]); //rapport between sD / max
+                                            float rapX = (mean[level] + cp.sigmm * sigma[level]) / (MaxP[level]); //rapport between sD / max
                                             float inx = log(insigma);
                                             float iny = log(rapX);
                                             float rap = inx / iny; //koef
-                                            float asig = 0.166f / (sigma[level] * cp.sigmafin);
+                                            float asig = 0.166f / (sigma[level] * cp.sigmm);
                                             float bsig = 0.5f - asig * mean[level];
                                             float amean = 0.5f / (mean[level]);
 
@@ -1267,7 +1267,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             for (int i = 0; i < W_L * H_L; i++) {
                                                 float absciss;
 
-                                                if (std::fabs(WavCoeffs_L3[dir][i]) >= (mean[level] + cp.sigmafin * sigma[level])) { //for max
+                                                if (std::fabs(WavCoeffs_L3[dir][i]) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
                                                     float valcour = xlogf(std::fabs(WavCoeffs_L3[dir][i]));
                                                     float valc = valcour - logmax;
                                                     float vald = valc * rap;

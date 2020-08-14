@@ -3328,7 +3328,7 @@ TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the first levels. However the quality is not strictly related to this coefficient and can vary depending on image and use.
 TP_WAVELET_DENOISE;Local contrast
-TP_WAVELET_DENOISEH;High levels Local contrast
+TP_WAVELET_DENOISEH;High levels Curve Local contrast
 TP_WAVELET_DENCONTRAST;Local contrast Equalizer
 TP_WAVELET_DENEQUAL;1 2 3 4 Equal
 TP_WAVELET_DEN14PLUS;1 4 High
@@ -3377,7 +3377,7 @@ TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight
 TP_WAVELET_LABEL;Wavelet Levels
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chroma
-TP_WAVELET_LEVDEN;High levels Local contrast
+TP_WAVELET_LEVDEN;High levels contrast
 TP_WAVELET_LEVDIR_ALL;All levels, in all directions
 TP_WAVELET_LEVDIR_INF;Finer detail levels, including selected level
 TP_WAVELET_LEVDIR_ONE;One level
@@ -3443,7 +3443,7 @@ TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
 TP_WAVELET_SIGMA;Attenuation response
-TP_WAVELET_SIGM;Radius
+TP_WAVELET_SIGM;Radius low & high
 TP_WAVELET_SIGMAFIN;Attenuation response
 TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n .The lower it is, the more the effect will be pinpointed towards a narrow range of contrast values
 TP_WAVELET_SKIN;Skin targetting/protection
