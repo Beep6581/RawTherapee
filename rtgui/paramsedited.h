@@ -1095,6 +1095,7 @@ struct WaveletParamsEdited {
     bool opacityCurveSH;
     bool opacityCurveBY;
     bool wavdenoise;
+    bool wavdenoiseh;
     bool opacityCurveRG;
     bool opacityCurveW;
     bool opacityCurveWL;

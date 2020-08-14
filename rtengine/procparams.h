@@ -1726,6 +1726,7 @@ private:
 struct WaveletParams {
     std::vector<double> ccwcurve;
     std::vector<double> wavdenoise;
+    std::vector<double> wavdenoiseh;
     std::vector<double> blcurve;
     std::vector<double> levelshc;
     std::vector<double> opacityCurveRG;
@@ -1864,6 +1865,7 @@ struct WaveletParams {
     void getCurves(
         WavCurve& cCurve,
         WavCurve& wavdenoise,
+        WavCurve& wavdenoiseh,
         Wavblcurve& tCurve,
         WavOpacityCurveRG& opacityCurveLUTRG,
         WavOpacityCurveSH& opacityCurveLUTSH,

@@ -73,6 +73,7 @@ Wavelet::Wavelet() :
     opaCurveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_COLORT"))),
     opacityCurveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_OPACITY"))),
     CurveEditorwavnoise(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_DENOISE"))),
+    CurveEditorwavnoiseh(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_DENOISEH"))),
     opacityCurveEditorW(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_OPACITYW"))),
     opacityCurveEditorWL(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_OPACITYWL"))),
     median(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_MEDI")))),
@@ -247,6 +248,7 @@ Wavelet::Wavelet() :
     EvWavmixmethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVMIXMET");
     EvWavquamethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVQUAMET");
     EvWavlevden = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVLEVDEN");
+    EvWavdenoiseh = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENOISEH");
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -624,6 +626,7 @@ Wavelet::Wavelet() :
     sigm->setAdjusterListener(this);
     levden->setAdjusterListener(this);
     CurveEditorwavnoise->setCurveListener(this);
+    CurveEditorwavnoiseh->setCurveListener(this);
 
     quamethod->append(M("TP_WAVELET_QUACONSER"));
     quamethod->append(M("TP_WAVELET_QUAAGRES"));
@@ -664,6 +667,14 @@ Wavelet::Wavelet() :
 
     CurveEditorwavnoise->curveListComplete();
     CurveEditorwavnoise->show();
+    
+    wavdenoiseh = static_cast<FlatCurveEditor*>(CurveEditorwavnoiseh->addCurve(CT_Flat, "", nullptr, false, false));
+    wavdenoiseh->setIdentityValue(0.);
+    wavdenoiseh->setResetCurve(FlatCurveType(default_params.wavdenoiseh.at(0)), default_params.wavdenoiseh);
+    CurveEditorwavnoiseh->set_tooltip_text(M("TP_WAVELET_DENLOCAL_TOOLTIP"));
+    CurveEditorwavnoiseh->curveListComplete();
+    CurveEditorwavnoiseh->show();
+    
     sigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
     levden->set_tooltip_text(M("TP_WAVELET_DENLEV_TOOLTIP"));
 
@@ -678,6 +689,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*sigm);
     noiseBox->pack_start(*CurveEditorwavnoise);
     noiseBox->pack_start(*levden);
+    noiseBox->pack_start(*CurveEditorwavnoiseh);
     
 
     balchrom->setAdjusterListener(this);
@@ -1235,6 +1247,7 @@ Wavelet::~Wavelet()
     delete curveEditorC;
     delete opacityCurveEditorG;
     delete CurveEditorwavnoise;
+    delete CurveEditorwavnoiseh;
     delete curveEditorbl;
     delete CCWcurveEditorG;
     delete curveEditorRES;
@@ -1519,6 +1532,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     blshape->setCurve(pp->wavelet.blcurve);
     opacityShapeRG->setCurve(pp->wavelet.opacityCurveRG);
     wavdenoise->setCurve(pp->wavelet.wavdenoise);
+    wavdenoiseh->setCurve(pp->wavelet.wavdenoiseh);
     opacityShapeSH->setCurve(pp->wavelet.opacityCurveSH);
     opacityShapeBY->setCurve(pp->wavelet.opacityCurveBY);
     opacityShape->setCurve(pp->wavelet.opacityCurveW);
@@ -1763,6 +1777,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         opacityShapeSH->setCurve(pp->wavelet.opacityCurveSH);
         opacityShapeBY->setCurve(pp->wavelet.opacityCurveBY);
         wavdenoise->setCurve(pp->wavelet.wavdenoise);
+        wavdenoiseh->setCurve(pp->wavelet.wavdenoiseh);
         opacityShape->setCurve(pp->wavelet.opacityCurveW);
         opacityShapeWL->setCurve(pp->wavelet.opacityCurveWL);
         hhshape->setUnChanged(!pedited->wavelet.hhcurve);
@@ -1972,6 +1987,7 @@ void Wavelet::setEditProvider(EditDataProvider *provider)
     opacityShapeSH->setEditProvider(provider);
     opacityShapeBY->setEditProvider(provider);
     wavdenoise->setEditProvider(provider);
+    wavdenoiseh->setEditProvider(provider);
     opacityShape->setEditProvider(provider);
     opacityShapeWL->setEditProvider(provider);
     hhshape->setEditProvider(provider);
@@ -2051,6 +2067,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.opacityCurveSH = opacityShapeSH->getCurve();
     pp->wavelet.opacityCurveBY = opacityShapeBY->getCurve();
     pp->wavelet.wavdenoise = wavdenoise->getCurve();
+    pp->wavelet.wavdenoiseh = wavdenoiseh->getCurve();
     pp->wavelet.opacityCurveW  = opacityShape->getCurve();
     pp->wavelet.opacityCurveWL = opacityShapeWL->getCurve();
     pp->wavelet.hhcurve        = hhshape->getCurve();
@@ -2187,6 +2204,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.opacityCurveSH  = !opacityShapeSH->isUnChanged();
         pedited->wavelet.opacityCurveBY  = !opacityShapeBY->isUnChanged();
         pedited->wavelet.wavdenoise  = !wavdenoise->isUnChanged();
+        pedited->wavelet.wavdenoiseh  = !wavdenoiseh->isUnChanged();
         pedited->wavelet.opacityCurveW   = !opacityShape->isUnChanged();
         pedited->wavelet.opacityCurveWL  = !opacityShapeWL->isUnChanged();
         pedited->wavelet.hhcurve         = !hhshape->isUnChanged();
@@ -2410,6 +2428,8 @@ void Wavelet::curveChanged(CurveEditor* ce)
             listener->panelChanged(EvWavOpac, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == wavdenoise) {
             listener->panelChanged(EvWavdenoise, M("HISTORY_CUSTOMCURVE"));
+        } else if (ce == wavdenoiseh) {
+            listener->panelChanged(EvWavdenoiseh, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == opacityShape) {
             listener->panelChanged(EvWavopacity, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == opacityShapeWL) {
@@ -3279,6 +3299,7 @@ void Wavelet::setBatchMode(bool batchMode)
     curveEditorC->setBatchMode(batchMode);
     opacityCurveEditorG->setBatchMode(batchMode);
     CurveEditorwavnoise->setBatchMode(batchMode);
+    CurveEditorwavnoiseh->setBatchMode(batchMode);
     opacityCurveEditorW->setBatchMode(batchMode);
     opacityCurveEditorWL->setBatchMode(batchMode);
     curveEditorbl->setBatchMode(batchMode);

@@ -97,6 +97,7 @@ struct cont_params {
     bool edgcurv;
     bool diagcurv;
     bool denoicurv;
+    bool denoicurvh;
     int CHmet;
     int CHSLmet;
     int EDmet;
@@ -206,7 +207,7 @@ std::unique_ptr<LUTf> ImProcFunctions::buildMeaLut(const float inVals[11], const
     return std::unique_ptr<LUTf>(new LUTf(lutVals));
 }
 
-void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavCurve & wavdenoise, const Wavblcurve & wavblcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveSH & waOpacityCurveSH, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, const LUTf &wavclCurve, int skip)
+void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavCurve & wavdenoise, const WavCurve & wavdenoiseh, const Wavblcurve & wavblcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveSH & waOpacityCurveSH, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, const LUTf &wavclCurve, int skip)
 
 
 {
@@ -379,6 +380,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.edgcurv = false;
     cp.diagcurv = false;
     cp.denoicurv = false;
+    cp.denoicurvh = false;
     cp.opaRG = false;
     cp.opaBY = false;
     cp.opaW = false;
@@ -467,6 +469,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         for (int i = 0; i < 500; i++) {
             if (wavdenoise[i] != 1.0) {
                 cp.denoicurv  = true;
+                break;
+            }
+        }
+    }
+
+    if (wavdenoiseh) {
+        for (int i = 0; i < 500; i++) {
+            if (wavdenoiseh[i] != 0.5) {
+                cp.denoicurvh  = true;
                 break;
             }
         }
@@ -1019,7 +1030,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             }
                         }
 
-                        if (cp.val > 0 || ref || contr || cp.denoicurv || cp.noiseena ) { //edge
+                        if (cp.val > 0 || ref || contr || cp.denoicurv || cp.denoicurvh || cp.noiseena ) { //edge
                             Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
                         }
 
@@ -1220,7 +1231,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         }
                                     }
                                     //now WavCoeffs_L denoised take into account local contrast 0123
-                                    if(cp.levden > 3) {
+                                    if(cp.levden > 3 && cp.denoicurvh) {//local contrast for high levels
                                         cp.levden = min(levwavL, cp.levden);
                                        // printf("OK levden=%i\n", cp.levden);
                                         
@@ -1267,12 +1278,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     absciss = amean * std::fabs(WavCoeffs_L3[dir][i]);
                                                 }
 
-                                                float kc = waOpacityCurveWL[absciss * 500.f] - 1.f;
+                                                float kc = wavdenoiseh[absciss * 500.f] - 0.5f;
                                                     if(kc < 0) {
-                                                        kc = -SQR(kc);//approximation to simulate sliders denoise
+                                                        kc = -SQR(2.f * kc);//approximation to simulate sliders denoise
                                                     }
                                                 
-                                                float reduceeffect = kc <= 0.f ? 1.f : 1.2f;
+                                                float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//if kc > 0 increase slightly denoise
 
                                                 float kinterm = 1.f + reduceeffect * kc;
                                                 kinterm = kinterm <= 0.f ? 0.01f : kinterm;

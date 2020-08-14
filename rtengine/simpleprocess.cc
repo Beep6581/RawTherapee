@@ -1365,6 +1365,7 @@ private:
             WaveletParams WaveParams = params.wavelet;
             WavCurve wavCLVCurve;
             WavCurve wavdenoise;
+            WavCurve wavdenoiseh;
             Wavblcurve wavblcurve;
             WavOpacityCurveRG waOpacityCurveRG;
             WavOpacityCurveSH waOpacityCurveSH;
@@ -1389,14 +1390,14 @@ private:
                 provradius = new LabImage(*labView, true);
             }
 
-            params.wavelet.getCurves(wavCLVCurve, wavdenoise, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
+            params.wavelet.getCurves(wavCLVCurve, wavdenoise, wavdenoiseh, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
             CurveFactory::diagonalCurve2Lut(params.wavelet.wavclCurve, wavclCurve, 1);
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                 const Glib::ustring provis = params.wavelet.CLmethod;
                 params.wavelet.CLmethod = "all";
-                ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavdenoise, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
+                ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavdenoise, wavdenoiseh, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
                 unshar = new LabImage(*labView, true);
                 params.wavelet.CLmethod = provis;
 
@@ -1408,7 +1409,7 @@ private:
                 WaveParams.expnoise = false; 
             }
 
-            ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavdenoise, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
+            ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavdenoise, wavdenoiseh, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                 WaveParams.expcontrast = procont;
