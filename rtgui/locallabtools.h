@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
- *  2019 Pierre Cabrera <pierre.cab@gmail.com>
+ *  2019-2020 Pierre Cabrera <pierre.cab@gmail.com>
  */
 #ifndef _LOCALLABTOOLS_H_
 #define _LOCALLABTOOLS_H_
@@ -52,7 +52,8 @@ protected:
     // LocallabTool mode enumeration
     enum modeType {
         Expert = 0,
-        Normal = 1
+        Normal = 1,
+        Simple = 2
     };
 
     // LocallabTool parameters
@@ -162,7 +163,8 @@ private:
 
     // To be implemented
     virtual void enabledChanged() {};
-    virtual void convertParamToNormal() {}; // Only necessary when using mode
+    virtual void convertParamToNormal() {}; // From Expert mode to Normal mode; Only necessary when using mode
+    virtual void convertParamToSimple() {}; // From Normal mode to Simple mode; Only necessary when using mode
     virtual void updateGUIToMode(const modeType new_type) {}; // Only necessary when using mode
 };
 
@@ -175,10 +177,10 @@ class LocallabColor:
 private:
     // Color & Light specific widgets
     Gtk::Frame* const lumFrame;
-    Gtk::CheckButton* const curvactiv;
     Adjuster* const lightness;
     Adjuster* const contrast;
     Adjuster* const chroma;
+    Gtk::CheckButton* const curvactiv;
     Gtk::Frame* const gridFrame;
     LabGrid* const labgrid;
     MyComboBoxText* const gridMethod;
@@ -204,10 +206,10 @@ private:
     DiagonalCurveEditor* const lcshape;
     CurveEditorGroup* const HCurveEditorG;
     FlatCurveEditor* const LHshape;
-    CurveEditorGroup* const H2CurveEditorG;
-    FlatCurveEditor* const HHshape;
     CurveEditorGroup* const H3CurveEditorG;
     FlatCurveEditor* const CHshape;
+    CurveEditorGroup* const H2CurveEditorG;
+    FlatCurveEditor* const HHshape;
     CurveEditorGroup* const rgbCurveEditorG;
     MyComboBoxText* const toneMethod;
     DiagonalCurveEditor* const rgbshape;
@@ -283,6 +285,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -388,6 +391,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -473,6 +477,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -557,6 +562,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -603,8 +609,11 @@ public:
     void adjusterChanged(Adjuster* a, double newval) override;
 
 private:
+    void complexityModeChanged();
+
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void softMethodChanged();
@@ -708,6 +717,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -784,6 +794,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -874,6 +885,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -907,6 +919,7 @@ private:
     Adjuster* const sharradius;
     Adjuster* const sensisha;
     Gtk::CheckButton* const inverssha;
+    Gtk::Frame* const sharFrame;
     MyComboBoxText* const showmasksharMethod;
 
     sigc::connection inversshaConn, showmasksharMethodConn;
@@ -930,6 +943,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void inversshaChanged();
@@ -952,8 +966,8 @@ private:
     Adjuster* const sigmalc;
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;
-    Adjuster* const levelwav;
     ThresholdAdjuster* const csThreshold;
+    Adjuster* const levelwav;
     MyExpander* const expresidpyr;
     Adjuster* const residcont;
     Adjuster* const residchro;
@@ -1058,6 +1072,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -1089,8 +1104,8 @@ class LocallabCBDL:
     public LocallabTool
 {
 private:
-    const std::array<Adjuster*, 6> multiplier;
     Gtk::Frame* const levFrame;
+    const std::array<Adjuster*, 6> multiplier;
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const clarityml;
@@ -1143,6 +1158,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -1212,7 +1228,6 @@ private:
     Adjuster* const blendmask;
     Adjuster* const blendmaskab;
     Adjuster* const softradiusmask;
-
     MyComboBoxText* const showmask_Method;
     Gtk::CheckButton* const enamask;
     CurveEditorGroup* const mask_CurveEditorG;
@@ -1226,7 +1241,7 @@ private:
     Gtk::CheckButton* const fftmask;
     Adjuster* const contmask;
     Adjuster* const blurmask;
-    
+    Gtk::Frame* const toolmaskFrame;
     Adjuster* const radmask;
     Adjuster* const lapmask;
     Adjuster* const chromask;
@@ -1269,18 +1284,22 @@ public:
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void curveChanged(CurveEditor* ce) override;
 
-
 private:
+    void complexityModeChanged();
+
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void convertParamToSimple() override;
+    void updateGUIToMode(const modeType new_type) override;
+
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
+
     void showmask_MethodChanged();
     void enamaskChanged();
     void toolmaskChanged();
-    void convertParamToNormal() override;
-    void updateGUIToMode(const modeType new_type) override;
     void fftmaskChanged();
-    void updatemaskGUI3();
-    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
-};
 
+    void updateMaskGUI();
+};
 
 #endif
