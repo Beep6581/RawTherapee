@@ -367,22 +367,12 @@ public:
     static void curveBW(const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
                         ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip);
 
-    static void curveCL(bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, int skip);
-
-    static void curveWavContL(bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve,/* LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip);
-    static void curveDehaContL(bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
-    static void mapcurve(bool & mapcontlutili, const std::vector<double>& mapcurvePoints, LUTf & mapcurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
-
-    static void curveToning(const std::vector<double>& curvePoints, LUTf & ToningCurve, int skip);
-
-    static bool curveLocal(const std::vector<double>& curvePoints, LUTf& LocalCurve, int skip);
-    static void curveskLocal(bool & localskutili, const std::vector<double>& curvePoints, LUTf & LocalskCurve, int skip);
+    static bool diagonalCurve2Lut(const std::vector<double>& curvePoints, LUTf& curve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
+    static bool diagonalCurve2Lut(const std::vector<double>& curvePoints, LUTf& curve, int skip);
 
     static void complexsgnCurve(bool & autili,  bool & butili, bool & ccutili, bool & clcutili, const std::vector<double>& acurvePoints,
                                 const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
                                 int skip = 1);
-
-    static void localLCurve(double br, double contr,/* const std::vector<double>& curvePoints,*/ LUTu & histogram, LUTf & outCurve, int skip, bool & utili);
 
     static void updatechroma(
         const std::vector<double>& cccurvePoints,
@@ -1280,6 +1270,35 @@ public:
     operator bool (void) const
     {
         return lutLocHHCurve;
+    }
+};
+
+
+class LocCHCurve
+{
+private:
+    LUTf lutLocCHCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocCHCurve() {};
+    LocCHCurve();
+    void Reset();
+    bool Set(const std::vector<double> &curvePoints);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocCHCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocCHCurve;
     }
 };
 

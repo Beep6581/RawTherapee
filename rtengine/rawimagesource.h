@@ -247,7 +247,7 @@ protected:
         double cared,
         double cablue,
         bool avoidColourshift,
-        const array2D<float> &rawData,
+        array2D<float> &rawData,
         double* fitParamsTransfer,
         bool fitParamsIn,
         bool fitParamsOut,

@@ -663,6 +663,8 @@ void LCurve::updateCurveBackgroundHistogram(
 {
     lshape->updateBackgroundHistogram (histLCurve);
     ccshape->updateBackgroundHistogram (histCCurve);
+    lcshape->updateBackgroundHistogram (histCCurve);
+    clshape->updateBackgroundHistogram (histLCurve);
 }
 
 void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd)

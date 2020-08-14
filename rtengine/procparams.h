@@ -50,6 +50,7 @@ class LocretigainCurve;
 class LocretigainCurverab;
 class LocLHCurve;
 class LocHHCurve;
+class LocCHCurve;
 class LocLLmaskCurve;
 class LocCCmaskCurve;
 class LocHHmaskCurve;
@@ -335,6 +336,7 @@ struct RetinexParams {
     int     stonalwidth;
     int     radius;
 
+    Glib::ustring complexmethod;
     Glib::ustring retinexMethod;
     Glib::ustring retinexcolorspace;
     Glib::ustring gammaretinex;
@@ -1056,6 +1058,7 @@ struct LocallabParams {
         std::vector<double> rgbcurve;
         std::vector<double> LHcurve;
         std::vector<double> HHcurve;
+        std::vector<double> CHcurve;
         bool invers;
         bool special;
         bool toolcol;
@@ -1395,7 +1398,6 @@ struct LocallabParams {
         int sensicb;
         double clarityml;
         int contresid;
-        double blurcbdl;
         double softradiuscb;
         bool enacbMask;
         std::vector<double> CCmaskcbcurve;
@@ -1789,6 +1791,7 @@ struct WaveletParams {
     Glib::ustring CLmethod;
     Glib::ustring Backmethod;
     Glib::ustring Tilesmethod;
+    Glib::ustring complexmethod;
     Glib::ustring daubcoeffmethod;
     Glib::ustring CHmethod;
     Glib::ustring Medgreinf;

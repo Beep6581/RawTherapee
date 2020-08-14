@@ -95,6 +95,7 @@ ControlSpotPanel::ControlSpotPanel():
 
     preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     ctboxshape(Gtk::manage(new Gtk::HBox())),
+    ctboxshapemethod(Gtk::manage(new Gtk::HBox())),
 
     controlPanelListener(nullptr),
     lastObject_(-1),
@@ -250,7 +251,7 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*excluFrame);
 
 
-    Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
+//    Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshapemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"));
     ctboxshapemethod->pack_start(*labelshapemethod, Gtk::PACK_SHRINK, 4);
 
@@ -309,7 +310,6 @@ ControlSpotPanel::ControlSpotPanel():
                              sigc::mem_fun(
                                  *this, &ControlSpotPanel::qualityMethodChanged));
     ctboxqualitymethod->pack_start(*qualityMethod_);
-//    pack_start(*ctboxqualitymethod);
 
     if (showtooltip) {
         expTransGrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
@@ -319,21 +319,9 @@ ControlSpotPanel::ControlSpotPanel():
 
     if (showtooltip) {
         transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         feather_->set_tooltip_text(M("TP_LOCALLAB_FEATH_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         scopemask_->set_tooltip_text(M("TP_LOCALLAB_SCOPEMASK_TOOLTIP"));
     }
 
@@ -927,6 +915,7 @@ void ControlSpotPanel::prevMethodChanged()
         expMaskMerge_->hide();
         circrad_->hide();
         ctboxshape->hide();
+        shapeMethod_->set_active(0);
 
     } else { // Excluding case
         expTransGrad_->show();
@@ -1743,6 +1732,25 @@ void ControlSpotPanel::setParamEditable(bool cond)
     savrest_->set_sensitive(cond);
     complexMethod_->set_sensitive(cond);
     wavMethod_->set_sensitive(cond);
+    preview_->set_sensitive(cond);
+
+    if (!cond) {
+        // Reset complex parameters visibility to default state
+        expTransGrad_->hide();
+        expShapeDetect_->hide();
+        expSpecCases_->hide();
+        expMaskMerge_->hide();
+        circrad_->hide();
+        ctboxshape->hide();
+        excluFrame->hide();
+//        ctboxshapemethod->hide();
+        locX_->hide();
+        locXL_->hide();
+        locY_->hide();
+        locYT_->hide();
+        centerX_->hide();
+        centerY_->hide();
+    }
 }
 
 void ControlSpotPanel::setDefaultExpanderVisibility()

@@ -60,6 +60,7 @@ void ParamsEdited::set(bool v)
     retinex.mapcurve    = v;
     retinex.cdHcurve    = v;
     retinex.lhcurve    = v;
+    retinex.complexmethod    = v;
     retinex.retinexMethod    = v;
     retinex.mapMethod    = v;
     retinex.viewMethod    = v;
@@ -531,6 +532,7 @@ void ParamsEdited::set(bool v)
     wavelet.CLmethod = v;
     wavelet.Backmethod = v;
     wavelet.Tilesmethod = v;
+    wavelet.complexmethod = v;
     wavelet.daubcoeffmethod = v;
     wavelet.CHmethod = v;
     wavelet.CHSLmethod = v;
@@ -710,6 +712,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         retinex.lhcurve = retinex.lhcurve && p.retinex.lhcurve == other.retinex.lhcurve;
         retinex.transmissionCurve = retinex.transmissionCurve && p.retinex.transmissionCurve == other.retinex.transmissionCurve;
         retinex.gaintransmissionCurve = retinex.gaintransmissionCurve && p.retinex.gaintransmissionCurve == other.retinex.gaintransmissionCurve;
+        retinex.complexmethod = retinex.complexmethod && p.retinex.complexmethod == other.retinex.complexmethod;
         retinex.retinexMethod = retinex.retinexMethod && p.retinex.retinexMethod == other.retinex.retinexMethod;
         retinex.mapMethod = retinex.mapMethod && p.retinex.mapMethod == other.retinex.mapMethod;
         retinex.viewMethod = retinex.viewMethod && p.retinex.viewMethod == other.retinex.viewMethod;
@@ -1104,6 +1107,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).rgbcurve = locallab.spots.at(j).rgbcurve && pSpot.rgbcurve == otherSpot.rgbcurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
                 locallab.spots.at(j).HHcurve = locallab.spots.at(j).HHcurve && pSpot.HHcurve == otherSpot.HHcurve;
+                locallab.spots.at(j).CHcurve = locallab.spots.at(j).CHcurve && pSpot.CHcurve == otherSpot.CHcurve;
                 locallab.spots.at(j).invers = locallab.spots.at(j).invers && pSpot.invers == otherSpot.invers;
                 locallab.spots.at(j).special = locallab.spots.at(j).special && pSpot.special == otherSpot.special;
                 locallab.spots.at(j).toolcol = locallab.spots.at(j).toolcol && pSpot.toolcol == otherSpot.toolcol;
@@ -1451,7 +1455,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensicb = locallab.spots.at(j).sensicb && pSpot.sensicb == otherSpot.sensicb;
                 locallab.spots.at(j).clarityml = locallab.spots.at(j).clarityml && pSpot.clarityml == otherSpot.clarityml;
                 locallab.spots.at(j).contresid = locallab.spots.at(j).contresid && pSpot.contresid == otherSpot.contresid;
-                locallab.spots.at(j).blurcbdl = locallab.spots.at(j).blurcbdl && pSpot.blurcbdl == otherSpot.blurcbdl;
                 locallab.spots.at(j).softradiuscb = locallab.spots.at(j).softradiuscb && pSpot.softradiuscb == otherSpot.softradiuscb;
                 locallab.spots.at(j).enacbMask = locallab.spots.at(j).enacbMask && pSpot.enacbMask == otherSpot.enacbMask;
                 locallab.spots.at(j).CCmaskcbcurve = locallab.spots.at(j).CCmaskcbcurve && pSpot.CCmaskcbcurve == otherSpot.CCmaskcbcurve;
@@ -1679,6 +1682,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.CLmethod = wavelet.CLmethod && p.wavelet.CLmethod == other.wavelet.CLmethod;
         wavelet.Backmethod = wavelet.Backmethod && p.wavelet.Backmethod == other.wavelet.Backmethod;
         wavelet.Tilesmethod = wavelet.Tilesmethod && p.wavelet.Tilesmethod == other.wavelet.Tilesmethod;
+        wavelet.complexmethod = wavelet.complexmethod && p.wavelet.complexmethod == other.wavelet.complexmethod;
         wavelet.daubcoeffmethod = wavelet.daubcoeffmethod && p.wavelet.daubcoeffmethod == other.wavelet.daubcoeffmethod;
         wavelet.CHmethod = wavelet.CHmethod && p.wavelet.CHmethod == other.wavelet.CHmethod;
         wavelet.CHSLmethod = wavelet.CHSLmethod && p.wavelet.CHSLmethod == other.wavelet.CHSLmethod;
@@ -1913,6 +1917,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (retinex.gaintransmissionCurve) {
         toEdit.retinex.gaintransmissionCurve = mods.retinex.gaintransmissionCurve;
+    }
+
+    if (retinex.complexmethod) {
+        toEdit.retinex.complexmethod = mods.retinex.complexmethod;
     }
 
     if (retinex.retinexMethod) {
@@ -3381,6 +3389,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).HHcurve = mods.locallab.spots.at(i).HHcurve;
         }
 
+        if (locallab.spots.at(i).CHcurve) {
+            toEdit.locallab.spots.at(i).CHcurve = mods.locallab.spots.at(i).CHcurve;
+        }
+
         if (locallab.spots.at(i).invers) {
             toEdit.locallab.spots.at(i).invers = mods.locallab.spots.at(i).invers;
         }
@@ -4712,10 +4724,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).contresid = mods.locallab.spots.at(i).contresid;
         }
 
-        if (locallab.spots.at(i).blurcbdl) {
-            toEdit.locallab.spots.at(i).blurcbdl = mods.locallab.spots.at(i).blurcbdl;
-        }
-
         if (locallab.spots.at(i).softradiuscb) {
             toEdit.locallab.spots.at(i).softradiuscb = mods.locallab.spots.at(i).softradiuscb;
         }
@@ -5574,6 +5582,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.Tilesmethod = mods.wavelet.Tilesmethod;
     }
 
+    if (wavelet.complexmethod) {
+        toEdit.wavelet.complexmethod = mods.wavelet.complexmethod;
+    }
+
     if (wavelet.daubcoeffmethod) {
         toEdit.wavelet.daubcoeffmethod = mods.wavelet.daubcoeffmethod;
     }
@@ -6138,6 +6150,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     rgbcurve(v),
     LHcurve(v),
     HHcurve(v),
+    CHcurve(v),
     invers(v),
     special(v),
     toolcol(v),
@@ -6477,7 +6490,6 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensicb(v),
     clarityml(v),
     contresid(v),
-    blurcbdl(v),
     softradiuscb(v),
     enacbMask(v),
     CCmaskcbcurve(v),
@@ -6622,6 +6634,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     rgbcurve = v;
     LHcurve = v;
     HHcurve = v;
+    CHcurve = v;
     invers = v;
     special = v;
     toolcol = v;
@@ -6974,7 +6987,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     CCmaskcbcurve = v;
     LLmaskcbcurve = v;
     HHmaskcbcurve = v;
-    blurcbdl = v;
     blendmaskcb = v;
     radmaskcb = v;
     chromaskcb = v;

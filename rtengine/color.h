@@ -623,7 +623,7 @@ public:
     static void XYZ2Lab(float x, float y, float z, float &L, float &a, float &b);
     static void RGB2Lab(float *X, float *Y, float *Z, float *L, float *a, float *b, const float wp[3][3], int width);
     static void Lab2RGBLimit(float *L, float *a, float *b, float *R, float *G, float *B, const float wp[3][3], float limit, float afactor, float bfactor, int width);
-    static void RGB2L(float *X, float *Y, float *Z, float *L, const float wp[3][3], int width);
+    static void RGB2L(const float *R, const float *G, const float *B, float *L, const float wp[3][3], int width);
 
     /**
     * @brief Convert Lab in Yuv
@@ -1006,8 +1006,6 @@ public:
     * @brief Get the gamma curves' parameters used by LCMS2
     * @param pwr gamma value [>1]
     * @param ts slope [0 ; 20]
-    * @param mode [always 0]
-    * @imax imax [always 0]
     * @param gamma a pointer to an array of 6 double gamma values:
     *        gamma0 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
     *        gamma1 used in ip2Lab2rgb [0 ; 20], can be superior to 20, but it's quite unusual(return value)
@@ -1016,7 +1014,7 @@ public:
     *        gamma4 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
     *        gamma5 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
     */
-    static void calcGamma (double pwr, double ts, int mode, GammaValues &gamma);
+    static void calcGamma (double pwr, double ts, GammaValues &gamma);
 
 
     /**
@@ -1468,9 +1466,7 @@ public:
 
     static void scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale, float &scaleext);
     static void transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor);
-    static void skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s);
     static void skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s);
-//  static void scaleredcdbl ( float skinprot, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext);
 
     static inline void pregamutlab(float lum, float hue, float &chr) //big approximation to limit gamut (Prophoto) before good gamut procedure for locallab chroma, to avoid crash
     {
@@ -1801,11 +1797,11 @@ public:
     /**
     * @brief Gamut correction in the XYZ color space
     * @param X X channel input value and corrected output value [0 ; 65535]
-    * @param Y Y channel input value and corrected output value [0 ; 65535]
+    * @param Y Y channel input value[0 ; 65535]
     * @param Z Z channel input value and corrected output value [0 ; 65535]
     * @param p working profile
     */
-    static void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
+    static void gamutmap(float &X, float Y, float &Z, const double p[3][3]);
 
 
     /**
@@ -1839,7 +1835,6 @@ public:
         } else if (HH >= -0.1f     && HH < 0.f     ) {
             hr = 0.1    * double(HH) + 0.93;    //hr 0.92  0.93    red
         }
-
         // in case of !
         if     (hr < 0.0) {
             hr += 1.0;

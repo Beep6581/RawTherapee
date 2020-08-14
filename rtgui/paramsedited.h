@@ -73,6 +73,7 @@ struct RetinexParamsEdited {
     bool slope;
     bool neigh;
     bool offs;
+    bool complexmethod;
     bool retinexMethod;
     bool mapMethod;
     bool viewMethod;
@@ -470,6 +471,7 @@ public:
         bool rgbcurve;
         bool LHcurve;
         bool HHcurve;
+        bool CHcurve;
         bool invers;
         bool special;
         bool toolcol;
@@ -809,7 +811,6 @@ public:
         bool sensicb;
         bool clarityml;
         bool contresid;
-        bool blurcbdl;
         bool softradiuscb;
         bool enacbMask;
         bool CCmaskcbcurve;
@@ -1039,6 +1040,7 @@ struct WaveletParamsEdited {
     bool CLmethod;
     bool Backmethod;
     bool Tilesmethod;
+    bool complexmethod;
     bool daubcoeffmethod;
     bool Dirmethod;
     bool sigma;

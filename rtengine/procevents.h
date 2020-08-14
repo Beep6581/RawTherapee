@@ -686,7 +686,7 @@ enum ProcEventCode {
     EvLocallabcontresid = 660,
     Evlocallabnoiselumf0 = 661,
     Evlocallabnoiselumf2 = 662,
-    EvLocallabblurcbdl = 663,
+    //EvLocallabblurcbdl = 663,
     Evlocallabblendmaskcb = 664,
     Evlocallabradmaskcb = 665,
     Evlocallabchromaskcb = 666,
@@ -946,7 +946,7 @@ enum ProcEventCode {
     Evlocallabsigmalc2 = 920,
     Evlocallabblwh = 921,
     EvlocallabcomplexityWithRefresh = 922,
-    EvlocallabcomplexityWithoutRefresh = 923,
+    // EvlocallabcomplexityWithoutRefresh = 923,
     EvLocallabSpotcolorscope = 924,
     EvlocallabshowmasktypMethod = 925,
     Evlocallabshadmaskblsha = 926,
@@ -978,7 +978,7 @@ enum ProcEventCode {
     Evlocallabblendmaskab = 952,
     EvLocallabSpotprevMethod = 953,
     Evlocallabactiv = 954,
-
+    EvlocallabCHshape = 955,
     NUMOFEVENTS
 };
 
