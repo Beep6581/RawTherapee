@@ -2388,7 +2388,7 @@ WaveletParams::WaveletParams() :
     bluehigh(0),
     ballum(7.),
     sigm(1.3),
-    levden(3),
+    levden(5),
     balchrom(0.),
     chromfi(0.),
     chromco(0.),

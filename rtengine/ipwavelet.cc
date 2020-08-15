@@ -252,7 +252,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.sigmacol = params->wavelet.sigmacol;
     cp.sigmadir = params->wavelet.sigmadir;
     cp.sigmm = params->wavelet.sigm;
-    cp.levden = params->wavelet.levden;
+    cp.levden = params->wavelet.levden - 1;
 
     if (params->wavelet.TMmethod == "cont") {
         cp.contmet = 1;
