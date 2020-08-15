@@ -2289,7 +2289,7 @@ bool EditorPanel::updateWaveform(void)
         || histogram_scope_type == HistogramPanelListener::NONE;
 }
 
-int EditorPanel::vectorscopeType(void)
+int EditorPanel::vectorscopeType(void) const
 {
     switch (histogram_scope_type) {
         case HistogramPanelListener::VECTORSCOPE_HS:

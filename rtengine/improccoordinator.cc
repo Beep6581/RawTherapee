@@ -45,7 +45,8 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
+#define BENCHMARK
+#include "StopWatch.h"
 namespace
 {
 
@@ -1855,57 +1856,53 @@ void ImProcCoordinator::updateVectorscope()
     if (!workimg) {
         return;
     }
-
+BENCHFUN
     int x1, y1, x2, y2;
     params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
 
     constexpr int size = VECTORSCOPE_SIZE;
     memset((int*)vectorscope, 0, size * size * sizeof(vectorscope[0][0]));
 
-    const int lab_img_size = (hListener->vectorscopeType() == 1) ? (x2 - x1) * (y2 - y1) : 0;
-    float a[lab_img_size], b[lab_img_size];
+    vectorscopeScale = (x2 - x1) * (y2 - y1);
+    const int lab_img_size = (hListener->vectorscopeType() == 1) ? vectorscopeScale : 0;
+
+    std::unique_ptr<float[]> a;
+    std::unique_ptr<float[]> b;
     if (lab_img_size) {
-        float L[lab_img_size];
-        ipf.rgb2lab(*workimg, x1, y1, x2 - x1, y2 - y1, L, a, b, params->icm);
+        a.reset(new float[lab_img_size]);
+        b.reset(new float[lab_img_size]);
+        std::unique_ptr<float []> L(new float[lab_img_size]);
+        ipf.rgb2lab(*workimg, x1, y1, x2 - x1, y2 - y1, L.get(), a.get(), b.get(), params->icm);
     }
 
-    int ofs_lab = 0;
-    for (int i = y1; i < y2; i++) {
-        int ofs = (i * pW + x1) * 3;
-
-        for (int j = x1; j < x2; j++) {
-            switch (hListener->vectorscopeType()) {
-                case 0: {
-                    // HS
-                    int red = 256 * workimg->data[ofs++];
-                    int green = 256 * workimg->data[ofs++];
-                    int blue = 256 * workimg->data[ofs++];
-                    float h, s, l;
-                    Color::rgb2hsl(red, green, blue, h, s, l);
-                    const int col = s * cos(2 * RT_PI * h) * (size / 2) + size / 2;
-                    const int row = s * sin(2 * RT_PI * h) * (size / 2) + size / 2;
-                    if (col >= 0 && col < size && row >= 0 && row < size) {
-                        vectorscope[row][col]++;
-                    }
-                    break;
+    if (hListener->vectorscopeType() == 0) { // HS
+        for (int i = y1; i < y2; ++i) {
+            int ofs = (i * pW + x1) * 3;
+            for (int j = x1; j < x2; ++j) {
+                const float red = 257.f * workimg->data[ofs++];
+                const float green = 257.f * workimg->data[ofs++];
+                const float blue = 257.f * workimg->data[ofs++];
+                float h, s, l;
+                Color::rgb2hslfloat(red, green, blue, h, s, l);
+                const auto sincosval = xsincosf(2.f * RT_PI_F * h);
+                const int col = s * sincosval.y * (size / 2) + size / 2;
+                const int row = s * sincosval.x * (size / 2) + size / 2;
+                if (col >= 0 && col < size && row >= 0 && row < size) {
+                    vectorscope[row][col]++;
                 }
-
-                case 1: {
-                    // CH
-                    const int col = (size / 96000.0) * a[ofs_lab] + size / 2;
-                    const int row = (size / 96000.0) * b[ofs_lab] + size / 2;
-
-                    if (col >= 0 && col < size && row >= 0 && row < size) {
-                        vectorscope[row][col]++;
-                    }
-                    ofs_lab++;
-                    break;
+            }
+        }
+    } else if (hListener->vectorscopeType() == 1) { // CH
+        for (int i = y1; i < y2; ++i) {
+            for (int j = x1, ofs_lab = (i - y1) * (x2 - x1); j < x2; ++j, ++ofs_lab) {
+                const int col = (size / 96000.f) * a[ofs_lab] + size / 2;
+                const int row = (size / 96000.f) * b[ofs_lab] + size / 2;
+                if (col >= 0 && col < size && row >= 0 && row < size) {
+                    vectorscope[row][col]++;
                 }
             }
         }
     }
-
-    vectorscopeScale = (x2 - x1) * (y2 - y1);
 }
 
 void ImProcCoordinator::updateWaveforms()

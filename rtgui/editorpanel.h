@@ -146,7 +146,7 @@ public:
     bool updateHistogram(void) override;
     bool updateVectorscope(void) override;
     bool updateWaveform(void) override;
-    int vectorscopeType(void) override;
+    int vectorscopeType(void) const override;
 
     // HistogramPanelListener
     void scopeTypeChanged(ScopeType new_type) override;
