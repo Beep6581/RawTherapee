@@ -344,11 +344,11 @@ public:
     /** Tells which observable is notifying the listener. */
     virtual void setObservable(HistogramObservable* observable) = 0;
     /** Returns if the listener wants the histogram to be updated. */
-    virtual bool updateHistogram(void) = 0;
+    virtual bool updateHistogram(void) const = 0;
     /** Returns if the listener wants the vectorscope to be updated. */
-    virtual bool updateVectorscope(void) = 0;
+    virtual bool updateVectorscope(void) const = 0;
     /** Returns if the listener wants the waveform to be updated. */
-    virtual bool updateWaveform(void) = 0;
+    virtual bool updateWaveform(void) const  = 0;
     /** Returns the vectorscope type: 0 for H-S and 1 for H-C. */
     virtual int vectorscopeType(void) const = 0;
 };

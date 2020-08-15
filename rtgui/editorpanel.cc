@@ -2269,13 +2269,13 @@ void EditorPanel::setObservable(rtengine::HistogramObservable* observable)
     histogram_observable = observable;
 }
 
-bool EditorPanel::updateHistogram(void)
+bool EditorPanel::updateHistogram(void) const
 {
     return histogram_scope_type == HistogramPanelListener::HISTOGRAM
         || histogram_scope_type == HistogramPanelListener::NONE;
 }
 
-bool EditorPanel::updateVectorscope(void)
+bool EditorPanel::updateVectorscope(void) const
 {
     return
         histogram_scope_type == HistogramPanelListener::VECTORSCOPE_HS
@@ -2283,7 +2283,7 @@ bool EditorPanel::updateVectorscope(void)
         || histogram_scope_type == HistogramPanelListener::NONE;
 }
 
-bool EditorPanel::updateWaveform(void)
+bool EditorPanel::updateWaveform(void) const
 {
     return histogram_scope_type == HistogramPanelListener::WAVEFORM
         || histogram_scope_type == HistogramPanelListener::NONE;

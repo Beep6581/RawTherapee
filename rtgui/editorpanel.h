@@ -143,9 +143,9 @@ public:
         const array2D<int>& waveformLuma
     ) override;
     void setObservable(rtengine::HistogramObservable* observable) override;
-    bool updateHistogram(void) override;
-    bool updateVectorscope(void) override;
-    bool updateWaveform(void) override;
+    bool updateHistogram(void) const override;
+    bool updateVectorscope(void) const override;
+    bool updateWaveform(void) const override;
     int vectorscopeType(void) const override;
 
     // HistogramPanelListener

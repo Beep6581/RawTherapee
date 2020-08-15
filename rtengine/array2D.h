@@ -140,6 +140,7 @@ public:
     {
         buffer.clear();
         rows.clear();
+        width = 0;
     }
 
     // use with indices

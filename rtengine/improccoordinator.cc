@@ -1864,17 +1864,6 @@ BENCHFUN
     memset((int*)vectorscope, 0, size * size * sizeof(vectorscope[0][0]));
 
     vectorscopeScale = (x2 - x1) * (y2 - y1);
-    const int lab_img_size = (hListener->vectorscopeType() == 1) ? vectorscopeScale : 0;
-
-    std::unique_ptr<float[]> a;
-    std::unique_ptr<float[]> b;
-    if (lab_img_size) {
-        a.reset(new float[lab_img_size]);
-        b.reset(new float[lab_img_size]);
-        std::unique_ptr<float []> L(new float[lab_img_size]);
-        ipf.rgb2lab(*workimg, x1, y1, x2 - x1, y2 - y1, L.get(), a.get(), b.get(), params->icm);
-    }
-
     if (hListener->vectorscopeType() == 0) { // HS
         for (int i = y1; i < y2; ++i) {
             int ofs = (i * pW + x1) * 3;
@@ -1893,6 +1882,10 @@ BENCHFUN
             }
         }
     } else if (hListener->vectorscopeType() == 1) { // CH
+        const std::unique_ptr<float[]> a(new float[vectorscopeScale]);
+        const std::unique_ptr<float[]> b(new float[vectorscopeScale]);
+        const std::unique_ptr<float[]> L(new float[vectorscopeScale]);
+        ipf.rgb2lab(*workimg, x1, y1, x2 - x1, y2 - y1, L.get(), a.get(), b.get(), params->icm);
         for (int i = y1; i < y2; ++i) {
             for (int j = x1, ofs_lab = (i - y1) * (x2 - x1); j < x2; ++j, ++ofs_lab) {
                 const int col = (size / 96000.f) * a[ofs_lab] + size / 2;
@@ -1908,11 +1901,11 @@ BENCHFUN
 void ImProcCoordinator::updateWaveforms()
 {
     if (!workimg) {
-        // Resize to zero.
-        waveformRed(0, 0);
-        waveformGreen(0, 0);
-        waveformBlue(0, 0);
-        waveformLuma(0, 0);
+        // free memory
+        waveformRed.free();
+        waveformGreen.free();
+        waveformBlue.free();
+        waveformLuma.free();
         return;
     }
 
