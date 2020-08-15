@@ -528,10 +528,27 @@ public:
 };
 NALensDataInterpreter naLensDataInterpreter;
 const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
-    /*
-     * The Nikon LensID is constructed as a Composite tag from the raw hex values of 8 other tags:
-     * LensIDNumber, LensFStops, MinFocalLength, MaxFocalLength, MaxApertureAtMinFocal, MaxApertureAtMaxFocal, MCUVersion and LensType, in that order.
-     */
+    
+    // This list is manually updated with entries from the 
+    // ExifTool and exiv2 libraries, until we move to use
+    // either of them (see #3801).
+    //
+    // The Nikon LensID is constructed as a Composite tag
+    // from the raw hex values of 8 other tags:
+    //   LensIDNumber
+    //   LensFStops
+    //   MinFocalLength
+    //   MaxFocalLength
+    //   MaxApertureAtMinFocal
+    //   MaxApertureAtMaxFocal
+    //   MCUVersion
+    //   LensType
+    // in that order.
+    //
+    // There are a few lenses with identical ID's that
+    // cannot be distinguished. See exiv2 > src\nikonmn_int.cpp
+    // for the list.
+    //
     {"00 00 00 00 00 00 00 01", "Manual Lens No CPU"},
     {"00 00 00 00 00 00 E1 12", "TC-17E II"},
     {"00 00 00 00 00 00 F1 0C", "TC-14E [II] or Sigma APO Tele Converter 1.4x EX DG or Kenko Teleplus PRO 300 DG 1.4x"},

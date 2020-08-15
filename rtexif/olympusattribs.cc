@@ -77,6 +77,24 @@ class OLLensTypeInterpreter : public Interpreter
 public:
     OLLensTypeInterpreter ()
     {
+        // This list is manually updated with entries from the 
+        // ExifTool and exiv2 libraries, until we move to use
+        // either of them (see #3801).
+        //
+        // Notes:
+        // "01 07 00" exiv2 does not mention EX. Uncertain if this the same as the
+        //            '105mm F2.8 EX DG OS HSM Macro' currently on the market and 
+        //            present in lensfun.
+        // "01 05 00" exiv2 does not mention EX DC HSM and there is also a second
+        //            entry for this lens "01 13 00". Uncertain what is correct.
+        //
+        // There are several lenses with identical names but two different ID's:
+        //  - Leica D Summilux 25mm f/1.4 Asph.
+        //  - Leica D Vario Elmarit 14-50mm f/2.8-3.5 Asph.
+        //  - Sigma 18-125mm f/3.5-5.6 DC
+        //  - Sigma 30mm f/1.4 EX DC HSM
+        //  - Sigma APO 50-500mm f/4.0-6.3 EX DG HSM
+        //
         lenses["00 01 00"] = "Olympus Zuiko Digital ED 50mm f/2.0 Macro";
         lenses["00 01 01"] = "Olympus Zuiko Digital 40-150mm f/3.5-4.5";
         lenses["00 01 10"] = "Olympus M.Zuiko Digital ED 14-42mm f/3.5-5.6";

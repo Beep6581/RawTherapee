@@ -699,17 +699,21 @@ class PALensTypeInterpreter final: public IntLensInterpreter< int >
 public:
     PALensTypeInterpreter ()
     {
+        // This list is manually updated with entries from the 
+        // ExifTool and exiv2 libraries, until we move to use
+        // either of them (see #3801).
+        //
         choices.insert (p_t (256 * 0 + 0, "M-42 or No Lens"));
         choices.insert (p_t (256 * 1 + 0, "K or M Lens"));
         choices.insert (p_t (256 * 2 + 0, "A Series Lens"));
-        choices.insert (p_t (256 * 3 + 0, "Sigma"));
+        choices.insert (p_t (256 * 3 + 0, "Sigma Lens"));
         choices.insert (p_t (256 * 3 + 17, "smc PENTAX-FA SOFT 85mm f/2.8"));
         choices.insert (p_t (256 * 3 + 18, "smc PENTAX-F 1.7X AF ADAPTER"));
         choices.insert (p_t (256 * 3 + 19, "smc PENTAX-F 24-50mm f/4"));
         choices.insert (p_t (256 * 3 + 20, "smc PENTAX-F 35-80mm f/4-5.6"));
         choices.insert (p_t (256 * 3 + 21, "smc PENTAX-F 80-200mm f/4.7-5.6"));
         choices.insert (p_t (256 * 3 + 22, "smc PENTAX-F FISH-EYE 17-28mm f/3.5-4.5"));
-        choices.insert (p_t (256 * 3 + 23, "smc PENTAX-F 100-300mm f/4.5-5.6 or Sigma Lens"));
+        choices.insert (p_t (256 * 3 + 23, "smc PENTAX-F 100-300mm f/4.5-5.6 or Sigma or Tokina Lens"));
         choices.insert (p_t (256 * 3 + 23, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
         choices.insert (p_t (256 * 3 + 23, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
         choices.insert (p_t (256 * 3 + 23, "Tokina 80-200mm f/2.8 ATX-Pro"));
@@ -720,6 +724,7 @@ public:
         choices.insert (p_t (256 * 3 + 25, "Sigma AF 28-300mm f/3.5-6.3 DL IF"));
         choices.insert (p_t (256 * 3 + 25, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
         choices.insert (p_t (256 * 3 + 25, "Tokina 80-200mm f/2.8 ATX-Pro"));
+        choices.insert (p_t (256 * 3 + 25, "Sigma Zoom 70-210mm f/4-5.6 UC-II"));
         choices.insert (p_t (256 * 3 + 26, "smc PENTAX-F* 250-600mm f/5.6 ED[IF]"));
         choices.insert (p_t (256 * 3 + 27, "smc PENTAX-F 28-80mm f/3.5-4.5 or Tokina Lens"));
         choices.insert (p_t (256 * 3 + 27, "Tokina AT-X Pro AF 28-70mm f/2.6-2.8"));
@@ -744,16 +749,14 @@ public:
         choices.insert (p_t (256 * 3 + 41, "smc PENTAX-F Macro 50mm f/2.8 or Sigma Lens"));
         choices.insert (p_t (256 * 3 + 41, "Sigma 50mm f/2.8 Macro"));
         choices.insert (p_t (256 * 3 + 42, "Sigma 300mm f/2.8 EX DG APO IF"));
-        choices.insert (p_t (256 * 3 + 44, "Sigma or Tamron Lens (3 44)"));
-        choices.insert (p_t (256 * 3 + 44, "Sigma AF 10-20mm f/4-5.6 EX DC"));
+        choices.insert (p_t (256 * 3 + 44, "Sigma AF 10-20mm f/4-5.6 EX DC or other Sigma or Tamron Lens"));
         choices.insert (p_t (256 * 3 + 44, "Sigma 12-24mm f/4.5-5.6 EX DG"));
         choices.insert (p_t (256 * 3 + 44, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
         choices.insert (p_t (256 * 3 + 44, "Sigma 18-50mm f/3.5-5.6 DC"));
         choices.insert (p_t (256 * 3 + 44, "Sigma 17-35mm f/2.8-4 EX DG"));
         choices.insert (p_t (256 * 3 + 44, "Tamron 35-90mm f/4-5.6 AF"));
         choices.insert (p_t (256 * 3 + 44, "Sigma AF 18-35mm f/3.5-4.5 Aspherical"));
-        choices.insert (p_t (256 * 3 + 46, "Sigma or Samsung Lens (3 46)"));
-        choices.insert (p_t (256 * 3 + 46, "Sigma APO 70-200mm f/2.8 EX"));
+        choices.insert (p_t (256 * 3 + 46, "Sigma APO 70-200mm f/2.8 EX or other Sigma or Samsung Lens"));
         choices.insert (p_t (256 * 3 + 46, "Sigma EX APO 100-300mm f/4 IF"));
         choices.insert (p_t (256 * 3 + 46, "Samsung/Schneider D-XENON 50-200mm f/4-5.6 ED"));
         choices.insert (p_t (256 * 3 + 50, "smc PENTAX-FA 28-70mm f/4 AL"));
@@ -768,8 +771,7 @@ public:
         choices.insert (p_t (256 * 3 + 252, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL"));
         choices.insert (p_t (256 * 3 + 253, "smc PENTAX-DA 14mm f/2.8 ED[IF]"));
         choices.insert (p_t (256 * 3 + 254, "smc PENTAX-DA 16-45mm f/4 ED AL"));
-        choices.insert (p_t (256 * 3 + 255, "Sigma Lens (3 255)"));
-        choices.insert (p_t (256 * 3 + 255, "Sigma 18-200mm f/3.5-6.3 DC"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma 18-200mm f/3.5-6.3 DC or other Sigma Lens"));
         choices.insert (p_t (256 * 3 + 255, "Sigma DL-II 35-80mm f/4-5.6"));
         choices.insert (p_t (256 * 3 + 255, "Sigma DL Zoom 75-300mm f/4-5.6"));
         choices.insert (p_t (256 * 3 + 255, "Sigma DF EX Aspherical 28-70mm f/2.8"));
@@ -778,6 +780,7 @@ public:
         choices.insert (p_t (256 * 3 + 255, "Sigma 70-300mm f/4-5.6 Macro"));
         choices.insert (p_t (256 * 3 + 255, "Sigma 55-200mm f/4-5.6 DC"));
         choices.insert (p_t (256 * 3 + 255, "Sigma 18-50mm f/2.8 EX DC"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma 18-50mm f/2.8 EX DC Macro"));
         choices.insert (p_t (256 * 4 + 1, "smc PENTAX-FA SOFT 28mm f/2.8"));
         choices.insert (p_t (256 * 4 + 2, "smc PENTAX-FA 80-320mm f/4.5-5.6"));
         choices.insert (p_t (256 * 4 + 3, "smc PENTAX-FA 43mm f/1.9 Limited"));
@@ -809,8 +812,7 @@ public:
         choices.insert (p_t (256 * 4 + 41, "Tamron AF 28-200mm Super Zoom f/3.8-5.6 Aspherical XR [IF] Macro (A03)"));
         choices.insert (p_t (256 * 4 + 43, "smc PENTAX-FA 28-90mm f/3.5-5.6"));
         choices.insert (p_t (256 * 4 + 44, "smc PENTAX-FA J 75-300mm f/4.5-5.8 AL"));
-        choices.insert (p_t (256 * 4 + 45, "Tamron Lens (4 45)"));
-        choices.insert (p_t (256 * 4 + 45, "Tamron 28-300mm f/3.5-6.3 Ultra zoom XR"));
+        choices.insert (p_t (256 * 4 + 45, "Tamron 28-300mm f/3.5-6.3 Ultra zoom XR or other Tamron Lens"));
         choices.insert (p_t (256 * 4 + 45, "Tamron AF 28-300mm f/3.5-6.3 XR Di LD Aspherical [IF] Macro"));
         choices.insert (p_t (256 * 4 + 46, "smc PENTAX-FA J 28-80mm f/3.5-5.6 AL"));
         choices.insert (p_t (256 * 4 + 47, "smc PENTAX-FA J 18-35mm f/4-5.6 AL"));
@@ -940,6 +942,7 @@ public:
         choices.insert (p_t (256 * 8 + 63, "HD PENTAX-D FA 15-30mm f/2.8 ED SDM WR"));
         choices.insert (p_t (256 * 8 + 64, "HD PENTAX-D FA* 50mm f/1.4 SDM AW"));
         choices.insert (p_t (256 * 8 + 65, "HD PENTAX-D FA 70-210mm f/4 ED SDM WR"));
+        choices.insert (p_t (256 * 8 + 66, "HD PENTAX-D FA 85mm f/1.4 ED SDM AW"));
         choices.insert (p_t (256 * 8 + 196, "HD PENTAX-DA* 11-18mm f/2.8 ED DC AW"));
         choices.insert (p_t (256 * 8 + 197, "HD PENTAX-DA 55-300mm f/4.5-6.3 ED PLM WR RE"));
         choices.insert (p_t (256 * 8 + 198, "smc PENTAX-DA L 18-50mm f/4-5.6 DC WR RE"));
@@ -956,13 +959,13 @@ public:
         choices.insert (p_t (256 * 8 + 235, "smc PENTAX-DA* 200mm f/2.8 ED [IF] SDM"));
         choices.insert (p_t (256 * 8 + 241, "smc PENTAX-DA* 50-135mm f/2.8 ED [IF] SDM"));
         choices.insert (p_t (256 * 8 + 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM"));
-        choices.insert (p_t (256 * 8 + 255, "Sigma Lens (8 255)"));
-        choices.insert (p_t (256 * 8 + 255, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
+        choices.insert (p_t (256 * 8 + 255, "Sigma 70-200mm f/2.8 EX DG Macro HSM II or other Sigma Lens"));
         choices.insert (p_t (256 * 8 + 255, "Sigma 150-500mm f/5-6.3 DG APO [OS] HSM"));
         choices.insert (p_t (256 * 8 + 255, "Sigma 50-150mm f/2.8 II APO EX DC HSM"));
         choices.insert (p_t (256 * 8 + 255, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
         choices.insert (p_t (256 * 8 + 255, "Sigma 50-200mm f/4-5.6 DC OS"));
         choices.insert (p_t (256 * 8 + 255, "Sigma 24-70mm f/2.8 EX DG HSM"));
+        choices.insert (p_t (256 * 8 + 255, "Sigma 18-50mm f/2.8-4.5 HSM OS"));
         choices.insert (p_t (256 * 9 + 0, "645 Manual Lens"));
         choices.insert (p_t (256 * 10 + 0, "645 A Series Lens"));
         choices.insert (p_t (256 * 11 + 1, "smc PENTAX-FA 645 75mm f/2.8"));
