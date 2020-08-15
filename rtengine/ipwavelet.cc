@@ -1237,12 +1237,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             for (int level = 0; level < cp.levden; level++) {
                                                 int W_L = Ldecomp->level_W(level);
                                                 int H_L = Ldecomp->level_H(level);
+                                                float* const* WavCoeffs_L2 = Ldecomp2->level_coeffs(level);//second decomp before denoise
                                                 float* const* WavCoeffs_L3 = Ldecomp->level_coeffs(level);//denoise with all levels
+                                               //denoise after low local contraste 
                                                 auto WavL0 = Ldecomp->level_coeffs(0)[dir];
                                                 auto WavL1 = Ldecomp->level_coeffs(1)[dir];
                                                 auto WavL2 = Ldecomp->level_coeffs(2)[dir];
                                                 auto WavL3 = Ldecomp->level_coeffs(3)[dir];
-
+                                               //not denoise
                                                 const auto WavL02 = Ldecomp2->level_coeffs(0)[dir];
                                                 const auto WavL12 = Ldecomp2->level_coeffs(1)[dir];
                                                 const auto WavL22 = Ldecomp2->level_coeffs(2)[dir];
@@ -1264,16 +1266,27 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                                 for (int i = 0; i < W_L * H_L; i++) {
                                                     float absciss;
+                                                    float tempwav = 0.f;
+                                                    //I added this part if user want to use whithout using low local contraste
+                                                    if(cp.mixmet == 0){
+                                                        tempwav = WavCoeffs_L2[dir][i];
+                                                    } else if(cp.mixmet == 1){
+                                                        tempwav = 0.5f * WavCoeffs_L3[dir][i] + 0.5f * WavCoeffs_L2[dir][i];
+                                                    } else if(cp.mixmet == 2){
+                                                        tempwav = 0.7f * WavCoeffs_L3[dir][i] + 0.3f * WavCoeffs_L2[dir][i];
+                                                    } else if(cp.mixmet == 3){
+                                                        tempwav = WavCoeffs_L3[dir][i]; 
+                                                    }
 
-                                                    if (std::fabs(WavCoeffs_L3[dir][i]) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
+                                                    if (std::fabs(tempwav) >= (mean[level] + cp.sigmm * sigma[level])) { //for max
                                                         float valcour = xlogf(std::fabs(WavCoeffs_L3[dir][i]));
                                                         float valc = valcour - logmax;
                                                         float vald = valc * rap;
                                                         absciss = xexpf(vald);
-                                                    } else if (std::fabs(WavCoeffs_L3[dir][i]) >= mean[level]) {
-                                                        absciss = asig * std::fabs(WavCoeffs_L3[dir][i]) + bsig;
+                                                    } else if (std::fabs(tempwav) >= mean[level]) {
+                                                        absciss = asig * std::fabs(tempwav) + bsig;
                                                     } else {
-                                                        absciss = amean * std::fabs(WavCoeffs_L3[dir][i]);
+                                                        absciss = amean * std::fabs(tempwav);
                                                     }
 
                                                     float kc = wavdenoiseh[absciss * 500.f] - 0.5f;

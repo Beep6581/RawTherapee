@@ -3327,7 +3327,7 @@ TP_WAVELET_DAUB10;D10 - medium
 TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the first levels. However the quality is not strictly related to this coefficient and can vary depending on image and use.
-TP_WAVELET_DENOISE;Local contrast
+TP_WAVELET_DENOISE;Low levels Curve Local contrast
 TP_WAVELET_DENOISEH;High levels Curve Local contrast
 TP_WAVELET_DENCONTRAST;Local contrast Equalizer
 TP_WAVELET_DENEQUAL;1 2 3 4 Equal
@@ -3377,7 +3377,7 @@ TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight
 TP_WAVELET_LABEL;Wavelet Levels
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chroma
-TP_WAVELET_LEVDEN;High levels contrast
+TP_WAVELET_LEVDEN;High levels local contrast threshold
 TP_WAVELET_LEVDIR_ALL;All levels, in all directions
 TP_WAVELET_LEVDIR_INF;Finer detail levels, including selected level
 TP_WAVELET_LEVDIR_ONE;One level
