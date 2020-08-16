@@ -1289,9 +1289,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                         absciss = amean * std::fabs(tempwav);
                                                     }
 
-                                                    float kc = wavdenoiseh[absciss * 500.f] - 0.5f;
+                                                    float kc = wavdenoiseh[absciss * 500.f] - 1.f;
                                                     if(kc < 0) {
-                                                        kc = -SQR(2.f * kc);//approximation to simulate sliders denoise
+                                                        kc = -SQR(kc);//approximation to simulate sliders denoise
                                                     }
                                                 
                                                     float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//if kc > 0 increase slightly denoise

@@ -2222,15 +2222,15 @@ WaveletParams::WaveletParams() :
     wavdenoiseh{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
-        0.5,
+        1.0,
         0.35,
         0.35,
         0.50,
-        0.5,
+        1.0,
         0.35,
         0.35,
         1.0,
-        0.5,
+        1.0,
         0.35,
         0.35
     },
