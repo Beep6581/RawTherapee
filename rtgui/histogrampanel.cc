@@ -1448,9 +1448,9 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
             float cx, cy;
             if (scopeType == 2) {
                 float H, S, L;
-                Color::rgb2hsl(pointer_red * 256.f, pointer_green * 256.f, pointer_blue * 256.f, H, S, L);
-                cx = (w + scope_size * S * cos(H * 2 * RT_PI)) / 2;
-                cy = (h - scope_size * S * sin(H * 2 * RT_PI)) / 2;
+                Color::rgb2hslfloat(pointer_red * 257.f, pointer_green * 257.f, pointer_blue * 257.f, H, S, L);
+                cx = (w + scope_size * S * std::cos(H * 2 * RT_PI_F)) / 2;
+                cy = (h - scope_size * S * std::sin(H * 2 * RT_PI_F)) / 2;
             } else {
                 constexpr float ab_factor = 327.68f / 96000.f;
                 cx = w / 2.f + scope_size * pointer_a * ab_factor;
