@@ -1863,20 +1863,35 @@ BENCHFUN
 
     vectorscopeScale = (x2 - x1) * (y2 - y1);
     if (hListener->vectorscopeType() == 0) { // HS
-        for (int i = y1; i < y2; ++i) {
-            int ofs = (i * pW + x1) * 3;
-            for (int j = x1; j < x2; ++j) {
-                const float red = 257.f * workimg->data[ofs++];
-                const float green = 257.f * workimg->data[ofs++];
-                const float blue = 257.f * workimg->data[ofs++];
-                float h, s, l;
-                Color::rgb2hslfloat(red, green, blue, h, s, l);
-                const auto sincosval = xsincosf(2.f * RT_PI_F * h);
-                const int col = s * sincosval.y * (size / 2) + size / 2;
-                const int row = s * sincosval.x * (size / 2) + size / 2;
-                if (col >= 0 && col < size && row >= 0 && row < size) {
-                    vectorscope[row][col]++;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            array2D<int> vectorscopeThr(size, size, ARRAY2D_CLEAR_DATA);
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+            for (int i = y1; i < y2; ++i) {
+                int ofs = (i * pW + x1) * 3;
+                for (int j = x1; j < x2; ++j) {
+                    const float red = 257.f * workimg->data[ofs++];
+                    const float green = 257.f * workimg->data[ofs++];
+                    const float blue = 257.f * workimg->data[ofs++];
+                    float h, s, l;
+                    Color::rgb2hslfloat(red, green, blue, h, s, l);
+                    const auto sincosval = xsincosf(2.f * RT_PI_F * h);
+                    const int col = s * sincosval.y * (size / 2) + size / 2;
+                    const int row = s * sincosval.x * (size / 2) + size / 2;
+                    if (col >= 0 && col < size && row >= 0 && row < size) {
+                        vectorscopeThr[row][col]++;
+                    }
                 }
+            }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                vectorscope += vectorscopeThr;
             }
         }
     } else if (hListener->vectorscopeType() == 1) { // CH
@@ -1884,13 +1899,28 @@ BENCHFUN
         const std::unique_ptr<float[]> b(new float[vectorscopeScale]);
         const std::unique_ptr<float[]> L(new float[vectorscopeScale]);
         ipf.rgb2lab(*workimg, x1, y1, x2 - x1, y2 - y1, L.get(), a.get(), b.get(), params->icm);
-        for (int i = y1; i < y2; ++i) {
-            for (int j = x1, ofs_lab = (i - y1) * (x2 - x1); j < x2; ++j, ++ofs_lab) {
-                const int col = (size / 96000.f) * a[ofs_lab] + size / 2;
-                const int row = (size / 96000.f) * b[ofs_lab] + size / 2;
-                if (col >= 0 && col < size && row >= 0 && row < size) {
-                    vectorscope[row][col]++;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            array2D<int> vectorscopeThr(size, size, ARRAY2D_CLEAR_DATA);
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+            for (int i = y1; i < y2; ++i) {
+                for (int j = x1, ofs_lab = (i - y1) * (x2 - x1); j < x2; ++j, ++ofs_lab) {
+                    const int col = (size / 96000.f) * a[ofs_lab] + size / 2;
+                    const int row = (size / 96000.f) * b[ofs_lab] + size / 2;
+                    if (col >= 0 && col < size && row >= 0 && row < size) {
+                        vectorscopeThr[row][col]++;
+                    }
                 }
+            }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                vectorscope += vectorscopeThr;
             }
         }
     }

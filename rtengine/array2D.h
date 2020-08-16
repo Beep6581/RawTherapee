@@ -211,6 +211,24 @@ public:
         }
     }
 
+    array2D<T>& operator+=(const array2D<T>& rhs)
+    {
+        if (rhs.getWidth() == this->getWidth() && rhs.getHeight() == this->getHeight()) {
+            for (int i = 0; i < getHeight(); ++i) {
+#ifdef _OPENMP
+                #pragma omp simd
+#endif
+
+                for (int j = 0; j < getWidth(); ++j) {
+                    rows[i][j] += rhs[i][j];
+                }
+            }
+        }
+
+        return *this;
+    }
+
+
     int getWidth() const
     {
         return width;
