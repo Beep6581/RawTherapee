@@ -898,7 +898,7 @@ void HistogramRGBAreaVert::get_preferred_width_for_height_vfunc (int height, int
 HistogramArea::HistogramArea (DrawModeListener *fml) :
     vectorscope_scale(0),
     vect(0, 0),
-    vect_buffer_dirty(true), vect_buffer_size(0),
+    vect_buffer_dirty(true),
     waveform_scale(0),
     rwave(0, 0), gwave(0, 0),bwave(0, 0), lwave(0, 0),
     wave_buffer_dirty(true),
@@ -1022,6 +1022,7 @@ void HistogramArea::update(
             lwave = waveformLuma;
             wave_buffer_dirty = true;
         } else if (scopeType >= 2) {
+            vectorscope_scale = vectorscopeScale;
             vect = vectorscope;
             vect_buffer_dirty = true;
         }
@@ -1343,7 +1344,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
 
     if (vect_buffer_dirty && vectorscope_scale > 0) {
         if (vect_buffer.size() != static_cast<std::size_t>(cairo_stride) * vect_height) {
-            vect_buffer.resize(cairo_stride * vect_height);
+            vect_buffer.resize(static_cast<std::size_t>(cairo_stride) * vect_height);
         }
 
         assert(vect_buffer.size() % 4 == 0);

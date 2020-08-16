@@ -164,7 +164,6 @@ protected:
     array2D<int> vect;
     std::vector<unsigned char> vect_buffer;
     bool vect_buffer_dirty;
-    int vect_buffer_size;
     int waveform_scale;
     array2D<int> rwave, gwave, bwave, lwave;
     std::vector<unsigned char> wave_buffer;
