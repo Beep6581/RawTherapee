@@ -214,13 +214,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wGamma->setAdjusterListener(this);
     wSlope->setAdjusterListener(this);
 
-    if (wGamma->delay < options.adjusterMaxDelay) {
-        wGamma->delay = options.adjusterMaxDelay;
-    }
+    wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    if (wSlope->delay < options.adjusterMaxDelay) {
-        wSlope->delay = options.adjusterMaxDelay;
-    }
+    wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     wFrame->add(*wProfVBox);
 

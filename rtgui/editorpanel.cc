@@ -1797,7 +1797,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
 
 bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams)
 {
-    img->free ();
+    delete img;
 
     if (! pc->returnValue() ) {
         openThm->imageDeveloped ();
@@ -1997,7 +1997,7 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
         err = 1;
     }
 
-    img->free();
+    delete img;
     return !err;
 }
 
@@ -2059,7 +2059,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
         }
 
         if (tries == 1000) {
-            img->free ();
+            delete img;
             return false;
         }
 
@@ -2080,7 +2080,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
 bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename)
 {
-    img->free ();
+    delete img;
     int errore = pc->returnValue();
     setProgressState(false);
     delete pc;

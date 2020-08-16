@@ -452,7 +452,7 @@ void Options::setDefaults()
     histogramDrawMode = 0;
     histogramScopeType = 0;
     curvebboxpos = 1;
-    complexity = 1;
+    complexity = 2;
     prevdemo = PD_Sidecar;
 
     rgbDenoiseThreadLimit = 0;

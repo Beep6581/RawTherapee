@@ -46,9 +46,7 @@ PreProcess::PreProcess () : FoldableToolPanel(this, "preprocess", M("TP_PREPROCE
     hdThreshold->set_tooltip_markup (M("TP_RAW_HD_TOOLTIP"));
     hdThreshold->setAdjusterListener (this);
 
-    if (hdThreshold->delay < options.adjusterMaxDelay) {
-        hdThreshold->delay = options.adjusterMaxDelay;
-    }
+    hdThreshold->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     hdThreshold->show();
     pack_start( *hdThreshold, Gtk::PACK_SHRINK, 4);

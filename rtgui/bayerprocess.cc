@@ -60,9 +60,7 @@ BayerProcess::BayerProcess () :
     dualDemosaicContrast->setAdjusterListener(this);
     dualDemosaicContrast->addAutoButton(M("TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP"));
     dualDemosaicContrast->setAutoValue(true);
-    if (dualDemosaicContrast->delay < options.adjusterMaxDelay) {
-        dualDemosaicContrast->delay = options.adjusterMaxDelay;
-    }
+    dualDemosaicContrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     dualDemosaicContrast->show();
     dualDemosaicOptions->pack_start(*dualDemosaicContrast);
@@ -72,9 +70,7 @@ BayerProcess::BayerProcess () :
     border = Gtk::manage(new Adjuster(M("TP_RAW_BORDER"), 0, 16, 1, 4));
     border->setAdjusterListener (this);
 
-    if (border->delay < options.adjusterMaxDelay) {
-        border->delay = options.adjusterMaxDelay;
-    }
+    border->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     border->show();
     borderbox->pack_start(*border);
@@ -96,22 +92,17 @@ BayerProcess::BayerProcess () :
     ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"), 0, 5, 1, 0 ));
     ccSteps->setAdjusterListener (this);
 
-    if (ccSteps->delay < options.adjusterMaxDelay) {
-        ccSteps->delay = options.adjusterMaxDelay;
-    }
+    ccSteps->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     ccSteps->show();
     pack_start( *ccSteps, Gtk::PACK_SHRINK, 4);
-
 
     dcbOptions = Gtk::manage (new Gtk::VBox ());
 
     dcbIterations = Gtk::manage (new Adjuster (M("TP_RAW_DCBITERATIONS"), 0, 5, 1, 2));
     dcbIterations->setAdjusterListener (this);
 
-    if (dcbIterations->delay < options.adjusterMaxDelay) {
-        dcbIterations->delay = options.adjusterMaxDelay;
-    }
+    dcbIterations->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     dcbIterations->show();
     dcbEnhance = Gtk::manage (new CheckBox(M("TP_RAW_DCBENHANCE"), multiImage));
@@ -126,9 +117,7 @@ BayerProcess::BayerProcess () :
     lmmseIterations->setAdjusterListener (this);
     lmmseIterations->set_tooltip_markup (M("TP_RAW_LMMSE_TOOLTIP"));
 
-    if (lmmseIterations->delay < options.adjusterMaxDelay) {
-        lmmseIterations->delay = options.adjusterMaxDelay;
-    }
+    lmmseIterations->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     lmmseIterations->show();
     lmmseOptions->pack_start(*lmmseIterations);
@@ -209,9 +198,7 @@ BayerProcess::BayerProcess () :
     pixelShiftSigma->set_tooltip_text (M("TP_RAW_PIXELSHIFTSIGMA_TOOLTIP"));
     pixelShiftSigma->setAdjusterListener (this);
 
-    if (pixelShiftSigma->delay < options.adjusterMaxDelay) {
-        pixelShiftSigma->delay = options.adjusterMaxDelay;
-    }
+    pixelShiftSigma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     pixelShiftSigma->show();
     pixelShiftOptions->pack_start(*pixelShiftSigma);
@@ -221,9 +208,7 @@ BayerProcess::BayerProcess () :
     pixelShiftSmooth->set_tooltip_text (M("TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP"));
     pixelShiftSmooth->setAdjusterListener (this);
 
-    if (pixelShiftSmooth->delay < options.adjusterMaxDelay) {
-        pixelShiftSmooth->delay = options.adjusterMaxDelay;
-    }
+    pixelShiftSmooth->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     pixelShiftSmooth->show();
     pixelShiftOptions->pack_start(*pixelShiftSmooth);
@@ -232,9 +217,7 @@ BayerProcess::BayerProcess () :
     pixelShiftEperIso->set_tooltip_text(M("TP_RAW_PIXELSHIFTEPERISO_TOOLTIP"));
     pixelShiftEperIso->setAdjusterListener (this);
 
-    if (pixelShiftEperIso->delay < options.adjusterMaxDelay) {
-        pixelShiftEperIso->delay = options.adjusterMaxDelay;
-    }
+    pixelShiftEperIso->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     pixelShiftEperIso->show();
     pixelShiftOptions->pack_start(*pixelShiftEperIso);

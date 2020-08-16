@@ -110,7 +110,7 @@ void PreviewHandler::delImage(IImage8* i)
                 oldImg->getMutex().unlock();
             }
 
-            i->free();
+            delete i;
             pih->phandler->previewImgMutex.lock();
             pih->phandler->previewImg.clear();
             pih->phandler->previewImgMutex.unlock();
