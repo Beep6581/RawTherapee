@@ -3134,6 +3134,8 @@ void Wavelet::updateGUIToMode(int mode)
         denHBox->hide();
         mixHBox->hide();
         sigm->hide();
+        CurveEditorwavnoiseh->hide();
+        levden->hide();
     } else {
         offset->show();
         sigma->show();
@@ -3154,6 +3156,8 @@ void Wavelet::updateGUIToMode(int mode)
         denHBox->show();
         mixHBox->show();
         sigm->show();
+        CurveEditorwavnoiseh->show();
+        levden->show();
     }
 
 }

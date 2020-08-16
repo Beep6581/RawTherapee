@@ -167,6 +167,7 @@ struct cont_params {
     float protab;
     float sigmm;
     int levden;
+    int complex;
 };
 
 int wavNestedLevels = 1;
@@ -207,7 +208,7 @@ std::unique_ptr<LUTf> ImProcFunctions::buildMeaLut(const float inVals[11], const
     return std::unique_ptr<LUTf>(new LUTf(lutVals));
 }
 
-void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavCurve & wavdenoise, const WavCurve & wavdenoiseh, const Wavblcurve & wavblcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveSH & waOpacityCurveSH, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, const LUTf &wavclCurve, int skip)
+void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavCurve & wavdenoise,  WavCurve & wavdenoiseh, const Wavblcurve & wavblcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveSH & waOpacityCurveSH, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, const LUTf &wavclCurve, int skip)
 
 
 {
@@ -222,6 +223,13 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     struct cont_params cp;
 
     cp.avoi = params->wavelet.avoid;
+
+    if (params->wavelet.complexmethod == "normal") {
+        cp.complex = 0;
+    } else if (params->wavelet.complexmethod == "expert") {
+        cp.complex = 1;
+    }
+
 
     if (params->wavelet.Medgreinf == "more") {
         cp.reinforce = 1;
@@ -474,9 +482,13 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         }
     }
 
+    if(cp.complex == 0) {
+        wavdenoiseh = wavdenoise;
+    }
+
     if (wavdenoiseh) {
         for (int i = 0; i < 500; i++) {
-            if (wavdenoiseh[i] != 0.5) {
+            if (wavdenoiseh[i] != 1.0) {
                 cp.denoicurvh  = true;
                 break;
             }
@@ -982,6 +994,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     levwavL = 4;    //to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
 
+                if(cp.denoicurvh) {
+                    levwavL = levwav;
+                }
                 if (settings->verbose) {
                     printf("Level decomp L=%i\n", levwavL);
                 }
@@ -1230,9 +1245,16 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         }
                                     }
                                     //now WavCoeffs_L denoised take into account local contrast 0123
+                                    
+                                    if(cp.complex == 0) {
+                                        cp.levden = levwavL;
+                                        printf("leD=%i \n", cp.levden);
+                                        
+                                    }
+
                                     if(cp.levden > 3 && cp.denoicurvh) {//local contrast for high levels
                                         cp.levden = min(levwavL, cp.levden);
-                                        
+                                        printf("lev_den=%i \n", cp.levden);
                                         for (int dir = 1; dir < 4; dir++) {
                                             for (int level = 0; level < cp.levden; level++) {
                                                 int W_L = Ldecomp->level_W(level);
