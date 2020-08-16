@@ -945,7 +945,7 @@ Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
 
 void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    int s = (int)RTScalable::getScale();
+    int s = RTScalable::getScale();
     minimum_height = 100 * s;
     natural_height = 200 * s;
 }
@@ -953,7 +953,7 @@ void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natura
 void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
 
-    int s = (int)RTScalable::getScale();
+    int s = RTScalable::getScale();
     minimum_width = 200 * s;
     natural_width = 400 * s;
 }
@@ -1105,7 +1105,7 @@ void HistogramArea::updateBackBuffer ()
     cr->set_dash (ch_ds, 0);
 
     // determine the number of h-gridlines based on current h
-    int nrOfHGridPartitions = (int)rtengine::min (16.0, pow (2.0, floor ((h - 100) / 250) + 2));
+    int nrOfHGridPartitions = static_cast<int>(rtengine::min (16.0, pow (2.0, floor ((h - 100) / 250) + 2)));
     int nrOfVGridPartitions = 8; // always show 8 stops (lines at 1,3,7,15,31,63,127)
 
     // draw vertical gridlines
@@ -1135,14 +1135,14 @@ void HistogramArea::updateBackBuffer ()
         // Vectorscope has no gridlines.
     } else if (options.histogramDrawMode == 0) {
         for (int i = 1; i < nrOfHGridPartitions; i++) {            
-            cr->move_to (padding, i * (double)h / nrOfHGridPartitions + 0.5);
-            cr->line_to (w - padding, i * (double)h / nrOfHGridPartitions + 0.5);
+            cr->move_to (padding, i * static_cast<double>(h) / nrOfHGridPartitions + 0.5);
+            cr->line_to (w - padding, i * static_cast<double>(h) / nrOfHGridPartitions + 0.5);
             cr->stroke ();
         }
     } else {
         for (int i = 1; i < nrOfHGridPartitions; i++) {
-            cr->move_to (padding, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5);
-            cr->line_to (w - padding, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5);
+            cr->move_to (padding, h - HistogramScaling::log (h, i * static_cast<double>(h) / nrOfHGridPartitions) + 0.5);
+            cr->line_to (w - padding, h - HistogramScaling::log (h, i * static_cast<double>(h) / nrOfHGridPartitions) + 0.5);
             cr->stroke ();
         }
     }
@@ -1306,15 +1306,15 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
     scale = scale <= 0.0 ? 0.001 : scale; // avoid division by zero and negative values
 
     for (int i = 0; i < 256; i++) {
-        double val = data[i] * (double)vsize / scale;
+        double val = data[i] * static_cast<double>(vsize) / scale;
 
         if (drawMode > 0) { // scale y for single and double log-scale
-            val = HistogramScaling::log ((double)vsize, val);
+            val = HistogramScaling::log (static_cast<double>(vsize), val);
         }
 
         double iscaled = i;
         if (drawMode == 2) { // scale x for double log-scale
-            iscaled = HistogramScaling::log (255.0, (double)i);
+            iscaled = HistogramScaling::log (255.0, static_cast<double>(i));
         }
 
         double posX = padding + iscaled * (hsize - padding * 2.0) / 255.0;
@@ -1363,7 +1363,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         for (int y = 0; y < vect_height; y++) {
             int* vect_row = vect[y];
             uint32_t* buffer_row =
-                (uint32_t*)&(vect_buffer[(vect_height - 1 - y) * cairo_stride]);
+                reinterpret_cast<uint32_t*>(&(vect_buffer[(vect_height - 1 - y) * cairo_stride]));
             for (int x = 0; x < vect_width; x++) {
                 const unsigned char value = min<float>(scale * vect_row[x], 0xff);
                 buffer_row[x] = value | (value << 8) | (value << 16) | (value << 24);
@@ -1508,7 +1508,7 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
             int* r_row = rwave[val];
             int* g_row = gwave[val];
             int* b_row = bwave[val];
-            uint32_t* buffer_row = (uint32_t*)&(wave_buffer[(255 - val) * cairo_stride]);
+            uint32_t* buffer_row = reinterpret_cast<uint32_t*>(&(wave_buffer[(255 - val) * cairo_stride]));
             for (int col = 0; col < wave_width; col++) {
                 const unsigned char r = needRed ? min<float>(scale * r_row[col], 0xff) : 0;
                 const unsigned char g = needGreen ? min<float>(scale * g_row[col], 0xff) : 0;
@@ -1527,7 +1527,7 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
             for (int val = 0; val < wave_height; val++) {
                 int* l_row = lwave[val];
                 uint32_t* buffer_row =
-                    (uint32_t*)&(wave_buffer_luma[(255 - val) * cairo_stride]);
+                    reinterpret_cast<uint32_t*>(&(wave_buffer_luma[(255 - val) * cairo_stride]));
                 for (int col = 0; col < wave_width; col++) {
                     const unsigned char l = min<float>(scale * l_row[col], 0xff);
                     buffer_row[col] = l | (l << 8) | (l << 16) | (l << 24);
