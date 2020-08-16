@@ -24,6 +24,7 @@
 
 #include <cairomm/cairomm.h>
 
+#include "delayed.h"
 #include "guiutils.h"
 #include "pointermotionlistener.h"
 
@@ -180,6 +181,8 @@ private:
 
 class HistogramPanel final : public Gtk::Grid, public PointerMotionListener, public DrawModeListener, public rtengine::NonCopyable
 {
+private:
+    DelayedCall<bool, Glib::ustring, Glib::ustring, int, int, int> pointer_moved_delayed_call;
 
 protected:
 

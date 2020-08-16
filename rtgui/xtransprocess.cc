@@ -79,9 +79,7 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     dualDemosaicContrast->addAutoButton(M("TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP"));
     dualDemosaicContrast->setAutoValue(true);
 
-    if (dualDemosaicContrast->delay < options.adjusterMaxDelay) {
-        dualDemosaicContrast->delay = options.adjusterMaxDelay;
-    }
+    dualDemosaicContrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     dualDemosaicContrast->show();
     dualDemosaicOptions->pack_start(*dualDemosaicContrast);
@@ -91,9 +89,7 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     border = Gtk::manage(new Adjuster(M("TP_RAW_BORDER"), 0, 16, 1, 7));
     border->setAdjusterListener (this);
 
-    if (border->delay < options.adjusterMaxDelay) {
-        border->delay = options.adjusterMaxDelay;
-    }
+    border->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     border->show();
     borderbox->pack_start(*border);
@@ -103,9 +99,7 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"), 0, 5, 1, 0 ));
     ccSteps->setAdjusterListener (this);
 
-    if (ccSteps->delay < options.adjusterMaxDelay) {
-        ccSteps->delay = options.adjusterMaxDelay;
-    }
+    ccSteps->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     ccSteps->show();
     pack_start( *ccSteps, Gtk::PACK_SHRINK, 4);

@@ -20,6 +20,7 @@
 
 #include <gtkmm.h>
 
+#include "delayed.h"
 #include "options.h"
 #include "pointermotionlistener.h"
 
@@ -33,6 +34,8 @@ class Navigator final :
     typedef const double (*TMatrix)[3];
 
 private:
+    DelayedCall<bool, Glib::ustring, Glib::ustring, int, int, int, int, int, bool> pointer_moved_delayed_call;
+
     Options::NavigatorUnit currentRGBUnit;
     Options::NavigatorUnit currentHSVUnit;
     void cycleUnitsRGB (GdkEventButton *event);
@@ -53,7 +56,8 @@ protected:
 public:
     PreviewWindow* previewWindow;
 
-    Navigator ();
+    Navigator();
+    ~Navigator() override;
 
     // pointermotionlistener interface
     //  void pointerMoved (bool validPos, int x, int y, int r, int g, int b);

@@ -502,112 +502,58 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     str->setAdjusterListener (this);
-
-    if (str->delay < 200) {
-        str->delay = 200;
-    }
+    str->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     scal->setAdjusterListener (this);
-
-    if (scal->delay < 200) {
-        scal->delay = 200;
-    }
+    scal->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     iter->setAdjusterListener (this);
-
-    if (iter->delay < 200) {
-        iter->delay = 200;
-    }
+    iter->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     grad->setAdjusterListener (this);
-
-    if (grad->delay < 200) {
-        grad->delay = 200;
-    }
+    grad->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     grads->setAdjusterListener (this);
-
-    if (grads->delay < 200) {
-        grads->delay = 200;
-    }
+    grads->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     gam->setAdjusterListener (this);
-
-    if (gam->delay < 500) {
-        gam->delay = 500;
-    }
+    gam->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay) * 2.5f);
 
     slope->setAdjusterListener (this);
-
-    if (slope->delay < 500) {
-        slope->delay = 500;
-    }
+    slope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay) * 2.5f);
 
     neigh->setAdjusterListener (this);
-
-    if (neigh->delay < 200) {
-        neigh->delay = 200;
-    }
+    neigh->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     offs->setAdjusterListener (this);
-
-    if (offs->delay < 200) {
-        offs->delay = 200;
-    }
+    offs->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     vart->setAdjusterListener (this);
-
-    if (vart->delay < 200) {
-        vart->delay = 200;
-    }
+    offs->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     limd->setAdjusterListener (this);
-
-    if (limd->delay < 200) {
-        limd->delay = 200;
-    }
+    limd->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     highl->setAdjusterListener (this);
-
-    if (highl->delay < 200) {
-        highl->delay = 200;
-    }
+    highl->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     radius->setAdjusterListener (this);
-
-    if (radius->delay < 200) {
-        radius->delay = 200;
-    }
+    radius->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     highlights->setAdjusterListener (this);
-
-    if (highlights->delay < 200) {
-        highlights->delay = 200;
-    }
+    highlights->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     h_tonalwidth->setAdjusterListener (this);
-
-    if (h_tonalwidth->delay < 200) {
-        h_tonalwidth->delay = 200;
-    }
+    h_tonalwidth->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     shadows->setAdjusterListener (this);
-
-    if (shadows->delay < 200) {
-        shadows->delay = 200;
-    }
+    shadows->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     s_tonalwidth->setAdjusterListener (this);
-
-    if (s_tonalwidth->delay < 200) {
-        s_tonalwidth->delay = 200;
-    }
+    s_tonalwidth->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     skal->setAdjusterListener (this);
-
-    if (skal->delay < 200) {
-        skal->delay = 200;
-    }
+    skal->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     disableListener();
     retinexColorSpaceChanged();
