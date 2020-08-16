@@ -1859,7 +1859,7 @@ BENCHFUN
     params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
 
     constexpr int size = VECTORSCOPE_SIZE;
-    memset((int*)vectorscope, 0, size * size * sizeof(vectorscope[0][0]));
+    vectorscope.fill(0);
 
     vectorscopeScale = (x2 - x1) * (y2 - y1);
     if (hListener->vectorscopeType() == 0) { // HS
@@ -1951,11 +1951,10 @@ void ImProcCoordinator::updateWaveforms()
     }
 
     // Start with zero.
-    const int waveformSize = 256 * waveform_width;
-    memset((int*)waveformRed, 0, waveformSize * sizeof(waveformRed[0][0]));
-    memset((int*)waveformGreen, 0, waveformSize * sizeof(waveformGreen[0][0]));
-    memset((int*)waveformBlue, 0, waveformSize * sizeof(waveformBlue[0][0]));
-    memset((int*)waveformLuma, 0, waveformSize * sizeof(waveformLuma[0][0]));
+    waveformRed.fill(0);
+    waveformGreen.fill(0);
+    waveformBlue.fill(0);
+    waveformLuma.fill(0);
 
     constexpr float luma_factor = 255.f / 32768.f;
     for (int i = y1; i < y2; i++) {
