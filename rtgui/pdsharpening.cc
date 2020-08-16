@@ -81,10 +81,10 @@ PdSharpening::PdSharpening() :
     dradiusOffset->setAdjusterListener(this);
     diter->setAdjusterListener(this);
 
-    contrast->delay = std::max(contrast->delay, options.adjusterMaxDelay);
-    dradius->delay = std::max(dradius->delay, options.adjusterMaxDelay);
-    dradiusOffset->delay = std::max(dradiusOffset->delay, options.adjusterMaxDelay);
-    diter->delay = std::max(diter->delay, options.adjusterMaxDelay);
+    contrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    dradius->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    dradiusOffset->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    diter->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 }
 
 PdSharpening::~PdSharpening()

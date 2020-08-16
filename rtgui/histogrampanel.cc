@@ -32,7 +32,22 @@ using namespace rtengine;
 //
 //
 // HistogramPanel
-HistogramPanel::HistogramPanel ()
+HistogramPanel::HistogramPanel() :
+    pointer_moved_delayed_call(
+        [this](bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int r, int g, int b)
+        {
+            if (!validPos) {
+                // do something to un-show vertical bars
+                histogramRGBArea->updateBackBuffer(-1, -1, -1);
+            } else {
+                // do something to show vertical bars
+                histogramRGBArea->updateBackBuffer(r, g, b, profile, profileW);
+            }
+            histogramRGBArea->queue_draw ();
+        },
+        50,
+        100
+    )
 {
     setExpandAlignProperties(this, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     set_name("HistogramPanel");
@@ -192,6 +207,8 @@ HistogramPanel::HistogramPanel ()
 
 HistogramPanel::~HistogramPanel ()
 {
+    pointer_moved_delayed_call.cancel();
+
     delete redImage;
     delete greenImage;
     delete blueImage;
@@ -311,15 +328,7 @@ void HistogramPanel::setHistRGBInvalid ()
 
 void HistogramPanel::pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw)
 {
-
-    if (!validPos) {
-        // do something to un-show vertical bars
-        histogramRGBArea->updateBackBuffer(-1, -1, -1);
-    } else {
-        // do something to show vertical bars
-        histogramRGBArea->updateBackBuffer(r, g, b, profile, profileW);
-    }
-    histogramRGBArea->queue_draw ();
+    pointer_moved_delayed_call(validPos, profile, profileW, r, g, b);
 }
 
 /*
@@ -372,7 +381,6 @@ HistogramRGBArea::HistogramRGBArea () :
     needLuma(options.histogramLuma), needChroma(options.histogramChroma), rawMode(options.histogramRAW),
     showMode(options.histogramBar), barDisplayed(options.histogramBar), parent(nullptr)
 {
-
     get_style_context()->add_class("drawingarea");
     set_name("HistogramRGBArea");
 
