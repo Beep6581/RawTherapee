@@ -18,6 +18,8 @@
  */
 #pragma once
 
+#include <vector>
+
 #include <gtkmm.h>
 
 #include <glibmm/ustring.h>
@@ -160,13 +162,13 @@ protected:
     LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
     int vectorscope_scale;
     array2D<int> vect;
-    std::unique_ptr<unsigned char[]> vect_buffer;
+    std::vector<unsigned char> vect_buffer;
     bool vect_buffer_dirty;
     int vect_buffer_size;
     int waveform_scale;
     array2D<int> rwave, gwave, bwave, lwave;
-    std::unique_ptr<unsigned char[]> wave_buffer;
-    std::unique_ptr<unsigned char[]> wave_buffer_luma;
+    std::vector<unsigned char> wave_buffer;
+    std::vector<unsigned char> wave_buffer_luma;
     bool wave_buffer_dirty;
 
     bool valid;

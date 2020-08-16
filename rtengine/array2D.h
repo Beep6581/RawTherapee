@@ -64,8 +64,7 @@ constexpr unsigned int ARRAY2D_BYREFERENCE = 2;
 
 
 template<typename T>
-class array2D :
-    public rtengine::NonCopyable
+class array2D
 {
 
 private:
@@ -123,6 +122,25 @@ public:
                 rows[i] = source[i];
             }
         }
+    }
+
+    array2D(const array2D& other) :
+        width(other.width),
+        buffer(other.buffer)
+    {
+        initRows(other.rows.size());
+    }
+
+    array2D& operator =(const array2D& other)
+    {
+        if (this != &other) {
+            free();
+            width = other.width;
+            buffer = other.buffer;
+            initRows(other.rows.size());
+        }
+
+        return *this;
     }
 
     void fill(const T val, bool multiThread = false)
