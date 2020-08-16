@@ -17,8 +17,6 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <fstream>
-#include <iostream>
-#include <string>
 #include <glibmm/thread.h>
 
 #include "improccoordinator.h"
@@ -27,7 +25,6 @@
 #include "cieimage.h"
 #include "color.h"
 #include "colortemp.h"
-#include "jaggedarray.h"
 #include "curves.h"
 #include "dcp.h"
 #include "iccstore.h"
@@ -45,8 +42,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#define BENCHMARK
-#include "StopWatch.h"
+
 namespace
 {
 
@@ -1854,7 +1850,7 @@ void ImProcCoordinator::updateVectorscope()
     if (!workimg) {
         return;
     }
-BENCHFUN
+
     int x1, y1, x2, y2;
     params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
 
