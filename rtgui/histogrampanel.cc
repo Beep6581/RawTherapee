@@ -1368,7 +1368,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
     const float scope_scale = fit_width ?
         (w - 2 * padding) / vect_width : (h - 2 * padding) / vect_height;
     const float scope_size = (vectorscope_scale > 0) ?
-        scope_scale * std::max<float>(vect_width, vect_height) : std::min<float>(w, h) - 2 * padding;
+        scope_scale * std::max<double>(vect_width, vect_height) : std::min<float>(w, h) - 2 * padding;
     const float o_x = (w - scope_scale * vect_width) / 2;
     const float o_y = (h - scope_scale * vect_height) / 2;
     const double s = RTScalable::getScale();
@@ -1486,8 +1486,9 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
     const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, rwave.getWidth());
 
     if (wave_buffer_dirty) {
-        wave_buffer.assign(wave_height * cairo_stride, 0);
-        wave_buffer_luma.assign(wave_height * cairo_stride, 0);
+        const auto buffer_size = static_cast<std::vector<unsigned char>::size_type>(wave_height) * cairo_stride;
+        wave_buffer.assign(buffer_size, 0);
+        wave_buffer_luma.assign(buffer_size, 0);
 
         assert(wave_buffer.size() % 4 == 0);
         assert(wave_buffer_luma.size() % 4 == 0);
