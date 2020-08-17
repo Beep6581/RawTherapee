@@ -1569,7 +1569,7 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event)
     isPressed = true;
     movingPosition = event->x;
 
-    if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
+    if (event->type == GDK_2BUTTON_PRESS && event->button == 1 && scopeType == 0) {
 
         drawMode = (drawMode + 1) % 3;
         options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
