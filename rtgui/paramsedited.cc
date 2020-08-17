@@ -524,6 +524,8 @@ void ParamsEdited::set(bool v)
     wavelet.mergeC = v;
     wavelet.softrad = v;
     wavelet.softradend = v;
+    wavelet.strend = v;
+    wavelet.detend = v;
     wavelet.Medgreinf = v;
     wavelet.ushamethod = v;
     wavelet.avoid = v;
@@ -591,6 +593,7 @@ void ParamsEdited::set(bool v)
     wavelet.level1noise = v;
     wavelet.level2noise = v;
     wavelet.level3noise = v;
+    wavelet.leveldenoise = v;
     wavelet.ccwcurve = v;
     wavelet.blcurve = v;
     wavelet.opacityCurveSH   = v;
@@ -1682,6 +1685,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.mergeC = wavelet.mergeC && p.wavelet.mergeC == other.wavelet.mergeC;
         wavelet.softrad = wavelet.softrad && p.wavelet.softrad == other.wavelet.softrad;
         wavelet.softradend = wavelet.softradend && p.wavelet.softradend == other.wavelet.softradend;
+        wavelet.strend = wavelet.strend && p.wavelet.strend == other.wavelet.strend;
+        wavelet.detend = wavelet.detend && p.wavelet.detend == other.wavelet.detend;
         wavelet.ushamethod = wavelet.ushamethod && p.wavelet.ushamethod == other.wavelet.ushamethod;
         wavelet.avoid = wavelet.avoid && p.wavelet.avoid == other.wavelet.avoid;
         wavelet.showmask = wavelet.showmask && p.wavelet.showmask == other.wavelet.showmask;
@@ -1747,6 +1752,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.level1noise = wavelet.level1noise && p.wavelet.level1noise == other.wavelet.level1noise;
         wavelet.level2noise = wavelet.level2noise && p.wavelet.level2noise == other.wavelet.level2noise;
         wavelet.level3noise = wavelet.level3noise && p.wavelet.level3noise == other.wavelet.level3noise;
+        wavelet.leveldenoise = wavelet.leveldenoise && p.wavelet.leveldenoise == other.wavelet.leveldenoise;
         wavelet.pastlev = wavelet.pastlev && p.wavelet.pastlev == other.wavelet.pastlev;
         wavelet.satlev = wavelet.satlev && p.wavelet.satlev == other.wavelet.satlev;
         wavelet.ccwcurve = wavelet.ccwcurve && p.wavelet.ccwcurve == other.wavelet.ccwcurve;
@@ -5560,6 +5566,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.softradend   = mods.wavelet.softradend;
     }
 
+    if (wavelet.strend) {
+        toEdit.wavelet.strend   = mods.wavelet.strend;
+    }
+
+    if (wavelet.detend) {
+        toEdit.wavelet.detend   = mods.wavelet.detend;
+    }
+
     if (wavelet.lipst) {
         toEdit.wavelet.lipst = mods.wavelet.lipst;
     }
@@ -5714,6 +5728,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.level3noise) {
         toEdit.wavelet.level3noise = mods.wavelet.level3noise;
+    }
+
+    if (wavelet.leveldenoise) {
+        toEdit.wavelet.leveldenoise = mods.wavelet.leveldenoise;
     }
 
     if (wavelet.pastlev) {

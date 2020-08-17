@@ -109,7 +109,9 @@ private:
     rtengine::ProcEvent EvWavquamethod;
     rtengine::ProcEvent EvWavlevden;
     rtengine::ProcEvent EvWavdenoiseh;
-
+    rtengine::ProcEvent EvWavstrend;
+    rtengine::ProcEvent EvWavdetend;
+    rtengine::ProcEvent EvWavlevdenois;
     LabGrid *labgrid;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
@@ -275,6 +277,7 @@ private:
     ThresholdAdjuster* const level1noise;
     ThresholdAdjuster* const level2noise;
     ThresholdAdjuster* const level3noise;
+    ThresholdAdjuster* const leveldenoise;
 
     Adjuster* const sigm;
     Adjuster* const levden;
@@ -293,6 +296,8 @@ private:
     Adjuster* const mergeC;
     Adjuster* const softrad;
     Adjuster* const softradend;
+    Adjuster* const strend;
+    Adjuster* const detend;
     Adjuster* const chrwav;
 
     MyComboBoxText* const Lmethod;
@@ -345,6 +350,7 @@ private:
     Gtk::Frame* const fincFrame;
     Gtk::Frame* const dirFrame;
     Gtk::Frame* const tonFrame;
+    Gtk::Frame* const guidFrame;
 
     Gtk::Label* const wavLabels;
     Gtk::Label* const labmC;

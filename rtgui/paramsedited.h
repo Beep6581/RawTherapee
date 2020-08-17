@@ -1090,6 +1090,7 @@ struct WaveletParamsEdited {
     bool level1noise;
     bool level2noise;
     bool level3noise;
+    bool leveldenoise;
     bool ccwcurve;
     bool blcurve;
     bool opacityCurveSH;
@@ -1120,6 +1121,8 @@ struct WaveletParamsEdited {
     bool mergeC;
     bool softrad;
     bool softradend;
+    bool strend;
+    bool detend;
     bool expcontrast;
     bool expchroma;
     bool expedge;

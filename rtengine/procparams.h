@@ -1758,6 +1758,8 @@ struct WaveletParams {
     double mergeC;
     double softrad;
     double softradend;
+    double strend;
+    int detend;
 
     bool lipst;
     bool avoid;
@@ -1856,6 +1858,7 @@ struct WaveletParams {
     Threshold<double> level1noise;
     Threshold<double> level2noise;
     Threshold<double> level3noise;
+    Threshold<double> leveldenoise;
 
     WaveletParams();
 

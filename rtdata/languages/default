@@ -1288,9 +1288,11 @@ HISTORY_MSG_WAVBL;Blur levels
 HISTORY_MSG_WAVCHROMCO;Chroma coarse
 HISTORY_MSG_WAVCHROMFI;Chroma fine
 HISTORY_MSG_WAVCLARI;Clarity
+HISTORY_MSG_WAVDENLH;Threshold
 HISTORY_MSG_WAVDENOISE;Local contrast
 HISTORY_MSG_WAVDENOISEH;High levels Local contrast
 HISTORY_MSG_WAVDENMET;Local equalizer
+HISTORY_MSG_WAVDETEND;Details soft
 HISTORY_MSG_WAVEDGS;Edge stopping
 HISTORY_MSG_WAVLEVDEN;High level local contrast
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
@@ -1307,6 +1309,7 @@ HISTORY_MSG_WAVSIGMA;Attenuation response
 HISTORY_MSG_WAVSIGM;Sigma
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
+HISTORY_MSG_WAVSTREND;Strength soft
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -3335,7 +3338,11 @@ TP_WAVELET_DEN14PLUS;1 4 High
 TP_WAVELET_DEN14LOW;1 4 Low
 TP_WAVELET_DEN12PLUS;1 2 High
 TP_WAVELET_DEN12LOW;1 2 Low
+TP_WAVELET_DENH;Low levels (1234)
+TP_WAVELET_DENLH;Threshold local contrast
+TP_WAVELET_DENL;High levels
 TP_WAVELET_DENQUA;Mode
+TP_WAVELET_DETEND;Details
 TP_WAVELET_DIRFRAME;Directional contrast
 TP_WAVELET_DONE;Vertical
 TP_WAVELET_DTHR;Diagonal
@@ -3365,6 +3372,7 @@ TP_WAVELET_FINAL;Final Touchup
 TP_WAVELET_FINCFRAME;Final local contrast
 TP_WAVELET_FINCOAR_TOOLTIP;The left (positive) part of the curve acts on the finer levels (increase).\nThe 2 points on the abscissa represent the respective action limits of finer and coarser levels 5 and 6 (default).\nThe right (negative) part of the curve acts on the coarser levels (increase).\nAvoid moving the left part of the curve with negative values. Avoid moving the right part of the curve with positives values
 TP_WAVELET_FINEST;Finest
+TP_WAVELET_GUIDFRAME;Final smooth
 TP_WAVELET_HIGHLIGHT;Finer levels luminance range
 TP_WAVELET_HS1;Whole luminance range
 TP_WAVELET_HS2;Selective luminance range
@@ -3452,6 +3460,7 @@ TP_WAVELET_SKY;Hue targetting/protection
 TP_WAVELET_SKY_TOOLTIP;Allows you to target or protect a range of hues.\nAt -100 selected hues are targetted.\nAt 0 all hues are treated equally.\nAt +100 selected hues are protected while all other hues are targetted.
 TP_WAVELET_SOFTRAD;Soft radius
 TP_WAVELET_STREN;Refine
+TP_WAVELET_STREND;Strength
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold

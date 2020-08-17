@@ -1435,6 +1435,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     delete unshar;
                     unshar    = NULL;
+                    
+                    
 /*
                     if (WaveParams.softrad > 0.f) {
                         array2D<float> ble(pW, pH);

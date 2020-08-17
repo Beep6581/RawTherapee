@@ -2396,6 +2396,8 @@ WaveletParams::WaveletParams() :
     mergeC(20.),
     softrad(0.),
     softradend(0.),
+    strend(50.),
+    detend(0),
     lipst(false),
     avoid(false),
     showmask(false),
@@ -2489,7 +2491,8 @@ WaveletParams::WaveletParams() :
     level0noise(0, 0, false),
     level1noise(0, 0, false),
     level2noise(0, 0, false),
-    level3noise(0, 0, false)
+    level3noise(0, 0, false),
+    leveldenoise(10, 50, false)
 {
 }
 
@@ -2529,6 +2532,8 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && mergeC == other.mergeC
         && softrad == other.softrad
         && softradend == other.softradend
+        && strend == other.strend
+        && detend == other.detend
         && lipst == other.lipst
         && avoid == other.avoid
         && showmask == other.showmask
@@ -2629,7 +2634,8 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && level0noise == other.level0noise
         && level1noise == other.level1noise
         && level2noise == other.level2noise
-        && level3noise == other.level3noise;
+        && level3noise == other.level3noise
+        && leveldenoise == other.leveldenoise;
 }
 
 bool WaveletParams::operator !=(const WaveletParams& other) const
@@ -6064,6 +6070,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.mergeC, "Wavelet", "MergeC", wavelet.mergeC, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.softrad, "Wavelet", "Softrad", wavelet.softrad, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.softradend, "Wavelet", "Softradend", wavelet.softradend, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.strend, "Wavelet", "Strend", wavelet.strend, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.detend, "Wavelet", "Detend", wavelet.detend, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expcontrast, "Wavelet", "Expcontrast", wavelet.expcontrast, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expchroma, "Wavelet", "Expchroma", wavelet.expchroma, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expedge, "Wavelet", "Expedge", wavelet.expedge, keyFile);
@@ -6101,6 +6109,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.level1noise, "Wavelet", "Level1noise", wavelet.level1noise.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.level2noise, "Wavelet", "Level2noise", wavelet.level2noise.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.level3noise, "Wavelet", "Level3noise", wavelet.level3noise.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.level3noise, "Wavelet", "Leveldenoise", wavelet.leveldenoise.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.threshold, "Wavelet", "ThresholdHighlight", wavelet.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.threshold2, "Wavelet", "ThresholdShadow", wavelet.threshold2, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgedetect, "Wavelet", "Edgedetect", wavelet.edgedetect, keyFile);
@@ -7895,6 +7904,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "MergeC", pedited, wavelet.mergeC, pedited->wavelet.mergeC);
             assignFromKeyfile(keyFile, "Wavelet", "Softrad", pedited, wavelet.softrad, pedited->wavelet.softrad);
             assignFromKeyfile(keyFile, "Wavelet", "Softradend", pedited, wavelet.softradend, pedited->wavelet.softradend);
+            assignFromKeyfile(keyFile, "Wavelet", "Strend", pedited, wavelet.strend, pedited->wavelet.strend);
+            assignFromKeyfile(keyFile, "Wavelet", "Detend", pedited, wavelet.detend, pedited->wavelet.detend);
             assignFromKeyfile(keyFile, "Wavelet", "Lipst", pedited, wavelet.lipst, pedited->wavelet.lipst);
             assignFromKeyfile(keyFile, "Wavelet", "AvoidColorShift", pedited, wavelet.avoid, pedited->wavelet.avoid);
             assignFromKeyfile(keyFile, "Wavelet", "Showmask", pedited, wavelet.showmask, pedited->wavelet.showmask);
@@ -8085,6 +8096,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->wavelet.level3noise = true;
+                }
+            }
+
+            if (keyFile.has_key("Wavelet", "Leveldenoise")) {
+                const std::vector<double> thresh = keyFile.get_double_list("Wavelet", "Leveldenoise");
+
+                if (thresh.size() >= 2) {
+                    wavelet.leveldenoise.setValues(thresh[0], thresh[1]);
+                }
+
+                if (pedited) {
+                    pedited->wavelet.leveldenoise = true;
                 }
             }
 

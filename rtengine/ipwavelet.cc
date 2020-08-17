@@ -1253,7 +1253,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     }
 
                                     if(cp.levden > 3 && cp.denoicurvh) {//local contrast for high levels
-                                        cp.levden = min(levwavL, cp.levden);
+                                        cp.levden = min(levwavL-1, cp.levden);
                                         printf("lev_den=%i \n", cp.levden);
                                         for (int dir = 1; dir < 4; dir++) {
                                             for (int level = 0; level < cp.levden; level++) {
@@ -1921,8 +1921,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     }
 
     if (waparams.softradend > 0.f  && cp.finena) {
-        array2D<float> ble(lab->W, lab->H);
-        array2D<float> guid(lab->W, lab->H);
+        float guid = waparams.softradend;
+        float strend = waparams.strend;
+        float detend = (float) waparams.detend;
+        array2D<float> LL(lab->W, lab->H);
+        array2D<float> guide(lab->W, lab->H);
+        const float blend = LIM01(float(strend) / 100.f);
 
         bool multiTh = false;
 
@@ -1934,31 +1938,25 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
         #pragma omp parallel for
 #endif
-
-        for (int ir = 0; ir < lab->H; ir++) {
-            for (int jr = 0; jr < lab->W; jr++) {
-                guid[ir][jr] = Color::L2Y(lab->L[ir][jr]) / 32768.f;
-                ble[ir][jr] = Color::L2Y(dst->L[ir][jr]) / 32768.f;
+        for (int y = 0; y < lab->H; y++) {
+            for (int x = 0; x < lab->W; x++) {
+                LL[y][x] = dst->L[y][x];
+                float ll = LL[y][x] / 32768.f;
+                guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
             }
         }
+        array2D<float> iL(lab->W, lab->H, LL, 0);
+        int r = rtengine::max(int(guid / skip), 1);
 
-        constexpr double epsilmax = 0.002;
-        constexpr double epsilmin = 0.0005;
-        constexpr double aepsil = 0.01f * (epsilmax - epsilmin);
-        constexpr double bepsil = epsilmin;
-        const double epsil = aepsil * waparams.softradend + bepsil;
-
-        const float blur = 10.f / scale * (0.001f + 0.8f * waparams.softradend);
-
-        rtengine::guidedFilter(guid, ble, ble, blur, epsil, multiTh);
-
+        const float epsil = 0.001f * std::pow(2, - detend);
+        rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, multiTh);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-
-        for (int ir = 0; ir < lab->H; ir++) {
-            for (int jr = 0; jr < lab->W; jr++) {
-                dst->L[ir][jr] = Color::computeXYZ2LabY(32768.f * ble[ir][jr]);
+        for (int y = 0; y < lab->H ; y++) {
+            for (int x = 0; x < lab->W; x++) {
+                LL[y][x] = intp(blend, LL[y][x] , iL[y][x]);
+                dst->L[y][x] = LL[y][x];
             }
         }
     }
