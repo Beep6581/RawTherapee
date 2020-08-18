@@ -526,6 +526,7 @@ void ParamsEdited::set(bool v)
     wavelet.softradend = v;
     wavelet.strend = v;
     wavelet.detend = v;
+    wavelet.thrend = v;
     wavelet.Medgreinf = v;
     wavelet.ushamethod = v;
     wavelet.avoid = v;
@@ -1688,6 +1689,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.softradend = wavelet.softradend && p.wavelet.softradend == other.wavelet.softradend;
         wavelet.strend = wavelet.strend && p.wavelet.strend == other.wavelet.strend;
         wavelet.detend = wavelet.detend && p.wavelet.detend == other.wavelet.detend;
+        wavelet.thrend = wavelet.thrend && p.wavelet.thrend == other.wavelet.thrend;
         wavelet.ushamethod = wavelet.ushamethod && p.wavelet.ushamethod == other.wavelet.ushamethod;
         wavelet.avoid = wavelet.avoid && p.wavelet.avoid == other.wavelet.avoid;
         wavelet.showmask = wavelet.showmask && p.wavelet.showmask == other.wavelet.showmask;
@@ -5574,6 +5576,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.detend) {
         toEdit.wavelet.detend   = mods.wavelet.detend;
+    }
+
+    if (wavelet.thrend) {
+        toEdit.wavelet.thrend   = mods.wavelet.thrend;
     }
 
     if (wavelet.lipst) {

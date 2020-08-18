@@ -1760,6 +1760,7 @@ struct WaveletParams {
     double softradend;
     double strend;
     int detend;
+    double thrend;
 
     bool lipst;
     bool avoid;

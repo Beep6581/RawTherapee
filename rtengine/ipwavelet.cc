@@ -1949,6 +1949,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         float guid = waparams.softradend;
         float strend = waparams.strend;
         float detend = (float) waparams.detend;
+        float thrend = 0.01f * (float) waparams.thrend;
         array2D<float> LL(lab->W, lab->H);
         array2D<float> guide(lab->W, lab->H);
         const float blend = LIM01(float(strend) / 100.f);

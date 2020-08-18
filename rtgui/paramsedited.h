@@ -1124,6 +1124,7 @@ struct WaveletParamsEdited {
     bool softradend;
     bool strend;
     bool detend;
+    bool thrend;
     bool expcontrast;
     bool expchroma;
     bool expedge;

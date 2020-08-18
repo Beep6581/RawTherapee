@@ -154,6 +154,7 @@ Wavelet::Wavelet() :
     softradend(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 1000., 1., 0.))),
     strend(Gtk::manage(new Adjuster(M("TP_WAVELET_STREND"), 0.0, 100., 1.0, 50.))),
     detend(Gtk::manage(new Adjuster(M("TP_WAVELET_DETEND"), -10, 10, 1, 0))),
+    thrend(Gtk::manage(new Adjuster(M("TP_WAVELET_THREND"), 0.0, 100., 0.5, 0.))),
     chrwav(Gtk::manage(new Adjuster(M("TP_WAVELET_CHRWAV"), 0., 100., 0.5, 0.))),
     Lmethod(Gtk::manage(new MyComboBoxText())),
     CHmethod(Gtk::manage(new MyComboBoxText())),
@@ -259,6 +260,7 @@ Wavelet::Wavelet() :
     EvWavdetend = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDETEND");
     EvWavlevdenois = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENLH");
     EvWavslimethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSLIMET");
+    EvWavthrend = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVTHREND");
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -1145,6 +1147,7 @@ Wavelet::Wavelet() :
     softradend->setAdjusterListener(this);
     strend->setAdjusterListener(this);
     detend->setAdjusterListener(this);
+    thrend->setAdjusterListener(this);
 
     opacityCurveEditorW->setCurveListener(this);
 
@@ -1216,6 +1219,7 @@ Wavelet::Wavelet() :
     guidBox->pack_start(*softradend);
     guidBox->pack_start(*strend);
     guidBox->pack_start(*detend);
+    guidBox->pack_start(*thrend);
     guidFrame->add(*guidBox);
     finalBox->pack_start(*guidFrame);
     
@@ -1687,6 +1691,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     softradend->setValue(pp->wavelet.softradend);
     strend->setValue(pp->wavelet.strend);
     detend->setValue(pp->wavelet.detend);
+    thrend->setValue(pp->wavelet.thrend);
     labgrid->setParams(pp->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX, false);
 
     sigm->setValue(pp->wavelet.sigm);
@@ -1878,6 +1883,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         softradend->setEditedState(pedited->wavelet.softradend ? Edited : UnEdited);
         strend->setEditedState(pedited->wavelet.strend ? Edited : UnEdited);
         detend->setEditedState(pedited->wavelet.detend ? Edited : UnEdited);
+        thrend->setEditedState(pedited->wavelet.thrend ? Edited : UnEdited);
 
         sigm->setEditedState(pedited->wavelet.sigm ? Edited : UnEdited);
         levden->setEditedState(pedited->wavelet.levden ? Edited : UnEdited);
@@ -2150,6 +2156,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.softradend     = softradend->getValue();
     pp->wavelet.strend         = strend->getValue();
     pp->wavelet.detend         = detend->getIntValue();
+    pp->wavelet.thrend         = thrend->getValue();
     pp->wavelet.expcontrast    = expcontrast->getEnabled();
     pp->wavelet.expchroma      = expchroma->getEnabled();
     pp->wavelet.expedge        = expedge->getEnabled();
@@ -2285,6 +2292,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.softradend      = softradend->getEditedState();
         pedited->wavelet.strend          = strend->getEditedState();
         pedited->wavelet.detend          = detend->getEditedState();
+        pedited->wavelet.thrend          = thrend->getEditedState();
         pedited->wavelet.balance         = balance->getEditedState();
         pedited->wavelet.iter            = iter->getEditedState();
         pedited->wavelet.sigmafin        = sigmafin->getEditedState();
@@ -2592,6 +2600,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     softradend->setDefault(defParams->wavelet.softradend);
     strend->setDefault(defParams->wavelet.strend);
     detend->setDefault(defParams->wavelet.detend);
+    thrend->setDefault(defParams->wavelet.thrend);
 
     if (pedited) {
         greenlow->setDefaultEditedState(pedited->wavelet.greenlow ? Edited : UnEdited);
@@ -2606,6 +2615,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         softradend->setDefaultEditedState(pedited->wavelet.softradend ? Edited : UnEdited);
         strend->setDefaultEditedState(pedited->wavelet.strend ? Edited : UnEdited);
         detend->setDefaultEditedState(pedited->wavelet.detend ? Edited : UnEdited);
+        thrend->setDefaultEditedState(pedited->wavelet.thrend ? Edited : UnEdited);
         sigm->setDefaultEditedState(pedited->wavelet.sigm ? Edited : UnEdited);
         levden->setDefaultEditedState(pedited->wavelet.levden ? Edited : UnEdited);
         ballum->setDefaultEditedState(pedited->wavelet.ballum ? Edited : UnEdited);
@@ -3661,6 +3671,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavstrend, strend->getTextValue());
         } else if (a == detend) {
             listener->panelChanged(EvWavdetend, detend->getTextValue());
+        } else if (a == thrend) {
+            listener->panelChanged(EvWavthrend, thrend->getTextValue());
         } else if (a == greenmed) {
             listener->panelChanged(EvWavgreenmed, greenmed->getTextValue());
         } else if (a == bluemed) {

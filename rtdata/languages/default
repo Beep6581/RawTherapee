@@ -1310,6 +1310,7 @@ HISTORY_MSG_WAVSIGM;Sigma
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVSLIMET;Method
+HISTORY_MSG_WAVTHREND;Threshold local contrast
 HISTORY_MSG_WAVSTREND;Strength soft
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_NEWSNAPSHOT;Add
@@ -3468,6 +3469,7 @@ TP_WAVELET_STREND;Strength
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold
+TP_WAVELET_THREND;Threshold local contrast
 TP_WAVELET_THRESHOLD;Finer levels
 TP_WAVELET_THRESHOLD2;Coarser levels
 TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels from the chosen value to the selected number of ‘wavelet levels’ will be affected by the Shadow luminance range.

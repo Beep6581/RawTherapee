@@ -2398,6 +2398,7 @@ WaveletParams::WaveletParams() :
     softradend(0.),
     strend(50.),
     detend(0),
+    thrend(0),
     lipst(false),
     avoid(false),
     showmask(false),
@@ -2535,6 +2536,7 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && softradend == other.softradend
         && strend == other.strend
         && detend == other.detend
+        && thrend == other.thrend
         && lipst == other.lipst
         && avoid == other.avoid
         && showmask == other.showmask
@@ -6075,6 +6077,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.softradend, "Wavelet", "Softradend", wavelet.softradend, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.strend, "Wavelet", "Strend", wavelet.strend, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.detend, "Wavelet", "Detend", wavelet.detend, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.thrend, "Wavelet", "Thrend", wavelet.thrend, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expcontrast, "Wavelet", "Expcontrast", wavelet.expcontrast, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expchroma, "Wavelet", "Expchroma", wavelet.expchroma, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expedge, "Wavelet", "Expedge", wavelet.expedge, keyFile);
@@ -7909,6 +7912,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "Softradend", pedited, wavelet.softradend, pedited->wavelet.softradend);
             assignFromKeyfile(keyFile, "Wavelet", "Strend", pedited, wavelet.strend, pedited->wavelet.strend);
             assignFromKeyfile(keyFile, "Wavelet", "Detend", pedited, wavelet.detend, pedited->wavelet.detend);
+            assignFromKeyfile(keyFile, "Wavelet", "Thrend", pedited, wavelet.thrend, pedited->wavelet.thrend);
             assignFromKeyfile(keyFile, "Wavelet", "Lipst", pedited, wavelet.lipst, pedited->wavelet.lipst);
             assignFromKeyfile(keyFile, "Wavelet", "AvoidColorShift", pedited, wavelet.avoid, pedited->wavelet.avoid);
             assignFromKeyfile(keyFile, "Wavelet", "Showmask", pedited, wavelet.showmask, pedited->wavelet.showmask);

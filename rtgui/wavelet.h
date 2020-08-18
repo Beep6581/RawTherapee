@@ -113,6 +113,7 @@ private:
     rtengine::ProcEvent EvWavdetend;
     rtengine::ProcEvent EvWavlevdenois;
     rtengine::ProcEvent EvWavslimethod;
+    rtengine::ProcEvent EvWavthrend;
 
     LabGrid *labgrid;
 
@@ -301,6 +302,7 @@ private:
     Adjuster* const softradend;
     Adjuster* const strend;
     Adjuster* const detend;
+    Adjuster* const thrend;
     Adjuster* const chrwav;
 
     MyComboBoxText* const Lmethod;
