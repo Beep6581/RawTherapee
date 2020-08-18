@@ -133,8 +133,8 @@ Wavelet::Wavelet() :
     level1noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVONE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     level2noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTWO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     level3noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTHRE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
-    leveldenoise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_DENLH"), 0., 100., 10., M("TP_WAVELET_DENL"), 1., 0., 100., 50., M("TP_WAVELET_DENH"), 1., nullptr, false))),
-    sigm(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGM"), 0.025, 2.5, 0.01, 1.3))),
+    leveldenoise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_DENLH"), 0., 100., 0., M("TP_WAVELET_DENL"), 1., 0., 100., 0., M("TP_WAVELET_DENH"), 1., nullptr, false))),
+    sigm(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGM"), 0.05, 3.5, 0.01, 1.6))),
     levden(Gtk::manage(new Adjuster(M("TP_WAVELET_LEVDEN"), 5, 10, 1, 5))),
     threshold(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD"), 1, 9, 1, 4))),
  //   threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 1, 9, 1, 4))),
@@ -174,6 +174,7 @@ Wavelet::Wavelet() :
     denmethod(Gtk::manage(new MyComboBoxText())),
     mixmethod(Gtk::manage(new MyComboBoxText())),
     quamethod(Gtk::manage(new MyComboBoxText())),
+    slimethod(Gtk::manage(new MyComboBoxText())),
     chanMixerHLFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_HIGHLIGHT")))),
     chanMixerMidFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_MIDTONES")))),
     chanMixerShadowsFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_SHADOWS")))),
@@ -205,6 +206,7 @@ Wavelet::Wavelet() :
     usharpHBox(Gtk::manage(new Gtk::HBox())),
     ctboxch(Gtk::manage(new Gtk::HBox())),
     quaHBox(Gtk::manage(new Gtk::HBox())),
+    sliHBox(Gtk::manage(new Gtk::HBox())),
     denHBox(Gtk::manage(new Gtk::HBox())),
     mixHBox(Gtk::manage(new Gtk::HBox())),
     ctboxBA(Gtk::manage(new Gtk::VBox()))
@@ -256,6 +258,7 @@ Wavelet::Wavelet() :
     EvWavstrend = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSTREND");
     EvWavdetend = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDETEND");
     EvWavlevdenois = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVDENLH");
+    EvWavslimethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSLIMET");
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -645,6 +648,13 @@ Wavelet::Wavelet() :
     quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
     quaHBox->pack_start(*quamethod);
 
+    slimethod->append(M("TP_WAVELET_DENSLI"));
+    slimethod->append(M("TP_WAVELET_DENCURV"));
+    slimethodconn = slimethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::slimethodChanged));
+    slimethod->set_tooltip_text(M("TP_WAVELET_DENSLI_TOOLTIP"));
+    Gtk::Label* const sliLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENSLILAB") + ":"));
+    sliHBox->pack_start(*sliLabel, Gtk::PACK_SHRINK, 4);
+    sliHBox->pack_start(*slimethod);
 
 
     denmethod->append(M("TP_WAVELET_DENEQUAL"));
@@ -692,8 +702,9 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*level1noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level2noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level3noise, Gtk::PACK_SHRINK, 0);
-//    noiseBox->pack_start(*leveldenoise, Gtk::PACK_SHRINK, 0);
+    noiseBox->pack_start(*leveldenoise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*quaHBox);
+    noiseBox->pack_start(*sliHBox);
     noiseBox->pack_start(*denHBox);
     noiseBox->pack_start(*mixHBox);
     noiseBox->pack_start(*sigm);
@@ -1356,6 +1367,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     complexmethodconn.block(true);
     denmethodconn.block(true);
     mixmethodconn.block(true);
+    slimethodconn.block(true);
     quamethodconn.block(true);
     daubcoeffmethodconn.block(true);
     Dirmethodconn.block(true);
@@ -1506,6 +1518,12 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         mixmethod->set_active(3);
     }
 
+    if (pp->wavelet.slimethod == "sli") {
+        slimethod->set_active(0);
+    } else if (pp->wavelet.slimethod == "cur") {
+        slimethod->set_active(1);
+    }
+    
     if (pp->wavelet.quamethod == "cons") {
         quamethod->set_active(0);
     } else if (pp->wavelet.quamethod == "agre") {
@@ -1729,6 +1747,10 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         if (!pedited->wavelet.mixmethod) {
             mixmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
+        if (!pedited->wavelet.slimethod) {
+            slimethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->wavelet.quamethod) {
@@ -1982,6 +2004,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     complexmethodconn.block(false);
     denmethodconn.block(false);
     mixmethodconn.block(false);
+    slimethodconn.block(false);
     quamethodconn.block(false);
     daubcoeffmethodconn.block(false);
     CHmethodconn.block(false);
@@ -2174,6 +2197,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.complexmethod   = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.denmethod       = denmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.mixmethod       = mixmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->wavelet.slimethod       = slimethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.quamethod       = quamethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.daubcoeffmethod = daubcoeffmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wavelet.CHmethod        = CHmethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -2411,6 +2435,12 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.mixmethod = "mix7";
     } else if (mixmethod->get_active_row_number() == 3) {
         pp->wavelet.mixmethod = "den";
+    }
+
+    if (slimethod->get_active_row_number() == 0) {
+        pp->wavelet.slimethod = "sli";
+    } else if (slimethod->get_active_row_number() == 1) {
+        pp->wavelet.slimethod = "cur";
     }
 
     if (quamethod->get_active_row_number() == 0) {
@@ -3122,6 +3152,7 @@ void Wavelet::convertParamToNormal()
     chromco->setValue(def_params.chromco);
     denmethod->set_active(0);
     mixmethod->set_active(2);
+    slimethod->set_active(0);
     quamethod->set_active(0);
     sigm->setValue(def_params.sigm);
     //toning
@@ -3175,9 +3206,12 @@ void Wavelet::updateGUIToMode(int mode)
         sigmafin->hide();
         denHBox->hide();
         mixHBox->hide();
+        sliHBox->hide();
         sigm->hide();
         CurveEditorwavnoiseh->hide();
+        CurveEditorwavnoise->hide();
         levden->hide();
+        leveldenoise->show();
     } else {
         offset->show();
         sigma->show();
@@ -3195,11 +3229,24 @@ void Wavelet::updateGUIToMode(int mode)
         blurFrame->show();
         cbenab->show();
         sigmafin->show();
-        denHBox->show();
+        denHBox->hide();
         mixHBox->show();
         sigm->show();
-        CurveEditorwavnoiseh->show();
+        CurveEditorwavnoiseh->hide();
+        CurveEditorwavnoise->hide();
         levden->show();
+        sliHBox->show();
+        if (slimethod->get_active_row_number() == 0){
+            leveldenoise->show();
+        } else {
+            leveldenoise->hide();
+            CurveEditorwavnoiseh->show();
+            CurveEditorwavnoise->show();
+        }
+        disableListener();
+        denmethod->set_active(0);
+        enableListener();
+
     }
 
 }
@@ -3233,6 +3280,22 @@ void Wavelet::mixmethodChanged()
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavmixmethod, mixmethod->get_active_text());
+    }
+}
+
+void Wavelet::slimethodChanged()
+{    
+    if (slimethod->get_active_row_number() == 0) {
+        updateGUIToMode(0);
+        convertParamToNormal();
+        leveldenoise->show();
+    } else if(slimethod->get_active_row_number() == 1  && complexmethod->get_active_row_number() == 1){
+        leveldenoise->hide();
+        updateGUIToMode(1);
+    }
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvWavslimethod, slimethod->get_active_text());
     }
 }
 
@@ -3328,6 +3391,7 @@ void Wavelet::setBatchMode(bool batchMode)
     complexmethod->append(M("GENERAL_UNCHANGED"));
     denmethod->append(M("GENERAL_UNCHANGED"));
     mixmethod->append(M("GENERAL_UNCHANGED"));
+    slimethod->append(M("GENERAL_UNCHANGED"));
     quamethod->append(M("GENERAL_UNCHANGED"));
     daubcoeffmethod->append(M("GENERAL_UNCHANGED"));
     CHmethod->append(M("GENERAL_UNCHANGED"));

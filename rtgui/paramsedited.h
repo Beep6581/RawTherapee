@@ -1043,6 +1043,7 @@ struct WaveletParamsEdited {
     bool complexmethod;
     bool denmethod;
     bool mixmethod;
+    bool slimethod;
     bool quamethod;
     bool daubcoeffmethod;
     bool Dirmethod;

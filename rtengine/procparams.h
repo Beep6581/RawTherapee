@@ -1800,6 +1800,7 @@ struct WaveletParams {
     Glib::ustring complexmethod;
     Glib::ustring denmethod;
     Glib::ustring mixmethod;
+    Glib::ustring slimethod;
     Glib::ustring quamethod;
     Glib::ustring daubcoeffmethod;
     Glib::ustring CHmethod;

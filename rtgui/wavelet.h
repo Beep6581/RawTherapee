@@ -112,6 +112,8 @@ private:
     rtengine::ProcEvent EvWavstrend;
     rtengine::ProcEvent EvWavdetend;
     rtengine::ProcEvent EvWavlevdenois;
+    rtengine::ProcEvent EvWavslimethod;
+
     LabGrid *labgrid;
 
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
@@ -134,6 +136,7 @@ private:
     void denmethodChanged();
     void mixmethodChanged();
     void quamethodChanged();
+    void slimethodChanged();
     void TilesmethodChanged();
     void avoidToggled();
     void showmaskToggled ();
@@ -338,6 +341,8 @@ private:
     sigc::connection  mixmethodconn;
     MyComboBoxText* const quamethod;
     sigc::connection  quamethodconn;
+    MyComboBoxText* const slimethod;
+    sigc::connection  slimethodconn;
 
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
@@ -372,6 +377,7 @@ private:
     Gtk::HBox* const usharpHBox;
     Gtk::HBox* const ctboxch;
     Gtk::HBox* const quaHBox;
+    Gtk::HBox* const sliHBox;
     Gtk::HBox* const denHBox;
     Gtk::HBox* const mixHBox;
     Gtk::VBox* const ctboxBA;// = Gtk::manage(new Gtk::VBox());

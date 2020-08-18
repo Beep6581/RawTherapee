@@ -2387,7 +2387,7 @@ WaveletParams::WaveletParams() :
     greenhigh(0),
     bluehigh(0),
     ballum(7.),
-    sigm(1.3),
+    sigm(1.6),
     levden(5),
     balchrom(0.),
     chromfi(0.),
@@ -2434,6 +2434,7 @@ WaveletParams::WaveletParams() :
     complexmethod("normal"),
     denmethod("equ"),
     mixmethod("mix"),
+    slimethod("sli"),
     quamethod("cons"),
     daubcoeffmethod("4_"),
     CHmethod("without"),
@@ -2492,7 +2493,7 @@ WaveletParams::WaveletParams() :
     level1noise(0, 0, false),
     level2noise(0, 0, false),
     level3noise(0, 0, false),
-    leveldenoise(10, 50, false)
+    leveldenoise(0, 0, false)
 {
 }
 
@@ -2577,6 +2578,7 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && complexmethod == other.complexmethod
         && denmethod == other.denmethod
         && mixmethod == other.mixmethod
+        && slimethod == other.slimethod
         && quamethod == other.quamethod
         && daubcoeffmethod == other.daubcoeffmethod
         && CHmethod == other.CHmethod
@@ -6048,6 +6050,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.complexmethod, "Wavelet", "complexMethod", wavelet.complexmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.denmethod, "Wavelet", "denMethod", wavelet.denmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.mixmethod, "Wavelet", "mixMethod", wavelet.mixmethod, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.slimethod, "Wavelet", "sliMethod", wavelet.slimethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.quamethod, "Wavelet", "quaMethod", wavelet.quamethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.daubcoeffmethod, "Wavelet", "DaubMethod", wavelet.daubcoeffmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.CLmethod, "Wavelet", "ChoiceLevMethod", wavelet.CLmethod, keyFile);
@@ -7934,6 +7937,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "complexMethod", pedited, wavelet.complexmethod, pedited->wavelet.complexmethod);
             assignFromKeyfile(keyFile, "Wavelet", "denMethod", pedited, wavelet.denmethod, pedited->wavelet.denmethod);
             assignFromKeyfile(keyFile, "Wavelet", "mixMethod", pedited, wavelet.mixmethod, pedited->wavelet.mixmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "sliMethod", pedited, wavelet.slimethod, pedited->wavelet.slimethod);
             assignFromKeyfile(keyFile, "Wavelet", "quaMethod", pedited, wavelet.quamethod, pedited->wavelet.quamethod);
             assignFromKeyfile(keyFile, "Wavelet", "DaubMethod", pedited, wavelet.daubcoeffmethod, pedited->wavelet.daubcoeffmethod);
             assignFromKeyfile(keyFile, "Wavelet", "CHromaMethod", pedited, wavelet.CHmethod, pedited->wavelet.CHmethod);

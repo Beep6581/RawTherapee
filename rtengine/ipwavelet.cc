@@ -80,7 +80,7 @@ struct cont_params {
     float b_lsl, t_lsl, b_rsl, t_rsl;
     float b_lhl, t_lhl, b_rhl, t_rhl;
     float edg_low, edg_mean, edg_sd, edg_max;
-    float lev0s, lev0n, lev1s, lev1n, lev2s, lev2n, lev3s, lev3n;
+    float lev0s, lev0n, lev1s, lev1n, lev2s, lev2n, lev3s, lev3n, levdenlow, levdenhigh;
     float b_lpast, t_lpast, b_rpast, t_rpast;
     float b_lsat, t_lsat, b_rsat, t_rsat;
     int rad;
@@ -123,6 +123,7 @@ struct cont_params {
     int denmet;
     int mixmet;
     int quamet;
+    int slimet;
     int ite;
     int contmet;
     bool opaW;
@@ -295,6 +296,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         cp.quamet = 0;
     } else if (params->wavelet.quamethod == "agre") {
         cp.quamet = 1;
+    }
+
+    if (params->wavelet.slimethod == "sli") {
+        cp.slimet = 0;
+    } else if (params->wavelet.slimethod == "cur") {
+        cp.slimet = 1;
     }
 
     if (params->wavelet.BAmethod != "none") {
@@ -601,7 +608,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.lev2n = static_cast<float>(params->wavelet.level2noise.getTop());
     cp.lev3s = static_cast<float>(params->wavelet.level3noise.getBottom());
     cp.lev3n = static_cast<float>(params->wavelet.level3noise.getTop());
-
+    cp.levdenhigh = 0.01f * static_cast<float>(params->wavelet.leveldenoise.getBottom());
+    cp.levdenlow = 0.01f * static_cast<float>(params->wavelet.leveldenoise.getTop());
     cp.detectedge = params->wavelet.medianlev;
     int minwin = rtengine::min(imwidth, imheight);
     int maxlevelcrop = 9;
@@ -994,7 +1002,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     levwavL = 4;    //to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
 
-                if(cp.denoicurvh) {
+                if(cp.denoicurvh  || cp.levdenhigh > 0.01f) {
                     levwavL = levwav;
                 }
                 if (settings->verbose) {
@@ -1045,7 +1053,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             }
                         }
 
-                        if (cp.val > 0 || ref || contr || cp.denoicurv || cp.denoicurvh || cp.noiseena ) { //edge
+                        if (cp.val > 0 || ref || contr || cp.denoicurv || cp.denoicurvh || cp.noiseena || cp.levdenhigh > 0.f || cp.levdenlow > 0.f) { //edge
                             Evaluate2(*Ldecomp, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
                         }
 
@@ -1131,7 +1139,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 //evaluate after denoise
                                 Evaluate2(*Ldecomp, meand, meanNd, sigmad, sigmaNd, MaxPd, MaxNd, wavNestedLevels);
 
-                                if (cp.denoicurv) {//only if curve enable
+                                if (cp.denoicurv || cp.levdenlow > 0.f) {//only if curve enable
                                     
                                     for (int dir = 1; dir < 4; dir++) {
                                         for (int level = 0; level < 4; level++) {
@@ -1165,7 +1173,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                 tempmax = MaxPd[level];
                                             }
                                             
-                                            if (cp.denoicurv && MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
+                                            if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
                                                 float insigma = 0.666f; //SD
                                                 float logmax = log(tempmax); //log Max
                                                 //cp.sigmm change the "wider" of sigma
@@ -1210,8 +1218,16 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                         float abs = pow(2.f * absciss, (1.f / k));
                                                         absciss = 0.5f * abs;
                                                     }
+                                                    //cp.levdenlow and absciss
+                                                    float kc = 0.f;
+                                                    if(cp.slimet == 0) {
+                                                        if(absciss < cp.levdenlow) {
+                                                            kc = -1.f;
+                                                        }
+                                                    } else {
+                                                        kc = wavdenoise[absciss * 500.f] - 1.f;
+                                                    }
 
-                                                    float kc = wavdenoise[absciss * 500.f] - 1.f;
                                                     if(kc < 0) {
                                                         kc = -SQR(kc);//approximation to simulate sliders denoise
                                                     }
@@ -1252,7 +1268,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         
                                     }
 
-                                    if(cp.levden > 3 && cp.denoicurvh) {//local contrast for high levels
+                                    if(cp.levden > 3 && (cp.denoicurvh || cp.levdenhigh > 0.f)) {//local contrast for high levels
                                         cp.levden = min(levwavL-1, cp.levden);
                                         printf("lev_den=%i \n", cp.levden);
                                         for (int dir = 1; dir < 4; dir++) {
@@ -1310,8 +1326,17 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     } else {
                                                         absciss = amean * std::fabs(tempwav);
                                                     }
+                                                    float kc = 0.f;
+                                                    
+                                                    if(cp.slimet == 0) {
+                                                        if(absciss < cp.levdenhigh) {
+                                                            kc = -1.f;
+                                                        }
+                                                    } else {
+                                                        kc = wavdenoiseh[absciss * 500.f] - 1.f;
+                                                    }
+                                                    
 
-                                                    float kc = wavdenoiseh[absciss * 500.f] - 1.f;
                                                     if(kc < 0) {
                                                         kc = -SQR(kc);//approximation to simulate sliders denoise
                                                     }
