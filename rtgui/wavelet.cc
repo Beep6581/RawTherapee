@@ -3163,7 +3163,7 @@ void Wavelet::convertParamToNormal()
     denmethod->set_active(0);
     mixmethod->set_active(2);
     slimethod->set_active(0);
-    quamethod->set_active(0);
+//    quamethod->set_active(0);
     sigm->setValue(def_params.sigm);
     //toning
     exptoning->setEnabled(def_params.exptoning);
@@ -3294,8 +3294,9 @@ void Wavelet::mixmethodChanged()
 }
 
 void Wavelet::slimethodChanged()
-{    
-    if (slimethod->get_active_row_number() == 0) {
+{ 
+/*   
+    if (slimethod->get_active_row_number() == 0 && complexmethod->get_active_row_number() == 0) {
         updateGUIToMode(0);
         convertParamToNormal();
         leveldenoise->show();
@@ -3303,7 +3304,7 @@ void Wavelet::slimethodChanged()
         leveldenoise->hide();
         updateGUIToMode(1);
     }
-
+*/
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavslimethod, slimethod->get_active_text());
     }
