@@ -221,6 +221,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     };
     const int imheight = lab->H, imwidth = lab->W;
    int levwavL;
+                        //Flat curve for H=f(H) in final touchup for guidedfilter
+    FlatCurve* wavguidCurve = new FlatCurve(params->wavelet.wavguidcurve); //curve H=f(H)
+    bool wavguidutili = false;
+
+    if (!wavguidCurve || wavguidCurve->isIdentity()) {
+        if (wavguidCurve) {
+            delete wavguidCurve;
+            wavguidCurve = nullptr;
+        }
+    } else {
+        wavguidutili = true;
+    }
 
     struct cont_params cp;
 
@@ -1993,6 +2005,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         int hh = lab->H;
         array2D<float> LL(ww, hh);
         array2D<float> LLbef(ww, hh);
+        array2D<float> LAbef(ww, hh);
+        array2D<float> LBbef(ww, hh);
         array2D<float> guide(ww, hh);
         const float blend = LIM01(float(strend) / 100.f);
         float mean[10];
@@ -2022,6 +2036,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
             for (int x = 0; x < ww; x++) {
                 LL[y][x] = dst->L[y][x];
                 LLbef[y][x] = dst->L[y][x];
+                LAbef[y][x] = dst->a[y][x];
+                LBbef[y][x] = dst->b[y][x];
                 float ll = LL[y][x] / 32768.f;
                 guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
             }
@@ -2032,6 +2048,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         const float epsil = 0.001f * std::pow(2, - detend);
         rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, multiTh);
         //take into account local contrast to modulate LL
+        //LL in function of LLbef and Labef Lbbef
+        if(wavguidutili) {
+            for (int y = 0; y < hh ; y++) {
+                for (int x = 0; x < ww; x++) {
+                    float hueG = xatan2f(LBbef[y][x], LAbef[y][x]);
+                    float valparam = 1.5f * (static_cast<float>(wavguidCurve->getVal(Color::huelab_to_huehsv2(hueG))) - 0.5f);
+                    LL[y][x] = LLbef[y][x] + (LL[y][x] - LLbef[y][x]) * valparam;
+                }
+            }
+        }
+        //end hue
+        
         printf("LEVWAV=%i\n", levwavL);
         
     if (thrend > 0.f) {
@@ -2104,14 +2132,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 float abs = pow(2.f * absciss, (1.f / k));
                                 absciss = 0.5f * abs;
                             }
-                                                    //cp.levdenlow and absciss
                             float kc = wavguid.getVal(absciss) -1.f;
 
                             if(kc < 0) {
                                 kc = -SQR(kc);//approximation to simulate sliders denoise
                             }
-                                                    //equalizer for levels 0 1 and 3...  1.33 and 0.75 arbitrary values
-                                                                            
                             float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//1.2 allows to increase denoise (not used)
 
                             float kinterm = 1.f + reduceeffect * kc;
