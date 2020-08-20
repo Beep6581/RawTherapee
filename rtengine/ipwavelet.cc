@@ -1112,6 +1112,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 int GWL = labco->W;
                                 int GHL = labco->H;
                                 float* noisevarlum = new float[GHL * GWL];
+                                float* noisevarhue = new float[GHL * GWL];
                                 int GW2L = (GWL + 1) / 2;
 
                                 float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
@@ -1141,6 +1142,19 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         }
                                     }
 
+                                if(wavguidutili) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                                    for (int ir = 0; ir < GHL; ir++)
+                                        for (int jr = 0; jr < GWL; jr++) {
+                                            float hueG = xatan2f(labco->b[ir][jr], labco->a[ir][jr]);
+                                            noisevarhue[(ir >> 1)*GW2L + (jr >> 1)] =  1.5f * (static_cast<float>(wavguidCurve->getVal(Color::huelab_to_huehsv2(hueG))) - 0.5f);
+                                        }
+                                }
+
+        
+
 
                                 if(cp.quamet == 0) {
                                     if (settings->verbose) {
@@ -1155,6 +1169,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                     WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
                                 }
+                                delete[] noisevarlum;
+
                                 //evaluate after denoise
                                 Evaluate2(*Ldecomp, meand, meanNd, sigmad, sigmaNd, MaxPd, MaxNd, wavNestedLevels);
                                 
@@ -1293,11 +1309,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             }
                                         }
                                     }
+                                }
                                     //now WavCoeffs_L denoised take into account local contrast 0123
                                     
                                     if(cp.complex == 0) {
                                         cp.levden = levwavL;
-                                        printf("leD=%i \n", cp.levden);
+                                       // printf("leD=%i \n", cp.levden);
                                         
                                     }
 
@@ -1406,7 +1423,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             }
                                         }
                                     }
-                                }
+                              delete[] noisevarhue;
                             }
                         }
                         //Flat curve for Contrast=f(H) in levels
