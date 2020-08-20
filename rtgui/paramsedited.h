@@ -1102,6 +1102,7 @@ struct WaveletParamsEdited {
     bool opacityCurveW;
     bool opacityCurveWL;
     bool hhcurve;
+    bool wavguidcurve;
     bool Chcurve;
     bool pastlev;
     bool satlev;

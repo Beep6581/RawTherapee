@@ -1294,6 +1294,7 @@ HISTORY_MSG_WAVDENOISEH;High levels Local contrast
 HISTORY_MSG_WAVDENMET;Local equalizer
 HISTORY_MSG_WAVDETEND;Details soft
 HISTORY_MSG_WAVEDGS;Edge stopping
+HISTORY_MSG_WAVGUIDH;Hue local contrast
 HISTORY_MSG_WAVLEVDEN;High level local contrast
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
 HISTORY_MSG_WAVMERGEC;Merge C
@@ -3333,6 +3334,7 @@ TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the first levels. However the quality is not strictly related to this coefficient and can vary depending on image and use.
 TP_WAVELET_DENOISE;Curve Local contrast
+TP_WAVELET_DENOISEGUID;Hue Local contrast
 TP_WAVELET_DENOISEH;High levels Curve Local contrast
 TP_WAVELET_DENCONTRAST;Local contrast Equalizer
 TP_WAVELET_DENEQUAL;1 2 3 4 Equal

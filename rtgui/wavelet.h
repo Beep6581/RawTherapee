@@ -114,6 +114,7 @@ private:
     rtengine::ProcEvent EvWavlevdenois;
     rtengine::ProcEvent EvWavslimethod;
     rtengine::ProcEvent EvWavthrend;
+    rtengine::ProcEvent EvWavguid;
 
     LabGrid *labgrid;
 
@@ -203,6 +204,8 @@ private:
     FlatCurveEditor* wavdenoise;
     CurveEditorGroup* const CurveEditorwavnoiseh;
     FlatCurveEditor* wavdenoiseh;
+    CurveEditorGroup* const CurveEditorwavguid;
+    FlatCurveEditor* wavguidf;
     CurveEditorGroup* const opacityCurveEditorW;
     CurveEditorGroup* const opacityCurveEditorWL;
     FlatCurveEditor* opacityShape;
