@@ -2047,9 +2047,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
         const float epsil = 0.001f * std::pow(2, - detend);
         rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, multiTh);
-        //take into account local contrast to modulate LL
+        //take Hue to modulate LL
         //LL in function of LLbef and Labef Lbbef
         if(wavguidutili) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
             for (int y = 0; y < hh ; y++) {
                 for (int x = 0; x < ww; x++) {
                     float hueG = xatan2f(LBbef[y][x], LAbef[y][x]);
@@ -2060,7 +2063,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         }
         //end hue
         
-        printf("LEVWAV=%i\n", levwavL);
+//        printf("LEVWAV=%i\n", levwavL);
         
     if (thrend > 0.f) {
             //2 decomposition LL after guidefilter and dst before (perhaps dst no need)
@@ -2147,7 +2150,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     }
                 }
             }
-        LdecompLL->reconstruct(LL[0], cp.strength);
+            LdecompLL->reconstruct(LL[0], cp.strength);
         }
     }
 
