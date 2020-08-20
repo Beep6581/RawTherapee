@@ -42,8 +42,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#define BENCHMARK
-#include "StopWatch.h"
+
 namespace
 {
 
@@ -1851,7 +1850,7 @@ void ImProcCoordinator::updateVectorscope()
     if (!workimg) {
         return;
     }
-BENCHFUN
+
     int x1, y1, x2, y2;
     params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
 
@@ -1892,6 +1891,10 @@ BENCHFUN
             }
         }
     } else if (hListener->vectorscopeType() == 1) { // CH
+        const std::unique_ptr<float[]> a(new float[vectorscopeScale]);
+        const std::unique_ptr<float[]> b(new float[vectorscopeScale]);
+        const std::unique_ptr<float[]> L(new float[vectorscopeScale]);
+        ipf.rgb2lab(*workimg, x1, y1, x2 - x1, y2 - y1, L.get(), a.get(), b.get(), params->icm);
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -1901,11 +1904,9 @@ BENCHFUN
             #pragma omp for nowait
 #endif
             for (int i = y1; i < y2; ++i) {
-                const float* const a = nprevl->a[i] + x1;
-                const float* const b = nprevl->b[i] + x1;
-                for (int j = x1; j < x2; ++j) {
-                    const int col = (size / 96000.f) * a[j] + size / 2;
-                    const int row = (size / 96000.f) * b[j] + size / 2;
+                for (int j = x1, ofs_lab = (i - y1) * (x2 - x1); j < x2; ++j, ++ofs_lab) {
+                    const int col = (size / 96000.f) * a[ofs_lab] + size / 2;
+                    const int row = (size / 96000.f) * b[ofs_lab] + size / 2;
                     if (col >= 0 && col < size && row >= 0 && row < size) {
                         vectorscopeThr[row][col]++;
                     }
