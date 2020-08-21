@@ -75,6 +75,7 @@ Wavelet::Wavelet() :
     CurveEditorwavnoise(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_DENOISE"))),
     CurveEditorwavnoiseh(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_DENOISEH"))),
     CurveEditorwavguid(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_DENOISEGUID"))),
+    CurveEditorwavhue(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_DENOISEHUE"))),
     opacityCurveEditorW(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_OPACITYW"))),
     opacityCurveEditorWL(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_OPACITYWL"))),
     median(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_MEDI")))),
@@ -263,6 +264,7 @@ Wavelet::Wavelet() :
     EvWavslimethod = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSLIMET");
     EvWavthrend = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVTHREND");
     EvWavguid = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVGUIDH");
+    EvWavhue = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVHUE");
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -644,6 +646,7 @@ Wavelet::Wavelet() :
     CurveEditorwavnoise->setCurveListener(this);
     CurveEditorwavnoiseh->setCurveListener(this);
     CurveEditorwavguid->setCurveListener(this);
+    CurveEditorwavhue->setCurveListener(this);
 
     quamethod->append(M("TP_WAVELET_QUACONSER"));
     quamethod->append(M("TP_WAVELET_QUAAGRES"));
@@ -691,6 +694,7 @@ Wavelet::Wavelet() :
 
     CurveEditorwavnoise->curveListComplete();
     CurveEditorwavnoise->show();
+    const std::vector<GradientMilestone> milestones4 = makeWholeHueRange();
     
     wavdenoiseh = static_cast<FlatCurveEditor*>(CurveEditorwavnoiseh->addCurve(CT_Flat, "", nullptr, false, false));
     wavdenoiseh->setIdentityValue(0.);
@@ -698,6 +702,14 @@ Wavelet::Wavelet() :
     CurveEditorwavnoiseh->set_tooltip_text(M("TP_WAVELET_DENLOCAL_TOOLTIP"));
     CurveEditorwavnoiseh->curveListComplete();
     CurveEditorwavnoiseh->show();
+
+    wavhue = static_cast<FlatCurveEditor*>(CurveEditorwavhue->addCurve(CT_Flat, M("TP_WAVELET_CURVEEDITOR_HH")));
+    wavhue->setTooltip(M("TP_WAVELET_WAVHUE_HH_TOOLTIP"));
+    wavhue->setCurveColorProvider(this, 5);
+    CurveEditorwavhue->set_tooltip_text(M("TP_WAVELET_DENWAVHUE_TOOLTIP"));
+    CurveEditorwavhue->curveListComplete();
+    wavhue->setBottomBarBgGradient(milestones4);
+
 
 /*
     wavguidf = static_cast<FlatCurveEditor*>(CurveEditorwavguid->addCurve(CT_Flat, "H", nullptr, false, true));
@@ -709,7 +721,6 @@ Wavelet::Wavelet() :
     wavguidf->setCurveColorProvider(this, 2);
     wavguidf->setBottomBarColorProvider(this, 2);
 */
-    const std::vector<GradientMilestone> milestones4 = makeWholeHueRange();
 
     wavguidf = static_cast<FlatCurveEditor*>(CurveEditorwavguid->addCurve(CT_Flat, M("TP_WAVELET_CURVEEDITOR_HH")));
     wavguidf->setTooltip(M("TP_WAVELET_WAVGUID_HH_TOOLTIP"));
@@ -724,6 +735,7 @@ Wavelet::Wavelet() :
     levden->set_tooltip_text(M("TP_WAVELET_DENLEV_TOOLTIP"));
 
     noiseBox->pack_start(*ballum);
+    noiseBox->pack_start(*CurveEditorwavhue);
     noiseBox->pack_start(*level0noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level1noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level2noise, Gtk::PACK_SHRINK, 0);
@@ -1309,6 +1321,7 @@ Wavelet::~Wavelet()
     delete CurveEditorwavnoise;
     delete CurveEditorwavnoiseh;
     delete CurveEditorwavguid;
+    delete CurveEditorwavhue;
     delete curveEditorbl;
     delete CCWcurveEditorG;
     delete curveEditorRES;
@@ -1607,6 +1620,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     opacityShapeWL->setCurve(pp->wavelet.opacityCurveWL);
     hhshape->setCurve(pp->wavelet.hhcurve);
     wavguidf->setCurve(pp->wavelet.wavguidcurve);
+    wavhue->setCurve(pp->wavelet.wavhuecurve);
     Chshape->setCurve(pp->wavelet.Chcurve);
     clshape->setCurve(pp->wavelet.wavclCurve);
     expcontrast->setEnabled(pp->wavelet.expcontrast);
@@ -1859,6 +1873,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         opacityShapeWL->setCurve(pp->wavelet.opacityCurveWL);
         hhshape->setUnChanged(!pedited->wavelet.hhcurve);
         wavguidf->setUnChanged(!pedited->wavelet.wavguidcurve);
+        wavhue->setUnChanged(!pedited->wavelet.wavhuecurve);
         Chshape->setUnChanged(!pedited->wavelet.Chcurve);
         clshape->setUnChanged(!pedited->wavelet.wavclCurve);
         avoid->set_inconsistent(!pedited->wavelet.avoid);
@@ -2075,6 +2090,7 @@ void Wavelet::setEditProvider(EditDataProvider *provider)
     opacityShapeWL->setEditProvider(provider);
     hhshape->setEditProvider(provider);
     wavguidf->setEditProvider(provider);
+    wavhue->setEditProvider(provider);
     Chshape->setEditProvider(provider);
     clshape->setEditProvider(provider);
 }
@@ -2157,6 +2173,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.opacityCurveWL = opacityShapeWL->getCurve();
     pp->wavelet.hhcurve        = hhshape->getCurve();
     pp->wavelet.wavguidcurve        = wavguidf->getCurve();
+    pp->wavelet.wavhuecurve        = wavhue->getCurve();
     pp->wavelet.Chcurve        = Chshape->getCurve();
     pp->wavelet.pastlev        = pastlev->getValue<int> ();
     pp->wavelet.satlev         = satlev->getValue<int> ();
@@ -2300,6 +2317,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.opacityCurveWL  = !opacityShapeWL->isUnChanged();
         pedited->wavelet.hhcurve         = !hhshape->isUnChanged();
         pedited->wavelet.wavguidcurve         = !wavguidf->isUnChanged();
+        pedited->wavelet.wavhuecurve         = !wavhue->isUnChanged();
         pedited->wavelet.Chcurve         = !Chshape->isUnChanged();
         pedited->wavelet.bllev           = bllev->getEditedState();
         pedited->wavelet.pastlev         = pastlev->getEditedState();
@@ -2539,6 +2557,8 @@ void Wavelet::curveChanged(CurveEditor* ce)
             listener->panelChanged(EvWavHHCurve, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == wavguidf) {
             listener->panelChanged(EvWavguid, M("HISTORY_CUSTOMCURVE"));
+        } else if (ce == wavhue) {
+            listener->panelChanged(EvWavhue, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == Chshape) {
             listener->panelChanged(EvWavCHCurve, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == clshape) {
@@ -3455,6 +3475,7 @@ void Wavelet::setBatchMode(bool batchMode)
     CurveEditorwavnoise->setBatchMode(batchMode);
     CurveEditorwavnoiseh->setBatchMode(batchMode);
     CurveEditorwavguid->setBatchMode(batchMode);
+    CurveEditorwavhue->setBatchMode(batchMode);
     opacityCurveEditorW->setBatchMode(batchMode);
     opacityCurveEditorWL->setBatchMode(batchMode);
     curveEditorbl->setBatchMode(batchMode);

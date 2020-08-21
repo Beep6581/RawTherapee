@@ -233,6 +233,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     } else {
         wavguidutili = true;
     }
+//flat curve for equalizer H
+    FlatCurve* wavhueCurve = new FlatCurve(params->wavelet.wavhuecurve); //curve H=f(H)
+    bool wavhueutili = false;
+
+    if (!wavhueCurve || wavhueCurve->isIdentity()) {
+        if (wavhueCurve) {
+            delete wavhueCurve;
+            wavhueCurve = nullptr;
+        }
+    } else {
+        wavhueutili = true;
+    }
 
     struct cont_params cp;
 
@@ -1142,14 +1154,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         }
                                     }
 
-                                if(wavguidutili) {
+                                if(wavhueutili) {
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
                                     for (int ir = 0; ir < GHL; ir++)
                                         for (int jr = 0; jr < GWL; jr++) {
                                             float hueG = xatan2f(labco->b[ir][jr], labco->a[ir][jr]);
-                                            noisevarhue[(ir >> 1)*GW2L + (jr >> 1)] =  1.5f * (static_cast<float>(wavguidCurve->getVal(Color::huelab_to_huehsv2(hueG))) - 0.5f);
+                                            noisevarhue[(ir >> 1)*GW2L + (jr >> 1)] = 1.f +  2.f * (static_cast<float>(wavhueCurve->getVal(Color::huelab_to_huehsv2(hueG))) - 0.5f);
+                                            noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] *= noisevarhue[(ir >> 1)*GW2L + (jr >> 1)];
                                         }
                                 }
 
@@ -2074,7 +2087,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 for (int x = 0; x < ww; x++) {
                     float hueG = xatan2f(LBbef[y][x], LAbef[y][x]);
                     float valparam = 1.5f * (static_cast<float>(wavguidCurve->getVal(Color::huelab_to_huehsv2(hueG))) - 0.5f);
-                    LL[y][x] = LLbef[y][x] + (LL[y][x] - LLbef[y][x]) * valparam;
+                    LL[y][x] = LLbef[y][x] + (LL[y][x] - LLbef[y][x]) * (1.f + valparam);
                 }
             }
         }

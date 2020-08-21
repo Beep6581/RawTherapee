@@ -2372,6 +2372,9 @@ WaveletParams::WaveletParams() :
     wavguidcurve{
         FCT_Linear
     },
+    wavhuecurve{
+        FCT_Linear
+    },
     Chcurve{
         FCT_Linear
     },
@@ -2515,6 +2518,7 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && opacityCurveWL == other.opacityCurveWL
         && hhcurve == other.hhcurve
         && wavguidcurve == other.wavguidcurve
+        && wavhuecurve == other.wavhuecurve
         && Chcurve == other.Chcurve
         && wavclCurve == other.wavclCurve
         && enabled == other.enabled
@@ -6150,6 +6154,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveWL, "Wavelet", "OpacityCurveWL", wavelet.opacityCurveWL, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.hhcurve, "Wavelet", "HHcurve", wavelet.hhcurve, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.wavguidcurve, "Wavelet", "Wavguidcurve", wavelet.wavguidcurve, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.wavhuecurve, "Wavelet", "Wavhuecurve", wavelet.wavhuecurve, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.Chcurve, "Wavelet", "CHcurve", wavelet.Chcurve, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.wavclCurve, "Wavelet", "WavclCurve", wavelet.wavclCurve, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.median, "Wavelet", "Median", wavelet.median, keyFile);
@@ -8002,6 +8007,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveWL", pedited, wavelet.opacityCurveWL, pedited->wavelet.opacityCurveWL);
             assignFromKeyfile(keyFile, "Wavelet", "HHcurve", pedited, wavelet.hhcurve, pedited->wavelet.hhcurve);
             assignFromKeyfile(keyFile, "Wavelet", "Wavguidcurve", pedited, wavelet.wavguidcurve, pedited->wavelet.wavguidcurve);
+            assignFromKeyfile(keyFile, "Wavelet", "Wavhuecurve", pedited, wavelet.wavhuecurve, pedited->wavelet.wavhuecurve);
             assignFromKeyfile(keyFile, "Wavelet", "CHcurve", pedited, wavelet.Chcurve, pedited->wavelet.Chcurve);
             assignFromKeyfile(keyFile, "Wavelet", "WavclCurve", pedited, wavelet.wavclCurve, pedited->wavelet.wavclCurve);
 

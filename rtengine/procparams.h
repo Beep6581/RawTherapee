@@ -1736,6 +1736,7 @@ struct WaveletParams {
     std::vector<double> opacityCurveWL;
     std::vector<double> hhcurve;
     std::vector<double> wavguidcurve;
+    std::vector<double> wavhuecurve;
     std::vector<double> Chcurve;
     std::vector<double> wavclCurve;
     bool enabled;

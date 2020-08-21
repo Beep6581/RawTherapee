@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
- *  2014 Jacques Desmis <jdesmis@gmail.com>
+ *  2014 2020 Jacques Desmis <jdesmis@gmail.com>
  */
 
 #pragma once
@@ -115,6 +115,7 @@ private:
     rtengine::ProcEvent EvWavslimethod;
     rtengine::ProcEvent EvWavthrend;
     rtengine::ProcEvent EvWavguid;
+    rtengine::ProcEvent EvWavhue;
 
     LabGrid *labgrid;
 
@@ -206,6 +207,8 @@ private:
     FlatCurveEditor* wavdenoiseh;
     CurveEditorGroup* const CurveEditorwavguid;
     FlatCurveEditor* wavguidf;
+    CurveEditorGroup* const CurveEditorwavhue;
+    FlatCurveEditor* wavhue;
     CurveEditorGroup* const opacityCurveEditorW;
     CurveEditorGroup* const opacityCurveEditorWL;
     FlatCurveEditor* opacityShape;
