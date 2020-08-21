@@ -2086,7 +2086,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
             for (int y = 0; y < hh ; y++) {
                 for (int x = 0; x < ww; x++) {
                     float hueG = xatan2f(LBbef[y][x], LAbef[y][x]);
-                    float valparam = 1.5f * (static_cast<float>(wavguidCurve->getVal(Color::huelab_to_huehsv2(hueG))) - 0.5f);
+                    float valparam = 1.f * (static_cast<float>(wavguidCurve->getVal(Color::huelab_to_huehsv2(hueG))) - 0.5f);
                     LL[y][x] = LLbef[y][x] + (LL[y][x] - LLbef[y][x]) * (1.f + valparam);
                 }
             }
