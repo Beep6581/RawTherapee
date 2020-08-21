@@ -2104,9 +2104,21 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
             Evaluate2(*LdecompLL, meang, meanNg, sigmag, sigmaNg, MaxPg, MaxNg, wavNestedLevels);
             Evaluate2(*Ldecompdst, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
             float sig = 2.f;
+            float thr = 0.f;
+            if(thrend < 0.02f) thr = 0.5f;
+            else if(thrend < 0.1f) thr = 0.2f;
+            else thr = 0.f;
+/*            
             FlatCurve wavguid({
                 FCT_MinMaxCPoints,
-                0, 1, 0.35, 0.35,thrend, 1.0, 0.35, 0.35, thrend + 0.01f, 0, 0.35, 0.35, 1, 0, 0.35, 0.35
+                0, 1, 0.35, 0.35,thrend, 1.0, 0.35, 0.35, thrend + 0.01f, 0.5, 0.35, 0.35, 1, 0.5, 0.35, 0.35
+            });
+*/
+
+
+            FlatCurve wavguid({
+                FCT_MinMaxCPoints,
+                0, 1, 0.35, 0.35,thrend, 1.0, 0.35, 0.35, thrend + 0.01f, thr, 0.35, 0.35, 1, thr, 0.35, 0.35
             });
 
             for (int dir = 1; dir < 4; dir++) {
