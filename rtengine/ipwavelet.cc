@@ -2110,7 +2110,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
             });
 
             for (int dir = 1; dir < 4; dir++) {
-                for (int level = 0; level < levwavL; level++) {
+                for (int level = 0; level < levwavL-1; level++) {
                     int Wlvl_L = LdecompLL->level_W(level);
                     int Hlvl_L = LdecompLL->level_H(level);
                     float* const* WavCoeffs_L = LdecompLL->level_coeffs(level);//first decomp denoised
