@@ -3295,12 +3295,12 @@ void Wavelet::updateGUIToMode(int mode)
         denHBox->hide();
         mixHBox->show();
         sigm->show();
-        CurveEditorwavnoiseh->hide();
-        CurveEditorwavnoise->hide();
         levden->show();
         sliHBox->show();
         if (slimethod->get_active_row_number() == 0){
             leveldenoise->show();
+            CurveEditorwavnoiseh->hide();
+            CurveEditorwavnoise->hide();
         } else {
             leveldenoise->hide();
             CurveEditorwavnoiseh->show();
@@ -3348,16 +3348,24 @@ void Wavelet::mixmethodChanged()
 
 void Wavelet::slimethodChanged()
 { 
-/*   
+  
     if (slimethod->get_active_row_number() == 0 && complexmethod->get_active_row_number() == 0) {
         updateGUIToMode(0);
         convertParamToNormal();
         leveldenoise->show();
-    } else if(slimethod->get_active_row_number() == 1  && complexmethod->get_active_row_number() == 1){
-        leveldenoise->hide();
+    } else if (slimethod->get_active_row_number() == 0 && complexmethod->get_active_row_number() == 1){
         updateGUIToMode(1);
+        leveldenoise->show();
+        CurveEditorwavnoiseh->hide();
+        CurveEditorwavnoise->hide();
+    } else if (slimethod->get_active_row_number() == 1 && complexmethod->get_active_row_number() == 1){
+        updateGUIToMode(1);
+        leveldenoise->hide();
+        CurveEditorwavnoiseh->show();
+        CurveEditorwavnoise->show();
     }
-*/
+        
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavslimethod, slimethod->get_active_text());
     }
