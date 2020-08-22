@@ -116,6 +116,7 @@ private:
     rtengine::ProcEvent EvWavthrend;
     rtengine::ProcEvent EvWavguid;
     rtengine::ProcEvent EvWavhue;
+    rtengine::ProcEvent EvWavthrden;
 
     LabGrid *labgrid;
 
@@ -291,6 +292,7 @@ private:
 
     Adjuster* const sigm;
     Adjuster* const levden;
+    Adjuster* const thrden;
     Adjuster* const threshold;
     Adjuster* const threshold2;
     Adjuster* const edgedetect;

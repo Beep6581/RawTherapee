@@ -1312,6 +1312,7 @@ HISTORY_MSG_WAVSIGM;Sigma
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVSLIMET;Method
+HISTORY_MSG_WAVTHRDEN;Threshold local contrast
 HISTORY_MSG_WAVTHREND;Threshold local contrast
 HISTORY_MSG_WAVSTREND;Strength soft
 HISTORY_MSG_WAVUSHAMET;Clarity method
@@ -3344,9 +3345,12 @@ TP_WAVELET_DEN14PLUS;1 4 High
 TP_WAVELET_DEN14LOW;1 4 Low
 TP_WAVELET_DEN12PLUS;1 2 High
 TP_WAVELET_DEN12LOW;1 2 Low
-TP_WAVELET_DENH;Low levels (1234)- Finest details
+//TP_WAVELET_DENH;Low levels (1234)- Finest details
+//TP_WAVELET_DENLH;Threshold local contrast by details levels
+//TP_WAVELET_DENL;High levels - Coarsest details
+TP_WAVELET_DENH;Threshold
 TP_WAVELET_DENLH;Threshold local contrast by details levels
-TP_WAVELET_DENL;High levels - Coarsest details
+TP_WAVELET_DENL;Correction structure
 TP_WAVELET_DENQUA;Mode
 TP_WAVELET_DENSLILAB;Method
 TP_WAVELET_DENSLI;Slider
@@ -3460,7 +3464,7 @@ TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
 TP_WAVELET_SIGMA;Attenuation response
-TP_WAVELET_SIGM;Radius low & high
+TP_WAVELET_SIGM;Radius
 TP_WAVELET_SIGMAFIN;Attenuation response
 TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n .The lower it is, the more the effect will be pinpointed towards a narrow range of contrast values
 TP_WAVELET_SKIN;Skin targetting/protection
