@@ -654,7 +654,7 @@ Wavelet::Wavelet() :
     quamethod->append(M("TP_WAVELET_QUACONSER"));
     quamethod->append(M("TP_WAVELET_QUAAGRES"));
     quamethodconn = quamethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::quamethodChanged));
-    quamethod->set_tooltip_text(M("TP_WAVELET_DENQUA_TOOLTIP"));
+//    quamethod->set_tooltip_text(M("TP_WAVELET_DENQUA_TOOLTIP"));
     Gtk::Label* const quaLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENQUA") + ":"));
     quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
     quaHBox->pack_start(*quamethod);
@@ -662,7 +662,7 @@ Wavelet::Wavelet() :
     slimethod->append(M("TP_WAVELET_DENSLI"));
     slimethod->append(M("TP_WAVELET_DENCURV"));
     slimethodconn = slimethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::slimethodChanged));
-    slimethod->set_tooltip_text(M("TP_WAVELET_DENSLI_TOOLTIP"));
+//    slimethod->set_tooltip_text(M("TP_WAVELET_DENSLI_TOOLTIP"));
     Gtk::Label* const sliLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENSLILAB") + ":"));
     sliHBox->pack_start(*sliLabel, Gtk::PACK_SHRINK, 4);
     sliHBox->pack_start(*slimethod);
@@ -707,23 +707,14 @@ Wavelet::Wavelet() :
     CurveEditorwavnoiseh->show();
 
     wavhue = static_cast<FlatCurveEditor*>(CurveEditorwavhue->addCurve(CT_Flat, M("TP_WAVELET_CURVEEDITOR_HH")));
-    wavhue->setTooltip(M("TP_WAVELET_WAVHUE_HH_TOOLTIP"));
+//    wavhue->setTooltip(M("TP_WAVELET_WAVHUE_HH_TOOLTIP"));
     wavhue->setCurveColorProvider(this, 5);
     CurveEditorwavhue->set_tooltip_text(M("TP_WAVELET_DENWAVHUE_TOOLTIP"));
     CurveEditorwavhue->curveListComplete();
     wavhue->setBottomBarBgGradient(milestones4);
 
 
-/*
-    wavguidf = static_cast<FlatCurveEditor*>(CurveEditorwavguid->addCurve(CT_Flat, "H", nullptr, false, true));
-    wavguidf->setIdentityValue(0.);
-//    wavdguif->setResetCurve(FlatCurveType(default_params.wavdguidf.at(0)), default_params.wavdguidf);
-    CurveEditorwavguid->set_tooltip_text(M("TP_WAVELET_DENWAVGUID_TOOLTIP"));
-    CurveEditorwavguid->curveListComplete();
-    CurveEditorwavguid->show();
-    wavguidf->setCurveColorProvider(this, 2);
-    wavguidf->setBottomBarColorProvider(this, 2);
-*/
+
 
     wavguidf = static_cast<FlatCurveEditor*>(CurveEditorwavguid->addCurve(CT_Flat, M("TP_WAVELET_CURVEEDITOR_HH")));
     wavguidf->setTooltip(M("TP_WAVELET_WAVGUID_HH_TOOLTIP"));
@@ -767,7 +758,7 @@ Wavelet::Wavelet() :
     chroBox->pack_start(*chromco);
     chroFrame->add(*chroBox);
     noiseBox->pack_start(*chroFrame);
-    noiseBox->set_tooltip_text(M("TP_WAVELET_NOISE_TOOLTIP"));
+//    noiseBox->set_tooltip_text(M("TP_WAVELET_NOISE_TOOLTIP"));
 
 
 //Clarity
@@ -1254,6 +1245,7 @@ Wavelet::Wavelet() :
 
     finalBox->pack_start(*fincFrame);
     finalBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
+    thrend->set_tooltip_text(M("TP_WAVELET_FINTHR_TOOLTIP"));
 
     guidFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const guidBox = Gtk::manage(new ToolParamBlock());

@@ -3335,7 +3335,7 @@ TP_WAVELET_DAUB10;D10 - medium
 TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the first levels. However the quality is not strictly related to this coefficient and can vary depending on image and use.
-TP_WAVELET_DENOISE;Curve Local contrast
+TP_WAVELET_DENOISE;Guide curve based on Local contrast
 TP_WAVELET_DENOISEGUID;Hue Local contrast
 TP_WAVELET_DENOISEH;High levels Curve Local contrast
 TP_WAVELET_DENOISEHUE;Denoise Equalizer Hue
@@ -3346,15 +3346,20 @@ TP_WAVELET_DEN14LOW;1 4 Low
 TP_WAVELET_DEN12PLUS;1 2 High
 TP_WAVELET_DEN12LOW;1 2 Low
 //TP_WAVELET_DENH;Low levels (1234)- Finest details
-//TP_WAVELET_DENLH;Threshold local contrast by details levels
+//TP_WAVELET_DENLH;Guided threshold by details levels
 //TP_WAVELET_DENL;High levels - Coarsest details
 TP_WAVELET_DENH;Threshold
-TP_WAVELET_DENLH;Threshold local contrast by details levels
+TP_WAVELET_DENLH;Guided threshold by details levels
 TP_WAVELET_DENL;Correction structure
+TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
+TP_WAVELET_DENMIX_TOOLTIP;Balances the action of the guide taking into account the original image and the denoised image
 TP_WAVELET_DENQUA;Mode
 TP_WAVELET_DENSLILAB;Method
 TP_WAVELET_DENSLI;Slider
 TP_WAVELET_DENCURV;Curve
+TP_WAVELET_DENSIGMA_TOOLTIP;Adapts the shape of the guide
+TP_WAVELET_DENWAVHUE_TOOLTIP;Amplify or reduce denoising depending on the color
+TP_WAVELET_DENWAVGUID_TOOLTIP;Acts on the guided filter to increase or reduce its action depending on the color
 TP_WAVELET_DETEND;Details
 TP_WAVELET_DIRFRAME;Directional contrast
 TP_WAVELET_DONE;Vertical
@@ -3385,7 +3390,8 @@ TP_WAVELET_FINAL;Final Touchup
 TP_WAVELET_FINCFRAME;Final local contrast
 TP_WAVELET_FINCOAR_TOOLTIP;The left (positive) part of the curve acts on the finer levels (increase).\nThe 2 points on the abscissa represent the respective action limits of finer and coarser levels 5 and 6 (default).\nThe right (negative) part of the curve acts on the coarser levels (increase).\nAvoid moving the left part of the curve with negative values. Avoid moving the right part of the curve with positives values
 TP_WAVELET_FINEST;Finest
-TP_WAVELET_GUIDFRAME;Final smooth
+TP_WAVELET_FINTHR_TOOLTIP;Uses local contrast to reduce or increase the action of the guided filter
+TP_WAVELET_GUIDFRAME;Final smooth (Guided Filter)
 TP_WAVELET_HIGHLIGHT;Finer levels luminance range
 TP_WAVELET_HS1;Whole luminance range
 TP_WAVELET_HS2;Selective luminance range
@@ -3478,6 +3484,7 @@ TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold
 TP_WAVELET_THREND;Threshold local contrast
+TP_WAVELET_THRDEN_TOOLTIP;Generates a stepped curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
 TP_WAVELET_THRESHOLD;Finer levels
 TP_WAVELET_THRESHOLD2;Coarser levels
 TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels from the chosen value to the selected number of ‘wavelet levels’ will be affected by the Shadow luminance range.
