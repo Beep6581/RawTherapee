@@ -596,7 +596,9 @@ int DCraw::parseCR3(
                             relpos_inBox += lTag;
                         }
                     }
-
+                    if (!szItem) {
+                        goto fin;
+                    }
                     relpos_inDir += szItem;
                 }
 
