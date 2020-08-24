@@ -2196,8 +2196,12 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
         maxlvl = 4;    //for refine denoise edge wavelet
     }
 
+    if (edge == 6) {
+        maxlvl = 5;    //for wavelet denoise
+    }
+
     if (edge == 2) {
-        maxlvl = 7;    //for locallab denoise
+        maxlvl = 5;    //for locallab denoise
     }
 
     int maxWL = 0, maxHL = 0;
@@ -2212,7 +2216,6 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
         }
 
     }
-
     bool memoryAllocationFailed = false;
 #ifdef _OPENMP
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
@@ -2264,7 +2267,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
                         for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                             nvl[i] = 0.f;
                         }
-                        if ((edge == 1 || edge == 2 || edge == 3  || edge == 5) && vari) {
+                        if ((edge == 1 || edge == 2 || edge == 3  || edge == 5 || edge == 6) && vari) {
                             //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
                             if ((edge == 1 || edge == 3)) {
                                 for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
@@ -2272,7 +2275,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
                                 }
                             }
 
-                            if (edge == 2 || edge == 4 || edge == 5) {
+                            if (edge == 2 || edge == 4 || edge == 5 || edge == 6) {
                                 for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                                     nvl[i] = vari[lvl] * SQR(noisevarlum[i]);
                                 }
@@ -2550,8 +2553,12 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition& WaveletCoeffs_L,
         maxlvl = 4;    //for refine denoise edge wavelet
     }
 
+    if (edge == 6) {
+        maxlvl = 5;    //for wavelet denoise
+    }
+
     if (edge == 2) {
-        maxlvl = 7;    //for locallab denoise
+        maxlvl = 5;    //for locallab denoise
     }
 
     int maxWL = 0, maxHL = 0;
@@ -2690,15 +2697,15 @@ void ImProcFunctions::ShrinkAllL(wavelet_decomposition& WaveletCoeffs_L, float *
         nvl[i] = 0.f;
     }
 
-    if ((edge == 1 || edge == 2 || edge == 3 || edge == 5) && vari) {
+    if ((edge == 1 || edge == 2 || edge == 3 || edge == 5 || edge == 6) && vari) {
         //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
         if ((edge == 1 || edge == 3)) {
             for (int i = 0; i < W_L * H_L; ++i) {
                 nvl[i] = vari[level]; //* SQR(1.f + 4.f * noisevarchrom[p]);
             }
-        }
+        } 
 
-        if (edge == 2 || edge == 4 || edge == 5) {
+        if (edge == 2 || edge == 4 || edge == 5 || edge == 6) {
             for (int i = 0; i < W_L * H_L; ++i) {
                 nvl[i] = vari[level] * SQR(noisevarlum[i]);
             }

@@ -135,9 +135,9 @@ Wavelet::Wavelet() :
     level1noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVONE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     level2noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTWO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     level3noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTHRE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
-    leveldenoise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_DENLH"), -50., 100., 0., M("TP_WAVELET_DENL"), 1, 0., 100., 0., M("TP_WAVELET_DENH"), 1., nullptr, false))),
+    leveldenoise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVFOUR"), 0., 100., 0., M("TP_WAVELET_DEN5THR"), 1, 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     sigm(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGM"), 0.05, 3.5, 0.01, 1.))),
-    levden(Gtk::manage(new Adjuster(M("TP_WAVELET_LEVDEN"), 5, 10, 1, 5))),
+    levden(Gtk::manage(new Adjuster(M("TP_WAVELET_LEVDEN"), 0., 100., 0.5, 0.))),
     thrden(Gtk::manage(new Adjuster(M("TP_WAVELET_DENLH"), 0., 100., 0.5, 0.))),
     threshold(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD"), 1, 9, 1, 4))),
  //   threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 1, 9, 1, 4))),
@@ -726,7 +726,7 @@ Wavelet::Wavelet() :
 
     
     sigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
-    levden->set_tooltip_text(M("TP_WAVELET_DENLEV_TOOLTIP"));
+//    levden->set_tooltip_text(M("TP_WAVELET_DENLEV_TOOLTIP"));
     thrden->set_tooltip_text(M("TP_WAVELET_THRDEN_TOOLTIP"));
 
     noiseBox->pack_start(*ballum);
@@ -735,7 +735,8 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*level1noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level2noise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*level3noise, Gtk::PACK_SHRINK, 0);
-//    noiseBox->pack_start(*leveldenoise, Gtk::PACK_SHRINK, 0);
+   // noiseBox->pack_start(*levden);
+    noiseBox->pack_start(*leveldenoise, Gtk::PACK_SHRINK, 0);
     noiseBox->pack_start(*thrden);
     noiseBox->pack_start(*quaHBox);
     noiseBox->pack_start(*sliHBox);
@@ -743,7 +744,6 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*mixHBox);
     noiseBox->pack_start(*sigm);
     noiseBox->pack_start(*CurveEditorwavnoise);
-//    noiseBox->pack_start(*levden);
 //    noiseBox->pack_start(*CurveEditorwavnoiseh);
     
 
@@ -2180,7 +2180,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.balance        = (int) balance->getValue();
     pp->wavelet.balchrom       = balchrom->getValue();
     pp->wavelet.sigm           = sigm->getValue();
-    pp->wavelet.levden         = levden->getIntValue();
+    pp->wavelet.levden         = levden->getValue();
     pp->wavelet.thrden         = thrden->getValue();
     pp->wavelet.ballum         = ballum->getValue();
     pp->wavelet.chromfi        = chromfi->getValue();
@@ -2830,7 +2830,7 @@ void Wavelet::adjusterChanged(ThresholdAdjuster* a, double newBottom, double new
                                    Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_NOIS") + ": %1" + "\n" + M("TP_WAVELET_STREN") + ": %2"), int(newTop), int(newBottom)));
         } else if (a == leveldenoise) {
             listener->panelChanged(EvWavlevdenois,
-                                   Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_DENL") + ": %1" + "\n" + M("TP_WAVELET_DENH") + ": %2"), int(newTop), int(newBottom)));
+                                   Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_NOIS") + ": %1" + "\n" + M("TP_WAVELET_DEN5THR") + ": %2"), int(newTop), int(newBottom)));
         }
 
     }
@@ -3276,7 +3276,7 @@ void Wavelet::updateGUIToMode(int mode)
         sigm->show();
         CurveEditorwavnoiseh->hide();
         CurveEditorwavnoise->hide();
-        levden->hide();
+       // levden->hide();
         thrden->show();
         leveldenoise->show();
     } else {
@@ -3299,7 +3299,7 @@ void Wavelet::updateGUIToMode(int mode)
         denHBox->hide();
         mixHBox->show();
         sigm->show();
-        levden->show();
+       // levden->show();
         sliHBox->show();
         if (slimethod->get_active_row_number() == 0){
             leveldenoise->show();
@@ -3308,7 +3308,7 @@ void Wavelet::updateGUIToMode(int mode)
             CurveEditorwavnoise->hide();
         } else {
             thrden->hide();
-            leveldenoise->hide();
+            leveldenoise->show();
             CurveEditorwavnoiseh->show();
             CurveEditorwavnoise->show();
         }
@@ -3366,7 +3366,7 @@ void Wavelet::slimethodChanged()
         CurveEditorwavnoise->hide();
     } else if (slimethod->get_active_row_number() == 1 && complexmethod->get_active_row_number() == 1){
         updateGUIToMode(1);
-        leveldenoise->hide();
+        leveldenoise->show();
         CurveEditorwavnoiseh->show();
         CurveEditorwavnoise->show();
     }

@@ -1752,7 +1752,7 @@ struct WaveletParams {
     int bluehigh;
     double ballum;
     double sigm;
-    int levden;
+    double levden;
     double thrden;
     double balchrom;
     double chromfi;
