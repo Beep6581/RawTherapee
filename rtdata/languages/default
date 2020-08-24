@@ -833,11 +833,11 @@ HISTORY_MSG_580;Local - Denoise
 HISTORY_MSG_581;Local - deNoise lum f 1
 HISTORY_MSG_582;Local - deNoise lum c
 HISTORY_MSG_583;Local - deNoise lum detail
-HISTORY_MSG_584;Local - deNoise Equalizer white-black
+HISTORY_MSG_584;Local - deNoise equalizer White-Black
 HISTORY_MSG_585;Local - deNoise chro f
 HISTORY_MSG_586;Local - deNoise chro c
 HISTORY_MSG_587;Local - deNoise chro detail
-HISTORY_MSG_588;Local - deNoise Equalizer blue-red
+HISTORY_MSG_588;Local - deNoise equalizer Blue-Red
 HISTORY_MSG_589;Local - deNoise bilateral
 HISTORY_MSG_590;Local - deNoise Scope
 HISTORY_MSG_591;Local - Avoid color shift
@@ -1294,7 +1294,7 @@ HISTORY_MSG_WAVDENOISEH;High levels Local contrast
 HISTORY_MSG_WAVDENMET;Local equalizer
 HISTORY_MSG_WAVDETEND;Details soft
 HISTORY_MSG_WAVEDGS;Edge stopping
-HISTORY_MSG_WAVGUIDH;Hue local contrast
+HISTORY_MSG_WAVGUIDH;Local contrast-Hue equalizer
 HISTORY_MSG_WAVHUE;Equalizer hue
 HISTORY_MSG_WAVLEVDEN;High level local contrast
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
@@ -3271,8 +3271,8 @@ TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the vertical, horizontal and diagonal wavelet directions: .\nActivating contrast, chroma or residual tone mapping amplifies the effect due to balance
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
-TP_WAVELET_BALCHROM;Denoise equalizer  blue-yellow red-green
-TP_WAVELET_BALLUM;Denoise Equalizer  White-Black
+TP_WAVELET_BALCHROM;Denoise equalizer  Blue-Yellow Red-Green
+TP_WAVELET_BALLUM;Denoise equalizer  White-Black
 TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
@@ -3338,7 +3338,7 @@ TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = 
 TP_WAVELET_DENOISE;Guide curve based on Local contrast
 TP_WAVELET_DENOISEGUID;Hue Local contrast
 TP_WAVELET_DENOISEH;High levels Curve Local contrast
-TP_WAVELET_DENOISEHUE;Denoise Equalizer Hue
+TP_WAVELET_DENOISEHUE;Denoise equalizer Hue
 TP_WAVELET_DENCONTRAST;Local contrast Equalizer
 TP_WAVELET_DENEQUAL;1 2 3 4 Equal
 TP_WAVELET_DEN14PLUS;1 4 High
@@ -3359,7 +3359,7 @@ TP_WAVELET_DENSLI;Slider
 TP_WAVELET_DENCURV;Curve
 TP_WAVELET_DENSIGMA_TOOLTIP;Adapts the shape of the guide
 TP_WAVELET_DENWAVHUE_TOOLTIP;Amplify or reduce denoising depending on the color
-TP_WAVELET_DENWAVGUID_TOOLTIP;Acts on the guided filter to increase or reduce its action depending on the color
+TP_WAVELET_DENWAVGUID_TOOLTIP;Uses hue to reduce or increase the action of the guided filter
 TP_WAVELET_DETEND;Details
 TP_WAVELET_DIRFRAME;Directional contrast
 TP_WAVELET_DONE;Vertical
@@ -3391,7 +3391,7 @@ TP_WAVELET_FINCFRAME;Final local contrast
 TP_WAVELET_FINCOAR_TOOLTIP;The left (positive) part of the curve acts on the finer levels (increase).\nThe 2 points on the abscissa represent the respective action limits of finer and coarser levels 5 and 6 (default).\nThe right (negative) part of the curve acts on the coarser levels (increase).\nAvoid moving the left part of the curve with negative values. Avoid moving the right part of the curve with positives values
 TP_WAVELET_FINEST;Finest
 TP_WAVELET_FINTHR_TOOLTIP;Uses local contrast to reduce or increase the action of the guided filter
-TP_WAVELET_GUIDFRAME;Final smooth (Guided Filter)
+TP_WAVELET_GUIDFRAME;Final smoothing (guided filter)
 TP_WAVELET_HIGHLIGHT;Finer levels luminance range
 TP_WAVELET_HS1;Whole luminance range
 TP_WAVELET_HS2;Selective luminance range
@@ -3483,7 +3483,7 @@ TP_WAVELET_STREND;Strength
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold
-TP_WAVELET_THREND;Threshold local contrast
+TP_WAVELET_THREND;Local contrast threshold  
 TP_WAVELET_THRDEN_TOOLTIP;Generates a stepped curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
 TP_WAVELET_THRESHOLD;Finer levels
 TP_WAVELET_THRESHOLD2;Coarser levels

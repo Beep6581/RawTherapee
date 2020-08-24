@@ -717,7 +717,7 @@ Wavelet::Wavelet() :
 
 
     wavguidf = static_cast<FlatCurveEditor*>(CurveEditorwavguid->addCurve(CT_Flat, M("TP_WAVELET_CURVEEDITOR_HH")));
-    wavguidf->setTooltip(M("TP_WAVELET_WAVGUID_HH_TOOLTIP"));
+//    wavguidf->setTooltip(M("TP_WAVELET_WAVGUID_HH_TOOLTIP"));
     wavguidf->setCurveColorProvider(this, 5);
     CurveEditorwavguid->set_tooltip_text(M("TP_WAVELET_DENWAVGUID_TOOLTIP"));
     CurveEditorwavguid->curveListComplete();
