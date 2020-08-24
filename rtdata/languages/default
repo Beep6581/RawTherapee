@@ -3347,10 +3347,10 @@ TP_WAVELET_DEN12PLUS;1 2 High
 TP_WAVELET_DEN12LOW;1 2 Low
 TP_WAVELET_DEN5THR;Guided threshold
 //TP_WAVELET_DENH;Low levels (1234)- Finest details
-//TP_WAVELET_DENLH;Guided threshold by details levels low
+//TP_WAVELET_DENLH;Guided threshold by detail levels low
 //TP_WAVELET_DENL;High levels - Coarsest details
 TP_WAVELET_DENH;Threshold
-TP_WAVELET_DENLH;Guided threshold by details levels low
+TP_WAVELET_DENLH;Guided threshold by detail levels low
 TP_WAVELET_DENL;Correction structure
 TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
 TP_WAVELET_DENMIX_TOOLTIP;Balances the action of the guide taking into account the original image and the denoised image
