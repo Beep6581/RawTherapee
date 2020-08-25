@@ -29,6 +29,7 @@
 #include "eventmapper.h"
 #include "labgrid.h"
 #include "../rtengine/color.h"
+#include <unistd.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -643,10 +644,13 @@ Wavelet::Wavelet() :
 
     level3noise->setAdjusterListener(this);
     level3noise->setUpdatePolicy(RTUP_DYNAMIC);
+
     leveldenoise->setAdjusterListener(this);
     leveldenoise->setUpdatePolicy(RTUP_DYNAMIC);
+
     levelsigm->setAdjusterListener(this);
     levelsigm->setUpdatePolicy(RTUP_DYNAMIC);
+
     ballum->setAdjusterListener(this);
     sigm->setAdjusterListener(this);
     levden->setAdjusterListener(this);
@@ -2845,6 +2849,7 @@ void Wavelet::adjusterChanged(ThresholdAdjuster* a, double newBottom, double new
             listener->panelChanged(EvWavlevdenois,
                                    Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_NOIS") + ": %1" + "\n" + M("TP_WAVELET_DEN5THR") + ": %2"), int(newTop), int(newBottom)));
         } else if (a == levelsigm) {
+            usleep(150);
             listener->panelChanged(EvWavlevelsigm,
                                    Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_LEVELLOW") + ": %1" + "\n" + M("TP_WAVELET_LEVELHIGH") + ": %2"), (newTop), (newBottom)));
         }
