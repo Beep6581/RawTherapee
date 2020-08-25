@@ -3336,7 +3336,7 @@ TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the first levels. However the quality is not strictly related to this coefficient and can vary depending on image and use.
 TP_WAVELET_DENOISE;Guide curve based on Local contrast
-TP_WAVELET_DENOISEGUID;Hue Local contrast
+TP_WAVELET_DENOISEGUID;Guided threshold based on hue
 TP_WAVELET_DENOISEH;High levels Curve Local contrast
 TP_WAVELET_DENOISEHUE;Denoise equalizer Hue
 TP_WAVELET_DENCONTRAST;Local contrast Equalizer
@@ -3347,10 +3347,10 @@ TP_WAVELET_DEN12PLUS;1 2 High
 TP_WAVELET_DEN12LOW;1 2 Low
 TP_WAVELET_DEN5THR;Guided threshold
 //TP_WAVELET_DENH;Low levels (1234)- Finest details
-//TP_WAVELET_DENLH;Guided threshold by detail levels low
+//TP_WAVELET_DENLH;Guided threshold by detail levels 1-4
 //TP_WAVELET_DENL;High levels - Coarsest details
 TP_WAVELET_DENH;Threshold
-TP_WAVELET_DENLH;Guided threshold by detail levels low
+TP_WAVELET_DENLH;Guided threshold by detail levels 1-4
 TP_WAVELET_DENL;Correction structure
 TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
 TP_WAVELET_DENMIX_TOOLTIP;Balances the action of the guide taking into account the original image and the denoised image
@@ -3487,6 +3487,7 @@ TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold
 TP_WAVELET_THREND;Local contrast threshold  
 TP_WAVELET_THRDEN_TOOLTIP;Generates a stepped curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
+TP_WAVELET_THRDEN_TOOLTIP;Generates a stepped denoise curve based on local contrast.\nReduces noise in uniform areas and preserves image structure
 TP_WAVELET_THRESHOLD;Finer levels
 TP_WAVELET_THRESHOLD2;Coarser levels
 TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels from the chosen value to the selected number of ‘wavelet levels’ will be affected by the Shadow luminance range.

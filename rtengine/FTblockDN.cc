@@ -2201,7 +2201,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
     }
 
     if (edge == 2) {
-        maxlvl = 5;    //for locallab denoise
+        maxlvl = 7;    //for locallab denoise
     }
 
     int maxWL = 0, maxHL = 0;
@@ -2216,6 +2216,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
         }
 
     }
+
     bool memoryAllocationFailed = false;
 #ifdef _OPENMP
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
@@ -2558,7 +2559,7 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition& WaveletCoeffs_L,
     }
 
     if (edge == 2) {
-        maxlvl = 5;    //for locallab denoise
+        maxlvl = 7;    //for locallab denoise
     }
 
     int maxWL = 0, maxHL = 0;
@@ -2572,7 +2573,6 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition& WaveletCoeffs_L,
             maxHL = WaveletCoeffs_L.level_H(lvl);
         }
     }
-
     bool memoryAllocationFailed = false;
 #ifdef _OPENMP
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
