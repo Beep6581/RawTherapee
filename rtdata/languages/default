@@ -1297,6 +1297,7 @@ HISTORY_MSG_WAVEDGS;Edge stopping
 HISTORY_MSG_WAVGUIDH;Local contrast-Hue equalizer
 HISTORY_MSG_WAVHUE;Equalizer hue
 HISTORY_MSG_WAVLEVDEN;High level local contrast
+HISTORY_MSG_WAVLEVSIGM;Radius
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
 HISTORY_MSG_WAVMERGEC;Merge C
 HISTORY_MSG_WAVMERGEL;Merge L
@@ -3411,6 +3412,9 @@ TP_WAVELET_LEVDIR_INF;Finer detail levels, including selected level
 TP_WAVELET_LEVDIR_ONE;One level
 TP_WAVELET_LEVDIR_SUP;Coarser detail levels, excluding selected level
 TP_WAVELET_LEVELS;Wavelet levels
+TP_WAVELET_LEVELLOW;Radius 1-4
+TP_WAVELET_LEVELHIGH;Radius 5-6
+TP_WAVELET_LEVELSIGM;Radius
 TP_WAVELET_LEVELS_TOOLTIP;Choose the number of wavelet decomposition levels for the image.\nMore levels require more RAM and require a longer processing time.
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVLABEL;Preview maximum possible levels = %1

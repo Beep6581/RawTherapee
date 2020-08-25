@@ -597,6 +597,7 @@ void ParamsEdited::set(bool v)
     wavelet.level2noise = v;
     wavelet.level3noise = v;
     wavelet.leveldenoise = v;
+    wavelet.levelsigm = v;
     wavelet.ccwcurve = v;
     wavelet.blcurve = v;
     wavelet.opacityCurveSH   = v;
@@ -1761,6 +1762,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.level2noise = wavelet.level2noise && p.wavelet.level2noise == other.wavelet.level2noise;
         wavelet.level3noise = wavelet.level3noise && p.wavelet.level3noise == other.wavelet.level3noise;
         wavelet.leveldenoise = wavelet.leveldenoise && p.wavelet.leveldenoise == other.wavelet.leveldenoise;
+        wavelet.levelsigm = wavelet.levelsigm && p.wavelet.levelsigm == other.wavelet.levelsigm;
         wavelet.pastlev = wavelet.pastlev && p.wavelet.pastlev == other.wavelet.pastlev;
         wavelet.satlev = wavelet.satlev && p.wavelet.satlev == other.wavelet.satlev;
         wavelet.ccwcurve = wavelet.ccwcurve && p.wavelet.ccwcurve == other.wavelet.ccwcurve;
@@ -5754,6 +5756,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.leveldenoise) {
         toEdit.wavelet.leveldenoise = mods.wavelet.leveldenoise;
+    }
+
+    if (wavelet.levelsigm) {
+        toEdit.wavelet.levelsigm = mods.wavelet.levelsigm;
     }
 
     if (wavelet.pastlev) {

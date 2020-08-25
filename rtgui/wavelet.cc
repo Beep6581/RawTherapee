@@ -136,6 +136,7 @@ Wavelet::Wavelet() :
     level2noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTWO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     level3noise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVTHRE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
     leveldenoise(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVFOUR"), 0., 100., 0., M("TP_WAVELET_DEN5THR"), 1, 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false))),
+    levelsigm(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVELSIGM"), 0.05, 3., 1., M("TP_WAVELET_LEVELHIGH"), 1, 0.05, 3., 1., M("TP_WAVELET_LEVELLOW"), 1., nullptr, false))),
     sigm(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGM"), 0.05, 3.5, 0.01, 1.))),
     levden(Gtk::manage(new Adjuster(M("TP_WAVELET_LEVDEN"), 0., 100., 0.5, 0.))),
     thrden(Gtk::manage(new Adjuster(M("TP_WAVELET_DENLH"), 0., 100., 0.5, 0.))),
@@ -267,6 +268,8 @@ Wavelet::Wavelet() :
     EvWavguid = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVGUIDH");
     EvWavhue = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVHUE");
     EvWavthrden = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVTHRDEN");
+    EvWavlevelsigm = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVLEVELSIGM");
+
 
     labgrid = Gtk::manage(new LabGrid(EvWavLabGridValue, M("TP_WAVELET_LABGRID_VALUES")));
 
@@ -642,6 +645,8 @@ Wavelet::Wavelet() :
     level3noise->setUpdatePolicy(RTUP_DYNAMIC);
     leveldenoise->setAdjusterListener(this);
     leveldenoise->setUpdatePolicy(RTUP_DYNAMIC);
+    levelsigm->setAdjusterListener(this);
+    levelsigm->setUpdatePolicy(RTUP_DYNAMIC);
     ballum->setAdjusterListener(this);
     sigm->setAdjusterListener(this);
     levden->setAdjusterListener(this);
@@ -725,7 +730,7 @@ Wavelet::Wavelet() :
 
 
     
-    sigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
+    levelsigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
 //    levden->set_tooltip_text(M("TP_WAVELET_DENLEV_TOOLTIP"));
     thrden->set_tooltip_text(M("TP_WAVELET_THRDEN_TOOLTIP"));
 
@@ -742,7 +747,8 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*sliHBox);
     noiseBox->pack_start(*denHBox);
     noiseBox->pack_start(*mixHBox);
-    noiseBox->pack_start(*sigm);
+    noiseBox->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
+//    noiseBox->pack_start(*sigm);
     noiseBox->pack_start(*CurveEditorwavnoise);
 //    noiseBox->pack_start(*CurveEditorwavnoiseh);
     
@@ -1744,6 +1750,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     level2noise->setValue<double>(pp->wavelet.level2noise);
     level3noise->setValue<double>(pp->wavelet.level3noise);
     leveldenoise->setValue<double>(pp->wavelet.leveldenoise);
+    levelsigm->setValue<double>(pp->wavelet.levelsigm);
     strength->setValue(pp->wavelet.strength);
     balance->setValue(pp->wavelet.balance);
     iter->setValue(pp->wavelet.iter);
@@ -1963,6 +1970,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         level2noise->setEditedState(pedited->wavelet.level2noise ? Edited : UnEdited);
         level3noise->setEditedState(pedited->wavelet.level3noise ? Edited : UnEdited);
         leveldenoise->setEditedState(pedited->wavelet.leveldenoise ? Edited : UnEdited);
+        levelsigm->setEditedState(pedited->wavelet.levelsigm ? Edited : UnEdited);
 
         for (int i = 0; i < 9; i++) {
             correction[i]->setEditedState(pedited->wavelet.c[i] ? Edited : UnEdited);
@@ -2161,6 +2169,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.level2noise    = level2noise->getValue<double> ();
     pp->wavelet.level3noise    = level3noise->getValue<double> ();
     pp->wavelet.leveldenoise    = leveldenoise->getValue<double> ();
+    pp->wavelet.levelsigm    = levelsigm->getValue<double> ();
     pp->wavelet.ccwcurve       = ccshape->getCurve();
     pp->wavelet.blcurve       = blshape->getCurve();
     pp->wavelet.opacityCurveRG = opacityShapeRG->getCurve();
@@ -2308,6 +2317,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.level2noise     = level2noise->getEditedState();
         pedited->wavelet.level3noise     = level3noise->getEditedState();
         pedited->wavelet.leveldenoise     = leveldenoise->getEditedState();
+        pedited->wavelet.levelsigm     = levelsigm->getEditedState();
         pedited->wavelet.opacityCurveRG  = !opacityShapeRG->isUnChanged();
         pedited->wavelet.opacityCurveSH  = !opacityShapeSH->isUnChanged();
         pedited->wavelet.opacityCurveBY  = !opacityShapeBY->isUnChanged();
@@ -2634,6 +2644,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     level2noise->setDefault<double> (defParams->wavelet.level2noise);
     level3noise->setDefault<double> (defParams->wavelet.level3noise);
     leveldenoise->setDefault<double> (defParams->wavelet.leveldenoise);
+    levelsigm->setDefault<double> (defParams->wavelet.levelsigm);
     sigm->setDefault(defParams->wavelet.sigm);
     levden->setDefault(defParams->wavelet.levden);
     thrden->setDefault(defParams->wavelet.thrden);
@@ -2736,6 +2747,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         level2noise->setDefaultEditedState(pedited->wavelet.level2noise ? Edited : UnEdited);
         level3noise->setDefaultEditedState(pedited->wavelet.level3noise ? Edited : UnEdited);
         leveldenoise->setDefaultEditedState(pedited->wavelet.leveldenoise ? Edited : UnEdited);
+        levelsigm->setDefaultEditedState(pedited->wavelet.levelsigm ? Edited : UnEdited);
 
         for (int i = 0; i < 9; i++) {
             correction[i]->setDefaultEditedState(pedited->wavelet.c[i] ? Edited : UnEdited);
@@ -2790,6 +2802,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         level2noise->setDefaultEditedState(Irrelevant);
         level3noise->setDefaultEditedState(Irrelevant);
         leveldenoise->setDefaultEditedState(Irrelevant);
+        levelsigm->setDefaultEditedState(Irrelevant);
         pastlev->setDefaultEditedState(Irrelevant);
         satlev->setDefaultEditedState(Irrelevant);
         strength->setDefaultEditedState(Irrelevant);
@@ -2831,6 +2844,9 @@ void Wavelet::adjusterChanged(ThresholdAdjuster* a, double newBottom, double new
         } else if (a == leveldenoise) {
             listener->panelChanged(EvWavlevdenois,
                                    Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_NOIS") + ": %1" + "\n" + M("TP_WAVELET_DEN5THR") + ": %2"), int(newTop), int(newBottom)));
+        } else if (a == levelsigm) {
+            listener->panelChanged(EvWavlevelsigm,
+                                   Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_LEVELLOW") + ": %1" + "\n" + M("TP_WAVELET_LEVELHIGH") + ": %2"), (newTop), (newBottom)));
         }
 
     }
@@ -3551,6 +3567,7 @@ void Wavelet::setBatchMode(bool batchMode)
     level2noise->showEditedCB();
     level3noise->showEditedCB();
     leveldenoise->showEditedCB();
+    levelsigm->showEditedCB();
 
     ToolPanel::setBatchMode(batchMode);
 

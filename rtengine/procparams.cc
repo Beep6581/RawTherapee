@@ -2501,7 +2501,8 @@ WaveletParams::WaveletParams() :
     level1noise(0, 0, false),
     level2noise(0, 0, false),
     level3noise(0, 0, false),
-    leveldenoise(0, 0, false)
+    leveldenoise(0, 0, false),
+    levelsigm(1, 1, false)
 {
 }
 
@@ -2649,7 +2650,8 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && level1noise == other.level1noise
         && level2noise == other.level2noise
         && level3noise == other.level3noise
-        && leveldenoise == other.leveldenoise;
+        && leveldenoise == other.leveldenoise
+        && levelsigm == other.levelsigm;
 }
 
 bool WaveletParams::operator !=(const WaveletParams& other) const
@@ -6126,7 +6128,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.level1noise, "Wavelet", "Level1noise", wavelet.level1noise.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.level2noise, "Wavelet", "Level2noise", wavelet.level2noise.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.level3noise, "Wavelet", "Level3noise", wavelet.level3noise.toVector(), keyFile);
-        saveToKeyfile(!pedited || pedited->wavelet.level3noise, "Wavelet", "Leveldenoise", wavelet.leveldenoise.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.leveldenoise, "Wavelet", "Leveldenoise", wavelet.leveldenoise.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.levelsigm, "Wavelet", "Levelsigm", wavelet.levelsigm.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.threshold, "Wavelet", "ThresholdHighlight", wavelet.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.threshold2, "Wavelet", "ThresholdShadow", wavelet.threshold2, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgedetect, "Wavelet", "Edgedetect", wavelet.edgedetect, keyFile);
@@ -8132,6 +8135,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->wavelet.leveldenoise = true;
+                }
+            }
+
+            if (keyFile.has_key("Wavelet", "Levelsigm")) {
+                const std::vector<double> thresh = keyFile.get_double_list("Wavelet", "Levelsigm");
+
+                if (thresh.size() >= 2) {
+                    wavelet.levelsigm.setValues(thresh[0], thresh[1]);
+                }
+
+                if (pedited) {
+                    pedited->wavelet.levelsigm = true;
                 }
             }
 

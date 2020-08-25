@@ -117,6 +117,7 @@ private:
     rtengine::ProcEvent EvWavguid;
     rtengine::ProcEvent EvWavhue;
     rtengine::ProcEvent EvWavthrden;
+    rtengine::ProcEvent EvWavlevelsigm;
 
     LabGrid *labgrid;
 
@@ -289,6 +290,7 @@ private:
     ThresholdAdjuster* const level2noise;
     ThresholdAdjuster* const level3noise;
     ThresholdAdjuster* const leveldenoise;
+    ThresholdAdjuster* const levelsigm;
 
     Adjuster* const sigm;
     Adjuster* const levden;

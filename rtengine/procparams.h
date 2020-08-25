@@ -1864,6 +1864,7 @@ struct WaveletParams {
     Threshold<double> level2noise;
     Threshold<double> level3noise;
     Threshold<double> leveldenoise;
+    Threshold<double> levelsigm;
 
     WaveletParams();
 

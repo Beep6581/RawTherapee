@@ -167,6 +167,8 @@ struct cont_params {
     float rangeab;
     float protab;
     float sigmm;
+    float sigmm14;
+    float sigmm56;
     float levden;
     float thrden;
     int complex;
@@ -637,6 +639,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.lev3n = static_cast<float>(params->wavelet.level3noise.getTop());
     cp.lev4n = static_cast<float>(params->wavelet.leveldenoise.getTop());
     cp.lev4t = 0.01f * static_cast<float>(params->wavelet.leveldenoise.getBottom());
+    cp.sigmm14 = static_cast<float>(params->wavelet.levelsigm.getTop());
+    cp.sigmm56 = static_cast<float>(params->wavelet.levelsigm.getBottom());
+
     cp.detectedge = params->wavelet.medianlev;
     int minwin = rtengine::min(imwidth, imheight);
     int maxlevelcrop = 9;
@@ -1106,11 +1111,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         float kr3 = 1.f;
 
                         if (cp.lev3n < 10.f) {
-                            kr3 = 0.2f;
+                            kr3 = 0.3f;
                         } else if (cp.lev3n < 30.f) {
-                            kr3 = 0.5f;
+                            kr3 = 0.6f;
                         } else if (cp.lev3n < 70.f) {
-                            kr3 = 0.7f;
+                            kr3 = 0.8f;
                         } else {
                             kr3 = 1.f;
                         }
@@ -1118,9 +1123,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         float kr4 = 1.f;
 
                         if (cp.lev4n < 10.f) {
-                            kr4 = 0.5f;
+                            kr4 = 0.6f;
                         } else if (cp.lev4n < 30.f) {
-                            kr4 = 0.7f;
+                            kr4 = 0.8f;
                         } else if (cp.lev4n < 70.f) {
                             kr4 = 0.9f;
                         } else {
@@ -1235,14 +1240,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 float siglh[10];
                                 float levref = 6;
                                 //levref = levwavL-1;
-                                
                                 for (int level = 0; level < levref; level++) {
                                     if(level > 3) {
-                                        siglh[level] = cp.sigmm;// * (1.f + 2.f * cp.levdenhigh);
+                                        siglh[level] = cp.sigmm56;
                                     } else {
-                                        siglh[level] = cp.sigmm;
+                                        siglh[level] = cp.sigmm14;
                                     }
                                 }
+//                                    printf("sig0=%f sig1=%f sig2=%f sig3=%f sig4=%f sig5=%f\n", siglh[0], siglh[1],siglh[2],siglh[3],siglh[4],siglh[5]);
                                 
                                 
                                 bool execut = false;
@@ -1389,11 +1394,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     
                                                     float kintermhigh = 1.f + reduceeffect * kchigh;
                                                     kintermhigh = kintermhigh <= 0.f ? 0.01f : kintermhigh;
+                                                    float kintermlow = kinterm;
                                                     if(cp.lev4t > 0.1f) {
                                                         kinterm *= kintermhigh;//take into account level 4 and 5 to act on level 0123
                                                     }
-                                                    WavL0[i] = WavL02[i] + (WavL0[i] - WavL02[i]) * kinterm;
-                                                    WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kinterm;
+                                                    WavL0[i] = WavL02[i] + (WavL0[i] - WavL02[i]) * kintermlow;
+                                                    WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kintermlow;
                                                     WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kinterm;
                                                     WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kinterm;
                                                     WavL4[i] = WavL42[i] + (WavL4[i] - WavL42[i]) * kintermhigh;
@@ -1799,6 +1805,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (usechrom) {
                             Ldecomp->reconstruct(labco->data, cp.strength);
                         }
+                        if (settings->verbose) {
+                            printf("OK END\n");
+                        }
+ 
                     }
                 }
 
