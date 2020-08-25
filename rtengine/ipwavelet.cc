@@ -1348,7 +1348,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     } else {
                                                         absciss = amean * std::fabs(tempwav);
                                                         float k = siglh[level];
-                                                        if(cp.sigmm > 1.f) {
+                                                        if(siglh[level] > 1.f) {
                                                             k = SQR(siglh[level]);
                                                         }
                                                         float abs = pow(2.f * absciss, (1.f / k));
@@ -2150,8 +2150,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             } else {
                                 absciss = amean * std::fabs(tempwav);
                                 float k = sig;
-                                if(cp.sigmm > 1.f) {
-                                k = SQR(sig);
+                                if(sig > 1.f) {
+                                    k = SQR(sig);
                                 }
                                 float abs = pow(2.f * absciss, (1.f / k));
                                 absciss = 0.5f * abs;
