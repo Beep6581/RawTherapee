@@ -103,7 +103,7 @@ Wavelet::Wavelet() :
     gamma(Gtk::manage(new Adjuster(M("TP_WAVELET_COMPGAMMA"), 0.4, 2.0, 0.01, 1.0))),
     sup(Gtk::manage(new Adjuster(M("TP_WAVELET_SUPE"), -100, 350, 1, 0))),
     sky(Gtk::manage(new Adjuster(M("TP_WAVELET_SKY"), -100., 100.0, 1., 0.))),
-    thres(Gtk::manage(new Adjuster(M("TP_WAVELET_LEVELS"), 4, 9, 1, 7))),//3
+    thres(Gtk::manage(new Adjuster(M("TP_WAVELET_LEVELS"), 5, 9, 1, 7))),//3
     chroma(Gtk::manage(new Adjuster(M("TP_WAVELET_CHRO"), 1, 9, 1, 5))),
     chro(Gtk::manage(new Adjuster(M("TP_WAVELET_CHR"), 0., 100., 1., 0.))),
     contrast(Gtk::manage(new Adjuster(M("TP_WAVELET_CONTRA"), -100, 100, 1, 0))),
