@@ -2197,7 +2197,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
     }
 
     if (edge == 6) {
-        maxlvl = 5;    //for wavelet denoise
+        maxlvl = 6;    //for wavelet denoise
     }
 
     if (edge == 2) {
@@ -2555,7 +2555,7 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition& WaveletCoeffs_L,
     }
 
     if (edge == 6) {
-        maxlvl = 5;    //for wavelet denoise
+        maxlvl = 6;    //for wavelet denoise
     }
 
     if (edge == 2) {

@@ -666,8 +666,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         maxlevelcrop = 5;
     }
 
-
+    
     int levwav = params->wavelet.thres;
+    if(params->wavelet.expnoise) {
+        levwav = 6;
+    }
 
     if (levwav == 9 && cp.mul[9] != 0) {
         levwav = 10;
@@ -1025,8 +1028,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     }
                 }
 
-                if (levwavL < 5) {
-                    levwavL = 5;    //to allow edge  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
+                if (levwavL < 5 && cp.noiseena) {
+                    levwavL = 6;    //to allow edge and denoise  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
 /*
                 if(cp.denoicurvh  || cp.levdenhigh > 0.01f) {
@@ -1092,14 +1095,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         }
 
                         //init for edge and denoise
-                        float vari[5];
+                        float vari[6];
 
                         vari[0] = 0.8f * SQR((cp.lev0n / 125.f) * (1.f + cp.lev0n / 25.f));
                         vari[1] = 0.8f * SQR((cp.lev1n / 125.f) * (1.f + cp.lev1n / 25.f));
                         vari[2] = 0.8f * SQR((cp.lev2n / 125.f) * (1.f + cp.lev2n / 25.f));
                         vari[3] = 0.8f * SQR((cp.lev3n / 125.f) * (1.f + cp.lev3n / 25.f));
                         vari[4] = 0.8f * SQR((cp.lev4n / 125.f) * (1.f + cp.lev4n / 25.f));
-                    //    vari[5] = 0.8f * SQR((cp.lev4n / 125.f) * (1.f + cp.lev4n / 25.f));
+                        vari[5] = 0.8f * SQR((cp.lev4n / 125.f) * (1.f + cp.lev4n / 25.f));
                         float kr3 = 1.f;
 
                         if (cp.lev3n < 10.f) {
@@ -1131,7 +1134,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             vari[2] = rtengine::max(0.000001f, vari[2]);
                             vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
                             vari[4] = rtengine::max(0.000001f, kr4 * vari[4]);
-                        //    vari[5] = rtengine::max(0.000001f, kr4 * vari[5]);
+                            vari[5] = rtengine::max(0.000001f, kr4 * vari[5]);
                             
                             const std::unique_ptr<wavelet_decomposition> Ldecomp2(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
                             if(!Ldecomp2->memory_allocation_failed()){
@@ -1230,7 +1233,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 
                                 
                                 float siglh[10];
-                                float levref = 5;
+                                float levref = 6;
                                 //levref = levwavL-1;
                                 
                                 for (int level = 0; level < levref; level++) {
@@ -1267,14 +1270,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             auto WavL2 = Ldecomp->level_coeffs(2)[dir];
                                             auto WavL3 = Ldecomp->level_coeffs(3)[dir];
                                             auto WavL4 = Ldecomp->level_coeffs(4)[dir];
-                                         //   auto WavL5 = Ldecomp->level_coeffs(5)[dir];
+                                            auto WavL5 = Ldecomp->level_coeffs(5)[dir];
                                                //not denoise
                                             const auto WavL02 = Ldecomp2->level_coeffs(0)[dir];
                                             const auto WavL12 = Ldecomp2->level_coeffs(1)[dir];
                                             const auto WavL22 = Ldecomp2->level_coeffs(2)[dir];
                                             const auto WavL32 = Ldecomp2->level_coeffs(3)[dir];
                                             const auto WavL42 = Ldecomp2->level_coeffs(4)[dir];
-                                         //   const auto WavL52 = Ldecomp2->level_coeffs(5)[dir];
+                                            const auto WavL52 = Ldecomp2->level_coeffs(5)[dir];
                                             if (settings->verbose) {
                                                 printf("level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meand[level], sigma[level], sigmad[level],MaxP[level], MaxPd[level]);
                                             }
@@ -1394,7 +1397,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kinterm;
                                                     WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kinterm;
                                                     WavL4[i] = WavL42[i] + (WavL4[i] - WavL42[i]) * kintermhigh;
-                                             //       WavL5[i] = WavL52[i] + (WavL5[i] - WavL52[i]) * kintermhigh;
+                                                    WavL5[i] = WavL52[i] + (WavL5[i] - WavL52[i]) * kintermhigh;
                                                 }
                                             }
                                         }
