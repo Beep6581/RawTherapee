@@ -1411,13 +1411,17 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     float kintermhigh = 1.f + reduceeffect * kchigh;
                                                     kintermhigh = kintermhigh <= 0.f ? 0.01f : kintermhigh;
                                                     float kintermlow = kinterm;
+                                                    /*
                                                     if(cp.lev4t > 0.1f) {
                                                         kinterm *= kintermhigh;//take into account level 4 and 5 to act on level 0123
                                                     }
-                                                    WavL0[i] = WavL02[i] + (WavL0[i] - WavL02[i]) * kintermlow;
-                                                    WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kintermlow;
-                                                    WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kinterm;
-                                                    WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kinterm;
+                                                    */
+                                                    if(level < 4) {
+                                                        WavL0[i] = WavL02[i] + (WavL0[i] - WavL02[i]) * kintermlow;
+                                                        WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kintermlow;
+                                                        WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kintermlow;
+                                                        WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kintermlow;
+                                                    }
                                                     if(cp.complex == 1){
                                                         WavL4[i] = WavL42[i] + (WavL4[i] - WavL42[i]) * kintermhigh;
                                                         WavL5[i] = WavL52[i] + (WavL5[i] - WavL52[i]) * kintermhigh;
