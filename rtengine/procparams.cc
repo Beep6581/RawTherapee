@@ -2396,6 +2396,7 @@ WaveletParams::WaveletParams() :
     sigm(1.0),
     levden(0.),
     thrden(0.),
+    limden(1.),
     balchrom(0.),
     chromfi(0.),
     chromco(0.),
@@ -2538,6 +2539,7 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && sigm == other.sigm
         && levden == other.levden
         && thrden == other.thrden
+        && limden == other.limden
         && balchrom == other.balchrom
         && chromfi == other.chromfi
         && chromco == other.chromco
@@ -6081,6 +6083,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.sigm, "Wavelet", "Sigm", wavelet.sigm, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.levden, "Wavelet", "Levden", wavelet.levden, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.thrden, "Wavelet", "Thrden", wavelet.thrden, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.limden, "Wavelet", "Limden", wavelet.limden, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.balchrom, "Wavelet", "Balchrom", wavelet.balchrom, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.chromfi, "Wavelet", "Chromfine", wavelet.chromfi, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.chromco, "Wavelet", "Chromcoarse", wavelet.chromco, keyFile);
@@ -7920,6 +7923,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "Sigm", pedited, wavelet.sigm, pedited->wavelet.sigm);
             assignFromKeyfile(keyFile, "Wavelet", "Levden", pedited, wavelet.levden, pedited->wavelet.levden);
             assignFromKeyfile(keyFile, "Wavelet", "Thrden", pedited, wavelet.thrden, pedited->wavelet.thrden);
+            assignFromKeyfile(keyFile, "Wavelet", "Limden", pedited, wavelet.limden, pedited->wavelet.limden);
             assignFromKeyfile(keyFile, "Wavelet", "Balchrom", pedited, wavelet.balchrom, pedited->wavelet.balchrom);
             assignFromKeyfile(keyFile, "Wavelet", "Chromfine", pedited, wavelet.chromfi, pedited->wavelet.chromfi);
             assignFromKeyfile(keyFile, "Wavelet", "Chromcoarse", pedited, wavelet.chromco, pedited->wavelet.chromco);

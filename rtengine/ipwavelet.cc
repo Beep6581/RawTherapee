@@ -171,6 +171,7 @@ struct cont_params {
     float sigmm56;
     float levden;
     float thrden;
+    float limden;
     int complex;
 };
 
@@ -291,6 +292,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.sigmm = params->wavelet.sigm;
     cp.levden = params->wavelet.levden;
     cp.thrden = 0.01f * params->wavelet.thrden;
+    cp.limden = params->wavelet.limden;
 
     if (params->wavelet.TMmethod == "cont") {
         cp.contmet = 1;
@@ -1249,6 +1251,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         }
                                     }
                                 } else {
+                                    levref = 4;
                                     for (int level = 0; level < levref; level++) {
                                             siglh[level] = cp.sigmm;
                                     }
@@ -1277,19 +1280,25 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             int Hlvl_L = Ldecomp->level_H(level);
                                             float* const* WavCoeffs_L = Ldecomp->level_coeffs(level);//first decomp denoised
                                             float* const* WavCoeffs_L2 = Ldecomp2->level_coeffs(level);//second decomp before denoise
+                                            int k4 = 3;
+                                            int k5 = 3;
+                                            if(cp.complex == 1){
+                                                k4= 4;
+                                                k5= 5;
+                                            }
                                             auto WavL0 = Ldecomp->level_coeffs(0)[dir];
                                             auto WavL1 = Ldecomp->level_coeffs(1)[dir];
                                             auto WavL2 = Ldecomp->level_coeffs(2)[dir];
                                             auto WavL3 = Ldecomp->level_coeffs(3)[dir];
-                                            auto WavL4 = Ldecomp->level_coeffs(4)[dir];
-                                            auto WavL5 = Ldecomp->level_coeffs(5)[dir];
+                                            auto WavL4 = Ldecomp->level_coeffs(k4)[dir];
+                                            auto WavL5 = Ldecomp->level_coeffs(k5)[dir];
                                                //not denoise
                                             const auto WavL02 = Ldecomp2->level_coeffs(0)[dir];
                                             const auto WavL12 = Ldecomp2->level_coeffs(1)[dir];
                                             const auto WavL22 = Ldecomp2->level_coeffs(2)[dir];
                                             const auto WavL32 = Ldecomp2->level_coeffs(3)[dir];
-                                            const auto WavL42 = Ldecomp2->level_coeffs(4)[dir];
-                                            const auto WavL52 = Ldecomp2->level_coeffs(5)[dir];
+                                            const auto WavL42 = Ldecomp2->level_coeffs(k4)[dir];
+                                            const auto WavL52 = Ldecomp2->level_coeffs(k5)[dir];
                                             if (settings->verbose) {
                                                 printf("level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meand[level], sigma[level], sigmad[level],MaxP[level], MaxPd[level]);
                                             }
@@ -1409,8 +1418,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kintermlow;
                                                     WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kinterm;
                                                     WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kinterm;
-                                                    WavL4[i] = WavL42[i] + (WavL4[i] - WavL42[i]) * kintermhigh;
-                                                    WavL5[i] = WavL52[i] + (WavL5[i] - WavL52[i]) * kintermhigh;
+                                                    if(cp.complex == 1){
+                                                        WavL4[i] = WavL42[i] + (WavL4[i] - WavL42[i]) * kintermhigh;
+                                                        WavL5[i] = WavL52[i] + (WavL5[i] - WavL52[i]) * kintermhigh;
+                                                    }
                                                 }
                                             }
                                         }
