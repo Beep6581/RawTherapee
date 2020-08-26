@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
- *  2014 - 2019Jacques Desmis <jdesmis@gmail.com>
+ *  2014 - 2020 Jacques Desmis <jdesmis@gmail.com>
  */
 
 #include "wavelet.h"
@@ -752,7 +752,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*denHBox);
     noiseBox->pack_start(*mixHBox);
     noiseBox->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
-//    noiseBox->pack_start(*sigm);
+    noiseBox->pack_start(*sigm);
     noiseBox->pack_start(*CurveEditorwavnoise);
 //    noiseBox->pack_start(*CurveEditorwavnoiseh);
     
@@ -3240,6 +3240,9 @@ void Wavelet::convertParamToNormal()
     denmethod->set_active(0);
     mixmethod->set_active(2);
     slimethod->set_active(0);
+    levelsigm->setValue<double>(def_params.levelsigm);
+    leveldenoise->setValue<double>(def_params.leveldenoise);
+
 //    quamethod->set_active(0);
 //    sigm->setValue(def_params.sigm);
     //toning
@@ -3295,11 +3298,12 @@ void Wavelet::updateGUIToMode(int mode)
         mixHBox->hide();
         sliHBox->hide();
         sigm->show();
+        levelsigm->hide();
         CurveEditorwavnoiseh->hide();
         CurveEditorwavnoise->hide();
        // levden->hide();
         thrden->show();
-        leveldenoise->show();
+        leveldenoise->hide();
     } else {
         offset->show();
         sigma->show();
@@ -3319,7 +3323,8 @@ void Wavelet::updateGUIToMode(int mode)
         sigmafin->show();
         denHBox->hide();
         mixHBox->show();
-        sigm->show();
+        sigm->hide();
+        levelsigm->show();
        // levden->show();
         sliHBox->show();
         if (slimethod->get_active_row_number() == 0){

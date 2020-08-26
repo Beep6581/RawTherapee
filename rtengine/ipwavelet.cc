@@ -1240,13 +1240,20 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 float siglh[10];
                                 float levref = 6;
                                 //levref = levwavL-1;
-                                for (int level = 0; level < levref; level++) {
-                                    if(level > 3) {
-                                        siglh[level] = cp.sigmm56;
-                                    } else {
-                                        siglh[level] = cp.sigmm14;
+                                if(cp.complex == 1){
+                                    for (int level = 0; level < levref; level++) {
+                                        if(level > 3) {
+                                            siglh[level] = cp.sigmm56;
+                                        } else {
+                                            siglh[level] = cp.sigmm14;
+                                        }
+                                    }
+                                } else {
+                                    for (int level = 0; level < levref; level++) {
+                                            siglh[level] = cp.sigmm;
                                     }
                                 }
+                                
 //                                    printf("sig0=%f sig1=%f sig2=%f sig3=%f sig4=%f sig5=%f\n", siglh[0], siglh[1],siglh[2],siglh[3],siglh[4],siglh[5]);
                                 
                                 
