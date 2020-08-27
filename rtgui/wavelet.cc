@@ -141,7 +141,7 @@ Wavelet::Wavelet() :
     sigm(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGM"), 0.05, 3.5, 0.01, 1.))),
     levden(Gtk::manage(new Adjuster(M("TP_WAVELET_LEVDEN"), 0., 100., 0.5, 0.))),
     thrden(Gtk::manage(new Adjuster(M("TP_WAVELET_DENLH"), 0., 100., 0.5, 0.))),
-    limden(Gtk::manage(new Adjuster(M("TP_WAVELET_LIMDEN"), 0., 1., 0.05, 1.))),
+    limden(Gtk::manage(new Adjuster(M("TP_WAVELET_LIMDEN"), 0., 1., 0.01, 0.))),
     threshold(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD"), 1, 9, 1, 4))),
  //   threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 1, 9, 1, 4))),
     threshold2(Gtk::manage(new Adjuster(M("TP_WAVELET_THRESHOLD2"), 3, 9, 1, 5))),
@@ -740,7 +740,7 @@ Wavelet::Wavelet() :
     levelsigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
 //    levden->set_tooltip_text(M("TP_WAVELET_DENLEV_TOOLTIP"));
     thrden->set_tooltip_text(M("TP_WAVELET_THRDEN_TOOLTIP"));
-    limden->set_tooltip_text(M("TP_WAVELET_LIMDEN_TOOLTIP"));
+//    limden->set_tooltip_text(M("TP_WAVELET_LIMDEN_TOOLTIP"));
 
     noiseBox->pack_start(*ballum);
     noiseBox->pack_start(*CurveEditorwavhue);
@@ -756,7 +756,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*denHBox);
     noiseBox->pack_start(*mixHBox);
     noiseBox->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
-//    noiseBox->pack_start(*limden);
+    noiseBox->pack_start(*limden);
     noiseBox->pack_start(*sigm);
     noiseBox->pack_start(*CurveEditorwavnoise);
 //    noiseBox->pack_start(*CurveEditorwavnoiseh);
@@ -3338,7 +3338,7 @@ void Wavelet::updateGUIToMode(int mode)
         mixHBox->show();
         sigm->hide();
         levelsigm->show();
-        limden->hide();
+        limden->show();
        // levden->show();
         sliHBox->show();
         if (slimethod->get_active_row_number() == 0){

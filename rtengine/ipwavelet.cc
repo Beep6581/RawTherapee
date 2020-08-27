@@ -1238,6 +1238,16 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     0, 1, 0.35, 0.35,threndhigh, 1.0, 0.35, 0.35, threndhigh + 0.01f, thrhigh, 0.35, 0.35, 1, thrhigh, 0.35, 0.35
                                 });
                                 
+                                float thrmed = 0.f;
+                                float threndmed = 1.f - cp.limden;
+                                if(threndmed < 0.02f) thrmed = 0.5f;
+                                else if(threndmed < 0.05f) thrmed = 0.2f;
+                                else thrmed = 0.f;
+
+                                FlatCurve wavmed({
+                                    FCT_MinMaxCPoints,
+                                    0, 1, 0.35, 0.35,threndmed, 1.0, 0.35, 0.35, threndmed + 0.01f, thrmed, 0.35, 0.35, 1, thrmed, 0.35, 0.35
+                                });
                                 
                                 float siglh[10];
                                 float levref = 6;
@@ -1380,6 +1390,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     float kchigh = 0.f;
                                                     kchigh = wavhigh.getVal(absciss) -1.f;
                                                     kchigh = -SQR(kchigh);
+
+                                                    float kcmed = 0.f;
+                                                    kcmed = wavmed.getVal(absciss) -1.f;
+                                                    kcmed = -SQR(kcmed);
                                                     
                                                     if(kc < 0) {
                                                         kc = -SQR(kc);//approximation to simulate sliders denoise
@@ -1410,19 +1424,24 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                     
                                                     float kintermhigh = 1.f + reduceeffect * kchigh;
                                                     kintermhigh = kintermhigh <= 0.f ? 0.01f : kintermhigh;
+
+                                                    float kintermed = 1.f + reduceeffect * kcmed;
+                                                    kintermed = kintermed <= 0.f ? 0.01f : kintermed;
+
                                                     float kintermlow = kinterm;
-                                                    /*
-                                                    if(cp.lev4t > 0.1f) {
-                                                        kinterm *= kintermhigh;//take into account level 4 and 5 to act on level 0123
-                                                    }
-                                                    */
                                                     if(level < 4) {
                                                         WavL0[i] = WavL02[i] + (WavL0[i] - WavL02[i]) * kintermlow;
                                                         WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kintermlow;
                                                         WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kintermlow;
                                                         WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kintermlow;
-                                                    }
+                                                    } 
                                                     if(cp.complex == 1){
+                                                        if(cp.limden > 0.f) {
+                                                            WavL0[i] = WavL02[i] + (WavL0[i] - WavL02[i]) * kintermed;
+                                                            WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kintermed;
+                                                            WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kintermed;
+                                                            WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kintermed;
+                                                        }
                                                         WavL4[i] = WavL42[i] + (WavL4[i] - WavL42[i]) * kintermhigh;
                                                         WavL5[i] = WavL52[i] + (WavL5[i] - WavL52[i]) * kintermhigh;
                                                     }

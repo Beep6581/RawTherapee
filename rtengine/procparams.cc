@@ -2396,7 +2396,7 @@ WaveletParams::WaveletParams() :
     sigm(1.0),
     levden(0.),
     thrden(0.),
-    limden(1.),
+    limden(0.),
     balchrom(0.),
     chromfi(0.),
     chromco(0.),
