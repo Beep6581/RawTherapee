@@ -4633,10 +4633,13 @@ const std::vector<const char*>& RAWParams::BayerSensor::getMethodStrings()
 {
     static const std::vector<const char*> method_strings {
         "amaze",
+        "amazebilinear",
         "amazevng4",
         "rcd",
+        "rcdbilinear",
         "rcdvng4",
         "dcb",
+        "dcbbilinear",
         "dcbvng4",
         "lmmse",
         "igv",
