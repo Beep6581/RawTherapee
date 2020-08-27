@@ -1378,19 +1378,34 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
     std::valarray<double> ch_ds(1);
 
     cr->translate(w / 2.0, h / 2.0);
-    cr->set_source_rgba (1., 1., 1., 0.25);
     cr->set_line_width (1.0 * s);
     cr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
     ch_ds[0] = 4;
 
     if (scopeType == 2) { // Hue-Saturation.
         // RYGCBM lines.
+        cr->set_line_width (2.0 * s);
+        constexpr double color_labels[6][3] = {
+            {1, 0, 0}, // R
+            {1, 1, 0}, // Y
+            {0, 1, 0}, // G
+            {0, 1, 1}, // C
+            {0, 0, 1}, // B
+            {1, 0, 1}, // M
+        };
         for (int i = 0; i < 6; i++) {
+            auto gradient = Cairo::LinearGradient::create(0, 0, scope_size / 2.0, 0);
+            const double (&color)[3] = color_labels[i];
+            cr->set_source(gradient);
+            gradient->add_color_stop_rgba(0, 1, 1, 1, 0.25);
+            gradient->add_color_stop_rgba(1, color[0], color[1], color[2], 0.5);
             cr->move_to(line_spacing, 0);
             cr->line_to(line_spacing + line_length, 0);
-            cr->rotate_degrees(60);
+            cr->rotate_degrees(-60);
+            cr->stroke();
         }
-        cr->stroke();
+        cr->set_line_width (1.0 * s);
+        cr->set_source_rgba (1, 1, 1, 0.25);
         // 100% saturation circle.
         cr->arc(0, 0, scope_size / 2.0, 0, 2 * RT_PI);
         cr->stroke();
@@ -1408,15 +1423,30 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         cr->unset_dash();
     } else if (scopeType == 3) { // Hue-Chroma.
         // a and b axes.
+        Cairo::RefPtr<Cairo::LinearGradient> gradient;
+        cr->set_line_width (2.0 * s);
+        gradient = Cairo::LinearGradient::create(0, -scope_size / 2.0, 0, scope_size / 2.0);
+        cr->set_source(gradient);
+        gradient->add_color_stop_rgba(0, 1, 1, 0, 0.5); // "yellow"
+        gradient->add_color_stop_rgba(0.5, 1, 1, 1, 0.25); // neutral
+        gradient->add_color_stop_rgba(1, 0, 0, 1, 0.5); // "blue"
         cr->move_to(0, line_spacing);
         cr->line_to(0, line_spacing + line_length);
         cr->move_to(0, -line_spacing);
         cr->line_to(0, -line_spacing - line_length);
+        cr->stroke();
+        gradient = Cairo::LinearGradient::create(-scope_size / 2.0, 0, scope_size / 2.0, 0);
+        cr->set_source(gradient);
+        gradient->add_color_stop_rgba(0, 0, 1, 0, 0.5); // "green"
+        gradient->add_color_stop_rgba(0.5, 1, 1, 1, 0.25); // neutral
+        gradient->add_color_stop_rgba(1, 1, 0, 1, 0.5); // "magenta"
         cr->move_to(line_spacing, 0);
         cr->line_to(line_spacing + line_length, 0);
         cr->move_to(-line_spacing, 0);
         cr->line_to(-line_spacing - line_length, 0);
         cr->stroke();
+        cr->set_source_rgba (1, 1, 1, 0.25);
+        cr->set_line_width (1.0 * s);
         // 25%, 50%, 75%, and 100% of standard chroma range.
         cr->set_dash(ch_ds, 0);
         for (int i = 1; i <= 4; i++) {
