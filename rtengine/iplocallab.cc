@@ -9684,10 +9684,10 @@ void ImProcFunctions::Lab_Local(
 
     const int GW = transformed->W;
     const int GH = transformed->H;
-            const std::unique_ptr<LabImage> bufblorig(new LabImage(GW, GH));
-            const std::unique_ptr<LabImage> bufblfin(new LabImage(GW, GH));
+    const std::unique_ptr<LabImage> bufblorig(new LabImage(GW, GH));
 
-    LabImage * originalmaskbl = nullptr;
+ //   LabImage * originalmaskbl = nullptr;
+    std::unique_ptr<LabImage> originalmaskbl;
     std::unique_ptr<LabImage> bufmaskorigbl;
     std::unique_ptr<LabImage> bufmaskblurbl;
     std::unique_ptr<LabImage> bufgb;
@@ -9699,7 +9699,7 @@ void ImProcFunctions::Lab_Local(
             if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
                 bufmaskorigbl.reset(new LabImage(GW, GH));
                 bufmaskblurbl.reset(new LabImage(GW, GH));
-                originalmaskbl = new LabImage(GW, GH);
+                originalmaskbl.reset (new LabImage(GW, GH));
             }
 
 #ifdef _OPENMP
@@ -9768,7 +9768,7 @@ void ImProcFunctions::Lab_Local(
             const float strumask = 0.02f * params->locallab.spots.at(sp).strumaskbl;
             bool astool = params->locallab.spots.at(sp).toolbl;
 
-            maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufblorig.get(), bufmaskblurbl.get(), originalmaskbl, original, reserved, inv, lp,
+            maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufblorig.get(), bufmaskblurbl.get(), originalmaskbl.get(), original, reserved, inv, lp,
                     strumask, astool,
                     locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili, lochhhmasCurve, lhhmasutili,  multiThread,
                     enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, amountcd, anchorcd, lmaskbllocalcurve, localmaskblutili, loclmasCurveblwav, lmasutiliblwav, 1, 1, 5, 5,
@@ -9780,8 +9780,6 @@ void ImProcFunctions::Lab_Local(
                 showmask(lumask, lp, 0, 0, cx, cy, GW, GH, bufblorig.get(), transformed, bufmaskblurbl.get(), inv);
                 return;
             }
-
-
 
     }
 
@@ -10255,7 +10253,7 @@ void ImProcFunctions::Lab_Local(
 //                        BlurNoise_Local(tmp1.get(), originalmaskbl, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                         
                         if(lp.smasktyp != 1) {
-                            BlurNoise_Local(tmp1.get(), originalmaskbl, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                            BlurNoise_Local(tmp1.get(), originalmaskbl.get(), bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                         } else {
                             BlurNoise_Local(tmp1.get(), original, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                         }
@@ -10268,7 +10266,7 @@ void ImProcFunctions::Lab_Local(
                     } else if (lp.blurmet == 1) {
  //                       InverseBlurNoise_Local(originalmaskbl, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         if(lp.smasktyp != 1) {
-                            InverseBlurNoise_Local(originalmaskbl, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+                            InverseBlurNoise_Local(originalmaskbl.get(), bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         } else {
                             InverseBlurNoise_Local(original, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         }
@@ -10323,7 +10321,7 @@ void ImProcFunctions::Lab_Local(
             ImProcFunctions::impulse_nr(bufwv.get(), threshold);
         }
 
-        DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, *(bufwv.get()), cx, cy, sk);
+        DeNoise_Local(call, lp,  originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, *(bufwv.get()), cx, cy, sk);
 
         if (params->locallab.spots.at(sp).recurs) {
             original->CopyFrom(transformed, multiThread);
@@ -10339,7 +10337,7 @@ void ImProcFunctions::Lab_Local(
         float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         constexpr int aut = 0;
-        DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk);
+        DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk);
 
         if (params->locallab.spots.at(sp).recurs) {
             original->CopyFrom(transformed, multiThread);
@@ -10347,11 +10345,11 @@ void ImProcFunctions::Lab_Local(
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
         }
     }
-
+/*
     if (denoiz || blurz || lp.denoiena || lp.blurena) {
-        delete originalmaskbl;
+       // delete originalmaskbl;
     }
-
+*/
 //begin cbdl
     if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f || lp.mulloc[5] != 1.f || lp.clarityml != 0.f || lp.contresid != 0.f  || lp.enacbMask || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4 || lp.prevdE) && lp.cbdlena) {
         if (call <= 3) { //call from simpleprocess dcrop improcc
