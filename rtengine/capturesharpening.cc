@@ -1116,23 +1116,23 @@ BENCHFUN
         return;
     }
 
-    array2D<float>* Lbuffer = nullptr;
+    std::unique_ptr<array2D<float>> Lbuffer;
     if (!redCache) {
-        Lbuffer = new array2D<float>(W, H);
+        Lbuffer.reset(new array2D<float>(W, H));
     }
 
-    array2D<float>* YOldbuffer = nullptr;
+    std::unique_ptr<array2D<float>> YOldbuffer;
     if (!greenCache) {
-        YOldbuffer = new array2D<float>(W, H);
+        YOldbuffer.reset(new array2D<float>(W, H));
     }
 
-    array2D<float>* YNewbuffer = nullptr;
+    std::unique_ptr<array2D<float>> YNewbuffer;
     if (!blueCache) {
-        YNewbuffer = new array2D<float>(W, H);
+        YNewbuffer.reset(new array2D<float>(W, H));
     }
-    array2D<float>& L = Lbuffer ? *Lbuffer : red;
-    array2D<float>& YOld = YOldbuffer ? * YOldbuffer : green;
-    array2D<float>& YNew = YNewbuffer ? * YNewbuffer : blue;
+    array2D<float>& L = Lbuffer.get() ? *Lbuffer.get() : red;
+    array2D<float>& YOld = YOldbuffer.get() ? *YOldbuffer.get() : green;
+    array2D<float>& YNew = YNewbuffer.get() ? *YNewbuffer.get() : blue;
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
@@ -1173,9 +1173,6 @@ BENCHFUN
         }
     }
 
-    delete Lbuffer;
-    delete YOldbuffer;
-    delete YNewbuffer;
     if (plistener) {
         plistener->setProgress(1.0);
     }
