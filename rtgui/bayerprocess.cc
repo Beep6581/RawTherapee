@@ -349,7 +349,10 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         dcbOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCB) || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4));
         lmmseOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::LMMSE));
         dualDemosaicOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEVNG4)
+                                         || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEBILINEAR)
                                          || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4)
+                                         || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBBILINEAR)
+                                         || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDBILINEAR)
                                          || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDVNG4));
         if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
             pixelShiftOptions->set_visible(pp->raw.bayersensor.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::CUSTOM);
@@ -558,7 +561,12 @@ void BayerProcess::methodChanged ()
             lmmseOptions->hide();
         }
 
-        if (currentMethod == procparams::RAWParams::BayerSensor::Method::AMAZEVNG4 || currentMethod == procparams::RAWParams::BayerSensor::Method::DCBVNG4 || currentMethod == procparams::RAWParams::BayerSensor::Method::RCDVNG4) {
+        if (currentMethod == procparams::RAWParams::BayerSensor::Method::AMAZEVNG4 ||
+            currentMethod == procparams::RAWParams::BayerSensor::Method::DCBVNG4 ||
+            currentMethod == procparams::RAWParams::BayerSensor::Method::RCDVNG4 ||
+            currentMethod == procparams::RAWParams::BayerSensor::Method::AMAZEBILINEAR ||
+            currentMethod == procparams::RAWParams::BayerSensor::Method::DCBBILINEAR ||
+            currentMethod == procparams::RAWParams::BayerSensor::Method::RCDBILINEAR) {
             dualDemosaicOptions->show();
         } else {
             dualDemosaicOptions->hide();
