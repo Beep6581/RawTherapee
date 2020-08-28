@@ -1160,17 +1160,12 @@ BENCHFUN
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
     for (int i = 0; i < H; ++i) {
-        int j = 0;
-#ifdef __SSE2__
-        for (; j < W - 3; j += 4) {
-            const vfloat factor = LVFU(YNew[i][j]) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f));
-            STVFU(red[i][j], LVFU(redVals[i][j]) * factor);
-            STVFU(green[i][j], LVFU(greenVals[i][j]) * factor);
-            STVFU(blue[i][j], LVFU(blueVals[i][j]) * factor);
-        }
-
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
 #endif
-        for (; j < W; ++j) {
+        for (int j = 0; j < W; ++j) {
             const float factor = YNew[i][j] / std::max(YOld[i][j], 0.00001f);
             red[i][j] = redVals[i][j] * factor;
             green[i][j] = greenVals[i][j] * factor;
