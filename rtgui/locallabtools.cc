@@ -5886,7 +5886,7 @@ LocallabBlur::LocallabBlur():
     toolblBox->pack_start(*gammaskbl, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*slomaskbl, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*shadmaskblsha, Gtk::PACK_SHRINK, 0);
-    toolblBox->pack_start(*shadmaskbl, Gtk::PACK_SHRINK, 0);
+//    toolblBox->pack_start(*shadmaskbl, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*mask2blCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     toolblBox->pack_start(*mask2blCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     toolblBox->pack_start(*csThresholdblur, Gtk::PACK_SHRINK, 0);
