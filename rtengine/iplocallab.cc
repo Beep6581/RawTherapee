@@ -9751,7 +9751,6 @@ void ImProcFunctions::Lab_Local(
             float lap = params->locallab.spots.at(sp).lapmaskbl;
             bool pde = params->locallab.spots.at(sp).laplac;
             LocwavCurve dummy;
-            bool lmasutilicolwav = false;
             bool delt = params->locallab.spots.at(sp).deltae;
             int lumask = params->locallab.spots.at(sp).lumask;
             int sco = params->locallab.spots.at(sp).scopemask;
@@ -9761,16 +9760,18 @@ void ImProcFunctions::Lab_Local(
             const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-            int shado = 0;
+            const int shado = params->locallab.spots.at(sp).shadmaskblsha;
             constexpr float amountcd = 0.f;
             constexpr float anchorcd = 50.f;
             LocHHmaskCurve lochhhmasCurve;
             constexpr bool lhhmasutili = false;
+            const float strumask = 0.02f * params->locallab.spots.at(sp).strumaskbl;
+            bool astool = params->locallab.spots.at(sp).toolbl;
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufblorig.get(), bufmaskblurbl.get(), originalmaskbl, original, reserved, inv, lp,
-                    0.f, false,
+                    strumask, astool,
                     locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili, lochhhmasCurve, lhhmasutili,  multiThread,
-                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, amountcd, anchorcd, lmaskbllocalcurve, localmaskblutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, amountcd, anchorcd, lmaskbllocalcurve, localmaskblutili, loclmasCurveblwav, lmasutiliblwav, 1, 1, 5, 5,
                     shortcu, delt, hueref, chromaref, lumaref,
                     maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, 0
                    );
