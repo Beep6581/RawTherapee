@@ -126,10 +126,13 @@ protected:
     LUTu histBlue, histBlueRaw;
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
+    bool hist_lrgb_dirty;
     int vectorscopeScale;
-    array2D<int> vectorscope;
+    bool vectorscope_hc_dirty, vectorscope_hs_dirty;
+    array2D<int> vectorscope_hc, vectorscope_hs;
     /// Waveform's intensity. Same as height of reference image.
     int waveformScale;
+    bool waveform_dirty;
     array2D<int> waveformRed, waveformGreen, waveformBlue, waveformLuma;
 
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
@@ -200,9 +203,14 @@ protected:
 
     void notifyHistogramChanged();
     void reallocAll();
-    void updateLRGBHistograms();
-    void updateVectorscope();
-    void updateWaveforms();
+    /// Updates L, R, G, and B histograms. Returns true unless not updated.
+    bool updateLRGBHistograms();
+    /// Updates the H-C vectorscope. Returns true unless not updated.
+    bool updateVectorscopeHC();
+    /// Updates the H-S vectorscope. Returns true unless not updated.
+    bool updateVectorscopeHS();
+    /// Updates all waveforms. Returns true unless not updated.
+    bool updateWaveforms();
     void setScale(int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);
 
@@ -561,7 +569,8 @@ public:
     } denoiseInfoStore;
 
     void requestUpdateHistogram() override;
-    void requestUpdateVectorscope() override;
+    void requestUpdateVectorscopeHC() override;
+    void requestUpdateVectorscopeHS() override;
     void requestUpdateWaveform() override;
 };
 

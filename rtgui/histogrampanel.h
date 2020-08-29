@@ -36,6 +36,11 @@
 
 class HistogramArea;
 
+enum ScopeType
+{
+    HISTOGRAM, HISTOGRAM_RAW, VECTORSCOPE_HC, VECTORSCOPE_HS, WAVEFORM, NONE
+};
+
 struct HistogramAreaIdleHelper {
     HistogramArea* harea;
     bool destroyed;
@@ -161,9 +166,9 @@ protected:
     LUTu rhist, ghist, bhist, lhist, chist;
     LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
     int vectorscope_scale;
-    array2D<int> vect;
-    std::vector<unsigned char> vect_buffer;
-    bool vect_buffer_dirty;
+    array2D<int> vect_hc, vect_hs;
+    std::vector<unsigned char> vect_hc_buffer, vect_hs_buffer;
+    bool vect_hc_buffer_dirty, vect_hs_buffer_dirty;
     int waveform_scale;
     array2D<int> rwave, gwave, bwave, lwave;
     std::vector<unsigned char> wave_buffer;
@@ -208,7 +213,8 @@ public:
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
         int vectorscopeScale,
-        const array2D<int>& vectorscope,
+        const array2D<int>& vectorscopeHC,
+        const array2D<int>& vectorscopeHS,
         int waveformScale,
         const array2D<int>& waveformRed,
         const array2D<int>& waveformGreen,
@@ -216,6 +222,7 @@ public:
         const array2D<int>& waveformLuma
     );
     void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type, bool pointer);
+    bool updatePending();
     void on_realize() override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     bool on_button_press_event (GdkEventButton* event) override;
@@ -238,8 +245,6 @@ private:
 class HistogramPanelListener
 {
 public:
-    enum ScopeType {HISTOGRAM, VECTORSCOPE_CH, VECTORSCOPE_HS, WAVEFORM, NONE};
-
     virtual void scopeTypeChanged(ScopeType new_type) = 0;
 };
 
@@ -297,6 +302,7 @@ protected:
     void setHistInvalid ();
     void showRGBBar();
     void updateHistAreaOptions();
+    void updateHistRGBAreaOptions();
 
 public:
 
@@ -313,7 +319,8 @@ public:
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
         int vectorscopeScale,
-        const array2D<int>& vectorscope,
+        const array2D<int>& vectorscopeHC,
+        const array2D<int>& vectorscopeHS,
         int waveformScale,
         const array2D<int>& waveformRed,
         const array2D<int>& waveformGreen,
@@ -321,7 +328,7 @@ public:
         const array2D<int>& waveformLuma
     )
     {
-        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscope, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
+        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscopeHC, vectorscopeHS, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;

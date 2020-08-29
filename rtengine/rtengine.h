@@ -334,7 +334,8 @@ public:
         const LUTu& histChroma,
         const LUTu& histLRETI,
         int vectorscopeScale,
-        const array2D<int>& vectorscope,
+        const array2D<int>& vectorscopeHC,
+        const array2D<int>& vectorscopeHS,
         int waveformScale,
         const array2D<int>& waveformRed,
         const array2D<int>& waveformGreen,
@@ -345,12 +346,12 @@ public:
     virtual void setObservable(HistogramObservable* observable) = 0;
     /** Returns if the listener wants the histogram to be updated. */
     virtual bool updateHistogram(void) const = 0;
-    /** Returns if the listener wants the vectorscope to be updated. */
-    virtual bool updateVectorscope(void) const = 0;
+    /** Returns if the listener wants the H-C vectorscope to be updated. */
+    virtual bool updateVectorscopeHC(void) const = 0;
+    /** Returns if the listener wants the H-S vectorscope to be updated. */
+    virtual bool updateVectorscopeHS(void) const = 0;
     /** Returns if the listener wants the waveform to be updated. */
     virtual bool updateWaveform(void) const  = 0;
-    /** Returns the vectorscope type: 0 for H-S and 1 for H-C. */
-    virtual int vectorscopeType(void) const = 0;
 };
 
 class HistogramObservable
@@ -358,8 +359,10 @@ class HistogramObservable
 public:
     /** Tells the observable to update the histogram data. */
     virtual void requestUpdateHistogram() = 0;
-    /** Tells the observable to update the vectorscope data. */
-    virtual void requestUpdateVectorscope() = 0;
+    /** Tells the observable to update the H-C vectorscope data. */
+    virtual void requestUpdateVectorscopeHC() = 0;
+    /** Tells the observable to update the H-S vectorscope data. */
+    virtual void requestUpdateVectorscopeHS() = 0;
     /** Tells the observable to update the waveform data. */
     virtual void requestUpdateWaveform() = 0;
 };

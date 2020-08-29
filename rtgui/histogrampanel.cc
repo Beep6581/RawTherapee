@@ -309,8 +309,10 @@ void HistogramPanel::showRGBBar()
 void HistogramPanel::resized (Gtk::Allocation& req)
 {
 
-    histogramArea->updateBackBuffer ();
-    histogramArea->queue_draw ();
+    if (!histogramArea->updatePending()) {
+        histogramArea->updateBackBuffer ();
+        histogramArea->queue_draw ();
+    }
 
     // set histogramRGBArea invalid;
     if (histogramRGBArea) {
@@ -394,7 +396,10 @@ void HistogramPanel::type_pressed()
         scopeType->set_image(*vectHcImage);
     }
     type_changed();
-    rgbv_toggled();
+    updateHistAreaOptions();
+    if (histogramRGBArea) {
+        updateHistRGBAreaOptions();
+    }
 }
 
 void HistogramPanel::type_changed()
@@ -415,7 +420,7 @@ void HistogramPanel::type_changed()
         histogramRGBArea = histogramRGBAreaHori.get();
         if (panel_listener) {
             updateHistAreaOptions();
-            panel_listener->scopeTypeChanged(HistogramPanelListener::HISTOGRAM);
+            panel_listener->scopeTypeChanged(ScopeType::HISTOGRAM);
         }
     } else if (options.histogramScopeType == 1) {
         showRed->set_sensitive();
@@ -428,7 +433,7 @@ void HistogramPanel::type_changed()
         histogramRGBArea = histogramRGBAreaVert.get();
         if (panel_listener) {
             updateHistAreaOptions();
-            panel_listener->scopeTypeChanged(HistogramPanelListener::WAVEFORM);
+            panel_listener->scopeTypeChanged(ScopeType::WAVEFORM);
         }
     } else {
         showRed->set_sensitive(false);
@@ -441,13 +446,13 @@ void HistogramPanel::type_changed()
         histogramRGBArea = nullptr;
         if (panel_listener) {
             updateHistAreaOptions();
-            HistogramPanelListener::ScopeType type = HistogramPanelListener::NONE;
+            ScopeType type = ScopeType::NONE;
             switch (options.histogramScopeType) {
                 case 2:
-                    type = HistogramPanelListener::VECTORSCOPE_HS;
+                    type = ScopeType::VECTORSCOPE_HS;
                     break;
                 case 3:
-                    type = HistogramPanelListener::VECTORSCOPE_CH;
+                    type = ScopeType::VECTORSCOPE_HC;
                     break;
             }
             panel_listener->scopeTypeChanged(type);
@@ -479,7 +484,7 @@ void HistogramPanel::rgbv_toggled ()
     histogramArea->queue_draw ();
 
     if (histogramRGBArea) {
-        histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showChro->get_active(), showRAW->get_active(), showBAR->get_active() && options.histogramScopeType < 2);
+        updateHistRGBAreaOptions();
         histogramRGBArea->updateBackBuffer (0, 0, 0);
         histogramRGBArea->queue_draw ();
     }
@@ -532,17 +537,17 @@ void HistogramPanel::setPanelListener(HistogramPanelListener* listener)
     panel_listener = listener;
 
     if (listener) {
-        HistogramPanelListener::ScopeType type;
+        ScopeType type;
         if (options.histogramScopeType == 0) {
-            type = HistogramPanelListener::HISTOGRAM;
+            type = ScopeType::HISTOGRAM;
         } else if (options.histogramScopeType == 1) {
-            type = HistogramPanelListener::WAVEFORM;
+            type = ScopeType::WAVEFORM;
         } else if (options.histogramScopeType == 2) {
-            type = HistogramPanelListener::VECTORSCOPE_HS;
+            type = ScopeType::VECTORSCOPE_HS;
         } else if (options.histogramScopeType == 3) {
-            type = HistogramPanelListener::VECTORSCOPE_CH;
+            type = ScopeType::VECTORSCOPE_HC;
         } else {
-            type = HistogramPanelListener::NONE;
+            type = ScopeType::NONE;
         }
         listener->scopeTypeChanged(type);
     }
@@ -560,6 +565,19 @@ void HistogramPanel::updateHistAreaOptions()
         options.histogramDrawMode,
         options.histogramScopeType,
         showBAR->get_active()
+    );
+}
+
+void HistogramPanel::updateHistRGBAreaOptions()
+{
+    histogramRGBArea->updateOptions(
+        showRed->get_active(),
+        showGreen->get_active(),
+        showBlue->get_active(),
+        showValue->get_active(),
+        showChro->get_active(),
+        showRAW->get_active(),
+        showBAR->get_active() && options.histogramScopeType < 2
     );
 }
 
@@ -897,8 +915,8 @@ void HistogramRGBAreaVert::get_preferred_width_for_height_vfunc (int height, int
 // HistogramArea
 HistogramArea::HistogramArea (DrawModeListener *fml) :
     vectorscope_scale(0),
-    vect(0, 0),
-    vect_buffer_dirty(true),
+    vect_hc(0, 0), vect_hs(0, 0),
+    vect_hc_buffer_dirty(true), vect_hs_buffer_dirty(true),
     waveform_scale(0),
     rwave(0, 0), gwave(0, 0),bwave(0, 0), lwave(0, 0),
     wave_buffer_dirty(true),
@@ -986,6 +1004,11 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool 
     wave_buffer_dirty = true;
 }
 
+bool HistogramArea::updatePending(void)
+{
+    return haih->pending > 0 && !haih->destroyed;
+}
+
 void HistogramArea::update(
     const LUTu& histRed,
     const LUTu& histGreen,
@@ -996,7 +1019,8 @@ void HistogramArea::update(
     const LUTu& histGreenRaw,
     const LUTu& histBlueRaw,
     int vectorscopeScale,
-    const array2D<int>& vectorscope,
+    const array2D<int>& vectorscopeHC,
+    const array2D<int>& vectorscopeHS,
     int waveformScale,
     const array2D<int>& waveformRed,
     const array2D<int>& waveformGreen,
@@ -1021,10 +1045,14 @@ void HistogramArea::update(
             bwave = waveformBlue;
             lwave = waveformLuma;
             wave_buffer_dirty = true;
-        } else if (scopeType >= 2) {
+        } else if (scopeType == 2) {
             vectorscope_scale = vectorscopeScale;
-            vect = vectorscope;
-            vect_buffer_dirty = true;
+            vect_hs = vectorscopeHS;
+            vect_hs_buffer_dirty = true;
+        } else if (scopeType == 3) {
+            vectorscope_scale = vectorscopeScale;
+            vect_hc = vectorscopeHC;
+            vect_hc_buffer_dirty = true;
         }
         valid = true;
     } else {
@@ -1060,7 +1088,6 @@ void HistogramArea::update(
 
 void HistogramArea::updateBackBuffer ()
 {
-
     if (!get_realized ()) {
         return;
     }
@@ -1333,6 +1360,10 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
 
 void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
 {
+    const auto& vect = (scopeType == 3) ? vect_hc : vect_hs;
+    auto& vect_buffer = (scopeType == 3) ? vect_hc_buffer : vect_hs_buffer;
+    auto& vect_buffer_dirty = (scopeType == 3) ? vect_hc_buffer_dirty : vect_hs_buffer_dirty;
+
     const int vect_width = vect.getWidth();
     const int vect_height = vect.getHeight();
     // Arbitrary scale factor multiplied by vectorscope area and divided by
@@ -1582,7 +1613,7 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
 bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
-    if (get_width() != oldwidth || get_height() != oldheight || isDirty ()) {
+    if (!updatePending() && (get_width() != oldwidth || get_height() != oldheight || isDirty())) {
         updateBackBuffer ();
     }
 
@@ -1651,8 +1682,7 @@ bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
         double dx = (event->x - movingPosition) / get_width();
         float new_brightness = LIM<float>(trace_brightness * pow(RANGE, dx), MIN_BRIGHT, MAX_BRIGHT);
         if (new_brightness != trace_brightness) {
-            wave_buffer_dirty = true;
-            vect_buffer_dirty = true;
+            wave_buffer_dirty = vect_hc_buffer_dirty = vect_hs_buffer_dirty = true;
             trace_brightness = new_brightness;
             setDirty(true);
             queue_draw();
