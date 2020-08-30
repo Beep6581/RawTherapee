@@ -98,7 +98,6 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomSca
     gestureZoom->signal_scale_changed().connect(sigc::mem_fun(*this, &Inspector::on_zoom_scale_changed));
 
     window.add(*this);
-    window.show_all();
     window.set_visible(false);
     active = true; // always track inspected thumbnails
 }
@@ -112,6 +111,7 @@ void Inspector::showWindow(bool scaled)
 {
     this->scaled = scaled;
     window.fullscreen();
+    window.show_all();
     window.set_visible(true);
     pinned = false;
 }
