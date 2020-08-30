@@ -2204,6 +2204,36 @@ WaveletParams::WaveletParams() :
         0.35,
         0.35
     },
+    wavdenoise{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        1.0,
+        0.35,
+        0.35,
+        0.50,
+        1.0,
+        0.35,
+        0.35,
+        1.0,
+        1.0,
+        0.35,
+        0.35
+    },
+    wavdenoiseh{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        1.0,
+        0.35,
+        0.35,
+        0.50,
+        1.0,
+        0.35,
+        0.35,
+        1.0,
+        1.0,
+        0.35,
+        0.35
+    },
     blcurve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0, 
@@ -2339,6 +2369,12 @@ WaveletParams::WaveletParams() :
     hhcurve{
         FCT_Linear
     },
+    wavguidcurve{
+        FCT_Linear
+    },
+    wavhuecurve{
+        FCT_Linear
+    },
     Chcurve{
         FCT_Linear
     },
@@ -2357,6 +2393,10 @@ WaveletParams::WaveletParams() :
     greenhigh(0),
     bluehigh(0),
     ballum(7.),
+    sigm(1.0),
+    levden(0.),
+    thrden(0.),
+    limden(0.),
     balchrom(0.),
     chromfi(0.),
     chromco(0.),
@@ -2364,6 +2404,9 @@ WaveletParams::WaveletParams() :
     mergeC(20.),
     softrad(0.),
     softradend(0.),
+    strend(50.),
+    detend(0),
+    thrend(0),
     lipst(false),
     avoid(false),
     showmask(false),
@@ -2398,6 +2441,10 @@ WaveletParams::WaveletParams() :
     Backmethod("grey"),
     Tilesmethod("full"),
     complexmethod("normal"),
+    denmethod("equ"),
+    mixmethod("mix"),
+    slimethod("sli"),
+    quamethod("cons"),
     daubcoeffmethod("4_"),
     CHmethod("without"),
     Medgreinf("less"),
@@ -2454,7 +2501,9 @@ WaveletParams::WaveletParams() :
     level0noise(0, 0, false),
     level1noise(0, 0, false),
     level2noise(0, 0, false),
-    level3noise(0, 0, false)
+    level3noise(0, 0, false),
+    leveldenoise(0, 0, false),
+    levelsigm(1, 1, false)
 {
 }
 
@@ -2462,6 +2511,8 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
 {
     return
         ccwcurve == other.ccwcurve
+        && wavdenoise == other.wavdenoise
+        && wavdenoiseh == other.wavdenoiseh
         && blcurve == other.blcurve
         && opacityCurveRG == other.opacityCurveRG
         && opacityCurveSH == other.opacityCurveSH
@@ -2469,6 +2520,8 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && opacityCurveW == other.opacityCurveW
         && opacityCurveWL == other.opacityCurveWL
         && hhcurve == other.hhcurve
+        && wavguidcurve == other.wavguidcurve
+        && wavhuecurve == other.wavhuecurve
         && Chcurve == other.Chcurve
         && wavclCurve == other.wavclCurve
         && enabled == other.enabled
@@ -2483,6 +2536,10 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && greenhigh == other.greenhigh
         && bluehigh == other.bluehigh
         && ballum == other.ballum
+        && sigm == other.sigm
+        && levden == other.levden
+        && thrden == other.thrden
+        && limden == other.limden
         && balchrom == other.balchrom
         && chromfi == other.chromfi
         && chromco == other.chromco
@@ -2490,6 +2547,9 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && mergeC == other.mergeC
         && softrad == other.softrad
         && softradend == other.softradend
+        && strend == other.strend
+        && detend == other.detend
+        && thrend == other.thrend
         && lipst == other.lipst
         && avoid == other.avoid
         && showmask == other.showmask
@@ -2531,6 +2591,10 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && Backmethod == other.Backmethod
         && Tilesmethod == other.Tilesmethod
         && complexmethod == other.complexmethod
+        && denmethod == other.denmethod
+        && mixmethod == other.mixmethod
+        && slimethod == other.slimethod
+        && quamethod == other.quamethod
         && daubcoeffmethod == other.daubcoeffmethod
         && CHmethod == other.CHmethod
         && Medgreinf == other.Medgreinf
@@ -2587,7 +2651,9 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && level0noise == other.level0noise
         && level1noise == other.level1noise
         && level2noise == other.level2noise
-        && level3noise == other.level3noise;
+        && level3noise == other.level3noise
+        && leveldenoise == other.leveldenoise
+        && levelsigm == other.levelsigm;
 }
 
 bool WaveletParams::operator !=(const WaveletParams& other) const
@@ -2597,6 +2663,8 @@ bool WaveletParams::operator !=(const WaveletParams& other) const
 
 void WaveletParams::getCurves(
     WavCurve& cCurve,
+    WavCurve& wavdenoise,
+    WavCurve& wavdenoiseh,
     Wavblcurve& tCurve,
     WavOpacityCurveRG& opacityCurveLUTRG,
     WavOpacityCurveSH& opacityCurveLUTSH,
@@ -2606,6 +2674,8 @@ void WaveletParams::getCurves(
 ) const
 {
     cCurve.Set(this->ccwcurve);
+    wavdenoise.Set(this->wavdenoise);
+    wavdenoiseh.Set(this->wavdenoiseh);
     tCurve.Set(this->blcurve);
     opacityCurveLUTRG.Set(this->opacityCurveRG);
     opacityCurveLUTSH.Set(this->opacityCurveSH);
@@ -5997,6 +6067,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.thres, "Wavelet", "MaxLev", wavelet.thres, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.Tilesmethod, "Wavelet", "TilesMethod", wavelet.Tilesmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.complexmethod, "Wavelet", "complexMethod", wavelet.complexmethod, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.denmethod, "Wavelet", "denMethod", wavelet.denmethod, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.mixmethod, "Wavelet", "mixMethod", wavelet.mixmethod, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.slimethod, "Wavelet", "sliMethod", wavelet.slimethod, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.quamethod, "Wavelet", "quaMethod", wavelet.quamethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.daubcoeffmethod, "Wavelet", "DaubMethod", wavelet.daubcoeffmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.CLmethod, "Wavelet", "ChoiceLevMethod", wavelet.CLmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.Backmethod, "Wavelet", "BackMethod", wavelet.Backmethod, keyFile);
@@ -6009,6 +6083,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.bluemed, "Wavelet", "CBbluemed", wavelet.bluemed, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.bluelow, "Wavelet", "CBbluelow", wavelet.bluelow, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.ballum, "Wavelet", "Ballum", wavelet.ballum, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.sigm, "Wavelet", "Sigm", wavelet.sigm, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.levden, "Wavelet", "Levden", wavelet.levden, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.thrden, "Wavelet", "Thrden", wavelet.thrden, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.limden, "Wavelet", "Limden", wavelet.limden, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.balchrom, "Wavelet", "Balchrom", wavelet.balchrom, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.chromfi, "Wavelet", "Chromfine", wavelet.chromfi, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.chromco, "Wavelet", "Chromcoarse", wavelet.chromco, keyFile);
@@ -6016,6 +6094,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.mergeC, "Wavelet", "MergeC", wavelet.mergeC, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.softrad, "Wavelet", "Softrad", wavelet.softrad, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.softradend, "Wavelet", "Softradend", wavelet.softradend, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.strend, "Wavelet", "Strend", wavelet.strend, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.detend, "Wavelet", "Detend", wavelet.detend, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.thrend, "Wavelet", "Thrend", wavelet.thrend, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expcontrast, "Wavelet", "Expcontrast", wavelet.expcontrast, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expchroma, "Wavelet", "Expchroma", wavelet.expchroma, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.expedge, "Wavelet", "Expedge", wavelet.expedge, keyFile);
@@ -6053,6 +6134,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.level1noise, "Wavelet", "Level1noise", wavelet.level1noise.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.level2noise, "Wavelet", "Level2noise", wavelet.level2noise.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.level3noise, "Wavelet", "Level3noise", wavelet.level3noise.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.leveldenoise, "Wavelet", "Leveldenoise", wavelet.leveldenoise.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.levelsigm, "Wavelet", "Levelsigm", wavelet.levelsigm.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.threshold, "Wavelet", "ThresholdHighlight", wavelet.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.threshold2, "Wavelet", "ThresholdShadow", wavelet.threshold2, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgedetect, "Wavelet", "Edgedetect", wavelet.edgedetect, keyFile);
@@ -6077,9 +6160,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveRG, "Wavelet", "OpacityCurveRG", wavelet.opacityCurveRG, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveSH, "Wavelet", "Levalshc", wavelet.opacityCurveSH, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveBY, "Wavelet", "OpacityCurveBY", wavelet.opacityCurveBY, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.wavdenoise, "Wavelet", "wavdenoise", wavelet.wavdenoise, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.wavdenoiseh, "Wavelet", "wavdenoiseh", wavelet.wavdenoiseh, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveW, "Wavelet", "OpacityCurveW", wavelet.opacityCurveW, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveWL, "Wavelet", "OpacityCurveWL", wavelet.opacityCurveWL, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.hhcurve, "Wavelet", "HHcurve", wavelet.hhcurve, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.wavguidcurve, "Wavelet", "Wavguidcurve", wavelet.wavguidcurve, keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.wavhuecurve, "Wavelet", "Wavhuecurve", wavelet.wavhuecurve, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.Chcurve, "Wavelet", "CHcurve", wavelet.Chcurve, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.wavclCurve, "Wavelet", "WavclCurve", wavelet.wavclCurve, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.median, "Wavelet", "Median", wavelet.median, keyFile);
@@ -7836,6 +7923,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "CBbluemed", pedited, wavelet.bluemed, pedited->wavelet.bluemed);
             assignFromKeyfile(keyFile, "Wavelet", "CBbluelow", pedited, wavelet.bluelow, pedited->wavelet.bluelow);
             assignFromKeyfile(keyFile, "Wavelet", "Ballum", pedited, wavelet.ballum, pedited->wavelet.ballum);
+            assignFromKeyfile(keyFile, "Wavelet", "Sigm", pedited, wavelet.sigm, pedited->wavelet.sigm);
+            assignFromKeyfile(keyFile, "Wavelet", "Levden", pedited, wavelet.levden, pedited->wavelet.levden);
+            assignFromKeyfile(keyFile, "Wavelet", "Thrden", pedited, wavelet.thrden, pedited->wavelet.thrden);
+            assignFromKeyfile(keyFile, "Wavelet", "Limden", pedited, wavelet.limden, pedited->wavelet.limden);
             assignFromKeyfile(keyFile, "Wavelet", "Balchrom", pedited, wavelet.balchrom, pedited->wavelet.balchrom);
             assignFromKeyfile(keyFile, "Wavelet", "Chromfine", pedited, wavelet.chromfi, pedited->wavelet.chromfi);
             assignFromKeyfile(keyFile, "Wavelet", "Chromcoarse", pedited, wavelet.chromco, pedited->wavelet.chromco);
@@ -7843,6 +7934,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "MergeC", pedited, wavelet.mergeC, pedited->wavelet.mergeC);
             assignFromKeyfile(keyFile, "Wavelet", "Softrad", pedited, wavelet.softrad, pedited->wavelet.softrad);
             assignFromKeyfile(keyFile, "Wavelet", "Softradend", pedited, wavelet.softradend, pedited->wavelet.softradend);
+            assignFromKeyfile(keyFile, "Wavelet", "Strend", pedited, wavelet.strend, pedited->wavelet.strend);
+            assignFromKeyfile(keyFile, "Wavelet", "Detend", pedited, wavelet.detend, pedited->wavelet.detend);
+            assignFromKeyfile(keyFile, "Wavelet", "Thrend", pedited, wavelet.thrend, pedited->wavelet.thrend);
             assignFromKeyfile(keyFile, "Wavelet", "Lipst", pedited, wavelet.lipst, pedited->wavelet.lipst);
             assignFromKeyfile(keyFile, "Wavelet", "AvoidColorShift", pedited, wavelet.avoid, pedited->wavelet.avoid);
             assignFromKeyfile(keyFile, "Wavelet", "Showmask", pedited, wavelet.showmask, pedited->wavelet.showmask);
@@ -7869,6 +7963,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "BackMethod", pedited, wavelet.Backmethod, pedited->wavelet.Backmethod);
             assignFromKeyfile(keyFile, "Wavelet", "TilesMethod", pedited, wavelet.Tilesmethod, pedited->wavelet.Tilesmethod);
             assignFromKeyfile(keyFile, "Wavelet", "complexMethod", pedited, wavelet.complexmethod, pedited->wavelet.complexmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "denMethod", pedited, wavelet.denmethod, pedited->wavelet.denmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "mixMethod", pedited, wavelet.mixmethod, pedited->wavelet.mixmethod);
+            assignFromKeyfile(keyFile, "Wavelet", "sliMethod", pedited, wavelet.slimethod, pedited->wavelet.slimethod);
+            assignFromKeyfile(keyFile, "Wavelet", "quaMethod", pedited, wavelet.quamethod, pedited->wavelet.quamethod);
             assignFromKeyfile(keyFile, "Wavelet", "DaubMethod", pedited, wavelet.daubcoeffmethod, pedited->wavelet.daubcoeffmethod);
             assignFromKeyfile(keyFile, "Wavelet", "CHromaMethod", pedited, wavelet.CHmethod, pedited->wavelet.CHmethod);
             assignFromKeyfile(keyFile, "Wavelet", "Medgreinf", pedited, wavelet.Medgreinf, pedited->wavelet.Medgreinf);
@@ -7917,9 +8015,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveRG", pedited, wavelet.opacityCurveRG, pedited->wavelet.opacityCurveRG);
             assignFromKeyfile(keyFile, "Wavelet", "Levalshc", pedited, wavelet.opacityCurveSH, pedited->wavelet.opacityCurveSH);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveBY", pedited, wavelet.opacityCurveBY, pedited->wavelet.opacityCurveBY);
+            assignFromKeyfile(keyFile, "Wavelet", "wavdenoise", pedited, wavelet.wavdenoise, pedited->wavelet.wavdenoise);
+            assignFromKeyfile(keyFile, "Wavelet", "wavdenoiseh", pedited, wavelet.wavdenoiseh, pedited->wavelet.wavdenoiseh);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveW", pedited, wavelet.opacityCurveW, pedited->wavelet.opacityCurveW);
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveWL", pedited, wavelet.opacityCurveWL, pedited->wavelet.opacityCurveWL);
             assignFromKeyfile(keyFile, "Wavelet", "HHcurve", pedited, wavelet.hhcurve, pedited->wavelet.hhcurve);
+            assignFromKeyfile(keyFile, "Wavelet", "Wavguidcurve", pedited, wavelet.wavguidcurve, pedited->wavelet.wavguidcurve);
+            assignFromKeyfile(keyFile, "Wavelet", "Wavhuecurve", pedited, wavelet.wavhuecurve, pedited->wavelet.wavhuecurve);
             assignFromKeyfile(keyFile, "Wavelet", "CHcurve", pedited, wavelet.Chcurve, pedited->wavelet.Chcurve);
             assignFromKeyfile(keyFile, "Wavelet", "WavclCurve", pedited, wavelet.wavclCurve, pedited->wavelet.wavclCurve);
 
@@ -8028,6 +8130,30 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->wavelet.level3noise = true;
+                }
+            }
+
+            if (keyFile.has_key("Wavelet", "Leveldenoise")) {
+                const std::vector<double> thresh = keyFile.get_double_list("Wavelet", "Leveldenoise");
+
+                if (thresh.size() >= 2) {
+                    wavelet.leveldenoise.setValues(thresh[0], thresh[1]);
+                }
+
+                if (pedited) {
+                    pedited->wavelet.leveldenoise = true;
+                }
+            }
+
+            if (keyFile.has_key("Wavelet", "Levelsigm")) {
+                const std::vector<double> thresh = keyFile.get_double_list("Wavelet", "Levelsigm");
+
+                if (thresh.size() >= 2) {
+                    wavelet.levelsigm.setValues(thresh[0], thresh[1]);
+                }
+
+                if (pedited) {
+                    pedited->wavelet.levelsigm = true;
                 }
             }
 

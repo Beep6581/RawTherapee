@@ -833,11 +833,11 @@ HISTORY_MSG_580;Local - Denoise
 HISTORY_MSG_581;Local - deNoise lum f 1
 HISTORY_MSG_582;Local - deNoise lum c
 HISTORY_MSG_583;Local - deNoise lum detail
-HISTORY_MSG_584;Local - deNoise Equalizer white-black
+HISTORY_MSG_584;Local - deNoise equalizer White-Black
 HISTORY_MSG_585;Local - deNoise chro f
 HISTORY_MSG_586;Local - deNoise chro c
 HISTORY_MSG_587;Local - deNoise chro detail
-HISTORY_MSG_588;Local - deNoise Equalizer blue-red
+HISTORY_MSG_588;Local - deNoise equalizer Blue-Red
 HISTORY_MSG_589;Local - deNoise bilateral
 HISTORY_MSG_590;Local - deNoise Scope
 HISTORY_MSG_591;Local - Avoid color shift
@@ -1288,18 +1288,35 @@ HISTORY_MSG_WAVBL;Blur levels
 HISTORY_MSG_WAVCHROMCO;Chroma coarse
 HISTORY_MSG_WAVCHROMFI;Chroma fine
 HISTORY_MSG_WAVCLARI;Clarity
+HISTORY_MSG_WAVDENLH;Level 5
+HISTORY_MSG_WAVDENOISE;Local contrast
+HISTORY_MSG_WAVDENOISEH;High levels Local contrast
+HISTORY_MSG_WAVDENMET;Local equalizer
+HISTORY_MSG_WAVDETEND;Details soft
 HISTORY_MSG_WAVEDGS;Edge stopping
+HISTORY_MSG_WAVGUIDH;Local contrast-Hue equalizer
+HISTORY_MSG_WAVHUE;Equalizer hue
+HISTORY_MSG_WAVLEVDEN;High level local contrast
+HISTORY_MSG_WAVLEVSIGM;Radius
+HISTORY_MSG_WAVLIMDEN;Interaction 56 14
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
 HISTORY_MSG_WAVMERGEC;Merge C
 HISTORY_MSG_WAVMERGEL;Merge L
+HISTORY_MSG_WAVMIXMET;Reference local contrast
 HISTORY_MSG_WAVOFFSET;Offset
 HISTORY_MSG_WAVOLDSH;Old algorithm
+HISTORY_MSG_WAVQUAMET;Denoise mode
 HISTORY_MSG_WAVRADIUS;Radius shadows-highlights
 HISTORY_MSG_WAVSCALE;Scale
 HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
 HISTORY_MSG_WAVSIGMA;Attenuation response
+HISTORY_MSG_WAVSIGM;Sigma
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
+HISTORY_MSG_WAVSLIMET;Method
+HISTORY_MSG_WAVTHRDEN;Threshold local contrast
+HISTORY_MSG_WAVTHREND;Threshold local contrast
+HISTORY_MSG_WAVSTREND;Strength soft
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -3259,8 +3276,8 @@ TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the vertical, horizontal and diagonal wavelet directions: .\nActivating contrast, chroma or residual tone mapping amplifies the effect due to balance
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
-TP_WAVELET_BALCHROM;Denoise equalizer  blue-yellow red-green
-TP_WAVELET_BALLUM;Denoise Equalizer  White-Black
+TP_WAVELET_BALCHROM;Denoise equalizer  Blue-Yellow Red-Green
+TP_WAVELET_BALLUM;Denoise equalizer  White-Black
 TP_WAVELET_BANONE;None
 TP_WAVELET_BASLI;Slider
 TP_WAVELET_BATYPE;Contrast balance method
@@ -3323,6 +3340,33 @@ TP_WAVELET_DAUB10;D10 - medium
 TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the first levels. However the quality is not strictly related to this coefficient and can vary depending on image and use.
+TP_WAVELET_DENOISE;Guide curve based on Local contrast
+TP_WAVELET_DENOISEGUID;Guided threshold based on hue
+TP_WAVELET_DENOISEH;High levels Curve Local contrast
+TP_WAVELET_DENOISEHUE;Denoise equalizer Hue
+TP_WAVELET_DENCONTRAST;Local contrast Equalizer
+TP_WAVELET_DENEQUAL;1 2 3 4 Equal
+TP_WAVELET_DEN14PLUS;1 4 High
+TP_WAVELET_DEN14LOW;1 4 Low
+TP_WAVELET_DEN12PLUS;1 2 High
+TP_WAVELET_DEN12LOW;1 2 Low
+TP_WAVELET_DEN5THR;Guided threshold
+//TP_WAVELET_DENH;Low levels (1234)- Finest details
+//TP_WAVELET_DENLH;Guided threshold by detail levels 1-4
+//TP_WAVELET_DENL;High levels - Coarsest details
+TP_WAVELET_DENH;Threshold
+TP_WAVELET_DENLH;Guided threshold by detail levels 1-4
+TP_WAVELET_DENL;Correction structure
+TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
+TP_WAVELET_DENMIX_TOOLTIP;Balances the action of the guide taking into account the original image and the denoised image
+TP_WAVELET_DENQUA;Mode
+TP_WAVELET_DENSLILAB;Method
+TP_WAVELET_DENSLI;Slider
+TP_WAVELET_DENCURV;Curve
+TP_WAVELET_DENSIGMA_TOOLTIP;Adapts the shape of the guide
+TP_WAVELET_DENWAVHUE_TOOLTIP;Amplify or reduce denoising depending on the color
+TP_WAVELET_DENWAVGUID_TOOLTIP;Uses hue to reduce or increase the action of the guided filter
+TP_WAVELET_DETEND;Details
 TP_WAVELET_DIRFRAME;Directional contrast
 TP_WAVELET_DONE;Vertical
 TP_WAVELET_DTHR;Diagonal
@@ -3352,6 +3396,8 @@ TP_WAVELET_FINAL;Final Touchup
 TP_WAVELET_FINCFRAME;Final local contrast
 TP_WAVELET_FINCOAR_TOOLTIP;The left (positive) part of the curve acts on the finer levels (increase).\nThe 2 points on the abscissa represent the respective action limits of finer and coarser levels 5 and 6 (default).\nThe right (negative) part of the curve acts on the coarser levels (increase).\nAvoid moving the left part of the curve with negative values. Avoid moving the right part of the curve with positives values
 TP_WAVELET_FINEST;Finest
+TP_WAVELET_FINTHR_TOOLTIP;Uses local contrast to reduce or increase the action of the guided filter
+TP_WAVELET_GUIDFRAME;Final smoothing (guided filter)
 TP_WAVELET_HIGHLIGHT;Finer levels luminance range
 TP_WAVELET_HS1;Whole luminance range
 TP_WAVELET_HS2;Selective luminance range
@@ -3364,18 +3410,24 @@ TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight
 TP_WAVELET_LABEL;Wavelet Levels
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chroma
+TP_WAVELET_LEVDEN;Level 5-6 denoise
 TP_WAVELET_LEVDIR_ALL;All levels, in all directions
 TP_WAVELET_LEVDIR_INF;Finer detail levels, including selected level
 TP_WAVELET_LEVDIR_ONE;One level
 TP_WAVELET_LEVDIR_SUP;Coarser detail levels, excluding selected level
 TP_WAVELET_LEVELS;Wavelet levels
+TP_WAVELET_LEVELLOW;Radius 1-4
+TP_WAVELET_LEVELHIGH;Radius 5-6
+TP_WAVELET_LEVELSIGM;Radius
 TP_WAVELET_LEVELS_TOOLTIP;Choose the number of wavelet decomposition levels for the image.\nMore levels require more RAM and require a longer processing time.
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVLABEL;Preview maximum possible levels = %1
+TP_WAVELET_LEVFOUR;Level 5-6 denoise and guided threshold
 TP_WAVELET_LEVONE;Level 2
 TP_WAVELET_LEVTHRE;Level 4
 TP_WAVELET_LEVTWO;Level 3
 TP_WAVELET_LEVZERO;Level 1
+TP_WAVELET_LIMDEN;Interaction levels 56 on levels 14
 TP_WAVELET_LINKEDG;Link to Edge Sharpness Strength
 TP_WAVELET_LIPST;Enhanced algoritm
 TP_WAVELET_LOWLIGHT;Coarser levels luminance range
@@ -3387,9 +3439,14 @@ TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n-
 TP_WAVELET_MERGEC;Merge chroma
 TP_WAVELET_MERGEL;Merge Luma
 TP_WAVELET_NEUTRAL;Neutral
+TP_WAVELET_MIXCONTRAST;Reference local contrast
+TP_WAVELET_MIXDENOISE;Denoise
+TP_WAVELET_MIXNOISE;Noise
+TP_WAVELET_MIXMIX;Mixed 50% noise - 50% denoise
+TP_WAVELET_MIXMIX70;Mixed 30% noise - 70% denoise
 TP_WAVELET_NOIS;Denoise
 TP_WAVELET_NOISE;Denoise and Refine
-TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 20, mode Agressive is used.\nIf chrominance coarse superior to 20, mode Agressive is used.
+TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 50, mode Agressive is used.\nIf chrominance coarse superior to 20, mode Agressive is used.
 TP_WAVELET_NPHIGH;High
 TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
@@ -3404,6 +3461,8 @@ TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the w
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
 TP_WAVELET_PROTAB;Protection
+TP_WAVELET_QUAAGRES;Agressive
+TP_WAVELET_QUACONSER;Conservative
 TP_WAVELET_RADIUS;Radius shadows - highlight
 TP_WAVELET_RANGEAB;Range a and b %
 TP_WAVELET_RE1;Reinforced
@@ -3422,6 +3481,7 @@ TP_WAVELET_SHA;Sharp mask
 TP_WAVELET_SHFRAME;Shadows/Highlights
 TP_WAVELET_SHOWMASK;Show wavelet 'mask'
 TP_WAVELET_SIGMA;Attenuation response
+TP_WAVELET_SIGM;Radius
 TP_WAVELET_SIGMAFIN;Attenuation response
 TP_WAVELET_SIGMA_TOOLTIP;The effect of the contrast sliders is stronger in medium contrast details, and weaker in high and low contrast details.\n With this slider you can control how quickly the effect dampens towards the extreme contrasts.\n The higher the slider is set, the wider the range of contrasts which will get a strong change, and the higher the risk to generate artifacts.\n .The lower it is, the more the effect will be pinpointed towards a narrow range of contrast values
 TP_WAVELET_SKIN;Skin targetting/protection
@@ -3430,9 +3490,13 @@ TP_WAVELET_SKY;Hue targetting/protection
 TP_WAVELET_SKY_TOOLTIP;Allows you to target or protect a range of hues.\nAt -100 selected hues are targetted.\nAt 0 all hues are treated equally.\nAt +100 selected hues are protected while all other hues are targetted.
 TP_WAVELET_SOFTRAD;Soft radius
 TP_WAVELET_STREN;Refine
+TP_WAVELET_STREND;Strength
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold
+TP_WAVELET_THREND;Local contrast threshold  
+TP_WAVELET_THRDEN_TOOLTIP;Generates a stepped curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
+TP_WAVELET_THRDEN_TOOLTIP;Generates a stepped denoise curve based on local contrast.\nReduces noise in uniform areas and preserves image structure
 TP_WAVELET_THRESHOLD;Finer levels
 TP_WAVELET_THRESHOLD2;Coarser levels
 TP_WAVELET_THRESHOLD2_TOOLTIP;Only levels from the chosen value to the selected number of ‘wavelet levels’ will be affected by the Shadow luminance range.
