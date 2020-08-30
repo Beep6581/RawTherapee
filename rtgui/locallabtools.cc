@@ -5614,6 +5614,9 @@ LocallabBlur::LocallabBlur():
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
     strbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRBL"), 0, 100, 1, 50))),
     epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
+    thrbl(Gtk::manage(new Adjuster(M("TP_WAVELET_THREND"), 0.0, 100., 0.5, 0.))),
+    LocalcurveEditorwavguid(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_WAVELET_DENOISEGUID"))),
+    wavguid(static_cast<FlatCurveEditor*>(LocalcurveEditorwavguid->addCurve(CT_Flat, "", nullptr, false, false))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
     blurMethod(Gtk::manage(new MyComboBoxText())),
     chroMethod(Gtk::manage(new MyComboBoxText())),
@@ -5662,6 +5665,15 @@ LocallabBlur::LocallabBlur():
 
     // Parameter Blur, Noise & Denoise specific widgets
     setExpandAlignProperties(expblnoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    float R, G, B;
+
+    std::vector<GradientMilestone> six_shape;
+
+    for (int i = 0; i < 6; i++) {
+        const float x = static_cast<float>(i) * (1.f / 6.f);
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        six_shape.emplace_back(x, R, G, B);
+    }
 
     blMethod->append(M("TP_LOCALLAB_BLUR"));
     blMethod->append(M("TP_LOCALLAB_BLMED"));
@@ -5699,6 +5711,19 @@ LocallabBlur::LocallabBlur():
     strbl->setAdjusterListener(this);
 
     epsbl->setAdjusterListener(this);
+    thrbl->setAdjusterListener(this);
+    LocalcurveEditorwavguid->setCurveListener(this);
+
+    wavguid->setIdentityValue(0.);
+    wavguid->setResetCurve(FlatCurveType(defSpot.locwavcurveguid.at(0)), defSpot.locwavcurveguid);
+    wavguid->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    wavguid->setCurveColorProvider(this, 3);
+    wavguid->setBottomBarBgGradient(six_shape);
+
+//    wavguid->setIdentityValue(0.);
+//    wavguid->setResetCurve(FlatCurveType(defSpot.locwavcurveguid.at(0)), defSpot.locwavcurveguid);
+
+    LocalcurveEditorwavguid->curveListComplete();
 
     sensibn->setAdjusterListener(this);
 
@@ -5840,6 +5865,8 @@ LocallabBlur::LocallabBlur():
     blnoisebox->pack_start(*guidbl);
     blnoisebox->pack_start(*strbl);
     blnoisebox->pack_start(*epsbl);
+    blnoisebox->pack_start(*thrbl);
+    blnoisebox->pack_start(*LocalcurveEditorwavguid, Gtk::PACK_SHRINK, 4);
     blnoisebox->pack_start(*sensibn);
     blnoisebox->pack_start(*blurMethod);
     blnoisebox->pack_start(*chroMethod);
@@ -5899,6 +5926,7 @@ LocallabBlur::LocallabBlur():
 LocallabBlur::~LocallabBlur()
 {
     delete LocalcurveEditorwavden;
+    delete LocalcurveEditorwavguid;
     delete maskblCurveEditorG;
     delete mask2blCurveEditorG;
     delete mask2blCurveEditorGwav;
@@ -5930,6 +5958,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
         expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
+        wavguid->setTooltip(M("TP_LOCALLAB_WAVGUID_TOOLTIP"));
         noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
@@ -6049,6 +6078,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         guidbl->setValue((double)spot.guidbl);
         strbl->setValue((double)spot.strbl);
         epsbl->setValue((double)spot.epsbl);
+        thrbl->setValue((double)spot.thrbl);
         sensibn->setValue((double)spot.sensibn);
 
         if (spot.blurMethod == "norm") {
@@ -6067,6 +6097,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
 
         activlum->set_active(spot.activlum);
         wavshapeden->setCurve(spot.locwavcurveden);
+        wavguid->setCurve(spot.locwavcurveguid);
         noiselumf0->setValue(spot.noiselumf0);
         noiselumf->setValue(spot.noiselumf);
         noiselumf2->setValue(spot.noiselumf2);
@@ -6162,6 +6193,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.guidbl = guidbl->getIntValue();
         spot.strbl = strbl->getIntValue();
         spot.epsbl = epsbl->getIntValue();
+        spot.thrbl = thrbl->getValue();
         spot.sensibn = sensibn->getIntValue();
 
         if (blurMethod->get_active_row_number() == 0) {
@@ -6180,6 +6212,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
         spot.activlum = activlum->get_active();
         spot.locwavcurveden = wavshapeden->getCurve();
+        spot.locwavcurveguid = wavguid->getCurve();
         spot.noiselumf0 = noiselumf0->getValue();
         spot.noiselumf = noiselumf->getValue();
         spot.noiselumf2 = noiselumf2->getValue();
@@ -6241,6 +6274,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         guidbl->setDefault((double)defSpot.guidbl);
         strbl->setDefault((double)defSpot.strbl);
         epsbl->setDefault((double)defSpot.epsbl);
+        thrbl->setDefault((double)defSpot.thrbl);
         sensibn->setDefault((double)defSpot.sensibn);
         noiselumf0->setDefault(defSpot.noiselumf0);
         noiselumf->setDefault(defSpot.noiselumf);
@@ -6333,6 +6367,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabepsbl,
                                        epsbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == thrbl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabthrbl,
+                                       thrbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -6516,6 +6557,13 @@ void LocallabBlur::curveChanged(CurveEditor* ce)
         if (ce == wavshapeden) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurveden,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (ce == wavguid) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurveguid,
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
@@ -6726,6 +6774,14 @@ void LocallabBlur::medMethodChanged()
 
 void LocallabBlur::blurMethodChanged()
 {
+    if (chroMethod->get_active_row_number() == 0 && blurMethod->get_active_row_number() == 0 && blMethod->get_active_row_number() == 2) {
+        LocalcurveEditorwavguid->show();
+        thrbl->show();
+    } else {
+        LocalcurveEditorwavguid->hide();
+        thrbl->hide();
+    }
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabblurMethod,
@@ -6736,6 +6792,13 @@ void LocallabBlur::blurMethodChanged()
 
 void LocallabBlur::chroMethodChanged()
 {
+    if (chroMethod->get_active_row_number() == 0 && blurMethod->get_active_row_number() == 0 && blMethod->get_active_row_number() == 2) {
+        LocalcurveEditorwavguid->show();
+        thrbl->show();
+    } else {
+        LocalcurveEditorwavguid->hide();
+        thrbl->hide();
+    }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabchroMethod,
@@ -6831,6 +6894,7 @@ void LocallabBlur::updateBlurGUI()
         guidbl->hide();
         strbl->hide();
         epsbl->hide();
+        thrbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 1) {
         fftwbl->hide();
@@ -6842,6 +6906,7 @@ void LocallabBlur::updateBlurGUI()
         guidbl->hide();
         strbl->hide();
         epsbl->hide();
+        thrbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 2) {
         fftwbl->hide();
@@ -6853,6 +6918,16 @@ void LocallabBlur::updateBlurGUI()
         guidbl->show();
         strbl->show();
         epsbl->show();
+        thrbl->show();
         activlum->hide();
     }
+
+    if (chroMethod->get_active_row_number() == 0 && blurMethod->get_active_row_number() == 0 && blMethod->get_active_row_number() == 2) {
+        LocalcurveEditorwavguid->show();
+        thrbl->show();
+    } else {
+        LocalcurveEditorwavguid->hide();
+        thrbl->hide();
+    }
+
 }

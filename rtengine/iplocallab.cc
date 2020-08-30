@@ -171,6 +171,7 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 1024)
 #endif
+
         for (int i = 0; i < 65536; i++) {
             const double x = rtengine::Color::igammareti(i / 65535.0, gamm, start, ts, mul, add);
             gammaLut[i] = 0.5 * rtengine::CLIP(x * 65535.0);  // CLIP avoid in some case extra values
@@ -179,6 +180,7 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 1024)
 #endif
+
         for (int i = 0; i < 65536; i++) {
             const double x = rtengine::Color::gammareti(i / 65535.0, gamm, start, ts, mul, add);
             gammaLut[i] = 0.5 * rtengine::CLIP(x * 65535.0);  // CLIP avoid in some case extra values
@@ -211,6 +213,7 @@ float calcLocalFactorrect(const float lox, const float loy, const float lcx, con
     const float ky = loy - lcy;
 
     float ref;
+
     //gradient allows differentiation between transition x and y
     if (std::fabs(kx / (ky + eps)) < krap) {
         ref = std::sqrt(rtengine::SQR(dy) * (1.f + rtengine::SQR(kx / (ky + eps))));
@@ -263,6 +266,7 @@ void deltaEforLaplace(float *dE, const float lap, int bfw, int bfh, rtengine::La
 #ifdef _OPENMP
     #pragma omp parallel for reduction(max:maxC)
 #endif
+
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
             const float val = std::sqrt((rtengine::SQR(refa - bufexporig->a[y][x]) + rtengine::SQR(refb - bufexporig->b[y][x])) + rtengine::SQR(refL - bufexporig->L[y][x])) / 327.68f;
@@ -281,6 +285,7 @@ void deltaEforLaplace(float *dE, const float lap, int bfw, int bfh, rtengine::La
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
+
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
             dE[y * bfw + x] = dE[y * bfw + x] >= maxdE ? ade * dE[y * bfw + x] + bde : 1.f;
@@ -345,23 +350,29 @@ void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius
     for (int x = 0; x < bfw; x++) {
         sobelL[0][x] = 0.f;
     }
+
     for (int y = 1; y < bfh - 1; y++) {
         sobelL[y][0] = 0.f;
+
         for (int x = 1; x < bfw - 1; x++) {
             float sumXL = 0.f;
             float sumYL = 0.f;
+
             for (int i = -1; i < 2; i += 2) {
                 for (int j = -1; j < 2; j += 1) {
                     sumXL += GX[j + 1][i + 1] * tmL[y + i][x + j];
                     sumYL += GY[j + 1][i + 1] * tmL[y + i][x + j];
                 }
             }
+
             //Edge strength
             //we can add if need teta = atan2 (sumYr, sumXr)
             sobelL[y][x] = rtengine::min(std::sqrt(rtengine::SQR(sumXL) + rtengine::SQR(sumYL)), 32767.f);
         }
+
         sobelL[y][bfw - 1] = 0.f;
     }
+
     for (int x = 0; x < bfw; x++) {
         sobelL[bfh - 1][x] = 0.f;
     }
@@ -493,6 +504,7 @@ struct local_params {
     int guidb;
     float strbl;
     float epsb;
+    float thrbl;
     float trans;
     float feath;
     int dehaze;
@@ -740,12 +752,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskcbmet = llcbMask;
     lp.showmaskretimet = llretiMask;
     lp.showmasksoftmet = llsoftMask;
-    
+
     lp.showmasktmmet = lltmMask;
     lp.showmaskblmet = llblMask;
     lp.showmask_met = ll_Mask;
-  //  printf("mask=%i \n", lp.showmask_met);
-    
+    //  printf("mask=%i \n", lp.showmask_met);
+
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -919,7 +931,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     if (locallab.spots.at(sp).shape == "ELI") {
         lp.shapmet = 0;
-    } else /*if (locallab.spots.at(sp).shape == "RECT")*/ {
+    } else { /*if (locallab.spots.at(sp).shape == "RECT")*/
         lp.shapmet = 1;
     }
 
@@ -1062,6 +1074,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int itera = locallab.spots.at(sp).itera;
     int guidbl = locallab.spots.at(sp).guidbl;
     float epsbl = (float) locallab.spots.at(sp).epsbl;
+    float thrbl = 0.01f * (float) locallab.spots.at(sp).thrbl;
     float sharradius = LIM(locallab.spots.at(sp).sharradius, 0.42, 3.5);
     float lcamount = ((float) locallab.spots.at(sp).lcamount);
     lcamount = LIM01(lcamount); //to prevent crash with old pp3 integer
@@ -1157,7 +1170,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.angmaexp = angmaskexpo;
     lp.str_mas = strmask;
     lp.ang_mas = angmask;
-    
+
     lp.strexp = strexpo;
     lp.angexp = angexpo;
     lp.strSH = strSH;
@@ -1223,6 +1236,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.strbl = 0.01f * (float) locallab.spots.at(sp).strbl;
 
     lp.epsb = epsbl;
+    lp.thrbl = thrbl;
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
     lp.blurcol = blurcolor;
@@ -1319,6 +1333,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     for (int y = 0; y < 5; y++) {
         lp.mullocsh[y] = multish[y];
     }
+
     lp.activspot = locallab.spots.at(sp).activ;
 
     lp.logena = locallab.spots.at(sp).explog && lp.activspot;
@@ -1353,11 +1368,13 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.expcomp = LIM(locallab.spots.at(sp).expcomp, -2.0, 4.0); //to prevent crash with Old pp3 with integer
     //increase sensitivity for low values
     float proexp = lp.expcomp;
+
     if (std::fabs(proexp) < 0.6f) {
         float interm = std::fabs(proexp) / 0.6f;
         interm = pow(interm, 3.f);
         lp.expcomp = proexp * interm;
     }
+
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
     lp.sensex = local_sensiex;
     lp.war = local_warm;
@@ -1440,6 +1457,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 
             if (!zone) {
                 zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
+
                 if (zone == 1) {
                     localFactor = pow_F(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
                 }
@@ -1450,6 +1468,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 
             if (!zone) {
                 zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
+
                 if (zone == 1) {
                     localFactor = pow_F(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
                 }
@@ -1462,6 +1481,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 
             if (!zone) {
                 zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
+
                 if (zone == 1) {
                     localFactor = pow_F(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
                 }
@@ -1472,6 +1492,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 
             if (!zone) {
                 zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
+
                 if (zone == 1) {
                     localFactor = pow_F(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
                 }
@@ -1582,7 +1603,8 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
         if (scale)
         {
             return x * 65535.f;
-        } else {
+        } else
+        {
             return x;
         }
     };
@@ -1623,6 +1645,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int y = 0; y < H; ++y) {
             for (int x = 0; x < W; ++x) {
                 float r = rgb->r(y, x);
@@ -1657,6 +1680,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
+
             for (int y = 0; y < H; ++y) {
                 for (int x = 0; x < W; ++x) {
                     Y2[y][x] = norm(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)) / 65535.f;
@@ -1666,6 +1690,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
                     assert(std::isfinite(Y[y][x]));
                 }
             }
+
             const float radius = rtengine::max(rtengine::max(bfw, W), rtengine::max(bfh, H)) / 30.f;
             const float epsilon = 0.005f;
             rtengine::guidedFilter(Y2, Y, Y, radius, epsilon, multiThread);
@@ -1675,6 +1700,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int y = 0; y < H; ++y) {
             for (int x = 0; x < W; ++x) {
                 float &r = rgb->r(y, x);
@@ -1728,6 +1754,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
     double mean = 0.0;
     int nc = 0;
+
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {
             const float r = img.r(y, x), g = img.g(y, x), b = img.b(y, x);
@@ -1735,6 +1762,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             nc++;
 
             const float m = rtengine::max(0.f, r, g, b) / 65535.f * ec;
+
             if (m > noise) {
                 const float l = rtengine::min(r, g, b) / 65535.f * ec;
                 minVal = rtengine::min(minVal, l > noise ? l : m);
@@ -1802,7 +1830,9 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 } else {
                     yb = 45.f;
                 }
+
                 sourceg[sp] = 0.4f * yb;
+
                 if (settings->verbose) {
                     std::cout << "         no samples found in range, resorting to Yb gray point value " << sourceg[sp]  << std::endl;
                 }
@@ -1885,6 +1915,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)
 #endif
+
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
             Y[y][x] = Color::rgbLuminance(R[y][x], G[y][x], B[y][x], ws);
@@ -1907,6 +1938,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 #ifdef _OPENMP
         #pragma omp parallel for if (multithread)
 #endif
+
         for (int y = 0; y < H; ++y) {
             for (int x = 0; x < W; ++x) {
                 float l = LIM(log2(rtengine::max(Y[y][x], 1e-9f)), centers[0], centers[11]);
@@ -2007,6 +2039,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)
 #endif
+
     for (int y = 0; y < H; ++y) {
         int x = 0;
 
@@ -2140,6 +2173,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic, 16)
 #endif
+
         for (int i = 0; i < height; i++) {
 #ifdef __SSE2__
             // vectorized conversion from Lab to jchqms
@@ -2305,11 +2339,13 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
     if (rad != 0.f) {
         array2D<float> ble(bfw, bfh);
         array2D<float> guid(bfw, bfh);
+
         if (flag == 0) {
 
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
+
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     guid[ir][jr] = Color::L2Y(bufcolorig->L[ir][jr]) / 32768.f;
@@ -2319,7 +2355,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 
             const float aepsil = (epsilmax - epsilmin) / 100.f;
             const float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
-           // const float epsil = aepsil * 0.1f * rad + bepsil;
+            // const float epsil = aepsil * 0.1f * rad + bepsil;
             const float epsil = aepsil * rad + bepsil;
             const float blur = 10.f / sk * (thres + 0.8f * rad);
 
@@ -2328,6 +2364,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
+
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     bufcolfin->L[ir][jr] =  Color::computeXYZ2LabY(32768.f * ble[ir][jr]);
@@ -2338,6 +2375,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
+
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     ble[ir][jr] = bufcolfin->L[ir][jr] / 32768.f;
@@ -2355,6 +2393,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
+
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     bufcolfin->L[ir][jr] =  32768.f * ble[ir][jr];
@@ -2372,6 +2411,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
 #ifdef _OPENMP
     #pragma omp parallel for reduction(min:minlig) schedule(dynamic,16) if (multiThread)
 #endif
+
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             minlig = rtengine::min(buflight[ir][jr], minlig);
@@ -2383,6 +2423,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             buflight[ir][jr] = LIM01((buflight[ir][jr] - minlig) / (100.f - minlig));
@@ -2400,6 +2441,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             buflight[ir][jr] = (100.f - minlig) * buflight[ir][jr] + minlig;
@@ -2416,18 +2458,21 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
     const float linear = lp.linear;
     int bw = bfw;
     int bh = bfh;
+
     if (linear > 0.f && lp.expcomp == 0.f) {
         lp.expcomp = 0.001f;
     }
+
     const bool exec = (lp.expmet == 1 && linear > 0.f && lp.laplacexp > 0.1f);
 
-    if(!exec) {//for standard exposure
+    if (!exec) { //for standard exposure
         const float cexp_scale = std::pow(2.f, lp.expcomp);
         const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
         const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
         const float chlrange = maxran - cshoulder;
         const float diffde = 100.f - lp.sensex;//the more scope, the less take into account dE for Laplace
-        if(!lp.invex) {// Laplacian not in inverse
+
+        if (!lp.invex) { // Laplacian not in inverse
             bw = bfwr;
             bh = bfhr;
 
@@ -2444,6 +2489,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
             constexpr float bb = 100.f - 30.f * aa;
 
             float lap;
+
             if (diffde > 80.f) {
                 lap = alap;
             } else if (diffde < 30.f) {
@@ -2453,8 +2499,9 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
             }
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bfhr; y++) {
                 for (int x = 0; x < bfwr; x++) {
                     datain[y * bfwr + x] = bufexporig->L[y][x];
@@ -2464,20 +2511,22 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
             MyMutex::MyLock lock(*fftwMutex);
             ImProcFunctions::retinex_pde(datain.get(), dataout.get(), bfwr, bfhr, lap, 1.f, dE.get(), 0, 1, 1);//350 arbitrary value about 45% strength Laplacian
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bfhr; y++) {
                 for (int x = 0; x < bfwr; x++) {
                     bufexporig->L[y][x] = dataout[y * bfwr + x];
                 }
             }
-        
+
         }
- 
+
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
-        for (int ir = 0; ir < bh; ir++) {//for standard with Laplacian in normal and without in inverse 
+
+        for (int ir = 0; ir < bh; ir++) {//for standard with Laplacian in normal and without in inverse
             for (int jr = 0; jr < bw; jr++) {
                 float L = bufexporig->L[ir][jr];
                 //highlight
@@ -2489,7 +2538,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
                 lab->L[ir][jr] = 0.5f * tonecurve[2 * L];
             }
         }
-    } else if(!lp.invex) {//for PDE algorithms
+    } else if (!lp.invex) { //for PDE algorithms
         constexpr float kl = 1.f;
         const float hlcompthr = lp.hlcompthr / 200.f;
         const float hlcomp = lp.hlcomp / 100.f;
@@ -2497,6 +2546,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int ir = 0; ir < bfh; ir++) {
             for (int jr = 0; jr < bfw; jr++) {
                 float L = bufexporig->L[ir][jr];
@@ -2539,6 +2589,7 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
 #ifdef _OPENMP
         #pragma omp for schedule(static) // static scheduling is important to avoid artefacts
 #endif
+
         for (int y = 0; y < lab->H; y++) {
             for (int x = 0; x < lab->W; x++) {
                 generate = !generate;
@@ -2651,6 +2702,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < transformed->H; y++) {
             const int loy = cy + y;
             const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
@@ -2665,7 +2717,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -2685,6 +2737,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     reducdEa = SQR(calcreducdE(dEa, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
                     reducdEb = SQR(calcreducdE(dEb, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
                 }
+
                 float difL, difa, difb;
 
                 if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
@@ -2766,6 +2819,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < transformed->H; y++) {
             int loy = cy + y;
 
@@ -2777,7 +2831,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -2799,6 +2853,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                             transformed->a[y][x] = clipC(original->a[y][x] + difa * reducdE);
                             transformed->b[y][x] = clipC(original->b[y][x] + difb * reducdE);
                         }
+
                         break;
                     }
 
@@ -2821,6 +2876,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                             transformed->a[y][x] = clipC(original->a[y][x] + difa * reducdE);
                             transformed->b[y][x] = clipC(original->b[y][x] + difb * reducdE);
                         }
+
                         break;
                     }
 
@@ -2907,6 +2963,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < transformed->H; y++) {
             int loy = cy + y;
 
@@ -2918,7 +2975,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -3028,6 +3085,7 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
 #else
         static_cast<void>(multiThread);
 #endif
+
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 bufexporig->a[y][x] = original->a[y + ystart][x + xstart];
@@ -3044,6 +3102,7 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:som) if(multiThread)
 #endif
+
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 som += SQR(std::fabs(bufexporig->a[y][x]) - meanfab) + SQR(std::fabs(bufexporig->b[y][x]) - meanfab);
@@ -3230,6 +3289,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
+
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             float X, Y, Z;
@@ -3251,6 +3311,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
+
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             blend2[ir][jr] = 32768.f * ble[ir][jr];
@@ -3264,6 +3325,7 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
+
     for (int y = 0; y < bfh ; y++) {
         const int loy = y + ystart + cy;
 
@@ -3276,7 +3338,7 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, achm, lp, zone, localFactor);
-            } else /*if (lp.shapmet == 1)*/ {
+            } else { /*if (lp.shapmet == 1)*/
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
             }
 
@@ -3361,6 +3423,7 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
+
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
             const float abdelta2 = SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f);
@@ -3369,6 +3432,7 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
             const float tempdE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
 
             float reducdE;
+
             if (tempdE > maxdE) {
                 reducdE = 0.f;
             } else if (tempdE > mindE && tempdE <= maxdE) {
@@ -3404,6 +3468,7 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
+
     for (int y = 0; y < bfh; y++) {
         const int loy = y + ystart + cy;
 
@@ -3415,7 +3480,7 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
 
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, achm, lp, zone, localFactor);
-            } else /*if (lp.shapmet == 1)*/ {
+            } else { /*if (lp.shapmet == 1)*/
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
             }
 
@@ -3456,11 +3521,14 @@ void ImProcFunctions::discrete_laplacian_threshold(float * data_out, const float
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
+
     for (size_t j = 0; j < ny; j++) {
         const float* ptr_in = &data_in[j * nx];
         float* ptr_out = &data_out[j * nx];
+
         for (size_t i = 0; i < nx; i++) {
             float val = 0.f;
+
             /* row differences */
             if (0 < i) {
                 const float diff = ptr_in[i] - ptr_in[i - 1];
@@ -3550,11 +3618,13 @@ void ImProcFunctions::rex_poisson_dct(float * data, size_t nx, size_t ny, double
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
+
     for (size_t i = 0; i < ny; ++i) {
         for (size_t j = 0; j < nx; ++j) {
             data[i * nx + j] *= m2 / (2.f - cosx[j] - cosy[i]);
         }
     }
+
     // handle the first value, data[0, 0] = 0
     data[0] = 0.f;
 
@@ -3572,6 +3642,7 @@ void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, do
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:mean,dt) if(multiThread)
 #endif
+
     for (size_t i = 0; i < size; i++) {
         mean += data[i];
         dt += SQR(data[i]);
@@ -3620,6 +3691,7 @@ void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t 
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
 #endif
+
     for (size_t i = 0; i < size; i++) {
         data[i] = (modma * data[i] + sigmmmodmb) + onesmod * ref[i];//normalize mean and stdv and balance PDE
     }
@@ -3641,15 +3713,19 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
 
     BENCHFUN
 #ifdef RT_FFTW3F_OMP
+
     if (multiThread) {
         fftwf_init_threads();
         fftwf_plan_with_nthreads(omp_get_max_threads());
     }
+
 #endif
 
     float *datashow = nullptr;
+
     if (show != 0) {
         datashow = (float *) fftwf_malloc(sizeof(float) * bfw * bfh);
+
         if (!datashow) {
             fprintf(stderr, "allocation error\n");
             abort();
@@ -3657,6 +3733,7 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     }
 
     float *data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh);
+
     if (!data_tmp) {
         fprintf(stderr, "allocation error\n");
         abort();
@@ -3666,6 +3743,7 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
 
     float *data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh);
+
     if (!data_fft) {
         fprintf(stderr, "allocation error\n");
         abort();
@@ -3688,10 +3766,12 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     if (dEenable == 1) {
         float* data_fft04 = (float *)fftwf_malloc(sizeof(float) * bfw * bfh);
         float* data_tmp04 = (float *)fftwf_malloc(sizeof(float) * bfw * bfh);
+
         if (!data_fft04 || !data_tmp04) {
             fprintf(stderr, "allocation error\n");
             abort();
         }
+
         //second call to laplacian with 40% strength ==> reduce effect if we are far from ref (deltaE)
         discrete_laplacian_threshold(data_tmp04, datain, bfw, bfh, 0.4f * thresh);
         const auto dct_fw04 = fftwf_plan_r2r_2d(bfh, bfw, data_tmp04, data_fft04, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
@@ -3709,13 +3789,17 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
 #ifdef _OPENMP
             #pragma omp for
 #endif
+
             for (int y = 0; y < bfh ; y++) {//mix two fftw Laplacian : plein if dE near ref
                 int x = 0;
 #ifdef __SSE2__
+
                 for (; x < bfw - 3; x += 4) {
                     STVFU(data_fft[y * bfw + x], intp(pow_F(LVFU(dE[y * bfw + x]), exponentv), LVFU(data_fft[y * bfw + x]), LVFU(data_fft04[y * bfw + x])));
                 }
+
 #endif
+
                 for (; x < bfw; x++) {
                     data_fft[y * bfw + x] = intp(pow_F(dE[y * bfw + x], exponent), data_fft[y * bfw + x], data_fft04[y * bfw + x]);
                 }
@@ -3724,6 +3808,7 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
         fftwf_free(data_fft04);
         fftwf_free(data_tmp04);
     }
+
     if (show == 2) {
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
@@ -3758,6 +3843,7 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
                 dataout[y * bfw + x] = clipLoc(multy * data_tmp[y * bfw + x]);
@@ -3772,15 +3858,19 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     }
 
     fftwf_free(data_tmp);
+
     if (datashow) {
         fftwf_free(datashow);
     }
+
     fftwf_cleanup();
 
 #ifdef RT_FFTW3F_OMP
+
     if (multiThread) {
         fftwf_cleanup_threads();
     }
+
 #endif
 }
 
@@ -3819,6 +3909,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 bufmaskblurcol->L[y][x] = original->L[y + ystart][x + xstart];
@@ -3875,7 +3966,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             if (rm > 0) {
                 float **mb = blendblur;
 #ifdef _OPENMP
-        #pragma omp parallel if (multiThread)
+                #pragma omp parallel if (multiThread)
 #endif
                 {
                     gaussianBlur(mb, mb, bfw, bfh, rm);
@@ -3885,7 +3976,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             if (blu_ma >= 0.25f) {
                 if (!fftt) { // || (lp.fftColorMask && call != 2)) {
 #ifdef _OPENMP
-        #pragma omp parallel if (multiThread)
+                    #pragma omp parallel if (multiThread)
 #endif
                     {
                         gaussianBlur(bufcolorig->L, blur, bfw, bfh, blu_ma / sk);
@@ -3923,6 +4014,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic, 16)
 #endif
+
             for (int ir = 0; ir < bfh; ir++) {
 #ifdef __SSE2__
 
@@ -3963,7 +4055,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     if (locllmasCurve && llmasutili) {
-                       // printf("s");
+                        // printf("s");
                         kmaskL = 32768.f * LIM01(kinv - kneg * locllmasCurve[(500.f / 32768.f) * bufcolorig->L[ir][jr]]);
 
                     }
@@ -4048,6 +4140,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         }
 
         std::unique_ptr<LabImage> bufprov;
+
         if (delt) {
             bufprov.reset(new LabImage(bfw, bfh));
             bufprov->CopyFrom(bufmaskblurcol, multiThread);
@@ -4075,6 +4168,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
         for (int ir = 0; ir < bfh; ir++) {
             for (int jr = 0; jr < bfw; jr++) {
                 float2 sincosval = xsincosf(hue[ir][jr]);
@@ -4090,6 +4184,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     bufmaskblurcol->L[ir][jr] *= (1.f + blendstru[ir][jr]);
@@ -4101,6 +4196,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     bufmaskblurcol->L[ir][jr] = 0.5f * lmasklocalcurve[2.f * bufmaskblurcol->L[ir][jr]];
@@ -4145,9 +4241,11 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
 #endif
             wavelet_decomposition *wdspot = new wavelet_decomposition(bufmaskblurcol->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen);
+
             if (wdspot->memory_allocation_failed()) {
                 return;
             }
+
             float mean[10];
             float meanN[10];
             float sigma[10];
@@ -4157,6 +4255,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
             float alow = 1.f;
             float blow = 0.f;
+
             if (level_hl != level_bl) {
                 alow = 1.f / (level_hl - level_bl);
                 blow = -alow * level_bl;
@@ -4169,13 +4268,13 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 ahigh = 1.f / (level_hr - level_br);
                 bhigh =  -ahigh * level_br;
             }
-        
+
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = level_bl; level < maxlvl; ++level) {
                     int W_L = wdspot->level_W(level);
                     int H_L = wdspot->level_H(level);
                     float* const* wav_L = wdspot->level_coeffs(level);
-                
+
                     if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                         float insigma = 0.666f; //SD
                         float logmax = log(MaxP[level]); //log Max
@@ -4186,12 +4285,13 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                         float asig = 0.166f / (sigma[level]);
                         float bsig = 0.5f - asig * mean[level];
                         float amean = 0.5f / mean[level];
-                    
+
 #ifdef _OPENMP
-                    #pragma omp parallel for if (multiThread)
+                        #pragma omp parallel for if (multiThread)
 #endif
+
                         for (int i = 0; i < W_L * H_L; i++) {
-                            if(loclmasCurvecolwav && lmasutilicolwav) {
+                            if (loclmasCurvecolwav && lmasutilicolwav) {
                                 float absciss;
                                 float &val = wav_L[dir][i];
 
@@ -4207,6 +4307,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                                 }
 
                                 float klev = 1.f;
+
                                 if (level >= level_hl && level <= level_hr) {
                                     klev = 1.f;
                                 }
@@ -4222,7 +4323,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                                         klev = ahigh * level + bhigh;
                                     }
                                 }
-            
+
                                 float kc = klev * (loclmasCurvecolwav[absciss * 500.f] - 0.5f);
                                 float amplieffect = kc <= 0.f ? 1.f : 4.f;
 
@@ -4230,14 +4331,14 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                                 kinterm = kinterm <= 0.f ? 0.01f : kinterm;
 
                                 val *=  kinterm;
-                            
+
                             }
                         }
                     }
-                
+
                 }
             }
-        
+
             wdspot->reconstruct(bufmaskblurcol->L[0], 1.f);
             delete wdspot;
 
@@ -4247,6 +4348,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
                     float huemah = xatan2f(bufmaskblurcol->b[ir][jr], bufmaskblurcol->a[ir][jr]);
@@ -4304,6 +4406,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     const float rdEval = rdE[ir][jr];
@@ -4316,11 +4419,12 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         struct grad_params gp;
 
-        if ((indic == 0 && lp.strmaexp != 0.f) || (indic ==12 &&  lp.str_mas != 0.f)) {
+        if ((indic == 0 && lp.strmaexp != 0.f) || (indic == 12 &&  lp.str_mas != 0.f)) {
             calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, indic);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int ir = 0; ir < bfh; ir++) {
                 for (int jr = 0; jr < bfw; jr++) {
                     bufmaskblurcol->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
@@ -4341,6 +4445,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
+
             for (int y = 0; y < bfh; y++) {
                 for (int x = 0; x < bfw; x++) {
                     bufmaskblurcol->L[y][x] = data_tmp[y * bfw + x];
@@ -4420,6 +4525,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < transformed->H; y++) {
             int loy = cy + y;
 
@@ -4430,7 +4536,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -4493,6 +4599,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                                 transformed->b[y][x] = 0.f;
                             }
                         }
+
                         break;
                     }
 
@@ -4562,6 +4669,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < transformed->H; y++) {
             const int loy = cy + y;
             const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
@@ -4577,7 +4685,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -4675,6 +4783,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
             #pragma omp barrier
             #pragma omp for schedule(dynamic,16)
 #endif
+
             for (int y = 0; y < transformed->H; y++)
             {
                 const int loy = cy + y;
@@ -4705,7 +4814,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else /*if (lp.shapmet == 1)*/ {
+                    } else { /*if (lp.shapmet == 1)*/
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                     }
 
@@ -4833,6 +4942,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
+
             for (int y = ystart; y < yend; y++)
             {
                 const int loy = cy + y;
@@ -4844,7 +4954,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else /*if (lp.shapmet == 1)*/ {
+                    } else { /*if (lp.shapmet == 1)*/
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                     }
 
@@ -4996,14 +5106,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     const float ach = lp.trans / 100.f;
     float varsens = lp.sensex;
 
-    if (senstype == 6 || senstype == 7)   //cbdl
-    {
+    if (senstype == 6 || senstype == 7) { //cbdl
         varsens =  lp.senscb;
-    } else if (senstype == 8)   //TM
-    {
+    } else if (senstype == 8) { //TM
         varsens =  lp.senstm;
-    } else if (senstype == 10) //local contrast
-    {
+    } else if (senstype == 10) { //local contrast
         varsens =  lp.senslc;
     }
 
@@ -5038,8 +5145,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     const bool usemasktm = (lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 4) && senstype == 8;
     const bool usemaskall = (usemaskcb  || usemasktm);
 
-    if (usemaskall)
-    {
+    if (usemaskall) {
         origblurmask.reset(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
@@ -5051,14 +5157,15 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
             gaussianBlur(originalmask->b, origblurmask->b, bfw, bfh, radius);
         }
     }
-    if (lp.equtm  && senstype == 8) //normalize luminance for Tone mapping , at this place we can use for others senstype!
-    {
+
+    if (lp.equtm  && senstype == 8) { //normalize luminance for Tone mapping , at this place we can use for others senstype!
         float *datain = new float[bfh * bfw];
         float *data = new float[bfh * bfw];
 
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
+
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
                 datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
@@ -5069,6 +5176,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
                 bufexporig->L[y - ystart][x - xstart] = data[(y - ystart) * bfw + x - xstart];
@@ -5085,8 +5193,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-        for (int y = 0; y < bfh; y++)
-        {
+
+        for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 origblur->L[y][x] = original->L[y + ystart][x + xstart];
                 origblur->a[y][x] = original->a[y + ystart][x + xstart];
@@ -5117,8 +5225,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
-        for (int y = ystart; y < yend; y++)
-        {
+
+        for (int y = ystart; y < yend; y++) {
             const int loy = cy + y;
 
 #ifdef __SSE2__
@@ -5147,7 +5255,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -5276,6 +5384,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
     for (int y = 0; y < transformed->H; y++) {
         for (int x = 0; x < transformed->W; x++) {
             temp->L[y][x] = original->L[y][x];
@@ -5319,6 +5428,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < temp->H; y++) {
                 for (int x = 0; x < temp->W; x++) {
                     const float lh = 0.5f * exlocalcurve[2.f * temp->L[y][x]]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
@@ -5347,6 +5457,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     const float epsi = original->L[y][x] == 0.f ? 0.001f : 0.f;
@@ -5361,6 +5472,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     //same as in "normal"
@@ -5379,6 +5491,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     temp->L[y][x] = 0.5f * lllocalcurve[2.f * original->L[y][x]];
@@ -5445,6 +5558,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < transformed->H; y++) {
             const int loy = cy + y;
 
@@ -5464,12 +5578,13 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else /*if (lp.shapmet == 1)*/ {
+                    } else { /*if (lp.shapmet == 1)*/
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);//rect not good
                     }
 
                     //deltaE
                     float reducdE;
+
                     if (zone != 2) {
                         const float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
                         const float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
@@ -5965,6 +6080,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = ystart; y < yend; y++) {
             const int loy = cy + y;
 
@@ -5974,7 +6090,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
@@ -6050,6 +6166,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 
     int bfhr = bfh;
     int bfwr = bfw;
+
     if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2) {
         optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
     }
@@ -6079,6 +6196,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     } else if (senstype == 20) { //common mask
         varsens = lp.sensimas;
     }
+
     bool delt = lp.deltaem;
 
     //sobel
@@ -6104,7 +6222,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2) &&  senstype == 8);
     const bool lcshow = ((lp.showmasklcmet == 1 || lp.showmasklcmet == 2) &&  senstype == 10);
     const bool origshow = ((lp.showmasksoftmet == 5) &&  senstype == 3 && lp.softmet == 1);
- 
+
     const bool masshow = ((lp.showmask_met == 1) &&  senstype == 20);
 
     const bool previewvib = ((lp.showmaskvibmet == 4) &&  senstype == 2);
@@ -6176,6 +6294,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
+
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
                 datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
@@ -6186,6 +6305,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
+
         for (int y = ystart; y < yend; y++)
             for (int x = xstart; x < xend; x++) {
                 bufexpfin->L[y - ystart][x - xstart] = data[(y - ystart) * bfw + x - xstart];
@@ -6202,6 +6322,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
                 origblur->L[y][x] = original->L[y + ystart][x + xstart];
@@ -6215,8 +6336,8 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
         gaussianBlur(origblur->b, origblur->b, bfw, bfh, radius);
 
     }
-    
-    
+
+
     //choice between original and mask
     const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
 
@@ -6237,6 +6358,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < bfh; y++) {
 
             const int loy = y + ystart + cy;
@@ -6265,7 +6387,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                 //calculate transition
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, achm, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                 }
 
@@ -6315,7 +6437,8 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     cla = bufexpfin->a[y][x] - original->a[y + ystart][x + xstart];
                     clb = bufexpfin->b[y][x] - original->b[y + ystart][x + xstart];
                 }
-                if(lp.blwh) {
+
+                if (lp.blwh) {
                     cla = 0.f;
                     clb = 0.f;
                 }
@@ -6385,6 +6508,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
 
     BENCHFUN
 #ifdef RT_FFTW3F_OMP
+
     if (multiThread) {
         fftwf_init_threads();
         fftwf_plan_with_nthreads(omp_get_max_threads());
@@ -6427,9 +6551,11 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
     fftwf_cleanup();
 
 #ifdef RT_FFTW3F_OMP
+
     if (multiThread) {
         fftwf_cleanup_threads();
     }
+
 #endif
 
     normalize_mean_dt(data, dataor, bfw * bfh, mod, 1.f);
@@ -6438,6 +6564,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
+
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw; x++) {
                 dataout[y * bfw + x] = clipLoc(data[y * bfw + x]);
@@ -6471,10 +6598,12 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
     BENCHFUN
 
 #ifdef RT_FFTW3F_OMP
+
     if (multiThread) {
         fftwf_init_threads();
         fftwf_plan_with_nthreads(omp_get_max_threads());
     }
+
 #endif
 
 
@@ -6523,6 +6652,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int j = 0; j < bfh; j++) {
             int index = j * bfw;
 
@@ -6542,6 +6672,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int j = 0; j < bfh; j++) {
             int index = j * bfw;
 
@@ -6560,6 +6691,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
+
             for (int j = 0; j < bfh; j++) {
                 int index = j * bfw;
 
@@ -6571,6 +6703,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
+
             for (int j = 0; j < bfh; j++) {
                 int index = j * bfw;
 
@@ -6587,6 +6720,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
+
     for (int index = 0; index < image_size; index++) { //restore data
         output[index] /= image_sizechange;
     }
@@ -6595,9 +6729,11 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
     fftwf_free(out);
 
 #ifdef RT_FFTW3F_OMP
+
     if (multiThread) {
         fftwf_cleanup_threads();
     }
+
 #endif
 }
 
@@ -6622,6 +6758,7 @@ void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
             input[y * bfw + x] =  input2[y][x];
@@ -6633,6 +6770,7 @@ void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
             output2[y][x] = output[y * bfw + x];
@@ -6717,6 +6855,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
 #ifdef _OPENMP
         #pragma omp for
 #endif
+
         for (int vblk = 0; vblk < numblox_H; ++vblk) {
 
             int top = (vblk - 1) * offset;
@@ -6829,6 +6968,7 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
+
     for (int i = 0; i < GH; ++i) {
         for (int j = 0; j < GW; ++j) {
             tmp1[i][j] = Lresult[i][j] / totwt[i][j];
@@ -6869,6 +7009,7 @@ void ImProcFunctions::wavcbd(wavelet_decomposition &wdspot, int level_bl, int ma
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
+
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 const int W_L = wdspot.level_W(level);
@@ -7008,9 +7149,11 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < H_L; y++) {
             int x = 0;
 #ifdef __SSE2__
+
             for (; x < W_L - 3; x += 4) {
                 vfloat exponev = onev;
                 vfloat valv = LVFU(Source[y][x]);
@@ -7024,7 +7167,9 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
                 const vfloat resultv = multv * xexpf(xlogf(valv + madLv) * exponev);
                 STVFU(Source[y][x], resultv);
             }
+
 #endif
+
             for (; x < W_L; x++) {
                 float expone = 1.f;
 
@@ -7075,6 +7220,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 
     if (process == 1 && loclevwavCurve && loclevwavutili) { //blur
         array2D<float> templevel(W_L, H_L);
+
         for (int dir = 1; dir < 4; ++dir) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 const auto WavL = wdspot.level_coeffs(level)[dir];
@@ -7088,9 +7234,11 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 
                 const float klev = 0.25f * loclevwavCurve[level * 55.5f];
                 float* src[H_L];
+
                 for (int i = 0; i < H_L; ++i) {
                     src[i] = &wdspot.level_coeffs(level)[dir][i * W_L];
                 }
+
 #ifdef _OPENMP
                 #pragma omp parallel if (multiThread)
 #endif
@@ -7107,15 +7255,19 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 #ifdef _OPENMP
                     #pragma omp for
 #endif
+
                     for (int y = 0; y < H_L; y++) {
                         int x = 0;
                         int j = y * W_L;
 #ifdef __SSE2__
+
                         for (; x < W_L - 3; x += 4, j += 4) {
                             const vfloat valv = LVFU(WavL[j]);
                             STVFU(WavL[j], intp((*meaLut)[vabsf(valv) * lutFactorv], LVFU(templevel[y][x]), valv));
                         }
+
 #endif
+
                         for (; x < W_L; x++, j++) {
                             WavL[j] = intp((*meaLut)[std::fabs(WavL[j]) * lutFactor], templevel[y][x], WavL[j]);
                         }
@@ -7166,16 +7318,20 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 #ifdef _OPENMP
                     #pragma omp for
 #endif
+
                     for (int i = 0; i < H_L; ++i) {
                         int j = 0;
 #ifdef __SSE2__
+
                         for (; j < W_L - 3; j += 4) {
                             const vfloat LL100v = LC2VFU(tmp[i * 2][j * 2]) / c327d68v;
                             const vfloat kbav = factorv * (loccompwavCurve[sixv * LL100v] - zd5v); //k1 between 0 and 0.5    0.5==> 1/6=0.16
                             const vfloat valv = LVFU(WavL[i * W_L + j]);
                             STVFU(WavL[i * W_L + j], valv * pow_F(onev + kbav * (*meaLut)[vabsf(valv) * lutFactorv], itfv));
                         }
+
 #endif
+
                         for (; j < W_L; ++j) {
                             const float LL100 = tmp[i * 2][j * 2] / 327.68f;
                             const float kba = factor * (loccompwavCurve[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
@@ -7191,6 +7347,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
+
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 const int W_L = wdspot.level_W(level);
@@ -7214,6 +7371,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
+
                 for (int y = 0; y < H_L; y++) {
                     for (int x = 0; x < W_L; x++) {
                         int j = y * W_L + x;
@@ -7222,11 +7380,13 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                 }
 
                 float klev = (loccomprewavCurve[level * 55.5f] - 0.75f);
+
                 if (klev < 0.f) {
                     klev *= 2.6666f;//compression increase contraste
                 } else {
                     klev *= 4.f;//dilatation reduce contraste - detailattenuator
                 }
+
                 const float compression = expf(-klev);
                 const float detailattenuator = std::max(klev, 0.f);
 
@@ -7241,15 +7401,19 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
 #ifdef _OPENMP
                     #pragma omp for
 #endif
+
                     for (int y = 0; y < H_L; y++) {
                         int x = 0;
                         int j = y * W_L;
 #ifdef __SSE2__
+
                         for (; x < W_L - 3; x += 4, j += 4) {
                             const vfloat valv = LVFU(wav_L[j]);
                             STVFU(wav_L[j], intp((*meaLut)[vabsf(valv) * lutFactorv], LVFU(templevel[y][x]), valv));
                         }
+
 #endif
+
                         for (; x < W_L; x++, j++) {
                             wav_L[j] = intp((*meaLut)[std::fabs(wav_L[j]) * lutFactor], templevel[y][x], wav_L[j]);
                         }
@@ -7269,7 +7433,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                    const LocwavCurve & locedgwavCurve, bool locedgwavutili,
                                    float sigm, float offs, int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres)
 {
-BENCHFUN
+    BENCHFUN
     std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
 
     //first decomposition for compress dynamic range positive values and other process
@@ -7292,11 +7456,13 @@ BENCHFUN
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int y = 0; y < H_Lm; y++) {
             for (int x = 0; x < W_Lm; x++) {
                 factorwav[y][x] = mult * (1.f - ImProcFunctions::calcGradientFactor(gpwav, x, y));
             }
         }
+
         float mean[10];
         float meanN[10];
         float sigma[10];
@@ -7352,6 +7518,7 @@ BENCHFUN
                             klev = ahighg * level + bhighg;
                         }
                     }
+
                     klev *= 0.8f;
                     const float threshold = mean[level] + lp.sigmalc2 * sigma[level];
                     float lutFactor;
@@ -7367,6 +7534,7 @@ BENCHFUN
                             const float WavCL = std::fabs(wav_L[y * W_L + x]);
 
                             float absciss;
+
                             if (WavCL >= threshold) { //for max
                                 absciss = pow_F(WavCL - logmax, rap);
                             } else if (WavCL >= mean[level]) {
@@ -7394,6 +7562,7 @@ BENCHFUN
 
     if (radblur > 0.f && blurena) {
         float* src[H_L];
+
         for (int i = 0; i < H_L; ++i) {
             src[i] = &wav_L0[i * W_L];
         }
@@ -7419,6 +7588,7 @@ BENCHFUN
         if (lp.residshathr > (100.f - tran)) {
             tran = 100.f - lp.residshathr;
         }
+
         constexpr float alp = 3.f;
         const float aalp = (1.f - alp) / lp.residshathr;
         const float ath = -lp.residsha / tran;
@@ -7432,6 +7602,7 @@ BENCHFUN
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int i = 0; i < W_L * H_L; i++) {
             const float LL100 = wav_L0[i] / 327.68f;
 
@@ -7462,7 +7633,7 @@ BENCHFUN
             }
         }
 
-        ImProcFunctions::shadowsHighlights(temp.get(), true, 1, lp.residhi, lp.residsha , 40, sk, lp.residhithr, lp.residshathr);
+        ImProcFunctions::shadowsHighlights(temp.get(), true, 1, lp.residhi, lp.residsha, 40, sk, lp.residhithr, lp.residshathr);
 
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
@@ -7481,6 +7652,7 @@ BENCHFUN
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:avedbl) if (multiThread)
 #endif
+
         for (int i = 0; i < W_L * H_L; i++) {
             avedbl += wav_L0[i];
         }
@@ -7497,6 +7669,7 @@ BENCHFUN
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
+
         for (int i = 0; i < W_L * H_L; i++) {
             wav_L0[i] = resid_contrast.getVal(LIM01(wav_L0[i] / 32768.f)) * 32768.f;
         }
@@ -7565,6 +7738,7 @@ BENCHFUN
 
         float gradw = lp.gradw;
         float tloww = lp.tloww;
+
         for (int lvl = 0; lvl < 4; lvl++) {
             for (int dir = 1; dir < 4; dir++) {
                 const int W_L = wdspot->level_W(lvl);
@@ -7574,7 +7748,7 @@ BENCHFUN
                 // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
             }
         }
-        
+
         tmC.free();
         float aamp = 1.f + lp.thigw / 100.f;
 
@@ -7585,6 +7759,7 @@ BENCHFUN
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
 #endif
+
             for (int i = 1; i < H_L - 1; i++) {
                 for (int j = 1; j < W_L - 1; j++) {
                     //treatment of koeLi and maxkoeLi
@@ -7595,13 +7770,14 @@ BENCHFUN
                         const auto somm = neigh ? 40.f : 50.f;
 
                         for (int dir = 1; dir < 4; dir++) { //neighbors proxi
-                            koeLi[lvl * 3 + dir - 1][i * W_L + j] = (kneigh * koeLi[lvl * 3 + dir - 1][i * W_L + j] + 
+                            koeLi[lvl * 3 + dir - 1][i * W_L + j] = (kneigh * koeLi[lvl * 3 + dir - 1][i * W_L + j] +
                                                                     2.f * koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j] + 2.f * koeLi[lvl * 3 + dir - 1][i * W_L + j + 1] + 2.f * koeLi[lvl * 3 + dir - 1][i * W_L + j - 1]
                                                                     + koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j - 1] + koeLi[lvl * 3 + dir - 1][(i - 1) * W_L + j + 1] + koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j - 1] + koeLi[lvl * 3 + dir - 1][(i + 1) * W_L + j + 1]) / somm;
                         }
                     }
 
                     float interm = 0.f;
+
                     for (int dir = 1; dir < 4; dir++) {
                         //here I evaluate combination of vert / diag / horiz...we are with multiplicators of the signal
                         interm += SQR(koeLi[lvl * 3 + dir - 1][i * W_L + j]);
@@ -7640,6 +7816,7 @@ BENCHFUN
                     }
 
                     float kampli;
+
                     if (alph > eddlipinfl) {
                         kampli = alipinfl * alph + blipinfl; //If beta low reduce kampli
                         kampli = SQR(bet) * kampli * aamp;
@@ -7682,11 +7859,13 @@ BENCHFUN
 
         if (lp.edgwmet != 1) {
             float brepart;
+
             if (lp.edgwmet == 0) {
                 brepart = 3.f;
-            } else /*if (lp.edgwmet == 2)*/ {
+            } else { /*if (lp.edgwmet == 2)*/
                 brepart = 0.5f;    //arbitrary value to increase / decrease repart, between 1 and 0
             }
+
             if (rad < lim0 / 60.f) {
                 const float arepart = - (brepart - 1.f) / (lim0 / 60.f);
                 repart *= arepart * rad + brepart;    //linear repartition of repart
@@ -7704,6 +7883,7 @@ BENCHFUN
                 float* const* wav_L = wdspot->level_coeffs(lvl);
                 const float koef = ak * lvl + bk; //modulate for levels : more levels high, more koef low ==> concentrated action on low levels, without or near for high levels
                 float expkoef = -pow_F(std::fabs(rad - lvl), koef);   //reduce effect for high levels
+
                 if (lp.edgwmet == 2) {
                     if (rad < lim0 / 60.f && lvl == 0) {
                         expkoef *= abs(repart);    //reduce effect for low values of rad and level=0==> quasi only level 1 is effective
@@ -7713,6 +7893,7 @@ BENCHFUN
                         expkoef /= repart;    //increase effect for low values of rad and level=1==> quasi only level 0 is effective
                     }
                 }
+
                 //take into account local contrast
                 const float refin = value * xexpf(expkoef);
                 const float edgePrecalc = 1.f + refin; //estimate edge "pseudo variance"
@@ -7747,11 +7928,13 @@ BENCHFUN
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
 #endif
+
                     for (int i = borderL; i < H_L - borderL; i++) {
                         for (int j = borderL; j < W_L - borderL; j++) {
                             const int k = i * W_L + j;
 
                             float edge;
+
                             if (lvl < 4) {
                                 edge = 1.f + (edgePrecalc - 1.f) * (koeLi[lvl * 3][k]) / (1.f + 0.9f * maxkoeLi[lvl * 3 + dir - 1]);
                             } else {
@@ -7759,11 +7942,12 @@ BENCHFUN
                             }
 
                             float absciss = 0.f;
+
                             if (std::fabs(wav_L[dir][k]) >= mean[lvl] + sigma[lvl]) {  //for max
                                 absciss = xexpf((xlogf(std::fabs(wav_L[dir][k])) - logmax) * rap);
                             } else if (std::fabs(wav_L[dir][k]) >= mean[lvl]) {
                                 absciss = asig * std::fabs(wav_L[dir][k]) + bsig;
-                            } else /*if (std::fabs(wav_L[dir][k]) < mean[lvl])*/ {
+                            } else { /*if (std::fabs(wav_L[dir][k]) < mean[lvl])*/
                                 absciss = amean * std::fabs(wav_L[dir][k]);
                             }
 
@@ -7787,6 +7971,7 @@ BENCHFUN
                             const float kc = kmul * (locedgwavCurve[absciss * 500.f] - 0.5f);
 
                             float kinterm;
+
                             if (kc >= 0.f) {
                                 constexpr float reduceeffect = 0.6f;
                                 kinterm = 1.f + reduceeffect * kc;    //about 1 to 3 general and big amplification for max (under 0)
@@ -7822,6 +8007,7 @@ BENCHFUN
         float MaxP[10];
         float MaxN[10];
         Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
+
         for (int dir = 1; dir < 4; dir++) {
             for (int level = level_bl; level < maxlvl; ++level) {
                 int W_L = wdspot->level_W(level);
@@ -7843,6 +8029,7 @@ BENCHFUN
                         klev = ahigh * level + bhigh;
                     }
                 }
+
                 float* const* wav_L = wdspot->level_coeffs(level);
 
                 if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
@@ -7860,10 +8047,12 @@ BENCHFUN
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic, 16 * W_L) if (multiThread)
 #endif
+
                     for (int i = 0; i < W_L * H_L; i++) {
                         const float val = std::fabs(wav_L[dir][i]);
 
                         float absciss;
+
                         if (val >= limit1) { //for max
                             const float valcour = xlogf(val);
                             absciss = xexpf((valcour - logmax) * rap);
@@ -7885,41 +8074,52 @@ BENCHFUN
             }
         }
     }
+
     //reconstruct all for L
     wdspot->reconstruct(tmp[0], 1.f);
 
     bool reconstruct = false;
+
     if (wavcurvecon && (chromalev != 1.f) && levelena) { // a if need ) {//contrast by levels for chroma a
         // a
         wdspot.reset(new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+
         if (wdspot->memory_allocation_failed()) {
             return;
         }
+
         wavcbd(*wdspot, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, chromalev, sk);
         reconstruct = true;
     }
+
     if (wavcurvelev && radlevblur > 0.f && blurena && chromablu > 0.f && !blurlc) {//chroma blur if need
         // a
         if (!reconstruct) {
             wdspot.reset(new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+
             if (wdspot->memory_allocation_failed()) {
                 return;
             }
         }
+
         wavcont(lp, tmp, *wdspot, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
         reconstruct = true;
     }
+
     if (reconstruct) {
         wdspot->reconstruct(tmpa[0], 1.f);
     }
 
     reconstruct = false;
+
     if (wavcurvecon && (chromalev != 1.f) && levelena) { // b if need ) {//contrast by levels for chroma b
         //b
         wdspot.reset(new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+
         if (wdspot->memory_allocation_failed()) {
             return;
         }
+
         //b
         wavcbd(*wdspot, level_bl, maxlvl, locconwavCurve, locconwavutili, sigm, offs, chromalev, sk);
         reconstruct = true;
@@ -7929,13 +8129,16 @@ BENCHFUN
         //b
         if (!reconstruct) {
             wdspot.reset(new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+
             if (wdspot->memory_allocation_failed()) {
                 return;
             }
         }
+
         wavcont(lp, tmp, *wdspot, level_bl, maxlvl, loclevwavCurve, loclevwavutili, loccompwavCurve, loccompwavutili, loccomprewavCurve, loccomprewavutili, radlevblur, 1, chromablu, 0.f, 0.f, 0.f);
         reconstruct = true;
     }
+
     if (reconstruct) {
         wdspot->reconstruct(tmpb[0], 1.f);
     }
@@ -8022,6 +8225,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 #ifdef _OPENMP
         #pragma omp for
 #endif
+
         for (int vblk = 0; vblk < numblox_H; ++vblk) {
 
             int top = (vblk - 1) * offset;
@@ -8156,6 +8360,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
+
     for (int i = 0; i < GH; ++i) {
         for (int j = 0; j < GW; ++j) {
             float d = Ldetail[i][j] / totwt[i][j];
@@ -8268,6 +8473,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
+
                 for (int lvl = 0; lvl < levred; lvl++) {
                     for (int dir = 1; dir < 4; dir++) {
                         int Wlvl_L = Ldecomp.level_W(lvl);
@@ -8371,6 +8577,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
+
                     for (int ir = 0; ir < GH; ir++)
                         for (int jr = 0; jr < GW; jr++) {
                             float lN = tmp1.L[ir][jr];
@@ -8658,6 +8865,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
+
                     for (int ir = 0; ir < GH; ir++)
                         for (int jr = 0; jr < GW; jr++) {
                             float cN = std::sqrt(SQR(tmp1.a[ir][jr]) + SQR(tmp1.b[ir][jr]));
@@ -8695,6 +8903,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
+
                 for (int i = 0; i < GH; ++i) {
                     for (int j = 0; j < GW; ++j) {
                         (*Lin)[i][j] = tmp1.L[i][j];
@@ -8715,6 +8924,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
+
                 for (int i = 0; i < GH; ++i) {
                     for (int j = 0; j < GW; ++j) {
                         (*Ain)[i][j] = tmp1.a[i][j];
@@ -8738,6 +8948,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
+
                 for (int i = 0; i < GH; ++i) {
                     for (int j = 0; j < GW; ++j) {
                         (*Bin)[i][j] = tmp1.b[i][j];
@@ -8755,8 +8966,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
             }
 
-           // DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
-            if(lp.smasktyp != 0) {
+            // DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
+            if (lp.smasktyp != 0) {
                 DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
             } else {
                 DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
@@ -8788,6 +8999,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
@@ -8815,6 +9027,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
+
                     for (int lvl = 0; lvl < levred; lvl++) {
                         for (int dir = 1; dir < 4; dir++) {
                             int Wlvl_L = Ldecomp.level_W(lvl);
@@ -8921,6 +9134,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
+
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 float lN = bufwv.L[ir][jr];
@@ -9206,6 +9420,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
+
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 float cN = std::sqrt(SQR(bufwv.a[ir][jr]) + SQR(bufwv.b[ir][jr]));
@@ -9242,6 +9457,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
+
                     for (int i = 0; i < bfh; ++i) {
                         for (int j = 0; j < bfw; ++j) {
                             (*Lin)[i][j] = bufwv.L[i][j];
@@ -9266,6 +9482,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
+
                     for (int i = 0; i < bfh; ++i) {
                         for (int j = 0; j < bfw; ++j) {
                             (*Ain)[i][j] = bufwv.a[i][j];
@@ -9287,6 +9504,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
+
                     for (int i = 0; i < bfh; ++i) {
                         for (int j = 0; j < bfw; ++j) {
                             (*Bin)[i][j] = bufwv.b[i][j];
@@ -9302,13 +9520,13 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     }
                 }
 
-            if(lp.smasktyp != 0) {
-                DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
-            } else {
-                DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
-            }
+                if (lp.smasktyp != 0) {
+                    DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
+                } else {
+                    DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
+                }
 
-              //  DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
+                //  DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
             }
         }
     }
@@ -9372,6 +9590,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic) collapse(2)
 #endif
+
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = 0; level < maxlvlresid; ++level) {
                     int W_L = wdspotresid->level_W(level);
@@ -9412,6 +9631,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic) collapse(2)
 #endif
+
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = 0; level < maxlvlresid; ++level) {
                     int W_L = wdspotresida->level_W(level);
@@ -9448,6 +9668,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic) collapse(2)
 #endif
+
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = 0; level < maxlvlresid; ++level) {
                     int W_L = wdspotresidb->level_W(level);
@@ -9510,15 +9731,16 @@ void ImProcFunctions::Lab_Local(
     const LocwavCurve& locconwavCurve, bool locconwavutili,
     const LocwavCurve& loccompwavCurve, bool loccompwavutili,
     const LocwavCurve& loccomprewavCurve, bool loccomprewavutili,
+    const LocwavCurve& locwavCurveguid, bool locwavguidutili,
     const LocwavCurve& locwavCurveden, bool locwavdenutili,
     const LocwavCurve& locedgwavCurve, bool locedgwavutili,
     const LocwavCurve& loclmasCurve_wav, bool lmasutili_wav,
-    
+
     bool LHutili, bool HHutili, bool CHutili, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int ll_Mask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax
-    )
+)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (!params->locallab.enabled) {
@@ -9559,6 +9781,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
+
         for (int y = rtengine::max(begy - cy, 0); y < rtengine::min(yEn - cy, original->H); y++) {
             const int loy = cy + y;
 
@@ -9579,6 +9802,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
         #pragma omp parallel for if(multiThread)
 #endif
+
         for (int ir = 0; ir < bfh; ir++)
             for (int jr = 0; jr < bfw; jr++) {
                 ble[ir][jr] /= 32768.f;
@@ -9602,6 +9826,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:sombel) if(multiThread)
 #endif
+
         for (int ir = 0; ir < bfh; ir++) {
             for (int jr = 0; jr < bfw; jr++) {
                 const float val = ble[ir][jr] * 32768.f;
@@ -9630,6 +9855,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
+
             for (int y = ystart; y < yend; y++) {
                 for (int x = xstart; x < xend; x++) {
                     bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
@@ -9653,6 +9879,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
+
                 for (int ir = 0; ir < bfh; ir++) {
                     for (int jr = 0; jr < bfw; jr++) {
                         bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gplog, jr, ir);
@@ -9698,81 +9925,82 @@ void ImProcFunctions::Lab_Local(
 
     if (denoiz || blurz || lp.denoiena || lp.blurena) {
         bufgb.reset(new LabImage(GW, GH));
-            
-            if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
-                bufmaskorigbl.reset(new LabImage(GW, GH));
-                bufmaskblurbl.reset(new LabImage(GW, GH, true));
-                originalmaskbl.reset (new LabImage(GW, GH));
-            }
+
+        if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
+            bufmaskorigbl.reset(new LabImage(GW, GH));
+            bufmaskblurbl.reset(new LabImage(GW, GH, true));
+            originalmaskbl.reset(new LabImage(GW, GH));
+        }
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-            for (int y = 0; y < GH; y++) {
-                for (int x = 0; x < GW; x++) {
-                    bufblorig->L[y][x] = original->L[y][x];
-                }
+
+        for (int y = 0; y < GH; y++) {
+            for (int x = 0; x < GW; x++) {
+                bufblorig->L[y][x] = original->L[y][x];
             }
+        }
 
-            int inv = 0;
-            bool showmaske = false;
-            bool enaMask = false;
-            bool deltaE = false;
-            bool modmask = false;
-            bool zero = false;
-            bool modif = false;
+        int inv = 0;
+        bool showmaske = false;
+        bool enaMask = false;
+        bool deltaE = false;
+        bool modmask = false;
+        bool zero = false;
+        bool modif = false;
 
-            if (lp.showmaskblmet == 3) {
-                showmaske = true;
-            }
+        if (lp.showmaskblmet == 3) {
+            showmaske = true;
+        }
 
-            if (lp.enablMask) {
-                enaMask = true;
-            }
+        if (lp.enablMask) {
+            enaMask = true;
+        }
 
-            if (lp.showmaskblmet == 4) {
-                deltaE = true;
-            }
+        if (lp.showmaskblmet == 4) {
+            deltaE = true;
+        }
 
-            if (lp.showmaskblmet == 2) {
-                modmask = true;
-            }
+        if (lp.showmaskblmet == 2) {
+            modmask = true;
+        }
 
-            if (lp.showmaskblmet == 1) {
-                modif = true;
-            }
+        if (lp.showmaskblmet == 1) {
+            modif = true;
+        }
 
-            if (lp.showmaskblmet == 0) {
-                zero = true;
-            }
+        if (lp.showmaskblmet == 0) {
+            zero = true;
+        }
 
-            float chrom = lp.chromabl;
-            float rad = lp.radmabl;
-            float gamma = lp.gammabl;
-            float slope = lp.slomabl;
-            float blendm = lp.blendmabl;
-            float lap = params->locallab.spots.at(sp).lapmaskbl;
-            bool pde = params->locallab.spots.at(sp).laplac;
-            LocwavCurve dummy;
-            bool delt = params->locallab.spots.at(sp).deltae;
-            int lumask = params->locallab.spots.at(sp).lumask;
-            int sco = params->locallab.spots.at(sp).scopemask;
-            int shortcu = 0;
+        float chrom = lp.chromabl;
+        float rad = lp.radmabl;
+        float gamma = lp.gammabl;
+        float slope = lp.slomabl;
+        float blendm = lp.blendmabl;
+        float lap = params->locallab.spots.at(sp).lapmaskbl;
+        bool pde = params->locallab.spots.at(sp).laplac;
+        LocwavCurve dummy;
+        bool delt = params->locallab.spots.at(sp).deltae;
+        int lumask = params->locallab.spots.at(sp).lumask;
+        int sco = params->locallab.spots.at(sp).scopemask;
+        int shortcu = 0;
 
-            const float mindE = 2.f + MINSCOPE * sco * lp.thr;
-            const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
-            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
-            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-            const int shado = params->locallab.spots.at(sp).shadmaskblsha;
-            const int highl = params->locallab.spots.at(sp).shadmaskbl;
-            constexpr float amountcd = 0.f;
-            constexpr float anchorcd = 50.f;
-            LocHHmaskCurve lochhhmasCurve;
-            constexpr bool lhhmasutili = false;
-            const float strumask = 0.02f * params->locallab.spots.at(sp).strumaskbl;
-            bool astool = params->locallab.spots.at(sp).toolbl;
+        const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+        const int shado = params->locallab.spots.at(sp).shadmaskblsha;
+        const int highl = params->locallab.spots.at(sp).shadmaskbl;
+        constexpr float amountcd = 0.f;
+        constexpr float anchorcd = 50.f;
+        LocHHmaskCurve lochhhmasCurve;
+        constexpr bool lhhmasutili = false;
+        const float strumask = 0.02f * params->locallab.spots.at(sp).strumaskbl;
+        bool astool = params->locallab.spots.at(sp).toolbl;
 
-            maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufblorig.get(), bufmaskblurbl.get(), originalmaskbl.get(), original, reserved, inv, lp,
+        maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufblorig.get(), bufmaskblurbl.get(), originalmaskbl.get(), original, reserved, inv, lp,
                     strumask, astool,
                     locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili, lochhhmasCurve, lhhmasutili,  multiThread,
                     enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskbllocalcurve, localmaskblutili, loclmasCurveblwav, lmasutiliblwav, 1, 1, 5, 5,
@@ -9780,16 +10008,17 @@ void ImProcFunctions::Lab_Local(
                     maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, 0
                    );
 
-            if (lp.showmaskblmet == 3) {
-                showmask(lumask, lp, 0, 0, cx, cy, GW, GH, bufblorig.get(), transformed, bufmaskblurbl.get(), inv);
-                return;
-            }
+        if (lp.showmaskblmet == 3) {
+            showmask(lumask, lp, 0, 0, cx, cy, GW, GH, bufblorig.get(), transformed, bufmaskblurbl.get(), inv);
+            return;
+        }
 
     }
 
     bool execmaskblur = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.smasktyp != 1;
+
     if (((radius > 1.5 * GAUSS_SKIP && lp.rad > 1.6) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || execmaskblur) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
- //   if (((radius > 1.5 * GAUSS_SKIP && lp.rad > 1.6) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
+//   if (((radius > 1.5 * GAUSS_SKIP && lp.rad > 1.6) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
         std::unique_ptr<LabImage> tmp1;
         std::unique_ptr<LabImage> tmp2;
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -9825,6 +10054,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = ystart; y < yend ; y++) {
                             for (int x = xstart; x < xend; x++) {
                                 tmp1->L[y - ystart][x - xstart] = original->L[y][x];
@@ -10042,12 +10272,25 @@ void ImProcFunctions::Lab_Local(
                     delete[] tmL;
                 }
 
+
+                bool HHguidcurve = false;
+
+                if (locwavCurveguid && locwavguidutili) {
+                    for (int i = 0; i < 500; i++) {
+                        if (locwavCurveguid[i] != 0.5) {
+                            HHguidcurve = true;
+                            break;
+                        }
+                    }
+                }
+
                 if (lp.blurmet == 0 && lp.blmet == 2) {
 
                     if (lp.guidb > 0) {
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = ystart; y < yend ; y++) {
                             for (int x = xstart; x < xend; x++) {
                                 tmp1->L[y - ystart][x - xstart] = original->L[y][x];
@@ -10061,18 +10304,25 @@ void ImProcFunctions::Lab_Local(
                         tmpImage = new Imagefloat(bfw, bfh);
                         lab2rgb(*tmp1, *tmpImage, params->icm.workingProfile);
                         array2D<float> LL(bfw, bfh);
+                        array2D<float> LLbef(bfw, bfh);
+                        array2D<float> LAbef(bfw, bfh);
+                        array2D<float> LBbef(bfw, bfh);
                         array2D<float> rr(bfw, bfh);
                         array2D<float> gg(bfw, bfh);
                         array2D<float> bb(bfw, bfh);
                         array2D<float> guide(bfw, bfh);
-                        
-                        
+
+
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < bfh ; y++) {
                             for (int x = 0; x < bfw; x++) {
                                 LL[y][x] = tmp1->L[y][x];
+                                LLbef[y][x] = tmp1->L[y][x];
+                                LAbef[y][x] = tmp1->a[y][x];
+                                LBbef[y][x] = tmp1->b[y][x];
                                 float ll = LL[y][x] / 32768.f;
                                 guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
                                 rr[y][x] = tmpImage->r(y, x);
@@ -10081,6 +10331,7 @@ void ImProcFunctions::Lab_Local(
 
                             }
                         }
+
                         array2D<float> iR(bfw, bfh, rr, 0);
                         array2D<float> iG(bfw, bfh, gg, 0);
                         array2D<float> iB(bfw, bfh, bb, 0);
@@ -10104,11 +10355,12 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < bfh ; y++) {
                             for (int x = 0; x < bfw; x++) {
-                                rr[y][x] = intp(lp.strbl, rr[y][x] , iR[y][x]);
-                                gg[y][x] = intp(lp.strbl, gg[y][x] , iG[y][x]);
-                                bb[y][x] = intp(lp.strbl, bb[y][x] , iB[y][x]);
+                                rr[y][x] = intp(lp.strbl, rr[y][x], iR[y][x]);
+                                gg[y][x] = intp(lp.strbl, gg[y][x], iG[y][x]);
+                                bb[y][x] = intp(lp.strbl, bb[y][x], iB[y][x]);
                                 tmpImage->r(y, x) = rr[y][x];
                                 tmpImage->g(y, x) = gg[y][x];
                                 tmpImage->b(y, x) = bb[y][x];
@@ -10119,12 +10371,171 @@ void ImProcFunctions::Lab_Local(
                         rgb2lab(*tmpImage, *tmp1, params->icm.workingProfile);
 
                         if (lp.chromet == 0) {
+                            if (HHguidcurve) {
+#ifdef _OPENMP
+                                #pragma omp parallel for
+#endif
+
+                                for (int y = 0; y < bfh ; y++) {
+                                    for (int x = 0; x < bfw; x++) {
+                                        float hueG = xatan2f(LBbef[y][x], LAbef[y][x]);
+                                        float valparam = float ((locwavCurveguid[500.f * Color::huelab_to_huehsv2(hueG)] - 0.5f));  //get H=f(H)
+                                        LL[y][x] = LLbef[y][x] + (LL[y][x] - LLbef[y][x]) * (1.f + valparam);
+                                    }
+                                }
+                            }
+
+//threshold
+                            if (lp.thrbl > 0.f) {
+                                float mean[10];
+                                float meanN[10];
+                                float sigma[10];
+                                float sigmaN[10];
+                                float MaxP[10];
+                                float MaxN[10];
+                                float meang[10];
+                                float meanNg[10];
+                                float sigmag[10];
+                                float sigmaNg[10];
+                                float MaxPg[10];
+                                float MaxNg[10];
+
+                                //2 decomposition LL after guidefilter and dst before (perhaps dst no need)
+#ifdef _OPENMP
+                                const int numThreads = omp_get_max_threads();
+#else
+                                const int numThreads = 1;
+
+#endif
+                                int wavelet_level = 1 + params->locallab.spots.at(sp).csthreshold.getBottomRight();//retrieve with +1 maximum wavelet_level
+                                int minwin = rtengine::min(bfw, bfh);
+                                int maxlevelspot = 10;//maximum possible
+
+                                // adap maximum level wavelet to size of crop
+                                while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
+                                    --maxlevelspot ;
+                                }
+
+                                // printf("minwin=%i maxlevelavant=%i  maxlespot=%i\n", minwin, wavelet_level, maxlevelspot);
+
+                                wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
+
+                                int maxlvl = wavelet_level;
+
+                                const std::unique_ptr<wavelet_decomposition> LdecompLL(new wavelet_decomposition(LL[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+                                const std::unique_ptr<wavelet_decomposition> Ldecompdst(new wavelet_decomposition(tmp1->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+
+                                if (!LdecompLL->memory_allocation_failed() && !Ldecompdst->memory_allocation_failed()) {
+
+                                    Evaluate2(*LdecompLL, meang, meanNg, sigmag, sigmaNg, MaxPg, MaxNg, numThreads);
+                                    Evaluate2(*Ldecompdst, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
+                                    float sig = 2.f;
+                                    float thr = 0.f;
+
+                                    if (lp.thrbl < 0.02f) {
+                                        thr = 0.5f;
+                                    } else if (lp.thrbl < 0.1f) {
+                                        thr = 0.2f;
+                                    } else {
+                                        thr = 0.f;
+                                    }
+
+                                    FlatCurve wavguid({
+                                        FCT_MinMaxCPoints,
+                                        0, 1, 0.35, 0.35, lp.thrbl, 1.0, 0.35, 0.35, lp.thrbl + 0.01f, thr, 0.35, 0.35, 1, thr, 0.35, 0.35
+                                    });
+
+                                    for (int dir = 1; dir < 4; dir++) {
+                                        for (int level = 0; level < maxlvl - 1; level++) {
+                                            int Wlvl_L = LdecompLL->level_W(level);
+                                            int Hlvl_L = LdecompLL->level_H(level);
+                                            float* const* WavCoeffs_L = LdecompLL->level_coeffs(level);//first decomp denoised
+                                            float* const* WavCoeffs_L2 = Ldecompdst->level_coeffs(level);//second decomp before denoise
+
+                                            if (settings->verbose) {
+                                                printf("level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meang[level], sigma[level], sigmag[level], MaxP[level], MaxPg[level]);
+                                            }
+
+                                            //find local contrast
+                                            float tempmean = 0.f;
+                                            float tempsig = 0.f;
+                                            float tempmax = 0.f;
+                                            tempmean = 0.3f * mean[level] + 0.7f * meang[level] ;
+                                            tempsig = 0.3f * sigma[level] + 0.7f * sigmag[level] ;
+                                            tempmax = 0.3f * MaxP[level] + 0.7f * MaxPg[level] ;
+
+                                            if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
+                                                float insigma = 0.666f; //SD
+                                                float logmax = log(tempmax); //log Max
+                                                //cp.sigmm change the "wider" of sigma
+                                                float rapX = (tempmean + sig * tempsig) / (tempmax); //rapport between sD / max
+                                                float inx = log(insigma);
+                                                float iny = log(rapX);
+                                                float rap = inx / iny; //koef
+                                                float asig = 0.166f / (tempsig * sig);
+                                                float bsig = 0.5f - asig * tempmean;
+                                                float amean = 0.5f / (tempmean);
+
+
+#ifdef _OPENMP
+                                                #pragma omp parallel for if (multiThread)
+#endif
+
+                                                for (int i = 0; i < Wlvl_L * Hlvl_L; i++) {
+                                                    float absciss;
+                                                    float tempwav = 0.f;
+                                                    tempwav = 0.7f * WavCoeffs_L[dir][i] + 0.3f * WavCoeffs_L2[dir][i];
+
+                                                    if (std::fabs(tempwav) >= (tempmean + sig * tempsig)) { //for max
+                                                        float valcour = xlogf(std::fabs(tempwav));
+                                                        float valc = valcour - logmax;
+                                                        float vald = valc * rap;
+                                                        absciss = xexpf(vald);
+                                                    } else if (std::fabs(tempwav) >= tempmean) {
+                                                        absciss = asig * std::fabs(tempwav) + bsig;
+                                                    } else {
+                                                        absciss = amean * std::fabs(tempwav);
+                                                        float k = sig;
+
+                                                        if (sig > 1.f) {
+                                                            k = SQR(sig);
+                                                        }
+
+                                                        float abs = pow(2.f * absciss, (1.f / k));
+                                                        absciss = 0.5f * abs;
+                                                    }
+
+                                                    float kc = wavguid.getVal(absciss) - 1.f;
+
+                                                    if (kc < 0) {
+                                                        kc = -SQR(kc);//approximation to simulate sliders denoise
+                                                    }
+
+                                                    float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//1.2 allows to increase denoise (not used)
+
+                                                    float kinterm = 1.f + reduceeffect * kc;
+                                                    kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+                                                    float prov = WavCoeffs_L2[dir][i];//save before denoise
+                                                    WavCoeffs_L[dir][i] = prov + (WavCoeffs_L[dir][i] - prov) * kinterm;//only apply local contrast on difference between denoise and normal
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    LdecompLL->reconstruct(LL[0], 1.f);
+                                }
+                            }
+
+
+//end threshold
+
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
-                                    LL[y][x] = intp(lp.strbl, LL[y][x] , iL[y][x]);
+                                    LL[y][x] = intp(lp.strbl, LL[y][x], iL[y][x]);
                                     tmp1->L[y][x] = LL[y][x];
                                 }
                             }
@@ -10139,6 +10550,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < GH ; y++) {
                             for (int x = 0; x < GW; x++) {
                                 tmp1->L[y][x] = original->L[y][x];
@@ -10160,6 +10572,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < GH ; y++) {
                             for (int x = 0; x < GW; x++) {
                                 LL[y][x] = tmp1->L[y][x];
@@ -10195,11 +10608,12 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < GH ; y++) {
                             for (int x = 0; x < GW; x++) {
-                                rr[y][x] = intp(lp.strbl, rr[y][x] , iR[y][x]);
-                                gg[y][x] = intp(lp.strbl, gg[y][x] , iG[y][x]);
-                                bb[y][x] = intp(lp.strbl, bb[y][x] , iB[y][x]); 
+                                rr[y][x] = intp(lp.strbl, rr[y][x], iR[y][x]);
+                                gg[y][x] = intp(lp.strbl, gg[y][x], iG[y][x]);
+                                bb[y][x] = intp(lp.strbl, bb[y][x], iB[y][x]);
                                 tmpImage->r(y, x) = rr[y][x];
                                 tmpImage->g(y, x) = gg[y][x];
                                 tmpImage->b(y, x) = bb[y][x];
@@ -10213,13 +10627,15 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
-                                    LL[y][x] = intp(lp.strbl, LL[y][x] , iL[y][x]);
+                                    LL[y][x] = intp(lp.strbl, LL[y][x], iL[y][x]);
                                     tmp1->L[y][x] = LL[y][x];
                                 }
                             }
                         }
+
                         delete tmpImage;
                     }
                 }
@@ -10231,6 +10647,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
                             bufchro[ir][jr] = std::sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - std::sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
@@ -10246,6 +10663,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
+
                         for (int y = 0; y < bfh; y++) {
                             for (int x = 0; x < bfw; x++) {
                                 bufchro[y][x] *= coefC;
@@ -10255,8 +10673,8 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.blurmet == 0) { //blur and noise (center)
 //                        BlurNoise_Local(tmp1.get(), originalmaskbl, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
-                        
-                        if(lp.smasktyp != 1) {
+
+                        if (lp.smasktyp != 1) {
                             BlurNoise_Local(tmp1.get(), originalmaskbl.get(), bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                         } else {
                             BlurNoise_Local(tmp1.get(), original, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
@@ -10268,8 +10686,8 @@ void ImProcFunctions::Lab_Local(
                             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                         }
                     } else if (lp.blurmet == 1) {
- //                       InverseBlurNoise_Local(originalmaskbl, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
-                        if(lp.smasktyp != 1) {
+//                       InverseBlurNoise_Local(originalmaskbl, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+                        if (lp.smasktyp != 1) {
                             InverseBlurNoise_Local(originalmaskbl.get(), bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         } else {
                             InverseBlurNoise_Local(original, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
@@ -10304,6 +10722,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = rtengine::max(0, begy - cy); y < rtengine::min(transformed->H, yEn - cy); y++) {
                 const int loy = cy + y;
 
@@ -10379,6 +10798,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = 0; y < bfh; y++) {
                     for (int x = 0; x < bfw; x++) {
                         loctemp->L[y][x] = original->L[y + ystart][x + xstart];
@@ -10466,6 +10886,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int y = ystart; y < yend; y++) {
                         for (int x = xstart; x < xend; x++) {
                             bufsh[y - ystart][x - xstart] = origcbdl->L[y - ystart][x - xstart] = original->L[y][x];
@@ -10499,6 +10920,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
                             bufsh[ir][jr] = std::sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr]));
@@ -10529,6 +10951,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
                             bufchrom[ir][jr] = (loctemp->L[ir][jr] - std::sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr])));
@@ -10544,6 +10967,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
                                 bufchrom[ir][jr] *= coefC;
@@ -10594,6 +11018,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = 0; y < bfh; y++) {
                     for (int x = 0; x < bfw; x++) {
                         bufexporig->L[y][x] = original->L[y + ystart][x + xstart];
@@ -10676,6 +11101,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int y = ystart; y < yend; y++) {
                         for (int x = xstart; x < xend; x++) {
                             bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
@@ -10703,6 +11129,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 double factor = 1.0;
@@ -10741,6 +11168,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 double factor = 1.0;
@@ -10755,6 +11183,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 double factor = 1.0;
@@ -10819,6 +11248,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = ystart; y < yend; y++) {
                     for (int x = xstart; x < xend; x++) {
                         bufgb->L[y - ystart][x - xstart] = original->L[y][x];
@@ -10958,6 +11388,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for reduction(max:maxL) reduction(min:minL) reduction(max:maxC) reduction(min:minC) schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
                             buflight[ir][jr] = tmp1->L[ir][jr] - bufgb->L[ir][jr];
@@ -10987,6 +11418,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
+
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
                             buflight[y][x] *= coef;
@@ -11052,6 +11484,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bfh; y++) {
                 for (int x = 0; x < bfw; x++) {
                     bufexporig->L[y][x] = original->L[y + ystart][x + xstart];
@@ -11134,6 +11567,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = 0; y < bfh ; y++) {
                     for (int x = 0; x < bfw; x++) {
                         bufexporig->L[y][x] = original->L[y + ystart][x + xstart];
@@ -11157,6 +11591,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < bfh; ir++)
                         for (int jr = 0; jr < bfw; jr++) {
                             double factor = 1.0;
@@ -11215,6 +11650,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
         for (int y = 0; y < GH ; y++) {
             for (int x = 0; x < GW; x++) {
                 bufcolorig->L[y][x] = original->L[y][x];
@@ -11316,6 +11752,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = ystart; y < yend; y++) {
                 for (int x = xstart; x < xend; x++) {
                     bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
@@ -11342,6 +11779,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = 0; y < bfhr; y++) {
                     for (int x = 0; x < bfwr; x++) {
                         datain[y * bfwr + x] = bufexpfin->L[y][x];
@@ -11354,6 +11792,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = 0; y < bfhr; y++) {
                     for (int x = 0; x < bfwr; x++) {
                         bufexpfin->L[y][x] = dataout[y * bfwr + x];
@@ -11387,6 +11826,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
         }
+
         if (loclevwavCurve && loclevwavutili) {
             for (int i = 0; i < 500; i++) {
                 if (loclevwavCurve[i] != 0.) {
@@ -11395,6 +11835,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
         }
+
         if (locconwavCurve && locconwavutili) {
             for (int i = 0; i < 500; i++) {
                 if (locconwavCurve[i] != 0.5) {
@@ -11403,6 +11844,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
         }
+
         if (loccompwavCurve && loccompwavutili) {
             for (int i = 0; i < 500; i++) {
                 if (loccompwavCurve[i] != 0.) {
@@ -11411,6 +11853,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
         }
+
         if (loccomprewavCurve && loccomprewavutili) {
             for (int i = 0; i < 500; i++) {
                 if (loccomprewavCurve[i] != 0.75) {
@@ -11457,6 +11900,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = ystart; y < yend; y++) {
                 for (int x = xstart; x < xend; x++) {
                     bufgb->L[y - ystart][x - xstart] = original->L[y][x];
@@ -11477,6 +11921,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bfh; y++) {
                 for (int x = 0; x < bfw; x++) {
                     bufgb->L[y][x] = original->L[y + ystart][x + xstart];
@@ -11572,6 +12017,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < bfhr; y++) {
                             for (int x = 0; x < bfwr; x++) {
                                 tmpfftw->L[y][x] = tmp1->L[y][x];
@@ -11585,6 +12031,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < bfhr; y++) {
                             for (int x = 0; x < bfwr; x++) {
                                 tmp1->L[y][x] = tmpfftw->L[y][x];
@@ -11640,7 +12087,7 @@ void ImProcFunctions::Lab_Local(
                     const float offs = params->locallab.spots.at(sp).offset;
                     const float sigmadc = params->locallab.spots.at(sp).sigmadc;
                     const float deltad = params->locallab.spots.at(sp).deltad;
-                   // const float fatres = params->locallab.spots.at(sp).fatres;
+                    // const float fatres = params->locallab.spots.at(sp).fatres;
                     const float chrol = params->locallab.spots.at(sp).chromalev;
                     const float chrobl = params->locallab.spots.at(sp).chromablu;
                     const bool blurena = params->locallab.spots.at(sp).wavblur;
@@ -11673,6 +12120,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < H_La; y++) {
                                 for (int x = 0; x < W_La; x++) {
                                     bufa[y][x]  = wav_ab0a [y * W_La + x];
@@ -11689,6 +12137,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < H_La; y++) {
                                 for (int x = 0; x < W_La; x++) {
                                     wav_ab0a[y * W_La + x] = bufa[y][x];
@@ -11701,6 +12150,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for if (multiThread)
 #endif
+
                             for (int i = 0; i < W_La * H_La; i++) {
                                 wav_ab0a[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));//more progressive than linear
                                 wav_ab0a[i] = clipC(wav_ab0a[i]);
@@ -11725,6 +12175,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < H_Lb; y++) {
                                 for (int x = 0; x < W_Lb; x++) {
                                     bufb[y][x]  = wav_ab0b [y * W_Lb + x];
@@ -11742,6 +12193,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < H_Lb; y++) {
                                 for (int x = 0; x < W_Lb; x++) {
                                     wav_ab0b[y * W_Lb + x] = bufb[y][x];
@@ -11755,6 +12207,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for if (multiThread)
 #endif
+
                             for (int i = 0; i < W_Lb * H_Lb; i++) {
                                 wav_ab0b[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));
                                 wav_ab0b[i] = clipC(wav_ab0b[i]);
@@ -11771,6 +12224,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < bfhr; y++) {
                             for (int x = 0; x < bfwr; x++) {
                                 tmpresid->L[y][x] = tmp1->L[y][x];
@@ -11778,6 +12232,7 @@ void ImProcFunctions::Lab_Local(
                                 tmpresid->b[y][x] = tmp1->b[y][x];
                             }
                         }
+
                         clarimerge(lp, mL, mC, exec, tmpresid.get(), wavelet_level, sk, numThreads);
                     }
 
@@ -11805,6 +12260,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
+
                         for (int x = 0; x < bfh; x++)
                             for (int y = 0; y < bfw; y++) {
                                 tmp1->L[x][y] = clipLoc((1.f + mL0) * mergfile->L[x][y] - mL * tmpresid->L[x][y]);
@@ -11837,7 +12293,7 @@ void ImProcFunctions::Lab_Local(
         JaggedArray<float> loctemp(bfw, bfh);
 
         if (call == 2) { //call from simpleprocess
-          //  printf("bfw=%i bfh=%i\n", bfw, bfh);
+            //  printf("bfw=%i bfh=%i\n", bfw, bfh);
 
             if (bfw < mSPsharp || bfh < mSPsharp) {
                 printf("too small RT-spot - minimum size 39 * 39\n");
@@ -11854,6 +12310,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < transformed->H ; y++) {
                 for (int x = 0; x < transformed->W; x++) {
                     int lox = cx + x;
@@ -11911,6 +12368,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = ystart; y < yend; y++) {
                 for (int x = xstart; x < xend; x++) {
                     bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
@@ -11973,6 +12431,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
+
             for (int ir = 0; ir < GH; ir++) //fill with 0
                 for (int jr = 0; jr < GW; jr++) {
                     bufreti->L[ir][jr] = 0.f;
@@ -11985,6 +12444,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < transformed->H ; y++) //{
                 for (int x = 0; x < transformed->W; x++) {
                     bufreti->L[y][x] = original->L[y][x];
@@ -12021,6 +12481,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < transformed->H ; y++)
                 for (int x = 0; x < transformed->W; x++) {
                     float dE = std::sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) + SQR(lumaref - bufreti->b[y][x] / 327.68f));
@@ -12037,6 +12498,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int ir = 0; ir < Hd; ir += 1)
                 for (int jr = 0; jr < Wd; jr += 1) {
                     orig[ir][jr] = bufreti->L[ir][jr];
@@ -12067,6 +12529,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
+
             for (int ir = 0; ir < Hd; ir += 1) {
                 for (int jr = 0; jr < Wd; jr += 1) {
                     tmpl->L[ir][jr] = orig[ir][jr];
@@ -12079,6 +12542,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
+
                 for (int ir = 0; ir < Hd; ir += 1)
                     for (int jr = 0; jr < Wd; jr += 1) {
                         datain[ir * Wd + jr] = orig1[ir][jr];
@@ -12089,6 +12553,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
+
                 for (int ir = 0; ir < Hd; ir += 1)
                     for (int jr = 0; jr < Wd; jr += 1) {
                         tmpl->L[ir][jr] = data[ir * Wd + jr];
@@ -12104,6 +12569,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int ir = 0; ir < Hd; ir++) {
                 for (int jr = 0; jr < Wd; jr++) {
                     buflight[ir][jr] = tmpl->L[ir][jr] - bufreti->L[ir][jr];
@@ -12135,6 +12601,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
 
@@ -12148,6 +12615,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for reduction(max:maxChro) schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int ir = 0; ir < Hd; ir++) {
                     for (int jr = 0; jr < Wd; jr++) {
                         maxChro = rtengine::max(maxChro, orig1[ir][jr]);
@@ -12176,6 +12644,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
+
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
                             const float Chprov = orig1[ir][jr];
@@ -12199,6 +12668,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < Hd; ir++) {
                         for (int jr = 0; jr < Wd; jr++) {
                             bufchro[ir][jr] = std::sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - orig1[ir][jr];
@@ -12214,6 +12684,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
+
                         for (int ir = 0; ir < Hd; ir++) {
                             for (int jr = 0; jr < Wd; jr++) {
                                 bufchro[ir][jr] *= coefC;
@@ -12243,6 +12714,7 @@ void ImProcFunctions::Lab_Local(
                     delete buforigmas;
                 }
             }
+
             delete  bufreti;
         }
     }
@@ -12291,6 +12763,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
+
                 for (int ir = 0; ir < bfh; ir++) //fill with 0
                     for (int jr = 0; jr < bfw; jr++) {
                         bufreti->L[ir][jr] = 0.f;
@@ -12304,6 +12777,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = ystart; y < yend; y++) {
                     for (int x = xstart; x < xend; x++) {
                         bufreti->L[y - ystart][x - xstart] = original->L[y][x];
@@ -12340,6 +12814,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = ystart; y < yend ; y++) {
                 for (int x = xstart; x < xend; x++) {
                     const float dE = std::sqrt(SQR(refa - bufreti->a[y - ystart][x - xstart] / 327.68f) + SQR(refb - bufreti->b[y - ystart][x - xstart] / 327.68f) + SQR(lumaref - bufreti->b[y - ystart][x - xstart] / 327.68f));
@@ -12360,6 +12835,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int ir = 0; ir < Hd; ir += 1) {
                     for (int jr = 0; jr < Wd; jr += 1) {
                         orig[ir][jr] = bufreti->L[ir][jr];
@@ -12393,6 +12869,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
+
             for (int ir = 0; ir < Hd; ir += 1)
                 for (int jr = 0; jr < Wd; jr += 1) {
                     tmpl->L[ir][jr] = orig[ir][jr];
@@ -12405,6 +12882,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
+
                 for (int ir = 0; ir < Hd; ir += 1) {
                     for (int jr = 0; jr < Wd; jr += 1) {
                         datain[ir * Wd + jr] = orig1[ir][jr];
@@ -12416,6 +12894,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
+
                 for (int ir = 0; ir < Hd; ir += 1) {
                     for (int jr = 0; jr < Wd; jr += 1) {
                         tmpl->L[ir][jr] = data[ir * Wd + jr];
@@ -12429,6 +12908,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int ir = 0; ir < Hd; ir++) {
                     for (int jr = 0; jr < Wd; jr++) {
                         buflight[ir][jr] = tmpl->L[ir][jr] - bufreti->L[ir][jr];
@@ -12444,6 +12924,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < Hd; ir++) {
                         for (int jr = 0; jr < Wd; jr++) {
                             buflight[ir][jr] *= coef;
@@ -12465,6 +12946,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < Hd; ir += 1) {
                         for (int jr = 0; jr < Wd; jr += 1) {
                             orig[ir][jr] = std::sqrt(SQR(bufreti->a[ir][jr]) + SQR(bufreti->b[ir][jr]));
@@ -12477,6 +12959,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for reduction(max:maxChro) schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int ir = 0; ir < Hd; ir++) {
                     for (int jr = 0; jr < Wd; jr++) {
                         maxChro = rtengine::max(maxChro, orig1[ir][jr]);
@@ -12503,6 +12986,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
+
                     for (int ir = 0; ir < Hd; ir += 1) {
                         for (int jr = 0; jr < Wd; jr += 1) {
                             const float Chprov = orig1[ir][jr];
@@ -12524,6 +13008,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < Hd; ir++) {
                         for (int jr = 0; jr < Wd; jr++) {
                             bufchro[ir][jr] = std::sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - orig1[ir][jr];
@@ -12539,6 +13024,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
+
                         for (int ir = 0; ir < Hd; ir++) {
                             for (int jr = 0; jr < Wd; jr++) {
                                 bufchro[ir][jr] *= coefC;
@@ -12570,6 +13056,7 @@ void ImProcFunctions::Lab_Local(
                     delete buforigmas;
                 }
             }
+
             delete  bufreti;
         }
     }
@@ -12618,6 +13105,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = ystart; y < yend; y++) {
                     for (int x = xstart; x < xend; x++) {
                         bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
@@ -12635,6 +13123,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = ystart; y < yend ; y++) {
                             for (int x = xstart; x < xend; x++) {
                                 const int lox = cx + x;
@@ -12645,7 +13134,7 @@ void ImProcFunctions::Lab_Local(
 
                                 if (lp.shapmet == 0) {
                                     calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                } else /*if (lp.shapmet == 1)*/ {
+                                } else { /*if (lp.shapmet == 1)*/
                                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                                 }
 
@@ -12728,6 +13217,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
                             bufexpfin->L[y][x] = original->L[y + ystart][x + xstart];
@@ -12742,6 +13232,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 bufexpfin->L[ir][jr] = 0.5f * exlocalcurve[2.f * bufexporig->L[ir][jr]];
@@ -12767,6 +13258,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
                                 bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
@@ -12782,6 +13274,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
                                     datain[y * bfwr + x] = bufexpfin->L[y][x];
@@ -12802,6 +13295,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
                                     dataout[y * bfwr + x] = bufexpfin->L[y][x];
@@ -12812,6 +13306,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
                                     bufexpfin->L[y][x] = dataout[y * bfwr + x];
@@ -12829,12 +13324,14 @@ void ImProcFunctions::Lab_Local(
                             if (params->locallab.spots.at(sp).exnoiseMethod == "med" || params->locallab.spots.at(sp).exnoiseMethod == "medhi") {
                                 if (lp.blac < -100.f && lp.linear > 0.01f) {
                                     float evnoise = lp.blac - lp.linear * 2000.f;
+
                                     if (params->locallab.spots.at(sp).exnoiseMethod == "med") {
                                         evnoise *= 0.4f;
                                     }
 
                                     //soft denoise, user must use Local Denoise to best result
                                     Median med;
+
                                     if (evnoise < -18000.f) {
                                         med = Median::TYPE_5X5_STRONG;
                                     } else if (evnoise < -15000.f) {
@@ -12854,6 +13351,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
                                     float L = LIM01(bufexpfin->L[y][x] / 32768.f);//change gamma for Laplacian
@@ -12866,6 +13364,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
                                     const float Y = dataout[y * bfwr + x] / 32768.f;//inverse Laplacian gamma
@@ -12874,6 +13373,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
+
                     if (lp.shadex > 0) {
                         if (lp.expcomp == 0.f) {
                             lp.expcomp = 0.001f;    // to enabled
@@ -12885,7 +13385,7 @@ void ImProcFunctions::Lab_Local(
                             lp.expcomp = 0.001f;    // to enabled
                         }
                     }
-                    
+
                     //shadows with ipshadowshighlight
                     if ((lp.expcomp != 0.f) || (exlocalcurve && localexutili)) {
                         if (lp.shadex > 0) {
@@ -12901,6 +13401,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float epsi = bufexporig->L[ir][jr] == 0.f ? 0.001f : 0.f;
@@ -12911,10 +13412,11 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
-                    
+
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
                         softproc(buforig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.1, 0.001, 0.5f, sk, multiThread, 1);
                     }
+
                     float meansob = 0.f;
                     transit_shapedetect2(call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                 }
@@ -12943,6 +13445,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
         for (int y = 0; y < GH ; y++) {
             for (int x = 0; x < GW; x++) {
                 bufexporig->L[y][x] = original->L[y][x];
@@ -13087,6 +13590,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = 0; y < bfh ; y++) {
                     for (int x = 0; x < bfw; x++) {
                         bufcolorig->L[y][x] = original->L[y + ystart][x + xstart];
@@ -13112,6 +13616,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = ystart; y < yend ; y++) {
                             for (int x = xstart; x < xend; x++) {
                                 const int lox = cx + x;
@@ -13122,7 +13627,7 @@ void ImProcFunctions::Lab_Local(
 
                                 if (lp.shapmet == 0) {
                                     calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                } else /*if (lp.shapmet == 1)*/ {
+                                } else { /*if (lp.shapmet == 1)*/
                                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                                 }
 
@@ -13133,6 +13638,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
+
                         return;
                     }
                 }
@@ -13165,6 +13671,7 @@ void ImProcFunctions::Lab_Local(
                 const float merlucol = params->locallab.spots.at(sp).merlucol;
 
                 int tonemod = 0;
+
                 if (params->locallab.spots.at(sp).toneMethod == "one") {
                     tonemod = 0;
                 } else if (params->locallab.spots.at(sp).toneMethod == "two") {
@@ -13211,6 +13718,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < bfh; y++)
                             for (int x = 0; x < bfw; x++) {
 
@@ -13284,6 +13792,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < bfh; y++) {
                             const int loy = y + ystart + cy;
 
@@ -13294,7 +13803,7 @@ void ImProcFunctions::Lab_Local(
 
                                 if (lp.shapmet == 0) {
                                     calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                } else /*if (lp.shapmet == 1)*/ {
+                                } else { /*if (lp.shapmet == 1)*/
                                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                                 }
 
@@ -13318,6 +13827,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     bool HHcurve = false;
+
                     if (lochhCurve && HHutili) {
                         for (int i = 0; i < 500; i++) {
                             if (lochhCurve[i] != 0.5) {
@@ -13351,6 +13861,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
                             float bufcolcalca = origptr->a[ir][jr];
@@ -13475,6 +13986,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 bufcolfin->L[ir][jr] = origptr->L[ir][jr];
@@ -13484,6 +13996,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     bool nottransit = false;
+
                     if (lp.mergemet >= 2) { //merge result with original
                         nottransit = true;
                         bufcolreserv.reset(new LabImage(bfw, bfh));
@@ -13493,6 +14006,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                         for (int y = 0; y < bfh ; y++) {
                             for (int x = 0; x < bfw; x++) {
                                 lumreserv[y][x] = 32768.f - reserved->L[y + ystart][x + xstart];
@@ -13509,9 +14023,9 @@ void ImProcFunctions::Lab_Local(
                                     bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
                                     bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
                                 } else if (lp.mergemet == 4 && ctoningmerg) {
-                                        bufcolreserv->L[y][x] = merlucol * 327.68f;
-                                        bufcolreserv->a[y][x] = 9.f * scaledirect * a_scalemerg;
-                                        bufcolreserv->b[y][x] = 9.f * scaledirect * b_scalemerg;
+                                    bufcolreserv->L[y][x] = merlucol * 327.68f;
+                                    bufcolreserv->a[y][x] = 9.f * scaledirect * a_scalemerg;
+                                    bufcolreserv->b[y][x] = 9.f * scaledirect * b_scalemerg;
                                 }
                             }
                         }
@@ -13522,6 +14036,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
@@ -13536,6 +14051,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
@@ -13551,6 +14067,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int ir = 0; ir < bfh; ir++) {
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gph, jr, ir);
@@ -13560,6 +14077,7 @@ void ImProcFunctions::Lab_Local(
                                     const float HH = xatan2f(bb, aa);
 
                                     float cor = 0.f;
+
                                     if (corrFactor < 1.f) {
                                         cor = - 2.5f * (1.f - corrFactor);
                                     } else if (corrFactor > 1.f) {
@@ -13567,6 +14085,7 @@ void ImProcFunctions::Lab_Local(
                                     }
 
                                     float newhr = HH + cor;
+
                                     if (newhr > rtengine::RT_PI_F) {
                                         newhr -= 2 * rtengine::RT_PI_F;
                                     } else if (newhr < -rtengine::RT_PI_F) {
@@ -13607,6 +14126,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         rdE[y][x] *= SQR(rdE[y][x]);
@@ -13625,6 +14145,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         bufprov->L[y][x] = intp(rdE[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
@@ -13642,6 +14163,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufreser->L[y][x]);
@@ -13659,6 +14181,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         rdE[y][x] *= SQR(rdE[y][x]);
@@ -13671,6 +14194,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         bufprov->L[y][x] = intp(rdE[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
@@ -13683,6 +14207,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
                                     if (lp.mergecolMethod == 17) {
@@ -13731,6 +14256,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
@@ -13747,6 +14273,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
                                     bufcolfin->L[y][x] = intp(rdE[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
@@ -13770,10 +14297,12 @@ void ImProcFunctions::Lab_Local(
                             float maxG = minG;
                             float minB = tmpImagereserv->b(0, 0);
                             float maxB = minB;
+
                             if (lp.mergecolMethod == 6 || lp.mergecolMethod == 9 || lp.mergecolMethod == 10 || lp.mergecolMethod == 11) {
 #ifdef _OPENMP
                                 #pragma omp parallel for reduction(max:maxR,maxG,maxB) reduction(min:minR,minG,minB) schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int ir = 0; ir < bfh; ir++) {
                                     for (int jr = 0; jr < bfw; jr++) {
                                         minR = rtengine::min(minR, tmpImagereserv->r(ir, jr));
@@ -13791,6 +14320,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {//LIM(x 0 2) 2 arbitrary value but limit...
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, tmpImageorig->r(y, x) - tmpImagereserv->r(y, x), tmpImageorig->r(y, x));
@@ -13802,6 +14332,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, std::fabs(tmpImageorig->r(y, x) - tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
@@ -13813,6 +14344,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, tmpImageorig->r(y, x) * tmpImagereserv->r(y, x), tmpImageorig->r(y, x));
@@ -13824,6 +14356,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, tmpImageorig->r(y, x) + tmpImagereserv->r(y, x), tmpImageorig->r(y, x));
@@ -13835,6 +14368,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, tmpImageorig->r(y, x) / (tmpImagereserv->r(y, x) + 0.00001f), tmpImageorig->r(y, x));
@@ -13846,6 +14380,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, softlig(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), minR, maxR), tmpImageorig->r(y, x));
@@ -13857,6 +14392,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, softlig2(LIM01(tmpImageorig->r(y, x)), LIM01(tmpImageorig->r(y, x))), tmpImageorig->r(y, x));
@@ -13868,6 +14404,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, softlig3(LIM01(tmpImageorig->r(y, x)), tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
@@ -13879,6 +14416,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, overlay(tmpImagereserv->r(y, x), tmpImageorig->r(y, x), minR, maxR), tmpImageorig->r(y, x));
@@ -13890,6 +14428,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, overlay(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), minR, maxR), tmpImageorig->r(y, x));
@@ -13901,6 +14440,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, screen(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), maxR), tmpImageorig->r(y, x));
@@ -13912,6 +14452,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, rtengine::min(tmpImageorig->r(y, x), tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
@@ -13923,6 +14464,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, rtengine::max(tmpImageorig->r(y, x), tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
@@ -13934,6 +14476,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, exclusion(tmpImageorig->r(y, x), tmpImagereserv->r(y, x)), tmpImageorig->r(y, x));
@@ -13946,6 +14489,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, colburn(LIM01(tmpImageorig->r(y, x)), LIM01(tmpImagereserv->r(y, x))), tmpImageorig->r(y, x));
@@ -13957,6 +14501,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         tmpImageorig->r(y, x) = intp(lp.opacol, coldodge(LIM01(tmpImageorig->r(y, x)), LIM01(tmpImagereserv->r(y, x))), tmpImageorig->r(y, x));
@@ -13973,6 +14518,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         bufcolfin->L[y][x] = intp(blend[y][x], bufcolfin->L[y][x], bufcolreserv->L[y][x]);
@@ -13986,6 +14532,7 @@ void ImProcFunctions::Lab_Local(
                         if (lp.softradiuscol > 0.f) {
                             softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                         }
+
                         float meansob = 0.f;
                         transit_shapedetect2(call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     }
@@ -13998,6 +14545,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gp, jr, ir);
@@ -14011,6 +14559,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gpab, jr, ir);
@@ -14025,6 +14574,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                             for (int ir = 0; ir < bfh; ir++)
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float corrFactor = ImProcFunctions::calcGradientFactor(gph, jr, ir);
@@ -14059,6 +14609,7 @@ void ImProcFunctions::Lab_Local(
                         if (lp.softradiuscol > 0.f) {
                             softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                         }
+
                         float meansob = 0.f;
                         transit_shapedetect2(call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     }
@@ -14108,6 +14659,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
         for (int y = 0; y < GH ; y++) {
             for (int x = 0; x < GW; x++) {
                 bufcolorig->L[y][x] = original->L[y][x];
@@ -14171,20 +14723,22 @@ void ImProcFunctions::Lab_Local(
             }
         }
     }
-    
+
 //begin common mask
-    if(lp.maskena) {
+    if (lp.maskena) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
         int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         int bfh = yend - ystart;
         int bfw = xend - xstart;
+
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.blurma >= 0.25f && lp.fftma && call == 2) {
                 optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
             }
+
             array2D<float> blechro(bfw, bfh);
             array2D<float> ble(bfw, bfh);
             array2D<float> hue(bfw, bfh);
@@ -14196,7 +14750,7 @@ void ImProcFunctions::Lab_Local(
             std::unique_ptr<LabImage> bufmaskblurcol;
             std::unique_ptr<LabImage> originalmaskcol;
             std::unique_ptr<LabImage> bufcolreserv;
-            
+
             int wo = original->W;
             int ho = original->H;
             LabImage *origsav = nullptr;
@@ -14212,9 +14766,11 @@ void ImProcFunctions::Lab_Local(
                     bufmaskblurcol.reset(new LabImage(bfw, bfh, true));
                     originalmaskcol.reset(new LabImage(bfw, bfh));
                 }
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = 0; y < bfh ; y++) {
                     for (int x = 0; x < bfw; x++) {
                         bufcolorig->L[y][x] = original->L[y + ystart][x + xstart];
@@ -14230,6 +14786,7 @@ void ImProcFunctions::Lab_Local(
                         bufcolfin->b[y][x] = original->b[y + ystart][x + xstart];
                     }
                 }
+
                 const int inv = 0;
                 const bool showmaske = lp.showmask_met == 2;
                 const bool enaMask = lp.ena_Mask;
@@ -14238,15 +14795,17 @@ void ImProcFunctions::Lab_Local(
                 const bool zero = lp.showmask_met == 0;
                 const bool modif = lp.showmask_met == 1;
                 const float chrom = params->locallab.spots.at(sp).chromask;
-                const float rad = params->locallab.spots.at(sp).radmask; 
-                const float gamma = params->locallab.spots.at(sp).gammask; 
+                const float rad = params->locallab.spots.at(sp).radmask;
+                const float gamma = params->locallab.spots.at(sp).gammask;
                 const float slope =  params->locallab.spots.at(sp).slopmask;
                 float blendm =  params->locallab.spots.at(sp).blendmask;
                 float blendmab =  params->locallab.spots.at(sp).blendmaskab;
+
                 if (lp.showmask_met == 2) {
                     blendm = 0.f;//normalize behavior mask with others no action of blend
                     blendmab = 0.f;
                 }
+
                 const float lap = params->locallab.spots.at(sp).lapmask;
                 const bool pde = params->locallab.spots.at(sp).laplac;
                 const int shado = params->locallab.spots.at(sp).shadmask;
@@ -14267,7 +14826,7 @@ void ImProcFunctions::Lab_Local(
                 const float amountcd = 0.f;
                 const float anchorcd = 50.f;
                 const int highl = 0;
-  
+
                 maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, reserved, inv, lp,
                             strumask, astool,
                             locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili, lochhhmas_Curve, lhhmas_utili, multiThread,
@@ -14276,15 +14835,17 @@ void ImProcFunctions::Lab_Local(
                             shortcu, delt, hueref, chromaref, lumaref,
                             maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftma, lp.blurma, lp.contma, 12
                            );
-                           
-                           
+
+
                 if (lp.showmask_met == 2) {
                     showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
                     return;
                 }
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                 for (int y = 0; y < bfh ; y++) {
                     for (int x = 0; x < bfw; x++) {
                         bufcolfin->L[y][x] = bufcolorig->L[y][x];
@@ -14297,6 +14858,7 @@ void ImProcFunctions::Lab_Local(
                         guid[y][x] = bufcolorigsav->L[y][x] / 32768.f;
                     }
                 }
+
                 if (softr != 0.f) {//soft for L a b because we change color...
                     float rad = softr;
                     const float tmpblur = rad < 0.f ? -1.f / rad : 1.f + rad;
@@ -14314,8 +14876,9 @@ void ImProcFunctions::Lab_Local(
                     rtengine::guidedFilter(guid, ble, ble, r2, 0.2f * epsil, multiThread);
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
                             float2 sincosval = xsincosf(hue[y][x]);
@@ -14325,20 +14888,20 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                 }
-                
+
 
 
                 float meansob = 0.f;
                 transit_shapedetect2(call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, cx, cy, sk);
                 delete origsav;
                 origsav    = NULL;
-                    
+
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                 }
-                    
+
             }
         }
     }
@@ -14373,6 +14936,7 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
+
             for (int y = 0; y < transformed->H; y++) {
                 const int loy = cy + y;
                 const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
@@ -14432,7 +14996,7 @@ void ImProcFunctions::Lab_Local(
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else /*if (lp.shapmet == 1)*/ {
+                    } else { /*if (lp.shapmet == 1)*/
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                     }
 
@@ -14467,6 +15031,7 @@ void ImProcFunctions::Lab_Local(
                         sincosval.y = aa / (Chprov1 * 327.68f);
                         sincosval.x = bb / (Chprov1 * 327.68f);
                     }
+
 #endif
 
                     Color::pregamutlab(Lprov1, HH, chr);

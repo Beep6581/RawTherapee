@@ -1103,6 +1103,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     const bool locconwavutili = locconwavCurve.Set(params->locallab.spots.at(sp).locconwavcurve);
                     const bool loccompwavutili = loccompwavCurve.Set(params->locallab.spots.at(sp).loccompwavcurve);
                     const bool loccomprewavutili = loccomprewavCurve.Set(params->locallab.spots.at(sp).loccomprewavcurve);
+                    const bool locwavguidutili = locwavCurveguid.Set(params->locallab.spots.at(sp).locwavcurveguid);
                     const bool locwavdenutili = locwavCurveden.Set(params->locallab.spots.at(sp).locwavcurveden);
                     const bool locedgwavutili = locedgwavCurve.Set(params->locallab.spots.at(sp).locedgwavcurve);
                     const bool lmasutili_wav = loclmasCurve_wav.Set(params->locallab.spots.at(sp).LLmask_curvewav);
@@ -1207,6 +1208,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                   locconwavCurve, locconwavutili,
                                   loccompwavCurve, loccompwavutili,
                                   loccomprewavCurve, loccomprewavutili,
+                                  locwavCurveguid, locwavguidutili,
                                   locwavCurveden, locwavdenutili,
                                   locedgwavCurve, locedgwavutili,
                                   loclmasCurve_wav, lmasutili_wav,

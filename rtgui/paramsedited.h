@@ -614,6 +614,8 @@ public:
         bool strengr;
         bool scalegr;
         bool epsbl;
+        bool thrbl;
+        bool locwavcurveguid;
         bool blMethod;
         bool chroMethod;
         bool blurMethod;

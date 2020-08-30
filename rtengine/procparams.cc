@@ -3243,6 +3243,34 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     strengr(0),
     scalegr(100),
     epsbl(0),
+    thrbl(0.),
+    locwavcurveguid{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        0.166,
+        0.50,
+        0.35,
+        0.35,
+        0.333,
+        0.50,
+        0.35,
+        0.35,
+        0.50,
+        0.50,
+        0.35,
+        0.35,
+        0.666,
+        0.50,
+        0.35,
+        0.35,
+        0.833,
+        0.50,
+        0.35,
+        0.35
+    },
     blMethod("blur"),
     chroMethod("lum"),
     blurMethod("norm"),
@@ -4177,6 +4205,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strengr == other.strengr
         && scalegr == other.scalegr
         && epsbl == other.epsbl
+        && thrbl == other.thrbl
+        && locwavcurveguid == other.locwavcurveguid
         && blMethod == other.blMethod
         && chroMethod == other.chroMethod
         && blurMethod == other.blurMethod
@@ -5703,6 +5733,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strengr, "Locallab", "Strengr_" + index_str, spot.strengr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->scalegr, "Locallab", "Scalegr_" + index_str, spot.scalegr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->epsbl, "Locallab", "Epsbl_" + index_str, spot.epsbl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->thrbl, "Locallab", "Thrbl_" + index_str, spot.thrbl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->locwavcurveguid, "Locallab", "LocwavCurveguid_" + index_str, spot.locwavcurveguid, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blMethod, "Locallab", "BlMethod_" + index_str, spot.blMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chroMethod, "Locallab", "ChroMethod_" + index_str, spot.chroMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurMethod, "Locallab", "BlurMethod_" + index_str, spot.blurMethod, keyFile);
@@ -7430,6 +7462,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Strengr_" + index_str, pedited, spot.strengr, spotEdited.strengr);
                 assignFromKeyfile(keyFile, "Locallab", "Scalegr_" + index_str, pedited, spot.scalegr, spotEdited.scalegr);
                 assignFromKeyfile(keyFile, "Locallab", "Epsbl_" + index_str, pedited, spot.epsbl, spotEdited.epsbl);
+                assignFromKeyfile(keyFile, "Locallab", "Thrbl_" + index_str, pedited, spot.thrbl, spotEdited.thrbl);
+                assignFromKeyfile(keyFile, "Locallab", "LocwavCurveguid_" + index_str, pedited, spot.locwavcurveguid, spotEdited.locwavcurveguid);
                 assignFromKeyfile(keyFile, "Locallab", "BlMethod_" + index_str, pedited, spot.blMethod, spotEdited.blMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ChroMethod_" + index_str, pedited, spot.chroMethod, spotEdited.chroMethod);
                 assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + index_str, pedited, spot.blurMethod, spotEdited.blurMethod);

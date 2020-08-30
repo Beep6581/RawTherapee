@@ -1195,7 +1195,8 @@ HISTORY_MSG_953;Local - Mask Common blend chroma
 HISTORY_MSG_954;Local - Show-hide tools
 HISTORY_MSG_955;Local - Enable Spot
 HISTORY_MSG_956;Local - CH Curve
-HISTORY_MSG_957;Local - Tool complexity mode
+HISTORY_MSG_957;Local - GF local contrast threshold
+HISTORY_MSG_958;Local - Local contrast Hue equalizer
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

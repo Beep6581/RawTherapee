@@ -644,6 +644,9 @@ private:
     Adjuster* const guidbl;
     Adjuster* const strbl;
     Adjuster* const epsbl;
+    Adjuster* const thrbl;
+    CurveEditorGroup* const LocalcurveEditorwavguid;
+    FlatCurveEditor* wavguid;
     Adjuster* const sensibn;
     MyComboBoxText* const blurMethod;
     MyComboBoxText* const chroMethod;
